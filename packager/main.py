@@ -1,5 +1,6 @@
 import os
 import json
+import shutil
 from packager.packager import package_puml_files
 
 def main():
@@ -10,6 +11,10 @@ def main():
     output_dir = config.get('output_dir', './uml_output')
     output_dir_packaged = config.get('output_dir_packaged', './uml_packaged_output')
     project_roots = config.get('project_roots', [])
+    # Clean output_dir_packaged before packaging
+    if output_dir_packaged and os.path.exists(output_dir_packaged):
+        shutil.rmtree(output_dir_packaged)
+    os.makedirs(output_dir_packaged, exist_ok=True)
     package_puml_files(output_dir, output_dir_packaged, project_roots) 
 
 if __name__ == "__main__":

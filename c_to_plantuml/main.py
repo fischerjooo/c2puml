@@ -3,6 +3,7 @@ import os
 import sys
 import json
 from typing import List, Optional, Tuple
+import shutil
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -33,6 +34,7 @@ class CToPlantUMLConverter:
         self.c_file_prefixes = c_file_prefixes or []
     
     def convert_projects(self, project_roots: List[str], output_dir: Optional[str] = None, recursive: bool = True) -> None:
+        self.project_roots = project_roots
         for project_root in project_roots:
             print(f"Processing project root: {project_root}")
             self.convert_project(project_root, output_dir, recursive)
@@ -51,6 +53,10 @@ class CToPlantUMLConverter:
         for c_file in c_files:
             self.generate_diagram_for_c_file(c_file, output_dir, project_root)
     def generate_diagram_for_c_file(self, c_file: str, output_dir: str, project_root: str) -> None:
+        # Clean output directory before generation
+        if os.path.exists(output_dir):
+            shutil.rmtree(output_dir)
+        os.makedirs(output_dir, exist_ok=True)
         parser = CParser()
 
         try:
@@ -123,6 +129,16 @@ class CToPlantUMLConverter:
         for fname in os.listdir(project_root):
             if fname.lower() == header.lower():
                 return os.path.join(project_root, fname)
+        # Recursive search in all project roots
+        if hasattr(self, 'project_roots'):
+            search_roots = self.project_roots
+        else:
+            search_roots = [project_root]
+        for root in search_roots:
+            for dirpath, _, filenames in os.walk(root):
+                for fname in filenames:
+                    if fname.lower() == header.lower():
+                        return os.path.join(dirpath, fname)
         return header
 
     def extract_macros_from_content(self, content: str) -> list:
@@ -205,4 +221,20 @@ def main():
     )
 
 if __name__ == "__main__":
-    main() 
+    from c_to_plantuml.main import main as c2puml_main
+    # Clean output directory before PlantUML generation
+    import json, os, shutil
+    config_path = os.path.join(os.path.dirname(__file__), 'test_config.json')
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = json.load(f)
+    output_dir = config.get('output_dir', None)
+    if output_dir and os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+    c2puml_main()
+    # Also call the packager main for restructure and cleanup
+    from packager.main import main as packager_main
+    # Clean output_dir_structured/output_dir_packaged before packaging
+    output_dir_structured = config.get('output_dir_structured') or config.get('output_dir_packaged')
+    if output_dir_structured and os.path.exists(output_dir_structured):
+        shutil.rmtree(output_dir_structured)
+    packager_main() 
