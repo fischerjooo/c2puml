@@ -62,6 +62,7 @@ class CToPlantUMLConverter:
         parser._parse_content(content)
         includes = list(parser.includes)
         functions = self.extract_functions_from_parser(parser)
+        globals_ = self.extract_globals_from_parser(parser)
         c_base = os.path.splitext(os.path.basename(c_file))[0]
         c_uml_id = to_uml_id(os.path.basename(c_file))
         # --- Extract macros from the C file ---
@@ -78,8 +79,8 @@ class CToPlantUMLConverter:
                 'macros': h_macros,
                 'stereotype': '<<public_header>>' if h.endswith('.h') else '<<private_header>>',
             })
-        plantuml_content = self.generator.generate_c_file_diagram_with_macros(
-            c_base, c_uml_id, functions, macros, header_infos
+        plantuml_content = self.generator.generate_c_file_diagram_with_macros_and_globals(
+            c_base, c_uml_id, functions, macros, globals_, header_infos
         )  # type: ignore
         output_path = os.path.join(output_dir, f"{c_base}.puml")
         with open(output_path, 'w', encoding='utf-8') as out_file:
@@ -94,14 +95,16 @@ class CToPlantUMLConverter:
                 params_str = ', '.join([f"{p.type} {p.name}" for p in func.parameters])
                 sig = f"{func.return_type} {func.name}({params_str})"
                 if sig not in seen:
-                    functions.append(sig)
+                    visibility = '-' if func.is_static else '+'
+                    functions.append(f"{visibility}{func.return_type} {func.name}({params_str})")
                     seen.add(sig)
         # Top-level (non-struct) functions
         for func in parser.functions:
             params_str = ', '.join([f"{p.type} {p.name}" for p in func.parameters])
             sig = f"{func.return_type} {func.name}({params_str})"
             if sig not in seen:
-                functions.append(sig)
+                visibility = '-' if func.is_static else '+'
+                functions.append(f"{visibility}{func.return_type} {func.name}({params_str})")
                 seen.add(sig)
         return functions
     def resolve_header_path(self, header: str, c_file: str, project_root: str) -> str:
@@ -139,15 +142,30 @@ class CToPlantUMLConverter:
         macros = [macro.replace('+', '-', 1) if macro.startswith('+') else macro for macro in macros]
         return macros
 
+    def extract_globals_from_parser(self, parser: CParser) -> list:
+        """Extract global variables from the parser as PlantUML field strings, using '-' for static (local) and '+' for extern/public."""
+        globals_ = []
+        for field in parser.globals:
+            type_str = field.type
+            if field.is_pointer:
+                type_str += "*"
+            if field.is_array:
+                type_str += f"[{field.array_size or ''}]"
+            # Use '-' for static, '+' otherwise
+            visibility = '-' if getattr(field, 'is_static', False) else '+'
+            globals_.append(f"{visibility} {type_str} {field.name}")
+        return globals_
+
 # Extend PlantUMLGenerator with a new method for the requested format
-setattr(PlantUMLGenerator, 'generate_c_file_diagram_with_macros', lambda self, c_base, c_uml_id, functions, macros, header_infos: (
+setattr(PlantUMLGenerator, 'generate_c_file_diagram_with_macros_and_globals', lambda self, c_base, c_uml_id, functions, macros, globals_, header_infos: (
     '\n'.join([
         f"@startuml CLS: {c_base}",
         '',
         f'class "{c_base}" as {c_uml_id} <<source>> #LightBlue',
         '{',
+        *(f"    {g}" for g in globals_),
         *(f"    {macro}" for macro in macros),
-        *(f"    + {func}" for func in functions),
+        *(f"    {func}" for func in functions),
         '}',
         '',
         *[line for h in header_infos for line in (

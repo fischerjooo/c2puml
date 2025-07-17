@@ -10,6 +10,7 @@ class CParser:
         self.typedefs: Dict[str, str] = {}
         self.includes: Set[str] = set()
         self.functions: List[Function] = []  # Store top-level functions
+        self.globals: List[Field] = []  # Store global variables
         
     def parse_files(self, file_paths: List[str]) -> None:
         """Parse multiple C files"""
@@ -38,6 +39,9 @@ class CParser:
         
         # Parse typedefs
         self._parse_typedefs(content)
+        
+        # Parse global variables
+        self._parse_globals(content)
         
         # Parse functions
         self._parse_functions(content)
@@ -156,6 +160,26 @@ class CParser:
             # Skip struct and enum typedefs (already handled)
             if not ('struct' in original_type or 'enum' in original_type):
                 self.typedefs[new_type] = original_type
+    
+    def _parse_globals(self, content: str) -> None:
+        """Parse global variable declarations (simple heuristic: type name [= ...]; at file scope, not inside functions/structs)."""
+        # Remove function bodies to avoid local variables
+        code_wo_funcs = re.sub(r'\{[^{}]*\}', '{}', content, flags=re.DOTALL)
+        # Match lines like: int foo; double bar = 3.14; char *baz = "hi";
+        pattern = r'^(static\s+)?([a-zA-Z_][\w\s\*]*?)\s+([a-zA-Z_][\w]*)\s*(\[[^\]]*\])?\s*(=[^;]*)?;'  # Optional static, at line start
+        for match in re.finditer(pattern, code_wo_funcs, re.MULTILINE):
+            is_static = bool(match.group(1))
+            var_type = match.group(2).strip()
+            var_name = match.group(3)
+            array_part = match.group(4)
+            is_pointer = '*' in var_type or (array_part is not None)
+            is_array = array_part is not None
+            array_size = None
+            if is_array and array_part:
+                array_size = array_part.strip('[]')
+            field = Field(var_name, var_type.replace('*', '').strip(), is_pointer, is_array, array_size)
+            setattr(field, 'is_static', is_static)
+            self.globals.append(field)
     
     def _parse_functions(self, content: str) -> None:
         """Parse function definitions and associate with structs"""
