@@ -38,6 +38,7 @@ class CToPlantUMLConverter:
             self.convert_project(project_root, output_dir, recursive)
     def convert_project(self, project_root: str, output_dir: Optional[str] = None, recursive: bool = True) -> None:
         c_files = [f for f in find_c_files(project_root, recursive) if f.endswith('.c')]
+        # Only filter if c_file_prefixes is non-empty
         if self.c_file_prefixes:
             c_files = [f for f in c_files if any(os.path.basename(f).startswith(prefix) for prefix in self.c_file_prefixes)]
         if not c_files:

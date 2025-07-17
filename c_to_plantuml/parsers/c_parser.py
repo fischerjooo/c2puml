@@ -132,16 +132,16 @@ class CParser:
     
     def _parse_enum_values(self, values_text: str) -> List[str]:
         """Parse enum values"""
+        if values_text is None:
+            return []
         values = []
         lines = values_text.strip().split(',')
-        
         for line in lines:
             line = line.strip()
             if line:
                 # Remove assignment if present
                 value_name = line.split('=')[0].strip()
                 values.append(value_name)
-        
         return values
     
     def _parse_typedefs(self, content: str) -> None:
