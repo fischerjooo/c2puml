@@ -128,7 +128,7 @@ setattr(PlantUMLGenerator, 'generate_c_file_diagram', lambda self, c_base, c_uml
 
 def main():
     # Always use test_config.json as the config file
-    config_path = os.path.join(os.path.dirname(__file__), '../test_config.json')
+    config_path = os.path.join(os.path.dirname(__file__), '..', 'test_config.json')
     config = load_config(config_path)
     project_roots = config.get('project_roots', [])
     output_dir = config.get('output_dir', '.')

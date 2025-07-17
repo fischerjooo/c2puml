@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug c_to_plantuml/main.py",
+            "name": "Debug main.py",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/c_to_plantuml/main.py",
+            "program": "${workspaceFolder}/main.py",
             "console": "integratedTerminal",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"

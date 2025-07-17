@@ -2,8 +2,8 @@
   "project_roots": [
     "D:/WORK/Sandbox/doom/ipx", "D:/WORK/Sandbox/doom/linuxdoom-1.10", "D:/WORK/Sandbox/doom/sersrc","D:/WORK/Sandbox/doom/sndserv"
   ],
-  "output_dir": "./uml_output",
-  "output_dir_structured": "./uml_structured_output",
+  "output_dir": "./output_uml",
+  "output_dir_packaged": "./output_packaged",
   "recursive": true,
   "c_file_prefixes": [],
   "structure_overrides": [

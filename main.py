@@ -1,5 +1,17 @@
 import sys
+import os
+import json
+from packager.packager import package_puml_files
 
 if __name__ == "__main__":
-    from c_to_plantuml.c_to_plantuml import main
-    sys.exit(main()) 
+    from c_to_plantuml.main import main as c2puml_main
+    # Run the PlantUML generation
+    c2puml_main()
+    # Load config to get output_dir, output_dir_packaged, and project_roots
+    config_path = os.path.join(os.path.dirname(__file__), 'test_config.json')
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = json.load(f)
+    output_dir = config.get('output_dir', './uml_output')
+    output_dir_packaged = config.get('output_dir_packaged', './uml_packaged_output')
+    project_roots = config.get('project_roots', [])
+    package_puml_files(output_dir, output_dir_packaged, project_roots) 
