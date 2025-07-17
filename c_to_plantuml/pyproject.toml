@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "c_to_plantuml"
+version = "1.0.0"
+description = "C to PlantUML Class Diagram Generator"
+authors = [
+    { name = "Your Name" }
+]
+readme = "README.md"
+requires-python = ">=3.7" 

@@ -1,0 +1,8 @@
+{
+  "project_roots": [
+    "../model_city_sim"
+  ],
+  "output_dir": "./uml_output",
+  "recursive": true,
+  "c_file_prefixes": ["main", "vehicle"]
+} 

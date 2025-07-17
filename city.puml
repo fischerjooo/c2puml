@@ -1,0 +1,33 @@
+@startuml CLS: city
+
+class "city" as CITY_C <<source>> #LightBlue
+{
+}
+
+interface "stdio.h" as STDIO_H <<public_header>> #LightGreen
+{
+}
+
+CITY_C --> STDIO_H : <<include>>
+
+interface "city.h" as CITY_H <<public_header>> #LightGreen
+{
+    + #define CITY_H
+    + #define MAX_BUILDINGS 10
+    + #define MAX_VEHICLES 5
+    + void init_city(City* city, const char* name)
+    + void add_building_to_city(City* city, Building b)
+    + void add_vehicle_to_city(City* city, Vehicle v)
+    + void simulate_city(const City* city)
+}
+
+CITY_C --> CITY_H : <<include>>
+
+interface "string.h" as STRING_H <<public_header>> #LightGreen
+{
+}
+
+CITY_C --> STRING_H : <<include>>
+
+
+@enduml
