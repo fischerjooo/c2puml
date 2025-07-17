@@ -1,0 +1,13 @@
+{
+  "project_roots": [
+    "D:/WORK/Sandbox/doom/ipx", "D:/WORK/Sandbox/doom/linuxdoom-1.10", "D:/WORK/Sandbox/doom/sersrc","D:/WORK/Sandbox/doom/sndserv"
+  ],
+  "output_dir": "./uml_output",
+  "output_dir_structured": "./uml_structured_output",
+  "recursive": true,
+  "c_file_prefixes": [],
+  "structure_overrides": [
+    {"from_puml": "am_map.puml", "to_folder": "special_folder"},
+    {"from_puml": "vehicle.puml", "to_folder": "vehicles"}
+  ]
+} 

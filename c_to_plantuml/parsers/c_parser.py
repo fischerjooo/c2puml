@@ -205,7 +205,7 @@ class CParser:
 
     @staticmethod
     def parse_header_file(header_path: str) -> Tuple[List[str], List[str]]:
-        """Return (function prototypes, macros) from a header file, supporting multi-line and avoiding false positives from calls/macros."""
+        """Return (function prototypes, macros) from a header file, supporting multi-line and avoiding false positives from calls/macros. Only macro names are included, comments and values are stripped."""
         if not os.path.exists(header_path):
             return [], []
         prototypes = []
@@ -255,7 +255,13 @@ class CParser:
         for line in joined_lines:
             l = line.strip()
             if l.startswith('#define'):
-                macros.append(f'+ {l}')
+                # Remove comments (// or /* ... */)
+                l_no_comment = re.split(r'//|/\*', l)[0].strip()
+                # Only keep the macro name
+                macro_parts = l_no_comment.split()
+                if len(macro_parts) >= 2:
+                    macro_name = macro_parts[1].split('(')[0]  # handle function-like macros
+                    macros.append(f'+ #define {macro_name}')
             elif (
                 proto_pattern.match(l)
                 and not l.startswith('typedef')
