@@ -9,6 +9,7 @@ class CParser:
         self.enums: Dict[str, Enum] = {}
         self.typedefs: Dict[str, str] = {}
         self.includes: Set[str] = set()
+        self.functions: List[Function] = []  # Store top-level functions
         
     def parse_files(self, file_paths: List[str]) -> None:
         """Parse multiple C files"""
@@ -158,20 +159,28 @@ class CParser:
     
     def _parse_functions(self, content: str) -> None:
         """Parse function definitions and associate with structs"""
-        # Simple function parsing - can be enhanced
-        pattern = r'(?:static\s+)?(\w+(?:\s*\*)?)\s+(\w+)\s*\(([^)]*)\)\s*\{'
-        
+        # Improved function parsing: avoid control flow statements
+        pattern = r'^(?:static\s+)?([a-zA-Z_][\w\s\*]*?)\s+([a-zA-Z_][\w]*)\s*\(([^)]*)\)\s*\{'  # Must start at line
+        control_keywords = {'if', 'else', 'for', 'while', 'switch', 'case', 'do', 'goto', 'return', 'break', 'continue', 'default'}
         for match in re.finditer(pattern, content, re.MULTILINE):
-            is_static = 'static' in match.group(0)
             return_type = match.group(1).strip()
             func_name = match.group(2)
+            # Skip control flow keywords
+            if func_name in control_keywords or return_type in control_keywords:
+                continue
+            is_static = 'static' in match.group(0)
             params_text = match.group(3)
-            
             params = self._parse_function_params(params_text)
             func = Function(func_name, return_type, params, is_static)
-            
             # Try to associate with struct based on naming conventions
-            self._associate_function_with_struct(func)
+            associated = False
+            for struct_name, struct in self.structs.items():
+                if func.name.lower().startswith(struct_name.lower()):
+                    struct.functions.append(func)
+                    associated = True
+                    break
+            if not associated:
+                self.functions.append(func)
     
     def _parse_function_params(self, params_text: str) -> List[Field]:
         """Parse function parameters"""

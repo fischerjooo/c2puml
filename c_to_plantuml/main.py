@@ -53,7 +53,6 @@ class CToPlantUMLConverter:
     def generate_diagram_for_c_file(self, c_file: str, output_dir: str, project_root: str) -> None:
         parser = CParser()
 
-
         try:
             with open(c_file, 'r', encoding='utf-8') as f:
                 content = f.read()
@@ -65,19 +64,22 @@ class CToPlantUMLConverter:
         functions = self.extract_functions_from_parser(parser)
         c_base = os.path.splitext(os.path.basename(c_file))[0]
         c_uml_id = to_uml_id(os.path.basename(c_file))
+        # --- Extract macros from the C file ---
+        macros = self.extract_macros_from_content(content)
+        # ---
         header_infos = []
         for h in includes:
             h_path = self.resolve_header_path(h, c_file, project_root)
-            prototypes, macros = parse_header_for_prototypes_and_macros(h_path)
+            prototypes, h_macros = parse_header_for_prototypes_and_macros(h_path)
             header_infos.append({
                 'name': h,
                 'uml_id': to_uml_id(h),
                 'prototypes': prototypes,
-                'macros': macros,
+                'macros': h_macros,
                 'stereotype': '<<public_header>>' if h.endswith('.h') else '<<private_header>>',
             })
-        plantuml_content = self.generator.generate_c_file_diagram(
-            c_base, c_uml_id, functions, header_infos
+        plantuml_content = self.generator.generate_c_file_diagram_with_macros(
+            c_base, c_uml_id, functions, macros, header_infos
         )  # type: ignore
         output_path = os.path.join(output_dir, f"{c_base}.puml")
         with open(output_path, 'w', encoding='utf-8') as out_file:
@@ -85,10 +87,22 @@ class CToPlantUMLConverter:
         print(f"PlantUML diagram written to {output_path}")
     def extract_functions_from_parser(self, parser: CParser) -> List[str]:
         functions = []
+        seen = set()
+        # Functions associated with structs
         for struct in parser.structs.values():
             for func in struct.functions:
                 params_str = ', '.join([f"{p.type} {p.name}" for p in func.parameters])
-                functions.append(f"{func.return_type} {func.name}({params_str})")
+                sig = f"{func.return_type} {func.name}({params_str})"
+                if sig not in seen:
+                    functions.append(sig)
+                    seen.add(sig)
+        # Top-level (non-struct) functions
+        for func in parser.functions:
+            params_str = ', '.join([f"{p.type} {p.name}" for p in func.parameters])
+            sig = f"{func.return_type} {func.name}({params_str})"
+            if sig not in seen:
+                functions.append(sig)
+                seen.add(sig)
         return functions
     def resolve_header_path(self, header: str, c_file: str, project_root: str) -> str:
         c_dir = os.path.dirname(c_file)
@@ -108,13 +122,31 @@ class CToPlantUMLConverter:
                 return os.path.join(project_root, fname)
         return header
 
+    def extract_macros_from_content(self, content: str) -> list:
+        """Extract #define macro names from C file content using CParser.parse_header_file logic, but mark as '-' for private."""
+        import tempfile
+        import os
+        from c_to_plantuml.parsers.c_parser import CParser
+        # Write content to a temporary file to reuse parse_header_file
+        with tempfile.NamedTemporaryFile('w+', delete=False, suffix='.h') as tmp:
+            tmp.write(content)
+            tmp_path = tmp.name
+        try:
+            _, macros = CParser.parse_header_file(tmp_path)
+        finally:
+            os.unlink(tmp_path)
+        # Change + to - for private macros
+        macros = [macro.replace('+', '-', 1) if macro.startswith('+') else macro for macro in macros]
+        return macros
+
 # Extend PlantUMLGenerator with a new method for the requested format
-setattr(PlantUMLGenerator, 'generate_c_file_diagram', lambda self, c_base, c_uml_id, functions, header_infos: (
+setattr(PlantUMLGenerator, 'generate_c_file_diagram_with_macros', lambda self, c_base, c_uml_id, functions, macros, header_infos: (
     '\n'.join([
         f"@startuml CLS: {c_base}",
         '',
         f'class "{c_base}" as {c_uml_id} <<source>> #LightBlue',
         '{',
+        *(f"    {macro}" for macro in macros),
         *(f"    + {func}" for func in functions),
         '}',
         '',
