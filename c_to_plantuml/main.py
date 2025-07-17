@@ -53,10 +53,6 @@ class CToPlantUMLConverter:
         for c_file in c_files:
             self.generate_diagram_for_c_file(c_file, output_dir, project_root)
     def generate_diagram_for_c_file(self, c_file: str, output_dir: str, project_root: str) -> None:
-        # Clean output directory before generation
-        if os.path.exists(output_dir):
-            shutil.rmtree(output_dir)
-        os.makedirs(output_dir, exist_ok=True)
         parser = CParser()
 
         try:
@@ -221,20 +217,26 @@ def main():
     )
 
 if __name__ == "__main__":
-    from c_to_plantuml.main import main as c2puml_main
-    # Clean output directory before PlantUML generation
+    # Parse the config file
     import json, os, shutil
     config_path = os.path.join(os.path.dirname(__file__), 'test_config.json')
     with open(config_path, 'r', encoding='utf-8') as f:
         config = json.load(f)
+
+    # Clean output directory before PlantUML generation
     output_dir = config.get('output_dir', None)
     if output_dir and os.path.exists(output_dir):
         shutil.rmtree(output_dir)
+
+    # Call c2puml_main to generate PlantUML files
+    from c_to_plantuml.main import main as c2puml_main
     c2puml_main()
+
+    # Clean output_dir_packaged before packaging
+    output_dir_packaged = config.get('output_dir_packaged', None)
+    if output_dir_packaged and os.path.exists(output_dir_packaged):
+        shutil.rmtree(output_dir_packaged)
+        
     # Also call the packager main for restructure and cleanup
     from packager.main import main as packager_main
-    # Clean output_dir_structured/output_dir_packaged before packaging
-    output_dir_structured = config.get('output_dir_structured') or config.get('output_dir_packaged')
-    if output_dir_structured and os.path.exists(output_dir_structured):
-        shutil.rmtree(output_dir_structured)
     packager_main() 

@@ -18,4 +18,4 @@ def main():
     package_puml_files(output_dir, output_dir_packaged, project_roots) 
 
 if __name__ == "__main__":
-    main() 
+    main()
