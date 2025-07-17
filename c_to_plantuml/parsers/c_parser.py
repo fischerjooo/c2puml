@@ -210,8 +210,12 @@ class CParser:
             return [], []
         prototypes = []
         macros = []
-        with open(header_path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
+        try:
+            with open(header_path, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+        except UnicodeDecodeError:
+            with open(header_path, 'r', encoding='latin-1') as f:
+                lines = f.readlines()
         # Join multi-line macros and function declarations
         joined_lines = []
         buffer = ''

@@ -37,7 +37,8 @@ class CToPlantUMLConverter:
             print(f"Processing project root: {project_root}")
             self.convert_project(project_root, output_dir, recursive)
     def convert_project(self, project_root: str, output_dir: Optional[str] = None, recursive: bool = True) -> None:
-        c_files = [f for f in find_c_files(project_root, recursive) if f.endswith('.c')]
+        c_extensions = {'.c', '.h', '.cpp', '.cc', '.cxx', '.hpp', '.hxx'}
+        c_files = [f for f in find_c_files(project_root, recursive) if os.path.splitext(f)[1].lower() in c_extensions]
         # Only filter if c_file_prefixes is non-empty
         if self.c_file_prefixes:
             c_files = [f for f in c_files if any(os.path.basename(f).startswith(prefix) for prefix in self.c_file_prefixes)]
@@ -51,8 +52,14 @@ class CToPlantUMLConverter:
             self.generate_diagram_for_c_file(c_file, output_dir, project_root)
     def generate_diagram_for_c_file(self, c_file: str, output_dir: str, project_root: str) -> None:
         parser = CParser()
-        with open(c_file, 'r', encoding='utf-8') as f:
-            content = f.read()
+
+
+        try:
+            with open(c_file, 'r', encoding='utf-8') as f:
+                content = f.read()
+        except UnicodeDecodeError:
+            with open(c_file, 'r', encoding='latin-1') as f:
+                content = f.read()
         parser._parse_content(content)
         includes = list(parser.includes)
         functions = self.extract_functions_from_parser(parser)
@@ -121,7 +128,7 @@ setattr(PlantUMLGenerator, 'generate_c_file_diagram', lambda self, c_base, c_uml
 
 def main():
     # Always use test_config.json as the config file
-    config_path = os.path.join(os.path.dirname(__file__), 'test_config.json')
+    config_path = os.path.join(os.path.dirname(__file__), '../test_config.json')
     config = load_config(config_path)
     project_roots = config.get('project_roots', [])
     output_dir = config.get('output_dir', '.')
