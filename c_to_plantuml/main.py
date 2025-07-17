@@ -37,7 +37,7 @@ class CToPlantUMLConverter:
             print(f"Processing project root: {project_root}")
             self.convert_project(project_root, output_dir, recursive)
     def convert_project(self, project_root: str, output_dir: Optional[str] = None, recursive: bool = True) -> None:
-        c_extensions = {'.c', '.h', '.cpp', '.cc', '.cxx', '.hpp', '.hxx'}
+        c_extensions = {'.c', '.cpp', '.cc', '.cxx'}
         c_files = [f for f in find_c_files(project_root, recursive) if os.path.splitext(f)[1].lower() in c_extensions]
         # Only filter if c_file_prefixes is non-empty
         if self.c_file_prefixes:
@@ -78,7 +78,7 @@ class CToPlantUMLConverter:
             })
         plantuml_content = self.generator.generate_c_file_diagram(
             c_base, c_uml_id, functions, header_infos
-        )
+        )  # type: ignore
         output_path = os.path.join(output_dir, f"{c_base}.puml")
         with open(output_path, 'w', encoding='utf-8') as out_file:
             out_file.write(plantuml_content)
@@ -98,6 +98,14 @@ class CToPlantUMLConverter:
         candidate = os.path.join(project_root, header)
         if os.path.exists(candidate):
             return candidate
+        # Case-insensitive search in c_dir
+        for fname in os.listdir(c_dir):
+            if fname.lower() == header.lower():
+                return os.path.join(c_dir, fname)
+        # Case-insensitive search in project_root
+        for fname in os.listdir(project_root):
+            if fname.lower() == header.lower():
+                return os.path.join(project_root, fname)
         return header
 
 # Extend PlantUMLGenerator with a new method for the requested format
