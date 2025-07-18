@@ -3,6 +3,12 @@
 ## Overview
 This document provides high-level guidance for developing new features or making code changes to the C to PlantUML converter project. Always prioritize code cleanup and simplification while maintaining clean coding practices, human readability, and testability.
 
+## Processing Flow
+The application follows a clear 3-step processing flow:
+1. **Parse C/C++ files and generate model** - Extract structural information from source code
+2. **Apply configuration/transformers** - Filter and transform the model based on configuration
+3. **Generate PlantUML files** - Convert the transformed model into PlantUML diagrams
+
 ## Workflow Steps
 
 ### 1. Specification Analysis
@@ -42,6 +48,46 @@ This document provides high-level guidance for developing new features or making
 - Create feature branch and commit changes
 - Submit pull request with complete change set
 - Include test results and documentation updates
+
+## Testing Structure
+
+### Test Organization
+All tests are organized under the `tests/` directory with the following structure:
+```
+tests/
+├── test_parser.py          # Parser functionality tests
+├── test_project_analyzer.py # Project analysis tests
+├── test_config.py          # Configuration functionality tests
+├── test_generator.py       # PlantUML generation tests
+├── test_integration.py     # Complete workflow tests
+├── test_files/             # Test input files
+│   ├── sample.c
+│   ├── sample.h
+│   ├── complex_example.c
+│   └── complex_example.h
+├── test_output/            # Expected output files
+│   └── expected_main.puml
+├── test_config.json        # Test configuration
+└── run_tests.py           # Test runner script
+```
+
+### Test Categories
+- **Unit Tests**: Test individual components in isolation
+- **Integration Tests**: Test complete workflows and component interactions
+- **Configuration Tests**: Test configuration loading, validation, and filtering
+- **Output Verification Tests**: Test PlantUML generation and output quality
+
+### Running Tests
+```bash
+# Run all tests
+python tests/run_tests.py
+
+# Run specific test module
+python tests/run_tests.py test_config
+
+# Run with unittest directly
+python -m unittest discover tests/
+```
 
 ## Quality Gates
 

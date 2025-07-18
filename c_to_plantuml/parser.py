@@ -17,6 +17,7 @@ class CParser:
         self.logger = logging.getLogger(__name__)
         # Compile regex patterns for better performance
         self.struct_pattern = re.compile(r'struct\s+(\w+)\s*\{([^}]+)\}')
+        self.typedef_struct_pattern = re.compile(r'typedef\s+struct\s*\{([^}]+)\}\s*(\w+)\s*;')
         self.enum_pattern = re.compile(r'enum\s+(\w+)\s*\{([^}]+)\}')
         self.function_pattern = re.compile(r'(\w+(?:\s+\w+)*)\s+(\w+)\s*\([^)]*\)\s*;?')
         self.global_pattern = re.compile(r'(\w+(?:\s+\w+)*)\s+(\w+)\s*;')
@@ -82,6 +83,7 @@ class CParser:
         """Parse struct definitions"""
         structs = {}
         
+        # Parse regular struct declarations
         for match in self.struct_pattern.finditer(content):
             name = match.group(1)
             body = match.group(2)
@@ -91,6 +93,17 @@ class CParser:
             structs[name] = Struct(name, fields, [])
             
             self.logger.debug(f"Parsed struct: {name} with {len(fields)} fields")
+        
+        # Parse typedef struct declarations
+        for match in self.typedef_struct_pattern.finditer(content):
+            body = match.group(1)
+            name = match.group(2)
+            
+            # Parse fields
+            fields = self._parse_struct_fields(body)
+            structs[name] = Struct(name, fields, [])
+            
+            self.logger.debug(f"Parsed typedef struct: {name} with {len(fields)} fields")
         
         return structs
     
