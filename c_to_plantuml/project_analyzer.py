@@ -155,6 +155,7 @@ class ProjectAnalyzer:
 def load_config_and_analyze(config_path: str) -> ProjectModel:
     """Load configuration and analyze project using the config file"""
     import json
+    import os
     
     with open(config_path, 'r', encoding='utf-8') as f:
         config = json.load(f)
@@ -181,24 +182,54 @@ def load_config_and_analyze(config_path: str) -> ProjectModel:
         recursive=recursive
     )
     
-    # Apply model filtering if specified in config
+    # Check for transformation configurations
+    transformer_configs = []
+    
+    # Check for direct transformation settings in main config
     if any(key in config for key in ['file_filters', 'element_filters', 'transformations', 'additions']):
-        from .manipulators.model_filter import ModelFilter
+        transformer_configs.append(config_path)
+    
+    # Check for additional transformation config files
+    additional_configs = config.get('transformation_configs', [])
+    for additional_config in additional_configs:
+        # Resolve relative paths relative to main config directory
+        if not os.path.isabs(additional_config):
+            config_dir = os.path.dirname(config_path)
+            additional_config = os.path.join(config_dir, additional_config)
         
-        # Create temporary config file for model filter or apply directly
-        model_filter = ModelFilter()
-        model_filter.file_filters = config.get('file_filters', {})
-        model_filter.element_filters = config.get('element_filters', {})
-        model_filter.transformations = config.get('transformations', {})
-        model_filter.additions = config.get('additions', {})
-        model_filter._compile_patterns()
+        if os.path.exists(additional_config):
+            transformer_configs.append(additional_config)
+        else:
+            print(f"Warning: Transformation config file not found: {additional_config}")
+    
+    # Apply transformations if any configs are specified
+    if transformer_configs:
+        from .manipulators.model_transformer import ModelTransformer
         
-        # Apply all filters and transformations
-        model = model_filter.apply_all_filters(model)
+        model_transformer = ModelTransformer()
         
-        # Save the filtered model
+        if len(transformer_configs) == 1:
+            # Load single config (might be main config with inline transformations)
+            if transformer_configs[0] == config_path:
+                # Direct transformation settings in main config
+                model_transformer.file_filters = config.get('file_filters', {})
+                model_transformer.element_filters = config.get('element_filters', {})
+                model_transformer.transformations = config.get('transformations', {})
+                model_transformer.additions = config.get('additions', {})
+                model_transformer._compile_patterns()
+            else:
+                # External transformation config
+                model_transformer.load_config(transformer_configs[0])
+        else:
+            # Load and merge multiple configs
+            model_transformer.load_multiple_configs(transformer_configs)
+        
+        # Apply all transformations
+        model = model_transformer.apply_all_filters(model)
+        
+        # Save the transformed model
         model.save_to_json(model_output_path)
-        print(f"Applied model filters and saved to: {model_output_path}")
+        print(f"Applied model transformations from {len(transformer_configs)} config(s) and saved to: {model_output_path}")
     
     # Generate PlantUML files if output_dir is specified
     if output_dir:

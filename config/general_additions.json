@@ -1,0 +1,100 @@
+{
+  "_description": "General additions - common structures and utilities",
+  "additions": {
+    "structs": [
+      {
+        "name": "error_info_t",
+        "typedef_name": "error_info_t",
+        "fields": [
+          {
+            "name": "code",
+            "type": "int"
+          },
+          {
+            "name": "message",
+            "type": "char",
+            "array_size": "256"
+          },
+          {
+            "name": "timestamp",
+            "type": "time_t"
+          }
+        ],
+        "target_files": [
+          ".*\\.h$"
+        ]
+      },
+      {
+        "name": "config_base_t",
+        "typedef_name": "config_base_t",
+        "fields": [
+          {
+            "name": "version",
+            "type": "uint32_t"
+          },
+          {
+            "name": "checksum",
+            "type": "uint32_t"
+          },
+          {
+            "name": "valid",
+            "type": "bool"
+          }
+        ],
+        "target_files": [
+          ".*config.*\\.h$"
+        ]
+      }
+    ],
+    "enums": [
+      {
+        "name": "log_level_e",
+        "typedef_name": "log_level_t",
+        "values": [
+          "LOG_TRACE",
+          "LOG_DEBUG",
+          "LOG_INFO",
+          "LOG_WARN",
+          "LOG_ERROR",
+          "LOG_FATAL"
+        ],
+        "target_files": [
+          ".*\\.h$"
+        ]
+      }
+    ],
+    "functions": [
+      {
+        "name": "get_timestamp",
+        "return_type": "time_t",
+        "parameters": [],
+        "is_static": false,
+        "target_files": [
+          ".*\\.c$"
+        ]
+      },
+      {
+        "name": "validate_checksum",
+        "return_type": "bool",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "void*"
+          },
+          {
+            "name": "size",
+            "type": "size_t"
+          },
+          {
+            "name": "expected",
+            "type": "uint32_t"
+          }
+        ],
+        "is_static": false,
+        "target_files": [
+          ".*\\.c$"
+        ]
+      }
+    ]
+  }
+}
