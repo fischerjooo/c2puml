@@ -19,57 +19,138 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Display environment information
+      run: |
+        echo "::group::Environment Information"
+        echo "🐧 OS: $(uname -a)"
+        echo "🐍 Python version: $(python --version)"
+        echo "📦 Pip version: $(pip --version)"
+        echo "📁 Working directory: $(pwd)"
+        echo "📋 Directory contents:"
+        ls -la
+        echo "🔧 Environment variables:"
+        env | grep -E "(PYTHON|PIP|PATH)" | head -10
+        echo "::endgroup::"
+
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -e .
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        echo "::group::Dependency Installation"
+        echo "📦 Upgrading pip..."
+        python -m pip install --upgrade pip --verbose
+        
+        echo "📦 Installing package in development mode..."
+        pip install -e . --verbose
+        
+        if [ -f requirements.txt ]; then
+          echo "📋 Installing from requirements.txt..."
+          echo "Requirements file contents:"
+          cat requirements.txt
+          pip install -r requirements.txt --verbose
+        fi
+        
+        echo "📋 Installed packages:"
+        pip list
+        echo "::endgroup::"
 
     - name: Lint with flake8
       run: |
+        echo "::group::Code Linting"
         pip install flake8
+        
+        echo "🔍 Running critical error checks (syntax errors, undefined names)..."
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        
+        echo "📝 Running full style check..."
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --verbose
+        echo "::endgroup::"
+
+    - name: Display test structure
+      run: |
+        echo "::group::Test Structure"
+        echo "📂 Test files and structure:"
+        echo "Main test directory:"
+        if [ -d "tests" ]; then
+          find tests -type f -name "*.py" | head -20
+        fi
+        
+        echo "Test configuration files:"
+        find . -maxdepth 1 -name "*test*.json" -o -name "*config*.json" | head -10
+        
+        echo "Sample test files directory:"
+        if [ -d "tests/test_files" ]; then
+          find tests/test_files -type f | head -10
+        fi
+        echo "::endgroup::"
 
     - name: Run unit tests
       run: |
-        python -m unittest tests.test_parser -v
+        echo "::group::Parser Unit Tests"
+        python -m unittest tests.test_parser -v --tb=long
+        echo "::endgroup::"
 
     - name: Test project analyzer
       run: |
-        python -m unittest tests.test_project_analyzer -v
+        echo "::group::Project Analyzer Unit Tests"
+        python -m unittest tests.test_project_analyzer -v --tb=long
+        echo "::endgroup::"
 
     - name: Test complete workflow
       run: |
-        # Test the main entry point
+        echo "::group::Complete Workflow Test"
+        echo "Testing main entry point with config..."
+        set -x  # Enable command echoing for debugging
         python -m c_to_plantuml.main config test_config.json
+        set +x  # Disable command echoing
+        echo "::endgroup::"
 
     - name: Verify output files
       run: |
+        echo "::group::Output File Verification"
+        echo "Checking for expected output files..."
+        
+        # List current directory contents for debugging
+        echo "Current directory contents:"
+        ls -la
+        
         # Check that expected files were created
         if [ ! -f "test_project_model.json" ]; then
-          echo "Error: test_project_model.json not created"
+          echo "❌ Error: test_project_model.json not created"
           exit 1
+        else
+          echo "✅ Found test_project_model.json"
+          echo "File size: $(stat -c%s test_project_model.json) bytes"
         fi
         
         if [ ! -d "test_plantuml_output" ]; then
-          echo "Error: test_plantuml_output directory not created"
+          echo "❌ Error: test_plantuml_output directory not created"
           exit 1
+        else
+          echo "✅ Found test_plantuml_output directory"
+          echo "Directory contents:"
+          ls -la test_plantuml_output/
         fi
         
         # Check for .puml files
         puml_count=$(find test_plantuml_output -name "*.puml" | wc -l)
         if [ "$puml_count" -eq 0 ]; then
-          echo "Error: No .puml files generated"
+          echo "❌ Error: No .puml files generated"
+          echo "Contents of output directory:"
+          find test_plantuml_output -type f
           exit 1
         fi
         
-        echo "Success: Found $puml_count PlantUML files"
+        echo "✅ Success: Found $puml_count PlantUML files"
+        echo "Generated files:"
+        find test_plantuml_output -name "*.puml" -exec echo "  - {}" \;
+        echo "::endgroup::"
 
     - name: Test CLI tools
       run: |
+        echo "::group::CLI Tools Test"
+        echo "Testing separate analyze and generate CLI commands..."
+        
         # Test the complete workflow with separate analyze and generate steps
         python -c "
         import sys
@@ -78,6 +159,8 @@ jobs:
         import argparse
         import os
 
+        print('🔄 Starting CLI analysis test...')
+        
         # Test analysis
         args = argparse.Namespace()
         args.project_roots = ['./tests/test_files']
@@ -86,58 +169,116 @@ jobs:
         args.prefixes = None
         args.no_recursive = False
 
+        print(f'📁 Analyzing project roots: {args.project_roots}')
+        print(f'📝 Output file: {args.output}')
+        print(f'🏷️  Project name: {args.name}')
+
         exit_code = handle_analyze_command(args)
         if exit_code != 0:
-            print('Analysis CLI test failed')
+            print('❌ Analysis CLI test failed with exit code:', exit_code)
             sys.exit(1)
 
-        print('Analysis CLI test passed')
+        print('✅ Analysis CLI test passed')
 
         # Check if model file was created
         if not os.path.exists('test_model.json'):
-            print('Error: CLI analysis failed to create model file')
+            print('❌ Error: CLI analysis failed to create model file')
             sys.exit(1)
+        else:
+            print('✅ Model file created successfully')
+            # Show file size for debugging
+            size = os.path.getsize('test_model.json')
+            print(f'📊 Model file size: {size} bytes')
 
+        print('🔄 Starting CLI generation test...')
+        
         # Test generation
         args = argparse.Namespace()
         args.model_json = 'test_model.json'
         args.output_dir = 'cli_output'
 
+        print(f'📥 Input model: {args.model_json}')
+        print(f'📁 Output directory: {args.output_dir}')
+
         exit_code = handle_generate_command(args)
         if exit_code != 0:
-            print('Generation CLI test failed')
+            print('❌ Generation CLI test failed with exit code:', exit_code)
             sys.exit(1)
 
-        print('Generation CLI test passed')
+        print('✅ Generation CLI test passed')
 
         # Check if output directory was created
         if not os.path.exists('cli_output'):
-            print('Error: CLI PlantUML generation failed')
+            print('❌ Error: CLI PlantUML generation failed')
             sys.exit(1)
+        else:
+            print('✅ CLI output directory created successfully')
+            # List generated files
+            import os
+            files = os.listdir('cli_output')
+            print(f'📋 Generated {len(files)} files:')
+            for f in files[:10]:  # Show first 10 files
+                print(f'  - {f}')
+            if len(files) > 10:
+                print(f'  ... and {len(files) - 10} more files')
         "
+        
+        echo "::endgroup::"
 
     - name: Performance benchmark
       run: |
+        echo "::group::Performance Benchmark"
+        echo "Running performance analysis on test files..."
+        
         # Run a simple performance test
         python -c "
         import time
         import sys
+        import os
         sys.path.insert(0, '.')
         from c_to_plantuml.project_analyzer import ProjectAnalyzer
 
+        print('🏃 Starting performance benchmark...')
+        print(f'🔍 Test files location: ./tests/test_files')
+        
+        # Show what files we're analyzing
+        if os.path.exists('./tests/test_files'):
+            files = []
+            for root, dirs, filenames in os.walk('./tests/test_files'):
+                for filename in filenames:
+                    if filename.endswith('.c') or filename.endswith('.h'):
+                        files.append(os.path.join(root, filename))
+            print(f'📁 Found {len(files)} C/H files to analyze:')
+            for f in files[:5]:  # Show first 5 files
+                print(f'  - {f}')
+            if len(files) > 5:
+                print(f'  ... and {len(files) - 5} more files')
+        
         start_time = time.perf_counter()
         analyzer = ProjectAnalyzer()
         model = analyzer.analyze_project(['./tests/test_files'], 'Perf_Test')
         end_time = time.perf_counter()
 
         duration = end_time - start_time
-        print(f'Analysis completed in {duration:.2f} seconds')
-        print(f'Files processed: {len(model.files)}')
+        print(f'⏱️  Analysis completed in {duration:.3f} seconds')
+        print(f'📊 Files processed: {len(model.files)}')
+        print(f'📈 Processing rate: {len(model.files)/duration:.1f} files/second')
 
         if duration > 30:  # Fail if takes more than 30 seconds for test files
-            print('Error: Analysis took too long')
+            print('❌ Error: Analysis took too long (>{30}s)')
             sys.exit(1)
+        else:
+            print('✅ Performance benchmark passed')
         "
+        
+        echo "::endgroup::"
+
+    - name: Run comprehensive test suite
+      run: |
+        echo "::group::Comprehensive Test Suite"
+        echo "Running the complete test suite with verbose output..."
+        python run_tests.py
+        echo "::endgroup::"
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -169,7 +310,11 @@ jobs:
 
     - name: Create complex test project
       run: |
+        echo "::group::Complex Test Project Setup"
+        echo "🔨 Creating complex test project structure..."
         mkdir -p complex_test/src complex_test/include
+        echo "📁 Created directories:"
+        find complex_test -type d
         
         # Create multiple C files with dependencies
         cat > complex_test/src/main.c << 'EOF'
@@ -205,9 +350,22 @@ jobs:
         
         #endif
         EOF
+        
+        echo "📝 Created test files:"
+        find complex_test -type f -name "*.c" -o -name "*.h"
+        echo "📊 Total files created: $(find complex_test -type f | wc -l)"
+        
+        echo "📋 File contents summary:"
+        for file in $(find complex_test -type f -name "*.c" -o -name "*.h"); do
+          echo "  📄 $file ($(wc -l < "$file") lines)"
+        done
+        echo "::endgroup::"
 
     - name: Test complex project analysis
       run: |
+        echo "::group::Complex Project Analysis"
+        echo "Creating configuration for complex project test..."
+        
         # Create config for complex project
         cat > complex_config.json << 'EOF'
         {
@@ -220,15 +378,27 @@ jobs:
         }
         EOF
         
-        # Run analysis
+        echo "📋 Configuration created:"
+        cat complex_config.json
+        
+        echo "🔄 Running complex project analysis..."
+        set -x  # Enable command echoing
         python -m c_to_plantuml.main config complex_config.json
+        set +x  # Disable command echoing
+        echo "::endgroup::"
 
     - name: Validate complex project output
       run: |
+        echo "::group::Complex Project Output Validation"
+        echo "Validating complex project analysis results..."
+        
         # Check model file
         if [ ! -f "complex_model.json" ]; then
-          echo "Error: Complex model not created"
+          echo "❌ Error: Complex model not created"
           exit 1
+        else
+          echo "✅ Complex model file created"
+          echo "📊 Model file size: $(stat -c%s complex_model.json) bytes"
         fi
         
         # Validate JSON structure
@@ -236,16 +406,39 @@ jobs:
         import json
         with open('complex_model.json', 'r') as f:
             model = json.load(f)
+            print(f'📋 Project name: {model[\"project_name\"]}')
+            print(f'📁 Files analyzed: {len(model[\"files\"])}')
+            
+            # Show analyzed files
+            for i, file_info in enumerate(model['files'][:3]):  # Show first 3 files
+                print(f'  {i+1}. {file_info.get(\"path\", \"unknown\")}')
+            if len(model['files']) > 3:
+                print(f'  ... and {len(model[\"files\"]) - 3} more files')
+            
             assert model['project_name'] == 'Complex_Integration_Test'
             assert len(model['files']) >= 2  # Should have main.c and utils.c
-            print('Complex model validation passed')
+            print('✅ Complex model validation passed')
         "
         
         # Check PlantUML output
+        if [ ! -d "complex_output" ]; then
+          echo "❌ Error: Complex output directory not created"
+          exit 1
+        else
+          echo "✅ Complex output directory created"
+          echo "📁 Output directory contents:"
+          ls -la complex_output/
+        fi
+        
         complex_puml_count=$(find complex_output -name "*.puml" | wc -l)
         if [ "$complex_puml_count" -lt 2 ]; then
-          echo "Error: Expected at least 2 PlantUML files, got $complex_puml_count"
+          echo "❌ Error: Expected at least 2 PlantUML files, got $complex_puml_count"
+          echo "📋 Found files:"
+          find complex_output -type f
           exit 1
         fi
         
-        echo "Integration test passed: $complex_puml_count PlantUML files generated"
+        echo "✅ Integration test passed: $complex_puml_count PlantUML files generated"
+        echo "📋 Generated PlantUML files:"
+        find complex_output -name "*.puml" -exec echo "  - {}" \;
+        echo "::endgroup::"

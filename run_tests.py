@@ -9,15 +9,18 @@ import sys
 import subprocess
 import tempfile
 import json
+import time
 from pathlib import Path
 
 
 def run_command(cmd, description, check_returncode=True):
     """Run a command and return success status"""
-    print(f"Command: {cmd}")
-    print("=" * 60)
+    print(f"🔄 Running: {description}")
+    print(f"📟 Command: {cmd}")
+    print("=" * 80)
     
     try:
+        start_time = time.perf_counter()
         result = subprocess.run(
             cmd,
             shell=True,
@@ -25,32 +28,49 @@ def run_command(cmd, description, check_returncode=True):
             text=True,
             timeout=120
         )
+        end_time = time.perf_counter()
+        duration = end_time - start_time
+        
+        print(f"⏱️  Execution time: {duration:.3f} seconds")
+        print(f"🔢 Return code: {result.returncode}")
         
         if result.stdout:
-            print("STDOUT:", result.stdout)
+            print("📤 STDOUT:")
+            print("-" * 40)
+            print(result.stdout)
+            print("-" * 40)
         if result.stderr:
-            print("STDERR:", result.stderr)
+            print("⚠️  STDERR:")
+            print("-" * 40)
+            print(result.stderr)
+            print("-" * 40)
         
         if check_returncode and result.returncode != 0:
-            print("❌ FAILED")
+            print(f"❌ FAILED ({description})")
             return False
         else:
-            print("✅ PASSED")
+            print(f"✅ PASSED ({description})")
             return True
             
     except subprocess.TimeoutExpired:
-        print("❌ FAILED (timeout)")
+        print(f"❌ FAILED (timeout after 120s) - {description}")
         return False
     except Exception as e:
-        print(f"❌ FAILED (error: {e})")
+        print(f"❌ FAILED (error: {e}) - {description}")
         return False
 
 
 def main():
     """Run all tests"""
-    print("C to PlantUML Converter - Comprehensive Test Suite")
-    print("=" * 60)
+    print("🧪 C to PlantUML Converter - Comprehensive Test Suite")
+    print("=" * 80)
+    print(f"🐍 Python version: {sys.version}")
+    print(f"📁 Working directory: {os.getcwd()}")
+    print(f"⏰ Test started at: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+    print("=" * 80)
     print()
+    
+    overall_start_time = time.perf_counter()
     
     test_results = []
     
@@ -290,26 +310,38 @@ typedef struct {
     test_results.append(("File Structure", structure_success))
     print()
     
+    overall_end_time = time.perf_counter()
+    total_duration = overall_end_time - overall_start_time
+    
     # Summary
-    print("=" * 60)
-    print("TEST RESULTS SUMMARY")
-    print("=" * 60)
+    print("=" * 80)
+    print("📊 TEST RESULTS SUMMARY")
+    print("=" * 80)
     
     passed = sum(1 for _, success in test_results if success)
     total = len(test_results)
     
+    print(f"⏰ Total execution time: {total_duration:.3f} seconds")
+    print(f"🧪 Tests completed at: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+    print()
+    
     for test_name, success in test_results:
         status = "✅ PASSED" if success else "❌ FAILED"
-        print(f"{test_name}: {status}")
+        print(f"  {status} {test_name}")
     
-    print(f"\nPassed: {passed}/{total}")
-    print(f"Success Rate: {passed/total*100:.1f}%")
+    print()
+    print(f"📈 Passed: {passed}/{total}")
+    print(f"📊 Success Rate: {passed/total*100:.1f}%")
+    print(f"⚡ Average time per test: {total_duration/total:.3f} seconds")
     
     if passed == total:
         print("🎉 ALL TESTS PASSED!")
+        print("=" * 80)
         return 0
     else:
         print("❌ SOME TESTS FAILED!")
+        print("🔍 Check the output above for details on failed tests")
+        print("=" * 80)
         return 1
 
 
