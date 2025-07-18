@@ -4,8 +4,10 @@ Data models for C to PlantUML converter
 """
 
 import json
-from dataclasses import dataclass, asdict
-from typing import Dict, List, Set, Optional
+import logging
+from dataclasses import dataclass, asdict, field
+from typing import Dict, List, Set, Optional, Any
+from datetime import datetime
 
 
 @dataclass
@@ -14,6 +16,13 @@ class Field:
     name: str
     type: str
     array_size: Optional[str] = None
+    
+    def __post_init__(self):
+        """Validate field data after initialization"""
+        if not self.name or not isinstance(self.name, str):
+            raise ValueError("Field name must be a non-empty string")
+        if not self.type or not isinstance(self.type, str):
+            raise ValueError("Field type must be a non-empty string")
 
 
 @dataclass
@@ -21,23 +30,40 @@ class Function:
     """Represents a function"""
     name: str
     return_type: str
-    parameters: List[Field]
+    parameters: List[Field] = field(default_factory=list)
     is_static: bool = False
+    
+    def __post_init__(self):
+        """Validate function data after initialization"""
+        if not self.name or not isinstance(self.name, str):
+            raise ValueError("Function name must be a non-empty string")
+        if not self.return_type or not isinstance(self.return_type, str):
+            raise ValueError("Function return type must be a non-empty string")
 
 
 @dataclass
 class Struct:
     """Represents a C struct"""
     name: str
-    fields: List[Field]
-    methods: List[Function]
+    fields: List[Field] = field(default_factory=list)
+    methods: List[Function] = field(default_factory=list)
+    
+    def __post_init__(self):
+        """Validate struct data after initialization"""
+        if not self.name or not isinstance(self.name, str):
+            raise ValueError("Struct name must be a non-empty string")
 
 
 @dataclass
 class Enum:
     """Represents a C enum"""
     name: str
-    values: List[str]
+    values: List[str] = field(default_factory=list)
+    
+    def __post_init__(self):
+        """Validate enum data after initialization"""
+        if not self.name or not isinstance(self.name, str):
+            raise ValueError("Enum name must be a non-empty string")
 
 
 @dataclass
@@ -47,13 +73,24 @@ class FileModel:
     relative_path: str
     project_root: str
     encoding_used: str
-    structs: Dict[str, Struct]
-    enums: Dict[str, Enum]
-    functions: List[Function]
-    globals: List[Field]
-    includes: Set[str]
-    macros: List[str]
-    typedefs: Dict[str, str]
+    structs: Dict[str, Struct] = field(default_factory=dict)
+    enums: Dict[str, Enum] = field(default_factory=dict)
+    functions: List[Function] = field(default_factory=list)
+    globals: List[Field] = field(default_factory=list)
+    includes: Set[str] = field(default_factory=set)
+    macros: List[str] = field(default_factory=list)
+    typedefs: Dict[str, str] = field(default_factory=dict)
+    
+    def __post_init__(self):
+        """Validate file model data after initialization"""
+        if not self.file_path or not isinstance(self.file_path, str):
+            raise ValueError("File path must be a non-empty string")
+        if not self.relative_path or not isinstance(self.relative_path, str):
+            raise ValueError("Relative path must be a non-empty string")
+        if not self.project_root or not isinstance(self.project_root, str):
+            raise ValueError("Project root must be a non-empty string")
+        if not self.encoding_used or not isinstance(self.encoding_used, str):
+            raise ValueError("Encoding must be a non-empty string")
     
     def to_dict(self) -> dict:
         """Convert to dictionary for JSON serialization"""
@@ -114,6 +151,19 @@ class FileModel:
         new_data['enums'] = enums
         
         return cls(**new_data)
+    
+    def get_summary(self) -> dict:
+        """Get a summary of the file contents"""
+        return {
+            'file_path': self.file_path,
+            'structs_count': len(self.structs),
+            'enums_count': len(self.enums),
+            'functions_count': len(self.functions),
+            'globals_count': len(self.globals),
+            'includes_count': len(self.includes),
+            'macros_count': len(self.macros),
+            'typedefs_count': len(self.typedefs)
+        }
 
 
 @dataclass
@@ -121,10 +171,17 @@ class ProjectModel:
     """Represents a complete C/C++ project"""
     project_name: str
     project_root: str
-    files: Dict[str, FileModel]
-    created_at: str
+    files: Dict[str, FileModel] = field(default_factory=dict)
+    created_at: str = field(default_factory=lambda: datetime.now().isoformat())
     
-    def save(self, file_path: str):
+    def __post_init__(self):
+        """Validate project model data after initialization"""
+        if not self.project_name or not isinstance(self.project_name, str):
+            raise ValueError("Project name must be a non-empty string")
+        if not self.project_root or not isinstance(self.project_root, str):
+            raise ValueError("Project root must be a non-empty string")
+    
+    def save(self, file_path: str) -> None:
         """Save model to JSON file"""
         data = {
             'project_name': self.project_name,
@@ -133,8 +190,11 @@ class ProjectModel:
             'created_at': self.created_at
         }
         
-        with open(file_path, 'w') as f:
-            json.dump(data, f, indent=2)
+        try:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            raise ValueError(f"Failed to save model to {file_path}: {e}")
     
     @classmethod
     def from_dict(cls, data: dict) -> 'ProjectModel':
@@ -148,5 +208,33 @@ class ProjectModel:
             project_name=data.get('project_name', 'Unknown'),
             project_root=data.get('project_root', ''),
             files=files,
-            created_at=data.get('created_at', '')
+            created_at=data.get('created_at', datetime.now().isoformat())
         )
+    
+    @classmethod
+    def load(cls, file_path: str) -> 'ProjectModel':
+        """Load model from JSON file"""
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return cls.from_dict(data)
+        except Exception as e:
+            raise ValueError(f"Failed to load model from {file_path}: {e}")
+    
+    def get_summary(self) -> dict:
+        """Get a summary of the project"""
+        total_structs = sum(len(f.structs) for f in self.files.values())
+        total_enums = sum(len(f.enums) for f in self.files.values())
+        total_functions = sum(len(f.functions) for f in self.files.values())
+        total_globals = sum(len(f.globals) for f in self.files.values())
+        
+        return {
+            'project_name': self.project_name,
+            'project_root': self.project_root,
+            'files_count': len(self.files),
+            'total_structs': total_structs,
+            'total_enums': total_enums,
+            'total_functions': total_functions,
+            'total_globals': total_globals,
+            'created_at': self.created_at
+        }
