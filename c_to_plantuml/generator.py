@@ -39,8 +39,10 @@ class Generator:
         generated_count = 0
         for file_path, file_model in model.files.items():
             try:
-                self._generate_file_diagram(file_model, output_path)
-                generated_count += 1
+                # Only generate diagrams for .c files, not .h files
+                if file_model.relative_path.endswith('.c'):
+                    self._generate_file_diagram(file_model, output_path)
+                    generated_count += 1
             except Exception as e:
                 self.logger.error(f"Failed to generate diagram for {file_path}: {e}")
         
@@ -58,8 +60,10 @@ class Generator:
         generated_count = 0
         for file_path, file_model in model.files.items():
             try:
-                self._generate_file_diagram(file_model, output_path)
-                generated_count += 1
+                # Only generate diagrams for .c files, not .h files
+                if file_model.relative_path.endswith('.c'):
+                    self._generate_file_diagram(file_model, output_path)
+                    generated_count += 1
             except Exception as e:
                 self.logger.error(f"Failed to generate diagram for {file_path}: {e}")
         
@@ -188,16 +192,41 @@ class Generator:
                     lines.append(f'{relation.typedef_name.upper()} -|> {relation.original_type.upper()} : «alias»')
                 lines.append("")
         
-        # Add include relationships
+        # Add header classes and include relationships
+        header_classes_added = set()
+        
+        # Add header classes from simple includes
+        if hasattr(file_model, 'includes') and file_model.includes:
+            for include in sorted(file_model.includes):
+                include_name = Path(include).stem
+                if include_name not in header_classes_added:
+                    # Create a class for each included header
+                    lines.append(f'class "{include_name}" as {include_name.upper()} <<header>> #LightGreen')
+                    lines.append("{")
+                    lines.append(f"    + #include <{include}>")
+                    lines.append("}")
+                    lines.append("")
+                    header_classes_added.add(include_name)
+                
+                # Add include relationship
+                lines.append(f'{base_name.upper()} --> {include_name.upper()} : <<include>>')
+                lines.append("")
+        
+        # Add include relationships with depth information if available
         if hasattr(file_model, 'include_relations') and file_model.include_relations:
             for relation in sorted(file_model.include_relations, key=lambda r: r.included_file):
                 included_file_name = Path(relation.included_file).stem
+                # Create a class for the included file if it's a header and not already added
+                if relation.included_file.endswith('.h') and included_file_name not in header_classes_added:
+                    lines.append(f'class "{included_file_name}" as {included_file_name.upper()} <<header>> #LightGreen')
+                    lines.append("{")
+                    lines.append(f"    + {relation.included_file}")
+                    lines.append("}")
+                    lines.append("")
+                    header_classes_added.add(included_file_name)
+                
                 lines.append(f'{base_name.upper()} --> {included_file_name.upper()} : <<include>> (depth {relation.depth})')
-        elif hasattr(file_model, 'includes') and file_model.includes:
-            # Fallback to simple includes if no relations are processed
-            for include in sorted(file_model.includes):
-                include_name = Path(include).stem
-                lines.append(f'{base_name.upper()} --> {include_name.upper()} : <<include>>')
+                lines.append("")
         
         lines.append("")
         lines.append("@enduml")

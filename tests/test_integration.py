@@ -202,7 +202,6 @@ void helper_function(void) {
         # Check output files
         self.assertTrue(os.path.exists(output_dir))
         self.assertTrue(os.path.exists(os.path.join(output_dir, "main.c.puml")))
-        self.assertTrue(os.path.exists(os.path.join(output_dir, "config.h.puml")))
         self.assertTrue(os.path.exists(os.path.join(output_dir, "utils.c.puml")))
         
         # Check main.c.puml content
@@ -277,7 +276,6 @@ void helper_function(void) {
         output_dir = os.path.join(self.temp_dir, "config_output")
         self.assertTrue(os.path.exists(output_dir))
         self.assertTrue(os.path.exists(os.path.join(output_dir, "main.c.puml")))
-        self.assertTrue(os.path.exists(os.path.join(output_dir, "config.h.puml")))
         self.assertTrue(os.path.exists(os.path.join(output_dir, "utils.c.puml")))
         
         # Check that model was saved
