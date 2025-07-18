@@ -69,7 +69,7 @@ class Generator:
         
         self.logger.info(f"Generated {generated_count} PlantUML diagrams in {config.output_dir}")
     
-    def _generate_file_diagram(self, file_model: FileModel, output_dir: Path) -> None:
+    def _generate_file_diagram(self, file_model: FileModel, output_dir: Path, model: ProjectModel = None) -> None:
         """Generate PlantUML diagram for a single file"""
         # Create filename using relative path without extension
         relative_path = Path(file_model.relative_path)
@@ -80,7 +80,7 @@ class Generator:
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # Generate PlantUML content
-        content = self._generate_plantuml_content(file_model)
+        content = self._generate_plantuml_content(file_model, model)
         
         # Write file
         try:
@@ -90,7 +90,7 @@ class Generator:
         except Exception as e:
             raise ValueError(f"Failed to write diagram file {puml_file}: {e}")
     
-    def _generate_plantuml_content(self, file_model: FileModel) -> str:
+    def _generate_plantuml_content(self, file_model: FileModel, model: ProjectModel = None) -> str:
         """Generate PlantUML content for a file"""
         lines = []
         base_name = Path(file_model.relative_path).stem
@@ -188,16 +188,77 @@ class Generator:
         
         # Add header classes and include relationships
         header_classes_added = set()
+        header_models = {}  # Store header file models for content display
+        
+        # Get all header file models from the project
+        if hasattr(file_model, 'project_root'):
+            project_root = Path(file_model.project_root)
+            for file_path, file_model_in_project in model.files.items():
+                if file_path.endswith('.h'):
+                    header_models[Path(file_path).stem] = file_model_in_project
         
         # Add header classes from simple includes
         if hasattr(file_model, 'includes') and file_model.includes:
             for include in sorted(file_model.includes):
                 include_name = Path(include).stem
                 if include_name not in header_classes_added:
-                    # Create a class for each included header
+                    # Create a class for each included header with actual content
                     lines.append(f'class "{include_name}" as {include_name.upper()} <<header>> #LightGreen')
                     lines.append("{")
-                    lines.append("    + Header file")
+                    
+                    # Show header content if available
+                    if include_name in header_models:
+                        header_model = header_models[include_name]
+                        
+                        # Add macros
+                        if hasattr(header_model, 'macros') and header_model.macros:
+                            lines.append("    -- Macros --")
+                            for macro in sorted(header_model.macros):
+                                lines.append(f"    + #define {macro}")
+                            lines.append("")
+                        
+                        # Add typedefs
+                        if hasattr(header_model, 'typedefs') and header_model.typedefs:
+                            lines.append("    -- Typedefs --")
+                            for typedef_name, original_type in sorted(header_model.typedefs.items()):
+                                lines.append(f"    + typedef {original_type} {typedef_name}")
+                            lines.append("")
+                        
+                        # Add global variables
+                        if hasattr(header_model, 'globals') and header_model.globals:
+                            lines.append("    -- Global Variables --")
+                            for global_var in sorted(header_model.globals, key=lambda x: x.name):
+                                lines.append(f"    - {global_var.type} {global_var.name}")
+                            lines.append("")
+                        
+                        # Add functions
+                        if hasattr(header_model, 'functions') and header_model.functions:
+                            lines.append("    -- Functions --")
+                            for func in sorted(header_model.functions, key=lambda x: x.name):
+                                lines.append(f"    + {func.return_type} {func.name}()")
+                            lines.append("")
+                        
+                        # Add structs
+                        if hasattr(header_model, 'structs') and header_model.structs:
+                            lines.append("    -- Structs --")
+                            for struct_name, struct in sorted(header_model.structs.items()):
+                                lines.append(f"    + struct {struct_name}")
+                                if hasattr(struct, 'fields') and struct.fields:
+                                    for field in sorted(struct.fields, key=lambda x: x.name):
+                                        lines.append(f"        + {field.type} {field.name}")
+                            lines.append("")
+                        
+                        # Add enums
+                        if hasattr(header_model, 'enums') and header_model.enums:
+                            lines.append("    -- Enums --")
+                            for enum_name, enum in sorted(header_model.enums.items()):
+                                lines.append(f"    + enum {enum_name}")
+                                if hasattr(enum, 'values') and enum.values:
+                                    for value in sorted(enum.values):
+                                        lines.append(f"        + {value}")
+                    else:
+                        lines.append("    + Header file")
+                    
                     lines.append("}")
                     lines.append("")
                     header_classes_added.add(include_name)
@@ -214,13 +275,82 @@ class Generator:
                 if relation.included_file.endswith('.h') and included_file_name not in header_classes_added:
                     lines.append(f'class "{included_file_name}" as {included_file_name.upper()} <<header>> #LightGreen')
                     lines.append("{")
-                    lines.append("    + Header file")
+                    
+                    # Show header content if available
+                    if included_file_name in header_models:
+                        header_model = header_models[included_file_name]
+                        
+                        # Add macros
+                        if hasattr(header_model, 'macros') and header_model.macros:
+                            lines.append("    -- Macros --")
+                            for macro in sorted(header_model.macros):
+                                lines.append(f"    + #define {macro}")
+                            lines.append("")
+                        
+                        # Add typedefs
+                        if hasattr(header_model, 'typedefs') and header_model.typedefs:
+                            lines.append("    -- Typedefs --")
+                            for typedef_name, original_type in sorted(header_model.typedefs.items()):
+                                lines.append(f"    + typedef {original_type} {typedef_name}")
+                            lines.append("")
+                        
+                        # Add global variables
+                        if hasattr(header_model, 'globals') and header_model.globals:
+                            lines.append("    -- Global Variables --")
+                            for global_var in sorted(header_model.globals, key=lambda x: x.name):
+                                lines.append(f"    - {global_var.type} {global_var.name}")
+                            lines.append("")
+                        
+                        # Add functions
+                        if hasattr(header_model, 'functions') and header_model.functions:
+                            lines.append("    -- Functions --")
+                            for func in sorted(header_model.functions, key=lambda x: x.name):
+                                lines.append(f"    + {func.return_type} {func.name}()")
+                            lines.append("")
+                        
+                        # Add structs
+                        if hasattr(header_model, 'structs') and header_model.structs:
+                            lines.append("    -- Structs --")
+                            for struct_name, struct in sorted(header_model.structs.items()):
+                                lines.append(f"    + struct {struct_name}")
+                                if hasattr(struct, 'fields') and struct.fields:
+                                    for field in sorted(struct.fields, key=lambda x: x.name):
+                                        lines.append(f"        + {field.type} {field.name}")
+                            lines.append("")
+                        
+                        # Add enums
+                        if hasattr(header_model, 'enums') and header_model.enums:
+                            lines.append("    -- Enums --")
+                            for enum_name, enum in sorted(header_model.enums.items()):
+                                lines.append(f"    + enum {enum_name}")
+                                if hasattr(enum, 'values') and enum.values:
+                                    for value in sorted(enum.values):
+                                        lines.append(f"        + {value}")
+                    else:
+                        lines.append("    + Header file")
+                    
                     lines.append("}")
                     lines.append("")
                     header_classes_added.add(included_file_name)
                 
                 lines.append(f'{base_name.upper()} --> {included_file_name.upper()} : <<include>> (depth {relation.depth})')
                 lines.append("")
+        
+        # Add relationships between header files
+        if hasattr(file_model, 'include_relations') and file_model.include_relations:
+            for relation in sorted(file_model.include_relations, key=lambda r: r.included_file):
+                if relation.included_file.endswith('.h'):
+                    included_file_name = Path(relation.included_file).stem
+                    
+                    # Check if the included header has its own includes
+                    if included_file_name in header_models:
+                        header_model = header_models[included_file_name]
+                        if hasattr(header_model, 'includes') and header_model.includes:
+                            for header_include in sorted(header_model.includes):
+                                header_include_name = Path(header_include).stem
+                                if header_include_name in header_classes_added:
+                                    lines.append(f'{included_file_name.upper()} --> {header_include_name.upper()} : <<include>>')
+                                    lines.append("")
         
         lines.append("")
         lines.append("@enduml")
