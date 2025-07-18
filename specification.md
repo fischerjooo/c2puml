@@ -188,21 +188,42 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
     {enums}
 }
 
-' For each included header file:
+' For each included header file with actual content:
 class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
 {
-    + Header file
+    -- Macros --
+    + #define {macro_name}
+    
+    -- Typedefs --
+    + typedef {original_type} {typedef_name}
+    
+    -- Global Variables --
+    - {type} {variable_name}
+    
+    -- Functions --
+    + {return_type} {function_name}()
+    
+    -- Structs --
+    + struct {struct_name}
+        + {type} {field_name}
+    
+    -- Enums --
+    + enum {enum_name}
+        + {value}
 }
 
 {UML_ID} --> {HEADER_UML_ID} : <<include>>
 
+' Header-to-header relationships:
+{HEADER_UML_ID} --> {OTHER_HEADER_UML_ID} : <<include>>
+
 @enduml
 ```
 
-- **No #include lines** are shown in the class content.
-- **All referenced include files** are shown as separate classes with the `<<header>>` stereotype and an arrow from the source class.
-- **Only .c files generate diagrams**; the output filename is `{basename}.puml` (no `.c` extension).
-- **Header files do not generate separate diagrams**.
+- **Header files show their actual content**: Macros, typedefs, global variables, functions, structs, and enums from header files are displayed in the header classes.
+- **Header-to-header relationships**: When headers include other headers, these relationships are shown with arrows.
+- **Only .c files generate diagrams**: The output filename is `{basename}.puml` (no `.c` extension).
+- **Header files do not generate separate diagrams**: They are shown as classes within .c file diagrams.
 
 ### 5.2 Styling and Formatting
 
@@ -225,13 +246,14 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
 
 #### 5.2.4 Relationships
 - **Include relationships**: `{source} --> {header} : <<include>>` (arrows only)
+- **Header-to-header relationships**: `{header1} --> {header2} : <<include>>`
 - **Typedef relationships**: `*--` for «defines», `-|>` for «alias»
 
 ### 5.3 Output Organization
 - **File naming**: `{basename}.puml` for each .c file (no extension in the name)
 - **Directory structure**: Mirrors source project structure
-- **Header files**: Shown as classes in diagrams, but do not generate separate .puml files
-- **Overview diagrams**: Project-level summary diagrams (optional)
+- **Header files**: Shown as classes with full content in diagrams, but do not generate separate .puml files
+- **Header relationships**: Include relationships between headers are displayed with arrows
 
 ### 5.4 Configuration-Driven Customization
 The output can be customized through JSON configuration:
@@ -242,6 +264,7 @@ The output can be customized through JSON configuration:
 - Output directory structure
 
 **Note:**
-- Only .c files generate PlantUML diagrams. Header files are represented as classes with arrows, but do not have their own .puml files.
-- All referenced include files are shown as classes with the `<<header>>` stereotype and include arrows.
+- Only .c files generate PlantUML diagrams. Header files are represented as classes with their full content and arrows, but do not have their own .puml files.
+- All referenced include files are shown as classes with the `<<header>>` stereotype and their actual content (macros, typedefs, globals, functions, structs, enums).
+- Header-to-header include relationships are displayed with arrows.
 - No #include lines are shown in the class content; all include relationships are visualized with arrows only.

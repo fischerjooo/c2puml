@@ -8,7 +8,7 @@ The C to PlantUML converter now supports:
 2. **Include Depth Processing**: Processes include relationships up to configurable depth
 3. **Configurable Include Depth**: Control how deep include relationships are processed
 4. **C-File Only Generation**: Only C files (.c) generate PlantUML diagrams
-5. **Enhanced Header Relationships**: C files show header relationships as separate classes with arrows only
+5. **Enhanced Header Relationships**: C files show header relationships as separate classes with full content and arrows
 
 ## Features Implemented
 
@@ -52,27 +52,41 @@ TYPEDEF_TEST --> SAMPLE : <<include>> (depth 2)
 
 ### 4. Enhanced Header Relationships
 
-C files now show header relationships as separate classes with **arrows only**:
+C files now show header relationships as separate classes with **full content and arrows**:
 
 ```plantuml
 class "stdio" as STDIO <<header>> #LightGreen
 {
-    + Header file
+    -- Macros --
+    + #define BUFFER_SIZE
+    
+    -- Functions --
+    + int printf()
+    + int scanf()
+    
+    -- Global Variables --
+    - FILE* stdin
+    - FILE* stdout
 }
 
 MAIN --> STDIO : <<include>>
+
+' Header-to-header relationships:
+STDIO --> STDLIB : <<include>>
 ```
 
 **Key Features**:
-- **No include statements in class content**: The `+ #include <stdio.h>` lines are removed from the main class
+- **Header files show their actual content**: Macros, typedefs, global variables, functions, structs, and enums from header files are displayed
 - **Header classes shown separately**: Each included header becomes a separate class with `<<header>>` stereotype
 - **Arrow relationships only**: Include relationships are shown with arrows between classes
-- **All referenced files shown**: Every include file is represented as a separate class
+- **Header-to-header relationships**: When headers include other headers, these relationships are shown with arrows
+- **All referenced files shown**: Every include file is represented as a separate class with its content
 
 This provides a clear visual representation of:
 - Which headers are included
+- The actual content of each header file
 - The relationship between source files and headers
-- Header dependencies
+- Header dependencies and relationships between headers
 - Clean separation between source content and include relationships
 
 ### 5. Configuration
@@ -103,28 +117,30 @@ Add `include_depth` to your configuration file:
 The generated PlantUML files now show:
 
 - **Source file classes** with `<<source>>` stereotype (only for .c files)
-- **Header classes** with `<<header>>` stereotype (shown as separate classes)
+- **Header classes** with `<<header>>` stereotype and full content (macros, typedefs, globals, functions, structs, enums)
 - **Typedef classes** with `<<typedef>>` stereotype
 - **Type classes** with `<<type>>` stereotype for complex types
 - **Proper relationships** with `«defines»` and `«alias»` stereotypes
 - **Include relationships** with arrows only (no include statements in class content)
+- **Header-to-header relationships** with arrows
 - **Depth information** for include relationships
 
 ## File Naming
 
-Files are now generated with their full extension to avoid conflicts:
-- `typedef_test.c.puml`
-- `complex_example.c.puml`
-- `sample.c.puml`
+Files are now generated without the .c extension to avoid conflicts:
+- `typedef_test.puml`
+- `complex_example.puml`
+- `sample.puml`
 
-**Note**: Header files (.h) do not generate separate PlantUML files but are shown as classes within the C file diagrams.
+**Note**: Header files (.h) do not generate separate PlantUML files but are shown as classes with full content within the C file diagrams.
 
 ## Benefits
 
 1. **Cleaner output**: Only source files generate diagrams
 2. **Better focus**: Concentrates on the main implementation files
 3. **Enhanced relationships**: Shows header dependencies clearly with arrows
-4. **Reduced clutter**: Avoids duplicate information from header files
-5. **Better organization**: Headers are shown as dependencies rather than separate files
+4. **Full header content**: Displays actual macros, typedefs, globals, functions, structs, and enums from headers
+5. **Header relationships**: Shows include relationships between headers
 6. **Cleaner class content**: No include statements cluttering the main class content
 7. **Visual clarity**: Clear separation between source content and include relationships
+8. **Complete dependency view**: All header content and relationships are visible

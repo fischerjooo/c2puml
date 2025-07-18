@@ -41,7 +41,7 @@ class Generator:
             try:
                 # Only generate diagrams for .c files, not .h files
                 if file_model.relative_path.endswith('.c'):
-                    self._generate_file_diagram(file_model, output_path)
+                    self._generate_file_diagram(file_model, output_path, model)
                     generated_count += 1
             except Exception as e:
                 self.logger.error(f"Failed to generate diagram for {file_path}: {e}")
@@ -62,7 +62,7 @@ class Generator:
             try:
                 # Only generate diagrams for .c files, not .h files
                 if file_model.relative_path.endswith('.c'):
-                    self._generate_file_diagram(file_model, output_path)
+                    self._generate_file_diagram(file_model, output_path, model)
                     generated_count += 1
             except Exception as e:
                 self.logger.error(f"Failed to generate diagram for {file_path}: {e}")
@@ -191,7 +191,7 @@ class Generator:
         header_models = {}  # Store header file models for content display
         
         # Get all header file models from the project
-        if hasattr(file_model, 'project_root'):
+        if hasattr(file_model, 'project_root') and model is not None:
             project_root = Path(file_model.project_root)
             for file_path, file_model_in_project in model.files.items():
                 if file_path.endswith('.h'):

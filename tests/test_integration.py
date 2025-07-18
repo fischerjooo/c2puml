@@ -279,8 +279,8 @@ void helper_function(void) {
         # Check output
         output_dir = os.path.join(self.temp_dir, "config_output")
         self.assertTrue(os.path.exists(output_dir))
-        self.assertTrue(os.path.exists(os.path.join(output_dir, "main.c.puml")))
-        self.assertTrue(os.path.exists(os.path.join(output_dir, "utils.c.puml")))
+        self.assertTrue(os.path.exists(os.path.join(output_dir, "main.puml")))
+        self.assertTrue(os.path.exists(os.path.join(output_dir, "utils.puml")))
         
         # Check that model was saved
         model_path = os.path.join(self.temp_dir, "config_model.json")
@@ -342,8 +342,8 @@ void helper_function(void) {
         # Check output
         output_dir = os.path.join(self.temp_dir, "filter_output")
         self.assertTrue(os.path.exists(output_dir))
-        self.assertTrue(os.path.exists(os.path.join(output_dir, "main.c.puml")))
-        self.assertTrue(os.path.exists(os.path.join(output_dir, "utils.c.puml")))
+        self.assertTrue(os.path.exists(os.path.join(output_dir, "main.puml")))
+        self.assertTrue(os.path.exists(os.path.join(output_dir, "utils.puml")))
         self.assertFalse(os.path.exists(os.path.join(output_dir, "config.h.puml")))
     
     def test_workflow_error_handling(self):
@@ -452,7 +452,7 @@ int global_var_{i} = {i};
         # Should generate all diagrams
         self.assertTrue(os.path.exists(output_dir))
         for i in range(10):
-            self.assertTrue(os.path.exists(os.path.join(output_dir, f"file_{i}.c.puml")))
+            self.assertTrue(os.path.exists(os.path.join(output_dir, f"file_{i}.puml")))
 
 
 if __name__ == '__main__':
