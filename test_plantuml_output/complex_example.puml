@@ -12,5 +12,20 @@ class "complex_example" as COMPLEX_EXAMPLE <<source>> #LightBlue
     - #define GET_ALPHA
 }
 
+class "entity_t" as ENTITY_T <<typedef>> #LightYellow
+{
+    + struct entity
+}
+
+class "data_value_t" as DATA_VALUE_T <<typedef>> #LightYellow
+{
+    + union data_value
+}
+
+class "event_type_t" as EVENT_TYPE_T <<typedef>> #LightYellow
+{
+    + enum event_type
+}
+
 
 @enduml
