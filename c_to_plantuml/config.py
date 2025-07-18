@@ -25,6 +25,7 @@ class Config:
         self.project_roots = self._validate_project_roots(data.get('project_roots', []))
         self.project_name = data.get('project_name', 'C_Project')
         self.output_dir = data.get('output_dir', './plantuml_output')
+        self.model_output_path = data.get('model_output_path', f"{self.project_name}_model.json")
         self.recursive = data.get('recursive', True)
         
         # File filters
@@ -97,6 +98,7 @@ class Config:
             'project_roots': self.project_roots,
             'project_name': self.project_name,
             'output_dir': self.output_dir,
+            'model_output_path': self.model_output_path,
             'recursive': self.recursive,
             'file_filters': self.file_filters,
             'element_filters': self.element_filters

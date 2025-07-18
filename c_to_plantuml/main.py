@@ -171,7 +171,7 @@ def handle_config(args: argparse.Namespace) -> int:
         model = analyzer.analyze_with_config(config)
         
         # Save model to file
-        model_filename = f"{config.project_name}_model.json"
+        model_filename = config.model_output_path
         model.save(model_filename)
         logger.info(f"Model saved to: {model_filename}")
         
