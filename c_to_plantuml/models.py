@@ -101,6 +101,18 @@ class Enum:
 
 
 @dataclass
+class Union:
+    """Represents a C union"""
+    name: str
+    fields: List[Field] = field(default_factory=list)
+    
+    def __post_init__(self):
+        """Validate union data after initialization"""
+        if not self.name or not isinstance(self.name, str):
+            raise ValueError("Union name must be a non-empty string")
+
+
+@dataclass
 class FileModel:
     """Represents a parsed C/C++ file"""
     file_path: str
@@ -116,6 +128,7 @@ class FileModel:
     typedefs: Dict[str, str] = field(default_factory=dict)
     typedef_relations: List[TypedefRelation] = field(default_factory=list)
     include_relations: List[IncludeRelation] = field(default_factory=list)
+    unions: Dict[str, Union] = field(default_factory=dict)
     
     def __post_init__(self):
         """Validate file model data after initialization"""
@@ -191,6 +204,20 @@ class FileModel:
         include_relations = [IncludeRelation(**rel) if isinstance(rel, dict) else rel 
                            for rel in include_relations_data]
         
+        # Convert unions back to Union objects
+        unions_data = data.get('unions', {})
+        unions = {}
+        for name, union_data in unions_data.items():
+            if isinstance(union_data, dict):
+                fields = [Field(**field) if isinstance(field, dict) else field 
+                         for field in union_data.get('fields', [])]
+                unions[name] = Union(
+                    name=union_data.get('name', name),
+                    fields=fields
+                )
+            else:
+                unions[name] = union_data
+        
         # Create new data dict with converted objects
         new_data = data.copy()
         new_data['includes'] = includes
@@ -200,6 +227,7 @@ class FileModel:
         new_data['enums'] = enums
         new_data['typedef_relations'] = typedef_relations
         new_data['include_relations'] = include_relations
+        new_data['unions'] = unions
         
         return cls(**new_data)
     
