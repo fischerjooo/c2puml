@@ -9,7 +9,7 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Set
 from .parser import CParser
-from .models import ProjectModel, FileModel
+from .models import ProjectModel, FileModel, IncludeRelation
 from .config import Config
 
 
@@ -93,6 +93,11 @@ class Analyzer:
             self.logger.info("Applying filters to model")
             combined_model = config.apply_filters(combined_model)
         
+        # Process include relationships if depth > 1
+        if config.include_depth > 1:
+            self.logger.info(f"Processing include relationships with depth {config.include_depth}")
+            combined_model = self._process_include_relations(combined_model, config.include_depth)
+        
         self.logger.info(f"Combined analysis complete. Total files: {len(combined_model.files)}")
         return combined_model
     
@@ -127,6 +132,71 @@ class Analyzer:
         
         self.logger.debug(f"Found {len(filtered_files)} C/C++ files after filtering")
         return sorted(filtered_files)
+    
+    def _process_include_relations(self, model: ProjectModel, max_depth: int) -> ProjectModel:
+        """Process include relationships up to specified depth"""
+        self.logger.info(f"Processing include relations with max depth: {max_depth}")
+        
+        # Create a mapping of file paths to their models for quick lookup
+        file_map = {file_model.file_path: file_model for file_model in model.files.values()}
+        
+        # Process each file's includes
+        for file_path, file_model in model.files.items():
+            self._process_file_includes(file_model, file_map, max_depth, 1, set())
+        
+        return model
+    
+    def _process_file_includes(self, file_model: FileModel, file_map: Dict[str, FileModel], 
+                              max_depth: int, current_depth: int, visited: Set[str]) -> None:
+        """Recursively process includes for a file"""
+        if current_depth > max_depth or file_model.file_path in visited:
+            return
+        
+        visited.add(file_model.file_path)
+        
+        # Process each include
+        for include_name in file_model.includes:
+            # Try to find the included file
+            included_file_path = self._find_included_file(include_name, file_model.project_root)
+            
+            if included_file_path and included_file_path in file_map:
+                # Create include relation
+                include_relation = IncludeRelation(
+                    source_file=file_model.file_path,
+                    included_file=included_file_path,
+                    depth=current_depth
+                )
+                file_model.include_relations.append(include_relation)
+                
+                # Recursively process the included file
+                included_file_model = file_map[included_file_path]
+                self._process_file_includes(included_file_model, file_map, max_depth, 
+                                          current_depth + 1, visited.copy())
+    
+    def _find_included_file(self, include_name: str, project_root: str) -> Optional[str]:
+        """Find the actual file path for an include"""
+        # Common include paths to search
+        search_paths = [
+            Path(project_root),
+            Path(project_root) / "include",
+            Path(project_root) / "src",
+            Path(project_root) / "lib",
+            Path(project_root) / "headers"
+        ]
+        
+        # Try different extensions
+        extensions = ['.h', '.hpp', '.hxx', '']
+        
+        for search_path in search_paths:
+            if not search_path.exists():
+                continue
+                
+            for ext in extensions:
+                file_path = search_path / f"{include_name}{ext}"
+                if file_path.exists():
+                    return str(file_path.resolve())
+        
+        return None
     
     def _get_timestamp(self) -> str:
         """Get current timestamp string"""

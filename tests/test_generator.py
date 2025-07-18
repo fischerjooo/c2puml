@@ -71,7 +71,7 @@ class TestGenerator(unittest.TestCase):
         """Test PlantUML content generation"""
         file_model = self.create_test_file_model("main.c")
         
-        content = self.generator._generate_plantuml_content(file_model)
+        content = self.generator._generate_plantuml_content(file_model, None)
         
         # Check basic structure
         self.assertIn("@startuml main", content)
@@ -80,10 +80,11 @@ class TestGenerator(unittest.TestCase):
         # Check class definition
         self.assertIn('class "main" as MAIN <<source>> #LightBlue', content)
         
-        # Check includes section
-        self.assertIn("-- Includes --", content)
-        self.assertIn("+ #include <stdio.h>", content)
-        self.assertIn("+ #include <stdlib.h>", content)
+        # Check header classes and relationships (includes are now shown as separate classes)
+        self.assertIn('class "stdio" as STDIO <<header>> #LightGreen', content)
+        self.assertIn('class "stdlib" as STDLIB <<header>> #LightGreen', content)
+        self.assertIn("MAIN --> STDIO : <<include>>", content)
+        self.assertIn("MAIN --> STDLIB : <<include>>", content)
         
         # Check macros section
         self.assertIn("-- Macros --", content)
@@ -134,7 +135,7 @@ class TestGenerator(unittest.TestCase):
         file_model = self.create_test_file_model("test.c")
         output_dir = Path(self.temp_dir)
         
-        self.generator._generate_file_diagram(file_model, output_dir)
+        self.generator._generate_file_diagram(file_model, output_dir, None)
         
         # Check that the file was created
         puml_file = output_dir / "test.puml"
@@ -270,7 +271,7 @@ class TestGenerator(unittest.TestCase):
         )
         
         output_dir = Path(self.temp_dir)
-        self.generator._generate_file_diagram(empty_file, output_dir)
+        self.generator._generate_file_diagram(empty_file, output_dir, None)
         
         # Check that the file was created
         puml_file = output_dir / "empty.puml"
@@ -310,7 +311,7 @@ class TestGenerator(unittest.TestCase):
         )
         
         output_dir = Path(self.temp_dir)
-        self.generator._generate_file_diagram(file_model, output_dir)
+        self.generator._generate_file_diagram(file_model, output_dir, None)
         
         # Check that the file was created
         puml_file = output_dir / "test_file.puml"

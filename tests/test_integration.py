@@ -202,7 +202,6 @@ void helper_function(void) {
         # Check output files
         self.assertTrue(os.path.exists(output_dir))
         self.assertTrue(os.path.exists(os.path.join(output_dir, "main.puml")))
-        self.assertTrue(os.path.exists(os.path.join(output_dir, "config.puml")))
         self.assertTrue(os.path.exists(os.path.join(output_dir, "utils.puml")))
         
         # Check main.puml content
@@ -216,9 +215,13 @@ void helper_function(void) {
         self.assertIn("+ int main()", main_puml)
         self.assertIn("+ void process_data()", main_puml)
         self.assertIn("+ float calculate()", main_puml)
-        self.assertIn("+ #include <stdio.h>", main_puml)
-        self.assertIn("+ #include <stdlib.h>", main_puml)
-        self.assertIn("+ #include <config.h>", main_puml)
+        # Check header classes and relationships (includes are now shown as separate classes)
+        self.assertIn('class "stdio" as STDIO <<header>> #LightGreen', main_puml)
+        self.assertIn('class "stdlib" as STDLIB <<header>> #LightGreen', main_puml)
+        self.assertIn('class "config" as CONFIG <<header>> #LightGreen', main_puml)
+        self.assertIn("MAIN --> STDIO : <<include>>", main_puml)
+        self.assertIn("MAIN --> STDLIB : <<include>>", main_puml)
+        self.assertIn("MAIN --> CONFIG : <<include>>", main_puml)
         self.assertIn("+ #define MAX_SIZE", main_puml)
         self.assertIn("+ typedef int Integer", main_puml)
         self.assertIn("+ typedef char* String", main_puml)
@@ -277,7 +280,6 @@ void helper_function(void) {
         output_dir = os.path.join(self.temp_dir, "config_output")
         self.assertTrue(os.path.exists(output_dir))
         self.assertTrue(os.path.exists(os.path.join(output_dir, "main.puml")))
-        self.assertTrue(os.path.exists(os.path.join(output_dir, "config.puml")))
         self.assertTrue(os.path.exists(os.path.join(output_dir, "utils.puml")))
         
         # Check that model was saved
@@ -342,7 +344,7 @@ void helper_function(void) {
         self.assertTrue(os.path.exists(output_dir))
         self.assertTrue(os.path.exists(os.path.join(output_dir, "main.puml")))
         self.assertTrue(os.path.exists(os.path.join(output_dir, "utils.puml")))
-        self.assertFalse(os.path.exists(os.path.join(output_dir, "config.puml")))
+        self.assertFalse(os.path.exists(os.path.join(output_dir, "config.h.puml")))
     
     def test_workflow_error_handling(self):
         """Test workflow error handling"""

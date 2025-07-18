@@ -3,6 +3,7 @@
   "project_name": "Test_Project",
   "output_dir": "./test_plantuml_output",
   "recursive": true,
+  "include_depth": 2,
   "file_filters": {
     "include": [".*\\.c$", ".*\\.h$"],
     "exclude": [".*test.*", ".*temp.*"]

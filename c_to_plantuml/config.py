@@ -27,6 +27,7 @@ class Config:
         self.output_dir = data.get('output_dir', './plantuml_output')
         self.model_output_path = data.get('model_output_path', f"{self.project_name}_model.json")
         self.recursive = data.get('recursive', True)
+        self.include_depth = data.get('include_depth', 1)
         
         # File filters
         self.file_filters = data.get('file_filters', {})
@@ -100,6 +101,7 @@ class Config:
             'output_dir': self.output_dir,
             'model_output_path': self.model_output_path,
             'recursive': self.recursive,
+            'include_depth': self.include_depth,
             'file_filters': self.file_filters,
             'element_filters': self.element_filters
         }
@@ -234,6 +236,7 @@ class Config:
             'project_roots': self.project_roots,
             'output_dir': self.output_dir,
             'recursive': self.recursive,
+            'include_depth': self.include_depth,
             'has_file_filters': bool(self.file_filters),
             'has_element_filters': bool(self.element_filters),
             'include_patterns': len(self.file_include_patterns),
