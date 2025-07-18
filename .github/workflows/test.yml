@@ -74,72 +74,72 @@ jobs:
       run: |
         # Test the complete workflow with separate analyze and generate steps
         python -c "
-import sys
-sys.path.insert(0, '.')
-from c_to_plantuml.main import handle_analyze_command, handle_generate_command
-import argparse
-import os
+        import sys
+        sys.path.insert(0, '.')
+        from c_to_plantuml.main import handle_analyze_command, handle_generate_command
+        import argparse
+        import os
 
-# Test analysis
-args = argparse.Namespace()
-args.project_roots = ['./tests/test_files']
-args.output = 'test_model.json'
-args.name = 'CLI_Test'
-args.prefixes = None
-args.no_recursive = False
+        # Test analysis
+        args = argparse.Namespace()
+        args.project_roots = ['./tests/test_files']
+        args.output = 'test_model.json'
+        args.name = 'CLI_Test'
+        args.prefixes = None
+        args.no_recursive = False
 
-exit_code = handle_analyze_command(args)
-if exit_code != 0:
-    print('Analysis CLI test failed')
-    sys.exit(1)
+        exit_code = handle_analyze_command(args)
+        if exit_code != 0:
+            print('Analysis CLI test failed')
+            sys.exit(1)
 
-print('Analysis CLI test passed')
+        print('Analysis CLI test passed')
 
-# Check if model file was created
-if not os.path.exists('test_model.json'):
-    print('Error: CLI analysis failed to create model file')
-    sys.exit(1)
+        # Check if model file was created
+        if not os.path.exists('test_model.json'):
+            print('Error: CLI analysis failed to create model file')
+            sys.exit(1)
 
-# Test generation
-args = argparse.Namespace()
-args.model_json = 'test_model.json'
-args.output_dir = 'cli_output'
+        # Test generation
+        args = argparse.Namespace()
+        args.model_json = 'test_model.json'
+        args.output_dir = 'cli_output'
 
-exit_code = handle_generate_command(args)
-if exit_code != 0:
-    print('Generation CLI test failed')
-    sys.exit(1)
+        exit_code = handle_generate_command(args)
+        if exit_code != 0:
+            print('Generation CLI test failed')
+            sys.exit(1)
 
-print('Generation CLI test passed')
+        print('Generation CLI test passed')
 
-# Check if output directory was created
-if not os.path.exists('cli_output'):
-    print('Error: CLI PlantUML generation failed')
-    sys.exit(1)
-"
+        # Check if output directory was created
+        if not os.path.exists('cli_output'):
+            print('Error: CLI PlantUML generation failed')
+            sys.exit(1)
+        "
 
     - name: Performance benchmark
       run: |
         # Run a simple performance test
         python -c "
-import time
-import sys
-sys.path.insert(0, '.')
-from c_to_plantuml.project_analyzer import ProjectAnalyzer
+        import time
+        import sys
+        sys.path.insert(0, '.')
+        from c_to_plantuml.project_analyzer import ProjectAnalyzer
 
-start_time = time.perf_counter()
-analyzer = ProjectAnalyzer()
-model = analyzer.analyze_project(['./tests/test_files'], 'Perf_Test')
-end_time = time.perf_counter()
+        start_time = time.perf_counter()
+        analyzer = ProjectAnalyzer()
+        model = analyzer.analyze_project(['./tests/test_files'], 'Perf_Test')
+        end_time = time.perf_counter()
 
-duration = end_time - start_time
-print(f'Analysis completed in {duration:.2f} seconds')
-print(f'Files processed: {len(model.files)}')
+        duration = end_time - start_time
+        print(f'Analysis completed in {duration:.2f} seconds')
+        print(f'Files processed: {len(model.files)}')
 
-if duration > 30:  # Fail if takes more than 30 seconds for test files
-    print('Error: Analysis took too long')
-    sys.exit(1)
-"
+        if duration > 30:  # Fail if takes more than 30 seconds for test files
+            print('Error: Analysis took too long')
+            sys.exit(1)
+        "
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
@@ -235,13 +235,13 @@ if duration > 30:  # Fail if takes more than 30 seconds for test files
         
         # Validate JSON structure
         python -c "
-import json
-with open('complex_model.json', 'r') as f:
-    model = json.load(f)
-    assert model['project_name'] == 'Complex_Integration_Test'
-    assert len(model['files']) >= 2  # Should have main.c and utils.c
-    print('Complex model validation passed')
-"
+        import json
+        with open('complex_model.json', 'r') as f:
+            model = json.load(f)
+            assert model['project_name'] == 'Complex_Integration_Test'
+            assert len(model['files']) >= 2  # Should have main.c and utils.c
+            print('Complex model validation passed')
+        "
         
         # Check PlantUML output
         complex_puml_count=$(find complex_output -name "*.puml" | wc -l)
