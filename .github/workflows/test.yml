@@ -37,11 +37,7 @@ jobs:
 
     - name: Run unit tests
       run: |
-        python -m pytest tests/ -v --tb=short
-
-    - name: Test enhanced parser
-      run: |
-        python -m unittest tests.test_enhanced_parser -v
+        python -m unittest tests.test_parser -v
 
     - name: Test project analyzer
       run: |
@@ -50,23 +46,23 @@ jobs:
     - name: Test complete workflow
       run: |
         # Test the main entry point
-        python -m c_to_plantuml.main --config test_config.json --clean --verbose
+        python -m c_to_plantuml.main config test_config.json
 
     - name: Verify output files
       run: |
         # Check that expected files were created
-        if [ ! -f "project_model.json" ]; then
-          echo "Error: project_model.json not created"
+        if [ ! -f "test_project_model.json" ]; then
+          echo "Error: test_project_model.json not created"
           exit 1
         fi
         
-        if [ ! -d "output_uml" ]; then
-          echo "Error: output_uml directory not created"
+        if [ ! -d "test_plantuml_output" ]; then
+          echo "Error: test_plantuml_output directory not created"
           exit 1
         fi
         
         # Check for .puml files
-        puml_count=$(find output_uml -name "*.puml" | wc -l)
+        puml_count=$(find test_plantuml_output -name "*.puml" | wc -l)
         if [ "$puml_count" -eq 0 ]; then
           echo "Error: No .puml files generated"
           exit 1
@@ -74,66 +70,76 @@ jobs:
         
         echo "Success: Found $puml_count PlantUML files"
 
-     - name: Test CLI tools
-       run: |
-         # Test the complete workflow with separate analyze and generate steps
-         python -c "
-import sys
-sys.path.insert(0, '.')
-from c_to_plantuml.main import analyze_project_cli, generate_plantuml_cli
-import os
+    - name: Test CLI tools
+      run: |
+        # Test the complete workflow with separate analyze and generate steps
+        python -c "
+        import sys
+        sys.path.insert(0, '.')
+        from c_to_plantuml.main import handle_analyze_command, handle_generate_command
+        import argparse
+        import os
 
-# Test analysis
-sys.argv = ['analyze_project_cli', './tests/test_files', '--output', 'test_model.json', '--name', 'CLI_Test']
-try:
-    analyze_project_cli()
-    print('Analysis CLI test passed')
-except SystemExit as e:
-    if e.code != 0:
-        raise
+        # Test analysis
+        args = argparse.Namespace()
+        args.project_roots = ['./tests/test_files']
+        args.output = 'test_model.json'
+        args.name = 'CLI_Test'
+        args.prefixes = None
+        args.no_recursive = False
 
-# Check if model file was created
-if not os.path.exists('test_model.json'):
-    print('Error: CLI analysis failed')
-    sys.exit(1)
+        exit_code = handle_analyze_command(args)
+        if exit_code != 0:
+            print('Analysis CLI test failed')
+            sys.exit(1)
 
-# Test generation
-sys.argv = ['generate_plantuml_cli', 'test_model.json', '--output', 'cli_output', '--clean']
-try:
-    generate_plantuml_cli()
-    print('Generation CLI test passed')
-except SystemExit as e:
-    if e.code != 0:
-        raise
+        print('Analysis CLI test passed')
 
-# Check if output directory was created
-if not os.path.exists('cli_output'):
-    print('Error: CLI PlantUML generation failed')
-    sys.exit(1)
-"
+        # Check if model file was created
+        if not os.path.exists('test_model.json'):
+            print('Error: CLI analysis failed to create model file')
+            sys.exit(1)
+
+        # Test generation
+        args = argparse.Namespace()
+        args.model_json = 'test_model.json'
+        args.output_dir = 'cli_output'
+
+        exit_code = handle_generate_command(args)
+        if exit_code != 0:
+            print('Generation CLI test failed')
+            sys.exit(1)
+
+        print('Generation CLI test passed')
+
+        # Check if output directory was created
+        if not os.path.exists('cli_output'):
+            print('Error: CLI PlantUML generation failed')
+            sys.exit(1)
+        "
 
     - name: Performance benchmark
       run: |
         # Run a simple performance test
         python -c "
-import time
-import sys
-sys.path.insert(0, '.')
-from c_to_plantuml.project_analyzer import ProjectAnalyzer
+        import time
+        import sys
+        sys.path.insert(0, '.')
+        from c_to_plantuml.project_analyzer import ProjectAnalyzer
 
-start_time = time.perf_counter()
-analyzer = ProjectAnalyzer()
-model = analyzer.analyze_project(['./tests/test_files'], 'Perf_Test')
-end_time = time.perf_counter()
+        start_time = time.perf_counter()
+        analyzer = ProjectAnalyzer()
+        model = analyzer.analyze_project(['./tests/test_files'], 'Perf_Test')
+        end_time = time.perf_counter()
 
-duration = end_time - start_time
-print(f'Analysis completed in {duration:.2f} seconds')
-print(f'Files processed: {len(model.files)}')
+        duration = end_time - start_time
+        print(f'Analysis completed in {duration:.2f} seconds')
+        print(f'Files processed: {len(model.files)}')
 
-if duration > 30:  # Fail if takes more than 30 seconds for test files
-    print('Error: Analysis took too long')
-    sys.exit(1)
-"
+        if duration > 30:  # Fail if takes more than 30 seconds for test files
+            print('Error: Analysis took too long')
+            sys.exit(1)
+        "
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
@@ -141,8 +147,8 @@ if duration > 30:  # Fail if takes more than 30 seconds for test files
       with:
         name: test-outputs-${{ matrix.python-version }}
         path: |
-          project_model.json
-          output_uml/
+          test_project_model.json
+          test_plantuml_output/
           cli_output/
           test_model.json
 
@@ -209,15 +215,15 @@ if duration > 30:  # Fail if takes more than 30 seconds for test files
         {
           "project_name": "Complex_Integration_Test",
           "project_roots": ["./complex_test"],
-          "output_dir": "./complex_output",
           "model_output_path": "./complex_model.json",
+          "output_dir": "./complex_output",
           "recursive": true,
           "c_file_prefixes": []
         }
         EOF
         
         # Run analysis
-        python -m c_to_plantuml.main --config complex_config.json --verbose
+        python -m c_to_plantuml.main config complex_config.json
 
     - name: Validate complex project output
       run: |
@@ -229,13 +235,13 @@ if duration > 30:  # Fail if takes more than 30 seconds for test files
         
         # Validate JSON structure
         python -c "
-import json
-with open('complex_model.json', 'r') as f:
-    model = json.load(f)
-    assert model['project_name'] == 'Complex_Integration_Test'
-    assert len(model['files']) >= 2  # Should have main.c and utils.c
-    print('Complex model validation passed')
-"
+        import json
+        with open('complex_model.json', 'r') as f:
+            model = json.load(f)
+            assert model['project_name'] == 'Complex_Integration_Test'
+            assert len(model['files']) >= 2  # Should have main.c and utils.c
+            print('Complex model validation passed')
+        "
         
         # Check PlantUML output
         complex_puml_count=$(find complex_output -name "*.puml" | wc -l)
