@@ -87,13 +87,13 @@ jobs:
     - name: Run unit tests
       run: |
         echo "::group::Parser Unit Tests"
-        python -m unittest tests.test_parser -v --tb=long
+        python -m unittest tests.test_parser -v
         echo "::endgroup::"
 
     - name: Test project analyzer
       run: |
         echo "::group::Project Analyzer Unit Tests"
-        python -m unittest tests.test_project_analyzer -v --tb=long
+        python -m unittest tests.test_project_analyzer -v
         echo "::endgroup::"
 
     - name: Test complete workflow
