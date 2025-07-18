@@ -1,0 +1,15 @@
+{
+  "project_name": "Test_C_Project",
+  "project_roots": [
+    "./tests/test_files"
+  ],
+  "output_dir": "./output_uml",
+  "output_dir_packaged": "./output_packaged",
+  "model_output_path": "./project_model.json",
+  "recursive": true,
+  "c_file_prefixes": [],
+  "structure_overrides": [
+    {"from_puml": "sample.puml", "to_folder": "core"},
+    {"from_puml": "complex_example.puml", "to_folder": "advanced"}
+  ]
+}
