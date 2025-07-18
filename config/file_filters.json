@@ -1,0 +1,17 @@
+{
+  "_description": "File-level filtering configuration",
+  "file_filters": {
+    "files": {
+      "include": [
+        ".*\\.c$",
+        ".*\\.h$"
+      ],
+      "exclude": [
+        ".*test.*",
+        ".*temp.*",
+        ".*\\.tmp$",
+        ".*_backup.*"
+      ]
+    }
+  }
+}

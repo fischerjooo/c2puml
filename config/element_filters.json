@@ -1,0 +1,55 @@
+{
+  "_description": "Element-level filtering configuration - structs, enums, functions, globals",
+  "element_filters": {
+    "structs": {
+      "include": [
+        "^[A-Z].*",
+        ".*_t$",
+        ".*_config.*",
+        "pump_.*"
+      ],
+      "exclude": [
+        ".*_internal.*",
+        ".*_deprecated.*",
+        ".*_temp.*"
+      ]
+    },
+    "enums": {
+      "include": [
+        ".*_enum$",
+        "^E_.*",
+        ".*_state.*",
+        "pump_.*"
+      ],
+      "exclude": [
+        ".*_old.*",
+        ".*_unused.*"
+      ]
+    },
+    "functions": {
+      "include": [
+        "^public_.*",
+        "^api_.*",
+        "pump_.*",
+        "control_.*"
+      ],
+      "exclude": [
+        "^_.*",
+        ".*_private.*",
+        ".*_test.*",
+        ".*_debug.*"
+      ]
+    },
+    "globals": {
+      "include": [
+        "^g_.*",
+        ".*_config$",
+        "pump_.*"
+      ],
+      "exclude": [
+        ".*_debug.*",
+        ".*_temp.*"
+      ]
+    }
+  }
+}

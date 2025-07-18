@@ -1,0 +1,9 @@
+{
+  "_description": "Main project configuration - basic analysis settings",
+  "project_name": "Enhanced_C_Project",
+  "project_roots": ["./tests/test_files"],
+  "c_file_prefixes": [],
+  "recursive": true,
+  "model_output_path": "./enhanced_project_model.json",
+  "output_dir": "./enhanced_plantuml_output"
+}
