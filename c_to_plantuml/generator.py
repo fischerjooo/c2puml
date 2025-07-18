@@ -71,11 +71,10 @@ class Generator:
     
     def _generate_file_diagram(self, file_model: FileModel, output_dir: Path) -> None:
         """Generate PlantUML diagram for a single file"""
-        # Create filename using relative path with extension to avoid conflicts
+        # Create filename using relative path without extension
         relative_path = Path(file_model.relative_path)
         base_name = relative_path.stem
-        extension = relative_path.suffix
-        puml_file = output_dir / f"{base_name}{extension}.puml"
+        puml_file = output_dir / f"{base_name}.puml"
         
         # Ensure output directory exists
         output_dir.mkdir(parents=True, exist_ok=True)

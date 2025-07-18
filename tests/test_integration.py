@@ -201,11 +201,11 @@ void helper_function(void) {
         
         # Check output files
         self.assertTrue(os.path.exists(output_dir))
-        self.assertTrue(os.path.exists(os.path.join(output_dir, "main.c.puml")))
-        self.assertTrue(os.path.exists(os.path.join(output_dir, "utils.c.puml")))
+        self.assertTrue(os.path.exists(os.path.join(output_dir, "main.puml")))
+        self.assertTrue(os.path.exists(os.path.join(output_dir, "utils.puml")))
         
-        # Check main.c.puml content
-        with open(os.path.join(output_dir, "main.c.puml"), 'r') as f:
+        # Check main.puml content
+        with open(os.path.join(output_dir, "main.puml"), 'r') as f:
             main_puml = f.read()
         
         self.assertIn("@startuml main", main_puml)
