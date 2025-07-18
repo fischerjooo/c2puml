@@ -1,0 +1,247 @@
+name: Test C to PlantUML Converter
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Lint with flake8
+      run: |
+        pip install flake8
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Run unit tests
+      run: |
+        python -m pytest tests/ -v --tb=short
+
+    - name: Test enhanced parser
+      run: |
+        python -m unittest tests.test_enhanced_parser -v
+
+    - name: Test project analyzer
+      run: |
+        python -m unittest tests.test_project_analyzer -v
+
+    - name: Test complete workflow
+      run: |
+        # Test the main entry point
+        python -m c_to_plantuml.main --config test_config.json --clean --verbose
+
+    - name: Verify output files
+      run: |
+        # Check that expected files were created
+        if [ ! -f "project_model.json" ]; then
+          echo "Error: project_model.json not created"
+          exit 1
+        fi
+        
+        if [ ! -d "output_uml" ]; then
+          echo "Error: output_uml directory not created"
+          exit 1
+        fi
+        
+        # Check for .puml files
+        puml_count=$(find output_uml -name "*.puml" | wc -l)
+        if [ "$puml_count" -eq 0 ]; then
+          echo "Error: No .puml files generated"
+          exit 1
+        fi
+        
+        echo "Success: Found $puml_count PlantUML files"
+
+     - name: Test CLI tools
+       run: |
+         # Test the complete workflow with separate analyze and generate steps
+         python -c "
+import sys
+sys.path.insert(0, '.')
+from c_to_plantuml.main import analyze_project_cli, generate_plantuml_cli
+import os
+
+# Test analysis
+sys.argv = ['analyze_project_cli', './tests/test_files', '--output', 'test_model.json', '--name', 'CLI_Test']
+try:
+    analyze_project_cli()
+    print('Analysis CLI test passed')
+except SystemExit as e:
+    if e.code != 0:
+        raise
+
+# Check if model file was created
+if not os.path.exists('test_model.json'):
+    print('Error: CLI analysis failed')
+    sys.exit(1)
+
+# Test generation
+sys.argv = ['generate_plantuml_cli', 'test_model.json', '--output', 'cli_output', '--clean']
+try:
+    generate_plantuml_cli()
+    print('Generation CLI test passed')
+except SystemExit as e:
+    if e.code != 0:
+        raise
+
+# Check if output directory was created
+if not os.path.exists('cli_output'):
+    print('Error: CLI PlantUML generation failed')
+    sys.exit(1)
+"
+
+    - name: Performance benchmark
+      run: |
+        # Run a simple performance test
+        python -c "
+import time
+import sys
+sys.path.insert(0, '.')
+from c_to_plantuml.project_analyzer import ProjectAnalyzer
+
+start_time = time.perf_counter()
+analyzer = ProjectAnalyzer()
+model = analyzer.analyze_project(['./tests/test_files'], 'Perf_Test')
+end_time = time.perf_counter()
+
+duration = end_time - start_time
+print(f'Analysis completed in {duration:.2f} seconds')
+print(f'Files processed: {len(model.files)}')
+
+if duration > 30:  # Fail if takes more than 30 seconds for test files
+    print('Error: Analysis took too long')
+    sys.exit(1)
+"
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-outputs-${{ matrix.python-version }}
+        path: |
+          project_model.json
+          output_uml/
+          cli_output/
+          test_model.json
+
+  integration-test:
+    needs: test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+
+    - name: Create complex test project
+      run: |
+        mkdir -p complex_test/src complex_test/include
+        
+        # Create multiple C files with dependencies
+        cat > complex_test/src/main.c << 'EOF'
+        #include "../include/utils.h"
+        #include <stdio.h>
+        
+        int main() {
+            utils_init();
+            return 0;
+        }
+        EOF
+        
+        cat > complex_test/src/utils.c << 'EOF'
+        #include "../include/utils.h"
+        
+        static int initialized = 0;
+        
+        void utils_init(void) {
+            initialized = 1;
+        }
+        
+        int utils_is_initialized(void) {
+            return initialized;
+        }
+        EOF
+        
+        cat > complex_test/include/utils.h << 'EOF'
+        #ifndef UTILS_H
+        #define UTILS_H
+        
+        void utils_init(void);
+        int utils_is_initialized(void);
+        
+        #endif
+        EOF
+
+    - name: Test complex project analysis
+      run: |
+        # Create config for complex project
+        cat > complex_config.json << 'EOF'
+        {
+          "project_name": "Complex_Integration_Test",
+          "project_roots": ["./complex_test"],
+          "output_dir": "./complex_output",
+          "model_output_path": "./complex_model.json",
+          "recursive": true,
+          "c_file_prefixes": []
+        }
+        EOF
+        
+        # Run analysis
+        python -m c_to_plantuml.main --config complex_config.json --verbose
+
+    - name: Validate complex project output
+      run: |
+        # Check model file
+        if [ ! -f "complex_model.json" ]; then
+          echo "Error: Complex model not created"
+          exit 1
+        fi
+        
+        # Validate JSON structure
+        python -c "
+import json
+with open('complex_model.json', 'r') as f:
+    model = json.load(f)
+    assert model['project_name'] == 'Complex_Integration_Test'
+    assert len(model['files']) >= 2  # Should have main.c and utils.c
+    print('Complex model validation passed')
+"
+        
+        # Check PlantUML output
+        complex_puml_count=$(find complex_output -name "*.puml" | wc -l)
+        if [ "$complex_puml_count" -lt 2 ]; then
+          echo "Error: Expected at least 2 PlantUML files, got $complex_puml_count"
+          exit 1
+        fi
+        
+        echo "Integration test passed: $complex_puml_count PlantUML files generated"

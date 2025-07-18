@@ -1,71 +1,138 @@
 import re
+import os
 from typing import Dict, List, Set, Optional, Tuple
 from ..models.c_structures import Field, Function, Struct, Enum
-import os
 
 class CParser:
+    """C parser with compiled regex patterns and caching"""
+    
+    # Pre-compiled regex patterns for better performance
+    COMMENT_BLOCK_PATTERN = re.compile(r'/\*.*?\*/', re.DOTALL)
+    COMMENT_LINE_PATTERN = re.compile(r'//.*?$', re.MULTILINE)
+    INCLUDE_PATTERN = re.compile(r'#include\s*[<\"](.*?)[>\"]')
+    STRUCT_PATTERN = re.compile(
+        r'typedef\s+struct\s*(\w+)?\s*\{([^}]+)\}\s*(\w+)\s*;|struct\s+(\w+)\s*\{([^}]+)\}\s*;',
+        re.MULTILINE | re.DOTALL
+    )
+    ENUM_PATTERN = re.compile(
+        r'typedef\s+enum\s*(\w+)?\s*\{([^}]+)\}\s*(\w+)\s*;|enum\s+(\w+)\s*\{([^}]+)\}\s*;',
+        re.MULTILINE | re.DOTALL
+    )
+    TYPEDEF_PATTERN = re.compile(r'typedef\s+([^;]+?)\s+(\w+)\s*;')
+    FUNCTION_PATTERN = re.compile(
+        r'^(?:static\s+)?([a-zA-Z_][\w\s\*]*?)\s+([a-zA-Z_][\w]*)\s*\(([^)]*)\)\s*\{',
+        re.MULTILINE
+    )
+    GLOBAL_VAR_PATTERN = re.compile(
+        r'^(static\s+)?([a-zA-Z_][\w\s\*]*?)\s+([a-zA-Z_][\w]*)\s*(\[[^\]]*\])?\s*(=[^;]*)?;',
+        re.MULTILINE
+    )
+    ARRAY_PATTERN = re.compile(r'\[([^\]]*)\]')
+    MACRO_DEFINE_PATTERN = re.compile(r'^#define\s+([a-zA-Z_][\w]*)', re.MULTILINE)
+    FUNCTION_PROTO_PATTERN = re.compile(
+        r'^[a-zA-Z_][a-zA-Z0-9_ \t\*]*\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\([^;{]*\)\s*;$',
+        re.MULTILINE
+    )
+    
     def __init__(self):
         self.structs: Dict[str, Struct] = {}
         self.enums: Dict[str, Enum] = {}
         self.typedefs: Dict[str, str] = {}
         self.includes: Set[str] = set()
-        self.functions: List[Function] = []  # Store top-level functions
-        self.globals: List[Field] = []  # Store global variables
+        self.functions: List[Function] = []
+        self.globals: List[Field] = []
+        self.macros: List[str] = []
         
+        # File caching for improved I/O performance
+        self.file_cache: Dict[str, str] = {}
+        self.encoding_cache: Dict[str, str] = {}
+    
+    def read_file_with_encoding_detection(self, file_path: str) -> Tuple[str, str]:
+        """Read file with encoding detection and caching"""
+        if file_path in self.file_cache:
+            return self.file_cache[file_path], self.encoding_cache[file_path]
+        
+        # Try UTF-8 first, fall back to Latin-1
+        for encoding in ['utf-8', 'latin-1']:
+            try:
+                with open(file_path, 'r', encoding=encoding, buffering=8192) as f:
+                    content = f.read()
+                self.file_cache[file_path] = content
+                self.encoding_cache[file_path] = encoding
+                return content, encoding
+            except UnicodeDecodeError:
+                continue
+        
+        raise ValueError(f"Could not decode file: {file_path}")
+    
+    def clear_cache(self) -> None:
+        """Clear file cache to manage memory usage"""
+        self.file_cache.clear()
+        self.encoding_cache.clear()
+    
+    def reset_parser_state(self) -> None:
+        """Reset parser state for processing a new file"""
+        self.structs.clear()
+        self.enums.clear()
+        self.typedefs.clear()
+        self.includes.clear()
+        self.functions.clear()
+        self.globals.clear()
+        self.macros.clear()
+    
     def parse_files(self, file_paths: List[str]) -> None:
         """Parse multiple C files"""
         for file_path in file_paths:
             try:
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                    self._parse_content(content)
-                    print(f"Parsed: {file_path}")
+                content, encoding = self.read_file_with_encoding_detection(file_path)
+                self._parse_content(content)
+                print(f"Parsed: {file_path}")
             except Exception as e:
                 print(f"Error parsing {file_path}: {e}")
     
+    def parse_file(self, file_path: str) -> Tuple[str, str]:
+        """Parse a single C file and return content and encoding used"""
+        self.reset_parser_state()
+        
+        content, encoding = self.read_file_with_encoding_detection(file_path)
+        self._parse_content(content)
+        
+        return content, encoding
+    
     def _parse_content(self, content: str) -> None:
-        """Parse C code content"""
-        # Remove comments
-        content = self._remove_comments(content)
+        """Parse C code content using compiled regex patterns"""
+        # Remove comments first using compiled patterns
+        content = self.COMMENT_BLOCK_PATTERN.sub('', content)
+        content = self.COMMENT_LINE_PATTERN.sub('', content)
         
-        # Parse includes
+        # Parse different elements using compiled patterns
         self._parse_includes(content)
-        
-        # Parse structs
+        self._parse_macros(content)
         self._parse_structs(content)
-        
-        # Parse enums
         self._parse_enums(content)
-        
-        # Parse typedefs
         self._parse_typedefs(content)
-        
-        # Parse global variables
         self._parse_globals(content)
-        
-        # Parse functions
         self._parse_functions(content)
     
     def _remove_comments(self, content: str) -> str:
-        """Remove C-style comments"""
-        # Remove /* */ comments
-        content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
-        # Remove // comments
-        content = re.sub(r'//.*?$', '', content, flags=re.MULTILINE)
+        """Remove C-style comments using compiled patterns"""
+        content = self.COMMENT_BLOCK_PATTERN.sub('', content)
+        content = self.COMMENT_LINE_PATTERN.sub('', content)
         return content
     
     def _parse_includes(self, content: str) -> None:
-        """Parse #include statements"""
-        pattern = r'#include\s*[<\"](.*?)[>\"]'
-        matches = re.findall(pattern, content)
+        """Parse #include statements using compiled regex"""
+        matches = self.INCLUDE_PATTERN.findall(content)
         self.includes.update(matches)
     
+    def _parse_macros(self, content: str) -> None:
+        """Parse #define macros using compiled regex"""
+        matches = self.MACRO_DEFINE_PATTERN.findall(content)
+        self.macros = [f"- #define {macro}" for macro in matches]
+    
     def _parse_structs(self, content: str) -> None:
-        """Parse struct definitions"""
-        # Pattern for struct definition
-        pattern = r'typedef\s+struct\s*(\w+)?\s*\{([^}]+)\}\s*(\w+)\s*;|struct\s+(\w+)\s*\{([^}]+)\}\s*;'
-        
-        for match in re.finditer(pattern, content, re.MULTILINE | re.DOTALL):
+        """Parse struct definitions using compiled regex"""
+        for match in self.STRUCT_PATTERN.finditer(content):
             if match.group(1) is not None or match.group(3) is not None:  # typedef struct
                 struct_name = match.group(1) or match.group(3) or "anonymous"
                 fields_text = match.group(2)
@@ -74,12 +141,15 @@ class CParser:
                 struct_name = match.group(4)
                 fields_text = match.group(5)
                 typedef_name = None
+            
             # Use typedef_name as struct_name if struct_name is None or 'anonymous'
             if (not struct_name or struct_name == "anonymous") and typedef_name:
                 struct_name = typedef_name
+            
             # Skip if fields_text is None
             if not fields_text:
                 continue
+            
             fields = self._parse_struct_fields(fields_text)
             struct = Struct(struct_name, fields, [], typedef_name)
             self.structs[struct_name] = struct
@@ -93,7 +163,7 @@ class CParser:
             line = line.strip()
             if not line:
                 continue
-                
+            
             # Basic field parsing
             tokens = line.split()
             if len(tokens) >= 2:
@@ -108,20 +178,18 @@ class CParser:
                 is_array = '[' in field_name
                 array_size = None
                 if is_array:
-                    array_match = re.search(r'\[([^\]]*)\]', field_name)
+                    array_match = self.ARRAY_PATTERN.search(field_name)
                     if array_match:
                         array_size = array_match.group(1)
-                    field_name = re.sub(r'\[.*?\]', '', field_name)
+                    field_name = self.ARRAY_PATTERN.sub('', field_name)
                 
                 fields.append(Field(field_name, field_type, is_pointer, is_array, array_size))
         
         return fields
     
     def _parse_enums(self, content: str) -> None:
-        """Parse enum definitions"""
-        pattern = r'typedef\s+enum\s*(\w+)?\s*\{([^}]+)\}\s*(\w+)\s*;|enum\s+(\w+)\s*\{([^}]+)\}\s*;'
-        
-        for match in re.finditer(pattern, content, re.MULTILINE | re.DOTALL):
+        """Parse enum definitions using compiled regex"""
+        for match in self.ENUM_PATTERN.finditer(content):
             if match.group(1):  # typedef enum
                 enum_name = match.group(1) or "anonymous"
                 values_text = match.group(2)
@@ -139,6 +207,7 @@ class CParser:
         """Parse enum values"""
         if values_text is None:
             return []
+        
         values = []
         lines = values_text.strip().split(',')
         for line in lines:
@@ -150,10 +219,8 @@ class CParser:
         return values
     
     def _parse_typedefs(self, content: str) -> None:
-        """Parse typedef statements"""
-        pattern = r'typedef\s+([^;]+?)\s+(\w+)\s*;'
-        
-        for match in re.finditer(pattern, content):
+        """Parse typedef statements using compiled regex"""
+        for match in self.TYPEDEF_PATTERN.finditer(content):
             original_type = match.group(1).strip()
             new_type = match.group(2).strip()
             
@@ -162,40 +229,44 @@ class CParser:
                 self.typedefs[new_type] = original_type
     
     def _parse_globals(self, content: str) -> None:
-        """Parse global variable declarations (simple heuristic: type name [= ...]; at file scope, not inside functions/structs)."""
+        """Parse global variable declarations using compiled regex"""
         # Remove function bodies to avoid local variables
         code_wo_funcs = re.sub(r'\{[^{}]*\}', '{}', content, flags=re.DOTALL)
-        # Match lines like: int foo; double bar = 3.14; char *baz = "hi";
-        pattern = r'^(static\s+)?([a-zA-Z_][\w\s\*]*?)\s+([a-zA-Z_][\w]*)\s*(\[[^\]]*\])?\s*(=[^;]*)?;'  # Optional static, at line start
-        for match in re.finditer(pattern, code_wo_funcs, re.MULTILINE):
+        
+        for match in self.GLOBAL_VAR_PATTERN.finditer(code_wo_funcs):
             is_static = bool(match.group(1))
             var_type = match.group(2).strip()
             var_name = match.group(3)
             array_part = match.group(4)
+            
             is_pointer = '*' in var_type or (array_part is not None)
             is_array = array_part is not None
             array_size = None
             if is_array and array_part:
                 array_size = array_part.strip('[]')
+            
             field = Field(var_name, var_type.replace('*', '').strip(), is_pointer, is_array, array_size)
             setattr(field, 'is_static', is_static)
             self.globals.append(field)
     
     def _parse_functions(self, content: str) -> None:
-        """Parse function definitions and associate with structs"""
-        # Improved function parsing: avoid control flow statements
-        pattern = r'^(?:static\s+)?([a-zA-Z_][\w\s\*]*?)\s+([a-zA-Z_][\w]*)\s*\(([^)]*)\)\s*\{'  # Must start at line
+        """Parse function definitions using compiled regex"""
         control_keywords = {'if', 'else', 'for', 'while', 'switch', 'case', 'do', 'goto', 'return', 'break', 'continue', 'default'}
-        for match in re.finditer(pattern, content, re.MULTILINE):
+        
+        for match in self.FUNCTION_PATTERN.finditer(content):
             return_type = match.group(1).strip()
             func_name = match.group(2)
+            
             # Skip control flow keywords
             if func_name in control_keywords or return_type in control_keywords:
                 continue
+            
             is_static = 'static' in match.group(0)
             params_text = match.group(3)
             params = self._parse_function_params(params_text)
+            
             func = Function(func_name, return_type, params, is_static)
+            
             # Try to associate with struct based on naming conventions
             associated = False
             for struct_name, struct in self.structs.items():
@@ -203,6 +274,7 @@ class CParser:
                     struct.functions.append(func)
                     associated = True
                     break
+            
             if not associated:
                 self.functions.append(func)
     
@@ -234,84 +306,40 @@ class CParser:
         for struct_name, struct in self.structs.items():
             if func.name.lower().startswith(struct_name.lower()):
                 struct.functions.append(func)
-                break 
-
+                break
+    
     @staticmethod
     def parse_header_file(header_path: str) -> Tuple[List[str], List[str]]:
-        """Return (function prototypes, macros) from a header file, supporting multi-line and avoiding false positives from calls/macros. Only macro names are included, comments and values are stripped."""
+        """Parse header file and return (function prototypes, macros)"""
         if not os.path.exists(header_path):
             return [], []
+        
         prototypes = []
         macros = []
+        
         try:
-            with open(header_path, 'r', encoding='utf-8') as f:
-                lines = f.readlines()
+            with open(header_path, 'r', encoding='utf-8', buffering=8192) as f:
+                content = f.read()
         except UnicodeDecodeError:
-            with open(header_path, 'r', encoding='latin-1') as f:
-                lines = f.readlines()
-        # Join multi-line macros and function declarations
-        joined_lines = []
-        buffer = ''
-        in_macro = False
-        in_func = False
-        for line in lines:
-            stripped = line.rstrip()
-            if in_macro:
-                buffer += '\n' + stripped
-                if not stripped.endswith('\\'):
-                    joined_lines.append(buffer)
-                    buffer = ''
-                    in_macro = False
-                continue
-            if in_func:
-                buffer += ' ' + stripped.lstrip()
-                if stripped.endswith(';'):
-                    joined_lines.append(buffer)
-                    buffer = ''
-                    in_func = False
-                continue
-
-            if stripped.startswith('#define'):
-                if stripped.endswith('\\'):
-                    buffer = stripped
-                    in_macro = True
-                else:
-                    joined_lines.append(stripped)
-            elif (stripped.endswith(';') and '(' in stripped and not stripped.startswith('typedef')):
-                if not stripped.endswith(');') or stripped.count('(') != stripped.count(')'):
-                    buffer = stripped
-                    in_func = True
-                else:
-                    joined_lines.append(stripped)
-            else:
-                joined_lines.append(stripped)
-        # Now process joined_lines for macros and prototypes
-        proto_pattern = re.compile(
-            r'^[a-zA-Z_][a-zA-Z0-9_ \t\*]*\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\([^;{]*\)\s*;$', re.MULTILINE
-        )
-        for line in joined_lines:
-            l = line.strip()
-            if l.startswith('#define'):
-                # Remove comments (// or /* ... */)
-                l_no_comment = re.split(r'//|/\*', l)[0].strip()
-                # Only keep the macro name
-                macro_parts = l_no_comment.split()
-                if len(macro_parts) >= 2:
-                    macro_name = macro_parts[1].split('(')[0]  # handle function-like macros
-                    macros.append(f'+ #define {macro_name}')
-            elif (
-                proto_pattern.match(l)
-                and not l.startswith('typedef')
-                and '=' not in l
-                and '{' not in l
-                and '}' not in l
-                and not l.startswith('#')
-                and not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*\s*\(', l)  # function call, not declaration
-            ):
+            with open(header_path, 'r', encoding='latin-1', buffering=8192) as f:
+                content = f.read()
+        
+        # Use compiled patterns for better performance
+        parser = CParser()
+        
+        # Extract macros
+        macro_matches = parser.MACRO_DEFINE_PATTERN.findall(content)
+        macros = [f'+ #define {macro}' for macro in macro_matches]
+        
+        # Extract function prototypes
+        proto_matches = parser.FUNCTION_PROTO_PATTERN.findall(content)
+        for proto in proto_matches:
+            if ('typedef' not in proto and '=' not in proto and 
+                '{' not in proto and '}' not in proto and not proto.startswith('#')):
                 # Extra check: must have a return type (not just function name)
-                tokens = l.split('(')[0].strip().split()
+                tokens = proto.split('(')[0].strip().split()
                 if len(tokens) > 1:
-                    proto = l[:-1].strip()
-                    proto = proto.replace('extern ', '')
-                    prototypes.append(f'+ {proto}')
+                    clean_proto = proto.replace('extern ', '').strip()
+                    prototypes.append(f'+ {clean_proto}')
+        
         return prototypes, macros 

@@ -1,9 +1,24 @@
 """
-C to PlantUML Class Diagram Generator
-A Python tool for converting C code projects to PlantUML class diagrams
+C to PlantUML Converter
+
+A high-performance Python package for converting C/C++ code to PlantUML diagrams.
+Features optimized parsing, JSON model generation, and comprehensive PlantUML output.
 """
 
-from .main import CToPlantUMLConverter
+__version__ = "1.1.0"
+__author__ = "C to PlantUML Team"
 
-__version__ = "1.0.0"
-__author__ = "Your Name" 
+# Import main functionality
+from .parsers.c_parser import CParser
+from .project_analyzer import ProjectAnalyzer
+from .generators.plantuml_generator import PlantUMLGenerator
+from .models.project_model import ProjectModel, FileModel
+
+# Main classes and functions for public API
+__all__ = [
+    'CParser',
+    'ProjectAnalyzer', 
+    'PlantUMLGenerator',
+    'ProjectModel',
+    'FileModel'
+] 
