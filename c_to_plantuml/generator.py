@@ -159,26 +159,86 @@ class Generator:
         lines.append("}")
         lines.append("")
         
-        # Add separate typedef classes
+        # Add separate typedef classes for struct/enum/union
         if hasattr(file_model, 'typedefs') and file_model.typedefs:
             for typedef_name, original_type in sorted(file_model.typedefs.items()):
-                lines.append(f'class "{typedef_name}" as {typedef_name.upper()} <<typedef>> #LightYellow')
-                lines.append("{")
-                lines.append(f"    + {original_type}")
-                lines.append("}")
-                lines.append("")
-        
-        # Add typedef relationships
+                # Struct typedef
+                if original_type in file_model.structs:
+                    struct = file_model.structs[original_type]
+                    lines.append(f'class "{typedef_name}" as {typedef_name.upper()} <<typedef>> #LightYellow')
+                    lines.append("{")
+                    lines.append(f"    + struct {original_type}")
+                    for field in struct.fields:
+                        lines.append(f"        + {field.type} {field.name}")
+                    lines.append("}")
+                    lines.append("")
+                # Enum typedef
+                elif original_type in file_model.enums:
+                    enum = file_model.enums[original_type]
+                    lines.append(f'class "{typedef_name}" as {typedef_name.upper()} <<typedef>> #LightYellow')
+                    lines.append("{")
+                    lines.append(f"    + enum {original_type}")
+                    for value in enum.values:
+                        lines.append(f"        + {value}")
+                    lines.append("}")
+                    lines.append("")
+                # Union typedef
+                elif hasattr(file_model, 'unions') and original_type in file_model.unions:
+                    union = file_model.unions[original_type]
+                    lines.append(f'class "{typedef_name}" as {typedef_name.upper()} <<typedef>> #LightYellow')
+                    lines.append("{")
+                    lines.append(f"    + union {original_type}")
+                    for field in union.fields:
+                        lines.append(f"        + {field.type} {field.name}")
+                    lines.append("}")
+                    lines.append("")
+                else:
+                    # Basic or unknown type
+                    lines.append(f'class "{typedef_name}" as {typedef_name.upper()} <<typedef>> #LightYellow')
+                    lines.append("{")
+                    lines.append(f"    + {original_type}")
+                    lines.append("}")
+                    lines.append("")
+
+        # Add typedef relationships for struct/enum/union
         if hasattr(file_model, 'typedef_relations') and file_model.typedef_relations:
             for relation in sorted(file_model.typedef_relations, key=lambda r: r.typedef_name):
                 # Create a class for the original type if it's not a basic type
                 if not self._is_basic_type(relation.original_type):
-                    lines.append(f'class "{relation.original_type}" as {relation.original_type.upper()} <<type>> #LightGray')
-                    lines.append("{")
-                    lines.append(f"    + {relation.original_type}")
-                    lines.append("}")
-                    lines.append("")
-                
+                    # Show struct/enum/union contents if available
+                    if relation.original_type in file_model.structs:
+                        struct = file_model.structs[relation.original_type]
+                        lines.append(f'class "{relation.original_type}" as {relation.original_type.upper()} <<type>> #LightGray')
+                        lines.append("{")
+                        lines.append(f"    + struct {relation.original_type}")
+                        for field in struct.fields:
+                            lines.append(f"        + {field.type} {field.name}")
+                        lines.append("}")
+                        lines.append("")
+                    elif relation.original_type in file_model.enums:
+                        enum = file_model.enums[relation.original_type]
+                        lines.append(f'class "{relation.original_type}" as {relation.original_type.upper()} <<type>> #LightGray')
+                        lines.append("{")
+                        lines.append(f"    + enum {relation.original_type}")
+                        for value in enum.values:
+                            lines.append(f"        + {value}")
+                        lines.append("}")
+                        lines.append("")
+                    elif hasattr(file_model, 'unions') and relation.original_type in file_model.unions:
+                        union = file_model.unions[relation.original_type]
+                        lines.append(f'class "{relation.original_type}" as {relation.original_type.upper()} <<type>> #LightGray')
+                        lines.append("{")
+                        lines.append(f"    + union {relation.original_type}")
+                        for field in union.fields:
+                            lines.append(f"        + {field.type} {field.name}")
+                        lines.append("}")
+                        lines.append("")
+                    else:
+                        lines.append(f'class "{relation.original_type}" as {relation.original_type.upper()} <<type>> #LightGray')
+                        lines.append("{")
+                        lines.append(f"    + {relation.original_type}")
+                        lines.append("}")
+                        lines.append("")
                 # Add the relationship
                 if relation.relationship_type == 'defines':
                     lines.append(f'{relation.typedef_name.upper()} *-- {relation.original_type.upper()} : «defines»')

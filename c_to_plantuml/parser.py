@@ -7,7 +7,7 @@ import re
 import logging
 from pathlib import Path
 from typing import List, Dict, Set, Optional, Tuple
-from .models import FileModel, Struct, Enum, Function, Field, TypedefRelation
+from .models import FileModel, Struct, Enum, Function, Field, TypedefRelation, Union
 
 
 class CParser:
@@ -29,6 +29,10 @@ class CParser:
         self.field_pattern = re.compile(r'(\w+(?:\s*\*\s*)?)\s+(\w+)(?:\s*\[[^\]]*\])?\s*;')
         self.enum_value_pattern = re.compile(r'(\w+)(?:\s*=\s*[^,]+)?,?')
         self.variable_pattern = re.compile(r'(\w+(?:\s*\*\s*)?)\s+(\w+)(?:\s*=\s*[^;]+)?\s*;')
+
+        self.union_pattern = re.compile(r'union\s+(\w+)\s*\{([^}]+)\}')
+        self.typedef_union_pattern = re.compile(r'typedef\s+union\s*\{([^}]+)\}\s*(\w+)\s*;')
+        self.typedef_named_union_pattern = re.compile(r'typedef\s+union\s+(\w+)\s*\{([^}]+)\}\s+(\w+)\s*;')
     
     def parse_file(self, file_path: Path) -> FileModel:
         """Parse a C/C++ file and return a FileModel"""
@@ -48,6 +52,7 @@ class CParser:
         typedefs = self._parse_typedefs(content)
         includes = self._parse_includes(content)
         typedef_relations = self._parse_typedef_relations(content)
+        unions = self._parse_unions(content)
         
         self.logger.debug(f"Parsed {len(structs)} structs, {len(enums)} enums, "
                          f"{len(functions)} functions, {len(globals)} globals")
@@ -64,7 +69,8 @@ class CParser:
             includes=includes,
             macros=macros,
             typedefs=typedefs,
-            typedef_relations=typedef_relations
+            typedef_relations=typedef_relations,
+            unions=unions
         )
     
     def _read_file(self, file_path: Path) -> str:
@@ -254,10 +260,9 @@ class CParser:
         return macros
     
     def _parse_typedefs(self, content: str) -> Dict[str, str]:
-        """Parse typedef definitions"""
+        """Parse typedef definitions, including struct/enum/union"""
         typedefs = {}
-        
-        # Improved typedef patterns to handle various cases
+        # Patterns for various typedefs
         typedef_patterns = [
             # Basic typedef: typedef type name;
             re.compile(r'typedef\s+(\w+(?:\s+\w+)*)\s+(\w+)\s*;'),
@@ -268,9 +273,16 @@ class CParser:
             # Struct typedef: typedef struct { ... } name;
             re.compile(r'typedef\s+struct\s*\{[^}]*\}\s+(\w+)\s*;'),
             # Named struct typedef: typedef struct name { ... } alias;
-            re.compile(r'typedef\s+struct\s+(\w+)\s*\{[^}]*\}\s+(\w+)\s*;')
+            re.compile(r'typedef\s+struct\s+(\w+)\s*\{[^}]*\}\s+(\w+)\s*;'),
+            # Enum typedef: typedef enum { ... } name;
+            re.compile(r'typedef\s+enum\s*\{[^}]*\}\s+(\w+)\s*;'),
+            # Named enum typedef: typedef enum name { ... } alias;
+            re.compile(r'typedef\s+enum\s+(\w+)\s*\{[^}]*\}\s+(\w+)\s*;'),
+            # Union typedef: typedef union { ... } name;
+            re.compile(r'typedef\s+union\s*\{[^}]*\}\s+(\w+)\s*;'),
+            # Named union typedef: typedef union name { ... } alias;
+            re.compile(r'typedef\s+union\s+(\w+)\s*\{[^}]*\}\s+(\w+)\s*;')
         ]
-        
         for pattern in typedef_patterns:
             for match in pattern.finditer(content):
                 if len(match.groups()) == 2:
@@ -278,11 +290,9 @@ class CParser:
                     new_type = match.group(2)
                     typedefs[new_type] = original_type
                 elif len(match.groups()) == 1:
-                    # For struct typedefs with only one group
                     new_type = match.group(1)
                     typedefs[new_type] = f"struct {new_type}"
-        
-        self.logger.debug(f"Parsed {len(typedefs)} typedefs")
+        self.logger.debug(f"Parsed {len(typedefs)} typedefs (robust)")
         return typedefs
     
     def _parse_includes(self, content: str) -> Set[str]:
@@ -346,3 +356,31 @@ class CParser:
         
         self.logger.debug(f"Parsed {len(relations)} typedef relations")
         return relations
+
+    def _parse_unions(self, content: str) -> Dict[str, Union]:
+        """Parse union definitions"""
+        unions = {}
+        # Parse regular union declarations
+        for match in self.union_pattern.finditer(content):
+            name = match.group(1)
+            body = match.group(2)
+            fields = self._parse_struct_fields(body)
+            unions[name] = Union(name, fields)
+            self.logger.debug(f"Parsed union: {name} with {len(fields)} fields")
+        # Parse typedef union declarations
+        for match in self.typedef_union_pattern.finditer(content):
+            body = match.group(1)
+            name = match.group(2)
+            fields = self._parse_struct_fields(body)
+            unions[name] = Union(name, fields)
+            self.logger.debug(f"Parsed typedef union: {name} with {len(fields)} fields")
+        # Parse typedef named union declarations
+        for match in self.typedef_named_union_pattern.finditer(content):
+            union_name = match.group(1)
+            body = match.group(2)
+            alias = match.group(3)
+            fields = self._parse_struct_fields(body)
+            unions[union_name] = Union(union_name, fields)
+            unions[alias] = Union(alias, fields)
+            self.logger.debug(f"Parsed typedef named union: {union_name} as {alias} with {len(fields)} fields")
+        return unions
