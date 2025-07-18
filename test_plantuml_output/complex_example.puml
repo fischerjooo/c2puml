@@ -1,62 +1,16 @@
-@startuml CLS: complex_example
+@startuml complex_example
 
-class "complex_example" as COMPLEX_EXAMPLE_C <<source>> #LightBlue
+class "complex_example" as COMPLEX_EXAMPLE <<source>> #LightBlue
 {
-    + int id
-    + char*[64] name
-    + entity_t*[100] entities
-    + int entity_count
-    + entity_t* active_entity
-    + event_handler_t*[16] handlers
-    + return NULL
-    + entity_t* entity
-    + entity_t* entity
-    + entity_t* entity
-    + int index
-    + int index
-    + event_type_t test_type
-    - #define BUFFER_SIZE
-    - #define LOG_LEVEL_ERROR
-    - #define LOG_LEVEL_INFO
-    - #define SAFE_CALL
-    -void log_message(int level, const char* message)
-    -entity_t* find_entity_by_id(int id)
-    +int create_entity(int id, const char* name, float x, float y, float z)
-    +void update_entity_position(int id, float x, float y, float z)
-    +void set_entity_color(int id, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-    +void register_event_handler(event_type_t type, event_handler_t handler)
-    +void trigger_event(event_type_t type, void* data)
+    - #define COMPLEX_EXAMPLE_H
+    - #define MAX_ENTITIES
+    - #define ENTITY_NAME_LENGTH
+    - #define MAKE_COLOR
+    - #define GET_RED
+    - #define GET_GREEN
+    - #define GET_BLUE
+    - #define GET_ALPHA
 }
 
-interface "complex_example.h" as COMPLEX_EXAMPLE_H <<public_header>> #LightGreen
-{
-    + #define COMPLEX_EXAMPLE_H
-    + #define MAX_ENTITIES
-    + #define ENTITY_NAME_LENGTH
-    + #define MAKE_COLOR
-    + #define GET_RED
-    + #define GET_GREEN
-    + #define GET_BLUE
-    + #define GET_ALPHA
-    + int create_entity(int id, const char* name, float x, float y, float z);
-    + void update_entity_position(int id, float x, float y, float z);
-    + void set_entity_color(int id, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-    + void register_event_handler(event_type_t type, event_handler_t handler);
-    + void trigger_event(event_type_t type, void* data);
-}
-
-COMPLEX_EXAMPLE_C --> COMPLEX_EXAMPLE_H : <<include>>
-
-interface "stdio.h" as STDIO_H <<public_header>> #LightGreen
-{
-}
-
-COMPLEX_EXAMPLE_C --> STDIO_H : <<include>>
-
-interface "string.h" as STRING_H <<public_header>> #LightGreen
-{
-}
-
-COMPLEX_EXAMPLE_C --> STRING_H : <<include>>
 
 @enduml

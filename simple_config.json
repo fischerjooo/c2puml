@@ -1,0 +1,20 @@
+{
+  "project_roots": ["./tests/test_files"],
+  "project_name": "Test_Project",
+  "output_dir": "./test_plantuml_output",
+  "recursive": true,
+  "file_filters": {
+    "include": [".*\\.c$", ".*\\.h$"],
+    "exclude": [".*test.*", ".*temp.*"]
+  },
+  "element_filters": {
+    "structs": {
+      "include": ["^[A-Z].*"],
+      "exclude": [".*_internal.*"]
+    },
+    "functions": {
+      "include": ["^public_.*"],
+      "exclude": [".*_private.*"]
+    }
+  }
+}
