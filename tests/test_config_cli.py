@@ -30,26 +30,29 @@ class TestConfigurationCLI(unittest.TestCase):
             "project_name": "CLITest",
             "project_roots": ["."],
             "files": {
-                "test_cli.c": {
-                    "file_path": "test_cli.c",
-                    "relative_path": "test_cli.c",
+                "cli_sample.c": {
+                    "file_path": "cli_sample.c",
+                    "relative_path": "cli_sample.c",
                     "project_root": ".",
                     "encoding_used": "utf-8",
                     "structs": {
-                        "old_legacy_struct": {
-                            "name": "old_legacy_struct",
-                            "typedef_name": "old_legacy_struct",
-                            "fields": []
+                        "OldLegacy_struct": {
+                            "name": "OldLegacy_struct",
+                            "typedef_name": "OldLegacy_struct",
+                            "fields": [],
+                            "functions": []
                         },
                         "PublicStruct": {
                             "name": "PublicStruct",
                             "typedef_name": "PublicStruct",
-                            "fields": []
+                            "fields": [],
+                            "functions": []
                         },
-                        "internal_temp_struct": {
-                            "name": "internal_temp_struct",
-                            "typedef_name": "internal_temp_struct",
-                            "fields": []
+                        "ConfigData": {
+                            "name": "ConfigData",
+                            "typedef_name": "ConfigData",
+                            "fields": [],
+                            "functions": []
                         }
                     },
                     "enums": {
@@ -66,19 +69,22 @@ class TestConfigurationCLI(unittest.TestCase):
                     },
                     "functions": [
                         {
-                            "name": "legacy_function",
+                            "name": "public_legacy_impl",
                             "return_type": "void",
-                            "parameters": []
+                            "parameters": [],
+                            "is_static": False
                         },
                         {
                             "name": "public_api_function",
                             "return_type": "int",
-                            "parameters": []
+                            "parameters": [],
+                            "is_static": False
                         },
                         {
                             "name": "internal_private_function",
                             "return_type": "void",
-                            "parameters": []
+                            "parameters": [],
+                            "is_static": False
                         }
                     ],
                     "globals": [
@@ -93,7 +99,7 @@ class TestConfigurationCLI(unittest.TestCase):
                     ],
                     "includes": [],
                     "macros": [],
-                    "typedefs": []
+                    "typedefs": {}
                 }
             },
             "global_includes": [],
@@ -177,11 +183,11 @@ class TestConfigurationCLI(unittest.TestCase):
             transformed_data = json.load(f)
         
         # Verify transformations were applied
-        test_file = transformed_data['files']['test_cli.c']
+        test_file = transformed_data['files']['cli_sample.c']
         
         # Check struct transformations
-        self.assertIn('new_legacy_struct', test_file['structs'])  # old_legacy_struct -> new_legacy_struct
-        self.assertNotIn('old_legacy_struct', test_file['structs'])
+        self.assertIn('OldLegacy_t', test_file['structs'])  # OldLegacy_struct -> OldLegacy_t (_struct suffix removed)
+        self.assertNotIn('OldLegacy_struct', test_file['structs'])
         
         # Check enum transformations
         self.assertIn('status_e', test_file['enums'])  # old_status_enum -> status_e
@@ -189,13 +195,12 @@ class TestConfigurationCLI(unittest.TestCase):
         
         # Check function transformations
         function_names = [f['name'] for f in test_file['functions']]
-        self.assertIn('modern_function', function_names)  # legacy_function -> modern_function
-        self.assertNotIn('legacy_function', function_names)
+        self.assertIn('public_legacy', function_names)  # public_legacy_impl -> public_legacy (_impl suffix removed)
+        self.assertNotIn('public_legacy_impl', function_names)
         
-        # Check that additions were made
-        self.assertIn('test_error_info_t', test_file['structs'])
-        self.assertIn('test_log_level_e', test_file['enums'])
+        # Check that additions were made (only functions for .c files)
         self.assertIn('test_get_timestamp', function_names)
+        self.assertIn('test_validate_checksum', function_names)
     
     def test_filter_command_with_output_file(self):
         """Test the filter command with a separate output file"""
@@ -228,17 +233,17 @@ class TestConfigurationCLI(unittest.TestCase):
             original_data = json.load(f)
         
         # Original should still have old names
-        test_file = original_data['files']['test_cli.c']
-        self.assertIn('old_legacy_struct', test_file['structs'])
-        self.assertIn('legacy_function', [f['name'] for f in test_file['functions']])
+        test_file = original_data['files']['cli_sample.c']
+        self.assertIn('OldLegacy_struct', test_file['structs'])
+        self.assertIn('public_legacy_impl', [f['name'] for f in test_file['functions']])
         
         # Output should have new names
         with open(output_path, 'r') as f:
             output_data = json.load(f)
         
-        output_file = output_data['files']['test_cli.c']
-        self.assertIn('new_legacy_struct', output_file['structs'])
-        self.assertIn('modern_function', [f['name'] for f in output_file['functions']])
+        output_file = output_data['files']['cli_sample.c']
+        self.assertIn('OldLegacy_t', output_file['structs'])
+        self.assertIn('public_legacy', [f['name'] for f in output_file['functions']])
     
     def test_filter_command_with_multiple_configs(self):
         """Test the filter command with multiple configuration files"""
@@ -255,7 +260,15 @@ class TestConfigurationCLI(unittest.TestCase):
         model_path = self._create_test_model_file()
         output_path = self._create_temp_file('.json')
         
-        cfgs = config_files[:2]
+        # Use config files that contain transformations
+        cfgs = []
+        for config_file in config_files:
+            if 'transformations.json' in config_file or 'general_additions.json' in config_file:
+                cfgs.append(config_file)
+        
+        if len(cfgs) < 2:
+            # Fallback to first 2 files if specific ones not found
+            cfgs = config_files[:2]
         class MockArgs:
             model_file = model_path
             config_files = cfgs
@@ -276,15 +289,17 @@ class TestConfigurationCLI(unittest.TestCase):
         with open(output_path, 'r') as f:
             output_data = json.load(f)
         
-        output_file = output_data['files']['test_cli.c']
+        output_file = output_data['files']['cli_sample.c']
         
         # Should have transformations from transformations.json
-        self.assertIn('new_legacy_struct', output_file['structs'])
+        self.assertIn('OldLegacy_t', output_file['structs'])
         
         # Should have additions from general_additions.json (if present)
         if any('general_additions.json' in f for f in cfgs):
-            self.assertIn('error_info_t', output_file['structs'])
-            self.assertIn('log_level_e', output_file['enums'])
+            # Only functions should be added to .c files
+            function_names = [f['name'] for f in output_file['functions']]
+            self.assertIn('get_timestamp', function_names)
+            self.assertIn('validate_checksum', function_names)
     
     def test_cli_error_handling(self):
         """Test CLI error handling with invalid inputs"""
@@ -348,9 +363,9 @@ class TestConfigurationCLI(unittest.TestCase):
             with open(output_path, 'r') as f:
                 output_data = json.load(f)
             
-            output_file = output_data['files']['test_cli.c']
-            self.assertIn('new_legacy_struct', output_file['structs'])
-            self.assertIn('modern_function', [f['name'] for f in output_file['functions']])
+            output_file = output_data['files']['cli_sample.c']
+            self.assertIn('OldLegacy_t', output_file['structs'])
+            self.assertIn('public_legacy', [f['name'] for f in output_file['functions']])
             
         except subprocess.TimeoutExpired:
             self.fail("CLI command timed out")
