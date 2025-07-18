@@ -1,0 +1,188 @@
+{
+  "_description": "Test configuration for automated testing of model manipulations",
+  "file_filters": {
+    "files": {
+      "include": [
+        ".*\\.c$",
+        ".*\\.h$"
+      ],
+      "exclude": [
+        ".*test.*",
+        ".*temp.*",
+        ".*\\.tmp$",
+        ".*_backup.*"
+      ]
+    }
+  },
+  "element_filters": {
+    "structs": {
+      "include": [
+        "^[A-Z].*",
+        ".*_t$",
+        ".*_config.*",
+        "pump_.*"
+      ],
+      "exclude": [
+        ".*_internal.*",
+        ".*_deprecated.*",
+        ".*_temp.*"
+      ]
+    },
+    "enums": {
+      "include": [
+        ".*_enum$",
+        "^E_.*",
+        ".*_state.*",
+        "pump_.*"
+      ],
+      "exclude": [
+        ".*_old.*",
+        ".*_unused.*"
+      ]
+    },
+    "functions": {
+      "include": [
+        "^public_.*",
+        "^api_.*",
+        "pump_.*",
+        "control_.*"
+      ],
+      "exclude": [
+        "^_.*",
+        ".*_private.*",
+        ".*_test.*",
+        ".*_debug.*"
+      ]
+    },
+    "globals": {
+      "include": [
+        "^g_.*",
+        ".*_config$",
+        "pump_.*"
+      ],
+      "exclude": [
+        ".*_debug.*",
+        ".*_temp.*"
+      ]
+    }
+  },
+  "transformations": {
+    "structs": {
+      "^old_(.*)": "new_\\1",
+      "(.*)_struct$": "\\1_t",
+      "^legacy_": "",
+      "pump_(.*)_config": "\\1_cfg",
+      "(.*)_data$": "\\1_info"
+    },
+    "enums": {
+      "^old_(.*)_enum": "\\1_e",
+      "(.*)_status": "\\1_state",
+      "pump_(.*)_mode": "pump_\\1_state",
+      "^legacy_(.*)": "\\1"
+    },
+    "functions": {
+      "^legacy_(.*)": "modern_\\1",
+      "(.*)_impl$": "\\1",
+      "^internal_(.*)": "_\\1",
+      "pump_(.*)_set": "pump_set_\\1",
+      "(.*)_handler$": "\\1_callback"
+    }
+  },
+  "additions": {
+    "structs": [
+      {
+        "name": "test_error_info_t",
+        "typedef_name": "test_error_info_t",
+        "fields": [
+          {
+            "name": "code",
+            "type": "int"
+          },
+          {
+            "name": "message",
+            "type": "char",
+            "array_size": "256"
+          },
+          {
+            "name": "timestamp",
+            "type": "time_t"
+          }
+        ],
+        "target_files": [
+          ".*\\.h$"
+        ]
+      },
+      {
+        "name": "test_config_base_t",
+        "typedef_name": "test_config_base_t",
+        "fields": [
+          {
+            "name": "version",
+            "type": "uint32_t"
+          },
+          {
+            "name": "checksum",
+            "type": "uint32_t"
+          },
+          {
+            "name": "valid",
+            "type": "bool"
+          }
+        ],
+        "target_files": [
+          ".*config.*\\.h$"
+        ]
+      }
+    ],
+    "enums": [
+      {
+        "name": "test_log_level_e",
+        "typedef_name": "test_log_level_t",
+        "values": [
+          "TEST_LOG_TRACE",
+          "TEST_LOG_DEBUG",
+          "TEST_LOG_INFO",
+          "TEST_LOG_WARN",
+          "TEST_LOG_ERROR",
+          "TEST_LOG_FATAL"
+        ],
+        "target_files": [
+          ".*\\.h$"
+        ]
+      }
+    ],
+    "functions": [
+      {
+        "name": "test_get_timestamp",
+        "return_type": "time_t",
+        "parameters": [],
+        "is_static": false,
+        "target_files": [
+          ".*\\.c$"
+        ]
+      },
+      {
+        "name": "test_validate_checksum",
+        "return_type": "bool",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "void*"
+          },
+          {
+            "name": "size",
+            "type": "size_t"
+          },
+          {
+            "name": "expected",
+            "type": "uint32_t"
+          }
+        ],
+        "is_static": false,
+        "target_files": [
+          ".*\\.c$"
+        ]
+      }
+    ]
+  }
+}
