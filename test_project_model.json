@@ -246,6 +246,20 @@
       ],
       "globals": [
         {
+          "name": "id",
+          "type": "int",
+          "is_pointer": false,
+          "is_array": false,
+          "array_size": null
+        },
+        {
+          "name": "name",
+          "type": "char",
+          "is_pointer": true,
+          "is_array": true,
+          "array_size": "64"
+        },
+        {
           "name": "entities",
           "type": "entity_t",
           "is_pointer": true,
@@ -272,6 +286,55 @@
           "is_pointer": true,
           "is_array": true,
           "array_size": "16"
+        },
+        {
+          "name": "NULL",
+          "type": "return",
+          "is_pointer": false,
+          "is_array": false,
+          "array_size": null
+        },
+        {
+          "name": "entity",
+          "type": "entity_t",
+          "is_pointer": true,
+          "is_array": false,
+          "array_size": null
+        },
+        {
+          "name": "entity",
+          "type": "entity_t",
+          "is_pointer": true,
+          "is_array": false,
+          "array_size": null
+        },
+        {
+          "name": "entity",
+          "type": "entity_t",
+          "is_pointer": true,
+          "is_array": false,
+          "array_size": null
+        },
+        {
+          "name": "index",
+          "type": "int",
+          "is_pointer": false,
+          "is_array": false,
+          "array_size": null
+        },
+        {
+          "name": "index",
+          "type": "int",
+          "is_pointer": false,
+          "is_array": false,
+          "array_size": null
+        },
+        {
+          "name": "test_type",
+          "type": "event_type_t",
+          "is_pointer": false,
+          "is_array": false,
+          "array_size": null
         }
       ],
       "includes": [
@@ -422,6 +485,20 @@
           "is_pointer": true,
           "is_array": true,
           "array_size": "MAX_SIZE"
+        },
+        {
+          "name": "p",
+          "type": "point_t",
+          "is_pointer": true,
+          "is_array": false,
+          "array_size": null
+        },
+        {
+          "name": "p",
+          "type": "return",
+          "is_pointer": false,
+          "is_array": false,
+          "array_size": null
         }
       ],
       "includes": [
@@ -444,5 +521,5 @@
     "stdlib.h",
     "string.h"
   ],
-  "created_at": "2025-07-18T04:44:53.298118"
+  "created_at": "2025-07-18T05:10:33.952099"
 }

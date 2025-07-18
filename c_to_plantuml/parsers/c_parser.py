@@ -20,17 +20,17 @@ class CParser:
     )
     TYPEDEF_PATTERN = re.compile(r'typedef\s+([^;]+?)\s+(\w+)\s*;')
     FUNCTION_PATTERN = re.compile(
-        r'^(?:static\s+)?([a-zA-Z_][\w\s\*]*?)\s+([a-zA-Z_][\w]*)\s*\(([^)]*)\)\s*\{',
+        r'^\s*(?:static\s+)?([a-zA-Z_][\w\s\*]*?)\s+([a-zA-Z_][\w]*)\s*\(([^)]*)\)\s*\{',
         re.MULTILINE
     )
     GLOBAL_VAR_PATTERN = re.compile(
-        r'^(static\s+)?([a-zA-Z_][\w\s\*]*?)\s+([a-zA-Z_][\w]*)\s*(\[[^\]]*\])?\s*(=[^;]*)?;',
+        r'^\s*(static\s+)?([a-zA-Z_][\w\s\*]*?)\s+([a-zA-Z_][\w]*)\s*(\[[^\]]*\])?\s*(=[^;]*)?;',
         re.MULTILINE
     )
     ARRAY_PATTERN = re.compile(r'\[([^\]]*)\]')
-    MACRO_DEFINE_PATTERN = re.compile(r'^#define\s+([a-zA-Z_][\w]*)', re.MULTILINE)
+    MACRO_DEFINE_PATTERN = re.compile(r'^\s*#define\s+([a-zA-Z_][\w]*)', re.MULTILINE)
     FUNCTION_PROTO_PATTERN = re.compile(
-        r'^[a-zA-Z_][a-zA-Z0-9_ \t\*]*\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\([^;{]*\)\s*;$',
+        r'^\s*[a-zA-Z_][a-zA-Z0-9_ \t\*]*\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\([^;{]*\)\s*;$',
         re.MULTILINE
     )
     
