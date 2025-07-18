@@ -1,0 +1,12 @@
+# Core dependencies for C to PlantUML converter
+# No external dependencies needed - uses only Python standard library
+
+# Development dependencies (install with: pip install -e .[dev])
+# pytest>=6.0
+# flake8>=3.9.0
+# black>=21.0.0
+# mypy>=0.900
+
+# Testing dependencies (install with: pip install -e .[test])
+# pytest>=6.0
+# pytest-cov>=2.12.0

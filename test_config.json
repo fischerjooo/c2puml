@@ -1,13 +1,8 @@
 {
-  "project_roots": [
-    "D:/WORK/Sandbox/doom/ipx", "D:/WORK/Sandbox/doom/linuxdoom-1.10", "D:/WORK/Sandbox/doom/sersrc","D:/WORK/Sandbox/doom/sndserv"
-  ],
-  "output_dir": "./output_uml",
-  "output_dir_packaged": "./output_packaged",
-  "recursive": true,
+  "project_name": "C_Test_Project",
+  "project_roots": ["./tests/test_files"],
   "c_file_prefixes": [],
-  "structure_overrides": [
-    {"from_puml": "am_map.puml", "to_folder": "special_folder"},
-    {"from_puml": "vehicle.puml", "to_folder": "vehicles"}
-  ]
+  "recursive": true,
+  "model_output_path": "./test_project_model.json",
+  "output_dir": "./test_plantuml_output"
 } 
