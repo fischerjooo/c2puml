@@ -181,6 +181,25 @@ def load_config_and_analyze(config_path: str) -> ProjectModel:
         recursive=recursive
     )
     
+    # Apply model filtering if specified in config
+    if any(key in config for key in ['file_filters', 'element_filters', 'transformations', 'additions']):
+        from .manipulators.model_filter import ModelFilter
+        
+        # Create temporary config file for model filter or apply directly
+        model_filter = ModelFilter()
+        model_filter.file_filters = config.get('file_filters', {})
+        model_filter.element_filters = config.get('element_filters', {})
+        model_filter.transformations = config.get('transformations', {})
+        model_filter.additions = config.get('additions', {})
+        model_filter._compile_patterns()
+        
+        # Apply all filters and transformations
+        model = model_filter.apply_all_filters(model)
+        
+        # Save the filtered model
+        model.save_to_json(model_output_path)
+        print(f"Applied model filters and saved to: {model_output_path}")
+    
     # Generate PlantUML files if output_dir is specified
     if output_dir:
         from .generators.plantuml_generator import generate_plantuml_from_json

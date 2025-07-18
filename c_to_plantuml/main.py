@@ -73,6 +73,26 @@ def create_config_parser(subparsers):
     )
     return config_parser
 
+def create_filter_parser(subparsers):
+    """Create the filter subcommand parser"""
+    filter_parser = subparsers.add_parser(
+        'filter', 
+        help='Apply filtering and transformations to existing JSON model'
+    )
+    filter_parser.add_argument(
+        'model_file', 
+        help='Existing JSON model file to filter'
+    )
+    filter_parser.add_argument(
+        'config_file', 
+        help='JSON configuration file with filter settings'
+    )
+    filter_parser.add_argument(
+        '-o', '--output', 
+        help='Output path for filtered model (default: overwrites input)'
+    )
+    return filter_parser
+
 def create_full_parser(subparsers):
     """Create the full workflow subcommand parser"""
     full_parser = subparsers.add_parser(
@@ -161,6 +181,45 @@ def handle_config_command(args):
         print(f"Error in config-based analysis: {e}")
         return 1
 
+def handle_filter_command(args):
+    """Handle the filter subcommand"""
+    print(f"Filtering model: {args.model_file}")
+    print(f"Using filter config: {args.config_file}")
+    
+    if not os.path.exists(args.model_file):
+        print(f"Error: Model file not found: {args.model_file}")
+        return 1
+    
+    if not os.path.exists(args.config_file):
+        print(f"Error: Config file not found: {args.config_file}")
+        return 1
+    
+    try:
+        from .models.project_model import ProjectModel
+        from .manipulators.model_filter import ModelFilter
+        
+        # Load existing model
+        model = ProjectModel.load_from_json(args.model_file)
+        print(f"Loaded model with {len(model.files)} files")
+        
+        # Load and apply filters
+        model_filter = ModelFilter()
+        model_filter.load_config(args.config_file)
+        
+        filtered_model = model_filter.apply_all_filters(model)
+        
+        # Save filtered model
+        output_path = args.output or args.model_file
+        filtered_model.save_to_json(output_path)
+        
+        print(f"Filtered model saved to: {output_path}")
+        print(f"Filtered model contains {len(filtered_model.files)} files")
+        
+        return 0
+    except Exception as e:
+        print(f"Error filtering model: {e}")
+        return 1
+
 def handle_full_command(args):
     """Handle the full workflow subcommand"""
     print(f"Running complete workflow for: {', '.join(args.project_roots)}")
@@ -218,6 +277,9 @@ Examples:
   # Use configuration file
   c2plantuml config my_config.json
   
+  # Filter existing JSON model
+  c2plantuml filter project.json filter_config.json -o filtered_project.json
+  
   # Filter files by prefix
   c2plantuml analyze /project -p main_ test_ -o filtered.json
         """)
@@ -228,6 +290,7 @@ Examples:
     create_analyze_parser(subparsers)
     create_generate_parser(subparsers)
     create_config_parser(subparsers)
+    create_filter_parser(subparsers)
     create_full_parser(subparsers)
     
     # Parse arguments
@@ -245,6 +308,8 @@ Examples:
             return handle_generate_command(args)
         elif args.command == 'config':
             return handle_config_command(args)
+        elif args.command == 'filter':
+            return handle_filter_command(args)
         elif args.command == 'full':
             return handle_full_command(args)
         else:
