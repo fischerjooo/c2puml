@@ -48,8 +48,8 @@ def main():
     
     # 1. Unit Tests
     tests = [
-        ("python -m unittest tests.test_optimized_parser -v", "Optimized Parser Unit Tests"),
-        ("python -m unittest tests.test_project_analyzer -v", "Project Analyzer Unit Tests"),
+        ("python3 -m unittest tests.test_enhanced_parser -v", "Enhanced Parser Unit Tests"),
+        ("python3 -m unittest tests.test_project_analyzer -v", "Project Analyzer Unit Tests"),
     ]
     
     for cmd, desc in tests:
@@ -66,11 +66,11 @@ def main():
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_path = Path(temp_dir)
         
-        # Test with optimized configuration
+        # Test with new configuration
         total_tests += 1
         if run_command(
-            "python -m c_to_plantuml.main_optimized --config test_config_optimized.json --clean --verbose",
-            "Full Workflow Test (Optimized)"
+            "python3 -m c_to_plantuml.main --config test_config.json --clean --verbose",
+            "Full Workflow Test"
         ):
             # Verify outputs
             if (Path("project_model.json").exists() and 
@@ -84,13 +84,13 @@ def main():
         # Test CLI tools
         total_tests += 1
         if run_command(
-            f"python -m c_to_plantuml.main_optimized analyze-project ./tests/test_files --output {temp_path}/cli_model.json --name CLI_Test",
+            f"python3 -c \"\nimport sys\nsys.path.insert(0, '.')\nfrom c_to_plantuml.main import analyze_project_cli\nimport os\nsys.argv = ['analyze_project_cli', './tests/test_files', '--output', '{temp_path}/cli_model.json', '--name', 'CLI_Test']\nanalyze_project_cli()\"",
             "CLI Analysis Tool Test"
         ):
             if (temp_path / "cli_model.json").exists():
                 total_tests += 1
                 if run_command(
-                    f"python -m c_to_plantuml.main_optimized generate-plantuml {temp_path}/cli_model.json --output {temp_path}/cli_output",
+                    f"python3 -c \"\nimport sys\nsys.path.insert(0, '.')\nfrom c_to_plantuml.main import generate_plantuml_cli\nimport os\nsys.argv = ['generate_plantuml_cli', '{temp_path}/cli_model.json', '--output', '{temp_path}/cli_output']\ngenerate_plantuml_cli()\"",
                     "CLI Generation Tool Test"
                 ):
                     if (temp_path / "cli_output").exists():
@@ -137,22 +137,22 @@ def main():
     # Check for Python syntax errors
     total_tests += 1
     if run_command(
-        "python -m py_compile c_to_plantuml/parsers/optimized_c_parser.py",
-        "Syntax Check - Optimized Parser"
+        "python3 -m py_compile c_to_plantuml/parsers/c_parser_enhanced.py",
+        "Syntax Check - Enhanced Parser"
     ):
         passed_tests += 1
     
     total_tests += 1
     if run_command(
-        "python -m py_compile c_to_plantuml/project_analyzer.py",
+        "python3 -m py_compile c_to_plantuml/project_analyzer.py",
         "Syntax Check - Project Analyzer"
     ):
         passed_tests += 1
     
     total_tests += 1
     if run_command(
-        "python -m py_compile c_to_plantuml/generators/model_plantuml_generator.py",
-        "Syntax Check - Model Generator"
+        "python3 -m py_compile c_to_plantuml/generators/plantuml_generator.py",
+        "Syntax Check - PlantUML Generator"
     ):
         passed_tests += 1
     
@@ -162,14 +162,14 @@ def main():
     print(f"{'='*60}")
     
     required_files = [
-        "c_to_plantuml/parsers/optimized_c_parser.py",
+        "c_to_plantuml/parsers/c_parser_enhanced.py",
         "c_to_plantuml/models/project_model.py",
-        "c_to_plantuml/generators/model_plantuml_generator.py",
+        "c_to_plantuml/generators/plantuml_generator.py",
         "c_to_plantuml/project_analyzer.py",
-        "c_to_plantuml/main_optimized.py",
+        "c_to_plantuml/main.py",
         "tests/test_files/sample.c",
         "tests/test_files/sample.h",
-        "test_config_optimized.json",
+        "test_config.json",
         "setup.py"
     ]
     

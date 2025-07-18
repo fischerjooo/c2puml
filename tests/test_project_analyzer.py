@@ -17,7 +17,7 @@ sys.path.insert(0, str(project_root))
 
 from c_to_plantuml.project_analyzer import ProjectAnalyzer, load_config_and_analyze
 from c_to_plantuml.models.project_model import ProjectModel, FileModel
-from c_to_plantuml.generators.model_plantuml_generator import ModelPlantUMLGenerator, generate_plantuml_from_json
+from c_to_plantuml.generators.plantuml_generator import PlantUMLGenerator, generate_plantuml_from_json
 
 class TestProjectAnalyzer(unittest.TestCase):
     """Test cases for the ProjectAnalyzer"""
@@ -179,12 +179,12 @@ class TestProjectAnalyzer(unittest.TestCase):
         self.assertGreater(len(nested_files_recursive), 0)
         self.assertEqual(len(nested_files_non_recursive), 0)
 
-class TestModelPlantUMLGenerator(unittest.TestCase):
-    """Test cases for the ModelPlantUMLGenerator"""
+class TestPlantUMLGenerator(unittest.TestCase):
+    """Test cases for the PlantUMLGenerator"""
     
     def setUp(self):
         """Set up test fixtures"""
-        self.generator = ModelPlantUMLGenerator()
+        self.generator = PlantUMLGenerator()
         self.test_files_dir = Path(__file__).parent / "test_files"
         self.temp_dir = Path(tempfile.mkdtemp())
         

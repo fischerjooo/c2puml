@@ -3,8 +3,8 @@ import os
 from typing import Dict, List, Set, Optional, Tuple
 from ..models.c_structures import Field, Function, Struct, Enum
 
-class OptimizedCParser:
-    """Optimized C parser with compiled regex patterns and caching"""
+class EnhancedCParser:
+    """Enhanced C parser with compiled regex patterns and caching"""
     
     # Pre-compiled regex patterns for better performance
     COMMENT_BLOCK_PATTERN = re.compile(r'/\*.*?\*/', re.DOTALL)
@@ -90,7 +90,7 @@ class OptimizedCParser:
         return content, encoding
     
     def _parse_content(self, content: str) -> None:
-        """Parse C code content using optimized regex patterns"""
+        """Parse C code content using compiled regex patterns"""
         # Remove comments first using compiled patterns
         content = self.COMMENT_BLOCK_PATTERN.sub('', content)
         content = self.COMMENT_LINE_PATTERN.sub('', content)
@@ -285,8 +285,8 @@ class OptimizedCParser:
         return params
     
     @staticmethod
-    def parse_header_file_optimized(header_path: str) -> Tuple[List[str], List[str]]:
-        """Optimized static method for parsing header files"""
+    def parse_header_file_enhanced(header_path: str) -> Tuple[List[str], List[str]]:
+        """Enhanced static method for parsing header files"""
         if not os.path.exists(header_path):
             return [], []
         
@@ -301,7 +301,7 @@ class OptimizedCParser:
                 content = f.read()
         
         # Use compiled patterns for better performance
-        parser = OptimizedCParser()
+        parser = EnhancedCParser()
         
         # Extract macros
         macro_matches = parser.MACRO_DEFINE_PATTERN.findall(content)

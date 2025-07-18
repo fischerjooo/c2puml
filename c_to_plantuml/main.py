@@ -1,242 +1,243 @@
-import argparse
+#!/usr/bin/env python3
+"""
+Main entry point for C to PlantUML converter with JSON model approach
+"""
+
 import os
 import sys
+import argparse
 import json
-from typing import List, Optional, Tuple
 import shutil
+from pathlib import Path
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-if __name__ == "__main__":
-    from c_to_plantuml.parsers.c_parser import CParser
-    from c_to_plantuml.generators.plantuml_generator import PlantUMLGenerator
-    from c_to_plantuml.utils.file_utils import find_c_files
-    from c_to_plantuml.models.c_structures import Function
-else:
-    from .parsers.c_parser import CParser
-    from .generators.plantuml_generator import PlantUMLGenerator
-    from .utils.file_utils import find_c_files
-    from .models.c_structures import Function
-
-def to_uml_id(name: str) -> str:
-    return name.replace('.', '_').replace('-', '_').upper()
-
-def parse_header_for_prototypes_and_macros(header_path: str) -> Tuple[List[str], List[str]]:
-    return CParser.parse_header_file(header_path)
-
-def load_config(config_path: str) -> dict:
-    with open(config_path, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
-class CToPlantUMLConverter:
-    def __init__(self, c_file_prefixes: Optional[List[str]] = None):
-        self.generator = PlantUMLGenerator()
-        self.c_file_prefixes = c_file_prefixes or []
-    
-    def convert_projects(self, project_roots: List[str], output_dir: Optional[str] = None, recursive: bool = True) -> None:
-        self.project_roots = project_roots
-        for project_root in project_roots:
-            print(f"Processing project root: {project_root}")
-            self.convert_project(project_root, output_dir, recursive)
-    def convert_project(self, project_root: str, output_dir: Optional[str] = None, recursive: bool = True) -> None:
-        c_extensions = {'.c', '.cpp', '.cc', '.cxx'}
-        c_files = [f for f in find_c_files(project_root, recursive) if os.path.splitext(f)[1].lower() in c_extensions]
-        # Only filter if c_file_prefixes is non-empty
-        if self.c_file_prefixes:
-            c_files = [f for f in c_files if any(os.path.basename(f).startswith(prefix) for prefix in self.c_file_prefixes)]
-        if not c_files:
-            print(f"No C files found in the project: {project_root}")
-            return
-        if not output_dir:
-            output_dir = os.getcwd()
-        os.makedirs(output_dir, exist_ok=True)
-        for c_file in c_files:
-            self.generate_diagram_for_c_file(c_file, output_dir, project_root)
-    def generate_diagram_for_c_file(self, c_file: str, output_dir: str, project_root: str) -> None:
-        parser = CParser()
-
-        try:
-            with open(c_file, 'r', encoding='utf-8') as f:
-                content = f.read()
-        except UnicodeDecodeError:
-            with open(c_file, 'r', encoding='latin-1') as f:
-                content = f.read()
-        parser._parse_content(content)
-        includes = list(parser.includes)
-        functions = self.extract_functions_from_parser(parser)
-        globals_ = self.extract_globals_from_parser(parser)
-        c_base = os.path.splitext(os.path.basename(c_file))[0]
-        c_uml_id = to_uml_id(os.path.basename(c_file))
-        # --- Extract macros from the C file ---
-        macros = self.extract_macros_from_content(content)
-        # ---
-        header_infos = []
-        for h in includes:
-            h_path = self.resolve_header_path(h, c_file, project_root)
-            prototypes, h_macros = parse_header_for_prototypes_and_macros(h_path)
-            header_infos.append({
-                'name': h,
-                'uml_id': to_uml_id(h),
-                'prototypes': prototypes,
-                'macros': h_macros,
-                'stereotype': '<<public_header>>' if h.endswith('.h') else '<<private_header>>',
-            })
-        plantuml_content = self.generator.generate_c_file_diagram_with_macros_and_globals(
-            c_base, c_uml_id, functions, macros, globals_, header_infos
-        )  # type: ignore
-        output_path = os.path.join(output_dir, f"{c_base}.puml")
-        with open(output_path, 'w', encoding='utf-8') as out_file:
-            out_file.write(plantuml_content)
-        print(f"PlantUML diagram written to {output_path}")
-    def extract_functions_from_parser(self, parser: CParser) -> List[str]:
-        functions = []
-        seen = set()
-        # Functions associated with structs
-        for struct in parser.structs.values():
-            for func in struct.functions:
-                params_str = ', '.join([f"{p.type} {p.name}" for p in func.parameters])
-                sig = f"{func.return_type} {func.name}({params_str})"
-                if sig not in seen:
-                    visibility = '-' if func.is_static else '+'
-                    functions.append(f"{visibility}{func.return_type} {func.name}({params_str})")
-                    seen.add(sig)
-        # Top-level (non-struct) functions
-        for func in parser.functions:
-            params_str = ', '.join([f"{p.type} {p.name}" for p in func.parameters])
-            sig = f"{func.return_type} {func.name}({params_str})"
-            if sig not in seen:
-                visibility = '-' if func.is_static else '+'
-                functions.append(f"{visibility}{func.return_type} {func.name}({params_str})")
-                seen.add(sig)
-        return functions
-    def resolve_header_path(self, header: str, c_file: str, project_root: str) -> str:
-        c_dir = os.path.dirname(c_file)
-        candidate = os.path.join(c_dir, header)
-        if os.path.exists(candidate):
-            return candidate
-        candidate = os.path.join(project_root, header)
-        if os.path.exists(candidate):
-            return candidate
-        # Case-insensitive search in c_dir
-        for fname in os.listdir(c_dir):
-            if fname.lower() == header.lower():
-                return os.path.join(c_dir, fname)
-        # Case-insensitive search in project_root
-        for fname in os.listdir(project_root):
-            if fname.lower() == header.lower():
-                return os.path.join(project_root, fname)
-        # Recursive search in all project roots
-        if hasattr(self, 'project_roots'):
-            search_roots = self.project_roots
-        else:
-            search_roots = [project_root]
-        for root in search_roots:
-            for dirpath, _, filenames in os.walk(root):
-                for fname in filenames:
-                    if fname.lower() == header.lower():
-                        return os.path.join(dirpath, fname)
-        return header
-
-    def extract_macros_from_content(self, content: str) -> list:
-        """Extract #define macro names from C file content using CParser.parse_header_file logic, but mark as '-' for private."""
-        import tempfile
-        import os
-        from c_to_plantuml.parsers.c_parser import CParser
-        # Write content to a temporary file to reuse parse_header_file
-        with tempfile.NamedTemporaryFile('w+', delete=False, suffix='.h') as tmp:
-            tmp.write(content)
-            tmp_path = tmp.name
-        try:
-            _, macros = CParser.parse_header_file(tmp_path)
-        finally:
-            os.unlink(tmp_path)
-        # Change + to - for private macros
-        macros = [macro.replace('+', '-', 1) if macro.startswith('+') else macro for macro in macros]
-        return macros
-
-    def extract_globals_from_parser(self, parser: CParser) -> list:
-        """Extract global variables from the parser as PlantUML field strings, using '-' for static (local) and '+' for extern/public."""
-        globals_ = []
-        for field in parser.globals:
-            type_str = field.type
-            if field.is_pointer:
-                type_str += "*"
-            if field.is_array:
-                type_str += f"[{field.array_size or ''}]"
-            # Use '-' for static, '+' otherwise
-            visibility = '-' if getattr(field, 'is_static', False) else '+'
-            globals_.append(f"{visibility} {type_str} {field.name}")
-        return globals_
-
-# Extend PlantUMLGenerator with a new method for the requested format
-setattr(PlantUMLGenerator, 'generate_c_file_diagram_with_macros_and_globals', lambda self, c_base, c_uml_id, functions, macros, globals_, header_infos: (
-    '\n'.join([
-        f"@startuml CLS: {c_base}",
-        '',
-        f'class "{c_base}" as {c_uml_id} <<source>> #LightBlue',
-        '{',
-        *(f"    {g}" for g in globals_),
-        *(f"    {macro}" for macro in macros),
-        *(f"    {func}" for func in functions),
-        '}',
-        '',
-        *[line for h in header_infos for line in (
-            [f'interface "{h["name"]}" as {h["uml_id"]} {h["stereotype"]} #LightGreen', '{'] +
-            [f"    {macro}" for macro in h['macros']] +
-            [f"    {proto}" for proto in h['prototypes']] +
-            ['}', '', f'{c_uml_id} --> {h["uml_id"]} : <<include>>', '']
-        )],
-        '',
-        '@enduml'
-    ])
-))
-
-# Usage:
-#   python main.py test_config.json
-#
-# See test_config.json for an example configuration file.
+from .project_analyzer import ProjectAnalyzer, load_config_and_analyze
+from .generators.plantuml_generator import generate_plantuml_from_json
 
 def main():
-    # Always use test_config.json as the config file
-    config_path = os.path.join(os.path.dirname(__file__), '..', 'test_config.json')
-    config = load_config(config_path)
-    project_roots = config.get('project_roots', [])
-    output_dir = config.get('output_dir', '.')
-    recursive = config.get('recursive', True)
-    c_file_prefixes = config.get('c_file_prefixes', [])
-    if not isinstance(c_file_prefixes, list):
-        c_file_prefixes = [c_file_prefixes] if c_file_prefixes else []
-    if not project_roots:
-        print('No project_roots specified in config!')
-        sys.exit(1)
-    converter = CToPlantUMLConverter(c_file_prefixes=c_file_prefixes)
-    converter.convert_projects(
-        project_roots,
-        output_dir,
-        recursive
+    """Main entry point for the C to PlantUML converter"""
+    parser = argparse.ArgumentParser(
+        description="Convert C/C++ projects to PlantUML diagrams using enhanced parsing and JSON models"
     )
+    
+    parser.add_argument(
+        '--config', '-c',
+        type=str,
+        default='test_config.json',
+        help='Configuration file path (default: test_config.json)'
+    )
+    
+    parser.add_argument(
+        '--analyze-only', '-a',
+        action='store_true',
+        help='Only perform analysis and save JSON model, skip PlantUML generation'
+    )
+    
+    parser.add_argument(
+        '--generate-only', '-g',
+        type=str,
+        metavar='JSON_MODEL',
+        help='Generate PlantUML from existing JSON model file'
+    )
+    
+    parser.add_argument(
+        '--output-dir', '-o',
+        type=str,
+        help='Output directory for PlantUML files (overrides config)'
+    )
+    
+    parser.add_argument(
+        '--clean', 
+        action='store_true',
+        help='Clean output directories before generation'
+    )
+    
+    parser.add_argument(
+        '--verbose', '-v',
+        action='store_true',
+        help='Enable verbose output'
+    )
+    
+    args = parser.parse_args()
+    
+    if args.verbose:
+        print(f"C to PlantUML Converter")
+        print(f"Configuration: {args.config}")
+    
+    try:
+        if args.generate_only:
+            # Generate PlantUML from existing JSON model
+            if not os.path.exists(args.generate_only):
+                print(f"Error: JSON model file not found: {args.generate_only}")
+                sys.exit(1)
+            
+            output_dir = args.output_dir or './output_uml'
+            
+            if args.clean and os.path.exists(output_dir):
+                shutil.rmtree(output_dir)
+                if args.verbose:
+                    print(f"Cleaned output directory: {output_dir}")
+            
+            print(f"Generating PlantUML from JSON model: {args.generate_only}")
+            generate_plantuml_from_json(args.generate_only, output_dir)
+            
+        else:
+            # Full workflow: analyze and optionally generate
+            if not os.path.exists(args.config):
+                print(f"Error: Configuration file not found: {args.config}")
+                sys.exit(1)
+            
+            # Load configuration
+            with open(args.config, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+            
+            # Clean model output if requested
+            model_output_path = config.get('model_output_path', './project_model.json')
+            if args.clean and os.path.exists(model_output_path):
+                os.remove(model_output_path)
+                if args.verbose:
+                    print(f"Cleaned model file: {model_output_path}")
+            
+            # Analyze project and create JSON model
+            print("Starting project analysis...")
+            model = load_config_and_analyze(args.config)
+            
+            if args.analyze_only:
+                print("Analysis complete. JSON model saved.")
+                print(f"Model location: {model_output_path}")
+                return
+            
+            # Generate PlantUML from the created model
+            output_dir = args.output_dir or config.get('output_dir', './output_uml')
+            
+            if args.clean and os.path.exists(output_dir):
+                shutil.rmtree(output_dir)
+                if args.verbose:
+                    print(f"Cleaned PlantUML output directory: {output_dir}")
+            
+            print("Generating PlantUML diagrams...")
+            generate_plantuml_from_json(model_output_path, output_dir)
+            
+            # Also run packager if configured
+            if 'output_dir_packaged' in config:
+                output_dir_packaged = config['output_dir_packaged']
+                
+                if args.clean and os.path.exists(output_dir_packaged):
+                    shutil.rmtree(output_dir_packaged)
+                    if args.verbose:
+                        print(f"Cleaned packaged output directory: {output_dir_packaged}")
+                
+                print("Running packager...")
+                from packager.packager import package_puml_files
+                package_puml_files(output_dir, output_dir_packaged, config.get('project_roots', []))
+        
+        print("Process completed successfully!")
+        
+    except Exception as e:
+        print(f"Error: {e}")
+        if args.verbose:
+            import traceback
+            traceback.print_exc()
+        sys.exit(1)
+
+def analyze_project_cli():
+    """CLI entry point for project analysis only"""
+    parser = argparse.ArgumentParser(
+        description="Analyze C/C++ project and create JSON model"
+    )
+    
+    parser.add_argument(
+        'project_roots',
+        nargs='+',
+        help='Project root directories to analyze'
+    )
+    
+    parser.add_argument(
+        '--output', '-o',
+        type=str,
+        default='project_model.json',
+        help='Output JSON model file (default: project_model.json)'
+    )
+    
+    parser.add_argument(
+        '--name', '-n',
+        type=str,
+        default='C_Project',
+        help='Project name (default: C_Project)'
+    )
+    
+    parser.add_argument(
+        '--prefixes', '-p',
+        nargs='*',
+        help='C file prefixes to filter'
+    )
+    
+    parser.add_argument(
+        '--no-recursive',
+        action='store_true',
+        help='Disable recursive directory scanning'
+    )
+    
+    args = parser.parse_args()
+    
+    try:
+        analyzer = ProjectAnalyzer()
+        model = analyzer.analyze_and_save(
+            project_roots=args.project_roots,
+            output_path=args.output,
+            project_name=args.name,
+            c_file_prefixes=args.prefixes or [],
+            recursive=not args.no_recursive
+        )
+        
+        print(f"Analysis complete!")
+        print(f"Files analyzed: {len(model.files)}")
+        print(f"Model saved to: {args.output}")
+        
+    except Exception as e:
+        print(f"Error: {e}")
+        sys.exit(1)
+
+def generate_plantuml_cli():
+    """CLI entry point for PlantUML generation only"""
+    parser = argparse.ArgumentParser(
+        description="Generate PlantUML diagrams from JSON model"
+    )
+    
+    parser.add_argument(
+        'json_model',
+        help='JSON model file path'
+    )
+    
+    parser.add_argument(
+        '--output', '-o',
+        type=str,
+        default='./output_uml',
+        help='Output directory for PlantUML files (default: ./output_uml)'
+    )
+    
+    parser.add_argument(
+        '--clean',
+        action='store_true',
+        help='Clean output directory before generation'
+    )
+    
+    args = parser.parse_args()
+    
+    try:
+        if not os.path.exists(args.json_model):
+            print(f"Error: JSON model file not found: {args.json_model}")
+            sys.exit(1)
+        
+        if args.clean and os.path.exists(args.output):
+            shutil.rmtree(args.output)
+            print(f"Cleaned output directory: {args.output}")
+        
+        generate_plantuml_from_json(args.json_model, args.output)
+        print("PlantUML generation complete!")
+        
+    except Exception as e:
+        print(f"Error: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
-    # Parse the config file
-    import json, os, shutil
-    config_path = os.path.join(os.path.dirname(__file__), 'test_config.json')
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = json.load(f)
-
-    # Clean output directory before PlantUML generation
-    output_dir = config.get('output_dir', None)
-    if output_dir and os.path.exists(output_dir):
-        shutil.rmtree(output_dir)
-
-    # Call c2puml_main to generate PlantUML files
-    from c_to_plantuml.main import main as c2puml_main
-    c2puml_main()
-
-    # Clean output_dir_packaged before packaging
-    output_dir_packaged = config.get('output_dir_packaged', None)
-    if output_dir_packaged and os.path.exists(output_dir_packaged):
-        shutil.rmtree(output_dir_packaged)
-        
-    # Also call the packager main for restructure and cleanup
-    from packager.main import main as packager_main
-    packager_main() 
+    main() 

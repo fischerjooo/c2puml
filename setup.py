@@ -54,9 +54,9 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "c2plantuml=c_to_plantuml.main_optimized:main",
-            "c2plantuml-analyze=c_to_plantuml.main_optimized:analyze_project_cli",
-            "c2plantuml-generate=c_to_plantuml.main_optimized:generate_plantuml_cli",
+            "c2plantuml=c_to_plantuml.main:main",
+            "c2plantuml-analyze=c_to_plantuml.main:analyze_project_cli",
+            "c2plantuml-generate=c_to_plantuml.main:generate_plantuml_cli",
         ],
     },
     include_package_data=True,

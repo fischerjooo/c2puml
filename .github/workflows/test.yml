@@ -39,9 +39,9 @@ jobs:
       run: |
         python -m pytest tests/ -v --tb=short
 
-    - name: Test optimized parser
+    - name: Test enhanced parser
       run: |
-        python -m unittest tests.test_optimized_parser -v
+        python -m unittest tests.test_enhanced_parser -v
 
     - name: Test project analyzer
       run: |
@@ -49,8 +49,8 @@ jobs:
 
     - name: Test complete workflow
       run: |
-        # Test the optimized main entry point
-        python -m c_to_plantuml.main_optimized --config test_config_optimized.json --clean --verbose
+        # Test the main entry point
+        python -m c_to_plantuml.main --config test_config.json --clean --verbose
 
     - name: Verify output files
       run: |
@@ -72,7 +72,7 @@ jobs:
           exit 1
         fi
         
-                 echo "Success: Found $puml_count PlantUML files"
+        echo "Success: Found $puml_count PlantUML files"
 
      - name: Test CLI tools
        run: |
@@ -80,7 +80,7 @@ jobs:
          python -c "
 import sys
 sys.path.insert(0, '.')
-from c_to_plantuml.main_optimized import analyze_project_cli, generate_plantuml_cli
+from c_to_plantuml.main import analyze_project_cli, generate_plantuml_cli
 import os
 
 # Test analysis
@@ -217,7 +217,7 @@ if duration > 30:  # Fail if takes more than 30 seconds for test files
         EOF
         
         # Run analysis
-        python -m c_to_plantuml.main_optimized --config complex_config.json --verbose
+        python -m c_to_plantuml.main --config complex_config.json --verbose
 
     - name: Validate complex project output
       run: |

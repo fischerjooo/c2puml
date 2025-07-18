@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unit tests for the optimized C parser
+Unit tests for the enhanced C parser
 """
 
 import unittest
@@ -14,15 +14,15 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from c_to_plantuml.parsers.optimized_c_parser import OptimizedCParser
+from c_to_plantuml.parsers.c_parser_enhanced import EnhancedCParser
 from c_to_plantuml.models.c_structures import Field, Function, Struct, Enum
 
-class TestOptimizedCParser(unittest.TestCase):
-    """Test cases for the OptimizedCParser"""
+class TestEnhancedCParser(unittest.TestCase):
+    """Test cases for the EnhancedCParser"""
     
     def setUp(self):
         """Set up test fixtures"""
-        self.parser = OptimizedCParser()
+        self.parser = EnhancedCParser()
         self.test_files_dir = Path(__file__).parent / "test_files"
         
     def test_file_caching(self):
@@ -231,12 +231,12 @@ class TestOptimizedCParser(unittest.TestCase):
         self.assertIn("register_event_handler", function_names)
     
     def test_header_file_parsing(self):
-        """Test optimized header file parsing"""
+        """Test enhanced header file parsing"""
         sample_header = self.test_files_dir / "sample.h"
         if not sample_header.exists():
             self.skipTest("sample.h test file not found")
         
-        prototypes, macros = OptimizedCParser.parse_header_file_optimized(str(sample_header))
+        prototypes, macros = EnhancedCParser.parse_header_file_enhanced(str(sample_header))
         
         # Check that prototypes and macros are found
         self.assertGreater(len(prototypes), 0)
@@ -290,7 +290,7 @@ class TestPerformanceImprovements(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures"""
-        self.parser = OptimizedCParser()
+        self.parser = EnhancedCParser()
     
     def test_regex_compilation_performance(self):
         """Test that compiled regex patterns perform better"""
