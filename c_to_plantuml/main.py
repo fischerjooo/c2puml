@@ -69,20 +69,32 @@ Examples:
     return parser
 
 
-def handle_analyze(args: argparse.Namespace) -> int:
-    """Handle analyze command"""
+def handle_analyze_command(args: argparse.Namespace) -> int:
+    """Handle analyze command - kept for backward compatibility"""
     logger = logging.getLogger(__name__)
-    logger.info(f"Analyzing C/C++ project: {args.project_root}")
     
-    if not os.path.exists(args.project_root):
-        logger.error(f"Project root not found: {args.project_root}")
+    # Handle both project_root and project_roots argument names for compatibility
+    project_root = getattr(args, 'project_root', None) or getattr(args, 'project_roots', [None])[0]
+    if not project_root:
+        logger.error("No project root specified")
+        return 1
+    
+    # Handle recursive argument with default
+    recursive = getattr(args, 'recursive', True)
+    if hasattr(args, 'no_recursive') and args.no_recursive:
+        recursive = False
+    
+    logger.info(f"Analyzing C/C++ project: {project_root}")
+    
+    if not os.path.exists(project_root):
+        logger.error(f"Project root not found: {project_root}")
         return 1
     
     try:
         analyzer = Analyzer()
         model = analyzer.analyze_project(
-            project_root=args.project_root,
-            recursive=args.recursive
+            project_root=project_root,
+            recursive=recursive
         )
         
         # Save model
@@ -99,28 +111,45 @@ def handle_analyze(args: argparse.Namespace) -> int:
         return 0
         
     except Exception as e:
-        logger.error(f"Error during analysis: {e}", exc_info=args.verbose)
+        logger.error(f"Error during analysis: {e}", exc_info=getattr(args, 'verbose', False))
         return 1
 
 
-def handle_generate(args: argparse.Namespace) -> int:
-    """Handle generate command"""
+def handle_generate_command(args: argparse.Namespace) -> int:
+    """Handle generate command - kept for backward compatibility"""
     logger = logging.getLogger(__name__)
-    logger.info(f"Generating PlantUML diagrams from: {args.model_file}")
     
-    if not os.path.exists(args.model_file):
-        logger.error(f"Model file not found: {args.model_file}")
+    # Handle both model_file and model_json argument names for compatibility
+    model_file = getattr(args, 'model_file', None) or getattr(args, 'model_json', None)
+    if not model_file:
+        logger.error("No model file specified")
+        return 1
+    
+    logger.info(f"Generating PlantUML diagrams from: {model_file}")
+    
+    if not os.path.exists(model_file):
+        logger.error(f"Model file not found: {model_file}")
         return 1
     
     try:
         generator = Generator()
-        generator.generate_from_model(args.model_file, args.output_dir)
+        generator.generate_from_model(model_file, args.output_dir)
         logger.info(f"PlantUML generation complete! Output in: {args.output_dir}")
         return 0
         
     except Exception as e:
-        logger.error(f"Error generating PlantUML: {e}", exc_info=args.verbose)
+        logger.error(f"Error generating PlantUML: {e}", exc_info=getattr(args, 'verbose', False))
         return 1
+
+
+def handle_analyze(args: argparse.Namespace) -> int:
+    """Handle analyze command"""
+    return handle_analyze_command(args)
+
+
+def handle_generate(args: argparse.Namespace) -> int:
+    """Handle generate command"""
+    return handle_generate_command(args)
 
 
 def handle_config(args: argparse.Namespace) -> int:
@@ -154,7 +183,7 @@ def handle_config(args: argparse.Namespace) -> int:
         return 0
         
     except Exception as e:
-        logger.error(f"Error in configuration-based workflow: {e}", exc_info=args.verbose)
+        logger.error(f"Error in configuration-based workflow: {e}", exc_info=getattr(args, 'verbose', False))
         return 1
 
 
@@ -164,7 +193,7 @@ def main() -> int:
     args = parser.parse_args()
     
     # Setup logging
-    setup_logging(args.verbose)
+    setup_logging(getattr(args, 'verbose', False))
     
     if not args.command:
         parser.print_help()
