@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """
 Main entry point for C to PlantUML converter
+
+Processing Flow:
+1. Parse C/C++ files and generate model
+2. Apply configuration/transformers to the model
+3. Generate PlantUML files from the transformed model
 """
 
 import argparse
@@ -32,6 +37,11 @@ def create_parser() -> argparse.ArgumentParser:
         description='Convert C/C++ code to PlantUML diagrams',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
+Processing Flow:
+1. Parse C/C++ files and generate model
+2. Apply configuration/transformers to the model  
+3. Generate PlantUML files from the transformed model
+
 Examples:
   %(prog)s analyze ./src
   %(prog)s generate project_model.json
@@ -46,8 +56,8 @@ Examples:
     
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
     
-    # Analyze command
-    analyze_parser = subparsers.add_parser('analyze', help='Analyze C/C++ project')
+    # Analyze command - Step 1: Parse and generate model
+    analyze_parser = subparsers.add_parser('analyze', help='Step 1: Analyze C/C++ project and generate model')
     analyze_parser.add_argument('project_root', help='Root directory of C/C++ project')
     analyze_parser.add_argument('-o', '--output', default='project_model.json',
                                help='Output JSON model file (default: project_model.json)')
@@ -56,21 +66,21 @@ Examples:
     analyze_parser.add_argument('--no-recursive', dest='recursive', action='store_false',
                                help='Disable recursive search')
     
-    # Generate command
-    generate_parser = subparsers.add_parser('generate', help='Generate PlantUML from JSON model')
+    # Generate command - Step 3: Generate PlantUML from model
+    generate_parser = subparsers.add_parser('generate', help='Step 3: Generate PlantUML from JSON model')
     generate_parser.add_argument('model_file', help='JSON model file')
     generate_parser.add_argument('-o', '--output-dir', default='./plantuml_output',
                                 help='Output directory for PlantUML files (default: ./plantuml_output)')
     
-    # Config command
-    config_parser = subparsers.add_parser('config', help='Run with configuration file')
+    # Config command - Complete workflow (Steps 1-3)
+    config_parser = subparsers.add_parser('config', help='Complete workflow: Analyze, transform, and generate using configuration')
     config_parser.add_argument('config_file', help='Configuration JSON file')
     
     return parser
 
 
 def handle_analyze_command(args: argparse.Namespace) -> int:
-    """Handle analyze command - kept for backward compatibility"""
+    """Handle analyze command - Step 1: Parse C files and generate model"""
     logger = logging.getLogger(__name__)
     
     # Handle both project_root and project_roots argument names for compatibility
@@ -84,7 +94,7 @@ def handle_analyze_command(args: argparse.Namespace) -> int:
     if hasattr(args, 'no_recursive') and args.no_recursive:
         recursive = False
     
-    logger.info(f"Analyzing C/C++ project: {project_root}")
+    logger.info(f"Step 1: Analyzing C/C++ project: {project_root}")
     
     if not os.path.exists(project_root):
         logger.error(f"Project root not found: {project_root}")
@@ -99,7 +109,7 @@ def handle_analyze_command(args: argparse.Namespace) -> int:
         
         # Save model
         model.save(args.output)
-        logger.info(f"Analysis complete! Model saved to: {args.output}")
+        logger.info(f"Step 1 complete! Model saved to: {args.output}")
         logger.info(f"Found {len(model.files)} files")
         
         # Print summary
@@ -116,7 +126,7 @@ def handle_analyze_command(args: argparse.Namespace) -> int:
 
 
 def handle_generate_command(args: argparse.Namespace) -> int:
-    """Handle generate command - kept for backward compatibility"""
+    """Handle generate command - Step 3: Generate PlantUML from model"""
     logger = logging.getLogger(__name__)
     
     # Handle both model_file and model_json argument names for compatibility
@@ -125,7 +135,7 @@ def handle_generate_command(args: argparse.Namespace) -> int:
         logger.error("No model file specified")
         return 1
     
-    logger.info(f"Generating PlantUML diagrams from: {model_file}")
+    logger.info(f"Step 3: Generating PlantUML diagrams from: {model_file}")
     
     if not os.path.exists(model_file):
         logger.error(f"Model file not found: {model_file}")
@@ -134,7 +144,7 @@ def handle_generate_command(args: argparse.Namespace) -> int:
     try:
         generator = Generator()
         generator.generate_from_model(model_file, args.output_dir)
-        logger.info(f"PlantUML generation complete! Output in: {args.output_dir}")
+        logger.info(f"Step 3 complete! PlantUML generation complete! Output in: {args.output_dir}")
         return 0
         
     except Exception as e:
@@ -153,9 +163,9 @@ def handle_generate(args: argparse.Namespace) -> int:
 
 
 def handle_config(args: argparse.Namespace) -> int:
-    """Handle config command"""
+    """Handle config command - Complete workflow (Steps 1-3)"""
     logger = logging.getLogger(__name__)
-    logger.info(f"Running with configuration: {args.config_file}")
+    logger.info(f"Running complete workflow with configuration: {args.config_file}")
     
     if not os.path.exists(args.config_file):
         logger.error(f"Config file not found: {args.config_file}")
@@ -166,20 +176,23 @@ def handle_config(args: argparse.Namespace) -> int:
         analyzer = Analyzer()
         generator = Generator()
         
-        # Analyze project
-        logger.info("Starting project analysis...")
+        # Step 1: Analyze project and generate model
+        logger.info("Step 1: Starting project analysis...")
         model = analyzer.analyze_with_config(config)
         
         # Save model to file
         model_filename = config.model_output_path
         model.save(model_filename)
-        logger.info(f"Model saved to: {model_filename}")
+        logger.info(f"Step 1 complete! Model saved to: {model_filename}")
         
-        # Generate diagrams
-        logger.info("Starting PlantUML generation...")
+        # Step 2: Apply configuration/transformers (handled in analyze_with_config)
+        logger.info("Step 2: Configuration/transformers applied during analysis")
+        
+        # Step 3: Generate diagrams
+        logger.info("Step 3: Starting PlantUML generation...")
         generator.generate_with_config(model, config)
         
-        logger.info("Configuration-based analysis and generation complete!")
+        logger.info("Complete workflow finished successfully!")
         return 0
         
     except Exception as e:
