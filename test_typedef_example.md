@@ -8,7 +8,7 @@ The C to PlantUML converter now supports:
 2. **Include Depth Processing**: Processes include relationships up to configurable depth
 3. **Configurable Include Depth**: Control how deep include relationships are processed
 4. **C-File Only Generation**: Only C files (.c) generate PlantUML diagrams
-5. **Enhanced Header Relationships**: C files show header relationships as separate classes
+5. **Enhanced Header Relationships**: C files show header relationships as separate classes with arrows only
 
 ## Features Implemented
 
@@ -52,21 +52,28 @@ TYPEDEF_TEST --> SAMPLE : <<include>> (depth 2)
 
 ### 4. Enhanced Header Relationships
 
-C files now show header relationships as separate classes:
+C files now show header relationships as separate classes with **arrows only**:
 
 ```plantuml
 class "stdio" as STDIO <<header>> #LightGreen
 {
-    + #include <stdio.h>
+    + Header file
 }
 
 MAIN --> STDIO : <<include>>
 ```
 
+**Key Features**:
+- **No include statements in class content**: The `+ #include <stdio.h>` lines are removed from the main class
+- **Header classes shown separately**: Each included header becomes a separate class with `<<header>>` stereotype
+- **Arrow relationships only**: Include relationships are shown with arrows between classes
+- **All referenced files shown**: Every include file is represented as a separate class
+
 This provides a clear visual representation of:
 - Which headers are included
 - The relationship between source files and headers
 - Header dependencies
+- Clean separation between source content and include relationships
 
 ### 5. Configuration
 
@@ -96,11 +103,12 @@ Add `include_depth` to your configuration file:
 The generated PlantUML files now show:
 
 - **Source file classes** with `<<source>>` stereotype (only for .c files)
-- **Header classes** with `<<header>>` stereotype (shown within .c files)
+- **Header classes** with `<<header>>` stereotype (shown as separate classes)
 - **Typedef classes** with `<<typedef>>` stereotype
 - **Type classes** with `<<type>>` stereotype for complex types
 - **Proper relationships** with `«defines»` and `«alias»` stereotypes
-- **Include relationships** with depth information
+- **Include relationships** with arrows only (no include statements in class content)
+- **Depth information** for include relationships
 
 ## File Naming
 
@@ -115,6 +123,8 @@ Files are now generated with their full extension to avoid conflicts:
 
 1. **Cleaner output**: Only source files generate diagrams
 2. **Better focus**: Concentrates on the main implementation files
-3. **Enhanced relationships**: Shows header dependencies clearly
+3. **Enhanced relationships**: Shows header dependencies clearly with arrows
 4. **Reduced clutter**: Avoids duplicate information from header files
 5. **Better organization**: Headers are shown as dependencies rather than separate files
+6. **Cleaner class content**: No include statements cluttering the main class content
+7. **Visual clarity**: Clear separation between source content and include relationships

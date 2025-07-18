@@ -108,12 +108,7 @@ class Generator:
         lines.append(f'class "{base_name}" as {base_name.upper()} <<source>> #LightBlue')
         lines.append("{")
         
-        # Add includes
-        if hasattr(file_model, 'includes') and file_model.includes:
-            lines.append("    -- Includes --")
-            for include in sorted(file_model.includes):
-                lines.append(f"    + #include <{include}>")
-            lines.append("")
+        # Note: Includes are now shown as separate classes with relationships, not in the main class content
         
         # Add macros
         if hasattr(file_model, 'macros') and file_model.macros:
@@ -203,7 +198,7 @@ class Generator:
                     # Create a class for each included header
                     lines.append(f'class "{include_name}" as {include_name.upper()} <<header>> #LightGreen')
                     lines.append("{")
-                    lines.append(f"    + #include <{include}>")
+                    lines.append("    + Header file")
                     lines.append("}")
                     lines.append("")
                     header_classes_added.add(include_name)
@@ -220,7 +215,7 @@ class Generator:
                 if relation.included_file.endswith('.h') and included_file_name not in header_classes_added:
                     lines.append(f'class "{included_file_name}" as {included_file_name.upper()} <<header>> #LightGreen')
                     lines.append("{")
-                    lines.append(f"    + {relation.included_file}")
+                    lines.append("    + Header file")
                     lines.append("}")
                     lines.append("")
                     header_classes_added.add(included_file_name)

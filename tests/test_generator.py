@@ -80,10 +80,11 @@ class TestGenerator(unittest.TestCase):
         # Check class definition
         self.assertIn('class "main" as MAIN <<source>> #LightBlue', content)
         
-        # Check includes section
-        self.assertIn("-- Includes --", content)
-        self.assertIn("+ #include <stdio.h>", content)
-        self.assertIn("+ #include <stdlib.h>", content)
+        # Check header classes and relationships (includes are now shown as separate classes)
+        self.assertIn('class "stdio" as STDIO <<header>> #LightGreen', content)
+        self.assertIn('class "stdlib" as STDLIB <<header>> #LightGreen', content)
+        self.assertIn("MAIN --> STDIO : <<include>>", content)
+        self.assertIn("MAIN --> STDLIB : <<include>>", content)
         
         # Check macros section
         self.assertIn("-- Macros --", content)
