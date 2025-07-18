@@ -111,6 +111,11 @@ def handle_config(args):
         # Analyze project
         model = analyzer.analyze_with_config(config)
         
+        # Save model to file
+        model_filename = f"{config.project_name}_model.json"
+        model.save(model_filename)
+        print(f"Model saved to: {model_filename}")
+        
         # Generate diagrams
         generator.generate_with_config(model, config)
         

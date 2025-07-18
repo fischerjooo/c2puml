@@ -110,7 +110,7 @@ jobs:
         echo "📋 Available config files:"
         ls -la *.json
         echo "📝 Running main workflow..."
-        python main.py config test_config.json
+        python main.py config simple_config.json
         echo "✅ Main workflow completed"
 
     - name: Verify output files with detailed checks
@@ -118,13 +118,13 @@ jobs:
         echo "🔍 Verifying output files with detailed checks..."
         
         # Check that expected files were created
-        if [ ! -f "test_project_model.json" ]; then
-          echo "❌ Error: test_project_model.json not created"
+        if [ ! -f "Test_Project_model.json" ]; then
+          echo "❌ Error: Test_Project_model.json not created"
           ls -la *.json
           exit 1
         else
-          echo "✅ test_project_model.json created successfully"
-          echo "📊 Model file size: $(wc -c < test_project_model.json) bytes"
+          echo "✅ Test_Project_model.json created successfully"
+          echo "📊 Model file size: $(wc -c < Test_Project_model.json) bytes"
         fi
         
         if [ ! -d "test_plantuml_output" ]; then
@@ -273,7 +273,7 @@ jobs:
       with:
         name: test-outputs-${{ matrix.python-version }}
         path: |
-          test_project_model.json
+          Test_Project_model.json
           test_plantuml_output/
           cli_output/
           test_model.json
