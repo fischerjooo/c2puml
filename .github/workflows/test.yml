@@ -94,22 +94,13 @@ jobs:
     - name: Run configuration tests
       run: |
         echo "🧪 Running configuration-related tests..."
-        echo "📝 Test: Configuration Manipulation Tests"
-        python -m unittest tests.test_config_manipulations -v --buffer
-        echo "✅ Configuration manipulation tests completed"
-        
-        echo "📝 Test: Configuration Integration Tests"
-        python -m unittest tests.test_config_integration -v --buffer
-        echo "✅ Configuration integration tests completed"
-        
-        echo "📝 Test: Configuration CLI Tests"
-        python -m unittest tests.test_config_cli -v --buffer
-        echo "✅ Configuration CLI tests completed"
+        echo "📝 Note: Configuration tests are integrated into main test files"
+        echo "✅ Configuration tests completed"
 
     - name: Run comprehensive test suite
       run: |
-        echo "🧪 Running comprehensive test suite using run_tests.py..."
-        python run_tests.py
+        echo "🧪 Running comprehensive test suite..."
+        python -m unittest discover tests -v --buffer
         echo "✅ Comprehensive test suite completed"
 
     - name: Test complete workflow with detailed logging
@@ -119,7 +110,7 @@ jobs:
         echo "📋 Available config files:"
         ls -la *.json
         echo "📝 Running main workflow..."
-        python -m c_to_plantuml.main config test_config.json
+        python main.py config test_config.json
         echo "✅ Main workflow completed"
 
     - name: Verify output files with detailed checks
@@ -245,15 +236,15 @@ jobs:
         import sys
         import os
         sys.path.insert(0, '.')
-        from c_to_plantuml.project_analyzer import ProjectAnalyzer
+        from c_to_plantuml.analyzer import Analyzer
 
         print('🔍 Starting performance analysis...')
         start_time = time.perf_counter()
         
-        analyzer = ProjectAnalyzer()
-        print('✅ ProjectAnalyzer initialized')
+        analyzer = Analyzer()
+        print('✅ Analyzer initialized')
         
-        model = analyzer.analyze_project(['./tests/test_files'], 'Perf_Test')
+        model = analyzer.analyze_project('./tests/test_files', recursive=True)
         end_time = time.perf_counter()
 
         duration = end_time - start_time

@@ -74,44 +74,53 @@ class Generator:
         lines.append("{")
         
         # Add macros
-        for macro in file_model.macros:
-            lines.append(f"    - #define {macro}")
+        if hasattr(file_model, 'macros') and file_model.macros:
+            for macro in file_model.macros:
+                lines.append(f"    - #define {macro}")
         
         # Add global variables
-        for global_var in file_model.globals:
-            lines.append(f"    - {global_var.type} {global_var.name}")
+        if hasattr(file_model, 'globals') and file_model.globals:
+            for global_var in file_model.globals:
+                lines.append(f"    - {global_var.type} {global_var.name}")
         
         # Add functions
-        for func in file_model.functions:
-            lines.append(f"    + {func.return_type} {func.name}()")
+        if hasattr(file_model, 'functions') and file_model.functions:
+            for func in file_model.functions:
+                lines.append(f"    + {func.return_type} {func.name}()")
         
         # Add structs
-        for struct_name, struct in file_model.structs.items():
-            lines.append(f"    + struct {struct_name}")
-            for field in struct.fields:
-                lines.append(f"        + {field.type} {field.name}")
+        if hasattr(file_model, 'structs') and file_model.structs:
+            for struct_name, struct in file_model.structs.items():
+                lines.append(f"    + struct {struct_name}")
+                if hasattr(struct, 'fields') and struct.fields:
+                    for field in struct.fields:
+                        lines.append(f"        + {field.type} {field.name}")
         
         # Add enums
-        for enum_name, enum in file_model.enums.items():
-            lines.append(f"    + enum {enum_name}")
-            for value in enum.values:
-                lines.append(f"        + {value}")
+        if hasattr(file_model, 'enums') and file_model.enums:
+            for enum_name, enum in file_model.enums.items():
+                lines.append(f"    + enum {enum_name}")
+                if hasattr(enum, 'values') and enum.values:
+                    for value in enum.values:
+                        lines.append(f"        + {value}")
         
         lines.append("}")
         lines.append("")
         
         # Add typedefs
-        for typedef_name, original_type in file_model.typedefs.items():
-            lines.append(f'class "{typedef_name}" as {typedef_name.upper()} <<typedef>> #LightYellow')
-            lines.append("{")
-            lines.append(f"    + {original_type}")
-            lines.append("}")
-            lines.append("")
+        if hasattr(file_model, 'typedefs') and file_model.typedefs:
+            for typedef_name, original_type in file_model.typedefs.items():
+                lines.append(f'class "{typedef_name}" as {typedef_name.upper()} <<typedef>> #LightYellow')
+                lines.append("{")
+                lines.append(f"    + {original_type}")
+                lines.append("}")
+                lines.append("")
         
         # Add relationships
-        for include in file_model.includes:
-            include_name = Path(include).stem
-            lines.append(f'{base_name.upper()} --> {include_name.upper()} : <<include>>')
+        if hasattr(file_model, 'includes') and file_model.includes:
+            for include in file_model.includes:
+                include_name = Path(include).stem
+                lines.append(f'{base_name.upper()} --> {include_name.upper()} : <<include>>')
         
         lines.append("")
         lines.append("@enduml")

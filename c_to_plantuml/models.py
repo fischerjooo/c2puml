@@ -67,8 +67,53 @@ class FileModel:
         """Create from dictionary"""
         # Convert list back to set
         includes = set(data.get('includes', []))
-        data['includes'] = includes
-        return cls(**data)
+        
+        # Convert globals back to Field objects
+        globals_data = data.get('globals', [])
+        globals = [Field(**g) if isinstance(g, dict) else g for g in globals_data]
+        
+        # Convert functions back to Function objects
+        functions_data = data.get('functions', [])
+        functions = [Function(**f) if isinstance(f, dict) else f for f in functions_data]
+        
+        # Convert structs back to Struct objects
+        structs_data = data.get('structs', {})
+        structs = {}
+        for name, struct_data in structs_data.items():
+            if isinstance(struct_data, dict):
+                fields = [Field(**field) if isinstance(field, dict) else field 
+                         for field in struct_data.get('fields', [])]
+                methods = [Function(**method) if isinstance(method, dict) else method 
+                          for method in struct_data.get('methods', [])]
+                structs[name] = Struct(
+                    name=struct_data.get('name', name),
+                    fields=fields,
+                    methods=methods
+                )
+            else:
+                structs[name] = struct_data
+        
+        # Convert enums back to Enum objects
+        enums_data = data.get('enums', {})
+        enums = {}
+        for name, enum_data in enums_data.items():
+            if isinstance(enum_data, dict):
+                enums[name] = Enum(
+                    name=enum_data.get('name', name),
+                    values=enum_data.get('values', [])
+                )
+            else:
+                enums[name] = enum_data
+        
+        # Create new data dict with converted objects
+        new_data = data.copy()
+        new_data['includes'] = includes
+        new_data['globals'] = globals
+        new_data['functions'] = functions
+        new_data['structs'] = structs
+        new_data['enums'] = enums
+        
+        return cls(**new_data)
 
 
 @dataclass
