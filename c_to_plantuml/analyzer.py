@@ -34,6 +34,9 @@ class Analyzer:
             try:
                 file_model = self.parser.parse_file(file_path)
                 relative_path = str(file_path.relative_to(project_root))
+                # Update the file model with correct relative path
+                file_model.relative_path = relative_path
+                file_model.project_root = str(project_root)
                 files[relative_path] = file_model
             except Exception as e:
                 print(f"Warning: Failed to parse {file_path}: {e}")

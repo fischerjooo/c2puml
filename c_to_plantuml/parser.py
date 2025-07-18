@@ -72,15 +72,16 @@ class CParser:
             name = match.group(1)
             body = match.group(2)
             
-            # Parse fields (simplified)
+            # Parse fields (improved)
             fields = []
-            for line in body.split('\n'):
+            lines = body.split('\n')
+            for line in lines:
                 line = line.strip()
                 if line and not line.startswith('//') and not line.startswith('/*'):
-                    # Simple field parsing
-                    field_match = re.match(r'(\w+)\s+(\w+)\s*;', line)
+                    # Improved field parsing
+                    field_match = re.match(r'(\w+(?:\s*\*\s*)?)\s+(\w+)(?:\s*\[[^\]]*\])?\s*;', line)
                     if field_match:
-                        field_type = field_match.group(1)
+                        field_type = field_match.group(1).strip()
                         field_name = field_match.group(2)
                         fields.append(Field(field_name, field_type))
             
@@ -96,13 +97,14 @@ class CParser:
             name = match.group(1)
             body = match.group(2)
             
-            # Parse enum values (simplified)
+            # Parse enum values (improved)
             values = []
-            for line in body.split('\n'):
+            lines = body.split('\n')
+            for line in lines:
                 line = line.strip()
                 if line and not line.startswith('//') and not line.startswith('/*'):
-                    # Simple value parsing
-                    value_match = re.match(r'(\w+)', line)
+                    # Improved value parsing
+                    value_match = re.match(r'(\w+)(?:\s*=\s*[^,]+)?,?', line)
                     if value_match:
                         values.append(value_match.group(1))
             
@@ -166,14 +168,14 @@ class CParser:
             if line.startswith('typedef'):
                 continue
             
-            # Try to match variable declarations
-            match = self.global_pattern.search(line)
+            # Try to match variable declarations (improved pattern)
+            match = re.search(r'(\w+(?:\s*\*\s*)?)\s+(\w+)(?:\s*=\s*[^;]+)?\s*;', line)
             if match:
-                var_type = match.group(1)
+                var_type = match.group(1).strip()
                 var_name = match.group(2)
                 
                 # Only include basic types as globals
-                if var_type in ['int', 'char', 'float', 'double', 'void', 'long', 'short']:
+                if var_type in ['int', 'char', 'float', 'double', 'void', 'long', 'short', 'User*']:
                     globals.append(Field(var_name, var_type))
         
         return globals
@@ -192,8 +194,11 @@ class CParser:
         """Parse typedef definitions"""
         typedefs = {}
         
-        for match in self.typedef_pattern.finditer(content):
-            original_type = match.group(1)
+        # Improved typedef pattern to handle more cases
+        typedef_pattern = re.compile(r'typedef\s+(\w+(?:\s+\w+)*)\s+(\w+)\s*;')
+        
+        for match in typedef_pattern.finditer(content):
+            original_type = match.group(1).strip()
             new_type = match.group(2)
             typedefs[new_type] = original_type
         
