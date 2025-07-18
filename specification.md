@@ -5,7 +5,9 @@
 The C to PlantUML Converter is a Python-based tool that analyzes C/C++ source code projects and generates comprehensive PlantUML class diagrams. The system provides a complete workflow from source code parsing to structured diagram generation with advanced filtering and transformation capabilities.
 
 ### Core Functionality
-- **Source Code Analysis**: Deep parsing of C/C++ files including structs, enums, functions, macros, typedefs, and global variables
+- **Source Code Analysis**: Deep parsing of C/C++ files including structs, enums, unions, functions, macros, typedefs, and global variables
+- **Typedef Relationship Analysis**: Comprehensive parsing of typedef relationships with proper UML stereotypes
+- **Include Depth Processing**: Configurable depth for processing include relationships and their content
 - **Model Generation**: Creates comprehensive JSON-based abstract models of parsed code structures
 - **Diagram Generation**: Converts models into PlantUML class diagrams with proper UML notation
 - **Advanced Filtering**: Regex-based filtering of files and code elements
@@ -22,25 +24,30 @@ The application follows a clear 3-step processing flow:
 ## 2. High-Level Requirements
 
 ### 2.1 Core Requirements
-- **R1**: Parse C/C++ source files and extract structural information (structs, enums, functions, macros, globals)
+- **R1**: Parse C/C++ source files and extract structural information (structs, enums, unions, functions, macros, globals, typedefs)
 - **R2**: Generate comprehensive JSON models representing parsed code structure
 - **R3**: Convert JSON models into PlantUML class diagrams with proper UML notation
 - **R4**: Support multi-project analysis with configurable project roots
 - **R5**: Provide command-line interface with multiple operation modes
+- **R6**: Parse and visualize typedef relationships with proper UML stereotypes («defines», «alias»)
+- **R7**: Support configurable include depth processing for header relationships
 
 ### 2.2 Advanced Requirements
-- **R6**: Support regex-based filtering of files and code elements
-- **R7**: Enable model transformation with renaming and element addition capabilities
-- **R8**: Support multi-configuration file loading and merging
-- **R9**: Generate structured output with customizable packaging
-- **R10**: Handle encoding issues and provide robust error handling
+- **R8**: Support regex-based filtering of files and code elements
+- **R9**: Enable model transformation with renaming and element addition capabilities
+- **R10**: Support multi-configuration file loading and merging
+- **R11**: Generate structured output with customizable packaging
+- **R12**: Handle encoding issues and provide robust error handling
+- **R13**: Parse and visualize unions with their fields
+- **R14**: Handle typedefs for struct/enum/union (named and anonymous) with content display
+- **R15**: Show relationships between typedefs and their underlying types
 
 ### 2.3 Quality Requirements
-- **R11**: Maintain backward compatibility with existing configurations
-- **R12**: Provide comprehensive error handling and validation
-- **R13**: Optimize performance with pre-compiled regex patterns
-- **R14**: Support both single-file and batch processing workflows
-- **R15**: Comprehensive testing with unit, integration, and output verification tests
+- **R16**: Maintain backward compatibility with existing configurations
+- **R17**: Provide comprehensive error handling and validation
+- **R18**: Optimize performance with pre-compiled regex patterns
+- **R19**: Support both single-file and batch processing workflows
+- **R20**: Comprehensive testing with unit, integration, and output verification tests
 
 ## 3. Software Architecture and Structure
 
@@ -85,27 +92,37 @@ tests/
   - Parser coordination
   - Model assembly and serialization
   - Configuration integration
+  - Include depth processing for header relationships
 
 #### 3.2.3 C Parser (`parser.py`)
 - **Purpose**: Parses C/C++ source code into structured data
 - **Capabilities**:
   - Multi-line macro parsing
   - Function declaration extraction
-  - Struct and enum parsing
+  - Struct, enum, and union parsing
+  - Typedef relationship extraction with stereotypes
   - Header file resolution
   - Encoding detection and handling
+  - Robust typedef parsing for struct/enum/union (named and anonymous)
 
 #### 3.2.4 Configuration Handler (`config.py`)
 - **Purpose**: Configuration loading, validation, and filtering
 - **Features**:
   - JSON configuration file loading
   - Regex-based file filtering
-  - Element-level filtering (structs, enums, functions, globals)
+  - Element-level filtering (structs, enums, unions, functions, globals)
+  - Include depth configuration
   - Configuration validation and error handling
 
 #### 3.2.5 PlantUML Generator (`generator.py`)
 - **Purpose**: Converts JSON models into PlantUML diagrams
 - **Output**: Structured PlantUML files with proper UML notation
+- **Features**:
+  - Typedef relationship visualization with stereotypes
+  - Header content display in diagrams
+  - Header-to-header relationship arrows
+  - Union field display
+  - Enhanced typedef content and relationship display
 
 ### 3.3 Data Models
 
@@ -129,11 +146,40 @@ class FileModel:
     encoding_used: str
     structs: Dict[str, Struct]
     enums: Dict[str, Enum]
+    unions: Dict[str, Union]
     functions: List[Function]
     globals: List[Field]
     includes: List[str]
     macros: List[str]
     typedefs: Dict[str, str]
+    typedef_relations: List[TypedefRelation]
+    include_relations: List[IncludeRelation]
+```
+
+#### 3.3.3 Typedef Relation Model
+```python
+@dataclass
+class TypedefRelation:
+    typedef_name: str
+    original_type: str
+    relationship_type: str  # 'defines' or 'alias'
+```
+
+#### 3.3.4 Include Relation Model
+```python
+@dataclass
+class IncludeRelation:
+    source_file: str
+    included_file: str
+    depth: int
+```
+
+#### 3.3.5 Union Model
+```python
+@dataclass
+class Union:
+    name: str
+    fields: List[Field]
 ```
 
 ### 3.4 Command Interface
@@ -151,12 +197,16 @@ All tests are organized under the `tests/` directory with comprehensive coverage
 - **Integration Tests**: Test complete workflows and component interactions
 - **Configuration Tests**: Test configuration loading, validation, and filtering
 - **Output Verification Tests**: Test PlantUML generation and output quality
+- **Typedef Relationship Tests**: Test typedef parsing and relationship visualization
+- **Union Tests**: Test union parsing and field display
 
 ### 4.2 Test Categories
 - **Parser Tests**: Verify C/C++ parsing accuracy and edge cases
 - **Configuration Tests**: Validate configuration loading, filtering, and transformation
 - **Generator Tests**: Ensure PlantUML output correctness and formatting
 - **Integration Tests**: Test complete workflows from parsing to diagram generation
+- **Typedef Tests**: Test typedef relationship parsing and visualization
+- **Union Tests**: Test union parsing and content display
 
 ### 4.3 Test Execution
 ```bash
@@ -186,6 +236,7 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
     {functions}
     {structs}
     {enums}
+    {unions}
 }
 
 ' For each included header file with actual content:
@@ -210,61 +261,110 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
     -- Enums --
     + enum {enum_name}
         + {value}
+    
+    -- Unions --
+    + union {union_name}
+        + {type} {field_name}
 }
 
-{UML_ID} --> {HEADER_UML_ID} : <<include>>
+' Typedef classes for struct/enum/union:
+class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
+{
+    + struct {original_type}
+        + {type} {field_name}
+}
 
-' Header-to-header relationships:
+class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
+{
+    + struct {original_type}
+        + {type} {field_name}
+}
+
+' Relationships:
+{UML_ID} --> {HEADER_UML_ID} : <<include>>
 {HEADER_UML_ID} --> {OTHER_HEADER_UML_ID} : <<include>>
+{TYPEDEF_UML_ID} *-- {TYPE_UML_ID} : «defines»
+{TYPEDEF_UML_ID} -|> {TYPE_UML_ID} : «alias»
 
 @enduml
 ```
 
-- **Header files show their actual content**: Macros, typedefs, global variables, functions, structs, and enums from header files are displayed in the header classes.
-- **Header-to-header relationships**: When headers include other headers, these relationships are shown with arrows.
-- **Only .c files generate diagrams**: The output filename is `{basename}.puml` (no `.c` extension).
-- **Header files do not generate separate diagrams**: They are shown as classes within .c file diagrams.
+### 5.2 Typedef Relationship Visualization
 
-### 5.2 Styling and Formatting
+#### 5.2.1 Typedef Stereotypes
+- **«defines»**: Used when a typedef defines a new type (e.g., `typedef struct { ... } MyStruct;`)
+- **«alias»**: Used when a typedef creates an alias for an existing type (e.g., `typedef int MyInt;`)
 
-#### 5.2.1 Color Scheme
+#### 5.2.2 Relationship Notation
+- **Defines relationship**: `{typedef} *-- {original_type} : «defines»`
+- **Alias relationship**: `{typedef} -|> {original_type} : «alias»`
+
+#### 5.2.3 Typedef Content Display
+- **Struct typedefs**: Show struct fields within the typedef class
+- **Enum typedefs**: Show enum values within the typedef class
+- **Union typedefs**: Show union fields within the typedef class
+- **Basic type typedefs**: Show the original type name
+
+### 5.3 Include Depth Configuration
+
+#### 5.3.1 Configuration Parameter
+- **`include_depth`**: Controls how deep to process include relationships
+- **Default**: 1 (only direct includes)
+- **Values**: 1, 2, 3, etc. (recursive depth)
+
+#### 5.3.2 Processing Behavior
+- **Depth 1**: Only direct includes are processed
+- **Depth 2+**: Includes of includes are also processed and their content is displayed
+- **Header relationships**: All header-to-header relationships are shown with arrows
+
+### 5.4 Styling and Formatting
+
+#### 5.4.1 Color Scheme
 - **Source files**: `#LightBlue` background, `<<source>>` stereotype
 - **Header files**: `#LightGreen` background, `<<header>>` stereotype
 - **Typedefs**: `#LightYellow` background, `<<typedef>>` stereotype
 - **Types**: `#LightGray` background, `<<type>>` stereotype
 
-#### 5.2.2 Visibility Notation
+#### 5.4.2 Visibility Notation
 - **Public members**: `+` prefix
 - **Private/Static members**: `-` prefix
 - **Macros**: `#define` prefix with `+` visibility
 
-#### 5.2.3 Element Representation
+#### 5.4.3 Element Representation
 - **Functions**: `{visibility}{return_type} {function_name}()`
 - **Global variables**: `{visibility} {type} {variable_name}`
 - **Macros**: `{visibility} #define {macro_name}`
 - **Struct fields**: `{visibility} {type} {field_name}`
+- **Union fields**: `{visibility} {type} {field_name}`
+- **Enum values**: `{visibility} {value}`
 
-#### 5.2.4 Relationships
+#### 5.4.4 Relationships
 - **Include relationships**: `{source} --> {header} : <<include>>` (arrows only)
 - **Header-to-header relationships**: `{header1} --> {header2} : <<include>>`
 - **Typedef relationships**: `*--` for «defines», `-|>` for «alias»
 
-### 5.3 Output Organization
+### 5.5 Output Organization
 - **File naming**: `{basename}.puml` for each .c file (no extension in the name)
 - **Directory structure**: Mirrors source project structure
 - **Header files**: Shown as classes with full content in diagrams, but do not generate separate .puml files
 - **Header relationships**: Include relationships between headers are displayed with arrows
+- **Typedef classes**: Separate classes for typedefs with their content and relationships
 
-### 5.4 Configuration-Driven Customization
+### 5.6 Configuration-Driven Customization
 The output can be customized through JSON configuration:
 - File filtering patterns
 - Element inclusion/exclusion rules
 - Transformation and renaming rules
 - Custom element additions
 - Output directory structure
+- Include depth configuration
 
-**Note:**
-- Only .c files generate PlantUML diagrams. Header files are represented as classes with their full content and arrows, but do not have their own .puml files.
-- All referenced include files are shown as classes with the `<<header>>` stereotype and their actual content (macros, typedefs, globals, functions, structs, enums).
-- Header-to-header include relationships are displayed with arrows.
-- No #include lines are shown in the class content; all include relationships are visualized with arrows only.
+**Key Features:**
+- **Only .c files generate PlantUML diagrams**: Header files are represented as classes with their full content and arrows, but do not have their own .puml files
+- **All referenced include files are shown**: As classes with the `<<header>>` stereotype and their actual content (macros, typedefs, globals, functions, structs, enums, unions)
+- **Header-to-header include relationships**: Displayed with arrows
+- **No #include lines in class content**: All include relationships are visualized with arrows only
+- **Typedef relationships**: Shown with proper UML stereotypes («defines», «alias») and relationship notation
+- **Typedef content display**: Struct/enum/union typedefs show their fields/values within the typedef class
+- **Union support**: Unions are parsed and displayed with their fields
+- **Include depth processing**: Configurable depth for processing include relationships
