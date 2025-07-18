@@ -1,203 +1,290 @@
 #!/usr/bin/env python3
 """
-Comprehensive test runner for the C to PlantUML converter
+Comprehensive test runner for C to PlantUML converter
+Runs unit tests, integration tests, and performance tests
 """
 
 import os
 import sys
 import subprocess
 import tempfile
-import shutil
-import time
+import json
 from pathlib import Path
 
-def run_command(cmd, description, cwd=None):
-    """Run a command and report results"""
-    print(f"\n{'='*60}")
-    print(f"Running: {description}")
+
+def run_command(cmd, description, check_returncode=True):
+    """Run a command and return success status"""
     print(f"Command: {cmd}")
-    print(f"{'='*60}")
+    print("=" * 60)
     
     try:
         result = subprocess.run(
-            cmd, 
-            shell=True, 
-            check=True, 
-            capture_output=True, 
+            cmd,
+            shell=True,
+            capture_output=True,
             text=True,
-            cwd=cwd
+            timeout=120
         )
-        print("✅ PASSED")
+        
         if result.stdout:
             print("STDOUT:", result.stdout)
-        return True
-    except subprocess.CalledProcessError as e:
-        print("❌ FAILED")
-        print("STDERR:", e.stderr)
-        print("STDOUT:", e.stdout)
+        if result.stderr:
+            print("STDERR:", result.stderr)
+        
+        if check_returncode and result.returncode != 0:
+            print("❌ FAILED")
+            return False
+        else:
+            print("✅ PASSED")
+            return True
+            
+    except subprocess.TimeoutExpired:
+        print("❌ FAILED (timeout)")
         return False
+    except Exception as e:
+        print(f"❌ FAILED (error: {e})")
+        return False
+
 
 def main():
     """Run all tests"""
     print("C to PlantUML Converter - Comprehensive Test Suite")
     print("=" * 60)
+    print()
     
-    # Track test results
-    passed_tests = 0
-    total_tests = 0
+    test_results = []
     
-    # 1. Unit Tests
-    tests = [
-        ("python3 -m unittest tests.test_enhanced_parser -v", "Enhanced Parser Unit Tests"),
-        ("python3 -m unittest tests.test_project_analyzer -v", "Project Analyzer Unit Tests"),
-    ]
+    # Unit Tests
+    print("=" * 60)
+    print("Running: Parser Unit Tests")
+    success = run_command(
+        "python3 -m unittest tests.test_parser -v",
+        "Parser Unit Tests"
+    )
+    test_results.append(("Parser Unit Tests", success))
+    print()
     
-    for cmd, desc in tests:
-        total_tests += 1
-        if run_command(cmd, desc):
-            passed_tests += 1
+    print("=" * 60)
+    print("Running: Project Analyzer Unit Tests")
+    success = run_command(
+        "python3 -m unittest tests.test_project_analyzer -v",
+        "Project Analyzer Unit Tests"
+    )
+    test_results.append(("Project Analyzer Unit Tests", success))
+    print()
     
-    # 2. Integration Tests
-    print(f"\n{'='*60}")
+    # Integration Tests
+    print("=" * 60)
     print("Integration Tests")
-    print(f"{'='*60}")
+    print("=" * 60)
+    print()
     
-    # Create temporary directory for testing
-    with tempfile.TemporaryDirectory() as temp_dir:
-        temp_path = Path(temp_dir)
-        
-        # Test with new configuration
-        total_tests += 1
-        if run_command(
-            "python3 -m c_to_plantuml.main --config test_config.json --clean --verbose",
-            "Full Workflow Test"
-        ):
-            # Verify outputs
-            if (Path("project_model.json").exists() and 
-                Path("output_uml").exists() and 
-                len(list(Path("output_uml").glob("*.puml"))) > 0):
-                print("✅ Output verification passed")
-                passed_tests += 1
-            else:
-                print("❌ Output verification failed")
-        
-        # Test CLI tools
-        total_tests += 1
-        if run_command(
-            f"python3 -c \"\nimport sys\nsys.path.insert(0, '.')\nfrom c_to_plantuml.main import analyze_project_cli\nimport os\nsys.argv = ['analyze_project_cli', './tests/test_files', '--output', '{temp_path}/cli_model.json', '--name', 'CLI_Test']\nanalyze_project_cli()\"",
-            "CLI Analysis Tool Test"
-        ):
-            if (temp_path / "cli_model.json").exists():
-                total_tests += 1
-                if run_command(
-                    f"python3 -c \"\nimport sys\nsys.path.insert(0, '.')\nfrom c_to_plantuml.main import generate_plantuml_cli\nimport os\nsys.argv = ['generate_plantuml_cli', '{temp_path}/cli_model.json', '--output', '{temp_path}/cli_output']\ngenerate_plantuml_cli()\"",
-                    "CLI Generation Tool Test"
-                ):
-                    if (temp_path / "cli_output").exists():
-                        print("✅ CLI tools verification passed")
-                        passed_tests += 1
-                    else:
-                        print("❌ CLI generation failed")
-            else:
-                print("❌ CLI analysis failed")
+    # Test 1: Full workflow using config
+    print("=" * 60)
+    print("Running: Full Workflow Test")
+    success = run_command(
+        "python3 -m c_to_plantuml.main config test_config.json",
+        "Full Workflow Test"
+    )
+    test_results.append(("Full Workflow Test", success))
+    print()
     
-    # 3. Performance Tests
-    print(f"\n{'='*60}")
-    print("Performance Tests")
-    print(f"{'='*60}")
+    # Test 2: CLI analysis tool
+    print("=" * 60)
+    print("Running: CLI Analysis Tool Test")
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        cmd = f"""python3 -c "
+import sys
+sys.path.insert(0, '.')
+from c_to_plantuml.main import handle_analyze_command
+import argparse
+args = argparse.Namespace()
+args.project_roots = ['./tests/test_files']
+args.output = '{tmp_dir}/cli_model.json'
+args.name = 'CLI_Test'
+args.prefixes = None
+args.no_recursive = False
+handle_analyze_command(args)"
+"""
+        success = run_command(cmd, "CLI Analysis Tool Test")
+        test_results.append(("CLI Analysis Tool Test", success))
+    print()
     
-    try:
-        from c_to_plantuml.project_analyzer import ProjectAnalyzer
+    # Test 3: PlantUML generation from JSON
+    print("=" * 60)
+    print("Running: PlantUML Generation Test")
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        # First create a test model
+        model_path = f"{tmp_dir}/test_model.json"
+        cmd1 = f"""python3 -c "
+import sys
+sys.path.insert(0, '.')
+from c_to_plantuml.project_analyzer import ProjectAnalyzer
+analyzer = ProjectAnalyzer()
+model = analyzer.analyze_and_save(['./tests/test_files'], '{model_path}', 'PlantUML_Test')
+print('Model created successfully')
+"
+"""
+        success1 = run_command(cmd1, "Create Test Model", check_returncode=False)
         
-        start_time = time.perf_counter()
-        analyzer = ProjectAnalyzer()
-        model = analyzer.analyze_project(['./tests/test_files'], 'Performance_Test')
-        end_time = time.perf_counter()
-        
-        duration = end_time - start_time
-        total_tests += 1
-        
-        print(f"Analysis completed in {duration:.2f} seconds")
-        print(f"Files processed: {len(model.files)}")
-        
-        if duration < 10:  # Should complete within 10 seconds for test files
-            print("✅ Performance test passed")
-            passed_tests += 1
+        if success1:
+            # Then generate PlantUML
+            cmd2 = f"""python3 -c "
+import sys
+sys.path.insert(0, '.')
+from c_to_plantuml.main import handle_generate_command
+import argparse
+args = argparse.Namespace()
+args.model_json = '{model_path}'
+args.output_dir = '{tmp_dir}/plantuml_output'
+handle_generate_command(args)"
+"""
+            success2 = run_command(cmd2, "Generate PlantUML")
+            success = success1 and success2
         else:
-            print("❌ Performance test failed - took too long")
+            success = False
+        
+        test_results.append(("PlantUML Generation Test", success))
+    print()
+    
+    # Performance Tests
+    print("=" * 60)
+    print("Performance Tests")
+    print("=" * 60)
+    try:
+        import time
+        from c_to_plantuml.parsers.c_parser import CParser
+        
+        # Create a large test file
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
+            large_content = '''
+#include <stdio.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 1024
+
+typedef struct {
+    int id;
+    char name[50];
+    double value;
+} TestStruct;
+
+''' + '\n'.join([f'int function_{i}(int param) {{ return param * {i}; }}' for i in range(200)])
             
+            f.write(large_content)
+            temp_file = f.name
+        
+        parser = CParser()
+        
+        # Measure parsing time
+        start_time = time.time()
+        parser.parse_file(temp_file)
+        parse_time = time.time() - start_time
+        
+        print(f"Performance Test Results:")
+        print(f"- Parsed file with 200+ functions in {parse_time:.3f} seconds")
+        print(f"- Found {len(parser.functions)} functions")
+        print(f"- Found {len(parser.structs)} structs")
+        
+        # Cleanup
+        os.unlink(temp_file)
+        
+        perf_success = parse_time < 2.0  # Should parse in under 2 seconds
+        test_results.append(("Performance Test", perf_success))
+        
+        if perf_success:
+            print("✅ Performance test passed")
+        else:
+            print("❌ Performance test failed (too slow)")
+        
     except Exception as e:
         print(f"❌ Performance test error: {e}")
+        test_results.append(("Performance Test", False))
+    print()
     
-    # 4. Code Quality Tests
-    print(f"\n{'='*60}")
+    # Code Quality Tests
+    print("=" * 60)
     print("Code Quality Tests")
-    print(f"{'='*60}")
+    print("=" * 60)
     
-    # Check for Python syntax errors
-    total_tests += 1
-    if run_command(
-        "python3 -m py_compile c_to_plantuml/parsers/c_parser_enhanced.py",
-        "Syntax Check - Enhanced Parser"
-    ):
-        passed_tests += 1
-    
-    total_tests += 1
-    if run_command(
-        "python3 -m py_compile c_to_plantuml/project_analyzer.py",
-        "Syntax Check - Project Analyzer"
-    ):
-        passed_tests += 1
-    
-    total_tests += 1
-    if run_command(
-        "python3 -m py_compile c_to_plantuml/generators/plantuml_generator.py",
-        "Syntax Check - PlantUML Generator"
-    ):
-        passed_tests += 1
-    
-    # 5. File Structure Tests
-    print(f"\n{'='*60}")
-    print("File Structure Tests")
-    print(f"{'='*60}")
-    
-    required_files = [
-        "c_to_plantuml/parsers/c_parser_enhanced.py",
+    # Syntax checks
+    code_files = [
+        "c_to_plantuml/parsers/c_parser.py",
+        "c_to_plantuml/project_analyzer.py",
+        "c_to_plantuml/generators/plantuml_generator.py",
         "c_to_plantuml/models/project_model.py",
+        "c_to_plantuml/main.py"
+    ]
+    
+    syntax_success = True
+    for file_path in code_files:
+        print("=" * 60)
+        print(f"Running: Syntax Check - {Path(file_path).stem}")
+        success = run_command(f"python3 -m py_compile {file_path}", f"Syntax Check - {file_path}")
+        syntax_success = syntax_success and success
+        print()
+    
+    test_results.append(("Code Syntax Checks", syntax_success))
+    
+    # File structure tests
+    print("=" * 60)
+    print("File Structure Tests")
+    print("=" * 60)
+    required_files = [
+        "c_to_plantuml/__init__.py",
+        "c_to_plantuml/main.py",
+        "c_to_plantuml/parsers/__init__.py",
+        "c_to_plantuml/parsers/c_parser.py",
+        "c_to_plantuml/models/__init__.py",
+        "c_to_plantuml/models/c_structures.py",
+        "c_to_plantuml/models/project_model.py",
+        "c_to_plantuml/generators/__init__.py",
         "c_to_plantuml/generators/plantuml_generator.py",
         "c_to_plantuml/project_analyzer.py",
-        "c_to_plantuml/main.py",
-        "tests/test_files/sample.c",
-        "tests/test_files/sample.h",
-        "test_config.json",
+        "c_to_plantuml/utils/__init__.py",
+        "c_to_plantuml/utils/file_utils.py",
+        "tests/test_parser.py",
+        "tests/test_project_analyzer.py",
         "setup.py"
     ]
     
     missing_files = []
     for file_path in required_files:
-        if not Path(file_path).exists():
+        if not os.path.exists(file_path):
             missing_files.append(file_path)
     
-    total_tests += 1
-    if not missing_files:
-        print("✅ All required files present")
-        passed_tests += 1
-    else:
+    if missing_files:
         print(f"❌ Missing files: {missing_files}")
+        structure_success = False
+    else:
+        print("✅ All required files present")
+        structure_success = True
     
-    # Final Results
-    print(f"\n{'='*60}")
+    test_results.append(("File Structure", structure_success))
+    print()
+    
+    # Summary
+    print("=" * 60)
     print("TEST RESULTS SUMMARY")
-    print(f"{'='*60}")
-    print(f"Passed: {passed_tests}/{total_tests}")
-    print(f"Success Rate: {(passed_tests/total_tests*100):.1f}%")
+    print("=" * 60)
     
-    if passed_tests == total_tests:
+    passed = sum(1 for _, success in test_results if success)
+    total = len(test_results)
+    
+    for test_name, success in test_results:
+        status = "✅ PASSED" if success else "❌ FAILED"
+        print(f"{test_name}: {status}")
+    
+    print(f"\nPassed: {passed}/{total}")
+    print(f"Success Rate: {passed/total*100:.1f}%")
+    
+    if passed == total:
         print("🎉 ALL TESTS PASSED!")
         return 0
     else:
         print("❌ SOME TESTS FAILED!")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

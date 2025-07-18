@@ -3,241 +3,272 @@
 Main entry point for C to PlantUML converter with JSON model approach
 """
 
-import os
-import sys
 import argparse
+import sys
+import os
 import json
-import shutil
-from pathlib import Path
-
 from .project_analyzer import ProjectAnalyzer, load_config_and_analyze
 from .generators.plantuml_generator import generate_plantuml_from_json
+from .models.project_model import ProjectModel
 
-def main():
-    """Main entry point for the C to PlantUML converter"""
-    parser = argparse.ArgumentParser(
-        description="Convert C/C++ projects to PlantUML diagrams using enhanced parsing and JSON models"
+def create_analyze_parser(subparsers):
+    """Create the analyze subcommand parser"""
+    analyze_parser = subparsers.add_parser(
+        'analyze', 
+        help='Analyze C code and create JSON model'
     )
-    
-    parser.add_argument(
-        '--config', '-c',
-        type=str,
-        default='test_config.json',
-        help='Configuration file path (default: test_config.json)'
+    analyze_parser.add_argument(
+        'project_roots', 
+        nargs='+', 
+        help='Root directories of C projects to analyze'
     )
-    
-    parser.add_argument(
-        '--analyze-only', '-a',
-        action='store_true',
-        help='Only perform analysis and save JSON model, skip PlantUML generation'
+    analyze_parser.add_argument(
+        '-o', '--output', 
+        default='./project_model.json',
+        help='Output path for JSON model (default: ./project_model.json)'
     )
-    
-    parser.add_argument(
-        '--generate-only', '-g',
-        type=str,
-        metavar='JSON_MODEL',
-        help='Generate PlantUML from existing JSON model file'
-    )
-    
-    parser.add_argument(
-        '--output-dir', '-o',
-        type=str,
-        help='Output directory for PlantUML files (overrides config)'
-    )
-    
-    parser.add_argument(
-        '--clean', 
-        action='store_true',
-        help='Clean output directories before generation'
-    )
-    
-    parser.add_argument(
-        '--verbose', '-v',
-        action='store_true',
-        help='Enable verbose output'
-    )
-    
-    args = parser.parse_args()
-    
-    if args.verbose:
-        print(f"C to PlantUML Converter")
-        print(f"Configuration: {args.config}")
-    
-    try:
-        if args.generate_only:
-            # Generate PlantUML from existing JSON model
-            if not os.path.exists(args.generate_only):
-                print(f"Error: JSON model file not found: {args.generate_only}")
-                sys.exit(1)
-            
-            output_dir = args.output_dir or './output_uml'
-            
-            if args.clean and os.path.exists(output_dir):
-                shutil.rmtree(output_dir)
-                if args.verbose:
-                    print(f"Cleaned output directory: {output_dir}")
-            
-            print(f"Generating PlantUML from JSON model: {args.generate_only}")
-            generate_plantuml_from_json(args.generate_only, output_dir)
-            
-        else:
-            # Full workflow: analyze and optionally generate
-            if not os.path.exists(args.config):
-                print(f"Error: Configuration file not found: {args.config}")
-                sys.exit(1)
-            
-            # Load configuration
-            with open(args.config, 'r', encoding='utf-8') as f:
-                config = json.load(f)
-            
-            # Clean model output if requested
-            model_output_path = config.get('model_output_path', './project_model.json')
-            if args.clean and os.path.exists(model_output_path):
-                os.remove(model_output_path)
-                if args.verbose:
-                    print(f"Cleaned model file: {model_output_path}")
-            
-            # Analyze project and create JSON model
-            print("Starting project analysis...")
-            model = load_config_and_analyze(args.config)
-            
-            if args.analyze_only:
-                print("Analysis complete. JSON model saved.")
-                print(f"Model location: {model_output_path}")
-                return
-            
-            # Generate PlantUML from the created model
-            output_dir = args.output_dir or config.get('output_dir', './output_uml')
-            
-            if args.clean and os.path.exists(output_dir):
-                shutil.rmtree(output_dir)
-                if args.verbose:
-                    print(f"Cleaned PlantUML output directory: {output_dir}")
-            
-            print("Generating PlantUML diagrams...")
-            generate_plantuml_from_json(model_output_path, output_dir)
-            
-            # Also run packager if configured
-            if 'output_dir_packaged' in config:
-                output_dir_packaged = config['output_dir_packaged']
-                
-                if args.clean and os.path.exists(output_dir_packaged):
-                    shutil.rmtree(output_dir_packaged)
-                    if args.verbose:
-                        print(f"Cleaned packaged output directory: {output_dir_packaged}")
-                
-                print("Running packager...")
-                from packager.packager import package_puml_files
-                package_puml_files(output_dir, output_dir_packaged, config.get('project_roots', []))
-        
-        print("Process completed successfully!")
-        
-    except Exception as e:
-        print(f"Error: {e}")
-        if args.verbose:
-            import traceback
-            traceback.print_exc()
-        sys.exit(1)
-
-def analyze_project_cli():
-    """CLI entry point for project analysis only"""
-    parser = argparse.ArgumentParser(
-        description="Analyze C/C++ project and create JSON model"
-    )
-    
-    parser.add_argument(
-        'project_roots',
-        nargs='+',
-        help='Project root directories to analyze'
-    )
-    
-    parser.add_argument(
-        '--output', '-o',
-        type=str,
-        default='project_model.json',
-        help='Output JSON model file (default: project_model.json)'
-    )
-    
-    parser.add_argument(
-        '--name', '-n',
-        type=str,
+    analyze_parser.add_argument(
+        '-n', '--name', 
         default='C_Project',
         help='Project name (default: C_Project)'
     )
-    
-    parser.add_argument(
-        '--prefixes', '-p',
+    analyze_parser.add_argument(
+        '-p', '--prefixes', 
         nargs='*',
-        help='C file prefixes to filter'
+        help='C file prefixes to include (e.g., main_ test_)'
     )
-    
-    parser.add_argument(
-        '--no-recursive',
+    analyze_parser.add_argument(
+        '--no-recursive', 
         action='store_true',
-        help='Disable recursive directory scanning'
+        help='Disable recursive directory search'
+    )
+    return analyze_parser
+
+def create_generate_parser(subparsers):
+    """Create the generate subcommand parser"""
+    generate_parser = subparsers.add_parser(
+        'generate', 
+        help='Generate PlantUML diagrams from JSON model'
+    )
+    generate_parser.add_argument(
+        'model_json', 
+        help='Path to JSON model file'
+    )
+    generate_parser.add_argument(
+        '-o', '--output-dir', 
+        default='./plantuml_output',
+        help='Output directory for PlantUML files (default: ./plantuml_output)'
+    )
+    return generate_parser
+
+def create_config_parser(subparsers):
+    """Create the config subcommand parser"""
+    config_parser = subparsers.add_parser(
+        'config', 
+        help='Run analysis using configuration file'
+    )
+    config_parser.add_argument(
+        'config_file', 
+        help='Path to JSON configuration file'
+    )
+    return config_parser
+
+def create_full_parser(subparsers):
+    """Create the full workflow subcommand parser"""
+    full_parser = subparsers.add_parser(
+        'full', 
+        help='Complete workflow: analyze and generate PlantUML'
+    )
+    full_parser.add_argument(
+        'project_roots', 
+        nargs='+', 
+        help='Root directories of C projects to analyze'
+    )
+    full_parser.add_argument(
+        '-o', '--output-dir', 
+        default='./c2plantuml_output',
+        help='Output directory (default: ./c2plantuml_output)'
+    )
+    full_parser.add_argument(
+        '-n', '--name', 
+        default='C_Project',
+        help='Project name (default: C_Project)'
+    )
+    full_parser.add_argument(
+        '-p', '--prefixes', 
+        nargs='*',
+        help='C file prefixes to include'
+    )
+    full_parser.add_argument(
+        '--no-recursive', 
+        action='store_true',
+        help='Disable recursive directory search'
+    )
+    full_parser.add_argument(
+        '--keep-json', 
+        action='store_true',
+        help='Keep the intermediate JSON model file'
+    )
+    return full_parser
+
+def handle_analyze_command(args):
+    """Handle the analyze subcommand"""
+    print(f"Analyzing C project(s): {', '.join(args.project_roots)}")
+    
+    analyzer = ProjectAnalyzer()
+    model = analyzer.analyze_and_save(
+        project_roots=args.project_roots,
+        output_path=args.output,
+        project_name=args.name,
+        c_file_prefixes=args.prefixes,
+        recursive=not args.no_recursive
     )
     
-    args = parser.parse_args()
+    print(f"Analysis complete! JSON model saved to: {args.output}")
+    print(f"Analyzed {len(model.files)} C files")
+    return 0
+
+def handle_generate_command(args):
+    """Handle the generate subcommand"""
+    print(f"Generating PlantUML diagrams from: {args.model_json}")
+    
+    if not os.path.exists(args.model_json):
+        print(f"Error: Model file not found: {args.model_json}")
+        return 1
     
     try:
-        analyzer = ProjectAnalyzer()
-        model = analyzer.analyze_and_save(
-            project_roots=args.project_roots,
-            output_path=args.output,
-            project_name=args.name,
-            c_file_prefixes=args.prefixes or [],
-            recursive=not args.no_recursive
-        )
-        
-        print(f"Analysis complete!")
-        print(f"Files analyzed: {len(model.files)}")
-        print(f"Model saved to: {args.output}")
-        
+        generate_plantuml_from_json(args.model_json, args.output_dir)
+        print(f"PlantUML generation complete! Output in: {args.output_dir}")
+        return 0
     except Exception as e:
-        print(f"Error: {e}")
-        sys.exit(1)
+        print(f"Error generating PlantUML: {e}")
+        return 1
 
-def generate_plantuml_cli():
-    """CLI entry point for PlantUML generation only"""
+def handle_config_command(args):
+    """Handle the config subcommand"""
+    print(f"Running analysis using config: {args.config_file}")
+    
+    if not os.path.exists(args.config_file):
+        print(f"Error: Config file not found: {args.config_file}")
+        return 1
+    
+    try:
+        model = load_config_and_analyze(args.config_file)
+        print(f"Config-based analysis complete!")
+        print(f"Analyzed {len(model.files)} C files")
+        return 0
+    except Exception as e:
+        print(f"Error in config-based analysis: {e}")
+        return 1
+
+def handle_full_command(args):
+    """Handle the full workflow subcommand"""
+    print(f"Running complete workflow for: {', '.join(args.project_roots)}")
+    
+    # Step 1: Analysis
+    model_path = os.path.join(args.output_dir, f"{args.name}_model.json")
+    
+    analyzer = ProjectAnalyzer()
+    model = analyzer.analyze_and_save(
+        project_roots=args.project_roots,
+        output_path=model_path,
+        project_name=args.name,
+        c_file_prefixes=args.prefixes,
+        recursive=not args.no_recursive
+    )
+    
+    print(f"Analysis complete! Analyzed {len(model.files)} C files")
+    
+    # Step 2: PlantUML Generation
+    try:
+        generate_plantuml_from_json(model_path, args.output_dir)
+        print(f"PlantUML generation complete!")
+    except Exception as e:
+        print(f"Error generating PlantUML: {e}")
+        return 1
+    
+    # Step 3: Cleanup (if requested)
+    if not args.keep_json:
+        try:
+            os.remove(model_path)
+            print(f"Cleaned up intermediate JSON file")
+        except OSError:
+            print(f"Warning: Could not remove {model_path}")
+    
+    print(f"Complete workflow finished! Output in: {args.output_dir}")
+    return 0
+
+def main():
+    """Main entry point for the C to PlantUML converter"""
+    
     parser = argparse.ArgumentParser(
-        description="Generate PlantUML diagrams from JSON model"
-    )
+        description='Convert C code to PlantUML diagrams',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Analyze C code and create JSON model
+  c2plantuml analyze /path/to/project -o project.json -n MyProject
+  
+  # Generate PlantUML from existing JSON model
+  c2plantuml generate project.json -o plantuml_diagrams/
+  
+  # Complete workflow: analyze and generate
+  c2plantuml full /path/to/project -o output/ -n MyProject
+  
+  # Use configuration file
+  c2plantuml config my_config.json
+  
+  # Filter files by prefix
+  c2plantuml analyze /project -p main_ test_ -o filtered.json
+        """)
     
-    parser.add_argument(
-        'json_model',
-        help='JSON model file path'
-    )
+    subparsers = parser.add_subparsers(dest='command', help='Available commands')
     
-    parser.add_argument(
-        '--output', '-o',
-        type=str,
-        default='./output_uml',
-        help='Output directory for PlantUML files (default: ./output_uml)'
-    )
+    # Create subcommand parsers
+    create_analyze_parser(subparsers)
+    create_generate_parser(subparsers)
+    create_config_parser(subparsers)
+    create_full_parser(subparsers)
     
-    parser.add_argument(
-        '--clean',
-        action='store_true',
-        help='Clean output directory before generation'
-    )
-    
+    # Parse arguments
     args = parser.parse_args()
     
+    if not args.command:
+        parser.print_help()
+        return 1
+    
+    # Route to appropriate handler
     try:
-        if not os.path.exists(args.json_model):
-            print(f"Error: JSON model file not found: {args.json_model}")
-            sys.exit(1)
-        
-        if args.clean and os.path.exists(args.output):
-            shutil.rmtree(args.output)
-            print(f"Cleaned output directory: {args.output}")
-        
-        generate_plantuml_from_json(args.json_model, args.output)
-        print("PlantUML generation complete!")
-        
+        if args.command == 'analyze':
+            return handle_analyze_command(args)
+        elif args.command == 'generate':
+            return handle_generate_command(args)
+        elif args.command == 'config':
+            return handle_config_command(args)
+        elif args.command == 'full':
+            return handle_full_command(args)
+        else:
+            print(f"Unknown command: {args.command}")
+            return 1
+            
+    except KeyboardInterrupt:
+        print("\nOperation cancelled by user")
+        return 1
     except Exception as e:
-        print(f"Error: {e}")
-        sys.exit(1)
+        print(f"Unexpected error: {e}")
+        return 1
 
-if __name__ == "__main__":
-    main() 
+def c2plantuml_analyze():
+    """Entry point for c2plantuml-analyze command"""
+    parser = create_analyze_parser(argparse.ArgumentParser())
+    args = parser.parse_args()
+    return handle_analyze_command(args)
+
+def c2plantuml_generate():
+    """Entry point for c2plantuml-generate command"""
+    parser = create_generate_parser(argparse.ArgumentParser())
+    args = parser.parse_args()
+    return handle_generate_command(args)
+
+if __name__ == '__main__':
+    sys.exit(main()) 

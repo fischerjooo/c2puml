@@ -2,7 +2,7 @@ import os
 import sys
 from datetime import datetime
 from typing import List, Dict, Optional
-from .parsers.c_parser_enhanced import EnhancedCParser
+from .parsers.c_parser import CParser
 from .models.project_model import ProjectModel, FileModel
 from .utils.file_utils import find_c_files
 
@@ -10,7 +10,7 @@ class ProjectAnalyzer:
     """Analyzes C projects and builds a comprehensive abstract model"""
     
     def __init__(self):
-        self.parser = EnhancedCParser()
+        self.parser = CParser()
         self.file_cache = {}  # For directory listing cache
     
     def analyze_project(self, project_roots: List[str], project_name: str = "C_Project", 

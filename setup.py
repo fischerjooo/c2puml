@@ -16,53 +16,46 @@ def read_requirements():
     return []
 
 setup(
-    name="c-to-plantuml",
-    version="2.0.0",
-    author="C to PlantUML Contributors",
-    author_email="contributors@example.com",
-    description="A robust Python tool for converting C/C++ projects into comprehensive PlantUML diagrams",
-    long_description=long_description,
+    name="c_to_plantuml",
+    version="1.1.0",
+    description="Convert C/C++ code to PlantUML diagrams with high-performance parsing",
+    long_description=open("README.md", "r", encoding="utf-8").read() if os.path.exists("README.md") else "",
     long_description_content_type="text/markdown",
-    url="https://github.com/your-org/c-to-plantuml",
+    author="C to PlantUML Team",
     packages=find_packages(),
+    python_requires=">=3.8",
+    install_requires=[
+        # No external dependencies - uses only standard library
+    ],
+    extras_require={
+        "dev": [
+            "pytest>=6.0",
+            "pytest-cov>=2.0",
+        ]
+    },
+    entry_points={
+        "console_scripts": [
+            "c2plantuml=c_to_plantuml.main:main",
+            "c2plantuml-analyze=c_to_plantuml.main:c2plantuml_analyze",
+            "c2plantuml-generate=c_to_plantuml.main:c2plantuml_generate",
+        ]
+    },
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
-        "Topic :: Software Development :: Documentation",
-        "Topic :: Software Development :: Code Generators",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
-        "Operating System :: OS Independent",
+        "Topic :: Software Development :: Documentation",
+        "Topic :: Software Development :: Code Generators",
+        "Topic :: Text Processing :: Markup",
     ],
-    python_requires=">=3.8",
-    install_requires=read_requirements(),
-    extras_require={
-        "dev": [
-            "pytest>=6.0",
-            "flake8>=3.9.0",
-            "black>=21.0.0",
-            "mypy>=0.900",
-        ],
-        "test": [
-            "pytest>=6.0",
-            "pytest-cov>=2.12.0",
-        ]
+    keywords="c cpp plantuml diagram visualization code-analysis parsing",
+    project_urls={
+        "Bug Reports": "https://github.com/yourusername/c_to_plantuml/issues",
+        "Source": "https://github.com/yourusername/c_to_plantuml",
     },
-    entry_points={
-        "console_scripts": [
-            "c2plantuml=c_to_plantuml.main:main",
-            "c2plantuml-analyze=c_to_plantuml.main:analyze_project_cli",
-            "c2plantuml-generate=c_to_plantuml.main:generate_plantuml_cli",
-        ],
-    },
-    include_package_data=True,
-    package_data={
-        "c_to_plantuml": ["*.json"],
-        "tests": ["test_files/*.c", "test_files/*.h"],
-    },
-    zip_safe=False,
 )

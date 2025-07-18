@@ -1,15 +1,8 @@
 {
-  "project_name": "Test_C_Project",
-  "project_roots": [
-    "./tests/test_files"
-  ],
-  "output_dir": "./output_uml",
-  "output_dir_packaged": "./output_packaged",
-  "model_output_path": "./project_model.json",
-  "recursive": true,
+  "project_name": "C_Test_Project",
+  "project_roots": ["./tests/test_files"],
   "c_file_prefixes": [],
-  "structure_overrides": [
-    {"from_puml": "sample.puml", "to_folder": "core"},
-    {"from_puml": "complex_example.puml", "to_folder": "advanced"}
-  ]
+  "recursive": true,
+  "model_output_path": "./test_project_model.json",
+  "output_dir": "./test_plantuml_output"
 } 

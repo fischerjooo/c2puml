@@ -1,0 +1,448 @@
+{
+  "project_name": "C_Test_Project",
+  "project_roots": [
+    "./tests/test_files"
+  ],
+  "files": {
+    "tests/test_files/complex_example.c": {
+      "file_path": "tests/test_files/complex_example.c",
+      "relative_path": "complex_example.c",
+      "project_root": "./tests/test_files",
+      "encoding_used": "utf-8",
+      "structs": {
+        "position": {
+          "name": "position",
+          "fields": [
+            {
+              "name": "id",
+              "type": "int",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "name",
+              "type": "char",
+              "is_pointer": false,
+              "is_array": true,
+              "array_size": "64"
+            },
+            {
+              "name": "z",
+              "type": "struct { float x, y,",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            }
+          ],
+          "functions": [],
+          "typedef_name": "position"
+        }
+      },
+      "enums": {
+        "null": {
+          "name": null,
+          "values": [],
+          "typedef_name": null
+        }
+      },
+      "functions": [
+        {
+          "name": "log_message",
+          "return_type": "void",
+          "parameters": [
+            {
+              "name": "level",
+              "type": "int",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "message",
+              "type": "const char*",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            }
+          ],
+          "is_static": true
+        },
+        {
+          "name": "find_entity_by_id",
+          "return_type": "entity_t*",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "int",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            }
+          ],
+          "is_static": true
+        },
+        {
+          "name": "create_entity",
+          "return_type": "int",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "int",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "name",
+              "type": "const char*",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "x",
+              "type": "float",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "y",
+              "type": "float",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "z",
+              "type": "float",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            }
+          ],
+          "is_static": false
+        },
+        {
+          "name": "update_entity_position",
+          "return_type": "void",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "int",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "x",
+              "type": "float",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "y",
+              "type": "float",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "z",
+              "type": "float",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            }
+          ],
+          "is_static": false
+        },
+        {
+          "name": "set_entity_color",
+          "return_type": "void",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "int",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "r",
+              "type": "unsigned char",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "g",
+              "type": "unsigned char",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "b",
+              "type": "unsigned char",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "a",
+              "type": "unsigned char",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            }
+          ],
+          "is_static": false
+        },
+        {
+          "name": "register_event_handler",
+          "return_type": "void",
+          "parameters": [
+            {
+              "name": "type",
+              "type": "event_type_t",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "handler",
+              "type": "event_handler_t",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            }
+          ],
+          "is_static": false
+        },
+        {
+          "name": "trigger_event",
+          "return_type": "void",
+          "parameters": [
+            {
+              "name": "type",
+              "type": "event_type_t",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "data",
+              "type": "void*",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            }
+          ],
+          "is_static": false
+        }
+      ],
+      "globals": [
+        {
+          "name": "entities",
+          "type": "entity_t",
+          "is_pointer": true,
+          "is_array": true,
+          "array_size": "100"
+        },
+        {
+          "name": "entity_count",
+          "type": "int",
+          "is_pointer": false,
+          "is_array": false,
+          "array_size": null
+        },
+        {
+          "name": "active_entity",
+          "type": "entity_t",
+          "is_pointer": true,
+          "is_array": false,
+          "array_size": null
+        },
+        {
+          "name": "handlers",
+          "type": "event_handler_t",
+          "is_pointer": true,
+          "is_array": true,
+          "array_size": "16"
+        }
+      ],
+      "includes": [
+        "complex_example.h",
+        "stdio.h",
+        "string.h"
+      ],
+      "macros": [
+        "- #define BUFFER_SIZE",
+        "- #define LOG_LEVEL_ERROR",
+        "- #define LOG_LEVEL_INFO",
+        "- #define SAFE_CALL"
+      ],
+      "typedefs": {
+        "int_val": "union {\n    int"
+      }
+    },
+    "tests/test_files/sample.c": {
+      "file_path": "tests/test_files/sample.c",
+      "relative_path": "sample.c",
+      "project_root": "./tests/test_files",
+      "encoding_used": "utf-8",
+      "structs": {
+        "point": {
+          "name": "point",
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "label",
+              "type": "char",
+              "is_pointer": false,
+              "is_array": true,
+              "array_size": "32"
+            }
+          ],
+          "functions": [],
+          "typedef_name": "point_t"
+        }
+      },
+      "enums": {
+        "null": {
+          "name": null,
+          "values": [],
+          "typedef_name": null
+        }
+      },
+      "functions": [
+        {
+          "name": "internal_helper",
+          "return_type": "void",
+          "parameters": [],
+          "is_static": true
+        },
+        {
+          "name": "calculate_sum",
+          "return_type": "int",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            }
+          ],
+          "is_static": false
+        },
+        {
+          "name": "create_point",
+          "return_type": "point_t*",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            },
+            {
+              "name": "label",
+              "type": "const char*",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            }
+          ],
+          "is_static": false
+        },
+        {
+          "name": "process_point",
+          "return_type": "void",
+          "parameters": [
+            {
+              "name": "p",
+              "type": "point_t*",
+              "is_pointer": false,
+              "is_array": false,
+              "array_size": null
+            }
+          ],
+          "is_static": false
+        },
+        {
+          "name": "main",
+          "return_type": "int",
+          "parameters": [],
+          "is_static": false
+        }
+      ],
+      "globals": [
+        {
+          "name": "global_counter",
+          "type": "int",
+          "is_pointer": false,
+          "is_array": false,
+          "array_size": null
+        },
+        {
+          "name": "buffer",
+          "type": "char",
+          "is_pointer": true,
+          "is_array": true,
+          "array_size": "MAX_SIZE"
+        }
+      ],
+      "includes": [
+        "sample.h",
+        "stdio.h",
+        "stdlib.h"
+      ],
+      "macros": [
+        "- #define MAX_SIZE",
+        "- #define DEBUG_MODE",
+        "- #define CALC"
+      ],
+      "typedefs": {}
+    }
+  },
+  "global_includes": [
+    "complex_example.h",
+    "sample.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h"
+  ],
+  "created_at": "2025-07-18T04:44:53.298118"
+}

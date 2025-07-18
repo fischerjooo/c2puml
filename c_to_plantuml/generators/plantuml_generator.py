@@ -104,9 +104,9 @@ class PlantUMLGenerator:
             h_path = self._resolve_header_path(include, file_model.file_path, file_model.project_root)
             
             if h_path and os.path.exists(h_path):
-                # Use the enhanced header parser
-                from ..parsers.c_parser_enhanced import EnhancedCParser
-                prototypes, h_macros = EnhancedCParser.parse_header_file_enhanced(h_path)
+                # Use the standard header parser
+                from ..parsers.c_parser import CParser
+                prototypes, h_macros = CParser.parse_header_file(h_path)
             else:
                 prototypes, h_macros = [], []
             
