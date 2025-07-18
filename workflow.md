@@ -1,7 +1,9 @@
 # Development Workflow - Agent LLM Guidance
 
 ## Overview
-This document provides step-by-step guidance for developing new features or making code changes to the C to PlantUML converter project. Follow this workflow to ensure consistent, high-quality development practices.
+This document provides step-by-step guidance for developing new features or making code changes to the C to PlantUML converter project. Follow this workflow to ensure consistent, high-quality development practices with a focus on clean code, readability, and testability.
+
+**IMPORTANT**: Always prioritize code cleanup and simplification. When working on any feature or change, continuously look for opportunities to improve existing code quality, enhance readability, and increase testability.
 
 ## Workflow Steps
 
@@ -48,8 +50,11 @@ This document provides step-by-step guidance for developing new features or maki
 - Include comprehensive docstrings and comments
 - Ensure backward compatibility unless breaking changes are required
 - Update `__init__.py` files if new modules are added
+- **Code Cleanup**: Refactor complex functions, remove duplication, improve variable names
+- **Readability**: Break down large functions, add clear comments, improve code structure
+- **Testability**: Extract pure functions, reduce side effects, add dependency injection where beneficial
 
-**Deliverables**: Working code implementation
+**Deliverables**: Working code implementation with improved quality
 
 ### 4. Testing Strategy
 **Objective**: Ensure feature works correctly and doesn't break existing functionality
@@ -59,6 +64,8 @@ This document provides step-by-step guidance for developing new features or maki
   - Test new functions and classes
   - Test edge cases and error conditions
   - Ensure existing tests still pass
+  - **Improve Test Quality**: Refactor existing tests for better readability and maintainability
+  - **Test Coverage**: Add tests for previously untested code paths
 - **Integration Tests**: Test complete workflows
   - Use existing test configurations in `config/`
   - Test with sample C files in `tests/test_files/`
@@ -66,8 +73,9 @@ This document provides step-by-step guidance for developing new features or maki
 - **Configuration Tests**: Test new configuration options
   - Create test config files
   - Verify parsing and application of new settings
+- **Test Cleanup**: Simplify complex test setups, remove test duplication, improve test data organization
 
-**Deliverables**: Test files, test configurations
+**Deliverables**: Test files, test configurations with improved quality
 
 ### 5. Verification and Validation
 **Objective**: Execute tests and validate implementation
@@ -129,12 +137,16 @@ This document provides step-by-step guidance for developing new features or maki
 - [ ] Specification updated (if needed)
 - [ ] Design reviewed and approved
 - [ ] Implementation plan complete
+- [ ] Code cleanup opportunities identified
 
 ### Before Testing
 - [ ] Code follows project style
 - [ ] All functions documented
 - [ ] Error handling implemented
 - [ ] Backward compatibility maintained
+- [ ] Complex functions refactored for readability
+- [ ] Duplicate code eliminated
+- [ ] Variable and function names are clear and descriptive
 
 ### Before Delivery
 - [ ] All tests pass
@@ -142,6 +154,8 @@ This document provides step-by-step guidance for developing new features or maki
 - [ ] Documentation updated
 - [ ] Performance acceptable
 - [ ] No breaking changes (or documented)
+- [ ] Code quality improved (cleaner, more readable, more testable)
+- [ ] Test quality improved (simpler, more maintainable)
 
 ## Common Patterns
 
@@ -166,6 +180,30 @@ This document provides step-by-step guidance for developing new features or maki
 4. Create test outputs and validate format
 5. Update documentation with new format examples
 
+## Code Quality Guidelines
+
+### Clean Code Practices
+- **Single Responsibility**: Each function/class should have one clear purpose
+- **DRY Principle**: Eliminate code duplication through extraction and reuse
+- **Meaningful Names**: Use descriptive variable, function, and class names
+- **Small Functions**: Keep functions under 20 lines when possible
+- **Clear Comments**: Explain "why" not "what" in comments
+- **Consistent Formatting**: Follow project style guidelines
+
+### Readability Improvements
+- Break down complex conditional logic into helper functions
+- Extract magic numbers and strings into named constants
+- Use early returns to reduce nesting
+- Group related functionality into cohesive modules
+- Add type hints where beneficial for clarity
+
+### Testability Enhancements
+- Extract pure functions that don't depend on external state
+- Use dependency injection for external dependencies
+- Separate business logic from I/O operations
+- Create small, focused test functions
+- Use descriptive test names that explain the scenario
+
 ## Error Handling Guidelines
 
 - Always validate input parameters
@@ -182,4 +220,15 @@ This document provides step-by-step guidance for developing new features or maki
 - Consider memory usage for large codebases
 - Optimize file I/O operations
 
-This workflow ensures consistent, high-quality development while maintaining the project's architecture and quality standards.
+## Continuous Improvement Checklist
+
+During any development task, always ask:
+- [ ] Can this code be simplified?
+- [ ] Are there any code smells (long functions, duplication, unclear names)?
+- [ ] Can I extract reusable components?
+- [ ] Are the tests clear and maintainable?
+- [ ] Is the code self-documenting?
+- [ ] Can I improve error handling or validation?
+- [ ] Are there opportunities to reduce complexity?
+
+This workflow ensures consistent, high-quality development while maintaining the project's architecture and quality standards, with a continuous focus on code improvement and maintainability.
