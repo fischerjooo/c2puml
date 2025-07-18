@@ -1,102 +1,78 @@
-# C to PlantUML
+# C to PlantUML Converter
 
-**A robust Python tool for converting C/C++ projects into comprehensive PlantUML diagrams, with advanced parsing, flexible configuration, and structured output packaging.**
-
----
+A Python tool that analyzes C/C++ source code and generates PlantUML class diagrams.
 
 ## Features
 
-- **Deep C/C++ Parsing**: Handles multi-line macros, function declarations, global/static variables, typedefs, and header file resolution (case-insensitive, recursive).
-- **Comprehensive Visualization**: Generates PlantUML diagrams showing:
-  - All macros (`#define`), with visibility (`+` for public, `-` for private).
-  - All functions (struct-associated and top-level), with static/public visibility.
-  - All global variables, with static/public visibility.
-  - All typedefs, rendered as PlantUML type aliases with `<<typedef>>`.
-- **Multi-Project & Config-Driven**: Accepts a JSON config specifying project roots, output directories, file name prefixes, and custom packaging structure.
-- **Clean Output**: Output and packaged directories are always cleaned before generation to prevent stale files.
-- **Structured Packaging**: `.puml` files are copied and renamed into a structured output directory, preserving the source folder structure and supporting custom overrides.
-- **Robust File Handling**: Handles encoding issues gracefully (UTF-8, Latin-1 fallback).
-- **Single-Command Workflow**: Run the entire process (generation + packaging) with one command and a config file.
+- **C/C++ Parsing**: Extracts structs, enums, functions, macros, and global variables
+- **PlantUML Generation**: Creates UML class diagrams with proper notation
+- **Simple Configuration**: Easy-to-use JSON configuration for filtering and transformations
+- **Clean Output**: Organized PlantUML files with clear structure
 
----
+## Quick Start
+
+### Basic Usage
+
+```bash
+# Analyze a C project and generate PlantUML diagrams
+python -m c_to_plantuml.main analyze ./my_project
+
+# Generate diagrams from existing JSON model
+python -m c_to_plantuml.main generate project_model.json
+
+# Use configuration file for advanced filtering
+python -m c_to_plantuml.main config config.json
+```
+
+### Configuration Example
+
+Create a `config.json` file:
+
+```json
+{
+  "project_roots": ["./src"],
+  "output_dir": "./diagrams",
+  "file_filters": {
+    "include": [".*\\.c$", ".*\\.h$"],
+    "exclude": [".*test.*"]
+  },
+  "element_filters": {
+    "structs": {
+      "include": ["^[A-Z].*"],
+      "exclude": [".*_internal.*"]
+    }
+  }
+}
+```
 
 ## Installation
 
 ```bash
-pip install .
-# or for development:
 pip install -e .
 ```
 
----
-
-## Usage
-
-1. **Prepare a config file** (see below for an example).
-2. **Run the tool from the project root:**
+## Testing
 
 ```bash
-python -m c_to_plantuml.main
+# Run all tests
+python -m pytest tests/
+
+# Run specific test
+python -m pytest tests/test_parser.py
 ```
-
-- The tool will:
-  - Parse the config file (`test_config.json` by default, located in the project root).
-  - Clean and generate PlantUML files into the specified output directory.
-  - Clean and package `.puml` files into the structured output directory.
-
----
-
-## Configuration Example (`test_config.json`)
-
-```json
-{
-  "project_roots": [
-    "D:/WORK/Sandbox/doom/ipx",
-    "D:/WORK/Sandbox/doom/linuxdoom-1.10",
-    "D:/WORK/Sandbox/doom/sersrc",
-    "D:/WORK/Sandbox/doom/sndserv"
-  ],
-  "output_dir": "./output_uml",
-  "output_dir_packaged": "./output_packaged",
-  "recursive": true,
-  "c_file_prefixes": [],
-  "structure_overrides": [
-    {"from_puml": "am_map.puml", "to_folder": "special_folder"},
-    {"from_puml": "vehicle.puml", "to_folder": "vehicles"}
-  ]
-}
-```
-
-- **project_roots**: List of root directories to scan for C/C++ files.
-- **output_dir**: Where to write initial `.puml` files.
-- **output_dir_packaged**: Where to copy/rename `.puml` files, preserving structure.
-- **recursive**: Whether to search subdirectories.
-- **c_file_prefixes**: Only process files starting with these prefixes (empty = all).
-- **structure_overrides**: (Optional) Move specific `.puml` files to custom folders in the packaged output.
-
----
-
-## Output & Packaging
-
-- **Initial output**: `.puml` files are generated for each C/C++ file in `output_dir`.
-- **Packaging**: Files are renamed to `CLS_<BASENAME>.puml` (all caps) and copied into `output_dir_packaged`, mirroring the source folder structure. Structure overrides are applied as specified.
-
----
 
 ## Project Structure
 
-- `c_to_plantuml/` – Main parsing and generation logic.
-- `packager/` – Packaging logic for structuring `.puml` output.
-- `test_config.json` – Example config file.
-- `output_uml/` – (Generated) Raw PlantUML files.
-- `output_packaged/` – (Generated) Structured/packaged PlantUML files.
-
----
+```
+c_to_plantuml/
+├── main.py                 # Simple CLI interface
+├── analyzer.py             # Core analysis logic
+├── parser.py               # C/C++ code parsing
+├── generator.py            # PlantUML generation
+├── config.py               # Configuration handling
+└── models.py               # Data structures
+```
 
 ## License
 
-MIT
-
----
-
-**For advanced usage, extensibility, or troubleshooting, see the source code and comments in each module.** 
+MIT License 
