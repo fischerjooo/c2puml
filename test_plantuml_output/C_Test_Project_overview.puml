@@ -1,0 +1,14 @@
+@startuml Project: C_Test_Project
+!theme plain
+
+package "C_Test_Project" <<folder>> {
+
+  component "complex_example\n(1 structs, 7 funcs, 4 macros)" as COMPLEX_EXAMPLE_C
+  component "sample\n(1 structs, 5 funcs, 3 macros)" as SAMPLE_C
+
+}
+
+note top : Generated from C to PlantUML converter
+note bottom : Created: 2025-07-18T06:30:09.861368
+
+@enduml

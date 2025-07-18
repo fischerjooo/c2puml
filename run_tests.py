@@ -73,6 +73,33 @@ def main():
     test_results.append(("Project Analyzer Unit Tests", success))
     print()
     
+    print("=" * 60)
+    print("Running: Configuration Manipulation Tests")
+    success = run_command(
+        "python3 -m unittest tests.test_config_manipulations -v",
+        "Configuration Manipulation Tests"
+    )
+    test_results.append(("Configuration Manipulation Tests", success))
+    print()
+    
+    print("=" * 60)
+    print("Running: Configuration Integration Tests")
+    success = run_command(
+        "python3 -m unittest tests.test_config_integration -v",
+        "Configuration Integration Tests"
+    )
+    test_results.append(("Configuration Integration Tests", success))
+    print()
+    
+    print("=" * 60)
+    print("Running: Configuration CLI Tests")
+    success = run_command(
+        "python3 -m unittest tests.test_config_cli -v",
+        "Configuration CLI Tests"
+    )
+    test_results.append(("Configuration CLI Tests", success))
+    print()
+    
     # Integration Tests
     print("=" * 60)
     print("Integration Tests")
