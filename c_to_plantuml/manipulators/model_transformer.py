@@ -11,10 +11,10 @@ from ..models.project_model import ProjectModel, FileModel
 from ..models.c_structures import Struct, Enum, Function, Field
 
 
-class ModelFilter:
+class ModelTransformer:
     """
-    Advanced filter for manipulating parsed C models using regex patterns
-    Supports file filtering, element filtering, renaming, and additions
+    Advanced transformer for manipulating parsed C models using regex patterns
+    Supports file filtering, element filtering, renaming, transformations, and additions
     """
     
     def __init__(self):
@@ -25,7 +25,7 @@ class ModelFilter:
         self.compiled_patterns = {}
         
     def load_config(self, config_path: str) -> None:
-        """Load filtering configuration from JSON file"""
+        """Load transformation configuration from JSON file"""
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
             
@@ -36,6 +36,59 @@ class ModelFilter:
         
         # Pre-compile regex patterns for performance
         self._compile_patterns()
+    
+    def load_multiple_configs(self, config_paths: list) -> None:
+        """Load and merge multiple configuration files"""
+        merged_config = {
+            'file_filters': {},
+            'element_filters': {},
+            'transformations': {},
+            'additions': {'structs': [], 'enums': [], 'functions': []}
+        }
+        
+        for config_path in config_paths:
+            print(f"Loading configuration: {config_path}")
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+            
+            # Merge file filters
+            if 'file_filters' in config:
+                self._merge_dict_deep(merged_config['file_filters'], config['file_filters'])
+            
+            # Merge element filters
+            if 'element_filters' in config:
+                self._merge_dict_deep(merged_config['element_filters'], config['element_filters'])
+            
+            # Merge transformations
+            if 'transformations' in config:
+                self._merge_dict_deep(merged_config['transformations'], config['transformations'])
+            
+            # Merge additions (append lists)
+            if 'additions' in config:
+                for element_type in ['structs', 'enums', 'functions']:
+                    if element_type in config['additions']:
+                        merged_config['additions'][element_type].extend(config['additions'][element_type])
+        
+        # Apply merged configuration
+        self.file_filters = merged_config['file_filters']
+        self.element_filters = merged_config['element_filters']
+        self.transformations = merged_config['transformations']
+        self.additions = merged_config['additions']
+        
+        # Pre-compile regex patterns for performance
+        self._compile_patterns()
+        
+        print(f"Successfully merged {len(config_paths)} configuration files")
+    
+    def _merge_dict_deep(self, target: dict, source: dict) -> None:
+        """Deep merge source dictionary into target dictionary"""
+        for key, value in source.items():
+            if key in target and isinstance(target[key], dict) and isinstance(value, dict):
+                self._merge_dict_deep(target[key], value)
+            elif key in target and isinstance(target[key], list) and isinstance(value, list):
+                target[key].extend(value)
+            else:
+                target[key] = value
         
     def _compile_patterns(self) -> None:
         """Pre-compile all regex patterns for better performance"""

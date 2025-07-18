@@ -81,15 +81,16 @@ def create_filter_parser(subparsers):
     )
     filter_parser.add_argument(
         'model_file', 
-        help='Existing JSON model file to filter'
+        help='Existing JSON model file to transform'
     )
     filter_parser.add_argument(
-        'config_file', 
-        help='JSON configuration file with filter settings'
+        'config_files', 
+        nargs='+',
+        help='JSON configuration file(s) with transformation settings'
     )
     filter_parser.add_argument(
         '-o', '--output', 
-        help='Output path for filtered model (default: overwrites input)'
+        help='Output path for transformed model (default: overwrites input)'
     )
     return filter_parser
 
@@ -183,41 +184,46 @@ def handle_config_command(args):
 
 def handle_filter_command(args):
     """Handle the filter subcommand"""
-    print(f"Filtering model: {args.model_file}")
-    print(f"Using filter config: {args.config_file}")
+    print(f"Transforming model: {args.model_file}")
+    print(f"Using transformation configs: {', '.join(args.config_files)}")
     
     if not os.path.exists(args.model_file):
         print(f"Error: Model file not found: {args.model_file}")
         return 1
     
-    if not os.path.exists(args.config_file):
-        print(f"Error: Config file not found: {args.config_file}")
-        return 1
+    # Check all config files exist
+    for config_file in args.config_files:
+        if not os.path.exists(config_file):
+            print(f"Error: Config file not found: {config_file}")
+            return 1
     
     try:
         from .models.project_model import ProjectModel
-        from .manipulators.model_filter import ModelFilter
+        from .manipulators.model_transformer import ModelTransformer
         
         # Load existing model
         model = ProjectModel.load_from_json(args.model_file)
         print(f"Loaded model with {len(model.files)} files")
         
-        # Load and apply filters
-        model_filter = ModelFilter()
-        model_filter.load_config(args.config_file)
+        # Load and apply transformations
+        model_transformer = ModelTransformer()
+        if len(args.config_files) == 1:
+            model_transformer.load_config(args.config_files[0])
+        else:
+            model_transformer.load_multiple_configs(args.config_files)
         
-        filtered_model = model_filter.apply_all_filters(model)
+        transformed_model = model_transformer.apply_all_filters(model)
         
-        # Save filtered model
+        # Save transformed model
         output_path = args.output or args.model_file
-        filtered_model.save_to_json(output_path)
+        transformed_model.save_to_json(output_path)
         
-        print(f"Filtered model saved to: {output_path}")
-        print(f"Filtered model contains {len(filtered_model.files)} files")
+        print(f"Transformed model saved to: {output_path}")
+        print(f"Transformed model contains {len(transformed_model.files)} files")
         
         return 0
     except Exception as e:
-        print(f"Error filtering model: {e}")
+        print(f"Error transforming model: {e}")
         return 1
 
 def handle_full_command(args):
@@ -277,8 +283,11 @@ Examples:
   # Use configuration file
   c2plantuml config my_config.json
   
-  # Filter existing JSON model
-  c2plantuml filter project.json filter_config.json -o filtered_project.json
+  # Transform existing JSON model with single config
+  c2plantuml filter project.json transform_config.json -o transformed_project.json
+  
+  # Transform with multiple config files
+  c2plantuml filter project.json filters.json transformations.json additions.json -o result.json
   
   # Filter files by prefix
   c2plantuml analyze /project -p main_ test_ -o filtered.json

@@ -1,4 +1,4 @@
 from .json_manipulator import JSONManipulator
-from .model_filter import ModelFilter
+from .model_transformer import ModelTransformer
 
-__all__ = ['JSONManipulator', 'ModelFilter'] 
+__all__ = ['JSONManipulator', 'ModelTransformer'] 
