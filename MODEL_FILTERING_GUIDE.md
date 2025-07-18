@@ -1,6 +1,8 @@
-# Model Filtering and Manipulation Guide
+# Model Transformation and Manipulation Guide
 
 This guide explains the enhanced JSON configuration input system that allows you to filter, transform, and manipulate parsed C model files using regex patterns. This extends the capabilities beyond just C file input filtering, enabling sophisticated pump model manipulation.
+
+> **Note**: This system has been renamed from `ModelFilter` to `ModelTransformer` to better reflect its comprehensive transformation capabilities, and now supports multiple configuration files for better organization.
 
 ## Overview
 
@@ -249,13 +251,20 @@ Add new elements to specific files or all files:
 python -m c_to_plantuml.main config enhanced_config.json
 ```
 
-### 2. Filtering Existing Models
+### 2. Transforming Existing Models
 ```bash
-# Apply filters to existing JSON model
-python -m c_to_plantuml.main filter existing_model.json filter_config.json -o filtered_model.json
+# Apply transformations to existing JSON model (single config)
+python -m c_to_plantuml.main filter existing_model.json transform_config.json -o transformed_model.json
+
+# Apply multiple transformation configs
+python -m c_to_plantuml.main filter existing_model.json \
+  config/filters.json config/transformations.json config/additions.json \
+  -o transformed_model.json
 ```
 
-### 3. Pump-Specific Configuration Example
+### 3. Pump-Specific Multi-Configuration Example
+
+**Main Configuration** (`pump_main_config.json`):
 ```json
 {
   "project_name": "Pump_Control_System",
@@ -263,41 +272,51 @@ python -m c_to_plantuml.main filter existing_model.json filter_config.json -o fi
   "model_output_path": "./pump_model.json",
   "output_dir": "./pump_plantuml",
   
+  "transformation_configs": [
+    "config/pump_file_filters.json",
+    "config/pump_element_filters.json",
+    "config/pump_transformations.json",
+    "config/pump_additions.json"
+  ]
+}
+```
+
+**Pump File Filters** (`config/pump_file_filters.json`):
+```json
+{
   "file_filters": {
     "files": {
       "include": [".*pump.*", ".*control.*", ".*sensor.*"],
       "exclude": [".*test.*", ".*mock.*"]
     }
-  },
-  
+  }
+}
+```
+
+**Pump Element Filters** (`config/pump_element_filters.json`):
+```json
+{
   "element_filters": {
     "functions": {
       "include": ["pump_.*", "control_.*", "sensor_.*"],
       "exclude": [".*_test.*", ".*_debug.*"]
     }
-  },
-  
-  "transformations": {
-    "structs": {
-      "pump_(.*)_data": "\\1_info",
-      "legacy_pump_(.*)": "pump_\\1"
-    }
-  },
-  
-  "additions": {
-    "structs": [
-      {
-        "name": "pump_runtime_t",
-        "fields": [
-          {"name": "current_state", "type": "pump_state_t"},
-          {"name": "last_maintenance", "type": "time_t"},
-          {"name": "operating_hours", "type": "uint32_t"}
-        ],
-        "target_files": [".*pump.*\\.h$"]
-      }
-    ]
   }
 }
+```
+
+**Usage**:
+```bash
+# Use multi-config setup
+python -m c_to_plantuml.main config pump_main_config.json
+
+# Or apply configs individually
+python -m c_to_plantuml.main filter base_model.json \
+  config/pump_file_filters.json \
+  config/pump_element_filters.json \
+  config/pump_transformations.json \
+  config/pump_additions.json \
+  -o pump_model.json
 ```
 
 ## Regex Pattern Examples
@@ -315,15 +334,25 @@ python -m c_to_plantuml.main filter existing_model.json filter_config.json -o fi
 - `\\2` - Second capture group
 - `prefix_\\1_suffix` - Add prefix and suffix to capture group
 
+## Multi-Configuration Best Practices
+
+1. **Logical Separation**: Split configurations by concern (filters, transformations, additions)
+2. **Reusable Modules**: Create reusable config files for common scenarios
+3. **Order Matters**: List transformation configs in logical order in main config
+4. **Test Incrementally**: Test individual configs before combining them
+5. **Document Dependencies**: Use comments to explain config relationships
+
 ## Performance Considerations
 
 - All regex patterns are pre-compiled for optimal performance
+- Multi-config loading has minimal overhead due to efficient merging
 - Filtering happens after parsing, so complex filters don't affect parse time
 - Consider using specific patterns rather than broad matches for better performance
 
 ## Error Handling
 
 - Invalid regex patterns will cause compilation errors at startup
+- Missing configuration files will generate warnings but continue processing
 - Missing fields in additions will be handled gracefully
 - File path matching failures will be logged but won't stop processing
 
@@ -333,6 +362,8 @@ python -m c_to_plantuml.main filter existing_model.json filter_config.json -o fi
 2. **Test Patterns**: Use regex tools to test your patterns before applying
 3. **Use Specific Targets**: Use `target_files` in additions to avoid unnecessary additions
 4. **Document Patterns**: Use comments in JSON to explain complex regex patterns
-5. **Backup Models**: Always keep backups of original models before filtering
+5. **Backup Models**: Always keep backups of original models before transforming
+6. **Modular Configs**: Use the multi-config system for better organization
+7. **Version Control**: Keep configuration files in version control for traceability
 
-This enhanced system allows for sophisticated manipulation of the parsed C model, enabling you to create customized views and transformations that go far beyond simple C file filtering.
+This enhanced system with `ModelTransformer` and multi-configuration support allows for sophisticated manipulation of the parsed C model, enabling you to create customized views and transformations that go far beyond simple C file filtering.
