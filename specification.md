@@ -176,53 +176,62 @@ python -m unittest discover tests/
 Each generated PlantUML file follows this structure:
 
 ```plantuml
-@startuml CLS: {filename}
+@startuml {basename}
 
-class "{filename}" as {UML_ID} <<source>> #LightBlue
+class "{basename}" as {UML_ID} <<source>> #LightBlue
 {
-    {global_variables}
     {macros}
+    {typedefs}
+    {global_variables}
     {functions}
+    {structs}
+    {enums}
 }
 
-interface "{header_name}" as {HEADER_UML_ID} <<public_header>> #LightGreen
+' For each included header file:
+class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
 {
-    {header_macros}
-    {header_prototypes}
+    + Header file
 }
 
-{source_class} --> {header_interface} : <<include>>
+{UML_ID} --> {HEADER_UML_ID} : <<include>>
 
 @enduml
 ```
 
+- **No #include lines** are shown in the class content.
+- **All referenced include files** are shown as separate classes with the `<<header>>` stereotype and an arrow from the source class.
+- **Only .c files generate diagrams**; the output filename is `{basename}.puml` (no `.c` extension).
+- **Header files do not generate separate diagrams**.
+
 ### 5.2 Styling and Formatting
 
 #### 5.2.1 Color Scheme
-- **Source files**: `#LightBlue` background
-- **Header files**: `#LightGreen` background
-- **Stereotypes**: `<<source>>`, `<<public_header>>`, `<<private_header>>`
+- **Source files**: `#LightBlue` background, `<<source>>` stereotype
+- **Header files**: `#LightGreen` background, `<<header>>` stereotype
+- **Typedefs**: `#LightYellow` background, `<<typedef>>` stereotype
+- **Types**: `#LightGray` background, `<<type>>` stereotype
 
 #### 5.2.2 Visibility Notation
 - **Public members**: `+` prefix
 - **Private/Static members**: `-` prefix
-- **Macros**: `#define` prefix with `-` visibility
+- **Macros**: `#define` prefix with `+` visibility
 
 #### 5.2.3 Element Representation
-- **Functions**: `{visibility}{return_type} {function_name}({parameters})`
+- **Functions**: `{visibility}{return_type} {function_name}()`
 - **Global variables**: `{visibility} {type} {variable_name}`
 - **Macros**: `{visibility} #define {macro_name}`
 - **Struct fields**: `{visibility} {type} {field_name}`
 
 #### 5.2.4 Relationships
-- **Include relationships**: `{source} --> {header} : <<include>>`
-- **Dependency arrows**: Standard PlantUML arrow notation
+- **Include relationships**: `{source} --> {header} : <<include>>` (arrows only)
+- **Typedef relationships**: `*--` for «defines», `-|>` for «alias»
 
 ### 5.3 Output Organization
-- **File naming**: `{basename}.puml` for each source file
+- **File naming**: `{basename}.puml` for each .c file (no extension in the name)
 - **Directory structure**: Mirrors source project structure
-- **Packaging**: Optional structured output with custom organization
-- **Overview diagrams**: Project-level summary diagrams
+- **Header files**: Shown as classes in diagrams, but do not generate separate .puml files
+- **Overview diagrams**: Project-level summary diagrams (optional)
 
 ### 5.4 Configuration-Driven Customization
 The output can be customized through JSON configuration:
@@ -232,4 +241,7 @@ The output can be customized through JSON configuration:
 - Custom element additions
 - Output directory structure
 
-This specification provides a comprehensive overview of the C to PlantUML converter's architecture, requirements, processing flow, and output format, enabling effective development, maintenance, and extension of the system.
+**Note:**
+- Only .c files generate PlantUML diagrams. Header files are represented as classes with arrows, but do not have their own .puml files.
+- All referenced include files are shown as classes with the `<<header>>` stereotype and include arrows.
+- No #include lines are shown in the class content; all include relationships are visualized with arrows only.
