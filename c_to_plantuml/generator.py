@@ -67,9 +67,11 @@ class Generator:
     
     def _generate_file_diagram(self, file_model: FileModel, output_dir: Path) -> None:
         """Generate PlantUML diagram for a single file"""
-        # Create filename
-        base_name = Path(file_model.file_path).stem
-        puml_file = output_dir / f"{base_name}.puml"
+        # Create filename using relative path with extension to avoid conflicts
+        relative_path = Path(file_model.relative_path)
+        base_name = relative_path.stem
+        extension = relative_path.suffix
+        puml_file = output_dir / f"{base_name}{extension}.puml"
         
         # Ensure output directory exists
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -88,7 +90,7 @@ class Generator:
     def _generate_plantuml_content(self, file_model: FileModel) -> str:
         """Generate PlantUML content for a file"""
         lines = []
-        base_name = Path(file_model.file_path).stem
+        base_name = Path(file_model.relative_path).stem
         
         # Header
         lines.append(f"@startuml {base_name}")
@@ -168,8 +170,31 @@ class Generator:
                 lines.append("}")
                 lines.append("")
         
-        # Add relationships
-        if hasattr(file_model, 'includes') and file_model.includes:
+        # Add typedef relationships
+        if hasattr(file_model, 'typedef_relations') and file_model.typedef_relations:
+            for relation in sorted(file_model.typedef_relations, key=lambda r: r.typedef_name):
+                # Create a class for the original type if it's not a basic type
+                if not self._is_basic_type(relation.original_type):
+                    lines.append(f'class "{relation.original_type}" as {relation.original_type.upper()} <<type>> #LightGray')
+                    lines.append("{")
+                    lines.append(f"    + {relation.original_type}")
+                    lines.append("}")
+                    lines.append("")
+                
+                # Add the relationship
+                if relation.relationship_type == 'defines':
+                    lines.append(f'{relation.typedef_name.upper()} *-- {relation.original_type.upper()} : «defines»')
+                else:  # alias
+                    lines.append(f'{relation.typedef_name.upper()} -|> {relation.original_type.upper()} : «alias»')
+                lines.append("")
+        
+        # Add include relationships
+        if hasattr(file_model, 'include_relations') and file_model.include_relations:
+            for relation in sorted(file_model.include_relations, key=lambda r: r.included_file):
+                included_file_name = Path(relation.included_file).stem
+                lines.append(f'{base_name.upper()} --> {included_file_name.upper()} : <<include>> (depth {relation.depth})')
+        elif hasattr(file_model, 'includes') and file_model.includes:
+            # Fallback to simple includes if no relations are processed
             for include in sorted(file_model.includes):
                 include_name = Path(include).stem
                 lines.append(f'{base_name.upper()} --> {include_name.upper()} : <<include>>')
@@ -178,3 +203,18 @@ class Generator:
         lines.append("@enduml")
         
         return "\n".join(lines)
+    
+    def _is_basic_type(self, type_name: str) -> bool:
+        """Check if a type is a basic C type"""
+        basic_types = {
+            'int', 'char', 'float', 'double', 'void', 'long', 'short',
+            'unsigned', 'signed', 'const', 'volatile', 'uint32_t', 'uint16_t',
+            'uint8_t', 'int32_t', 'int16_t', 'int8_t', 'size_t', 'ssize_t'
+        }
+        
+        # Handle pointer types
+        if '*' in type_name:
+            base_type = type_name.replace('*', '').strip()
+            return base_type in basic_types
+        
+        return type_name in basic_types

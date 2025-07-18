@@ -26,6 +26,40 @@ class Field:
 
 
 @dataclass
+class TypedefRelation:
+    """Represents a typedef relationship"""
+    typedef_name: str
+    original_type: str
+    relationship_type: str  # 'defines' or 'alias'
+    
+    def __post_init__(self):
+        """Validate typedef relation data after initialization"""
+        if not self.typedef_name or not isinstance(self.typedef_name, str):
+            raise ValueError("Typedef name must be a non-empty string")
+        if not self.original_type or not isinstance(self.original_type, str):
+            raise ValueError("Original type must be a non-empty string")
+        if self.relationship_type not in ['defines', 'alias']:
+            raise ValueError("Relationship type must be 'defines' or 'alias'")
+
+
+@dataclass
+class IncludeRelation:
+    """Represents an include relationship"""
+    source_file: str
+    included_file: str
+    depth: int
+    
+    def __post_init__(self):
+        """Validate include relation data after initialization"""
+        if not self.source_file or not isinstance(self.source_file, str):
+            raise ValueError("Source file must be a non-empty string")
+        if not self.included_file or not isinstance(self.included_file, str):
+            raise ValueError("Included file must be a non-empty string")
+        if not isinstance(self.depth, int) or self.depth < 0:
+            raise ValueError("Depth must be a non-negative integer")
+
+
+@dataclass
 class Function:
     """Represents a function"""
     name: str
@@ -80,6 +114,8 @@ class FileModel:
     includes: Set[str] = field(default_factory=set)
     macros: List[str] = field(default_factory=list)
     typedefs: Dict[str, str] = field(default_factory=dict)
+    typedef_relations: List[TypedefRelation] = field(default_factory=list)
+    include_relations: List[IncludeRelation] = field(default_factory=list)
     
     def __post_init__(self):
         """Validate file model data after initialization"""
@@ -97,6 +133,9 @@ class FileModel:
         data = asdict(self)
         # Convert set to list for JSON serialization
         data['includes'] = list(self.includes)
+        # Convert typedef_relations and include_relations to lists of dicts
+        data['typedef_relations'] = [asdict(rel) for rel in self.typedef_relations]
+        data['include_relations'] = [asdict(rel) for rel in self.include_relations]
         return data
     
     @classmethod
@@ -142,6 +181,16 @@ class FileModel:
             else:
                 enums[name] = enum_data
         
+        # Convert typedef_relations back to TypedefRelation objects
+        typedef_relations_data = data.get('typedef_relations', [])
+        typedef_relations = [TypedefRelation(**rel) if isinstance(rel, dict) else rel 
+                           for rel in typedef_relations_data]
+        
+        # Convert include_relations back to IncludeRelation objects
+        include_relations_data = data.get('include_relations', [])
+        include_relations = [IncludeRelation(**rel) if isinstance(rel, dict) else rel 
+                           for rel in include_relations_data]
+        
         # Create new data dict with converted objects
         new_data = data.copy()
         new_data['includes'] = includes
@@ -149,6 +198,8 @@ class FileModel:
         new_data['functions'] = functions
         new_data['structs'] = structs
         new_data['enums'] = enums
+        new_data['typedef_relations'] = typedef_relations
+        new_data['include_relations'] = include_relations
         
         return cls(**new_data)
     

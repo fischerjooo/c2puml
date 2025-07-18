@@ -7,7 +7,7 @@ import re
 import logging
 from pathlib import Path
 from typing import List, Dict, Set, Optional, Tuple
-from .models import FileModel, Struct, Enum, Function, Field
+from .models import FileModel, Struct, Enum, Function, Field, TypedefRelation
 
 
 class CParser:
@@ -47,6 +47,7 @@ class CParser:
         macros = self._parse_macros(content)
         typedefs = self._parse_typedefs(content)
         includes = self._parse_includes(content)
+        typedef_relations = self._parse_typedef_relations(content)
         
         self.logger.debug(f"Parsed {len(structs)} structs, {len(enums)} enums, "
                          f"{len(functions)} functions, {len(globals)} globals")
@@ -62,7 +63,8 @@ class CParser:
             globals=globals,
             includes=includes,
             macros=macros,
-            typedefs=typedefs
+            typedefs=typedefs,
+            typedef_relations=typedef_relations
         )
     
     def _read_file(self, file_path: Path) -> str:
@@ -255,18 +257,30 @@ class CParser:
         """Parse typedef definitions"""
         typedefs = {}
         
-        # Improved typedef pattern to handle more cases including pointer types
+        # Improved typedef patterns to handle various cases
         typedef_patterns = [
+            # Basic typedef: typedef type name;
             re.compile(r'typedef\s+(\w+(?:\s+\w+)*)\s+(\w+)\s*;'),
-            re.compile(r'typedef\s+(\w+(?:\s*\*\s*)?)\s+(\w+)\s*;'),
-            re.compile(r'typedef\s+(\w+(?:\s+\w+)*\s*\*)\s+(\w+)\s*;')
+            # Pointer typedef: typedef type* name;
+            re.compile(r'typedef\s+(\w+(?:\s+\w+)*\s*\*)\s+(\w+)\s*;'),
+            # Function pointer: typedef return_type (*name)(params);
+            re.compile(r'typedef\s+(\w+(?:\s+\w+)*)\s*\(\s*\*\s*(\w+)\s*\)\s*\([^)]*\)\s*;'),
+            # Struct typedef: typedef struct { ... } name;
+            re.compile(r'typedef\s+struct\s*\{[^}]*\}\s+(\w+)\s*;'),
+            # Named struct typedef: typedef struct name { ... } alias;
+            re.compile(r'typedef\s+struct\s+(\w+)\s*\{[^}]*\}\s+(\w+)\s*;')
         ]
         
         for pattern in typedef_patterns:
             for match in pattern.finditer(content):
-                original_type = match.group(1).strip()
-                new_type = match.group(2)
-                typedefs[new_type] = original_type
+                if len(match.groups()) == 2:
+                    original_type = match.group(1).strip()
+                    new_type = match.group(2)
+                    typedefs[new_type] = original_type
+                elif len(match.groups()) == 1:
+                    # For struct typedefs with only one group
+                    new_type = match.group(1)
+                    typedefs[new_type] = f"struct {new_type}"
         
         self.logger.debug(f"Parsed {len(typedefs)} typedefs")
         return typedefs
@@ -281,3 +295,54 @@ class CParser:
         
         self.logger.debug(f"Parsed {len(includes)} includes")
         return includes
+    
+    def _parse_typedef_relations(self, content: str) -> List[TypedefRelation]:
+        """Parse typedef relationships"""
+        relations = []
+        
+        # Improved typedef patterns to handle various cases
+        typedef_patterns = [
+            # Basic typedef: typedef type name;
+            re.compile(r'typedef\s+(\w+(?:\s+\w+)*)\s+(\w+)\s*;'),
+            # Pointer typedef: typedef type* name;
+            re.compile(r'typedef\s+(\w+(?:\s+\w+)*\s*\*)\s+(\w+)\s*;'),
+            # Function pointer: typedef return_type (*name)(params);
+            re.compile(r'typedef\s+(\w+(?:\s+\w+)*)\s*\(\s*\*\s*(\w+)\s*\)\s*\([^)]*\)\s*;'),
+            # Struct typedef: typedef struct { ... } name;
+            re.compile(r'typedef\s+struct\s*\{[^}]*\}\s+(\w+)\s*;'),
+            # Named struct typedef: typedef struct name { ... } alias;
+            re.compile(r'typedef\s+struct\s+(\w+)\s*\{[^}]*\}\s+(\w+)\s*;')
+        ]
+        
+        for pattern in typedef_patterns:
+            for match in pattern.finditer(content):
+                if len(match.groups()) == 2:
+                    original_type = match.group(1).strip()
+                    new_type = match.group(2)
+                    
+                    # Determine relationship type
+                    # If the original type is a basic type, it's an alias
+                    # If it's a complex type or struct, it's a definition
+                    if self._is_basic_type(original_type):
+                        relationship_type = 'alias'
+                    else:
+                        relationship_type = 'defines'
+                    
+                    relations.append(TypedefRelation(
+                        typedef_name=new_type,
+                        original_type=original_type,
+                        relationship_type=relationship_type
+                    ))
+                elif len(match.groups()) == 1:
+                    # For struct typedefs with only one group
+                    new_type = match.group(1)
+                    original_type = f"struct {new_type}"
+                    
+                    relations.append(TypedefRelation(
+                        typedef_name=new_type,
+                        original_type=original_type,
+                        relationship_type='defines'
+                    ))
+        
+        self.logger.debug(f"Parsed {len(relations)} typedef relations")
+        return relations

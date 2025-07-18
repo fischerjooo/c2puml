@@ -137,7 +137,7 @@ class TestGenerator(unittest.TestCase):
         self.generator._generate_file_diagram(file_model, output_dir)
         
         # Check that the file was created
-        puml_file = output_dir / "test.puml"
+        puml_file = output_dir / "test.c.puml"
         self.assertTrue(puml_file.exists())
         
         # Check file content
@@ -171,7 +171,7 @@ class TestGenerator(unittest.TestCase):
         self.assertTrue(os.path.exists(output_dir))
         
         # Check that diagram file was created
-        puml_file = os.path.join(output_dir, "main.puml")
+        puml_file = os.path.join(output_dir, "main.c.puml")
         self.assertTrue(os.path.exists(puml_file))
         
         # Check file content
@@ -209,7 +209,7 @@ class TestGenerator(unittest.TestCase):
         self.assertTrue(os.path.exists(output_dir))
         
         # Check that diagram file was created
-        puml_file = os.path.join(output_dir, "main.puml")
+        puml_file = os.path.join(output_dir, "main.c.puml")
         self.assertTrue(os.path.exists(puml_file))
     
     def test_generate_multiple_files(self):
@@ -239,8 +239,8 @@ class TestGenerator(unittest.TestCase):
         self.generator.generate_from_model(model_path, output_dir)
         
         # Check that both diagram files were created
-        main_puml = os.path.join(output_dir, "main.puml")
-        utils_puml = os.path.join(output_dir, "utils.puml")
+        main_puml = os.path.join(output_dir, "main.c.puml")
+        utils_puml = os.path.join(output_dir, "utils.c.puml")
         
         self.assertTrue(os.path.exists(main_puml))
         self.assertTrue(os.path.exists(utils_puml))
@@ -273,7 +273,7 @@ class TestGenerator(unittest.TestCase):
         self.generator._generate_file_diagram(empty_file, output_dir)
         
         # Check that the file was created
-        puml_file = output_dir / "empty.puml"
+        puml_file = output_dir / "empty.c.puml"
         self.assertTrue(puml_file.exists())
         
         # Check file content
@@ -313,7 +313,7 @@ class TestGenerator(unittest.TestCase):
         self.generator._generate_file_diagram(file_model, output_dir)
         
         # Check that the file was created
-        puml_file = output_dir / "test_file.puml"
+        puml_file = output_dir / "test_file.c.puml"
         self.assertTrue(puml_file.exists())
         
         # Check file content
