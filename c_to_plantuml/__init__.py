@@ -1,24 +1,27 @@
 """
 C to PlantUML Converter
 
-A high-performance Python package for converting C/C++ code to PlantUML diagrams.
-Features optimized parsing, JSON model generation, and comprehensive PlantUML output.
+A Python tool that analyzes C/C++ source code and generates PlantUML class diagrams.
 """
 
-__version__ = "1.1.0"
+__version__ = "2.0.0"
 __author__ = "C to PlantUML Team"
 
-# Import main functionality
-from .parsers.c_parser import CParser
-from .project_analyzer import ProjectAnalyzer
-from .generators.plantuml_generator import PlantUMLGenerator
-from .models.project_model import ProjectModel, FileModel
+from .analyzer import Analyzer
+from .generator import Generator
+from .parser import CParser
+from .config import Config
+from .models import ProjectModel, FileModel, Struct, Enum, Function, Field
 
-# Main classes and functions for public API
 __all__ = [
+    'Analyzer',
+    'Generator', 
     'CParser',
-    'ProjectAnalyzer', 
-    'PlantUMLGenerator',
+    'Config',
     'ProjectModel',
-    'FileModel'
+    'FileModel',
+    'Struct',
+    'Enum',
+    'Function',
+    'Field'
 ] 
