@@ -58,7 +58,26 @@ jobs:
         find tests/ -name "test_*.py" -type f | sort
         echo "📊 Test file count: $(find tests/ -name "test_*.py" -type f | wc -l)"
         echo "📋 Available test modules:"
-        python -m unittest discover tests/ -p "test_*.py" --list
+        python -c "
+        import os
+        import sys
+        sys.path.insert(0, '.')
+        
+        try:
+            # Get test files and convert to module names
+            test_files = [f for f in os.listdir('tests') if f.startswith('test_') and f.endswith('.py')]
+            test_modules = [f.replace('.py', '') for f in sorted(test_files)]
+            
+            # Print discovered modules
+            for module in test_modules:
+                print(f'  - tests.{module}')
+                
+            if not test_modules:
+                print('  ⚠️  No test modules found')
+                
+        except Exception as e:
+            print(f'  ❌ Error discovering test modules: {e}')
+        "
 
     - name: Run unit tests with verbose output
       run: |
