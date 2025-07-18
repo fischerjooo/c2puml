@@ -1,0 +1,4 @@
+[console_scripts]
+c2plantuml = c_to_plantuml.main:main
+c2plantuml-analyze = c_to_plantuml.main:c2plantuml_analyze
+c2plantuml-generate = c_to_plantuml.main:c2plantuml_generate

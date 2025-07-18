@@ -1,0 +1,45 @@
+@startuml CLS: sample
+
+class "sample" as SAMPLE_C <<source>> #LightBlue
+{
+    + int global_counter
+    + char*[MAX_SIZE] buffer
+    + point_t* p
+    + return p
+    - #define MAX_SIZE
+    - #define DEBUG_MODE
+    - #define CALC
+    -void internal_helper()
+    +int calculate_sum(int a, int b)
+    +point_t* create_point(int x, int y, const char* label)
+    +void process_point(point_t* p)
+    +int main()
+}
+
+interface "sample.h" as SAMPLE_H <<public_header>> #LightGreen
+{
+    + #define SAMPLE_H
+    + #define PI
+    + #define VERSION
+    + #define MIN
+    + #define MAX
+    + int calculate_sum(int a, int b);
+    + point_t* create_point(int x, int y, const char* label);
+    + void process_point(point_t* p);
+}
+
+SAMPLE_C --> SAMPLE_H : <<include>>
+
+interface "stdio.h" as STDIO_H <<public_header>> #LightGreen
+{
+}
+
+SAMPLE_C --> STDIO_H : <<include>>
+
+interface "stdlib.h" as STDLIB_H <<public_header>> #LightGreen
+{
+}
+
+SAMPLE_C --> STDLIB_H : <<include>>
+
+@enduml
