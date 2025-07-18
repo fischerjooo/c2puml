@@ -164,6 +164,7 @@ def load_config_and_analyze(config_path: str) -> ProjectModel:
     c_file_prefixes = config.get('c_file_prefixes', [])
     recursive = config.get('recursive', True)
     model_output_path = config.get('model_output_path', './project_model.json')
+    output_dir = config.get('output_dir')
     
     if not isinstance(c_file_prefixes, list):
         c_file_prefixes = [c_file_prefixes] if c_file_prefixes else []
@@ -172,10 +173,18 @@ def load_config_and_analyze(config_path: str) -> ProjectModel:
         raise ValueError('No project_roots specified in config!')
     
     analyzer = ProjectAnalyzer()
-    return analyzer.analyze_and_save(
+    model = analyzer.analyze_and_save(
         project_roots=project_roots,
         output_path=model_output_path,
         project_name=project_name,
         c_file_prefixes=c_file_prefixes,
         recursive=recursive
     )
+    
+    # Generate PlantUML files if output_dir is specified
+    if output_dir:
+        from .generators.plantuml_generator import generate_plantuml_from_json
+        generate_plantuml_from_json(model_output_path, output_dir)
+        print(f"PlantUML diagrams generated in: {output_dir}")
+    
+    return model
