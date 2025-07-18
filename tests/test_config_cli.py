@@ -255,10 +255,10 @@ class TestConfigurationCLI(unittest.TestCase):
         model_path = self._create_test_model_file()
         output_path = self._create_temp_file('.json')
         
-        # Create mock arguments
+        cfgs = config_files[:2]
         class MockArgs:
             model_file = model_path
-            config_files = config_files[:2]  # Use first two config files
+            config_files = cfgs
             output = output_path
         
         args = MockArgs()
@@ -282,7 +282,7 @@ class TestConfigurationCLI(unittest.TestCase):
         self.assertIn('new_legacy_struct', output_file['structs'])
         
         # Should have additions from general_additions.json (if present)
-        if any('general_additions.json' in f for f in config_files[:2]):
+        if any('general_additions.json' in f for f in cfgs):
             self.assertIn('error_info_t', output_file['structs'])
             self.assertIn('log_level_e', output_file['enums'])
     
