@@ -4,14 +4,17 @@
 
 Successfully extended the JSON configuration input system to support advanced filtering and manipulation of parsed model files using regex patterns. The pump model can now be manipulated beyond just C file inputs.
 
+> **Latest Update**: The system has been renamed from `ModelFilter` to `ModelTransformer` and enhanced with multi-configuration file support for better organization and modularity.
+
 ## 🚀 New Features Implemented
 
-### 1. **ModelFilter Class** (`c_to_plantuml/manipulators/model_filter.py`)
-- Advanced filtering system with regex pattern support
+### 1. **ModelTransformer Class** (`c_to_plantuml/manipulators/model_transformer.py`)
+- Advanced transformation system with regex pattern support
 - Pre-compiled patterns for optimal performance
 - Support for file-level and element-level filtering
 - Transformation capabilities with regex replacement
 - Addition system for injecting new elements
+- Multi-configuration file support with intelligent merging
 
 ### 2. **Enhanced Configuration Schema**
 Extended the JSON configuration to support:
@@ -51,16 +54,21 @@ Extended the JSON configuration to support:
 }
 ```
 
-### 3. **New CLI Command**
-Added `filter` command for standalone model manipulation:
+### 3. **Enhanced CLI Command**
+Enhanced `filter` command for standalone model manipulation with multi-config support:
 
 ```bash
-# Apply filters to existing JSON model
-python -m c_to_plantuml.main filter model.json filter_config.json -o filtered_model.json
+# Apply single transformation config
+python -m c_to_plantuml.main filter model.json transform_config.json -o transformed_model.json
+
+# Apply multiple transformation configs
+python -m c_to_plantuml.main filter model.json \
+  config/filters.json config/transformations.json config/additions.json \
+  -o transformed_model.json
 ```
 
 ### 4. **Integrated Workflow**
-The existing `config` command now automatically applies filtering if filter configurations are present in the JSON file.
+The existing `config` command now automatically applies transformations if transformation configurations are present in the JSON file, including support for multiple referenced configuration files.
 
 ## 📋 Capabilities Demonstrated
 
@@ -122,16 +130,26 @@ python3 -m c_to_plantuml.main filter model.json filter_config.json -o filtered.j
 ## 📁 Files Created/Modified
 
 ### New Files
-- `c_to_plantuml/manipulators/model_filter.py` - Core filtering implementation
+- `c_to_plantuml/manipulators/model_transformer.py` - Core transformation implementation (renamed from model_filter.py)
+- `config/` directory with modular configuration files:
+  - `project_config.json` - Basic project settings
+  - `file_filters.json` - File-level filtering
+  - `element_filters.json` - Element-level filtering
+  - `transformations.json` - Regex transformations
+  - `pump_additions.json` - Pump-specific additions
+  - `general_additions.json` - General utility additions
+  - `complete_pump_config.json` - Multi-config reference example
 - `enhanced_config.json` - Comprehensive example configuration
 - `simple_filter_test.json` - Working test configuration  
 - `filter_test_config.json` - Standalone filter test
-- `MODEL_FILTERING_GUIDE.md` - Complete user documentation
+- `MODEL_FILTERING_GUIDE.md` - Complete user documentation (updated for ModelTransformer)
+- `MULTI_CONFIG_GUIDE.md` - Multi-configuration system guide
+- `RENAMED_AND_ENHANCED_IMPLEMENTATION.md` - Implementation summary
 
 ### Modified Files
-- `c_to_plantuml/manipulators/__init__.py` - Added ModelFilter export
-- `c_to_plantuml/project_analyzer.py` - Integrated filtering into config workflow
-- `c_to_plantuml/main.py` - Added filter command and handler
+- `c_to_plantuml/manipulators/__init__.py` - Updated ModelTransformer export
+- `c_to_plantuml/project_analyzer.py` - Integrated transformation into config workflow with multi-config support
+- `c_to_plantuml/main.py` - Enhanced filter command with multi-config support and updated help
 
 ## 🎯 Use Cases Enabled
 
@@ -230,9 +248,12 @@ The JSON configuration input has been successfully extended to provide sophistic
 - ✅ **Transformations** with regex replacements
 - ✅ **Additions** of new elements to specific files
 - ✅ **Pump model manipulation** beyond C file inputs
-- ✅ **Standalone filtering** of existing models
+- ✅ **Standalone transformation** of existing models
+- ✅ **Multi-configuration support** with logical groupings
+- ✅ **Deep configuration merging** for complex workflows
 - ✅ **Integrated workflow** with existing commands
 - ✅ **Performance optimization** with compiled patterns
 - ✅ **Comprehensive documentation** and examples
+- ✅ **Accurate naming** reflecting true capabilities (ModelTransformer)
 
-The pump model can now be manipulated in sophisticated ways using the enhanced JSON configuration system!
+The pump model can now be manipulated in sophisticated ways using the enhanced JSON configuration system with powerful multi-config support!
