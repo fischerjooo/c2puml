@@ -1,0 +1,58 @@
+{
+  "project_name": "Simple_Filter_Test",
+  "project_roots": ["./tests/test_files"],
+  "c_file_prefixes": [],
+  "recursive": true,
+  "model_output_path": "./simple_filter_model.json",
+  "output_dir": "./simple_filter_output",
+  
+  "element_filters": {
+    "functions": {
+      "exclude": [
+        ".*_test.*"
+      ]
+    }
+  },
+  
+  "transformations": {
+    "structs": {
+      "(.*)_struct$": "\\1_t"
+    }
+  },
+  
+  "additions": {
+    "structs": [
+      {
+        "name": "pump_control_t",
+        "typedef_name": "pump_control_t",
+        "fields": [
+          {
+            "name": "enabled",
+            "type": "bool"
+          },
+          {
+            "name": "pressure",
+            "type": "float"
+          }
+        ],
+        "target_files": [
+          ".*\\.h$"
+        ]
+      }
+    ],
+    "enums": [
+      {
+        "name": "pump_state_e",
+        "typedef_name": "pump_state_t", 
+        "values": [
+          "PUMP_OFF",
+          "PUMP_ON",
+          "PUMP_ERROR"
+        ],
+        "target_files": [
+          ".*sample.*"
+        ]
+      }
+    ]
+  }
+}
