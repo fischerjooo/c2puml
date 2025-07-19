@@ -272,11 +272,19 @@ class TestIntegrationExamples(unittest.TestCase):
         project_dir = example_dir / "input"
         config_file = example_dir / "config.json"
         
-        # Load configuration
-        config = Config.load(str(config_file))
+        # Change to the configuration directory to handle relative paths
+        original_cwd = os.getcwd()
         
-        # Analyze project
-        model = self.analyzer.analyze_with_config(config)
+        try:
+            os.chdir(str(example_dir))
+            
+            # Load configuration
+            config = Config.load(str(config_file.name))
+            
+            # Analyze project
+            model = self.analyzer.analyze_with_config(config)
+        finally:
+            os.chdir(original_cwd)
         
         # Verify that filtering worked
         self.assertEqual(model.project_name, "use_case_configuration")

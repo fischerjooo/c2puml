@@ -367,17 +367,32 @@ class TestConfigurationUseCase(unittest.TestCase):
         # Use the example from examples folder
         self.project_dir = Path(__file__).parent.parent / "examples" / "use_case_configuration" / "input"
         self.config_file = Path(__file__).parent.parent / "examples" / "use_case_configuration" / "config.json"
+        
+        # Verify that the files exist
+        if not self.config_file.exists():
+            raise FileNotFoundError(f"Configuration file not found: {self.config_file}")
+        if not self.project_dir.exists():
+            raise FileNotFoundError(f"Project directory not found: {self.project_dir}")
     
     def test_configuration_filtering(self):
         """Test configuration-based filtering"""
-        # Load configuration
-        config = Config.load(str(self.config_file))
+        # Change to the configuration directory to handle relative paths
+        config_dir = self.config_file.parent
+        original_cwd = os.getcwd()
         
-        # Analyze with configuration - use analyze_project directly for single project
-        model = self.analyzer.analyze_project(str(self.project_dir), recursive=True)
-        
-        # Apply filters manually
-        model = config.apply_filters(model)
+        try:
+            os.chdir(str(config_dir))
+            
+            # Load configuration
+            config = Config.load(str(self.config_file.name))
+            
+            # Analyze with configuration - use analyze_project directly for single project
+            model = self.analyzer.analyze_project(str(self.project_dir), recursive=True)
+            
+            # Apply filters manually
+            model = config.apply_filters(model)
+        finally:
+            os.chdir(original_cwd)
         
         # Check that the model was created successfully
         self.assertIsNotNone(model)
