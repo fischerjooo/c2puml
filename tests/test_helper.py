@@ -81,12 +81,47 @@ class UseCaseTestHelper:
             
             # Check if we need to create a minimal config file for testing
             if config_file.parent.exists() and (config_file.parent / "input").exists():
-                # Create a minimal config file for testing
+                # Create a proper config file for testing that matches the expected structure
                 minimal_config = {
-                    "project_root": str(config_file.parent / "input"),
-                    "output_dir": str(config_file.parent / "generated_output"),
-                    "file_filters": ["*.c", "*.h"],
-                    "element_filters": ["functions", "structs", "typedefs"]
+                    "project_name": config_file.parent.name,
+                    "project_roots": [str(config_file.parent / "input")],
+                    "model_output_path": f"{config_file.parent.name}_model.json",
+                    "output_dir": "generated_output",
+                    "include_depth": 1,
+                    "file_filters": {
+                        "include": ["*.c", "*.h"],
+                        "exclude": []
+                    },
+                    "element_filters": {
+                        "structs": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "enums": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "unions": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "functions": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "globals": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "typedefs": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "macros": {
+                            "include": [],
+                            "exclude": []
+                        }
+                    }
                 }
                 
                 import json
@@ -164,12 +199,47 @@ class UseCaseTestHelper:
             
             # Check if we need to create a minimal config file for testing
             if example_dir.exists() and (example_dir / "input").exists():
-                # Create a minimal config file for testing
+                # Create a proper config file for testing that matches the expected structure
                 minimal_config = {
-                    "project_root": str(example_dir / "input"),
-                    "output_dir": str(example_dir / "generated_output"),
-                    "file_filters": ["*.c", "*.h"],
-                    "element_filters": ["functions", "structs", "typedefs"]
+                    "project_name": example_dir.name,
+                    "project_roots": [str(example_dir / "input")],
+                    "model_output_path": f"{example_dir.name}_model.json",
+                    "output_dir": "generated_output",
+                    "include_depth": 1,
+                    "file_filters": {
+                        "include": ["*.c", "*.h"],
+                        "exclude": []
+                    },
+                    "element_filters": {
+                        "structs": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "enums": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "unions": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "functions": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "globals": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "typedefs": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "macros": {
+                            "include": [],
+                            "exclude": []
+                        }
+                    }
                 }
                 
                 import json
