@@ -9,8 +9,8 @@ the examples folder and expectations classes for validation.
 
 import unittest
 from pathlib import Path
-from .test_helper import UseCaseTestHelper
-from .expectations import (
+from tests.test_helper import UseCaseTestHelper
+from tests.expectations import (
     BasicProjectExpectations,
     ComplexTypedefExpectations,
     ConfigurationExpectations,

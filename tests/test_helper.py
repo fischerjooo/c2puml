@@ -16,7 +16,7 @@ from c_to_plantuml.analyzer import Analyzer
 from c_to_plantuml.generator import Generator
 from c_to_plantuml.config import Config
 from c_to_plantuml.models import ProjectModel
-from .expectations import BaseExpectations
+from tests.expectations import BaseExpectations
 
 
 class UseCaseTestHelper:

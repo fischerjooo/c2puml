@@ -9,7 +9,7 @@ use case, including file structure, content validation, and output verification.
 import unittest
 from pathlib import Path
 from typing import Dict, List
-from .base_expectations import BaseExpectations
+from tests.expectations.base_expectations import BaseExpectations
 from c_to_plantuml.models import ProjectModel, FileModel
 
 
