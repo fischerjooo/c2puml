@@ -69,6 +69,9 @@ class UseCaseTestHelper:
     
     def run_configuration_test(self, project_dir: Path, config_file: Path, test_case: unittest.TestCase) -> None:
         """Run configuration-based test using expectations"""
+        # Ensure config file exists
+        test_case.assertTrue(config_file.exists(), f"Config file not found: {config_file}")
+        
         # Change to the configuration directory to handle relative paths
         config_dir = config_file.parent
         original_cwd = os.getcwd()
@@ -76,8 +79,8 @@ class UseCaseTestHelper:
         try:
             os.chdir(str(config_dir))
             
-            # Load configuration
-            config = Config.load(str(config_file.name))
+            # Load configuration using full path
+            config = Config.load(str(config_file))
             
             # Analyze with configuration
             model = self.analyzer.analyze_project(str(project_dir), recursive=True)
@@ -118,14 +121,17 @@ class UseCaseTestHelper:
         project_dir = example_dir / "input"
         config_file = example_dir / "config.json"
         
+        # Ensure config file exists
+        test_case.assertTrue(config_file.exists(), f"Config file not found: {config_file}")
+        
         # Change to the configuration directory to handle relative paths
         original_cwd = os.getcwd()
         
         try:
             os.chdir(str(example_dir))
             
-            # Load configuration
-            config = Config.load(str(config_file.name))
+            # Load configuration using full path
+            config = Config.load(str(config_file))
             
             # Step 1: Analyze project and generate model
             model = self.analyzer.analyze_with_config(config)
