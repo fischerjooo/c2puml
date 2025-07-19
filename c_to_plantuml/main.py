@@ -14,9 +14,23 @@ import os
 import logging
 from pathlib import Path
 from typing import Optional
-from .analyzer import Analyzer
-from .generator import Generator
-from .config import Config
+try:
+    from .analyzer import Analyzer
+    from .generator import Generator
+    from .config import Config
+except ImportError:
+    # Handle case when running as script directly
+    import sys
+    from pathlib import Path
+    
+    # Add the parent directory to the path so we can import the package
+    parent_dir = Path(__file__).parent.parent
+    sys.path.insert(0, str(parent_dir))
+    
+    # Now import from the package
+    from c_to_plantuml.analyzer import Analyzer
+    from c_to_plantuml.generator import Generator
+    from c_to_plantuml.config import Config
 
 
 def setup_logging(verbose: bool = False) -> None:
