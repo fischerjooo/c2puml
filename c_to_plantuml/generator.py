@@ -69,6 +69,27 @@ class Generator:
         
         self.logger.info(f"Generated {generated_count} PlantUML diagrams in {config.output_dir}")
     
+    def generate_from_project_model(self, model: ProjectModel, output_dir: str) -> None:
+        """Generate PlantUML diagrams from a ProjectModel object"""
+        self.logger.info(f"Generating diagrams from project model: {model.project_name}")
+        
+        # Create output directory
+        output_path = Path(output_dir)
+        output_path.mkdir(parents=True, exist_ok=True)
+        
+        # Generate diagrams for each file
+        generated_count = 0
+        for file_path, file_model in model.files.items():
+            try:
+                # Only generate diagrams for .c files, not .h files
+                if file_model.relative_path.endswith('.c'):
+                    self._generate_file_diagram(file_model, output_path, model)
+                    generated_count += 1
+            except Exception as e:
+                self.logger.error(f"Failed to generate diagram for {file_path}: {e}")
+        
+        self.logger.info(f"Generated {generated_count} PlantUML diagrams in {output_dir}")
+    
     def _generate_file_diagram(self, file_model: FileModel, output_dir: Path, model: ProjectModel = None) -> None:
         """Generate PlantUML diagram for a single file"""
         # Create filename using relative path without extension
