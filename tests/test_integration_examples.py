@@ -35,6 +35,8 @@ class TestIntegrationExamples(unittest.TestCase):
         """Set up test fixtures"""
         # Use examples from the examples folder
         self.examples_dir = Path(__file__).parent.parent / "examples"
+        # Ensure we have an absolute path
+        self.examples_dir = self.examples_dir.resolve()
     
     def test_integration_workflow_example(self):
         """Test complete workflow using the integration workflow example"""

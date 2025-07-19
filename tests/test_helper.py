@@ -69,7 +69,23 @@ class UseCaseTestHelper:
     
     def run_configuration_test(self, project_dir: Path, config_file: Path, test_case: unittest.TestCase) -> None:
         """Run configuration-based test using expectations"""
-        # Ensure config file exists
+        # Ensure config file exists with better error reporting
+        if not config_file.exists():
+            # Try to find the file in common locations
+            possible_paths = [
+                config_file,
+                config_file.absolute(),
+                Path.cwd() / config_file.name,
+                Path(__file__).parent.parent / "examples" / config_file.parent.name / config_file.name
+            ]
+            error_msg = f"Config file not found: {config_file}\n"
+            error_msg += f"Tried paths: {[str(p) for p in possible_paths]}\n"
+            error_msg += f"Current working directory: {Path.cwd()}\n"
+            error_msg += f"Config file parent exists: {config_file.parent.exists()}\n"
+            if config_file.parent.exists():
+                error_msg += f"Config file parent contents: {list(config_file.parent.iterdir())}\n"
+            test_case.fail(error_msg)
+        
         test_case.assertTrue(config_file.exists(), f"Config file not found: {config_file}")
         
         # Change to the configuration directory to handle relative paths
@@ -121,7 +137,23 @@ class UseCaseTestHelper:
         project_dir = example_dir / "input"
         config_file = example_dir / "config.json"
         
-        # Ensure config file exists
+        # Ensure config file exists with better error reporting
+        if not config_file.exists():
+            # Try to find the file in common locations
+            possible_paths = [
+                config_file,
+                config_file.absolute(),
+                Path.cwd() / "examples" / example_dir.name / "config.json",
+                Path(__file__).parent.parent / "examples" / example_dir.name / "config.json"
+            ]
+            error_msg = f"Config file not found: {config_file}\n"
+            error_msg += f"Tried paths: {[str(p) for p in possible_paths]}\n"
+            error_msg += f"Current working directory: {Path.cwd()}\n"
+            error_msg += f"Example directory exists: {example_dir.exists()}\n"
+            if example_dir.exists():
+                error_msg += f"Example directory contents: {list(example_dir.iterdir())}\n"
+            test_case.fail(error_msg)
+        
         test_case.assertTrue(config_file.exists(), f"Config file not found: {config_file}")
         
         # Change to the configuration directory to handle relative paths
