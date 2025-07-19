@@ -136,10 +136,20 @@ def handle_analyze_command(args: argparse.Namespace) -> int:
     """Handle analyze command - Step 1: Parse C files and generate model"""
     logger = logging.getLogger(__name__)
     
-    if not validate_project_root(args.project_root):
+    # Handle both project_root and project_roots attributes for compatibility
+    project_root = getattr(args, 'project_root', None)
+    if project_root is None:
+        project_roots = getattr(args, 'project_roots', None)
+        if project_roots is not None and isinstance(project_roots, list) and len(project_roots) > 0:
+            project_root = project_roots[0]
+        else:
+            logger.error("Neither project_root nor project_roots found in arguments")
+            return 1
+    
+    if not validate_project_root(project_root):
         return 1
     
-    logger.info(f"Step 1: Analyzing C/C++ project: {args.project_root}")
+    logger.info(f"Step 1: Analyzing C/C++ project: {project_root}")
     
     try:
         analyzer = Analyzer()
