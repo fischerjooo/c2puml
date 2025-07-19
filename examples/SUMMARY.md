@@ -4,19 +4,49 @@ This directory contains example use cases for the C to PlantUML converter.
 
 ## Available Examples
 
-### ✅ large_codebase
+### ✅ use_case_large_codebase
 - **Description**: No description available
 - **Input**: 5 files
 - **Output**: 0 files
 - **Configuration**: config.json
 
-### ✅ typedef_example
+### ✅ use_case_typedef_complex
+- **Description**: No description available
+- **Input**: 2 files
+- **Output**: 0 files
+- **Configuration**: config.json
+
+### ✅ use_case_error_handling
 - **Description**: No description available
 - **Input**: 3 files
 - **Output**: 0 files
 - **Configuration**: config.json
 
+### ✅ large_codebase
+- **Description**: No description available
+- **Input**: 5 files
+- **Output**: 3 files
+- **Configuration**: config.json
+
+### ✅ typedef_example
+- **Description**: No description available
+- **Input**: 3 files
+- **Output**: 1 files
+- **Configuration**: config.json
+
 ### ✅ basic_project
+- **Description**: No description available
+- **Input**: 3 files
+- **Output**: 1 files
+- **Configuration**: config.json
+
+### ✅ use_case_configuration
+- **Description**: No description available
+- **Input**: 3 files
+- **Output**: 0 files
+- **Configuration**: config.json
+
+### ✅ use_case_basic_project
 - **Description**: No description available
 - **Input**: 3 files
 - **Output**: 0 files
