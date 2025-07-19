@@ -154,7 +154,7 @@ def handle_analyze_command(args: argparse.Namespace) -> int:
     try:
         analyzer = Analyzer()
         model = analyzer.analyze_project(
-            project_root=args.project_root,
+            project_root=project_root,
             recursive=args.recursive
         )
         
