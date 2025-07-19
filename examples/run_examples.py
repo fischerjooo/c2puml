@@ -62,12 +62,13 @@ def run_example(example_dir: Path, verbose: bool = False) -> bool:
     try:
         # Run the complete workflow using config
         cmd = [
-            sys.executable, "-m", "c_to_plantuml", "config", 
+            sys.executable, "-m", "c_to_plantuml.main", 
+            "--verbose" if verbose else "", "config", 
             str(config_file)
         ]
         
-        if verbose:
-            cmd.extend(["--verbose"])
+        # Remove empty strings
+        cmd = [arg for arg in cmd if arg]
         
         logger.info(f"Running command: {' '.join(cmd)}")
         

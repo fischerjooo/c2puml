@@ -4,8 +4,20 @@ This directory contains example use cases for the C to PlantUML converter.
 
 ## Available Examples
 
-### ❌ basic_project
-- **Description**: Basic Project Example
+### ✅ large_codebase
+- **Description**: No description available
+- **Input**: 5 files
+- **Output**: 0 files
+- **Configuration**: config.json
+
+### ✅ typedef_example
+- **Description**: No description available
+- **Input**: 3 files
+- **Output**: 0 files
+- **Configuration**: config.json
+
+### ✅ basic_project
+- **Description**: No description available
 - **Input**: 3 files
 - **Output**: 0 files
 - **Configuration**: config.json

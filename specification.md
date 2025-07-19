@@ -47,7 +47,7 @@ The application follows a clear 3-step processing flow:
 - Store all parsed elements with their properties
 - Track relationships between elements (typedefs, includes)
 - Support model serialization and deserialization
-- Maintain backward compatibility with existing model formats
+- Support modern JSON model formats with validation
 
 #### R3: PlantUML Diagram Generation
 **Description**: Convert JSON models into PlantUML class diagrams with proper UML notation
@@ -173,14 +173,14 @@ The application follows a clear 3-step processing flow:
 
 ### 2.3 Quality Requirements
 
-#### R16: Backward Compatibility
-**Description**: Maintain backward compatibility with existing configurations
+#### R16: Modern Configuration Support
+**Description**: Support modern configuration formats with validation and transformation
 **Behavior**:
-- Support legacy configuration formats
-- Maintain API compatibility
-- Provide migration tools if needed
-- Document breaking changes
-- Support version-specific features
+- Support JSON-based configuration with schema validation
+- Provide configuration templates and examples
+- Support configuration inheritance and merging
+- Validate configuration syntax and semantics
+- Support configuration versioning and migration
 
 #### R17: Comprehensive Error Handling
 **Description**: Provide comprehensive error handling and validation
