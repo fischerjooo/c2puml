@@ -8,14 +8,24 @@ classes for validation, making them more reliable and maintainable.
 
 import unittest
 from pathlib import Path
-from tests.test_helper import UseCaseTestHelper
-from tests.expectations import (
-    IntegrationWorkflowExpectations,
-    ComplexExampleExpectations,
-    TypedefTestExpectations,
-    SampleExpectations,
-    ConfigurationExpectations
-)
+try:
+    from tests.test_helper import UseCaseTestHelper
+    from tests.expectations import (
+        IntegrationWorkflowExpectations,
+        ComplexExampleExpectations,
+        TypedefTestExpectations,
+        SampleExpectations,
+        ConfigurationExpectations
+    )
+except ImportError:
+    from .test_helper import UseCaseTestHelper
+    from .expectations import (
+        IntegrationWorkflowExpectations,
+        ComplexExampleExpectations,
+        TypedefTestExpectations,
+        SampleExpectations,
+        ConfigurationExpectations
+    )
 
 
 class TestIntegrationExamples(unittest.TestCase):

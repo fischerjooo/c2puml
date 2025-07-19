@@ -8,7 +8,10 @@ use case, including file structure, content validation, and output verification.
 
 from pathlib import Path
 from typing import Dict, List
-from tests.expectations.base_expectations import BaseExpectations
+try:
+    from tests.expectations.base_expectations import BaseExpectations
+except ImportError:
+    from .base_expectations import BaseExpectations
 from c_to_plantuml.models import ProjectModel, FileModel
 
 
