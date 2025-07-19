@@ -131,6 +131,10 @@ class Config:
             model.files = filtered_files
             
             self.logger.debug(f"File filtering: {len(model.files)} files after filtering")
+        else:
+            # Apply only element filters if no file filters
+            for file_path, file_model in model.files.items():
+                model.files[file_path] = self._apply_element_filters(file_model)
         
         return model
     
