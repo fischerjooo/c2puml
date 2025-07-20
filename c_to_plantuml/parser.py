@@ -115,23 +115,9 @@ class CParser:
             for ext in c_extensions:
                 files.extend(project_root.glob(f"*{ext}"))
 
-        # Filter out hidden files and common exclude patterns
-        filtered_files = []
-        exclude_patterns = {".git", "__pycache__", "node_modules", ".vscode", ".idea"}
-
-        for file_path in files:
-            # Skip hidden files and directories
-            if any(part.startswith(".") for part in file_path.parts):
-                continue
-
-            # Skip common exclude patterns
-            if any(pattern in file_path.parts for pattern in exclude_patterns):
-                continue
-
-            filtered_files.append(file_path)
-
-        self.logger.debug(f"Found {len(filtered_files)} C/C++ files after filtering")
-        return sorted(filtered_files)
+        # No filtering at parsing step - all filtering should be done in transformer
+        self.logger.debug(f"Found {len(files)} C/C++ files")
+        return sorted(files)
 
     def _detect_encoding(self, file_path: Path) -> str:
         """Detect file encoding"""

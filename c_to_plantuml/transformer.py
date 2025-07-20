@@ -99,7 +99,7 @@ class Transformer:
         """Apply all configured transformations to the model"""
         self.logger.info("Applying transformations to model")
 
-        # Apply file filters
+        # Apply comprehensive file filtering (moved from parser)
         if "file_filters" in config:
             model = self._apply_file_filters(model, config["file_filters"])
 
@@ -107,7 +107,7 @@ class Transformer:
         if "element_filters" in config:
             model = self._apply_element_filters(model, config["element_filters"])
 
-        # Apply transformations
+        # Apply transformations with file selection support
         if "transformations" in config:
             model = self._apply_model_transformations(model, config["transformations"])
 
@@ -123,16 +123,26 @@ class Transformer:
     def _apply_file_filters(
         self, model: ProjectModel, filters: Dict[str, Any]
     ) -> ProjectModel:
-        """Apply file-level filters"""
+        """Apply comprehensive file-level filters (includes filtering moved from parser)"""
         include_patterns = self._compile_patterns(filters.get("include", []))
         exclude_patterns = self._compile_patterns(filters.get("exclude", []))
 
-        if not include_patterns and not exclude_patterns:
-            return model
+        # Add common exclude patterns that were previously in parser
+        common_exclude_patterns = [
+            r"\.git/.*",
+            r"__pycache__/.*",
+            r"node_modules/.*",
+            r"\.vscode/.*",
+            r"\.idea/.*",
+            r".*/\..*",  # Hidden files and directories
+        ]
+        
+        # Combine user exclude patterns with common ones
+        all_exclude_patterns = self._compile_patterns(common_exclude_patterns + filters.get("exclude", []))
 
         filtered_files = {}
         for file_path, file_model in model.files.items():
-            if self._should_include_file(file_path, include_patterns, exclude_patterns):
+            if self._should_include_file(file_path, include_patterns, all_exclude_patterns):
                 filtered_files[file_path] = file_model
 
         model.files = filtered_files
@@ -193,23 +203,41 @@ class Transformer:
     def _apply_model_transformations(
         self, model: ProjectModel, transformations: Dict[str, Any]
     ) -> ProjectModel:
-        """Apply model-level transformations"""
+        """Apply model-level transformations with file selection support"""
+        # Get file selection configuration
+        file_selection = transformations.get("file_selection", {})
+        apply_to_all = file_selection.get("apply_to_all", True)
+        selected_files = file_selection.get("selected_files", [])
+        
+        # Determine which files to apply transformations to
+        target_files = set()
+        if apply_to_all:
+            target_files = set(model.files.keys())
+        else:
+            # Apply only to selected files
+            for pattern in selected_files:
+                for file_path in model.files.keys():
+                    if self._matches_pattern(file_path, pattern):
+                        target_files.add(file_path)
+        
+        self.logger.debug(f"Applying transformations to {len(target_files)} files: {list(target_files)}")
+
         # Rename elements
         if "rename" in transformations:
-            model = self._apply_renaming(model, transformations["rename"])
+            model = self._apply_renaming(model, transformations["rename"], target_files)
 
         # Add elements
         if "add" in transformations:
-            model = self._apply_additions(model, transformations["add"])
+            model = self._apply_additions(model, transformations["add"], target_files)
 
         # Remove elements
         if "remove" in transformations:
-            model = self._apply_removals(model, transformations["remove"])
+            model = self._apply_removals(model, transformations["remove"], target_files)
 
         return model
 
     def _apply_renaming(
-        self, model: ProjectModel, rename_config: Dict[str, Any]
+        self, model: ProjectModel, rename_config: Dict[str, Any], target_files: Set[str]
     ) -> ProjectModel:
         """Apply renaming transformations"""
         # Implementation for renaming elements
@@ -218,7 +246,7 @@ class Transformer:
         return model
 
     def _apply_additions(
-        self, model: ProjectModel, add_config: Dict[str, Any]
+        self, model: ProjectModel, add_config: Dict[str, Any], target_files: Set[str]
     ) -> ProjectModel:
         """Apply addition transformations"""
         # Implementation for adding new elements
@@ -227,7 +255,7 @@ class Transformer:
         return model
 
     def _apply_removals(
-        self, model: ProjectModel, remove_config: Dict[str, Any]
+        self, model: ProjectModel, remove_config: Dict[str, Any], target_files: Set[str]
     ) -> ProjectModel:
         """Apply removal transformations"""
         # Implementation for removing elements
