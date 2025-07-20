@@ -89,7 +89,7 @@ void init_config(void);
         # Step 3: Generate PlantUML diagrams
         generator = Generator()
         output_dir = os.path.join(self.temp_dir, "output")
-        generator.generate_from_model(model_path, output_dir)
+        generator.generate(model_path, output_dir)
 
         # Verify generation
         self.assertTrue(os.path.exists(output_dir))

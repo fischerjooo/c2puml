@@ -38,7 +38,7 @@ int global_var;
 
         c_file = self.create_test_file("test.c", test_content)
         parser = CParser()
-        file_model = parser.parse_file(Path(c_file))
+        file_model = parser.parse_file(Path(c_file), "test.c", str(Path(c_file).parent))
 
         # Verify parsing results
         self.assertIn("Person", file_model.structs)

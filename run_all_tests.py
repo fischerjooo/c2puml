@@ -19,10 +19,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 def run_unit_tests():
     """Run all unit tests and return the test result"""
     # Import and run unit tests from test files
-    from tests.test_config import TestConfig
-    from tests.test_generator import TestGenerator
-    from tests.test_parser import TestCParser
-    from tests.test_project_analyzer import TestProjectAnalyzer
+    from tests.unit.test_config import TestConfig
+    from tests.unit.test_generator import TestGenerator
+    from tests.unit.test_parser import TestCParser
+    from tests.unit.test_project_analyzer import TestProjectAnalyzer
 
     # Create test suite for unit tests
     unit_suite = unittest.TestSuite()
@@ -44,13 +44,13 @@ def run_unit_tests():
 def run_feature_tests():
     """Run all feature-based tests and return the test result"""
     # Import feature test classes
-    from tests.feature_tests.test_parser_features import TestParserFeatures
-    from tests.feature_tests.test_project_analysis_features import TestProjectAnalysisFeatures
-    from tests.feature_tests.test_generator_features import TestGeneratorFeatures
-    from tests.feature_tests.test_configuration_features import TestConfigurationFeatures
-    from tests.feature_tests.test_workflow_features import TestWorkflowFeatures
-    from tests.feature_tests.test_error_handling_features import TestErrorHandlingFeatures
-    from tests.feature_tests.test_performance_features import TestPerformanceFeatures
+    from tests.feature.test_parser_features import TestParserFeatures
+    from tests.feature.test_project_analysis_features import TestProjectAnalysisFeatures
+    from tests.feature.test_generator_features import TestGeneratorFeatures
+    from tests.feature.test_configuration_features import TestConfigurationFeatures
+    from tests.feature.test_workflow_features import TestWorkflowFeatures
+    from tests.feature.test_error_handling_features import TestErrorHandlingFeatures
+    from tests.feature.test_performance_features import TestPerformanceFeatures
 
     # Create test suite for feature tests
     feature_suite = unittest.TestSuite()

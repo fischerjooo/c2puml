@@ -96,7 +96,8 @@ class TestConfig(unittest.TestCase):
             "recursive": False,
             "file_filters": {
                 "include": [".*\\.c$"]
-            }
+            },
+            "element_filters": {}
         })
         
         # Save configuration
@@ -119,7 +120,8 @@ class TestConfig(unittest.TestCase):
             "file_filters": {
                 "include": [".*\\.c$", ".*\\.h$"],
                 "exclude": ["test_.*\\.c$", ".*\\.tmp$"]
-            }
+            },
+            "element_filters": {}
         })
         
         # Test include patterns
@@ -143,7 +145,8 @@ class TestConfig(unittest.TestCase):
                     "include": ["main", "process"],
                     "exclude": ["debug_.*"]
                 }
-            }
+            },
+            "file_filters": {}
         })
         
         # Create test file model
@@ -255,7 +258,8 @@ class TestConfig(unittest.TestCase):
             "file_filters": {
                 "include": ["[invalid_regex"],
                 "exclude": ["[invalid_regex"]
-            }
+            },
+            "element_filters": {}
         })
         
         # Should handle invalid regex gracefully
@@ -273,7 +277,8 @@ class TestConfig(unittest.TestCase):
             "file_filters": {
                 "include": [".*\\.c$"],
                 "exclude": ["test_.*\\.c$"]
-            }
+            },
+            "element_filters": {}
         })
         
         summary = config.get_summary()
@@ -288,7 +293,9 @@ class TestConfig(unittest.TestCase):
         """Test default configuration values"""
         config = Config({
             "project_name": "test_project",
-            "source_folders": ["/path/to/project"]
+            "source_folders": ["/path/to/project"],
+            "file_filters": {},
+            "element_filters": {}
         })
         
         # Check default values
@@ -302,19 +309,25 @@ class TestConfig(unittest.TestCase):
         config1 = Config({
             "project_name": "test_project",
             "source_folders": ["/path/to/project"],
-            "output_dir": "./output"
+            "output_dir": "./output",
+            "file_filters": {},
+            "element_filters": {}
         })
         
         config2 = Config({
             "project_name": "test_project",
             "source_folders": ["/path/to/project"],
-            "output_dir": "./output"
+            "output_dir": "./output",
+            "file_filters": {},
+            "element_filters": {}
         })
         
         config3 = Config({
             "project_name": "different_project",
             "source_folders": ["/path/to/project"],
-            "output_dir": "./output"
+            "output_dir": "./output",
+            "file_filters": {},
+            "element_filters": {}
         })
         
         # Test equality - compare key attributes instead
@@ -327,7 +340,9 @@ class TestConfig(unittest.TestCase):
         """Test configuration string representation"""
         config = Config({
             "project_name": "test_project",
-            "source_folders": ["/path/to/project"]
+            "source_folders": ["/path/to/project"],
+            "file_filters": {},
+            "element_filters": {}
         })
         
         repr_str = repr(config)

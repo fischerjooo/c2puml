@@ -23,6 +23,8 @@ class TestConfigurationFeatures(BaseFeatureTest):
             "output_dir": "./output",
             "model_output_path": "model.json",
             "recursive": True,
+            "file_filters": {},
+            "element_filters": {},
         }
 
         config_path = os.path.join(self.temp_dir, "test_config.json")

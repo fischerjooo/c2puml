@@ -44,7 +44,7 @@ int global_var;
         
         try:
             # Parse the file
-            file_model = self.parser.parse_file(Path(temp_file))
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent))
             
             # Check results
             self.assertIn('Person', file_model.structs)
@@ -75,7 +75,7 @@ struct Rectangle {
             temp_file = f.name
         
         try:
-            file_model = self.parser.parse_file(Path(temp_file))
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent))
             
             self.assertIn('Point', file_model.structs)
             self.assertIn('Rectangle', file_model.structs)
@@ -106,7 +106,7 @@ enum Status {
             temp_file = f.name
         
         try:
-            file_model = self.parser.parse_file(Path(temp_file))
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent))
             
             self.assertIn('Color', file_model.enums)
             self.assertIn('Status', file_model.enums)
@@ -139,7 +139,7 @@ float get_average(float* values, int count) {
             temp_file = f.name
         
         try:
-            file_model = self.parser.parse_file(Path(temp_file))
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent))
             
             self.assertEqual(len(file_model.functions), 3)
             function_names = [f.name for f in file_model.functions]
@@ -162,7 +162,7 @@ float get_average(float* values, int count) {
             temp_file = f.name
         
         try:
-            file_model = self.parser.parse_file(Path(temp_file))
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent))
             
             self.assertEqual(len(file_model.macros), 4)
             self.assertIn('MAX_SIZE', file_model.macros)
@@ -185,7 +185,7 @@ float get_average(float* values, int count) {
             temp_file = f.name
         
         try:
-            file_model = self.parser.parse_file(Path(temp_file))
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent))
             
             self.assertEqual(len(file_model.includes), 4)
             self.assertIn('stdio.h', file_model.includes)
@@ -208,7 +208,7 @@ static int static_var = 10;
             temp_file = f.name
         
         try:
-            file_model = self.parser.parse_file(Path(temp_file))
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent))
             
             self.assertGreaterEqual(len(file_model.globals), 3)
             global_names = [g.name for g in file_model.globals]
@@ -234,7 +234,7 @@ typedef struct {
             temp_file = f.name
         
         try:
-            file_model = self.parser.parse_file(Path(temp_file))
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent))
             
             self.assertGreaterEqual(len(file_model.typedefs), 3)
             self.assertIn('Integer', file_model.typedefs)
@@ -251,7 +251,7 @@ typedef struct {
             temp_file = f.name
         
         try:
-            file_model = self.parser.parse_file(Path(temp_file))
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent))
             self.assertEqual(file_model.encoding_used, "utf-8")
             self.assertEqual(len(file_model.functions), 1)
             
@@ -309,7 +309,7 @@ float calculate(float a, float b) {
             temp_file = f.name
         
         try:
-            file_model = self.parser.parse_file(Path(temp_file))
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent))
             
             # Verify all elements are parsed
             self.assertEqual(len(file_model.includes), 3)
