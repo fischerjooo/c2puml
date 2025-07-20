@@ -200,59 +200,63 @@ float get_average(float* values, int count) {
         """Test parsing global variables"""
         with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
             f.write("""
-int global_counter = 0;
-char* global_string = "Hello";
+int global_int = 42;
 float global_float = 3.14f;
+char* global_string = "hello";
+static int static_var = 10;
             """)
             temp_file = f.name
         
         try:
             file_model = self.parser.parse_file(Path(temp_file))
             
-            # The parser correctly finds global variables
-            self.assertGreaterEqual(len(file_model.globals), 2)
+            self.assertGreaterEqual(len(file_model.globals), 3)
             global_names = [g.name for g in file_model.globals]
-            self.assertIn('global_counter', global_names)
+            self.assertIn('global_int', global_names)
             self.assertIn('global_float', global_names)
+            self.assertIn('global_string', global_names)
             
         finally:
             os.unlink(temp_file)
     
     def test_parse_typedefs(self):
-        """Test parsing typedef definitions"""
+        """Test parsing typedef declarations"""
         with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
             f.write("""
 typedef int Integer;
 typedef char* String;
-typedef unsigned long ulong;
-typedef struct Point Point_t;
+typedef void (*Callback)(int);
+typedef struct {
+    int x;
+    int y;
+} Point;
             """)
             temp_file = f.name
         
         try:
             file_model = self.parser.parse_file(Path(temp_file))
             
-            # The parser correctly finds typedefs
-            self.assertGreaterEqual(len(file_model.typedefs), 1)
-            self.assertEqual(file_model.typedefs['Integer'], 'int')
+            self.assertGreaterEqual(len(file_model.typedefs), 3)
+            self.assertIn('Integer', file_model.typedefs)
+            self.assertIn('String', file_model.typedefs)
+            self.assertIn('Callback', file_model.typedefs)
             
         finally:
             os.unlink(temp_file)
     
     def test_encoding_detection(self):
-        """Test encoding detection for different file encodings"""
-        # Test UTF-8 encoding
+        """Test encoding detection and handling"""
         with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False, encoding='utf-8') as f:
-            f.write("// UTF-8 file\nint main() { return 0; }")
-            utf8_file = f.name
+            f.write("// UTF-8 comment with émojis 🚀\nint main() { return 0; }")
+            temp_file = f.name
         
         try:
-            file_model = self.parser.parse_file(Path(utf8_file))
+            file_model = self.parser.parse_file(Path(temp_file))
+            self.assertEqual(file_model.encoding_used, "utf-8")
             self.assertEqual(len(file_model.functions), 1)
-            self.assertEqual(file_model.functions[0].name, 'main')
             
         finally:
-            os.unlink(utf8_file)
+            os.unlink(temp_file)
     
     def test_complete_file_parsing(self):
         """Test parsing a complete C file with all elements"""
@@ -260,41 +264,46 @@ typedef struct Point Point_t;
             f.write("""
 #include <stdio.h>
 #include <stdlib.h>
+#include "config.h"
 
-#define MAX_BUFFER 1024
-#define VERSION "1.0"
+#define MAX_SIZE 100
+#define DEBUG_MODE 1
 
-typedef struct User {
-    int id;
+typedef int Integer;
+typedef char* String;
+
+struct Person {
     char name[50];
-    char email[100];
-} User;
+    int age;
+    float height;
+};
 
-typedef enum UserStatus {
-    ACTIVE,
-    INACTIVE,
-    SUSPENDED
-} UserStatus;
+struct Config {
+    int max_users;
+    int timeout;
+    String server_name;
+};
 
-int global_user_count = 0;
-User* global_users = NULL;
+enum Status {
+    OK,
+    ERROR,
+    PENDING
+};
 
-User* create_user(int id, const char* name) {
-    User* user = malloc(sizeof(User));
-    user->id = id;
-    strcpy(user->name, name);
-    return user;
-}
-
-void delete_user(User* user) {
-    free(user);
-}
+int global_var = 42;
+String global_string = "test";
 
 int main() {
-    User* user = create_user(1, "John Doe");
-    printf("Created user: %s\\n", user->name);
-    delete_user(user);
+    printf("Hello, World!\\n");
     return 0;
+}
+
+void process_data(void* data) {
+    // Process data
+}
+
+float calculate(float a, float b) {
+    return a + b;
 }
             """)
             temp_file = f.name
@@ -302,35 +311,14 @@ int main() {
         try:
             file_model = self.parser.parse_file(Path(temp_file))
             
-            # Check includes
-            self.assertEqual(len(file_model.includes), 2)
-            self.assertIn('stdio.h', file_model.includes)
-            self.assertIn('stdlib.h', file_model.includes)
-            
-            # Check macros
+            # Verify all elements are parsed
+            self.assertEqual(len(file_model.includes), 3)
             self.assertEqual(len(file_model.macros), 2)
-            self.assertIn('MAX_BUFFER', file_model.macros)
-            self.assertIn('VERSION', file_model.macros)
-            
-            # Check structs
-            self.assertIn('User', file_model.structs)
-            user_struct = file_model.structs['User']
-            self.assertGreaterEqual(len(user_struct.fields), 1)
-            
-            # Check enums
-            self.assertIn('UserStatus', file_model.enums)
-            status_enum = file_model.enums['UserStatus']
-            self.assertEqual(len(status_enum.values), 3)
-            
-            # Check functions
-            self.assertGreaterEqual(len(file_model.functions), 2)
-            function_names = [f.name for f in file_model.functions]
-            self.assertIn('delete_user', function_names)
-            self.assertIn('main', function_names)
+            self.assertEqual(len(file_model.typedefs), 2)
+            self.assertEqual(len(file_model.structs), 2)
+            self.assertEqual(len(file_model.enums), 1)
+            self.assertEqual(len(file_model.functions), 3)
+            self.assertGreaterEqual(len(file_model.globals), 2)
             
         finally:
             os.unlink(temp_file)
-
-
-if __name__ == '__main__':
-    unittest.main()

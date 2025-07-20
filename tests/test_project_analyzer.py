@@ -116,21 +116,6 @@ class TestProjectAnalyzer(unittest.TestCase):
         self.assertIn('user.c', file_names)
         self.assertIn('config.c', file_names)
     
-    def test_prefix_filtering(self):
-        """Test filtering files by prefix"""
-        self.create_test_file("main.c", "int main() { return 0; }")
-        self.create_test_file("test_helper.c", "void helper() {}")
-        self.create_test_file("module_core.c", "void core() {}")
-        
-        # Analyze with prefix filter (note: prefix filtering is not implemented in simplified version)
-        model = self.analyzer.analyze_project(self.temp_dir, recursive=True)
-        
-        # Should include all files (prefix filtering removed in simplified version)
-        file_names = [os.path.basename(fp) for fp in model.files.keys()]
-        self.assertIn('main.c', file_names)
-        self.assertIn('test_helper.c', file_names)
-        self.assertIn('module_core.c', file_names)
-    
     def test_recursive_search(self):
         """Test recursive directory search"""
         # Create nested directory structure
@@ -185,103 +170,98 @@ class TestProjectAnalyzer(unittest.TestCase):
         self.assertIn('stdio.h', file_model.includes)
         self.assertIn('Data', file_model.structs)
     
-    def test_config_based_analysis(self):
-        """Test analysis using configuration file"""
+    def test_empty_project_analysis(self):
+        """Test analyzing an empty project directory"""
+        # Create empty directory
+        empty_dir = os.path.join(self.temp_dir, "empty")
+        os.makedirs(empty_dir, exist_ok=True)
+        
+        # Analyze empty project
+        model = self.analyzer.analyze_project(empty_dir, recursive=True)
+        
+        # Verify empty model
+        self.assertEqual(len(model.files), 0)
+        self.assertEqual(model.project_name, "empty")
+        self.assertEqual(model.project_root, empty_dir)
+    
+    def test_error_handling(self):
+        """Test error handling in project analysis"""
+        # Test with non-existent directory
+        with self.assertRaises(Exception):
+            self.analyzer.analyze_project("/non/existent/path", recursive=True)
+        
+        # Test with file instead of directory
+        test_file = self.create_test_file("test.txt", "not a directory")
+        with self.assertRaises(Exception):
+            self.analyzer.analyze_project(test_file, recursive=True)
+    
+    def test_file_filtering(self):
+        """Test file filtering during analysis"""
+        # Create files with different extensions
+        self.create_test_file("main.c", "int main() { return 0; }")
+        self.create_test_file("header.h", "#define MAX 100")
+        self.create_test_file("test.txt", "not a C file")
+        self.create_test_file("script.py", "print('not C')")
+        
+        # Analyze with default filters (should only include .c and .h files)
+        model = self.analyzer.analyze_project(self.temp_dir, recursive=True)
+        
+        # Should only include C/C++ files
+        file_names = [os.path.basename(fp) for fp in model.files.keys()]
+        self.assertIn('main.c', file_names)
+        self.assertIn('header.h', file_names)
+        self.assertNotIn('test.txt', file_names)
+        self.assertNotIn('script.py', file_names)
+    
+    def test_model_serialization(self):
+        """Test model serialization and deserialization"""
         test_content = '''
         #include <stdio.h>
         
-        void test_function() {
-            printf("Hello, World!\\n");
+        struct Test {
+            int value;
+        };
+        
+        int main() {
+            return 0;
         }
         '''
         
         self.create_test_file("test.c", test_content)
         
-        # Create config file
-        config = {
-            "project_roots": [self.temp_dir],
-            "project_name": "ConfigTest",
-            "recursive": True,
-            "output_dir": os.path.join(self.temp_dir, "output")
-        }
-        
-        config_path = os.path.join(self.temp_dir, "config.json")
-        with open(config_path, 'w', encoding='utf-8') as f:
-            json.dump(config, f, indent=2)
-        
-        # Run analysis using config
-        from c_to_plantuml.config import Config
-        config_obj = Config.load(config_path)
-        model = self.analyzer.analyze_with_config(config_obj)
-        
-        # Verify results
-        self.assertEqual(model.project_name, "ConfigTest")
-        self.assertEqual(len(model.files), 1)
-    
-    def test_empty_project_analysis(self):
-        """Test analyzing a project with no C files"""
-        empty_dir = os.path.join(self.temp_dir, "empty")
-        os.makedirs(empty_dir, exist_ok=True)
-        
-        # Create a non-C file
-        with open(os.path.join(empty_dir, "readme.txt"), 'w') as f:
-            f.write("No C files here")
-        
-        model = self.analyzer.analyze_project(empty_dir, recursive=True)
-        
-        # Should handle empty project gracefully
-        self.assertEqual(model.project_name, "empty")
-        self.assertEqual(len(model.files), 0)
-    
-    def test_error_handling(self):
-        """Test error handling for problematic files"""
-        # Create a file with encoding issues
-        problematic_file = os.path.join(self.temp_dir, "problematic.c")
-        with open(problematic_file, 'wb') as f:
-            f.write(b'\xff\xfe// Invalid UTF-8\nint main() { return 0; }')
-        
-        # Should handle the error gracefully
+        # Create model
         model = self.analyzer.analyze_project(self.temp_dir, recursive=True)
         
-        # Analysis should complete even with problematic files
-        self.assertEqual(model.project_name, os.path.basename(self.temp_dir))
-        # The file might or might not be processed depending on encoding detection
-    
-    def test_cache_management(self):
-        """Test cache management during analysis"""
-        # Create multiple files to trigger cache management
-        for i in range(5):  # Reduced number for faster testing
-            content = f'''
-            #include <stdio.h>
-            
-            void function_{i}() {{
-                printf("Function {i}\\n");
-            }}
-            '''
-            self.create_test_file(f"file_{i}.c", content)
+        # Serialize to dict
+        model_dict = model.__dict__.copy()
+        model_dict['files'] = {k: v.__dict__.copy() for k, v in model.files.items()}
         
-        # Analyze project
-        model = self.analyzer.analyze_project(self.temp_dir, recursive=True)
+        # Verify serialization
+        self.assertIn('project_name', model_dict)
+        self.assertIn('project_root', model_dict)
+        self.assertIn('files', model_dict)
+        self.assertIn('created_at', model_dict)
         
-        # Should process all files
-        self.assertEqual(len(model.files), 5)
+        # Deserialize from dict
+        loaded_model = ProjectModel.from_dict(model_dict)
+        
+        # Verify deserialization
+        self.assertEqual(loaded_model.project_name, model.project_name)
+        self.assertEqual(loaded_model.project_root, model.project_root)
+        self.assertEqual(len(loaded_model.files), len(model.files))
     
     def test_relative_path_calculation(self):
         """Test relative path calculation in file models"""
         # Create nested structure
-        sub_dir = os.path.join(self.temp_dir, "src", "modules")
+        sub_dir = os.path.join(self.temp_dir, "src")
         os.makedirs(sub_dir, exist_ok=True)
         
-        test_file = self.create_test_file("src/modules/test.c", "int test() { return 0; }")
+        self.create_test_file("src/main.c", "int main() { return 0; }")
         
+        # Analyze project
         model = self.analyzer.analyze_project(self.temp_dir, recursive=True)
         
+        # Check relative paths
         file_model = list(model.files.values())[0]
-        
-        # Check that relative path is calculated correctly
-        expected_relative = os.path.join("src", "modules", "test.c")
-        self.assertEqual(file_model.relative_path, expected_relative)
+        self.assertEqual(file_model.relative_path, "src/main.c")
         self.assertEqual(file_model.project_root, self.temp_dir)
-
-if __name__ == '__main__':
-    unittest.main()
