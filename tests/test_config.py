@@ -36,7 +36,7 @@ class TestConfig(unittest.TestCase):
         """Test loading a valid configuration file"""
         config_data = {
             "project_name": "test_project",
-            "project_roots": ["/path/to/project"],
+            "source_folders": ["/path/to/project"],
             "output_dir": "./output",
             "model_output_path": "model.json",
             "recursive": True
@@ -46,7 +46,7 @@ class TestConfig(unittest.TestCase):
         config = Config.load(config_path)
         
         self.assertEqual(config.project_name, "test_project")
-        self.assertEqual(config.project_roots, ["/path/to/project"])
+        self.assertEqual(config.source_folders, ["/path/to/project"])
         self.assertEqual(config.output_dir, "./output")
         self.assertEqual(config.model_output_path, "model.json")
         self.assertTrue(config.recursive)
@@ -55,7 +55,7 @@ class TestConfig(unittest.TestCase):
         """Test loading configuration with file and element filters"""
         config_data = {
             "project_name": "test_project",
-            "project_roots": ["/path/to/project"],
+            "source_folders": ["/path/to/project"],
             "file_filters": {
                 "include": [".*\\.c$", ".*\\.h$"],
                 "exclude": ["test_.*\\.c$"]
@@ -77,10 +77,10 @@ class TestConfig(unittest.TestCase):
     
     def test_config_validation(self):
         """Test configuration validation"""
-        # Test invalid project_roots (not a list)
+        # Test invalid source_folders (not a list)
         config_data = {
             "project_name": "test_project",
-            "project_roots": "invalid_string"
+            "source_folders": "invalid_string"
         }
         
         config_path = self.create_test_config(config_data)
@@ -91,7 +91,7 @@ class TestConfig(unittest.TestCase):
         """Test saving and loading configuration"""
         original_config = Config({
             "project_name": "test_project",
-            "project_roots": ["/path/to/project"],
+            "source_folders": ["/path/to/project"],
             "output_dir": "./output",
             "recursive": False,
             "file_filters": {
@@ -108,7 +108,7 @@ class TestConfig(unittest.TestCase):
         
         # Verify loaded configuration matches original
         self.assertEqual(loaded_config.project_name, original_config.project_name)
-        self.assertEqual(loaded_config.project_roots, original_config.project_roots)
+        self.assertEqual(loaded_config.source_folders, original_config.source_folders)
         self.assertEqual(loaded_config.output_dir, original_config.output_dir)
         self.assertEqual(loaded_config.recursive, original_config.recursive)
         self.assertEqual(len(loaded_config.file_include_patterns), 1)
@@ -267,7 +267,7 @@ class TestConfig(unittest.TestCase):
         """Test configuration summary generation"""
         config = Config({
             "project_name": "test_project",
-            "project_roots": ["/path/to/project"],
+            "source_folders": ["/path/to/project"],
             "output_dir": "./output",
             "recursive": True,
             "file_filters": {
@@ -282,13 +282,13 @@ class TestConfig(unittest.TestCase):
         # Note: summary format may vary depending on implementation
         self.assertIsInstance(summary, dict)
         self.assertIn("project_name", summary)
-        self.assertIn("project_roots", summary)
+        self.assertIn("source_folders", summary)
     
     def test_default_config_values(self):
         """Test default configuration values"""
         config = Config({
             "project_name": "test_project",
-            "project_roots": ["/path/to/project"]
+            "source_folders": ["/path/to/project"]
         })
         
         # Check default values
@@ -301,25 +301,25 @@ class TestConfig(unittest.TestCase):
         """Test configuration equality comparison"""
         config1 = Config({
             "project_name": "test_project",
-            "project_roots": ["/path/to/project"],
+            "source_folders": ["/path/to/project"],
             "output_dir": "./output"
         })
         
         config2 = Config({
             "project_name": "test_project",
-            "project_roots": ["/path/to/project"],
+            "source_folders": ["/path/to/project"],
             "output_dir": "./output"
         })
         
         config3 = Config({
             "project_name": "different_project",
-            "project_roots": ["/path/to/project"],
+            "source_folders": ["/path/to/project"],
             "output_dir": "./output"
         })
         
         # Test equality - compare key attributes instead
         self.assertEqual(config1.project_name, config2.project_name)
-        self.assertEqual(config1.project_roots, config2.project_roots)
+        self.assertEqual(config1.source_folders, config2.source_folders)
         self.assertEqual(config1.output_dir, config2.output_dir)
         self.assertNotEqual(config1.project_name, config3.project_name)
     
@@ -327,7 +327,7 @@ class TestConfig(unittest.TestCase):
         """Test configuration string representation"""
         config = Config({
             "project_name": "test_project",
-            "project_roots": ["/path/to/project"]
+            "source_folders": ["/path/to/project"]
         })
         
         repr_str = repr(config)

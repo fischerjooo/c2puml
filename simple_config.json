@@ -1,5 +1,5 @@
 {
-  "project_roots": ["./tests/test_files"],
+  "source_folders": ["./tests/test_files"],
   "project_name": "Test_Project",
   "output_dir": "./test_plantuml_output",
   "recursive": true,

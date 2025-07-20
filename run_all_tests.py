@@ -190,7 +190,7 @@ Config* create_config(int max_users) {
             
             config_data = {
                 "project_name": "test_project",
-                "project_roots": [self.temp_dir],  # Use actual existing directory
+                "source_folders": [self.temp_dir],  # Use actual existing directory
                 "output_dir": "./output",
                 "model_output_path": "model.json",
                 "recursive": True
@@ -204,7 +204,7 @@ Config* create_config(int max_users) {
             
             # Verify configuration loading
             self.assertEqual(config.project_name, "test_project")
-            self.assertEqual(config.project_roots, [self.temp_dir])
+            self.assertEqual(config.source_folders, [self.temp_dir])
             self.assertEqual(config.output_dir, "./output")
             self.assertEqual(config.model_output_path, "model.json")
             self.assertTrue(config.recursive)

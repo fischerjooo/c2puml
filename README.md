@@ -90,7 +90,7 @@ Create a JSON configuration file for transformation and filtering:
 
 ```json
 {
-  "project_roots": ["./src", "./include"],
+  "source_folders": ["./src", "./include"],
   "project_name": "MyProject",
   "output_dir": "./diagrams",
   "recursive": true,
@@ -150,7 +150,7 @@ python3 main.py generate model.json -o ./diagrams
 # Create configuration file
 cat > config.json << EOF
 {
-  "project_roots": ["./src"],
+  "source_folders": ["./src"],
   "project_name": "MyLibrary",
   "output_dir": "./docs/diagrams",
   "recursive": true,

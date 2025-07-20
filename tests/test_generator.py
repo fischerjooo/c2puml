@@ -196,7 +196,7 @@ class TestGenerator(unittest.TestCase):
         # Create configuration
         config = Config({
             "project_name": "test_project",
-            "project_roots": ["/test"],
+            "source_folders": ["/test"],
             "output_dir": os.path.join(self.temp_dir, "config_output"),
             "recursive": True
         })
