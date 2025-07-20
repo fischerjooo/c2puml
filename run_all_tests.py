@@ -1,142 +1,157 @@
 #!/usr/bin/env python3
 """
-Comprehensive Test Runner for C to PlantUML Converter
-Single entry point for all test executions - both local and CI/CD
+Robust Test Runner for C to PlantUML Converter
+Single entry point for all test executions - works locally and in CI
 """
 
-import json
-import os
-import shutil
 import sys
-import tempfile
+import os
 import unittest
 from pathlib import Path
 
+# Get the script directory and change to it
+script_dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(script_dir)
+
 # Add the current directory to the path so we can import the module
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, script_dir)
 
 
-def run_unit_tests():
-    """Run all unit tests and return the test result"""
-    # Import and run unit tests from test files
-    from tests.unit.test_config import TestConfig
-    from tests.unit.test_generator import TestGenerator
-    from tests.unit.test_parser import TestCParser
-    from tests.unit.test_project_analyzer import TestProjectAnalyzer
-
-    # Create test suite for unit tests
-    unit_suite = unittest.TestSuite()
-
-    # Add unit test classes using TestLoader
-    loader = unittest.TestLoader()
-    unit_suite.addTest(loader.loadTestsFromTestCase(TestCParser))
-    unit_suite.addTest(loader.loadTestsFromTestCase(TestProjectAnalyzer))
-    unit_suite.addTest(loader.loadTestsFromTestCase(TestGenerator))
-    unit_suite.addTest(loader.loadTestsFromTestCase(TestConfig))
-
-    # Run unit tests with verbose output
+def run_tests_with_discovery():
+    """Run tests using unittest discovery - most reliable method"""
+    print("🔍 Using unittest discovery method...")
+    
+    # Use unittest.main() with discovery - this is the most robust approach
+    # that works consistently across different environments
+    test_loader = unittest.TestLoader()
+    test_suite = test_loader.discover('tests', pattern='test_*.py')
+    
     runner = unittest.TextTestRunner(verbosity=2)
-    result = runner.run(unit_suite)
-
-    return result
+    return runner.run(test_suite)
 
 
-def run_feature_tests():
-    """Run all feature-based tests and return the test result"""
-    # Import feature test classes
-    from tests.feature.test_configuration_features import TestConfigurationFeatures
-    from tests.feature.test_error_handling_features import TestErrorHandlingFeatures
-    from tests.feature.test_generator_features import TestGeneratorFeatures
-    from tests.feature.test_parser_features import TestParserFeatures
-    from tests.feature.test_performance_features import TestPerformanceFeatures
-    from tests.feature.test_project_analysis_features import TestProjectAnalysisFeatures
-    from tests.feature.test_workflow_features import TestWorkflowFeatures
-
-    # Create test suite for feature tests
-    feature_suite = unittest.TestSuite()
-
-    # Add feature test classes using TestLoader
+def run_tests_with_imports():
+    """Run tests by importing test classes directly - fallback method"""
+    print("📦 Using direct import method...")
+    
+    all_tests = unittest.TestSuite()
     loader = unittest.TestLoader()
-    feature_suite.addTest(loader.loadTestsFromTestCase(TestParserFeatures))
-    feature_suite.addTest(loader.loadTestsFromTestCase(TestProjectAnalysisFeatures))
-    feature_suite.addTest(loader.loadTestsFromTestCase(TestGeneratorFeatures))
-    feature_suite.addTest(loader.loadTestsFromTestCase(TestConfigurationFeatures))
-    feature_suite.addTest(loader.loadTestsFromTestCase(TestWorkflowFeatures))
-    feature_suite.addTest(loader.loadTestsFromTestCase(TestErrorHandlingFeatures))
-    feature_suite.addTest(loader.loadTestsFromTestCase(TestPerformanceFeatures))
-
-    # Run feature tests with verbose output
+    
+    # Import and add unit tests
+    try:
+        from tests.unit.test_config import TestConfig
+        from tests.unit.test_generator import TestGenerator
+        from tests.unit.test_parser import TestCParser
+        from tests.unit.test_project_analyzer import TestProjectAnalyzer
+        
+        all_tests.addTest(loader.loadTestsFromTestCase(TestCParser))
+        all_tests.addTest(loader.loadTestsFromTestCase(TestProjectAnalyzer))
+        all_tests.addTest(loader.loadTestsFromTestCase(TestGenerator))
+        all_tests.addTest(loader.loadTestsFromTestCase(TestConfig))
+        print("✅ Unit tests imported successfully")
+    except ImportError as e:
+        print(f"⚠️  Warning: Could not import unit tests: {e}")
+    
+    # Import and add feature tests
+    try:
+        from tests.feature.test_integration import TestIntegration
+        from tests.feature.test_parser_features import TestParserFeatures
+        from tests.feature.test_generator_features import TestGeneratorFeatures
+        from tests.feature.test_project_analysis_features import TestProjectAnalysisFeatures
+        
+        all_tests.addTest(loader.loadTestsFromTestCase(TestIntegration))
+        all_tests.addTest(loader.loadTestsFromTestCase(TestParserFeatures))
+        all_tests.addTest(loader.loadTestsFromTestCase(TestGeneratorFeatures))
+        all_tests.addTest(loader.loadTestsFromTestCase(TestProjectAnalysisFeatures))
+        print("✅ Feature tests imported successfully")
+    except ImportError as e:
+        print(f"⚠️  Warning: Could not import feature tests: {e}")
+    
+    # Run tests
     runner = unittest.TextTestRunner(verbosity=2)
-    result = runner.run(feature_suite)
-
-    return result
+    return runner.run(all_tests)
 
 
 def main():
-    """Main test runner function"""
+    """Main test runner function with multiple fallback strategies"""
     print("🧪 Running C to PlantUML Converter Tests")
     print("=" * 60)
-
-    # Track overall results
-    total_tests_run = 0
-    total_failures = 0
-    total_errors = 0
-    all_failures = []
-    all_errors = []
-
-    # Run unit tests
-    print("\n📋 Running Unit Tests...")
-    print("-" * 40)
-    unit_result = run_unit_tests()
-
-    total_tests_run += unit_result.testsRun
-    total_failures += len(unit_result.failures)
-    total_errors += len(unit_result.errors)
-    all_failures.extend(unit_result.failures)
-    all_errors.extend(unit_result.errors)
-
-    # Run feature tests
-    print("\n📋 Running Feature Tests...")
-    print("-" * 40)
-    feature_result = run_feature_tests()
-
-    total_tests_run += feature_result.testsRun
-    total_failures += len(feature_result.failures)
-    total_errors += len(feature_result.errors)
-    all_failures.extend(feature_result.failures)
-    all_errors.extend(feature_result.errors)
-
-    # Print comprehensive summary
+    print(f"Working directory: {os.getcwd()}")
+    print(f"Script directory: {script_dir}")
+    print(f"Python version: {sys.version}")
+    
+    # Try multiple approaches to run tests
+    result = None
+    
+    # Method 1: Try unittest discovery (most reliable)
+    try:
+        print("\n🔄 Attempting unittest discovery...")
+        result = run_tests_with_discovery()
+        if result.testsRun > 0:
+            print("✅ Discovery method successful!")
+        else:
+            raise Exception("No tests found with discovery")
+    except Exception as e:
+        print(f"❌ Discovery failed: {e}")
+        
+        # Method 2: Try direct imports
+        try:
+            print("\n🔄 Attempting direct imports...")
+            result = run_tests_with_imports()
+            if result.testsRun > 0:
+                print("✅ Import method successful!")
+            else:
+                raise Exception("No tests found with imports")
+        except Exception as e2:
+            print(f"❌ Import method failed: {e2}")
+            
+            # Method 3: Last resort - try unittest.main()
+            try:
+                print("\n🔄 Attempting unittest.main()...")
+                # Temporarily modify argv for unittest.main()
+                old_argv = sys.argv
+                sys.argv = ['run_all_tests.py', 'discover', '-s', 'tests', '-p', 'test_*.py', '-v']
+                
+                # Capture the result
+                test_suite = unittest.defaultTestLoader.discover('tests', pattern='test_*.py')
+                runner = unittest.TextTestRunner(verbosity=2)
+                result = runner.run(test_suite)
+                
+                sys.argv = old_argv
+                print("✅ unittest.main() method successful!")
+            except Exception as e3:
+                print(f"❌ All methods failed: {e3}")
+                print("\n💡 Debugging information:")
+                print(f"Current directory contents: {os.listdir('.')}")
+                if os.path.exists('tests'):
+                    print(f"Tests directory contents: {os.listdir('tests')}")
+                else:
+                    print("Tests directory not found!")
+                return 1
+    
+    # Print summary
     print("\n" + "=" * 60)
-    print("COMPREHENSIVE TEST SUMMARY")
+    print("TEST SUMMARY")
     print("=" * 60)
-    print(f"Total Tests run: {total_tests_run}")
-    print(f"Unit Tests: {unit_result.testsRun}")
-    print(f"Feature Tests: {feature_result.testsRun}")
-    print(f"Total Failures: {total_failures}")
-    print(f"Total Errors: {total_errors}")
-    unit_skipped = len(unit_result.skipped) if hasattr(unit_result, "skipped") else 0
-    feature_skipped = (
-        len(feature_result.skipped) if hasattr(feature_result, "skipped") else 0
-    )
-    print(f"Skipped: {unit_skipped + feature_skipped}")
-
-    if all_failures:
+    print(f"Tests run: {result.testsRun}")
+    print(f"Failures: {len(result.failures)}")
+    print(f"Errors: {len(result.errors)}")
+    
+    if result.failures:
         print("\n❌ FAILURES:")
-        for test, traceback in all_failures:
+        for test, traceback in result.failures:
             print(f"  {test}: {traceback}")
-
-    if all_errors:
+    
+    if result.errors:
         print("\n❌ ERRORS:")
-        for test, traceback in all_errors:
+        for test, traceback in result.errors:
             print(f"  {test}: {traceback}")
-
-    # Return appropriate exit code
-    if total_failures == 0 and total_errors == 0:
+    
+    if result.wasSuccessful():
         print("\n✅ All tests passed!")
         return 0
     else:
-        print(f"\n❌ {total_failures + total_errors} test(s) failed!")
+        print(f"\n❌ {len(result.failures) + len(result.errors)} test(s) failed!")
         return 1
 
 
