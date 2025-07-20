@@ -11,6 +11,7 @@ A robust Python tool for converting C/C++ source code to PlantUML diagrams. This
 - **Robust Error Handling**: Graceful handling of invalid files and encoding issues
 - **Logging Support**: Comprehensive logging for debugging and monitoring
 - **Type Safety**: Full type hints and validation throughout the codebase
+- **Modular Architecture**: 3-step processing pipeline for maximum flexibility
 
 ## Installation
 
@@ -29,41 +30,63 @@ python3 -m pip install -e .
 
 ## Usage
 
+The tool provides a 3-step processing pipeline that can be executed individually or chained together:
+
+### Processing Flow
+
+1. **Parse** - Parses C code files and generates model.json
+2. **Transform** - Modifies the model file based on transformation configuration
+3. **Generate** - Generates puml files based on the model.json
+
 ### Command Line Interface
 
-The tool provides a command-line interface with three main commands:
-
-#### 1. Analyze a C/C++ Project
+#### 1. Parse C/C++ Project (Step 1)
 
 ```bash
-python3 main.py analyze ./src -o project_model.json --verbose
+python3 main.py parse ./src -o model.json --verbose
 ```
 
 Options:
 - `project_root`: Root directory of C/C++ project
-- `-o, --output`: Output JSON model file (default: project_model.json)
+- `-o, --output`: Output JSON model file (default: model.json)
 - `--recursive/--no-recursive`: Search subdirectories recursively (default: True)
 - `--verbose, -v`: Enable verbose output
 
-#### 2. Generate PlantUML from Model
+#### 2. Transform Model (Step 2)
 
 ```bash
-python3 main.py generate project_model.json -o ./plantuml_output
+python3 main.py transform model.json config.json -o transformed_model.json
 ```
 
 Options:
-- `model_file`: JSON model file from analysis
-- `-o, --output-dir`: Output directory for PlantUML files (default: ./plantuml_output)
+- `model_file`: Input JSON model file
+- `config_file`: Configuration JSON file
+- `-o, --output`: Output transformed model file (default: overwrites input)
 
-#### 3. Run with Configuration
+#### 3. Generate PlantUML (Step 3)
 
 ```bash
-python3 main.py config config.json
+python3 main.py generate model.json -o ./plantuml_output
 ```
+
+Options:
+- `model_file`: JSON model file
+- `-o, --output-dir`: Output directory for PlantUML files (default: ./plantuml_output)
+
+#### 4. Complete Workflow (All Steps)
+
+```bash
+python3 main.py workflow ./src config.json
+```
+
+Options:
+- `project_root`: Root directory of C/C++ project
+- `config_file`: Configuration JSON file
+- `--recursive/--no-recursive`: Search subdirectories recursively (default: True)
 
 ### Configuration File
 
-Create a JSON configuration file for more control:
+Create a JSON configuration file for transformation and filtering:
 
 ```json
 {
@@ -71,6 +94,7 @@ Create a JSON configuration file for more control:
   "project_name": "MyProject",
   "output_dir": "./diagrams",
   "recursive": true,
+  "include_depth": 2,
   "file_filters": {
     "include": [".*\\.c$", ".*\\.h$"],
     "exclude": [".*test.*", ".*mock.*"]
@@ -84,6 +108,23 @@ Create a JSON configuration file for more control:
       "include": [".*public.*"],
       "exclude": [".*private.*"]
     }
+  },
+  "transformations": {
+    "rename": {
+      "structs": {
+        "old_name": "new_name"
+      }
+    },
+    "add": {
+      "structs": {
+        "NewStruct": {
+          "fields": [
+            {"name": "field1", "type": "int"},
+            {"name": "field2", "type": "char*"}
+          ]
+        }
+      }
+    }
   }
 }
 ```
@@ -93,14 +134,17 @@ Create a JSON configuration file for more control:
 ### Basic Usage
 
 ```bash
-# Analyze a simple C project
-python3 main.py analyze ./my_project --verbose
+# Step 1: Parse a C project
+python3 main.py parse ./my_project --verbose
 
-# Generate diagrams
-python3 main.py generate my_project_model.json -o ./diagrams
+# Step 2: Transform the model (optional)
+python3 main.py transform model.json config.json
+
+# Step 3: Generate diagrams
+python3 main.py generate model.json -o ./diagrams
 ```
 
-### Advanced Usage with Configuration
+### Advanced Usage with Complete Workflow
 
 ```bash
 # Create configuration file
@@ -110,6 +154,7 @@ cat > config.json << EOF
   "project_name": "MyLibrary",
   "output_dir": "./docs/diagrams",
   "recursive": true,
+  "include_depth": 2,
   "file_filters": {
     "include": [".*\\.c$", ".*\\.h$"],
     "exclude": [".*test.*"]
@@ -117,8 +162,8 @@ cat > config.json << EOF
 }
 EOF
 
-# Run with configuration
-python3 main.py config config.json
+# Run complete workflow
+python3 main.py workflow ./src config.json
 ```
 
 ## Generated PlantUML Output
@@ -127,17 +172,9 @@ The tool generates PlantUML diagrams with the following structure:
 
 ```plantuml
 @startuml filename
-!theme plain
-skinparam classAttributeIconSize 0
-skinparam classFontSize 12
-skinparam classFontName Arial
 
 class "filename" as FILENAME <<source>> #LightBlue
 {
-    -- Includes --
-    + #include <stdio.h>
-    + #include <stdlib.h>
-
     -- Macros --
     + #define MAX_SIZE
     + #define DEBUG_MODE
@@ -163,35 +200,48 @@ class "filename" as FILENAME <<source>> #LightBlue
     + enum Status
         + OK
         + ERROR
+
+    -- Unions --
+    + union Data
+        + int int_val
+        + float float_val
 }
 
-class "Integer" as INTEGER <<typedef>> #LightYellow
+class "stdio" as HEADER_STDIO <<header>> #LightGreen
+{
+    -- Functions --
+    + int printf()
+    + int scanf()
+}
+
+class "Integer" as TYPEDEF_INTEGER <<typedef>> #LightYellow
 {
     + int
 }
 
-class "String" as STRING <<typedef>> #LightYellow
+class "Person" as TYPE_PERSON <<type>> #LightGray
 {
-    + char*
+    + struct Person
+        + char name[50]
+        + int age
 }
 
-FILENAME --> STDIO : <<include>>
-FILENAME --> STDLIB : <<include>>
+FILENAME --> HEADER_STDIO : <<include>>
+TYPEDEF_INTEGER *-- TYPE_PERSON : «defines»
 
 @enduml
 ```
 
 ## Architecture
 
-The tool is organized into several key modules:
+The tool is organized into a modular 3-step architecture:
 
 ### Core Modules
 
 - **`main.py`**: Command-line interface and entry point
-- **`parser.py`**: C/C++ code parsing with regex-based analysis
-- **`analyzer.py`**: Project analysis and file discovery
-- **`generator.py`**: PlantUML diagram generation
-- **`config.py`**: Configuration management and filtering
+- **`parser.py`**: Step 1 - Parse C/C++ files and generate model.json
+- **`transformer.py`**: Step 2 - Transform model based on configuration
+- **`generator.py`**: Step 3 - Generate puml files based on model.json
 - **`models.py`**: Data models and serialization
 
 ### Key Features
@@ -199,131 +249,71 @@ The tool is organized into several key modules:
 1. **Robust Parsing**: Handles various C/C++ constructs including:
    - Struct definitions with fields
    - Enum definitions with values
-   - Function declarations (including static functions)
+   - Union definitions with fields
+   - Function declarations
    - Global variable declarations
    - Macro definitions
-   - Typedef declarations
-   - Include statements
+   - Typedef relationships
+   - Include relationships
 
-2. **Error Handling**: Graceful handling of:
-   - Invalid file encodings
-   - Binary files
-   - Malformed C code
-   - Missing directories
+2. **Advanced Filtering**: 
+   - File-level filtering with regex patterns
+   - Element-level filtering for structs, enums, functions, etc.
+   - Include depth configuration
 
-3. **Logging**: Comprehensive logging system with:
-   - Debug information for parsing details
-   - Info messages for major operations
-   - Warning messages for recoverable issues
-   - Error messages for failures
+3. **Model Transformation**:
+   - Element renaming
+   - Element addition
+   - Element removal
+   - Configuration-driven transformations
 
-4. **Configuration**: Flexible configuration system with:
-   - File filtering (include/exclude patterns)
-   - Element filtering (structs, functions, etc.)
-   - Multiple project roots
-   - Output customization
+4. **PlantUML Generation**:
+   - Proper UML notation
+   - Typedef relationship visualization
+   - Header content display
+   - Include relationship arrows
+   - Color-coded stereotypes
 
-## Testing
+## Development
 
-The project uses a comprehensive testing approach with a single entry point for all test executions.
+### Project Structure
 
-### Quick Start
+```
+c_to_plantuml/
+├── main.py                 # CLI entry point
+├── parser.py               # Step 1: Parse C/C++ files
+├── transformer.py          # Step 2: Transform model
+├── generator.py            # Step 3: Generate PlantUML
+├── models.py               # Data models
+└── __init__.py             # Package initialization
+
+tests/
+├── test_parser.py          # Parser tests
+├── test_transformer.py     # Transformer tests
+├── test_generator.py       # Generator tests
+├── test_integration.py     # Integration tests
+└── test_files/             # Test input files
+```
+
+### Running Tests
 
 ```bash
-# Run all tests (unit + feature tests)
-python3 run_all_tests.py
+# Run all tests
+python -m unittest discover tests/
 
-# Or use the convenience script
-./test.sh
+# Run specific test module
+python -m unittest tests.test_parser
 ```
-
-### Test Structure
-
-The comprehensive test runner (`run_all_tests.py`) orchestrates both unit tests and feature tests:
-
-#### Unit Tests (41 tests):
-- **Parser Tests**: Detailed C file parsing (structs, enums, functions, globals, includes, macros, typedefs)
-- **Project Analysis Tests**: Multi-file analysis, model generation, file filtering
-- **PlantUML Generation Tests**: Diagram generation, output validation, syntax checking
-- **Configuration Tests**: JSON configuration loading, validation, filtering
-
-#### Feature Tests (7 tests):
-- **Parser Tests**: Basic C parsing functionality
-- **Project Analysis Tests**: Project analysis and model generation
-- **PlantUML Generation Tests**: Diagram generation functionality
-- **Configuration Tests**: Configuration loading and validation
-- **Workflow Tests**: Complete end-to-end testing from C files to PlantUML diagrams
-- **Error Handling Tests**: Edge cases and error scenarios
-- **Performance Tests**: Performance benchmarks with reasonable limits
-
-### CI/CD Integration
-
-The GitHub workflow automatically runs the same test command:
-
-```yaml
-- name: Run comprehensive feature tests
-  run: |
-    python run_all_tests.py
-```
-
-### Benefits
-
-- **Single Entry Point**: One command to run all tests (unit + feature)
-- **Comprehensive Coverage**: Both detailed unit tests and high-level feature tests
-- **Consistent Execution**: Same behavior locally and in CI/CD
-- **Fast Execution**: Efficient test discovery and execution
-- **Clear Results**: Detailed reporting with separate unit and feature test results
-
-For detailed testing documentation, see [tests/README.md](tests/README.md).
-
-## Recent Improvements
-
-### Code Quality Enhancements
-
-1. **Better Error Handling**: Added comprehensive error handling throughout the codebase
-2. **Logging System**: Implemented structured logging with different levels
-3. **Type Safety**: Added full type hints and validation
-4. **Code Organization**: Improved module structure and separation of concerns
-5. **Documentation**: Enhanced docstrings and comments
-
-### Parser Improvements
-
-1. **Robust Regex Patterns**: Improved regex patterns for better parsing accuracy
-2. **Context Awareness**: Better handling of struct/enum context to avoid false positives
-3. **Encoding Detection**: Multiple encoding support with fallback
-4. **Typedef Support**: Enhanced typedef parsing for complex types including pointers
-
-### Generator Improvements
-
-1. **Better PlantUML Output**: More organized and readable diagram structure
-2. **Theme Support**: Added PlantUML theme and styling
-3. **Sorted Output**: Consistent ordering of elements in diagrams
-4. **Error Recovery**: Graceful handling of file writing errors
-
-### Configuration Improvements
-
-1. **Validation**: Added configuration validation with helpful error messages
-2. **Flexible Filtering**: Enhanced file and element filtering capabilities
-3. **Save/Load**: Added configuration save and load functionality
-4. **Summary Methods**: Added methods to get configuration summaries
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Make your changes
+3. Make your changes following the 3-step architecture
 4. Add tests for new functionality
-5. Ensure all tests pass
+5. Update documentation
 6. Submit a pull request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For issues and questions:
-1. Check the existing issues
-2. Create a new issue with detailed information
-3. Include sample C code if reporting parsing issues
-4. Provide configuration files if reporting configuration issues 
+This project is licensed under the MIT License - see the LICENSE file for details. 

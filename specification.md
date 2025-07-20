@@ -17,9 +17,11 @@ The C to PlantUML Converter is a Python-based tool that analyzes C/C++ source co
 ### Processing Flow
 The application follows a clear 3-step processing flow:
 
-1. **Parse C/C++ files and generate model** - Extract structural information from source code
-2. **Apply configuration/transformers** - Filter and transform the model based on configuration
-3. **Generate PlantUML files** - Convert the transformed model into PlantUML diagrams
+1. **Parse** - Parses C code files and generates model.json
+2. **Transform** - Modifies the model file based on transformation configuration
+3. **Generate** - Generates puml files based on the model.json
+
+All steps can be executed individually or can be chained together.
 
 ## 2. High-Level Requirements
 
@@ -52,22 +54,20 @@ The application follows a clear 3-step processing flow:
 ## 3. Software Architecture and Structure
 
 ### 3.1 Overall Architecture
-The system follows a modular architecture with clear separation of concerns:
+The system follows a modular architecture with clear separation of concerns and 3 distinct processing steps:
 
 ```
 c_to_plantuml/
 ├── main.py                 # CLI entry point and command routing
-├── analyzer.py             # Project analysis orchestration
-├── parser.py               # C/C++ parser implementation
-├── generator.py            # PlantUML diagram generation
-├── config.py               # Configuration handling and filtering
+├── parser.py               # Step 1: Parse C/C++ files and generate model.json
+├── transformer.py          # Step 2: Transform model based on configuration
+├── generator.py            # Step 3: Generate puml files based on model.json
 ├── models.py               # Data models and serialization
 └── __init__.py             # Package initialization
 
 tests/
 ├── test_parser.py          # Parser functionality tests
-├── test_project_analyzer.py # Project analysis tests
-├── test_config.py          # Configuration functionality tests
+├── test_transformer.py     # Transformer functionality tests
 ├── test_generator.py       # PlantUML generation tests
 ├── test_integration.py     # Complete workflow tests
 ├── test_files/             # Test input files
@@ -85,39 +85,28 @@ tests/
   - Workflow orchestration (Steps 1-3)
   - Error handling and logging setup
 
-#### 3.2.2 Project Analyzer (`analyzer.py`)
-- **Purpose**: Orchestrates the complete analysis workflow
+#### 3.2.2 Parser (`parser.py`)
+- **Purpose**: Step 1 - Parse C code files and generate model.json
 - **Responsibilities**: 
   - File discovery and filtering
-  - Parser coordination
+  - C/C++ source code parsing
   - Model assembly and serialization
-  - Configuration integration
-  - Include depth processing for header relationships
-
-#### 3.2.3 C Parser (`parser.py`)
-- **Purpose**: Parses C/C++ source code into structured data
-- **Capabilities**:
-  - Multi-line macro parsing
-  - Function declaration extraction
-  - Struct, enum, and union parsing
-  - Typedef relationship extraction with stereotypes
-  - Header file resolution
   - Encoding detection and handling
   - Robust typedef parsing for struct/enum/union (named and anonymous)
 
-#### 3.2.4 Configuration Handler (`config.py`)
-- **Purpose**: Configuration loading, validation, and filtering
-- **Features**:
-  - JSON configuration file loading
-  - Regex-based file filtering
-  - Element-level filtering (structs, enums, unions, functions, globals)
-  - Include depth configuration
-  - Configuration validation and error handling
+#### 3.2.3 Transformer (`transformer.py`)
+- **Purpose**: Step 2 - Transform model based on configuration
+- **Responsibilities**:
+  - Configuration loading and validation
+  - Model transformation and filtering
+  - Include depth processing
+  - Element renaming and addition
+  - File and element-level filtering
 
-#### 3.2.5 PlantUML Generator (`generator.py`)
-- **Purpose**: Converts JSON models into PlantUML diagrams
-- **Output**: Structured PlantUML files with proper UML notation
-- **Features**:
+#### 3.2.4 Generator (`generator.py`)
+- **Purpose**: Step 3 - Generate puml files based on model.json
+- **Responsibilities**:
+  - PlantUML diagram generation
   - Typedef relationship visualization with stereotypes
   - Header content display in diagrams
   - Header-to-header relationship arrows
@@ -183,10 +172,11 @@ class Union:
 ```
 
 ### 3.4 Command Interface
-The system provides multiple CLI commands:
-- `analyze`: Step 1 - Parse C projects and generate JSON models
+The system provides multiple CLI commands for the 3-step workflow:
+- `parse`: Step 1 - Parse C projects and generate JSON models
+- `transform`: Step 2 - Transform JSON models based on configuration
 - `generate`: Step 3 - Convert JSON models to PlantUML diagrams
-- `config`: Complete workflow (Steps 1-3) using configuration files
+- `workflow`: Complete workflow (Steps 1-3) using configuration files
 
 ## 4. Testing Architecture
 
@@ -202,7 +192,7 @@ All tests are organized under the `tests/` directory with comprehensive coverage
 
 ### 4.2 Test Categories
 - **Parser Tests**: Verify C/C++ parsing accuracy and edge cases
-- **Configuration Tests**: Validate configuration loading, filtering, and transformation
+- **Transformer Tests**: Validate model transformation and filtering
 - **Generator Tests**: Ensure PlantUML output correctness and formatting
 - **Integration Tests**: Test complete workflows from parsing to diagram generation
 - **Typedef Tests**: Test typedef relationship parsing and visualization
@@ -214,7 +204,7 @@ All tests are organized under the `tests/` directory with comprehensive coverage
 python tests/run_tests.py
 
 # Run specific test module
-python tests/run_tests.py test_config
+python tests/run_tests.py test_parser
 
 # Run with unittest directly
 python -m unittest discover tests/
