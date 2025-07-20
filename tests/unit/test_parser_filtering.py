@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unit tests for the parser filtering functionality
+Unit tests for user-configurable filtering features via config.json
 """
 
 import json
@@ -10,17 +10,19 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from c_to_plantuml.models import ProjectModel
-from c_to_plantuml.parser import CParser, Parser
+from c_to_plantuml.config import Config
+from c_to_plantuml.models import (
+    Enum, Field, FileModel, Function, ProjectModel, Struct, Union
+)
+from c_to_plantuml.transformer import Transformer
 
 
-class TestParserFiltering(unittest.TestCase):
-    """Test cases for parser filtering functionality"""
+class TestUserConfigurableFiltering(unittest.TestCase):
+    """Test cases for user-configurable filtering features via config.json"""
 
     def setUp(self):
         """Set up test fixtures"""
-        self.parser = Parser()
-        self.c_parser = CParser()
+        self.transformer = Transformer()
         self.temp_dir = tempfile.mkdtemp()
         self.test_files = []
 
@@ -39,254 +41,450 @@ class TestParserFiltering(unittest.TestCase):
         self.test_files.append(file_path)
         return file_path
 
-    def test_file_extension_filtering(self):
-        """Test that only C/C++ files are included"""
-        # Create files with different extensions
-        c_file = self.create_test_file("test.c", "int main() { return 0; }")
-        h_file = self.create_test_file("header.h", "#define MAX 100")
-        cpp_file = self.create_test_file("test.cpp", "int main() { return 0; }")
-        txt_file = self.create_test_file("readme.txt", "This is a text file")
-        py_file = self.create_test_file("script.py", "print('Hello')")
+    def create_test_model(self) -> ProjectModel:
+        """Create a test project model with various elements"""
+        # Create a file model with different types of elements
+        file_model = FileModel(
+            file_path="/test/project/main.c",
+            relative_path="main.c",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={
+                "PublicStruct": Struct("PublicStruct", [Field("id", "int")]),
+                "InternalStruct": Struct("InternalStruct", [Field("data", "char*")]),
+                "UserData": Struct("UserData", [Field("name", "char*"), Field("age", "int")]),
+                "temp_data": Struct("temp_data", [Field("buffer", "void*")])
+            },
+            enums={
+                "Status": Enum("Status", ["OK", "ERROR", "PENDING"]),
+                "internal_state": Enum("internal_state", ["IDLE", "BUSY"]),
+                "UserType": Enum("UserType", ["ADMIN", "USER", "GUEST"])
+            },
+            functions=[
+                Function("public_function", "int", [Field("param", "int")]),
+                Function("private_function", "void", [Field("data", "char*")]),
+                Function("main", "int", []),
+                Function("internal_helper", "void", [])
+            ],
+            globals=[
+                Field("global_var", "int"),
+                Field("internal_var", "char*"),
+                Field("public_constant", "const int")
+            ],
+            macros=["MAX_SIZE", "internal_macro", "PUBLIC_DEFINE"],
+            typedefs={
+                "UserPtr": "UserData*",
+                "internal_type": "void*",
+                "PublicType": "int"
+            },
+            includes={"stdio.h", "stdlib.h", "internal.h"},
+            unions={},
+            typedef_relations=[],
+            include_relations=[]
+        )
 
-        # Parse the project
-        model = self.c_parser.parse_project(self.temp_dir, recursive=False)
+        # Create project model
+        model = ProjectModel(
+            project_name="TestProject",
+            project_root="/test/project",
+            files={"main.c": file_model},
+            created_at="2024-01-01T00:00:00"
+        )
 
-        # Verify only C/C++ files are included
-        self.assertEqual(len(model.files), 3)
-        self.assertIn("test.c", model.files)
-        self.assertIn("header.h", model.files)
-        self.assertIn("test.cpp", model.files)
-        self.assertNotIn("readme.txt", model.files)
-        self.assertNotIn("script.py", model.files)
+        return model
 
-    def test_hidden_file_exclusion(self):
-        """Test that hidden files and directories are excluded"""
-        # Create hidden files and directories
-        hidden_file = self.create_test_file(".hidden.c", "int hidden() { return 0; }")
-        hidden_dir = os.path.join(self.temp_dir, ".hidden_dir")
-        os.makedirs(hidden_dir)
-        hidden_in_dir = os.path.join(hidden_dir, "test.c")
-        with open(hidden_in_dir, "w") as f:
-            f.write("int test() { return 0; }")
+    def test_file_filters_include_patterns(self):
+        """Test file filtering with include patterns"""
+        config = Config()
+        config.file_filters = {
+            "include": [r".*\.c$", r".*\.h$"],
+            "exclude": []
+        }
+        config._compile_patterns()
 
-        # Create visible files
-        visible_file = self.create_test_file("visible.c", "int visible() { return 0; }")
+        # Test files that should be included
+        self.assertTrue(config._should_include_file("main.c"))
+        self.assertTrue(config._should_include_file("header.h"))
+        self.assertTrue(config._should_include_file("src/file.c"))
+        self.assertTrue(config._should_include_file("include/config.h"))
 
-        # Parse the project
-        model = self.c_parser.parse_project(self.temp_dir, recursive=True)
+        # Test files that should be excluded
+        self.assertFalse(config._should_include_file("readme.txt"))
+        self.assertFalse(config._should_include_file("script.py"))
+        self.assertFalse(config._should_include_file("Makefile"))
 
-        # Verify hidden files are excluded
-        self.assertEqual(len(model.files), 1)
-        self.assertIn("visible.c", model.files)
-        self.assertNotIn(".hidden.c", model.files)
-        self.assertNotIn(".hidden_dir/test.c", model.files)
+    def test_file_filters_exclude_patterns(self):
+        """Test file filtering with exclude patterns"""
+        config = Config()
+        config.file_filters = {
+            "include": [],
+            "exclude": [r".*test.*", r".*temp.*", r".*\.bak$"]
+        }
+        config._compile_patterns()
 
-    def test_exclude_patterns(self):
-        """Test that common exclude patterns are filtered out"""
-        # Create directories that should be excluded
-        git_dir = os.path.join(self.temp_dir, ".git")
-        os.makedirs(git_dir)
-        git_file = os.path.join(git_dir, "config.c")
-        with open(git_file, "w") as f:
-            f.write("int git_config() { return 0; }")
+        # Test files that should be excluded
+        self.assertFalse(config._should_include_file("test.c"))
+        self.assertFalse(config._should_include_file("temp.h"))
+        self.assertFalse(config._should_include_file("file.bak"))
+        self.assertFalse(config._should_include_file("unittest.c"))
+        self.assertFalse(config._should_include_file("temporary.h"))
 
-        cache_dir = os.path.join(self.temp_dir, "__pycache__")
-        os.makedirs(cache_dir)
-        cache_file = os.path.join(cache_dir, "test.c")
-        with open(cache_file, "w") as f:
-            f.write("int cache_test() { return 0; }")
+        # Test files that should be included
+        self.assertTrue(config._should_include_file("main.c"))
+        self.assertTrue(config._should_include_file("header.h"))
+        self.assertTrue(config._should_include_file("production.c"))
 
-        vscode_dir = os.path.join(self.temp_dir, ".vscode")
-        os.makedirs(vscode_dir)
-        vscode_file = os.path.join(vscode_dir, "settings.c")
-        with open(vscode_file, "w") as f:
-            f.write("int vscode_settings() { return 0; }")
+    def test_file_filters_include_and_exclude(self):
+        """Test file filtering with both include and exclude patterns"""
+        config = Config()
+        config.file_filters = {
+            "include": [r".*\.c$", r".*\.h$"],
+            "exclude": [r".*test.*", r".*temp.*"]
+        }
+        config._compile_patterns()
 
-        # Create visible files
-        visible_file = self.create_test_file("main.c", "int main() { return 0; }")
+        # Test files that should be included (match include, don't match exclude)
+        self.assertTrue(config._should_include_file("main.c"))
+        self.assertTrue(config._should_include_file("header.h"))
+        self.assertTrue(config._should_include_file("production.c"))
 
-        # Parse the project
-        model = self.c_parser.parse_project(self.temp_dir, recursive=True)
+        # Test files that should be excluded (match exclude patterns)
+        self.assertFalse(config._should_include_file("test.c"))
+        self.assertFalse(config._should_include_file("temp.h"))
+        self.assertFalse(config._should_include_file("unittest.c"))
 
-        # Verify excluded patterns are filtered out
-        self.assertEqual(len(model.files), 1)
-        self.assertIn("main.c", model.files)
-        self.assertNotIn(".git/config.c", model.files)
-        self.assertNotIn("__pycache__/test.c", model.files)
-        self.assertNotIn(".vscode/settings.c", model.files)
+        # Test files that should be excluded (don't match include patterns)
+        self.assertFalse(config._should_include_file("readme.txt"))
+        self.assertFalse(config._should_include_file("script.py"))
 
-    def test_recursive_vs_non_recursive_scanning(self):
-        """Test recursive vs non-recursive directory scanning"""
-        # Create subdirectory structure
-        subdir = os.path.join(self.temp_dir, "subdir")
-        os.makedirs(subdir)
-        
-        root_file = self.create_test_file("root.c", "int root() { return 0; }")
-        sub_file = os.path.join(subdir, "sub.c")
-        with open(sub_file, "w") as f:
-            f.write("int sub() { return 0; }")
+    def test_element_filters_structs(self):
+        """Test element filtering for structs"""
+        config = Config()
+        config.element_filters = {
+            "structs": {
+                "include": [r"^[A-Z].*"],
+                "exclude": [r".*[Ii]nternal.*", r".*temp.*"]
+            }
+        }
+        config._compile_patterns()
 
-        # Test non-recursive scanning
-        model_non_recursive = self.c_parser.parse_project(self.temp_dir, recursive=False)
-        self.assertEqual(len(model_non_recursive.files), 1)
-        self.assertIn("root.c", model_non_recursive.files)
-        self.assertNotIn("subdir/sub.c", model_non_recursive.files)
+        model = self.create_test_model()
+        file_model = list(model.files.values())[0]
 
-        # Test recursive scanning
-        model_recursive = self.c_parser.parse_project(self.temp_dir, recursive=True)
-        self.assertEqual(len(model_recursive.files), 2)
-        self.assertIn("root.c", model_recursive.files)
-        self.assertIn("subdir/sub.c", model_recursive.files)
+        # Apply filters
+        filtered_model = config._apply_element_filters(file_model)
 
-    def test_multiple_c_extensions(self):
-        """Test that all C/C++ file extensions are supported"""
-        extensions = [".c", ".h", ".cpp", ".cc", ".cxx", ".hpp", ".hxx"]
-        
-        for ext in extensions:
-            filename = f"test{ext}"
-            content = f"int test_{ext[1:]}() {{ return 0; }}"
-            self.create_test_file(filename, content)
+        # Check that only public structs are included
+        self.assertIn("PublicStruct", filtered_model.structs)
+        self.assertIn("UserData", filtered_model.structs)
+        self.assertNotIn("InternalStruct", filtered_model.structs)
+        self.assertNotIn("temp_data", filtered_model.structs)
 
-        # Parse the project
-        model = self.c_parser.parse_project(self.temp_dir, recursive=False)
+    def test_element_filters_functions(self):
+        """Test element filtering for functions"""
+        config = Config()
+        config.element_filters = {
+            "functions": {
+                "include": [r"^public_.*", r"^main$"],
+                "exclude": [r".*private.*", r".*internal.*"]
+            }
+        }
+        config._compile_patterns()
 
-        # Verify all extensions are included
-        self.assertEqual(len(model.files), len(extensions))
-        for ext in extensions:
-            filename = f"test{ext}"
-            self.assertIn(filename, model.files)
+        model = self.create_test_model()
+        file_model = list(model.files.values())[0]
 
-    def test_nested_directory_structure(self):
-        """Test parsing with complex nested directory structure"""
-        # Create nested structure
-        level1 = os.path.join(self.temp_dir, "level1")
-        level2 = os.path.join(level1, "level2")
-        level3 = os.path.join(level2, "level3")
-        
-        os.makedirs(level3)
-        
-        # Create files at different levels
-        root_file = self.create_test_file("root.c", "int root() { return 0; }")
-        level1_file = os.path.join(level1, "level1.c")
-        with open(level1_file, "w") as f:
-            f.write("int level1_func() { return 0; }")
-        
-        level2_file = os.path.join(level2, "level2.c")
-        with open(level2_file, "w") as f:
-            f.write("int level2_func() { return 0; }")
-        
-        level3_file = os.path.join(level3, "level3.c")
-        with open(level3_file, "w") as f:
-            f.write("int level3_func() { return 0; }")
+        # Apply filters
+        filtered_model = config._apply_element_filters(file_model)
 
-        # Parse recursively
-        model = self.c_parser.parse_project(self.temp_dir, recursive=True)
+        # Check that only public functions and main are included
+        function_names = [f.name for f in filtered_model.functions]
+        self.assertIn("public_function", function_names)
+        self.assertIn("main", function_names)
+        self.assertNotIn("private_function", function_names)
+        self.assertNotIn("internal_helper", function_names)
 
-        # Verify all files are found
-        self.assertEqual(len(model.files), 4)
-        self.assertIn("root.c", model.files)
-        self.assertIn("level1/level1.c", model.files)
-        self.assertIn("level1/level2/level2.c", model.files)
-        self.assertIn("level1/level2/level3/level3.c", model.files)
+    def test_element_filters_enums(self):
+        """Test element filtering for enums"""
+        config = Config()
+        config.element_filters = {
+            "enums": {
+                "include": [r"^[A-Z].*"],
+                "exclude": [r".*[Ii]nternal.*"]
+            }
+        }
+        config._compile_patterns()
 
-    def test_file_encoding_handling(self):
-        """Test that files with different encodings are handled properly"""
-        # Create files with different content
-        simple_file = self.create_test_file("simple.c", "int simple() { return 0; }")
-        
-        # Create file with special characters
-        special_file = self.create_test_file("special.c", "// Comment with émojis 🚀\nint special() { return 0; }")
+        model = self.create_test_model()
+        file_model = list(model.files.values())[0]
 
-        # Parse the project
-        model = self.c_parser.parse_project(self.temp_dir, recursive=False)
+        # Apply filters
+        filtered_model = config._apply_element_filters(file_model)
 
-        # Verify both files are parsed successfully
-        self.assertEqual(len(model.files), 2)
-        self.assertIn("simple.c", model.files)
-        self.assertIn("special.c", model.files)
+        # Check that only public enums are included
+        self.assertIn("Status", filtered_model.enums)
+        self.assertIn("UserType", filtered_model.enums)
+        self.assertNotIn("internal_state", filtered_model.enums)
 
-        # Verify encoding information is captured
-        simple_model = model.files["simple.c"]
-        special_model = model.files["special.c"]
-        self.assertIsNotNone(simple_model.encoding_used)
-        self.assertIsNotNone(special_model.encoding_used)
+    def test_element_filters_globals(self):
+        """Test element filtering for global variables"""
+        config = Config()
+        config.element_filters = {
+            "globals": {
+                "include": [r"^public_.*"],
+                "exclude": [r".*[Ii]nternal.*"]
+            }
+        }
+        config._compile_patterns()
 
-    def test_empty_directory_handling(self):
-        """Test handling of empty directories"""
-        # Create empty subdirectory
-        empty_dir = os.path.join(self.temp_dir, "empty")
-        os.makedirs(empty_dir)
+        model = self.create_test_model()
+        file_model = list(model.files.values())[0]
 
-        # Parse the project
-        model = self.c_parser.parse_project(self.temp_dir, recursive=True)
+        # Apply filters
+        filtered_model = config._apply_element_filters(file_model)
 
-        # Verify empty directory doesn't cause issues
-        self.assertEqual(len(model.files), 0)
-        self.assertEqual(model.project_name, os.path.basename(self.temp_dir))
+        # Check that only public globals are included
+        global_names = [g.name for g in filtered_model.globals]
+        self.assertIn("public_constant", global_names)
+        self.assertNotIn("global_var", global_names)
+        self.assertNotIn("internal_var", global_names)
 
-    def test_invalid_project_root_handling(self):
-        """Test error handling for invalid project roots"""
-        # Test non-existent directory
-        with self.assertRaises(ValueError):
-            self.c_parser.parse_project("/non/existent/path")
+    def test_element_filters_macros(self):
+        """Test element filtering for macros"""
+        config = Config()
+        config.element_filters = {
+            "macros": {
+                "include": [r"^[A-Z].*"],
+                "exclude": [r".*[Ii]nternal.*"]
+            }
+        }
+        config._compile_patterns()
 
-        # Test file instead of directory
-        test_file = self.create_test_file("test.txt", "This is a file")
-        with self.assertRaises(ValueError):
-            self.c_parser.parse_project(test_file)
+        model = self.create_test_model()
+        file_model = list(model.files.values())[0]
 
-    def test_parser_integration_with_filtering(self):
-        """Test the main Parser class integration with filtering"""
-        # Create test files
-        self.create_test_file("main.c", "int main() { return 0; }")
-        self.create_test_file("header.h", "#define MAX 100")
-        
-        # Create file that should be excluded
-        hidden_file = self.create_test_file(".hidden.c", "int hidden() { return 0; }")
+        # Apply filters
+        filtered_model = config._apply_element_filters(file_model)
 
-        # Use the main Parser class
-        output_file = os.path.join(self.temp_dir, "model.json")
-        result = self.parser.parse(self.temp_dir, output_file, recursive=False)
+        # Check that only public macros are included
+        self.assertIn("MAX_SIZE", filtered_model.macros)
+        self.assertIn("PUBLIC_DEFINE", filtered_model.macros)
+        self.assertNotIn("internal_macro", filtered_model.macros)
 
-        # Verify output file was created
-        self.assertEqual(result, output_file)
-        self.assertTrue(os.path.exists(output_file))
+    def test_element_filters_typedefs(self):
+        """Test element filtering for typedefs"""
+        config = Config()
+        config.element_filters = {
+            "typedefs": {
+                "include": [r"^[A-Z].*"],
+                "exclude": [r".*[Ii]nternal.*"]
+            }
+        }
+        config._compile_patterns()
 
-        # Load and verify the model
-        model = ProjectModel.load(output_file)
-        self.assertEqual(len(model.files), 2)
-        self.assertIn("main.c", model.files)
-        self.assertIn("header.h", model.files)
-        self.assertNotIn(".hidden.c", model.files)
+        model = self.create_test_model()
+        file_model = list(model.files.values())[0]
 
-    def test_filtering_performance(self):
+        # Apply filters
+        filtered_model = config._apply_element_filters(file_model)
+
+        # Check that only public typedefs are included
+        self.assertIn("UserPtr", filtered_model.typedefs)
+        self.assertIn("PublicType", filtered_model.typedefs)
+        self.assertNotIn("internal_type", filtered_model.typedefs)
+
+    def test_multiple_element_filters(self):
+        """Test applying multiple element filters simultaneously"""
+        config = Config()
+        config.element_filters = {
+            "structs": {
+                "include": [r"^[A-Z].*"],
+                "exclude": [r".*[Ii]nternal.*"]
+            },
+            "functions": {
+                "include": [r"^public_.*"],
+                "exclude": [r".*private.*"]
+            },
+            "enums": {
+                "include": [r"^[A-Z].*"],
+                "exclude": [r".*[Ii]nternal.*"]
+            }
+        }
+        config._compile_patterns()
+
+        model = self.create_test_model()
+        file_model = list(model.files.values())[0]
+
+        # Apply filters
+        filtered_model = config._apply_element_filters(file_model)
+
+        # Check structs
+        self.assertIn("PublicStruct", filtered_model.structs)
+        self.assertIn("UserData", filtered_model.structs)
+        self.assertNotIn("InternalStruct", filtered_model.structs)
+        self.assertNotIn("temp_data", filtered_model.structs)
+
+        # Check functions
+        function_names = [f.name for f in filtered_model.functions]
+        self.assertIn("public_function", function_names)
+        self.assertNotIn("private_function", function_names)
+        self.assertNotIn("internal_helper", function_names)
+
+        # Check enums
+        self.assertIn("Status", filtered_model.enums)
+        self.assertIn("UserType", filtered_model.enums)
+        self.assertNotIn("internal_state", filtered_model.enums)
+
+    def test_config_loading_with_filters(self):
+        """Test loading configuration with filters from JSON"""
+        config_data = {
+            "project_name": "TestProject",
+            "source_folders": ["./src"],
+            "file_filters": {
+                "include": [r".*\.c$", r".*\.h$"],
+                "exclude": [r".*test.*"]
+            },
+            "element_filters": {
+                "structs": {
+                    "include": [r"^[A-Z].*"],
+                    "exclude": [r".*[Ii]nternal.*"]
+                }
+            }
+        }
+
+        config = Config()
+        for key, value in config_data.items():
+            setattr(config, key, value)
+        config._compile_patterns()
+
+        # Verify configuration was loaded correctly
+        self.assertEqual(config.project_name, "TestProject")
+        self.assertEqual(config.source_folders, ["./src"])
+        self.assertEqual(config.file_filters["include"], [r".*\.c$", r".*\.h$"])
+        self.assertEqual(config.file_filters["exclude"], [r".*test.*"])
+        self.assertIn("structs", config.element_filters)
+
+    def test_invalid_regex_patterns(self):
+        """Test handling of invalid regex patterns in filters"""
+        config = Config()
+        config.file_filters = {
+            "include": [r"valid_pattern", r"[invalid_regex"],
+            "exclude": [r"another_valid", r"[invalid_exclude"]
+        }
+        config.element_filters = {
+            "structs": {
+                "include": [r"^[A-Z].*", r"[invalid_struct"],
+                "exclude": [r".*[Ii]nternal.*"]
+            }
+        }
+        config._compile_patterns()
+
+        # Configuration should still be created, but invalid patterns should be skipped
+        self.assertIsInstance(config, Config)
+        self.assertEqual(len(config.file_include_patterns), 1)  # Only valid pattern
+        self.assertEqual(len(config.file_exclude_patterns), 1)  # Only valid pattern
+
+    def test_empty_filters(self):
+        """Test behavior with empty filter configurations"""
+        config = Config()
+        config.file_filters = {}
+        config.element_filters = {}
+        config._compile_patterns()
+
+        # Should include all files when no file filters are specified
+        self.assertTrue(config._should_include_file("any_file.c"))
+        self.assertTrue(config._should_include_file("test.h"))
+
+        # Should not have any compiled patterns
+        self.assertEqual(len(config.file_include_patterns), 0)
+        self.assertEqual(len(config.file_exclude_patterns), 0)
+
+    def test_filter_performance(self):
         """Test that filtering doesn't significantly impact performance"""
         import time
-        
-        # Create many files with different patterns
-        c_file_count = 0
-        for i in range(50):
-            if i % 5 == 0:
-                # Create hidden files
-                self.create_test_file(f".hidden_{i}.c", f"int hidden_{i}() {{ return {i}; }}")
-            elif i % 3 == 0:
-                # Create non-C files
-                self.create_test_file(f"file_{i}.txt", f"Text file {i}")
-            else:
-                # Create C files
-                self.create_test_file(f"file_{i}.c", f"int func_{i}() {{ return {i}; }}")
-                c_file_count += 1
 
-        # Measure parsing time
+        # Create a large model
+        model = self.create_test_model()
+        file_model = list(model.files.values())[0]
+
+        # Create configuration with multiple filters
+        config = Config()
+        config.file_filters = {
+            "include": [r".*\.c$"],
+            "exclude": [r".*test.*"]
+        }
+        config.element_filters = {
+            "structs": {
+                "include": [r"^[A-Z].*"],
+                "exclude": [r".*internal.*"]
+            },
+            "functions": {
+                "include": [r"^public_.*"],
+                "exclude": [r".*private.*"]
+            },
+            "enums": {
+                "include": [r"^[A-Z].*"],
+                "exclude": [r".*internal.*"]
+            }
+        }
+        config._compile_patterns()
+
+        # Measure filtering time
         start_time = time.time()
-        model = self.c_parser.parse_project(self.temp_dir, recursive=False)
+        for _ in range(100):  # Apply filters multiple times
+            filtered_model = config._apply_element_filters(file_model)
         end_time = time.time()
 
-        # Verify filtering worked correctly
-        self.assertEqual(len(model.files), c_file_count)
-        
-        # Verify performance is reasonable (should complete in under 1 second)
+        # Verify performance is reasonable (should complete quickly)
         self.assertLess(end_time - start_time, 1.0)
+
+    def test_config_equality(self):
+        """Test configuration equality comparison"""
+        config1 = Config()
+        config1.project_name = "Test"
+        config1.file_filters = {"include": [r".*\.c$"]}
+        config1.element_filters = {"structs": {"include": [r"^[A-Z].*"]}}
+
+        config2 = Config()
+        config2.project_name = "Test"
+        config2.file_filters = {"include": [r".*\.c$"]}
+        config2.element_filters = {"structs": {"include": [r"^[A-Z].*"]}}
+
+        config3 = Config()
+        config3.project_name = "Different"
+        config3.file_filters = {"include": [r".*\.c$"]}
+        config3.element_filters = {"structs": {"include": [r"^[A-Z].*"]}}
+
+        self.assertEqual(config1, config2)
+        self.assertNotEqual(config1, config3)
+
+    def test_config_has_filters(self):
+        """Test the has_filters method"""
+        # Config with no filters
+        config1 = Config()
+        self.assertFalse(config1.has_filters())
+
+        # Config with file filters only
+        config2 = Config()
+        config2.file_filters = {"include": [r".*\.c$"]}
+        self.assertTrue(config2.has_filters())
+
+        # Config with element filters only
+        config3 = Config()
+        config3.element_filters = {"structs": {"include": [r"^[A-Z].*"]}}
+        self.assertTrue(config3.has_filters())
+
+        # Config with both filters
+        config4 = Config()
+        config4.file_filters = {"include": [r".*\.c$"]}
+        config4.element_filters = {"structs": {"include": [r"^[A-Z].*"]}}
+        self.assertTrue(config4.has_filters())
+
+        # Config with empty filter dictionaries
+        config5 = Config()
+        config5.file_filters = {}
+        config5.element_filters = {}
+        self.assertFalse(config5.has_filters())
 
 
 if __name__ == "__main__":

@@ -64,7 +64,7 @@ The `run_all_tests.py` script provides a simple and elegant test execution:
 ### Test Structure
 - **Unit Tests**: Test individual components in isolation
   - **Parser Tests**: Test C/C++ parsing functionality
-  - **Parser Filtering Tests**: Test file filtering, extension filtering, and directory scanning
+  - **User Configurable Filtering Tests**: Test user-configurable filtering via config.json
   - **Generator Tests**: Test PlantUML diagram generation
   - **Transformer Tests**: Test model transformation and filtering
   - **Config Tests**: Test configuration loading and validation
