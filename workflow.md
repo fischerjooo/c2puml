@@ -7,6 +7,7 @@ The C to PlantUML Converter follows a simple 3-step workflow for converting C/C+
 - **Do not create new markdown files** - only edit existing markdown files
 - Keep documentation concise and focused on practical usage
 - Update this workflow.md file for any new workflow changes
+- Use modern Python packaging with pyproject.toml
 
 ## Processing Workflow
 

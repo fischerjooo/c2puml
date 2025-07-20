@@ -3,5 +3,5 @@ flake8>=6.0.0
 black>=23.0.0
 isort>=5.12.0
 
-# Install the package in development mode
--e .
+# Install the package in development mode using pip
+# Run: pip install -e .
