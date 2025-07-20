@@ -44,13 +44,13 @@ def run_unit_tests():
 def run_feature_tests():
     """Run all feature-based tests and return the test result"""
     # Import feature test classes
-    from tests.feature.test_parser_features import TestParserFeatures
-    from tests.feature.test_project_analysis_features import TestProjectAnalysisFeatures
-    from tests.feature.test_generator_features import TestGeneratorFeatures
     from tests.feature.test_configuration_features import TestConfigurationFeatures
-    from tests.feature.test_workflow_features import TestWorkflowFeatures
     from tests.feature.test_error_handling_features import TestErrorHandlingFeatures
+    from tests.feature.test_generator_features import TestGeneratorFeatures
+    from tests.feature.test_parser_features import TestParserFeatures
     from tests.feature.test_performance_features import TestPerformanceFeatures
+    from tests.feature.test_project_analysis_features import TestProjectAnalysisFeatures
+    from tests.feature.test_workflow_features import TestWorkflowFeatures
 
     # Create test suite for feature tests
     feature_suite = unittest.TestSuite()
