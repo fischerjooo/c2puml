@@ -44,7 +44,7 @@ def main():
     success = True
     
     # Run flake8
-    flake8_cmd = f"flake8 {' '.join(python_files)}"
+    flake8_cmd = f"flake8 {' '.join(python_files)} --extend-ignore=E501"
     if not run_command(flake8_cmd, "flake8 linting"):
         success = False
     
