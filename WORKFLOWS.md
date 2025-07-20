@@ -17,8 +17,8 @@ The project uses a **sequenced workflow approach** where linting and formatting 
 - Manual dispatch
 
 **Sequence**:
-1. **Step 1**: Lint and Format (`lint-and-format.yml`)
-2. **Step 2**: Test (runs on updated code after formatting)
+1. **Step 1**: Lint and Format (Job 1)
+2. **Step 2**: Test (Job 2, runs on updated code after formatting)
 
 **Key Features**:
 - ✅ **Proper sequencing**: Tests run after formatting

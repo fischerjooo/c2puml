@@ -7,18 +7,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
-# Allow this workflow to be called by other workflows
-workflow_call:
-  outputs:
-    formatted:
-      description: "Whether code was formatted"
-      value: ${{ jobs.lint-and-format.outputs.has_changes }}
-
 jobs:
   lint-and-format:
     runs-on: ubuntu-latest
-    outputs:
-      has_changes: ${{ steps.check_changes.outputs.has_changes }}
     strategy:
       matrix:
         python-version: [3.9]
