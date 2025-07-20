@@ -17,5 +17,29 @@
       "include": ["^public_.*"],
       "exclude": [".*_private.*"]
     }
+  },
+  "transformations": {
+    "file_selection": {
+      "selected_files": [".*main\\.c$", ".*utils\\.c$"]
+    },
+    "rename": {
+      "structs": {
+        "old_name": "new_name"
+      }
+    },
+    "add": {
+      "structs": {
+        "NewStruct": {
+          "fields": [
+            {"name": "field1", "type": "int"},
+            {"name": "field2", "type": "char*"}
+          ]
+        }
+      }
+    },
+    "remove": {
+      "functions": ["deprecated_function"],
+      "structs": ["unused_struct"]
+    }
   }
 }
