@@ -220,14 +220,57 @@ class CParser:
         from .models import Field
 
         globals_list = []
-        # Match global variable declarations: type name;
-        pattern = r"([A-Za-z_][A-Za-z0-9_]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*;"
-        matches = re.findall(pattern, content)
-
-        for var_type, var_name in matches:
-            # Skip function declarations (they have parentheses)
-            if "(" not in content[content.find(var_name) : content.find(var_name) + 50]:
-                globals_list.append(Field(var_name, var_type))
+        
+        # Split content into lines and process each line
+        lines = content.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            
+            # Skip empty lines, comments, and preprocessor directives
+            if (not line or 
+                line.startswith('//') or 
+                line.startswith('/*') or 
+                line.startswith('#')):
+                continue
+                
+            # Skip lines with function-like declarations (containing parentheses)
+            if '(' in line and ')' in line:
+                continue
+                
+            # Check if line ends with semicolon (basic global variable indicator)
+            if line.endswith(';'):
+                # Remove semicolon
+                line = line[:-1].strip()
+                
+                # Split by equals sign to handle assignments
+                if '=' in line:
+                    # Format: type name = value
+                    declaration_part = line.split('=')[0].strip()
+                else:
+                    # Format: type name;
+                    declaration_part = line
+                
+                # Split declaration into parts
+                parts = declaration_part.split()
+                
+                if len(parts) >= 2:
+                    # Handle static keyword
+                    if parts[0] == 'static':
+                        parts = parts[1:]  # Remove 'static'
+                    
+                    if len(parts) >= 2:
+                        # Last part is the variable name
+                        var_name = parts[-1]
+                        
+                        # Check if variable name is valid
+                        if re.match(r'^[A-Za-z_][A-Za-z0-9_]*$', var_name):
+                            # Everything before the variable name is the type
+                            type_parts = parts[:-1]
+                            type_name = ' '.join(type_parts).strip()
+                            
+                            if type_name:
+                                globals_list.append(Field(var_name, type_name))
 
         return globals_list
 
@@ -258,11 +301,62 @@ class CParser:
         import re
 
         typedefs = {}
-        # Match typedef type name;
-        pattern = r"typedef\s+([^;]+)\s+([A-Za-z_][A-Za-z0-9_]*)\s*;"
-        matches = re.findall(pattern, content)
-        for original_type, typedef_name in matches:
-            typedefs[typedef_name] = original_type.strip()
+        
+        # Split content into lines to handle multi-line typedefs
+        lines = content.split('\n')
+        i = 0
+        
+        while i < len(lines):
+            line = lines[i].strip()
+            
+            # Skip empty lines and comments
+            if not line or line.startswith('//') or line.startswith('/*'):
+                i += 1
+                continue
+                
+            # Check for typedef
+            if line.startswith('typedef '):
+                # Collect the full typedef declaration (may span multiple lines)
+                typedef_text = line
+                j = i + 1
+                
+                # Continue collecting lines until we find the semicolon
+                while j < len(lines) and ';' not in typedef_text:
+                    typedef_text += ' ' + lines[j].strip()
+                    j += 1
+                
+                # Now parse the complete typedef
+                if ';' in typedef_text:
+                    # Remove 'typedef ' prefix and ';' suffix
+                    typedef_body = typedef_text[8:].rstrip(';').strip()
+                    
+                    # Handle different typedef patterns
+                    
+                    # Pattern 1: typedef type name; (simple typedef)
+                    simple_pattern = r'^([^;]+)\s+([A-Za-z_][A-Za-z0-9_]*)$'
+                    match = re.match(simple_pattern, typedef_body)
+                    if match:
+                        original_type, typedef_name = match.groups()
+                        typedefs[typedef_name] = original_type.strip()
+                    
+                    # Pattern 2: typedef struct { ... } name; (struct typedef)
+                    struct_pattern = r'^struct\s*\{[^}]*\}\s+([A-Za-z_][A-Za-z0-9_]*)$'
+                    match = re.match(struct_pattern, typedef_body, re.DOTALL)
+                    if match:
+                        typedef_name = match.group(1)
+                        typedefs[typedef_name] = 'struct'
+                    
+                    # Pattern 3: typedef void (*name)(params); (function pointer)
+                    func_ptr_pattern = r'^([^(*]+)\s*\(\s*\*\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)\s*\([^)]*\)$'
+                    match = re.match(func_ptr_pattern, typedef_body)
+                    if match:
+                        return_type, typedef_name = match.groups()
+                        typedefs[typedef_name] = f"{return_type.strip()} (*)(...)"
+                
+                i = j  # Skip the lines we've processed
+            else:
+                i += 1
+                
         return typedefs
 
     def _parse_typedef_relations(self, content: str) -> List["TypedefRelation"]:

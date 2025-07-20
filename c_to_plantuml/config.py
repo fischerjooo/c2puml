@@ -4,6 +4,7 @@ Configuration management for C to PlantUML converter
 """
 
 import json
+import logging
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -41,6 +42,9 @@ class Config:
 
     def __init__(self, *args, **kwargs):
         """Initialize configuration with keyword arguments or a single dict"""
+        # Initialize logger
+        self.logger = logging.getLogger(__name__)
+        
         # Initialize with default values first
         object.__init__(self)
 
@@ -100,25 +104,43 @@ class Config:
 
     def _compile_patterns(self):
         """Compile regex patterns for filtering"""
-        # Compile file filter patterns
-        self.file_include_patterns = [
-            re.compile(pattern) for pattern in self.file_filters.get("include", [])
-        ]
-        self.file_exclude_patterns = [
-            re.compile(pattern) for pattern in self.file_filters.get("exclude", [])
-        ]
+        # Compile file filter patterns with error handling
+        self.file_include_patterns = []
+        for pattern in self.file_filters.get("include", []):
+            try:
+                self.file_include_patterns.append(re.compile(pattern))
+            except re.error as e:
+                self.logger.warning(f"Invalid include pattern '{pattern}': {e}")
+                # Skip invalid patterns
+                
+        self.file_exclude_patterns = []
+        for pattern in self.file_filters.get("exclude", []):
+            try:
+                self.file_exclude_patterns.append(re.compile(pattern))
+            except re.error as e:
+                self.logger.warning(f"Invalid exclude pattern '{pattern}': {e}")
+                # Skip invalid patterns
 
-        # Compile element filter patterns
+        # Compile element filter patterns with error handling
         self.element_include_patterns = {}
         self.element_exclude_patterns = {}
 
         for element_type, filters in self.element_filters.items():
-            self.element_include_patterns[element_type] = [
-                re.compile(pattern) for pattern in filters.get("include", [])
-            ]
-            self.element_exclude_patterns[element_type] = [
-                re.compile(pattern) for pattern in filters.get("exclude", [])
-            ]
+            self.element_include_patterns[element_type] = []
+            for pattern in filters.get("include", []):
+                try:
+                    self.element_include_patterns[element_type].append(re.compile(pattern))
+                except re.error as e:
+                    self.logger.warning(f"Invalid {element_type} include pattern '{pattern}': {e}")
+                    # Skip invalid patterns
+                    
+            self.element_exclude_patterns[element_type] = []
+            for pattern in filters.get("exclude", []):
+                try:
+                    self.element_exclude_patterns[element_type].append(re.compile(pattern))
+                except re.error as e:
+                    self.logger.warning(f"Invalid {element_type} exclude pattern '{pattern}': {e}")
+                    # Skip invalid patterns
 
     @classmethod
     def load(cls, config_file: str) -> "Config":
