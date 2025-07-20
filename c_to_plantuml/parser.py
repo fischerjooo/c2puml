@@ -148,44 +148,46 @@ class CParser:
     def _parse_structs(self, content: str) -> Dict[str, "Struct"]:
         """Parse struct definitions from content"""
         import re
-        from .models import Struct, Field
-        
+
+        from .models import Field, Struct
+
         structs = {}
         # Match struct name { ... };
-        pattern = r'struct\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{([^}]+)\}'
+        pattern = r"struct\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{([^}]+)\}"
         matches = re.findall(pattern, content, re.DOTALL)
-        
+
         for struct_name, struct_body in matches:
             fields = []
             # Parse fields within struct
-            field_pattern = r'([A-Za-z_][A-Za-z0-9_]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*;'
+            field_pattern = r"([A-Za-z_][A-Za-z0-9_]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*;"
             field_matches = re.findall(field_pattern, struct_body)
             for field_type, field_name in field_matches:
                 fields.append(Field(field_name, field_type))
-            
+
             structs[struct_name] = Struct(struct_name, fields)
-        
+
         return structs
 
     def _parse_enums(self, content: str) -> Dict[str, "Enum"]:
         """Parse enum definitions from content"""
         import re
+
         from .models import Enum
-        
+
         enums = {}
         # Match enum name { ... };
-        pattern = r'enum\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{([^}]+)\}'
+        pattern = r"enum\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{([^}]+)\}"
         matches = re.findall(pattern, content, re.DOTALL)
-        
+
         for enum_name, enum_body in matches:
             values = []
             # Parse enum values
-            value_pattern = r'([A-Za-z_][A-Za-z0-9_]*)'
+            value_pattern = r"([A-Za-z_][A-Za-z0-9_]*)"
             value_matches = re.findall(value_pattern, enum_body)
             values.extend(value_matches)
-            
+
             enums[enum_name] = Enum(enum_name, values)
-        
+
         return enums
 
     def _parse_unions(self, content: str) -> Dict[str, "Union"]:
@@ -196,38 +198,43 @@ class CParser:
     def _parse_functions(self, content: str) -> List["Function"]:
         """Parse function declarations from content"""
         import re
+
         from .models import Function
-        
+
         functions = []
         # Match function declarations: return_type name(parameters)
-        pattern = r'([A-Za-z_][A-Za-z0-9_]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\([^)]*\)\s*\{'
+        pattern = (
+            r"([A-Za-z_][A-Za-z0-9_]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\([^)]*\)\s*\{"
+        )
         matches = re.findall(pattern, content)
-        
+
         for return_type, func_name in matches:
             functions.append(Function(func_name, return_type, []))
-        
+
         return functions
 
     def _parse_globals(self, content: str) -> List["Field"]:
         """Parse global variable declarations from content"""
         import re
+
         from .models import Field
-        
+
         globals_list = []
         # Match global variable declarations: type name;
-        pattern = r'([A-Za-z_][A-Za-z0-9_]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*;'
+        pattern = r"([A-Za-z_][A-Za-z0-9_]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*;"
         matches = re.findall(pattern, content)
-        
+
         for var_type, var_name in matches:
             # Skip function declarations (they have parentheses)
-            if '(' not in content[content.find(var_name):content.find(var_name) + 50]:
+            if "(" not in content[content.find(var_name) : content.find(var_name) + 50]:
                 globals_list.append(Field(var_name, var_type))
-        
+
         return globals_list
 
     def _parse_includes(self, content: str) -> List[str]:
         """Parse #include directives from content"""
         import re
+
         includes = []
         # Match #include <header.h> or #include "header.h"
         pattern = r'#include\s*[<"]([^>"]+)[>"]'
@@ -238,9 +245,10 @@ class CParser:
     def _parse_macros(self, content: str) -> List[str]:
         """Parse macro definitions from content"""
         import re
+
         macros = []
         # Match #define MACRO_NAME or #define MACRO_NAME value
-        pattern = r'#define\s+([A-Za-z_][A-Za-z0-9_]*)'
+        pattern = r"#define\s+([A-Za-z_][A-Za-z0-9_]*)"
         matches = re.findall(pattern, content)
         macros.extend(matches)
         return macros
@@ -248,9 +256,10 @@ class CParser:
     def _parse_typedefs(self, content: str) -> Dict[str, str]:
         """Parse typedef definitions from content"""
         import re
+
         typedefs = {}
         # Match typedef type name;
-        pattern = r'typedef\s+([^;]+)\s+([A-Za-z_][A-Za-z0-9_]*)\s*;'
+        pattern = r"typedef\s+([^;]+)\s+([A-Za-z_][A-Za-z0-9_]*)\s*;"
         matches = re.findall(pattern, content)
         for original_type, typedef_name in matches:
             typedefs[typedef_name] = original_type.strip()

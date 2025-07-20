@@ -4,8 +4,9 @@ Feature tests for PlantUML generation functionality
 Tests the ability to generate PlantUML diagrams from parsed C code models.
 """
 
-from .base import BaseFeatureTest
 from c_to_plantuml.models import ProjectModel
+
+from .base import BaseFeatureTest
 
 
 class TestGeneratorFeatures(BaseFeatureTest):
@@ -41,9 +42,11 @@ class TestGeneratorFeatures(BaseFeatureTest):
             project_name="test_project",
             project_root="/test",
             files={"test.c": file_model},
-            created_at="2023-01-01T00:00:00"
+            created_at="2023-01-01T00:00:00",
         )
-        content = generator.plantuml_generator.generate_diagram(file_model, project_model)
+        content = generator.plantuml_generator.generate_diagram(
+            file_model, project_model
+        )
 
         # Verify PlantUML generation
         self.assertIn("@startuml test", content)

@@ -15,8 +15,8 @@ class TestWorkflowFeatures(BaseFeatureTest):
 
     def test_feature_complete_workflow(self):
         """Test complete end-to-end workflow"""
-        from c_to_plantuml.parser import Parser
         from c_to_plantuml.generator import Generator
+        from c_to_plantuml.parser import Parser
 
         # Create test project
         project_content = """
