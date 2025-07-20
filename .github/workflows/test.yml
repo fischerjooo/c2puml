@@ -43,13 +43,29 @@ jobs:
         echo "Installed packages:"
         pip list
 
+    - name: Install development dependencies
+      run: |
+        echo "📦 Installing development dependencies..."
+        pip install -r requirements-dev.txt
+        echo "✅ Development dependencies installed"
+
     - name: Lint with flake8
       run: |
-        echo "🔍 Running flake8 linting..."
-        pip install flake8
-        echo "📝 Checking for Python syntax errors and undefined names..."
-        flake8 c_to_plantuml/ --count --select=E9,F63,F7,F82 --show-source --statistics
-        echo "✅ Critical linting completed successfully"
+        echo "🔍 Running comprehensive flake8 linting..."
+        flake8 c_to_plantuml/ main.py run_all_tests.py setup.py --count --show-source --statistics
+        echo "✅ flake8 linting completed successfully"
+
+    - name: Check code formatting with black
+      run: |
+        echo "🎨 Checking code formatting with black..."
+        black --check --diff c_to_plantuml/ main.py run_all_tests.py setup.py
+        echo "✅ Black formatting check completed"
+
+    - name: Check import sorting with isort
+      run: |
+        echo "📦 Checking import sorting with isort..."
+        isort --check-only --diff c_to_plantuml/ main.py run_all_tests.py setup.py
+        echo "✅ isort check completed"
 
     - name: Test new 3-step architecture
       run: |

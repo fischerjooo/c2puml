@@ -1,2 +1,7 @@
-# No external dependencies required
+# No external dependencies required for runtime
 # Uses only Python standard library
+
+# Development dependencies (for linting and formatting)
+flake8>=6.0.0
+black>=23.0.0
+isort>=5.12.0
