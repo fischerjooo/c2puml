@@ -1,17 +1,16 @@
-# Automated Python Formatting and Import Sorting
+# Python Code Formatting
 
-This project uses automated formatting tools to ensure consistent code style across all Python files.
+This project uses a simple local script to format all Python files consistently.
 
 ## 🛠️ Tools Used
 
-### Core Formatting Tools
+### Formatting Tools
 - **Black**: Code formatter that enforces consistent style
 - **isort**: Import sorting and organization
-- **flake8**: Linting and style checking
 
 ### Configuration Files
-- `pyproject.toml`: Central configuration for all tools
-- `.pre-commit-config.yaml`: Pre-commit hooks configuration (optional)
+- `pyproject.toml`: Configuration for black and isort
+- `scripts/format.py`: Single script to format all Python files
 
 ## 🚀 Quick Start
 
@@ -19,57 +18,27 @@ This project uses automated formatting tools to ensure consistent code style acr
 
 1. **Install dependencies**:
    ```bash
-   pip install black isort flake8
+   pip install black isort
    ```
 
-2. **Run formatting**:
+2. **Format all Python files**:
    ```bash
-   # Format all Python files
    python scripts/format.py
-   
-   # Or run individual tools
+   ```
+
+3. **Or run individual tools**:
+   ```bash
    python3 -m black .
    python3 -m isort .
    ```
 
-3. **Check formatting**:
-   ```bash
-   # Check all formatting and linting
-   python scripts/lint.py
-   
-   # Or run individual checks
-   python3 -m black --check .
-   python3 -m isort --check-only .
-   python3 -m flake8 .
-   ```
+## 📁 File Organization
 
-### Pre-commit Hooks (Optional)
+### Scripts
+- `scripts/format.py`: Single script to format all Python files
 
-Set up pre-commit hooks for automatic formatting on commit:
-
-```bash
-# Install pre-commit hooks
-pre-commit install
-
-# Run hooks on all files
-pre-commit run --all-files
-```
-
-## 📋 GitHub Actions Workflow
-
-### Python Format and Lint Workflow (`python-format.yml`)
-- **Trigger**: Push to main/master, PRs, manual dispatch
-- **Purpose**: Check formatting and auto-fix issues
-- **Tools**: black, isort, flake8
-- **Python Version**: 3.9
-- **Auto-commit**: Automatically commits formatting changes for both pushes and PRs
-
-### Test Auto-Formatting Workflow (`test-format.yml`)
-- **Trigger**: Manual dispatch only
-- **Purpose**: Test and demonstrate auto-formatting capability
-- **Tools**: black, isort, flake8
-- **Python Version**: 3.9
-- **Auto-commit**: Commits formatting changes when manually triggered
+### Configuration
+- `pyproject.toml`: Tool configuration for black and isort
 
 ## ⚙️ Configuration Details
 
@@ -99,111 +68,74 @@ skip_glob = [
 ]
 ```
 
-### Flake8 Configuration
-```toml
-[tool.flake8]
-max-line-length = 88
-extend-ignore = ["E203", "W503", "E501", "F401", "F841", "W293"]
-exclude = [
-    ".git", "__pycache__", "build", "dist", ".eggs", "*.egg",
-    ".venv", "venv", ".tox", ".mypy_cache", "c_to_plantuml.egg-info"
-]
-per-file-ignores = [
-    "__init__.py:F401",
-    "tests/*:F401",
-    "scripts/*:F401",
-    "run_all_tests.py:F401"
-]
+## 🎯 Usage
+
+### Format All Files
+```bash
+# Run the single formatting script
+python scripts/format.py
 ```
 
-## 📁 File Organization
+### What It Does
+1. **Finds all Python files** in the project (excluding build directories)
+2. **Formats code** with black (consistent style)
+3. **Sorts imports** with isort (organized imports)
+4. **Reports results** with clear success/failure messages
 
-### Scripts
-- `scripts/format.py`: Comprehensive formatting script
-- `scripts/lint.py`: Comprehensive linting and checking script
+### Example Output
+```
+🚀 Auto-formatting all Python files...
+============================================================
+📁 Found 26 Python files to format:
+   - c_to_plantuml/__init__.py
+   - c_to_plantuml/config.py
+   - c_to_plantuml/generator.py
+   ...
 
-### Workflows
-- `.github/workflows/python-format.yml`: Main formatting workflow
+🎨 Running black code formatting...
+🔧 black code formatting...
+✅ black code formatting completed successfully
 
-### Configuration
-- `pyproject.toml`: Central tool configuration
-- `.pre-commit-config.yaml`: Pre-commit hooks (optional)
+📦 Running isort import sorting...
+🔧 isort import sorting...
+✅ isort import sorting completed successfully
+
+============================================================
+🎉 All Python files formatted successfully!
+
+💡 To run tests, use:
+   python run_all_tests.py
+```
 
 ## 🔧 Customization
 
 ### Adding New Tools
 1. Update `pyproject.toml` with tool configuration
-2. Add tool to GitHub workflow
-3. Update scripts in `scripts/` directory
+2. Add tool to `scripts/format.py`
 
 ### Modifying Rules
 1. Edit `pyproject.toml` for tool-specific rules
-2. Update workflow file for CI/CD changes
-3. Test locally with `python scripts/lint.py`
-
-## 🚨 Common Issues
-
-### Import Sorting Issues
-```bash
-# Fix import sorting
-python3 -m isort .
-
-# Check import sorting
-python3 -m isort --check-only --diff .
-```
-
-### Code Formatting Issues
-```bash
-# Fix code formatting
-python3 -m black .
-
-# Check code formatting
-python3 -m black --check --diff .
-```
-
-### Linting Issues
-```bash
-# Run linting
-python3 -m flake8 . --max-line-length=88 --extend-ignore=E203,W503,E501,F401,F841,W293
-```
-
-## 📊 Workflow Status
-
-The automated workflow provides:
-
-- ✅ **Format Checking**: Ensures all code follows style guidelines
-- ✅ **Import Sorting**: Maintains consistent import organization
-- ✅ **Linting**: Catches style and potential issues
-- ✅ **Auto-fixing**: Automatically fixes formatting issues for pushes and PRs
-- ✅ **Python 3.9 Support**: Optimized for Python 3.9 compatibility
-- ✅ **PR Integration**: Auto-formats PRs and comments with success message
-- ✅ **Simplified Setup**: Clean and reliable automation
+2. Test locally with `python scripts/format.py`
 
 ## 🎯 Best Practices
 
-1. **Always run formatting before committing**:
+1. **Run formatting before committing**:
    ```bash
    python scripts/format.py
    ```
 
-2. **Use pre-commit hooks** for automatic formatting (optional)
+2. **Keep configuration centralized** in `pyproject.toml`
 
-3. **Check formatting in CI/CD** before merging
-
-4. **Keep configuration centralized** in `pyproject.toml`
-
-5. **Ensure Python 3.9 compatibility** for optimal performance
+3. **Use consistent Python version** (3.9) for optimal compatibility
 
 ## 📝 Contributing
 
 When contributing to this project:
 
-1. Install development dependencies
-2. Set up pre-commit hooks (optional)
-3. Run formatting before committing (optional - CI will auto-fix)
-4. Ensure all checks pass locally
-5. The CI/CD will automatically format and commit any formatting issues to your PR
+1. Install development dependencies: `pip install black isort`
+2. Run formatting before committing: `python scripts/format.py`
+3. Ensure all tests pass: `python run_all_tests.py`
 
-**Note**: The workflow will automatically fix formatting issues in your PR and commit them back to your branch, so you don't need to worry about formatting manually.
+That's it! No complex CI/CD, no automated workflows - just a simple local script to keep your code formatted.
 
-For more information, see the main [README.md](README.md) and [WORKFLOWS.md](WORKFLOWS.md) files.
+For more information, see the main [README.md](README.md) file.

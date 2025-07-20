@@ -33,26 +33,3 @@ skip_glob = [
     ".tox/*",
     ".mypy_cache/*"
 ]
-
-[tool.flake8]
-max-line-length = 88
-extend-ignore = ["E203", "W503", "E501", "F401", "F841", "W293"]
-exclude = [
-    ".git",
-    "__pycache__",
-    "build",
-    "dist",
-    ".eggs",
-    "*.egg",
-    ".venv",
-    "venv",
-    ".tox",
-    ".mypy_cache",
-    "c_to_plantuml.egg-info"
-]
-per-file-ignores = [
-    "__init__.py:F401",
-    "tests/*:F401",
-    "scripts/*:F401",
-    "run_all_tests.py:F401"
-]

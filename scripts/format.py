@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Script to automatically fix formatting issues using black and isort.
-Comprehensive formatting for all Python files in the project.
+Auto-format all Python files in the project.
+This is the single script to run for formatting all Python code.
 """
 
 import subprocess
@@ -52,8 +52,8 @@ def find_python_files():
 
 
 def main():
-    """Main function to run formatting tools."""
-    print("🚀 Starting automatic code formatting...")
+    """Main function to format all Python files."""
+    print("🚀 Auto-formatting all Python files...")
     print("=" * 60)
 
     # Check if we're in the right directory
@@ -83,9 +83,7 @@ def main():
 
     print("\n" + "=" * 60)
     if success:
-        print("🎉 All formatting completed successfully!")
-        print("\n💡 To check if everything is properly formatted, run:")
-        print("   python scripts/lint.py")
+        print("🎉 All Python files formatted successfully!")
         print("\n💡 To run tests, use:")
         print("   python run_all_tests.py")
     else:
