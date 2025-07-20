@@ -225,23 +225,49 @@ The tool is organized into several key modules:
 
 ## Testing
 
-The project includes comprehensive tests:
+The project uses a streamlined testing approach with a single entry point for all test executions.
+
+### Quick Start
 
 ```bash
-# Run all tests
-python3 test_simple.py
+# Run all feature tests (recommended)
+python3 run_all_tests.py
 
-# Run specific test modules
-PYTHONPATH=/workspace python3 -m unittest discover -s tests -p "test_*.py" -v
+# Or use the convenience script
+./test.sh
 ```
 
-Test coverage includes:
-- Parser functionality for all C constructs
-- Project analysis with various scenarios
-- PlantUML generation
-- Configuration system
-- Error handling
-- Integration tests
+### Test Structure
+
+All feature-based tests are consolidated into a single comprehensive test runner (`run_all_tests.py`) that covers:
+
+- **Parser Tests**: C file parsing (structs, enums, functions, globals, includes, macros)
+- **Project Analysis Tests**: Multi-file analysis and model generation
+- **PlantUML Generation Tests**: Diagram generation and output validation
+- **Configuration Tests**: JSON configuration loading and validation
+- **Workflow Tests**: Complete end-to-end testing from C files to PlantUML diagrams
+- **Error Handling Tests**: Edge cases and error scenarios
+- **Performance Tests**: Performance benchmarks with reasonable limits
+
+### CI/CD Integration
+
+The GitHub workflow automatically runs the same test command:
+
+```yaml
+- name: Run comprehensive feature tests
+  run: |
+    python run_all_tests.py
+```
+
+### Benefits
+
+- **Single Entry Point**: One command to run all tests
+- **Consistent Execution**: Same behavior locally and in CI/CD
+- **Feature-Focused**: Tests focus on user-facing functionality
+- **Fast Execution**: No redundant test discovery or setup
+- **Clear Results**: Simple pass/fail reporting with detailed output
+
+For detailed testing documentation, see [tests/README.md](tests/README.md).
 
 ## Recent Improvements
 
