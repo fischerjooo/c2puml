@@ -1,83 +1,97 @@
 #!/usr/bin/env python3
 """
-Configuration handling for C to PlantUML converter
+Configuration management for C to PlantUML converter
 """
 
 import json
 import re
-import logging
 from pathlib import Path
-from typing import Dict, List, Set, Optional, Any
-from .models import ProjectModel, FileModel
+from typing import Dict, List, Any, Optional
+from dataclasses import dataclass, field
 
 
+@dataclass
 class Config:
-    """Configuration for C to PlantUML converter"""
+    """Configuration class for C to PlantUML converter"""
     
-    def __init__(self, data: dict):
-        self.logger = logging.getLogger(__name__)
-        
-        # Validate required fields
-        if not isinstance(data, dict):
-            raise ValueError("Configuration data must be a dictionary")
-        
-        # Basic configuration
-        self.project_roots = self._validate_project_roots(data.get('project_roots', []))
-        self.project_name = data.get('project_name', 'C_Project')
-        self.output_dir = data.get('output_dir', './plantuml_output')
-        self.model_output_path = data.get('model_output_path', f"{self.project_name}_model.json")
-        self.recursive = data.get('recursive', True)
-        self.include_depth = data.get('include_depth', 1)
-        
-        # File filters
-        self.file_filters = data.get('file_filters', {})
-        self.file_include_patterns = self._compile_patterns(
-            self.file_filters.get('include', [])
-        )
-        self.file_exclude_patterns = self._compile_patterns(
-            self.file_filters.get('exclude', [])
-        )
-        
-        # Element filters
-        self.element_filters = data.get('element_filters', {})
-        
-        self.logger.debug(f"Configuration loaded: {self.project_name}")
+    # Basic configuration
+    project_name: str = "Unknown_Project"
+    source_folders: List[str] = field(default_factory=list)
+    output_dir: str = "./plantuml_output"
+    model_output_path: str = "model.json"
+    recursive: bool = True
+    include_depth: int = 1
     
-    def _validate_project_roots(self, project_roots: List[str]) -> List[str]:
-        """Validate project roots"""
-        if not isinstance(project_roots, list):
-            raise ValueError("project_roots must be a list")
-        
-        validated_roots = []
-        for root in project_roots:
-            if not isinstance(root, str):
-                raise ValueError(f"Project root must be a string: {root}")
-            
-            path = Path(root)
-            if not path.exists():
-                self.logger.warning(f"Project root does not exist: {root}")
-            
-            validated_roots.append(str(path.resolve()))
-        
-        return validated_roots
+    # Filters
+    file_filters: Dict[str, List[str]] = field(default_factory=dict)
+    element_filters: Dict[str, Dict[str, List[str]]] = field(default_factory=dict)
     
-    def _compile_patterns(self, patterns: List[str]) -> List[re.Pattern]:
-        """Compile regex patterns with error handling"""
-        compiled_patterns = []
+    # Transformations
+    transformations: Dict[str, Any] = field(default_factory=dict)
+    
+    # Compiled patterns for performance
+    file_include_patterns: List[re.Pattern] = field(default_factory=list)
+    file_exclude_patterns: List[re.Pattern] = field(default_factory=list)
+    element_include_patterns: Dict[str, Dict[str, List[re.Pattern]]] = field(default_factory=dict)
+    element_exclude_patterns: Dict[str, Dict[str, List[re.Pattern]]] = field(default_factory=dict)
+    
+    def __init__(self, *args, **kwargs):
+        """Initialize configuration with keyword arguments or a single dict"""
+        if len(args) == 1 and isinstance(args[0], dict):
+            # Handle case where a single dict is passed as positional argument
+            data = args[0]
+            # Use object.__init__ to avoid calling the dataclass __init__ recursively
+            object.__init__(self)
+            # Set attributes manually
+            for key, value in data.items():
+                if hasattr(self, key):
+                    setattr(self, key, value)
+        elif len(kwargs) == 1 and isinstance(next(iter(kwargs.values())), dict):
+            # Handle case where a single dict is passed as keyword argument
+            data = next(iter(kwargs.values()))
+            object.__init__(self)
+            for key, value in data.items():
+                if hasattr(self, key):
+                    setattr(self, key, value)
+        else:
+            # Handle normal keyword arguments
+            object.__init__(self)
+            for key, value in kwargs.items():
+                if hasattr(self, key):
+                    setattr(self, key, value)
         
-        for pattern in patterns:
-            try:
-                compiled_patterns.append(re.compile(pattern))
-            except re.error as e:
-                self.logger.warning(f"Invalid regex pattern '{pattern}': {e}")
+        # Compile patterns after initialization
+        self._compile_patterns()
+    
+    def __post_init__(self):
+        """Compile regex patterns after initialization"""
+        self._compile_patterns()
+    
+    def _compile_patterns(self):
+        """Compile regex patterns for filtering"""
+        # Compile file filter patterns
+        self.file_include_patterns = [
+            re.compile(pattern) for pattern in self.file_filters.get('include', [])
+        ]
+        self.file_exclude_patterns = [
+            re.compile(pattern) for pattern in self.file_filters.get('exclude', [])
+        ]
         
-        return compiled_patterns
+        # Compile element filter patterns
+        self.element_include_patterns = {}
+        self.element_exclude_patterns = {}
+        
+        for element_type, filters in self.element_filters.items():
+            self.element_include_patterns[element_type] = [
+                re.compile(pattern) for pattern in filters.get('include', [])
+            ]
+            self.element_exclude_patterns[element_type] = [
+                re.compile(pattern) for pattern in filters.get('exclude', [])
+            ]
     
     @classmethod
     def load(cls, config_file: str) -> 'Config':
         """Load configuration from JSON file"""
-        logger = logging.getLogger(__name__)
-        
         if not Path(config_file).exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
         
@@ -85,160 +99,237 @@ class Config:
             with open(config_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
-            logger.info(f"Loaded configuration from: {config_file}")
-            return cls(data)
+            # Handle backward compatibility: project_roots -> source_folders
+            if 'project_roots' in data and 'source_folders' not in data:
+                data['source_folders'] = data.pop('project_roots')
             
-        except json.JSONDecodeError as e:
-            raise ValueError(f"Invalid JSON in configuration file {config_file}: {e}")
+            # Validate required fields
+            if 'source_folders' not in data:
+                raise ValueError("Configuration must contain 'source_folders' field")
+            
+            if not isinstance(data['source_folders'], list):
+                raise ValueError("'source_folders' must be a list")
+            
+            return cls(**data)
+            
         except Exception as e:
             raise ValueError(f"Failed to load configuration from {config_file}: {e}")
     
     def save(self, config_file: str) -> None:
         """Save configuration to JSON file"""
         data = {
-            'project_roots': self.project_roots,
             'project_name': self.project_name,
+            'source_folders': self.source_folders,
             'output_dir': self.output_dir,
             'model_output_path': self.model_output_path,
             'recursive': self.recursive,
             'include_depth': self.include_depth,
             'file_filters': self.file_filters,
-            'element_filters': self.element_filters
+            'element_filters': self.element_filters,
+            'transformations': self.transformations
         }
         
         try:
             with open(config_file, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
-            
-            self.logger.info(f"Configuration saved to: {config_file}")
         except Exception as e:
             raise ValueError(f"Failed to save configuration to {config_file}: {e}")
     
     def has_filters(self) -> bool:
-        """Check if any filters are configured"""
+        """Check if configuration has any filters defined"""
         return bool(self.file_filters or self.element_filters)
-    
-    def apply_filters(self, model: ProjectModel) -> ProjectModel:
-        """Apply configured filters to the model"""
-        self.logger.debug("Applying filters to model")
-        
-        # Apply file filters
-        if self.file_include_patterns or self.file_exclude_patterns:
-            filtered_files = {}
-            for file_path, file_model in model.files.items():
-                if self._should_include_file(file_path):
-                    filtered_files[file_path] = self._apply_element_filters(file_model)
-            model.files = filtered_files
-            
-            self.logger.debug(f"File filtering: {len(model.files)} files after filtering")
-        
-        return model
     
     def _should_include_file(self, file_path: str) -> bool:
         """Check if a file should be included based on filters"""
-        # Check include patterns
-        if self.file_include_patterns:
-            if not any(pattern.search(file_path) for pattern in self.file_include_patterns):
+        # Check exclude patterns first
+        for pattern in self.file_exclude_patterns:
+            if pattern.search(file_path):
                 return False
         
-        # Check exclude patterns
-        if self.file_exclude_patterns:
-            if any(pattern.search(file_path) for pattern in self.file_exclude_patterns):
-                return False
+        # If no include patterns, include all files (after exclusions)
+        if not self.file_include_patterns:
+            return True
         
-        return True
+        # Check include patterns - file must match at least one
+        for pattern in self.file_include_patterns:
+            if pattern.search(file_path):
+                return True
+        
+        return False
     
-    def _apply_element_filters(self, file_model: FileModel) -> FileModel:
+    def _apply_element_filters(self, file_model) -> Any:
         """Apply element filters to a file model"""
-        if not self.element_filters:
-            return file_model
+        from .models import FileModel
+        
+        # Create a copy of the file model to avoid modifying the original
+        filtered_model = FileModel(
+            file_path=file_model.file_path,
+            relative_path=file_model.relative_path,
+            project_root=file_model.project_root,
+            encoding_used=file_model.encoding_used,
+            structs=file_model.structs.copy(),
+            enums=file_model.enums.copy(),
+            unions=file_model.unions.copy(),
+            functions=file_model.functions.copy(),
+            globals=file_model.globals.copy(),
+            includes=file_model.includes.copy(),
+            macros=file_model.macros.copy(),
+            typedefs=file_model.typedefs.copy(),
+            typedef_relations=file_model.typedef_relations.copy(),
+            include_relations=file_model.include_relations.copy()
+        )
         
         # Filter structs
         if 'structs' in self.element_filters:
-            file_model.structs = self._filter_dict(
-                file_model.structs, 
+            filtered_model.structs = self._filter_dict(
+                filtered_model.structs, 
                 self.element_filters['structs']
             )
         
         # Filter enums
         if 'enums' in self.element_filters:
-            file_model.enums = self._filter_dict(
-                file_model.enums, 
+            filtered_model.enums = self._filter_dict(
+                filtered_model.enums, 
                 self.element_filters['enums']
+            )
+        
+        # Filter unions
+        if 'unions' in self.element_filters:
+            filtered_model.unions = self._filter_dict(
+                filtered_model.unions, 
+                self.element_filters['unions']
             )
         
         # Filter functions
         if 'functions' in self.element_filters:
-            file_model.functions = self._filter_list(
-                file_model.functions, 
+            filtered_model.functions = self._filter_list(
+                filtered_model.functions, 
                 self.element_filters['functions'],
                 key=lambda f: f.name
             )
         
         # Filter globals
         if 'globals' in self.element_filters:
-            file_model.globals = self._filter_list(
-                file_model.globals, 
+            filtered_model.globals = self._filter_list(
+                filtered_model.globals, 
                 self.element_filters['globals'],
                 key=lambda g: g.name
             )
         
-        return file_model
-    
-    def _filter_dict(self, items: Dict, filters: Dict) -> Dict:
-        """Filter a dictionary based on include/exclude patterns"""
-        include_patterns = self._compile_patterns(filters.get('include', []))
-        exclude_patterns = self._compile_patterns(filters.get('exclude', []))
+        # Filter macros
+        if 'macros' in self.element_filters:
+            filtered_model.macros = self._filter_list(
+                filtered_model.macros, 
+                self.element_filters['macros']
+            )
         
-        filtered = {}
+        # Filter typedefs
+        if 'typedefs' in self.element_filters:
+            filtered_model.typedefs = self._filter_dict(
+                filtered_model.typedefs, 
+                self.element_filters['typedefs']
+            )
+        
+        return filtered_model
+    
+    def _filter_dict(self, items: dict, filters: dict) -> dict:
+        """Filter dictionary items based on include/exclude patterns"""
+        include_patterns = [re.compile(pattern) for pattern in filters.get('include', [])]
+        exclude_patterns = [re.compile(pattern) for pattern in filters.get('exclude', [])]
+        
+        filtered_items = {}
+        
         for name, item in items.items():
             # Check include patterns
             if include_patterns:
-                if not any(pattern.search(name) for pattern in include_patterns):
+                should_include = False
+                for pattern in include_patterns:
+                    if pattern.search(name):
+                        should_include = True
+                        break
+                if not should_include:
                     continue
             
             # Check exclude patterns
-            if exclude_patterns:
-                if any(pattern.search(name) for pattern in exclude_patterns):
-                    continue
+            should_exclude = False
+            for pattern in exclude_patterns:
+                if pattern.search(name):
+                    should_exclude = True
+                    break
+            if should_exclude:
+                continue
             
-            filtered[name] = item
+            filtered_items[name] = item
         
-        return filtered
+        return filtered_items
     
-    def _filter_list(self, items: List, filters: Dict, key=None) -> List:
-        """Filter a list based on include/exclude patterns"""
-        include_patterns = self._compile_patterns(filters.get('include', []))
-        exclude_patterns = self._compile_patterns(filters.get('exclude', []))
+    def _filter_list(self, items: list, filters: dict, key=None) -> list:
+        """Filter list items based on include/exclude patterns"""
+        include_patterns = [re.compile(pattern) for pattern in filters.get('include', [])]
+        exclude_patterns = [re.compile(pattern) for pattern in filters.get('exclude', [])]
         
-        filtered = []
+        filtered_items = []
+        
         for item in items:
-            name = key(item) if key else str(item)
+            # Get the name to check against patterns
+            if key:
+                name = key(item)
+            else:
+                name = str(item)
             
             # Check include patterns
             if include_patterns:
-                if not any(pattern.search(name) for pattern in include_patterns):
+                should_include = False
+                for pattern in include_patterns:
+                    if pattern.search(name):
+                        should_include = True
+                        break
+                if not should_include:
                     continue
             
             # Check exclude patterns
-            if exclude_patterns:
-                if any(pattern.search(name) for pattern in exclude_patterns):
-                    continue
+            should_exclude = False
+            for pattern in exclude_patterns:
+                if pattern.search(name):
+                    should_exclude = True
+                    break
+            if should_exclude:
+                continue
             
-            filtered.append(item)
+            filtered_items.append(item)
         
-        return filtered
+        return filtered_items
     
-    def get_summary(self) -> dict:
+    def get_summary(self) -> Dict[str, Any]:
         """Get a summary of the configuration"""
         return {
             'project_name': self.project_name,
-            'project_roots': self.project_roots,
+            'source_folders': self.source_folders,
             'output_dir': self.output_dir,
             'recursive': self.recursive,
             'include_depth': self.include_depth,
             'has_file_filters': bool(self.file_filters),
             'has_element_filters': bool(self.element_filters),
-            'include_patterns': len(self.file_include_patterns),
-            'exclude_patterns': len(self.file_exclude_patterns)
+            'has_transformations': bool(self.transformations)
         }
+    
+    def __eq__(self, other: Any) -> bool:
+        """Check if two configurations are equal"""
+        if not isinstance(other, Config):
+            return False
+        
+        return (
+            self.project_name == other.project_name and
+            self.source_folders == other.source_folders and
+            self.output_dir == other.output_dir and
+            self.model_output_path == other.model_output_path and
+            self.recursive == other.recursive and
+            self.include_depth == other.include_depth and
+            self.file_filters == other.file_filters and
+            self.element_filters == other.element_filters and
+            self.transformations == other.transformations
+        )
+    
+    def __repr__(self) -> str:
+        """String representation of the configuration"""
+        return f"Config(project_name='{self.project_name}', source_folders={self.source_folders})"

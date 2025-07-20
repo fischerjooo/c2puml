@@ -5,9 +5,11 @@ This document provides high-level guidance for developing new features or making
 
 ## Processing Flow
 The application follows a clear 3-step processing flow:
-1. **Parse C/C++ files and generate model** - Extract structural information from source code
-2. **Apply configuration/transformers** - Filter and transform the model based on configuration
-3. **Generate PlantUML files** - Convert the transformed model into PlantUML diagrams
+1. **Parse** - Parses C code files and generates model.json
+2. **Transform** - Modifies the model file based on transformation configuration
+3. **Generate** - Generates puml files based on the model.json
+
+All steps can be executed individually or can be chained together.
 
 ## Workflow Steps
 
@@ -56,8 +58,7 @@ All tests are organized under the `tests/` directory with the following structur
 ```
 tests/
 ├── test_parser.py          # Parser functionality tests
-├── test_project_analyzer.py # Project analysis tests
-├── test_config.py          # Configuration functionality tests
+├── test_transformer.py     # Transformer functionality tests
 ├── test_generator.py       # PlantUML generation tests
 ├── test_integration.py     # Complete workflow tests
 ├── test_files/             # Test input files
@@ -83,7 +84,7 @@ tests/
 python tests/run_tests.py
 
 # Run specific test module
-python tests/run_tests.py test_config
+python tests/run_tests.py test_parser
 
 # Run with unittest directly
 python -m unittest discover tests/

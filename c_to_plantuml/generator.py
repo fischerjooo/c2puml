@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PlantUML diagram generator
+Generator module for C to PlantUML converter - Step 3: Generate puml files based on model.json
 """
 
 import os
@@ -9,425 +9,471 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Optional
 from .models import ProjectModel, FileModel
-from .config import Config
 
 
-class Generator:
-    """Generator for PlantUML diagrams"""
+class PlantUMLGenerator:
+    """PlantUML diagram generator"""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
     
-    def generate_from_model(self, model_file: str, output_dir: str) -> None:
-        """Generate PlantUML diagrams from a JSON model file"""
-        self.logger.info(f"Generating diagrams from model: {model_file}")
+    def generate_diagram(self, file_model: FileModel, project_model: ProjectModel) -> str:
+        """Generate PlantUML diagram for a single file"""
+        self.logger.debug(f"Generating diagram for: {file_model.file_path}")
         
-        # Load model
-        try:
-            with open(model_file, 'r') as f:
-                model_data = json.load(f)
+        # Get file basename for diagram name
+        file_path = Path(file_model.file_path)
+        basename = file_path.stem
+        
+        # Start PlantUML diagram
+        diagram_lines = [
+            f"@startuml {basename}",
+            ""
+        ]
+        
+        # Generate main class for the file
+        diagram_lines.extend(self._generate_main_class(file_model, basename))
+        
+        # Generate header classes for includes
+        diagram_lines.extend(self._generate_header_classes(file_model, project_model))
+        
+        # Generate typedef classes
+        diagram_lines.extend(self._generate_typedef_classes(file_model))
+        
+        # Generate relationships
+        diagram_lines.extend(self._generate_relationships(file_model, project_model))
+        
+        # End diagram
+        diagram_lines.extend([
+            "",
+            "@enduml"
+        ])
+        
+        return "\n".join(diagram_lines)
+    
+    def _generate_main_class(self, file_model: FileModel, basename: str) -> List[str]:
+        """Generate the main class for the file"""
+        lines = [
+            f'class "{basename}" as {self._get_uml_id(basename)} <<source>> #LightBlue',
+            "{"
+        ]
+        
+        # Add macros
+        if file_model.macros:
+            lines.append("    -- Macros --")
+            for macro in file_model.macros:
+                lines.append(f"    + #define {macro}")
+            lines.append("")
+        
+        # Add typedefs
+        if file_model.typedefs:
+            lines.append("    -- Typedefs --")
+            for typedef_name, original_type in file_model.typedefs.items():
+                lines.append(f"    + typedef {original_type} {typedef_name}")
+            lines.append("")
+        
+        # Add global variables
+        if file_model.globals:
+            lines.append("    -- Global Variables --")
+            for global_var in file_model.globals:
+                lines.append(f"    - {global_var.type} {global_var.name}")
+            lines.append("")
+        
+        # Add functions
+        if file_model.functions:
+            lines.append("    -- Functions --")
+            for function in file_model.functions:
+                lines.append(f"    + {function.return_type} {function.name}()")
+            lines.append("")
+        
+        # Add structs
+        if file_model.structs:
+            lines.append("    -- Structs --")
+            for struct_name, struct in file_model.structs.items():
+                lines.append(f"    + struct {struct_name}")
+                for field in struct.fields:
+                    lines.append(f"        + {field.type} {field.name}")
+            lines.append("")
+        
+        # Add enums
+        if file_model.enums:
+            lines.append("    -- Enums --")
+            for enum_name, enum in file_model.enums.items():
+                lines.append(f"    + enum {enum_name}")
+                for value in enum.values:
+                    lines.append(f"        + {value}")
+            lines.append("")
+        
+        # Add unions
+        if file_model.unions:
+            lines.append("    -- Unions --")
+            for union_name, union in file_model.unions.items():
+                lines.append(f"    + union {union_name}")
+                for field in union.fields:
+                    lines.append(f"        + {field.type} {field.name}")
+            lines.append("")
+        
+        lines.append("}")
+        lines.append("")
+        
+        return lines
+    
+    def _generate_header_classes(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
+        """Generate classes for included header files"""
+        lines = []
+        
+        # Get all included files that exist in the project
+        for include_name in file_model.includes:
+            included_file_path = self._find_included_file(include_name, file_model.project_root, project_model)
             
-            model = ProjectModel.from_dict(model_data)
-        except Exception as e:
-            raise ValueError(f"Failed to load model file {model_file}: {e}")
+            if included_file_path and included_file_path in project_model.files:
+                included_file_model = project_model.files[included_file_path]
+                header_basename = Path(included_file_path).stem
+                
+                lines.extend(self._generate_header_class(included_file_model, header_basename))
+        
+        return lines
+    
+    def _generate_header_class(self, file_model: FileModel, basename: str) -> List[str]:
+        """Generate a class for a header file"""
+        lines = [
+            f'class "{basename}" as {self._get_header_uml_id(basename)} <<header>> #LightGreen',
+            "{"
+        ]
+        
+        # Add macros
+        if file_model.macros:
+            lines.append("    -- Macros --")
+            for macro in file_model.macros:
+                lines.append(f"    + #define {macro}")
+            lines.append("")
+        
+        # Add typedefs
+        if file_model.typedefs:
+            lines.append("    -- Typedefs --")
+            for typedef_name, original_type in file_model.typedefs.items():
+                lines.append(f"    + typedef {original_type} {typedef_name}")
+            lines.append("")
+        
+        # Add global variables
+        if file_model.globals:
+            lines.append("    -- Global Variables --")
+            for global_var in file_model.globals:
+                lines.append(f"    - {global_var.type} {global_var.name}")
+            lines.append("")
+        
+        # Add functions
+        if file_model.functions:
+            lines.append("    -- Functions --")
+            for function in file_model.functions:
+                lines.append(f"    + {function.return_type} {function.name}()")
+            lines.append("")
+        
+        # Add structs
+        if file_model.structs:
+            lines.append("    -- Structs --")
+            for struct_name, struct in file_model.structs.items():
+                lines.append(f"    + struct {struct_name}")
+                for field in struct.fields:
+                    lines.append(f"        + {field.type} {field.name}")
+            lines.append("")
+        
+        # Add enums
+        if file_model.enums:
+            lines.append("    -- Enums --")
+            for enum_name, enum in file_model.enums.items():
+                lines.append(f"    + enum {enum_name}")
+                for value in enum.values:
+                    lines.append(f"        + {value}")
+            lines.append("")
+        
+        # Add unions
+        if file_model.unions:
+            lines.append("    -- Unions --")
+            for union_name, union in file_model.unions.items():
+                lines.append(f"    + union {union_name}")
+                for field in union.fields:
+                    lines.append(f"        + {field.type} {field.name}")
+            lines.append("")
+        
+        lines.append("}")
+        lines.append("")
+        
+        return lines
+    
+    def _generate_typedef_classes(self, file_model: FileModel) -> List[str]:
+        """Generate classes for typedefs"""
+        lines = []
+        
+        for typedef_relation in file_model.typedef_relations:
+            typedef_name = typedef_relation.typedef_name
+            original_type = typedef_relation.original_type
+            relationship_type = typedef_relation.relationship_type
+            
+            # Generate typedef class
+            lines.extend([
+                f'class "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow',
+                "{",
+                f"    + {original_type}",
+                "}",
+                ""
+            ])
+            
+            # Generate original type class if it's a struct/enum/union
+            if relationship_type == 'defines':
+                # Find the original type in the file
+                if original_type in file_model.structs:
+                    struct = file_model.structs[original_type]
+                    lines.extend([
+                        f'class "{original_type}" as {self._get_type_uml_id(original_type)} <<type>> #LightGray',
+                        "{",
+                        f"    + struct {original_type}"
+                    ])
+                    for field in struct.fields:
+                        lines.append(f"        + {field.type} {field.name}")
+                    lines.extend(["}", ""])
+                elif original_type in file_model.enums:
+                    enum = file_model.enums[original_type]
+                    lines.extend([
+                        f'class "{original_type}" as {self._get_type_uml_id(original_type)} <<type>> #LightGray',
+                        "{",
+                        f"    + enum {original_type}"
+                    ])
+                    for value in enum.values:
+                        lines.append(f"        + {value}")
+                    lines.extend(["}", ""])
+                elif original_type in file_model.unions:
+                    union = file_model.unions[original_type]
+                    lines.extend([
+                        f'class "{original_type}" as {self._get_type_uml_id(original_type)} <<type>> #LightGray',
+                        "{",
+                        f"    + union {original_type}"
+                    ])
+                    for field in union.fields:
+                        lines.append(f"        + {field.type} {field.name}")
+                    lines.extend(["}", ""])
+        
+        return lines
+    
+    def _generate_relationships(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
+        """Generate relationships between classes"""
+        lines = []
+        
+        # Include relationships
+        for include_name in file_model.includes:
+            included_file_path = self._find_included_file(include_name, file_model.project_root, project_model)
+            
+            if included_file_path and included_file_path in project_model.files:
+                header_basename = Path(included_file_path).stem
+                lines.append(f'{self._get_uml_id(Path(file_model.file_path).stem)} --> {self._get_header_uml_id(header_basename)} : <<include>>')
+        
+        # Header-to-header relationships
+        for include_relation in file_model.include_relations:
+            source_basename = Path(include_relation.source_file).stem
+            included_basename = Path(include_relation.included_file).stem
+            lines.append(f'{self._get_header_uml_id(source_basename)} --> {self._get_header_uml_id(included_basename)} : <<include>>')
+        
+        # Typedef relationships
+        for typedef_relation in file_model.typedef_relations:
+            typedef_name = typedef_relation.typedef_name
+            original_type = typedef_relation.original_type
+            relationship_type = typedef_relation.relationship_type
+            
+            if relationship_type == 'defines':
+                lines.append(f'{self._get_typedef_uml_id(typedef_name)} *-- {self._get_type_uml_id(original_type)} : «defines»')
+            else:  # alias
+                lines.append(f'{self._get_typedef_uml_id(typedef_name)} -|> {self._get_type_uml_id(original_type)} : «alias»')
+        
+        return lines
+    
+    def _find_included_file(self, include_name: str, project_root: str, project_model: ProjectModel) -> Optional[str]:
+        """Find the actual file path for an include"""
+        # Common include paths to search
+        search_paths = [
+            Path(project_root),
+            Path(project_root) / "include",
+            Path(project_root) / "src",
+            Path(project_root) / "lib",
+            Path(project_root) / "headers"
+        ]
+        
+        # Try different extensions
+        extensions = ['.h', '.hpp', '.hxx', '']
+        
+        for search_path in search_paths:
+            if not search_path.exists():
+                continue
+                
+            for ext in extensions:
+                file_path = search_path / f"{include_name}{ext}"
+                if file_path.exists():
+                    return str(file_path.resolve())
+        
+        return None
+    
+    def _get_uml_id(self, name: str) -> str:
+        """Generate UML ID for a class"""
+        return name.upper().replace('-', '_').replace('.', '_')
+    
+    def _get_header_uml_id(self, name: str) -> str:
+        """Generate UML ID for a header class"""
+        return f"HEADER_{self._get_uml_id(name)}"
+    
+    def _get_typedef_uml_id(self, name: str) -> str:
+        """Generate UML ID for a typedef class"""
+        return f"TYPEDEF_{self._get_uml_id(name)}"
+    
+    def _get_type_uml_id(self, name: str) -> str:
+        """Generate UML ID for a type class"""
+        return f"TYPE_{self._get_uml_id(name)}"
+
+
+class Generator:
+    """Main generator class for Step 3: Generate puml files based on model.json"""
+    
+    def __init__(self):
+        self.plantuml_generator = PlantUMLGenerator()
+        self.logger = logging.getLogger(__name__)
+    
+    def generate(self, model_file: str, output_dir: str = "./plantuml_output") -> str:
+        """
+        Step 3: Generate puml files based on model.json
+        
+        Args:
+            model_file: Input JSON model file path
+            output_dir: Output directory for PlantUML files
+            
+        Returns:
+            Path to the output directory
+        """
+        self.logger.info(f"Step 3: Generating PlantUML diagrams from: {model_file}")
+        
+        # Load the model
+        model = self._load_model(model_file)
         
         # Create output directory
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
         
-        # Generate diagrams for each file
-        generated_count = 0
+        # Generate diagrams for each .c file
+        generated_files = []
         for file_path, file_model in model.files.items():
-            try:
-                # Only generate diagrams for .c files, not .h files
-                if file_model.relative_path.endswith('.c'):
-                    self._generate_file_diagram(file_model, output_path, model)
-                    generated_count += 1
-            except Exception as e:
-                self.logger.error(f"Failed to generate diagram for {file_path}: {e}")
+            if file_path.endswith('.c'):
+                try:
+                    diagram_content = self.plantuml_generator.generate_diagram(file_model, model)
+                    
+                    # Create output file
+                    basename = Path(file_path).stem
+                    output_file = output_path / f"{basename}.puml"
+                    
+                    with open(output_file, 'w', encoding='utf-8') as f:
+                        f.write(diagram_content)
+                    
+                    generated_files.append(str(output_file))
+                    self.logger.debug(f"Generated: {output_file}")
+                    
+                except Exception as e:
+                    self.logger.warning(f"Failed to generate diagram for {file_path}: {e}")
         
-        self.logger.info(f"Generated {generated_count} PlantUML diagrams in {output_dir}")
+        self.logger.info(f"Step 3 complete! Generated {len(generated_files)} PlantUML files in: {output_dir}")
+        return output_dir
     
-    def generate_with_config(self, model: ProjectModel, config: Config) -> None:
-        """Generate PlantUML diagrams using configuration"""
-        self.logger.info(f"Generating diagrams with config: {config.project_name}")
+    def _load_model(self, model_file: str) -> ProjectModel:
+        """Load model from JSON file"""
+        if not Path(model_file).exists():
+            raise FileNotFoundError(f"Model file not found: {model_file}")
         
-        # Create output directory
-        output_path = Path(config.output_dir)
-        output_path.mkdir(parents=True, exist_ok=True)
-        
-        # Generate diagrams for each file
-        generated_count = 0
-        for file_path, file_model in model.files.items():
-            try:
-                # Only generate diagrams for .c files, not .h files
-                if file_model.relative_path.endswith('.c'):
-                    self._generate_file_diagram(file_model, output_path, model)
-                    generated_count += 1
-            except Exception as e:
-                self.logger.error(f"Failed to generate diagram for {file_path}: {e}")
-        
-        self.logger.info(f"Generated {generated_count} PlantUML diagrams in {config.output_dir}")
-    
-    def _generate_file_diagram(self, file_model: FileModel, output_dir: Path, model: ProjectModel = None) -> None:
-        """Generate PlantUML diagram for a single file"""
-        # Create filename using relative path without extension
-        relative_path = Path(file_model.relative_path)
-        base_name = relative_path.stem
-        puml_file = output_dir / f"{base_name}.puml"
-        
-        # Ensure output directory exists
-        output_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Generate PlantUML content
-        content = self._generate_plantuml_content(file_model, model)
-        
-        # Write file
         try:
-            with open(puml_file, 'w', encoding='utf-8') as f:
-                f.write(content)
-            self.logger.debug(f"Generated diagram: {puml_file}")
+            with open(model_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            # Convert back to ProjectModel
+            model = ProjectModel(
+                project_name=data['project_name'],
+                project_root=data['project_root'],
+                files={},
+                created_at=data['created_at']
+            )
+            
+            # Convert file data back to FileModel objects
+            for file_path, file_data in data['files'].items():
+                model.files[file_path] = self._dict_to_file_model(file_data)
+            
+            self.logger.debug(f"Loaded model with {len(model.files)} files")
+            return model
+            
         except Exception as e:
-            raise ValueError(f"Failed to write diagram file {puml_file}: {e}")
+            raise ValueError(f"Failed to load model from {model_file}: {e}")
     
-    def _generate_plantuml_content(self, file_model: FileModel, model: ProjectModel = None) -> str:
-        """Generate PlantUML content for a file"""
-        lines = []
-        base_name = Path(file_model.relative_path).stem
+    def _dict_to_file_model(self, data: Dict) -> FileModel:
+        """Convert dictionary back to FileModel"""
+        from .models import FileModel, Struct, Enum, Union, Function, Field, TypedefRelation, IncludeRelation
         
-        # Header
-        lines.append(f"@startuml {base_name}")
-        lines.append("!theme plain")
-        lines.append("skinparam classAttributeIconSize 0")
-        lines.append("skinparam classFontSize 12")
-        lines.append("skinparam classFontName Arial")
-        lines.append("")
+        # Convert structs
+        structs = {}
+        for name, struct_data in data.get('structs', {}).items():
+            fields = [Field(f['name'], f['type']) for f in struct_data.get('fields', [])]
+            structs[name] = Struct(name, fields, struct_data.get('methods', []))
         
-        # Main class
-        lines.append(f'class "{base_name}" as {base_name.upper()} <<source>> #LightBlue')
-        lines.append("{")
+        # Convert enums
+        enums = {}
+        for name, enum_data in data.get('enums', {}).items():
+            enums[name] = Enum(name, enum_data.get('values', []))
         
-        # Note: Includes are now shown as separate classes with relationships, not in the main class content
+        # Convert unions
+        unions = {}
+        for name, union_data in data.get('unions', {}).items():
+            fields = [Field(f['name'], f['type']) for f in union_data.get('fields', [])]
+            unions[name] = Union(name, fields)
         
-        # Add macros
-        if hasattr(file_model, 'macros') and file_model.macros:
-            lines.append("    -- Macros --")
-            for macro in sorted(file_model.macros):
-                lines.append(f"    + #define {macro}")
-            lines.append("")
+        # Convert functions
+        functions = []
+        for func_data in data.get('functions', []):
+            functions.append(Function(
+                func_data['name'],
+                func_data['return_type'],
+                func_data.get('parameters', [])
+            ))
         
-        # Add typedefs
-        if hasattr(file_model, 'typedefs') and file_model.typedefs:
-            lines.append("    -- Typedefs --")
-            for typedef_name, original_type in sorted(file_model.typedefs.items()):
-                lines.append(f"    + typedef {original_type} {typedef_name}")
-            lines.append("")
+        # Convert globals
+        globals_list = []
+        for global_data in data.get('globals', []):
+            globals_list.append(Field(
+                global_data['name'],
+                global_data['type']
+            ))
         
-        # Add global variables
-        if hasattr(file_model, 'globals') and file_model.globals:
-            lines.append("    -- Global Variables --")
-            for global_var in sorted(file_model.globals, key=lambda x: x.name):
-                lines.append(f"    - {global_var.type} {global_var.name}")
-            lines.append("")
+        # Convert typedef relations
+        typedef_relations = []
+        for rel_data in data.get('typedef_relations', []):
+            typedef_relations.append(TypedefRelation(
+                rel_data['typedef_name'],
+                rel_data['original_type'],
+                rel_data['relationship_type']
+            ))
         
-        # Add functions
-        if hasattr(file_model, 'functions') and file_model.functions:
-            lines.append("    -- Functions --")
-            for func in sorted(file_model.functions, key=lambda x: x.name):
-                lines.append(f"    + {func.return_type} {func.name}()")
-            lines.append("")
+        # Convert include relations
+        include_relations = []
+        for rel_data in data.get('include_relations', []):
+            include_relations.append(IncludeRelation(
+                rel_data['source_file'],
+                rel_data['included_file'],
+                rel_data['depth']
+            ))
         
-        # Add structs
-        if hasattr(file_model, 'structs') and file_model.structs:
-            lines.append("    -- Structs --")
-            for struct_name, struct in sorted(file_model.structs.items()):
-                lines.append(f"    + struct {struct_name}")
-                if hasattr(struct, 'fields') and struct.fields:
-                    for field in sorted(struct.fields, key=lambda x: x.name):
-                        lines.append(f"        + {field.type} {field.name}")
-            lines.append("")
-        
-        # Add enums
-        if hasattr(file_model, 'enums') and file_model.enums:
-            lines.append("    -- Enums --")
-            for enum_name, enum in sorted(file_model.enums.items()):
-                lines.append(f"    + enum {enum_name}")
-                if hasattr(enum, 'values') and enum.values:
-                    for value in sorted(enum.values):
-                        lines.append(f"        + {value}")
-        
-        lines.append("}")
-        lines.append("")
-        
-        # Add separate typedef classes for struct/enum/union
-        if hasattr(file_model, 'typedefs') and file_model.typedefs:
-            for typedef_name, original_type in sorted(file_model.typedefs.items()):
-                # Struct typedef
-                if original_type in file_model.structs:
-                    struct = file_model.structs[original_type]
-                    lines.append(f'class "{typedef_name}" as {typedef_name.upper()} <<typedef>> #LightYellow')
-                    lines.append("{")
-                    lines.append(f"    + struct {original_type}")
-                    for field in struct.fields:
-                        lines.append(f"        + {field.type} {field.name}")
-                    lines.append("}")
-                    lines.append("")
-                # Enum typedef
-                elif original_type in file_model.enums:
-                    enum = file_model.enums[original_type]
-                    lines.append(f'class "{typedef_name}" as {typedef_name.upper()} <<typedef>> #LightYellow')
-                    lines.append("{")
-                    lines.append(f"    + enum {original_type}")
-                    for value in enum.values:
-                        lines.append(f"        + {value}")
-                    lines.append("}")
-                    lines.append("")
-                # Union typedef
-                elif hasattr(file_model, 'unions') and original_type in file_model.unions:
-                    union = file_model.unions[original_type]
-                    lines.append(f'class "{typedef_name}" as {typedef_name.upper()} <<typedef>> #LightYellow')
-                    lines.append("{")
-                    lines.append(f"    + union {original_type}")
-                    for field in union.fields:
-                        lines.append(f"        + {field.type} {field.name}")
-                    lines.append("}")
-                    lines.append("")
-                else:
-                    # Basic or unknown type
-                    lines.append(f'class "{typedef_name}" as {typedef_name.upper()} <<typedef>> #LightYellow')
-                    lines.append("{")
-                    lines.append(f"    + {original_type}")
-                    lines.append("}")
-                    lines.append("")
-
-        # Add typedef relationships for struct/enum/union
-        if hasattr(file_model, 'typedef_relations') and file_model.typedef_relations:
-            for relation in sorted(file_model.typedef_relations, key=lambda r: r.typedef_name):
-                # Create a class for the original type if it's not a basic type
-                if not self._is_basic_type(relation.original_type):
-                    # Show struct/enum/union contents if available
-                    if relation.original_type in file_model.structs:
-                        struct = file_model.structs[relation.original_type]
-                        lines.append(f'class "{relation.original_type}" as {relation.original_type.upper()} <<type>> #LightGray')
-                        lines.append("{")
-                        lines.append(f"    + struct {relation.original_type}")
-                        for field in struct.fields:
-                            lines.append(f"        + {field.type} {field.name}")
-                        lines.append("}")
-                        lines.append("")
-                    elif relation.original_type in file_model.enums:
-                        enum = file_model.enums[relation.original_type]
-                        lines.append(f'class "{relation.original_type}" as {relation.original_type.upper()} <<type>> #LightGray')
-                        lines.append("{")
-                        lines.append(f"    + enum {relation.original_type}")
-                        for value in enum.values:
-                            lines.append(f"        + {value}")
-                        lines.append("}")
-                        lines.append("")
-                    elif hasattr(file_model, 'unions') and relation.original_type in file_model.unions:
-                        union = file_model.unions[relation.original_type]
-                        lines.append(f'class "{relation.original_type}" as {relation.original_type.upper()} <<type>> #LightGray')
-                        lines.append("{")
-                        lines.append(f"    + union {relation.original_type}")
-                        for field in union.fields:
-                            lines.append(f"        + {field.type} {field.name}")
-                        lines.append("}")
-                        lines.append("")
-                    else:
-                        lines.append(f'class "{relation.original_type}" as {relation.original_type.upper()} <<type>> #LightGray')
-                        lines.append("{")
-                        lines.append(f"    + {relation.original_type}")
-                        lines.append("}")
-                        lines.append("")
-                # Add the relationship
-                if relation.relationship_type == 'defines':
-                    lines.append(f'{relation.typedef_name.upper()} *-- {relation.original_type.upper()} : «defines»')
-                else:  # alias
-                    lines.append(f'{relation.typedef_name.upper()} -|> {relation.original_type.upper()} : «alias»')
-                lines.append("")
-        
-        # Add header classes and include relationships
-        header_classes_added = set()
-        header_models = {}  # Store header file models for content display
-        
-        # Get all header file models from the project
-        if hasattr(file_model, 'project_root') and model is not None:
-            project_root = Path(file_model.project_root)
-            for file_path, file_model_in_project in model.files.items():
-                if file_path.endswith('.h'):
-                    header_models[Path(file_path).stem] = file_model_in_project
-        
-        # Add header classes from simple includes
-        if hasattr(file_model, 'includes') and file_model.includes:
-            for include in sorted(file_model.includes):
-                include_name = Path(include).stem
-                if include_name not in header_classes_added:
-                    # Create a class for each included header with actual content
-                    lines.append(f'class "{include_name}" as {include_name.upper()} <<header>> #LightGreen')
-                    lines.append("{")
-                    
-                    # Show header content if available
-                    if include_name in header_models:
-                        header_model = header_models[include_name]
-                        
-                        # Add macros
-                        if hasattr(header_model, 'macros') and header_model.macros:
-                            lines.append("    -- Macros --")
-                            for macro in sorted(header_model.macros):
-                                lines.append(f"    + #define {macro}")
-                            lines.append("")
-                        
-                        # Add typedefs
-                        if hasattr(header_model, 'typedefs') and header_model.typedefs:
-                            lines.append("    -- Typedefs --")
-                            for typedef_name, original_type in sorted(header_model.typedefs.items()):
-                                lines.append(f"    + typedef {original_type} {typedef_name}")
-                            lines.append("")
-                        
-                        # Add global variables
-                        if hasattr(header_model, 'globals') and header_model.globals:
-                            lines.append("    -- Global Variables --")
-                            for global_var in sorted(header_model.globals, key=lambda x: x.name):
-                                lines.append(f"    - {global_var.type} {global_var.name}")
-                            lines.append("")
-                        
-                        # Add functions
-                        if hasattr(header_model, 'functions') and header_model.functions:
-                            lines.append("    -- Functions --")
-                            for func in sorted(header_model.functions, key=lambda x: x.name):
-                                lines.append(f"    + {func.return_type} {func.name}()")
-                            lines.append("")
-                        
-                        # Add structs
-                        if hasattr(header_model, 'structs') and header_model.structs:
-                            lines.append("    -- Structs --")
-                            for struct_name, struct in sorted(header_model.structs.items()):
-                                lines.append(f"    + struct {struct_name}")
-                                if hasattr(struct, 'fields') and struct.fields:
-                                    for field in sorted(struct.fields, key=lambda x: x.name):
-                                        lines.append(f"        + {field.type} {field.name}")
-                            lines.append("")
-                        
-                        # Add enums
-                        if hasattr(header_model, 'enums') and header_model.enums:
-                            lines.append("    -- Enums --")
-                            for enum_name, enum in sorted(header_model.enums.items()):
-                                lines.append(f"    + enum {enum_name}")
-                                if hasattr(enum, 'values') and enum.values:
-                                    for value in sorted(enum.values):
-                                        lines.append(f"        + {value}")
-                    else:
-                        lines.append("    + Header file")
-                    
-                    lines.append("}")
-                    lines.append("")
-                    header_classes_added.add(include_name)
-                
-                # Add include relationship
-                lines.append(f'{base_name.upper()} --> {include_name.upper()} : <<include>>')
-                lines.append("")
-        
-        # Add include relationships with depth information if available
-        if hasattr(file_model, 'include_relations') and file_model.include_relations:
-            for relation in sorted(file_model.include_relations, key=lambda r: r.included_file):
-                included_file_name = Path(relation.included_file).stem
-                # Create a class for the included file if it's a header and not already added
-                if relation.included_file.endswith('.h') and included_file_name not in header_classes_added:
-                    lines.append(f'class "{included_file_name}" as {included_file_name.upper()} <<header>> #LightGreen')
-                    lines.append("{")
-                    
-                    # Show header content if available
-                    if included_file_name in header_models:
-                        header_model = header_models[included_file_name]
-                        
-                        # Add macros
-                        if hasattr(header_model, 'macros') and header_model.macros:
-                            lines.append("    -- Macros --")
-                            for macro in sorted(header_model.macros):
-                                lines.append(f"    + #define {macro}")
-                            lines.append("")
-                        
-                        # Add typedefs
-                        if hasattr(header_model, 'typedefs') and header_model.typedefs:
-                            lines.append("    -- Typedefs --")
-                            for typedef_name, original_type in sorted(header_model.typedefs.items()):
-                                lines.append(f"    + typedef {original_type} {typedef_name}")
-                            lines.append("")
-                        
-                        # Add global variables
-                        if hasattr(header_model, 'globals') and header_model.globals:
-                            lines.append("    -- Global Variables --")
-                            for global_var in sorted(header_model.globals, key=lambda x: x.name):
-                                lines.append(f"    - {global_var.type} {global_var.name}")
-                            lines.append("")
-                        
-                        # Add functions
-                        if hasattr(header_model, 'functions') and header_model.functions:
-                            lines.append("    -- Functions --")
-                            for func in sorted(header_model.functions, key=lambda x: x.name):
-                                lines.append(f"    + {func.return_type} {func.name}()")
-                            lines.append("")
-                        
-                        # Add structs
-                        if hasattr(header_model, 'structs') and header_model.structs:
-                            lines.append("    -- Structs --")
-                            for struct_name, struct in sorted(header_model.structs.items()):
-                                lines.append(f"    + struct {struct_name}")
-                                if hasattr(struct, 'fields') and struct.fields:
-                                    for field in sorted(struct.fields, key=lambda x: x.name):
-                                        lines.append(f"        + {field.type} {field.name}")
-                            lines.append("")
-                        
-                        # Add enums
-                        if hasattr(header_model, 'enums') and header_model.enums:
-                            lines.append("    -- Enums --")
-                            for enum_name, enum in sorted(header_model.enums.items()):
-                                lines.append(f"    + enum {enum_name}")
-                                if hasattr(enum, 'values') and enum.values:
-                                    for value in sorted(enum.values):
-                                        lines.append(f"        + {value}")
-                    else:
-                        lines.append("    + Header file")
-                    
-                    lines.append("}")
-                    lines.append("")
-                    header_classes_added.add(included_file_name)
-                
-                lines.append(f'{base_name.upper()} --> {included_file_name.upper()} : <<include>> (depth {relation.depth})')
-                lines.append("")
-        
-        # Add relationships between header files
-        if hasattr(file_model, 'include_relations') and file_model.include_relations:
-            for relation in sorted(file_model.include_relations, key=lambda r: r.included_file):
-                if relation.included_file.endswith('.h'):
-                    included_file_name = Path(relation.included_file).stem
-                    
-                    # Check if the included header has its own includes
-                    if included_file_name in header_models:
-                        header_model = header_models[included_file_name]
-                        if hasattr(header_model, 'includes') and header_model.includes:
-                            for header_include in sorted(header_model.includes):
-                                header_include_name = Path(header_include).stem
-                                if header_include_name in header_classes_added:
-                                    lines.append(f'{included_file_name.upper()} --> {header_include_name.upper()} : <<include>>')
-                                    lines.append("")
-        
-        lines.append("")
-        lines.append("@enduml")
-        
-        return "\n".join(lines)
-    
-    def _is_basic_type(self, type_name: str) -> bool:
-        """Check if a type is a basic C type"""
-        basic_types = {
-            'int', 'char', 'float', 'double', 'void', 'long', 'short',
-            'unsigned', 'signed', 'const', 'volatile', 'uint32_t', 'uint16_t',
-            'uint8_t', 'int32_t', 'int16_t', 'int8_t', 'size_t', 'ssize_t'
-        }
-        
-        # Handle pointer types
-        if '*' in type_name:
-            base_type = type_name.replace('*', '').strip()
-            return base_type in basic_types
-        
-        return type_name in basic_types
+        return FileModel(
+            file_path=data['file_path'],
+            relative_path=data['relative_path'],
+            project_root=data['project_root'],
+            encoding_used=data['encoding_used'],
+            structs=structs,
+            enums=enums,
+            unions=unions,
+            functions=functions,
+            globals=globals_list,
+            includes=data.get('includes', []),
+            macros=data.get('macros', []),
+            typedefs=data.get('typedefs', {}),
+            typedef_relations=typedef_relations,
+            include_relations=include_relations
+        )

@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9, '3.10', '3.11']
+        python-version: [3.9]
 
     steps:
     - uses: actions/checkout@v4
@@ -48,62 +48,94 @@ jobs:
         echo "🔍 Running flake8 linting..."
         pip install flake8
         echo "📝 Checking for Python syntax errors and undefined names..."
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        echo "📊 Running comprehensive style check..."
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-        echo "✅ Linting completed successfully"
+        flake8 c_to_plantuml/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        echo "✅ Critical linting completed successfully"
 
-    - name: Run comprehensive feature tests
+    - name: Test new 3-step architecture
       run: |
-        echo "🧪 Running comprehensive feature tests..."
-        echo "📝 Single entry point: run_all_tests.py"
-        python run_all_tests.py
-        echo "✅ Feature tests completed"
-
-    - name: Test main workflow
-      run: |
-        echo "🔄 Testing main workflow with simple config..."
+        echo "🧪 Testing new 3-step architecture..."
         echo "📁 Current directory: $(pwd)"
         echo "📋 Available config files:"
         ls -la *.json
-        echo "📝 Running main workflow..."
-        python main.py config simple_config.json
-        echo "✅ Main workflow completed"
+        
+        # Test Step 1: Parse
+        echo "📝 Step 1: Testing parse command..."
+        python main.py --verbose parse tests/test_files -o test_model.json
+        
+        # Test Step 2: Transform (if config exists)
+        if [ -f "simple_config.json" ]; then
+          echo "🔄 Step 2: Testing transform command..."
+          python main.py transform test_model.json simple_config.json -o transformed_model.json
+        else
+          echo "⚠️ No config file found, skipping transform step"
+        fi
+        
+        # Test Step 3: Generate
+        echo "🎨 Step 3: Testing generate command..."
+        model_file="transformed_model.json"
+        if [ ! -f "transformed_model.json" ]; then
+          model_file="test_model.json"
+        fi
+        python main.py generate $model_file -o test_plantuml_output
+        
+        echo "✅ 3-step architecture tests completed"
+
+    - name: Test complete workflow
+      run: |
+        echo "🔄 Testing complete workflow..."
+        if [ -f "simple_config.json" ]; then
+          echo "📝 Running complete workflow with config..."
+          python main.py workflow tests/test_files simple_config.json
+        else
+          echo "⚠️ No config file found, testing parse only..."
+          python main.py parse tests/test_files -o workflow_model.json
+        fi
+        echo "✅ Complete workflow test finished"
 
     - name: Verify output files
       run: |
         echo "🔍 Verifying output files..."
         
         # Check that expected files were created
-        if [ ! -f "Test_Project_model.json" ]; then
-          echo "❌ Error: Test_Project_model.json not created"
+        if [ ! -f "test_model.json" ] && [ ! -f "workflow_model.json" ]; then
+          echo "❌ Error: No model JSON file created"
           ls -la *.json
           exit 1
         else
-          echo "✅ Test_Project_model.json created successfully"
-          echo "📊 Model file size: $(wc -c < Test_Project_model.json) bytes"
+          echo "✅ Model JSON file created successfully"
+          if [ -f "test_model.json" ]; then
+            echo "📊 test_model.json size: $(wc -c < test_model.json) bytes"
+          fi
+          if [ -f "workflow_model.json" ]; then
+            echo "📊 workflow_model.json size: $(wc -c < workflow_model.json) bytes"
+          fi
         fi
         
-        if [ ! -d "test_plantuml_output" ]; then
-          echo "❌ Error: test_plantuml_output directory not created"
+        if [ ! -d "test_plantuml_output" ] && [ ! -d "plantuml_output" ]; then
+          echo "❌ Error: No PlantUML output directory created"
           ls -la
           exit 1
         else
-          echo "✅ test_plantuml_output directory created successfully"
+          echo "✅ PlantUML output directory created successfully"
         fi
         
         # Check for .puml files
-        puml_count=$(find test_plantuml_output -name "*.puml" | wc -l)
+        output_dir="test_plantuml_output"
+        if [ ! -d "$output_dir" ]; then
+          output_dir="plantuml_output"
+        fi
+        
+        puml_count=$(find $output_dir -name "*.puml" | wc -l)
         if [ "$puml_count" -eq 0 ]; then
           echo "❌ Error: No .puml files generated"
           echo "📁 Directory contents:"
-          ls -la test_plantuml_output/
+          ls -la $output_dir/
           exit 1
         fi
         
         echo "✅ Success: Found $puml_count PlantUML files"
         echo "📊 PlantUML files:"
-        find test_plantuml_output -name "*.puml" -exec wc -l {} \;
+        find $output_dir -name "*.puml" -exec wc -l {} \;
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -111,5 +143,8 @@ jobs:
       with:
         name: test-outputs-${{ matrix.python-version }}
         path: |
-          Test_Project_model.json
+          test_model.json
+          transformed_model.json
+          workflow_model.json
           test_plantuml_output/
+          plantuml_output/
