@@ -43,11 +43,8 @@ class CParser:
         
         for file_path in c_files:
             try:
-                file_model = self.parse_file(file_path)
                 relative_path = str(file_path.relative_to(project_root))
-                # Update the file model with correct relative path
-                file_model.relative_path = relative_path
-                file_model.project_root = str(project_root)
+                file_model = self.parse_file(file_path, relative_path, str(project_root))
                 files[relative_path] = file_model
                 
                 self.logger.debug(f"Successfully parsed: {relative_path}")
@@ -69,7 +66,7 @@ class CParser:
         self.logger.info(f"Parsing complete. Parsed {len(files)} files successfully.")
         return model
     
-    def parse_file(self, file_path: Path) -> FileModel:
+    def parse_file(self, file_path: Path, relative_path: str, project_root: str) -> FileModel:
         """Parse a single C/C++ file and return a file model"""
         self.logger.debug(f"Parsing file: {file_path}")
         
@@ -83,8 +80,8 @@ class CParser:
         # Parse file content
         file_model = FileModel(
             file_path=str(file_path.resolve()),
-            relative_path="",
-            project_root="",
+            relative_path=relative_path,
+            project_root=project_root,
             encoding_used=encoding,
             structs=self._parse_structs(content),
             enums=self._parse_enums(content),
