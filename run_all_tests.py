@@ -4,71 +4,73 @@ Comprehensive Test Runner for C to PlantUML Converter
 Single entry point for all test executions - both local and CI/CD
 """
 
-import unittest
-import sys
-import os
-import tempfile
 import json
+import os
 import shutil
+import sys
+import tempfile
+import unittest
 from pathlib import Path
 
 # Add the current directory to the path so we can import the module
 sys.path.insert(0, str(Path(__file__).parent))
 
+
 def run_unit_tests():
     """Run all unit tests and return the test result"""
     # Import and run unit tests from test files
+    from tests.test_config import TestConfig
+    from tests.test_generator import TestGenerator
     from tests.test_parser import TestCParser
     from tests.test_project_analyzer import TestProjectAnalyzer
-    from tests.test_generator import TestGenerator
-    from tests.test_config import TestConfig
-    
+
     # Create test suite for unit tests
     unit_suite = unittest.TestSuite()
-    
+
     # Add unit test classes using TestLoader
     loader = unittest.TestLoader()
     unit_suite.addTest(loader.loadTestsFromTestCase(TestCParser))
     unit_suite.addTest(loader.loadTestsFromTestCase(TestProjectAnalyzer))
     unit_suite.addTest(loader.loadTestsFromTestCase(TestGenerator))
     unit_suite.addTest(loader.loadTestsFromTestCase(TestConfig))
-    
+
     # Run unit tests with verbose output
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(unit_suite)
-    
+
     return result
+
 
 def run_feature_tests():
     """Run all feature-based tests and return the test result"""
-    
+
     class FeatureTestSuite(unittest.TestCase):
         """Comprehensive feature test suite"""
-        
+
         def setUp(self):
             """Set up test fixtures"""
             self.temp_dir = tempfile.mkdtemp()
             self.test_files = []
-            
+
         def tearDown(self):
             """Clean up test fixtures"""
             shutil.rmtree(self.temp_dir, ignore_errors=True)
-            
+
         def create_test_file(self, filename: str, content: str) -> str:
             """Create a test file and return its path"""
             file_path = os.path.join(self.temp_dir, filename)
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            
-            with open(file_path, 'w', encoding='utf-8') as f:
+
+            with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
-            
+
             self.test_files.append(file_path)
             return file_path
-        
+
         def test_feature_parser_basic_parsing(self):
             """Test basic C parsing functionality"""
             from c_to_plantuml.parser import CParser
-            
+
             test_content = """
 #include <stdio.h>
 
@@ -88,23 +90,23 @@ int main() {
 
 int global_var;
             """
-            
+
             c_file = self.create_test_file("test.c", test_content)
             parser = CParser()
             file_model = parser.parse_file(Path(c_file))
-            
+
             # Verify parsing results
-            self.assertIn('Person', file_model.structs)
-            self.assertIn('Status', file_model.enums)
+            self.assertIn("Person", file_model.structs)
+            self.assertIn("Status", file_model.enums)
             self.assertEqual(len(file_model.functions), 1)
-            self.assertEqual(file_model.functions[0].name, 'main')
+            self.assertEqual(file_model.functions[0].name, "main")
             self.assertGreaterEqual(len(file_model.globals), 1)
-            self.assertIn('stdio.h', file_model.includes)
-        
+            self.assertIn("stdio.h", file_model.includes)
+
         def test_feature_project_analysis(self):
             """Test project analysis functionality"""
             from c_to_plantuml.analyzer import Analyzer
-            
+
             # Create test project
             file1_content = """
 #include <stdio.h>
@@ -118,7 +120,7 @@ void print_user(User* user) {
     printf("User: %s\\n", user->name);
 }
             """
-            
+
             file2_content = """
 #include <stdlib.h>
 
@@ -131,24 +133,24 @@ Config* create_config(int max_users) {
     return malloc(sizeof(Config));
 }
             """
-            
+
             self.create_test_file("user.c", file1_content)
             self.create_test_file("config.c", file2_content)
-            
+
             analyzer = Analyzer()
             model = analyzer.analyze_project(self.temp_dir, recursive=True)
-            
+
             # Verify analysis results
             self.assertEqual(len(model.files), 2)
             file_names = [os.path.basename(fp) for fp in model.files.keys()]
-            self.assertIn('user.c', file_names)
-            self.assertIn('config.c', file_names)
-        
+            self.assertIn("user.c", file_names)
+            self.assertIn("config.c", file_names)
+
         def test_feature_plantuml_generation(self):
             """Test PlantUML diagram generation"""
             from c_to_plantuml.generator import Generator
-            from c_to_plantuml.models import FileModel, Struct, Enum, Function, Field
-            
+            from c_to_plantuml.models import Enum, Field, FileModel, Function, Struct
+
             # Create test file model
             file_model = FileModel(
                 file_path="test.c",
@@ -156,26 +158,21 @@ Config* create_config(int max_users) {
                 project_root="/test",
                 encoding_used="utf-8",
                 structs={
-                    "Person": Struct("Person", [
-                        Field("name", "char*"),
-                        Field("age", "int")
-                    ])
+                    "Person": Struct(
+                        "Person", [Field("name", "char*"), Field("age", "int")]
+                    )
                 },
-                enums={
-                    "Status": Enum("Status", ["OK", "ERROR"])
-                },
-                functions=[
-                    Function("main", "int", [])
-                ],
+                enums={"Status": Enum("Status", ["OK", "ERROR"])},
+                functions=[Function("main", "int", [])],
                 globals=[],
                 includes=["stdio.h"],
                 macros=[],
-                typedefs={}
+                typedefs={},
             )
-            
+
             generator = Generator()
             content = generator._generate_plantuml_content(file_model, None)
-            
+
             # Verify PlantUML generation
             self.assertIn("@startuml test", content)
             self.assertIn("@enduml", content)
@@ -183,37 +180,37 @@ Config* create_config(int max_users) {
             self.assertIn('class "stdio" as STDIO <<header>> #LightGreen', content)
             self.assertIn("+ struct Person", content)
             self.assertIn("+ enum Status", content)
-        
+
         def test_feature_configuration_loading(self):
             """Test configuration loading and validation"""
             from c_to_plantuml.config import Config
-            
+
             config_data = {
                 "project_name": "test_project",
                 "source_folders": [self.temp_dir],  # Use actual existing directory
                 "output_dir": "./output",
                 "model_output_path": "model.json",
-                "recursive": True
+                "recursive": True,
             }
-            
+
             config_path = os.path.join(self.temp_dir, "test_config.json")
-            with open(config_path, 'w', encoding='utf-8') as f:
+            with open(config_path, "w", encoding="utf-8") as f:
                 json.dump(config_data, f, indent=2)
-            
+
             config = Config.load(config_path)
-            
+
             # Verify configuration loading
             self.assertEqual(config.project_name, "test_project")
             self.assertEqual(config.source_folders, [self.temp_dir])
             self.assertEqual(config.output_dir, "./output")
             self.assertEqual(config.model_output_path, "model.json")
             self.assertTrue(config.recursive)
-        
+
         def test_feature_complete_workflow(self):
             """Test complete end-to-end workflow"""
             from c_to_plantuml.analyzer import Analyzer
             from c_to_plantuml.generator import Generator
-            
+
             # Create test project
             project_content = """
 #include <stdio.h>
@@ -242,7 +239,7 @@ void process_data(void* data) {
     // Process data
 }
             """
-            
+
             header_content = """
 #ifndef CONFIG_H
 #define CONFIG_H
@@ -264,62 +261,67 @@ void init_config(void);
 
 #endif
             """
-            
+
             self.create_test_file("main.c", project_content)
             self.create_test_file("config.h", header_content)
-            
+
             # Step 1: Analyze project
             analyzer = Analyzer()
             model = analyzer.analyze_project(self.temp_dir, recursive=True)
-            
+
             # Verify analysis
             self.assertEqual(len(model.files), 2)
             self.assertIn("main.c", model.files)
             self.assertIn("config.h", model.files)
-            
+
             # Step 2: Save model
             model_path = os.path.join(self.temp_dir, "test_model.json")
             model.save(model_path)
             self.assertTrue(os.path.exists(model_path))
-            
+
             # Step 3: Generate PlantUML diagrams
             generator = Generator()
             output_dir = os.path.join(self.temp_dir, "output")
             generator.generate_from_model(model_path, output_dir)
-            
+
             # Verify generation
             self.assertTrue(os.path.exists(output_dir))
             puml_files = list(Path(output_dir).glob("*.puml"))
             # Check that at least one PlantUML file was generated
-            self.assertGreaterEqual(len(puml_files), 1, f"Expected at least 1 PlantUML file, got {len(puml_files)}")
-            
+            self.assertGreaterEqual(
+                len(puml_files),
+                1,
+                f"Expected at least 1 PlantUML file, got {len(puml_files)}",
+            )
+
             # Verify the content of generated files
             for puml_file in puml_files:
-                with open(puml_file, 'r', encoding='utf-8') as f:
+                with open(puml_file, "r", encoding="utf-8") as f:
                     content = f.read()
                     self.assertIn("@startuml", content)
                     self.assertIn("@enduml", content)
-        
+
         def test_feature_error_handling(self):
             """Test error handling in various scenarios"""
             from c_to_plantuml.analyzer import Analyzer
-            
+
             # Test with non-existent directory
             analyzer = Analyzer()
             with self.assertRaises(Exception):
                 analyzer.analyze_project("/non/existent/path", recursive=True)
-            
+
             # Test with empty directory
             empty_dir = os.path.join(self.temp_dir, "empty")
             os.makedirs(empty_dir, exist_ok=True)
             model = analyzer.analyze_project(empty_dir, recursive=True)
             self.assertEqual(len(model.files), 0)
-        
+
         def test_feature_performance(self):
             """Test performance with reasonable limits"""
             import time
+
             from c_to_plantuml.analyzer import Analyzer
-            
+
             # Create a moderately complex test project
             for i in range(5):
                 content = f"""
@@ -335,62 +337,67 @@ int process{i}(int input) {{
 }}
                 """
                 self.create_test_file(f"file{i}.c", content)
-            
+
             # Measure analysis time
             analyzer = Analyzer()
             start_time = time.perf_counter()
             model = analyzer.analyze_project(self.temp_dir, recursive=True)
             end_time = time.perf_counter()
-            
+
             duration = end_time - start_time
-            
+
             # Verify performance (should complete within 10 seconds for test files)
-            self.assertLess(duration, 10.0, f"Analysis took {duration:.2f} seconds, expected < 10 seconds")
+            self.assertLess(
+                duration,
+                10.0,
+                f"Analysis took {duration:.2f} seconds, expected < 10 seconds",
+            )
             self.assertEqual(len(model.files), 5)
-    
+
     # Create test suite
     suite = unittest.TestLoader().loadTestsFromTestCase(FeatureTestSuite)
-    
+
     # Run tests with verbose output
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
-    
+
     return result
+
 
 def main():
     """Main test runner function"""
     print("🧪 Running C to PlantUML Converter Tests")
     print("=" * 60)
-    
+
     # Track overall results
     total_tests_run = 0
     total_failures = 0
     total_errors = 0
     all_failures = []
     all_errors = []
-    
+
     # Run unit tests
     print("\n📋 Running Unit Tests...")
     print("-" * 40)
     unit_result = run_unit_tests()
-    
+
     total_tests_run += unit_result.testsRun
     total_failures += len(unit_result.failures)
     total_errors += len(unit_result.errors)
     all_failures.extend(unit_result.failures)
     all_errors.extend(unit_result.errors)
-    
+
     # Run feature tests
     print("\n📋 Running Feature Tests...")
     print("-" * 40)
     feature_result = run_feature_tests()
-    
+
     total_tests_run += feature_result.testsRun
     total_failures += len(feature_result.failures)
     total_errors += len(feature_result.errors)
     all_failures.extend(feature_result.failures)
     all_errors.extend(feature_result.errors)
-    
+
     # Print comprehensive summary
     print("\n" + "=" * 60)
     print("COMPREHENSIVE TEST SUMMARY")
@@ -400,18 +407,22 @@ def main():
     print(f"Feature Tests: {feature_result.testsRun}")
     print(f"Total Failures: {total_failures}")
     print(f"Total Errors: {total_errors}")
-    print(f"Skipped: {len(unit_result.skipped) if hasattr(unit_result, 'skipped') else 0 + len(feature_result.skipped) if hasattr(feature_result, 'skipped') else 0}")
-    
+    unit_skipped = len(unit_result.skipped) if hasattr(unit_result, "skipped") else 0
+    feature_skipped = (
+        len(feature_result.skipped) if hasattr(feature_result, "skipped") else 0
+    )
+    print(f"Skipped: {unit_skipped + feature_skipped}")
+
     if all_failures:
         print("\n❌ FAILURES:")
         for test, traceback in all_failures:
             print(f"  {test}: {traceback}")
-    
+
     if all_errors:
         print("\n❌ ERRORS:")
         for test, traceback in all_errors:
             print(f"  {test}: {traceback}")
-    
+
     # Return appropriate exit code
     if total_failures == 0 and total_errors == 0:
         print("\n✅ All tests passed!")
@@ -420,5 +431,6 @@ def main():
         print(f"\n❌ {total_failures + total_errors} test(s) failed!")
         return 1
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sys.exit(main())

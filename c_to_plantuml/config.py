@@ -5,15 +5,15 @@ Configuration management for C to PlantUML converter
 
 import json
 import re
-from pathlib import Path
-from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Dict, List
 
 
 @dataclass
 class Config:
     """Configuration class for C to PlantUML converter"""
-    
+
     # Basic configuration
     project_name: str = "Unknown_Project"
     source_folders: List[str] = field(default_factory=list)
@@ -21,20 +21,24 @@ class Config:
     model_output_path: str = "model.json"
     recursive: bool = True
     include_depth: int = 1
-    
+
     # Filters
     file_filters: Dict[str, List[str]] = field(default_factory=dict)
     element_filters: Dict[str, Dict[str, List[str]]] = field(default_factory=dict)
-    
+
     # Transformations
     transformations: Dict[str, Any] = field(default_factory=dict)
-    
+
     # Compiled patterns for performance
     file_include_patterns: List[re.Pattern] = field(default_factory=list)
     file_exclude_patterns: List[re.Pattern] = field(default_factory=list)
-    element_include_patterns: Dict[str, Dict[str, List[re.Pattern]]] = field(default_factory=dict)
-    element_exclude_patterns: Dict[str, Dict[str, List[re.Pattern]]] = field(default_factory=dict)
-    
+    element_include_patterns: Dict[str, Dict[str, List[re.Pattern]]] = field(
+        default_factory=dict
+    )
+    element_exclude_patterns: Dict[str, Dict[str, List[re.Pattern]]] = field(
+        default_factory=dict
+    )
+
     def __init__(self, *args, **kwargs):
         """Initialize configuration with keyword arguments or a single dict"""
         if len(args) == 1 and isinstance(args[0], dict):
@@ -59,108 +63,108 @@ class Config:
             for key, value in kwargs.items():
                 if hasattr(self, key):
                     setattr(self, key, value)
-        
+
         # Compile patterns after initialization
         self._compile_patterns()
-    
+
     def __post_init__(self):
         """Compile regex patterns after initialization"""
         self._compile_patterns()
-    
+
     def _compile_patterns(self):
         """Compile regex patterns for filtering"""
         # Compile file filter patterns
         self.file_include_patterns = [
-            re.compile(pattern) for pattern in self.file_filters.get('include', [])
+            re.compile(pattern) for pattern in self.file_filters.get("include", [])
         ]
         self.file_exclude_patterns = [
-            re.compile(pattern) for pattern in self.file_filters.get('exclude', [])
+            re.compile(pattern) for pattern in self.file_filters.get("exclude", [])
         ]
-        
+
         # Compile element filter patterns
         self.element_include_patterns = {}
         self.element_exclude_patterns = {}
-        
+
         for element_type, filters in self.element_filters.items():
             self.element_include_patterns[element_type] = [
-                re.compile(pattern) for pattern in filters.get('include', [])
+                re.compile(pattern) for pattern in filters.get("include", [])
             ]
             self.element_exclude_patterns[element_type] = [
-                re.compile(pattern) for pattern in filters.get('exclude', [])
+                re.compile(pattern) for pattern in filters.get("exclude", [])
             ]
-    
+
     @classmethod
-    def load(cls, config_file: str) -> 'Config':
+    def load(cls, config_file: str) -> "Config":
         """Load configuration from JSON file"""
         if not Path(config_file).exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
-        
+
         try:
-            with open(config_file, 'r', encoding='utf-8') as f:
+            with open(config_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            
+
             # Handle backward compatibility: project_roots -> source_folders
-            if 'project_roots' in data and 'source_folders' not in data:
-                data['source_folders'] = data.pop('project_roots')
-            
+            if "project_roots" in data and "source_folders" not in data:
+                data["source_folders"] = data.pop("project_roots")
+
             # Validate required fields
-            if 'source_folders' not in data:
+            if "source_folders" not in data:
                 raise ValueError("Configuration must contain 'source_folders' field")
-            
-            if not isinstance(data['source_folders'], list):
+
+            if not isinstance(data["source_folders"], list):
                 raise ValueError("'source_folders' must be a list")
-            
+
             return cls(**data)
-            
+
         except Exception as e:
             raise ValueError(f"Failed to load configuration from {config_file}: {e}")
-    
+
     def save(self, config_file: str) -> None:
         """Save configuration to JSON file"""
         data = {
-            'project_name': self.project_name,
-            'source_folders': self.source_folders,
-            'output_dir': self.output_dir,
-            'model_output_path': self.model_output_path,
-            'recursive': self.recursive,
-            'include_depth': self.include_depth,
-            'file_filters': self.file_filters,
-            'element_filters': self.element_filters,
-            'transformations': self.transformations
+            "project_name": self.project_name,
+            "source_folders": self.source_folders,
+            "output_dir": self.output_dir,
+            "model_output_path": self.model_output_path,
+            "recursive": self.recursive,
+            "include_depth": self.include_depth,
+            "file_filters": self.file_filters,
+            "element_filters": self.element_filters,
+            "transformations": self.transformations,
         }
-        
+
         try:
-            with open(config_file, 'w', encoding='utf-8') as f:
+            with open(config_file, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
         except Exception as e:
             raise ValueError(f"Failed to save configuration to {config_file}: {e}")
-    
+
     def has_filters(self) -> bool:
         """Check if configuration has any filters defined"""
         return bool(self.file_filters or self.element_filters)
-    
+
     def _should_include_file(self, file_path: str) -> bool:
         """Check if a file should be included based on filters"""
         # Check exclude patterns first
         for pattern in self.file_exclude_patterns:
             if pattern.search(file_path):
                 return False
-        
+
         # If no include patterns, include all files (after exclusions)
         if not self.file_include_patterns:
             return True
-        
+
         # Check include patterns - file must match at least one
         for pattern in self.file_include_patterns:
             if pattern.search(file_path):
                 return True
-        
+
         return False
-    
+
     def _apply_element_filters(self, file_model) -> Any:
         """Apply element filters to a file model"""
         from .models import FileModel
-        
+
         # Create a copy of the file model to avoid modifying the original
         filtered_model = FileModel(
             file_path=file_model.file_path,
@@ -176,69 +180,68 @@ class Config:
             macros=file_model.macros.copy(),
             typedefs=file_model.typedefs.copy(),
             typedef_relations=file_model.typedef_relations.copy(),
-            include_relations=file_model.include_relations.copy()
+            include_relations=file_model.include_relations.copy(),
         )
-        
+
         # Filter structs
-        if 'structs' in self.element_filters:
+        if "structs" in self.element_filters:
             filtered_model.structs = self._filter_dict(
-                filtered_model.structs, 
-                self.element_filters['structs']
+                filtered_model.structs, self.element_filters["structs"]
             )
-        
+
         # Filter enums
-        if 'enums' in self.element_filters:
+        if "enums" in self.element_filters:
             filtered_model.enums = self._filter_dict(
-                filtered_model.enums, 
-                self.element_filters['enums']
+                filtered_model.enums, self.element_filters["enums"]
             )
-        
+
         # Filter unions
-        if 'unions' in self.element_filters:
+        if "unions" in self.element_filters:
             filtered_model.unions = self._filter_dict(
-                filtered_model.unions, 
-                self.element_filters['unions']
+                filtered_model.unions, self.element_filters["unions"]
             )
-        
+
         # Filter functions
-        if 'functions' in self.element_filters:
+        if "functions" in self.element_filters:
             filtered_model.functions = self._filter_list(
-                filtered_model.functions, 
-                self.element_filters['functions'],
-                key=lambda f: f.name
+                filtered_model.functions,
+                self.element_filters["functions"],
+                key=lambda f: f.name,
             )
-        
+
         # Filter globals
-        if 'globals' in self.element_filters:
+        if "globals" in self.element_filters:
             filtered_model.globals = self._filter_list(
-                filtered_model.globals, 
-                self.element_filters['globals'],
-                key=lambda g: g.name
+                filtered_model.globals,
+                self.element_filters["globals"],
+                key=lambda g: g.name,
             )
-        
+
         # Filter macros
-        if 'macros' in self.element_filters:
+        if "macros" in self.element_filters:
             filtered_model.macros = self._filter_list(
-                filtered_model.macros, 
-                self.element_filters['macros']
+                filtered_model.macros, self.element_filters["macros"]
             )
-        
+
         # Filter typedefs
-        if 'typedefs' in self.element_filters:
+        if "typedefs" in self.element_filters:
             filtered_model.typedefs = self._filter_dict(
-                filtered_model.typedefs, 
-                self.element_filters['typedefs']
+                filtered_model.typedefs, self.element_filters["typedefs"]
             )
-        
+
         return filtered_model
-    
+
     def _filter_dict(self, items: dict, filters: dict) -> dict:
         """Filter dictionary items based on include/exclude patterns"""
-        include_patterns = [re.compile(pattern) for pattern in filters.get('include', [])]
-        exclude_patterns = [re.compile(pattern) for pattern in filters.get('exclude', [])]
-        
+        include_patterns = [
+            re.compile(pattern) for pattern in filters.get("include", [])
+        ]
+        exclude_patterns = [
+            re.compile(pattern) for pattern in filters.get("exclude", [])
+        ]
+
         filtered_items = {}
-        
+
         for name, item in items.items():
             # Check include patterns
             if include_patterns:
@@ -249,7 +252,7 @@ class Config:
                         break
                 if not should_include:
                     continue
-            
+
             # Check exclude patterns
             should_exclude = False
             for pattern in exclude_patterns:
@@ -258,25 +261,29 @@ class Config:
                     break
             if should_exclude:
                 continue
-            
+
             filtered_items[name] = item
-        
+
         return filtered_items
-    
+
     def _filter_list(self, items: list, filters: dict, key=None) -> list:
         """Filter list items based on include/exclude patterns"""
-        include_patterns = [re.compile(pattern) for pattern in filters.get('include', [])]
-        exclude_patterns = [re.compile(pattern) for pattern in filters.get('exclude', [])]
-        
+        include_patterns = [
+            re.compile(pattern) for pattern in filters.get("include", [])
+        ]
+        exclude_patterns = [
+            re.compile(pattern) for pattern in filters.get("exclude", [])
+        ]
+
         filtered_items = []
-        
+
         for item in items:
             # Get the name to check against patterns
             if key:
                 name = key(item)
             else:
                 name = str(item)
-            
+
             # Check include patterns
             if include_patterns:
                 should_include = False
@@ -286,7 +293,7 @@ class Config:
                         break
                 if not should_include:
                     continue
-            
+
             # Check exclude patterns
             should_exclude = False
             for pattern in exclude_patterns:
@@ -295,41 +302,44 @@ class Config:
                     break
             if should_exclude:
                 continue
-            
+
             filtered_items.append(item)
-        
+
         return filtered_items
-    
+
     def get_summary(self) -> Dict[str, Any]:
         """Get a summary of the configuration"""
         return {
-            'project_name': self.project_name,
-            'source_folders': self.source_folders,
-            'output_dir': self.output_dir,
-            'recursive': self.recursive,
-            'include_depth': self.include_depth,
-            'has_file_filters': bool(self.file_filters),
-            'has_element_filters': bool(self.element_filters),
-            'has_transformations': bool(self.transformations)
+            "project_name": self.project_name,
+            "source_folders": self.source_folders,
+            "output_dir": self.output_dir,
+            "recursive": self.recursive,
+            "include_depth": self.include_depth,
+            "has_file_filters": bool(self.file_filters),
+            "has_element_filters": bool(self.element_filters),
+            "has_transformations": bool(self.transformations),
         }
-    
+
     def __eq__(self, other: Any) -> bool:
         """Check if two configurations are equal"""
         if not isinstance(other, Config):
             return False
-        
+
         return (
-            self.project_name == other.project_name and
-            self.source_folders == other.source_folders and
-            self.output_dir == other.output_dir and
-            self.model_output_path == other.model_output_path and
-            self.recursive == other.recursive and
-            self.include_depth == other.include_depth and
-            self.file_filters == other.file_filters and
-            self.element_filters == other.element_filters and
-            self.transformations == other.transformations
+            self.project_name == other.project_name
+            and self.source_folders == other.source_folders
+            and self.output_dir == other.output_dir
+            and self.model_output_path == other.model_output_path
+            and self.recursive == other.recursive
+            and self.include_depth == other.include_depth
+            and self.file_filters == other.file_filters
+            and self.element_filters == other.element_filters
+            and self.transformations == other.transformations
         )
-    
+
     def __repr__(self) -> str:
         """String representation of the configuration"""
-        return f"Config(project_name='{self.project_name}', source_folders={self.source_folders})"
+        return (
+            f"Config(project_name='{self.project_name}', "
+            f"source_folders={self.source_folders})"
+        )
