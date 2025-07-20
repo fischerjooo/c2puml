@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unit tests for the project analyzer and model functionality
+Unit tests for the project parser and model functionality
 """
 
 import unittest
@@ -8,16 +8,16 @@ import os
 import tempfile
 import json
 import shutil
-from c_to_plantuml.analyzer import Analyzer
+from c_to_plantuml.parser import Parser
 from c_to_plantuml.models import ProjectModel
 from c_to_plantuml.parser import CParser
 
 class TestProjectAnalyzer(unittest.TestCase):
-    """Test cases for ProjectAnalyzer functionality"""
+    """Test cases for ProjectParser functionality"""
     
     def setUp(self):
         """Set up test fixtures"""
-        self.analyzer = Analyzer()
+        self.parser = Parser()
         self.temp_dir = tempfile.mkdtemp()
         self.test_files = []
     
@@ -59,7 +59,7 @@ class TestProjectAnalyzer(unittest.TestCase):
         c_file = self.create_test_file("test.c", test_c_content)
         
         # Analyze the project
-        model = self.analyzer.analyze_project(self.temp_dir, recursive=True)
+        model = self.parser.c_parser.parse_project(self.temp_dir, recursive=True)
         
         # Verify model structure
         self.assertEqual(model.project_name, os.path.basename(self.temp_dir))
@@ -106,7 +106,7 @@ class TestProjectAnalyzer(unittest.TestCase):
         self.create_test_file("config.c", file2_content)
         
         # Analyze the project
-        model = self.analyzer.analyze_project(self.temp_dir, recursive=True)
+        model = self.parser.c_parser.parse_project(self.temp_dir, recursive=True)
         
         # Verify model structure
         self.assertEqual(len(model.files), 2)
@@ -126,11 +126,11 @@ class TestProjectAnalyzer(unittest.TestCase):
         self.create_test_file("subdir/helper.c", "void helper() {}")
         
         # Test recursive search (default)
-        model = self.analyzer.analyze_project(self.temp_dir, recursive=True)
+        model = self.parser.c_parser.parse_project(self.temp_dir, recursive=True)
         self.assertEqual(len(model.files), 2)
         
         # Test non-recursive search
-        model_non_recursive = self.analyzer.analyze_project(self.temp_dir, recursive=False)
+        model_non_recursive = self.parser.c_parser.parse_project(self.temp_dir, recursive=False)
         # Should only find files in the root directory
         self.assertEqual(len(model_non_recursive.files), 1)
     
@@ -152,7 +152,7 @@ class TestProjectAnalyzer(unittest.TestCase):
         
         # Analyze and save
         model_path = os.path.join(self.temp_dir, "model.json")
-        model = self.analyzer.analyze_project(self.temp_dir, recursive=True)
+        model = self.parser.c_parser.parse_project(self.temp_dir, recursive=True)
         model.save(model_path)
         
         # Verify file was created
@@ -177,7 +177,7 @@ class TestProjectAnalyzer(unittest.TestCase):
         os.makedirs(empty_dir, exist_ok=True)
         
         # Analyze empty project
-        model = self.analyzer.analyze_project(empty_dir, recursive=True)
+        model = self.parser.c_parser.parse_project(empty_dir, recursive=True)
         
         # Verify empty model
         self.assertEqual(len(model.files), 0)
@@ -188,12 +188,12 @@ class TestProjectAnalyzer(unittest.TestCase):
         """Test error handling in project analysis"""
         # Test with non-existent directory
         with self.assertRaises(Exception):
-            self.analyzer.analyze_project("/non/existent/path", recursive=True)
+            self.parser.c_parser.parse_project("/non/existent/path", recursive=True)
         
         # Test with file instead of directory
         test_file = self.create_test_file("test.txt", "not a directory")
         with self.assertRaises(Exception):
-            self.analyzer.analyze_project(test_file, recursive=True)
+            self.parser.c_parser.parse_project(test_file, recursive=True)
     
     def test_file_filtering(self):
         """Test file filtering during analysis"""
@@ -204,7 +204,7 @@ class TestProjectAnalyzer(unittest.TestCase):
         self.create_test_file("script.py", "print('not C')")
         
         # Analyze with default filters (should only include .c and .h files)
-        model = self.analyzer.analyze_project(self.temp_dir, recursive=True)
+        model = self.parser.c_parser.parse_project(self.temp_dir, recursive=True)
         
         # Should only include C/C++ files
         file_names = [os.path.basename(fp) for fp in model.files.keys()]
@@ -230,7 +230,7 @@ class TestProjectAnalyzer(unittest.TestCase):
         self.create_test_file("test.c", test_content)
         
         # Create model
-        model = self.analyzer.analyze_project(self.temp_dir, recursive=True)
+        model = self.parser.c_parser.parse_project(self.temp_dir, recursive=True)
         
         # Serialize to dict
         model_dict = model.__dict__.copy()
@@ -259,7 +259,7 @@ class TestProjectAnalyzer(unittest.TestCase):
         self.create_test_file("src/main.c", "int main() { return 0; }")
         
         # Analyze project
-        model = self.analyzer.analyze_project(self.temp_dir, recursive=True)
+        model = self.parser.c_parser.parse_project(self.temp_dir, recursive=True)
         
         # Check relative paths
         file_model = list(model.files.values())[0]
