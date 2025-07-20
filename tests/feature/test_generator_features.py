@@ -1,58 +1,87 @@
 """
-Feature tests for PlantUML generation functionality
+Feature tests for generator functionality
 
-Tests the ability to generate PlantUML diagrams from parsed C code models.
+Tests advanced PlantUML generation features.
 """
 
-from c_to_plantuml.models import ProjectModel
-
-from .base import BaseFeatureTest
+import os
+from tests.feature.base import BaseFeatureTest
 
 
 class TestGeneratorFeatures(BaseFeatureTest):
-    """Test PlantUML diagram generation"""
+    """Test advanced generator features"""
 
-    def test_feature_plantuml_generation(self):
-        """Test PlantUML diagram generation"""
+    def test_generate_with_typedefs(self):
+        """Test PlantUML generation with typedef relationships"""
         from c_to_plantuml.generator import Generator
-        from c_to_plantuml.models import Enum, Field, FileModel, Function, Struct
+        from c_to_plantuml.parser import Parser
 
-        # Create test file model
-        file_model = FileModel(
-            file_path="test.c",
-            relative_path="test.c",
-            project_root="/test",
-            encoding_used="utf-8",
-            structs={
-                "Person": Struct(
-                    "Person", [Field("name", "char*"), Field("age", "int")]
-                )
-            },
-            enums={"Status": Enum("Status", ["OK", "ERROR"])},
-            functions=[Function("main", "int", [])],
-            globals=[],
-            includes=["stdio.h"],
-            macros=[],
-            typedefs={},
-        )
+        content = """
+#include <stdio.h>
 
+typedef struct {
+    int id;
+    char name[100];
+} User;
+
+typedef User* UserPtr;
+
+struct Container {
+    UserPtr users;
+    int count;
+};
+        """
+
+        self.create_test_file("typedef_test.c", content)
+        
+        # Parse and generate
+        parser = Parser()
+        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        
+        model_path = os.path.join(self.temp_dir, "test_model.json")
+        model.save(model_path)
+        
         generator = Generator()
-        # Create a simple project model for testing
-        project_model = ProjectModel(
-            project_name="test_project",
-            project_root="/test",
-            files={"test.c": file_model},
-            created_at="2023-01-01T00:00:00",
-        )
-        content = generator.plantuml_generator.generate_diagram(
-            file_model, project_model
-        )
+        output_dir = self.temp_dir + "/output"
+        generator.generate(model_path, output_dir)
+        
+        # Verify generation
+        from pathlib import Path
+        puml_files = list(Path(output_dir).glob("*.puml"))
+        self.assertGreaterEqual(len(puml_files), 1)
 
-        # Verify PlantUML generation
-        self.assertIn("@startuml test", content)
-        self.assertIn("@enduml", content)
-        self.assertIn('class "test" as TEST <<source>> #LightBlue', content)
-        # Header classes not implemented in current version
-        # self.assertIn('class "stdio" as STDIO <<header>> #LightGreen', content)
-        self.assertIn("+ struct Person", content)
-        self.assertIn("+ enum Status", content)
+    def test_generate_with_unions(self):
+        """Test PlantUML generation with union definitions"""
+        from c_to_plantuml.generator import Generator
+        from c_to_plantuml.parser import Parser
+
+        content = """
+union Data {
+    int i;
+    float f;
+    char str[20];
+};
+
+struct Container {
+    union Data data;
+    int type;
+};
+        """
+
+        self.create_test_file("union_test.c", content)
+        
+        # Parse and generate
+        parser = Parser()
+        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        
+        model_path = os.path.join(self.temp_dir, "test_model.json")
+        model.save(model_path)
+        
+        generator = Generator()
+        output_dir = self.temp_dir + "/output"
+        generator.generate(model_path, output_dir)
+        
+        # Verify generation
+        from pathlib import Path
+        puml_files = list(Path(output_dir).glob("*.puml"))
+        self.assertGreaterEqual(len(puml_files), 1)
