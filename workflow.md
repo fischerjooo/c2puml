@@ -7,6 +7,7 @@ The C to PlantUML Converter follows a simple 3-step workflow for converting C/C+
 - **Do not create new markdown files** - only edit existing markdown files
 - Keep documentation concise and focused on practical usage
 - Update this workflow.md file for any new workflow changes
+- Use modern Python packaging with pyproject.toml
 
 ## Processing Workflow
 
@@ -62,6 +63,11 @@ The `run_all_tests.py` script provides a simple and elegant test execution:
 
 ### Test Structure
 - **Unit Tests**: Test individual components in isolation
+  - **Parser Tests**: Test C/C++ parsing functionality
+  - **User Configurable Filtering Tests**: Test user-configurable filtering via config.json
+  - **Generator Tests**: Test PlantUML diagram generation
+  - **Transformer Tests**: Test model transformation and filtering
+  - **Config Tests**: Test configuration loading and validation
 - **Feature Tests**: Test complete workflows and integrations
 - **Test Files**: Sample C/C++ files for testing
 - **Test Output**: Expected output files for verification

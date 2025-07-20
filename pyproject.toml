@@ -2,6 +2,38 @@
 requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "c-to-plantuml"
+version = "2.0.0"
+description = "Convert C/C++ code to PlantUML diagrams"
+readme = "README.md"
+authors = [
+    {name = "C to PlantUML Team", email = "team@c-to-plantuml.com"}
+]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.7"
+dependencies = []
+
+[project.scripts]
+c2plantuml = "c_to_plantuml.main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
 [tool.black]
 line-length = 88
 target-version = ['py39']
