@@ -15,6 +15,30 @@ from pathlib import Path
 # Add the current directory to the path so we can import the module
 sys.path.insert(0, str(Path(__file__).parent))
 
+def run_unit_tests():
+    """Run all unit tests and return the test result"""
+    # Import and run unit tests from test files
+    from tests.test_parser import TestCParser
+    from tests.test_project_analyzer import TestProjectAnalyzer
+    from tests.test_generator import TestGenerator
+    from tests.test_config import TestConfig
+    
+    # Create test suite for unit tests
+    unit_suite = unittest.TestSuite()
+    
+    # Add unit test classes using TestLoader
+    loader = unittest.TestLoader()
+    unit_suite.addTest(loader.loadTestsFromTestCase(TestCParser))
+    unit_suite.addTest(loader.loadTestsFromTestCase(TestProjectAnalyzer))
+    unit_suite.addTest(loader.loadTestsFromTestCase(TestGenerator))
+    unit_suite.addTest(loader.loadTestsFromTestCase(TestConfig))
+    
+    # Run unit tests with verbose output
+    runner = unittest.TextTestRunner(verbosity=2)
+    result = runner.run(unit_suite)
+    
+    return result
+
 def run_feature_tests():
     """Run all feature-based tests and return the test result"""
     
@@ -335,37 +359,65 @@ int process{i}(int input) {{
 
 def main():
     """Main test runner function"""
-    print("🧪 Running C to PlantUML Converter Feature Tests")
+    print("🧪 Running C to PlantUML Converter Tests")
     print("=" * 60)
     
-    # Run all feature tests
-    result = run_feature_tests()
+    # Track overall results
+    total_tests_run = 0
+    total_failures = 0
+    total_errors = 0
+    all_failures = []
+    all_errors = []
     
-    # Print summary
+    # Run unit tests
+    print("\n📋 Running Unit Tests...")
+    print("-" * 40)
+    unit_result = run_unit_tests()
+    
+    total_tests_run += unit_result.testsRun
+    total_failures += len(unit_result.failures)
+    total_errors += len(unit_result.errors)
+    all_failures.extend(unit_result.failures)
+    all_errors.extend(unit_result.errors)
+    
+    # Run feature tests
+    print("\n📋 Running Feature Tests...")
+    print("-" * 40)
+    feature_result = run_feature_tests()
+    
+    total_tests_run += feature_result.testsRun
+    total_failures += len(feature_result.failures)
+    total_errors += len(feature_result.errors)
+    all_failures.extend(feature_result.failures)
+    all_errors.extend(feature_result.errors)
+    
+    # Print comprehensive summary
     print("\n" + "=" * 60)
-    print("TEST SUMMARY")
+    print("COMPREHENSIVE TEST SUMMARY")
     print("=" * 60)
-    print(f"Tests run: {result.testsRun}")
-    print(f"Failures: {len(result.failures)}")
-    print(f"Errors: {len(result.errors)}")
-    print(f"Skipped: {len(result.skipped) if hasattr(result, 'skipped') else 0}")
+    print(f"Total Tests run: {total_tests_run}")
+    print(f"Unit Tests: {unit_result.testsRun}")
+    print(f"Feature Tests: {feature_result.testsRun}")
+    print(f"Total Failures: {total_failures}")
+    print(f"Total Errors: {total_errors}")
+    print(f"Skipped: {len(unit_result.skipped) if hasattr(unit_result, 'skipped') else 0 + len(feature_result.skipped) if hasattr(feature_result, 'skipped') else 0}")
     
-    if result.failures:
+    if all_failures:
         print("\n❌ FAILURES:")
-        for test, traceback in result.failures:
+        for test, traceback in all_failures:
             print(f"  {test}: {traceback}")
     
-    if result.errors:
+    if all_errors:
         print("\n❌ ERRORS:")
-        for test, traceback in result.errors:
+        for test, traceback in all_errors:
             print(f"  {test}: {traceback}")
     
     # Return appropriate exit code
-    if result.wasSuccessful():
-        print("\n✅ All feature tests passed!")
+    if total_failures == 0 and total_errors == 0:
+        print("\n✅ All tests passed!")
         return 0
     else:
-        print("\n❌ Some feature tests failed!")
+        print(f"\n❌ {total_failures + total_errors} test(s) failed!")
         return 1
 
 if __name__ == '__main__':

@@ -225,12 +225,12 @@ The tool is organized into several key modules:
 
 ## Testing
 
-The project uses a streamlined testing approach with a single entry point for all test executions.
+The project uses a comprehensive testing approach with a single entry point for all test executions.
 
 ### Quick Start
 
 ```bash
-# Run all feature tests (recommended)
+# Run all tests (unit + feature tests)
 python3 run_all_tests.py
 
 # Or use the convenience script
@@ -239,12 +239,19 @@ python3 run_all_tests.py
 
 ### Test Structure
 
-All feature-based tests are consolidated into a single comprehensive test runner (`run_all_tests.py`) that covers:
+The comprehensive test runner (`run_all_tests.py`) orchestrates both unit tests and feature tests:
 
-- **Parser Tests**: C file parsing (structs, enums, functions, globals, includes, macros)
-- **Project Analysis Tests**: Multi-file analysis and model generation
-- **PlantUML Generation Tests**: Diagram generation and output validation
-- **Configuration Tests**: JSON configuration loading and validation
+#### Unit Tests (41 tests):
+- **Parser Tests**: Detailed C file parsing (structs, enums, functions, globals, includes, macros, typedefs)
+- **Project Analysis Tests**: Multi-file analysis, model generation, file filtering
+- **PlantUML Generation Tests**: Diagram generation, output validation, syntax checking
+- **Configuration Tests**: JSON configuration loading, validation, filtering
+
+#### Feature Tests (7 tests):
+- **Parser Tests**: Basic C parsing functionality
+- **Project Analysis Tests**: Project analysis and model generation
+- **PlantUML Generation Tests**: Diagram generation functionality
+- **Configuration Tests**: Configuration loading and validation
 - **Workflow Tests**: Complete end-to-end testing from C files to PlantUML diagrams
 - **Error Handling Tests**: Edge cases and error scenarios
 - **Performance Tests**: Performance benchmarks with reasonable limits
@@ -261,11 +268,11 @@ The GitHub workflow automatically runs the same test command:
 
 ### Benefits
 
-- **Single Entry Point**: One command to run all tests
+- **Single Entry Point**: One command to run all tests (unit + feature)
+- **Comprehensive Coverage**: Both detailed unit tests and high-level feature tests
 - **Consistent Execution**: Same behavior locally and in CI/CD
-- **Feature-Focused**: Tests focus on user-facing functionality
-- **Fast Execution**: No redundant test discovery or setup
-- **Clear Results**: Simple pass/fail reporting with detailed output
+- **Fast Execution**: Efficient test discovery and execution
+- **Clear Results**: Detailed reporting with separate unit and feature test results
 
 For detailed testing documentation, see [tests/README.md](tests/README.md).
 
