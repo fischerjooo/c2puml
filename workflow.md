@@ -1,7 +1,7 @@
 # C to PlantUML Converter - Workflow Guide
 
 ## Overview
-The C to PlantUML Converter follows a simple 3-step workflow for converting C/C++ source code to PlantUML diagrams.
+The C to PlantUML Converter follows a simple 3-step workflow for converting C/C++ source code to PlantUML diagrams with advanced filtering and transformation capabilities.
 
 ## Documentation Guidelines
 - **Do not create new markdown files** - only edit existing markdown files
@@ -23,9 +23,10 @@ python3 main.py parse ./src
 ### Step 2: Transform (Optional)
 Transform the model based on configuration rules. This step handles:
 - User-configured file filtering
-- Model element filtering (structs, enums, functions, etc.)
+- Model element filtering (structs, enums, unions, functions, etc.)
 - Model transformations (rename, add, remove elements)
 - File selection for transformer actions (apply to all files or selected ones)
+- Include depth processing
 
 ```bash
 python3 main.py transform model.json config.json
@@ -125,14 +126,15 @@ The transformer supports applying actions to all model files or only selected on
 ### Running Tests
 ```bash
 # Run all tests (recommended)
-python3 run_all_tests.py
+python run_all_tests.py
 
 # Run with shell script
 ./test.sh
 
 # Run specific test categories
-python3 -m unittest tests.unit.test_parser
-python3 -m unittest tests.unit.test_generator
+python -m unittest tests.unit.test_parser
+python -m unittest tests.unit.test_generator
+python -m unittest tests.feature.test_integration
 ```
 
 ### Test Runner
@@ -143,15 +145,19 @@ The `run_all_tests.py` script provides a simple and elegant test execution:
 - Works consistently across different environments
 
 ### Test Structure
-- **Unit Tests**: Test individual components in isolation
+- **Unit Tests** (`tests/unit/`): Test individual components in isolation
   - **Parser Tests**: Test C/C++ parsing functionality
   - **User Configurable Filtering Tests**: Test user-configurable filtering via config.json
   - **Generator Tests**: Test PlantUML diagram generation
   - **Transformer Tests**: Test model transformation and filtering
   - **Config Tests**: Test configuration loading and validation
-- **Feature Tests**: Test complete workflows and integrations
+- **Feature Tests** (`tests/feature/`): Test complete workflows and integrations
+  - **Integration Tests**: Test complete workflows from parsing to diagram generation
+  - **Parser Feature Tests**: Test parser features and edge cases
+  - **Generator Feature Tests**: Test generator features and output quality
+  - **Transformer Feature Tests**: Test transformer features and transformations
+  - **Project Analysis Tests**: Test project-wide analysis features
 - **Test Files**: Sample C/C++ files for testing
-- **Test Output**: Expected output files for verification
 
 ## Configuration
 The system uses JSON configuration files to control:
@@ -161,8 +167,14 @@ The system uses JSON configuration files to control:
 - Output directory structure
 - Include depth configuration
 - File selection for transformer actions
+- Typedef relationship processing
+- Union field display
 
 ## Output
-- **PlantUML Files**: `.puml` files for each `.c` source file
+- **PlantUML Files**: `.puml` files for each `.c` source file with proper UML notation
 - **Model Files**: JSON models representing parsed code structure
+- **Typedef Relationships**: Proper UML stereotypes («defines», «alias») for typedef relationships
+- **Union Support**: Full parsing and display of union definitions with fields
+- **Header Content**: All referenced include files shown as classes with their actual content
+- **Header Relationships**: Include relationships between headers displayed with arrows
 - **Logs**: Processing logs and error reports

@@ -6,12 +6,14 @@ The C to PlantUML Converter is a Python-based tool that analyzes C/C++ source co
 
 ### Core Functionality
 - **Source Code Analysis**: Deep parsing of C/C++ files including structs, enums, unions, functions, macros, typedefs, and global variables
-- **Typedef Relationship Analysis**: Comprehensive parsing of typedef relationships with proper UML stereotypes
+- **Typedef Relationship Analysis**: Comprehensive parsing of typedef relationships with proper UML stereotypes («defines», «alias»)
+- **Union Support**: Full parsing and visualization of union definitions with fields
 - **Include Depth Processing**: Configurable depth for processing include relationships and their content
 - **Model Generation**: Creates comprehensive JSON-based abstract models of parsed code structures
 - **Diagram Generation**: Converts models into PlantUML class diagrams with proper UML notation
 - **Advanced Filtering**: Regex-based filtering of files and code elements
 - **Model Transformation**: Renaming, filtering, and addition of elements using configuration-driven rules
+- **File Selection for Transformations**: Apply transformations to all files or selected ones
 - **Structured Output**: Organized packaging of generated diagrams with customizable structure
 
 ### Processing Flow
@@ -45,13 +47,13 @@ All steps can be executed individually or can be chained together.
 - **R13**: Parse and visualize unions with their fields
 - **R14**: Handle typedefs for struct/enum/union (named and anonymous) with content display
 - **R15**: Show relationships between typedefs and their underlying types
+- **R16**: Support file selection for transformer actions (apply to all files or selected ones)
 
 ### 2.3 Quality Requirements
-- **R16**: Maintain backward compatibility with existing configurations
-- **R17**: Provide comprehensive error handling and validation
-- **R18**: Optimize performance with pre-compiled regex patterns
-- **R19**: Support both single-file and batch processing workflows
-- **R20**: Comprehensive testing with unit, integration, and output verification tests
+- **R18**: Provide comprehensive error handling and validation
+- **R19**: Optimize performance with pre-compiled regex patterns
+- **R20**: Support both single-file and batch processing workflows
+- **R21**: Comprehensive testing with unit, integration, and output verification tests
 
 ## 3. Software Architecture and Structure
 
@@ -65,17 +67,24 @@ c_to_plantuml/
 ├── transformer.py          # Step 2: Transform model based on configuration
 ├── generator.py            # Step 3: Generate puml files based on model.json
 ├── models.py               # Data models and serialization
+├── config.py               # Configuration management and input file filtering
 └── __init__.py             # Package initialization
 
 tests/
-├── test_parser.py          # Parser functionality tests
-├── test_transformer.py     # Transformer functionality tests
-├── test_generator.py       # PlantUML generation tests
-├── test_integration.py     # Complete workflow tests
+├── unit/                   # Unit tests
+│   ├── test_parser.py      # Parser functionality tests
+│   ├── test_transformer.py # Transformer functionality tests
+│   ├── test_generator.py   # PlantUML generation tests
+│   ├── test_config.py      # Configuration tests
+│   └── test_parser_filtering.py # User configurable filtering tests
+├── feature/                # Feature tests
+│   ├── test_integration.py # Complete workflow tests
+│   ├── test_parser_features.py # Parser feature tests
+│   ├── test_generator_features.py # Generator feature tests
+│   ├── test_transformer_features.py # Transformer feature tests
+│   └── test_project_analysis_features.py # Project analysis tests
 ├── test_files/             # Test input files
-├── test_output/            # Expected output files
-├── test_config.json        # Test configuration
-└── run_tests.py           # Test runner script
+└── run_all_tests.py        # Test runner script
 ```
 
 ### 3.2 Core Components
@@ -102,17 +111,26 @@ tests/
 - **Responsibilities**:
   - Configuration loading and validation
   - User-configured file filtering (essential filtering already done in parser)
-  - Model element filtering (structs, enums, functions, etc.)
+  - Model element filtering (structs, enums, unions, functions, etc.)
   - Model transformation and filtering
   - Include depth processing
   - Element renaming and addition
   - File selection for transformer actions (apply to all files or selected ones)
 
-#### 3.2.4 Generator (`generator.py`)
+#### 3.2.4 Configuration (`config.py`)
+- **Purpose**: Configuration management and input filtering
+- **Responsibilities**:
+  - Configuration loading and validation
+  - Regex pattern compilation and validation
+  - File and element filtering logic
+  - Configuration serialization and deserialization
+  - Backward compatibility handling
+
+#### 3.2.5 Generator (`generator.py`)
 - **Purpose**: Step 3 - Generate puml files based on model.json
 - **Responsibilities**:
   - PlantUML diagram generation
-  - Typedef relationship visualization with stereotypes
+  - Typedef relationship visualization with stereotypes («defines», «alias»)
   - Header content display in diagrams
   - Header-to-header relationship arrows
   - Union field display
@@ -188,8 +206,18 @@ The system provides multiple CLI commands for the 3-step workflow:
 ### 4.1 Test Organization
 All tests are organized under the `tests/` directory with comprehensive coverage:
 
-- **Unit Tests**: Test individual components in isolation
-- **Integration Tests**: Test complete workflows and component interactions
+- **Unit Tests** (`tests/unit/`): Test individual components in isolation
+  - Parser tests
+  - Transformer tests
+  - Generator tests
+  - Configuration tests
+  - User configurable filtering tests
+- **Feature Tests** (`tests/feature/`): Test complete workflows and integrations
+  - Integration tests
+  - Parser feature tests
+  - Generator feature tests
+  - Transformer feature tests
+  - Project analysis tests
 - **Configuration Tests**: Test configuration loading, validation, and filtering
 - **Output Verification Tests**: Test PlantUML generation and output quality
 - **Typedef Relationship Tests**: Test typedef parsing and relationship visualization
@@ -205,14 +233,16 @@ All tests are organized under the `tests/` directory with comprehensive coverage
 
 ### 4.3 Test Execution
 ```bash
-# Run all tests
-python tests/run_tests.py
+# Run all tests (recommended)
+python run_all_tests.py
 
-# Run specific test module
-python tests/run_tests.py test_parser
+# Run with shell script
+./test.sh
 
-# Run with unittest directly
-python -m unittest discover tests/
+# Run specific test categories
+python -m unittest tests.unit.test_parser
+python -m unittest tests.unit.test_generator
+python -m unittest tests.feature.test_integration
 ```
 
 ## 5. PlantUML Output Specification
