@@ -1,8 +1,15 @@
 #!/bin/bash
 # Simple test runner script
 
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 echo "🧪 Running C to PlantUML Converter Tests"
 echo "========================================"
+echo "Script directory: $SCRIPT_DIR"
+
+# Change to the script directory
+cd "$SCRIPT_DIR"
 
 # Detect Python version
 if command -v python3 &> /dev/null; then
@@ -15,6 +22,7 @@ else
 fi
 
 echo "🐍 Using Python: $($PYTHON_CMD --version)"
+echo "📁 Working directory: $(pwd)"
 
 # Run the test suite
 $PYTHON_CMD run_all_tests.py

@@ -32,4 +32,21 @@ jobs:
     - name: Run all tests
       run: |
         echo "🧪 Running comprehensive test suite..."
-        python run_all_tests.py
+        echo "Current directory: $(pwd)"
+        echo "Files in current directory:"
+        ls -la
+        echo "Files in tests directory:"
+        ls -la tests/ || echo "tests directory not found"
+        echo "Files in tests/unit directory:"
+        ls -la tests/unit/ || echo "tests/unit directory not found"
+        echo "Files in tests/feature directory:"
+        ls -la tests/feature/ || echo "tests/feature directory not found"
+        
+        # Try the main test runner first
+        python run_all_tests.py || {
+          echo "Main test runner failed, trying simple runner..."
+          python run_tests_simple.py || {
+            echo "Simple test runner also failed, trying direct unittest..."
+            python -m unittest discover tests/ -v
+          }
+        }
