@@ -99,7 +99,7 @@ class Transformer:
         """Apply all configured transformations to the model"""
         self.logger.info("Applying transformations to model")
 
-        # Apply file filters
+        # Apply comprehensive file filtering (moved from parser)
         if "file_filters" in config:
             model = self._apply_file_filters(model, config["file_filters"])
 
@@ -107,7 +107,7 @@ class Transformer:
         if "element_filters" in config:
             model = self._apply_element_filters(model, config["element_filters"])
 
-        # Apply transformations
+        # Apply transformations with file selection support
         if "transformations" in config:
             model = self._apply_model_transformations(model, config["transformations"])
 
@@ -123,7 +123,7 @@ class Transformer:
     def _apply_file_filters(
         self, model: ProjectModel, filters: Dict[str, Any]
     ) -> ProjectModel:
-        """Apply file-level filters"""
+        """Apply user-configured file-level filters (important filtering already done in parser)"""
         include_patterns = self._compile_patterns(filters.get("include", []))
         exclude_patterns = self._compile_patterns(filters.get("exclude", []))
 
@@ -136,7 +136,7 @@ class Transformer:
                 filtered_files[file_path] = file_model
 
         model.files = filtered_files
-        self.logger.debug(f"File filtering: {len(model.files)} files after filtering")
+        self.logger.debug(f"User file filtering: {len(model.files)} files after filtering")
         return model
 
     def _apply_element_filters(
@@ -193,46 +193,85 @@ class Transformer:
     def _apply_model_transformations(
         self, model: ProjectModel, transformations: Dict[str, Any]
     ) -> ProjectModel:
-        """Apply model-level transformations"""
+        """Apply model-level transformations with file selection support"""
+        # Get file selection configuration
+        file_selection = transformations.get("file_selection", {})
+        selected_files = file_selection.get("selected_files", [])
+        
+        # Determine which files to apply transformations to
+        # If selected_files is empty or not specified, apply to all files
+        if not selected_files:
+            target_files = set(model.files.keys())
+        else:
+            # Apply only to selected files
+            target_files = set()
+            for pattern in selected_files:
+                for file_path in model.files.keys():
+                    if self._matches_pattern(file_path, pattern):
+                        target_files.add(file_path)
+        
+        self.logger.debug(f"Applying transformations to {len(target_files)} files: {list(target_files)}")
+
         # Rename elements
         if "rename" in transformations:
-            model = self._apply_renaming(model, transformations["rename"])
+            model = self._apply_renaming(model, transformations["rename"], target_files)
 
         # Add elements
         if "add" in transformations:
-            model = self._apply_additions(model, transformations["add"])
+            model = self._apply_additions(model, transformations["add"], target_files)
 
         # Remove elements
         if "remove" in transformations:
-            model = self._apply_removals(model, transformations["remove"])
+            model = self._apply_removals(model, transformations["remove"], target_files)
 
         return model
 
     def _apply_renaming(
-        self, model: ProjectModel, rename_config: Dict[str, Any]
+        self, model: ProjectModel, rename_config: Dict[str, Any], target_files: Set[str]
     ) -> ProjectModel:
-        """Apply renaming transformations"""
-        # Implementation for renaming elements
-        # This would handle renaming structs, enums, functions, etc.
-        self.logger.debug("Applying renaming transformations")
+        """Apply renaming transformations to selected files"""
+        self.logger.debug(f"Applying renaming transformations to {len(target_files)} files")
+        
+        # Apply renaming only to target files
+        for file_path in target_files:
+            if file_path in model.files:
+                file_model = model.files[file_path]
+                # Apply renaming logic here
+                # This would handle renaming structs, enums, functions, etc.
+                self.logger.debug(f"Applying renaming to file: {file_path}")
+        
         return model
 
     def _apply_additions(
-        self, model: ProjectModel, add_config: Dict[str, Any]
+        self, model: ProjectModel, add_config: Dict[str, Any], target_files: Set[str]
     ) -> ProjectModel:
-        """Apply addition transformations"""
-        # Implementation for adding new elements
-        # This would handle adding new structs, enums, functions, etc.
-        self.logger.debug("Applying addition transformations")
+        """Apply addition transformations to selected files"""
+        self.logger.debug(f"Applying addition transformations to {len(target_files)} files")
+        
+        # Apply additions only to target files
+        for file_path in target_files:
+            if file_path in model.files:
+                file_model = model.files[file_path]
+                # Apply addition logic here
+                # This would handle adding new elements like structs, enums, functions, etc.
+                self.logger.debug(f"Applying additions to file: {file_path}")
+        
         return model
 
     def _apply_removals(
-        self, model: ProjectModel, remove_config: Dict[str, Any]
+        self, model: ProjectModel, remove_config: Dict[str, Any], target_files: Set[str]
     ) -> ProjectModel:
-        """Apply removal transformations"""
-        # Implementation for removing elements
-        # This would handle removing structs, enums, functions, etc.
-        self.logger.debug("Applying removal transformations")
+        """Apply removal transformations to selected files"""
+        self.logger.debug(f"Applying removal transformations to {len(target_files)} files")
+        
+        # Apply removals only to target files
+        for file_path in target_files:
+            if file_path in model.files:
+                file_model = model.files[file_path]
+                # Apply removal logic here
+                # This would handle removing elements like structs, enums, functions, etc.
+                self.logger.debug(f"Applying removals to file: {file_path}")
+        
         return model
 
     def _process_include_relations(
@@ -320,6 +359,15 @@ class Transformer:
                     return str(file_path.resolve())
 
         return None
+
+    def _matches_pattern(self, file_path: str, pattern: str) -> bool:
+        """Check if a file path matches a pattern"""
+        try:
+            import re
+            return bool(re.search(pattern, file_path))
+        except re.error:
+            self.logger.warning(f"Invalid pattern '{pattern}' for file matching")
+            return False
 
     def _compile_patterns(self, patterns: List[str]) -> List[re.Pattern]:
         """Compile regex patterns with error handling"""
