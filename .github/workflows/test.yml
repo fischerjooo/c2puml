@@ -53,59 +53,16 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         echo "✅ Linting completed successfully"
 
-    - name: Discover and list test files
+    - name: Run comprehensive feature tests
       run: |
-        echo "🔍 Discovering test files..."
-        find tests/ -name "test_*.py" -type f | sort
-        echo "📊 Test file count: $(find tests/ -name "test_*.py" -type f | wc -l)"
-        echo "📋 Available test modules:"
-        python -c "
-        import os
-        import sys
-        sys.path.insert(0, '.')
-        
-        try:
-            # Get test files and convert to module names
-            test_files = [f for f in os.listdir('tests') if f.startswith('test_') and f.endswith('.py')]
-            test_modules = [f.replace('.py', '') for f in sorted(test_files)]
-            
-            # Print discovered modules
-            for module in test_modules:
-                print(f'  - tests.{module}')
-                
-            if not test_modules:
-                print('  ⚠️  No test modules found')
-                
-        except Exception as e:
-            print(f'  ❌ Error discovering test modules: {e}')
-        "
+        echo "🧪 Running comprehensive feature tests..."
+        echo "📝 Single entry point: run_all_tests.py"
+        python run_all_tests.py
+        echo "✅ Feature tests completed"
 
-    - name: Run unit tests with verbose output
+    - name: Test main workflow
       run: |
-        echo "🧪 Running unit tests with verbose output..."
-        echo "📝 Test: Parser Unit Tests"
-        python -m unittest tests.test_parser -v --buffer
-        echo "✅ Parser tests completed"
-        
-        echo "📝 Test: Project Analyzer Unit Tests"
-        python -m unittest tests.test_project_analyzer -v --buffer
-        echo "✅ Project Analyzer tests completed"
-
-    - name: Run configuration tests
-      run: |
-        echo "🧪 Running configuration-related tests..."
-        echo "📝 Note: Configuration tests are integrated into main test files"
-        echo "✅ Configuration tests completed"
-
-    - name: Run comprehensive test suite
-      run: |
-        echo "🧪 Running comprehensive test suite..."
-        python -m unittest discover tests -v --buffer
-        echo "✅ Comprehensive test suite completed"
-
-    - name: Test complete workflow with detailed logging
-      run: |
-        echo "🔄 Testing complete workflow with detailed logging..."
+        echo "🔄 Testing main workflow with simple config..."
         echo "📁 Current directory: $(pwd)"
         echo "📋 Available config files:"
         ls -la *.json
@@ -113,9 +70,9 @@ jobs:
         python main.py config simple_config.json
         echo "✅ Main workflow completed"
 
-    - name: Verify output files with detailed checks
+    - name: Verify output files
       run: |
-        echo "🔍 Verifying output files with detailed checks..."
+        echo "🔍 Verifying output files..."
         
         # Check that expected files were created
         if [ ! -f "Test_Project_model.json" ]; then
@@ -135,10 +92,7 @@ jobs:
           echo "✅ test_plantuml_output directory created successfully"
         fi
         
-        # Check for .puml files with detailed listing
-        echo "📋 Contents of test_plantuml_output:"
-        find test_plantuml_output -type f | sort
-        
+        # Check for .puml files
         puml_count=$(find test_plantuml_output -name "*.puml" | wc -l)
         if [ "$puml_count" -eq 0 ]; then
           echo "❌ Error: No .puml files generated"
@@ -151,122 +105,6 @@ jobs:
         echo "📊 PlantUML files:"
         find test_plantuml_output -name "*.puml" -exec wc -l {} \;
 
-    - name: Test CLI tools with verbose output
-      run: |
-        echo "🛠️ Testing CLI tools with verbose output..."
-        echo "📝 Testing the complete workflow with separate analyze and generate steps"
-        
-        # Test analysis
-        echo "🔍 Testing analysis CLI..."
-        python -c "
-        import sys
-        sys.path.insert(0, '.')
-        from c_to_plantuml.main import handle_analyze_command, handle_generate_command
-        import argparse
-        import os
-
-        print('Setting up analysis test...')
-        args = argparse.Namespace()
-        args.project_roots = ['./tests/test_files']
-        args.output = 'test_model.json'
-        args.name = 'CLI_Test'
-        args.prefixes = None
-        args.no_recursive = False
-
-        print(f'Project roots: {args.project_roots}')
-        print(f'Output file: {args.output}')
-        print(f'Project name: {args.name}')
-
-        exit_code = handle_analyze_command(args)
-        print(f'Analysis exit code: {exit_code}')
-        
-        if exit_code != 0:
-            print('❌ Analysis CLI test failed')
-            sys.exit(1)
-
-        print('✅ Analysis CLI test passed')
-
-        # Check if model file was created
-        if not os.path.exists('test_model.json'):
-            print('❌ Error: CLI analysis failed to create model file')
-            print('Current directory contents:')
-            for f in os.listdir('.'):
-                if f.endswith('.json'):
-                    print(f'  {f}')
-            sys.exit(1)
-        else:
-            print('✅ Model file created successfully')
-            print(f'Model file size: {os.path.getsize(\"test_model.json\")} bytes')
-
-        # Test generation
-        print('🔍 Testing generation CLI...')
-        args = argparse.Namespace()
-        args.model_json = 'test_model.json'
-        args.output_dir = 'cli_output'
-
-        print(f'Model JSON: {args.model_json}')
-        print(f'Output directory: {args.output_dir}')
-
-        exit_code = handle_generate_command(args)
-        print(f'Generation exit code: {exit_code}')
-        
-        if exit_code != 0:
-            print('❌ Generation CLI test failed')
-            sys.exit(1)
-
-        print('✅ Generation CLI test passed')
-
-        # Check if output directory was created
-        if not os.path.exists('cli_output'):
-            print('❌ Error: CLI PlantUML generation failed')
-            sys.exit(1)
-        else:
-            print('✅ CLI output directory created successfully')
-            print('CLI output contents:')
-            for root, dirs, files in os.walk('cli_output'):
-                for file in files:
-                    print(f'  {os.path.join(root, file)}')
-        "
-
-    - name: Performance benchmark with detailed metrics
-      run: |
-        echo "⚡ Running performance benchmark with detailed metrics..."
-        python -c "
-        import time
-        import sys
-        import os
-        sys.path.insert(0, '.')
-        from c_to_plantuml.analyzer import Analyzer
-
-        print('🔍 Starting performance analysis...')
-        start_time = time.perf_counter()
-        
-        analyzer = Analyzer()
-        print('✅ Analyzer initialized')
-        
-        model = analyzer.analyze_project('./tests/test_files', recursive=True)
-        end_time = time.perf_counter()
-
-        duration = end_time - start_time
-        print(f'⏱️ Analysis completed in {duration:.2f} seconds')
-        print(f'📁 Files processed: {len(model.files)}')
-        print(f'📊 Model size: {len(str(model))} characters')
-        
-        # Additional metrics
-        if hasattr(model, 'functions'):
-            print(f'🔧 Functions found: {len(model.functions)}')
-        if hasattr(model, 'structs'):
-            print(f'🏗️ Structs found: {len(model.structs)}')
-        if hasattr(model, 'enums'):
-            print(f'📋 Enums found: {len(model.enums)}')
-
-        if duration > 30:  # Fail if takes more than 30 seconds for test files
-            print('❌ Error: Analysis took too long')
-            sys.exit(1)
-        else:
-            print('✅ Performance test passed')
-        "
-
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       if: always()
@@ -275,141 +113,3 @@ jobs:
         path: |
           Test_Project_model.json
           test_plantuml_output/
-          cli_output/
-          test_model.json
-
-  integration-test:
-    needs: test
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-
-    - name: Install dependencies
-      run: |
-        echo "🔧 Installing dependencies for integration tests..."
-        python -m pip install --upgrade pip
-        pip install -e .
-        echo "✅ Dependencies installed"
-
-    - name: Create complex test project
-      run: |
-        echo "🏗️ Creating complex test project..."
-        mkdir -p complex_test/src complex_test/include
-        
-        echo "📝 Creating main.c..."
-        cat > complex_test/src/main.c << 'EOF'
-        #include "../include/utils.h"
-        #include <stdio.h>
-        
-        int main() {
-            utils_init();
-            return 0;
-        }
-        EOF
-        
-        echo "📝 Creating utils.c..."
-        cat > complex_test/src/utils.c << 'EOF'
-        #include "../include/utils.h"
-        
-        static int initialized = 0;
-        
-        void utils_init(void) {
-            initialized = 1;
-        }
-        
-        int utils_is_initialized(void) {
-            return initialized;
-        }
-        EOF
-        
-        echo "📝 Creating utils.h..."
-        cat > complex_test/include/utils.h << 'EOF'
-        #ifndef UTILS_H
-        #define UTILS_H
-        
-        void utils_init(void);
-        int utils_is_initialized(void);
-        
-        #endif
-        EOF
-        
-        echo "📋 Complex test project structure:"
-        find complex_test -type f | sort
-        echo "✅ Complex test project created"
-
-    - name: Test complex project analysis
-      run: |
-        echo "🔍 Testing complex project analysis..."
-        # Create config for complex project
-        cat > complex_config.json << 'EOF'
-        {
-          "project_name": "Complex_Integration_Test",
-          "project_roots": ["./complex_test"],
-          "model_output_path": "./complex_model.json",
-          "output_dir": "./complex_output",
-          "recursive": true,
-          "c_file_prefixes": []
-        }
-        EOF
-        
-        echo "📋 Configuration created:"
-        cat complex_config.json
-        
-        echo "🔄 Running analysis..."
-        python -m c_to_plantuml.main config complex_config.json
-        echo "✅ Complex project analysis completed"
-
-    - name: Validate complex project output
-      run: |
-        echo "🔍 Validating complex project output..."
-        
-        # Check model file
-        if [ ! -f "complex_model.json" ]; then
-          echo "❌ Error: Complex model not created"
-          ls -la *.json
-          exit 1
-        else
-          echo "✅ Complex model file created"
-          echo "📊 Model file size: $(wc -c < complex_model.json) bytes"
-        fi
-        
-        # Validate JSON structure
-        echo "🔍 Validating JSON structure..."
-        python -c "
-        import json
-        with open('complex_model.json', 'r') as f:
-            model = json.load(f)
-            print(f'Project name: {model[\"project_name\"]}')
-            print(f'Files count: {len(model[\"files\"])}')
-            print(f'Files: {list(model[\"files\"].keys())}')
-            assert model['project_name'] == 'Complex_Integration_Test'
-            assert len(model['files']) >= 2  # Should have main.c and utils.c
-            print('✅ Complex model validation passed')
-        "
-        
-        # Check PlantUML output
-        echo "🔍 Checking PlantUML output..."
-        if [ ! -d "complex_output" ]; then
-          echo "❌ Error: Complex output directory not created"
-          ls -la
-          exit 1
-        fi
-        
-        echo "📋 Complex output contents:"
-        find complex_output -type f | sort
-        
-        complex_puml_count=$(find complex_output -name "*.puml" | wc -l)
-        if [ "$complex_puml_count" -lt 2 ]; then
-          echo "❌ Error: Expected at least 2 PlantUML files, got $complex_puml_count"
-          exit 1
-        fi
-        
-        echo "✅ Integration test passed: $complex_puml_count PlantUML files generated"
-        echo "📊 PlantUML files:"
-        find complex_output -name "*.puml" -exec wc -l {} \;

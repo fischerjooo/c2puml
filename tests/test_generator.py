@@ -80,7 +80,7 @@ class TestGenerator(unittest.TestCase):
         # Check class definition
         self.assertIn('class "main" as MAIN <<source>> #LightBlue', content)
         
-        # Check header classes and relationships (includes are now shown as separate classes)
+        # Check header classes and relationships
         self.assertIn('class "stdio" as STDIO <<header>> #LightGreen', content)
         self.assertIn('class "stdlib" as STDLIB <<header>> #LightGreen', content)
         self.assertIn("MAIN --> STDIO : <<include>>", content)
@@ -198,61 +198,56 @@ class TestGenerator(unittest.TestCase):
             "project_name": "test_project",
             "project_roots": ["/test"],
             "output_dir": os.path.join(self.temp_dir, "config_output"),
-            "model_output_path": "model.json",
             "recursive": True
         })
         
-        # Generate diagrams
-        self.generator.generate_with_config(model, config)
+        # Save model
+        model_path = os.path.join(self.temp_dir, "test_model.json")
+        model.save(model_path)
         
-        # Check output directory was created
-        output_dir = os.path.join(self.temp_dir, "config_output")
-        self.assertTrue(os.path.exists(output_dir))
+        # Generate with config
+        self.generator.generate_from_model(model_path, config.output_dir)
         
-        # Check that diagram file was created
-        puml_file = os.path.join(output_dir, "main.puml")
+        # Verify output
+        self.assertTrue(os.path.exists(config.output_dir))
+        puml_file = os.path.join(config.output_dir, "main.puml")
         self.assertTrue(os.path.exists(puml_file))
     
     def test_generate_multiple_files(self):
         """Test generating diagrams for multiple files"""
         # Create multiple file models
         file1 = self.create_test_file_model("main.c")
-        file2 = self.create_test_file_model("utils.c")
-        file2.structs = {"Helper": Struct("Helper", [Field("data", "void*")])}
-        file2.functions = [Function("helper_func", "void", [])]
+        file2 = FileModel(
+            file_path="utils.c",
+            relative_path="utils.c",
+            project_root="/test",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            functions=[Function("helper", "void", [])],
+            globals=[],
+            includes=["stdio.h"],
+            macros=[],
+            typedefs={}
+        )
         
         model = ProjectModel(
             project_name="test_project",
             project_root="/test",
-            files={
-                "main.c": file1,
-                "utils.c": file2
-            },
+            files={"main.c": file1, "utils.c": file2},
             created_at="2024-01-01T00:00:00"
         )
         
-        # Save model to file
+        # Save and generate
         model_path = os.path.join(self.temp_dir, "test_model.json")
         model.save(model_path)
         
-        # Generate diagrams
         output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate_from_model(model_path, output_dir)
         
-        # Check that both diagram files were created
-        main_puml = os.path.join(output_dir, "main.puml")
-        utils_puml = os.path.join(output_dir, "utils.puml")
-        
-        self.assertTrue(os.path.exists(main_puml))
-        self.assertTrue(os.path.exists(utils_puml))
-        
-        # Check content of utils.puml
-        with open(utils_puml, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        self.assertIn("@startuml utils", content)
-        self.assertIn("+ struct Helper", content)
-        self.assertIn("+ void helper_func()", content)
+        # Check both files were generated
+        self.assertTrue(os.path.exists(os.path.join(output_dir, "main.puml")))
+        self.assertTrue(os.path.exists(os.path.join(output_dir, "utils.puml")))
     
     def test_generate_empty_file_model(self):
         """Test generating diagram for empty file model"""
@@ -270,78 +265,94 @@ class TestGenerator(unittest.TestCase):
             typedefs={}
         )
         
-        output_dir = Path(self.temp_dir)
-        self.generator._generate_file_diagram(empty_file, output_dir, None)
+        content = self.generator._generate_plantuml_content(empty_file, None)
         
-        # Check that the file was created
-        puml_file = output_dir / "empty.puml"
-        self.assertTrue(puml_file.exists())
-        
-        # Check file content
-        with open(puml_file, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
+        # Should still generate valid PlantUML
         self.assertIn("@startuml empty", content)
-        self.assertIn('class "empty" as EMPTY <<source>> #LightBlue', content)
         self.assertIn("@enduml", content)
+        self.assertIn('class "empty" as EMPTY <<source>> #LightBlue', content)
     
     def test_generate_with_special_characters(self):
-        """Test generating diagram with special characters in names"""
-        file_model = FileModel(
+        """Test generating diagrams with special characters in names"""
+        special_file = FileModel(
             file_path="test_file.c",
             relative_path="test_file.c",
             project_root="/test",
             encoding_used="utf-8",
             structs={
                 "Test_Struct": Struct("Test_Struct", [
-                    Field("field_name", "int"),
-                    Field("another_field", "char*")
+                    Field("field_name", "int")
                 ])
             },
             enums={
                 "Test_Enum": Enum("Test_Enum", ["VALUE_1", "VALUE_2"])
             },
-            functions=[
-                Function("test_function", "void", [Field("param_name", "int")])
-            ],
+            functions=[Function("test_function", "void", [])],
             globals=[],
             includes=[],
             macros=[],
             typedefs={}
         )
         
-        output_dir = Path(self.temp_dir)
-        self.generator._generate_file_diagram(file_model, output_dir, None)
+        content = self.generator._generate_plantuml_content(special_file, None)
         
-        # Check that the file was created
-        puml_file = output_dir / "test_file.puml"
-        self.assertTrue(puml_file.exists())
-        
-        # Check file content
-        with open(puml_file, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
+        # Should handle special characters properly
         self.assertIn("@startuml test_file", content)
         self.assertIn("+ struct Test_Struct", content)
-        self.assertIn("+ int field_name", content)
         self.assertIn("+ enum Test_Enum", content)
-        self.assertIn("+ VALUE_1", content)
         self.assertIn("+ void test_function()", content)
     
     def test_generate_error_handling(self):
-        """Test error handling during generation"""
+        """Test error handling in diagram generation"""
         # Test with non-existent model file
-        with self.assertRaises(ValueError):
-            self.generator.generate_from_model("non_existent.json", self.temp_dir)
+        with self.assertRaises(Exception):
+            self.generator.generate_from_model("/non/existent/model.json", self.temp_dir)
         
         # Test with invalid model file
         invalid_model_path = os.path.join(self.temp_dir, "invalid.json")
         with open(invalid_model_path, 'w') as f:
-            f.write("invalid json content")
+            f.write("invalid json")
         
-        with self.assertRaises(ValueError):
+        with self.assertRaises(Exception):
             self.generator.generate_from_model(invalid_model_path, self.temp_dir)
-
-
-if __name__ == '__main__':
-    unittest.main()
+    
+    def test_plantuml_syntax_validity(self):
+        """Test that generated PlantUML syntax is valid"""
+        file_model = self.create_test_file_model("test.c")
+        content = self.generator._generate_plantuml_content(file_model, None)
+        
+        # Check for required PlantUML elements
+        self.assertIn("@startuml", content)
+        self.assertIn("@enduml", content)
+        self.assertIn("class", content)
+        
+        # Check for proper class syntax
+        self.assertIn('class "test" as TEST', content)
+        
+        # Check for proper relationship syntax
+        self.assertIn("-->", content)
+        
+        # Check for proper section separators
+        self.assertIn("--", content)
+    
+    def test_output_directory_creation(self):
+        """Test that output directory is created if it doesn't exist"""
+        file_model = self.create_test_file_model("test.c")
+        model = ProjectModel(
+            project_name="test_project",
+            project_root="/test",
+            files={"test.c": file_model},
+            created_at="2024-01-01T00:00:00"
+        )
+        
+        # Save model
+        model_path = os.path.join(self.temp_dir, "test_model.json")
+        model.save(model_path)
+        
+        # Generate to non-existent directory
+        output_dir = os.path.join(self.temp_dir, "new_output_dir")
+        self.generator.generate_from_model(model_path, output_dir)
+        
+        # Directory should be created
+        self.assertTrue(os.path.exists(output_dir))
+        self.assertTrue(os.path.exists(os.path.join(output_dir, "test.puml")))

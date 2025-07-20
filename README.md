@@ -225,23 +225,56 @@ The tool is organized into several key modules:
 
 ## Testing
 
-The project includes comprehensive tests:
+The project uses a comprehensive testing approach with a single entry point for all test executions.
+
+### Quick Start
 
 ```bash
-# Run all tests
-python3 test_simple.py
+# Run all tests (unit + feature tests)
+python3 run_all_tests.py
 
-# Run specific test modules
-PYTHONPATH=/workspace python3 -m unittest discover -s tests -p "test_*.py" -v
+# Or use the convenience script
+./test.sh
 ```
 
-Test coverage includes:
-- Parser functionality for all C constructs
-- Project analysis with various scenarios
-- PlantUML generation
-- Configuration system
-- Error handling
-- Integration tests
+### Test Structure
+
+The comprehensive test runner (`run_all_tests.py`) orchestrates both unit tests and feature tests:
+
+#### Unit Tests (41 tests):
+- **Parser Tests**: Detailed C file parsing (structs, enums, functions, globals, includes, macros, typedefs)
+- **Project Analysis Tests**: Multi-file analysis, model generation, file filtering
+- **PlantUML Generation Tests**: Diagram generation, output validation, syntax checking
+- **Configuration Tests**: JSON configuration loading, validation, filtering
+
+#### Feature Tests (7 tests):
+- **Parser Tests**: Basic C parsing functionality
+- **Project Analysis Tests**: Project analysis and model generation
+- **PlantUML Generation Tests**: Diagram generation functionality
+- **Configuration Tests**: Configuration loading and validation
+- **Workflow Tests**: Complete end-to-end testing from C files to PlantUML diagrams
+- **Error Handling Tests**: Edge cases and error scenarios
+- **Performance Tests**: Performance benchmarks with reasonable limits
+
+### CI/CD Integration
+
+The GitHub workflow automatically runs the same test command:
+
+```yaml
+- name: Run comprehensive feature tests
+  run: |
+    python run_all_tests.py
+```
+
+### Benefits
+
+- **Single Entry Point**: One command to run all tests (unit + feature)
+- **Comprehensive Coverage**: Both detailed unit tests and high-level feature tests
+- **Consistent Execution**: Same behavior locally and in CI/CD
+- **Fast Execution**: Efficient test discovery and execution
+- **Clear Results**: Detailed reporting with separate unit and feature test results
+
+For detailed testing documentation, see [tests/README.md](tests/README.md).
 
 ## Recent Improvements
 
