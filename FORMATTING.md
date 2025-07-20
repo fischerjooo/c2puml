@@ -62,7 +62,14 @@ pre-commit run --all-files
 - **Purpose**: Check formatting and auto-fix issues
 - **Tools**: black, isort, flake8
 - **Python Version**: 3.9
-- **Auto-commit**: Automatically commits formatting changes on push (not PRs)
+- **Auto-commit**: Automatically commits formatting changes for both pushes and PRs
+
+### Test Auto-Formatting Workflow (`test-format.yml`)
+- **Trigger**: Manual dispatch only
+- **Purpose**: Test and demonstrate auto-formatting capability
+- **Tools**: black, isort, flake8
+- **Python Version**: 3.9
+- **Auto-commit**: Commits formatting changes when manually triggered
 
 ## ⚙️ Configuration Details
 
@@ -167,9 +174,9 @@ The automated workflow provides:
 - ✅ **Format Checking**: Ensures all code follows style guidelines
 - ✅ **Import Sorting**: Maintains consistent import organization
 - ✅ **Linting**: Catches style and potential issues
-- ✅ **Auto-fixing**: Automatically fixes formatting issues on push
+- ✅ **Auto-fixing**: Automatically fixes formatting issues for pushes and PRs
 - ✅ **Python 3.9 Support**: Optimized for Python 3.9 compatibility
-- ✅ **PR Integration**: Comments on PRs with formatting issues
+- ✅ **PR Integration**: Auto-formats PRs and comments with success message
 - ✅ **Simplified Setup**: Clean and reliable automation
 
 ## 🎯 Best Practices
@@ -193,8 +200,10 @@ When contributing to this project:
 
 1. Install development dependencies
 2. Set up pre-commit hooks (optional)
-3. Run formatting before committing
+3. Run formatting before committing (optional - CI will auto-fix)
 4. Ensure all checks pass locally
-5. The CI/CD will automatically format and check your code
+5. The CI/CD will automatically format and commit any formatting issues to your PR
+
+**Note**: The workflow will automatically fix formatting issues in your PR and commit them back to your branch, so you don't need to worry about formatting manually.
 
 For more information, see the main [README.md](README.md) and [WORKFLOWS.md](WORKFLOWS.md) files.
