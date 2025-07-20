@@ -7,7 +7,11 @@ import os
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .models import Struct, Enum, Union, Function, Field, TypedefRelation
+
 from .models import ProjectModel, FileModel, IncludeRelation
 
 
