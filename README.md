@@ -1,13 +1,16 @@
 # C to PlantUML Converter
 
-A robust Python tool for converting C/C++ source code to PlantUML diagrams. This tool analyzes C/C++ projects and generates comprehensive PlantUML class diagrams showing structs, enums, functions, global variables, macros, typedefs, and include relationships.
+A robust Python tool for converting C/C++ source code to PlantUML diagrams. This tool analyzes C/C++ projects and generates comprehensive PlantUML class diagrams showing structs, enums, unions, functions, global variables, macros, typedefs, and include relationships.
 
 ## Features
 
-- **Comprehensive C/C++ Parsing**: Parses structs, enums, functions, global variables, macros, typedefs, and includes
+- **Comprehensive C/C++ Parsing**: Parses structs, enums, unions, functions, global variables, macros, typedefs, and includes
 - **Project Analysis**: Analyzes entire C/C++ projects with recursive directory scanning
-- **PlantUML Generation**: Creates beautiful, organized PlantUML diagrams
+- **PlantUML Generation**: Creates beautiful, organized PlantUML diagrams with proper UML notation
 - **Configuration System**: Flexible configuration with file and element filtering
+- **Model Transformation**: Advanced model transformation with renaming, addition, and removal capabilities
+- **Typedef Relationship Analysis**: Comprehensive parsing of typedef relationships with proper UML stereotypes
+- **Union Support**: Full parsing and visualization of union definitions with fields
 - **Robust Error Handling**: Graceful handling of invalid files and encoding issues
 - **Logging Support**: Comprehensive logging for debugging and monitoring
 - **Type Safety**: Full type hints and validation throughout the codebase
@@ -24,7 +27,7 @@ A robust Python tool for converting C/C++ source code to PlantUML diagrams. This
 
 ```bash
 git clone <repository-url>
-cd c-to-plantuml
+cd generator_project
 python3 -m pip install -e .
 ```
 
@@ -47,6 +50,8 @@ The tool provides a 3-step processing pipeline that can be executed individually
 3. **Generate** - Generates puml files based on the model.json
 
 ### Command Line Interface
+
+The tool provides a 3-step processing pipeline that can be executed individually or chained together:
 
 #### 1. Parse C/C++ Project (Step 1)
 
@@ -118,6 +123,9 @@ Create a JSON configuration file for transformation and filtering:
     }
   },
   "transformations": {
+    "file_selection": {
+      "selected_files": [".*main\\.c$", ".*utils\\.c$"]
+    },
     "rename": {
       "structs": {
         "old_name": "new_name"
@@ -240,6 +248,15 @@ TYPEDEF_INTEGER *-- TYPE_PERSON : «defines»
 @enduml
 ```
 
+### Key Features of Generated Diagrams
+
+- **Typedef Relationships**: Proper UML stereotypes («defines», «alias») for typedef relationships
+- **Union Support**: Full parsing and display of union definitions with fields
+- **Include Depth Processing**: Configurable depth for processing include relationships
+- **Header Content Display**: All referenced include files shown as classes with their actual content
+- **Header-to-Header Relationships**: Include relationships between headers displayed with arrows
+- **Color-Coded Stereotypes**: Different colors for source files, headers, typedefs, and types
+
 ## Architecture
 
 The tool is organized into a modular 3-step architecture:
@@ -251,6 +268,7 @@ The tool is organized into a modular 3-step architecture:
 - **`transformer.py`**: Step 2 - Transform model based on configuration
 - **`generator.py`**: Step 3 - Generate puml files based on model.json
 - **`models.py`**: Data models and serialization
+- **`config.py`**: Configuration management and filtering
 
 ### Key Features
 
@@ -261,26 +279,29 @@ The tool is organized into a modular 3-step architecture:
    - Function declarations
    - Global variable declarations
    - Macro definitions
-   - Typedef relationships
+   - Typedef relationships with proper UML stereotypes
    - Include relationships
 
 2. **Advanced Filtering**: 
    - File-level filtering with regex patterns
-   - Element-level filtering for structs, enums, functions, etc.
+   - Element-level filtering for structs, enums, unions, functions, etc.
    - Include depth configuration
+   - File selection for transformer actions
 
 3. **Model Transformation**:
    - Element renaming
    - Element addition
    - Element removal
    - Configuration-driven transformations
+   - File selection for applying transformations
 
 4. **PlantUML Generation**:
    - Proper UML notation
-   - Typedef relationship visualization
+   - Typedef relationship visualization with stereotypes («defines», «alias»)
    - Header content display
    - Include relationship arrows
    - Color-coded stereotypes
+   - Union field display
 
 ## Development
 
@@ -293,24 +314,38 @@ c_to_plantuml/
 ├── transformer.py          # Step 2: Transform model
 ├── generator.py            # Step 3: Generate PlantUML
 ├── models.py               # Data models
+├── config.py               # Configuration management
 └── __init__.py             # Package initialization
 
 tests/
-├── test_parser.py          # Parser tests
-├── test_transformer.py     # Transformer tests
-├── test_generator.py       # Generator tests
-├── test_integration.py     # Integration tests
+├── unit/                   # Unit tests
+│   ├── test_parser.py      # Parser tests
+│   ├── test_transformer.py # Transformer tests
+│   ├── test_generator.py   # Generator tests
+│   ├── test_config.py      # Configuration tests
+│   └── test_parser_filtering.py # User configurable filtering tests
+├── feature/                # Feature tests
+│   ├── test_integration.py # Integration tests
+│   ├── test_parser_features.py # Parser feature tests
+│   ├── test_generator_features.py # Generator feature tests
+│   ├── test_transformer_features.py # Transformer feature tests
+│   └── test_project_analysis_features.py # Project analysis tests
 └── test_files/             # Test input files
 ```
 
 ### Running Tests
 
 ```bash
-# Run all tests
-python -m unittest discover tests/
+# Run all tests (recommended)
+python run_all_tests.py
 
-# Run specific test module
-python -m unittest tests.test_parser
+# Run with shell script
+./test.sh
+
+# Run specific test categories
+python -m unittest tests.unit.test_parser
+python -m unittest tests.unit.test_generator
+python -m unittest tests.feature.test_integration
 ```
 
 ## Contributing
