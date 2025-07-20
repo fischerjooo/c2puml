@@ -1,5 +1,5 @@
 #!/bin/bash
-# Simple test runner script for local development
+# Simple test runner script
 
 echo "🧪 Running C to PlantUML Converter Tests"
 echo "========================================"
@@ -16,11 +16,10 @@ fi
 
 echo "🐍 Using Python: $($PYTHON_CMD --version)"
 
-# Run the comprehensive test suite
-echo "📝 Running feature tests..."
+# Run the test suite
 $PYTHON_CMD run_all_tests.py
 
-# Check exit code
+# Check exit code and provide feedback
 if [ $? -eq 0 ]; then
     echo ""
     echo "✅ All tests passed successfully!"

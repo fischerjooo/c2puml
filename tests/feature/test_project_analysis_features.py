@@ -1,56 +1,73 @@
 """
 Feature tests for project analysis functionality
 
-Tests the ability to analyze entire C/C++ projects with multiple files.
+Tests project-wide analysis and discovery features.
 """
 
 import os
 
-from .base import BaseFeatureTest
+from tests.feature.base import BaseFeatureTest
 
 
 class TestProjectAnalysisFeatures(BaseFeatureTest):
-    """Test project analysis functionality"""
+    """Test project analysis features"""
 
-    def test_feature_project_analysis(self):
-        """Test project analysis functionality"""
+    def test_recursive_project_analysis(self):
+        """Test recursive project analysis with multiple directories"""
         from c_to_plantuml.parser import Parser
 
-        # Create test project
-        file1_content = """
+        # Create nested directory structure
+        subdir = self.temp_dir + "/subdir"
+        os.makedirs(subdir, exist_ok=True)
+
+        main_content = """
 #include <stdio.h>
+#include "subdir/header.h"
 
-typedef struct User {
-    int id;
-    char name[50];
-} User;
-
-void print_user(User* user) {
-    printf("User: %s\\n", user->name);
+int main() {
+    return 0;
 }
         """
 
-        file2_content = """
-#include <stdlib.h>
+        header_content = """
+#ifndef HEADER_H
+#define HEADER_H
 
-typedef struct Config {
-    int max_users;
-    int timeout;
-} Config;
+struct Data {
+    int value;
+};
 
-Config* create_config(int max_users) {
-    return malloc(sizeof(Config));
-}
+#endif
         """
 
-        self.create_test_file("user.c", file1_content)
-        self.create_test_file("config.c", file2_content)
-
+        self.create_test_file("main.c", main_content)
+        self.create_test_file("subdir/header.h", header_content)
+        
+        # Test recursive analysis
         parser = Parser()
         model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        
+        # Verify both files were found
+        self.assertIn("main.c", model.files)
+        self.assertIn("subdir/header.h", model.files)
 
-        # Verify analysis results
-        self.assertEqual(len(model.files), 2)
-        file_names = [os.path.basename(fp) for fp in model.files.keys()]
-        self.assertIn("user.c", file_names)
-        self.assertIn("config.c", file_names)
+    def test_file_filtering(self):
+        """Test file filtering during project analysis"""
+        from c_to_plantuml.parser import Parser
+
+        # Create various file types
+        self.create_test_file("main.c", "int main() { return 0; }")
+        self.create_test_file("test.c", "void test() {}")
+        self.create_test_file("ignore.txt", "ignore this file")
+        self.create_test_file("backup.c~", "backup file")
+        
+        # Test analysis with default filtering
+        parser = Parser()
+        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        
+        # Should only include .c and .h files
+        self.assertIn("main.c", model.files)
+        self.assertIn("test.c", model.files)
+        # Should not include non-C files
+        self.assertNotIn("ignore.txt", model.files)
+        self.assertNotIn("backup.c~", model.files)
