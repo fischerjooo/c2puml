@@ -4,7 +4,6 @@ Script to run linting and formatting tools locally.
 Comprehensive linting for all Python files in the project.
 """
 
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -72,7 +71,7 @@ def main():
 
     # Run flake8
     print("\n🔍 Running flake8 linting...")
-    flake8_cmd = "python3 -m flake8 . --max-line-length=88 --extend-ignore=E203,W503,E501,F401,F841,W293 --count --show-source --statistics"
+    flake8_cmd = "python3 -m flake8 . --max-line-length=88 --extend-ignore=E203,W503,E501,F401,F841,W293"
     if not run_command(flake8_cmd, "flake8 linting"):
         success = False
 
@@ -88,15 +87,6 @@ def main():
     if not run_command(isort_cmd, "isort import sorting check"):
         success = False
 
-    # Run pre-commit hooks check if available
-    print("\n🔧 Running pre-commit hooks check...")
-    try:
-        pre_commit_cmd = "python3 -m pre_commit run --all-files"
-        if not run_command(pre_commit_cmd, "pre-commit hooks check"):
-            print("⚠️  pre-commit hooks failed or not available, continuing...")
-    except FileNotFoundError:
-        print("⚠️  pre-commit not available, skipping...")
-
     print("\n" + "=" * 60)
     if success:
         print("🎉 All checks passed!")
@@ -105,7 +95,6 @@ def main():
         print("\n💡 Or run individual tools:")
         print("   python3 -m black .")
         print("   python3 -m isort .")
-        print("   python3 -m pre_commit run --all-files")
     else:
         print("❌ Some checks failed. Please fix the issues above.")
         print("\n💡 To automatically fix formatting issues, run:")

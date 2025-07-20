@@ -1,0 +1,90 @@
+name: Python Format and Lint
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  format-and-lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install black isort flake8
+
+    - name: Check formatting with black
+      run: |
+        echo "🎨 Checking code formatting..."
+        black --check --diff .
+
+    - name: Check import sorting with isort
+      run: |
+        echo "📦 Checking import sorting..."
+        isort --check-only --diff .
+
+    - name: Run linting with flake8
+      run: |
+        echo "🔍 Running linting..."
+        flake8 .
+
+    - name: Format code (if needed)
+      if: github.event_name != 'pull_request'
+      run: |
+        echo "🔧 Auto-formatting code..."
+        black .
+        isort .
+
+    - name: Check for changes
+      if: github.event_name != 'pull_request'
+      id: check_changes
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+          git diff
+        else
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Commit and push changes
+      if: steps.check_changes.outputs.has_changes == 'true' && github.event_name != 'pull_request'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add -A
+        git commit -m "style: auto-format code with black and isort"
+        git push
+
+    - name: Comment on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: checkRuns } = await github.rest.checks.listForRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: context.sha,
+          });
+          
+          const formatCheck = checkRuns.check_runs.find(check => check.name === 'Python Format and Lint');
+          
+          if (formatCheck && formatCheck.conclusion === 'failure') {
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '⚠️ **Code formatting issues detected!**\n\nPlease run the following commands to fix formatting:\n\n```bash\npip install black isort flake8\nblack .\nisort .\n```\n\nOr use the provided script:\n```bash\npython scripts/format.py\n```'
+            });
+          }

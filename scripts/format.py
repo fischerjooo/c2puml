@@ -81,15 +81,6 @@ def main():
     if not run_command(isort_cmd, "isort import sorting"):
         success = False
 
-    # Run pre-commit hooks if available
-    print("\n🔧 Running pre-commit hooks...")
-    try:
-        pre_commit_cmd = "python3 -m pre_commit run --all-files"
-        if not run_command(pre_commit_cmd, "pre-commit hooks"):
-            print("⚠️  pre-commit hooks failed or not available, continuing...")
-    except FileNotFoundError:
-        print("⚠️  pre-commit not available, skipping...")
-
     print("\n" + "=" * 60)
     if success:
         print("🎉 All formatting completed successfully!")
