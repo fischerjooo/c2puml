@@ -28,6 +28,14 @@ cd c-to-plantuml
 python3 -m pip install -e .
 ```
 
+### Development Setup
+
+For development, install additional dependencies:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
 ## Usage
 
 The tool provides a 3-step processing pipeline that can be executed individually or chained together:
