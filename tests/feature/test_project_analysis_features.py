@@ -17,7 +17,7 @@ class TestProjectAnalysisFeatures(BaseFeatureTest):
         from c_to_plantuml.parser import Parser
 
         # Create nested directory structure
-        subdir = self.temp_dir + "/subdir"
+        subdir = os.path.join(self.temp_dir, "subdir")
         os.makedirs(subdir, exist_ok=True)
 
         main_content = """
@@ -49,7 +49,9 @@ struct Data {
         
         # Verify both files were found
         self.assertIn("main.c", model.files)
-        self.assertIn("subdir/header.h", model.files)
+        # Use os.path.join to handle cross-platform path separators
+        expected_header_path = os.path.join("subdir", "header.h")
+        self.assertIn(expected_header_path, model.files)
 
     def test_file_filtering(self):
         """Test file filtering during project analysis"""
