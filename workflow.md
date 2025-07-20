@@ -3,6 +3,11 @@
 ## Overview
 The C to PlantUML Converter follows a simple 3-step workflow for converting C/C++ source code to PlantUML diagrams.
 
+## Documentation Guidelines
+- **Do not create new markdown files** - only edit existing markdown files
+- Keep documentation concise and focused on practical usage
+- Update this workflow.md file for any new workflow changes
+
 ## Processing Workflow
 
 ### Step 1: Parse
@@ -37,7 +42,7 @@ python3 main.py workflow ./src config.json
 
 ### Running Tests
 ```bash
-# Run all tests
+# Run all tests (recommended)
 python3 run_all_tests.py
 
 # Run with shell script
@@ -47,6 +52,13 @@ python3 run_all_tests.py
 python3 -m unittest tests.unit.test_parser
 python3 -m unittest tests.unit.test_generator
 ```
+
+### Test Runner
+The `run_all_tests.py` script provides a simple and elegant test execution:
+- Uses unittest discovery to automatically find all test files
+- Runs both unit and feature tests
+- Provides clear test summary with pass/fail status
+- Works consistently across different environments
 
 ### Test Structure
 - **Unit Tests**: Test individual components in isolation
