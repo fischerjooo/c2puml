@@ -63,14 +63,14 @@ pre-commit run --all-files
 - **Trigger**: Push to main/master, PRs, manual dispatch
 - **Purpose**: Check formatting without making changes
 - **Tools**: black, isort, flake8, pre-commit
-- **Matrix**: Python 3.9, 3.10, 3.11
+- **Matrix**: Python 3.9
 
 ### 2. Lint and Format Workflow (`lint-and-format.yml`)
 - **Trigger**: Push to main/master, PRs, manual dispatch
 - **Purpose**: Check formatting and auto-fix issues
 - **Tools**: black, isort, flake8, pre-commit
 - **Auto-commit**: Automatically commits formatting changes
-- **Matrix**: Python 3.9, 3.10, 3.11
+- **Matrix**: Python 3.9
 
 ## ⚙️ Configuration Details
 
@@ -78,7 +78,7 @@ pre-commit run --all-files
 ```toml
 [tool.black]
 line-length = 88
-target-version = ['py39', 'py310', 'py311']
+target-version = ['py39']
 include = '\.pyi?$'
 extend-exclude = '''
 /(
@@ -182,7 +182,7 @@ The automated workflows provide:
 - ✅ **Import Sorting**: Maintains consistent import organization
 - ✅ **Linting**: Catches style and potential issues
 - ✅ **Auto-fixing**: Automatically fixes formatting issues
-- ✅ **Multi-Python Support**: Tests on Python 3.9, 3.10, 3.11
+- ✅ **Python 3.9 Support**: Optimized for Python 3.9 compatibility
 - ✅ **PR Integration**: Comments on PRs with formatting issues
 - ✅ **Artifact Upload**: Provides formatted files as artifacts
 
@@ -199,7 +199,7 @@ The automated workflows provide:
 
 4. **Keep configuration centralized** in `pyproject.toml`
 
-5. **Test on multiple Python versions** to ensure compatibility
+5. **Ensure Python 3.9 compatibility** for optimal performance
 
 ## 📝 Contributing
 

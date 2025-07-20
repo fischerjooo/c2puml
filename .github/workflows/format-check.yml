@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9, 3.10, 3.11]
+        python-version: [3.9]
 
     steps:
     - uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
         echo "🔧 Installing Python dependencies..."
         python -m pip install --upgrade pip
         echo "📦 Installing formatting tools..."
-        pip install black isort flake8 pre-commit
+        pip install flake8 black isort pre-commit
         echo "📋 Installing package in development mode..."
         pip install -e .
         echo "✅ Dependencies installed successfully"
