@@ -147,13 +147,48 @@ class CParser:
 
     def _parse_structs(self, content: str) -> Dict[str, "Struct"]:
         """Parse struct definitions from content"""
-        # Implementation would go here - simplified for now
-        return {}
+        import re
+
+        from .models import Field, Struct
+
+        structs = {}
+        # Match struct name { ... };
+        pattern = r"struct\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{([^}]+)\}"
+        matches = re.findall(pattern, content, re.DOTALL)
+
+        for struct_name, struct_body in matches:
+            fields = []
+            # Parse fields within struct
+            field_pattern = r"([A-Za-z_][A-Za-z0-9_]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*;"
+            field_matches = re.findall(field_pattern, struct_body)
+            for field_type, field_name in field_matches:
+                fields.append(Field(field_name, field_type))
+
+            structs[struct_name] = Struct(struct_name, fields)
+
+        return structs
 
     def _parse_enums(self, content: str) -> Dict[str, "Enum"]:
         """Parse enum definitions from content"""
-        # Implementation would go here - simplified for now
-        return {}
+        import re
+
+        from .models import Enum
+
+        enums = {}
+        # Match enum name { ... };
+        pattern = r"enum\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{([^}]+)\}"
+        matches = re.findall(pattern, content, re.DOTALL)
+
+        for enum_name, enum_body in matches:
+            values = []
+            # Parse enum values
+            value_pattern = r"([A-Za-z_][A-Za-z0-9_]*)"
+            value_matches = re.findall(value_pattern, enum_body)
+            values.extend(value_matches)
+
+            enums[enum_name] = Enum(enum_name, values)
+
+        return enums
 
     def _parse_unions(self, content: str) -> Dict[str, "Union"]:
         """Parse union definitions from content"""
@@ -162,28 +197,167 @@ class CParser:
 
     def _parse_functions(self, content: str) -> List["Function"]:
         """Parse function declarations from content"""
-        # Implementation would go here - simplified for now
-        return []
+        import re
+
+        from .models import Function
+
+        functions = []
+        # Match function declarations: return_type name(parameters)
+        pattern = (
+            r"([A-Za-z_][A-Za-z0-9_]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\([^)]*\)\s*\{"
+        )
+        matches = re.findall(pattern, content)
+
+        for return_type, func_name in matches:
+            functions.append(Function(func_name, return_type, []))
+
+        return functions
 
     def _parse_globals(self, content: str) -> List["Field"]:
         """Parse global variable declarations from content"""
-        # Implementation would go here - simplified for now
-        return []
+        import re
+
+        from .models import Field
+
+        globals_list = []
+        
+        # Split content into lines and process each line
+        lines = content.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            
+            # Skip empty lines, comments, and preprocessor directives
+            if (not line or 
+                line.startswith('//') or 
+                line.startswith('/*') or 
+                line.startswith('#')):
+                continue
+                
+            # Skip lines with function-like declarations (containing parentheses)
+            if '(' in line and ')' in line:
+                continue
+                
+            # Check if line ends with semicolon (basic global variable indicator)
+            if line.endswith(';'):
+                # Remove semicolon
+                line = line[:-1].strip()
+                
+                # Split by equals sign to handle assignments
+                if '=' in line:
+                    # Format: type name = value
+                    declaration_part = line.split('=')[0].strip()
+                else:
+                    # Format: type name;
+                    declaration_part = line
+                
+                # Split declaration into parts
+                parts = declaration_part.split()
+                
+                if len(parts) >= 2:
+                    # Handle static keyword
+                    if parts[0] == 'static':
+                        parts = parts[1:]  # Remove 'static'
+                    
+                    if len(parts) >= 2:
+                        # Last part is the variable name
+                        var_name = parts[-1]
+                        
+                        # Check if variable name is valid
+                        if re.match(r'^[A-Za-z_][A-Za-z0-9_]*$', var_name):
+                            # Everything before the variable name is the type
+                            type_parts = parts[:-1]
+                            type_name = ' '.join(type_parts).strip()
+                            
+                            if type_name:
+                                globals_list.append(Field(var_name, type_name))
+
+        return globals_list
 
     def _parse_includes(self, content: str) -> List[str]:
         """Parse #include directives from content"""
-        # Implementation would go here - simplified for now
-        return []
+        import re
+
+        includes = []
+        # Match #include <header.h> or #include "header.h"
+        pattern = r'#include\s*[<"]([^>"]+)[>"]'
+        matches = re.findall(pattern, content)
+        includes.extend(matches)
+        return includes
 
     def _parse_macros(self, content: str) -> List[str]:
         """Parse macro definitions from content"""
-        # Implementation would go here - simplified for now
-        return []
+        import re
+
+        macros = []
+        # Match #define MACRO_NAME or #define MACRO_NAME value
+        pattern = r"#define\s+([A-Za-z_][A-Za-z0-9_]*)"
+        matches = re.findall(pattern, content)
+        macros.extend(matches)
+        return macros
 
     def _parse_typedefs(self, content: str) -> Dict[str, str]:
         """Parse typedef definitions from content"""
-        # Implementation would go here - simplified for now
-        return {}
+        import re
+
+        typedefs = {}
+        
+        # Split content into lines to handle multi-line typedefs
+        lines = content.split('\n')
+        i = 0
+        
+        while i < len(lines):
+            line = lines[i].strip()
+            
+            # Skip empty lines and comments
+            if not line or line.startswith('//') or line.startswith('/*'):
+                i += 1
+                continue
+                
+            # Check for typedef
+            if line.startswith('typedef '):
+                # Collect the full typedef declaration (may span multiple lines)
+                typedef_text = line
+                j = i + 1
+                
+                # Continue collecting lines until we find the semicolon
+                while j < len(lines) and ';' not in typedef_text:
+                    typedef_text += ' ' + lines[j].strip()
+                    j += 1
+                
+                # Now parse the complete typedef
+                if ';' in typedef_text:
+                    # Remove 'typedef ' prefix and ';' suffix
+                    typedef_body = typedef_text[8:].rstrip(';').strip()
+                    
+                    # Handle different typedef patterns
+                    
+                    # Pattern 1: typedef type name; (simple typedef)
+                    simple_pattern = r'^([^;]+)\s+([A-Za-z_][A-Za-z0-9_]*)$'
+                    match = re.match(simple_pattern, typedef_body)
+                    if match:
+                        original_type, typedef_name = match.groups()
+                        typedefs[typedef_name] = original_type.strip()
+                    
+                    # Pattern 2: typedef struct { ... } name; (struct typedef)
+                    struct_pattern = r'^struct\s*\{[^}]*\}\s+([A-Za-z_][A-Za-z0-9_]*)$'
+                    match = re.match(struct_pattern, typedef_body, re.DOTALL)
+                    if match:
+                        typedef_name = match.group(1)
+                        typedefs[typedef_name] = 'struct'
+                    
+                    # Pattern 3: typedef void (*name)(params); (function pointer)
+                    func_ptr_pattern = r'^([^(*]+)\s*\(\s*\*\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)\s*\([^)]*\)$'
+                    match = re.match(func_ptr_pattern, typedef_body)
+                    if match:
+                        return_type, typedef_name = match.groups()
+                        typedefs[typedef_name] = f"{return_type.strip()} (*)(...)"
+                
+                i = j  # Skip the lines we've processed
+            else:
+                i += 1
+                
+        return typedefs
 
     def _parse_typedef_relations(self, content: str) -> List["TypedefRelation"]:
         """Parse typedef relationships from content"""

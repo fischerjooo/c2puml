@@ -4,6 +4,7 @@ Configuration management for C to PlantUML converter
 """
 
 import json
+import logging
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -41,11 +42,43 @@ class Config:
 
     def __init__(self, *args, **kwargs):
         """Initialize configuration with keyword arguments or a single dict"""
+        # Initialize logger
+        self.logger = logging.getLogger(__name__)
+        
+        # Initialize with default values first
+        object.__init__(self)
+
+        # Ensure all dataclass fields are initialized with defaults
+        if not hasattr(self, "project_name"):
+            self.project_name = "Unknown_Project"
+        if not hasattr(self, "source_folders"):
+            self.source_folders = []
+        if not hasattr(self, "output_dir"):
+            self.output_dir = "./plantuml_output"
+        if not hasattr(self, "model_output_path"):
+            self.model_output_path = "model.json"
+        if not hasattr(self, "recursive"):
+            self.recursive = True
+        if not hasattr(self, "include_depth"):
+            self.include_depth = 1
+        if not hasattr(self, "file_filters"):
+            self.file_filters = {}
+        if not hasattr(self, "element_filters"):
+            self.element_filters = {}
+        if not hasattr(self, "transformations"):
+            self.transformations = {}
+        if not hasattr(self, "file_include_patterns"):
+            self.file_include_patterns = []
+        if not hasattr(self, "file_exclude_patterns"):
+            self.file_exclude_patterns = []
+        if not hasattr(self, "element_include_patterns"):
+            self.element_include_patterns = {}
+        if not hasattr(self, "element_exclude_patterns"):
+            self.element_exclude_patterns = {}
+
         if len(args) == 1 and isinstance(args[0], dict):
             # Handle case where a single dict is passed as positional argument
             data = args[0]
-            # Use object.__init__ to avoid calling the dataclass __init__ recursively
-            object.__init__(self)
             # Set attributes manually
             for key, value in data.items():
                 if hasattr(self, key):
@@ -53,13 +86,11 @@ class Config:
         elif len(kwargs) == 1 and isinstance(next(iter(kwargs.values())), dict):
             # Handle case where a single dict is passed as keyword argument
             data = next(iter(kwargs.values()))
-            object.__init__(self)
             for key, value in data.items():
                 if hasattr(self, key):
                     setattr(self, key, value)
         else:
             # Handle normal keyword arguments
-            object.__init__(self)
             for key, value in kwargs.items():
                 if hasattr(self, key):
                     setattr(self, key, value)
@@ -73,25 +104,43 @@ class Config:
 
     def _compile_patterns(self):
         """Compile regex patterns for filtering"""
-        # Compile file filter patterns
-        self.file_include_patterns = [
-            re.compile(pattern) for pattern in self.file_filters.get("include", [])
-        ]
-        self.file_exclude_patterns = [
-            re.compile(pattern) for pattern in self.file_filters.get("exclude", [])
-        ]
+        # Compile file filter patterns with error handling
+        self.file_include_patterns = []
+        for pattern in self.file_filters.get("include", []):
+            try:
+                self.file_include_patterns.append(re.compile(pattern))
+            except re.error as e:
+                self.logger.warning(f"Invalid include pattern '{pattern}': {e}")
+                # Skip invalid patterns
+                
+        self.file_exclude_patterns = []
+        for pattern in self.file_filters.get("exclude", []):
+            try:
+                self.file_exclude_patterns.append(re.compile(pattern))
+            except re.error as e:
+                self.logger.warning(f"Invalid exclude pattern '{pattern}': {e}")
+                # Skip invalid patterns
 
-        # Compile element filter patterns
+        # Compile element filter patterns with error handling
         self.element_include_patterns = {}
         self.element_exclude_patterns = {}
 
         for element_type, filters in self.element_filters.items():
-            self.element_include_patterns[element_type] = [
-                re.compile(pattern) for pattern in filters.get("include", [])
-            ]
-            self.element_exclude_patterns[element_type] = [
-                re.compile(pattern) for pattern in filters.get("exclude", [])
-            ]
+            self.element_include_patterns[element_type] = []
+            for pattern in filters.get("include", []):
+                try:
+                    self.element_include_patterns[element_type].append(re.compile(pattern))
+                except re.error as e:
+                    self.logger.warning(f"Invalid {element_type} include pattern '{pattern}': {e}")
+                    # Skip invalid patterns
+                    
+            self.element_exclude_patterns[element_type] = []
+            for pattern in filters.get("exclude", []):
+                try:
+                    self.element_exclude_patterns[element_type].append(re.compile(pattern))
+                except re.error as e:
+                    self.logger.warning(f"Invalid {element_type} exclude pattern '{pattern}': {e}")
+                    # Skip invalid patterns
 
     @classmethod
     def load(cls, config_file: str) -> "Config":
