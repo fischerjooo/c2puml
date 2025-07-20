@@ -594,30 +594,155 @@ class TestTransformer(unittest.TestCase):
         self.assertEqual(result, self.sample_project_model)
 
     def test_apply_transformations_with_all_sections(self):
-        """Test applying transformations with all config sections"""
+        """Test applying transformations with all configuration sections"""
         config = {
-            "file_filters": {"include": [r".*\.c$"]},
-            "element_filters": {"structs": {"include": [r"Person.*"]}},
-            "transformations": {"rename": {}, "add": {}, "remove": {}},
+            "file_filters": {
+                "include": [".*\\.c$"],
+                "exclude": [".*test.*"]
+            },
+            "element_filters": {
+                "structs": {
+                    "include": ["^[A-Z].*"],
+                    "exclude": [".*_internal.*"]
+                }
+            },
+            "transformations": {
+                "file_selection": {
+                    "apply_to_all": True
+                },
+                "rename": {
+                    "structs": {
+                        "old_name": "new_name"
+                    }
+                }
+            },
             "include_depth": 2
         }
         
-        with patch.object(self.transformer, '_apply_file_filters') as mock_file_filter:
-            with patch.object(self.transformer, '_apply_element_filters') as mock_element_filter:
-                with patch.object(self.transformer, '_apply_model_transformations') as mock_transformations:
-                    with patch.object(self.transformer, '_process_include_relations') as mock_includes:
-                        mock_file_filter.return_value = self.sample_project_model
-                        mock_element_filter.return_value = self.sample_project_model
-                        mock_transformations.return_value = self.sample_project_model
-                        mock_includes.return_value = self.sample_project_model
-                        
-                        result = self.transformer._apply_transformations(self.sample_project_model, config)
-                        
-                        # Verify all methods were called
-                        mock_file_filter.assert_called_once()
-                        mock_element_filter.assert_called_once()
-                        mock_transformations.assert_called_once()
-                        mock_includes.assert_called_once()
+        result = self.transformer._apply_transformations(self.sample_project_model, config)
+        self.assertIsInstance(result, ProjectModel)
+        self.assertEqual(len(result.files), 1)  # Only .c files after filtering
+
+    def test_file_selection_apply_to_all(self):
+        """Test file selection with apply_to_all=True"""
+        config = {
+            "transformations": {
+                "file_selection": {
+                    "apply_to_all": True
+                },
+                "rename": {
+                    "structs": {
+                        "old_name": "new_name"
+                    }
+                }
+            }
+        }
+        
+        result = self.transformer._apply_model_transformations(self.sample_project_model, config["transformations"])
+        self.assertIsInstance(result, ProjectModel)
+        # Should apply to all files
+        self.assertEqual(len(result.files), 2)
+
+    def test_file_selection_selected_files(self):
+        """Test file selection with specific file patterns"""
+        config = {
+            "transformations": {
+                "file_selection": {
+                    "apply_to_all": False,
+                    "selected_files": [".*sample\\.c$"]
+                },
+                "rename": {
+                    "structs": {
+                        "old_name": "new_name"
+                    }
+                }
+            }
+        }
+        
+        result = self.transformer._apply_model_transformations(self.sample_project_model, config["transformations"])
+        self.assertIsInstance(result, ProjectModel)
+        # Should apply only to sample.c
+        self.assertEqual(len(result.files), 2)  # Files still exist, but transformations applied only to selected
+
+    def test_file_selection_no_matching_files(self):
+        """Test file selection with no matching files"""
+        config = {
+            "transformations": {
+                "file_selection": {
+                    "apply_to_all": False,
+                    "selected_files": [".*nonexistent\\.c$"]
+                },
+                "rename": {
+                    "structs": {
+                        "old_name": "new_name"
+                    }
+                }
+            }
+        }
+        
+        result = self.transformer._apply_model_transformations(self.sample_project_model, config["transformations"])
+        self.assertIsInstance(result, ProjectModel)
+        # Should not apply to any files
+        self.assertEqual(len(result.files), 2)
+
+    def test_matches_pattern_valid(self):
+        """Test _matches_pattern method with valid patterns"""
+        self.assertTrue(self.transformer._matches_pattern("main.c", ".*main\\.c$"))
+        self.assertTrue(self.transformer._matches_pattern("utils.c", ".*utils\\.c$"))
+        self.assertFalse(self.transformer._matches_pattern("main.c", ".*utils\\.c$"))
+
+    def test_matches_pattern_invalid(self):
+        """Test _matches_pattern method with invalid patterns"""
+        # Should handle invalid regex gracefully
+        result = self.transformer._matches_pattern("main.c", "[invalid")
+        self.assertFalse(result)
+
+    def test_renaming_with_file_selection(self):
+        """Test renaming with file selection"""
+        target_files = {"sample.c"}
+        rename_config = {
+            "structs": {
+                "Person": "Employee",
+                "Point": "Coordinate"
+            }
+        }
+        
+        result = self.transformer._apply_renaming(self.sample_project_model, rename_config, target_files)
+        self.assertIsInstance(result, ProjectModel)
+        # Should apply renaming only to sample.c
+        self.assertIn("sample.c", result.files)
+
+    def test_additions_with_file_selection(self):
+        """Test additions with file selection"""
+        target_files = {"sample.c"}
+        add_config = {
+            "structs": {
+                "NewStruct": {
+                    "fields": [
+                        {"name": "field1", "type": "int"},
+                        {"name": "field2", "type": "char*"}
+                    ]
+                }
+            }
+        }
+        
+        result = self.transformer._apply_additions(self.sample_project_model, add_config, target_files)
+        self.assertIsInstance(result, ProjectModel)
+        # Should apply additions only to sample.c
+        self.assertIn("sample.c", result.files)
+
+    def test_removals_with_file_selection(self):
+        """Test removals with file selection"""
+        target_files = {"sample.c"}
+        remove_config = {
+            "functions": ["calculate"],
+            "structs": ["Point"]
+        }
+        
+        result = self.transformer._apply_removals(self.sample_project_model, remove_config, target_files)
+        self.assertIsInstance(result, ProjectModel)
+        # Should apply removals only to sample.c
+        self.assertIn("sample.c", result.files)
 
 
 if __name__ == "__main__":

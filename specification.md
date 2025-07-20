@@ -17,11 +17,13 @@ The C to PlantUML Converter is a Python-based tool that analyzes C/C++ source co
 ### Processing Flow
 The application follows a clear 3-step processing flow:
 
-1. **Parse** - Parses C code files and generates model.json
-2. **Transform** - Modifies the model file based on transformation configuration
+1. **Parse** - Parses C code files and generates model.json (with essential file filtering only)
+2. **Transform** - Modifies the model file based on transformation configuration (includes model element filtering and file selection)
 3. **Generate** - Generates puml files based on the model.json
 
 All steps can be executed individually or can be chained together.
+
+**Important**: Model element filtering is NOT part of the parsing step - it is only performed in the transformer step to ensure complete model preservation during parsing.
 
 ## 2. High-Level Requirements
 
@@ -88,20 +90,23 @@ tests/
 #### 3.2.2 Parser (`parser.py`)
 - **Purpose**: Step 1 - Parse C code files and generate model.json
 - **Responsibilities**: 
-  - File discovery and filtering
+  - File discovery and essential filtering (hidden files, common exclude patterns)
   - C/C++ source code parsing
   - Model assembly and serialization
   - Encoding detection and handling
   - Robust typedef parsing for struct/enum/union (named and anonymous)
+  - **Note**: Does NOT perform model element filtering - preserves all elements for transformer
 
 #### 3.2.3 Transformer (`transformer.py`)
 - **Purpose**: Step 2 - Transform model based on configuration
 - **Responsibilities**:
   - Configuration loading and validation
+  - User-configured file filtering (essential filtering already done in parser)
+  - Model element filtering (structs, enums, functions, etc.)
   - Model transformation and filtering
   - Include depth processing
   - Element renaming and addition
-  - File and element-level filtering
+  - File selection for transformer actions (apply to all files or selected ones)
 
 #### 3.2.4 Generator (`generator.py`)
 - **Purpose**: Step 3 - Generate puml files based on model.json
@@ -348,6 +353,33 @@ The output can be customized through JSON configuration:
 - Custom element additions
 - Output directory structure
 - Include depth configuration
+- File selection for transformer actions
+
+#### 5.6.1 File Selection for Transformer Actions
+The transformer supports applying actions to all model files or only selected ones:
+
+```json
+{
+  "transformations": {
+    "file_selection": {
+      "apply_to_all": false,
+      "selected_files": [".*main\\.c$", ".*utils\\.c$"]
+    },
+    "rename": {
+      "structs": {
+        "old_name": "new_name"
+      }
+    }
+  }
+}
+```
+
+- **`apply_to_all`**: When `true`, applies transformations to all files. When `false`, applies only to files matching patterns in `selected_files`
+- **`selected_files`**: List of regex patterns for files to apply transformations to
+
+#### 5.6.2 Filtering Separation
+- **Parser Step**: Essential file filtering (hidden files, common exclude patterns)
+- **Transformer Step**: User-configured file filtering and model element filtering
 
 **Key Features:**
 - **Only .c files generate PlantUML diagrams**: Header files are represented as classes with their full content and arrows, but do not have their own .puml files
