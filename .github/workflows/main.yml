@@ -1,11 +1,20 @@
-name: Test C to PlantUML Converter (Standalone)
+name: Main Workflow - Lint, Format, and Test
 
 on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
   workflow_dispatch:
-  # This workflow can also be triggered manually or by other workflows
 
 jobs:
+  # Step 1: Lint and Format
+  lint-and-format:
+    uses: ./.github/workflows/lint-and-format.yml
+
+  # Step 2: Test (runs after lint-and-format, on updated code)
   test:
+    needs: lint-and-format
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -34,6 +43,12 @@ jobs:
         fi
         echo "✅ Dependencies installed successfully"
 
+    - name: Install development dependencies
+      run: |
+        echo "📦 Installing development dependencies..."
+        pip install -r requirements-dev.txt
+        echo "✅ Development dependencies installed"
+
     - name: Show Python environment
       run: |
         echo "🐍 Python Environment Information:"
@@ -41,12 +56,6 @@ jobs:
         echo "Pip version: $(pip --version)"
         echo "Installed packages:"
         pip list
-
-    - name: Install development dependencies
-      run: |
-        echo "📦 Installing development dependencies..."
-        pip install -r requirements-dev.txt
-        echo "✅ Development dependencies installed"
 
     - name: Lint with flake8
       run: |
