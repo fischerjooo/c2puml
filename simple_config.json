@@ -20,7 +20,6 @@
   },
   "transformations": {
     "file_selection": {
-      "apply_to_all": false,
       "selected_files": [".*main\\.c$", ".*utils\\.c$"]
     },
     "rename": {

@@ -608,7 +608,7 @@ class TestTransformer(unittest.TestCase):
             },
             "transformations": {
                 "file_selection": {
-                    "apply_to_all": True
+                    "selected_files": []
                 },
                 "rename": {
                     "structs": {
@@ -624,12 +624,29 @@ class TestTransformer(unittest.TestCase):
         self.assertEqual(len(result.files), 1)  # Only .c files after filtering
 
     def test_file_selection_apply_to_all(self):
-        """Test file selection with apply_to_all=True"""
+        """Test file selection with empty selected_files (apply to all)"""
         config = {
             "transformations": {
                 "file_selection": {
-                    "apply_to_all": True
+                    "selected_files": []
                 },
+                "rename": {
+                    "structs": {
+                        "old_name": "new_name"
+                    }
+                }
+            }
+        }
+        
+        result = self.transformer._apply_model_transformations(self.sample_project_model, config["transformations"])
+        self.assertIsInstance(result, ProjectModel)
+        # Should apply to all files
+        self.assertEqual(len(result.files), 2)
+
+    def test_file_selection_no_file_selection(self):
+        """Test file selection with no file_selection specified (apply to all)"""
+        config = {
+            "transformations": {
                 "rename": {
                     "structs": {
                         "old_name": "new_name"
@@ -648,7 +665,6 @@ class TestTransformer(unittest.TestCase):
         config = {
             "transformations": {
                 "file_selection": {
-                    "apply_to_all": False,
                     "selected_files": [".*sample\\.c$"]
                 },
                 "rename": {
@@ -669,7 +685,6 @@ class TestTransformer(unittest.TestCase):
         config = {
             "transformations": {
                 "file_selection": {
-                    "apply_to_all": False,
                     "selected_files": [".*nonexistent\\.c$"]
                 },
                 "rename": {

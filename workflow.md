@@ -54,7 +54,6 @@ The transformer supports applying actions to all model files or only selected on
 {
   "transformations": {
     "file_selection": {
-      "apply_to_all": false,
       "selected_files": [".*main\\.c$", ".*utils\\.c$"]
     },
     "rename": {
@@ -66,8 +65,56 @@ The transformer supports applying actions to all model files or only selected on
 }
 ```
 
-- **`apply_to_all`**: When `true`, applies transformations to all files. When `false`, applies only to files matching patterns in `selected_files`
 - **`selected_files`**: List of regex patterns for files to apply transformations to
+- **Empty list or missing field**: Applies transformations to all files
+- **Non-empty list**: Applies transformations only to files matching the patterns
+
+#### File Selection Examples
+
+**Apply to all files (default):**
+```json
+{
+  "transformations": {
+    "rename": {
+      "structs": {
+        "old_name": "new_name"
+      }
+    }
+  }
+}
+```
+
+**Apply to specific files:**
+```json
+{
+  "transformations": {
+    "file_selection": {
+      "selected_files": [".*main\\.c$", ".*utils\\.c$"]
+    },
+    "rename": {
+      "structs": {
+        "old_name": "new_name"
+      }
+    }
+  }
+}
+```
+
+**Apply to files in a directory:**
+```json
+{
+  "transformations": {
+    "file_selection": {
+      "selected_files": [".*src/core/.*\\.c$"]
+    },
+    "rename": {
+      "structs": {
+        "old_name": "new_name"
+      }
+    }
+  }
+}
+```
 
 ### Filtering Separation
 - **Parser Step**: Essential file filtering (hidden files, common exclude patterns)

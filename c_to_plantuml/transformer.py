@@ -196,15 +196,15 @@ class Transformer:
         """Apply model-level transformations with file selection support"""
         # Get file selection configuration
         file_selection = transformations.get("file_selection", {})
-        apply_to_all = file_selection.get("apply_to_all", True)
         selected_files = file_selection.get("selected_files", [])
         
         # Determine which files to apply transformations to
-        target_files = set()
-        if apply_to_all:
+        # If selected_files is empty or not specified, apply to all files
+        if not selected_files:
             target_files = set(model.files.keys())
         else:
             # Apply only to selected files
+            target_files = set()
             for pattern in selected_files:
                 for file_path in model.files.keys():
                     if self._matches_pattern(file_path, pattern):
