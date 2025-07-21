@@ -24,8 +24,15 @@ fi
 echo "🐍 Using Python: $($PYTHON_CMD --version)"
 echo "📁 Working directory: $(pwd)"
 
-# Run the test suite
-$PYTHON_CMD run_all_tests.py
+# Check if a specific test category was requested
+if [ $# -eq 1 ]; then
+    TEST_CATEGORY="$1"
+    echo "🎯 Running $TEST_CATEGORY tests only..."
+    $PYTHON_CMD run_all_tests.py "$TEST_CATEGORY"
+else
+    echo "🎯 Running all tests..."
+    $PYTHON_CMD run_all_tests.py
+fi
 
 # Check exit code and provide feedback
 if [ $? -eq 0 ]; then

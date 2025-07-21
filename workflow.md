@@ -129,9 +129,19 @@ The transformer supports applying actions to all model files or only selected on
 python run_all_tests.py
 
 # Run with shell script
-./test.sh
+./run_all_tests.sh
 
 # Run specific test categories
+python run_all_tests.py unit
+python run_all_tests.py feature
+python run_all_tests.py integration
+
+# Run with shell script for specific categories
+./run_all_tests.sh unit
+./run_all_tests.sh feature
+./run_all_tests.sh integration
+
+# Run individual test modules
 python -m unittest tests.unit.test_parser
 python -m unittest tests.unit.test_generator
 python -m unittest tests.feature.test_integration
