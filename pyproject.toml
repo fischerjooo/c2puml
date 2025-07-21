@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "c-to-plantuml"
 version = "2.0.0"
-description = "Convert C/C++ code to PlantUML diagrams"
+description = "Convert C/C++ code to PlantUML diagrams with advanced filtering and transformation capabilities"
 readme = "README.md"
 authors = [
     {name = "C to PlantUML Team", email = "team@c-to-plantuml.com"}
@@ -22,11 +22,16 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Documentation",
     "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Documentation",
 ]
 requires-python = ">=3.7"
 dependencies = []
+keywords = ["c", "cpp", "plantuml", "uml", "diagram", "code-generation", "documentation"]
 
 [project.scripts]
 c2plantuml = "c_to_plantuml.main:main"
@@ -64,4 +69,46 @@ skip_glob = [
     "venv/*",
     ".tox/*",
     ".mypy_cache/*"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+    "--tb=short"
+]
+markers = [
+    "unit: Unit tests",
+    "feature: Feature tests", 
+    "integration: Integration tests",
+    "slow: Slow running tests"
+]
+
+[tool.coverage.run]
+source = ["c_to_plantuml"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
 ]
