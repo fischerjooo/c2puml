@@ -31,6 +31,5 @@ class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 LOGGER --> HEADER_LOGGER : <<include>>
 LOGGER ..> TYPEDEF_LOG_LEVEL_T : declares
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : declares
-TYPEDEF_LOG_LEVEL_T *-- TYPE_LOG_LEVEL_T : «defines»
 
 @enduml
