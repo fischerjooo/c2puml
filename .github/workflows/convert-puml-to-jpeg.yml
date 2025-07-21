@@ -54,12 +54,41 @@ jobs:
     - name: Run picgen.sh script
       run: |
         echo "🚀 Running PlantUML to JPEG conversion..."
+        chmod +x ./picgen.sh
         ./picgen.sh
+        
+        # Check if any images were actually generated
+        echo "🔍 Checking for generated images after script execution..."
+        if find output -name "*.jpg" | grep -q .; then
+          echo "✅ Images were generated successfully"
+        else
+          echo "⚠️ No images were generated. This might indicate an issue with the conversion process."
+        fi
         
     - name: List generated images
       run: |
         echo "📁 Generated images in output directory:"
-        find output -name "*.jpg" -o -name "*.png" | sort || echo "No images found"
+        find output -name "*.jpg" | sort || echo "No images found"
+        
+        echo "📁 All files in output directory:"
+        ls -la output/
+        
+        echo "📁 Checking if JPG images exist with exact paths:"
+        ls -la output/*.jpg 2>/dev/null || echo "No JPG files found"
+        
+        echo "📊 Summary of files in output directory:"
+        echo "Total files: $(find output -type f | wc -l)"
+        echo "JPG files: $(find output -name "*.jpg" | wc -l)"
+        echo "PUML files: $(find output -name "*.puml" | wc -l)"
+        
+        echo "🔍 Verifying JPG files for upload:"
+        jpg_files=$(find output -name "*.jpg")
+        if [ -n "$jpg_files" ]; then
+          echo "✅ Found JPG files to upload:"
+          echo "$jpg_files"
+        else
+          echo "❌ No JPG files found for upload"
+        fi
         
     - name: Check for changes
       id: check_changes
@@ -78,7 +107,7 @@ jobs:
         echo "📝 Committing generated images to repository..."
         
         # Add all generated images
-        git add output/*.jpg output/*.png 2>/dev/null || echo "No new images to add"
+        git add output/*.jpg 2>/dev/null || echo "No new images to add"
         
         # Check if there are staged changes
         if git diff --cached --quiet; then
@@ -93,7 +122,7 @@ jobs:
           find output -name "*.puml" -exec basename {} \; | sed 's/^/- /' >> /tmp/commit_msg
           echo "" >> /tmp/commit_msg
           echo "Generated images:" >> /tmp/commit_msg
-          find output -name "*.jpg" -o -name "*.png" | sort | sed 's/^/- /' >> /tmp/commit_msg
+          find output -name "*.jpg" | sort | sed 's/^/- /' >> /tmp/commit_msg
           
           # Commit with detailed message
           git commit -F /tmp/commit_msg
@@ -115,11 +144,3 @@ jobs:
         name: plantuml-images
         path: output/*.jpg
         retention-days: 30
-        
-    - name: Upload PNG files as artifacts (fallback)
-      uses: actions/upload-artifact@v4
-      with:
-        name: plantuml-png-fallback
-        path: output/*.png
-        retention-days: 30
-        if-no-files-found: ignore
