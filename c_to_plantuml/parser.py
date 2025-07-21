@@ -316,7 +316,13 @@ class CParser:
                             type_name = ' '.join(type_parts).strip()
                             
                             if type_name:
-                                globals_list.append(Field(var_name, type_name))
+                                if not var_name or not type_name:
+                                    import logging
+                                    logging.getLogger(__name__).debug(
+                                        f"Skipping global variable with empty name or type: line='{line}', type='{type_name}', name='{var_name}'"
+                                    )
+                                else:
+                                    globals_list.append(Field(var_name, type_name))
 
         return globals_list
 
