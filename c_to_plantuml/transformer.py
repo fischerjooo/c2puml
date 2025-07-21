@@ -313,6 +313,10 @@ class Transformer:
             )
 
             if included_file_path and included_file_path in file_map:
+                # Prevent self-referencing include relations
+                if file_model.file_path == included_file_path:
+                    self.logger.debug(f"Skipping self-include relation for {file_model.file_path}")
+                    continue
                 # Create include relation
                 from .models import IncludeRelation
 
