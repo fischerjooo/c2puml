@@ -31,7 +31,7 @@ class PlantUMLGenerator:
         diagram_lines = [f"@startuml {basename}", ""]
 
         # Generate main class for the file
-        diagram_lines.extend(self._generate_main_class(file_model, basename))
+        diagram_lines.extend(self._generate_main_class(file_model, basename, project_model))
 
         # Generate header classes for includes
         diagram_lines.extend(self._generate_header_classes(file_model, project_model))
@@ -47,7 +47,7 @@ class PlantUMLGenerator:
 
         return "\n".join(diagram_lines)
 
-    def _generate_main_class(self, file_model: FileModel, basename: str) -> List[str]:
+    def _generate_main_class(self, file_model: FileModel, basename: str, project_model: ProjectModel) -> List[str]:
         """Generate the main class for the file using the new PlantUML template"""
         lines = [
             f'class "{basename}" as {self._get_uml_id(basename)} <<source>> #LightBlue',
@@ -57,8 +57,25 @@ class PlantUMLGenerator:
         for macro in file_model.macros:
             lines.append(f"    - #define {macro}")
         lines.append("    -- Typedefs --")
+        
+        # Add all typedefs with + visibility (both local and from includes)
         for typedef_name in file_model.typedefs:
-            lines.append(f"    - typedef {typedef_name}")
+            lines.append(f"    + typedef {typedef_name}")
+        
+        # Add typedefs from included files with + visibility
+        for include_relation in file_model.include_relations:
+            included_file_path = include_relation.included_file
+            # Find the included file model in the project
+            included_file_model = None
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    included_file_model = model
+                    break
+            
+            if included_file_model:
+                for typedef_name in included_file_model.typedefs:
+                    lines.append(f"    + typedef {typedef_name}")
+        
         lines.append("    -- Global Variables --")
         for global_var in file_model.globals:
             lines.append(f"    {global_var.type} {global_var.name}")
