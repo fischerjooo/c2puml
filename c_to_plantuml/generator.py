@@ -126,8 +126,14 @@ class PlantUMLGenerator:
                 include_name, file_model.project_root, project_model
             )
 
-            if included_file_path and included_file_path in project_model.files:
-                included_file_model = project_model.files[included_file_path]
+            # Try to find the file in project_model.files by matching file paths
+            included_file_model = None
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    included_file_model = model
+                    break
+
+            if included_file_model:
                 header_basename = Path(included_file_path).stem
 
                 lines.extend(
@@ -286,7 +292,14 @@ class PlantUMLGenerator:
                 include_name, file_model.project_root, project_model
             )
 
-            if included_file_path and included_file_path in project_model.files:
+            # Try to find the file in project_model.files by matching file paths
+            included_file_model = None
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    included_file_model = model
+                    break
+
+            if included_file_model:
                 header_basename = Path(included_file_path).stem
                 lines.append(
                     f"{self._get_uml_id(Path(file_model.file_path).stem)} --> "

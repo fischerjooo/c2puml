@@ -33,3 +33,9 @@ class BaseFeatureTest(unittest.TestCase):
 
         self.test_files.append(file_path)
         return file_path
+
+    def write_json_config(self, config_file: str, config: dict) -> None:
+        """Write JSON configuration to file"""
+        import json
+        with open(config_file, 'w', encoding='utf-8') as f:
+            json.dump(config, f, indent=2)
