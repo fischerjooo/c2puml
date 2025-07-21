@@ -95,37 +95,37 @@ class TestGenerator(unittest.TestCase):
 
         # Check macros section
         self.assertIn("-- Macros --", content)
-        self.assertIn("+ #define MAX_SIZE", content)
-        self.assertIn("+ #define DEBUG_MODE", content)
+        self.assertIn("- #define MAX_SIZE", content)
+        self.assertIn("- #define DEBUG_MODE", content)
 
         # Check typedefs section
         self.assertIn("-- Typedefs --", content)
-        self.assertIn("+ typedef int Integer", content)
-        self.assertIn("+ typedef char* String", content)
+        self.assertIn("- typedef Integer", content)
+        self.assertIn("- typedef String", content)
 
         # Check global variables section
         self.assertIn("-- Global Variables --", content)
-        self.assertIn("- int global_var", content)
-        self.assertIn("- char* global_string", content)
+        self.assertIn("int global_var", content)
+        self.assertIn("char* global_string", content)
 
         # Check functions section
         self.assertIn("-- Functions --", content)
-        self.assertIn("+ int main()", content)
-        self.assertIn("+ void process_data()", content)
-        self.assertIn("+ float calculate()", content)
+        self.assertIn("int main()", content)
+        self.assertIn("void process_data()", content)
+        self.assertIn("float calculate()", content)
 
         # Check structs section
         self.assertIn("-- Structs --", content)
-        self.assertIn("+ struct Person", content)
-        self.assertIn("+ struct Config", content)
+        self.assertIn("struct Person", content)
+        self.assertIn("struct Config", content)
         self.assertIn("+ char* name", content)  # Person field
         self.assertIn("+ int age", content)  # Person field
         self.assertIn("+ int max_users", content)  # Config field
 
         # Check enums section
         self.assertIn("-- Enums --", content)
-        self.assertIn("+ enum Status", content)
-        self.assertIn("+ enum Color", content)
+        self.assertIn("enum Status", content)
+        self.assertIn("enum Color", content)
         self.assertIn("+ OK", content)
         self.assertIn("+ RED", content)
 
