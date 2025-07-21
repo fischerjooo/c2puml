@@ -50,6 +50,10 @@ for puml_file in $puml_files; do
             echo "🔄 Converting ${base_name}.png to JPEG..."
             convert "${base_name}.png" "${base_name}.jpg"
             echo "✅ Created ${base_name}.jpg"
+            
+            # Clean up the temporary PNG file
+            rm "${base_name}.png"
+            echo "🧹 Cleaned up temporary ${base_name}.png"
         fi
     else
         echo "⚠️  ImageMagick not found. PNG files created instead of JPEG."
