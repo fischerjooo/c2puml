@@ -142,17 +142,12 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         with open(main_puml_path, 'r', encoding='utf-8') as f:
             main_content = f.read()
         
-        # Check that typedefs are correctly shown in header classes (name only)
-        self.assertIn("+ typedef x", main_content)           # from types.h
-        self.assertIn("+ typedef PointPtr", main_content)    # from types.h
-        self.assertIn("+ typedef PointPtrPtr", main_content) # from types.h
-        self.assertIn("+ typedef ImageCallback", main_content) # from types.h
-        self.assertIn("+ typedef CompareFunc", main_content) # from types.h
-        
-        # Check that typedefs are NOT shown with full type information in headers
-        self.assertNotIn("+ typedef struct { int x", main_content)
-        self.assertNotIn("+ typedef Point* PointPtr", main_content)
-        self.assertNotIn("+ typedef PointPtr* PointPtrPtr", main_content)
+        # Check that typedefs are correctly shown in header classes with full type
+        self.assertIn("+ typedef struct { int x", main_content)           # from types.h
+        self.assertIn("+ typedef Point* PointPtr", main_content)    # from types.h
+        self.assertIn("+ typedef PointPtr* PointPtrPtr", main_content) # from types.h
+        self.assertIn("+ typedef void (*)(...) ImageCallback", main_content) # from types.h
+        self.assertIn("+ typedef int (*)(...) CompareFunc", main_content) # from types.h
         
         # Check config.puml for typedefs in headers
         # Note: Individual header files are not being generated as separate .puml files in the current implementation
@@ -236,18 +231,12 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         with open(main_puml_path, 'r', encoding='utf-8') as f:
             main_content = f.read()
         
-        # Check that typedefs are correctly shown in header classes (name only)
-        self.assertIn("+ typedef x", main_content)           # from types.h
-        self.assertIn("+ typedef PointPtr", main_content)    # from types.h
-        self.assertIn("+ typedef PointPtrPtr", main_content) # from types.h
-        self.assertIn("+ typedef ImageCallback", main_content) # from types.h
-        self.assertIn("+ typedef CompareFunc", main_content) # from types.h
-        
-        # Check that typedefs are NOT shown with full type information in headers
-        self.assertNotIn("+ typedef struct { int x", main_content)
-        self.assertNotIn("+ typedef Point* PointPtr", main_content)
-        self.assertNotIn("+ typedef void (*)(...) ImageCallback", main_content)
-        self.assertNotIn("+ typedef int (*)(...) CompareFunc", main_content)
+        # Check that typedefs are correctly shown in header classes with full type
+        self.assertIn("+ typedef struct { int x", main_content)           # from types.h
+        self.assertIn("+ typedef Point* PointPtr", main_content)    # from types.h
+        self.assertIn("+ typedef PointPtr* PointPtrPtr", main_content) # from types.h
+        self.assertIn("+ typedef void (*)(...) ImageCallback", main_content) # from types.h
+        self.assertIn("+ typedef int (*)(...) CompareFunc", main_content) # from types.h
 
     def test_feature_include_processing_with_macros(self):
         """Test include processing when headers contain macros"""
