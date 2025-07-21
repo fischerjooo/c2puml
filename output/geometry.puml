@@ -28,14 +28,10 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 
 class "string.h" as HEADER_STRING_H <<header>> #LightGray
 {
-    -- External Header --
-    + (external)
 }
 
 class "stdlib.h" as HEADER_STDLIB_H <<header>> #LightGray
 {
-    -- External Header --
-    + (external)
 }
 
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow

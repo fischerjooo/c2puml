@@ -22,20 +22,14 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 
 class "stdarg.h" as HEADER_STDARG_H <<header>> #LightGray
 {
-    -- External Header --
-    + (external)
 }
 
 class "string.h" as HEADER_STRING_H <<header>> #LightGray
 {
-    -- External Header --
-    + (external)
 }
 
 class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
 {
-    -- External Header --
-    + (external)
 }
 
 class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
