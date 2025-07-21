@@ -71,8 +71,46 @@ class "stdlib.h" as HEADER_STDLIB_H <<header>> #LightGray
 {
 }
 
+class "sample" as HEADER_SAMPLE <<header>> #LightGreen
+{
+    -- Macros --
+    + #define SAMPLE_H
+    + #define PI
+    + #define VERSION
+    + #define MIN
+    + #define MAX
+    -- Global Variables --
+    + int x
+    + int y
+    + extern const int MAX_POINTS
+    + extern const char * DEFAULT_LABEL
+    -- Functions --
+    + extern int calculate_sum()
+    + extern point_t * create_point()
+    + extern void process_point()
+}
+
+class "config" as HEADER_CONFIG <<header>> #LightGreen
+{
+    -- Macros --
+    + #define CONFIG_H
+    + #define PROJECT_NAME
+    + #define MAX_LABEL_LEN
+    + #define DEFAULT_BUFFER_SIZE
+}
+
 class "stdint.h" as HEADER_STDINT_H <<header>> #LightGray
 {
+}
+
+class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
+{
+    -- Macros --
+    + #define MATH_UTILS_H
+    -- Functions --
+    + int add()
+    + int subtract()
+    + real_t average()
 }
 
 class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
@@ -106,6 +144,34 @@ class "NamedUnion_t" as TYPEDEF_NAMEDUNION_T <<typedef>> #LightYellow
     + union
 }
 
+class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
+{
+    + int x
+    + int y
+    + char[32] label
+}
+
+class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
+{
+    + STATE_IDLE = 0
+    + STATE_RUNNING
+    + STATE_ERROR
+}
+
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
+{
+    + point_t[3] vertices
+    + char[MAX_LABEL_LEN] label
+}
+
+class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
+{
+    + LOG_DEBUG = 0
+    + LOG_INFO
+    + LOG_WARN
+    + LOG_ERROR
+}
+
 class "NestedInfo_t" as TYPEDEF_NESTEDINFO_T <<typedef>> #LightYellow
 {
     + struct
@@ -121,20 +187,6 @@ class "CE_Status_t" as TYPEDEF_CE_STATUS_T <<typedef>> #LightYellow
 class "ComplexExample_t" as TYPEDEF_COMPLEXEXAMPLE_T <<typedef>> #LightYellow
 {
     + struct
-}
-
-class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
-{
-    + point_t[3] vertices
-    + char[MAX_LABEL_LEN] label
-}
-
-class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
-{
-    + LOG_DEBUG = 0
-    + LOG_INFO
-    + LOG_WARN
-    + LOG_ERROR
 }
 
 TYPEDEF_TEST --> HEADER_COMPLEX_EXAMPLE : <<include>>

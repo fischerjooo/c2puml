@@ -81,6 +81,15 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     + int triangle_area()
 }
 
+class "config" as HEADER_CONFIG <<header>> #LightGreen
+{
+    -- Macros --
+    + #define CONFIG_H
+    + #define PROJECT_NAME
+    + #define MAX_LABEL_LEN
+    + #define DEFAULT_BUFFER_SIZE
+}
+
 class "stddef.h" as HEADER_STDDEF_H <<header>> #LightGray
 {
 }
@@ -99,18 +108,18 @@ class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
     + STATE_ERROR
 }
 
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
+{
+    + point_t[3] vertices
+    + char[MAX_LABEL_LEN] label
+}
+
 class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 {
     + LOG_DEBUG = 0
     + LOG_INFO
     + LOG_WARN
     + LOG_ERROR
-}
-
-class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
-{
-    + point_t[3] vertices
-    + char[MAX_LABEL_LEN] label
 }
 
 SAMPLE --> HEADER_MATH_UTILS : <<include>>
