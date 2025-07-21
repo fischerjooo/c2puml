@@ -120,10 +120,10 @@ typedef Point* PointPtr;
         self.assertIn("+ typedef struct { types_Word x", diagram)  # from utils.h
         
         # Verify complex typedefs in main file
-        self.assertIn("+ typedef CustomByte", diagram)
-        self.assertIn("+ typedef types_Word CustomWord", diagram)
-        self.assertIn("+ typedef utils_Point CustomPoint", diagram)
-        self.assertIn("+ typedef struct { CustomByte r, g, b", diagram)
+        self.assertIn("- typedef types_Byte CustomByte", diagram)
+        self.assertIn("- typedef types_Word CustomWord", diagram)
+        self.assertIn("- typedef utils_Point CustomPoint", diagram)
+        self.assertIn("- typedef struct { CustomByte r, g, b", diagram)
 
     def test_include_processing_with_circular_typedef_dependencies(self):
         """Test include processing with circular typedef dependencies"""

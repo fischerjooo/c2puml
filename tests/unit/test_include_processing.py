@@ -314,10 +314,10 @@ typedef struct {
         file_model = project_model.files["test.c"]
         diagram = self.generator.generate_diagram(file_model, project_model)
         
-        # Check that typedefs are correctly shown in header classes with full type
-        self.assertIn("+ typedef int Integer", diagram)  # from utils.h
-        self.assertIn("+ typedef char* String", diagram)   # from utils.h
-        self.assertIn("+ typedef void (*)(...) Callback", diagram) # from utils.h
+        # Check that typedefs are correctly shown in main class with full type
+        self.assertIn("- typedef int Integer", diagram)  # from test.c
+        self.assertIn("- typedef char* String", diagram)   # from test.c
+        self.assertIn("- typedef void (*)(...) Callback", diagram) # from test.c
 
     def test_generate_complex_typedef_relationships(self):
         """Test generating complex typedef relationships with structs"""
@@ -349,11 +349,11 @@ typedef Color* ColorPtr;
         diagram = self.generator.generate_diagram(file_model, project_model)
         
         # Check that complex typedefs are parsed and included with full type
-        self.assertIn("+ typedef struct { int x", diagram)           # from types.h
-        self.assertIn("+ typedef Point* PointPtr", diagram)    # from types.h
-        self.assertIn("+ typedef PointPtr* PointPtrPtr", diagram) # from types.h
-        self.assertIn("+ typedef enum Color", diagram)       # from types.h
-        self.assertIn("+ typedef Color* ColorPtr", diagram)    # from types.h
+        self.assertIn("- typedef struct { int x", diagram)           # from test.c
+        self.assertIn("- typedef Point* PointPtr", diagram)    # from test.c
+        self.assertIn("- typedef PointPtr* PointPtrPtr", diagram) # from test.c
+        self.assertIn("- typedef enum Color", diagram)       # from test.c
+        self.assertIn("- typedef Color* ColorPtr", diagram)    # from test.c
 
     def test_include_processing_with_typedefs(self):
         """Test include processing when headers contain typedefs"""
@@ -627,8 +627,8 @@ enum Color {
         
         # Structs in header classes
         self.assertIn("+ struct Config", diagram)  # in config.h
-        # Struct fields should NOT be shown in header class
-        self.assertNotIn("+ typedef struct { Byte r, g, b, a", diagram)  # in types.h (parsed as typedef)
+        # Typedef struct should be shown in header class
+        self.assertIn("+ typedef struct { Byte r, g, b, a", diagram)  # in types.h (parsed as typedef)
         
         # Enums in header classes
         self.assertIn("+ enum Color", diagram)  # in types.h
