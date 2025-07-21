@@ -13,12 +13,14 @@ class TestCLIFeature(BaseFeatureTest):
         typedef struct { int x; } Point;
         int main() { return 0; }
         """)
-        # Minimal config.json
+        # Minimal config.json with explicit output_dir
+        self.output_dir = os.path.join(self.temp_dir, "output")
         self.config_path = os.path.join(self.temp_dir, "config.json")
         self.write_json_config(self.config_path, {
             "project_name": "cli_test",
             "source_folders": [self.temp_dir],
-            "recursive": True
+            "recursive": True,
+            "output_dir": self.output_dir
         })
         self.cli = [sys.executable, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../main.py'))]
         self.env = os.environ.copy()
@@ -34,7 +36,7 @@ class TestCLIFeature(BaseFeatureTest):
         # Run parse only
         result = self.run_cli(["--config", self.config_path, "parse"])
         self.assertEqual(result.returncode, 0)
-        model_path = os.path.join(self.temp_dir, "model.json")
+        model_path = os.path.join(self.output_dir, "model.json")
         self.assertTrue(os.path.exists(model_path))
 
     def test_transform_only(self):
@@ -43,7 +45,7 @@ class TestCLIFeature(BaseFeatureTest):
         # Then, run transform
         result = self.run_cli(["--config", self.config_path, "transform"])
         self.assertEqual(result.returncode, 0)
-        transformed_path = os.path.join(self.temp_dir, "model_transformed.json")
+        transformed_path = os.path.join(self.output_dir, "model_transformed.json")
         self.assertTrue(os.path.exists(transformed_path))
 
     def test_generate_prefers_transformed(self):
@@ -53,20 +55,18 @@ class TestCLIFeature(BaseFeatureTest):
         # Then, run generate
         result = self.run_cli(["--config", self.config_path, "generate"])
         self.assertEqual(result.returncode, 0)
-        output_dir = os.path.join(self.temp_dir, "output")
-        puml_files = list(Path(output_dir).glob("*.puml"))
+        puml_files = list(Path(self.output_dir).glob("*.puml"))
         self.assertGreaterEqual(len(puml_files), 1)
 
     def test_generate_fallback_to_model(self):
         # Only run parse
         self.run_cli(["--config", self.config_path, "parse"])
         # Remove model_transformed.json if exists
-        transformed_path = os.path.join(self.temp_dir, "model_transformed.json")
+        transformed_path = os.path.join(self.output_dir, "model_transformed.json")
         if os.path.exists(transformed_path):
             os.remove(transformed_path)
         # Run generate
         result = self.run_cli(["--config", self.config_path, "generate"])
         self.assertEqual(result.returncode, 0)
-        output_dir = os.path.join(self.temp_dir, "output")
-        puml_files = list(Path(output_dir).glob("*.puml"))
+        puml_files = list(Path(self.output_dir).glob("*.puml"))
         self.assertGreaterEqual(len(puml_files), 1)
