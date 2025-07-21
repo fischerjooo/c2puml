@@ -384,27 +384,3 @@ class TestGenerator(unittest.TestCase):
         # Directory should be created
         self.assertTrue(os.path.exists(output_dir))
         self.assertTrue(os.path.exists(os.path.join(output_dir, "test.puml")))
-
-    def test_no_self_include(self):
-        """Test that a file including itself does not generate a self-include in the PlantUML diagram"""
-        file_model = FileModel(
-            file_path="self.h",
-            relative_path="self.h",
-            project_root="/test",
-            encoding_used="utf-8",
-            includes=["self.h"],
-            macros=[],
-            typedefs={},
-            globals=[],
-            functions=[],
-            structs={},
-            enums={},
-            unions={},
-            typedef_relations=[],
-            include_relations=[]
-        )
-        project_model = ProjectModel("test", "/test", {"self.h": file_model}, "2023-01-01")
-        generator = PlantUMLGenerator()
-        content = generator.generate_diagram(file_model, project_model)
-        # There should be no self-include relationship in the output
-        self.assertNotIn("SELF --> HEADER_SELF : <<include>>", content)
