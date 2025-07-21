@@ -258,7 +258,7 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
     -- Macros --
     - #define {macro_name}
     -- Typedefs --
-    - typedef {original_type} {typedef_name}
+    - typedef {original_type} {typedef_name}  # Only primitive typedefs (relationship_type = "alias" and not struct/enum/union)
     -- Global Variables --
     {type} {variable_name}
     -- Functions --
@@ -277,7 +277,7 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
     -- Macros --
     + #define {macro_name}
     -- Typedefs --
-    + typedef {original_type} {typedef_name}
+    + typedef {original_type} {typedef_name}  # Only primitive typedefs (relationship_type = "alias" and not struct/enum/union)
     -- Global Variables --
     + {type} {variable_name}
     -- Functions --
@@ -335,12 +335,17 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 - **«defines»**: Used when a typedef defines a new type (e.g., `typedef struct { ... } MyStruct;`)
 - **«alias»**: Used when a typedef creates an alias for an existing type (e.g., `typedef int MyInt;`)
 
-#### 5.2.2 Relationship Notation
+#### 5.2.2 Typedef Filtering in File/Header Classes
+- **Primitive typedefs only**: Only typedefs with `relationship_type = "alias"` and `original_type` not starting with "struct", "enum", or "union" are shown in file/header classes
+- **Complex typedefs excluded**: Struct, enum, and union typedefs are NOT shown in file/header classes to avoid duplication with their separate typedef classes
+- **Typedef classes**: All typedefs (primitive and complex) are shown in separate typedef classes with their content and relationships
+
+#### 5.2.3 Relationship Notation
 - **Defines relationship**: `{typedef} *-- {original_type} : «defines»`
 - **Alias relationship**: `{typedef} -|> {original_type} : «alias»`
 
-#### 5.2.3 Typedef Content Display
-- **Source/Header files**: Show full typedef declarations (e.g., `typedef struct { ... } MyStruct`, `typedef int MyInt`, `typedef enum { ... } MyEnum`)
+#### 5.2.4 Typedef Content Display
+- **Source/Header files**: Show only primitive typedef declarations (e.g., `typedef int MyInt`, `typedef char* String`) - struct/enum/union typedefs are NOT shown in file/header classes
 - **Typedef classes**: Show the actual content:
   - **Struct typedefs**: Show struct fields with their types (e.g., `+ int x`, `+ char* name`)
   - **Enum typedefs**: Show enum values (e.g., `+ RED`, `+ GREEN`, `+ BLUE`)
@@ -378,14 +383,14 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
   - Unions: No prefix
 - **Header files**: 
   - All elements: `+` prefix
-- **Included typedefs in source files**: `+` prefix (from header files)
+- **Included typedefs in source files**: `+` prefix (from header files) - only primitive typedefs
 - **Macros**: `#define` prefix with appropriate visibility
 
 #### 5.4.3 Element Representation
 - **Functions**: `{return_type} {function_name}()` (source) or `+ {return_type} {function_name}()` (header)
 - **Global variables**: `{type} {variable_name}` (source) or `+ {type} {variable_name}` (header)
 - **Macros**: `- #define {macro_name}` (source) or `+ #define {macro_name}` (header)
-- **Typedefs**: `- typedef {original_type} {typedef_name}` (source) or `+ typedef {original_type} {typedef_name}` (header) - full declaration
+- **Primitive Typedefs**: `- typedef {original_type} {typedef_name}` (source) or `+ typedef {original_type} {typedef_name}` (header) - only for primitive type aliases (relationship_type = "alias" and not struct/enum/union)
 - **Structs**: `struct {struct_name}` (source) or `+ struct {struct_name}` (header) - only the name
 - **Enums**: `enum {enum_name}` (source) or `+ enum {enum_name}` (header) - only the name
 - **Unions**: `union {union_name}` (source) or `+ union {union_name}` (header) - only the name
@@ -443,10 +448,10 @@ The transformer supports applying actions to all model files or only selected on
 
 **Key Features:**
 - **Only .c files generate PlantUML diagrams**: Header files are represented as classes with their full content and arrows, but do not have their own .puml files
-- **All referenced include files are shown**: As classes with the `<<header>>` stereotype and their actual content (macros, typedefs, globals, functions, structs, enums, unions)
+- **All referenced include files are shown**: As classes with the `<<header>>` stereotype and their actual content (macros, primitive typedefs, globals, functions, structs, enums, unions)
 - **Header-to-header include relationships**: Displayed with arrows
 - **No #include lines in class content**: All include relationships are visualized with arrows only
 - **Typedef relationships**: Shown with proper UML stereotypes («defines», «alias») and relationship notation
-- **Typedef content display**: Struct/enum/union typedefs show their fields/values within the typedef class
+- **Typedef content display**: Only primitive typedefs are shown in file/header classes; struct/enum/union typedefs are shown in separate typedef classes with their fields/values
 - **Union support**: Unions are parsed and displayed with their fields
 - **Include depth processing**: Configurable depth for processing include relationships
