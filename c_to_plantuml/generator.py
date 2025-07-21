@@ -58,9 +58,21 @@ class PlantUMLGenerator:
             lines.append(f"    - #define {macro}")
         lines.append("    -- Typedefs --")
         
-        # Add all typedefs with + visibility (both local and from includes)
-        for typedef_name in file_model.typedefs:
-            lines.append(f"    + typedef {typedef_name}")
+        # Add local typedefs with - visibility (C file) or + visibility (header file)
+        for typedef_name, original_type in file_model.typedefs.items():
+            # Determine if this is a C file or header file
+            is_header = file_model.file_path.endswith('.h')
+            visibility = "+" if is_header else "-"
+            
+            # Determine the typedef type and format accordingly
+            if original_type == 'struct':
+                lines.append(f"    {visibility} typedef struct {typedef_name}")
+            elif original_type == 'enum':
+                lines.append(f"    {visibility} typedef enum {typedef_name}")
+            elif original_type == 'union':
+                lines.append(f"    {visibility} typedef union {typedef_name}")
+            else:
+                lines.append(f"    {visibility} typedef {original_type} {typedef_name}")
         
         # Add typedefs from included files with + visibility
         for include_relation in file_model.include_relations:
@@ -73,8 +85,16 @@ class PlantUMLGenerator:
                     break
             
             if included_file_model:
-                for typedef_name in included_file_model.typedefs:
-                    lines.append(f"    + typedef {typedef_name}")
+                for typedef_name, original_type in included_file_model.typedefs.items():
+                    # Determine the typedef type and format accordingly
+                    if original_type == 'struct':
+                        lines.append(f"    + typedef struct {typedef_name}")
+                    elif original_type == 'enum':
+                        lines.append(f"    + typedef enum {typedef_name}")
+                    elif original_type == 'union':
+                        lines.append(f"    + typedef union {typedef_name}")
+                    else:
+                        lines.append(f"    + typedef {original_type} {typedef_name}")
         
         lines.append("    -- Global Variables --")
         for global_var in file_model.globals:
@@ -144,8 +164,16 @@ class PlantUMLGenerator:
         for macro in file_model.macros:
             lines.append(f"    + #define {macro}")
         lines.append("    -- Typedefs --")
-        for typedef_name in file_model.typedefs:
-            lines.append(f"    + typedef {typedef_name}")
+        for typedef_name, original_type in file_model.typedefs.items():
+            # Determine the typedef type and format accordingly
+            if original_type == 'struct':
+                lines.append(f"    + typedef struct {typedef_name}")
+            elif original_type == 'enum':
+                lines.append(f"    + typedef enum {typedef_name}")
+            elif original_type == 'union':
+                lines.append(f"    + typedef union {typedef_name}")
+            else:
+                lines.append(f"    + typedef {original_type} {typedef_name}")
         lines.append("    -- Global Variables --")
         for global_var in file_model.globals:
             lines.append(f"    + {global_var.type} {global_var.name}")
