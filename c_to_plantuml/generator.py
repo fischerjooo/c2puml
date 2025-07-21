@@ -296,6 +296,9 @@ class PlantUMLGenerator:
                 )
         # Header-to-header relationships
         for include_relation in file_model.include_relations:
+            # Skip self-include
+            if include_relation.source_file == include_relation.included_file:
+                continue
             source_basename = Path(include_relation.source_file).stem
             included_basename = Path(include_relation.included_file).stem
             lines.append(
