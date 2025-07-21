@@ -159,12 +159,12 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
         
         # Verify typedefs are correctly displayed in header classes
         expected_header_typedefs = [
-            "+ typedef char* String",  # from core.h
-            "+ typedef int Integer",  # from core.h
-            "+ typedef struct { core_Integer r, g, b",  # from graphics.h
-            "+ typedef struct { core_Integer octet1, octet2, octet3, octet4",  # from network.h
-            "+ typedef unsigned char Byte",  # from types.h
-            "+ typedef unsigned short Word"  # from types.h
+            "+ typedef String",  # from core.h
+            "+ typedef Integer",  # from core.h
+            "+ typedef Color",  # from graphics.h
+            "+ typedef Address",  # from network.h
+            "+ typedef Byte",  # from types.h
+            "+ typedef Word"  # from types.h
         ]
         
         for typedef in expected_header_typedefs:
@@ -241,13 +241,15 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
         self.assertIn("- #define DEBUG_MODE", main_content)
         
         # Verify structs are correctly displayed
-        self.assertIn("+ struct Config", main_content)
-        self.assertIn("+ ConfigId id", main_content)
+        self.assertIn("struct Config", main_content)
+        # Struct fields should NOT be shown in main class
+        self.assertNotIn("ConfigId id", main_content)
         
         # Verify enums are correctly displayed
-        self.assertIn("+ enum Status", main_content)
-        self.assertIn("+ OK", main_content)
-        self.assertIn("+ ERROR", main_content)
+        self.assertIn("enum Status", main_content)
+        # Enum values should NOT be shown in main class
+        self.assertNotIn("OK", main_content)
+        self.assertNotIn("ERROR", main_content)
 
     def create_comprehensive_test_project(self) -> Path:
         """Create a comprehensive test project with all types of relationships"""
