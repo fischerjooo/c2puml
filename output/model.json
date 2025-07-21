@@ -55,7 +55,7 @@
         "CE_Status_tag": {
           "name": "CE_Status_tag",
           "values": [
-            "CE_STATUS_OK",
+            "CE_STATUS_OK = 0",
             "CE_STATUS_WARN",
             "CE_STATUS_FAIL"
           ]
@@ -101,19 +101,22 @@
           "typedef_name": "NestedInfo_t",
           "original_type": "struct",
           "relationship_type": "defines",
-          "struct_tag_name": "NestedInfo_tag"
+          "struct_tag_name": "NestedInfo_tag",
+          "enum_tag_name": ""
         },
         {
           "typedef_name": "CE_Status_t",
-          "original_type": "enum CE_Status_tag { CE_STATUS_OK = 0, CE_STATUS_WARN, CE_STATUS_FAIL }",
+          "original_type": "enum",
           "relationship_type": "defines",
-          "struct_tag_name": ""
+          "struct_tag_name": "",
+          "enum_tag_name": "CE_Status_tag"
         },
         {
           "typedef_name": "ComplexExample_t",
           "original_type": "struct",
           "relationship_type": "defines",
-          "struct_tag_name": "ComplexExample_tag"
+          "struct_tag_name": "ComplexExample_tag",
+          "enum_tag_name": ""
         }
       ],
       "include_relations": [],
@@ -341,7 +344,8 @@
           "typedef_name": "triangle_t",
           "original_type": "struct",
           "relationship_type": "defines",
-          "struct_tag_name": "triangle_tag"
+          "struct_tag_name": "triangle_tag",
+          "enum_tag_name": ""
         }
       ],
       "include_relations": [],
@@ -423,7 +427,7 @@
         "log_level_tag": {
           "name": "log_level_tag",
           "values": [
-            "LOG_DEBUG",
+            "LOG_DEBUG = 0",
             "LOG_INFO",
             "LOG_WARN",
             "LOG_ERROR"
@@ -476,9 +480,10 @@
       "typedef_relations": [
         {
           "typedef_name": "log_level_t",
-          "original_type": "enum log_level_tag { LOG_DEBUG = 0, LOG_INFO, LOG_WARN, LOG_ERROR }",
+          "original_type": "enum",
           "relationship_type": "defines",
-          "struct_tag_name": ""
+          "struct_tag_name": "",
+          "enum_tag_name": "log_level_tag"
         }
       ],
       "include_relations": [],
@@ -817,7 +822,7 @@
         "system_state_tag": {
           "name": "system_state_tag",
           "values": [
-            "STATE_IDLE",
+            "STATE_IDLE = 0",
             "STATE_RUNNING",
             "STATE_ERROR"
           ]
@@ -920,13 +925,15 @@
           "typedef_name": "point_t",
           "original_type": "struct",
           "relationship_type": "defines",
-          "struct_tag_name": "point_tag"
+          "struct_tag_name": "point_tag",
+          "enum_tag_name": ""
         },
         {
           "typedef_name": "system_state_t",
-          "original_type": "enum system_state_tag { STATE_IDLE = 0, STATE_RUNNING, STATE_ERROR }",
+          "original_type": "enum",
           "relationship_type": "defines",
-          "struct_tag_name": ""
+          "struct_tag_name": "",
+          "enum_tag_name": "system_state_tag"
         }
       ],
       "include_relations": [],
@@ -1131,7 +1138,7 @@
         "Color_tag": {
           "name": "Color_tag",
           "values": [
-            "COLOR_RED",
+            "COLOR_RED = 0",
             "COLOR_GREEN",
             "COLOR_BLUE"
           ]
@@ -1139,7 +1146,7 @@
         "StatusEnum_tag": {
           "name": "StatusEnum_tag",
           "values": [
-            "STATUS_OK",
+            "STATUS_OK = 0",
             "STATUS_FAIL"
           ]
         }
@@ -1244,38 +1251,43 @@
       "typedef_relations": [
         {
           "typedef_name": "Status_t",
-          "original_type": "enum StatusEnum_tag { STATUS_OK = 0, STATUS_FAIL }",
+          "original_type": "enum",
           "relationship_type": "defines",
-          "struct_tag_name": ""
+          "struct_tag_name": "",
+          "enum_tag_name": "StatusEnum_tag"
         },
         {
           "typedef_name": "Point_t",
           "original_type": "struct",
           "relationship_type": "defines",
-          "struct_tag_name": "Point_tag"
+          "struct_tag_name": "Point_tag",
+          "enum_tag_name": ""
         },
         {
           "typedef_name": "NamedStruct_t",
           "original_type": "struct",
           "relationship_type": "defines",
-          "struct_tag_name": "NamedStruct_tag"
+          "struct_tag_name": "NamedStruct_tag",
+          "enum_tag_name": ""
         },
         {
           "typedef_name": "Number_t",
           "original_type": "union",
           "relationship_type": "defines",
-          "struct_tag_name": ""
+          "struct_tag_name": "",
+          "enum_tag_name": ""
         },
         {
           "typedef_name": "NamedUnion_t",
           "original_type": "union",
           "relationship_type": "defines",
-          "struct_tag_name": ""
+          "struct_tag_name": "",
+          "enum_tag_name": ""
         }
       ],
       "include_relations": [],
       "unions": {}
     }
   },
-  "created_at": "2025-07-21T17:04:05.215761"
+  "created_at": "2025-07-21T17:28:40.005156"
 }

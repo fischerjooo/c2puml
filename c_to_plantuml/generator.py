@@ -237,10 +237,25 @@ class PlantUMLGenerator:
                         lines.append(f"    + {field.type} {field.name}")
                 else:
                     lines.append(f"    + {original_type}")
-            elif original_type == "enum" and typedef_name in file_model.enums:
-                enum = file_model.enums[typedef_name]
-                for value in enum.values:
-                    lines.append(f"    + {value}")
+            elif original_type == "enum":
+                # Try to find the enum by the enum tag name if available, otherwise by typedef name
+                enum_name = typedef_relation.enum_tag_name if hasattr(typedef_relation, 'enum_tag_name') and typedef_relation.enum_tag_name else typedef_name
+                # Look for the enum in the project model
+                found_enum = None
+                import logging
+                logging.getLogger(__name__).debug(f"Looking for enum '{enum_name}' in project model")
+                for f_model in project_model.files.values():
+                    if enum_name in f_model.enums:
+                        found_enum = f_model.enums[enum_name]
+                        logging.getLogger(__name__).debug(f"Found enum '{enum_name}' in file '{f_model.file_path}'")
+                        break
+                
+                if found_enum:
+                    for value in found_enum.values:
+                        lines.append(f"    + {value}")
+                else:
+                    logging.getLogger(__name__).debug(f"Enum '{enum_name}' not found in project model")
+                    lines.append(f"    + {original_type}")
             elif original_type == "union" and typedef_name in file_model.unions:
                 union = file_model.unions[typedef_name]
                 for field in union.fields:
@@ -552,14 +567,15 @@ class Generator:
         # Convert typedef relations
         typedef_relations = []
         for rel_data in data.get("typedef_relations", []):
-            typedef_relations.append(
-                TypedefRelation(
-                    rel_data["typedef_name"],
-                    rel_data["original_type"],
-                    rel_data["relationship_type"],
-                    rel_data.get("struct_tag_name", ""),  # Include struct_tag_name with default empty string
-                )
+                    typedef_relations.append(
+            TypedefRelation(
+                rel_data["typedef_name"],
+                rel_data["original_type"],
+                rel_data["relationship_type"],
+                rel_data.get("struct_tag_name", ""),  # Include struct_tag_name with default empty string
+                rel_data.get("enum_tag_name", ""),  # Include enum_tag_name with default empty string
             )
+        )
 
         # Convert include relations
         include_relations = []
