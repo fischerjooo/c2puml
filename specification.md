@@ -255,13 +255,23 @@ Each generated PlantUML file follows this structure:
 
 class "{basename}" as {UML_ID} <<source>> #LightBlue
 {
-    {macros}
-    {typedefs}
-    {global_variables}
-    {functions}
-    {structs}
-    {enums}
-    {unions}
+    -- Macros --
+    - #define {macro_name}
+    -- Typedefs --
+    - typedef {typedef_name}
+    -- Global Variables --
+    {type} {variable_name}
+    -- Functions --
+    {return_type} {function_name}()
+    -- Structs --
+    struct {struct_name}
+        + {type} {field_name}
+    -- Enums --
+    enum {enum_name}
+        + {value}
+    -- Unions --
+    union {union_name}
+        + {type} {field_name}
 }
 
 ' For each included header file with actual content:
@@ -269,24 +279,18 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
 {
     -- Macros --
     + #define {macro_name}
-    
     -- Typedefs --
     + typedef {original_type} {typedef_name}
-    
     -- Global Variables --
-    - {type} {variable_name}
-    
+    + {type} {variable_name}
     -- Functions --
     + {return_type} {function_name}()
-    
     -- Structs --
     + struct {struct_name}
         + {type} {field_name}
-    
     -- Enums --
     + enum {enum_name}
         + {value}
-    
     -- Unions --
     + union {union_name}
         + {type} {field_name}
@@ -295,14 +299,12 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
 ' Typedef classes for struct/enum/union:
 class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 {
-    + struct {original_type}
-        + {type} {field_name}
+    + {type} {field_name}
 }
 
 class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 {
-    + struct {original_type}
-        + {type} {field_name}
+    + {type} {field_name}
 }
 
 ' Relationships:
@@ -351,17 +353,26 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 - **Types**: `#LightGray` background, `<<type>>` stereotype
 
 #### 5.4.2 Visibility Notation
-- **Public members**: `+` prefix
-- **Private/Static members**: `-` prefix
-- **Macros**: `#define` prefix with `+` visibility
+- **Source files**: 
+  - Macros: `-` prefix
+  - Typedefs: `-` prefix
+  - Global variables: No prefix
+  - Functions: No prefix
+  - Structs: No prefix
+  - Enums: No prefix
+  - Unions: No prefix
+- **Header files**: 
+  - All elements: `+` prefix
+- **Macros**: `#define` prefix with appropriate visibility
 
 #### 5.4.3 Element Representation
-- **Functions**: `{visibility}{return_type} {function_name}()`
-- **Global variables**: `{visibility} {type} {variable_name}`
-- **Macros**: `{visibility} #define {macro_name}`
-- **Struct fields**: `{visibility} {type} {field_name}`
-- **Union fields**: `{visibility} {type} {field_name}`
-- **Enum values**: `{visibility} {value}`
+- **Functions**: `{return_type} {function_name}()` (source) or `+ {return_type} {function_name}()` (header)
+- **Global variables**: `{type} {variable_name}` (source) or `+ {type} {variable_name}` (header)
+- **Macros**: `- #define {macro_name}` (source) or `+ #define {macro_name}` (header)
+- **Typedefs**: `- typedef {typedef_name}` (source) or `+ typedef {original_type} {typedef_name}` (header)
+- **Struct fields**: `+ {type} {field_name}` (indented under struct)
+- **Union fields**: `+ {type} {field_name}` (indented under union)
+- **Enum values**: `+ {value}` (indented under enum)
 
 #### 5.4.4 Relationships
 - **Include relationships**: `{source} --> {header} : <<include>>` (arrows only)
