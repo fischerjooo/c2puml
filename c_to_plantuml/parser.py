@@ -343,7 +343,21 @@ class CParser:
                         typedef_name = match.group(1)
                         typedefs[typedef_name] = 'struct'
                     
-                    # Pattern 3: typedef void (*name)(params); (function pointer)
+                    # Pattern 3: typedef enum { ... } name; (enum typedef)
+                    enum_pattern = r'^enum\s*\{[^}]*\}\s+([A-Za-z_][A-Za-z0-9_]*)$'
+                    match = re.match(enum_pattern, typedef_body, re.DOTALL)
+                    if match:
+                        typedef_name = match.group(1)
+                        typedefs[typedef_name] = 'enum'
+                    
+                    # Pattern 4: typedef union { ... } name; (union typedef)
+                    union_pattern = r'^union\s*\{[^}]*\}\s+([A-Za-z_][A-Za-z0-9_]*)$'
+                    match = re.match(union_pattern, typedef_body, re.DOTALL)
+                    if match:
+                        typedef_name = match.group(1)
+                        typedefs[typedef_name] = 'union'
+                    
+                    # Pattern 5: typedef void (*name)(params); (function pointer)
                     func_ptr_pattern = r'^([^(*]+)\s*\(\s*\*\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)\s*\([^)]*\)$'
                     match = re.match(func_ptr_pattern, typedef_body)
                     if match:
