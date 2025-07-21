@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 #include "sample.h"
+#include "config.h"
+#include "logger.h"
 
 // Basic type aliases
 typedef uint32_t MyLen;
@@ -23,9 +25,9 @@ typedef struct MyComplexStruct {
     MyLen id;
     MyString name;
     MyCallback callback;
+    log_level_t log_level; // New: use logger typedef
 } MyComplex;
 
-// Another typedef that defines a new type
 typedef MyComplex* MyComplexPtr;
 
 // Enum typedef (anonymous)
@@ -35,28 +37,26 @@ typedef enum {
     COLOR_BLUE
 } Color_t;
 
-// Enum typedef (named)
 enum StatusEnum { STATUS_OK, STATUS_FAIL };
 typedef enum StatusEnum Status_t;
 
-// Struct typedef (anonymous)
 typedef struct {
     int x;
     int y;
 } Point_t;
 
-// Struct typedef (named)
 struct NamedStruct { int a; int b; };
 typedef struct NamedStruct NamedStruct_t;
 
-// Union typedef (anonymous)
 typedef union {
     int i;
     float f;
 } Number_t;
 
-// Union typedef (named)
 union NamedUnion { char c; double d; };
 typedef union NamedUnion NamedUnion_t;
+
+// New: Typedef for array of pointers
+typedef MyComplexPtr MyComplexArray[10];
 
 #endif // TYPEDEF_TEST_H
