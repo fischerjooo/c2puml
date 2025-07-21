@@ -1,5 +1,11 @@
 # C to PlantUML Converter - Testing Workflow
 
+## Documentation Guidelines
+- **Do not create new markdown files** - only edit existing markdown files
+- Keep documentation concise and focused on practical usage
+- Update this workflow.md file for any new workflow changes
+- Use modern Python packaging with pyproject.toml
+
 ## Overview
 Simple testing workflow for the C to PlantUML Converter using two main scripts.
 
