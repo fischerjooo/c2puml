@@ -7,9 +7,19 @@
 #define PI 3.14159
 #define VERSION "1.0.0"
 
-/* Forward declarations with explicit tags */
-typedef struct point_tag point_t;
-typedef enum system_state_tag system_state_t;
+/* Full definition of point_t struct */
+typedef struct point_tag {
+    int x;
+    int y;
+    char label[32];
+} point_t;
+
+/* Full definition of system_state_t enum */
+typedef enum system_state_tag {
+    STATE_IDLE = 0,
+    STATE_RUNNING,
+    STATE_ERROR
+} system_state_t;
 
 /* Function prototypes */
 extern int calculate_sum(int a, int b);
