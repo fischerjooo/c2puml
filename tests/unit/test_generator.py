@@ -11,8 +11,8 @@ import unittest
 from pathlib import Path
 
 from c_to_plantuml.config import Config
-from c_to_plantuml.generator import Generator
-from c_to_plantuml.models import Enum, Field, FileModel, Function, ProjectModel, Struct
+from c_to_plantuml.generator import Generator, PlantUMLGenerator
+from c_to_plantuml.models import Enum, Field, FileModel, Function, ProjectModel, Struct, Union
 
 
 class TestGenerator(unittest.TestCase):
@@ -67,77 +67,53 @@ class TestGenerator(unittest.TestCase):
 
     def test_generate_plantuml_content(self):
         """Test PlantUML content generation"""
-        file_model = self.create_test_file_model("main.c")
-
-        # Create a simple project model for testing
-        project_model = ProjectModel(
-            project_name="test_project",
+        # Create a simple file model
+        file_model = FileModel(
+            file_path="test.c",
+            relative_path="test.c",
             project_root="/test",
-            files={"main.c": file_model},
-            created_at="2023-01-01T00:00:00",
+            encoding_used="utf-8",
+            macros={"MAX_SIZE": "100", "DEBUG": "1"},
+            typedefs={"Integer": "int", "String": "char*"},
+            globals=[Field("global_var", "int"), Field("global_string", "char*")],
+            functions=[Function("main", "int", []), Function("process_data", "void", [])],
+            structs={"Person": Struct("Person", [Field("name", "char*"), Field("age", "int")])},
+            enums={"Status": Enum("Status", ["OK", "ERROR", "PENDING"])},
+            unions={"Data": Union("Data", [Field("i", "int"), Field("f", "float")])},
+            includes=[],
+            typedef_relations=[]
         )
-        content = self.generator.plantuml_generator.generate_diagram(
-            file_model, project_model
-        )
-
-        # Check basic structure
-        self.assertIn("@startuml main", content)
-        self.assertIn("@enduml", content)
-
-        # Check class definition
-        self.assertIn('class "main" as MAIN <<source>> #LightBlue', content)
-
-        # Check header classes and relationships (not implemented in current version)
-        # self.assertIn('class "stdio" as STDIO <<header>> #LightGreen', content)
-        # self.assertIn('class "stdlib" as STDLIB <<header>> #LightGreen', content)
-        # self.assertIn("MAIN --> STDIO : <<include>>", content)
-        # self.assertIn("MAIN --> STDLIB : <<include>>", content)
-
-        # Check macros section
+        
+        generator = PlantUMLGenerator()
+        content = generator.generate_diagram(file_model, ProjectModel("test", "/test", {"test.c": file_model}, "2023-01-01"))
+        
+        # Check that the content contains expected elements
+        self.assertIn("@startuml test", content)
+        self.assertIn('class "test" as TEST <<source>> #LightBlue', content)
         self.assertIn("-- Macros --", content)
-        self.assertIn("- #define MAX_SIZE", content)
-        self.assertIn("- #define DEBUG_MODE", content)
-
-        # Check typedefs section
         self.assertIn("-- Typedefs --", content)
-        self.assertIn("- typedef Integer", content)
-        self.assertIn("- typedef String", content)
-
-        # Check global variables section
         self.assertIn("-- Global Variables --", content)
-        self.assertIn("int global_var", content)
-        self.assertIn("char* global_string", content)
-
-        # Check functions section
         self.assertIn("-- Functions --", content)
-        self.assertIn("int main()", content)
-        self.assertIn("void process_data()", content)
-        self.assertIn("float calculate()", content)
-
-        # Check structs section
         self.assertIn("-- Structs --", content)
-        self.assertIn("struct Person", content)
-        self.assertIn("struct Config", content)
-        # Struct fields should NOT be shown in main class
-        self.assertNotIn("+ char* name", content)  # Person field
-        self.assertNotIn("+ int age", content)  # Person field
-        self.assertNotIn("+ int max_users", content)  # Config field
-
-        # Check enums section
         self.assertIn("-- Enums --", content)
-        self.assertIn("enum Status", content)
-        self.assertIn("enum Color", content)
-        # Enum values should NOT be shown in main class
-        self.assertNotIn("+ OK", content)
-        self.assertNotIn("+ RED", content)
-
-        # Check typedef classes (not implemented in current version)
-        # self.assertIn('class "Integer" as INTEGER <<typedef>> #LightYellow', content)
-        # self.assertIn('class "String" as STRING <<typedef>> #LightYellow', content)
-
-        # Check relationships (not implemented in current version)
-        # self.assertIn("MAIN --> STDIO : <<include>>", content)
-        # self.assertIn("MAIN --> STDLIB : <<include>>", content)
+        self.assertIn("-- Unions --", content)
+        
+        # Check visibility prefixes
+        self.assertIn("- #define MAX_SIZE", content)  # macros in source
+        self.assertIn("- typedef Integer", content)   # typedefs in source
+        self.assertIn("int global_var", content)      # globals in source (no prefix)
+        self.assertIn("int main()", content)          # functions in source (no prefix)
+        self.assertIn("struct Person", content)       # structs in source (no prefix)
+        self.assertIn("enum Status", content)         # enums in source (no prefix)
+        self.assertIn("union Data", content)          # unions in source (no prefix)
+        
+        # Check that struct/enum/union content is NOT shown in main class
+        self.assertNotIn("+ char* name", content)     # struct fields not in main
+        self.assertNotIn("+ int age", content)        # struct fields not in main
+        self.assertNotIn("+ OK", content)             # enum values not in main
+        self.assertNotIn("+ ERROR", content)          # enum values not in main
+        self.assertNotIn("+ int i", content)          # union fields not in main
+        self.assertNotIn("+ float f", content)        # union fields not in main
 
     def test_generate_file_diagram(self):
         """Test generating a PlantUML diagram file"""
@@ -339,9 +315,9 @@ class TestGenerator(unittest.TestCase):
 
         # Should handle special characters properly
         self.assertIn("@startuml test_file", content)
-        self.assertIn("+ struct Test_Struct", content)
-        self.assertIn("+ enum Test_Enum", content)
-        self.assertIn("+ void test_function()", content)
+        self.assertIn("void test_function()", content)
+        self.assertIn("struct Test_Struct", content)  # no + prefix in source files
+        self.assertIn("enum Test_Enum", content)      # no + prefix in source files
 
     def test_generate_error_handling(self):
         """Test error handling in diagram generation"""

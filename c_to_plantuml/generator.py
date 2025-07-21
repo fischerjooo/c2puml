@@ -86,19 +86,30 @@ class PlantUMLGenerator:
 
         # Get all included files that exist in the project
         for include_name in file_model.includes:
-            included_file_path = self._find_included_file(
-                include_name, file_model.project_root, project_model
-            )
-
-            # Try to find the file in project_model.files by matching file paths
+            # First try to find the file directly in project_model.files
             included_file_model = None
             for key, model in project_model.files.items():
-                if model.file_path == included_file_path:
+                # Check if the file name matches the include (with or without extension)
+                file_basename = Path(key).stem
+                if file_basename == include_name or key == include_name:
                     included_file_model = model
                     break
+            
+            # If not found in project_model.files, try to find it on the file system
+            if not included_file_model:
+                included_file_path = self._find_included_file(
+                    include_name, file_model.project_root, project_model
+                )
+                
+                if included_file_path:
+                    # Try to find the file in project_model.files by matching file paths
+                    for key, model in project_model.files.items():
+                        if model.file_path == included_file_path:
+                            included_file_model = model
+                            break
 
             if included_file_model:
-                header_basename = Path(included_file_path).stem
+                header_basename = Path(included_file_model.file_path).stem
 
                 lines.extend(
                     self._generate_header_class(included_file_model, header_basename)
