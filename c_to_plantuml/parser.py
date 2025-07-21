@@ -230,6 +230,10 @@ class CParser:
             # Skip typedef declarations
             if line.startswith('typedef '):
                 continue
+
+            # Skip lines that are just a closing brace and a name (e.g., '} log_level_t;')
+            if line.startswith('}'):
+                continue
                 
             # Skip lines with function-like declarations (containing parentheses)
             if '(' in line and ')' in line:
