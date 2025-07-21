@@ -105,19 +105,14 @@ class TestIncludeProcessingEnhancedFeatures(BaseFeatureTest):
             main_content = f.read()
         
         # Verify typedefs are correctly displayed in main class
-        self.assertIn("+ typedef CustomString", main_content)
-        self.assertIn("+ typedef graphics_Color CustomColor", main_content)
-        self.assertIn("+ typedef network_Address CustomAddress", main_content)
+        self.assertIn("- typedef core_String CustomString", main_content)
+        self.assertIn("- typedef graphics_Color CustomColor", main_content)
+        self.assertIn("- typedef network_Address CustomAddress", main_content)
         
-        # Check that typedefs are correctly shown in header classes (name only)
-        self.assertIn("+ typedef CustomString", main_content)  # from core.h
-        self.assertIn("+ typedef CustomColor", main_content)   # from graphics.h
-        self.assertIn("+ typedef CustomAddress", main_content) # from network.h
-        
-        # Check that typedefs are NOT shown with full type information in headers
-        self.assertNotIn("+ typedef core_String CustomString", main_content)
-        self.assertNotIn("+ typedef graphics_Color CustomColor", main_content)
-        self.assertNotIn("+ typedef network_Address CustomAddress", main_content)
+        # Check that typedefs are correctly shown in header classes with full type
+        self.assertIn("+ typedef char* String", main_content)  # from core.h
+        self.assertIn("+ typedef struct { core_Integer r, g, b", main_content)   # from graphics.h
+        self.assertIn("+ typedef struct { core_Integer octet1, octet2, octet3, octet4", main_content) # from network.h
 
     def test_feature_header_to_header_relationship_verification(self):
         """Test detailed verification of header-to-header relationships"""
@@ -242,15 +237,10 @@ class TestIncludeProcessingEnhancedFeatures(BaseFeatureTest):
         self.assertIn("+ #define DEBUG_MODE", main_content)  # from config.h
         self.assertIn("+ #define DEFAULT_PORT", main_content)  # from config.h
         
-        # Verify typedefs are correctly displayed in header classes
-        self.assertIn("+ typedef ConfigId", main_content)  # from config.h
-        self.assertIn("+ typedef PortNumber", main_content)  # from config.h
-        self.assertIn("+ typedef ConfigString", main_content)  # from config.h
-        
-        # Check that typedefs are NOT shown with full type information in headers
-        self.assertNotIn("+ typedef uint32_t ConfigId", main_content)
-        self.assertNotIn("+ typedef uint16_t PortNumber", main_content)
-        self.assertNotIn("+ typedef char* ConfigString", main_content)
+        # Verify typedefs are correctly displayed in header classes with full type
+        self.assertIn("+ typedef uint32_t ConfigId", main_content)  # from config.h
+        self.assertIn("+ typedef uint16_t PortNumber", main_content)  # from config.h
+        self.assertIn("+ typedef char* ConfigString", main_content)  # from config.h
 
     def test_feature_struct_and_enum_integration_verification(self):
         """Test verification of struct and enum integration in headers"""

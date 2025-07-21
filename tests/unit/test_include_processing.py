@@ -314,15 +314,10 @@ typedef struct {
         file_model = project_model.files["test.c"]
         diagram = self.generator.generate_diagram(file_model, project_model)
         
-        # Check that typedefs are correctly shown in header classes (name only)
-        self.assertIn("+ typedef Integer", diagram)  # from utils.h
-        self.assertIn("+ typedef String", diagram)   # from utils.h
-        self.assertIn("+ typedef Callback", diagram) # from utils.h
-        
-        # Check that typedefs are NOT shown with full type information in headers
-        self.assertNotIn("+ typedef int Integer", diagram)
-        self.assertNotIn("+ typedef char* String", diagram)
-        self.assertNotIn("+ typedef void (*)(...)", diagram)
+        # Check that typedefs are correctly shown in header classes with full type
+        self.assertIn("+ typedef int Integer", diagram)  # from utils.h
+        self.assertIn("+ typedef char* String", diagram)   # from utils.h
+        self.assertIn("+ typedef void (*)(...) Callback", diagram) # from utils.h
 
     def test_generate_complex_typedef_relationships(self):
         """Test generating complex typedef relationships with structs"""
@@ -353,17 +348,12 @@ typedef Color* ColorPtr;
         file_model = project_model.files["test.c"]
         diagram = self.generator.generate_diagram(file_model, project_model)
         
-        # Check that complex typedefs are parsed and included (name only in headers)
-        self.assertIn("+ typedef x", diagram)           # from types.h
-        self.assertIn("+ typedef PointPtr", diagram)    # from types.h
-        self.assertIn("+ typedef PointPtrPtr", diagram) # from types.h
-        self.assertIn("+ typedef Color", diagram)       # from types.h
-        self.assertIn("+ typedef ColorPtr", diagram)    # from types.h
-        
-        # Check that typedefs are NOT shown with full type information in headers
-        self.assertNotIn("+ typedef struct { int x", diagram)
-        self.assertNotIn("+ typedef Point* PointPtr", diagram)
-        self.assertNotIn("+ typedef PointPtr* PointPtrPtr", diagram)
+        # Check that complex typedefs are parsed and included with full type
+        self.assertIn("+ typedef struct { int x", diagram)           # from types.h
+        self.assertIn("+ typedef Point* PointPtr", diagram)    # from types.h
+        self.assertIn("+ typedef PointPtr* PointPtrPtr", diagram) # from types.h
+        self.assertIn("+ typedef enum Color", diagram)       # from types.h
+        self.assertIn("+ typedef Color* ColorPtr", diagram)    # from types.h
 
     def test_include_processing_with_typedefs(self):
         """Test include processing when headers contain typedefs"""
@@ -388,12 +378,11 @@ typedef struct {
         main_file_model = project_model.files["main.c"]
         diagram = self.generator.generate_diagram(main_file_model, project_model)
         
-        # Check that header class includes typedefs
+        # Check that header class includes typedefs with full type
         self.assertIn('class "utils" as HEADER_UTILS <<header>> #LightGreen', diagram)
-        self.assertIn("+ typedef Integer", diagram)
-        self.assertIn("+ typedef String", diagram)
-        # Typedef content should NOT be shown in header class
-        self.assertNotIn("+ typedef struct { int x", diagram)
+        self.assertIn("+ typedef int Integer", diagram)
+        self.assertIn("+ typedef char* String", diagram)
+        self.assertIn("+ typedef struct { int x", diagram)
 
     def test_include_processing_with_macros(self):
         """Test include processing when headers contain macros"""
@@ -623,18 +612,13 @@ enum Color {
         self.assertIn("MAIN --> HEADER_TYPES : <<include>>", diagram)
         
         # Typedefs in main class
-        self.assertIn("- typedef Integer", diagram)
-        self.assertIn("- typedef String", diagram)
+        self.assertIn("- typedef int Integer", diagram)
+        self.assertIn("- typedef char* String", diagram)
         
-        # Typedefs in header classes (name only)
-        self.assertIn("+ typedef x", diagram)  # in utils.h
-        self.assertIn("+ typedef ConfigId", diagram)  # in config.h
-        self.assertIn("+ typedef Byte", diagram)  # in types.h
-        
-        # Check that typedefs are NOT shown with full type information in headers
-        self.assertNotIn("+ typedef struct { int x", diagram)  # in utils.h
-        self.assertNotIn("+ typedef uint32_t ConfigId", diagram)  # in config.h
-        self.assertNotIn("+ typedef unsigned char Byte", diagram)  # in types.h
+        # Typedefs in header classes with full type
+        self.assertIn("+ typedef struct { int x", diagram)  # in utils.h
+        self.assertIn("+ typedef uint32_t ConfigId", diagram)  # in config.h
+        self.assertIn("+ typedef unsigned char Byte", diagram)  # in types.h
         
         # Macros in header classes
         self.assertIn("+ #define MAX_SIZE", diagram)  # in utils.h
