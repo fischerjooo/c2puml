@@ -17,7 +17,7 @@ def get_acceptable_encodings() -> List[str]:
     return [
         "utf-8", "utf-8-sig", "utf-16", "utf-16le", "utf-16be",
         "windows-1252", "windows-1254", "cp1252", "cp1254",
-        "iso-8859-1", "latin-1"
+        "iso-8859-1", "latin-1", "ascii"  # Added 'ascii' as acceptable encoding
     ]
 
 
