@@ -23,9 +23,20 @@ def main():
     print(f"Working directory: {os.getcwd()}")
     print(f"Python version: {sys.version}")
     
-    # Use unittest discovery to find and run all tests
-    test_loader = unittest.TestLoader()
-    test_suite = test_loader.discover('tests', pattern='test_*.py')
+    # Check for command line arguments
+    if len(sys.argv) > 1:
+        test_category = sys.argv[1].lower()
+        if test_category in ['unit', 'feature', 'integration']:
+            print(f"Running {test_category} tests only...")
+            test_suite = unittest.TestLoader().discover(f'tests/{test_category}', pattern='test_*.py')
+        else:
+            print(f"Unknown test category: {test_category}")
+            print("Available categories: unit, feature, integration")
+            return 1
+    else:
+        # Use unittest discovery to find and run all tests
+        test_loader = unittest.TestLoader()
+        test_suite = test_loader.discover('tests', pattern='test_*.py')
     
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(test_suite)
