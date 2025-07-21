@@ -28,6 +28,15 @@ class "string.h" as HEADER_STRING_H <<header>> #LightGray
 {
 }
 
+class "config" as HEADER_CONFIG <<header>> #LightGreen
+{
+    -- Macros --
+    + #define CONFIG_H
+    + #define PROJECT_NAME
+    + #define MAX_LABEL_LEN
+    + #define DEFAULT_BUFFER_SIZE
+}
+
 class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
 {
 }

@@ -23,6 +23,15 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     + real_t average()
 }
 
+class "config" as HEADER_CONFIG <<header>> #LightGreen
+{
+    -- Macros --
+    + #define CONFIG_H
+    + #define PROJECT_NAME
+    + #define MAX_LABEL_LEN
+    + #define DEFAULT_BUFFER_SIZE
+}
+
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
 

@@ -160,10 +160,18 @@ class PlantUMLGenerator:
         for include_relation in file_model.include_relations:
             included_file_path = include_relation.included_file
             included_file_model = None
+            # Try to find the included file model by matching file_path
             for key, model in project_model.files.items():
                 if model.file_path == included_file_path:
                     included_file_model = model
                     break
+            # If not found by file_path, try to find by relative path
+            if not included_file_model:
+                included_file_basename = Path(included_file_path).name
+                for key, model in project_model.files.items():
+                    if key == included_file_basename:
+                        included_file_model = model
+                        break
             if included_file_model:
                 header_basename = Path(included_file_model.file_path).stem
                 if header_basename not in seen_headers:
@@ -171,6 +179,14 @@ class PlantUMLGenerator:
                     lines.extend(
                         self._generate_header_class(included_file_model, header_basename)
                     )
+                
+                # Recursively process include relationships from the included file
+                self._process_nested_includes(included_file_model, project_model, seen_headers, lines)
+            else:
+                # Debug logging to see what's happening
+                import logging
+                logging.getLogger(__name__).debug(f"Could not find included file model for: {included_file_path}")
+                logging.getLogger(__name__).debug(f"Available keys: {list(project_model.files.keys())}")
             
             # Also process external headers from included files
             if included_file_model:
@@ -188,6 +204,77 @@ class PlantUMLGenerator:
                             )
 
         return lines
+
+    def _process_nested_includes(self, file_model: FileModel, project_model: ProjectModel, seen_headers: set, lines: List[str], visited_files: set = None, depth: int = 0) -> None:
+        """Recursively process include relationships from included files"""
+        if visited_files is None:
+            visited_files = set()
+        
+        # Prevent infinite recursion
+        if depth > 3 or file_model.file_path in visited_files:
+            return
+        
+        visited_files.add(file_model.file_path)
+        
+        for include_relation in file_model.include_relations:
+            included_file_path = include_relation.included_file
+            included_file_model = None
+            # Try to find the included file model by matching file_path
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    included_file_model = model
+                    break
+            # If not found by file_path, try to find by relative path
+            if not included_file_model:
+                included_file_basename = Path(included_file_path).name
+                for key, model in project_model.files.items():
+                    if key == included_file_basename:
+                        included_file_model = model
+                        break
+            if included_file_model:
+                header_basename = Path(included_file_model.file_path).stem
+                if header_basename not in seen_headers:
+                    seen_headers.add(header_basename)
+                    lines.extend(
+                        self._generate_header_class(included_file_model, header_basename)
+                    )
+                    # Recursively process further nested includes
+                    self._process_nested_includes(included_file_model, project_model, seen_headers, lines, visited_files, depth + 1)
+
+    def _process_nested_typedefs(self, file_model: FileModel, project_model: ProjectModel, seen_typedefs: set, lines: List[str], visited_files: set = None, depth: int = 0) -> None:
+        """Recursively process typedefs from included files"""
+        if visited_files is None:
+            visited_files = set()
+        
+        # Prevent infinite recursion
+        if depth > 3 or file_model.file_path in visited_files:
+            return
+        
+        visited_files.add(file_model.file_path)
+        
+        for include_relation in file_model.include_relations:
+            included_file_path = include_relation.included_file
+            included_file_model = None
+            # Try to find the included file model by matching file_path
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    included_file_model = model
+                    break
+            # If not found by file_path, try to find by relative path
+            if not included_file_model:
+                included_file_basename = Path(included_file_path).name
+                for key, model in project_model.files.items():
+                    if key == included_file_basename:
+                        included_file_model = model
+                        break
+            if included_file_model:
+                for typedef_relation in included_file_model.typedef_relations:
+                    typedef_name = typedef_relation.typedef_name
+                    if typedef_name not in seen_typedefs:
+                        seen_typedefs.add(typedef_name)
+                        lines.extend(self._generate_single_typedef_class(typedef_relation, included_file_model, project_model))
+                # Recursively process further nested typedefs
+                self._process_nested_typedefs(included_file_model, project_model, seen_typedefs, lines, visited_files, depth + 1)
 
     def _generate_header_class(self, file_model: FileModel, basename: str) -> List[str]:
         """Generate a class for a header file using the new PlantUML template"""
@@ -247,20 +334,8 @@ class PlantUMLGenerator:
                 seen_typedefs.add(typedef_name)
                 lines.extend(self._generate_single_typedef_class(typedef_relation, file_model, project_model))
         
-        # Process typedefs from included header files
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
-            included_file_model = None
-            for key, model in project_model.files.items():
-                if model.file_path == included_file_path:
-                    included_file_model = model
-                    break
-            if included_file_model:
-                for typedef_relation in included_file_model.typedef_relations:
-                    typedef_name = typedef_relation.typedef_name
-                    if typedef_name not in seen_typedefs:
-                        seen_typedefs.add(typedef_name)
-                        lines.extend(self._generate_single_typedef_class(typedef_relation, included_file_model, project_model))
+        # Process typedefs from included header files (recursively)
+        self._process_nested_typedefs(file_model, project_model, seen_typedefs, lines)
         
         return lines
     
@@ -366,10 +441,18 @@ class PlantUMLGenerator:
         for include_relation in file_model.include_relations:
             included_file_path = include_relation.included_file
             included_file_model = None
+            # Try to find the included file model by matching file_path
             for key, model in project_model.files.items():
                 if model.file_path == included_file_path:
                     included_file_model = model
                     break
+            # If not found by file_path, try to find by relative path
+            if not included_file_model:
+                included_file_basename = Path(included_file_path).name
+                for key, model in project_model.files.items():
+                    if key == included_file_basename:
+                        included_file_model = model
+                        break
             if included_file_model:
                 # Process include relations from the included file
                 for nested_include_relation in included_file_model.include_relations:
@@ -396,10 +479,18 @@ class PlantUMLGenerator:
         for include_relation in file_model.include_relations:
             included_file_path = include_relation.included_file
             included_file_model = None
+            # Try to find the included file model by matching file_path
             for key, model in project_model.files.items():
                 if model.file_path == included_file_path:
                     included_file_model = model
                     break
+            # If not found by file_path, try to find by relative path
+            if not included_file_model:
+                included_file_basename = Path(included_file_path).name
+                for key, model in project_model.files.items():
+                    if key == included_file_basename:
+                        included_file_model = model
+                        break
             
             if included_file_model:
                 # Process external headers from this included file
