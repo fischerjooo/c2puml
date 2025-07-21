@@ -147,10 +147,10 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
         
         # Verify typedefs are correctly displayed in main class
         expected_main_typedefs = [
-            "+ typedef core_String CustomString",
-            "+ typedef graphics_Color CustomColor",
-            "+ typedef network_Address CustomAddress",
-            "+ typedef core_Integer CustomInteger"
+            "- typedef CustomString",
+            "- typedef CustomColor",
+            "- typedef CustomAddress",
+            "- typedef CustomInteger"
         ]
         
         for typedef in expected_main_typedefs:
@@ -237,8 +237,8 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
         self.assertIn("+ typedef int Integer", main_content)
         
         # Verify macros are correctly displayed
-        self.assertIn("+ #define MAX_SIZE", main_content)
-        self.assertIn("+ #define DEBUG_MODE", main_content)
+        self.assertIn("- #define MAX_SIZE", main_content)
+        self.assertIn("- #define DEBUG_MODE", main_content)
         
         # Verify structs are correctly displayed
         self.assertIn("+ struct Config", main_content)

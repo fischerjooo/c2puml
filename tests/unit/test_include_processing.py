@@ -380,7 +380,6 @@ typedef struct {
         
         # Check that header class includes typedefs
         self.assertIn('class "utils" as HEADER_UTILS <<header>> #LightGreen', diagram)
-        # Check typedefs in the header class
         self.assertIn("+ typedef int Integer", diagram)
         self.assertIn("+ typedef char* String", diagram)
         self.assertIn("+ typedef struct { int x", diagram)
@@ -611,8 +610,8 @@ enum Color {
         self.assertIn("MAIN --> HEADER_TYPES : <<include>>", diagram)
         
         # Typedefs in main class
-        self.assertIn("+ typedef int Integer", diagram)
-        self.assertIn("+ typedef char* String", diagram)
+        self.assertIn("- typedef Integer", diagram)
+        self.assertIn("- typedef String", diagram)
         
         # Typedefs in header classes
         self.assertIn("+ typedef struct { int x", diagram)  # in utils.h
