@@ -356,6 +356,65 @@ python -m unittest tests.unit.test_generator
 python -m unittest tests.feature.test_integration
 ```
 
+## GitHub Workflows
+
+### Convert PlantUML to JPEG
+
+This repository includes a GitHub workflow that automatically converts PlantUML (`.puml`) files to JPEG images. The workflow uses the `picgen.sh` script and can be triggered manually.
+
+#### How to Use
+
+1. **Manual Trigger**: Go to the "Actions" tab in your GitHub repository
+2. **Select Workflow**: Choose "Convert PlantUML to JPEG" from the workflows list
+3. **Run Workflow**: Click "Run workflow" and configure:
+   - **Output folder**: Specify custom folder (defaults to `output`)
+   - **Commit changes**: Enable/disable automatic commit of generated images (default: enabled)
+4. **Results**: 
+   - Generated JPEG images are automatically committed to the repository
+   - Images are also available as downloadable artifacts
+
+#### What the Workflow Does
+
+- Installs PlantUML and ImageMagick on a Ubuntu runner
+- Scans the specified folder for `.puml` files
+- Converts each PlantUML file to JPEG format
+- **Automatically commits generated images to the repository** (configurable)
+- Uploads the generated images as downloadable artifacts
+- Provides detailed logs of the conversion process
+- Creates informative commit messages with file details
+
+#### Prerequisites
+
+The workflow automatically installs:
+- PlantUML (for diagram generation)
+- ImageMagick (for PNG to JPEG conversion)
+- Java Runtime Environment (required by PlantUML)
+
+#### Commit Behavior
+
+- **Default**: Generated images are automatically committed to the repository
+- **Configurable**: You can disable automatic commits via the workflow input
+- **Branch**: Images are committed to the same branch that triggered the workflow
+- **Commit Message**: Includes details about which `.puml` files were converted and which images were generated
+- **Permissions**: Uses `GITHUB_TOKEN` for authentication (no additional setup required)
+
+#### Local Usage
+
+You can also run the conversion locally:
+
+```bash
+# Make the script executable (if not already)
+chmod +x picgen.sh
+
+# Run the conversion
+./picgen.sh
+```
+
+The script will:
+- Convert all `.puml` files in the `output` directory to JPEG
+- Create both PNG (intermediate) and JPEG (final) files
+- Provide detailed progress information
+
 ## Contributing
 
 1. Fork the repository
