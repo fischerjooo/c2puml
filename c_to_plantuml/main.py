@@ -12,14 +12,16 @@ import argparse
 import logging
 import os
 import sys
+import json
+from pathlib import Path
 
 from .generator import Generator
 from .parser import Parser
 from .transformer import Transformer
+from .config import Config
 
 
 def setup_logging(verbose: bool = False) -> None:
-    """Setup logging configuration"""
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(
         level=level,
@@ -27,286 +29,118 @@ def setup_logging(verbose: bool = False) -> None:
         handlers=[logging.StreamHandler(sys.stdout)],
     )
 
+def load_config_from_path(config_path: str) -> dict:
+    path = Path(config_path)
+    if path.is_file():
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    elif path.is_dir():
+        # Merge all .json files in the folder
+        config = {}
+        for file in path.glob("*.json"):
+            with open(file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                config.update(data)
+        return config
+    else:
+        raise FileNotFoundError(f"Config path not found: {config_path}")
 
-def create_parser() -> argparse.ArgumentParser:
-    """Create the main argument parser"""
+def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Convert C/C++ code to PlantUML diagrams",
+        description="C to PlantUML Converter (Simplified CLI)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Processing Flow:
-1. Parse C/C++ files and generate model.json
-2. Transform model based on configuration
-3. Generate PlantUML files from the transformed model
-
-Examples:
-  %(prog)s parse ./src
-  %(prog)s transform model.json config.json
-  %(prog)s generate model.json
-  %(prog)s workflow ./src config.json
-  %(prog)s parse ./src --verbose
+Usage:
+  %(prog)s --config config.json [--output output_folder]
+  %(prog)s config_folder [--output output_folder]
+  %(prog)s [--output output_folder]  # Uses current directory as config folder
         """,
     )
-
-    # Global options
+    parser.add_argument(
+        "--config", "-c", type=str, default=None, help="Path to config.json or config folder (optional, default: current directory)"
+    )
+    parser.add_argument(
+        "output", nargs="?", default=None, help="Output folder (optional, default: ./output)"
+    )
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose output"
     )
-
-    subparsers = parser.add_subparsers(dest="command", help="Available commands")
-
-    # Parse command - Step 1: Parse C files and generate model
-    parse_parser = subparsers.add_parser(
-        "parse", help="Step 1: Parse C/C++ project and generate model.json"
-    )
-    parse_parser.add_argument("project_root", help="Root directory of C/C++ project")
-    parse_parser.add_argument(
-        "-o",
-        "--output",
-        default="model.json",
-        help="Output JSON model file (default: model.json)",
-    )
-    parse_parser.add_argument(
-        "--recursive",
-        action="store_true",
-        default=True,
-        help="Search subdirectories recursively (default: True)",
-    )
-    parse_parser.add_argument(
-        "--no-recursive",
-        dest="recursive",
-        action="store_false",
-        help="Disable recursive search",
-    )
-
-    # Transform command - Step 2: Transform model based on configuration
-    transform_parser = subparsers.add_parser(
-        "transform", help="Step 2: Transform model based on configuration"
-    )
-    transform_parser.add_argument("model_file", help="Input JSON model file")
-    transform_parser.add_argument("config_file", help="Configuration JSON file")
-    transform_parser.add_argument(
-        "-o",
-        "--output",
-        help="Output transformed model file (default: overwrites input)",
-    )
-
-    # Generate command - Step 3: Generate PlantUML from model
-    generate_parser = subparsers.add_parser(
-        "generate", help="Step 3: Generate PlantUML from JSON model"
-    )
-    generate_parser.add_argument("model_file", help="JSON model file")
-    generate_parser.add_argument(
-        "-o",
-        "--output-dir",
-        default="./plantuml_output",
-        help="Output directory for PlantUML files (default: ./plantuml_output)",
-    )
-
-    # Workflow command - Complete workflow (Steps 1-3)
-    workflow_parser = subparsers.add_parser(
-        "workflow", help="Complete workflow: Parse, transform, and generate"
-    )
-    workflow_parser.add_argument("project_root", help="Root directory of C/C++ project")
-    workflow_parser.add_argument("config_file", help="Configuration JSON file")
-    workflow_parser.add_argument(
-        "--recursive",
-        action="store_true",
-        default=True,
-        help="Search subdirectories recursively (default: True)",
-    )
-    workflow_parser.add_argument(
-        "--no-recursive",
-        dest="recursive",
-        action="store_false",
-        help="Disable recursive search",
-    )
-
-    return parser
-
-
-def handle_parse_command(args: argparse.Namespace) -> int:
-    """Handle parse command - Step 1: Parse C files and generate model.json"""
-    logger = logging.getLogger(__name__)
-
-    logger.info(f"Step 1: Parsing C/C++ project: {args.project_root}")
-
-    if not os.path.exists(args.project_root):
-        logger.error(f"Project root not found: {args.project_root}")
-        return 1
-
-    try:
-        parser = Parser()
-        output_file = parser.parse(
-            project_root=args.project_root,
-            output_file=args.output,
-            recursive=args.recursive,
-        )
-
-        logger.info(f"Step 1 complete! Model saved to: {output_file}")
-        return 0
-
-    except Exception as e:
-        logger.error(
-            f"Error during parsing: {e}", exc_info=getattr(args, "verbose", False)
-        )
-        return 1
-
-
-def handle_transform_command(args: argparse.Namespace) -> int:
-    """Handle transform command - Step 2: Transform model based on configuration"""
-    logger = logging.getLogger(__name__)
-
-    logger.info(f"Step 2: Transforming model: {args.model_file}")
-
-    if not os.path.exists(args.model_file):
-        logger.error(f"Model file not found: {args.model_file}")
-        return 1
-
-    if not os.path.exists(args.config_file):
-        logger.error(f"Config file not found: {args.config_file}")
-        return 1
-
-    try:
-        transformer = Transformer()
-        output_file = transformer.transform(
-            model_file=args.model_file,
-            config_file=args.config_file,
-            output_file=args.output,
-        )
-
-        logger.info(f"Step 2 complete! Transformed model saved to: {output_file}")
-        return 0
-
-    except Exception as e:
-        logger.error(
-            f"Error during transformation: {e}",
-            exc_info=getattr(args, "verbose", False),
-        )
-        return 1
-
-
-def handle_generate_command(args: argparse.Namespace) -> int:
-    """Handle generate command - Step 3: Generate PlantUML from model"""
-    logger = logging.getLogger(__name__)
-
-    logger.info(f"Step 3: Generating PlantUML diagrams from: {args.model_file}")
-
-    if not os.path.exists(args.model_file):
-        logger.error(f"Model file not found: {args.model_file}")
-        return 1
-
-    try:
-        generator = Generator()
-        output_dir = generator.generate(
-            model_file=args.model_file, output_dir=args.output_dir
-        )
-
-        logger.info(
-            f"Step 3 complete! PlantUML generation complete! Output in: {output_dir}"
-        )
-        return 0
-
-    except Exception as e:
-        logger.error(
-            f"Error generating PlantUML: {e}", exc_info=getattr(args, "verbose", False)
-        )
-        return 1
-
-
-def handle_workflow_command(args: argparse.Namespace) -> int:
-    """Handle workflow command - Complete workflow (Steps 1-3)"""
-    logger = logging.getLogger(__name__)
-    logger.info(
-        f"Running complete workflow: {args.project_root} with {args.config_file}"
-    )
-
-    if not os.path.exists(args.project_root):
-        logger.error(f"Project root not found: {args.project_root}")
-        return 1
-
-    if not os.path.exists(args.config_file):
-        logger.error(f"Config file not found: {args.config_file}")
-        return 1
-
-    try:
-        # Step 1: Parse
-        logger.info("Step 1: Starting project parsing...")
-        parser = Parser()
-        model_file = parser.parse(
-            project_root=args.project_root,
-            output_file="temp_model.json",
-            recursive=args.recursive,
-        )
-        logger.info(f"Step 1 complete! Model saved to: {model_file}")
-
-        # Step 2: Transform
-        logger.info("Step 2: Starting model transformation...")
-        transformer = Transformer()
-        transformed_model_file = transformer.transform(
-            model_file=model_file,
-            config_file=args.config_file,
-            output_file="transformed_model.json",
-        )
-        logger.info(
-            f"Step 2 complete! Transformed model saved to: {transformed_model_file}"
-        )
-
-        # Step 3: Generate
-        logger.info("Step 3: Starting PlantUML generation...")
-        generator = Generator()
-        output_dir = generator.generate(
-            model_file=transformed_model_file, output_dir="./plantuml_output"
-        )
-        logger.info(
-            f"Step 3 complete! PlantUML generation complete! Output in: {output_dir}"
-        )
-
-        # Clean up temporary files
-        try:
-            os.remove(model_file)
-            os.remove(transformed_model_file)
-            logger.debug("Cleaned up temporary files")
-        except Exception:
-            pass
-
-        logger.info("Complete workflow finished successfully!")
-        return 0
-
-    except Exception as e:
-        logger.error(
-            f"Error in workflow: {e}", exc_info=getattr(args, "verbose", False)
-        )
-        return 1
-
-
-def main() -> int:
-    """Main entry point"""
-    parser = create_parser()
     args = parser.parse_args()
 
-    # Setup logging
-    setup_logging(getattr(args, "verbose", False))
+    setup_logging(args.verbose)
 
-    if not args.command:
-        parser.print_help()
-        return 1
-
-    # Handle commands
-    command_handlers = {
-        "parse": handle_parse_command,
-        "transform": handle_transform_command,
-        "generate": handle_generate_command,
-        "workflow": handle_workflow_command,
-    }
-
-    handler = command_handlers.get(args.command)
-    if handler:
-        return handler(args)
+    # Determine config path
+    config_path = args.config
+    if config_path is None:
+        # If a positional argument is given, treat it as config folder
+        if args.output and not args.output.startswith("-"):
+            config_path = args.output
+            output_folder = None
+        else:
+            config_path = os.getcwd()
+            output_folder = None
     else:
-        logging.error(f"Unknown command: {args.command}")
+        output_folder = args.output
+
+    # Determine output folder
+    if output_folder is None or output_folder.startswith("-"):
+        output_folder = os.path.join(os.getcwd(), "output")
+    output_folder = os.path.abspath(output_folder)
+    os.makedirs(output_folder, exist_ok=True)
+
+    logging.info(f"Using config: {config_path}")
+    logging.info(f"Output folder: {output_folder}")
+
+    # Load config
+    try:
+        config_data = load_config_from_path(config_path)
+        config = Config(**config_data)
+    except Exception as e:
+        logging.error(f"Failed to load configuration: {e}")
         return 1
 
+    # Step 1: Parse
+    try:
+        parser_obj = Parser()
+        model_file = os.path.join(output_folder, "model.json")
+        parser_obj.parse(
+            project_root=config.source_folders[0],
+            output_file=model_file,
+            recursive=getattr(config, "recursive", True),
+        )
+        logging.info(f"Model saved to: {model_file}")
+    except Exception as e:
+        logging.error(f"Error during parsing: {e}")
+        return 1
+
+    # Step 2: Transform
+    try:
+        transformer = Transformer()
+        transformed_model_file = os.path.join(output_folder, "transformed_model.json")
+        transformer.transform(
+            model_file=model_file,
+            config_file=config_path if Path(config_path).is_file() else str(list(Path(config_path).glob("*.json"))[0]),
+            output_file=transformed_model_file,
+        )
+        logging.info(f"Transformed model saved to: {transformed_model_file}")
+    except Exception as e:
+        logging.error(f"Error during transformation: {e}")
+        return 1
+
+    # Step 3: Generate
+    try:
+        generator = Generator()
+        generator.generate(
+            model_file=transformed_model_file,
+            output_dir=output_folder,
+        )
+        logging.info(f"PlantUML generation complete! Output in: {output_folder}")
+    except Exception as e:
+        logging.error(f"Error generating PlantUML: {e}")
+        return 1
+
+    logging.info("Complete workflow finished successfully!")
+    return 0
 
 if __name__ == "__main__":
     sys.exit(main())
