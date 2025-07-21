@@ -34,10 +34,79 @@ class "stdlib.h" as HEADER_STDLIB_H <<header>> #LightGray
 {
 }
 
+class "sample" as HEADER_SAMPLE <<header>> #LightGreen
+{
+    -- Macros --
+    + #define SAMPLE_H
+    + #define PI
+    + #define VERSION
+    + #define MIN
+    + #define MAX
+    -- Global Variables --
+    + int x
+    + int y
+    + extern const int MAX_POINTS
+    + extern const char * DEFAULT_LABEL
+    -- Functions --
+    + extern int calculate_sum()
+    + extern point_t * create_point()
+    + extern void process_point()
+}
+
+class "config" as HEADER_CONFIG <<header>> #LightGreen
+{
+    -- Macros --
+    + #define CONFIG_H
+    + #define PROJECT_NAME
+    + #define MAX_LABEL_LEN
+    + #define DEFAULT_BUFFER_SIZE
+}
+
+class "logger" as HEADER_LOGGER <<header>> #LightGreen
+{
+    -- Macros --
+    + #define LOGGER_H
+    -- Functions --
+    + void set_log_callback()
+    + void log_message()
+}
+
+class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
+{
+    -- Macros --
+    + #define MATH_UTILS_H
+    -- Functions --
+    + int add()
+    + int subtract()
+    + real_t average()
+}
+
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 {
     + point_t[3] vertices
     + char[MAX_LABEL_LEN] label
+}
+
+class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
+{
+    + int x
+    + int y
+    + char[32] label
+}
+
+class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
+{
+    + STATE_IDLE = 0
+    + STATE_RUNNING
+    + STATE_ERROR
+}
+
+class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
+{
+    + LOG_DEBUG = 0
+    + LOG_INFO
+    + LOG_WARN
+    + LOG_ERROR
 }
 
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
