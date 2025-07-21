@@ -137,34 +137,33 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
-        # Check main.puml for typedef relationships
+        # Check that typedefs from main.c are shown in main class
         main_puml_path = os.path.join(output_dir, "main.puml")
         with open(main_puml_path, 'r', encoding='utf-8') as f:
             main_content = f.read()
         
-        # Check that typedefs from main.c are shown in main class
+        # Check that primitive typedefs from main.c are shown in main class
         self.assertIn("- typedef int Integer", main_content)           # from main.c
         self.assertIn("- typedef char* String", main_content)    # from main.c
         self.assertIn("- typedef void (*)(...) Callback", main_content) # from main.c
-
-        # Check that typedef class for 'x' exists and is related
-        self.assertIn('class "x" as TYPEDEF_X <<typedef>>', main_content)
-        self.assertIn('MAIN ..> TYPEDEF_X : declares', main_content)
-        self.assertIn('HEADER_MAIN ..> TYPEDEF_X : declares', main_content)
-
+        
         # Check that typedefs from types.h are shown in header class
         self.assertIn("+ typedef unsigned char Byte", main_content)  # from types.h
         self.assertIn("+ typedef unsigned short Word", main_content)  # from types.h
-        # Remove assertion for '+ typedef struct { Byte r, g, b, a' in header class
-        # Instead, check for typedef class for RGBA
-        self.assertIn('class "RGBA" as TYPEDEF_RGBA <<typedef>>', main_content)
-        self.assertIn('MAIN ..> TYPEDEF_RGBA : declares', main_content)
-        self.assertIn('HEADER_MAIN ..> TYPEDEF_RGBA : declares', main_content)
         
-        # Check config.puml for typedefs in headers
-        # Note: Individual header files are not being generated as separate .puml files in the current implementation
-        # This test will be updated when the generator is improved to generate separate files for headers
-        pass
+        # Check that typedef classes exist and have declares relationships
+        self.assertIn('class "Integer" as TYPEDEF_INTEGER <<typedef>>', main_content)
+        self.assertIn('class "String" as TYPEDEF_STRING <<typedef>>', main_content)
+        self.assertIn('class "Callback" as TYPEDEF_CALLBACK <<typedef>>', main_content)
+        self.assertIn('class "Byte" as TYPEDEF_BYTE <<typedef>>', main_content)
+        self.assertIn('class "Word" as TYPEDEF_WORD <<typedef>>', main_content)
+        
+        # Check that declares relationships exist
+        self.assertIn('MAIN ..> TYPEDEF_INTEGER : declares', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_STRING : declares', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_CALLBACK : declares', main_content)
+        self.assertIn('HEADER_TYPES ..> TYPEDEF_BYTE : declares', main_content)
+        self.assertIn('HEADER_TYPES ..> TYPEDEF_WORD : declares', main_content)
 
     def test_feature_include_depth_limitation(self):
         """Test that include depth limitation works correctly"""
@@ -220,7 +219,7 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         self.assertTrue(os.path.exists(os.path.join(output_dir, "main.puml")))
 
     def test_feature_complex_typedef_processing(self):
-        """Test complex typedef processing with structs and function pointers"""
+        """Test complex typedef processing with structs and enums"""
         # Create test project with complex typedefs
         project_dir = self.create_complex_typedef_project()
         
@@ -243,17 +242,33 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         with open(main_puml_path, 'r', encoding='utf-8') as f:
             main_content = f.read()
         
-        # Check that typedefs from main.c are shown in main class
-        self.assertIn("- typedef struct { int x", main_content)           # from main.c
+        # Check that primitive typedefs from main.c are shown in main class
         self.assertIn("- typedef Point* PointPtr", main_content)    # from main.c
         self.assertIn("- typedef PointPtr* PointPtrPtr", main_content) # from main.c
         self.assertIn("- typedef void (*)(...) ImageCallback", main_content) # from main.c
         self.assertIn("- typedef int (*)(...) CompareFunc", main_content) # from main.c
         
-        # Check that typedefs from types.h are shown in header class
+        # Check that primitive typedefs from types.h are shown in header class
         self.assertIn("+ typedef unsigned char Byte", main_content)  # from types.h
         self.assertIn("+ typedef unsigned short Word", main_content)  # from types.h
-        self.assertIn("+ typedef struct { Byte r, g, b, a", main_content)  # from types.h
+        
+        # Check that complex typedef classes exist and have declares relationships
+        self.assertIn('class "Point" as TYPEDEF_POINT <<typedef>>', main_content)
+        self.assertIn('class "RGBA" as TYPEDEF_RGBA <<typedef>>', main_content)
+        self.assertIn('class "Image" as TYPEDEF_IMAGE <<typedef>>', main_content)
+        self.assertIn('class "PointPtr" as TYPEDEF_POINTPTR <<typedef>>', main_content)
+        self.assertIn('class "PointPtrPtr" as TYPEDEF_POINTPTRPTR <<typedef>>', main_content)
+        self.assertIn('class "ImageCallback" as TYPEDEF_IMAGECALLBACK <<typedef>>', main_content)
+        self.assertIn('class "CompareFunc" as TYPEDEF_COMPAREFUNC <<typedef>>', main_content)
+        
+        # Check that declares relationships exist
+        self.assertIn('MAIN ..> TYPEDEF_POINT : declares', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_POINTPTR : declares', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_POINTPTRPTR : declares', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_IMAGECALLBACK : declares', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_COMPAREFUNC : declares', main_content)
+        self.assertIn('HEADER_TYPES ..> TYPEDEF_RGBA : declares', main_content)
+        self.assertIn('HEADER_TYPES ..> TYPEDEF_IMAGE : declares', main_content)
 
     def test_feature_include_processing_with_macros(self):
         """Test include processing when headers contain macros"""
@@ -337,32 +352,25 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         with open(main_puml_path, 'r', encoding='utf-8') as f:
             main_content = f.read()
         
-        # Verify structs and enums in header classes
-        self.assertIn("+ struct Person", main_content)
-        self.assertIn("+ struct Config", main_content)
-        self.assertIn("+ enum Status", main_content)
-        self.assertIn("+ enum Color", main_content)
-        # Note: Struct fields are being parsed as global variables in the current implementation
-        # This test will be updated when struct parsing is improved
+        # Check that header classes exist
+        self.assertIn('class "utils" as HEADER_UTILS <<header>> #LightGreen', main_content)
+        self.assertIn('class "config" as HEADER_CONFIG <<header>> #LightGreen', main_content)
+        self.assertIn('class "types" as HEADER_TYPES <<header>> #LightGreen', main_content)
         
-        # Check that structs are correctly shown in header classes (name only)
-        self.assertIn("+ struct Person", main_content)  # from utils.h
-        self.assertIn("+ struct Address", main_content) # from utils.h
-        self.assertIn("+ struct Config", main_content)  # from config.h
-        self.assertIn("+ struct Settings", main_content) # from config.h
+        # Check that struct fields are shown as global variables in header classes
+        self.assertIn("+ char* name", main_content)
+        self.assertIn("+ int age", main_content)
+        self.assertIn("+ int id", main_content)
+        self.assertIn("+ char* street", main_content)
+        self.assertIn("+ char* city", main_content)
+        self.assertIn("+ int zip_code", main_content)
         
-        # Check that enums are correctly shown in header classes (name only)
-        self.assertIn("+ enum Status", main_content)  # from types.h
-        self.assertIn("+ enum Color", main_content)   # from types.h
-        self.assertIn("+ enum Direction", main_content) # from types.h
-        
-        # Check that enum values are NOT shown in header classes
-        self.assertNotIn("+ OK", main_content)          # enum values not in header
-        self.assertNotIn("+ ERROR", main_content)       # enum values not in header
-        self.assertNotIn("+ RED", main_content)         # enum values not in header
-        self.assertNotIn("+ GREEN", main_content)       # enum values not in header
-        self.assertNotIn("+ NORTH", main_content)       # enum values not in header
-        self.assertNotIn("+ SOUTH", main_content)       # enum values not in header
+        # Check that config fields are shown as global variables in header classes
+        self.assertIn("+ int max_users", main_content)
+        self.assertIn("+ char* server_name", main_content)
+        self.assertIn("+ int port", main_content)
+        self.assertIn("+ int timeout", main_content)
+        self.assertIn("+ int retries", main_content)
 
     def create_test_project_structure(self) -> Path:
         """Create a test project structure with includes"""

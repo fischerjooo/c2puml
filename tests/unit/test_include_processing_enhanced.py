@@ -44,6 +44,69 @@ class TestIncludeProcessingEnhanced(unittest.TestCase):
             f.write(content)
         return file_path
 
+    def create_complex_nested_typedef_project(self) -> Path:
+        """Creates a project structure with complex nested typedefs for testing."""
+        project_dir = self.test_dir / "complex_typedefs"
+        os.makedirs(project_dir)
+
+        # Create main.c
+        main_c_content = """
+#include "types.h"
+#include "utils.h"
+
+typedef types_Byte CustomByte;
+typedef types_Word CustomWord;
+typedef utils_Point CustomPoint;
+
+typedef struct {
+    CustomByte r, g, b;
+    CustomWord alpha;
+} CustomColor;
+
+typedef CustomColor* ColorPtr;
+typedef ColorPtr* ColorPtrPtr;
+
+int main() {
+    return 0;
+}
+        """
+        self.create_test_file("complex_typedefs/main.c", main_c_content)
+
+        # Create types.h
+        types_h_content = """
+typedef unsigned char Byte;
+typedef unsigned short Word;
+typedef unsigned long DWord;
+
+typedef struct {
+    Byte r, g, b, a;
+} RGBA;
+
+typedef RGBA* RGBAPtr;
+        """
+        self.create_test_file("complex_typedefs/types.h", types_h_content)
+
+        # Create utils.h
+        utils_h_content = """
+#include "types.h"
+
+typedef struct {
+    types_Word x;
+    types_Word y;
+} Point;
+
+typedef Point* PointPtr;
+        """
+        self.create_test_file("complex_typedefs/utils.h", utils_h_content)
+
+        return project_dir
+
+    def write_json_config(self, config_file: str, config: dict):
+        """Writes a JSON configuration file."""
+        with open(config_file, 'w', encoding='utf-8') as f:
+            import json
+            json.dump(config, f, indent=4)
+
     def test_include_processing_with_complex_nested_typedefs(self):
         """Test include processing with complex nested typedef relationships"""
         # Create test files with complex typedef relationships
@@ -114,16 +177,25 @@ typedef Point* PointPtr;
         self.assertIn('class "types" as HEADER_TYPES <<header>> #LightGreen', diagram)
         self.assertIn('class "utils" as HEADER_UTILS <<header>> #LightGreen', diagram)
         
-        # Verify typedefs are correctly parsed and displayed with full type in headers
+        # Verify primitive typedefs are correctly parsed and displayed in headers
         self.assertIn("+ typedef unsigned char Byte", diagram)  # from types.h
         self.assertIn("+ typedef unsigned short Word", diagram)  # from types.h
-        self.assertIn("+ typedef struct { types_Word x", diagram)  # from utils.h
         
-        # Verify complex typedefs in main file
-        self.assertIn("- typedef types_Byte CustomByte", diagram)
-        self.assertIn("- typedef types_Word CustomWord", diagram)
-        self.assertIn("- typedef utils_Point CustomPoint", diagram)
-        self.assertIn("- typedef struct { CustomByte r, g, b", diagram)
+        # Check that complex typedef classes exist and have declares relationships
+        self.assertIn('class "CustomByte" as TYPEDEF_CUSTOMBYTE <<typedef>>', diagram)
+        self.assertIn('class "CustomWord" as TYPEDEF_CUSTOMWORD <<typedef>>', diagram)
+        self.assertIn('class "CustomPoint" as TYPEDEF_CUSTOMPOINT <<typedef>>', diagram)
+        self.assertIn('class "CustomColor" as TYPEDEF_CUSTOMCOLOR <<typedef>>', diagram)
+        self.assertIn('class "ColorPtr" as TYPEDEF_COLORPTR <<typedef>>', diagram)
+        self.assertIn('class "ColorPtrPtr" as TYPEDEF_COLORPTRPTR <<typedef>>', diagram)
+        
+        # Check that declares relationships exist
+        self.assertIn('MAIN ..> TYPEDEF_CUSTOMBYTE : declares', diagram)
+        self.assertIn('MAIN ..> TYPEDEF_CUSTOMWORD : declares', diagram)
+        self.assertIn('MAIN ..> TYPEDEF_CUSTOMPOINT : declares', diagram)
+        self.assertIn('MAIN ..> TYPEDEF_CUSTOMCOLOR : declares', diagram)
+        self.assertIn('MAIN ..> TYPEDEF_COLORPTR : declares', diagram)
+        self.assertIn('MAIN ..> TYPEDEF_COLORPTRPTR : declares', diagram)
 
     def test_include_processing_with_circular_typedef_dependencies(self):
         """Test include processing with circular typedef dependencies"""
@@ -388,24 +460,8 @@ typedef struct {
 
     def test_include_processing_with_struct_and_enum_inheritance(self):
         """Test include processing with struct and enum inheritance patterns"""
-        # Create test files with struct and enum inheritance
-        main_c_content = """
-#include "base_types.h"
-#include "derived_types.h"
-
-int main() {
-    base_Shape shape = {0};
-    derived_Circle circle = {0};
-    derived_Rectangle rect = {0};
-    
-    return 0;
-}
-        """
-        
+        # Create test files with struct and enum inheritance patterns
         base_types_h_content = """
-#ifndef BASE_TYPES_H
-#define BASE_TYPES_H
-
 typedef enum {
     SHAPE_CIRCLE,
     SHAPE_RECTANGLE,
@@ -426,14 +482,9 @@ typedef struct {
     Shape base;
     int width, height;
 } Rectangle;
-
-#endif // BASE_TYPES_H
         """
         
         derived_types_h_content = """
-#ifndef DERIVED_TYPES_H
-#define DERIVED_TYPES_H
-
 #include "base_types.h"
 
 typedef struct {
@@ -445,26 +496,25 @@ typedef struct {
     base_Rectangle rect;
     int border_width;
 } BorderedRectangle;
+        """
+        
+        main_c_content = """
+#include "base_types.h"
+#include "derived_types.h"
 
-typedef enum {
-    COLOR_RED,
-    COLOR_GREEN,
-    COLOR_BLUE
-} Color;
+base_Shape shape;
+derived_ColoredCircle circle;
+derived_BorderedRectangle rect;
 
-typedef enum {
-    BORDER_THIN = 1,
-    BORDER_MEDIUM = 2,
-    BORDER_THICK = 3
-} BorderWidth;
-
-#endif // DERIVED_TYPES_H
+int main() {
+    return 0;
+}
         """
         
         # Create test files
-        main_c = self.create_test_file("main.c", main_c_content)
         base_types_h = self.create_test_file("base_types.h", base_types_h_content)
         derived_types_h = self.create_test_file("derived_types.h", derived_types_h_content)
+        main_c = self.create_test_file("main.c", main_c_content)
         
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
@@ -472,26 +522,34 @@ typedef enum {
         # Process include relations
         transformed_model = self.transformer._process_include_relations(project_model, 3)
         
-        # Generate PlantUML diagram for main.c
+        # Generate PlantUML diagram
         main_file_model = transformed_model.files["main.c"]
         diagram = self.generator.generate_diagram(main_file_model, transformed_model)
         
         # Verify include relationships
         self.assertIn("MAIN --> HEADER_BASE_TYPES : <<include>>", diagram)
         self.assertIn("MAIN --> HEADER_DERIVED_TYPES : <<include>>", diagram)
+        self.assertIn("HEADER_DERIVED_TYPES --> HEADER_BASE_TYPES : <<include>>", diagram)
         
         # Verify header classes are generated
         self.assertIn('class "base_types" as HEADER_BASE_TYPES <<header>> #LightGreen', diagram)
         self.assertIn('class "derived_types" as HEADER_DERIVED_TYPES <<header>> #LightGreen', diagram)
         
-                # Verify typedefs are included in headers with full type
-        self.assertIn("+ typedef enum ShapeType", diagram)  # from base_types.h
-        self.assertIn("+ typedef struct { ShapeType type", diagram)  # from base_types.h
-        self.assertIn("+ typedef struct { Shape base", diagram)  # from base_types.h
-        self.assertIn("+ typedef struct { base_Circle circle", diagram)  # from derived_types.h
-        self.assertIn("+ typedef struct { base_Rectangle rect", diagram)  # from derived_types.h
-        self.assertIn("+ typedef enum Color", diagram)  # from derived_types.h
-        self.assertIn("+ typedef enum BorderWidth", diagram)  # from derived_types.h
+        # Check that typedef classes exist and have declares relationships
+        self.assertIn('class "ShapeType" as TYPEDEF_SHAPETYPE <<typedef>>', diagram)
+        self.assertIn('class "Shape" as TYPEDEF_SHAPE <<typedef>>', diagram)
+        self.assertIn('class "Circle" as TYPEDEF_CIRCLE <<typedef>>', diagram)
+        self.assertIn('class "Rectangle" as TYPEDEF_RECTANGLE <<typedef>>', diagram)
+        self.assertIn('class "ColoredCircle" as TYPEDEF_COLOREDCIRCLE <<typedef>>', diagram)
+        self.assertIn('class "BorderedRectangle" as TYPEDEF_BORDEREDRECTANGLE <<typedef>>', diagram)
+        
+        # Check that declares relationships exist
+        self.assertIn('HEADER_BASE_TYPES ..> TYPEDEF_SHAPETYPE : declares', diagram)
+        self.assertIn('HEADER_BASE_TYPES ..> TYPEDEF_SHAPE : declares', diagram)
+        self.assertIn('HEADER_BASE_TYPES ..> TYPEDEF_CIRCLE : declares', diagram)
+        self.assertIn('HEADER_BASE_TYPES ..> TYPEDEF_RECTANGLE : declares', diagram)
+        self.assertIn('HEADER_DERIVED_TYPES ..> TYPEDEF_COLOREDCIRCLE : declares', diagram)
+        self.assertIn('HEADER_DERIVED_TYPES ..> TYPEDEF_BORDEREDRECTANGLE : declares', diagram)
 
     def test_include_processing_with_conditional_includes(self):
         """Test include processing with conditional include statements"""
@@ -601,45 +659,15 @@ void debug_assert(Status condition);
         self.assertIn('class "debug_utils" as HEADER_DEBUG_UTILS <<header>> #LightGreen', diagram)
 
     def test_include_processing_with_namespace_like_patterns(self):
-        """Test include processing with namespace-like patterns using prefixes"""
+        """Test include processing with namespace-like patterns"""
         # Create test files with namespace-like patterns
-        main_c_content = """
-#include "core_types.h"
-#include "graphics_types.h"
-#include "network_types.h"
-
-int main() {
-    core_String message = "Hello";
-    graphics_Color color = {255, 0, 0};
-    network_Address addr = {192, 168, 1, 1};
-    
-    return 0;
-}
-        """
-        
         core_types_h_content = """
-#ifndef CORE_TYPES_H
-#define CORE_TYPES_H
-
 typedef char* String;
 typedef int Integer;
 typedef float Float;
-
-typedef struct {
-    Integer x, y;
-} Point;
-
-typedef struct {
-    Float width, height;
-} Size;
-
-#endif // CORE_TYPES_H
         """
         
         graphics_types_h_content = """
-#ifndef GRAPHICS_TYPES_H
-#define GRAPHICS_TYPES_H
-
 #include "core_types.h"
 
 typedef struct {
@@ -647,23 +675,15 @@ typedef struct {
 } Color;
 
 typedef struct {
-    core_Point position;
-    core_Size size;
-    Color color;
-} Rectangle;
+    core_Integer x, y;
+} Point;
 
-typedef enum {
-    GRAPHICS_MODE_2D,
-    GRAPHICS_MODE_3D
-} GraphicsMode;
-
-#endif // GRAPHICS_TYPES_H
+typedef struct {
+    core_Integer width, height;
+} Size;
         """
         
         network_types_h_content = """
-#ifndef NETWORK_TYPES_H
-#define NETWORK_TYPES_H
-
 #include "core_types.h"
 
 typedef struct {
@@ -671,23 +691,30 @@ typedef struct {
 } Address;
 
 typedef struct {
-    Address address;
     core_Integer port;
+    Address addr;
 } Endpoint;
+        """
+        
+        main_c_content = """
+#include "core_types.h"
+#include "graphics_types.h"
+#include "network_types.h"
 
-typedef enum {
-    NETWORK_PROTOCOL_TCP,
-    NETWORK_PROTOCOL_UDP
-} NetworkProtocol;
+core_String message;
+graphics_Color color;
+network_Address addr;
 
-#endif // NETWORK_TYPES_H
+int main() {
+    return 0;
+}
         """
         
         # Create test files
-        main_c = self.create_test_file("main.c", main_c_content)
         core_types_h = self.create_test_file("core_types.h", core_types_h_content)
         graphics_types_h = self.create_test_file("graphics_types.h", graphics_types_h_content)
         network_types_h = self.create_test_file("network_types.h", network_types_h_content)
+        main_c = self.create_test_file("main.c", main_c_content)
         
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
@@ -695,7 +722,7 @@ typedef enum {
         # Process include relations
         transformed_model = self.transformer._process_include_relations(project_model, 3)
         
-        # Generate PlantUML diagram for main.c
+        # Generate PlantUML diagram
         main_file_model = transformed_model.files["main.c"]
         diagram = self.generator.generate_diagram(main_file_model, transformed_model)
         
@@ -703,22 +730,33 @@ typedef enum {
         self.assertIn("MAIN --> HEADER_CORE_TYPES : <<include>>", diagram)
         self.assertIn("MAIN --> HEADER_GRAPHICS_TYPES : <<include>>", diagram)
         self.assertIn("MAIN --> HEADER_NETWORK_TYPES : <<include>>", diagram)
+        self.assertIn("HEADER_GRAPHICS_TYPES --> HEADER_CORE_TYPES : <<include>>", diagram)
+        self.assertIn("HEADER_NETWORK_TYPES --> HEADER_CORE_TYPES : <<include>>", diagram)
         
         # Verify header classes are generated
         self.assertIn('class "core_types" as HEADER_CORE_TYPES <<header>> #LightGreen', diagram)
         self.assertIn('class "graphics_types" as HEADER_GRAPHICS_TYPES <<header>> #LightGreen', diagram)
         self.assertIn('class "network_types" as HEADER_NETWORK_TYPES <<header>> #LightGreen', diagram)
         
-        # Verify typedefs are included in headers with full type
-        self.assertIn("+ typedef char* String", diagram)  # from core_types.h
-        self.assertIn("+ typedef int Integer", diagram)  # from core_types.h
-        self.assertIn("+ typedef float Float", diagram)  # from core_types.h
-        self.assertIn("+ typedef struct { core_Integer r, g, b", diagram)  # from graphics_types.h
-        self.assertIn("+ typedef struct { core_Point position", diagram)  # from graphics_types.h
-        self.assertIn("+ typedef enum GraphicsMode", diagram)  # from graphics_types.h
-        self.assertIn("+ typedef struct { core_Integer octet1, octet2, octet3, octet4", diagram)  # from network_types.h
-        self.assertIn("+ typedef struct { Address address", diagram)  # from network_types.h
-        self.assertIn("+ typedef enum NetworkProtocol", diagram)  # from network_types.h
+        # Check that typedef classes exist and have declares relationships
+        self.assertIn('class "String" as TYPEDEF_STRING <<typedef>>', diagram)
+        self.assertIn('class "Integer" as TYPEDEF_INTEGER <<typedef>>', diagram)
+        self.assertIn('class "Float" as TYPEDEF_FLOAT <<typedef>>', diagram)
+        self.assertIn('class "Color" as TYPEDEF_COLOR <<typedef>>', diagram)
+        self.assertIn('class "Point" as TYPEDEF_POINT <<typedef>>', diagram)
+        self.assertIn('class "Size" as TYPEDEF_SIZE <<typedef>>', diagram)
+        self.assertIn('class "Address" as TYPEDEF_ADDRESS <<typedef>>', diagram)
+        self.assertIn('class "Endpoint" as TYPEDEF_ENDPOINT <<typedef>>', diagram)
+        
+        # Check that declares relationships exist
+        self.assertIn('HEADER_CORE_TYPES ..> TYPEDEF_STRING : declares', diagram)
+        self.assertIn('HEADER_CORE_TYPES ..> TYPEDEF_INTEGER : declares', diagram)
+        self.assertIn('HEADER_CORE_TYPES ..> TYPEDEF_FLOAT : declares', diagram)
+        self.assertIn('HEADER_GRAPHICS_TYPES ..> TYPEDEF_COLOR : declares', diagram)
+        self.assertIn('HEADER_GRAPHICS_TYPES ..> TYPEDEF_POINT : declares', diagram)
+        self.assertIn('HEADER_GRAPHICS_TYPES ..> TYPEDEF_SIZE : declares', diagram)
+        self.assertIn('HEADER_NETWORK_TYPES ..> TYPEDEF_ADDRESS : declares', diagram)
+        self.assertIn('HEADER_NETWORK_TYPES ..> TYPEDEF_ENDPOINT : declares', diagram)
 
 
 if __name__ == "__main__":

@@ -133,47 +133,50 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
 
     def test_integration_typedef_relationships_verification(self):
         """Test verification of typedef relationships in generated diagrams"""
-        # Create test project
-        project_dir = self.create_complex_test_project()
+        # Create test project with typedefs
+        project_dir = self.create_test_project_structure()
         
-        # Run the workflow
+        # Parse and generate diagrams
+        model_file = os.path.join(self.temp_dir, "model.json")
+        self.parser.parse(str(project_dir), model_file)
+        
         config = {"include_depth": 2}
         config_file = os.path.join(self.temp_dir, "config.json")
         self.write_json_config(config_file, config)
         
-        model_file = os.path.join(self.temp_dir, "model.json")
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
+        self.transformer.transform(model_file, config_file, transformed_model_file)
+        
         output_dir = os.path.join(self.temp_dir, "output")
+        self.generator.generate(transformed_model_file, output_dir)
         
-        # Execute workflow
-        from c_to_plantuml.parser import Parser
-        from c_to_plantuml.transformer import Transformer
-        from c_to_plantuml.generator import Generator
-        
-        parser = Parser()
-        transformer = Transformer()
-        generator = Generator()
-        
-        parser.parse(str(project_dir), model_file)
-        transformer.transform(model_file, config_file, transformed_model_file)
-        generator.generate(transformed_model_file, output_dir)
-        
-        # Verify typedef relationships in main.puml
+        # Check that typedefs from main.c are shown in main class
         main_puml_path = os.path.join(output_dir, "main.puml")
         with open(main_puml_path, 'r', encoding='utf-8') as f:
             main_content = f.read()
         
-        # Check that typedefs from main.c are shown in main class
-        self.assertIn('class "x" as TYPEDEF_X <<typedef>>', main_content)
-        self.assertIn('MAIN ..> TYPEDEF_X : declares', main_content)
-        self.assertIn('HEADER_MAIN ..> TYPEDEF_X : declares', main_content)
-        # Check that typedef class for 'RGBA' exists and is related
-        self.assertIn('class "RGBA" as TYPEDEF_RGBA <<typedef>>', main_content)
-        self.assertIn('MAIN ..> TYPEDEF_RGBA : declares', main_content)
-        self.assertIn('HEADER_MAIN ..> TYPEDEF_RGBA : declares', main_content)
+        # Check that primitive typedefs from main.c are shown in main class
+        self.assertIn("- typedef int Integer", main_content)           # from main.c
+        self.assertIn("- typedef char* String", main_content)    # from main.c
+        self.assertIn("- typedef void (*)(...) Callback", main_content) # from main.c
+        
+        # Check that primitive typedefs from types.h are shown in header class
         self.assertIn("+ typedef unsigned char Byte", main_content)  # from types.h
         self.assertIn("+ typedef unsigned short Word", main_content)  # from types.h
-        self.assertIn("+ typedef struct { Byte r, g, b, a", main_content)  # from types.h
+        
+        # Check that typedef classes exist and have declares relationships
+        self.assertIn('class "Integer" as TYPEDEF_INTEGER <<typedef>>', main_content)
+        self.assertIn('class "String" as TYPEDEF_STRING <<typedef>>', main_content)
+        self.assertIn('class "Callback" as TYPEDEF_CALLBACK <<typedef>>', main_content)
+        self.assertIn('class "Byte" as TYPEDEF_BYTE <<typedef>>', main_content)
+        self.assertIn('class "Word" as TYPEDEF_WORD <<typedef>>', main_content)
+        
+        # Check that declares relationships exist
+        self.assertIn('MAIN ..> TYPEDEF_INTEGER : declares', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_STRING : declares', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_CALLBACK : declares', main_content)
+        self.assertIn('HEADER_TYPES ..> TYPEDEF_BYTE : declares', main_content)
+        self.assertIn('HEADER_TYPES ..> TYPEDEF_WORD : declares', main_content)
 
     def test_integration_include_depth_limitation_verification(self):
         """Test verification of include depth limitation"""
