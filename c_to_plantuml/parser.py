@@ -239,8 +239,9 @@ class CParser:
             if '(' in line and ')' in line:
                 continue
                 
-            # Skip switch/case/default statements
-            if line.startswith('case ') or line.startswith('default:') or line.startswith('switch '):
+            # Skip switch/case/default statements (case insensitive)
+            line_lower = line.lower()
+            if line_lower.startswith('case ') or line_lower.startswith('default:') or line_lower.startswith('switch '):
                 continue
                 
             # Check if line ends with semicolon (basic global variable indicator)
