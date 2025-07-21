@@ -499,14 +499,15 @@ class Transformer:
         # Convert typedef relations
         typedef_relations = []
         for rel_data in data.get("typedef_relations", []):
-            typedef_relations.append(
-                TypedefRelation(
-                    rel_data["typedef_name"],
-                    rel_data["original_type"],
-                    rel_data["relationship_type"],
-                    rel_data.get("struct_tag_name", ""),  # Include struct_tag_name with default empty string
-                )
+                    typedef_relations.append(
+            TypedefRelation(
+                rel_data["typedef_name"],
+                rel_data["original_type"],
+                rel_data["relationship_type"],
+                rel_data.get("struct_tag_name", ""),  # Include struct_tag_name with default empty string
+                rel_data.get("enum_tag_name", ""),  # Include enum_tag_name with default empty string
             )
+        )
 
         # Convert include relations
         include_relations = []
