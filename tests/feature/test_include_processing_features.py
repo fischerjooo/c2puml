@@ -50,7 +50,7 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
         # Step 3: Generate PlantUML diagrams
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Verify output files were created
@@ -76,7 +76,7 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check main.puml for C to H relationships
@@ -110,7 +110,7 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check utils.puml for H to H relationships
@@ -134,7 +134,7 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check main.puml for typedef relationships
@@ -168,7 +168,7 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check that only relationships up to depth 2 are generated
@@ -198,7 +198,7 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Should not crash and should generate some output
@@ -221,7 +221,7 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check that complex typedefs are processed correctly
@@ -251,7 +251,7 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check that macros are included in header classes
@@ -280,7 +280,7 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check that functions are included in header classes
@@ -309,7 +309,7 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check that structs and enums are included in header classes

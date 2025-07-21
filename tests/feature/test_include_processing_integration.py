@@ -56,7 +56,7 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         self.write_json_config(config_file, config)
         
         # Run the complete workflow
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         
         # Simulate the main workflow
         model_file = os.path.join(self.temp_dir, "model.json")
@@ -96,7 +96,7 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         
         model_file = os.path.join(self.temp_dir, "model.json")
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         
         # Execute workflow
         from c_to_plantuml.parser import Parser
@@ -143,7 +143,7 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         
         model_file = os.path.join(self.temp_dir, "model.json")
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         
         # Execute workflow
         from c_to_plantuml.parser import Parser
@@ -185,7 +185,7 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         
         model_file = os.path.join(self.temp_dir, "model.json")
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         
         # Execute workflow
         from c_to_plantuml.parser import Parser
@@ -223,7 +223,7 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         
         model_file = os.path.join(self.temp_dir, "model.json")
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         
         # Execute workflow
         from c_to_plantuml.parser import Parser
@@ -255,7 +255,7 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         
         model_file = os.path.join(self.temp_dir, "model.json")
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         
         # Execute workflow
         from c_to_plantuml.parser import Parser
@@ -294,7 +294,7 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         
         model_file = os.path.join(self.temp_dir, "model.json")
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         
         # Execute workflow
         from c_to_plantuml.parser import Parser

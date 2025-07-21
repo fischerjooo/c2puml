@@ -51,7 +51,7 @@ class TestIncludeProcessingEnhancedFeatures(BaseFeatureTest):
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
         # Generate PlantUML diagrams
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Verify output files were created
@@ -96,7 +96,7 @@ class TestIncludeProcessingEnhancedFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check main.puml for typedef relationships
@@ -130,7 +130,7 @@ class TestIncludeProcessingEnhancedFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check main.puml for header-to-header relationships
@@ -160,7 +160,7 @@ class TestIncludeProcessingEnhancedFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check main.puml for depth-limited relationships
@@ -190,7 +190,7 @@ class TestIncludeProcessingEnhancedFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check main.puml for circular include handling
@@ -224,7 +224,7 @@ class TestIncludeProcessingEnhancedFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check main.puml for macro and typedef integration
@@ -258,7 +258,7 @@ class TestIncludeProcessingEnhancedFeatures(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check main.puml for struct and enum integration

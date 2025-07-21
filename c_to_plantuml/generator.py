@@ -385,7 +385,7 @@ class Generator:
         self.plantuml_generator = PlantUMLGenerator()
         self.logger = logging.getLogger(__name__)
 
-    def generate(self, model_file: str, output_dir: str = "./plantuml_output") -> str:
+    def generate(self, model_file: str, output_dir: str = "./output") -> str:
         """
         Step 3: Generate puml files based on model.json
 
