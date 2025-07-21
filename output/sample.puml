@@ -22,6 +22,24 @@ class "sample" as SAMPLE <<source>> #LightBlue
     return CALC()
 }
 
+class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
+{
+    -- External Header --
+    + (external)
+}
+
+class "stdlib.h" as HEADER_STDLIB_H <<header>> #LightGray
+{
+    -- External Header --
+    + (external)
+}
+
+class "string.h" as HEADER_STRING_H <<header>> #LightGray
+{
+    -- External Header --
+    + (external)
+}
+
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
     -- Macros --
@@ -69,6 +87,12 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     + int triangle_area()
 }
 
+class "stddef.h" as HEADER_STDDEF_H <<header>> #LightGray
+{
+    -- External Header --
+    + (external)
+}
+
 class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
     + int x
@@ -105,6 +129,11 @@ HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
+HEADER_SAMPLE --> HEADER_STDDEF_H : <<include>>
+HEADER_LOGGER --> HEADER_STDIO_H : <<include>>
+SAMPLE --> HEADER_STDIO_H : <<include>>
+SAMPLE --> HEADER_STDLIB_H : <<include>>
+SAMPLE --> HEADER_STRING_H : <<include>>
 SAMPLE --> HEADER_SAMPLE : <<include>>
 HEADER_SAMPLE ..> TYPEDEF_POINT_T : declares
 HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : declares
