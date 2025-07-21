@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "sample.h"
+#include "math_utils.h"
+#include "logger.h"
+#include "geometry.h"
 
 #define MAX_SIZE 100
 #define DEBUG_MODE 1
@@ -59,6 +62,16 @@ void process_point(point_t* p) {
     internal_helper();
 }
 
+// Add a function that uses triangle_t and logging
+void demo_triangle_usage() {
+    point_t a = {0, 0, "A"};
+    point_t b = {4, 0, "B"};
+    point_t c = {0, 3, "C"};
+    triangle_t tri = create_triangle(&a, &b, &c, "DemoTriangle");
+    int area = triangle_area(&tri);
+    log_message(LOG_INFO, "Triangle '%s' area: %d", tri.label, area);
+}
+
 int main(void) {
     point_t* p1 = create_point(10, 20, "First Point");
     point_t* p2 = create_point(30, 40, "Second Point");
@@ -70,6 +83,8 @@ int main(void) {
     
     free(p1);
     free(p2);
+
+    demo_triangle_usage();
     
     return 0;
 }
