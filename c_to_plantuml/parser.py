@@ -154,12 +154,17 @@ class CParser:
 
         for struct_name, struct_body in matches:
             fields = []
-            # Parse fields within struct
-            field_pattern = r"([A-Za-z_][A-Za-z0-9_]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*;"
-            field_matches = re.findall(field_pattern, struct_body)
-            for field_type, field_name in field_matches:
-                fields.append(Field(field_name, field_type))
-
+            # Improved regex: match type (with pointers/arrays), name, and array size if present
+            # Handles: int x; char label[32]; double *ptr; int (*cb)(int);
+            field_pattern = r"([A-Za-z_][A-Za-z0-9_\*\s]*?)\s+([A-Za-z_][A-Za-z0-9_]*)(\s*\[[^;]*\])?\s*;"
+            for field_match in re.finditer(field_pattern, struct_body):
+                field_type = field_match.group(1).strip()
+                field_name = field_match.group(2).strip()
+                array_size = field_match.group(3)
+                if array_size:
+                    field_type = f"{field_type}{array_size.strip()}"
+                if field_name:
+                    fields.append(Field(field_name, field_type))
             structs[struct_name] = Struct(struct_name, fields)
 
         return structs
