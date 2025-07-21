@@ -290,34 +290,88 @@ class PlantUMLGenerator:
                 f"{self._get_header_uml_id(source_basename)} --> "
                 f"{self._get_header_uml_id(included_basename)} : <<include>>"
             )
-        # Typedef relationships
+        # Typedef relationships - process typedefs from current file and included files
+        seen_typedef_relations = set()
+        
+        # Process typedefs from current file
         for typedef_relation in file_model.typedef_relations:
-            typedef_name = typedef_relation.typedef_name
-            original_type = typedef_relation.original_type
-            relationship_type = typedef_relation.relationship_type
-            # Always show a 'declares' relation from the file to the typedef class
-            main_class_id = self._get_uml_id(Path(file_model.file_path).stem)
-            header_class_id = self._get_header_uml_id(Path(file_model.file_path).stem)
-            lines.append(f"{main_class_id} ..> {self._get_typedef_uml_id(typedef_name)} : declares")
-            lines.append(f"{header_class_id} ..> {self._get_typedef_uml_id(typedef_name)} : declares")
-            # For complex typedefs, show the 'defines' relation from the typedef class to the type class
-            if relationship_type == "defines":
-                if original_type in ("struct", "enum", "union"):
-                    lines.append(
-                        f"{self._get_typedef_uml_id(typedef_name)} *-- "
-                        f"{self._get_type_uml_id(typedef_name)} : «defines»"
-                    )
-                else:
-                    lines.append(
-                        f"{self._get_typedef_uml_id(typedef_name)} -|> "
-                        f"{self._get_type_uml_id(original_type)} : «alias»"
-                    )
-            elif relationship_type == "alias":
+            self._process_typedef_relationships(typedef_relation, file_model, project_model, lines, seen_typedef_relations)
+        
+        # Process typedefs from included header files
+        for include_relation in file_model.include_relations:
+            included_file_path = include_relation.included_file
+            included_file_model = None
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    included_file_model = model
+                    break
+            if included_file_model:
+                for typedef_relation in included_file_model.typedef_relations:
+                    self._process_typedef_relationships(typedef_relation, included_file_model, project_model, lines, seen_typedef_relations)
+        return lines
+
+    def _process_typedef_relationships(self, typedef_relation, file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_typedef_relations: set):
+        """Process relationships for a single typedef"""
+        typedef_name = typedef_relation.typedef_name
+        original_type = typedef_relation.original_type
+        relationship_type = typedef_relation.relationship_type
+        
+        # Create a unique identifier for this typedef relation to avoid duplicates
+        relation_id = f"{file_model.file_path}:{typedef_name}"
+        if relation_id in seen_typedef_relations:
+            return
+        seen_typedef_relations.add(relation_id)
+        
+        # Show a 'declares' relation from the file that defines the typedef
+        file_basename = Path(file_model.file_path).stem
+        main_class_id = self._get_uml_id(file_basename)
+        header_class_id = self._get_header_uml_id(file_basename)
+        
+        # Only add the relationship if the typedef class exists in the diagram
+        typedef_class_id = self._get_typedef_uml_id(typedef_name)
+        lines.append(f"{main_class_id} ..> {typedef_class_id} : declares")
+        lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+        
+        # For complex typedefs, show the 'defines' relation from the typedef class to the type class
+        if relationship_type == "defines":
+            if original_type in ("struct", "enum", "union"):
                 lines.append(
-                    f"{self._get_typedef_uml_id(typedef_name)} -|> "
+                    f"{typedef_class_id} *-- "
+                    f"{self._get_type_uml_id(typedef_name)} : «defines»"
+                )
+            else:
+                lines.append(
+                    f"{typedef_class_id} -|> "
                     f"{self._get_type_uml_id(original_type)} : «alias»"
                 )
-        return lines
+        elif relationship_type == "alias":
+            lines.append(
+                f"{typedef_class_id} -|> "
+                f"{self._get_type_uml_id(original_type)} : «alias»"
+            )
+        
+        # Check for relationships between typedefs (when one typedef uses another)
+        if relationship_type == "defines" and original_type == "struct":
+            # Look for the struct definition to find typedef dependencies
+            struct_name = typedef_relation.struct_tag_name if typedef_relation.struct_tag_name else typedef_name
+            if struct_name in file_model.structs:
+                struct = file_model.structs[struct_name]
+                for field in struct.fields:
+                    # Check if the field type is a typedef
+                    field_type = field.type
+                    # Remove array notation for checking
+                    if '[' in field_type:
+                        field_type = field_type[:field_type.index('[')]
+                    # Remove pointer notation for checking
+                    if field_type.endswith('*'):
+                        field_type = field_type[:-1].strip()
+                    
+                    # Check if this field type is a typedef in the project
+                    for key, model in project_model.files.items():
+                        for other_typedef_relation in model.typedef_relations:
+                            if other_typedef_relation.typedef_name == field_type:
+                                other_typedef_class_id = self._get_typedef_uml_id(field_type)
+                                lines.append(f"{typedef_class_id} --> {other_typedef_class_id} : uses")
 
     def _find_included_file(
         self, include_name: str, project_root: str, project_model: ProjectModel
