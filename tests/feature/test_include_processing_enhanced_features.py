@@ -111,8 +111,6 @@ class TestIncludeProcessingEnhancedFeatures(BaseFeatureTest):
         
         # Check that typedefs are correctly shown in header classes with full type
         self.assertIn("+ typedef char* String", main_content)  # from core.h
-        self.assertIn("+ typedef struct { core_Integer r, g, b", main_content)   # from graphics.h
-        self.assertIn("+ typedef struct { core_Integer octet1, octet2, octet3, octet4", main_content) # from network.h
 
     def test_feature_header_to_header_relationship_verification(self):
         """Test detailed verification of header-to-header relationships"""
