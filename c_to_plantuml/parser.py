@@ -316,13 +316,14 @@ class CParser:
                             type_name = ' '.join(type_parts).strip()
                             
                             if type_name:
-                                if not var_name or not type_name:
-                                    import logging
-                                    logging.getLogger(__name__).debug(
-                                        f"Skipping global variable with empty name or type: line='{line}', type='{type_name}', name='{var_name}'"
-                                    )
-                                else:
+                                import logging
+                                logger = logging.getLogger(__name__)
+                                logger.debug(f"About to create Field: line='{line}', type='{type_name}', name='{var_name}'")
+                                try:
                                     globals_list.append(Field(var_name, type_name))
+                                except Exception as e:
+                                    logger.error(f"Exception creating Field: {e} | line='{line}', type='{type_name}', name='{var_name}'")
+                                    raise
 
         return globals_list
 
