@@ -55,9 +55,12 @@ class CParser:
                 failed_files.append(str(file_path))
 
         if failed_files:
-            self.logger.warning(
-                f"Failed to parse {len(failed_files)} files: {failed_files}"
+            error_msg = (
+                f"Failed to parse {len(failed_files)} files: {failed_files}. "
+                "Stopping model processing."
             )
+            self.logger.error(error_msg)
+            raise RuntimeError(error_msg)
 
         model = ProjectModel(
             project_name=project_root.name,
@@ -501,7 +504,11 @@ class Parser:
         self.logger.info(f"Step 1: Parsing C/C++ project: {project_root}")
 
         # Parse the project
-        model = self.c_parser.parse_project(project_root, recursive)
+        try:
+            model = self.c_parser.parse_project(project_root, recursive)
+        except RuntimeError as e:
+            self.logger.error(f"Failed to parse project: {e}")
+            raise
 
         # Save model to JSON file
         model.save(output_file)
