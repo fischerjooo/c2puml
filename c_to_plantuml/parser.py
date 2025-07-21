@@ -189,20 +189,52 @@ class CParser:
         return {}
 
     def _parse_functions(self, content: str) -> List["Function"]:
-        """Parse function declarations from content"""
+        """Parse function declarations and definitions from content, including prototypes in headers."""
         import re
-
-        from .models import Function
+        from .models import Function, Field
 
         functions = []
-        # Match function declarations: return_type name(parameters)
-        pattern = (
-            r"([A-Za-z_][A-Za-z0-9_]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\([^)]*\)\s*\{"
-        )
-        matches = re.findall(pattern, content)
+        seen = set()
 
-        for return_type, func_name in matches:
-            functions.append(Function(func_name, return_type, []))
+        # Match function definitions: return_type name(params) {...}
+        def_pattern = r"(?:static|inline|extern)?\s*([A-Za-z_][A-Za-z0-9_\*\s]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(([^)]*)\)\s*\{"  # with body
+        # Match function declarations (prototypes): return_type name(params);
+        decl_pattern = r"(?:static|inline|extern)?\s*([A-Za-z_][A-Za-z0-9_\*\s]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(([^)]*)\)\s*;"
+
+        # Helper to parse parameter list
+        def parse_params(param_str):
+            params = []
+            param_str = param_str.strip()
+            if not param_str or param_str == 'void':
+                return params
+            for param in param_str.split(','):
+                param = param.strip()
+                if not param:
+                    continue
+                # Split type and name (very basic)
+                parts = param.rsplit(' ', 1)
+                if len(parts) == 2:
+                    type_, name = parts
+                else:
+                    type_, name = parts[0], ''
+                params.append(Field(name=name, type=type_.strip()))
+            return params
+
+        # Parse function definitions
+        for match in re.finditer(def_pattern, content):
+            return_type, func_name, params = match.groups()
+            key = (func_name, return_type)
+            if key not in seen:
+                seen.add(key)
+                functions.append(Function(func_name, return_type.strip(), parse_params(params)))
+
+        # Parse function declarations (prototypes)
+        for match in re.finditer(decl_pattern, content):
+            return_type, func_name, params = match.groups()
+            key = (func_name, return_type)
+            if key not in seen:
+                seen.add(key)
+                functions.append(Function(func_name, return_type.strip(), parse_params(params)))
 
         return functions
 
