@@ -10,7 +10,7 @@ This document summarizes the comprehensive test suite developed to verify the co
 
 ## Test Coverage
 
-### Total Test Count: 56 Tests
+### Total Test Count: 56 Tests (out of 164 total tests)
 
 The test suite consists of the following test files:
 
@@ -226,3 +226,18 @@ The comprehensive test suite successfully verifies that the include header proce
 3. **Typedef relationships** are correctly parsed and shown in their PlantUML objects
 
 The test suite provides confidence that the PlantUML diagram generator correctly handles include header processing across a wide range of scenarios, from simple includes to complex nested relationships and circular dependencies.
+
+## How to Run Tests
+
+```bash
+# Run all tests (including include processing tests)
+python run_all_tests.py
+
+# Or run specific include processing test categories
+python -m pytest tests/unit/test_include_processing.py -v
+python -m pytest tests/unit/test_include_processing_enhanced.py -v
+python -m pytest tests/feature/test_include_processing_features.py -v
+python -m pytest tests/feature/test_include_processing_enhanced_features.py -v
+python -m pytest tests/feature/test_include_processing_integration.py -v
+python -m pytest tests/integration/test_include_processing_comprehensive.py -v
+```
