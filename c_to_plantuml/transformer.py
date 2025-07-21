@@ -504,6 +504,7 @@ class Transformer:
                     rel_data["typedef_name"],
                     rel_data["original_type"],
                     rel_data["relationship_type"],
+                    rel_data.get("struct_tag_name", ""),  # Include struct_tag_name with default empty string
                 )
             )
 
