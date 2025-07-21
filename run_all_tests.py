@@ -9,12 +9,11 @@ import os
 import unittest
 from pathlib import Path
 
-# Get the script directory and change to it
+# Ensure the project root (parent of 'tests') is in sys.path
 script_dir = os.path.dirname(os.path.abspath(__file__))
-os.chdir(script_dir)
-
-# Add the current directory to the path so we can import the module
-sys.path.insert(0, script_dir)
+project_root = script_dir  # If 'tests' is in the same directory as this script
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 
 def main():
