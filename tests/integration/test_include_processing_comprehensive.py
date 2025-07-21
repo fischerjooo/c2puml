@@ -47,7 +47,7 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
         # Generate PlantUML diagrams
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Verify output files were created
@@ -103,7 +103,7 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check main.puml for H to H relationships
@@ -137,7 +137,7 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Check main.puml for typedef relationships
@@ -189,7 +189,7 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
         self.transformer.transform(model_file, config_file, transformed_model_file)
         
         # Generate PlantUML diagrams
-        output_dir = os.path.join(self.temp_dir, "plantuml_output")
+        output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
         
         # Verify output files were created

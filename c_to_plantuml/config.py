@@ -18,7 +18,7 @@ class Config:
     # Basic configuration
     project_name: str = "Unknown_Project"
     source_folders: List[str] = field(default_factory=list)
-    output_dir: str = "./plantuml_output"
+    output_dir: str = "./output"
     model_output_path: str = "model.json"
     recursive: bool = True
     include_depth: int = 1
@@ -54,7 +54,7 @@ class Config:
         if not hasattr(self, "source_folders"):
             self.source_folders = []
         if not hasattr(self, "output_dir"):
-            self.output_dir = "./plantuml_output"
+            self.output_dir = "./output"
         if not hasattr(self, "model_output_path"):
             self.model_output_path = "model.json"
         if not hasattr(self, "recursive"):

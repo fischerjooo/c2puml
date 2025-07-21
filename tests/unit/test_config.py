@@ -296,7 +296,7 @@ class TestConfig(unittest.TestCase):
         )
 
         # Check default values
-        self.assertEqual(config.output_dir, "./plantuml_output")
+        self.assertEqual(config.output_dir, "./output")
         # Note: model_output_path may be derived from project_name
         self.assertTrue(config.recursive)
         self.assertFalse(config.has_filters())
