@@ -52,11 +52,10 @@ class PlantUMLGenerator:
         lines = [
             f'class "{basename}" as {self._get_uml_id(basename)} <<source>> #LightBlue',
             "{",
-            "    -- Macros --",
         ]
-        for macro in file_model.macros:
-            lines.append(f"    - #define {macro}")
-        lines.append("    -- Typedefs --")
+        
+        # Collect all typedefs (local + from includes)
+        all_typedefs = []
         
         # Add local typedefs with - visibility (C file) or + visibility (header file)
         for typedef_name, original_type in file_model.typedefs.items():
@@ -66,13 +65,13 @@ class PlantUMLGenerator:
             
             # Determine the typedef type and format accordingly
             if original_type == 'struct':
-                lines.append(f"    {visibility} typedef struct {typedef_name}")
+                all_typedefs.append(f"    {visibility} typedef struct {typedef_name}")
             elif original_type == 'enum':
-                lines.append(f"    {visibility} typedef enum {typedef_name}")
+                all_typedefs.append(f"    {visibility} typedef enum {typedef_name}")
             elif original_type == 'union':
-                lines.append(f"    {visibility} typedef union {typedef_name}")
+                all_typedefs.append(f"    {visibility} typedef union {typedef_name}")
             else:
-                lines.append(f"    {visibility} typedef {original_type} {typedef_name}")
+                all_typedefs.append(f"    {visibility} typedef {original_type} {typedef_name}")
         
         # Add typedefs from included files with + visibility
         for include_relation in file_model.include_relations:
@@ -88,29 +87,49 @@ class PlantUMLGenerator:
                 for typedef_name, original_type in included_file_model.typedefs.items():
                     # Determine the typedef type and format accordingly
                     if original_type == 'struct':
-                        lines.append(f"    + typedef struct {typedef_name}")
+                        all_typedefs.append(f"    + typedef struct {typedef_name}")
                     elif original_type == 'enum':
-                        lines.append(f"    + typedef enum {typedef_name}")
+                        all_typedefs.append(f"    + typedef enum {typedef_name}")
                     elif original_type == 'union':
-                        lines.append(f"    + typedef union {typedef_name}")
+                        all_typedefs.append(f"    + typedef union {typedef_name}")
                     else:
-                        lines.append(f"    + typedef {original_type} {typedef_name}")
+                        all_typedefs.append(f"    + typedef {original_type} {typedef_name}")
         
-        lines.append("    -- Global Variables --")
-        for global_var in file_model.globals:
-            lines.append(f"    {global_var.type} {global_var.name}")
-        lines.append("    -- Functions --")
-        for function in file_model.functions:
-            lines.append(f"    {function.return_type} {function.name}()")
-        lines.append("    -- Structs --")
-        for struct_name in file_model.structs:
-            lines.append(f"    struct {struct_name}")
-        lines.append("    -- Enums --")
-        for enum_name in file_model.enums:
-            lines.append(f"    enum {enum_name}")
-        lines.append("    -- Unions --")
-        for union_name in file_model.unions:
-            lines.append(f"    union {union_name}")
+        # Generate sections only if they have content
+        if file_model.macros:
+            lines.append("    -- Macros --")
+            for macro in file_model.macros:
+                lines.append(f"    - #define {macro}")
+        
+        if all_typedefs:
+            lines.append("    -- Typedefs --")
+            lines.extend(all_typedefs)
+        
+        if file_model.globals:
+            lines.append("    -- Global Variables --")
+            for global_var in file_model.globals:
+                lines.append(f"    {global_var.type} {global_var.name}")
+        
+        if file_model.functions:
+            lines.append("    -- Functions --")
+            for function in file_model.functions:
+                lines.append(f"    {function.return_type} {function.name}()")
+        
+        if file_model.structs:
+            lines.append("    -- Structs --")
+            for struct_name in file_model.structs:
+                lines.append(f"    struct {struct_name}")
+        
+        if file_model.enums:
+            lines.append("    -- Enums --")
+            for enum_name in file_model.enums:
+                lines.append(f"    enum {enum_name}")
+        
+        if file_model.unions:
+            lines.append("    -- Unions --")
+            for union_name in file_model.unions:
+                lines.append(f"    union {union_name}")
+        
         lines.append("}")
         lines.append("")
         return lines
@@ -159,36 +178,52 @@ class PlantUMLGenerator:
         lines = [
             f'class "{basename}" as {self._get_header_uml_id(basename)} <<header>> #LightGreen',
             "{",
-            "    -- Macros --",
         ]
-        for macro in file_model.macros:
-            lines.append(f"    + #define {macro}")
-        lines.append("    -- Typedefs --")
-        for typedef_name, original_type in file_model.typedefs.items():
-            # Determine the typedef type and format accordingly
-            if original_type == 'struct':
-                lines.append(f"    + typedef struct {typedef_name}")
-            elif original_type == 'enum':
-                lines.append(f"    + typedef enum {typedef_name}")
-            elif original_type == 'union':
-                lines.append(f"    + typedef union {typedef_name}")
-            else:
-                lines.append(f"    + typedef {original_type} {typedef_name}")
-        lines.append("    -- Global Variables --")
-        for global_var in file_model.globals:
-            lines.append(f"    + {global_var.type} {global_var.name}")
-        lines.append("    -- Functions --")
-        for function in file_model.functions:
-            lines.append(f"    + {function.return_type} {function.name}()")
-        lines.append("    -- Structs --")
-        for struct_name in file_model.structs:
-            lines.append(f"    + struct {struct_name}")
-        lines.append("    -- Enums --")
-        for enum_name in file_model.enums:
-            lines.append(f"    + enum {enum_name}")
-        lines.append("    -- Unions --")
-        for union_name in file_model.unions:
-            lines.append(f"    + union {union_name}")
+        
+        # Generate sections only if they have content
+        if file_model.macros:
+            lines.append("    -- Macros --")
+            for macro in file_model.macros:
+                lines.append(f"    + #define {macro}")
+        
+        if file_model.typedefs:
+            lines.append("    -- Typedefs --")
+            for typedef_name, original_type in file_model.typedefs.items():
+                # Determine the typedef type and format accordingly
+                if original_type == 'struct':
+                    lines.append(f"    + typedef struct {typedef_name}")
+                elif original_type == 'enum':
+                    lines.append(f"    + typedef enum {typedef_name}")
+                elif original_type == 'union':
+                    lines.append(f"    + typedef union {typedef_name}")
+                else:
+                    lines.append(f"    + typedef {original_type} {typedef_name}")
+        
+        if file_model.globals:
+            lines.append("    -- Global Variables --")
+            for global_var in file_model.globals:
+                lines.append(f"    + {global_var.type} {global_var.name}")
+        
+        if file_model.functions:
+            lines.append("    -- Functions --")
+            for function in file_model.functions:
+                lines.append(f"    + {function.return_type} {function.name}()")
+        
+        if file_model.structs:
+            lines.append("    -- Structs --")
+            for struct_name in file_model.structs:
+                lines.append(f"    + struct {struct_name}")
+        
+        if file_model.enums:
+            lines.append("    -- Enums --")
+            for enum_name in file_model.enums:
+                lines.append(f"    + enum {enum_name}")
+        
+        if file_model.unions:
+            lines.append("    -- Unions --")
+            for union_name in file_model.unions:
+                lines.append(f"    + union {union_name}")
+        
         lines.append("}")
         lines.append("")
         return lines
