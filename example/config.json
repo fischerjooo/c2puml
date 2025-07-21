@@ -1,0 +1,33 @@
+{
+  "project_name": "example_project",
+  "source_folders": ["example/source"],
+  "output_dir": "./plantuml_output",
+  "model_output_path": "model.json",
+  "recursive": true,
+  "file_filters": {
+    "include": [".*\\.c$", ".*\\.h$"],
+    "exclude": ["test_.*\\.c$"]
+  },
+  "element_filters": {
+    "structs": {
+      "include": ["point", "MyComplexStruct", "NamedStruct"],
+      "exclude": ["Internal.*"]
+    },
+    "functions": {
+      "include": [".*"],
+      "exclude": ["internal_.*"]
+    },
+    "typedefs": {
+      "include": [".*"],
+      "exclude": []
+    },
+    "enums": {
+      "include": [".*"],
+      "exclude": []
+    },
+    "macros": {
+      "include": [".*"],
+      "exclude": []
+    }
+  }
+}
