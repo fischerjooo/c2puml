@@ -23,6 +23,18 @@ Simple testing workflow for the C to PlantUML Converter using two main scripts.
 ./run_example.sh
 ```
 
+### Standard Workflow (Manual Steps)
+```bash
+# 1. Clean previous output
+rm -rf output
+
+# 2. Run the converter with config
+python3 main.py --config example/config.json --verbose
+
+# 3. Generate images from PlantUML files (optional)
+./picgen.sh
+```
+
 ## Test Structure
 - **Unit Tests** (`tests/unit/`): Test individual components
 - **Feature Tests** (`tests/feature/`): Test complete workflows
@@ -39,5 +51,13 @@ Simple testing workflow for the C to PlantUML Converter using two main scripts.
 
 ## Output
 - **Test Results**: Pass/fail status with detailed reporting
-- **Example Output**: Generated PlantUML diagrams in `./plantuml_output`
+- **Example Output**: Generated PlantUML diagrams in `./output`
+- **Images**: JPEG images generated from PlantUML files using `picgen.sh`
 - **Logs**: Processing logs and error reports
+
+## Image Generation
+The `picgen.sh` script converts all `.puml` files in the output directory to JPEG images:
+- Requires PlantUML to be installed (`sudo apt-get install plantuml`)
+- Optionally uses ImageMagick for PNG to JPEG conversion (`sudo apt-get install imagemagick`)
+- Automatically cleans up temporary PNG files
+- Generates high-quality JPEG images for documentation and sharing
