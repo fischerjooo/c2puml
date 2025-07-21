@@ -11,6 +11,9 @@ echo Script directory: %SCRIPT_DIR%
 REM Change to the script directory
 cd /d %SCRIPT_DIR%
 
+REM Set PYTHONPATH to the script directory (project root)
+set PYTHONPATH=%SCRIPT_DIR%
+
 REM Detect Python version
 where python >nul 2>nul
 if %errorlevel%==0 (
