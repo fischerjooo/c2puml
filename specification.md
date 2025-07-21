@@ -258,7 +258,7 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
     -- Macros --
     - #define {macro_name}
     -- Typedefs --
-    - typedef {typedef_name}
+    - typedef {original_type} {typedef_name}
     -- Global Variables --
     {type} {variable_name}
     -- Functions --
@@ -277,7 +277,7 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
     -- Macros --
     + #define {macro_name}
     -- Typedefs --
-    + typedef {typedef_name}
+    + typedef {original_type} {typedef_name}
     -- Global Variables --
     + {type} {variable_name}
     -- Functions --
@@ -340,7 +340,7 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 - **Alias relationship**: `{typedef} -|> {original_type} : «alias»`
 
 #### 5.2.3 Typedef Content Display
-- **Source/Header files**: Only list typedef names (e.g., `typedef MyStruct`, `struct Person`, `enum Status`)
+- **Source/Header files**: Show full typedef declarations (e.g., `typedef struct { ... } MyStruct`, `typedef int MyInt`, `typedef enum { ... } MyEnum`)
 - **Typedef classes**: Show the actual content:
   - **Struct typedefs**: Show struct fields with their types (e.g., `+ int x`, `+ char* name`)
   - **Enum typedefs**: Show enum values (e.g., `+ RED`, `+ GREEN`, `+ BLUE`)
@@ -368,7 +368,7 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 - **Types**: `#LightGray` background, `<<type>>` stereotype
 
 #### 5.4.2 Visibility Notation
-- **Source files**: 
+- **Source files (C files)**: 
   - Macros: `-` prefix
   - Typedefs: `-` prefix
   - Global variables: No prefix
@@ -378,13 +378,14 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
   - Unions: No prefix
 - **Header files**: 
   - All elements: `+` prefix
+- **Included typedefs in source files**: `+` prefix (from header files)
 - **Macros**: `#define` prefix with appropriate visibility
 
 #### 5.4.3 Element Representation
 - **Functions**: `{return_type} {function_name}()` (source) or `+ {return_type} {function_name}()` (header)
 - **Global variables**: `{type} {variable_name}` (source) or `+ {type} {variable_name}` (header)
 - **Macros**: `- #define {macro_name}` (source) or `+ #define {macro_name}` (header)
-- **Typedefs**: `- typedef {typedef_name}` (source) or `+ typedef {typedef_name}` (header) - only the name
+- **Typedefs**: `- typedef {original_type} {typedef_name}` (source) or `+ typedef {original_type} {typedef_name}` (header) - full declaration
 - **Structs**: `struct {struct_name}` (source) or `+ struct {struct_name}` (header) - only the name
 - **Enums**: `enum {enum_name}` (source) or `+ enum {enum_name}` (header) - only the name
 - **Unions**: `union {union_name}` (source) or `+ union {union_name}` (header) - only the name

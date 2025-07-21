@@ -163,12 +163,18 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         with open(main_puml_path, 'r', encoding='utf-8') as f:
             main_content = f.read()
         
-        # Check that typedefs are correctly shown in header classes with full type
-        self.assertIn("+ typedef struct { int x", main_content)           # from types.h
-        self.assertIn("+ typedef Point* PointPtr", main_content)    # from types.h
-        self.assertIn("+ typedef PointPtr* PointPtrPtr", main_content) # from types.h
-        self.assertIn("+ typedef void (*)(...) ImageCallback", main_content) # from types.h
-        self.assertIn("+ typedef int (*)(...) CompareFunc", main_content) # from types.h
+        # Check that typedefs from main.c are shown in main class
+        self.assertIn("- typedef int Integer", main_content)           # from main.c
+        self.assertIn("- typedef char* String", main_content)    # from main.c
+        self.assertIn("- typedef void (*)(...) Callback", main_content) # from main.c
+        
+        # Check that typedefs from utils.h are shown in header class
+        self.assertIn("+ typedef struct { int x", main_content)  # from utils.h
+        
+        # Check that typedefs from types.h are shown in header class
+        self.assertIn("+ typedef unsigned char Byte", main_content)  # from types.h
+        self.assertIn("+ typedef unsigned short Word", main_content)  # from types.h
+        self.assertIn("+ typedef struct { Byte r, g, b, a", main_content)  # from types.h
 
     def test_integration_include_depth_limitation_verification(self):
         """Test verification of include depth limitation"""
@@ -272,12 +278,17 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         with open(main_puml_path, 'r', encoding='utf-8') as f:
             main_content = f.read()
         
-        # Check that typedefs are correctly shown in header classes with full type
-        self.assertIn("+ typedef struct { int x", main_content)           # from types.h
-        self.assertIn("+ typedef Point* PointPtr", main_content)    # from types.h
-        self.assertIn("+ typedef PointPtr* PointPtrPtr", main_content) # from types.h
-        self.assertIn("+ typedef void (*)(...) ImageCallback", main_content) # from types.h
-        self.assertIn("+ typedef int (*)(...) CompareFunc", main_content) # from types.h
+        # Check that typedefs from main.c are shown in main class
+        self.assertIn("- typedef struct { int x", main_content)           # from main.c
+        self.assertIn("- typedef Point* PointPtr", main_content)    # from main.c
+        self.assertIn("- typedef PointPtr* PointPtrPtr", main_content) # from main.c
+        self.assertIn("- typedef void (*)(...) ImageCallback", main_content) # from main.c
+        self.assertIn("- typedef int (*)(...) CompareFunc", main_content) # from main.c
+        
+        # Check that typedefs from types.h are shown in header class
+        self.assertIn("+ typedef unsigned char Byte", main_content)  # from types.h
+        self.assertIn("+ typedef unsigned short Word", main_content)  # from types.h
+        self.assertIn("+ typedef struct { Byte r, g, b, a", main_content)  # from types.h
 
     def test_integration_plantuml_syntax_validity(self):
         """Test that generated PlantUML syntax is valid"""

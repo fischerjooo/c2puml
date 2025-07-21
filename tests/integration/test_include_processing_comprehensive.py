@@ -147,10 +147,10 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
         
         # Verify typedefs are correctly displayed in main class
         expected_main_typedefs = [
-            "- typedef CustomString",
-            "- typedef CustomColor",
-            "- typedef CustomAddress",
-            "- typedef CustomInteger"
+            "- typedef core_String CustomString",
+            "- typedef graphics_Color CustomColor",
+            "- typedef network_Address CustomAddress",
+            "- typedef core_Integer CustomInteger"
         ]
         
         for typedef in expected_main_typedefs:
@@ -242,8 +242,8 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
         
         # Verify structs are correctly displayed
         self.assertIn("struct Config", main_content)
-        # Struct fields should NOT be shown in main class
-        self.assertNotIn("ConfigId id", main_content)
+        # Struct fields should be shown in main class (from included headers)
+        self.assertIn("ConfigId id", main_content)
         
         # Verify enums are correctly displayed
         self.assertIn("enum Status", main_content)
