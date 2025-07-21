@@ -28,6 +28,7 @@ class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
     + LOG_ERROR
 }
 
+HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 LOGGER --> HEADER_LOGGER : <<include>>
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : declares
 

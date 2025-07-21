@@ -32,6 +32,8 @@ class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
     + char[MAX_LABEL_LEN] label
 }
 
+HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
+HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 GEOMETRY --> HEADER_GEOMETRY : <<include>>
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : declares
 TYPEDEF_TRIANGLE_T --> TYPEDEF_POINT_T : uses
