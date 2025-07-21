@@ -293,22 +293,19 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
 ' Typedef classes for struct typedefs:
 class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 {
-    + struct {original_type}
-        + {type} {field_name}
+    + {type} {field_name}
 }
 
 ' Typedef classes for enum typedefs:
 class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 {
-    + enum {original_type}
-        + {value}
+    + {value}
 }
 
 ' Typedef classes for union typedefs:
 class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 {
-    + union {original_type}
-        + {type} {field_name}
+    + {type} {field_name}
 }
 
 ' Typedef classes for simple type typedefs:
@@ -320,8 +317,7 @@ class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 ' Original type classes for struct/enum/union:
 class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 {
-    + struct {original_type}
-        + {type} {field_name}
+    + {type} {field_name}
 }
 
 ' Relationships:
@@ -346,10 +342,10 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 #### 5.2.3 Typedef Content Display
 - **Source/Header files**: Only list typedef names (e.g., `typedef MyStruct`, `struct Person`, `enum Status`)
 - **Typedef classes**: Show the actual content:
-  - **Struct typedefs**: Show struct fields within the typedef class
-  - **Enum typedefs**: Show enum values within the typedef class
-  - **Union typedefs**: Show union fields within the typedef class
-  - **Simple type typedefs**: Show the original type name
+  - **Struct typedefs**: Show struct fields with their types (e.g., `+ int x`, `+ char* name`)
+  - **Enum typedefs**: Show enum values (e.g., `+ RED`, `+ GREEN`, `+ BLUE`)
+  - **Union typedefs**: Show union fields with their types (e.g., `+ int data`, `+ char* str`)
+  - **Simple type typedefs**: Show the original type (e.g., `+ int`, `+ char*`)
 
 ### 5.3 Include Depth Configuration
 
