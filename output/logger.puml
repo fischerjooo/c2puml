@@ -1,0 +1,29 @@
+@startuml logger
+
+class "logger" as LOGGER <<source>> #LightBlue
+{
+    -- Typedefs --
+    + typedef void (*)(...) log_callback_t
+    -- Global Variables --
+    log_callback_t current_cb
+    va_list args
+    const char * level_str
+    -- Functions --
+    void set_log_callback()
+    void log_message()
+}
+
+class "logger" as HEADER_LOGGER <<header>> #LightGreen
+{
+    -- Macros --
+    + #define LOGGER_H
+    -- Typedefs --
+    + typedef void (*)(...) log_callback_t
+    -- Functions --
+    + void set_log_callback()
+    + void log_message()
+}
+
+LOGGER --> HEADER_LOGGER : <<include>>
+
+@enduml

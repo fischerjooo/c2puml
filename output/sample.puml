@@ -1,0 +1,89 @@
+@startuml sample
+
+class "sample" as SAMPLE <<source>> #LightBlue
+{
+    -- Macros --
+    - #define MAX_SIZE
+    - #define DEBUG_MODE
+    - #define CALC
+    -- Typedefs --
+    + typedef double real_t
+    + typedef int (*)(...) math_op_t
+    + typedef void (*)(...) log_callback_t
+    -- Global Variables --
+    int global_counter
+    double * global_ptr
+    return p
+    point_t a
+    point_t b
+    point_t c
+    -- Functions --
+    int calculate_sum()
+    point_t * create_point()
+    void process_point()
+    void demo_triangle_usage()
+    int main()
+    return CALC()
+}
+
+class "sample" as HEADER_SAMPLE <<header>> #LightGreen
+{
+    -- Macros --
+    + #define SAMPLE_H
+    + #define PI
+    + #define VERSION
+    + #define MIN
+    + #define MAX
+    -- Global Variables --
+    + int x
+    + int y
+    + extern const int MAX_POINTS
+    + extern const char * DEFAULT_LABEL
+    -- Functions --
+    + extern int calculate_sum()
+    + extern point_t * create_point()
+    + extern void process_point()
+}
+
+class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
+{
+    -- Macros --
+    + #define MATH_UTILS_H
+    -- Typedefs --
+    + typedef double real_t
+    + typedef int (*)(...) math_op_t
+    -- Functions --
+    + int add()
+    + int subtract()
+    + real_t average()
+}
+
+class "logger" as HEADER_LOGGER <<header>> #LightGreen
+{
+    -- Macros --
+    + #define LOGGER_H
+    -- Typedefs --
+    + typedef void (*)(...) log_callback_t
+    -- Functions --
+    + void set_log_callback()
+    + void log_message()
+}
+
+class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
+{
+    -- Macros --
+    + #define GEOMETRY_H
+    -- Functions --
+    + triangle_t create_triangle()
+    + int triangle_area()
+}
+
+SAMPLE --> HEADER_SAMPLE : <<include>>
+SAMPLE --> HEADER_MATH_UTILS : <<include>>
+SAMPLE --> HEADER_LOGGER : <<include>>
+SAMPLE --> HEADER_GEOMETRY : <<include>>
+HEADER_SAMPLE --> HEADER_MATH_UTILS : <<include>>
+HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
+HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
+
+@enduml

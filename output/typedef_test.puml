@@ -1,0 +1,93 @@
+@startuml typedef_test
+
+class "typedef_test" as TYPEDEF_TEST <<source>> #LightBlue
+{
+    -- Typedefs --
+    + typedef uint32_t MyLen
+    + typedef int32_t MyInt
+    + typedef char * MyString
+    + typedef int (*)(...) MyCallback
+    + typedef MyComplex * MyComplexPtr
+    + typedef void (*)(...) log_callback_t
+    -- Global Variables --
+    MyLen global_length
+    MyBuffer global_buffer
+    MyComplexPtr global_complex
+    return complex
+    MyBuffer buffer
+    -- Functions --
+    void log_buffer()
+    MyInt process_buffer()
+    int my_callback()
+    MyComplex * create_complex()
+    int main()
+    return process_buffer()
+}
+
+class "typedef_test" as HEADER_TYPEDEF_TEST <<header>> #LightGreen
+{
+    -- Macros --
+    + #define TYPEDEF_TEST_H
+    -- Typedefs --
+    + typedef uint32_t MyLen
+    + typedef int32_t MyInt
+    + typedef char * MyString
+    + typedef int (*)(...) MyCallback
+    + typedef MyComplex * MyComplexPtr
+    -- Global Variables --
+    + MyLen length
+    + MyString data
+    + MyLen id
+    + MyString name
+    + MyCallback callback
+    + log_level_t log_level
+    + int x
+    + int y
+    + int a
+    + int b
+    + int i
+    + float f
+    + char c
+    + double d
+}
+
+class "complex_example" as HEADER_COMPLEX_EXAMPLE <<header>> #LightGreen
+{
+    -- Macros --
+    + #define COMPLEX_EXAMPLE_H
+    -- Global Variables --
+    + id_t id
+    + log_level_t log_level
+    + NestedInfo_t info
+    + CE_Status_t status
+}
+
+class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
+{
+    -- Macros --
+    + #define GEOMETRY_H
+    -- Functions --
+    + triangle_t create_triangle()
+    + int triangle_area()
+}
+
+class "logger" as HEADER_LOGGER <<header>> #LightGreen
+{
+    -- Macros --
+    + #define LOGGER_H
+    -- Typedefs --
+    + typedef void (*)(...) log_callback_t
+    -- Functions --
+    + void set_log_callback()
+    + void log_message()
+}
+
+TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>
+TYPEDEF_TEST --> HEADER_COMPLEX_EXAMPLE : <<include>>
+TYPEDEF_TEST --> HEADER_GEOMETRY : <<include>>
+TYPEDEF_TEST --> HEADER_LOGGER : <<include>>
+HEADER_TYPEDEF_TEST --> HEADER_COMPLEX_EXAMPLE : <<include>>
+HEADER_TYPEDEF_TEST --> HEADER_GEOMETRY : <<include>>
+HEADER_TYPEDEF_TEST --> HEADER_LOGGER : <<include>>
+
+@enduml
