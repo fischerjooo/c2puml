@@ -51,16 +51,13 @@ def main() -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Usage:
-  %(prog)s --config config.json [--output output_folder]
-  %(prog)s config_folder [--output output_folder]
-  %(prog)s [--output output_folder]  # Uses current directory as config folder
+  %(prog)s --config config.json
+  %(prog)s config_folder
+  %(prog)s              # Uses current directory as config folder
         """,
     )
     parser.add_argument(
         "--config", "-c", type=str, default=None, help="Path to config.json or config folder (optional, default: current directory)"
-    )
-    parser.add_argument(
-        "output", nargs="?", default=None, help="Output folder (optional, default: ./output)"
     )
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose output"
@@ -72,24 +69,9 @@ Usage:
     # Determine config path
     config_path = args.config
     if config_path is None:
-        # If a positional argument is given, treat it as config folder
-        if args.output and not args.output.startswith("-"):
-            config_path = args.output
-            output_folder = None
-        else:
-            config_path = os.getcwd()
-            output_folder = None
-    else:
-        output_folder = args.output
-
-    # Determine output folder
-    if output_folder is None or output_folder.startswith("-"):
-        output_folder = os.path.join(os.getcwd(), "output")
-    output_folder = os.path.abspath(output_folder)
-    os.makedirs(output_folder, exist_ok=True)
+        config_path = os.getcwd()
 
     logging.info(f"Using config: {config_path}")
-    logging.info(f"Output folder: {output_folder}")
 
     # Load config
     try:
@@ -98,6 +80,12 @@ Usage:
     except Exception as e:
         logging.error(f"Failed to load configuration: {e}")
         return 1
+
+    # Determine output folder from config, default to ./output
+    output_folder = getattr(config, "output_dir", None) or os.path.join(os.getcwd(), "output")
+    output_folder = os.path.abspath(output_folder)
+    os.makedirs(output_folder, exist_ok=True)
+    logging.info(f"Output folder: {output_folder}")
 
     # Step 1: Parse
     try:
