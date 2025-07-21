@@ -189,10 +189,17 @@ class CParser:
 
         for enum_name, enum_body in matches:
             values = []
-            # Parse enum values
-            value_pattern = r"([A-Za-z_][A-Za-z0-9_]*)"
+            # Parse enum values - handle both simple names and assignments
+            # Pattern: NAME or NAME = VALUE
+            value_pattern = r"([A-Za-z_][A-Za-z0-9_]*)(?:\s*=\s*([^,\s]+))?"
             value_matches = re.findall(value_pattern, enum_body)
-            values.extend(value_matches)
+            for value_match in value_matches:
+                value_name = value_match[0]
+                value_assignment = value_match[1] if value_match[1] else ""
+                if value_assignment:
+                    values.append(f"{value_name} = {value_assignment}")
+                else:
+                    values.append(value_name)
 
             enums[enum_name] = Enum(enum_name, values)
 
@@ -547,22 +554,124 @@ class CParser:
                     if ';' in next_line and brace_count == 0:
                         break
                     j += 1
+                print(f"DEBUG: Full typedef text: '{typedef_text}'")
                 if ';' in typedef_text:
                     typedef_body = typedef_text[8:].rstrip(';').strip()
                     # Debug: print the typedef body to see what we're parsing
                     import logging
+                    print(f"DEBUG: Parsing typedef body: '{typedef_body}'")
                     logging.getLogger(__name__).debug(f"Parsing typedef body: '{typedef_body}'")
                     logging.getLogger(__name__).debug(f"Full typedef text: '{typedef_text}'")
+                    logging.getLogger(__name__).debug(f"Checking patterns for typedef body: '{typedef_body}'")
+                    
+                    # Check which pattern matches
+                    if typedef_body.startswith('struct {') or typedef_body.startswith('struct{'):
+                        logging.getLogger(__name__).debug("Pattern 1 would match")
+                    elif re.match(r'^struct\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 2b would match")
+                    elif typedef_body.startswith('enum {') or typedef_body.startswith('enum{'):
+                        logging.getLogger(__name__).debug("Pattern 3 would match")
+                    elif re.match(r'^enum\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 3b would match")
+                    elif typedef_body.startswith('union {') or typedef_body.startswith('union{'):
+                        logging.getLogger(__name__).debug("Pattern 4 would match")
+                    elif re.match(r'^union\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 4b would match")
+                    else:
+                        logging.getLogger(__name__).debug("No pattern matches")
+                    
+                    # Check which pattern actually matches
+                    if typedef_body.startswith('struct {') or typedef_body.startswith('struct{'):
+                        logging.getLogger(__name__).debug("Pattern 1 actually matches")
+                    elif re.match(r'^struct\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 2b actually matches")
+                    elif typedef_body.startswith('enum {') or typedef_body.startswith('enum{'):
+                        logging.getLogger(__name__).debug("Pattern 3 actually matches")
+                    elif re.match(r'^enum\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 3b actually matches")
+                    elif typedef_body.startswith('union {') or typedef_body.startswith('union{'):
+                        logging.getLogger(__name__).debug("Pattern 4 actually matches")
+                    elif re.match(r'^union\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 4b actually matches")
+                    else:
+                        logging.getLogger(__name__).debug("No pattern actually matches")
+                    
+                    # Check which pattern is executed
+                    if typedef_body.startswith('struct {') or typedef_body.startswith('struct{'):
+                        logging.getLogger(__name__).debug("Pattern 1 is executed")
+                    elif re.match(r'^struct\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 2b is executed")
+                    elif typedef_body.startswith('enum {') or typedef_body.startswith('enum{'):
+                        logging.getLogger(__name__).debug("Pattern 3 is executed")
+                    elif re.match(r'^enum\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 3b is executed")
+                    elif typedef_body.startswith('union {') or typedef_body.startswith('union{'):
+                        logging.getLogger(__name__).debug("Pattern 4 is executed")
+                    elif re.match(r'^union\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 4b is executed")
+                    else:
+                        logging.getLogger(__name__).debug("No pattern is executed")
+                    
+                    # Check which pattern is actually executed (after the if/elif chain)
+                    if typedef_body.startswith('struct {') or typedef_body.startswith('struct{'):
+                        logging.getLogger(__name__).debug("Pattern 1 is actually executed")
+                    elif re.match(r'^struct\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 2b is actually executed")
+                    elif typedef_body.startswith('enum {') or typedef_body.startswith('enum{'):
+                        logging.getLogger(__name__).debug("Pattern 3 is actually executed")
+                    elif re.match(r'^enum\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 3b is actually executed")
+                    elif typedef_body.startswith('union {') or typedef_body.startswith('union{'):
+                        logging.getLogger(__name__).debug("Pattern 4 is actually executed")
+                    elif re.match(r'^union\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 4b is actually executed")
+                    else:
+                        logging.getLogger(__name__).debug("No pattern is actually executed")
+                    
+                    # Check which pattern is actually executed (after the if/elif chain)
+                    if typedef_body.startswith('struct {') or typedef_body.startswith('struct{'):
+                        logging.getLogger(__name__).debug("Pattern 1 is actually executed")
+                    elif re.match(r'^struct\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 2b is actually executed")
+                    elif typedef_body.startswith('enum {') or typedef_body.startswith('enum{'):
+                        logging.getLogger(__name__).debug("Pattern 3 is actually executed")
+                    elif re.match(r'^enum\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 3b is actually executed")
+                    elif typedef_body.startswith('union {') or typedef_body.startswith('union{'):
+                        logging.getLogger(__name__).debug("Pattern 4 is actually executed")
+                    elif re.match(r'^union\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 4b is actually executed")
+                    else:
+                        logging.getLogger(__name__).debug("No pattern is actually executed")
+                    
+                    # Check which pattern is actually executed (after the if/elif chain)
+                    if typedef_body.startswith('struct {') or typedef_body.startswith('struct{'):
+                        logging.getLogger(__name__).debug("Pattern 1 is actually executed")
+                    elif re.match(r'^struct\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 2b is actually executed")
+                    elif typedef_body.startswith('enum {') or typedef_body.startswith('enum{'):
+                        logging.getLogger(__name__).debug("Pattern 3 is actually executed")
+                    elif re.match(r'^enum\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 3b is actually executed")
+                    elif typedef_body.startswith('union {') or typedef_body.startswith('union{'):
+                        logging.getLogger(__name__).debug("Pattern 4 is actually executed")
+                    elif re.match(r'^union\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        logging.getLogger(__name__).debug("Pattern 4b is actually executed")
+                    else:
+                        logging.getLogger(__name__).debug("No pattern is actually executed")
                     # Pattern 1: typedef type name; (simple typedef)
-                    simple_pattern = r'^([^;]+)\s+([A-Za-z_][A-Za-z0-9_]*)$'
-                    match = re.match(simple_pattern, typedef_body)
-                    if match:
-                        original_type, typedef_name = match.groups()
-                        relationship_type = 'alias'
-                        # If the original type is a known struct/enum/union name, treat as defines
-                        if original_type.startswith('struct') or original_type.startswith('enum') or original_type.startswith('union'):
-                            relationship_type = 'defines'
-                        typedef_relations.append(TypedefRelation(typedef_name, original_type.strip(), relationship_type))
+                    # Only match if there are no braces in the typedef body
+                    if '{' not in typedef_body and '}' not in typedef_body:
+                        simple_pattern = r'^([^;]+)\s+([A-Za-z_][A-Za-z0-9_]*)$'
+                        match = re.match(simple_pattern, typedef_body)
+                        print(f"DEBUG: Pattern 1 match result: {match}")
+                        if match:
+                            original_type, typedef_name = match.groups()
+                            relationship_type = 'alias'
+                            # If the original type is a known struct/enum/union name, treat as defines
+                            if original_type.startswith('struct') or original_type.startswith('enum') or original_type.startswith('union'):
+                                relationship_type = 'defines'
+                            typedef_relations.append(TypedefRelation(typedef_name, original_type.strip(), relationship_type))
                     # Pattern 2: typedef struct { ... } name; (struct typedef)
                     # Use a more robust pattern that handles multiline content and nested braces
                     elif typedef_body.startswith('struct {') or typedef_body.startswith('struct{'):
@@ -637,26 +746,61 @@ class CParser:
                                     typedef_relations.append(TypedefRelation(typedef_name, 'enum', 'defines'))
                     # Pattern 3b: typedef enum tag { ... } name; (enum typedef with tag)
                     elif re.match(r'^enum\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
-                        # Find the closing brace and typedef name
-                        brace_count = 0
-                        start_pos = typedef_body.find('{')
-                        if start_pos != -1:
-                            brace_count = 1
-                            pos = start_pos + 1
-                            while pos < len(typedef_body) and brace_count > 0:
-                                if typedef_body[pos] == '{':
-                                    brace_count += 1
-                                elif typedef_body[pos] == '}':
-                                    brace_count -= 1
-                                pos += 1
-                            
-                            if brace_count == 0:
-                                # Extract the typedef name after the closing brace
-                                remaining = typedef_body[pos:].strip()
-                                name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
-                                if name_match:
-                                    typedef_name = name_match.group(1)
-                                    typedef_relations.append(TypedefRelation(typedef_name, 'enum', 'defines'))
+                        import logging
+                        print(f"DEBUG: Pattern 3b matched for typedef body: '{typedef_body}'")
+                        logging.getLogger(__name__).debug(f"Pattern 3b matched for typedef body: '{typedef_body}'")
+                        # Extract the enum tag name first
+                        enum_tag_match = re.match(r'^enum\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{', typedef_body)
+                        print(f"DEBUG: enum_tag_match result: {enum_tag_match}")
+                        logging.getLogger(__name__).debug(f"enum_tag_match result: {enum_tag_match}")
+                        if enum_tag_match:
+                            enum_tag_name = enum_tag_match.group(1)
+                            print(f"DEBUG: Found enum typedef with tag: {enum_tag_name}")
+                            import logging
+                            logging.getLogger(__name__).debug(f"Found enum typedef with tag: {enum_tag_name}")
+                            # Find the closing brace and typedef name
+                            brace_count = 0
+                            start_pos = typedef_body.find('{')
+                            if start_pos != -1:
+                                brace_count = 1
+                                pos = start_pos + 1
+                                while pos < len(typedef_body) and brace_count > 0:
+                                    if typedef_body[pos] == '{':
+                                        brace_count += 1
+                                    elif typedef_body[pos] == '}':
+                                        brace_count -= 1
+                                    pos += 1
+                                
+                                if brace_count == 0:
+                                    # Extract the typedef name after the closing brace
+                                    remaining = typedef_body[pos:].strip()
+                                    name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
+                                    if name_match:
+                                        typedef_name = name_match.group(1)
+                                        typedef_relations.append(TypedefRelation(typedef_name, 'enum', 'defines', "", enum_tag_name))
+                        else:
+                            print(f"DEBUG: Failed to extract enum tag name from: '{typedef_body}'")
+                            logging.getLogger(__name__).debug(f"Failed to extract enum tag name from: '{typedef_body}'")
+                            # Find the closing brace and typedef name
+                            brace_count = 0
+                            start_pos = typedef_body.find('{')
+                            if start_pos != -1:
+                                brace_count = 1
+                                pos = start_pos + 1
+                                while pos < len(typedef_body) and brace_count > 0:
+                                    if typedef_body[pos] == '{':
+                                        brace_count += 1
+                                    elif typedef_body[pos] == '}':
+                                        brace_count -= 1
+                                    pos += 1
+                                
+                                if brace_count == 0:
+                                    # Extract the typedef name after the closing brace
+                                    remaining = typedef_body[pos:].strip()
+                                    name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
+                                    if name_match:
+                                        typedef_name = name_match.group(1)
+                                        typedef_relations.append(TypedefRelation(typedef_name, 'enum', 'defines', "", enum_tag_name))
                     # Pattern 4: typedef union { ... } name; (union typedef)
                     # Use a more robust pattern that handles multiline content and nested braces
                     elif typedef_body.startswith('union {') or typedef_body.startswith('union{'):
