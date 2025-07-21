@@ -142,10 +142,17 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         with open(main_puml_path, 'r', encoding='utf-8') as f:
             main_content = f.read()
         
-        # Verify typedefs in main class
-        self.assertIn("+ typedef int Integer", main_content)
-        self.assertIn("+ typedef char* String", main_content)
-        self.assertIn("+ typedef void (*)(...) Callback", main_content)
+        # Check that typedefs are correctly shown in header classes (name only)
+        self.assertIn("+ typedef x", main_content)           # from types.h
+        self.assertIn("+ typedef PointPtr", main_content)    # from types.h
+        self.assertIn("+ typedef PointPtrPtr", main_content) # from types.h
+        self.assertIn("+ typedef ImageCallback", main_content) # from types.h
+        self.assertIn("+ typedef CompareFunc", main_content) # from types.h
+        
+        # Check that typedefs are NOT shown with full type information in headers
+        self.assertNotIn("+ typedef struct { int x", main_content)
+        self.assertNotIn("+ typedef Point* PointPtr", main_content)
+        self.assertNotIn("+ typedef PointPtr* PointPtrPtr", main_content)
         
         # Check config.puml for typedefs in headers
         # Note: Individual header files are not being generated as separate .puml files in the current implementation
@@ -229,11 +236,18 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         with open(main_puml_path, 'r', encoding='utf-8') as f:
             main_content = f.read()
         
-        # Verify complex typedefs
-        self.assertIn("+ typedef struct { int x", main_content)
-        self.assertIn("+ typedef Point* PointPtr", main_content)
-        self.assertIn("+ typedef void (*)(...) ImageCallback", main_content)
-        self.assertIn("+ typedef int (*)(...) CompareFunc", main_content)
+        # Check that typedefs are correctly shown in header classes (name only)
+        self.assertIn("+ typedef x", main_content)           # from types.h
+        self.assertIn("+ typedef PointPtr", main_content)    # from types.h
+        self.assertIn("+ typedef PointPtrPtr", main_content) # from types.h
+        self.assertIn("+ typedef ImageCallback", main_content) # from types.h
+        self.assertIn("+ typedef CompareFunc", main_content) # from types.h
+        
+        # Check that typedefs are NOT shown with full type information in headers
+        self.assertNotIn("+ typedef struct { int x", main_content)
+        self.assertNotIn("+ typedef Point* PointPtr", main_content)
+        self.assertNotIn("+ typedef void (*)(...) ImageCallback", main_content)
+        self.assertNotIn("+ typedef int (*)(...) CompareFunc", main_content)
 
     def test_feature_include_processing_with_macros(self):
         """Test include processing when headers contain macros"""
@@ -324,8 +338,25 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         self.assertIn("+ enum Color", main_content)
         # Note: Struct fields are being parsed as global variables in the current implementation
         # This test will be updated when struct parsing is improved
-        self.assertIn("+ OK", main_content)          # Status enum value
-        self.assertIn("+ RED", main_content)         # Color enum value
+        
+        # Check that structs are correctly shown in header classes (name only)
+        self.assertIn("+ struct Person", main_content)  # from utils.h
+        self.assertIn("+ struct Address", main_content) # from utils.h
+        self.assertIn("+ struct Config", main_content)  # from config.h
+        self.assertIn("+ struct Settings", main_content) # from config.h
+        
+        # Check that enums are correctly shown in header classes (name only)
+        self.assertIn("+ enum Status", main_content)  # from types.h
+        self.assertIn("+ enum Color", main_content)   # from types.h
+        self.assertIn("+ enum Direction", main_content) # from types.h
+        
+        # Check that enum values are NOT shown in header classes
+        self.assertNotIn("+ OK", main_content)          # enum values not in header
+        self.assertNotIn("+ ERROR", main_content)       # enum values not in header
+        self.assertNotIn("+ RED", main_content)         # enum values not in header
+        self.assertNotIn("+ GREEN", main_content)       # enum values not in header
+        self.assertNotIn("+ NORTH", main_content)       # enum values not in header
+        self.assertNotIn("+ SOUTH", main_content)       # enum values not in header
 
     def create_test_project_structure(self) -> Path:
         """Create a test project structure with includes"""

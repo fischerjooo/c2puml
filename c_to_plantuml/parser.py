@@ -227,6 +227,10 @@ class CParser:
                 line.startswith('#')):
                 continue
                 
+            # Skip typedef declarations
+            if line.startswith('typedef '):
+                continue
+                
             # Skip lines with function-like declarations (containing parentheses)
             if '(' in line and ')' in line:
                 continue
