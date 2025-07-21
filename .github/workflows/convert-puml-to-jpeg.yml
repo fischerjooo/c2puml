@@ -17,17 +17,31 @@ on:
 jobs:
   convert-puml:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
         
     - name: Configure Git
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        
+    - name: Setup Git credentials
+      run: |
+        # Use Personal Access Token for pushing if available, otherwise use GITHUB_TOKEN
+        if [ -n "${{ secrets.PERSONAL_ACCESS_TOKEN }}" ]; then
+          echo "Using Personal Access Token for authentication"
+          git remote set-url origin https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ github.repository }}
+        else
+          echo "Using GITHUB_TOKEN for authentication"
+        fi
         
     - name: Install PlantUML
       run: |
@@ -128,7 +142,13 @@ jobs:
           git commit -F /tmp/commit_msg
           
           # Push to the same branch
-          git push origin ${{ github.ref }}
+          if [ -n "${{ secrets.PERSONAL_ACCESS_TOKEN }}" ]; then
+            echo "Pushing with Personal Access Token..."
+            git push origin ${{ github.ref }}
+          else
+            echo "Pushing with GITHUB_TOKEN..."
+            git push origin ${{ github.ref }}
+          fi
           
           echo "✅ Successfully committed and pushed generated images"
         fi
