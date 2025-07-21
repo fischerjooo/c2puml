@@ -17,17 +17,35 @@ on:
 jobs:
   convert-puml:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        fetch-depth: 0
         
     - name: Configure Git
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        
+    - name: Validate Personal Access Token
+      run: |
+        if [ -z "${{ secrets.PERSONAL_ACCESS_TOKEN }}" ]; then
+          echo "❌ Error: PERSONAL_ACCESS_TOKEN secret is not configured"
+          echo "Please add a Personal Access Token with 'repo' scope as a repository secret"
+          exit 1
+        fi
+        echo "✅ Personal Access Token is configured"
+        
+    - name: Setup Git credentials
+      run: |
+        echo "Setting up Git credentials with Personal Access Token"
+        git remote set-url origin https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ github.repository }}
         
     - name: Install PlantUML
       run: |
@@ -127,7 +145,8 @@ jobs:
           # Commit with detailed message
           git commit -F /tmp/commit_msg
           
-          # Push to the same branch
+          # Push to the same branch using Personal Access Token
+          echo "Pushing with Personal Access Token..."
           git push origin ${{ github.ref }}
           
           echo "✅ Successfully committed and pushed generated images"

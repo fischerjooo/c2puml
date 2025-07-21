@@ -40,6 +40,43 @@ For development, install additional dependencies:
 pip install -r requirements-dev.txt
 ```
 
+## GitHub Actions Setup
+
+This project includes GitHub Actions workflows for automated PlantUML to JPEG conversion. To set up the workflows properly, you need to configure authentication.
+
+### Authentication Setup
+
+The workflow requires write permissions to commit generated images back to the repository. You have two options:
+
+#### Option 1: Use Personal Access Token (Recommended)
+
+1. Create a Personal Access Token (PAT) with `repo` scope:
+   - Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
+   - Generate a new token with `repo` permissions
+   - Copy the token
+
+2. Add the token as a repository secret:
+   - Go to your repository Settings → Secrets and variables → Actions
+   - Create a new secret named `PERSONAL_ACCESS_TOKEN`
+   - Paste your PAT as the value
+
+#### Option 2: Use Workflow Permissions (Alternative)
+
+The workflow is configured with explicit permissions that should work for most repositories. If you're still getting permission errors, ensure your repository settings allow workflow write access:
+
+1. Go to repository Settings → Actions → General
+2. Under "Workflow permissions", select "Read and write permissions"
+3. Check "Allow GitHub Actions to create and approve pull requests"
+
+### Running the Workflow
+
+1. Go to the Actions tab in your repository
+2. Select "Convert PlantUML to JPEG" workflow
+3. Click "Run workflow"
+4. Configure the input parameters:
+   - **Output folder**: Directory containing .puml files (default: `output`)
+   - **Commit changes**: Whether to commit generated images (default: `true`)
+
 ## Usage
 
 The tool provides a 3-step processing pipeline that can be executed individually or chained together:
@@ -414,6 +451,32 @@ The script will:
 - Convert all `.puml` files in the `output` directory to JPEG
 - Create both PNG (intermediate) and JPEG (final) files
 - Provide detailed progress information
+
+## Troubleshooting
+
+### GitHub Actions Permission Errors
+
+If you encounter permission errors like `Permission to fischerjooo/generator_project.git denied to github-actions[bot]`, follow these steps:
+
+1. **Check Repository Settings**:
+   - Go to repository Settings → Actions → General
+   - Ensure "Workflow permissions" is set to "Read and write permissions"
+   - Check "Allow GitHub Actions to create and approve pull requests"
+
+2. **Set up Personal Access Token** (if repository settings don't work):
+   - Create a PAT with `repo` scope
+   - Add it as a repository secret named `PERSONAL_ACCESS_TOKEN`
+   - The workflow will automatically use it for authentication
+
+3. **Verify Secret Configuration**:
+   - Go to repository Settings → Secrets and variables → Actions
+   - Ensure `PERSONAL_ACCESS_TOKEN` is properly configured
+
+### Common Issues
+
+- **No images generated**: Check that `.puml` files exist in the specified output folder
+- **Conversion failures**: Ensure PlantUML syntax is valid in your `.puml` files
+- **Authentication errors**: Follow the authentication setup steps above
 
 ## Contributing
 
