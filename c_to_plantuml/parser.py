@@ -157,14 +157,21 @@ class CParser:
             # Improved regex: match type (with pointers/arrays), name, and array size if present
             # Handles: int x; char label[32]; double *ptr; int (*cb)(int);
             field_pattern = r"([A-Za-z_][A-Za-z0-9_\*\s]*?)\s+([A-Za-z_][A-Za-z0-9_]*)(\s*\[[^;]*\])?\s*;"
+            import logging
+            logger = logging.getLogger(__name__)
             for field_match in re.finditer(field_pattern, struct_body):
                 field_type = field_match.group(1).strip()
                 field_name = field_match.group(2).strip()
                 array_size = field_match.group(3)
                 if array_size:
                     field_type = f"{field_type}{array_size.strip()}"
-                if field_name:
-                    fields.append(Field(field_name, field_type))
+                logger.debug(f"[struct] About to create Field: type='{field_type}', name='{field_name}'")
+                try:
+                    if field_name:
+                        fields.append(Field(field_name, field_type))
+                except Exception as e:
+                    logger.error(f"[struct] Exception creating Field: {e} | type='{field_type}', name='{field_name}'")
+                    raise
             structs[struct_name] = Struct(struct_name, fields)
 
         return structs
@@ -225,7 +232,14 @@ class CParser:
                     type_, name = parts
                 else:
                     type_, name = parts[0], ''
-                params.append(Field(name=name, type=type_.strip()))
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.debug(f"[funcparam] About to create Field: type='{type_}', name='{name}'")
+                try:
+                    params.append(Field(name=name, type=type_.strip()))
+                except Exception as e:
+                    logger.error(f"[funcparam] Exception creating Field: {e} | type='{type_}', name='{name}'")
+                    raise
             return params
 
         # Parse function definitions
