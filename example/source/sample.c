@@ -1,69 +1,78 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "sample.h"
 #include "math_utils.h"
 #include "logger.h"
 #include "geometry.h"
 
-#define MAX_SIZE 100
-#define DEBUG_MODE 1
+#define MAX_SIZE 100U
+#define DEBUG_MODE 1U
 #define CALC(x, y) ((x) + (y))
 
-// Global variables
-int global_counter = 0;
+/* Global variables */
+static int global_counter = 0;
 static char buffer[MAX_SIZE];
-double *global_ptr = NULL;
+double * global_ptr = NULL;
 
-// Typedef
-typedef struct point {
+/* Typedef and struct definition with explicit tag */
+typedef struct point_tag {
     int x;
     int y;
     char label[32];
 } point_t;
 
-// Enum definition
-typedef enum {
-    STATE_IDLE,
+/* Enum definition with explicit tag */
+typedef enum system_state_tag {
+    STATE_IDLE = 0,
     STATE_RUNNING,
     STATE_ERROR
 } system_state_t;
 
-// Function prototypes
+/* Function prototypes */
 static void internal_helper(void);
 int calculate_sum(int a, int b);
-point_t* create_point(int x, int y, const char* label);
+point_t * create_point(int x, int y, const char * label);
 
-// Static function implementation
-static void internal_helper(void) {
+/* Static function implementation */
+static void internal_helper(void)
+{
     printf("Internal helper called\n");
     global_counter++;
 }
 
-// Public function implementations
-int calculate_sum(int a, int b) {
+/* Public function implementations */
+int calculate_sum(int a, int b)
+{
     return CALC(a, b);
 }
 
-point_t* create_point(int x, int y, const char* label) {
-    point_t* p = malloc(sizeof(point_t));
-    if (p != NULL) {
+point_t * create_point(int x, int y, const char * label)
+{
+    point_t * p = (point_t *)malloc(sizeof(point_t));
+    if (p != NULL)
+    {
         p->x = x;
         p->y = y;
-        strncpy(p->label, label, sizeof(p->label) - 1);
-        p->label[sizeof(p->label) - 1] = '\0';
+        (void)strncpy(p->label, label, (sizeof(p->label) - 1U));
+        p->label[sizeof(p->label) - 1U] = '\0';
     }
     return p;
 }
 
-void process_point(point_t* p) {
-    if (p == NULL) return;
-    
+void process_point(point_t * p)
+{
+    if (p == NULL)
+    {
+        return;
+    }
     printf("Point: (%d, %d) - %s\n", p->x, p->y, p->label);
     internal_helper();
 }
 
-// Add a function that uses triangle_t and logging
-void demo_triangle_usage() {
+/* Add a function that uses triangle_t and logging */
+void demo_triangle_usage(void)
+{
     point_t a = {0, 0, "A"};
     point_t b = {4, 0, "B"};
     point_t c = {0, 3, "C"};
@@ -72,19 +81,20 @@ void demo_triangle_usage() {
     log_message(LOG_INFO, "Triangle '%s' area: %d", tri.label, area);
 }
 
-int main(void) {
-    point_t* p1 = create_point(10, 20, "First Point");
-    point_t* p2 = create_point(30, 40, "Second Point");
-    
+int main(void)
+{
+    point_t * p1 = create_point(10, 20, "First Point");
+    point_t * p2 = create_point(30, 40, "Second Point");
+
     process_point(p1);
     process_point(p2);
-    
+
     printf("Total operations: %d\n", global_counter);
-    
+
     free(p1);
     free(p2);
 
     demo_triangle_usage();
-    
+
     return 0;
 }

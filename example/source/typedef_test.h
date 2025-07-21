@@ -6,57 +6,68 @@
 #include "config.h"
 #include "logger.h"
 
-// Basic type aliases
+/* Basic type aliases */
 typedef uint32_t MyLen;
 typedef int32_t MyInt;
-typedef char* MyString;
+typedef char * MyString;
 
-// Struct definition
-typedef struct {
+/* Struct definition with explicit tag */
+typedef struct MyBuffer_tag {
     MyLen length;
     MyString data;
 } MyBuffer;
 
-// Function pointer typedef
-typedef int (*MyCallback)(MyBuffer* buffer);
+/* Function pointer typedef for buffer callback */
+typedef int (*MyCallback)(MyBuffer * buffer);
 
-// Complex type definition
-typedef struct MyComplexStruct {
+/* Complex type definition with explicit tag */
+typedef struct MyComplexStruct_tag {
     MyLen id;
     MyString name;
     MyCallback callback;
-    log_level_t log_level; // New: use logger typedef
+    log_level_t log_level;
 } MyComplex;
 
-typedef MyComplex* MyComplexPtr;
+typedef MyComplex * MyComplexPtr;
 
-// Enum typedef (anonymous)
-typedef enum {
-    COLOR_RED,
+/* Enum typedef with explicit tag */
+typedef enum Color_tag {
+    COLOR_RED = 0,
     COLOR_GREEN,
     COLOR_BLUE
 } Color_t;
 
-enum StatusEnum { STATUS_OK, STATUS_FAIL };
-typedef enum StatusEnum Status_t;
+/* Status enum and typedef */
+typedef enum StatusEnum_tag {
+    STATUS_OK = 0,
+    STATUS_FAIL
+} Status_t;
 
-typedef struct {
+/* Point struct with explicit tag */
+typedef struct Point_tag {
     int x;
     int y;
 } Point_t;
 
-struct NamedStruct { int a; int b; };
-typedef struct NamedStruct NamedStruct_t;
+/* Named struct and typedef */
+typedef struct NamedStruct_tag {
+    int a;
+    int b;
+} NamedStruct_t;
 
-typedef union {
+/* Union typedef with explicit tag */
+typedef union Number_tag {
     int i;
     float f;
 } Number_t;
 
-union NamedUnion { char c; double d; };
-typedef union NamedUnion NamedUnion_t;
+/* Named union and typedef */
+typedef union NamedUnion_tag {
+    char c;
+    double d;
+} NamedUnion_t;
 
-// New: Typedef for array of pointers
+/* Typedef for array of pointers */
 typedef MyComplexPtr MyComplexArray[10];
 
-#endif // TYPEDEF_TEST_H
+#endif /* TYPEDEF_TEST_H */
