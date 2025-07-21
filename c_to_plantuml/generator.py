@@ -151,19 +151,16 @@ class PlantUMLGenerator:
             if relationship_type == "defines":
                 if original_type in file_model.structs:
                     struct = file_model.structs[original_type]
-                    lines.append(f"    + struct {original_type}")
                     for field in struct.fields:
-                        lines.append(f"        + {field.type} {field.name}")
+                        lines.append(f"    + {field.type} {field.name}")
                 elif original_type in file_model.enums:
                     enum = file_model.enums[original_type]
-                    lines.append(f"    + enum {original_type}")
                     for value in enum.values:
-                        lines.append(f"        + {value}")
+                        lines.append(f"    + {value}")
                 elif original_type in file_model.unions:
                     union = file_model.unions[original_type]
-                    lines.append(f"    + union {original_type}")
                     for field in union.fields:
-                        lines.append(f"        + {field.type} {field.name}")
+                        lines.append(f"    + {field.type} {field.name}")
                 else:
                     lines.append(f"    + {original_type}")
             else:
@@ -176,27 +173,24 @@ class PlantUMLGenerator:
                     struct = file_model.structs[original_type]
                     lines.append(f'class "{original_type}" as {self._get_type_uml_id(original_type)} <<type>> #LightGray')
                     lines.append("{")
-                    lines.append(f"    + struct {original_type}")
                     for field in struct.fields:
-                        lines.append(f"        + {field.type} {field.name}")
+                        lines.append(f"    + {field.type} {field.name}")
                     lines.append("}")
                     lines.append("")
                 elif original_type in file_model.enums:
                     enum = file_model.enums[original_type]
                     lines.append(f'class "{original_type}" as {self._get_type_uml_id(original_type)} <<type>> #LightGray')
                     lines.append("{")
-                    lines.append(f"    + enum {original_type}")
                     for value in enum.values:
-                        lines.append(f"        + {value}")
+                        lines.append(f"    + {value}")
                     lines.append("}")
                     lines.append("")
                 elif original_type in file_model.unions:
                     union = file_model.unions[original_type]
                     lines.append(f'class "{original_type}" as {self._get_type_uml_id(original_type)} <<type>> #LightGray')
                     lines.append("{")
-                    lines.append(f"    + union {original_type}")
                     for field in union.fields:
-                        lines.append(f"        + {field.type} {field.name}")
+                        lines.append(f"    + {field.type} {field.name}")
                     lines.append("}")
                     lines.append("")
         return lines
