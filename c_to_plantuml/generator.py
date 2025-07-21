@@ -298,6 +298,11 @@ class PlantUMLGenerator:
         for include_relation in file_model.include_relations:
             source_basename = Path(include_relation.source_file).stem
             included_basename = Path(include_relation.included_file).stem
+            # Skip self-referencing header-to-header include relations
+            if source_basename == included_basename:
+                import logging
+                logging.getLogger(__name__).debug(f"Skipping self-referencing header include: {source_basename} -> {included_basename}")
+                continue
             lines.append(
                 f"{self._get_header_uml_id(source_basename)} --> "
                 f"{self._get_header_uml_id(included_basename)} : <<include>>"
