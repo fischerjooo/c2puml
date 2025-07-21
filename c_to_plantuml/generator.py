@@ -238,24 +238,7 @@ class PlantUMLGenerator:
             # Typedef class
             lines.append(f'class "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
             lines.append("{")
-            # Show struct/enum/union fields/values if available
-            if relationship_type == "defines":
-                if original_type in file_model.structs:
-                    struct = file_model.structs[original_type]
-                    for field in struct.fields:
-                        lines.append(f"    + {field.type} {field.name}")
-                elif original_type in file_model.enums:
-                    enum = file_model.enums[original_type]
-                    for value in enum.values:
-                        lines.append(f"    + {value}")
-                elif original_type in file_model.unions:
-                    union = file_model.unions[original_type]
-                    for field in union.fields:
-                        lines.append(f"    + {field.type} {field.name}")
-                else:
-                    lines.append(f"    + {original_type}")
-            else:
-                lines.append(f"    + {original_type}")
+            lines.append(f"    + {original_type}")
             lines.append("}")
             lines.append("")
             # Original type class if struct/enum/union
@@ -330,6 +313,11 @@ class PlantUMLGenerator:
                     f"{self._get_typedef_uml_id(typedef_name)} -|> "
                     f"{self._get_type_uml_id(original_type)} : «alias»"
                 )
+            # Declares relation from main/header class to typedef
+            main_class_id = self._get_uml_id(Path(file_model.file_path).stem)
+            header_class_id = self._get_header_uml_id(Path(file_model.file_path).stem)
+            lines.append(f"{main_class_id} ..> {self._get_typedef_uml_id(typedef_name)} : declares")
+            lines.append(f"{header_class_id} ..> {self._get_typedef_uml_id(typedef_name)} : declares")
         return lines
 
     def _find_included_file(
