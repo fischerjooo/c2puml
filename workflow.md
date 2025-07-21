@@ -9,11 +9,6 @@ Simple testing workflow for the C to PlantUML Converter using two main scripts.
 ```bash
 # Run all tests
 ./run_all_tests.sh
-
-# Run specific test categories
-./run_all_tests.sh unit
-./run_all_tests.sh feature
-./run_all_tests.sh integration
 ```
 
 ### Running Examples
