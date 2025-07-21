@@ -265,13 +265,10 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
     {return_type} {function_name}()
     -- Structs --
     struct {struct_name}
-        + {type} {field_name}
     -- Enums --
     enum {enum_name}
-        + {value}
     -- Unions --
     union {union_name}
-        + {type} {field_name}
 }
 
 ' For each included header file with actual content:
@@ -280,31 +277,51 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
     -- Macros --
     + #define {macro_name}
     -- Typedefs --
-    + typedef {original_type} {typedef_name}
+    + typedef {typedef_name}
     -- Global Variables --
     + {type} {variable_name}
     -- Functions --
     + {return_type} {function_name}()
     -- Structs --
     + struct {struct_name}
-        + {type} {field_name}
     -- Enums --
     + enum {enum_name}
-        + {value}
     -- Unions --
     + union {union_name}
+}
+
+' Typedef classes for struct typedefs:
+class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
+{
+    + struct {original_type}
         + {type} {field_name}
 }
 
-' Typedef classes for struct/enum/union:
+' Typedef classes for enum typedefs:
 class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 {
-    + {type} {field_name}
+    + enum {original_type}
+        + {value}
 }
 
+' Typedef classes for union typedefs:
+class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
+{
+    + union {original_type}
+        + {type} {field_name}
+}
+
+' Typedef classes for simple type typedefs:
+class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
+{
+    + {original_type}
+}
+
+' Original type classes for struct/enum/union:
 class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 {
-    + {type} {field_name}
+    + struct {original_type}
+        + {type} {field_name}
 }
 
 ' Relationships:
@@ -327,10 +344,12 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 - **Alias relationship**: `{typedef} -|> {original_type} : «alias»`
 
 #### 5.2.3 Typedef Content Display
-- **Struct typedefs**: Show struct fields within the typedef class
-- **Enum typedefs**: Show enum values within the typedef class
-- **Union typedefs**: Show union fields within the typedef class
-- **Basic type typedefs**: Show the original type name
+- **Source/Header files**: Only list typedef names (e.g., `typedef MyStruct`, `struct Person`, `enum Status`)
+- **Typedef classes**: Show the actual content:
+  - **Struct typedefs**: Show struct fields within the typedef class
+  - **Enum typedefs**: Show enum values within the typedef class
+  - **Union typedefs**: Show union fields within the typedef class
+  - **Simple type typedefs**: Show the original type name
 
 ### 5.3 Include Depth Configuration
 
@@ -369,10 +388,13 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 - **Functions**: `{return_type} {function_name}()` (source) or `+ {return_type} {function_name}()` (header)
 - **Global variables**: `{type} {variable_name}` (source) or `+ {type} {variable_name}` (header)
 - **Macros**: `- #define {macro_name}` (source) or `+ #define {macro_name}` (header)
-- **Typedefs**: `- typedef {typedef_name}` (source) or `+ typedef {original_type} {typedef_name}` (header)
-- **Struct fields**: `+ {type} {field_name}` (indented under struct)
-- **Union fields**: `+ {type} {field_name}` (indented under union)
-- **Enum values**: `+ {value}` (indented under enum)
+- **Typedefs**: `- typedef {typedef_name}` (source) or `+ typedef {typedef_name}` (header) - only the name
+- **Structs**: `struct {struct_name}` (source) or `+ struct {struct_name}` (header) - only the name
+- **Enums**: `enum {enum_name}` (source) or `+ enum {enum_name}` (header) - only the name
+- **Unions**: `union {union_name}` (source) or `+ union {union_name}` (header) - only the name
+- **Struct fields**: `+ {type} {field_name}` (shown in typedef/type classes only)
+- **Union fields**: `+ {type} {field_name}` (shown in typedef/type classes only)
+- **Enum values**: `+ {value}` (shown in typedef/type classes only)
 
 #### 5.4.4 Relationships
 - **Include relationships**: `{source} --> {header} : <<include>>` (arrows only)

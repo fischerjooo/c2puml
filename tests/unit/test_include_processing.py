@@ -380,9 +380,10 @@ typedef struct {
         
         # Check that header class includes typedefs
         self.assertIn('class "utils" as HEADER_UTILS <<header>> #LightGreen', diagram)
-        self.assertIn("+ typedef int Integer", diagram)
-        self.assertIn("+ typedef char* String", diagram)
-        self.assertIn("+ typedef struct { int x", diagram)
+        self.assertIn("+ typedef Integer", diagram)
+        self.assertIn("+ typedef String", diagram)
+        # Typedef content should NOT be shown in header class
+        self.assertNotIn("+ typedef struct { int x", diagram)
 
     def test_include_processing_with_macros(self):
         """Test include processing when headers contain macros"""
@@ -466,6 +467,7 @@ struct Config {
         self.assertIn('class "types" as HEADER_TYPES <<header>> #LightGreen', diagram)
         self.assertIn("+ struct Person", diagram)
         self.assertIn("+ struct Config", diagram)
+        # Struct fields should NOT be shown in header class
         # Note: Struct fields are being parsed as global variables in the current implementation
         # This test will be updated when struct parsing is improved
         pass
@@ -502,10 +504,11 @@ enum Color {
         self.assertIn('class "types" as HEADER_TYPES <<header>> #LightGreen', diagram)
         self.assertIn("+ enum Status", diagram)
         self.assertIn("+ enum Color", diagram)
-        self.assertIn("+ OK", diagram)
-        self.assertIn("+ ERROR", diagram)
-        self.assertIn("+ RED", diagram)
-        self.assertIn("+ GREEN", diagram)
+        # Enum values should NOT be shown in header class
+        self.assertNotIn("+ OK", diagram)
+        self.assertNotIn("+ ERROR", diagram)
+        self.assertNotIn("+ RED", diagram)
+        self.assertNotIn("+ GREEN", diagram)
 
     def test_include_processing_complete_scenario(self):
         """Test complete include processing scenario with all elements"""
@@ -625,13 +628,15 @@ enum Color {
         
         # Structs in header classes
         self.assertIn("+ struct Config", diagram)  # in config.h
-        self.assertIn("+ typedef struct { Byte r, g, b, a", diagram)  # in types.h (parsed as typedef)
+        # Struct fields should NOT be shown in header class
+        self.assertNotIn("+ typedef struct { Byte r, g, b, a", diagram)  # in types.h (parsed as typedef)
         
         # Enums in header classes
         self.assertIn("+ enum Color", diagram)  # in types.h
-        self.assertIn("+ RED", diagram)
-        self.assertIn("+ GREEN", diagram)
-        self.assertIn("+ BLUE", diagram)
+        # Enum values should NOT be shown in header class
+        self.assertNotIn("+ RED", diagram)
+        self.assertNotIn("+ GREEN", diagram)
+        self.assertNotIn("+ BLUE", diagram)
 
 
 if __name__ == "__main__":

@@ -118,16 +118,18 @@ class TestGenerator(unittest.TestCase):
         self.assertIn("-- Structs --", content)
         self.assertIn("struct Person", content)
         self.assertIn("struct Config", content)
-        self.assertIn("+ char* name", content)  # Person field
-        self.assertIn("+ int age", content)  # Person field
-        self.assertIn("+ int max_users", content)  # Config field
+        # Struct fields should NOT be shown in main class
+        self.assertNotIn("+ char* name", content)  # Person field
+        self.assertNotIn("+ int age", content)  # Person field
+        self.assertNotIn("+ int max_users", content)  # Config field
 
         # Check enums section
         self.assertIn("-- Enums --", content)
         self.assertIn("enum Status", content)
         self.assertIn("enum Color", content)
-        self.assertIn("+ OK", content)
-        self.assertIn("+ RED", content)
+        # Enum values should NOT be shown in main class
+        self.assertNotIn("+ OK", content)
+        self.assertNotIn("+ RED", content)
 
         # Check typedef classes (not implemented in current version)
         # self.assertIn('class "Integer" as INTEGER <<typedef>> #LightYellow', content)

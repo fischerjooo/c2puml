@@ -66,20 +66,14 @@ class PlantUMLGenerator:
         for function in file_model.functions:
             lines.append(f"    {function.return_type} {function.name}()")
         lines.append("    -- Structs --")
-        for struct_name, struct in file_model.structs.items():
+        for struct_name in file_model.structs:
             lines.append(f"    struct {struct_name}")
-            for field in struct.fields:
-                lines.append(f"        + {field.type} {field.name}")
         lines.append("    -- Enums --")
-        for enum_name, enum in file_model.enums.items():
+        for enum_name in file_model.enums:
             lines.append(f"    enum {enum_name}")
-            for value in enum.values:
-                lines.append(f"        + {value}")
         lines.append("    -- Unions --")
-        for union_name, union in file_model.unions.items():
+        for union_name in file_model.unions:
             lines.append(f"    union {union_name}")
-            for field in union.fields:
-                lines.append(f"        + {field.type} {field.name}")
         lines.append("}")
         lines.append("")
         return lines
@@ -122,8 +116,8 @@ class PlantUMLGenerator:
         for macro in file_model.macros:
             lines.append(f"    + #define {macro}")
         lines.append("    -- Typedefs --")
-        for typedef_name, original_type in file_model.typedefs.items():
-            lines.append(f"    + typedef {original_type} {typedef_name}")
+        for typedef_name in file_model.typedefs:
+            lines.append(f"    + typedef {typedef_name}")
         lines.append("    -- Global Variables --")
         for global_var in file_model.globals:
             lines.append(f"    + {global_var.type} {global_var.name}")
@@ -131,20 +125,14 @@ class PlantUMLGenerator:
         for function in file_model.functions:
             lines.append(f"    + {function.return_type} {function.name}()")
         lines.append("    -- Structs --")
-        for struct_name, struct in file_model.structs.items():
+        for struct_name in file_model.structs:
             lines.append(f"    + struct {struct_name}")
-            for field in struct.fields:
-                lines.append(f"        + {field.type} {field.name}")
         lines.append("    -- Enums --")
-        for enum_name, enum in file_model.enums.items():
+        for enum_name in file_model.enums:
             lines.append(f"    + enum {enum_name}")
-            for value in enum.values:
-                lines.append(f"        + {value}")
         lines.append("    -- Unions --")
-        for union_name, union in file_model.unions.items():
+        for union_name in file_model.unions:
             lines.append(f"    + union {union_name}")
-            for field in union.fields:
-                lines.append(f"        + {field.type} {field.name}")
         lines.append("}")
         lines.append("")
         return lines
