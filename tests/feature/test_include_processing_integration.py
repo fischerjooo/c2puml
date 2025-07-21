@@ -167,11 +167,10 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         self.assertIn('class "x" as TYPEDEF_X <<typedef>>', main_content)
         self.assertIn('MAIN ..> TYPEDEF_X : declares', main_content)
         self.assertIn('HEADER_MAIN ..> TYPEDEF_X : declares', main_content)
-        
-        # Check that typedefs from utils.h are shown in header class
-        self.assertIn("+ typedef struct { int x", main_content)  # from utils.h
-        
-        # Check that typedefs from types.h are shown in header class
+        # Check that typedef class for 'RGBA' exists and is related
+        self.assertIn('class "RGBA" as TYPEDEF_RGBA <<typedef>>', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_RGBA : declares', main_content)
+        self.assertIn('HEADER_MAIN ..> TYPEDEF_RGBA : declares', main_content)
         self.assertIn("+ typedef unsigned char Byte", main_content)  # from types.h
         self.assertIn("+ typedef unsigned short Word", main_content)  # from types.h
         self.assertIn("+ typedef struct { Byte r, g, b, a", main_content)  # from types.h
@@ -279,11 +278,23 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
             main_content = f.read()
         
         # Check that typedefs from main.c are shown in main class
-        self.assertIn("- typedef struct { int x", main_content)           # from main.c
-        self.assertIn("- typedef Point* PointPtr", main_content)    # from main.c
-        self.assertIn("- typedef PointPtr* PointPtrPtr", main_content) # from main.c
-        self.assertIn("- typedef void (*)(...) ImageCallback", main_content) # from main.c
-        self.assertIn("- typedef int (*)(...) CompareFunc", main_content) # from main.c
+        self.assertIn('class "Point" as TYPEDEF_POINT <<typedef>>', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_POINT : declares', main_content)
+        self.assertIn('HEADER_MAIN ..> TYPEDEF_POINT : declares', main_content)
+        # Check for pointer typedefs
+        self.assertIn('class "PointPtr" as TYPEDEF_POINTPTR <<typedef>>', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_POINTPTR : declares', main_content)
+        self.assertIn('HEADER_MAIN ..> TYPEDEF_POINTPTR : declares', main_content)
+        self.assertIn('class "PointPtrPtr" as TYPEDEF_POINTPTRPTR <<typedef>>', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_POINTPTRPTR : declares', main_content)
+        self.assertIn('HEADER_MAIN ..> TYPEDEF_POINTPTRPTR : declares', main_content)
+        # Check for function pointer typedefs
+        self.assertIn('class "ImageCallback" as TYPEDEF_IMAGECALLBACK <<typedef>>', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_IMAGECALLBACK : declares', main_content)
+        self.assertIn('HEADER_MAIN ..> TYPEDEF_IMAGECALLBACK : declares', main_content)
+        self.assertIn('class "CompareFunc" as TYPEDEF_COMPAREFUNC <<typedef>>', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_COMPAREFUNC : declares', main_content)
+        self.assertIn('HEADER_MAIN ..> TYPEDEF_COMPAREFUNC : declares', main_content)
         
         # Check that typedefs from types.h are shown in header class
         self.assertIn("+ typedef unsigned char Byte", main_content)  # from types.h

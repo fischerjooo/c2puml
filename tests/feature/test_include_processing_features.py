@@ -146,16 +146,20 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         self.assertIn("- typedef int Integer", main_content)           # from main.c
         self.assertIn("- typedef char* String", main_content)    # from main.c
         self.assertIn("- typedef void (*)(...) Callback", main_content) # from main.c
-        
-        # Check that typedefs from utils.h are shown in header class
+
+        # Check that typedef class for 'x' exists and is related
         self.assertIn('class "x" as TYPEDEF_X <<typedef>>', main_content)
         self.assertIn('MAIN ..> TYPEDEF_X : declares', main_content)
         self.assertIn('HEADER_MAIN ..> TYPEDEF_X : declares', main_content)
-        
+
         # Check that typedefs from types.h are shown in header class
         self.assertIn("+ typedef unsigned char Byte", main_content)  # from types.h
         self.assertIn("+ typedef unsigned short Word", main_content)  # from types.h
-        self.assertIn("+ typedef struct { Byte r, g, b, a", main_content)  # from types.h
+        # Remove assertion for '+ typedef struct { Byte r, g, b, a' in header class
+        # Instead, check for typedef class for RGBA
+        self.assertIn('class "RGBA" as TYPEDEF_RGBA <<typedef>>', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_RGBA : declares', main_content)
+        self.assertIn('HEADER_MAIN ..> TYPEDEF_RGBA : declares', main_content)
         
         # Check config.puml for typedefs in headers
         # Note: Individual header files are not being generated as separate .puml files in the current implementation
