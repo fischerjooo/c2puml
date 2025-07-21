@@ -26,6 +26,18 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     + int triangle_area()
 }
 
+class "string.h" as HEADER_STRING_H <<header>> #LightGray
+{
+    -- External Header --
+    + (external)
+}
+
+class "stdlib.h" as HEADER_STDLIB_H <<header>> #LightGray
+{
+    -- External Header --
+    + (external)
+}
+
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 {
     + point_t[3] vertices
@@ -35,6 +47,8 @@ class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 GEOMETRY --> HEADER_GEOMETRY : <<include>>
+GEOMETRY --> HEADER_STRING_H : <<include>>
+GEOMETRY --> HEADER_STDLIB_H : <<include>>
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : declares
 TYPEDEF_TRIANGLE_T --> TYPEDEF_POINT_T : uses
 

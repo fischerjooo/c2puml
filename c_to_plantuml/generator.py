@@ -146,6 +146,15 @@ class PlantUMLGenerator:
                     lines.extend(
                         self._generate_header_class(included_file_model, header_basename)
                     )
+            else:
+                # This is an external header that couldn't be found
+                # Generate an empty header class for it
+                header_basename = include_name
+                if header_basename not in seen_headers:
+                    seen_headers.add(header_basename)
+                    lines.extend(
+                        self._generate_external_header_class(header_basename)
+                    )
 
         # Process indirect includes from include_relations (up to configured depth)
         for include_relation in file_model.include_relations:
@@ -162,6 +171,21 @@ class PlantUMLGenerator:
                     lines.extend(
                         self._generate_header_class(included_file_model, header_basename)
                     )
+            
+            # Also process external headers from included files
+            if included_file_model:
+                for include_name in included_file_model.includes:
+                    # Check if this is an external header
+                    included_file_path = self._find_included_file(
+                        include_name, included_file_model.project_root, project_model
+                    )
+                    if included_file_path and included_file_path.startswith("EXTERNAL:"):
+                        external_header_name = included_file_path.split(":", 1)[1]
+                        if external_header_name not in seen_headers:
+                            seen_headers.add(external_header_name)
+                            lines.extend(
+                                self._generate_external_header_class(external_header_name)
+                            )
 
         return lines
 
@@ -199,6 +223,18 @@ class PlantUMLGenerator:
                 lines.append(f"    + {function.return_type} {function.name}()")
         lines.append("}")
         lines.append("")
+        return lines
+
+    def _generate_external_header_class(self, basename: str) -> List[str]:
+        """Generate an empty class for an external header file"""
+        lines = [
+            f'class "{basename}" as {self._get_header_uml_id(basename)} <<header>> #LightGray',
+            "{",
+            "    -- External Header --",
+            "    + (external)",
+            "}",
+            "",
+        ]
         return lines
 
     def _generate_typedef_classes(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
@@ -358,29 +394,71 @@ class PlantUMLGenerator:
                     
                     lines.append(f"{source_class} --> {target_class} : <<include>>")
         
+        # Also process external headers from included files
+        for include_relation in file_model.include_relations:
+            included_file_path = include_relation.included_file
+            included_file_model = None
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    included_file_model = model
+                    break
+            
+            if included_file_model:
+                # Process external headers from this included file
+                for include_name in included_file_model.includes:
+                    included_file_path = self._find_included_file(
+                        include_name, included_file_model.project_root, project_model
+                    )
+                    if included_file_path and included_file_path.startswith("EXTERNAL:"):
+                        external_header_name = included_file_path.split(":", 1)[1]
+                        source_basename = Path(included_file_model.file_path).stem
+                        
+                        # Create a unique identifier for this relationship
+                        relationship_id = f"{source_basename}->{external_header_name}"
+                        if relationship_id not in seen_relationships:
+                            seen_relationships.add(relationship_id)
+                            source_class = self._get_header_uml_id(source_basename)
+                            target_class = self._get_header_uml_id(external_header_name)
+                            lines.append(f"{source_class} --> {target_class} : <<include>>")
+        
         # Also process direct includes for backward compatibility
         for include_name in file_model.includes:
             included_file_path = self._find_included_file(
                 include_name, file_model.project_root, project_model
             )
             included_file_model = None
-            for key, model in project_model.files.items():
-                if model.file_path == included_file_path:
-                    included_file_model = model
-                    break
-            # Skip self-include
-            if included_file_model and included_file_model.file_path == file_model.file_path:
-                continue
-            if included_file_model:
-                header_basename = Path(included_file_path).stem
+            
+            # Check if this is an external header
+            if included_file_path and included_file_path.startswith("EXTERNAL:"):
+                # This is an external header
+                external_header_name = included_file_path.split(":", 1)[1]
                 source_class = self._get_uml_id(Path(file_model.file_path).stem)
-                target_class = self._get_header_uml_id(header_basename)
+                target_class = self._get_header_uml_id(external_header_name)
                 
                 # Check if this relationship was already added
-                relationship_id = f"{Path(file_model.file_path).stem}->{header_basename}"
+                relationship_id = f"{Path(file_model.file_path).stem}->{external_header_name}"
                 if relationship_id not in seen_relationships:
                     seen_relationships.add(relationship_id)
                     lines.append(f"{source_class} --> {target_class} : <<include>>")
+            else:
+                # This is a project header
+                for key, model in project_model.files.items():
+                    if model.file_path == included_file_path:
+                        included_file_model = model
+                        break
+                # Skip self-include
+                if included_file_model and included_file_model.file_path == file_model.file_path:
+                    continue
+                if included_file_model:
+                    header_basename = Path(included_file_path).stem
+                    source_class = self._get_uml_id(Path(file_model.file_path).stem)
+                    target_class = self._get_header_uml_id(header_basename)
+                    
+                    # Check if this relationship was already added
+                    relationship_id = f"{Path(file_model.file_path).stem}->{header_basename}"
+                    if relationship_id not in seen_relationships:
+                        seen_relationships.add(relationship_id)
+                        lines.append(f"{source_class} --> {target_class} : <<include>>")
         # Typedef relationships - process typedefs from current file and included files
         seen_typedef_relations = set()
         
@@ -503,7 +581,9 @@ class PlantUMLGenerator:
                 if file_path.exists():
                     return str(file_path.resolve())
 
-        return None
+        # If not found in project, it's an external header
+        # Return a special identifier for external headers
+        return f"EXTERNAL:{include_name}"
 
     def _get_uml_id(self, name: str) -> str:
         """Generate UML ID for a class"""

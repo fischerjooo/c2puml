@@ -67,6 +67,24 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
     + void log_message()
 }
 
+class "stdlib.h" as HEADER_STDLIB_H <<header>> #LightGray
+{
+    -- External Header --
+    + (external)
+}
+
+class "stdint.h" as HEADER_STDINT_H <<header>> #LightGray
+{
+    -- External Header --
+    + (external)
+}
+
+class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
+{
+    -- External Header --
+    + (external)
+}
+
 class "Status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 {
     + STATUS_OK = 0
@@ -135,7 +153,10 @@ HEADER_COMPLEX_EXAMPLE --> HEADER_LOGGER : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
+HEADER_TYPEDEF_TEST --> HEADER_STDINT_H : <<include>>
+HEADER_LOGGER --> HEADER_STDIO_H : <<include>>
 TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>
+TYPEDEF_TEST --> HEADER_STDLIB_H : <<include>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_STATUS_T : declares
 HEADER_TYPEDEF_TEST ..> TYPEDEF_POINT_T : declares
 HEADER_TYPEDEF_TEST ..> TYPEDEF_NAMEDSTRUCT_T : declares
