@@ -532,11 +532,27 @@ class CParser:
             if line.startswith('typedef '):
                 typedef_text = line
                 j = i + 1
-                while j < len(lines) and ';' not in typedef_text:
-                    typedef_text += ' ' + lines[j].strip()
+                # Continue reading lines until we find the closing brace and semicolon
+                brace_count = 0
+                if '{' in typedef_text:
+                    brace_count = typedef_text.count('{') - typedef_text.count('}')
+                
+                while j < len(lines):
+                    next_line = lines[j].strip()
+                    typedef_text += ' ' + next_line
+                    if '{' in next_line:
+                        brace_count += next_line.count('{')
+                    if '}' in next_line:
+                        brace_count -= next_line.count('}')
+                    if ';' in next_line and brace_count == 0:
+                        break
                     j += 1
                 if ';' in typedef_text:
                     typedef_body = typedef_text[8:].rstrip(';').strip()
+                    # Debug: print the typedef body to see what we're parsing
+                    import logging
+                    logging.getLogger(__name__).debug(f"Parsing typedef body: '{typedef_body}'")
+                    logging.getLogger(__name__).debug(f"Full typedef text: '{typedef_text}'")
                     # Pattern 1: typedef type name; (simple typedef)
                     simple_pattern = r'^([^;]+)\s+([A-Za-z_][A-Za-z0-9_]*)$'
                     match = re.match(simple_pattern, typedef_body)
@@ -549,7 +565,7 @@ class CParser:
                         typedef_relations.append(TypedefRelation(typedef_name, original_type.strip(), relationship_type))
                     # Pattern 2: typedef struct { ... } name; (struct typedef)
                     # Use a more robust pattern that handles multiline content and nested braces
-                    if typedef_body.startswith('struct {') or typedef_body.startswith('struct{'):
+                    elif typedef_body.startswith('struct {') or typedef_body.startswith('struct{'):
                         # Find the closing brace and typedef name
                         brace_count = 0
                         start_pos = typedef_body.find('{')
@@ -570,6 +586,32 @@ class CParser:
                                 if name_match:
                                     typedef_name = name_match.group(1)
                                     typedef_relations.append(TypedefRelation(typedef_name, 'struct', 'defines'))
+                    # Pattern 2b: typedef struct tag { ... } name; (struct typedef with tag)
+                    elif re.match(r'^struct\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        # Extract the struct tag name first
+                        struct_tag_match = re.match(r'^struct\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{', typedef_body)
+                        if struct_tag_match:
+                            struct_tag_name = struct_tag_match.group(1)
+                            # Find the closing brace and typedef name
+                            brace_count = 0
+                            start_pos = typedef_body.find('{')
+                            if start_pos != -1:
+                                brace_count = 1
+                                pos = start_pos + 1
+                                while pos < len(typedef_body) and brace_count > 0:
+                                    if typedef_body[pos] == '{':
+                                        brace_count += 1
+                                    elif typedef_body[pos] == '}':
+                                        brace_count -= 1
+                                    pos += 1
+                                
+                                if brace_count == 0:
+                                    # Extract the typedef name after the closing brace
+                                    remaining = typedef_body[pos:].strip()
+                                    name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
+                                    if name_match:
+                                        typedef_name = name_match.group(1)
+                                        typedef_relations.append(TypedefRelation(typedef_name, 'struct', 'defines', struct_tag_name))
                     # Pattern 3: typedef enum { ... } name; (enum typedef)
                     # Use a more robust pattern that handles multiline content and nested braces
                     elif typedef_body.startswith('enum {') or typedef_body.startswith('enum{'):
@@ -593,9 +635,53 @@ class CParser:
                                 if name_match:
                                     typedef_name = name_match.group(1)
                                     typedef_relations.append(TypedefRelation(typedef_name, 'enum', 'defines'))
+                    # Pattern 3b: typedef enum tag { ... } name; (enum typedef with tag)
+                    elif re.match(r'^enum\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
+                        # Find the closing brace and typedef name
+                        brace_count = 0
+                        start_pos = typedef_body.find('{')
+                        if start_pos != -1:
+                            brace_count = 1
+                            pos = start_pos + 1
+                            while pos < len(typedef_body) and brace_count > 0:
+                                if typedef_body[pos] == '{':
+                                    brace_count += 1
+                                elif typedef_body[pos] == '}':
+                                    brace_count -= 1
+                                pos += 1
+                            
+                            if brace_count == 0:
+                                # Extract the typedef name after the closing brace
+                                remaining = typedef_body[pos:].strip()
+                                name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
+                                if name_match:
+                                    typedef_name = name_match.group(1)
+                                    typedef_relations.append(TypedefRelation(typedef_name, 'enum', 'defines'))
                     # Pattern 4: typedef union { ... } name; (union typedef)
                     # Use a more robust pattern that handles multiline content and nested braces
                     elif typedef_body.startswith('union {') or typedef_body.startswith('union{'):
+                        # Find the closing brace and typedef name
+                        brace_count = 0
+                        start_pos = typedef_body.find('{')
+                        if start_pos != -1:
+                            brace_count = 1
+                            pos = start_pos + 1
+                            while pos < len(typedef_body) and brace_count > 0:
+                                if typedef_body[pos] == '{':
+                                    brace_count += 1
+                                elif typedef_body[pos] == '}':
+                                    brace_count -= 1
+                                pos += 1
+                            
+                            if brace_count == 0:
+                                # Extract the typedef name after the closing brace
+                                remaining = typedef_body[pos:].strip()
+                                name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
+                                if name_match:
+                                    typedef_name = name_match.group(1)
+                                    typedef_relations.append(TypedefRelation(typedef_name, 'union', 'defines'))
+                    # Pattern 4b: typedef union tag { ... } name; (union typedef with tag)
+                    elif re.match(r'^union\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
                         # Find the closing brace and typedef name
                         brace_count = 0
                         start_pos = typedef_body.find('{')

@@ -37,7 +37,7 @@ class PlantUMLGenerator:
         diagram_lines.extend(self._generate_header_classes(file_model, project_model))
 
         # Generate typedef classes
-        diagram_lines.extend(self._generate_typedef_classes(file_model))
+        diagram_lines.extend(self._generate_typedef_classes(file_model, project_model))
 
         # Generate relationships
         diagram_lines.extend(self._generate_relationships(file_model, project_model))
@@ -183,36 +183,74 @@ class PlantUMLGenerator:
         lines.append("")
         return lines
 
-    def _generate_typedef_classes(self, file_model: FileModel) -> List[str]:
+    def _generate_typedef_classes(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
         """Generate classes for typedefs using the new PlantUML template"""
         lines = []
+        seen_typedefs = set()
+        
+        # Process typedefs from the current file
         for typedef_relation in file_model.typedef_relations:
             typedef_name = typedef_relation.typedef_name
-            original_type = typedef_relation.original_type
-            relationship_type = typedef_relation.relationship_type
-            # Typedef class
-            lines.append(f'class "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
-            lines.append("{")
-            # For struct/union/enum typedefs, show fields/values
-            if relationship_type == "defines":
-                if original_type == "struct" and typedef_name in file_model.structs:
-                    struct = file_model.structs[typedef_name]
+            if typedef_name not in seen_typedefs:
+                seen_typedefs.add(typedef_name)
+                lines.extend(self._generate_single_typedef_class(typedef_relation, file_model, project_model))
+        
+        # Process typedefs from included header files
+        for include_relation in file_model.include_relations:
+            included_file_path = include_relation.included_file
+            included_file_model = None
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    included_file_model = model
+                    break
+            if included_file_model:
+                for typedef_relation in included_file_model.typedef_relations:
+                    typedef_name = typedef_relation.typedef_name
+                    if typedef_name not in seen_typedefs:
+                        seen_typedefs.add(typedef_name)
+                        lines.extend(self._generate_single_typedef_class(typedef_relation, included_file_model, project_model))
+        
+        return lines
+    
+    def _generate_single_typedef_class(self, typedef_relation, file_model: FileModel, project_model: ProjectModel) -> List[str]:
+        """Generate a single typedef class"""
+        lines = []
+        typedef_name = typedef_relation.typedef_name
+        original_type = typedef_relation.original_type
+        relationship_type = typedef_relation.relationship_type
+        
+        # Typedef class
+        lines.append(f'class "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
+        lines.append("{")
+        # For struct/union/enum typedefs, show fields/values
+        if relationship_type == "defines":
+            if original_type == "struct":
+                # Try to find the struct by the struct tag name if available
+                struct_name = typedef_relation.struct_tag_name if typedef_relation.struct_tag_name else typedef_name
+                # Look for the struct in the file model that contains the typedef relation
+                import logging
+                logging.getLogger(__name__).debug(f"Looking for struct '{struct_name}' in file '{file_model.file_path}', available structs: {list(file_model.structs.keys())}")
+                logging.getLogger(__name__).debug(f"typedef_relation.struct_tag_name: '{typedef_relation.struct_tag_name}', typedef_name: '{typedef_name}'")
+                if struct_name in file_model.structs:
+                    struct = file_model.structs[struct_name]
                     for field in struct.fields:
-                        lines.append(f"    + {field.type} {field.name}")
-                elif original_type == "enum" and typedef_name in file_model.enums:
-                    enum = file_model.enums[typedef_name]
-                    for value in enum.values:
-                        lines.append(f"    + {value}")
-                elif original_type == "union" and typedef_name in file_model.unions:
-                    union = file_model.unions[typedef_name]
-                    for field in union.fields:
                         lines.append(f"    + {field.type} {field.name}")
                 else:
                     lines.append(f"    + {original_type}")
+            elif original_type == "enum" and typedef_name in file_model.enums:
+                enum = file_model.enums[typedef_name]
+                for value in enum.values:
+                    lines.append(f"    + {value}")
+            elif original_type == "union" and typedef_name in file_model.unions:
+                union = file_model.unions[typedef_name]
+                for field in union.fields:
+                    lines.append(f"    + {field.type} {field.name}")
             else:
                 lines.append(f"    + {original_type}")
-            lines.append("}")
-            lines.append("")
+        else:
+            lines.append(f"    + {original_type}")
+        lines.append("}")
+        lines.append("")
         return lines
 
     def _generate_relationships(
@@ -465,6 +503,7 @@ class Generator:
                     rel_data["typedef_name"],
                     rel_data["original_type"],
                     rel_data["relationship_type"],
+                    rel_data.get("struct_tag_name", ""),  # Include struct_tag_name with default empty string
                 )
             )
 

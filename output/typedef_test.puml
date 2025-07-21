@@ -2,13 +2,6 @@
 
 class "typedef_test" as TYPEDEF_TEST <<source>> #LightBlue
 {
-    -- Typedefs --
-    + typedef uint32_t MyLen
-    + typedef int32_t MyInt
-    + typedef char * MyString
-    + typedef int (*)(...) MyCallback
-    + typedef MyComplex * MyComplexPtr
-    + typedef void (*)(...) log_callback_t
     -- Global Variables --
     MyLen global_length
     MyBuffer global_buffer
@@ -28,12 +21,6 @@ class "typedef_test" as HEADER_TYPEDEF_TEST <<header>> #LightGreen
 {
     -- Macros --
     + #define TYPEDEF_TEST_H
-    -- Typedefs --
-    + typedef uint32_t MyLen
-    + typedef int32_t MyInt
-    + typedef char * MyString
-    + typedef int (*)(...) MyCallback
-    + typedef MyComplex * MyComplexPtr
     -- Global Variables --
     + MyLen length
     + MyString data
@@ -75,11 +62,61 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
-    -- Typedefs --
-    + typedef void (*)(...) log_callback_t
     -- Functions --
     + void set_log_callback()
     + void log_message()
+}
+
+class "Status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+{
+    + enum StatusEnum_tag { STATUS_OK = 0, STATUS_FAIL }
+}
+
+class "Point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
+{
+    + struct
+}
+
+class "NamedStruct_t" as TYPEDEF_NAMEDSTRUCT_T <<typedef>> #LightYellow
+{
+    + int a
+    + int b
+}
+
+class "Number_t" as TYPEDEF_NUMBER_T <<typedef>> #LightYellow
+{
+    + union
+}
+
+class "NamedUnion_t" as TYPEDEF_NAMEDUNION_T <<typedef>> #LightYellow
+{
+    + union
+}
+
+class "NestedInfo_t" as TYPEDEF_NESTEDINFO_T <<typedef>> #LightYellow
+{
+    + struct
+}
+
+class "CE_Status_t" as TYPEDEF_CE_STATUS_T <<typedef>> #LightYellow
+{
+    + enum CE_Status_tag { CE_STATUS_OK = 0, CE_STATUS_WARN, CE_STATUS_FAIL }
+}
+
+class "ComplexExample_t" as TYPEDEF_COMPLEXEXAMPLE_T <<typedef>> #LightYellow
+{
+    + struct
+}
+
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
+{
+    + point_t[3] vertices
+    + char[MAX_LABEL_LEN] label
+}
+
+class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
+{
+    + enum log_level_tag { LOG_DEBUG = 0, LOG_INFO, LOG_WARN, LOG_ERROR }
 }
 
 TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>

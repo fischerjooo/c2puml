@@ -2,9 +2,6 @@
 
 class "math_utils" as MATH_UTILS <<source>> #LightBlue
 {
-    -- Typedefs --
-    + typedef double real_t
-    + typedef int (*)(...) math_op_t
     -- Global Variables --
     return a + b
     return a - b
@@ -20,9 +17,6 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
     -- Macros --
     + #define MATH_UTILS_H
-    -- Typedefs --
-    + typedef double real_t
-    + typedef int (*)(...) math_op_t
     -- Functions --
     + int add()
     + int subtract()

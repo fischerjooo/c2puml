@@ -98,19 +98,22 @@
       },
       "typedef_relations": [
         {
-          "typedef_name": "id",
-          "original_type": "struct NestedInfo_tag { id_t",
-          "relationship_type": "defines"
+          "typedef_name": "NestedInfo_t",
+          "original_type": "struct",
+          "relationship_type": "defines",
+          "struct_tag_name": "NestedInfo_tag"
         },
         {
           "typedef_name": "CE_Status_t",
           "original_type": "enum CE_Status_tag { CE_STATUS_OK = 0, CE_STATUS_WARN, CE_STATUS_FAIL }",
-          "relationship_type": "defines"
+          "relationship_type": "defines",
+          "struct_tag_name": ""
         },
         {
-          "typedef_name": "info",
-          "original_type": "struct ComplexExample_tag { NestedInfo_t",
-          "relationship_type": "defines"
+          "typedef_name": "ComplexExample_t",
+          "original_type": "struct",
+          "relationship_type": "defines",
+          "struct_tag_name": "ComplexExample_tag"
         }
       ],
       "include_relations": [],
@@ -149,23 +152,7 @@
         "status_t": "int32_t",
         "GlobalStatus_t": "enum GlobalStatus"
       },
-      "typedef_relations": [
-        {
-          "typedef_name": "id_t",
-          "original_type": "uint32_t",
-          "relationship_type": "alias"
-        },
-        {
-          "typedef_name": "status_t",
-          "original_type": "int32_t",
-          "relationship_type": "alias"
-        },
-        {
-          "typedef_name": "GlobalStatus_t",
-          "original_type": "enum GlobalStatus",
-          "relationship_type": "defines"
-        }
-      ],
+      "typedef_relations": [],
       "include_relations": [],
       "unions": {}
     },
@@ -349,7 +336,14 @@
         "GEOMETRY_H"
       ],
       "typedefs": {},
-      "typedef_relations": [],
+      "typedef_relations": [
+        {
+          "typedef_name": "triangle_t",
+          "original_type": "struct",
+          "relationship_type": "defines",
+          "struct_tag_name": "triangle_tag"
+        }
+      ],
       "include_relations": [],
       "unions": {}
     },
@@ -483,12 +477,8 @@
         {
           "typedef_name": "log_level_t",
           "original_type": "enum log_level_tag { LOG_DEBUG = 0, LOG_INFO, LOG_WARN, LOG_ERROR }",
-          "relationship_type": "defines"
-        },
-        {
-          "typedef_name": "log_callback_t",
-          "original_type": "void (*)(...)",
-          "relationship_type": "alias"
+          "relationship_type": "defines",
+          "struct_tag_name": ""
         }
       ],
       "include_relations": [],
@@ -656,18 +646,7 @@
         "real_t": "double",
         "math_op_t": "int (*)(...)"
       },
-      "typedef_relations": [
-        {
-          "typedef_name": "real_t",
-          "original_type": "double",
-          "relationship_type": "alias"
-        },
-        {
-          "typedef_name": "math_op_t",
-          "original_type": "int (*)(...)",
-          "relationship_type": "alias"
-        }
-      ],
+      "typedef_relations": [],
       "include_relations": [],
       "unions": {}
     },
@@ -938,14 +917,16 @@
       },
       "typedef_relations": [
         {
-          "typedef_name": "x",
-          "original_type": "struct point_tag { int",
-          "relationship_type": "defines"
+          "typedef_name": "point_t",
+          "original_type": "struct",
+          "relationship_type": "defines",
+          "struct_tag_name": "point_tag"
         },
         {
           "typedef_name": "system_state_t",
           "original_type": "enum system_state_tag { STATE_IDLE = 0, STATE_RUNNING, STATE_ERROR }",
-          "relationship_type": "defines"
+          "relationship_type": "defines",
+          "struct_tag_name": ""
         }
       ],
       "include_relations": [],
@@ -1262,74 +1243,39 @@
       },
       "typedef_relations": [
         {
-          "typedef_name": "MyLen",
-          "original_type": "uint32_t",
-          "relationship_type": "alias"
-        },
-        {
-          "typedef_name": "MyInt",
-          "original_type": "int32_t",
-          "relationship_type": "alias"
-        },
-        {
-          "typedef_name": "MyString",
-          "original_type": "char *",
-          "relationship_type": "alias"
-        },
-        {
-          "typedef_name": "length",
-          "original_type": "struct MyBuffer_tag { MyLen",
-          "relationship_type": "defines"
-        },
-        {
-          "typedef_name": "MyCallback",
-          "original_type": "int (*)(...)",
-          "relationship_type": "alias"
-        },
-        {
-          "typedef_name": "id",
-          "original_type": "struct MyComplexStruct_tag { MyLen",
-          "relationship_type": "defines"
-        },
-        {
-          "typedef_name": "MyComplexPtr",
-          "original_type": "MyComplex *",
-          "relationship_type": "alias"
-        },
-        {
-          "typedef_name": "Color_t",
-          "original_type": "enum Color_tag { COLOR_RED = 0, COLOR_GREEN, COLOR_BLUE }",
-          "relationship_type": "defines"
-        },
-        {
           "typedef_name": "Status_t",
           "original_type": "enum StatusEnum_tag { STATUS_OK = 0, STATUS_FAIL }",
-          "relationship_type": "defines"
+          "relationship_type": "defines",
+          "struct_tag_name": ""
         },
         {
-          "typedef_name": "x",
-          "original_type": "struct Point_tag { int",
-          "relationship_type": "defines"
+          "typedef_name": "Point_t",
+          "original_type": "struct",
+          "relationship_type": "defines",
+          "struct_tag_name": "Point_tag"
         },
         {
-          "typedef_name": "a",
-          "original_type": "struct NamedStruct_tag { int",
-          "relationship_type": "defines"
+          "typedef_name": "NamedStruct_t",
+          "original_type": "struct",
+          "relationship_type": "defines",
+          "struct_tag_name": "NamedStruct_tag"
         },
         {
-          "typedef_name": "i",
-          "original_type": "union Number_tag { int",
-          "relationship_type": "defines"
+          "typedef_name": "Number_t",
+          "original_type": "union",
+          "relationship_type": "defines",
+          "struct_tag_name": ""
         },
         {
-          "typedef_name": "c",
-          "original_type": "union NamedUnion_tag { char",
-          "relationship_type": "defines"
+          "typedef_name": "NamedUnion_t",
+          "original_type": "union",
+          "relationship_type": "defines",
+          "struct_tag_name": ""
         }
       ],
       "include_relations": [],
       "unions": {}
     }
   },
-  "created_at": "2025-07-21T16:29:09.403418"
+  "created_at": "2025-07-21T16:43:33.126110"
 }
