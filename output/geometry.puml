@@ -26,6 +26,12 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     + int triangle_area()
 }
 
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
+{
+    + point_t[3] vertices
+    + char[MAX_LABEL_LEN] label
+}
+
 GEOMETRY --> HEADER_GEOMETRY : <<include>>
 
 @enduml

@@ -11,7 +11,7 @@
   },
   "element_filters": {
     "structs": {
-      "include": ["point", "MyComplexStruct", "NamedStruct"],
+      "include": ["point", "triangle_tag", "MyComplexStruct", "NamedStruct"],
       "exclude": ["Internal.*"]
     },
     "functions": {

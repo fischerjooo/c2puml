@@ -32,6 +32,7 @@ class TypedefRelation:
     typedef_name: str
     original_type: str
     relationship_type: str  # 'defines' or 'alias'
+    struct_tag_name: str = ""  # For struct typedefs, store the struct tag name
 
     def __post_init__(self):
         """Validate typedef relation data after initialization"""

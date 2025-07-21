@@ -2,8 +2,6 @@
 
 class "logger" as LOGGER <<source>> #LightBlue
 {
-    -- Typedefs --
-    + typedef void (*)(...) log_callback_t
     -- Global Variables --
     log_callback_t current_cb
     va_list args
@@ -17,11 +15,14 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
-    -- Typedefs --
-    + typedef void (*)(...) log_callback_t
     -- Functions --
     + void set_log_callback()
     + void log_message()
+}
+
+class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
+{
+    + enum log_level_tag { LOG_DEBUG = 0, LOG_INFO, LOG_WARN, LOG_ERROR }
 }
 
 LOGGER --> HEADER_LOGGER : <<include>>

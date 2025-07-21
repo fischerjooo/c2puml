@@ -6,10 +6,6 @@ class "sample" as SAMPLE <<source>> #LightBlue
     - #define MAX_SIZE
     - #define DEBUG_MODE
     - #define CALC
-    -- Typedefs --
-    + typedef double real_t
-    + typedef int (*)(...) math_op_t
-    + typedef void (*)(...) log_callback_t
     -- Global Variables --
     int global_counter
     double * global_ptr
@@ -49,9 +45,6 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
     -- Macros --
     + #define MATH_UTILS_H
-    -- Typedefs --
-    + typedef double real_t
-    + typedef int (*)(...) math_op_t
     -- Functions --
     + int add()
     + int subtract()
@@ -62,8 +55,6 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
-    -- Typedefs --
-    + typedef void (*)(...) log_callback_t
     -- Functions --
     + void set_log_callback()
     + void log_message()
@@ -76,6 +67,29 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     -- Functions --
     + triangle_t create_triangle()
     + int triangle_area()
+}
+
+class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
+{
+    + int x
+    + int y
+    + char[32] label
+}
+
+class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
+{
+    + enum system_state_tag { STATE_IDLE = 0, STATE_RUNNING, STATE_ERROR }
+}
+
+class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
+{
+    + enum log_level_tag { LOG_DEBUG = 0, LOG_INFO, LOG_WARN, LOG_ERROR }
+}
+
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
+{
+    + point_t[3] vertices
+    + char[MAX_LABEL_LEN] label
 }
 
 SAMPLE --> HEADER_SAMPLE : <<include>>
