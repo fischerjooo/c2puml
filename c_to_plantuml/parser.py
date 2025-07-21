@@ -229,17 +229,24 @@ class CParser:
                 if param == '...':
                     # Skip variadic parameter
                     continue
-                # Split type and name (very basic)
-                parts = param.rsplit(' ', 1)
-                if len(parts) == 2:
-                    type_, name = parts
+                # Improved: handle pointer types and multiple spaces
+                import re
+                # Match: type (with pointers/const), name
+                match = re.match(r'^(.*\S)\s+([A-Za-z_][A-Za-z0-9_]*)$', param)
+                if match:
+                    type_, name = match.groups()
                 else:
-                    type_, name = parts[0], ''
+                    # If only one word, treat as name if valid identifier, else skip
+                    if re.match(r'^[A-Za-z_][A-Za-z0-9_]*$', param):
+                        type_, name = '', param
+                    else:
+                        continue
                 import logging
                 logger = logging.getLogger(__name__)
                 logger.debug(f"[funcparam] About to create Field: type='{type_}', name='{name}'")
                 try:
-                    params.append(Field(name=name, type=type_.strip()))
+                    if name and type_:
+                        params.append(Field(name=name, type=type_.strip()))
                 except Exception as e:
                     logger.error(f"[funcparam] Exception creating Field: {e} | type='{type_}', name='{name}'")
                     raise
