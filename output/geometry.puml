@@ -1,0 +1,31 @@
+@startuml geometry
+
+class "geometry" as GEOMETRY <<source>> #LightBlue
+{
+    -- Global Variables --
+    triangle_t tri
+    return tri
+    int x1
+    int y1
+    int x2
+    int y2
+    int x3
+    int y3
+    return area
+    -- Functions --
+    triangle_t create_triangle()
+    int triangle_area()
+}
+
+class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
+{
+    -- Macros --
+    + #define GEOMETRY_H
+    -- Functions --
+    + triangle_t create_triangle()
+    + int triangle_area()
+}
+
+GEOMETRY --> HEADER_GEOMETRY : <<include>>
+
+@enduml
