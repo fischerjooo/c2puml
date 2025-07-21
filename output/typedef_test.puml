@@ -69,20 +69,14 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 
 class "stdlib.h" as HEADER_STDLIB_H <<header>> #LightGray
 {
-    -- External Header --
-    + (external)
 }
 
 class "stdint.h" as HEADER_STDINT_H <<header>> #LightGray
 {
-    -- External Header --
-    + (external)
 }
 
 class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
 {
-    -- External Header --
-    + (external)
 }
 
 class "Status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow

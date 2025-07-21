@@ -24,20 +24,14 @@ class "sample" as SAMPLE <<source>> #LightBlue
 
 class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
 {
-    -- External Header --
-    + (external)
 }
 
 class "stdlib.h" as HEADER_STDLIB_H <<header>> #LightGray
 {
-    -- External Header --
-    + (external)
 }
 
 class "string.h" as HEADER_STRING_H <<header>> #LightGray
 {
-    -- External Header --
-    + (external)
 }
 
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
@@ -89,8 +83,6 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 
 class "stddef.h" as HEADER_STDDEF_H <<header>> #LightGray
 {
-    -- External Header --
-    + (external)
 }
 
 class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow

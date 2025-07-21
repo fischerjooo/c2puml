@@ -230,8 +230,6 @@ class PlantUMLGenerator:
         lines = [
             f'class "{basename}" as {self._get_header_uml_id(basename)} <<header>> #LightGray',
             "{",
-            "    -- External Header --",
-            "    + (external)",
             "}",
             "",
         ]
