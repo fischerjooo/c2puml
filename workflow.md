@@ -33,6 +33,9 @@ Simple testing workflow for the C to PlantUML Converter using two main scripts.
 
 # 2. Generate images from PlantUML files (optional)
 ./picgen.sh
+
+# 3. Update specification.md if needed
+# Review generated output and update specification.md with any new findings
 ```
 
 ## Test Structure
