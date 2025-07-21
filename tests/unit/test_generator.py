@@ -100,7 +100,7 @@ class TestGenerator(unittest.TestCase):
         
         # Check visibility prefixes
         self.assertIn("- #define MAX_SIZE", content)  # macros in source
-        self.assertIn("- typedef Integer", content)   # typedefs in source
+        self.assertIn("- typedef int Integer", content)   # typedefs in source
         self.assertIn("int global_var", content)      # globals in source (no prefix)
         self.assertIn("int main()", content)          # functions in source (no prefix)
         self.assertIn("struct Person", content)       # structs in source (no prefix)
