@@ -2,9 +2,9 @@
 set SCRIPT_DIR=%~dp0
 cd /d %SCRIPT_DIR%
 
-if exist plantuml_output rmdir /s /q plantuml_output
-mkdir plantuml_output
+if exist output rmdir /s /q output
+mkdir output
 
-python main.py workflow example/source example/config.json
+python main.py --config example/config.json
 
-echo PlantUML diagrams generated in: %SCRIPT_DIR%plantuml_output
+echo PlantUML diagrams generated in: %SCRIPT_DIR%output
