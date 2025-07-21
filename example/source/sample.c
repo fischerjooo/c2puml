@@ -15,20 +15,6 @@ static int global_counter = 0;
 static char buffer[MAX_SIZE];
 double * global_ptr = NULL;
 
-/* Typedef and struct definition with explicit tag */
-typedef struct point_tag {
-    int x;
-    int y;
-    char label[32];
-} point_t;
-
-/* Enum definition with explicit tag */
-typedef enum system_state_tag {
-    STATE_IDLE = 0,
-    STATE_RUNNING,
-    STATE_ERROR
-} system_state_t;
-
 /* Function prototypes */
 static void internal_helper(void);
 int calculate_sum(int a, int b);
