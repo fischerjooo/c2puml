@@ -29,7 +29,17 @@ jobs:
         pip install -e .
         pip install -r requirements-dev.txt
 
-    - name: Run all tests
+    - name: Run all tests (Python)
       run: |
-        echo "🧪 Running comprehensive test suite..."
+        echo "🧪 Running comprehensive test suite (Python)..."
         python run_all_tests.py
+
+    - name: Run all tests (Shell)
+      run: |
+        echo "🧪 Running comprehensive test suite (Shell)..."
+        bash run_all_tests.sh
+
+    - name: Run example (Shell)
+      run: |
+        echo "🚀 Running example script..."
+        bash run_example.sh
