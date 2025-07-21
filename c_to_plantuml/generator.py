@@ -474,6 +474,75 @@ class PlantUMLGenerator:
                     target_class = self._get_header_uml_id(included_basename)
                     
                     lines.append(f"{source_class} --> {target_class} : <<include>>")
+                
+                # Also process direct includes from the included file
+                for include_name in included_file_model.includes:
+                    nested_included_file_path = self._find_included_file(
+                        include_name, included_file_model.project_root, project_model
+                    )
+                    if nested_included_file_path:
+                        nested_included_basename = Path(nested_included_file_path).stem
+                        source_basename = Path(included_file_model.file_path).stem
+                        
+                        # Skip self-referencing include relations
+                        if source_basename == nested_included_basename:
+                            continue
+                        
+                        # Create a unique identifier for this relationship to avoid duplicates
+                        relationship_id = f"{source_basename}->{nested_included_basename}"
+                        if relationship_id in seen_relationships:
+                            continue
+                        seen_relationships.add(relationship_id)
+                        
+                        # Both source and target are header classes for nested includes
+                        source_class = self._get_header_uml_id(source_basename)
+                        target_class = self._get_header_uml_id(nested_included_basename)
+                        
+                        lines.append(f"{source_class} --> {target_class} : <<include>>")
+                
+                # Also process include relations from the included file (recursive)
+                for nested_include_relation in included_file_model.include_relations:
+                    nested_source_basename = Path(nested_include_relation.source_file).stem
+                    nested_included_basename = Path(nested_include_relation.included_file).stem
+                    
+                    # Skip self-referencing include relations
+                    if nested_source_basename == nested_included_basename:
+                        continue
+                    
+                    # Create a unique identifier for this relationship to avoid duplicates
+                    relationship_id = f"{nested_source_basename}->{nested_included_basename}"
+                    if relationship_id in seen_relationships:
+                        continue
+                    seen_relationships.add(relationship_id)
+                    
+                    # Both source and target are header classes for nested includes
+                    source_class = self._get_header_uml_id(nested_source_basename)
+                    target_class = self._get_header_uml_id(nested_included_basename)
+                    
+                    lines.append(f"{source_class} --> {target_class} : <<include>>")
+        
+        # Also process all include relationships from all files to show the complete dependency graph
+        for key, model in project_model.files.items():
+            if model.file_path != file_model.file_path:  # Skip the main file itself
+                for include_relation in model.include_relations:
+                    source_basename = Path(include_relation.source_file).stem
+                    included_basename = Path(include_relation.included_file).stem
+                    
+                    # Skip self-referencing include relations
+                    if source_basename == included_basename:
+                        continue
+                    
+                    # Create a unique identifier for this relationship to avoid duplicates
+                    relationship_id = f"{source_basename}->{included_basename}"
+                    if relationship_id in seen_relationships:
+                        continue
+                    seen_relationships.add(relationship_id)
+                    
+                    # Both source and target are header classes for all includes
+                    source_class = self._get_header_uml_id(source_basename)
+                    target_class = self._get_header_uml_id(included_basename)
+                    
+                    lines.append(f"{source_class} --> {target_class} : <<include>>")
         
         # Also process external headers from included files
         for include_relation in file_model.include_relations:
@@ -566,6 +635,10 @@ class PlantUMLGenerator:
             if included_file_model:
                 for typedef_relation in included_file_model.typedef_relations:
                     self._process_typedef_relationships(typedef_relation, included_file_model, project_model, lines, seen_typedef_relations)
+        
+        # Process type dependencies and macro dependencies
+        self._process_type_dependencies(file_model, project_model, lines, seen_relationships)
+        
         return lines
 
     def _process_typedef_relationships(self, typedef_relation, file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_typedef_relations: set):
@@ -644,6 +717,112 @@ class PlantUMLGenerator:
                             if other_typedef_relation.typedef_name == field_type:
                                 other_typedef_class_id = self._get_typedef_uml_id(field_type)
                                 lines.append(f"{typedef_class_id} --> {other_typedef_class_id} : uses")
+        
+        # Show which header declares this typedef (for typedefs from included files)
+        # Find which header actually declares this typedef
+        for key, model in project_model.files.items():
+            for other_typedef_relation in model.typedef_relations:
+                if other_typedef_relation.typedef_name == typedef_name:
+                    # This typedef is declared in this model
+                    if model.file_path != file_model.file_path:
+                        # It's declared in a different file
+                        header_class_id = self._get_header_uml_id(Path(model.file_path).stem)
+                        typedef_class_id = self._get_typedef_uml_id(typedef_name)
+                        lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+        
+        # Also show which header declares typedefs that are used in the current file
+        # This helps show the relationship between headers and the typedefs they provide
+        if file_model.file_path.endswith('.c'):
+            # For source files, show which headers declare the typedefs they use
+            for include_relation in file_model.include_relations:
+                included_file_path = include_relation.included_file
+                included_file_model = None
+                for key, model in project_model.files.items():
+                    if model.file_path == included_file_path:
+                        included_file_model = model
+                        break
+                if included_file_model:
+                    for other_typedef_relation in included_file_model.typedef_relations:
+                        header_class_id = self._get_header_uml_id(Path(included_file_model.file_path).stem)
+                        typedef_class_id = self._get_typedef_uml_id(other_typedef_relation.typedef_name)
+                        lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+
+    def _process_type_dependencies(self, file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_relationships: set):
+        """Process type dependencies and macro dependencies"""
+        # Process typedefs from current file and included files
+        all_typedefs = []
+        
+        # Add typedefs from current file
+        for typedef_relation in file_model.typedef_relations:
+            all_typedefs.append((typedef_relation, file_model))
+        
+        # Add typedefs from included files
+        for include_relation in file_model.include_relations:
+            included_file_path = include_relation.included_file
+            included_file_model = None
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    included_file_model = model
+                    break
+            if included_file_model:
+                for typedef_relation in included_file_model.typedef_relations:
+                    all_typedefs.append((typedef_relation, included_file_model))
+        
+        # Process each typedef for dependencies
+        for typedef_relation, typedef_file_model in all_typedefs:
+            if typedef_relation.relationship_type == "defines" and typedef_relation.original_type == "struct":
+                # Look for struct definition to find field dependencies
+                struct_name = typedef_relation.struct_tag_name if typedef_relation.struct_tag_name else typedef_relation.typedef_name
+                if struct_name in typedef_file_model.structs:
+                    struct = typedef_file_model.structs[struct_name]
+                    for field in struct.fields:
+                        self._process_field_dependencies(field, typedef_relation, typedef_file_model, project_model, lines, seen_relationships)
+        
+        # Process macro dependencies
+        self._process_macro_dependencies(file_model, project_model, lines, seen_relationships)
+
+    def _process_field_dependencies(self, field, typedef_relation, typedef_file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_relationships: set):
+        """Process dependencies for a struct field"""
+        field_type = field.type
+        
+        # Check for macro usage in field type (e.g., MAX_LABEL_LEN)
+        if 'MAX_LABEL_LEN' in field_type:
+            # Find which header defines MAX_LABEL_LEN
+            for key, model in project_model.files.items():
+                if 'MAX_LABEL_LEN' in model.macros:
+                    typedef_class_id = self._get_typedef_uml_id(typedef_relation.typedef_name)
+                    header_class_id = self._get_header_uml_id(Path(model.file_path).stem)
+                    
+                    # Create a unique identifier for this relationship
+                    relationship_id = f"{typedef_relation.typedef_name}->{Path(model.file_path).stem}:macro"
+                    if relationship_id not in seen_relationships:
+                        seen_relationships.add(relationship_id)
+                        lines.append(f"{typedef_class_id} ..> {header_class_id} : uses MAX_LABEL_LEN")
+                    break
+
+    def _process_macro_dependencies(self, file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_relationships: set):
+        """Process macro dependencies between files"""
+        # Check for macro usage in the current file
+        for macro in file_model.macros:
+            # Check if this macro is used in other files
+            for key, model in project_model.files.items():
+                if model.file_path != file_model.file_path:
+                    # Check if the macro is used in typedefs, functions, or globals
+                    for typedef_relation in model.typedef_relations:
+                        if typedef_relation.relationship_type == "defines" and typedef_relation.original_type == "struct":
+                            struct_name = typedef_relation.struct_tag_name if typedef_relation.struct_tag_name else typedef_relation.typedef_name
+                            if struct_name in model.structs:
+                                struct = model.structs[struct_name]
+                                for field in struct.fields:
+                                    if macro in field.type:
+                                        # Create relationship showing macro usage
+                                        typedef_class_id = self._get_typedef_uml_id(typedef_relation.typedef_name)
+                                        header_class_id = self._get_header_uml_id(Path(file_model.file_path).stem)
+                                        
+                                        relationship_id = f"{typedef_relation.typedef_name}->{Path(file_model.file_path).stem}:{macro}"
+                                        if relationship_id not in seen_relationships:
+                                            seen_relationships.add(relationship_id)
+                                            lines.append(f"{typedef_class_id} ..> {header_class_id} : uses {macro}")
 
     def _find_included_file(
         self, include_name: str, project_root: str, project_model: ProjectModel
