@@ -344,8 +344,23 @@ class PlantUMLGenerator:
         
         # Only add the relationship if the typedef class exists in the diagram
         typedef_class_id = self._get_typedef_uml_id(typedef_name)
-        lines.append(f"{main_class_id} ..> {typedef_class_id} : declares")
-        lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+        
+        # Determine which file actually defines this typedef
+        # If the typedef_relation is from the current file_model, it's defined in the current file
+        # If it's from an included file, it's defined in the header
+        current_file_typedefs = {tr.typedef_name for tr in file_model.typedef_relations}
+        
+        if typedef_name in current_file_typedefs:
+            # Typedef is defined in the current file (could be .c or .h)
+            if file_model.file_path.endswith('.h'):
+                # Typedef is defined in header file
+                lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+            else:
+                # Typedef is defined in source file
+                lines.append(f"{main_class_id} ..> {typedef_class_id} : declares")
+        else:
+            # Typedef is from an included header file
+            lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
         
         # For complex typedefs, show the 'defines' relation from the typedef class to the type class
         if relationship_type == "defines":

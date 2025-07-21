@@ -33,7 +33,6 @@ class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 }
 
 GEOMETRY --> HEADER_GEOMETRY : <<include>>
-GEOMETRY ..> TYPEDEF_TRIANGLE_T : declares
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : declares
 TYPEDEF_TRIANGLE_T --> TYPEDEF_POINT_T : uses
 
