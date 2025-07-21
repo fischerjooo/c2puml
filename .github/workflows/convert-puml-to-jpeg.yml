@@ -148,30 +148,3 @@ jobs:
         name: plantuml-images
         path: output/*.jpg
         retention-days: 30
-        if-no-files-found: warn
-        
-    - name: Verify artifact upload paths
-      run: |
-        echo "🔍 Verifying artifact upload paths..."
-        echo "Current working directory: $(pwd)"
-        echo "Checking for JPG files in output directory:"
-        ls -la output/*.jpg 2>/dev/null || echo "No JPG files found in output directory"
-        
-        echo "Checking for PNG files in output directory:"
-        ls -la output/*.png 2>/dev/null || echo "No PNG files found in output directory"
-        
-    - name: Upload PNG files as artifacts (fallback)
-      uses: actions/upload-artifact@v4
-      with:
-        name: plantuml-png-fallback
-        path: output/*.png
-        retention-days: 30
-        if-no-files-found: ignore
-        
-    - name: Upload all output files as artifacts (debug)
-      uses: actions/upload-artifact@v4
-      with:
-        name: output-debug
-        path: output/
-        retention-days: 7
-        if-no-files-found: warn
