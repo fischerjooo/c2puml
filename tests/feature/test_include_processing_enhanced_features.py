@@ -105,14 +105,19 @@ class TestIncludeProcessingEnhancedFeatures(BaseFeatureTest):
             main_content = f.read()
         
         # Verify typedefs are correctly displayed in main class
-        self.assertIn("+ typedef core_String CustomString", main_content)
+        self.assertIn("+ typedef CustomString", main_content)
         self.assertIn("+ typedef graphics_Color CustomColor", main_content)
         self.assertIn("+ typedef network_Address CustomAddress", main_content)
         
-        # Verify typedefs are correctly displayed in header classes
-        self.assertIn("+ typedef char* String", main_content)  # from core.h
-        self.assertIn("+ typedef struct { core_Integer r, g, b", main_content)  # from graphics.h
-        self.assertIn("+ typedef struct { core_Integer octet1, octet2, octet3, octet4", main_content)  # from network.h
+        # Check that typedefs are correctly shown in header classes (name only)
+        self.assertIn("+ typedef CustomString", main_content)  # from core.h
+        self.assertIn("+ typedef CustomColor", main_content)   # from graphics.h
+        self.assertIn("+ typedef CustomAddress", main_content) # from network.h
+        
+        # Check that typedefs are NOT shown with full type information in headers
+        self.assertNotIn("+ typedef core_String CustomString", main_content)
+        self.assertNotIn("+ typedef graphics_Color CustomColor", main_content)
+        self.assertNotIn("+ typedef network_Address CustomAddress", main_content)
 
     def test_feature_header_to_header_relationship_verification(self):
         """Test detailed verification of header-to-header relationships"""
@@ -238,9 +243,14 @@ class TestIncludeProcessingEnhancedFeatures(BaseFeatureTest):
         self.assertIn("+ #define DEFAULT_PORT", main_content)  # from config.h
         
         # Verify typedefs are correctly displayed in header classes
-        self.assertIn("+ typedef uint32_t ConfigId", main_content)  # from config.h
-        self.assertIn("+ typedef uint16_t PortNumber", main_content)  # from config.h
-        self.assertIn("+ typedef char* ConfigString", main_content)  # from config.h
+        self.assertIn("+ typedef ConfigId", main_content)  # from config.h
+        self.assertIn("+ typedef PortNumber", main_content)  # from config.h
+        self.assertIn("+ typedef ConfigString", main_content)  # from config.h
+        
+        # Check that typedefs are NOT shown with full type information in headers
+        self.assertNotIn("+ typedef uint32_t ConfigId", main_content)
+        self.assertNotIn("+ typedef uint16_t PortNumber", main_content)
+        self.assertNotIn("+ typedef char* ConfigString", main_content)
 
     def test_feature_struct_and_enum_integration_verification(self):
         """Test verification of struct and enum integration in headers"""
@@ -274,9 +284,14 @@ class TestIncludeProcessingEnhancedFeatures(BaseFeatureTest):
         
         # Verify enums are correctly displayed in header classes
         self.assertIn("+ enum Status", main_content)  # from types.h
-        self.assertIn("+ OK", main_content)  # enum values
-        self.assertIn("+ ERROR", main_content)  # enum values
-        self.assertIn("+ PENDING", main_content)  # enum values
+        
+        # Check that enums are correctly shown in header classes (name only)
+        self.assertIn("+ enum Status", main_content)  # from types.h
+        
+        # Check that enum values are NOT shown in header classes
+        self.assertNotIn("+ OK", main_content)  # enum values not in header
+        self.assertNotIn("+ ERROR", main_content)  # enum values not in header
+        self.assertNotIn("+ PENDING", main_content)  # enum values not in header
 
     def create_complex_layered_project(self) -> Path:
         """Create a complex project with multiple layers of includes"""

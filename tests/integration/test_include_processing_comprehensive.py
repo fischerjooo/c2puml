@@ -157,19 +157,33 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
             self.assertIn(typedef, main_content,
                          f"Expected typedef in main class not found: {typedef}")
         
-        # Verify typedefs are correctly displayed in header classes
-        expected_header_typedefs = [
-            "+ typedef String",  # from core.h
-            "+ typedef Integer",  # from core.h
-            "+ typedef Color",  # from graphics.h
-            "+ typedef Address",  # from network.h
-            "+ typedef Byte",  # from types.h
-            "+ typedef Word"  # from types.h
+        # Check that typedefs are correctly shown in header classes (name only)
+        expected_typedefs = [
+            "+ typedef String",      # from core.h
+            "+ typedef Integer",     # from core.h
+            "+ typedef Float",       # from core.h
+            "+ typedef Byte",        # from types.h
+            "+ typedef Word",        # from types.h
+            "+ typedef DWord",       # from types.h
         ]
         
-        for typedef in expected_header_typedefs:
+        for typedef in expected_typedefs:
             self.assertIn(typedef, main_content,
                          f"Expected typedef in header class not found: {typedef}")
+        
+        # Check that typedefs are NOT shown with full type information in headers
+        unexpected_typedefs = [
+            "+ typedef char* String",
+            "+ typedef int Integer", 
+            "+ typedef float Float",
+            "+ typedef unsigned char Byte",
+            "+ typedef unsigned short Word",
+            "+ typedef unsigned long DWord",
+        ]
+        
+        for typedef in unexpected_typedefs:
+            self.assertNotIn(typedef, main_content,
+                            f"Unexpected typedef with full type found in header: {typedef}")
 
     def test_comprehensive_include_processing_correctness(self):
         """Test comprehensive verification of include processing correctness"""
@@ -231,14 +245,19 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
             self.assertIn(relationship, main_content,
                          f"Expected include relationship not found: {relationship}")
         
-        # Verify typedefs are correctly displayed
-        self.assertIn("+ typedef core_String CustomString", main_content)
-        self.assertIn("+ typedef char* String", main_content)
-        self.assertIn("+ typedef int Integer", main_content)
+        # Verify typedefs are correctly displayed (name only in headers)
+        self.assertIn("+ typedef String", main_content)  # from core.h
+        self.assertIn("+ typedef Integer", main_content)  # from core.h
+        self.assertIn("+ typedef Float", main_content)    # from core.h
         
-        # Verify macros are correctly displayed
-        self.assertIn("- #define MAX_SIZE", main_content)
-        self.assertIn("- #define DEBUG_MODE", main_content)
+        # Check that typedefs are NOT shown with full type information in headers
+        self.assertNotIn("+ typedef char* String", main_content)
+        self.assertNotIn("+ typedef int Integer", main_content)
+        self.assertNotIn("+ typedef float Float", main_content)
+        
+        # Verify macros are correctly displayed in header classes
+        self.assertIn("+ #define MAX_SIZE", main_content)  # from utils.h
+        self.assertIn("+ #define DEBUG_MODE", main_content)  # from utils.h
         
         # Verify structs are correctly displayed
         self.assertIn("struct Config", main_content)

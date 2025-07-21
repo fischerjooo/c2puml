@@ -114,13 +114,18 @@ typedef Point* PointPtr;
         self.assertIn('class "types" as HEADER_TYPES <<header>> #LightGreen', diagram)
         self.assertIn('class "utils" as HEADER_UTILS <<header>> #LightGreen', diagram)
         
-        # Verify typedefs are correctly parsed and displayed
-        self.assertIn("+ typedef unsigned char Byte", diagram)  # from types.h
-        self.assertIn("+ typedef unsigned short Word", diagram)  # from types.h
-        self.assertIn("+ typedef struct { types_Word x", diagram)  # from utils.h
+        # Verify typedefs are correctly parsed and displayed (name only in headers)
+        self.assertIn("+ typedef Byte", diagram)  # from types.h
+        self.assertIn("+ typedef Word", diagram)  # from types.h
+        self.assertIn("+ typedef x", diagram)  # from utils.h
+        
+        # Check that typedefs are NOT shown with full type information in headers
+        self.assertNotIn("+ typedef unsigned char Byte", diagram)  # from types.h
+        self.assertNotIn("+ typedef unsigned short Word", diagram)  # from types.h
+        self.assertNotIn("+ typedef struct { types_Word x", diagram)  # from utils.h
         
         # Verify complex typedefs in main file
-        self.assertIn("+ typedef types_Byte CustomByte", diagram)
+        self.assertIn("+ typedef CustomByte", diagram)
         self.assertIn("+ typedef types_Word CustomWord", diagram)
         self.assertIn("+ typedef utils_Point CustomPoint", diagram)
         self.assertIn("+ typedef struct { CustomByte r, g, b", diagram)
@@ -175,10 +180,15 @@ typedef types_PointPtr* PointPtrPtr;
         # Verify include relationships
         self.assertIn("HEADER_TYPES --> HEADER_UTILS : <<include>>", diagram)
         
-        # Verify typedefs are correctly parsed
-        self.assertIn("+ typedef unsigned char Byte", diagram)
-        self.assertIn("+ typedef utils_Point* PointPtr", diagram)
-        self.assertIn("+ typedef utils_Color* ColorPtr", diagram)
+        # Check that typedefs are correctly shown in header classes (name only)
+        self.assertIn("+ typedef Byte", diagram)  # from types.h
+        self.assertIn("+ typedef PointPtr", diagram)  # from types.h
+        self.assertIn("+ typedef ColorPtr", diagram)  # from types.h
+        
+        # Check that typedefs are NOT shown with full type information in headers
+        self.assertNotIn("+ typedef unsigned char Byte", diagram)
+        self.assertNotIn("+ typedef utils_Point* PointPtr", diagram)
+        self.assertNotIn("+ typedef utils_Color* ColorPtr", diagram)
 
     def test_include_processing_with_function_declarations_in_headers(self):
         """Test include processing with function declarations in headers"""
@@ -484,16 +494,23 @@ typedef enum {
         self.assertIn('class "base_types" as HEADER_BASE_TYPES <<header>> #LightGreen', diagram)
         self.assertIn('class "derived_types" as HEADER_DERIVED_TYPES <<header>> #LightGreen', diagram)
         
-                # Verify enums are included in headers (as typedefs in current implementation)
-        self.assertIn("+ typedef enum { SHAPE_CIRCLE, SHAPE_RECTANGLE, SHAPE_TRIANGLE } ShapeType", diagram)  # from base_types.h
-        self.assertIn("+ typedef enum { COLOR_RED, COLOR_GREEN, COLOR_BLUE } Color", diagram)  # from derived_types.h
-        self.assertIn("+ typedef enum { BORDER_THIN = 1, BORDER_MEDIUM = 2, BORDER_THICK = 3 } BorderWidth", diagram)  # from derived_types.h
+                # Verify typedefs are included in headers (name only)
+        self.assertIn("+ typedef ShapeType", diagram)  # from base_types.h
+        self.assertIn("+ typedef type", diagram)  # from base_types.h
+        self.assertIn("+ typedef base", diagram)  # from base_types.h
+        self.assertIn("+ typedef circle", diagram)  # from derived_types.h
+        self.assertIn("+ typedef rect", diagram)  # from derived_types.h
+        self.assertIn("+ typedef Color", diagram)  # from derived_types.h
+        self.assertIn("+ typedef BorderWidth", diagram)  # from derived_types.h
         
-        # Verify structs are included in headers (as typedefs in current implementation)
-        self.assertIn("+ typedef struct { ShapeType type", diagram)  # from base_types.h
-        self.assertIn("+ typedef struct { Shape base", diagram)  # from base_types.h
-        self.assertIn("+ typedef struct { base_Circle circle", diagram)  # from derived_types.h
-        self.assertIn("+ typedef struct { base_Rectangle rect", diagram)  # from derived_types.h
+        # Check that typedefs are NOT shown with full type information in headers
+        self.assertNotIn("+ typedef enum { SHAPE_CIRCLE, SHAPE_RECTANGLE, SHAPE_TRIANGLE } ShapeType", diagram)  # from base_types.h
+        self.assertNotIn("+ typedef enum { COLOR_RED, COLOR_GREEN, COLOR_BLUE } Color", diagram)  # from derived_types.h
+        self.assertNotIn("+ typedef enum { BORDER_THIN = 1, BORDER_MEDIUM = 2, BORDER_THICK = 3 } BorderWidth", diagram)  # from derived_types.h
+        self.assertNotIn("+ typedef struct { ShapeType type", diagram)  # from base_types.h
+        self.assertNotIn("+ typedef struct { Shape base", diagram)  # from base_types.h
+        self.assertNotIn("+ typedef struct { base_Circle circle", diagram)  # from derived_types.h
+        self.assertNotIn("+ typedef struct { base_Rectangle rect", diagram)  # from derived_types.h
 
     def test_include_processing_with_conditional_includes(self):
         """Test include processing with conditional include statements"""
@@ -711,14 +728,23 @@ typedef enum {
         self.assertIn('class "graphics_types" as HEADER_GRAPHICS_TYPES <<header>> #LightGreen', diagram)
         self.assertIn('class "network_types" as HEADER_NETWORK_TYPES <<header>> #LightGreen', diagram)
         
-        # Verify typedefs are included in headers
-        self.assertIn("+ typedef char* String", diagram)  # from core_types.h
-        self.assertIn("+ typedef struct { core_Integer r, g, b", diagram)  # from graphics_types.h
-        self.assertIn("+ typedef struct { core_Integer octet1, octet2, octet3, octet4", diagram)  # from network_types.h
+        # Verify typedefs are included in headers (name only)
+        self.assertIn("+ typedef String", diagram)  # from core_types.h
+        self.assertIn("+ typedef Integer", diagram)  # from core_types.h
+        self.assertIn("+ typedef Float", diagram)  # from core_types.h
+        self.assertIn("+ typedef b", diagram)  # from graphics_types.h
+        self.assertIn("+ typedef position", diagram)  # from graphics_types.h
+        self.assertIn("+ typedef GraphicsMode", diagram)  # from graphics_types.h
+        self.assertIn("+ typedef octet4", diagram)  # from network_types.h
+        self.assertIn("+ typedef address", diagram)  # from network_types.h
+        self.assertIn("+ typedef NetworkProtocol", diagram)  # from network_types.h
         
-                # Verify enums are included in headers (as typedefs in current implementation)
-        self.assertIn("+ typedef enum { GRAPHICS_MODE_2D, GRAPHICS_MODE_3D } GraphicsMode", diagram)  # from graphics_types.h
-        self.assertIn("+ typedef enum { NETWORK_PROTOCOL_TCP, NETWORK_PROTOCOL_UDP } NetworkProtocol", diagram)  # from network_types.h
+        # Check that typedefs are NOT shown with full type information in headers
+        self.assertNotIn("+ typedef char* String", diagram)  # from core_types.h
+        self.assertNotIn("+ typedef struct { core_Integer r, g, b", diagram)  # from graphics_types.h
+        self.assertNotIn("+ typedef struct { core_Integer octet1, octet2, octet3, octet4", diagram)  # from network_types.h
+        self.assertNotIn("+ typedef enum { GRAPHICS_MODE_2D, GRAPHICS_MODE_3D } GraphicsMode", diagram)  # from graphics_types.h
+        self.assertNotIn("+ typedef enum { NETWORK_PROTOCOL_TCP, NETWORK_PROTOCOL_UDP } NetworkProtocol", diagram)  # from network_types.h
 
 
 if __name__ == "__main__":
