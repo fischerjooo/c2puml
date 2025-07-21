@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from .models import Struct, Enum, Union, Function, Field, TypedefRelation
 
 from .models import FileModel, ProjectModel
+from .utils import detect_file_encoding
 
 
 class CParser:
@@ -134,16 +135,8 @@ class CParser:
         return sorted(filtered_files)
 
     def _detect_encoding(self, file_path: Path) -> str:
-        """Detect file encoding"""
-        try:
-            import chardet
-
-            with open(file_path, "rb") as f:
-                raw_data = f.read()
-                result = chardet.detect(raw_data)
-                return result["encoding"] or "utf-8"
-        except ImportError:
-            return "utf-8"
+        """Detect file encoding with platform-aware fallbacks"""
+        return detect_file_encoding(file_path)
 
     def _parse_structs(self, content: str) -> Dict[str, "Struct"]:
         """Parse struct definitions from content"""
