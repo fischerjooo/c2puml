@@ -12,6 +12,7 @@ A robust Python tool for converting C/C++ source code to PlantUML diagrams. This
 - **Typedef Relationship Analysis**: Comprehensive parsing of typedef relationships with proper UML stereotypes
 - **Union Support**: Full parsing and visualization of union definitions with fields
 - **Robust Error Handling**: Graceful handling of invalid files and encoding issues
+- **Cross-Platform Encoding Support**: Automatic detection and handling of different file encodings (UTF-8, Windows-1252, Windows-1254, etc.)
 - **Logging Support**: Comprehensive logging for debugging and monitoring
 - **Type Safety**: Full type hints and validation throughout the codebase
 - **Modular Architecture**: 3-step processing pipeline for maximum flexibility
@@ -302,6 +303,13 @@ The tool is organized into a modular 3-step architecture:
    - Include relationship arrows
    - Color-coded stereotypes
    - Union field display
+
+5. **Cross-Platform Encoding Support**:
+   - Automatic detection of file encodings (UTF-8, Windows-1252, Windows-1254, etc.)
+   - Platform-aware encoding fallbacks
+   - BOM (Byte Order Mark) detection for UTF-8 and UTF-16 files
+   - Graceful handling of encoding detection failures
+   - Consistent behavior across Windows, Linux, and macOS
 
 ## Development
 

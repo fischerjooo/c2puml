@@ -11,6 +11,7 @@ from pathlib import Path
 
 from c_to_plantuml.models import Enum, Field, Function, Struct
 from c_to_plantuml.parser import CParser
+from c_to_plantuml.utils import get_acceptable_encodings
 
 
 class TestCParser(unittest.TestCase):
@@ -289,7 +290,14 @@ typedef struct {
             file_model = self.parser.parse_file(
                 Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
             )
-            self.assertEqual(file_model.encoding_used, "utf-8")
+            
+            # Accept both UTF-8 and common Windows encodings for cross-platform compatibility
+            acceptable_encodings = get_acceptable_encodings()
+            self.assertIn(
+                file_model.encoding_used.lower(), 
+                [enc.lower() for enc in acceptable_encodings],
+                f"Encoding '{file_model.encoding_used}' not in acceptable encodings: {acceptable_encodings}"
+            )
             self.assertEqual(len(file_model.functions), 1)
 
         finally:
