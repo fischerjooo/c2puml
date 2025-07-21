@@ -376,8 +376,62 @@ class CParser:
 
     def _parse_typedef_relations(self, content: str) -> List["TypedefRelation"]:
         """Parse typedef relationships from content"""
-        # Implementation would go here - simplified for now
-        return []
+        import re
+        from .models import TypedefRelation
+        typedef_relations = []
+        lines = content.split('\n')
+        i = 0
+        while i < len(lines):
+            line = lines[i].strip()
+            if not line or line.startswith('//') or line.startswith('/*'):
+                i += 1
+                continue
+            if line.startswith('typedef '):
+                typedef_text = line
+                j = i + 1
+                while j < len(lines) and ';' not in typedef_text:
+                    typedef_text += ' ' + lines[j].strip()
+                    j += 1
+                if ';' in typedef_text:
+                    typedef_body = typedef_text[8:].rstrip(';').strip()
+                    # Pattern 1: typedef type name; (simple typedef)
+                    simple_pattern = r'^([^;]+)\s+([A-Za-z_][A-Za-z0-9_]*)$'
+                    match = re.match(simple_pattern, typedef_body)
+                    if match:
+                        original_type, typedef_name = match.groups()
+                        relationship_type = 'alias'
+                        # If the original type is a known struct/enum/union name, treat as defines
+                        if original_type.startswith('struct') or original_type.startswith('enum') or original_type.startswith('union'):
+                            relationship_type = 'defines'
+                        typedef_relations.append(TypedefRelation(typedef_name, original_type.strip(), relationship_type))
+                    # Pattern 2: typedef struct { ... } name; (struct typedef)
+                    struct_pattern = r'^struct\s*\{[^}]*\}\s+([A-Za-z_][A-Za-z0-9_]*)$'
+                    match = re.match(struct_pattern, typedef_body, re.DOTALL)
+                    if match:
+                        typedef_name = match.group(1)
+                        typedef_relations.append(TypedefRelation(typedef_name, 'struct', 'defines'))
+                    # Pattern 3: typedef enum { ... } name; (enum typedef)
+                    enum_pattern = r'^enum\s*\{[^}]*\}\s+([A-Za-z_][A-Za-z0-9_]*)$'
+                    match = re.match(enum_pattern, typedef_body, re.DOTALL)
+                    if match:
+                        typedef_name = match.group(1)
+                        typedef_relations.append(TypedefRelation(typedef_name, 'enum', 'defines'))
+                    # Pattern 4: typedef union { ... } name; (union typedef)
+                    union_pattern = r'^union\s*\{[^}]*\}\s+([A-Za-z_][A-Za-z0-9_]*)$'
+                    match = re.match(union_pattern, typedef_body, re.DOTALL)
+                    if match:
+                        typedef_name = match.group(1)
+                        typedef_relations.append(TypedefRelation(typedef_name, 'union', 'defines'))
+                    # Pattern 5: typedef void (*name)(params); (function pointer)
+                    func_ptr_pattern = r'^([^(*]+)\s*\(\s*\*\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)\s*\([^)]*\)$'
+                    match = re.match(func_ptr_pattern, typedef_body)
+                    if match:
+                        return_type, typedef_name = match.groups()
+                        typedef_relations.append(TypedefRelation(typedef_name, f"{return_type.strip()} (*)(...)", 'alias'))
+                i = j
+            else:
+                i += 1
+        return typedef_relations
 
     def _get_timestamp(self) -> str:
         """Get current timestamp string"""
