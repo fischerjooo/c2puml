@@ -51,13 +51,17 @@ def main() -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Usage:
-  %(prog)s --config config.json
-  %(prog)s config_folder
-  %(prog)s              # Uses current directory as config folder
+  %(prog)s --config config.json [parse|transform|generate]
+  %(prog)s config_folder [parse|transform|generate]
+  %(prog)s [parse|transform|generate]  # Uses current directory as config folder
+  %(prog)s              # Full workflow (parse, transform, generate)
         """,
     )
     parser.add_argument(
         "--config", "-c", type=str, default=None, help="Path to config.json or config folder (optional, default: current directory)"
+    )
+    parser.add_argument(
+        "command", nargs="?", choices=["parse", "transform", "generate"], help="Which step to run: parse, transform, or generate. If omitted, runs full workflow."
     )
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose output"
@@ -87,48 +91,91 @@ Usage:
     os.makedirs(output_folder, exist_ok=True)
     logging.info(f"Output folder: {output_folder}")
 
-    # Step 1: Parse
+    model_file = os.path.join(output_folder, "model.json")
+    transformed_model_file = os.path.join(output_folder, "model_transformed.json")
+
+    # Parse command
+    if args.command == "parse":
+        try:
+            parser_obj = Parser()
+            parser_obj.parse(
+                project_root=config.source_folders[0],
+                output_file=model_file,
+                recursive=getattr(config, "recursive", True),
+            )
+            logging.info(f"Model saved to: {model_file}")
+            return 0
+        except Exception as e:
+            logging.error(f"Error during parsing: {e}")
+            return 1
+
+    # Transform command
+    if args.command == "transform":
+        try:
+            transformer = Transformer()
+            transformer.transform(
+                model_file=model_file,
+                config_file=config_path if Path(config_path).is_file() else str(list(Path(config_path).glob("*.json"))[0]),
+                output_file=transformed_model_file,
+            )
+            logging.info(f"Transformed model saved to: {transformed_model_file}")
+            return 0
+        except Exception as e:
+            logging.error(f"Error during transformation: {e}")
+            return 1
+
+    # Generate command
+    if args.command == "generate":
+        try:
+            generator = Generator()
+            # Prefer transformed model, else fallback to model.json
+            if os.path.exists(transformed_model_file):
+                model_to_use = transformed_model_file
+            elif os.path.exists(model_file):
+                model_to_use = model_file
+            else:
+                logging.error("No model file found for generation.")
+                return 1
+            generator.generate(
+                model_file=model_to_use,
+                output_dir=output_folder,
+            )
+            logging.info(f"PlantUML generation complete! Output in: {output_folder}")
+            return 0
+        except Exception as e:
+            logging.error(f"Error generating PlantUML: {e}")
+            return 1
+
+    # Default: full workflow
     try:
+        # Step 1: Parse
         parser_obj = Parser()
-        model_file = os.path.join(output_folder, "model.json")
         parser_obj.parse(
             project_root=config.source_folders[0],
             output_file=model_file,
             recursive=getattr(config, "recursive", True),
         )
         logging.info(f"Model saved to: {model_file}")
-    except Exception as e:
-        logging.error(f"Error during parsing: {e}")
-        return 1
-
-    # Step 2: Transform
-    try:
+        # Step 2: Transform
         transformer = Transformer()
-        transformed_model_file = os.path.join(output_folder, "transformed_model.json")
         transformer.transform(
             model_file=model_file,
             config_file=config_path if Path(config_path).is_file() else str(list(Path(config_path).glob("*.json"))[0]),
             output_file=transformed_model_file,
         )
         logging.info(f"Transformed model saved to: {transformed_model_file}")
-    except Exception as e:
-        logging.error(f"Error during transformation: {e}")
-        return 1
-
-    # Step 3: Generate
-    try:
+        # Step 3: Generate
         generator = Generator()
         generator.generate(
             model_file=transformed_model_file,
             output_dir=output_folder,
         )
         logging.info(f"PlantUML generation complete! Output in: {output_folder}")
+        logging.info("Complete workflow finished successfully!")
+        return 0
     except Exception as e:
-        logging.error(f"Error generating PlantUML: {e}")
+        logging.error(f"Error in workflow: {e}")
         return 1
-
-    logging.info("Complete workflow finished successfully!")
-    return 0
 
 if __name__ == "__main__":
     sys.exit(main())
