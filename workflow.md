@@ -25,13 +25,13 @@ Simple testing workflow for the C to PlantUML Converter using two main scripts.
 
 ### Standard Workflow (Manual Steps)
 ```bash
-# 1. Clean previous output
-rm -rf output
+# 0. Run all tests and check for errors
+./run_all_tests.sh
 
-# 2. Run the converter with config
-python3 main.py --config example/config.json --verbose
+# 1. Run example workflow (includes cleaning and generation)
+./run_example.sh
 
-# 3. Generate images from PlantUML files (optional)
+# 2. Generate images from PlantUML files (optional)
 ./picgen.sh
 ```
 
