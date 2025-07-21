@@ -23,6 +23,7 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     + real_t average()
 }
 
+HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
 
 @enduml
