@@ -54,56 +54,42 @@ class PlantUMLGenerator:
             "{",
         ]
         
-        # Collect all typedefs (local + from includes)
-        all_typedefs = []
-        
-        # Add local typedefs with - visibility (C file) or + visibility (header file)
-        for typedef_name, original_type in file_model.typedefs.items():
-            # Determine if this is a C file or header file
+        # Only show typedefs to primitive types directly in the file class
+        primitive_typedefs = []
+        for typedef_relation in file_model.typedef_relations:
+            typedef_name = typedef_relation.typedef_name
+            original_type = typedef_relation.original_type
+            relationship_type = typedef_relation.relationship_type
             is_header = file_model.file_path.endswith('.h')
             visibility = "+" if is_header else "-"
-            
-            # Determine the typedef type and format accordingly
-            if original_type == 'struct':
-                all_typedefs.append(f"    {visibility} typedef struct {typedef_name}")
-            elif original_type == 'enum':
-                all_typedefs.append(f"    {visibility} typedef enum {typedef_name}")
-            elif original_type == 'union':
-                all_typedefs.append(f"    {visibility} typedef union {typedef_name}")
-            else:
-                all_typedefs.append(f"    {visibility} typedef {original_type} {typedef_name}")
+            # Only show primitive typedefs (not struct/enum/union)
+            if relationship_type == "alias" and not (original_type.startswith("struct") or original_type.startswith("enum") or original_type.startswith("union")):
+                primitive_typedefs.append(f"    {visibility} typedef {original_type} {typedef_name}")
         
-        # Add typedefs from included files with + visibility
+        # Add primitive typedefs from included files with + visibility
         for include_relation in file_model.include_relations:
             included_file_path = include_relation.included_file
-            # Find the included file model in the project
             included_file_model = None
             for key, model in project_model.files.items():
                 if model.file_path == included_file_path:
                     included_file_model = model
                     break
-            
             if included_file_model:
-                for typedef_name, original_type in included_file_model.typedefs.items():
-                    # Determine the typedef type and format accordingly
-                    if original_type == 'struct':
-                        all_typedefs.append(f"    + typedef struct {typedef_name}")
-                    elif original_type == 'enum':
-                        all_typedefs.append(f"    + typedef enum {typedef_name}")
-                    elif original_type == 'union':
-                        all_typedefs.append(f"    + typedef union {typedef_name}")
-                    else:
-                        all_typedefs.append(f"    + typedef {original_type} {typedef_name}")
+                for typedef_relation in included_file_model.typedef_relations:
+                    typedef_name = typedef_relation.typedef_name
+                    original_type = typedef_relation.original_type
+                    relationship_type = typedef_relation.relationship_type
+                    if relationship_type == "alias" and not (original_type.startswith("struct") or original_type.startswith("enum") or original_type.startswith("union")):
+                        primitive_typedefs.append(f"    + typedef {original_type} {typedef_name}")
         
-        # Generate sections only if they have content
         if file_model.macros:
             lines.append("    -- Macros --")
             for macro in file_model.macros:
                 lines.append(f"    - #define {macro}")
         
-        if all_typedefs:
+        if primitive_typedefs:
             lines.append("    -- Typedefs --")
-            lines.extend(all_typedefs)
+            lines.extend(primitive_typedefs)
         
         if file_model.globals:
             lines.append("    -- Global Variables --")
@@ -115,21 +101,8 @@ class PlantUMLGenerator:
             for function in file_model.functions:
                 lines.append(f"    {function.return_type} {function.name}()")
         
-        if file_model.structs:
-            lines.append("    -- Structs --")
-            for struct_name in file_model.structs:
-                lines.append(f"    struct {struct_name}")
-        
-        if file_model.enums:
-            lines.append("    -- Enums --")
-            for enum_name in file_model.enums:
-                lines.append(f"    enum {enum_name}")
-        
-        if file_model.unions:
-            lines.append("    -- Unions --")
-            for union_name in file_model.unions:
-                lines.append(f"    union {union_name}")
-        
+        # Do not show structs/enums/unions directly if they are only present as typedefs
+        # (They will be shown in their own class if needed)
         lines.append("}")
         lines.append("")
         return lines
@@ -180,25 +153,22 @@ class PlantUMLGenerator:
             f'class "{basename}" as {self._get_header_uml_id(basename)} <<header>> #LightGreen',
             "{",
         ]
-        
-        # Generate sections only if they have content
         if file_model.macros:
             lines.append("    -- Macros --")
             for macro in file_model.macros:
                 lines.append(f"    + #define {macro}")
         
-        if file_model.typedefs:
+        # Only show primitive typedefs directly in the header class
+        primitive_typedefs = []
+        for typedef_relation in file_model.typedef_relations:
+            typedef_name = typedef_relation.typedef_name
+            original_type = typedef_relation.original_type
+            relationship_type = typedef_relation.relationship_type
+            if relationship_type == "alias" and not (original_type.startswith("struct") or original_type.startswith("enum") or original_type.startswith("union")):
+                primitive_typedefs.append(f"    + typedef {original_type} {typedef_name}")
+        if primitive_typedefs:
             lines.append("    -- Typedefs --")
-            for typedef_name, original_type in file_model.typedefs.items():
-                # Determine the typedef type and format accordingly
-                if original_type == 'struct':
-                    lines.append(f"    + typedef struct {typedef_name}")
-                elif original_type == 'enum':
-                    lines.append(f"    + typedef enum {typedef_name}")
-                elif original_type == 'union':
-                    lines.append(f"    + typedef union {typedef_name}")
-                else:
-                    lines.append(f"    + typedef {original_type} {typedef_name}")
+            lines.extend(primitive_typedefs)
         
         if file_model.globals:
             lines.append("    -- Global Variables --")
@@ -209,22 +179,6 @@ class PlantUMLGenerator:
             lines.append("    -- Functions --")
             for function in file_model.functions:
                 lines.append(f"    + {function.return_type} {function.name}()")
-        
-        if file_model.structs:
-            lines.append("    -- Structs --")
-            for struct_name in file_model.structs:
-                lines.append(f"    + struct {struct_name}")
-        
-        if file_model.enums:
-            lines.append("    -- Enums --")
-            for enum_name in file_model.enums:
-                lines.append(f"    + enum {enum_name}")
-        
-        if file_model.unions:
-            lines.append("    -- Unions --")
-            for union_name in file_model.unions:
-                lines.append(f"    + union {union_name}")
-        
         lines.append("}")
         lines.append("")
         return lines
@@ -239,35 +193,26 @@ class PlantUMLGenerator:
             # Typedef class
             lines.append(f'class "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
             lines.append("{")
-            lines.append(f"    + {original_type}")
-            lines.append("}")
-            lines.append("")
-            # Original type class if struct/enum/union
+            # For struct/union/enum typedefs, show fields/values
             if relationship_type == "defines":
-                if original_type in file_model.structs:
-                    struct = file_model.structs[original_type]
-                    lines.append(f'class "{original_type}" as {self._get_type_uml_id(original_type)} <<type>> #LightGray')
-                    lines.append("{")
+                if original_type == "struct" and typedef_name in file_model.structs:
+                    struct = file_model.structs[typedef_name]
                     for field in struct.fields:
                         lines.append(f"    + {field.type} {field.name}")
-                    lines.append("}")
-                    lines.append("")
-                elif original_type in file_model.enums:
-                    enum = file_model.enums[original_type]
-                    lines.append(f'class "{original_type}" as {self._get_type_uml_id(original_type)} <<type>> #LightGray')
-                    lines.append("{")
+                elif original_type == "enum" and typedef_name in file_model.enums:
+                    enum = file_model.enums[typedef_name]
                     for value in enum.values:
                         lines.append(f"    + {value}")
-                    lines.append("}")
-                    lines.append("")
-                elif original_type in file_model.unions:
-                    union = file_model.unions[original_type]
-                    lines.append(f'class "{original_type}" as {self._get_type_uml_id(original_type)} <<type>> #LightGray')
-                    lines.append("{")
+                elif original_type == "union" and typedef_name in file_model.unions:
+                    union = file_model.unions[typedef_name]
                     for field in union.fields:
                         lines.append(f"    + {field.type} {field.name}")
-                    lines.append("}")
-                    lines.append("")
+                else:
+                    lines.append(f"    + {original_type}")
+            else:
+                lines.append(f"    + {original_type}")
+            lines.append("}")
+            lines.append("")
         return lines
 
     def _generate_relationships(
@@ -312,21 +257,28 @@ class PlantUMLGenerator:
             typedef_name = typedef_relation.typedef_name
             original_type = typedef_relation.original_type
             relationship_type = typedef_relation.relationship_type
-            if relationship_type == "defines":
-                lines.append(
-                    f"{self._get_typedef_uml_id(typedef_name)} *-- "
-                    f"{self._get_type_uml_id(original_type)} : «defines»"
-                )
-            else:  # alias
-                lines.append(
-                    f"{self._get_typedef_uml_id(typedef_name)} -|> "
-                    f"{self._get_type_uml_id(original_type)} : «alias»"
-                )
-            # Declares relation from main/header class to typedef
+            # Always show a 'declares' relation from the file to the typedef class
             main_class_id = self._get_uml_id(Path(file_model.file_path).stem)
             header_class_id = self._get_header_uml_id(Path(file_model.file_path).stem)
             lines.append(f"{main_class_id} ..> {self._get_typedef_uml_id(typedef_name)} : declares")
             lines.append(f"{header_class_id} ..> {self._get_typedef_uml_id(typedef_name)} : declares")
+            # For complex typedefs, show the 'defines' relation from the typedef class to the type class
+            if relationship_type == "defines":
+                if original_type in ("struct", "enum", "union"):
+                    lines.append(
+                        f"{self._get_typedef_uml_id(typedef_name)} *-- "
+                        f"{self._get_type_uml_id(typedef_name)} : «defines»"
+                    )
+                else:
+                    lines.append(
+                        f"{self._get_typedef_uml_id(typedef_name)} -|> "
+                        f"{self._get_type_uml_id(original_type)} : «alias»"
+                    )
+            elif relationship_type == "alias":
+                lines.append(
+                    f"{self._get_typedef_uml_id(typedef_name)} -|> "
+                    f"{self._get_type_uml_id(original_type)} : «alias»"
+                )
         return lines
 
     def _find_included_file(
