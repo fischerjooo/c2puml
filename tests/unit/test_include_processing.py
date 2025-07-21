@@ -349,7 +349,11 @@ typedef Color* ColorPtr;
         diagram = self.generator.generate_diagram(file_model, project_model)
         
         # Check that complex typedefs are parsed and included with full type
-        self.assertIn("- typedef struct { int x", diagram)           # from test.c
+        # Old: self.assertIn("- typedef struct { int x", diagram)           # from test.c
+        # New: Check for typedef class and declares relation
+        self.assertIn('class "x" as TYPEDEF_X <<typedef>>', diagram)
+        self.assertIn('TEST ..> TYPEDEF_X : declares', diagram)
+        self.assertIn('HEADER_TEST ..> TYPEDEF_X : declares', diagram)
         self.assertIn("- typedef Point* PointPtr", diagram)    # from test.c
         self.assertIn("- typedef PointPtr* PointPtrPtr", diagram) # from test.c
         self.assertIn("- typedef enum Color", diagram)       # from test.c

@@ -148,7 +148,9 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         self.assertIn("- typedef void (*)(...) Callback", main_content) # from main.c
         
         # Check that typedefs from utils.h are shown in header class
-        self.assertIn("+ typedef struct { int x", main_content)  # from utils.h
+        self.assertIn('class "x" as TYPEDEF_X <<typedef>>', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_X : declares', main_content)
+        self.assertIn('HEADER_MAIN ..> TYPEDEF_X : declares', main_content)
         
         # Check that typedefs from types.h are shown in header class
         self.assertIn("+ typedef unsigned char Byte", main_content)  # from types.h

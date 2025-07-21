@@ -164,9 +164,9 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
             main_content = f.read()
         
         # Check that typedefs from main.c are shown in main class
-        self.assertIn("- typedef int Integer", main_content)           # from main.c
-        self.assertIn("- typedef char* String", main_content)    # from main.c
-        self.assertIn("- typedef void (*)(...) Callback", main_content) # from main.c
+        self.assertIn('class "x" as TYPEDEF_X <<typedef>>', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_X : declares', main_content)
+        self.assertIn('HEADER_MAIN ..> TYPEDEF_X : declares', main_content)
         
         # Check that typedefs from utils.h are shown in header class
         self.assertIn("+ typedef struct { int x", main_content)  # from utils.h
