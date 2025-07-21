@@ -226,6 +226,9 @@ class CParser:
                 param = param.strip()
                 if not param:
                     continue
+                if param == '...':
+                    # Skip variadic parameter
+                    continue
                 # Split type and name (very basic)
                 parts = param.rsplit(' ', 1)
                 if len(parts) == 2:
