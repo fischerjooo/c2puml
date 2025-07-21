@@ -151,13 +151,45 @@ The `run_all_tests.py` script provides a simple and elegant test execution:
   - **Generator Tests**: Test PlantUML diagram generation
   - **Transformer Tests**: Test model transformation and filtering
   - **Config Tests**: Test configuration loading and validation
+  - **Include Processing Tests**: Test include header processing and relationship generation
 - **Feature Tests** (`tests/feature/`): Test complete workflows and integrations
   - **Integration Tests**: Test complete workflows from parsing to diagram generation
   - **Parser Feature Tests**: Test parser features and edge cases
   - **Generator Feature Tests**: Test generator features and output quality
   - **Transformer Feature Tests**: Test transformer features and transformations
   - **Project Analysis Tests**: Test project-wide analysis features
+  - **Include Processing Feature Tests**: Test end-to-end include processing scenarios
+- **Integration Tests** (`tests/integration/`): Test comprehensive integration scenarios
+  - **Include Processing Integration Tests**: Test complex include processing workflows
 - **Test Files**: Sample C/C++ files for testing
+
+### Include Processing Test Coverage
+The test suite includes comprehensive coverage for include header processing:
+
+**Unit Tests** (`tests/unit/test_include_processing*.py`):
+- Include parsing and relationship extraction
+- Typedef relationship processing
+- Circular dependency handling
+- Complex nested include scenarios
+- Edge cases and error conditions
+
+**Feature Tests** (`tests/feature/test_include_processing*.py`):
+- End-to-end include processing workflows
+- Header-to-header relationship verification
+- C-to-header relationship verification
+- Typedef relationship verification in PlantUML output
+- Include depth limitation testing
+- Circular include handling verification
+
+**Integration Tests** (`tests/integration/test_include_processing*.py`):
+- Complex project structures with multiple include layers
+- Comprehensive verification of C-to-H, H-to-H, and typedef relationships
+- Real-world scenario testing with complex include hierarchies
+
+**Key Verification Points**:
+1. **C to H file relationships** are correctly processed and represented
+2. **H to H file relationships** are properly processed and represented  
+3. **Typedef relationships** are correctly parsed and shown in their PlantUML objects
 
 ## Configuration
 The system uses JSON configuration files to control:
