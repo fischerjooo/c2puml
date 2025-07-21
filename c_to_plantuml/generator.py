@@ -350,10 +350,9 @@ class PlantUMLGenerator:
         # For complex typedefs, show the 'defines' relation from the typedef class to the type class
         if relationship_type == "defines":
             if original_type in ("struct", "enum", "union"):
-                lines.append(
-                    f"{typedef_class_id} *-- "
-                    f"{self._get_type_uml_id(typedef_name)} : «defines»"
-                )
+                # For struct/enum/union typedefs, don't create a relationship to a non-existent type class
+                # since the fields/values are already shown in the typedef class itself
+                pass
             else:
                 lines.append(
                     f"{typedef_class_id} -|> "
