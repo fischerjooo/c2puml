@@ -39,6 +39,9 @@ Simple testing workflow for the C to PlantUML Converter using two main scripts.
 
 # 4. Update specification.md if needed
 # Always review and update specification.md with any new findings or changes
+
+# 5. Development or extend tests for new feature or feature change
+# Add new tests or modify existing tests based on feature development
 ```
 
 ## Test Structure
