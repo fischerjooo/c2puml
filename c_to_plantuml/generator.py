@@ -150,7 +150,6 @@ class PlantUMLGenerator:
                 if file_basename == include_name or key == include_name:
                     included_file_model = model
                     break
-            
             # If not found in project_model.files, try to find it on the file system
             if not included_file_model:
                 included_file_path = self._find_included_file(
@@ -163,7 +162,9 @@ class PlantUMLGenerator:
                         if model.file_path == included_file_path:
                             included_file_model = model
                             break
-
+            # Skip self-include
+            if included_file_model and included_file_model.file_path == file_model.file_path:
+                continue
             if included_file_model:
                 header_basename = Path(included_file_model.file_path).stem
 
@@ -284,6 +285,9 @@ class PlantUMLGenerator:
                 if model.file_path == included_file_path:
                     included_file_model = model
                     break
+            # Skip self-include
+            if included_file_model and included_file_model.file_path == file_model.file_path:
+                continue
             if included_file_model:
                 header_basename = Path(included_file_path).stem
                 lines.append(
