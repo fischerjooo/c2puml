@@ -2,10 +2,15 @@
 
 This template defines the structure for generating PlantUML diagrams from C source and header files, with strict separation of typedefs and clear relationship groupings.
 
+## UML_ID Naming Conventions
+- **C files**: No prefix, based on filename in capital letters (e.g., `main.c` → `MAIN`)
+- **H files**: `HEADER_` prefix, based on filename in capital letters (e.g., `utils.h` → `HEADER_UTILS`)
+- **Typedefs**: `TYPEDEF_` prefix, based on typedef name in capital letters (e.g., `MyStruct` → `TYPEDEF_MYSTRUCT`)
+
 ```plantuml
 @startuml {basename}
 
-' Source file class
+' Source file class (C file)
 class "{basename}" as {UML_ID} <<source>> #LightBlue
 {
     -- Macros --
@@ -17,7 +22,7 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
     {return_type} {function_name}()
 }
 
-' Header file class
+' Header file class (H file)
 class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
 {
     -- Macros --
@@ -35,12 +40,6 @@ class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
     + {typedef_content} ' (fields for struct/union, values for enum, signature for function typedef, type for primitive)
 }
 
-' Original type classes for struct/enum/union
-class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
-{
-    + {field_type} {field_name}
-}
-
 ' Relationships: the following 3 groupings should be done:
 ' 1. Include relationships: C or H files including other H files
 {UML_ID} --> {HEADER_UML_ID} : <<include>>
@@ -56,6 +55,9 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 
 ## Notes
 - All typedefs (including function typedefs) are represented as separate classes and never listed in C or header classes.
-- Enums and unions are not listed in C or header classes; they are only shown in their own typedef/type classes.
-- Structs are not listed in C or header classes; they are only shown in their own typedef/type classes.
+- Enums, unions, and structs are not listed in C or header classes; they are only shown in their own typedef classes.
+- UML_ID naming follows specific conventions:
+  - C files: No prefix, filename in capital letters
+  - H files: `HEADER_` prefix, filename in capital letters  
+  - Typedefs: `TYPEDEF_` prefix, typedef name in capital letters
 - Relationships are grouped as: Include, Declaration, and Uses.
