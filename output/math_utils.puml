@@ -2,47 +2,47 @@
 
 class "math_utils" as MATH_UTILS <<source>> #LightBlue
 {
-    -- Functions --
-    int add(int a, int b)
-    int subtract(int a, int b)
-    real_t average(const int * arr, size_t len)
+-- Functions --
+int add(int a, int b)
+int subtract(int a, int b)
+real_t average(const int * arr, size_t len)
 }
 
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
-    -- Macros --
-    + #define MATH_UTILS_H
-    -- Functions --
-    + int add(int a, int b);
-    + int subtract(int a, int b);
-    + real_t average(const int * arr, size_t len);
+-- Macros --
++ #define MATH_UTILS_H
+-- Functions --
++ int add(int a, int b);
++ int subtract(int a, int b);
++ real_t average(const int * arr, size_t len);
 }
 class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
-    -- Macros --
-    + #define CONFIG_H
-    + #define PROJECT_NAME
-    + #define MAX_LABEL_LEN
-    + #define DEFAULT_BUFFER_SIZE
+-- Macros --
++ #define CONFIG_H
++ #define PROJECT_NAME
++ #define MAX_LABEL_LEN
++ #define DEFAULT_BUFFER_SIZE
 }
 class "real_t" as TYPEDEF_real_t <<typedef>> #LightYellow
 {
-    + double
++ double
 }
 
 class "math_op_t" as TYPEDEF_math_op_t <<typedef>> #LightYellow
 {
-    + int ( * math_op_t ) ( int , int )
++ int ( * math_op_t ) ( int , int )
 }
 
 class "id_t" as TYPEDEF_id_t <<typedef>> #LightYellow
 {
-    + uint32_t
++ uint32_t
 }
 
 class "status_t" as TYPEDEF_status_t <<typedef>> #LightYellow
 {
-    + int32_t
++ int32_t
 }
 
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>

@@ -521,6 +521,9 @@ class PUMLValidator:
         print(f"    Declares: {len(declares)}")
         print(f"    Uses: {len(uses)}")
         
+        # Check for duplicate relationships
+        self._validate_no_duplicate_relationships(relationships, filename)
+        
         # Assert relationship structure
         for source, target, rel_type in relationships:
             assert source and target, f"Invalid relationship: {source} -> {target}"
@@ -811,6 +814,24 @@ class PUMLValidator:
             header_file_path = self.source_dir / f"{puml_basename}.h"
             if header_file_path.exists():
                 raise AssertionError(f"PlantUML diagram generated for header file: {filename} (corresponds to {puml_basename}.h). Only C files should have PlantUML diagrams generated.")
+
+    def _validate_no_duplicate_relationships(self, relationships: List[Tuple[str, str, str]], filename: str) -> None:
+        """Assert that no duplicate relationships exist between the same two objects."""
+        seen_relationships = set()
+        duplicates = []
+        
+        for source, target, rel_type in relationships:
+            # Create a key for the relationship (source, target, type)
+            rel_key = (source, target, rel_type)
+            
+            if rel_key in seen_relationships:
+                duplicates.append(f"{source} -> {target} ({rel_type})")
+            else:
+                seen_relationships.add(rel_key)
+        
+        if duplicates:
+            duplicate_list = ", ".join(duplicates)
+            raise AssertionError(f"Duplicate relationships found in {filename}: {duplicate_list}")
 
     def validate_file(self, filename: str) -> None:
         """Validate a single PUML file."""

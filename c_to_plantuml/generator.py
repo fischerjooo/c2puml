@@ -55,6 +55,9 @@ class PlantUMLGenerator:
         # Generate declares relationships for included header files
         diagram_lines.extend(self.generate_included_declares_relationships(file_model, project_model))
 
+        # Deduplicate relationships to prevent duplicates
+        diagram_lines = self._deduplicate_relationships(diagram_lines)
+
         # End diagram
         diagram_lines.extend(["", "@enduml"])
 
@@ -1212,6 +1215,36 @@ class PlantUMLGenerator:
     def _get_type_uml_id(self, name: str) -> str:
         """Generate UML ID for a type class"""
         return f"TYPE_{self._get_uml_id(name)}"
+
+    def _deduplicate_relationships(self, diagram_lines: List[str]) -> List[str]:
+        """Remove duplicate relationship lines from the diagram"""
+        seen_relationships = set()
+        deduplicated_lines = []
+        
+        for line in diagram_lines:
+            line = line.strip()
+            
+            # Check if this is a relationship line (contains --> or ..>)
+            if ('-->' in line or '..>' in line) and ':' in line:
+                # Normalize the relationship line for comparison
+                # Remove extra whitespace and normalize formatting
+                normalized_line = re.sub(r'\s+', ' ', line.strip())
+                
+                # Further normalize by removing angle brackets from relationship type
+                # This handles cases like "declares" vs "<<declares>>"
+                normalized_line = re.sub(r'<<([^>]+)>>', r'\1', normalized_line)
+                
+                if normalized_line in seen_relationships:
+                    # Skip this duplicate relationship
+                    continue
+                else:
+                    seen_relationships.add(normalized_line)
+                    deduplicated_lines.append(line)
+            else:
+                # Not a relationship line, keep it as is
+                deduplicated_lines.append(line)
+        
+        return deduplicated_lines
 
     def generate_typedef_uses_relations(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
         # For each typedef, if its fields use another typedef, emit a uses relation

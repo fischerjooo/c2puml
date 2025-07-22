@@ -2,18 +2,18 @@
 
 class "geometry" as GEOMETRY <<source>> #LightBlue
 {
-    -- Functions --
-    triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
-    int triangle_area(const triangle_t * tri)
+-- Functions --
+triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
+int triangle_area(const triangle_t * tri)
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
-    -- Macros --
-    + #define GEOMETRY_H
-    -- Functions --
-    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
-    + int triangle_area(const triangle_t * tri);
+-- Macros --
++ #define GEOMETRY_H
+-- Functions --
++ triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
++ int triangle_area(const triangle_t * tri);
 }
 class "string.h" as HEADER_STRING <<header>> #LightGray
 {
@@ -25,57 +25,57 @@ class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
 
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
-    -- Macros --
-    + #define SAMPLE_H
-    + #define PI
-    + #define VERSION
-    + #define MIN(a, b)
-    + #define MAX(a, b)
-    -- Global Variables --
-    + int MAX_POINTS
-    + char * DEFAULT_LABEL
-    -- Functions --
-    + extern int calculate_sum(int a, int b);
-    + extern point_t * create_point(int x, int y, const char * label);
-    + extern void process_point(point_t * p);
+-- Macros --
++ #define SAMPLE_H
++ #define PI
++ #define VERSION
++ #define MIN(a, b)
++ #define MAX(a, b)
+-- Global Variables --
++ int MAX_POINTS
++ char * DEFAULT_LABEL
+-- Functions --
++ extern int calculate_sum(int a, int b);
++ extern point_t * create_point(int x, int y, const char * label);
++ extern void process_point(point_t * p);
 }
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
-    -- Macros --
-    + #define MATH_UTILS_H
-    -- Functions --
-    + int add(int a, int b);
-    + int subtract(int a, int b);
-    + real_t average(const int * arr, size_t len);
+-- Macros --
++ #define MATH_UTILS_H
+-- Functions --
++ int add(int a, int b);
++ int subtract(int a, int b);
++ real_t average(const int * arr, size_t len);
 }
 class "triangle_t" as TYPEDEF_triangle_t <<typedef>> #LightYellow
 {
-    + point_t 3[ ] vertices
-    + char MAX_LABEL_LEN[ ] label
++ point_t 3[ ] vertices
++ char MAX_LABEL_LEN[ ] label
 }
 
 class "point_t" as TYPEDEF_point_t <<typedef>> #LightYellow
 {
-    + int x
-    + int y
-    + char 32[ ] label
++ int x
++ int y
++ char 32[ ] label
 }
 
 enum "system_state_t" as TYPEDEF_system_state_t <<typedef>> #LightYellow
 {
-    STATE_IDLE = 0
-    STATE_RUNNING
-    STATE_ERROR
+STATE_IDLE = 0
+STATE_RUNNING
+STATE_ERROR
 }
 
 class "real_t" as TYPEDEF_real_t <<typedef>> #LightYellow
 {
-    + double
++ double
 }
 
 class "math_op_t" as TYPEDEF_math_op_t <<typedef>> #LightYellow
 {
-    + int ( * math_op_t ) ( int , int )
++ int ( * math_op_t ) ( int , int )
 }
 
 GEOMETRY --> HEADER_GEOMETRY : <<include>>
@@ -86,8 +86,6 @@ HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_GEOMETRY ..> TYPEDEF_triangle_t : declares
 TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
-TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
 TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>
-HEADER_GEOMETRY ..> TYPEDEF_triangle_t : <<declares>>
 
 @enduml
