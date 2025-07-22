@@ -58,29 +58,29 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     + real_t average(const int * arr, size_t len)
 }
 
-class "triangle_t" as TYPEDEF_TRIANGLE_T_triangle_t <<typedef>> #LightYellow
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 {
     + typedef struct triangle_t
 }
 
-class "point_t" as TYPEDEF_POINT_T_point_t <<typedef>> #LightYellow
+class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
     + typedef struct point_t
 }
 
-enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T_system_state_t <<typedef>> #LightYellow
+enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
 {
     STATE_IDLE = 0
     STATE_RUNNING
     STATE_ERROR
 }
 
-class "real_t" as TYPEDEF_REAL_T_real_t <<typedef>> #LightYellow
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 {
     + typedef double real_t
 }
 
-class "math_op_t" as TYPEDEF_MATH_OP_T_math_op_t <<typedef>> #LightYellow
+class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
 {
     + typedef int ( * math_op_t ) ( int , int ) math_op_t
 }
@@ -91,7 +91,7 @@ GEOMETRY --> HEADER_STDLIB_H : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
-TYPEDEF_TRIANGLE_T_triangle_t ..> TYPEDEF_POINT_T_point_t : <<uses>>
-TYPEDEF_LOG_CALLBACK_T_log_callback_t ..> TYPEDEF_LOG_LEVEL_T_log_level_t : <<uses>>
+TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
+TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
 
 @enduml

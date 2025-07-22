@@ -1126,17 +1126,9 @@ class PlantUMLGenerator:
 
     def _get_typedef_uml_id(self, name: str) -> str:
         """Generate UML ID for a typedef class"""
-        # Preserve case sensitivity for typedef names to avoid collisions
-        # Convert to uppercase but keep original case in a suffix if needed
+        # Convert to uppercase and replace special characters
         base_id = name.upper().replace("-", "_").replace(".", "_")
-        
-        # If the name contains lowercase letters, add a suffix to preserve uniqueness
-        if name != name.upper():
-            # Use the original name as a suffix to preserve case information
-            suffix = name.replace("-", "_").replace(".", "_")
-            return f"TYPEDEF_{base_id}_{suffix}"
-        else:
-            return f"TYPEDEF_{base_id}"
+        return f"TYPEDEF_{base_id}"
 
     def _get_type_uml_id(self, name: str) -> str:
         """Generate UML ID for a type class"""
