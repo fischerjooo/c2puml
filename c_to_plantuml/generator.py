@@ -34,18 +34,22 @@ class PlantUMLGenerator:
         # Generate main class for the file
         diagram_lines.extend(self._generate_main_class(file_model, basename, project_model))
 
-        # Generate header classes for includes (respecting include_depth)
-        diagram_lines.extend(self._generate_header_classes(file_model, project_model, include_depth))
+        # Build include hierarchy for relationship filtering
+        include_hierarchy = self._build_include_hierarchy(file_model, project_model)
+        
+        # Collect all typedef names and header names that will be referenced in relationships
+        referenced_typedefs = self._collect_referenced_typedefs(file_model, project_model, include_hierarchy)
+        referenced_headers = self._collect_referenced_headers(file_model, project_model, include_hierarchy)
 
-        # Generate typedef classes (respecting include_depth)
-        diagram_lines.extend(self._generate_typedef_classes(file_model, project_model, include_depth))
+        # Generate typedef classes (including all referenced typedefs)
+        diagram_lines.extend(self._generate_typedef_classes_with_references(file_model, project_model, include_depth, referenced_typedefs))
+        
+        # Generate header classes (including all referenced headers)
+        diagram_lines.extend(self._generate_header_classes_with_references(file_model, project_model, include_depth, referenced_headers))
 
         # Generate relationships
         diagram_lines.extend(self._generate_relationships(file_model, project_model))
 
-        # Build include hierarchy for relationship filtering
-        include_hierarchy = self._build_include_hierarchy(file_model, project_model)
-        
         # Generate typedef uses relations
         diagram_lines.extend(self.generate_typedef_uses_relations(file_model, project_model, include_hierarchy))
         
@@ -725,6 +729,231 @@ class PlantUMLGenerator:
         # Start from the root file
         add_to_hierarchy(file_model.file_path)
         return hierarchy
+
+    def _collect_referenced_typedefs(self, file_model: FileModel, project_model: ProjectModel, include_hierarchy: set) -> set:
+        """Collect all typedef names that are referenced in relationships"""
+        referenced_typedefs = set()
+        
+        # Collect typedefs from the current file's relationships
+        for typedef_name, original_type in file_model.typedefs.items():
+            referenced_typedefs.add(typedef_name)
+        
+        for typedef_relation in file_model.typedef_relations:
+            referenced_typedefs.add(typedef_relation.typedef_name)
+        
+        # Collect typedefs from included files that are in the include hierarchy
+        self._collect_nested_referenced_typedefs(file_model, project_model, referenced_typedefs, include_hierarchy)
+        
+        return referenced_typedefs
+
+    def _collect_nested_referenced_typedefs(self, file_model: FileModel, project_model: ProjectModel, referenced_typedefs: set, include_hierarchy: set, visited_files: set = None, depth: int = 0, max_depth: int = 3) -> None:
+        """Recursively collect typedef names from included files that are in the include hierarchy"""
+        if visited_files is None:
+            visited_files = set()
+        
+        # Prevent infinite recursion and respect max_depth
+        if depth >= max_depth or file_model.file_path in visited_files:
+            return
+        
+        visited_files.add(file_model.file_path)
+        
+        # Process each include in the current file
+        for include in file_model.includes:
+            # Find the included file model
+            included_file_model = self._find_included_file_model(include, project_model)
+            if included_file_model and included_file_model.file_path.endswith('.h'):
+                # Check if this included file is in the include hierarchy
+                included_file_basename = Path(included_file_model.file_path).stem
+                if include_hierarchy and included_file_basename not in include_hierarchy:
+                    continue
+                
+                # Add typedefs from this included file
+                for typedef_name, original_type in included_file_model.typedefs.items():
+                    referenced_typedefs.add(typedef_name)
+                
+                for typedef_relation in included_file_model.typedef_relations:
+                    referenced_typedefs.add(typedef_relation.typedef_name)
+                
+                # Recursively process further nested includes
+                self._collect_nested_referenced_typedefs(included_file_model, project_model, referenced_typedefs, include_hierarchy, visited_files, depth + 1, max_depth)
+
+    def _generate_typedef_classes_with_references(self, file_model: FileModel, project_model: ProjectModel, include_depth: int, referenced_typedefs: set) -> List[str]:
+        """Generate typedef classes including all referenced typedefs"""
+        lines = []
+        seen_typedefs = set()
+        
+        # First, process complex typedefs from typedef_relations (these have tag names)
+        for typedef_relation in file_model.typedef_relations:
+            typedef_name = typedef_relation.typedef_name
+            if typedef_name not in seen_typedefs:
+                seen_typedefs.add(typedef_name)
+                import logging
+                logging.getLogger(__name__).debug(f"Processing typedef_relation for '{typedef_name}' with tag names: struct='{typedef_relation.struct_tag_name}', enum='{typedef_relation.enum_tag_name}'")
+                lines.extend(self._generate_single_typedef_class(typedef_relation, file_model, project_model))
+        
+        # Then, process simple typedefs from the typedefs dictionary (only if not already processed)
+        for typedef_name, original_type in file_model.typedefs.items():
+            if typedef_name not in seen_typedefs:
+                seen_typedefs.add(typedef_name)
+                lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
+        
+        # Process typedefs from included header files (respecting include_depth)
+        if include_depth > 1:
+            self._process_nested_typedefs(file_model, project_model, seen_typedefs, lines, max_depth=include_depth)
+        
+        # Add any referenced typedefs that weren't already processed
+        for typedef_name in referenced_typedefs:
+            if typedef_name not in seen_typedefs:
+                seen_typedefs.add(typedef_name)
+                # Try to find the typedef definition in the project model
+                typedef_found = False
+                
+                # Look for simple typedefs
+                for f_model in project_model.files.values():
+                    if typedef_name in f_model.typedefs:
+                        lines.extend(self._generate_simple_typedef_class(typedef_name, f_model.typedefs[typedef_name], project_model))
+                        typedef_found = True
+                        break
+                
+                # Look for complex typedefs (typedef_relations)
+                if not typedef_found:
+                    for f_model in project_model.files.values():
+                        for typedef_relation in f_model.typedef_relations:
+                            if typedef_relation.typedef_name == typedef_name:
+                                lines.extend(self._generate_single_typedef_class(typedef_relation, f_model, project_model))
+                                typedef_found = True
+                                break
+                        if typedef_found:
+                            break
+                
+                # If still not found, create a placeholder typedef class
+                if not typedef_found:
+                    lines.extend(self._generate_simple_typedef_class(typedef_name, "unknown", project_model))
+        
+        return lines
+
+    def _collect_referenced_headers(self, file_model: FileModel, project_model: ProjectModel, include_hierarchy: set) -> set:
+        """Collect all header names that are referenced in relationships"""
+        referenced_headers = set()
+        
+        # Collect headers from the current file's relationships
+        for include in file_model.includes:
+            included_file_model = self._find_included_file_model(include, project_model)
+            if included_file_model and included_file_model.file_path.endswith('.h'):
+                referenced_headers.add(Path(included_file_model.file_path).stem)
+            else:
+                # External header
+                referenced_headers.add(include)
+        
+        # Collect headers from included files that are in the include hierarchy
+        self._collect_nested_referenced_headers(file_model, project_model, referenced_headers, include_hierarchy)
+        
+        # Also collect headers that are referenced by other headers in the hierarchy
+        self._collect_indirect_referenced_headers(file_model, project_model, referenced_headers, include_hierarchy)
+        
+        return referenced_headers
+
+    def _collect_nested_referenced_headers(self, file_model: FileModel, project_model: ProjectModel, referenced_headers: set, include_hierarchy: set, visited_files: set = None, depth: int = 0, max_depth: int = 3) -> None:
+        """Recursively collect header names from included files that are in the include hierarchy"""
+        if visited_files is None:
+            visited_files = set()
+        
+        # Prevent infinite recursion and respect max_depth
+        if depth >= max_depth or file_model.file_path in visited_files:
+            return
+        
+        visited_files.add(file_model.file_path)
+        
+        # Process each include in the current file
+        for include in file_model.includes:
+            # Find the included file model
+            included_file_model = self._find_included_file_model(include, project_model)
+            if included_file_model and included_file_model.file_path.endswith('.h'):
+                # Check if this included file is in the include hierarchy
+                included_file_basename = Path(included_file_model.file_path).stem
+                if include_hierarchy and included_file_basename not in include_hierarchy:
+                    continue
+                
+                # Add this header
+                referenced_headers.add(included_file_basename)
+                
+                # Recursively process further nested includes
+                self._collect_nested_referenced_headers(included_file_model, project_model, referenced_headers, include_hierarchy, visited_files, depth + 1, max_depth)
+
+    def _collect_indirect_referenced_headers(self, file_model: FileModel, project_model: ProjectModel, referenced_headers: set, include_hierarchy: set, visited_files: set = None, depth: int = 0, max_depth: int = 3) -> None:
+        """Collect headers that are referenced by other headers in the hierarchy"""
+        if visited_files is None:
+            visited_files = set()
+        
+        # Prevent infinite recursion and respect max_depth
+        if depth >= max_depth or file_model.file_path in visited_files:
+            return
+        
+        visited_files.add(file_model.file_path)
+        
+        # Process each include in the current file
+        for include in file_model.includes:
+            # Find the included file model
+            included_file_model = self._find_included_file_model(include, project_model)
+            if included_file_model and included_file_model.file_path.endswith('.h'):
+                # Check if this included file is in the include hierarchy
+                included_file_basename = Path(included_file_model.file_path).stem
+                if include_hierarchy and included_file_basename not in include_hierarchy:
+                    continue
+                
+                # Add all includes from this header file
+                for nested_include in included_file_model.includes:
+                    nested_included_file_model = self._find_included_file_model(nested_include, project_model)
+                    if nested_included_file_model and nested_included_file_model.file_path.endswith('.h'):
+                        referenced_headers.add(Path(nested_included_file_model.file_path).stem)
+                    else:
+                        # External header
+                        referenced_headers.add(nested_include)
+                
+                # Recursively process further nested includes
+                self._collect_indirect_referenced_headers(included_file_model, project_model, referenced_headers, include_hierarchy, visited_files, depth + 1, max_depth)
+
+    def _generate_header_classes_with_references(self, file_model: FileModel, project_model: ProjectModel, include_depth: int, referenced_headers: set) -> List[str]:
+        """Generate header classes including all referenced headers"""
+        lines = []
+        seen_headers = set()
+        
+        # First, process headers from the current file
+        for include in file_model.includes:
+            included_file_model = self._find_included_file_model(include, project_model)
+            if included_file_model and included_file_model.file_path.endswith('.h'):
+                header_basename = Path(included_file_model.file_path).stem
+                if header_basename not in seen_headers:
+                    seen_headers.add(header_basename)
+                    lines.extend(self._generate_header_class(included_file_model, header_basename))
+            else:
+                # External header
+                if include not in seen_headers:
+                    seen_headers.add(include)
+                    lines.extend(self._generate_external_header_class(include))
+        
+        # Process headers from included header files (respecting include_depth)
+        if include_depth > 1:
+            self._process_nested_includes(file_model, project_model, seen_headers, lines, max_depth=include_depth)
+        
+        # Add any referenced headers that weren't already processed
+        for header_name in referenced_headers:
+            if header_name not in seen_headers:
+                seen_headers.add(header_name)
+                # Try to find the header file in the project model
+                header_found = False
+                
+                for f_model in project_model.files.values():
+                    if f_model.file_path.endswith('.h') and Path(f_model.file_path).stem == header_name:
+                        lines.extend(self._generate_header_class(f_model, header_name))
+                        header_found = True
+                        break
+                
+                # If not found, create an external header class
+                if not header_found:
+                    lines.extend(self._generate_external_header_class(header_name))
+        
+        return lines
 
     def _generate_relationships(
         self, file_model: FileModel, project_model: ProjectModel

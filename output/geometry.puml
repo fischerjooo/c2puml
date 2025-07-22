@@ -7,6 +7,59 @@ triangle_t create_triangle(const point_t * a, const point_t * b, const point_t *
 int triangle_area(const triangle_t * tri)
 }
 
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
+{
++ point_t 3[ ] vertices
++ char MAX_LABEL_LEN[ ] label
+}
+
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
+{
++ double
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
++ uint32_t
+}
+
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+{
++ int32_t
+}
+
+enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
+{
+LOG_DEBUG = 0
+LOG_INFO
+LOG_WARN
+LOG_ERROR
+}
+
+class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
+{
++ void ( * log_callback_t ) ( log_level_t level , const char * message )
+}
+
+enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
+{
+STATE_IDLE = 0
+STATE_RUNNING
+STATE_ERROR
+}
+
+class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
+{
++ int ( * math_op_t ) ( int , int )
+}
+
+class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
+{
++ int x
++ int y
++ char 32[ ] label
+}
+
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
 -- Macros --
@@ -20,6 +73,34 @@ class "string.h" as HEADER_STRING <<header>> #LightGray
 }
 
 class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
+{
+}
+
+class "logger" as HEADER_LOGGER <<header>> #LightGreen
+{
+-- Macros --
++ #define LOGGER_H
+-- Functions --
++ void set_log_callback(log_callback_t cb);
++ void log_message(log_level_t level, const char * fmt, ...);
+}
+class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
+{
+}
+
+class "stdint.h" as HEADER_STDINT <<header>> #LightGray
+{
+}
+
+class "config" as HEADER_CONFIG <<header>> #LightGreen
+{
+-- Macros --
++ #define CONFIG_H
++ #define PROJECT_NAME
++ #define MAX_LABEL_LEN
++ #define DEFAULT_BUFFER_SIZE
+}
+class "stdio.h" as HEADER_STDIO <<header>> #LightGray
 {
 }
 
@@ -48,12 +129,6 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 + int subtract(int a, int b);
 + real_t average(const int * arr, size_t len);
 }
-class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
-{
-+ point_t 3[ ] vertices
-+ char MAX_LABEL_LEN[ ] label
-}
-
 GEOMETRY --> HEADER_GEOMETRY : <<include>>
 GEOMETRY --> HEADER_STRING : <<include>>
 GEOMETRY --> HEADER_STDLIB : <<include>>

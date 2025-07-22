@@ -398,6 +398,8 @@ class PUMLValidator:
     def extract_classes(self, content: str) -> Dict[str, Dict]:
         """Extract all class definitions from PUML content."""
         classes = {}
+        
+        # Extract class definitions
         class_pattern = r'class\s+"([^"]+)"\s+as\s+(\w+)\s+<<(\w+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
         matches = re.finditer(class_pattern, content, re.DOTALL)
         
@@ -410,6 +412,24 @@ class PUMLValidator:
             
             classes[uml_id] = {
                 'name': class_name,
+                'stereotype': stereotype,
+                'color': color,
+                'body': body
+            }
+        
+        # Extract enum definitions (typedef enums)
+        enum_pattern = r'enum\s+"([^"]+)"\s+as\s+(\w+)\s+<<(\w+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
+        enum_matches = re.finditer(enum_pattern, content, re.DOTALL)
+        
+        for match in enum_matches:
+            enum_name = match.group(1)
+            uml_id = match.group(2)
+            stereotype = match.group(3)
+            color = match.group(4)
+            body = match.group(5).strip()
+            
+            classes[uml_id] = {
+                'name': enum_name,
                 'stereotype': stereotype,
                 'color': color,
                 'body': body
