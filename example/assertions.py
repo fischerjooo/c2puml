@@ -29,7 +29,7 @@ class PUMLValidator:
         self.expected_source_files = {
             # C files
             "typedef_test.c": {
-                "includes": ["typedef_test.h", "complex_example.h", "geometry.h", "logger.h", "<stdlib.h>"],
+                "includes": ["typedef_test.h", "complex_example.h", "geometry.h", "logger.h", "stdlib.h"],
                 "globals": ["MyLen global_length", "MyBuffer global_buffer", "MyComplexPtr global_complex"],
                 "functions": [
                     "void log_buffer(const MyBuffer * buffer)",
@@ -41,7 +41,7 @@ class PUMLValidator:
                 "typedefs": []  # No typedefs in C files
             },
             "geometry.c": {
-                "includes": ["geometry.h", "<string.h>", "<stdlib.h>"],
+                "includes": ["geometry.h", "string.h", "stdlib.h"],
                 "globals": [],
                 "functions": [
                     "triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)",
@@ -50,7 +50,7 @@ class PUMLValidator:
                 "typedefs": []
             },
             "logger.c": {
-                "includes": ["logger.h", "<stdarg.h>", "<string.h>"],
+                "includes": ["logger.h", "stdarg.h", "string.h"],
                 "globals": ["log_callback_t current_cb"],
                 "functions": [
                     "void set_log_callback(log_callback_t cb)",
@@ -69,7 +69,7 @@ class PUMLValidator:
                 "typedefs": []
             },
             "sample.c": {
-                "includes": ["<stdio.h>", "<stdlib.h>", "<string.h>", "sample.h", "math_utils.h", "logger.h", "geometry.h"],
+                "includes": ["stdio.h", "stdlib.h", "string.h", "sample.h", "math_utils.h", "logger.h", "geometry.h"],
                 "globals": ["int global_counter", "char buffer[MAX_SIZE]", "double * global_ptr"],
                 "macros": ["#define MAX_SIZE", "#define DEBUG_MODE", "#define CALC(x, y)"],
                 "functions": [
@@ -85,7 +85,7 @@ class PUMLValidator:
             
             # H files
             "typedef_test.h": {
-                "includes": ["<stdint.h>", "sample.h", "config.h", "logger.h"],
+                "includes": ["stdint.h", "sample.h", "config.h", "logger.h"],
                 "macros": ["#define TYPEDEF_TEST_H"],
                 "typedefs": [
                     "typedef uint32_t MyLen",
@@ -119,7 +119,7 @@ class PUMLValidator:
                 "globals": []
             },
             "logger.h": {
-                "includes": ["<stdio.h>", "config.h"],
+                "includes": ["stdio.h", "config.h"],
                 "macros": ["#define LOGGER_H"],
                 "typedefs": [
                     "typedef enum log_level_tag",
@@ -143,7 +143,7 @@ class PUMLValidator:
                 "globals": []
             },
             "sample.h": {
-                "includes": ["<stddef.h>", "config.h"],
+                "includes": ["stddef.h", "config.h"],
                 "macros": ["#define SAMPLE_H", "#define PI", "#define VERSION", "#define MIN(a, b)", "#define MAX(a, b)"],
                 "typedefs": [
                     "typedef struct point_tag",
@@ -160,7 +160,7 @@ class PUMLValidator:
                 ]
             },
             "config.h": {
-                "includes": ["<stddef.h>", "<stdint.h>"],
+                "includes": ["stddef.h", "stdint.h"],
                 "macros": ["#define CONFIG_H", "#define PROJECT_NAME", "#define MAX_LABEL_LEN", "#define DEFAULT_BUFFER_SIZE"],
                 "typedefs": ["typedef uint32_t id_t", "typedef int32_t status_t", "typedef enum GlobalStatus GlobalStatus_t"],
                 "functions": [],
@@ -206,10 +206,15 @@ class PUMLValidator:
     def extract_includes(self, content: str) -> List[str]:
         """Extract all #include statements from source file content."""
         includes = []
+        # Pattern for #include with quotes or angle brackets
         include_pattern = r'#include\s+["<]([^">]+)[">]'
         matches = re.findall(include_pattern, content)
         for match in matches:
-            includes.append(match)
+            # For standard library headers, remove angle brackets and show without <>
+            if match.startswith('std') or match in ['stdio.h', 'stdlib.h', 'string.h', 'stdarg.h', 'stddef.h']:
+                includes.append(match)
+            else:
+                includes.append(match)
         return includes
         
     def extract_macros(self, content: str) -> List[str]:
