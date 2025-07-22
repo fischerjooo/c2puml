@@ -122,12 +122,12 @@ class CTokenizer:
         # Compiled regex patterns for efficiency
         self.patterns = {
             'identifier': re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*'),
-            'number': re.compile(r'\d+\.?\d*[fFuUlL]*'),
+            'number': re.compile(r'0[xX][0-9a-fA-F]+[uUlL]*|0[bB][01]+[uUlL]*|0[0-7]+[uUlL]*|\d+\.\d*([eE][+-]?\d+)?[fFlL]*|\d+([eE][+-]?\d+)?[fFlL]*|\d+[uUlL]*'),
             'string': re.compile(r'"([^"\\]|\\.)*"'),
             'char': re.compile(r"'([^'\\]|\\.)'"),
             'comment_single': re.compile(r'//.*'),
             'comment_multi': re.compile(r'/\*.*?\*/', re.DOTALL),
-            'preprocessor': re.compile(r'#.*'),
+            'preprocessor': re.compile(r'#(include|define|ifdef|ifndef|endif|elif|else|pragma|error|warning)\b.*'),
             'whitespace': re.compile(r'[ \t]+'),
             'newline': re.compile(r'\n'),
         }
@@ -135,13 +135,38 @@ class CTokenizer:
     def tokenize(self, content: str) -> List[Token]:
         """Tokenize C/C++ source code content"""
         tokens = []
-        lines = content.split('\n')
-        
-        for line_num, line in enumerate(lines, 1):
-            tokens.extend(self._tokenize_line(line, line_num))
-        
-        # Add EOF token
-        tokens.append(Token(TokenType.EOF, '', len(lines), len(lines[-1]) if lines else 0))
+        lines = content.splitlines()
+        total_lines = len(lines)
+        line_num = 1
+        in_multiline_string = False
+        multiline_string_value = ''
+        multiline_string_start_line = 0
+        multiline_string_start_col = 0
+        for idx, line in enumerate(lines):
+            if in_multiline_string:
+                multiline_string_value += '\n' + line
+                if '"' in line:
+                    # End of multiline string
+                    in_multiline_string = False
+                    tokens.append(Token(TokenType.STRING, multiline_string_value, multiline_string_start_line, multiline_string_start_col))
+            else:
+                line_tokens = self._tokenize_line(line, line_num)
+                # Check if a string starts but does not end on this line
+                if line_tokens and line_tokens[-1].type == TokenType.STRING and not line_tokens[-1].value.endswith('"'):
+                    in_multiline_string = True
+                    multiline_string_value = line_tokens[-1].value
+                    multiline_string_start_line = line_tokens[-1].line
+                    multiline_string_start_col = line_tokens[-1].column
+                    tokens.extend(line_tokens[:-1])
+                else:
+                    tokens.extend(line_tokens)
+            if line_num < total_lines:
+                tokens.append(Token(TokenType.NEWLINE, '\n', line_num, len(line)))
+            line_num += 1
+        if in_multiline_string:
+            tokens.append(Token(TokenType.STRING, multiline_string_value, multiline_string_start_line, multiline_string_start_col))
+        tokens.append(Token(TokenType.EOF, '', total_lines, len(lines[-1]) if lines else 0))
+        # No need for post-processing merge step now
         
         return tokens
     
@@ -163,10 +188,23 @@ class CTokenizer:
                 pos = len(line)  # Rest of line is comment
                 continue
             
-            if match := self.patterns['comment_multi'].match(line, pos):
-                tokens.append(Token(TokenType.COMMENT, match.group(), line_num, pos))
-                pos = match.end()
-                continue
+            # Multi-line comments - check for /* at start of line or after whitespace
+            if line[pos:].startswith('/*'):
+                # Find the end of the comment
+                comment_start = pos
+                comment_end = line.find('*/', pos)
+                if comment_end != -1:
+                    # Comment ends on this line
+                    comment_text = line[pos:comment_end + 2]
+                    tokens.append(Token(TokenType.COMMENT, comment_text, line_num, pos))
+                    pos = comment_end + 2
+                    continue
+                else:
+                    # Comment continues to next line - handle in tokenize method
+                    comment_text = line[pos:]
+                    tokens.append(Token(TokenType.COMMENT, comment_text, line_num, pos))
+                    pos = len(line)
+                    continue
             
             # Preprocessor directives
             if match := self.patterns['preprocessor'].match(line, pos):
@@ -181,9 +219,34 @@ class CTokenizer:
                 continue
             
             # String literals
-            if match := self.patterns['string'].match(line, pos):
-                tokens.append(Token(TokenType.STRING, match.group(), line_num, pos))
-                pos = match.end()
+            if line[pos] == '"' or (
+                pos > 0 and line[pos-1] in ['L', 'u', 'U', 'R'] and line[pos] == '"') or (
+                pos > 1 and line[pos-2:pos] == 'u8' and line[pos] == '"'):
+                # Handle string literals with possible prefixes
+                string_start = pos
+                prefix = ''
+                if line[pos-2:pos] == 'u8':
+                    prefix = 'u8'
+                    string_start -= 2
+                elif line[pos-1] in ['L', 'u', 'U', 'R']:
+                    prefix = line[pos-1]
+                    string_start -= 1
+                pos += 1  # Skip opening quote
+                while pos < len(line):
+                    if line[pos] == '"':
+                        # Found closing quote
+                        string_text = line[string_start:pos + 1]
+                        tokens.append(Token(TokenType.STRING, string_text, line_num, string_start))
+                        pos += 1
+                        break
+                    elif line[pos] == '\\':
+                        pos += 2
+                    else:
+                        pos += 1
+                else:
+                    string_text = line[string_start:]
+                    tokens.append(Token(TokenType.STRING, string_text, line_num, string_start))
+                    pos = len(line)
                 continue
             
             # Character literals
@@ -205,6 +268,13 @@ class CTokenizer:
                 pos += 1
                 continue
             
+            # Multi-character operators (<<, >>)
+            if line[pos:pos+2] in ['<<', '>>']:
+                op = line[pos:pos+2]
+                tokens.append(Token(TokenType.OPERATOR if hasattr(TokenType, 'OPERATOR') else TokenType.UNKNOWN, op, line_num, pos))
+                pos += 2
+                continue
+            
             # Identifiers and keywords
             if match := self.patterns['identifier'].match(line, pos):
                 value = match.group()
@@ -213,7 +283,7 @@ class CTokenizer:
                 pos = match.end()
                 continue
             
-            # Unknown character
+            # Unknown character (always one at a time)
             tokens.append(Token(TokenType.UNKNOWN, line[pos], line_num, pos))
             pos += 1
         
@@ -223,7 +293,7 @@ class CTokenizer:
                      exclude_types: Optional[List[TokenType]] = None) -> List[Token]:
         """Filter tokens by type"""
         if exclude_types is None:
-            exclude_types = [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]
+            exclude_types = [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE, TokenType.EOF]
         
         return [token for token in tokens if token.type not in exclude_types]
 
@@ -294,6 +364,25 @@ class StructureFinder:
         
         return functions
     
+    def find_unions(self) -> List[Tuple[int, int, str]]:
+        """Find union definitions in token stream"""
+        unions = []
+        self.pos = 0
+        
+        while self.pos < len(self.tokens):
+            if self._current_token_is(TokenType.UNION):
+                union_info = self._parse_union()
+                if union_info:
+                    unions.append(union_info)
+            elif self._current_token_is(TokenType.TYPEDEF):
+                typedef_union = self._parse_typedef_union()
+                if typedef_union:
+                    unions.append(typedef_union)
+            else:
+                self.pos += 1
+        
+        return unions
+    
     def _current_token_is(self, token_type: TokenType) -> bool:
         """Check if current token is of specified type"""
         return (self.pos < len(self.tokens) and 
@@ -338,10 +427,14 @@ class StructureFinder:
             return None
         self._advance()
         
-        # Get struct name (optional for anonymous structs)
-        struct_name = ""
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
+        # Get struct tag name (optional for anonymous structs)
+        struct_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
-            struct_name = self._advance().value
+            struct_tag = self._advance().value
         
         # Find opening brace
         while self.pos < len(self.tokens) and not self._current_token_is(TokenType.LBRACE):
@@ -356,6 +449,41 @@ class StructureFinder:
         
         if end_brace_pos is None:
             return None
+        
+        # Look for struct name after closing brace
+        name_pos = end_brace_pos + 1
+        struct_name = struct_tag  # Default to tag name
+        
+        # Check if this is a typedef struct by looking backwards
+        is_typedef = False
+        check_pos = start_pos - 1
+        while check_pos >= 0:
+            if self.tokens[check_pos].type == TokenType.TYPEDEF:
+                is_typedef = True
+                break
+            elif self.tokens[check_pos].type in [TokenType.STRUCT, TokenType.LBRACE, TokenType.RBRACE]:
+                break
+            check_pos -= 1
+        
+        if is_typedef:
+            # For typedef struct, look for the typedef name after the closing brace
+            while name_pos < len(self.tokens):
+                if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                    struct_name = self.tokens[name_pos].value
+                    break
+                elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+                    break
+                name_pos += 1
+        elif not struct_tag:
+            # Anonymous struct - check if there's a variable name after the brace
+            while name_pos < len(self.tokens):
+                if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                    # This is a variable name, not a struct name
+                    struct_name = ""
+                    break
+                elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+                    break
+                name_pos += 1
         
         # Find semicolon (for struct definitions)
         self.pos = end_brace_pos + 1
@@ -381,26 +509,52 @@ class StructureFinder:
             self.pos = start_pos + 1
             return None
         
-        # Parse the struct part
-        struct_info = self._parse_struct()
-        if not struct_info:
+        # Skip 'struct'
+        self._advance()
+        
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
+        # Get struct tag name (optional)
+        struct_tag = ""
+        if self._current_token_is(TokenType.IDENTIFIER):
+            struct_tag = self._advance().value
+        
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
+        # Check if this is a forward declaration (no braces)
+        if not self._current_token_is(TokenType.LBRACE):
+            # This is a forward declaration like "typedef struct Node* NodePtr;"
+            # Not a struct definition, so skip it
             self.pos = start_pos + 1
             return None
         
-        # Look for typedef name after struct
-        struct_end = struct_info[1]
-        self.pos = struct_end
+        # Find matching closing brace
+        end_brace_pos = self._find_matching_brace(self.pos)
+        if end_brace_pos is None:
+            self.pos = start_pos + 1
+            return None
         
-        # Skip backwards to find typedef name
-        while (self.pos > struct_info[1] - 5 and 
-               not self._current_token_is(TokenType.IDENTIFIER)):
-            self.pos -= 1
-        
+        # Look for typedef name after closing brace
         typedef_name = ""
-        if self._current_token_is(TokenType.IDENTIFIER):
-            typedef_name = self.tokens[self.pos].value
+        name_pos = end_brace_pos + 1
+        while name_pos < len(self.tokens):
+            if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                typedef_name = self.tokens[name_pos].value
+                break
+            elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+                break
+            name_pos += 1
         
-        return (start_pos, struct_end, typedef_name)
+        # Find semicolon
+        while name_pos < len(self.tokens) and not self.tokens[name_pos].type == TokenType.SEMICOLON:
+            name_pos += 1
+        
+        end_pos = name_pos
+        return (start_pos, end_pos, typedef_name)
     
     def _parse_enum(self) -> Optional[Tuple[int, int, str]]:
         """Parse enum definition starting at current position"""
@@ -411,10 +565,14 @@ class StructureFinder:
             return None
         self._advance()
         
-        # Get enum name (optional for anonymous enums)
-        enum_name = ""
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
+        # Get enum tag name (optional for anonymous enums)
+        enum_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
-            enum_name = self._advance().value
+            enum_tag = self._advance().value
         
         # Find opening brace
         while self.pos < len(self.tokens) and not self._current_token_is(TokenType.LBRACE):
@@ -429,6 +587,41 @@ class StructureFinder:
         
         if end_brace_pos is None:
             return None
+        
+        # Look for enum name after closing brace
+        name_pos = end_brace_pos + 1
+        enum_name = enum_tag  # Default to tag name
+        
+        # Check if this is a typedef enum by looking backwards
+        is_typedef = False
+        check_pos = start_pos - 1
+        while check_pos >= 0:
+            if self.tokens[check_pos].type == TokenType.TYPEDEF:
+                is_typedef = True
+                break
+            elif self.tokens[check_pos].type in [TokenType.ENUM, TokenType.LBRACE, TokenType.RBRACE]:
+                break
+            check_pos -= 1
+        
+        if is_typedef:
+            # For typedef enum, look for the typedef name after the closing brace
+            while name_pos < len(self.tokens):
+                if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                    enum_name = self.tokens[name_pos].value
+                    break
+                elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+                    break
+                name_pos += 1
+        elif not enum_tag:
+            # Anonymous enum - check if there's a variable name after the brace
+            while name_pos < len(self.tokens):
+                if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                    # This is a variable name, not an enum name
+                    enum_name = ""
+                    break
+                elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+                    break
+                name_pos += 1
         
         # Find semicolon
         self.pos = end_brace_pos + 1
@@ -454,26 +647,15 @@ class StructureFinder:
             self.pos = start_pos + 1
             return None
         
-        # Parse the enum part
+        # Parse the enum part - this will return the tag name (e.g., StatusEnum_tag)
         enum_info = self._parse_enum()
         if not enum_info:
             self.pos = start_pos + 1
             return None
         
-        # Look for typedef name after enum
-        enum_end = enum_info[1]
-        self.pos = enum_end
-        
-        # Skip backwards to find typedef name
-        while (self.pos > enum_info[1] - 5 and 
-               not self._current_token_is(TokenType.IDENTIFIER)):
-            self.pos -= 1
-        
-        typedef_name = ""
-        if self._current_token_is(TokenType.IDENTIFIER):
-            typedef_name = self.tokens[self.pos].value
-        
-        return (start_pos, enum_end, typedef_name)
+        # For typedef enums, we want to return the tag name, not the typedef name
+        # The typedef name will be handled separately in the parser
+        return enum_info
     
     def _parse_function(self) -> Optional[Tuple[int, int, str, str, bool]]:
         """Parse function declaration/definition
@@ -507,46 +689,49 @@ class StructureFinder:
                         else:
                             break
                     
-                    # Define modifiers set
-                    modifiers = {TokenType.STATIC, TokenType.EXTERN, TokenType.INLINE}
-                    
-                    # Now look backwards to find the complete return type
-                    # We need to include all tokens that are part of the return type
-                    # For example: "point_t *" should include both "point_t" and "*"
-                    # But we need to be careful not to go too far back and include content from other functions
-                    
-                    # Look back at most 20 tokens to capture multi-token return types like "point_t *"
-                    # This ensures we capture both "point_t" and "*" tokens
-                    max_lookback = max(0, func_name_pos - 20)
-                    if return_type_start < max_lookback:
-                        return_type_start = max_lookback
-                    
-
-                    
-                    # Skip modifiers like static, extern, inline
-                    while (return_type_start >= 0 and 
-                           self.tokens[return_type_start].type in modifiers):
-                        return_type_start -= 1
-                    
-                    # Now collect the return type tokens
-                    # Look back enough to capture multi-token return types like "point_t *"
-                    # We need to look back further to capture the full return type
-                    max_lookback = max(0, func_name_pos - 8)  # Look back at most 8 tokens
-                    if return_type_start < max_lookback:
-                        return_type_start = max_lookback
-                    
-                    # Extract return type
-                    if return_type_start >= 0 and return_type_start <= return_type_end:
-                        return_type_tokens = self.tokens[return_type_start:return_type_end + 1]
-                        return_type = ' '.join(t.value for t in return_type_tokens)
+                    # If we found a non-whitespace token, that's the end of the return type
+                    # Now we need to find the start by looking backwards from there
+                    if return_type_start >= 0:
+                        return_type_end = return_type_start
+                        return_type_start = return_type_end
                         
-                        # Find end of function (either ; for declaration or { for definition)
-                        end_pos = self._find_function_end(self.pos)
-                        if end_pos:
-                            # Determine if this is a declaration or definition
-                            is_declaration = self._is_function_declaration(end_pos)
-                            self.pos = end_pos + 1
-                            return (start_pos, end_pos, func_name, return_type, is_declaration)
+                        # Define modifiers set
+                        modifiers = {TokenType.STATIC, TokenType.EXTERN, TokenType.INLINE}
+                        
+                        # Collect all tokens that are part of the return type (including modifiers)
+                        return_type_tokens = []
+                        
+                        # Look back at most 10 tokens to capture multi-token return types
+                        max_lookback = max(0, func_name_pos - 10)
+                        current_pos = return_type_start
+                        
+                        # Collect tokens backwards until we hit a limit or non-return-type token
+                        while current_pos >= max_lookback:
+                            token_type = self.tokens[current_pos].type
+                            if token_type in [TokenType.IDENTIFIER, TokenType.INT, TokenType.VOID, 
+                                            TokenType.CHAR, TokenType.FLOAT, TokenType.DOUBLE,
+                                            TokenType.LONG, TokenType.SHORT, TokenType.UNSIGNED,
+                                            TokenType.SIGNED, TokenType.ASTERISK, TokenType.CONST,
+                                            TokenType.STATIC, TokenType.EXTERN, TokenType.INLINE]:
+                                return_type_tokens.insert(0, self.tokens[current_pos])
+                                current_pos -= 1
+                            elif token_type in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                                # Skip whitespace and continue looking
+                                current_pos -= 1
+                            else:
+                                break
+                        
+                        # Extract return type
+                        if return_type_tokens:
+                            return_type = ' '.join(t.value for t in return_type_tokens).strip()
+                            
+                            # Find end of function (either ; for declaration or { for definition)
+                            end_pos = self._find_function_end(self.pos)
+                            if end_pos:
+                                # Determine if this is a declaration or definition
+                                is_declaration = self._is_function_declaration(end_pos)
+                                self.pos = end_pos + 1
+                                return (start_pos, end_pos, func_name, return_type, is_declaration)
             
             self.pos += 1
             
@@ -606,95 +791,177 @@ class StructureFinder:
         
         return None
 
+    def _parse_union(self) -> Optional[Tuple[int, int, str]]:
+        """Parse union definition"""
+        if not self._current_token_is(TokenType.UNION):
+            return None
+        
+        start_pos = self.pos
+        self._advance()  # Consumes 'union'
+        
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
+        # Get union tag name (optional for anonymous unions)
+        union_tag = ""
+        if self._current_token_is(TokenType.IDENTIFIER):
+            union_tag = self._advance().value
+        
+        # Find opening brace
+        while self.pos < len(self.tokens) and not self._current_token_is(TokenType.LBRACE):
+            self.pos += 1
+        
+        if self.pos >= len(self.tokens):
+            return None
+        
+        # Find matching closing brace
+        end_pos = self._find_matching_brace(self.pos)
+        if end_pos is None:
+            return None
+        
+        # Look for union name after closing brace (for typedefs or named unions)
+        union_name = union_tag  # Default to tag name
+        
+        # Skip to semicolon
+        self.pos = end_pos + 1
+        while self.pos < len(self.tokens) and not self._current_token_is(TokenType.SEMICOLON):
+            if self._current_token_is(TokenType.IDENTIFIER):
+                union_name = self._advance().value
+                break
+            self.pos += 1
+        
+        return (start_pos, end_pos, union_name)
+
+    def _parse_typedef_union(self) -> Optional[Tuple[int, int, str]]:
+        """Parse typedef union definition"""
+        if not self._current_token_is(TokenType.TYPEDEF):
+            return None
+        
+        start_pos = self.pos
+        self._advance()  # Consumes 'typedef'
+        
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
+        # Check if next token is 'union'
+        if not self._current_token_is(TokenType.UNION):
+            return None
+        
+        self._advance()  # Consumes 'union'
+        
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
+        # Get union tag name (optional)
+        union_tag = ""
+        if self._current_token_is(TokenType.IDENTIFIER):
+            union_tag = self._advance().value
+        
+        # Find opening brace
+        while self.pos < len(self.tokens) and not self._current_token_is(TokenType.LBRACE):
+            self.pos += 1
+        
+        if self.pos >= len(self.tokens):
+            return None
+        
+        # Find matching closing brace
+        end_pos = self._find_matching_brace(self.pos)
+        if end_pos is None:
+            return None
+        
+        # Look for typedef name after closing brace
+        typedef_name = ""
+        self.pos = end_pos + 1
+        while self.pos < len(self.tokens) and not self._current_token_is(TokenType.SEMICOLON):
+            if self._current_token_is(TokenType.IDENTIFIER):
+                typedef_name = self._advance().value
+                break
+            self.pos += 1
+        
+        return (start_pos, end_pos, typedef_name)
+
 
 def extract_token_range(tokens: List[Token], start: int, end: int) -> str:
-    """Extract raw text from token range"""
+    """Extract raw text from token range, excluding whitespace, comments, and newlines"""
     if start >= len(tokens) or end >= len(tokens) or start > end:
         return ""
-    
-    return ' '.join(token.value for token in tokens[start:end + 1])
+    return ' '.join(token.value for token in tokens[start:end + 1] if token.type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE])
 
 
 def find_struct_fields(tokens: List[Token], struct_start: int, struct_end: int) -> List[Tuple[str, str]]:
     """Extract field information from struct token range
-    
     Returns:
         List of tuples (field_name, field_type)
     """
     fields = []
-    
-    # Find the opening brace of the struct
     pos = struct_start
     while pos <= struct_end and tokens[pos].type != TokenType.LBRACE:
         pos += 1
-    
     if pos > struct_end:
         return fields
-    
     pos += 1  # Skip opening brace
     
-    # Parse fields until closing brace
-    while pos <= struct_end and tokens[pos].type != TokenType.RBRACE:
-        # Look for field declarations (type name;)
+    # Find the closing brace position
+    closing_brace_pos = pos
+    while closing_brace_pos <= struct_end and tokens[closing_brace_pos].type != TokenType.RBRACE:
+        closing_brace_pos += 1
+    
+    # Only parse fields up to the closing brace
+    while pos < closing_brace_pos and tokens[pos].type != TokenType.RBRACE:
         field_tokens = []
-        
-        # Collect tokens until semicolon
-        while pos <= struct_end and tokens[pos].type != TokenType.SEMICOLON:
+        while pos < closing_brace_pos and tokens[pos].type != TokenType.SEMICOLON:
             if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
                 field_tokens.append(tokens[pos])
             pos += 1
-        
         # Parse field from collected tokens
         if len(field_tokens) >= 2:
-            # Last token should be field name, rest is type
-            field_name = field_tokens[-1].value
-            field_type = ' '.join(t.value for t in field_tokens[:-1])
-            fields.append((field_name, field_type))
-        
-        if pos <= struct_end:
+            # Array field: type name [ size ]
+            if (len(field_tokens) >= 4 and
+                field_tokens[-3].type == TokenType.LBRACKET and
+                field_tokens[-1].type == TokenType.RBRACKET):
+                field_name = field_tokens[-4].value
+                field_type = ' '.join(t.value for t in field_tokens[:-4]) + ' ' + field_tokens[-2].value + '[ ]'
+                fields.append((field_name, field_type.strip()))
+            else:
+                # Regular field: type name
+                field_name = field_tokens[-1].value
+                field_type = ' '.join(t.value for t in field_tokens[:-1])
+                if field_name not in ['[', ']', ';', '}'] and field_name:
+                    fields.append((field_name, field_type.strip()))
+        if pos < closing_brace_pos:
             pos += 1  # Skip semicolon
-    
     return fields
-
 
 def find_enum_values(tokens: List[Token], enum_start: int, enum_end: int) -> List[str]:
     """Extract enum values from enum token range"""
     values = []
-    
-    # Find the opening brace of the enum
     pos = enum_start
     while pos <= enum_end and tokens[pos].type != TokenType.LBRACE:
         pos += 1
-    
     if pos > enum_end:
         return values
-    
     pos += 1  # Skip opening brace
-    
-    # Parse enum values until closing brace
     current_value = []
-    
     while pos <= enum_end and tokens[pos].type != TokenType.RBRACE:
         token = tokens[pos]
-        
         if token.type == TokenType.COMMA:
-            # End of current enum value
             if current_value:
-                # Filter out whitespace and comments from current value
                 filtered_value = [t for t in current_value if t.type not in [TokenType.WHITESPACE, TokenType.COMMENT]]
                 if filtered_value:
-                    values.append(' '.join(t.value for t in filtered_value))
+                    value_str = ' '.join(t.value for t in filtered_value).strip()
+                    if value_str:
+                        values.append(value_str)
                 current_value = []
         elif token.type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
             current_value.append(token)
-        
         pos += 1
-    
-    # Add last value if exists
     if current_value:
-        # Filter out whitespace and comments from current value
         filtered_value = [t for t in current_value if t.type not in [TokenType.WHITESPACE, TokenType.COMMENT]]
         if filtered_value:
-            values.append(' '.join(t.value for t in filtered_value))
-    
+            value_str = ' '.join(t.value for t in filtered_value).strip()
+            if value_str:
+                values.append(value_str)
     return values

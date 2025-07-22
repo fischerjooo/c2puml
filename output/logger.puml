@@ -2,20 +2,20 @@
 
 class "logger" as LOGGER <<source>> #LightBlue
 {
-    -- Global Variables --
-    - log_callback_t current_cb
-    -- Functions --
-    void set_log_callback(log_callback_t cb)
-    void log_message(log_level_t level, const char * fmt, . . .)
+-- Global Variables --
+- log_callback_t current_cb
+-- Functions --
+void set_log_callback(log_callback_t cb)
+void log_message(log_level_t level, const char * fmt, ...)
 }
 
 class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
-    -- Macros --
-    + #define LOGGER_H
-    -- Functions --
-    + void set_log_callback(log_callback_t cb);
-    + void log_message(log_level_t level, const char * fmt, . . .);
+-- Macros --
++ #define LOGGER_H
+-- Functions --
++ void set_log_callback(log_callback_t cb);
++ void log_message(log_level_t level, const char * fmt, ...);
 }
 class "stdarg.h" as HEADER_STDARG <<header>> #LightGray
 {
@@ -27,37 +27,37 @@ class "string.h" as HEADER_STRING <<header>> #LightGray
 
 class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
-    -- Macros --
-    + #define CONFIG_H
-    + #define PROJECT_NAME
-    + #define MAX_LABEL_LEN
-    + #define DEFAULT_BUFFER_SIZE
+-- Macros --
++ #define CONFIG_H
++ #define PROJECT_NAME
++ #define MAX_LABEL_LEN
++ #define DEFAULT_BUFFER_SIZE
 }
 class "stdio.h" as HEADER_STDIO <<header>> #LightGray
 {
 }
 
-enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
+enum "log_level_t" as TYPEDEF_log_level_t <<typedef>> #LightYellow
 {
-    LOG_DEBUG = 0
-    LOG_INFO
-    LOG_WARN
-    LOG_ERROR
+LOG_DEBUG = 0
+LOG_INFO
+LOG_WARN
+LOG_ERROR
 }
 
-class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
+class "log_callback_t" as TYPEDEF_log_callback_t <<typedef>> #LightYellow
 {
-    + typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) log_callback_t
++ void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
-class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+class "id_t" as TYPEDEF_id_t <<typedef>> #LightYellow
 {
-    + typedef uint32_t id_t
++ uint32_t
 }
 
-class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+class "status_t" as TYPEDEF_status_t <<typedef>> #LightYellow
 {
-    + typedef int32_t status_t
++ int32_t
 }
 
 LOGGER --> HEADER_LOGGER : <<include>>
@@ -65,8 +65,8 @@ LOGGER --> HEADER_STDARG : <<include>>
 LOGGER --> HEADER_STRING : <<include>>
 HEADER_LOGGER --> HEADER_STDIO : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
-TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
-HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
-HEADER_LOGGER ..> TYPEDEF_LOG_CALLBACK_T : <<declares>>
+HEADER_LOGGER ..> TYPEDEF_log_level_t : <<declares>>
+TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>
+HEADER_LOGGER ..> TYPEDEF_log_callback_t : <<declares>>
 
 @enduml

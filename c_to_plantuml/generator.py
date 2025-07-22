@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import re
 
-from .models import FileModel, ProjectModel
+from .models import FileModel, ProjectModel, EnumValue
 
 
 class PlantUMLGenerator:
@@ -55,6 +55,9 @@ class PlantUMLGenerator:
         # Generate declares relationships for included header files
         diagram_lines.extend(self.generate_included_declares_relationships(file_model, project_model))
 
+        # Deduplicate relationships to prevent duplicates
+        diagram_lines = self._deduplicate_relationships(diagram_lines)
+
         # End diagram
         diagram_lines.extend(["", "@enduml"])
 
@@ -82,6 +85,9 @@ class PlantUMLGenerator:
         
         # Remove function bodies (everything after { until the end)
         signature = re.sub(r'\s*\{[^}]*\}(?:\s*;)?$', ';', signature)
+        
+        # Fix malformed variadic functions (replace ... ... with ...)
+        signature = re.sub(r'\.\.\.\s+\.\.\.', '...', signature)
         
         # Clean up extra whitespace
         signature = re.sub(r'\s+', ' ', signature).strip()
@@ -132,51 +138,10 @@ class PlantUMLGenerator:
             "{",
         ]
         
-        # Show typedefs section if we have any typedefs
-        all_typedefs = []
-        
-        # Add primitive typedefs from typedef_relations
-        for typedef_relation in file_model.typedef_relations:
-            typedef_name = typedef_relation.typedef_name
-            original_type = typedef_relation.original_type
-            relationship_type = typedef_relation.relationship_type
-            is_header = file_model.file_path.endswith('.h')
-            visibility = "+" if is_header else "-"
-            # Only show primitive typedefs (not struct/enum/union)
-            if relationship_type == "alias" and not (original_type.startswith("struct") or original_type.startswith("enum") or original_type.startswith("union")):
-                all_typedefs.append(f"    {visibility} typedef {original_type} {typedef_name}")
-        
-        # Add simple typedefs from the typedefs dictionary
-        if file_model.typedefs:
-            is_header = file_model.file_path.endswith('.h')
-            visibility = "+" if is_header else "-"
-            for typedef_name, original_type in file_model.typedefs.items():
-                all_typedefs.append(f"    {visibility} typedef {original_type} {typedef_name}")
-        
-        # Add primitive typedefs from included files with + visibility
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
-            included_file_model = None
-            for key, model in project_model.files.items():
-                if model.file_path == included_file_path:
-                    included_file_model = model
-                    break
-            if included_file_model:
-                for typedef_relation in included_file_model.typedef_relations:
-                    typedef_name = typedef_relation.typedef_name
-                    original_type = typedef_relation.original_type
-                    relationship_type = typedef_relation.relationship_type
-                    if relationship_type == "alias" and not (original_type.startswith("struct") or original_type.startswith("enum") or original_type.startswith("union")):
-                        primitive_typedefs.append(f"    + typedef {original_type} {typedef_name}")
-        
         if file_model.macros:
             lines.append("    -- Macros --")
             for macro in file_model.macros:
                 lines.append(f"    - #define {macro}")
-        
-        if all_typedefs:
-            lines.append("    -- Typedefs --")
-            lines.extend(all_typedefs)
         
         if file_model.globals:
             lines.append("    -- Global Variables --")
@@ -425,7 +390,11 @@ class PlantUMLGenerator:
         if file_model.globals:
             lines.append("    -- Global Variables --")
             for global_var in file_model.globals:
-                lines.append(f"    + {global_var}")
+                # Format global variable properly
+                if hasattr(global_var, 'value') and global_var.value is not None:
+                    lines.append(f"    + {global_var.type} {global_var.name} = {global_var.value}")
+                else:
+                    lines.append(f"    + {global_var.type} {global_var.name}")
         
         # Show functions section - only declarations, no implementations
         if file_model.functions:
@@ -467,18 +436,20 @@ class PlantUMLGenerator:
         lines = []
         seen_typedefs = set()
         
-        # Process simple typedefs from the typedefs dictionary (current file)
-        for typedef_name, original_type in file_model.typedefs.items():
-            if typedef_name not in seen_typedefs:
-                seen_typedefs.add(typedef_name)
-                lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
-        
-        # Process complex typedefs from the current file
+        # First, process complex typedefs from typedef_relations (these have tag names)
         for typedef_relation in file_model.typedef_relations:
             typedef_name = typedef_relation.typedef_name
             if typedef_name not in seen_typedefs:
                 seen_typedefs.add(typedef_name)
+                import logging
+                logging.getLogger(__name__).debug(f"Processing typedef_relation for '{typedef_name}' with tag names: struct='{typedef_relation.struct_tag_name}', enum='{typedef_relation.enum_tag_name}'")
                 lines.extend(self._generate_single_typedef_class(typedef_relation, file_model, project_model))
+        
+        # Then, process simple typedefs from the typedefs dictionary (only if not already processed)
+        for typedef_name, original_type in file_model.typedefs.items():
+            if typedef_name not in seen_typedefs:
+                seen_typedefs.add(typedef_name)
+                lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
         
         # Process typedefs from included header files (respecting include_depth)
         if include_depth > 1:
@@ -519,17 +490,71 @@ class PlantUMLGenerator:
                 
                 if found_enum:
                     for value in found_enum.values:
-                        lines.append(f"    {value}")
+                        if value.value is not None:
+                            lines.append(f"    {value.name} = {value.value}")
+                        else:
+                            lines.append(f"    {value.name}")
                 else:
-                    lines.append(f"    + typedef {original_type} {typedef_name}")
+                    lines.append(f"    + {original_type}")
             else:
-                lines.append(f"    + typedef {original_type} {typedef_name}")
+                lines.append(f"    + {original_type}")
             lines.append("}")
         else:
             # For non-enum typedefs, create a regular class
             lines.append(f'class "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
             lines.append("{")
-            lines.append(f"    + typedef {original_type} {typedef_name}")
+            
+            # For struct/union typedefs, try to show fields
+            if original_type == "struct":
+                # Try to find the struct in the project model
+                if project_model:
+                    found_struct = None
+                    # Try multiple possible struct names
+                    possible_struct_names = [typedef_name]
+                    if typedef_name.endswith('_t'):
+                        possible_struct_names.append(typedef_name[:-2])  # Remove "_t" suffix
+                        possible_struct_names.append(f"{typedef_name[:-2]}_tag")  # Add _tag suffix to base name
+                    possible_struct_names.append(f"{typedef_name}_tag")
+                    
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.debug(f"Looking for struct '{typedef_name}' with possible names: {possible_struct_names}")
+                    
+                    for f_model in project_model.files.values():
+                        logger.debug(f"Checking file '{f_model.file_path}' for structs: {list(f_model.structs.keys())}")
+                        for name in possible_struct_names:
+                            if name in f_model.structs:
+                                found_struct = f_model.structs[name]
+                                logger.debug(f"Found struct '{name}' in file '{f_model.file_path}'")
+                                break
+                        if found_struct:
+                            break
+                    
+                    if found_struct:
+                        for field in found_struct.fields:
+                            lines.append(f"    + {field.type} {field.name}")
+                    else:
+                        lines.append(f"    + {original_type}")
+                else:
+                    lines.append(f"    + {original_type}")
+            elif original_type == "union":
+                # Try to find the union in the project model
+                if project_model:
+                    found_union = None
+                    for f_model in project_model.files.values():
+                        if typedef_name in f_model.unions:
+                            found_union = f_model.unions[typedef_name]
+                            break
+                    
+                    if found_union:
+                        for field in found_union.fields:
+                            lines.append(f"    + {field.type} {field.name}")
+                    else:
+                        lines.append(f"    + {original_type}")
+                else:
+                    lines.append(f"    + {original_type}")
+            else:
+                lines.append(f"    + {original_type}")
             lines.append("}")
         
         lines.append("")
@@ -547,8 +572,12 @@ class PlantUMLGenerator:
             lines.append(f'enum "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
             lines.append("{")
             
-            # Try to find the enum by the enum tag name if available, otherwise by typedef name
-            enum_name = typedef_relation.enum_tag_name if hasattr(typedef_relation, 'enum_tag_name') and typedef_relation.enum_tag_name else typedef_name
+            # Try to find the enum by the typedef name first, then by the enum tag name
+            enum_name = typedef_name
+            if not any(enum_name in f_model.enums for f_model in project_model.files.values()):
+                # If typedef name not found, try the enum tag name
+                if hasattr(typedef_relation, 'enum_tag_name') and typedef_relation.enum_tag_name:
+                    enum_name = typedef_relation.enum_tag_name
             # Look for the enum in the project model
             found_enum = None
             import logging
@@ -561,7 +590,10 @@ class PlantUMLGenerator:
             
             if found_enum:
                 for value in found_enum.values:
-                    lines.append(f"    {value}")
+                    if value.value is not None:
+                        lines.append(f"    {value.name} = {value.value}")
+                    else:
+                        lines.append(f"    {value.name}")
             else:
                 logging.getLogger(__name__).debug(f"Enum '{enum_name}' not found in project model")
                 lines.append(f"    + {original_type}")
@@ -571,31 +603,25 @@ class PlantUMLGenerator:
             lines.append("{")
             
             # For struct/union typedefs, show fields/values
-            if relationship_type == "defines":
+            if original_type in ["struct", "union"]:
                 if original_type == "struct":
-                    # Try to find the struct by the struct tag name if available
-                    struct_name = typedef_relation.struct_tag_name if typedef_relation.struct_tag_name else typedef_name
-                    # Look for the struct in the file model that contains the typedef relation
+                    # Try to find the struct by the typedef name first, then by the struct tag name
                     import logging
-                    logging.getLogger(__name__).debug(f"Looking for struct '{struct_name}' in file '{file_model.file_path}', available structs: {list(file_model.structs.keys())}")
                     logging.getLogger(__name__).debug(f"typedef_relation.struct_tag_name: '{typedef_relation.struct_tag_name}', typedef_name: '{typedef_name}'")
                     
-                    # Try multiple possible struct names
-                    possible_struct_names = [struct_name]
-                    if struct_name != typedef_name:
-                        possible_struct_names.append(typedef_name)
-                    if struct_name.endswith('_tag'):
-                        possible_struct_names.append(struct_name[:-4])  # Remove "_tag" suffix
+                    # Try multiple possible struct names, starting with typedef name
+                    possible_struct_names = [typedef_name]
+                    if typedef_relation.struct_tag_name:
+                        possible_struct_names.append(typedef_relation.struct_tag_name)
                     if typedef_name.endswith('_t'):
                         possible_struct_names.append(typedef_name[:-2])  # Remove "_t" suffix
-                    # Also try adding "_tag" suffix to the struct name
-                    if not struct_name.endswith('_tag'):
-                        possible_struct_names.append(f"{struct_name}_tag")
-                    # Try the typedef name without "_t" suffix
-                    if typedef_name.endswith('_t'):
-                        possible_struct_names.append(typedef_name[:-2])
-                    # Try the typedef name with "_tag" suffix
-                    possible_struct_names.append(f"{typedef_name}_tag")
+                    if typedef_relation.struct_tag_name and typedef_relation.struct_tag_name.endswith('_tag'):
+                        possible_struct_names.append(typedef_relation.struct_tag_name[:-4])  # Remove "_tag" suffix
+                    # Also try adding "_tag" suffix to the typedef name
+                    if not typedef_name.endswith('_tag'):
+                        possible_struct_names.append(f"{typedef_name}_tag")
+                    
+                    logging.getLogger(__name__).debug(f"Looking for struct with possible names: {possible_struct_names} in file '{file_model.file_path}', available structs: {list(file_model.structs.keys())}")
                     
                     found_struct = None
                     for name in possible_struct_names:
@@ -976,13 +1002,13 @@ class PlantUMLGenerator:
             # Typedef is defined in the current file (could be .c or .h)
             if file_model.file_path.endswith('.h'):
                 # Typedef is defined in header file
-                lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+                lines.append(f"{header_class_id} ..> {typedef_class_id} : <<declares>>")
             else:
                 # Typedef is defined in source file
-                lines.append(f"{main_class_id} ..> {typedef_class_id} : declares")
+                lines.append(f"{main_class_id} ..> {typedef_class_id} : <<declares>>")
         else:
             # Typedef is from an included header file
-            lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+            lines.append(f"{header_class_id} ..> {typedef_class_id} : <<declares>>")
         
         # For complex typedefs, show the 'defines' relation from the typedef class to the type class
         if relationship_type == "defines":
@@ -990,23 +1016,7 @@ class PlantUMLGenerator:
                 # For struct/enum/union typedefs, don't create a relationship to a non-existent type class
                 # since the fields/values are already shown in the typedef class itself
                 pass
-            else:
-                relationship_id = f"{typedef_name}->{original_type}:alias"
-                if relationship_id not in seen_relationships:
-                    seen_relationships.add(relationship_id)
-                    lines.append(
-                        f"{typedef_class_id} -|> "
-                        f"{self._get_type_uml_id(original_type)} : «alias»"
-                    )
-        elif relationship_type == "alias":
-            relationship_id = f"{typedef_name}->{original_type}:alias"
-            if relationship_id not in seen_relationships:
-                seen_relationships.add(relationship_id)
-                lines.append(
-                    f"{typedef_class_id} -|> "
-                    f"{self._get_type_uml_id(original_type)} : «alias»"
-                )
-        
+
         # Check for relationships between typedefs (when one typedef uses another)
         if relationship_type == "defines" and original_type == "struct":
             # Look for the struct definition to find typedef dependencies
@@ -1031,7 +1041,7 @@ class PlantUMLGenerator:
                                 relationship_id = f"{typedef_name}->{field_type}:uses"
                                 if relationship_id not in seen_relationships:
                                     seen_relationships.add(relationship_id)
-                                    lines.append(f"{typedef_class_id} --> {other_typedef_class_id} : uses")
+                                    lines.append(f"{typedef_class_id} --> {other_typedef_class_id} : <<uses>>")
         
         # Show which header declares this typedef (for typedefs from included files)
         # Find which header actually declares this typedef
@@ -1046,7 +1056,7 @@ class PlantUMLGenerator:
                         relationship_id = f"{Path(model.file_path).stem}->{typedef_name}:declares"
                         if relationship_id not in seen_relationships:
                             seen_relationships.add(relationship_id)
-                            lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+                            lines.append(f"{header_class_id} ..> {typedef_class_id} : <<declares>>")
         
         # Also show which header declares typedefs that are used in the current file
         # This helps show the relationship between headers and the typedefs they provide
@@ -1066,7 +1076,7 @@ class PlantUMLGenerator:
                         relationship_id = f"{Path(included_file_model.file_path).stem}->{other_typedef_relation.typedef_name}:declares"
                         if relationship_id not in seen_relationships:
                             seen_relationships.add(relationship_id)
-                            lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+                            lines.append(f"{header_class_id} ..> {typedef_class_id} : <<declares>>")
 
     def _process_type_dependencies(self, file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_relationships: set):
         """Process type dependencies and macro dependencies"""
@@ -1129,7 +1139,7 @@ class PlantUMLGenerator:
                     relationship_id = f"{typedef_relation.typedef_name}->{Path(model.file_path).stem}:macro"
                     if relationship_id not in seen_relationships:
                         seen_relationships.add(relationship_id)
-                        lines.append(f"{typedef_class_id} ..> {header_class_id} : uses MAX_LABEL_LEN")
+                        lines.append(f"{typedef_class_id} ..> {header_class_id} : <<uses>> MAX_LABEL_LEN")
                     break
 
     def _process_macro_dependencies(self, file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_relationships: set):
@@ -1154,7 +1164,7 @@ class PlantUMLGenerator:
                                         relationship_id = f"{typedef_relation.typedef_name}->{Path(file_model.file_path).stem}:{macro}"
                                         if relationship_id not in seen_relationships:
                                             seen_relationships.add(relationship_id)
-                                            lines.append(f"{typedef_class_id} ..> {header_class_id} : uses {macro}")
+                                            lines.append(f"{typedef_class_id} ..> {header_class_id} : <<uses>> {macro}")
 
     def _find_included_file(
         self, include_name: str, project_root: str, project_model: ProjectModel
@@ -1198,13 +1208,43 @@ class PlantUMLGenerator:
 
     def _get_typedef_uml_id(self, name: str) -> str:
         """Generate UML ID for a typedef class"""
-        # Convert to uppercase and replace special characters
-        base_id = name.upper().replace("-", "_").replace(".", "_")
+        # Keep case sensitivity and replace special characters
+        base_id = name.replace("-", "_").replace(".", "_")
         return f"TYPEDEF_{base_id}"
 
     def _get_type_uml_id(self, name: str) -> str:
         """Generate UML ID for a type class"""
         return f"TYPE_{self._get_uml_id(name)}"
+
+    def _deduplicate_relationships(self, diagram_lines: List[str]) -> List[str]:
+        """Remove duplicate relationship lines from the diagram"""
+        seen_relationships = set()
+        deduplicated_lines = []
+        
+        for line in diagram_lines:
+            line = line.strip()
+            
+            # Check if this is a relationship line (contains --> or ..>)
+            if ('-->' in line or '..>' in line) and ':' in line:
+                # Normalize the relationship line for comparison
+                # Remove extra whitespace and normalize formatting
+                normalized_line = re.sub(r'\s+', ' ', line.strip())
+                
+                # Further normalize by removing angle brackets from relationship type
+                # This handles cases like "declares" vs "<<declares>>"
+                normalized_line = re.sub(r'<<([^>]+)>>', r'\1', normalized_line)
+                
+                if normalized_line in seen_relationships:
+                    # Skip this duplicate relationship
+                    continue
+                else:
+                    seen_relationships.add(normalized_line)
+                    deduplicated_lines.append(line)
+            else:
+                # Not a relationship line, keep it as is
+                deduplicated_lines.append(line)
+        
+        return deduplicated_lines
 
     def generate_typedef_uses_relations(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
         # For each typedef, if its fields use another typedef, emit a uses relation
@@ -1559,10 +1599,11 @@ class Generator:
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
 
-        # Generate diagrams for each .c file
+        # Generate diagrams for each C file only (not header files)
         generated_files = []
         for file_path, file_model in model.files.items():
-            if file_path.endswith(".c"):
+            # Only generate PlantUML diagrams for C files, not header files
+            if file_path.endswith('.c'):
                 try:
                     diagram_content = self.plantuml_generator.generate_diagram(
                         file_model, model, include_depth
@@ -1582,6 +1623,8 @@ class Generator:
                     self.logger.warning(
                         f"Failed to generate diagram for {file_path}: {e}"
                     )
+            else:
+                self.logger.debug(f"Skipping header file: {file_path}")
 
         self.logger.info(
             f"Step 3 complete! Generated {len(generated_files)} PlantUML files "
@@ -1640,7 +1683,13 @@ class Generator:
         # Convert enums
         enums = {}
         for name, enum_data in data.get("enums", {}).items():
-            enums[name] = Enum(name, enum_data.get("values", []))
+            values = []
+            for value_data in enum_data.get("values", []):
+                if isinstance(value_data, dict):
+                    values.append(EnumValue(value_data["name"], value_data.get("value")))
+                else:
+                    values.append(EnumValue(value_data))
+            enums[name] = Enum(name, values)
 
         # Convert unions
         unions = {}

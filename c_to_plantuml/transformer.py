@@ -459,6 +459,7 @@ class Transformer:
             Struct,
             TypedefRelation,
             Union,
+            EnumValue,
         )
 
         # Convert structs
@@ -472,7 +473,13 @@ class Transformer:
         # Convert enums
         enums = {}
         for name, enum_data in data.get("enums", {}).items():
-            enums[name] = Enum(name, enum_data.get("values", []))
+            values = []
+            for value_data in enum_data.get("values", []):
+                if isinstance(value_data, dict):
+                    values.append(EnumValue(value_data["name"], value_data.get("value")))
+                else:
+                    values.append(EnumValue(value_data))
+            enums[name] = Enum(name, values)
 
         # Convert unions
         unions = {}
