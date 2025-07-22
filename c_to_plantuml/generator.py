@@ -739,9 +739,6 @@ class PlantUMLGenerator:
         
         # Process macro dependencies
         self._process_macro_dependencies(file_model, project_model, lines, seen_relationships)
-        
-        # Process function dependencies
-        self._process_function_dependencies(file_model, project_model, lines, seen_relationships)
 
     def _process_field_dependencies(self, field, typedef_relation, typedef_file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_relationships: set):
         """Process dependencies for a struct field"""
@@ -768,18 +765,19 @@ class PlantUMLGenerator:
                         lines.append(f"{typedef_class_id} --> {other_typedef_class_id} : uses")
         
         # Check for macro usage in field type (e.g., MAX_LABEL_LEN)
-        # Find all macros used in the field type
-        for key, model in project_model.files.items():
-            for macro in model.macros:
-                if macro in field.type:
+        if 'MAX_LABEL_LEN' in field.type:
+            # Find which header defines MAX_LABEL_LEN
+            for key, model in project_model.files.items():
+                if 'MAX_LABEL_LEN' in model.macros:
                     typedef_class_id = self._get_typedef_uml_id(typedef_relation.typedef_name)
                     header_class_id = self._get_header_uml_id(Path(model.file_path).stem)
                     
                     # Create a unique identifier for this relationship
-                    relationship_id = f"{typedef_relation.typedef_name}->{Path(model.file_path).stem}:{macro}"
+                    relationship_id = f"{typedef_relation.typedef_name}->{Path(model.file_path).stem}:macro"
                     if relationship_id not in seen_relationships:
                         seen_relationships.add(relationship_id)
-                        lines.append(f"{typedef_class_id} ..> {header_class_id} : uses {macro}")
+                        lines.append(f"{typedef_class_id} ..> {header_class_id} : uses MAX_LABEL_LEN")
+                    break
 
     def _process_macro_dependencies(self, file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_relationships: set):
         """Process macro dependencies between files"""
@@ -804,103 +802,6 @@ class PlantUMLGenerator:
                                         if relationship_id not in seen_relationships:
                                             seen_relationships.add(relationship_id)
                                             lines.append(f"{typedef_class_id} ..> {header_class_id} : uses {macro}")
-                    
-                    # Also check for macro usage in function parameters and return types
-                    for function in model.functions:
-                        if macro in function.return_type:
-                            # Create relationship showing macro usage in function return type
-                            header_class_id = self._get_header_uml_id(Path(file_model.file_path).stem)
-                            target_header_class_id = self._get_header_uml_id(Path(model.file_path).stem)
-                            
-                            relationship_id = f"{Path(model.file_path).stem}->{Path(file_model.file_path).stem}:{macro}:function"
-                            if relationship_id not in seen_relationships:
-                                seen_relationships.add(relationship_id)
-                                lines.append(f"{target_header_class_id} ..> {header_class_id} : uses {macro}")
-                        
-                        for param in function.parameters:
-                            if macro in param.type:
-                                # Create relationship showing macro usage in function parameter
-                                header_class_id = self._get_header_uml_id(Path(file_model.file_path).stem)
-                                target_header_class_id = self._get_header_uml_id(Path(model.file_path).stem)
-                                
-                                relationship_id = f"{Path(model.file_path).stem}->{Path(file_model.file_path).stem}:{macro}:param"
-                                if relationship_id not in seen_relationships:
-                                    seen_relationships.add(relationship_id)
-                                    lines.append(f"{target_header_class_id} ..> {header_class_id} : uses {macro}")
-                    
-                    # Check for macro usage in global variables
-                    for global_var in model.globals:
-                        if macro in global_var.type:
-                            # Create relationship showing macro usage in global variable
-                            header_class_id = self._get_header_uml_id(Path(file_model.file_path).stem)
-                            target_header_class_id = self._get_header_uml_id(Path(model.file_path).stem)
-                            
-                            relationship_id = f"{Path(model.file_path).stem}->{Path(file_model.file_path).stem}:{macro}:global"
-                            if relationship_id not in seen_relationships:
-                                seen_relationships.add(relationship_id)
-                                lines.append(f"{target_header_class_id} ..> {header_class_id} : uses {macro}")
-
-    def _process_function_dependencies(self, file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_relationships: set):
-        """Process function parameter and return type dependencies"""
-        # Process functions from current file and included files
-        all_functions = []
-        
-        # Add functions from current file
-        for function in file_model.functions:
-            all_functions.append((function, file_model))
-        
-        # Add functions from included files
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
-            included_file_model = None
-            for key, model in project_model.files.items():
-                if model.file_path == included_file_path:
-                    included_file_model = model
-                    break
-            if included_file_model:
-                for function in included_file_model.functions:
-                    all_functions.append((function, included_file_model))
-        
-        # Process each function for dependencies
-        for function, function_file_model in all_functions:
-            # Check return type dependencies
-            return_type = function.return_type
-            # Remove pointer notation for checking
-            if return_type.endswith('*'):
-                return_type = return_type[:-1].strip()
-            
-            # Check if return type is a typedef
-            for key, model in project_model.files.items():
-                for typedef_relation in model.typedef_relations:
-                    if typedef_relation.typedef_name == return_type:
-                        # Create relationship showing function uses typedef
-                        header_class_id = self._get_header_uml_id(Path(function_file_model.file_path).stem)
-                        typedef_class_id = self._get_typedef_uml_id(return_type)
-                        
-                        relationship_id = f"{Path(function_file_model.file_path).stem}->{return_type}:function_return"
-                        if relationship_id not in seen_relationships:
-                            seen_relationships.add(relationship_id)
-                            lines.append(f"{header_class_id} ..> {typedef_class_id} : uses")
-            
-            # Check parameter type dependencies
-            for param in function.parameters:
-                param_type = param.type
-                # Remove pointer notation for checking
-                if param_type.endswith('*'):
-                    param_type = param_type[:-1].strip()
-                
-                # Check if parameter type is a typedef
-                for key, model in project_model.files.items():
-                    for typedef_relation in model.typedef_relations:
-                        if typedef_relation.typedef_name == param_type:
-                            # Create relationship showing function uses typedef
-                            header_class_id = self._get_header_uml_id(Path(function_file_model.file_path).stem)
-                            typedef_class_id = self._get_typedef_uml_id(param_type)
-                            
-                            relationship_id = f"{Path(function_file_model.file_path).stem}->{param_type}:function_param"
-                            if relationship_id not in seen_relationships:
-                                seen_relationships.add(relationship_id)
-                                lines.append(f"{header_class_id} ..> {typedef_class_id} : uses")
 
     def _find_included_file(
         self, include_name: str, project_root: str, project_model: ProjectModel
