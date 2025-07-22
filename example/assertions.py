@@ -54,7 +54,7 @@ class PUMLValidator:
                 "globals": ["log_callback_t current_cb"],
                 "functions": [
                     "void set_log_callback(log_callback_t cb)",
-                    "void log_message(log_level_t level, const char * fmt)"
+                    "void log_message(log_level_t level, const char * fmt, ...)"
                 ],
                 "typedefs": []
             },
@@ -71,13 +71,14 @@ class PUMLValidator:
             "sample.c": {
                 "includes": ["<stdio.h>", "<stdlib.h>", "<string.h>", "sample.h", "math_utils.h", "logger.h", "geometry.h"],
                 "globals": ["int global_counter", "char buffer[MAX_SIZE]", "double * global_ptr"],
-                "macros": ["#define MAX_SIZE", "#define DEBUG_MODE", "#define CALC"],
+                "macros": ["#define MAX_SIZE", "#define DEBUG_MODE", "#define CALC(x, y)"],
                 "functions": [
+                    "static void internal_helper(void)",
                     "int calculate_sum(int a, int b)",
                     "point_t * create_point(int x, int y, const char * label)",
                     "void process_point(point_t * p)",
-                    "void demo_triangle_usage()",
-                    "int main()"
+                    "void demo_triangle_usage(void)",
+                    "int main(void)"
                 ],
                 "typedefs": []
             },
@@ -126,7 +127,7 @@ class PUMLValidator:
                 ],
                 "functions": [
                     "void set_log_callback(log_callback_t cb)",
-                    "void log_message(log_level_t level, const char * fmt)"
+                    "void log_message(log_level_t level, const char * fmt, ...)"
                 ],
                 "globals": []
             },
@@ -143,7 +144,7 @@ class PUMLValidator:
             },
             "sample.h": {
                 "includes": ["<stddef.h>", "config.h"],
-                "macros": ["#define SAMPLE_H", "#define PI", "#define VERSION", "#define MIN", "#define MAX"],
+                "macros": ["#define SAMPLE_H", "#define PI", "#define VERSION", "#define MIN(a, b)", "#define MAX(a, b)"],
                 "typedefs": [
                     "typedef struct point_tag",
                     "typedef enum system_state_tag"
@@ -159,9 +160,9 @@ class PUMLValidator:
                 ]
             },
             "config.h": {
-                "includes": ["<stdint.h>"],
+                "includes": ["<stddef.h>", "<stdint.h>"],
                 "macros": ["#define CONFIG_H", "#define PROJECT_NAME", "#define MAX_LABEL_LEN", "#define DEFAULT_BUFFER_SIZE"],
-                "typedefs": [],
+                "typedefs": ["typedef uint32_t id_t", "typedef int32_t status_t", "typedef enum GlobalStatus GlobalStatus_t"],
                 "functions": [],
                 "globals": []
             },
@@ -214,10 +215,23 @@ class PUMLValidator:
     def extract_macros(self, content: str) -> List[str]:
         """Extract all #define statements from source file content."""
         macros = []
-        define_pattern = r'#define\s+(\w+)'
-        matches = re.findall(define_pattern, content)
-        for match in matches:
+        # Pattern for simple #define without parameters
+        simple_define_pattern = r'#define\s+(\w+)\s+(?!\()'
+        simple_matches = re.findall(simple_define_pattern, content)
+        for match in simple_matches:
             macros.append(f"#define {match}")
+            
+        # Pattern for #define with parameters (function-like macros)
+        func_define_pattern = r'#define\s+(\w+)\s*\(([^)]+)\)'
+        func_matches = re.findall(func_define_pattern, content)
+        for match in func_matches:
+            macro_name = match[0]
+            params = match[1].strip()
+            # Convert parameter list to function-like format
+            param_list = [p.strip() for p in params.split(',')]
+            param_str = ', '.join(param_list)
+            macros.append(f"#define {macro_name}({param_str})")
+            
         return macros
         
     def extract_typedefs(self, content: str) -> List[str]:
@@ -232,11 +246,16 @@ class PUMLValidator:
     def extract_functions(self, content: str) -> List[str]:
         """Extract function declarations from source file content."""
         functions = []
-        # Pattern for function declarations (including extern)
-        func_pattern = r'(?:extern\s+)?[a-zA-Z_][a-zA-Z0-9_]*\s+\*?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\([^)]*\)\s*;'
+        # Pattern for function declarations (including extern and static)
+        func_pattern = r'(?:extern\s+|static\s+)?[a-zA-Z_][a-zA-Z0-9_]*\s+\*?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\([^)]*\)\s*;?'
         matches = re.findall(func_pattern, content)
         for match in matches:
-            functions.append(match.strip())
+            # Clean up the function signature
+            func_sig = match.strip()
+            # Remove trailing semicolon if present
+            if func_sig.endswith(';'):
+                func_sig = func_sig[:-1]
+            functions.append(func_sig)
         return functions
         
     def extract_globals(self, content: str) -> List[str]:
