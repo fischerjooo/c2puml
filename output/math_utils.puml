@@ -49,5 +49,7 @@ MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 HEADER_MATH_UTILS ..> TYPEDEF_real_t : <<declares>>
 HEADER_MATH_UTILS ..> TYPEDEF_math_op_t : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_id_t : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_status_t : <<declares>>
 
 @enduml

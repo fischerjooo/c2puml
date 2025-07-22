@@ -68,5 +68,7 @@ HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_LOGGER ..> TYPEDEF_log_level_t : <<declares>>
 TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>
 HEADER_LOGGER ..> TYPEDEF_log_callback_t : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_id_t : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_status_t : <<declares>>
 
 @enduml

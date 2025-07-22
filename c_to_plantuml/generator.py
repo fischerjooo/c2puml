@@ -1545,6 +1545,22 @@ class PlantUMLGenerator:
         lines = []
         seen_relationships = set()
         
+        # Process nested includes recursively
+        self._process_nested_declares_relationships(file_model, project_model, seen_relationships, lines)
+        
+        return lines
+    
+    def _process_nested_declares_relationships(self, file_model: FileModel, project_model: ProjectModel, seen_relationships: set, lines: List[str], visited_files: set = None, depth: int = 0, max_depth: int = 3) -> None:
+        """Recursively process declares relationships from included files"""
+        if visited_files is None:
+            visited_files = set()
+        
+        # Prevent infinite recursion and respect max_depth
+        if depth >= max_depth or file_model.file_path in visited_files:
+            return
+        
+        visited_files.add(file_model.file_path)
+        
         # Process each include in the current file
         for include in file_model.includes:
             # Find the included file model
@@ -1567,8 +1583,9 @@ class PlantUMLGenerator:
                     if relationship_key not in seen_relationships:
                         seen_relationships.add(relationship_key)
                         lines.append(f"{header_class_id} ..> {self._get_typedef_uml_id(typedef_name)} : <<declares>>")
-        
-        return lines
+                
+                # Recursively process further nested includes (respecting max_depth)
+                self._process_nested_declares_relationships(included_file_model, project_model, seen_relationships, lines, visited_files, depth + 1, max_depth)
 
 
 class Generator:

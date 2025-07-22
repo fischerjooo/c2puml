@@ -549,6 +549,9 @@ class PUMLValidator:
         # Check for consistent relationship formatting
         self._validate_relationship_formatting(relationships, filename)
         
+        # Check that all typedef objects have at least one relation
+        self._validate_all_typedefs_have_relations(relationships, filename)
+        
         # Assert relationship structure
         for source, target, rel_type in relationships:
             assert source and target, f"Invalid relationship: {source} -> {target}"
@@ -639,18 +642,18 @@ class PUMLValidator:
             assert 'TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>' in content, "Missing log_callback_t uses log_level_t relationship"
             
         elif filename == "sample.puml":
-            assert 'TYPEDEF_POINT_T' in content, "Missing TYPEDEF_POINT_T class"
-            assert 'TYPEDEF_SYSTEM_STATE_T' in content, "Missing TYPEDEF_SYSTEM_STATE_T enum class"
-            assert 'TYPEDEF_TRIANGLE_T' in content, "Missing TYPEDEF_TRIANGLE_T class"
-            assert 'TYPEDEF_LOG_LEVEL_T' in content, "Missing TYPEDEF_LOG_LEVEL_T enum class"
-            assert 'TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>' in content, "Missing triangle_t uses point_t relationship"
+            assert 'TYPEDEF_point_t' in content, "Missing TYPEDEF_point_t class"
+            assert 'TYPEDEF_system_state_t' in content, "Missing TYPEDEF_system_state_t enum class"
+            assert 'TYPEDEF_triangle_t' in content, "Missing TYPEDEF_triangle_t class"
+            assert 'TYPEDEF_log_level_t' in content, "Missing TYPEDEF_log_level_t enum class"
+            assert 'TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>' in content, "Missing triangle_t uses point_t relationship"
             
         elif filename == "math_utils.puml":
             # math_utils.puml should have separate typedef classes
-            assert 'TYPEDEF_REAL_T' in content, "Missing TYPEDEF_REAL_T class"
-            assert 'TYPEDEF_MATH_OP_T' in content, "Missing TYPEDEF_MATH_OP_T class"
-            assert 'TYPEDEF_ID_T' in content, "Missing TYPEDEF_ID_T class"
-            assert 'TYPEDEF_STATUS_T' in content, "Missing TYPEDEF_STATUS_T class"
+            assert 'TYPEDEF_real_t' in content, "Missing TYPEDEF_real_t class"
+            assert 'TYPEDEF_math_op_t' in content, "Missing TYPEDEF_math_op_t class"
+            assert 'TYPEDEF_id_t' in content, "Missing TYPEDEF_id_t class"
+            assert 'TYPEDEF_status_t' in content, "Missing TYPEDEF_status_t class"
             
         print(f"    ✅ Specific content valid")
     
@@ -870,6 +873,36 @@ class PUMLValidator:
         if invalid_relationships:
             invalid_list = ", ".join(invalid_relationships)
             raise AssertionError(f"Relationships without <<>> formatting found in {filename}: {invalid_list}")
+
+    def _validate_all_typedefs_have_relations(self, relationships: List[Tuple[str, str, str]], filename: str) -> None:
+        """Assert that all typedef objects have at least one relation (either <<declares>> or <<uses>>)."""
+        # Read the PUML file to extract all typedef objects
+        content = self.read_puml_file(filename)
+        classes = self.extract_classes(content)
+        
+        # Find all typedef objects
+        typedef_objects = []
+        for uml_id, class_info in classes.items():
+            if class_info['stereotype'] == 'typedef':
+                typedef_objects.append(uml_id)
+        
+        # Find all objects that have relations (either as source or target)
+        objects_with_relations = set()
+        for source, target, rel_type in relationships:
+            objects_with_relations.add(source)
+            objects_with_relations.add(target)
+        
+        # Check which typedef objects don't have any relations
+        typedefs_without_relations = []
+        for typedef_id in typedef_objects:
+            if typedef_id not in objects_with_relations:
+                typedefs_without_relations.append(typedef_id)
+        
+        if typedefs_without_relations:
+            missing_list = ", ".join(typedefs_without_relations)
+            raise AssertionError(f"Typedef objects without any relations found in {filename}: {missing_list}")
+        
+        print(f"    ✅ All {len(typedef_objects)} typedef objects have relations")
 
     def validate_file(self, filename: str) -> None:
         """Validate a single PUML file."""

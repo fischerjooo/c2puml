@@ -292,6 +292,12 @@ HEADER_TYPEDEF_TEST ..> TYPEDEF_MyString : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MyCallback : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MyComplexPtr : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MyComplexArray : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_point_t : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_system_state_t : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_id_t : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_status_t : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_log_callback_t : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_real_t : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_math_op_t : <<declares>>
 
 @enduml
