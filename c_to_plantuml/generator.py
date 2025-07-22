@@ -549,12 +549,19 @@ class PlantUMLGenerator:
                     possible_struct_names = [typedef_name]
                     if typedef_name.endswith('_t'):
                         possible_struct_names.append(typedef_name[:-2])  # Remove "_t" suffix
+                        possible_struct_names.append(f"{typedef_name[:-2]}_tag")  # Add _tag suffix to base name
                     possible_struct_names.append(f"{typedef_name}_tag")
                     
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.debug(f"Looking for struct '{typedef_name}' with possible names: {possible_struct_names}")
+                    
                     for f_model in project_model.files.values():
+                        logger.debug(f"Checking file '{f_model.file_path}' for structs: {list(f_model.structs.keys())}")
                         for name in possible_struct_names:
                             if name in f_model.structs:
                                 found_struct = f_model.structs[name]
+                                logger.debug(f"Found struct '{name}' in file '{f_model.file_path}'")
                                 break
                         if found_struct:
                             break
@@ -1255,8 +1262,8 @@ class PlantUMLGenerator:
 
     def _get_typedef_uml_id(self, name: str) -> str:
         """Generate UML ID for a typedef class"""
-        # Convert to uppercase and replace special characters
-        base_id = name.upper().replace("-", "_").replace(".", "_")
+        # Keep case sensitivity and replace special characters
+        base_id = name.replace("-", "_").replace(".", "_")
         return f"TYPEDEF_{base_id}"
 
     def _get_type_uml_id(self, name: str) -> str:

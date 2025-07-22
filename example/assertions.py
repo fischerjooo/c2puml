@@ -621,7 +621,7 @@ class PUMLValidator:
         print(f"    ✅ Specific content valid")
     
     def _validate_macro_formatting(self, content: str, filename: str) -> None:
-        """Validate that function-like macros include parameter names."""
+        """Validate that macros show only name/parameters, not full values."""
         # Look for function-like macros that are missing parameters
         lines = content.split('\n')
         
@@ -635,6 +635,17 @@ class PUMLValidator:
                 # Check if this macro should have parameters based on common patterns
                 if macro_name in ['MIN', 'MAX', 'CALC'] and '(' not in line:
                     raise AssertionError(f"Function-like macro {macro_name} missing parameters in {filename}")
+                
+                # Check for macros that show full values instead of just name/parameters
+                if macro_name in ['MIN', 'MAX', 'CALC'] and '(' in line and ')' in line:
+                    # Check if the macro shows the full value after the parameters
+                    parts = line.split(')')
+                    if len(parts) > 1 and parts[1].strip() and not parts[1].strip().startswith(';'):
+                        raise AssertionError(f"Macro {macro_name} showing full value instead of just name/parameters in {filename}")
+                
+                # Check for simple defines that show values instead of just names
+                if macro_name in ['PI', 'MAX_SIZE', 'DEFAULT_VALUE'] and '=' in line:
+                    raise AssertionError(f"Simple define {macro_name} showing value instead of just name in {filename}")
                 
                 # Check for variadic function issues
                 if '... ...' in line:

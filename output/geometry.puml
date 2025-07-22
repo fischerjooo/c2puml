@@ -27,10 +27,10 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
     -- Macros --
     + #define SAMPLE_H
-    + #define PI 3.14159
-    + #define VERSION "1.0.0"
-    + #define MIN(a, b) ((a) < (b) ? (a) : (b))
-    + #define MAX(a, b) ((a) > (b) ? (a) : (b))
+    + #define PI
+    + #define VERSION
+    + #define MIN(a, b)
+    + #define MAX(a, b)
     -- Global Variables --
     + int MAX_POINTS
     + char * DEFAULT_LABEL
@@ -48,32 +48,32 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     + int subtract(int a, int b);
     + real_t average(const int * arr, size_t len);
 }
-class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
+class "triangle_t" as TYPEDEF_triangle_t <<typedef>> #LightYellow
 {
     + point_t 3[ ] vertices
     + char MAX_LABEL_LEN[ ] label
 }
 
-class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
+class "point_t" as TYPEDEF_point_t <<typedef>> #LightYellow
 {
     + int x
     + int y
     + char 32[ ] label
 }
 
-enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
+enum "system_state_t" as TYPEDEF_system_state_t <<typedef>> #LightYellow
 {
     STATE_IDLE = 0
     STATE_RUNNING
     STATE_ERROR
 }
 
-class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
+class "real_t" as TYPEDEF_real_t <<typedef>> #LightYellow
 {
     + typedef double real_t
 }
 
-class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
+class "math_op_t" as TYPEDEF_math_op_t <<typedef>> #LightYellow
 {
     + typedef int ( * math_op_t ) ( int , int ) math_op_t
 }
@@ -84,8 +84,8 @@ GEOMETRY --> HEADER_STDLIB : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
-TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
-TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
-HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
+TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
+TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>
+HEADER_GEOMETRY ..> TYPEDEF_triangle_t : <<declares>>
 
 @enduml
