@@ -11,9 +11,6 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
     -- Macros --
     + #define GEOMETRY_H
-    -- Global Variables --
-    + point_t vertices
-    + char label
     -- Functions --
     + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
     + int triangle_area(const triangle_t * tri)
@@ -39,9 +36,6 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + #define MIN
     + #define MAX
     -- Global Variables --
-    + int x
-    + int y
-    + char label
     + extern const int MAX_POINTS
     + extern const char * DEFAULT_LABEL
     -- Functions --
@@ -117,5 +111,6 @@ HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : declares
+TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : uses
 
 @enduml

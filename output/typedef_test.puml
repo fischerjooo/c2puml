@@ -19,21 +19,6 @@ class "typedef_test" as HEADER_TYPEDEF_TEST <<header>> #LightGreen
 {
     -- Macros --
     + #define TYPEDEF_TEST_H
-    -- Global Variables --
-    + MyLen length
-    + MyString data
-    + MyLen id
-    + MyString name
-    + MyCallback callback
-    + log_level_t log_level
-    + int x
-    + int y
-    + int a
-    + int b
-    + int i
-    + float f
-    + char c
-    + double d
     -- Struct Fields --
     + MyLen id
     + MyString name
@@ -47,22 +32,12 @@ class "complex_example" as HEADER_COMPLEX_EXAMPLE <<header>> #LightGreen
 {
     -- Macros --
     + #define COMPLEX_EXAMPLE_H
-    -- Global Variables --
-    + id_t id
-    + char description
-    + log_level_t log_level
-    + NestedInfo_t info
-    + CE_Status_t status
-    + int values
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
     -- Macros --
     + #define GEOMETRY_H
-    -- Global Variables --
-    + point_t vertices
-    + char label
     -- Functions --
     + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
     + int triangle_area(const triangle_t * tri)
@@ -93,9 +68,6 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + #define MIN
     + #define MAX
     -- Global Variables --
-    + int x
-    + int y
-    + char label
     + extern const int MAX_POINTS
     + extern const char * DEFAULT_LABEL
     -- Functions --
@@ -236,5 +208,6 @@ HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_CE_STATUS_T : declares
 HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_COMPLEXEXAMPLE_T : declares
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : declares
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : declares
+TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : uses
 
 @enduml
