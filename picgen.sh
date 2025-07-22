@@ -58,6 +58,12 @@ for puml_file in $puml_files; do
     else
         echo "⚠️  ImageMagick not found. PNG files created instead of JPEG."
         echo "   Install ImageMagick with: sudo apt-get install imagemagick"
+        
+        # Delete PNG files since we only want JPEG output
+        if [ -f "${base_name}.png" ]; then
+            rm "${base_name}.png"
+            echo "🧹 Deleted ${base_name}.png (JPEG conversion failed)"
+        fi
     fi
 done
 
