@@ -51,6 +51,9 @@ class PlantUMLGenerator:
         
         # Generate declares relationships between files and typedefs
         diagram_lines.extend(self.generate_declares_relationships(file_model, project_model))
+        
+        # Generate declares relationships for included header files
+        diagram_lines.extend(self.generate_included_declares_relationships(file_model, project_model))
 
         # End diagram
         diagram_lines.extend(["", "@enduml"])
@@ -1497,6 +1500,36 @@ class PlantUMLGenerator:
         
         return lines
 
+    def generate_included_declares_relationships(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
+        """Generate declares relationships for typedefs declared in included header files"""
+        lines = []
+        seen_relationships = set()
+        
+        # Process each include in the current file
+        for include in file_model.includes:
+            # Find the included file model
+            included_file_model = self._find_included_file_model(include, project_model)
+            if included_file_model and included_file_model.file_path.endswith('.h'):
+                # Get the header class ID
+                header_class_id = self._get_header_uml_id(Path(included_file_model.file_path).stem)
+                
+                # Process typedefs defined in the included header file
+                for typedef_name, original_type in included_file_model.typedefs.items():
+                    relationship_key = f"declares_{header_class_id}_{typedef_name}"
+                    if relationship_key not in seen_relationships:
+                        seen_relationships.add(relationship_key)
+                        lines.append(f"{header_class_id} ..> {self._get_typedef_uml_id(typedef_name)} : <<declares>>")
+                
+                # Process typedefs from typedef_relations in the included header file
+                for typedef_relation in included_file_model.typedef_relations:
+                    typedef_name = typedef_relation.typedef_name
+                    relationship_key = f"declares_{header_class_id}_{typedef_name}"
+                    if relationship_key not in seen_relationships:
+                        seen_relationships.add(relationship_key)
+                        lines.append(f"{header_class_id} ..> {self._get_typedef_uml_id(typedef_name)} : <<declares>>")
+        
+        return lines
+
 
 class Generator:
     """Main generator class for Step 3: Generate puml files based on model.json"""
@@ -1526,10 +1559,10 @@ class Generator:
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
 
-        # Generate diagrams for each .c and .h file
+        # Generate diagrams for each .c file
         generated_files = []
         for file_path, file_model in model.files.items():
-            if file_path.endswith(".c") or file_path.endswith(".h"):
+            if file_path.endswith(".c"):
                 try:
                     diagram_content = self.plantuml_generator.generate_diagram(
                         file_model, model, include_depth
