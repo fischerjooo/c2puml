@@ -322,11 +322,19 @@ class PlantUMLGenerator:
                         included_file_model = model
                         break
             if included_file_model:
+                # Process simple typedefs from the typedefs dictionary
+                for typedef_name, original_type in included_file_model.typedefs.items():
+                    if typedef_name not in seen_typedefs:
+                        seen_typedefs.add(typedef_name)
+                        lines.extend(self._generate_simple_typedef_class(typedef_name, original_type))
+                
+                # Process complex typedefs from typedef_relations
                 for typedef_relation in included_file_model.typedef_relations:
                     typedef_name = typedef_relation.typedef_name
                     if typedef_name not in seen_typedefs:
                         seen_typedefs.add(typedef_name)
                         lines.extend(self._generate_single_typedef_class(typedef_relation, included_file_model, project_model))
+                
                 # Recursively process further nested typedefs
                 self._process_nested_typedefs(included_file_model, project_model, seen_typedefs, lines, visited_files, depth + 1)
 
@@ -416,16 +424,6 @@ class PlantUMLGenerator:
                 seen_typedefs.add(typedef_name)
                 lines.extend(self._generate_simple_typedef_class(typedef_name, original_type))
         
-        # Process simple typedefs from included header files
-        for include in file_model.includes:
-            # Find the included file model
-            included_file_model = self._find_included_file_model(include, project_model)
-            if included_file_model:
-                for typedef_name, original_type in included_file_model.typedefs.items():
-                    if typedef_name not in seen_typedefs:
-                        seen_typedefs.add(typedef_name)
-                        lines.extend(self._generate_simple_typedef_class(typedef_name, original_type))
-        
         # Process complex typedefs from the current file
         for typedef_relation in file_model.typedef_relations:
             typedef_name = typedef_relation.typedef_name
@@ -433,7 +431,7 @@ class PlantUMLGenerator:
                 seen_typedefs.add(typedef_name)
                 lines.extend(self._generate_single_typedef_class(typedef_relation, file_model, project_model))
         
-        # Process typedefs from included header files (recursively)
+        # Process typedefs from included header files (including transitive includes)
         self._process_nested_typedefs(file_model, project_model, seen_typedefs, lines)
         
         return lines
@@ -1114,7 +1112,17 @@ class PlantUMLGenerator:
 
     def _get_typedef_uml_id(self, name: str) -> str:
         """Generate UML ID for a typedef class"""
-        return f"TYPEDEF_{self._get_uml_id(name)}"
+        # Preserve case sensitivity for typedef names to avoid collisions
+        # Convert to uppercase but keep original case in a suffix if needed
+        base_id = name.upper().replace("-", "_").replace(".", "_")
+        
+        # If the name contains lowercase letters, add a suffix to preserve uniqueness
+        if name != name.upper():
+            # Use the original name as a suffix to preserve case information
+            suffix = name.replace("-", "_").replace(".", "_")
+            return f"TYPEDEF_{base_id}_{suffix}"
+        else:
+            return f"TYPEDEF_{base_id}"
 
     def _get_type_uml_id(self, name: str) -> str:
         """Generate UML ID for a type class"""
@@ -1125,56 +1133,191 @@ class PlantUMLGenerator:
         lines = []
         typedef_names = set()
         
-        # Collect all typedef names from all files
+        # Collect all typedef names from all files (for relationship processing)
         for f in project_model.files.values():
             typedef_names.update(f.typedefs.keys())
             # Also add typedef names from typedef_relations
             for typedef_rel in f.typedef_relations:
                 typedef_names.add(typedef_rel.typedef_name)
         
-        for f in project_model.files.values():
-            for typedef in f.typedef_relations:
-                typedef_name = typedef.typedef_name
-                
-                # Find the struct/union/enum fields for this typedef
-                struct = None
-                
-                # Try to find the struct by the struct tag name
-                if hasattr(typedef, 'struct_tag_name') and typedef.struct_tag_name:
-                    struct = f.structs.get(typedef.struct_tag_name)
-                
-                # If not found, try by the typedef name itself
-                if not struct:
-                    struct = f.structs.get(typedef_name)
-                
-                # If still not found, try common variations
-                if not struct:
-                    # Try with _tag suffix
-                    if not typedef_name.endswith('_tag'):
-                        struct = f.structs.get(f"{typedef_name}_tag")
-                
-                # If still not found, try without _t suffix
-                if not struct and typedef_name.endswith('_t'):
-                    base_name = typedef_name[:-2]
-                    struct = f.structs.get(base_name)
-                    
-                    # Also try with _tag suffix
-                    if not struct:
-                        struct = f.structs.get(f"{base_name}_tag")
-                
-                if struct:
-                    for field in struct.fields:
-                        # If the field type is another typedef, emit a uses relation
-                        # Strip array syntax, pointers, const, etc.
-                        field_type = field.type.replace('const ', '').replace('*', '').strip()
-                        # Remove array syntax like [3], [MAX_LABEL_LEN], etc.
-                        field_type = re.sub(r'\[[^\]]*\]', '', field_type).strip()
-                        
-                        # Check if the field type is a typedef
-                        if field_type in typedef_names and field_type != typedef_name:
-                            lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(field_type)} : uses")
+        # Process typedefs from the current file and its include chain
+        self._process_file_typedef_uses(file_model, project_model, typedef_names, lines)
         
         return lines
+    
+    def _process_file_typedef_uses(self, file_model: FileModel, project_model: ProjectModel, typedef_names: set, lines: List[str], visited_files: set = None, depth: int = 0) -> None:
+        """Process typedef uses for a file and its include chain"""
+        if visited_files is None:
+            visited_files = set()
+        
+        # Prevent infinite recursion
+        if depth > 3 or file_model.file_path in visited_files:
+            return
+        
+        visited_files.add(file_model.file_path)
+        
+        # Process typedefs from the current file
+        for typedef in file_model.typedef_relations:
+            typedef_name = typedef.typedef_name
+            self._process_typedef_uses(typedef_name, file_model, typedef_names, lines, project_model)
+        
+        # Process simple typedefs from the current file
+        for typedef_name, original_type in file_model.typedefs.items():
+            if original_type == "struct":
+                self._process_typedef_uses(typedef_name, file_model, typedef_names, lines, project_model)
+            elif "(" in original_type and "*" in original_type:
+                # This is likely a function pointer typedef
+                self._process_function_pointer_typedef_uses(typedef_name, original_type, typedef_names, lines)
+            elif "*" in original_type and "(" not in original_type:
+                # This is likely a pointer typedef
+                self._process_pointer_typedef_uses(typedef_name, original_type, typedef_names, lines)
+            elif "[" in original_type:
+                # This is likely an array typedef
+                self._process_array_typedef_uses(typedef_name, original_type, typedef_names, lines)
+        
+        # Process typedefs from included files (recursively)
+        for include_relation in file_model.include_relations:
+            included_file_path = include_relation.included_file
+            included_file_model = None
+            # Try to find the included file model
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    included_file_model = model
+                    break
+            if not included_file_model:
+                included_file_basename = Path(included_file_path).name
+                for key, model in project_model.files.items():
+                    if key == included_file_basename:
+                        included_file_model = model
+                        break
+            
+            if included_file_model:
+                self._process_file_typedef_uses(included_file_model, project_model, typedef_names, lines, visited_files, depth + 1)
+    
+    def _process_typedef_uses(self, typedef_name: str, file_model: FileModel, typedef_names: set, lines: List[str], project_model: ProjectModel = None) -> None:
+        """Process uses relationships for a single typedef"""
+        # Find the struct/union/enum fields for this typedef
+        struct = None
+        
+        # Try to find the struct by the typedef name itself
+        struct = file_model.structs.get(typedef_name)
+        
+        # If not found, try common variations
+        if not struct:
+            # Try with _tag suffix
+            if not typedef_name.endswith('_tag'):
+                struct = file_model.structs.get(f"{typedef_name}_tag")
+        
+        # If still not found, try without _t suffix
+        if not struct and typedef_name.endswith('_t'):
+            base_name = typedef_name[:-2]
+            struct = file_model.structs.get(base_name)
+            
+            # Also try with _tag suffix
+            if not struct:
+                struct = file_model.structs.get(f"{base_name}_tag")
+        
+        # If still not found and we have project_model, check included files
+        if not struct and project_model:
+            for include_relation in file_model.include_relations:
+                included_file_path = include_relation.included_file
+                included_file_model = None
+                # Try to find the included file model
+                for key, model in project_model.files.items():
+                    if model.file_path == included_file_path:
+                        included_file_model = model
+                        break
+                if not included_file_model:
+                    included_file_basename = Path(included_file_path).name
+                    for key, model in project_model.files.items():
+                        if key == included_file_basename:
+                            included_file_model = model
+                            break
+                
+                if included_file_model:
+                    # Try to find the struct in the included file
+                    struct = included_file_model.structs.get(typedef_name)
+                    if not struct and not typedef_name.endswith('_tag'):
+                        struct = included_file_model.structs.get(f"{typedef_name}_tag")
+                    if not struct and typedef_name.endswith('_t'):
+                        base_name = typedef_name[:-2]
+                        struct = included_file_model.structs.get(base_name)
+                        if not struct:
+                            struct = included_file_model.structs.get(f"{base_name}_tag")
+                    if struct:
+                        break
+        
+        if struct:
+            for field in struct.fields:
+                # If the field type is another typedef, emit a uses relation
+                # Strip array syntax, pointers, const, etc.
+                field_type = field.type.replace('const ', '').replace('*', '').strip()
+                # Remove array syntax like [3], [MAX_LABEL_LEN], etc.
+                field_type = re.sub(r'\[[^\]]*\]', '', field_type).strip()
+                # Remove field name if present (everything after the first space)
+                if ' ' in field_type:
+                    field_type = field_type.split(' ')[0].strip()
+                
+                # Check if the field type is a typedef
+                if field_type in typedef_names and field_type != typedef_name:
+                    lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(field_type)} : <<uses>>")
+
+    def _process_function_pointer_typedef_uses(self, typedef_name: str, original_type: str, typedef_names: set, lines: List[str]) -> None:
+        """Process uses relationships for a function pointer typedef"""
+        # Extract parameter types from function pointer definition
+        # Example: "int ( * MyCallback ) ( MyBuffer * buffer )"
+        # We need to extract "MyBuffer" from the parameters
+        
+        # Find the parameter list between the last set of parentheses
+        param_start = original_type.rfind('(')
+        param_end = original_type.rfind(')')
+        
+        if param_start != -1 and param_end != -1 and param_end > param_start:
+            param_list = original_type[param_start + 1:param_end].strip()
+            
+            # Split parameters by comma and process each one
+            if param_list:
+                # Handle single parameter case
+                params = [param_list] if ',' not in param_list else [p.strip() for p in param_list.split(',')]
+                
+                for param in params:
+                    # Extract the type from the parameter
+                    # Remove parameter name, pointers, const, etc.
+                    param_type = param.replace('const ', '').replace('*', '').strip()
+                    # Remove parameter name (everything after the last space)
+                    if ' ' in param_type:
+                        param_type = param_type.rsplit(' ', 1)[0].strip()
+                    
+                    # Check if the parameter type is a typedef
+                    if param_type in typedef_names and param_type != typedef_name:
+                        lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(param_type)} : <<uses>>")
+
+    def _process_pointer_typedef_uses(self, typedef_name: str, original_type: str, typedef_names: set, lines: List[str]) -> None:
+        """Process uses relationships for a pointer typedef"""
+        # Extract the base type from pointer typedef
+        # Example: "MyComplex *" -> extract "MyComplex"
+        
+        # Remove pointer symbols and whitespace
+        base_type = original_type.replace('*', '').strip()
+        
+        # Check if the base type is a typedef
+        if base_type in typedef_names and base_type != typedef_name:
+            lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(base_type)} : <<uses>>")
+
+    def _process_array_typedef_uses(self, typedef_name: str, original_type: str, typedef_names: set, lines: List[str]) -> None:
+        """Process uses relationships for an array typedef"""
+        # Extract the base type from array typedef
+        # Example: "MyComplexPtr MyComplexArray [ 10 ]" -> extract "MyComplexPtr"
+        
+        # Find the array name and remove it along with the array syntax
+        # Split by space and take the first part (the base type)
+        parts = original_type.split()
+        if len(parts) >= 2:
+            base_type = parts[0]
+            
+            # Check if the base type is a typedef
+            if base_type in typedef_names and base_type != typedef_name:
+                lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(base_type)} : <<uses>>")
 
 
 class Generator:
