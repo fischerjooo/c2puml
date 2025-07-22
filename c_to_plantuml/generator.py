@@ -350,27 +350,6 @@ class PlantUMLGenerator:
             for macro in file_model.macros:
                 lines.append(f"    + #define {macro}")
         
-        # Only show primitive typedefs directly in the header class
-        # Show typedefs section for header files
-        header_typedefs = []
-        
-        # Add primitive typedefs from typedef_relations
-        for typedef_relation in file_model.typedef_relations:
-            typedef_name = typedef_relation.typedef_name
-            original_type = typedef_relation.original_type
-            relationship_type = typedef_relation.relationship_type
-            if relationship_type == "alias" and not (original_type.startswith("struct") or original_type.startswith("enum") or original_type.startswith("union")):
-                header_typedefs.append(f"    + typedef {original_type} {typedef_name}")
-        
-        # Add simple typedefs from the typedefs dictionary
-        if file_model.typedefs:
-            for typedef_name, original_type in file_model.typedefs.items():
-                header_typedefs.append(f"    + typedef {original_type} {typedef_name}")
-        
-        if header_typedefs:
-            lines.append("    -- Typedefs --")
-            lines.extend(header_typedefs)
-        
         if file_model.globals:
             lines.append("    -- Global Variables --")
             for global_var in file_model.globals:
@@ -419,36 +398,22 @@ class PlantUMLGenerator:
         lines = []
         seen_typedefs = set()
         
-        # Determine if this file should generate separate typedef classes
-        # Files that have their own typedefs or are primarily about typedefs should generate separate classes
-        has_own_typedefs = bool(file_model.typedefs or file_model.typedef_relations)
+        # Process simple typedefs from the typedefs dictionary (current file)
+        for typedef_name, original_type in file_model.typedefs.items():
+            if typedef_name not in seen_typedefs:
+                seen_typedefs.add(typedef_name)
+                lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
         
-        # Check if this is a file that should have separate typedef classes
-        # For now, only generate separate typedef classes if the file has its own typedefs
-        # or if it's a file that's primarily about typedefs (like typedef_test.c)
-        should_generate_separate_typedefs = has_own_typedefs
+        # Process complex typedefs from the current file
+        for typedef_relation in file_model.typedef_relations:
+            typedef_name = typedef_relation.typedef_name
+            if typedef_name not in seen_typedefs:
+                seen_typedefs.add(typedef_name)
+                lines.extend(self._generate_single_typedef_class(typedef_relation, file_model, project_model))
         
-        # Special case: typedef_test.c should always generate separate typedef classes
-        if "typedef_test" in file_model.file_path:
-            should_generate_separate_typedefs = True
-        
-        if should_generate_separate_typedefs:
-            # Process simple typedefs from the typedefs dictionary (current file)
-            for typedef_name, original_type in file_model.typedefs.items():
-                if typedef_name not in seen_typedefs:
-                    seen_typedefs.add(typedef_name)
-                    lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
-            
-            # Process complex typedefs from the current file
-            for typedef_relation in file_model.typedef_relations:
-                typedef_name = typedef_relation.typedef_name
-                if typedef_name not in seen_typedefs:
-                    seen_typedefs.add(typedef_name)
-                    lines.extend(self._generate_single_typedef_class(typedef_relation, file_model, project_model))
-            
-            # Process typedefs from included header files (respecting include_depth)
-            if include_depth > 1:
-                self._process_nested_typedefs(file_model, project_model, seen_typedefs, lines, max_depth=include_depth)
+        # Process typedefs from included header files (respecting include_depth)
+        if include_depth > 1:
+            self._process_nested_typedefs(file_model, project_model, seen_typedefs, lines, max_depth=include_depth)
         
         return lines
     

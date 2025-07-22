@@ -18,21 +18,6 @@ class "typedef_test" as HEADER_TYPEDEF_TEST <<header>> #LightGreen
 {
     -- Macros --
     + #define TYPEDEF_TEST_H
-    -- Typedefs --
-    + typedef uint32_t MyLen
-    + typedef int32_t MyInt
-    + typedef char * MyString
-    + typedef struct MyBuffer
-    + typedef int ( * MyCallback ) ( MyBuffer * buffer ) MyCallback
-    + typedef struct MyComplex
-    + typedef MyComplex * MyComplexPtr
-    + typedef enum Color_t
-    + typedef enum Status_t
-    + typedef struct Point_t
-    + typedef struct NamedStruct_t
-    + typedef union Number_t
-    + typedef union NamedUnion_t
-    + typedef MyComplexPtr MyComplexArray [ 10 ] MyComplexArray
     -- Struct Fields --
     + MyLen length
     + MyString data
@@ -48,10 +33,6 @@ class "complex_example" as HEADER_COMPLEX_EXAMPLE <<header>> #LightGreen
 {
     -- Macros --
     + #define COMPLEX_EXAMPLE_H
-    -- Typedefs --
-    + typedef struct NestedInfo_t
-    + typedef enum CE_Status_t
-    + typedef struct ComplexExample_t
     -- Struct Fields --
     + id_t id
     + char description [ MAX_LABEL_LEN ]
@@ -65,8 +46,6 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
     -- Macros --
     + #define GEOMETRY_H
-    -- Typedefs --
-    + typedef struct triangle_t
     -- Functions --
     + #ifndef GEOMETRY_H #define GEOMETRY_H #include "sample.h" #include "math_utils.h" typedef struct triangle_tag { point_t vertices [ 3 ] ; char label [ MAX_LABEL_LEN ] ; } triangle_t ; triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
     + int triangle_area(const triangle_t * tri)
@@ -79,9 +58,6 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
-    -- Typedefs --
-    + typedef enum log_level_t
-    + typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) log_callback_t
     -- Functions --
     + #ifndef LOGGER_H #define LOGGER_H #include <stdio.h> #include "config.h" typedef enum log_level_tag { LOG_DEBUG = 0 , LOG_INFO , LOG_WARN , LOG_ERROR } log_level_t ; typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) ; void set_log_callback(log_callback_t cb)
     + void log_message(log_level_t level, const char * fmt, . . .)
@@ -99,9 +75,6 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + #define VERSION
     + #define MIN
     + #define MAX
-    -- Typedefs --
-    + typedef struct point_t
-    + typedef enum system_state_t
     -- Global Variables --
     + int MAX_POINTS
     + char * DEFAULT_LABEL
@@ -122,9 +95,6 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + #define PROJECT_NAME
     + #define MAX_LABEL_LEN
     + #define DEFAULT_BUFFER_SIZE
-    -- Typedefs --
-    + typedef uint32_t id_t
-    + typedef int32_t status_t
 }
 
 class "stdint.h" as HEADER_STDINT_H <<header>> #LightGray
@@ -135,9 +105,6 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
     -- Macros --
     + #define MATH_UTILS_H
-    -- Typedefs --
-    + typedef double real_t
-    + typedef int ( * math_op_t ) ( int , int ) math_op_t
     -- Functions --
     + #ifndef MATH_UTILS_H #define MATH_UTILS_H #include "config.h" typedef double real_t ; typedef int ( * math_op_t ) ( int , int ) ; int add(int a, int b)
     + int subtract(int a, int b)

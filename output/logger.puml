@@ -13,9 +13,6 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
-    -- Typedefs --
-    + typedef enum log_level_t
-    + typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) log_callback_t
     -- Functions --
     + #ifndef LOGGER_H #define LOGGER_H #include <stdio.h> #include "config.h" typedef enum log_level_tag { LOG_DEBUG = 0 , LOG_INFO , LOG_WARN , LOG_ERROR } log_level_t ; typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) ; void set_log_callback(log_callback_t cb)
     + void log_message(log_level_t level, const char * fmt, . . .)
@@ -36,13 +33,33 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + #define PROJECT_NAME
     + #define MAX_LABEL_LEN
     + #define DEFAULT_BUFFER_SIZE
-    -- Typedefs --
-    + typedef uint32_t id_t
-    + typedef int32_t status_t
 }
 
 class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
 {
+}
+
+enum "log_level_t" as TYPEDEF_LOG_LEVEL_T_log_level_t <<typedef>> #LightYellow
+{
+    LOG_DEBUG = 0
+    LOG_INFO
+    LOG_WARN
+    LOG_ERROR
+}
+
+class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T_log_callback_t <<typedef>> #LightYellow
+{
+    + typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) log_callback_t
+}
+
+class "id_t" as TYPEDEF_ID_T_id_t <<typedef>> #LightYellow
+{
+    + typedef uint32_t id_t
+}
+
+class "status_t" as TYPEDEF_STATUS_T_status_t <<typedef>> #LightYellow
+{
+    + typedef int32_t status_t
 }
 
 LOGGER --> HEADER_LOGGER : <<include>>
