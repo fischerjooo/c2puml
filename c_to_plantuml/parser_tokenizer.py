@@ -249,6 +249,13 @@ class CTokenizer:
                 pos += 1
                 continue
             
+            # Multi-character operators (<<, >>)
+            if line[pos:pos+2] in ['<<', '>>']:
+                op = line[pos:pos+2]
+                tokens.append(Token(TokenType.OPERATOR if hasattr(TokenType, 'OPERATOR') else TokenType.UNKNOWN, op, line_num, pos))
+                pos += 2
+                continue
+            
             # Identifiers and keywords
             if match := self.patterns['identifier'].match(line, pos):
                 value = match.group()
@@ -257,7 +264,7 @@ class CTokenizer:
                 pos = match.end()
                 continue
             
-            # Unknown character
+            # Unknown character (always one at a time)
             tokens.append(Token(TokenType.UNKNOWN, line[pos], line_num, pos))
             pos += 1
         
@@ -404,13 +411,19 @@ class StructureFinder:
         # Look for struct name after closing brace (for typedefs or named structs)
         name_pos = end_brace_pos + 1
         struct_name = struct_tag
+        found_var_after_brace = False
         while name_pos < len(self.tokens):
             if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                if not struct_tag:
+                    # Anonymous struct, variable after brace
+                    found_var_after_brace = True
                 struct_name = self.tokens[name_pos].value
                 break
             elif self.tokens[name_pos].type == TokenType.SEMICOLON:
                 break
             name_pos += 1
+        if not struct_tag and found_var_after_brace:
+            struct_name = ""
         
         # Find semicolon (for struct definitions)
         self.pos = end_brace_pos + 1
@@ -708,7 +721,7 @@ def find_struct_fields(tokens: List[Token], struct_start: int, struct_end: int) 
                 # Regular field: type name
                 field_name = field_tokens[-1].value
                 field_type = ' '.join(t.value for t in field_tokens[:-1])
-                if field_name not in ['[', ']', ';'] and field_name:
+                if field_name not in ['[', ']', ';', '}'] and field_name:
                     fields.append((field_name, field_type.strip()))
         if pos <= struct_end:
             pos += 1  # Skip semicolon
