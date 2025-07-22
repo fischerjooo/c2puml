@@ -7,6 +7,12 @@ This template defines the structure for generating PlantUML diagrams from C sour
 - **H files**: `HEADER_` prefix, based on filename in capital letters (e.g., `utils.h` → `HEADER_UTILS`)
 - **Typedefs**: `TYPEDEF_` prefix, based on typedef name in capital letters (e.g., `MyStruct` → `TYPEDEF_MYSTRUCT`)
 
+## Content Formatting Rules
+- **Standard library headers**: Shown without angle brackets (e.g., `stdio.h` not `<stdio.h>`)
+- **Macro definitions**: Function-like macros include parameter names (e.g., `#define MIN(a, b)`, `#define CALC(x, y)`)
+- **Function signatures**: Include full parameter lists and return types
+- **Typedef declarations**: All typedefs (structs, enums, unions, function pointers, primitives) are in separate classes
+
 ```plantuml
 @startuml {basename}
 
@@ -19,7 +25,7 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
     -- Global Variables --
     {type} {variable_name}
     -- Functions --
-    {return_type} {function_name}()
+    {return_type} {function_name}({parameters})
 }
 
 ' Header file class (H file)
@@ -31,7 +37,7 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
     -- Global Variables --
     + {type} {variable_name}
     -- Functions --
-    + {return_type} {function_name}()
+    + {return_type} {function_name}({parameters})
 }
 
 ' Typedef classes (all typedefs, including function typedefs, are in separate classes)
@@ -61,3 +67,6 @@ class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
   - H files: `HEADER_` prefix, filename in capital letters  
   - Typedefs: `TYPEDEF_` prefix, typedef name in capital letters
 - Relationships are grouped as: Include, Declaration, and Uses.
+- Standard library headers (stdio.h, stdlib.h, string.h, etc.) are displayed without angle brackets.
+- Function-like macros include parameter names in the format `#define MACRO(param1, param2)`.
+- Function signatures include complete parameter lists and return types.
