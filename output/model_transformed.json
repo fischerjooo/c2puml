@@ -26,8 +26,23 @@
           "array_size": null
         },
         {
+          "name": "description",
+          "type": "char",
+          "array_size": null
+        },
+        {
           "name": "log_level",
           "type": "log_level_t",
+          "array_size": null
+        },
+        {
+          "name": "NestedInfo_t",
+          "type": "}",
+          "array_size": null
+        },
+        {
+          "name": "CE_Status_t",
+          "type": "}",
           "array_size": null
         },
         {
@@ -38,6 +53,16 @@
         {
           "name": "status",
           "type": "CE_Status_t",
+          "array_size": null
+        },
+        {
+          "name": "values",
+          "type": "int",
+          "array_size": null
+        },
+        {
+          "name": "ComplexExample_t",
+          "type": "}",
           "array_size": null
         }
       ],
@@ -185,53 +210,7 @@
           "is_static": false
         }
       ],
-      "globals": [
-        {
-          "name": "tri",
-          "type": "triangle_t",
-          "array_size": null
-        },
-        {
-          "name": "tri",
-          "type": "return",
-          "array_size": null
-        },
-        {
-          "name": "x1",
-          "type": "int",
-          "array_size": null
-        },
-        {
-          "name": "y1",
-          "type": "int",
-          "array_size": null
-        },
-        {
-          "name": "x2",
-          "type": "int",
-          "array_size": null
-        },
-        {
-          "name": "y2",
-          "type": "int",
-          "array_size": null
-        },
-        {
-          "name": "x3",
-          "type": "int",
-          "array_size": null
-        },
-        {
-          "name": "y3",
-          "type": "int",
-          "array_size": null
-        },
-        {
-          "name": "area",
-          "type": "return",
-          "array_size": null
-        }
-      ],
+      "globals": [],
       "includes": [
         "geometry.h",
         "string.h",
@@ -314,7 +293,23 @@
           "is_static": false
         }
       ],
-      "globals": [],
+      "globals": [
+        {
+          "name": "vertices",
+          "type": "point_t",
+          "array_size": null
+        },
+        {
+          "name": "label",
+          "type": "char",
+          "array_size": null
+        },
+        {
+          "name": "triangle_t",
+          "type": "}",
+          "array_size": null
+        }
+      ],
       "includes": [
         "sample.h",
         "math_utils.h"
@@ -429,16 +424,6 @@
           "name": "current_cb",
           "type": "log_callback_t",
           "array_size": null
-        },
-        {
-          "name": "args",
-          "type": "va_list",
-          "array_size": null
-        },
-        {
-          "name": "level_str",
-          "type": "const char *",
-          "array_size": null
         }
       ],
       "includes": [
@@ -506,7 +491,13 @@
           "is_static": false
         }
       ],
-      "globals": [],
+      "globals": [
+        {
+          "name": "log_level_t",
+          "type": "}",
+          "array_size": null
+        }
+      ],
       "includes": [
         "stdio.h",
         "config.h"
@@ -626,28 +617,7 @@
           "is_static": false
         }
       ],
-      "globals": [
-        {
-          "name": "b",
-          "type": "return a +",
-          "array_size": null
-        },
-        {
-          "name": "b",
-          "type": "return a -",
-          "array_size": null
-        },
-        {
-          "name": "sum",
-          "type": "int",
-          "array_size": null
-        },
-        {
-          "name": "i",
-          "type": "size_t",
-          "array_size": null
-        }
-      ],
+      "globals": [],
       "includes": [
         "math_utils.h"
       ],
@@ -844,28 +814,13 @@
           "array_size": null
         },
         {
+          "name": "buffer",
+          "type": "char",
+          "array_size": null
+        },
+        {
           "name": "global_ptr",
           "type": "double *",
-          "array_size": null
-        },
-        {
-          "name": "p",
-          "type": "return",
-          "array_size": null
-        },
-        {
-          "name": "a",
-          "type": "point_t",
-          "array_size": null
-        },
-        {
-          "name": "b",
-          "type": "point_t",
-          "array_size": null
-        },
-        {
-          "name": "c",
-          "type": "point_t",
           "array_size": null
         }
       ],
@@ -1009,6 +964,21 @@
         {
           "name": "y",
           "type": "int",
+          "array_size": null
+        },
+        {
+          "name": "label",
+          "type": "char",
+          "array_size": null
+        },
+        {
+          "name": "point_t",
+          "type": "}",
+          "array_size": null
+        },
+        {
+          "name": "system_state_t",
+          "type": "}",
           "array_size": null
         },
         {
@@ -1208,16 +1178,6 @@
           "name": "global_complex",
           "type": "MyComplexPtr",
           "array_size": null
-        },
-        {
-          "name": "complex",
-          "type": "return",
-          "array_size": null
-        },
-        {
-          "name": "buffer",
-          "type": "MyBuffer",
-          "array_size": null
         }
       ],
       "includes": [
@@ -1333,6 +1293,11 @@
           "array_size": null
         },
         {
+          "name": "MyBuffer",
+          "type": "}",
+          "array_size": null
+        },
+        {
           "name": "id",
           "type": "MyLen",
           "array_size": null
@@ -1353,6 +1318,21 @@
           "array_size": null
         },
         {
+          "name": "MyComplex",
+          "type": "}",
+          "array_size": null
+        },
+        {
+          "name": "Color_t",
+          "type": "}",
+          "array_size": null
+        },
+        {
+          "name": "Status_t",
+          "type": "}",
+          "array_size": null
+        },
+        {
           "name": "x",
           "type": "int",
           "array_size": null
@@ -1360,6 +1340,11 @@
         {
           "name": "y",
           "type": "int",
+          "array_size": null
+        },
+        {
+          "name": "Point_t",
+          "type": "}",
           "array_size": null
         },
         {
@@ -1373,6 +1358,11 @@
           "array_size": null
         },
         {
+          "name": "NamedStruct_t",
+          "type": "}",
+          "array_size": null
+        },
+        {
           "name": "i",
           "type": "int",
           "array_size": null
@@ -1383,6 +1373,11 @@
           "array_size": null
         },
         {
+          "name": "Number_t",
+          "type": "}",
+          "array_size": null
+        },
+        {
           "name": "c",
           "type": "char",
           "array_size": null
@@ -1390,6 +1385,11 @@
         {
           "name": "d",
           "type": "double",
+          "array_size": null
+        },
+        {
+          "name": "NamedUnion_t",
+          "type": "}",
           "array_size": null
         }
       ],
@@ -1489,5 +1489,5 @@
       "unions": {}
     }
   },
-  "created_at": "2025-07-22T05:05:16.196452"
+  "created_at": "2025-07-22T05:19:10.218321"
 }
