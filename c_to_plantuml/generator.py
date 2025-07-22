@@ -205,6 +205,10 @@ class PlantUMLGenerator:
                     )
                     if included_file_path and included_file_path.startswith("EXTERNAL:"):
                         external_header_name = included_file_path.split(":", 1)[1]
+                        # Ensure external header has .h extension for consistency
+                        if not external_header_name.endswith('.h'):
+                            external_header_name = f"{external_header_name}.h"
+                        
                         if external_header_name not in seen_headers:
                             seen_headers.add(external_header_name)
                             lines.extend(
@@ -330,6 +334,10 @@ class PlantUMLGenerator:
 
     def _generate_external_header_class(self, basename: str) -> List[str]:
         """Generate an empty class for an external header file"""
+        # Handle external headers that might come with or without .h extension
+        if not basename.endswith('.h'):
+            basename = f"{basename}.h"
+        
         lines = [
             f'class "{basename}" as {self._get_header_uml_id(basename)} <<header>> #LightGray',
             "{",
@@ -418,194 +426,50 @@ class PlantUMLGenerator:
         lines = []
         seen_relationships = set()
         
-        # Process all include relationships (direct and indirect up to configured depth)
-        for include_relation in file_model.include_relations:
-            source_basename = Path(include_relation.source_file).stem
-            included_basename = Path(include_relation.included_file).stem
-            
-            # Skip self-referencing include relations
-            if source_basename == included_basename:
-                import logging
-                logging.getLogger(__name__).debug(f"Skipping self-referencing header include: {source_basename} -> {included_basename}")
-                continue
-            
-            # Create a unique identifier for this relationship to avoid duplicates
-            relationship_id = f"{source_basename}->{included_basename}"
-            if relationship_id in seen_relationships:
-                continue
-            seen_relationships.add(relationship_id)
-            
-            # Determine the source class type
-            if include_relation.source_file == file_model.file_path:
-                # This is a direct include from the current file
-                if file_model.file_path.endswith('.h'):
-                    # Header file including another header
-                    source_class = self._get_header_uml_id(source_basename)
-                else:
-                    # Source file including a header
-                    source_class = self._get_uml_id(source_basename)
-            else:
-                # This is an indirect include (from included files)
-                source_class = self._get_header_uml_id(source_basename)
-            
-            # Target is always a header class
-            target_class = self._get_header_uml_id(included_basename)
-            
-            lines.append(f"{source_class} --> {target_class} : <<include>>")
+        # Track which headers are actually included in this diagram
+        included_headers = set()
         
-        # Also process include relations from included files to show deeper relationships
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
-            included_file_model = None
-            # Try to find the included file model by matching file_path
-            for key, model in project_model.files.items():
-                if model.file_path == included_file_path:
-                    included_file_model = model
-                    break
-            # If not found by file_path, try to find by relative path
-            if not included_file_model:
-                included_file_basename = Path(included_file_path).name
-                for key, model in project_model.files.items():
-                    if key == included_file_basename:
-                        included_file_model = model
-                        break
-            if included_file_model:
-                # Process include relations from the included file
-                for nested_include_relation in included_file_model.include_relations:
-                    source_basename = Path(nested_include_relation.source_file).stem
-                    included_basename = Path(nested_include_relation.included_file).stem
-                    
-                    # Skip self-referencing include relations
-                    if source_basename == included_basename:
-                        continue
-                    
-                    # Create a unique identifier for this relationship to avoid duplicates
-                    relationship_id = f"{source_basename}->{included_basename}"
-                    if relationship_id in seen_relationships:
-                        continue
-                    seen_relationships.add(relationship_id)
-                    
-                    # Both source and target are header classes for nested includes
-                    source_class = self._get_header_uml_id(source_basename)
-                    target_class = self._get_header_uml_id(included_basename)
-                    
-                    lines.append(f"{source_class} --> {target_class} : <<include>>")
-                
-                # Also process direct includes from the included file
-                for include_name in included_file_model.includes:
-                    nested_included_file_path = self._find_included_file(
-                        include_name, included_file_model.project_root, project_model
-                    )
-                    if nested_included_file_path:
-                        nested_included_basename = Path(nested_included_file_path).stem
-                        source_basename = Path(included_file_model.file_path).stem
-                        
-                        # Skip self-referencing include relations
-                        if source_basename == nested_included_basename:
-                            continue
-                        
-                        # Create a unique identifier for this relationship to avoid duplicates
-                        relationship_id = f"{source_basename}->{nested_included_basename}"
-                        if relationship_id in seen_relationships:
-                            continue
-                        seen_relationships.add(relationship_id)
-                        
-                        # Both source and target are header classes for nested includes
-                        source_class = self._get_header_uml_id(source_basename)
-                        target_class = self._get_header_uml_id(nested_included_basename)
-                        
-                        lines.append(f"{source_class} --> {target_class} : <<include>>")
-                
-                # Also process include relations from the included file (recursive)
-                for nested_include_relation in included_file_model.include_relations:
-                    nested_source_basename = Path(nested_include_relation.source_file).stem
-                    nested_included_basename = Path(nested_include_relation.included_file).stem
-                    
-                    # Skip self-referencing include relations
-                    if nested_source_basename == nested_included_basename:
-                        continue
-                    
-                    # Create a unique identifier for this relationship to avoid duplicates
-                    relationship_id = f"{nested_source_basename}->{nested_included_basename}"
-                    if relationship_id in seen_relationships:
-                        continue
-                    seen_relationships.add(relationship_id)
-                    
-                    # Both source and target are header classes for nested includes
-                    source_class = self._get_header_uml_id(nested_source_basename)
-                    target_class = self._get_header_uml_id(nested_included_basename)
-                    
-                    lines.append(f"{source_class} --> {target_class} : <<include>>")
-        
-        # Also process all include relationships from all files to show the complete dependency graph
-        for key, model in project_model.files.items():
-            if model.file_path != file_model.file_path:  # Skip the main file itself
-                for include_relation in model.include_relations:
-                    source_basename = Path(include_relation.source_file).stem
-                    included_basename = Path(include_relation.included_file).stem
-                    
-                    # Skip self-referencing include relations
-                    if source_basename == included_basename:
-                        continue
-                    
-                    # Create a unique identifier for this relationship to avoid duplicates
-                    relationship_id = f"{source_basename}->{included_basename}"
-                    if relationship_id in seen_relationships:
-                        continue
-                    seen_relationships.add(relationship_id)
-                    
-                    # Both source and target are header classes for all includes
-                    source_class = self._get_header_uml_id(source_basename)
-                    target_class = self._get_header_uml_id(included_basename)
-                    
-                    lines.append(f"{source_class} --> {target_class} : <<include>>")
-        
-        # Also process external headers from included files
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
-            included_file_model = None
-            # Try to find the included file model by matching file_path
-            for key, model in project_model.files.items():
-                if model.file_path == included_file_path:
-                    included_file_model = model
-                    break
-            # If not found by file_path, try to find by relative path
-            if not included_file_model:
-                included_file_basename = Path(included_file_path).name
-                for key, model in project_model.files.items():
-                    if key == included_file_basename:
-                        included_file_model = model
-                        break
-            
-            if included_file_model:
-                # Process external headers from this included file
-                for include_name in included_file_model.includes:
-                    included_file_path = self._find_included_file(
-                        include_name, included_file_model.project_root, project_model
-                    )
-                    if included_file_path and included_file_path.startswith("EXTERNAL:"):
-                        external_header_name = included_file_path.split(":", 1)[1]
-                        source_basename = Path(included_file_model.file_path).stem
-                        
-                        # Create a unique identifier for this relationship
-                        relationship_id = f"{source_basename}->{external_header_name}"
-                        if relationship_id not in seen_relationships:
-                            seen_relationships.add(relationship_id)
-                            source_class = self._get_header_uml_id(source_basename)
-                            target_class = self._get_header_uml_id(external_header_name)
-                            lines.append(f"{source_class} --> {target_class} : <<include>>")
-        
-        # Also process direct includes for backward compatibility
+        # Add direct includes from the current file
         for include_name in file_model.includes:
             included_file_path = self._find_included_file(
                 include_name, file_model.project_root, project_model
             )
-            included_file_model = None
+            if included_file_path and included_file_path.startswith("EXTERNAL:"):
+                external_header_name = included_file_path.split(":", 1)[1]
+                if not external_header_name.endswith('.h'):
+                    external_header_name = f"{external_header_name}.h"
+                included_headers.add(external_header_name)
+            else:
+                # Find the actual header file
+                for key, model in project_model.files.items():
+                    if model.file_path == included_file_path:
+                        header_basename = Path(model.file_path).stem
+                        included_headers.add(header_basename)
+                        break
+        
+        # Add headers from include_relations
+        for include_relation in file_model.include_relations:
+            included_file_path = include_relation.included_file
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    header_basename = Path(model.file_path).stem
+                    included_headers.add(header_basename)
+                    break
+        
+        # Process direct includes from the current file
+        for include_name in file_model.includes:
+            included_file_path = self._find_included_file(
+                include_name, file_model.project_root, project_model
+            )
             
             # Check if this is an external header
             if included_file_path and included_file_path.startswith("EXTERNAL:"):
                 # This is an external header
                 external_header_name = included_file_path.split(":", 1)[1]
+                # Ensure external header has .h extension for consistency
+                if not external_header_name.endswith('.h'):
+                    external_header_name = f"{external_header_name}.h"
+                
                 source_class = self._get_uml_id(Path(file_model.file_path).stem)
                 target_class = self._get_header_uml_id(external_header_name)
                 
@@ -633,6 +497,60 @@ class PlantUMLGenerator:
                     if relationship_id not in seen_relationships:
                         seen_relationships.add(relationship_id)
                         lines.append(f"{source_class} --> {target_class} : <<include>>")
+        
+        # Process relationships between included headers (only for headers that are in this diagram)
+        for include_relation in file_model.include_relations:
+            included_file_path = include_relation.included_file
+            included_file_model = None
+            
+            # Find the included file model
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    included_file_model = model
+                    break
+            
+            if included_file_model:
+                # Process direct includes from the included file (only if they're in our diagram)
+                for include_name in included_file_model.includes:
+                    nested_included_file_path = self._find_included_file(
+                        include_name, included_file_model.project_root, project_model
+                    )
+                    
+                    if nested_included_file_path and nested_included_file_path.startswith("EXTERNAL:"):
+                        # External header
+                        external_header_name = nested_included_file_path.split(":", 1)[1]
+                        if not external_header_name.endswith('.h'):
+                            external_header_name = f"{external_header_name}.h"
+                        
+                        source_basename = Path(included_file_model.file_path).stem
+                        source_class = self._get_header_uml_id(source_basename)
+                        target_class = self._get_header_uml_id(external_header_name)
+                        
+                        # Only add if both source and target are in our diagram
+                        if source_basename in included_headers and external_header_name in included_headers:
+                            relationship_id = f"{source_basename}->{external_header_name}"
+                            if relationship_id not in seen_relationships:
+                                seen_relationships.add(relationship_id)
+                                lines.append(f"{source_class} --> {target_class} : <<include>>")
+                    else:
+                        # Project header
+                        for key, model in project_model.files.items():
+                            if model.file_path == nested_included_file_path:
+                                nested_header_basename = Path(model.file_path).stem
+                                source_basename = Path(included_file_model.file_path).stem
+                                
+                                # Only add if both source and target are in our diagram
+                                if source_basename in included_headers and nested_header_basename in included_headers:
+                                    source_class = self._get_header_uml_id(source_basename)
+                                    target_class = self._get_header_uml_id(nested_header_basename)
+                                    
+                                    relationship_id = f"{source_basename}->{nested_header_basename}"
+                                    if relationship_id not in seen_relationships:
+                                        seen_relationships.add(relationship_id)
+                                        lines.append(f"{source_class} --> {target_class} : <<include>>")
+                                break
+
+
         # Typedef relationships - process typedefs from current file and included files
         seen_typedef_relations = set()
         
