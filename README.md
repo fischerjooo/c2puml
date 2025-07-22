@@ -490,3 +490,37 @@ If you encounter permission errors like `Permission to fischerjooo/generator_pro
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details. 
+
+## PlantUML Diagram Generation
+
+The project includes scripts to convert PlantUML diagrams to PNG images:
+
+### Linux/macOS (picgen.sh)
+```bash
+./picgen.sh
+```
+
+### Windows (picgen.bat)
+```cmd
+picgen.bat
+```
+
+### Features
+- **Auto-download**: Automatically downloads PlantUML.jar if not found
+- **Cross-platform**: Works on Linux, macOS, and Windows
+- **Smart detection**: Uses installed PlantUML command if available, falls back to JAR file
+- **Error handling**: Provides clear error messages and fallback options
+
+### Requirements
+- Java Runtime Environment (JRE) 8 or later
+- Internet connection (for auto-download on first run)
+- On Linux/macOS: `wget` or `curl` for downloading
+- On Windows: PowerShell for downloading
+
+### Generated Files
+The scripts will create PNG images for all `.puml` files in the `output/` directory:
+- `sample.png` - Main sample application diagram
+- `math_utils.png` - Math utilities module diagram  
+- `logger.png` - Logging module diagram
+- `geometry.png` - Geometry module diagram
+- `typedef_test.png` - Typedef test module diagram 
