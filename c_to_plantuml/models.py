@@ -76,6 +76,7 @@ class Function:
     return_type: str
     parameters: List[Field] = field(default_factory=list)
     is_static: bool = False
+    is_declaration: bool = False
 
     def __post_init__(self):
         """Validate function data after initialization"""
