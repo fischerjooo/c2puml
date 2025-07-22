@@ -544,6 +544,9 @@ class PUMLValidator:
         # Check that no "-- Typedefs --" sections exist in header or source classes
         self._validate_no_typedefs_sections_in_header_or_source_classes(content, filename)
         
+        # Check that PlantUML files are only generated for C files, not header files
+        self._validate_only_c_files_have_puml_diagrams(filename)
+        
         if filename == "typedef_test.puml":
             # Should have specific typedef classes
             assert 'TYPEDEF_MYLEN' in content, "Missing TYPEDEF_MYLEN class"
@@ -772,6 +775,43 @@ class PUMLValidator:
                         if lines[j].strip() == '-- Typedefs --':
                             raise AssertionError(f"Typedef value found in '-- Typedefs --' section of header or source class block in {filename}: {class_name} - {line}")
 
+    def _validate_only_c_files_have_puml_diagrams(self, filename: str) -> None:
+        """Assert that PlantUML files are only generated for C files, not header files."""
+        # Extract the base name from the PlantUML filename
+        puml_basename = filename.replace('.puml', '')
+        
+        # Check if this corresponds to a header file by looking for .h extension
+        # The expected C files that should have PlantUML diagrams
+        expected_c_files = [
+            "typedef_test",  # typedef_test.c
+            "geometry",      # geometry.c  
+            "logger",        # logger.c
+            "math_utils",    # math_utils.c
+            "sample"         # sample.c
+        ]
+        
+        # Check if this is a header file by looking for common header patterns
+        header_patterns = [
+            "complex_example",  # complex_example.h
+            "config",          # config.h
+            "sample_h",        # sample.h (if generated separately)
+            "logger_h",        # logger.h (if generated separately)
+            "math_utils_h",    # math_utils.h (if generated separately)
+            "geometry_h",      # geometry.h (if generated separately)
+            "typedef_test_h"   # typedef_test.h (if generated separately)
+        ]
+        
+        # If the basename matches a header pattern, throw an error
+        if puml_basename in header_patterns:
+            raise AssertionError(f"PlantUML diagram generated for header file: {filename}. Only C files should have PlantUML diagrams generated.")
+        
+        # If the basename is not in expected C files, it might be a header file
+        if puml_basename not in expected_c_files:
+            # Check if there's a corresponding .h file in the source directory
+            header_file_path = self.source_dir / f"{puml_basename}.h"
+            if header_file_path.exists():
+                raise AssertionError(f"PlantUML diagram generated for header file: {filename} (corresponds to {puml_basename}.h). Only C files should have PlantUML diagrams generated.")
+
     def validate_file(self, filename: str) -> None:
         """Validate a single PUML file."""
         print(f"\n{'='*60}")
@@ -835,8 +875,14 @@ class PUMLValidator:
         print("📊 Validating generated PUML files")
         print(f"{'='*60}")
         
+        # Find all PlantUML files in the output directory
+        all_puml_files = list(self.output_dir.glob("*.puml"))
+        puml_filenames = [f.name for f in all_puml_files]
+        
+        print(f"📁 Found {len(puml_filenames)} PlantUML files: {puml_filenames}")
+        
         # Validate each PUML file
-        for filename in self.expected_files:
+        for filename in puml_filenames:
             try:
                 self.validate_file(filename)
             except AssertionError as e:

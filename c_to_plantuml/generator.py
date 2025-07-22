@@ -1566,9 +1566,11 @@ class Generator:
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
 
-        # Generate diagrams for each file
+        # Generate diagrams for each C file only (not header files)
         generated_files = []
         for file_path, file_model in model.files.items():
+            # Only generate PlantUML diagrams for C files, not header files
+            if file_path.endswith('.c'):
                 try:
                     diagram_content = self.plantuml_generator.generate_diagram(
                         file_model, model, include_depth
@@ -1588,6 +1590,8 @@ class Generator:
                     self.logger.warning(
                         f"Failed to generate diagram for {file_path}: {e}"
                     )
+            else:
+                self.logger.debug(f"Skipping header file: {file_path}")
 
         self.logger.info(
             f"Step 3 complete! Generated {len(generated_files)} PlantUML files "
