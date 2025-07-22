@@ -48,32 +48,32 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 + int subtract(int a, int b);
 + real_t average(const int * arr, size_t len);
 }
-class "triangle_t" as TYPEDEF_triangle_t <<typedef>> #LightYellow
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 {
 + point_t 3[ ] vertices
 + char MAX_LABEL_LEN[ ] label
 }
 
-class "point_t" as TYPEDEF_point_t <<typedef>> #LightYellow
+class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
 + int x
 + int y
 + char 32[ ] label
 }
 
-enum "system_state_t" as TYPEDEF_system_state_t <<typedef>> #LightYellow
+enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
 {
 STATE_IDLE = 0
 STATE_RUNNING
 STATE_ERROR
 }
 
-class "real_t" as TYPEDEF_real_t <<typedef>> #LightYellow
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 {
 + double
 }
 
-class "math_op_t" as TYPEDEF_math_op_t <<typedef>> #LightYellow
+class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
 {
 + int ( * math_op_t ) ( int , int )
 }
@@ -84,16 +84,16 @@ GEOMETRY --> HEADER_STDLIB : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
-HEADER_GEOMETRY ..> TYPEDEF_triangle_t : <<declares>>
-TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
-TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>
-HEADER_SAMPLE ..> TYPEDEF_point_t : <<declares>>
-HEADER_SAMPLE ..> TYPEDEF_system_state_t : <<declares>>
-HEADER_CONFIG ..> TYPEDEF_id_t : <<declares>>
-HEADER_CONFIG ..> TYPEDEF_status_t : <<declares>>
-HEADER_LOGGER ..> TYPEDEF_log_level_t : <<declares>>
-HEADER_LOGGER ..> TYPEDEF_log_callback_t : <<declares>>
-HEADER_MATH_UTILS ..> TYPEDEF_real_t : <<declares>>
-HEADER_MATH_UTILS ..> TYPEDEF_math_op_t : <<declares>>
+HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
+TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
+TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
+HEADER_SAMPLE ..> TYPEDEF_POINT_T : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_ID_T : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>
+HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
+HEADER_LOGGER ..> TYPEDEF_LOG_CALLBACK_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MATH_OP_T : <<declares>>
 
 @enduml

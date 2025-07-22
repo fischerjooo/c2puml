@@ -85,33 +85,33 @@ class "stdio.h" as HEADER_STDIO <<header>> #LightGray
 {
 }
 
-class "MyLen" as TYPEDEF_MyLen <<typedef>> #LightYellow
+class "MyLen" as TYPEDEF_MYLEN <<typedef>> #LightYellow
 {
 + uint32_t
 }
 
-class "MyInt" as TYPEDEF_MyInt <<typedef>> #LightYellow
+class "MyInt" as TYPEDEF_MYINT <<typedef>> #LightYellow
 {
 + int32_t
 }
 
-class "MyString" as TYPEDEF_MyString <<typedef>> #LightYellow
+class "MyString" as TYPEDEF_MYSTRING <<typedef>> #LightYellow
 {
 + char *
 }
 
-class "MyBuffer" as TYPEDEF_MyBuffer <<typedef>> #LightYellow
+class "MyBuffer" as TYPEDEF_MYBUFFER <<typedef>> #LightYellow
 {
 + MyLen length
 + MyString data
 }
 
-class "MyCallback" as TYPEDEF_MyCallback <<typedef>> #LightYellow
+class "MyCallback" as TYPEDEF_MYCALLBACK <<typedef>> #LightYellow
 {
 + int ( * MyCallback ) ( MyBuffer * buffer )
 }
 
-class "MyComplex" as TYPEDEF_MyComplex <<typedef>> #LightYellow
+class "MyComplex" as TYPEDEF_MYCOMPLEX <<typedef>> #LightYellow
 {
 + MyLen id
 + MyString name
@@ -119,77 +119,77 @@ class "MyComplex" as TYPEDEF_MyComplex <<typedef>> #LightYellow
 + log_level_t log_level
 }
 
-class "MyComplexPtr" as TYPEDEF_MyComplexPtr <<typedef>> #LightYellow
+class "MyComplexPtr" as TYPEDEF_MYCOMPLEXPTR <<typedef>> #LightYellow
 {
 + MyComplex *
 }
 
-enum "Color_t" as TYPEDEF_Color_t <<typedef>> #LightYellow
+enum "Color_t" as TYPEDEF_COLOR_T <<typedef>> #LightYellow
 {
 COLOR_RED = 0
 COLOR_GREEN
 COLOR_BLUE
 }
 
-enum "Status_t" as TYPEDEF_Status_t <<typedef>> #LightYellow
+enum "Status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 {
 STATUS_OK = 0
 STATUS_FAIL
 }
 
-class "Point_t" as TYPEDEF_Point_t <<typedef>> #LightYellow
+class "Point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
 + struct
 }
 
-class "NamedStruct_t" as TYPEDEF_NamedStruct_t <<typedef>> #LightYellow
+class "NamedStruct_t" as TYPEDEF_NAMEDSTRUCT_T <<typedef>> #LightYellow
 {
 + int a
 + int b
 }
 
-class "Number_t" as TYPEDEF_Number_t <<typedef>> #LightYellow
+class "Number_t" as TYPEDEF_NUMBER_T <<typedef>> #LightYellow
 {
 + int i
 + float f
 }
 
-class "NamedUnion_t" as TYPEDEF_NamedUnion_t <<typedef>> #LightYellow
+class "NamedUnion_t" as TYPEDEF_NAMEDUNION_T <<typedef>> #LightYellow
 {
 + char c
 + double d
 }
 
-class "MyComplexArray" as TYPEDEF_MyComplexArray <<typedef>> #LightYellow
+class "MyComplexArray" as TYPEDEF_MYCOMPLEXARRAY <<typedef>> #LightYellow
 {
 + MyComplexPtr MyComplexArray [ 10 ]
 }
 
-class "point_t" as TYPEDEF_point_t <<typedef>> #LightYellow
+class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
 + int x
 + int y
 + char 32[ ] label
 }
 
-enum "system_state_t" as TYPEDEF_system_state_t <<typedef>> #LightYellow
+enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
 {
 STATE_IDLE = 0
 STATE_RUNNING
 STATE_ERROR
 }
 
-class "id_t" as TYPEDEF_id_t <<typedef>> #LightYellow
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
 {
 + uint32_t
 }
 
-class "status_t" as TYPEDEF_status_t <<typedef>> #LightYellow
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 {
 + int32_t
 }
 
-enum "log_level_t" as TYPEDEF_log_level_t <<typedef>> #LightYellow
+enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 {
 LOG_DEBUG = 0
 LOG_INFO
@@ -197,44 +197,44 @@ LOG_WARN
 LOG_ERROR
 }
 
-class "log_callback_t" as TYPEDEF_log_callback_t <<typedef>> #LightYellow
+class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 {
 + void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
-class "NestedInfo_t" as TYPEDEF_NestedInfo_t <<typedef>> #LightYellow
+class "NestedInfo_t" as TYPEDEF_NESTEDINFO_T <<typedef>> #LightYellow
 {
 + id_t id
 + char MAX_LABEL_LEN[ ] description
 + log_level_t log_level
 }
 
-enum "CE_Status_t" as TYPEDEF_CE_Status_t <<typedef>> #LightYellow
+enum "CE_Status_t" as TYPEDEF_CE_STATUS_T <<typedef>> #LightYellow
 {
 CE_STATUS_OK = 0
 CE_STATUS_WARN
 CE_STATUS_FAIL
 }
 
-class "ComplexExample_t" as TYPEDEF_ComplexExample_t <<typedef>> #LightYellow
+class "ComplexExample_t" as TYPEDEF_COMPLEXEXAMPLE_T <<typedef>> #LightYellow
 {
 + NestedInfo_t info
 + CE_Status_t status
 + int 5[ ] values
 }
 
-class "triangle_t" as TYPEDEF_triangle_t <<typedef>> #LightYellow
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 {
 + point_t 3[ ] vertices
 + char MAX_LABEL_LEN[ ] label
 }
 
-class "real_t" as TYPEDEF_real_t <<typedef>> #LightYellow
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 {
 + double
 }
 
-class "math_op_t" as TYPEDEF_math_op_t <<typedef>> #LightYellow
+class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
 {
 + int ( * math_op_t ) ( int , int )
 }
@@ -258,46 +258,46 @@ HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_MyBuffer : <<declares>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_MyComplex : <<declares>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_Color_t : <<declares>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_Status_t : <<declares>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_Point_t : <<declares>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_NamedStruct_t : <<declares>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_Number_t : <<declares>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_NamedUnion_t : <<declares>>
-HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_NestedInfo_t : <<declares>>
-HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_CE_Status_t : <<declares>>
-HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ComplexExample_t : <<declares>>
-HEADER_GEOMETRY ..> TYPEDEF_triangle_t : <<declares>>
-HEADER_LOGGER ..> TYPEDEF_log_level_t : <<declares>>
-TYPEDEF_MyBuffer ..> TYPEDEF_MyLen : <<uses>>
-TYPEDEF_MyBuffer ..> TYPEDEF_MyString : <<uses>>
-TYPEDEF_MyComplex ..> TYPEDEF_MyLen : <<uses>>
-TYPEDEF_MyComplex ..> TYPEDEF_MyString : <<uses>>
-TYPEDEF_MyComplex ..> TYPEDEF_MyCallback : <<uses>>
-TYPEDEF_MyComplex ..> TYPEDEF_log_level_t : <<uses>>
-TYPEDEF_MyCallback ..> TYPEDEF_MyBuffer : <<uses>>
-TYPEDEF_MyComplexPtr ..> TYPEDEF_MyComplex : <<uses>>
-TYPEDEF_MyComplexArray ..> TYPEDEF_MyComplexPtr : <<uses>>
-TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
-TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>
-TYPEDEF_NestedInfo_t ..> TYPEDEF_id_t : <<uses>>
-TYPEDEF_NestedInfo_t ..> TYPEDEF_log_level_t : <<uses>>
-TYPEDEF_ComplexExample_t ..> TYPEDEF_NestedInfo_t : <<uses>>
-TYPEDEF_ComplexExample_t ..> TYPEDEF_CE_Status_t : <<uses>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_MyLen : <<declares>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_MyInt : <<declares>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_MyString : <<declares>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_MyCallback : <<declares>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_MyComplexPtr : <<declares>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_MyComplexArray : <<declares>>
-HEADER_SAMPLE ..> TYPEDEF_point_t : <<declares>>
-HEADER_SAMPLE ..> TYPEDEF_system_state_t : <<declares>>
-HEADER_CONFIG ..> TYPEDEF_id_t : <<declares>>
-HEADER_CONFIG ..> TYPEDEF_status_t : <<declares>>
-HEADER_LOGGER ..> TYPEDEF_log_callback_t : <<declares>>
-HEADER_MATH_UTILS ..> TYPEDEF_real_t : <<declares>>
-HEADER_MATH_UTILS ..> TYPEDEF_math_op_t : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MYBUFFER : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MYCOMPLEX : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_COLOR_T : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_STATUS_T : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_POINT_T : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_NAMEDSTRUCT_T : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_NUMBER_T : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_NAMEDUNION_T : <<declares>>
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_NESTEDINFO_T : <<declares>>
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_CE_STATUS_T : <<declares>>
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_COMPLEXEXAMPLE_T : <<declares>>
+HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
+HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
+TYPEDEF_MYBUFFER ..> TYPEDEF_MYLEN : <<uses>>
+TYPEDEF_MYBUFFER ..> TYPEDEF_MYSTRING : <<uses>>
+TYPEDEF_MYCOMPLEX ..> TYPEDEF_MYLEN : <<uses>>
+TYPEDEF_MYCOMPLEX ..> TYPEDEF_MYSTRING : <<uses>>
+TYPEDEF_MYCOMPLEX ..> TYPEDEF_MYCALLBACK : <<uses>>
+TYPEDEF_MYCOMPLEX ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
+TYPEDEF_MYCALLBACK ..> TYPEDEF_MYBUFFER : <<uses>>
+TYPEDEF_MYCOMPLEXPTR ..> TYPEDEF_MYCOMPLEX : <<uses>>
+TYPEDEF_MYCOMPLEXARRAY ..> TYPEDEF_MYCOMPLEXPTR : <<uses>>
+TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
+TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
+TYPEDEF_NESTEDINFO_T ..> TYPEDEF_ID_T : <<uses>>
+TYPEDEF_NESTEDINFO_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
+TYPEDEF_COMPLEXEXAMPLE_T ..> TYPEDEF_NESTEDINFO_T : <<uses>>
+TYPEDEF_COMPLEXEXAMPLE_T ..> TYPEDEF_CE_STATUS_T : <<uses>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MYLEN : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MYINT : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MYSTRING : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MYCALLBACK : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MYCOMPLEXPTR : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MYCOMPLEXARRAY : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_POINT_T : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_ID_T : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>
+HEADER_LOGGER ..> TYPEDEF_LOG_CALLBACK_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MATH_OP_T : <<declares>>
 
 @enduml

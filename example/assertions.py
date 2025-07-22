@@ -642,18 +642,18 @@ class PUMLValidator:
             assert 'TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>' in content, "Missing log_callback_t uses log_level_t relationship"
             
         elif filename == "sample.puml":
-            assert 'TYPEDEF_point_t' in content, "Missing TYPEDEF_point_t class"
-            assert 'TYPEDEF_system_state_t' in content, "Missing TYPEDEF_system_state_t enum class"
-            assert 'TYPEDEF_triangle_t' in content, "Missing TYPEDEF_triangle_t class"
-            assert 'TYPEDEF_log_level_t' in content, "Missing TYPEDEF_log_level_t enum class"
-            assert 'TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>' in content, "Missing triangle_t uses point_t relationship"
+            assert 'TYPEDEF_POINT_T' in content, "Missing TYPEDEF_POINT_T class"
+            assert 'TYPEDEF_SYSTEM_STATE_T' in content, "Missing TYPEDEF_SYSTEM_STATE_T enum class"
+            assert 'TYPEDEF_TRIANGLE_T' in content, "Missing TYPEDEF_TRIANGLE_T class"
+            assert 'TYPEDEF_LOG_LEVEL_T' in content, "Missing TYPEDEF_LOG_LEVEL_T enum class"
+            assert 'TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>' in content, "Missing triangle_t uses point_t relationship"
             
         elif filename == "math_utils.puml":
             # math_utils.puml should have separate typedef classes
-            assert 'TYPEDEF_real_t' in content, "Missing TYPEDEF_real_t class"
-            assert 'TYPEDEF_math_op_t' in content, "Missing TYPEDEF_math_op_t class"
-            assert 'TYPEDEF_id_t' in content, "Missing TYPEDEF_id_t class"
-            assert 'TYPEDEF_status_t' in content, "Missing TYPEDEF_status_t class"
+            assert 'TYPEDEF_REAL_T' in content, "Missing TYPEDEF_REAL_T class"
+            assert 'TYPEDEF_MATH_OP_T' in content, "Missing TYPEDEF_MATH_OP_T class"
+            assert 'TYPEDEF_ID_T' in content, "Missing TYPEDEF_ID_T class"
+            assert 'TYPEDEF_STATUS_T' in content, "Missing TYPEDEF_STATUS_T class"
             
         print(f"    ✅ Specific content valid")
     

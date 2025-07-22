@@ -1208,8 +1208,8 @@ class PlantUMLGenerator:
 
     def _get_typedef_uml_id(self, name: str) -> str:
         """Generate UML ID for a typedef class"""
-        # Keep case sensitivity and replace special characters
-        base_id = name.replace("-", "_").replace(".", "_")
+        # Convert to uppercase and replace special characters
+        base_id = name.upper().replace("-", "_").replace(".", "_")
         return f"TYPEDEF_{base_id}"
 
     def _get_type_uml_id(self, name: str) -> str:
