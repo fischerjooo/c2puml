@@ -3,9 +3,9 @@
 class "typedef_test" as TYPEDEF_TEST <<source>> #LightBlue
 {
     -- Global Variables --
-    MyLen = 0U global_length
-    MyBuffer = {0U, NULL} global_buffer
-    MyComplexPtr = NULL global_complex
+    MyLen global_length
+    MyBuffer global_buffer
+    MyComplexPtr global_complex
     -- Functions --
     void log_buffer(const MyBuffer * buffer)
     MyInt process_buffer(MyBuffer * buffer)

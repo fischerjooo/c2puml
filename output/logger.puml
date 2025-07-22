@@ -3,7 +3,7 @@
 class "logger" as LOGGER <<source>> #LightBlue
 {
     -- Global Variables --
-    log_callback_t = NULL current_cb
+    log_callback_t current_cb
     -- Functions --
     void set_log_callback(log_callback_t cb)
     void log_message(log_level_t level, const char * fmt)

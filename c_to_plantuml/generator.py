@@ -327,7 +327,10 @@ class PlantUMLGenerator:
         if file_model.globals:
             lines.append("    -- Global Variables --")
             for global_var in file_model.globals:
-                lines.append(f"    + {global_var.type} {global_var.name}")
+                if hasattr(global_var, 'value') and global_var.value is not None:
+                    lines.append(f"    + {global_var.type} {global_var.name} = {global_var.value}")
+                else:
+                    lines.append(f"    + {global_var.type} {global_var.name}")
         
         if file_model.functions:
             lines.append("    -- Functions --")
@@ -1039,6 +1042,27 @@ class PlantUMLGenerator:
     def _get_type_uml_id(self, name: str) -> str:
         """Generate UML ID for a type class"""
         return f"TYPE_{self._get_uml_id(name)}"
+
+    def generate_typedef_uses_relations(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
+        # For each typedef, if its fields use another typedef, emit a uses relation
+        lines = []
+        typedef_names = set()
+        for f in project_model.files.values():
+            typedef_names.update(f.typedefs.keys())
+        for f in project_model.files.values():
+            for typedef in f.typedef_relations:
+                typedef_name = typedef.typedef_name
+                # Find the struct/union/enum fields for this typedef
+                struct = f.structs.get(typedef.struct_tag_name) if hasattr(typedef, 'struct_tag_name') and typedef.struct_tag_name else None
+                if not struct:
+                    struct = f.structs.get(typedef_name)
+                if struct:
+                    for field in struct.fields:
+                        # If the field type is another typedef, emit a uses relation
+                        field_type = field.type.replace('const ', '').replace('*', '').strip()
+                        if field_type in typedef_names and field_type != typedef_name:
+                            lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(field_type)} : uses")
+        return lines
 
 
 class Generator:
