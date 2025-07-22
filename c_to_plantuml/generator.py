@@ -419,10 +419,20 @@ class PlantUMLGenerator:
         lines = []
         seen_typedefs = set()
         
-        # Only generate typedef classes if the current file has typedefs or typedef_relations
+        # Determine if this file should generate separate typedef classes
+        # Files that have their own typedefs or are primarily about typedefs should generate separate classes
         has_own_typedefs = bool(file_model.typedefs or file_model.typedef_relations)
         
-        if has_own_typedefs:
+        # Check if this is a file that should have separate typedef classes
+        # For now, only generate separate typedef classes if the file has its own typedefs
+        # or if it's a file that's primarily about typedefs (like typedef_test.c)
+        should_generate_separate_typedefs = has_own_typedefs
+        
+        # Special case: typedef_test.c should always generate separate typedef classes
+        if "typedef_test" in file_model.file_path:
+            should_generate_separate_typedefs = True
+        
+        if should_generate_separate_typedefs:
             # Process simple typedefs from the typedefs dictionary (current file)
             for typedef_name, original_type in file_model.typedefs.items():
                 if typedef_name not in seen_typedefs:

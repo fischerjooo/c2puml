@@ -567,8 +567,13 @@ class PUMLValidator:
             assert 'TYPEDEF_TRIANGLE_T_triangle_t ..> TYPEDEF_POINT_T_point_t : <<uses>>' in content, "Missing triangle_t uses point_t relationship"
             
         elif filename == "math_utils.puml":
-            # math_utils.puml should be simple with no typedefs
-            assert 'TYPEDEF_' not in content, "math_utils.puml should not contain typedef classes"
+            # math_utils.puml should have typedefs embedded in header classes, not as separate typedef classes
+            assert 'TYPEDEF_' not in content, "math_utils.puml should not contain separate typedef classes"
+            # Should have typedefs embedded in header classes
+            assert 'typedef double real_t' in content, "Missing real_t typedef in header class"
+            assert 'typedef int ( * math_op_t ) ( int , int )' in content, "Missing math_op_t typedef in header class"
+            assert 'typedef uint32_t id_t' in content, "Missing id_t typedef in header class"
+            assert 'typedef int32_t status_t' in content, "Missing status_t typedef in header class"
             
         print(f"    ✅ Specific content valid")
         
