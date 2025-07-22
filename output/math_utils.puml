@@ -3,7 +3,7 @@
 class "math_utils" as MATH_UTILS <<source>> #LightBlue
 {
     -- Functions --
-    #include "math_utils.h" int add(int a, int b)
+    int add(int a, int b)
     int subtract(int a, int b)
     real_t average(const int * arr, size_t len)
 }
@@ -13,11 +13,10 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     -- Macros --
     + #define MATH_UTILS_H
     -- Functions --
-    + #ifndef MATH_UTILS_H #define MATH_UTILS_H #include "config.h" typedef double real_t ; typedef int ( * math_op_t ) ( int , int ) ; int add(int a, int b)
-    + int subtract(int a, int b)
-    + real_t average(const int * arr, size_t len)
+    + int add(int a, int b);
+    + int subtract(int a, int b);
+    + real_t average(const int * arr, size_t len);
 }
-
 class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
     -- Macros --
@@ -26,7 +25,6 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + #define MAX_LABEL_LEN
     + #define DEFAULT_BUFFER_SIZE
 }
-
 class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 {
     + typedef double real_t

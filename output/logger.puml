@@ -5,7 +5,7 @@ class "logger" as LOGGER <<source>> #LightBlue
     -- Global Variables --
     - log_callback_t current_cb
     -- Functions --
-    #include "logger.h" #include <stdarg.h> #include <string.h> static log_callback_t current_cb = NULL ; void set_log_callback(log_callback_t cb)
+    void set_log_callback(log_callback_t cb)
     void log_message(log_level_t level, const char * fmt, . . .)
 }
 
@@ -14,10 +14,9 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
     -- Macros --
     + #define LOGGER_H
     -- Functions --
-    + #ifndef LOGGER_H #define LOGGER_H #include <stdio.h> #include "config.h" typedef enum log_level_tag { LOG_DEBUG = 0 , LOG_INFO , LOG_WARN , LOG_ERROR } log_level_t ; typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) ; void set_log_callback(log_callback_t cb)
-    + void log_message(log_level_t level, const char * fmt, . . .)
+    + void set_log_callback(log_callback_t cb);
+    + void log_message(log_level_t level, const char * fmt, . . .);
 }
-
 class "stdarg.h" as HEADER_STDARG <<header>> #LightGray
 {
 }
@@ -34,7 +33,6 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + #define MAX_LABEL_LEN
     + #define DEFAULT_BUFFER_SIZE
 }
-
 class "stdio.h" as HEADER_STDIO <<header>> #LightGray
 {
 }

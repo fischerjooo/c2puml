@@ -125,7 +125,7 @@
       "functions": [
         {
           "name": "create_triangle",
-          "return_type": "#include \"geometry.h\" #include <string.h> #include <stdlib.h> triangle_t",
+          "return_type": "triangle_t",
           "parameters": [
             {
               "name": "a",
@@ -148,7 +148,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         },
         {
           "name": "triangle_area",
@@ -160,7 +161,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         }
       ],
       "globals": [],
@@ -202,7 +204,7 @@
       "functions": [
         {
           "name": "create_triangle",
-          "return_type": "#ifndef GEOMETRY_H #define GEOMETRY_H #include \"sample.h\" #include \"math_utils.h\" typedef struct triangle_tag { point_t vertices [ 3 ] ; char label [ MAX_LABEL_LEN ] ; } triangle_t ; triangle_t",
+          "return_type": "triangle_t",
           "parameters": [
             {
               "name": "a",
@@ -225,7 +227,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": true
         },
         {
           "name": "triangle_area",
@@ -237,7 +240,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": true
         }
       ],
       "globals": [],
@@ -265,7 +269,7 @@
       "functions": [
         {
           "name": "set_log_callback",
-          "return_type": "#include \"logger.h\" #include <stdarg.h> #include <string.h> static log_callback_t current_cb = NULL ; void",
+          "return_type": "void",
           "parameters": [
             {
               "name": "cb",
@@ -273,7 +277,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         },
         {
           "name": "log_message",
@@ -295,7 +300,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         }
       ],
       "globals": [
@@ -336,7 +342,7 @@
       "functions": [
         {
           "name": "set_log_callback",
-          "return_type": "#ifndef LOGGER_H #define LOGGER_H #include <stdio.h> #include \"config.h\" typedef enum log_level_tag { LOG_DEBUG = 0 , LOG_INFO , LOG_WARN , LOG_ERROR } log_level_t ; typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) ; void",
+          "return_type": "void",
           "parameters": [
             {
               "name": "cb",
@@ -344,7 +350,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": true
         },
         {
           "name": "log_message",
@@ -366,7 +373,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": true
         }
       ],
       "globals": [],
@@ -395,7 +403,7 @@
       "functions": [
         {
           "name": "add",
-          "return_type": "#include \"math_utils.h\" int",
+          "return_type": "int",
           "parameters": [
             {
               "name": "a",
@@ -408,7 +416,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         },
         {
           "name": "subtract",
@@ -425,7 +434,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         },
         {
           "name": "average",
@@ -442,7 +452,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         }
       ],
       "globals": [],
@@ -465,7 +476,7 @@
       "functions": [
         {
           "name": "add",
-          "return_type": "#ifndef MATH_UTILS_H #define MATH_UTILS_H #include \"config.h\" typedef double real_t ; typedef int ( * math_op_t ) ( int , int ) ; int",
+          "return_type": "int",
           "parameters": [
             {
               "name": "a",
@@ -478,7 +489,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": true
         },
         {
           "name": "subtract",
@@ -495,7 +507,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": true
         },
         {
           "name": "average",
@@ -512,7 +525,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": true
         }
       ],
       "globals": [],
@@ -540,9 +554,10 @@
       "functions": [
         {
           "name": "internal_helper",
-          "return_type": "#include <stdio.h> #include <stdlib.h> #include <string.h> #include \"sample.h\" #include \"math_utils.h\" #include \"logger.h\" #include \"geometry.h\" #define MAX_SIZE 100U #define DEBUG_MODE 1U #define CALC(x, y) ((x) + (y)) static int global_counter = 0 ; static char buffer [ MAX_SIZE ] ; double * global_ptr = NULL ; static void",
+          "return_type": "void",
           "parameters": [],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": true
         },
         {
           "name": "calculate_sum",
@@ -559,11 +574,12 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": true
         },
         {
           "name": "create_point",
-          "return_type": "point_t *",
+          "return_type": "*",
           "parameters": [
             {
               "name": "x",
@@ -581,13 +597,15 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": true
         },
         {
           "name": "internal_helper",
           "return_type": "void",
           "parameters": [],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         },
         {
           "name": "calculate_sum",
@@ -604,11 +622,12 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         },
         {
           "name": "create_point",
-          "return_type": "point_t *",
+          "return_type": "*",
           "parameters": [
             {
               "name": "x",
@@ -626,7 +645,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         },
         {
           "name": "process_point",
@@ -638,19 +658,22 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         },
         {
           "name": "demo_triangle_usage",
           "return_type": "void",
           "parameters": [],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         },
         {
           "name": "main",
           "return_type": "int",
           "parameters": [],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         }
       ],
       "globals": [
@@ -730,7 +753,7 @@
       "functions": [
         {
           "name": "calculate_sum",
-          "return_type": "#ifndef SAMPLE_H #define SAMPLE_H #include <stddef.h> #include \"config.h\" #define PI 3.14159 #define VERSION \"1.0.0\" typedef struct point_tag { int x ; int y ; char label [ 32 ] ; } point_t ; typedef enum system_state_tag { STATE_IDLE = 0 , STATE_RUNNING , STATE_ERROR } system_state_t ; extern int",
+          "return_type": "int",
           "parameters": [
             {
               "name": "a",
@@ -743,11 +766,12 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": true
         },
         {
           "name": "create_point",
-          "return_type": "point_t *",
+          "return_type": "*",
           "parameters": [
             {
               "name": "x",
@@ -765,7 +789,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": true
         },
         {
           "name": "process_point",
@@ -777,7 +802,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": true
         }
       ],
       "globals": [
@@ -823,7 +849,7 @@
       "functions": [
         {
           "name": "log_buffer",
-          "return_type": "#include \"typedef_test.h\" #include \"complex_example.h\" #include \"geometry.h\" #include \"logger.h\" #include <stdlib.h> MyLen global_length = 0U ; MyBuffer global_buffer = { 0U , NULL } ; MyComplexPtr global_complex = NULL ; void",
+          "return_type": "void",
           "parameters": [
             {
               "name": "buffer",
@@ -831,7 +857,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         },
         {
           "name": "process_buffer",
@@ -843,7 +870,8 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         },
         {
           "name": "my_callback",
@@ -855,11 +883,12 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         },
         {
           "name": "create_complex",
-          "return_type": "MyComplex *",
+          "return_type": "*",
           "parameters": [
             {
               "name": "id",
@@ -872,13 +901,15 @@
               "value": null
             }
           ],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         },
         {
           "name": "main",
           "return_type": "int",
           "parameters": [],
-          "is_static": false
+          "is_static": false,
+          "is_declaration": false
         }
       ],
       "globals": [
@@ -1041,5 +1072,5 @@
       "unions": {}
     }
   },
-  "created_at": "2025-07-22T11:57:48.709599"
+  "created_at": "2025-07-22T13:03:23.812463"
 }

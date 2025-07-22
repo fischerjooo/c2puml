@@ -59,6 +59,50 @@ class PlantUMLGenerator:
         else:
             return f"{function.return_type} {function.name}()"
 
+    def _clean_function_signature(self, signature: str) -> str:
+        """Clean up function signature by removing unwanted content like include statements"""
+        # Remove include statements that might have been mixed in
+        import re
+        
+        # Remove #include statements
+        signature = re.sub(r'#include\s+[<"][^>"]*[>"]', '', signature)
+        
+        # Remove struct definitions and other non-function content
+        signature = re.sub(r'typedef\s+struct[^;]+;', '', signature)
+        signature = re.sub(r'struct\s+\w+\s*{[^}]*}', '', signature)
+        
+        # Remove function bodies (everything after { until the end)
+        signature = re.sub(r'\s*\{[^}]*\}(?:\s*;)?$', ';', signature)
+        
+        # Clean up extra whitespace
+        signature = re.sub(r'\s+', ' ', signature).strip()
+        
+        return signature
+
+    def _deduplicate_functions(self, functions: List) -> List:
+        """Remove duplicate functions and keep only declarations for headers"""
+        seen = set()
+        unique_functions = []
+        
+        for func in functions:
+            # Create a key based on function name and parameters
+            param_str = ', '.join([f"{p.type} {p.name}" for p in func.parameters]) if func.parameters else ""
+            key = f"{func.name}({param_str})"
+            
+            if key not in seen:
+                seen.add(key)
+                unique_functions.append(func)
+        
+        return unique_functions
+
+    def _is_function_declaration_only(self, function) -> bool:
+        """Check if this is a function declaration (no body)"""
+        # If the function has a body, it's an implementation, not a declaration
+        # We can detect this by checking if there are any tokens that indicate a function body
+        # For now, we'll use a simple heuristic: if the function signature ends with ';' it's likely a declaration
+        signature = self._format_function_signature(function)
+        return signature.strip().endswith(';')
+
     def _generate_main_class(self, file_model: FileModel, basename: str, project_model: ProjectModel) -> List[str]:
         """Generate the main class for the file using the new PlantUML template"""
         # Determine if this is a header file
@@ -148,8 +192,24 @@ class PlantUMLGenerator:
         
         if file_model.functions:
             lines.append("    -- Functions --")
-            for function in file_model.functions:
-                lines.append(f"    {self._format_function_signature(function)}")
+            # Deduplicate functions but keep both declarations and implementations
+            unique_functions = self._deduplicate_functions(file_model.functions)
+            
+            for function in unique_functions:
+                # Clean up the function signature to remove any unwanted content
+                signature = self._format_function_signature(function)
+                signature = self._clean_function_signature(signature)
+                
+                # For implementations, remove the function body if it's too long
+                if hasattr(function, 'is_declaration') and not function.is_declaration:
+                    # This is an implementation - truncate if it's too long
+                    if len(signature) > 100:
+                        # Find the opening brace and truncate
+                        brace_pos = signature.find('{')
+                        if brace_pos > 0:
+                            signature = signature[:brace_pos].rstrip() + ' { ... }'
+                
+                lines.append(f"    {signature}")
         
         # Do not show structs/enums/unions directly if they are only present as typedefs
         # (They will be shown in their own class if needed)
@@ -345,26 +405,38 @@ class PlantUMLGenerator:
             f'class "{basename}" as {self._get_header_uml_id(basename)} <<header>> #LightGreen',
             "{",
         ]
+        
+        # Show macros section if we have any macros
         if file_model.macros:
             lines.append("    -- Macros --")
             for macro in file_model.macros:
                 lines.append(f"    + #define {macro}")
         
+        # Show global variables section if we have any globals
         if file_model.globals:
             lines.append("    -- Global Variables --")
             for global_var in file_model.globals:
-                if hasattr(global_var, 'value') and global_var.value is not None:
-                    lines.append(f"    + {global_var.type} {global_var.name} = {global_var.value}")
-                else:
-                    lines.append(f"    + {global_var.type} {global_var.name}")
+                lines.append(f"    + {global_var}")
         
+        # Show functions section - only declarations, no implementations
         if file_model.functions:
             lines.append("    -- Functions --")
-            for function in file_model.functions:
-                lines.append(f"    + {self._format_function_signature(function)}")
+            # Filter to only declarations and deduplicate
+            declarations = [f for f in file_model.functions if hasattr(f, 'is_declaration') and f.is_declaration]
+            unique_functions = self._deduplicate_functions(declarations)
+            
+            for function in unique_functions:
+                # Clean up the function signature
+                signature = self._format_function_signature(function)
+                signature = self._clean_function_signature(signature)
+                
+                # Ensure it ends with semicolon for declarations
+                if not signature.strip().endswith(';'):
+                    signature = signature.rstrip() + ';'
+                
+                lines.append(f"    + {signature}")
         
         lines.append("}")
-        lines.append("")
         return lines
 
     def _generate_external_header_class(self, basename: str) -> List[str]:
@@ -1451,6 +1523,8 @@ class Generator:
                     func_data["name"],
                     func_data["return_type"],
                     parameters,
+                    is_static=func_data.get("is_static", False),
+                    is_declaration=func_data.get("is_declaration", False),
                 )
             )
 

@@ -185,7 +185,7 @@ class CParser:
         functions = []
         function_infos = structure_finder.find_functions()
         
-        for start_pos, end_pos, func_name, return_type in function_infos:
+        for start_pos, end_pos, func_name, return_type, is_declaration in function_infos:
             # Map back to original token positions to parse parameters
             original_start = self._find_original_token_pos(tokens, structure_finder.tokens, start_pos)
             original_end = self._find_original_token_pos(tokens, structure_finder.tokens, end_pos)
@@ -196,8 +196,12 @@ class CParser:
                 parameters = self._parse_function_parameters(tokens, original_start, original_end, func_name)
             
             try:
-                functions.append(Function(func_name, return_type, parameters))
-                self.logger.debug(f"Parsed function: {func_name} with {len(parameters)} parameters")
+                # Create function with declaration flag
+                function = Function(func_name, return_type, parameters)
+                # Add a custom attribute to track if this is a declaration
+                function.is_declaration = is_declaration
+                functions.append(function)
+                self.logger.debug(f"Parsed function: {func_name} with {len(parameters)} parameters (declaration: {is_declaration})")
             except Exception as e:
                 self.logger.warning(f"Error creating function {func_name}: {e}")
         
