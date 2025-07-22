@@ -124,11 +124,11 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
 + int triangle_area(const triangle_t * tri);
 }
-class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
+class "stdint.h" as HEADER_STDINT <<header>> #LightGray
 {
 }
 
-class "stdint.h" as HEADER_STDINT <<header>> #LightGray
+class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
 {
 }
 

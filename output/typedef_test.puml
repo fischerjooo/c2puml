@@ -134,9 +134,9 @@ class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 + void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
-class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 {
-+ uint32_t
++ double
 }
 
 class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
@@ -146,14 +146,14 @@ class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 + char 32[ ] label
 }
 
-class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
 {
-+ int32_t
++ uint32_t
 }
 
-class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
+class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
 {
-+ double
++ int ( * math_op_t ) ( int , int )
 }
 
 enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
@@ -163,9 +163,9 @@ STATE_RUNNING
 STATE_ERROR
 }
 
-class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 {
-+ int ( * math_op_t ) ( int , int )
++ int32_t
 }
 
 class "typedef_test" as HEADER_TYPEDEF_TEST <<header>> #LightGreen
@@ -198,14 +198,6 @@ class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
 {
 }
 
-class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
-{
-}
-
-class "stdint.h" as HEADER_STDINT <<header>> #LightGray
-{
-}
-
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
 -- Macros --
@@ -222,18 +214,6 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 + extern point_t * create_point(int x, int y, const char * label);
 + extern void process_point(point_t * p);
 }
-class "config" as HEADER_CONFIG <<header>> #LightGreen
-{
--- Macros --
-+ #define CONFIG_H
-+ #define PROJECT_NAME
-+ #define MAX_LABEL_LEN
-+ #define DEFAULT_BUFFER_SIZE
-}
-class "stdio.h" as HEADER_STDIO <<header>> #LightGray
-{
-}
-
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
 -- Macros --
@@ -242,6 +222,26 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 + int add(int a, int b);
 + int subtract(int a, int b);
 + real_t average(const int * arr, size_t len);
+}
+class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
+{
+}
+
+class "stdio.h" as HEADER_STDIO <<header>> #LightGray
+{
+}
+
+class "stdint.h" as HEADER_STDINT <<header>> #LightGray
+{
+}
+
+class "config" as HEADER_CONFIG <<header>> #LightGreen
+{
+-- Macros --
++ #define CONFIG_H
++ #define PROJECT_NAME
++ #define MAX_LABEL_LEN
++ #define DEFAULT_BUFFER_SIZE
 }
 TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>
 TYPEDEF_TEST --> HEADER_COMPLEX_EXAMPLE : <<include>>

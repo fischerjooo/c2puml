@@ -48,11 +48,15 @@ class "string.h" as HEADER_STRING <<header>> #LightGray
 {
 }
 
-class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
+class "stdio.h" as HEADER_STDIO <<header>> #LightGray
 {
 }
 
 class "stdint.h" as HEADER_STDINT <<header>> #LightGray
+{
+}
+
+class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
 {
 }
 
@@ -64,10 +68,6 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 + #define MAX_LABEL_LEN
 + #define DEFAULT_BUFFER_SIZE
 }
-class "stdio.h" as HEADER_STDIO <<header>> #LightGray
-{
-}
-
 LOGGER --> HEADER_LOGGER : <<include>>
 LOGGER --> HEADER_STDARG : <<include>>
 LOGGER --> HEADER_STRING : <<include>>
