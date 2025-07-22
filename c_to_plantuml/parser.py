@@ -105,7 +105,26 @@ class CParser:
         enums = self._parse_enums_with_tokenizer(tokens, structure_finder)
         unions = self._parse_unions_with_tokenizer(tokens, structure_finder)
         functions = self._parse_functions_with_tokenizer(tokens, structure_finder)
-        
+        typedefs = self._parse_typedefs_with_tokenizer(tokens)
+
+        # Map typedef names to anonymous structs/enums/unions if needed
+        from .models import Struct, Enum, Union
+        # Structs
+        for typedef_name, original_type in typedefs.items():
+            if original_type == 'struct' and typedef_name not in structs:
+                # Find anonymous struct (empty name)
+                anon_struct = structs.get('')
+                if anon_struct:
+                    structs[typedef_name] = Struct(typedef_name, anon_struct.fields)
+            elif original_type == 'enum' and typedef_name not in enums:
+                anon_enum = enums.get('')
+                if anon_enum:
+                    enums[typedef_name] = Enum(typedef_name, anon_enum.values)
+            elif original_type == 'union' and typedef_name not in unions:
+                anon_union = unions.get('')
+                if anon_union:
+                    unions[typedef_name] = Union(typedef_name, anon_union.fields)
+
         return FileModel(
             file_path=str(file_path),
             relative_path=relative_path,
@@ -118,7 +137,7 @@ class CParser:
             globals=self._parse_globals_with_tokenizer(tokens),
             includes=self._parse_includes_with_tokenizer(tokens),
             macros=self._parse_macros_with_tokenizer(tokens),
-            typedefs=self._parse_typedefs_with_tokenizer(tokens),
+            typedefs=typedefs,
             typedef_relations=self._parse_typedef_relations_with_tokenizer(tokens, structs),
             include_relations=[],
         )
