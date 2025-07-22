@@ -97,7 +97,7 @@ class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
     + LOG_ERROR
 }
 
-' Include relationships: C or H files including other H files
+' Include relationships
 GEOMETRY --> HEADER_GEOMETRY : <<include>>
 GEOMETRY --> HEADER_STRING_H : <<include>>
 GEOMETRY --> HEADER_STDLIB_H : <<include>>
@@ -105,10 +105,10 @@ HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 
-' Declaration relationships: C or H files declaring typedef with declares relation
+' Declaration relationships
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
 
-' Uses relationships: typedefs using other typedefs relations via 'uses' linkage
+' Uses relationships
 TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
 
 @enduml

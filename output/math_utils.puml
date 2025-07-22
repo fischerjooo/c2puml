@@ -27,7 +27,7 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + #define DEFAULT_BUFFER_SIZE
 }
 
-' Include relationships: C or H files including other H files
+' Include relationships
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 

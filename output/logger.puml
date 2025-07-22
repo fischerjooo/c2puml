@@ -52,18 +52,18 @@ class "log_callback_t" as TYPEDEF_LOGCALLBACK_T <<typedef>> #LightYellow
     + void (*)(log_level_t level, const char * message)
 }
 
-' Include relationships: C or H files including other H files
+' Include relationships
 LOGGER --> HEADER_LOGGER : <<include>>
 LOGGER --> HEADER_STDARG_H : <<include>>
 LOGGER --> HEADER_STRING_H : <<include>>
 HEADER_LOGGER --> HEADER_STDIO_H : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 
-' Declaration relationships: C or H files declaring typedef with declares relation
+' Declaration relationships
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_LOGCALLBACK_T : <<declares>>
 
-' Uses relationships: typedefs using other typedefs relations via 'uses' linkage
+' Uses relationships
 TYPEDEF_LOGCALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
 
 @enduml

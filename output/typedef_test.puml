@@ -229,7 +229,7 @@ class "ComplexExample_t" as TYPEDEF_COMPLEXEXAMPLE_T <<typedef>> #LightYellow
     + int[5] values
 }
 
-' Include relationships: C or H files including other H files
+' Include relationships
 TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>
 TYPEDEF_TEST --> HEADER_COMPLEX_EXAMPLE : <<include>>
 TYPEDEF_TEST --> HEADER_GEOMETRY : <<include>>
@@ -250,7 +250,7 @@ HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
 
-' Declaration relationships: C or H files declaring typedef with declares relation
+' Declaration relationships
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MYLEN : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MYINT : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MYSTRING : <<declares>>
@@ -272,7 +272,7 @@ HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_LOGCALLBACK_T : <<declares>>
 
-' Uses relationships: typedefs using other typedefs relations via 'uses' linkage
+' Uses relationships
 TYPEDEF_MYBUFFER ..> TYPEDEF_MYLEN : <<uses>>
 TYPEDEF_MYBUFFER ..> TYPEDEF_MYSTRING : <<uses>>
 TYPEDEF_MYCALLBACK ..> TYPEDEF_MYBUFFER : <<uses>>
