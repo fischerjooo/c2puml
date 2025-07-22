@@ -7,6 +7,7 @@ import json
 import logging
 from pathlib import Path
 from typing import Dict, List, Optional
+import re
 
 from .models import FileModel, ProjectModel
 
@@ -41,6 +42,9 @@ class PlantUMLGenerator:
 
         # Generate relationships
         diagram_lines.extend(self._generate_relationships(file_model, project_model))
+
+        # Generate typedef uses relations
+        diagram_lines.extend(self.generate_typedef_uses_relations(file_model, project_model))
 
         # End diagram
         diagram_lines.extend(["", "@enduml"])
@@ -1047,21 +1051,56 @@ class PlantUMLGenerator:
         # For each typedef, if its fields use another typedef, emit a uses relation
         lines = []
         typedef_names = set()
+        
+        # Collect all typedef names from all files
         for f in project_model.files.values():
             typedef_names.update(f.typedefs.keys())
+            # Also add typedef names from typedef_relations
+            for typedef_rel in f.typedef_relations:
+                typedef_names.add(typedef_rel.typedef_name)
+        
         for f in project_model.files.values():
             for typedef in f.typedef_relations:
                 typedef_name = typedef.typedef_name
+                
                 # Find the struct/union/enum fields for this typedef
-                struct = f.structs.get(typedef.struct_tag_name) if hasattr(typedef, 'struct_tag_name') and typedef.struct_tag_name else None
+                struct = None
+                
+                # Try to find the struct by the struct tag name
+                if hasattr(typedef, 'struct_tag_name') and typedef.struct_tag_name:
+                    struct = f.structs.get(typedef.struct_tag_name)
+                
+                # If not found, try by the typedef name itself
                 if not struct:
                     struct = f.structs.get(typedef_name)
+                
+                # If still not found, try common variations
+                if not struct:
+                    # Try with _tag suffix
+                    if not typedef_name.endswith('_tag'):
+                        struct = f.structs.get(f"{typedef_name}_tag")
+                
+                # If still not found, try without _t suffix
+                if not struct and typedef_name.endswith('_t'):
+                    base_name = typedef_name[:-2]
+                    struct = f.structs.get(base_name)
+                    
+                    # Also try with _tag suffix
+                    if not struct:
+                        struct = f.structs.get(f"{base_name}_tag")
+                
                 if struct:
                     for field in struct.fields:
                         # If the field type is another typedef, emit a uses relation
+                        # Strip array syntax, pointers, const, etc.
                         field_type = field.type.replace('const ', '').replace('*', '').strip()
+                        # Remove array syntax like [3], [MAX_LABEL_LEN], etc.
+                        field_type = re.sub(r'\[[^\]]*\]', '', field_type).strip()
+                        
+                        # Check if the field type is a typedef
                         if field_type in typedef_names and field_type != typedef_name:
                             lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(field_type)} : uses")
+        
         return lines
 
 

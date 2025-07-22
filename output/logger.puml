@@ -3,7 +3,7 @@
 class "logger" as LOGGER <<source>> #LightBlue
 {
     -- Global Variables --
-    log_callback_t current_cb
+    static log_callback_t current_cb
     -- Functions --
     void set_log_callback(log_callback_t cb)
     void log_message(log_level_t level, const char * fmt)
@@ -53,5 +53,6 @@ LOGGER --> HEADER_STRING_H : <<include>>
 HEADER_LOGGER --> HEADER_STDIO_H : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : declares
+TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : uses
 
 @enduml
