@@ -18,28 +18,12 @@ class "typedef_test" as HEADER_TYPEDEF_TEST <<header>> #LightGreen
 {
     -- Macros --
     + #define TYPEDEF_TEST_H
-    -- Struct Fields --
-    + MyLen length
-    + MyString data
-    + MyLen id
-    + MyString name
-    + MyCallback callback
-    + log_level_t log_level
-    + int a
-    + int b
 }
 
 class "complex_example" as HEADER_COMPLEX_EXAMPLE <<header>> #LightGreen
 {
     -- Macros --
     + #define COMPLEX_EXAMPLE_H
-    -- Struct Fields --
-    + id_t id
-    + char description [ MAX_LABEL_LEN ]
-    + log_level_t log_level
-    + NestedInfo_t info
-    + CE_Status_t status
-    + int values [ 5 ]
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
@@ -49,9 +33,6 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     -- Functions --
     + #ifndef GEOMETRY_H #define GEOMETRY_H #include "sample.h" #include "math_utils.h" typedef struct triangle_tag { point_t vertices [ 3 ] ; char label [ MAX_LABEL_LEN ] ; } triangle_t ; triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
     + int triangle_area(const triangle_t * tri)
-    -- Struct Fields --
-    + point_t vertices [ 3 ]
-    + char label [ MAX_LABEL_LEN ]
 }
 
 class "logger" as HEADER_LOGGER <<header>> #LightGreen
@@ -82,10 +63,6 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + #ifndef SAMPLE_H #define SAMPLE_H #include <stddef.h> #include "config.h" #define PI 3.14159 #define VERSION "1.0.0" typedef struct point_tag { int x ; int y ; char label [ 32 ] ; } point_t ; typedef enum system_state_tag { STATE_IDLE = 0 , STATE_RUNNING , STATE_ERROR } system_state_t ; extern int calculate_sum(int a, int b)
     + point_t * create_point(int x, int y, const char * label)
     + void process_point(point_t * p)
-    -- Struct Fields --
-    + int x
-    + int y
-    + char label [ 32 ]
 }
 
 class "config" as HEADER_CONFIG <<header>> #LightGreen

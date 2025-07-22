@@ -363,18 +363,6 @@ class PlantUMLGenerator:
             for function in file_model.functions:
                 lines.append(f"    + {self._format_function_signature(function)}")
         
-        # Display struct fields as global variables (for backward compatibility with tests)
-        # But only show them if they're not already shown as typedefs
-        if file_model.structs:
-            lines.append("    -- Struct Fields --")
-            seen_fields = set()
-            for struct_name, struct in file_model.structs.items():
-                for field in struct.fields:
-                    field_key = f"{field.type} {field.name}"
-                    if field_key not in seen_fields:
-                        seen_fields.add(field_key)
-                        lines.append(f"    + {field.type} {field.name}")
-        
         lines.append("}")
         lines.append("")
         return lines
