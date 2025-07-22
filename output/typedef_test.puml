@@ -44,7 +44,7 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
     + void log_message(log_level_t level, const char * fmt, . . .)
 }
 
-class "stdlib.h" as HEADER_STDLIB_H <<header>> #LightGray
+class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
 {
 }
 
@@ -74,7 +74,7 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + #define DEFAULT_BUFFER_SIZE
 }
 
-class "stdint.h" as HEADER_STDINT_H <<header>> #LightGray
+class "stdint.h" as HEADER_STDINT <<header>> #LightGray
 {
 }
 
@@ -88,7 +88,7 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     + real_t average(const int * arr, size_t len)
 }
 
-class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
+class "stdio.h" as HEADER_STDIO <<header>> #LightGray
 {
 }
 
@@ -236,17 +236,17 @@ TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>
 TYPEDEF_TEST --> HEADER_COMPLEX_EXAMPLE : <<include>>
 TYPEDEF_TEST --> HEADER_GEOMETRY : <<include>>
 TYPEDEF_TEST --> HEADER_LOGGER : <<include>>
-TYPEDEF_TEST --> HEADER_STDLIB_H : <<include>>
-HEADER_TYPEDEF_TEST --> HEADER_STDINT_H : <<include>>
+TYPEDEF_TEST --> HEADER_STDLIB : <<include>>
+HEADER_TYPEDEF_TEST --> HEADER_STDINT : <<include>>
 HEADER_TYPEDEF_TEST --> HEADER_SAMPLE : <<include>>
 HEADER_TYPEDEF_TEST --> HEADER_CONFIG : <<include>>
 HEADER_COMPLEX_EXAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_COMPLEX_EXAMPLE --> HEADER_LOGGER : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
-HEADER_LOGGER --> HEADER_STDIO_H : <<include>>
+HEADER_LOGGER --> HEADER_STDIO : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
-HEADER_CONFIG --> HEADER_STDINT_H : <<include>>
+HEADER_CONFIG --> HEADER_STDINT : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>

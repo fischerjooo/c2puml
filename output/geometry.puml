@@ -16,11 +16,11 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     + int triangle_area(const triangle_t * tri)
 }
 
-class "string.h" as HEADER_STRING_H <<header>> #LightGray
+class "string.h" as HEADER_STRING <<header>> #LightGray
 {
 }
 
-class "stdlib.h" as HEADER_STDLIB_H <<header>> #LightGray
+class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
 {
 }
 
@@ -79,8 +79,8 @@ class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
 }
 
 GEOMETRY --> HEADER_GEOMETRY : <<include>>
-GEOMETRY --> HEADER_STRING_H : <<include>>
-GEOMETRY --> HEADER_STDLIB_H : <<include>>
+GEOMETRY --> HEADER_STRING : <<include>>
+GEOMETRY --> HEADER_STDLIB : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>

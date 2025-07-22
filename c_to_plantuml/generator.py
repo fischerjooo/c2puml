@@ -1110,6 +1110,9 @@ class PlantUMLGenerator:
 
     def _get_header_uml_id(self, name: str) -> str:
         """Generate UML ID for a header class"""
+        # Remove .h extension if present
+        if name.endswith('.h'):
+            name = name[:-2]
         return f"HEADER_{self._get_uml_id(name)}"
 
     def _get_typedef_uml_id(self, name: str) -> str:
