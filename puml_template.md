@@ -9,9 +9,12 @@ This template defines the structure for generating PlantUML diagrams from C sour
 
 ## Content Formatting Rules
 - **Standard library headers**: Shown without angle brackets (e.g., `stdio.h` not `<stdio.h>`)
-- **Macro definitions**: Function-like macros include parameter names (e.g., `#define MIN(a, b)`, `#define CALC(x, y)`)
+- **Macro definitions**: 
+  - Simple defines show only the name (e.g., `#define PI`, `#define MAX_SIZE`)
+  - Function-like macros show name and parameters only (e.g., `#define MIN(a, b)`, `#define CALC(x, y)`)
+  - No macro values/definitions are shown
 - **Function signatures**: Include full parameter lists and return types
-- **Typedef declarations**: All typedefs (structs, enums, unions, function pointers, primitives) are in separate classes
+- **Typedef declarations**: All typedefs (structs, enums, unions, function pointers, primitives) are in separate classes. Simple typedefs show only the type without repeating the name (e.g., `+ uint32_t` not `+ typedef uint32_t id_t`)
 
 ```plantuml
 @startuml {basename}
@@ -20,8 +23,8 @@ This template defines the structure for generating PlantUML diagrams from C sour
 class "{basename}" as {UML_ID} <<source>> #LightBlue
 {
     -- Macros --
-    - #define {macro_name}
-    - #define {macro_name}({parameters})
+    - #define {macro_name} ' (for simple defines)
+    - #define {macro_name}({parameters}) ' (for function-like macros)
     -- Global Variables --
     {type} {variable_name}
     -- Functions --
@@ -32,8 +35,8 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
 class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
 {
     -- Macros --
-    + #define {macro_name}
-    + #define {macro_name}({parameters})
+    + #define {macro_name} ' (for simple defines)
+    + #define {macro_name}({parameters}) ' (for function-like macros)
     -- Global Variables --
     + {type} {variable_name}
     -- Functions --
@@ -68,5 +71,7 @@ class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
   - Typedefs: `TYPEDEF_` prefix, typedef name in capital letters
 - Relationships are grouped as: Include, Declaration, and Uses.
 - Standard library headers (stdio.h, stdlib.h, string.h, etc.) are displayed without angle brackets.
-- Function-like macros include parameter names in the format `#define MACRO(param1, param2)`.
+- Macro definitions show only names and parameters, not values:
+  - Simple defines: `#define PI`, `#define MAX_SIZE`
+  - Function-like macros: `#define MIN(a, b)`, `#define CALC(x, y)`
 - Function signatures include complete parameter lists and return types.

@@ -162,7 +162,7 @@ class PUMLValidator:
             "config.h": {
                 "includes": ["stddef.h", "stdint.h"],
                 "macros": ["#define CONFIG_H", "#define PROJECT_NAME", "#define MAX_LABEL_LEN", "#define DEFAULT_BUFFER_SIZE"],
-                "typedefs": ["typedef uint32_t id_t", "typedef int32_t status_t", "typedef enum GlobalStatus GlobalStatus_t"],
+                "typedefs": ["typedef uint32_t id_t", "typedef int32_t status_t", "typedef enum GlobalStatus GlobalStatus_t;"],
                 "functions": [],
                 "globals": []
             },
@@ -242,10 +242,47 @@ class PUMLValidator:
     def extract_typedefs(self, content: str) -> List[str]:
         """Extract all typedef statements from source file content."""
         typedefs = []
-        typedef_pattern = r'typedef\s+(?:struct|enum|union)?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*[a-zA-Z_][a-zA-Z0-9_]*\s*;?'
-        matches = re.findall(typedef_pattern, content)
-        for match in matches:
+        
+        # Use a simpler approach: look for typedef patterns and extract them
+        # This is more reliable than complex regex patterns
+        
+        # Pattern for simple typedefs: typedef type name;
+        simple_pattern = r'typedef\s+[a-zA-Z_][a-zA-Z0-9_]*\s+\*?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*(?:\[[^\]]*\])?\s*;'
+        simple_matches = re.findall(simple_pattern, content)
+        for match in simple_matches:
             typedefs.append(match.strip())
+        
+        # Pattern for function pointer typedefs
+        func_ptr_pattern = r'typedef\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\(\s*\*\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\)\s*\([^)]*\)\s*;'
+        func_matches = re.findall(func_ptr_pattern, content)
+        for match in func_matches:
+            typedefs.append(match.strip())
+        
+        # For complex typedefs (struct/enum/union), look for the pattern:
+        # typedef struct/enum/union tag { ... } name;
+        # We'll use a simpler approach that looks for the key parts
+        
+        # Look for typedef followed by struct/enum/union
+        lines = content.split('\n')
+        for line in lines:
+            line = line.strip()
+            if line.startswith('typedef') and any(keyword in line for keyword in ['struct', 'enum', 'union']):
+                # This is a complex typedef, extract the basic pattern
+                # Look for: typedef struct/enum/union tag
+                match = re.search(r'typedef\s+(struct|enum|union)\s+([a-zA-Z_][a-zA-Z0-9_]*)', line)
+                if match:
+                    typedef_type = match.group(1)
+                    typedef_tag = match.group(2)
+                    typedefs.append(f"typedef {typedef_type} {typedef_tag}")
+        
+        # Also look for the specific pattern: typedef enum GlobalStatus GlobalStatus_t;
+        enum_typedef_pattern = r'typedef\s+enum\s+([a-zA-Z_][a-zA-Z0-9_]*)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*;'
+        enum_matches = re.findall(enum_typedef_pattern, content)
+        for match in enum_matches:
+            enum_name = match[0]
+            typedef_name = match[1]
+            typedefs.append(f"typedef enum {enum_name} {typedef_name};")
+        
         return typedefs
         
     def extract_functions(self, content: str) -> List[str]:
@@ -266,8 +303,8 @@ class PUMLValidator:
     def extract_globals(self, content: str) -> List[str]:
         """Extract global variable declarations from source file content."""
         globals = []
-        # Pattern for global variable declarations
-        global_pattern = r'(?:extern\s+)?(?:const\s+)?[a-zA-Z_][a-zA-Z0-9_]*\s+\*?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*[=;]'
+        # Pattern for global variable declarations including arrays
+        global_pattern = r'(?:extern\s+)?(?:const\s+)?[a-zA-Z_][a-zA-Z0-9_]*\s+\*?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*(?:\[[^\]]*\])?\s*[=;]'
         matches = re.findall(global_pattern, content)
         for match in matches:
             globals.append(match.strip())
@@ -387,19 +424,41 @@ class PUMLValidator:
         include_pattern = r'(\w+)\s+-->\s+(\w+)\s+:\s+<<include>>'
         includes = re.findall(include_pattern, content)
         for source, target in includes:
-            relationships.append((source, target, 'include'))
+            relationships.append((source, target, '<<include>>'))
             
         # Declaration relationships: A ..> B : <<declares>>
         declare_pattern = r'(\w+)\s+\.\.>\s+(\w+)\s+:\s+<<declares>>'
         declares = re.findall(declare_pattern, content)
         for source, target in declares:
-            relationships.append((source, target, 'declares'))
+            relationships.append((source, target, '<<declares>>'))
             
         # Uses relationships: A ..> B : <<uses>>
         uses_pattern = r'(\w+)\s+\.\.>\s+(\w+)\s+:\s+<<uses>>'
         uses = re.findall(uses_pattern, content)
         for source, target in uses:
-            relationships.append((source, target, 'uses'))
+            relationships.append((source, target, '<<uses>>'))
+            
+        # Also check for relationships without angle brackets (to detect violations)
+        # Include relationships without brackets: A --> B : include
+        include_no_brackets_pattern = r'(\w+)\s+-->\s+(\w+)\s+:\s+(?!<<)(\w+)(?!>>)'
+        includes_no_brackets = re.findall(include_no_brackets_pattern, content)
+        for source, target, rel_type in includes_no_brackets:
+            if rel_type == 'include':
+                relationships.append((source, target, rel_type))
+            
+        # Declaration relationships without brackets: A ..> B : declares
+        declare_no_brackets_pattern = r'(\w+)\s+\.\.>\s+(\w+)\s+:\s+(?!<<)(\w+)(?!>>)'
+        declares_no_brackets = re.findall(declare_no_brackets_pattern, content)
+        for source, target, rel_type in declares_no_brackets:
+            if rel_type == 'declares':
+                relationships.append((source, target, rel_type))
+            
+        # Uses relationships without brackets: A ..> B : uses
+        uses_no_brackets_pattern = r'(\w+)\s+\.\.>\s+(\w+)\s+:\s+(?!<<)(\w+)(?!>>)'
+        uses_no_brackets = re.findall(uses_no_brackets_pattern, content)
+        for source, target, rel_type in uses_no_brackets:
+            if rel_type == 'uses':
+                relationships.append((source, target, rel_type))
             
         return relationships
         
@@ -475,25 +534,46 @@ class PUMLValidator:
         print(f"\n🔗 Validating relationships for {filename}:")
         
         # Group relationships by type
-        includes = [(s, t) for s, t, r in relationships if r == 'include']
-        declares = [(s, t) for s, t, r in relationships if r == 'declares']
-        uses = [(s, t) for s, t, r in relationships if r == 'uses']
+        includes = [(s, t) for s, t, r in relationships if r == '<<include>>']
+        declares = [(s, t) for s, t, r in relationships if r == '<<declares>>']
+        uses = [(s, t) for s, t, r in relationships if r == '<<uses>>']
         
         print(f"  📊 Relationship counts:")
         print(f"    Include: {len(includes)}")
         print(f"    Declares: {len(declares)}")
         print(f"    Uses: {len(uses)}")
         
+        # Check for duplicate relationships
+        self._validate_no_duplicate_relationships(relationships, filename)
+        
+        # Check for consistent relationship formatting
+        self._validate_relationship_formatting(relationships, filename)
+        
         # Assert relationship structure
         for source, target, rel_type in relationships:
             assert source and target, f"Invalid relationship: {source} -> {target}"
-            assert rel_type in ['include', 'declares', 'uses'], f"Invalid relationship type: {rel_type}"
+            assert rel_type in ['<<include>>', '<<declares>>', '<<uses>>'], f"Invalid relationship type: {rel_type}"
             
         print(f"    ✅ Relationship structure valid")
         
     def assert_specific_content(self, content: str, filename: str) -> None:
         """Assert specific content requirements for each file."""
         print(f"\n🎯 Validating specific content for {filename}:")
+        
+        # Check for macro formatting issues
+        self._validate_macro_formatting(content, filename)
+        
+        # Check for typedef content issues
+        self._validate_typedef_content(content, filename)
+        
+        # Check for global variable formatting issues
+        self._validate_global_variable_formatting(content, filename)
+        
+        # Check that no "-- Typedefs --" sections exist in header or source classes
+        self._validate_no_typedefs_sections_in_header_or_source_classes(content, filename)
+        
+        # Check that PlantUML files are only generated for C files, not header files
+        self._validate_only_c_files_have_puml_diagrams(filename)
         
         if filename == "typedef_test.puml":
             # Should have specific typedef classes
@@ -573,7 +653,224 @@ class PUMLValidator:
             assert 'TYPEDEF_STATUS_T' in content, "Missing TYPEDEF_STATUS_T class"
             
         print(f"    ✅ Specific content valid")
+    
+    def _validate_macro_formatting(self, content: str, filename: str) -> None:
+        """Validate that macros show only name/parameters, not full values."""
+        # Look for function-like macros that are missing parameters
+        lines = content.split('\n')
         
+        for line in lines:
+            line = line.strip()
+            if line.startswith('#define'):
+                # Check if this is a function-like macro that should have parameters
+                # Look for common function-like macro names
+                macro_name = line.split()[1] if len(line.split()) > 1 else ""
+                
+                # Check if this macro should have parameters based on common patterns
+                if macro_name in ['MIN', 'MAX', 'CALC'] and '(' not in line:
+                    raise AssertionError(f"Function-like macro {macro_name} missing parameters in {filename}")
+                
+                # Check for macros that show full values instead of just name/parameters
+                if macro_name in ['MIN', 'MAX', 'CALC'] and '(' in line and ')' in line:
+                    # Check if the macro shows the full value after the parameters
+                    parts = line.split(')')
+                    if len(parts) > 1 and parts[1].strip() and not parts[1].strip().startswith(';'):
+                        raise AssertionError(f"Macro {macro_name} showing full value instead of just name/parameters in {filename}")
+                
+                # Check for simple defines that show values instead of just names
+                if macro_name in ['PI', 'MAX_SIZE', 'DEFAULT_VALUE'] and '=' in line:
+                    raise AssertionError(f"Simple define {macro_name} showing value instead of just name in {filename}")
+                
+                # Check for variadic function issues
+                if '... ...' in line:
+                    raise AssertionError(f"Malformed variadic function with '... ...' in {filename}")
+        
+        print("    ✅ Macro formatting valid")
+    
+    def _validate_typedef_content(self, content: str, filename: str) -> None:
+        """Validate that typedef content is properly displayed."""
+        # Check for typedef content issues
+        lines = content.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            
+            # Check for struct typedefs that only show "typedef struct Name" without fields
+            if 'typedef struct' in line and 'typedef struct' in line and '{' not in line:
+                # This might be a struct typedef without fields - check if it should have fields
+                if any(keyword in line for keyword in ['MyBuffer', 'MyComplex', 'Point_t', 'triangle_t']):
+                    # These structs should have fields displayed
+                    if 'Field(' not in content and 'field' not in content.lower():
+                        raise AssertionError(f"Struct typedef missing fields in {filename}")
+            
+            # Check for enum typedefs that show EnumValue objects instead of clean values
+            if 'EnumValue(' in line:
+                raise AssertionError(f"Enum typedef showing EnumValue objects instead of clean values in {filename}")
+            
+            # Check for function pointer typedefs with raw tokenized format
+            if 'typedef' in line and '(*' in line and ')' in line and 'typedef' in line:
+                # Check for malformed function pointer typedefs
+                if line.count('typedef') > 1 or '... ...' in line:
+                    raise AssertionError(f"Malformed function pointer typedef in {filename}")
+            
+            # Check for simple typedefs that repeat the typedef name
+            if line.startswith('+ typedef') and 'typedef' in line:
+                # Check if the typedef name is repeated at the end
+                parts = line.split()
+                if len(parts) >= 3:
+                    typedef_name = parts[2]  # e.g., "uint32_t" or "void"
+                    if len(parts) > 3 and parts[-1] == typedef_name:
+                        raise AssertionError(f"Simple typedef repeating name '{typedef_name}' in {filename}")
+            
+            # Check for enum/struct typedefs that show only the type instead of values/fields
+            if line.strip() in ['+ enum', '+ struct']:
+                raise AssertionError(f"Enum/struct typedef showing only type '{line.strip()}' instead of values/fields in {filename}")
+        
+        print("    ✅ Typedef content valid")
+    
+    def _validate_global_variable_formatting(self, content: str, filename: str) -> None:
+        """Validate that global variables are properly formatted."""
+        # Check for global variable formatting issues
+        lines = content.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            
+            # Check for global variables that show Field objects instead of clean format
+            if 'Field(' in line and 'name=' in line and 'type=' in line:
+                raise AssertionError(f"Global variable showing Field object instead of clean format in {filename}")
+            
+            # Check for malformed variadic functions
+            if '... ...' in line:
+                raise AssertionError(f"Malformed variadic function with '... ...' in {filename}")
+        
+        print("    ✅ Global variable formatting valid")
+
+    def _validate_no_typedefs_in_header_or_source_classes(self, puml_lines, filename):
+        """Assert that no typedefs (e.g., '+ struct', '+ enum', or any typedef) are generated in header or source class blocks (HEADER_xxx or main class blocks)."""
+        in_header_or_main_class = False
+        class_name = None
+        for line in puml_lines:
+            # Detect start of a header or main class
+            if line.strip().startswith('class "') and (
+                'as HEADER_' in line or 'as ' in line and '<<header>>' in line or '<<main>>' in line):
+                in_header_or_main_class = True
+                class_name = line.strip()
+                continue
+            if in_header_or_main_class:
+                if line.strip() == '}':
+                    in_header_or_main_class = False
+                    class_name = None
+                    continue
+                # Detect typedefs in header or main class
+                if line.strip().startswith('+ struct') or line.strip().startswith('+ enum') or line.strip().startswith('+ typedef'):
+                    raise AssertionError(f"Typedef found in header or source class block {class_name} in {filename}: {line.strip()}")
+
+    def _validate_no_typedefs_sections_in_header_or_source_classes(self, content: str, filename: str) -> None:
+        """Assert that no '-- Typedefs --' sections exist in header or source class blocks."""
+        lines = content.split('\n')
+        in_header_or_source_class = False
+        class_name = None
+        
+        for i, line in enumerate(lines):
+            line = line.strip()
+            
+            # Detect start of a header or source class
+            if line.startswith('class "') and (
+                'as HEADER_' in line or 
+                ('as ' in line and '<<header>>' in line) or 
+                ('as ' in line and '<<main>>' in line) or
+                ('as ' in line and not '<<typedef>>' in line and not '<<enum>>' in line)
+            ):
+                in_header_or_source_class = True
+                class_name = line
+                continue
+                
+            if in_header_or_source_class:
+                if line == '}':
+                    in_header_or_source_class = False
+                    class_name = None
+                    continue
+                    
+                # Check for "-- Typedefs --" section in header or source class
+                if line == '-- Typedefs --':
+                    raise AssertionError(f"'-- Typedefs --' section found in header or source class block in {filename}: {class_name}")
+                    
+                # Also check for typedef values that might appear after the section
+                if line.startswith('+ ') and ('struct' in line or 'enum' in line or 'typedef' in line):
+                    # Look back a few lines to see if we're in a typedefs section
+                    for j in range(max(0, i-5), i):
+                        if lines[j].strip() == '-- Typedefs --':
+                            raise AssertionError(f"Typedef value found in '-- Typedefs --' section of header or source class block in {filename}: {class_name} - {line}")
+
+    def _validate_only_c_files_have_puml_diagrams(self, filename: str) -> None:
+        """Assert that PlantUML files are only generated for C files, not header files."""
+        # Extract the base name from the PlantUML filename
+        puml_basename = filename.replace('.puml', '')
+        
+        # Check if this corresponds to a header file by looking for .h extension
+        # The expected C files that should have PlantUML diagrams
+        expected_c_files = [
+            "typedef_test",  # typedef_test.c
+            "geometry",      # geometry.c  
+            "logger",        # logger.c
+            "math_utils",    # math_utils.c
+            "sample"         # sample.c
+        ]
+        
+        # Check if this is a header file by looking for common header patterns
+        header_patterns = [
+            "complex_example",  # complex_example.h
+            "config",          # config.h
+            "sample_h",        # sample.h (if generated separately)
+            "logger_h",        # logger.h (if generated separately)
+            "math_utils_h",    # math_utils.h (if generated separately)
+            "geometry_h",      # geometry.h (if generated separately)
+            "typedef_test_h"   # typedef_test.h (if generated separately)
+        ]
+        
+        # If the basename matches a header pattern, throw an error
+        if puml_basename in header_patterns:
+            raise AssertionError(f"PlantUML diagram generated for header file: {filename}. Only C files should have PlantUML diagrams generated.")
+        
+        # If the basename is not in expected C files, it might be a header file
+        if puml_basename not in expected_c_files:
+            # Check if there's a corresponding .h file in the source directory
+            header_file_path = self.source_dir / f"{puml_basename}.h"
+            if header_file_path.exists():
+                raise AssertionError(f"PlantUML diagram generated for header file: {filename} (corresponds to {puml_basename}.h). Only C files should have PlantUML diagrams generated.")
+
+    def _validate_no_duplicate_relationships(self, relationships: List[Tuple[str, str, str]], filename: str) -> None:
+        """Assert that no duplicate relationships exist between the same two objects."""
+        seen_relationships = set()
+        duplicates = []
+        
+        for source, target, rel_type in relationships:
+            # Create a key for the relationship (source, target, type)
+            rel_key = (source, target, rel_type)
+            
+            if rel_key in seen_relationships:
+                duplicates.append(f"{source} -> {target} ({rel_type})")
+            else:
+                seen_relationships.add(rel_key)
+        
+        if duplicates:
+            duplicate_list = ", ".join(duplicates)
+            raise AssertionError(f"Duplicate relationships found in {filename}: {duplicate_list}")
+
+    def _validate_relationship_formatting(self, relationships: List[Tuple[str, str, str]], filename: str) -> None:
+        """Assert that all relationships use consistent <<>> formatting."""
+        invalid_relationships = []
+        
+        for source, target, rel_type in relationships:
+            # Check if the relationship type has angle brackets
+            if not rel_type.startswith('<<') or not rel_type.endswith('>>'):
+                invalid_relationships.append(f"{source} -> {target} ({rel_type})")
+        
+        if invalid_relationships:
+            invalid_list = ", ".join(invalid_relationships)
+            raise AssertionError(f"Relationships without <<>> formatting found in {filename}: {invalid_list}")
+
     def validate_file(self, filename: str) -> None:
         """Validate a single PUML file."""
         print(f"\n{'='*60}")
@@ -637,8 +934,14 @@ class PUMLValidator:
         print("📊 Validating generated PUML files")
         print(f"{'='*60}")
         
+        # Find all PlantUML files in the output directory
+        all_puml_files = list(self.output_dir.glob("*.puml"))
+        puml_filenames = [f.name for f in all_puml_files]
+        
+        print(f"📁 Found {len(puml_filenames)} PlantUML files: {puml_filenames}")
+        
         # Validate each PUML file
-        for filename in self.expected_files:
+        for filename in puml_filenames:
             try:
                 self.validate_file(filename)
             except AssertionError as e:

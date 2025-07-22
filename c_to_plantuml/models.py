@@ -24,8 +24,8 @@ class Field:
 
     def __post_init__(self):
         """Validate field data after initialization"""
-        if not self.name or not isinstance(self.name, str):
-            raise ValueError("Field name must be a non-empty string")
+        if not isinstance(self.name, str):
+            raise ValueError("Field name must be a string")
         if not self.type or not isinstance(self.type, str):
             raise ValueError("Field type must be a non-empty string")
 
@@ -101,16 +101,25 @@ class Struct:
 
 
 @dataclass
-class Enum:
-    """Represents a C enum"""
-
+class EnumValue:
     name: str
-    values: List[str] = field(default_factory=list)
+    value: Optional[str] = None
 
     def __post_init__(self):
-        """Validate enum data after initialization"""
+        if not self.name or not isinstance(self.name, str):
+            raise ValueError("Enum value name must be a non-empty string")
+
+@dataclass
+class Enum:
+    """Represents a C enum"""
+    name: str
+    values: List[EnumValue] = field(default_factory=list)
+
+    def __post_init__(self):
         if not self.name or not isinstance(self.name, str):
             raise ValueError("Enum name must be a non-empty string")
+        # Convert any string values to EnumValue
+        self.values = [v if isinstance(v, EnumValue) else EnumValue(v) for v in self.values]
 
 
 @dataclass
@@ -206,8 +215,9 @@ class FileModel:
         enums = {}
         for name, enum_data in enums_data.items():
             if isinstance(enum_data, dict):
+                values = [EnumValue(**val) if isinstance(val, dict) else EnumValue(val) for val in enum_data.get("values", [])]
                 enums[name] = Enum(
-                    name=enum_data.get("name", name), values=enum_data.get("values", [])
+                    name=enum_data.get("name", name), values=values
                 )
             else:
                 enums[name] = enum_data

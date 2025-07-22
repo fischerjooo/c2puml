@@ -17,8 +17,8 @@
               "value": null
             },
             {
-              "name": "]",
-              "type": "char description [ MAX_LABEL_LEN",
+              "name": "description",
+              "type": "char MAX_LABEL_LEN[ ]",
               "value": null
             },
             {
@@ -43,8 +43,8 @@
               "value": null
             },
             {
-              "name": "]",
-              "type": "int values [ 5",
+              "name": "values",
+              "type": "int 5[ ]",
               "value": null
             }
           ],
@@ -55,9 +55,18 @@
         "CE_Status_t": {
           "name": "CE_Status_t",
           "values": [
-            "CE_STATUS_OK = 0",
-            "CE_STATUS_WARN",
-            "CE_STATUS_FAIL"
+            {
+              "name": "CE_STATUS_OK",
+              "value": "0"
+            },
+            {
+              "name": "CE_STATUS_WARN",
+              "value": null
+            },
+            {
+              "name": "CE_STATUS_FAIL",
+              "value": null
+            }
           ]
         }
       },
@@ -75,7 +84,29 @@
         "CE_Status_t": "enum",
         "ComplexExample_t": "struct"
       },
-      "typedef_relations": [],
+      "typedef_relations": [
+        {
+          "typedef_name": "NestedInfo_t",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "NestedInfo_tag",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "CE_Status_t",
+          "original_type": "enum",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": "CE_Status_tag"
+        },
+        {
+          "typedef_name": "ComplexExample_t",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "ComplexExample_tag",
+          "enum_tag_name": ""
+        }
+      ],
       "include_relations": [
         {
           "source_file": "/workspace/example/source/complex_example.h",
@@ -110,9 +141,18 @@
         "GlobalStatus": {
           "name": "GlobalStatus",
           "values": [
-            "GS_OK",
-            "GS_ERROR",
-            "GS_UNKNOWN"
+            {
+              "name": "GS_OK",
+              "value": null
+            },
+            {
+              "name": "GS_ERROR",
+              "value": null
+            },
+            {
+              "name": "GS_UNKNOWN",
+              "value": null
+            }
           ]
         }
       },
@@ -214,13 +254,13 @@
           "name": "triangle_t",
           "fields": [
             {
-              "name": "]",
-              "type": "point_t vertices [ 3",
+              "name": "vertices",
+              "type": "point_t 3[ ]",
               "value": null
             },
             {
-              "name": "]",
-              "type": "char label [ MAX_LABEL_LEN",
+              "name": "label",
+              "type": "char MAX_LABEL_LEN[ ]",
               "value": null
             }
           ],
@@ -282,7 +322,15 @@
       "typedefs": {
         "triangle_t": "struct"
       },
-      "typedef_relations": [],
+      "typedef_relations": [
+        {
+          "typedef_name": "triangle_t",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "triangle_tag",
+          "enum_tag_name": ""
+        }
+      ],
       "include_relations": [
         {
           "source_file": "/workspace/example/source/geometry.h",
@@ -373,8 +421,8 @@
               "value": null
             },
             {
-              "name": ".",
-              "type": ". .",
+              "name": "...",
+              "type": "...",
               "value": null
             }
           ],
@@ -416,10 +464,22 @@
         "log_level_t": {
           "name": "log_level_t",
           "values": [
-            "LOG_DEBUG = 0",
-            "LOG_INFO",
-            "LOG_WARN",
-            "LOG_ERROR"
+            {
+              "name": "LOG_DEBUG",
+              "value": "0"
+            },
+            {
+              "name": "LOG_INFO",
+              "value": null
+            },
+            {
+              "name": "LOG_WARN",
+              "value": null
+            },
+            {
+              "name": "LOG_ERROR",
+              "value": null
+            }
           ]
         }
       },
@@ -452,8 +512,8 @@
               "value": null
             },
             {
-              "name": ".",
-              "type": ". .",
+              "name": "...",
+              "type": "...",
               "value": null
             }
           ],
@@ -473,7 +533,15 @@
         "log_level_t": "enum",
         "log_callback_t": "void ( * log_callback_t ) ( log_level_t level , const char * message )"
       },
-      "typedef_relations": [],
+      "typedef_relations": [
+        {
+          "typedef_name": "log_level_t",
+          "original_type": "enum",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": "log_level_tag"
+        }
+      ],
       "include_relations": [
         {
           "source_file": "/workspace/example/source/logger.h",
@@ -719,7 +787,7 @@
         },
         {
           "name": "create_point",
-          "return_type": "*",
+          "return_type": "point_t *",
           "parameters": [
             {
               "name": "x",
@@ -760,7 +828,7 @@
         },
         {
           "name": "create_point",
-          "return_type": "*",
+          "return_type": "point_t *",
           "parameters": [
             {
               "name": "x",
@@ -816,8 +884,8 @@
           "value": null
         },
         {
-          "name": "]",
-          "type": "char buffer [ MAX_SIZE",
+          "name": "buffer",
+          "type": "char",
           "value": null
         },
         {
@@ -838,7 +906,7 @@
       "macros": [
         "MAX_SIZE",
         "DEBUG_MODE",
-        "CALC"
+        "CALC(x, y)"
       ],
       "typedefs": {},
       "typedef_relations": [],
@@ -886,8 +954,8 @@
               "value": null
             },
             {
-              "name": "]",
-              "type": "char label [ 32",
+              "name": "label",
+              "type": "char 32[ ]",
               "value": null
             }
           ],
@@ -898,16 +966,25 @@
         "system_state_t": {
           "name": "system_state_t",
           "values": [
-            "STATE_IDLE = 0",
-            "STATE_RUNNING",
-            "STATE_ERROR"
+            {
+              "name": "STATE_IDLE",
+              "value": "0"
+            },
+            {
+              "name": "STATE_RUNNING",
+              "value": null
+            },
+            {
+              "name": "STATE_ERROR",
+              "value": null
+            }
           ]
         }
       },
       "functions": [
         {
           "name": "calculate_sum",
-          "return_type": "int",
+          "return_type": "extern int",
           "parameters": [
             {
               "name": "a",
@@ -925,7 +1002,7 @@
         },
         {
           "name": "create_point",
-          "return_type": "*",
+          "return_type": "extern point_t *",
           "parameters": [
             {
               "name": "x",
@@ -948,7 +1025,7 @@
         },
         {
           "name": "process_point",
-          "return_type": "void",
+          "return_type": "extern void",
           "parameters": [
             {
               "name": "p",
@@ -982,14 +1059,29 @@
         "SAMPLE_H",
         "PI",
         "VERSION",
-        "MIN",
-        "MAX"
+        "MIN(a, b)",
+        "MAX(a, b)"
       ],
       "typedefs": {
         "point_t": "struct",
         "system_state_t": "enum"
       },
-      "typedef_relations": [],
+      "typedef_relations": [
+        {
+          "typedef_name": "point_t",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "point_tag",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "system_state_t",
+          "original_type": "enum",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": "system_state_tag"
+        }
+      ],
       "include_relations": [
         {
           "source_file": "/workspace/example/source/sample.h",
@@ -1103,7 +1195,7 @@
         },
         {
           "name": "create_complex",
-          "return_type": "*",
+          "return_type": "MyComplex *",
           "parameters": [
             {
               "name": "id",
@@ -1247,16 +1339,31 @@
         "Color_t": {
           "name": "Color_t",
           "values": [
-            "COLOR_RED = 0",
-            "COLOR_GREEN",
-            "COLOR_BLUE"
+            {
+              "name": "COLOR_RED",
+              "value": "0"
+            },
+            {
+              "name": "COLOR_GREEN",
+              "value": null
+            },
+            {
+              "name": "COLOR_BLUE",
+              "value": null
+            }
           ]
         },
         "Status_t": {
           "name": "Status_t",
           "values": [
-            "STATUS_OK = 0",
-            "STATUS_FAIL"
+            {
+              "name": "STATUS_OK",
+              "value": "0"
+            },
+            {
+              "name": "STATUS_FAIL",
+              "value": null
+            }
           ]
         }
       },
@@ -1287,7 +1394,64 @@
         "NamedUnion_t": "union",
         "MyComplexArray": "MyComplexPtr MyComplexArray [ 10 ]"
       },
-      "typedef_relations": [],
+      "typedef_relations": [
+        {
+          "typedef_name": "MyBuffer",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "MyBuffer_tag",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "MyComplex",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "MyComplexStruct_tag",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "Color_t",
+          "original_type": "enum",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": "Color_tag"
+        },
+        {
+          "typedef_name": "Status_t",
+          "original_type": "enum",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": "StatusEnum_tag"
+        },
+        {
+          "typedef_name": "Point_t",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "Point_tag",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "NamedStruct_t",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "NamedStruct_tag",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "Number_t",
+          "original_type": "union",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "NamedUnion_t",
+          "original_type": "union",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": ""
+        }
+      ],
       "include_relations": [
         {
           "source_file": "/workspace/example/source/typedef_test.h",
@@ -1320,8 +1484,39 @@
           "depth": 1
         }
       ],
-      "unions": {}
+      "unions": {
+        "Number_t": {
+          "name": "Number_t",
+          "fields": [
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "f",
+              "type": "float",
+              "value": null
+            }
+          ]
+        },
+        "NamedUnion_t": {
+          "name": "NamedUnion_t",
+          "fields": [
+            {
+              "name": "c",
+              "type": "char",
+              "value": null
+            },
+            {
+              "name": "d",
+              "type": "double",
+              "value": null
+            }
+          ]
+        }
+      }
     }
   },
-  "created_at": "2025-07-22T13:38:36.308002"
+  "created_at": "2025-07-22T20:50:54.610170"
 }
