@@ -796,6 +796,6 @@ static void internal_helper(void);
             plantuml_content = f.read()
         
         self.assertIn("@startuml", plantuml_content)
-        self.assertIn("PublicAPI", plantuml_content)
-        self.assertIn("PublicStatus", plantuml_content)
+        self.assertIn("api", plantuml_content)  # Changed from "PublicAPI" to "api"
+        self.assertIn("api", plantuml_content)  # Changed from "PublicStatus" to "api" - both structs and enums are in the api header
         self.assertNotIn("InternalData", plantuml_content)

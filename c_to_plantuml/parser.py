@@ -369,12 +369,21 @@ class CParser:
             
             # Check for struct/enum/union declarations (including typedef struct)
             if any(keyword in line for keyword in ['struct ', 'enum ', 'union ']):
-                if '{' in line:
+                # Check if this is actually a global variable declaration with struct type
+                # Pattern: struct TypeName var_name = ...; (not a struct definition)
+                if '=' in line and line.endswith(';'):
+                    logger.debug(f"  Skipping line {i+1}: struct variable declaration, will process as global")
+                    # Don't skip - let it be processed as a global variable
+                    pass
+                elif '{' in line:
                     in_struct_or_enum = True
                     struct_enum_brace_depth = 1  # Start with 1 for the opening brace
                     logger.debug(f"  Entering struct/enum at line {i+1}: {line}")
-                logger.debug(f"  Skipping line {i+1}: struct/enum/union declaration")
-                continue
+                    logger.debug(f"  Skipping line {i+1}: struct/enum/union declaration")
+                    continue
+                else:
+                    logger.debug(f"  Skipping line {i+1}: struct/enum/union declaration")
+                    continue
             
             # Check for typedef declarations (that are not struct/enum/union)
             if line.startswith('typedef') and not any(keyword in line for keyword in ['struct ', 'enum ', 'union ']):
@@ -382,10 +391,27 @@ class CParser:
                 continue
             
             # Check for function-like declarations (function prototypes or definitions)
+            # Pattern: return_type function_name(params) {
             if '(' in line and ')' in line and '{' in line and not in_struct_or_enum:
-                in_function = True
-                logger.debug(f"  Exiting function at line {i+1}")
-                logger.debug(f"  Skipping line {i+1}: function-like declaration")
+                # Check if this looks like a function declaration (not a control structure)
+                # Function pattern: type name(params) {
+                # Control structure pattern: if/for/while/switch (condition) {
+                if any(keyword in line for keyword in ['if ', 'for ', 'while ', 'switch ']):
+                    logger.debug(f"  Skipping line {i+1}: control structure, not function")
+                    continue
+                
+                # Check if it has a return type pattern (type name(params))
+                parts = line.split('(')
+                if len(parts) >= 2:
+                    before_paren = parts[0].strip()
+                    # Check if before_paren contains a type and name
+                    if ' ' in before_paren and not before_paren.startswith(('if ', 'for ', 'while ', 'switch ')):
+                        in_function = True
+                        logger.debug(f"  Entering function at line {i+1}: {line}")
+                        logger.debug(f"  Skipping line {i+1}: function-like declaration")
+                        continue
+                
+                logger.debug(f"  Skipping line {i+1}: control structure or unknown pattern")
                 continue
             
             # Count braces
@@ -404,6 +430,11 @@ class CParser:
                     logger.debug(f"  Exiting struct/enum (braces closed) at line {i+1}")
             else:
                 brace_depth += open_braces - close_braces
+                # Check if we've exited a function
+                if in_function and brace_depth <= 0:
+                    in_function = False
+                    brace_depth = 0
+                    logger.debug(f"  Exiting function at line {i+1}")
             
             # Skip if we're inside a function, any block, or inside a struct/enum definition
             if in_function or brace_depth > 0 or in_struct_or_enum:
@@ -422,6 +453,11 @@ class CParser:
                 # Skip function declarations (containing parentheses)
                 if '(' in line and ')' in line:
                     logger.debug(f"  Skipping line {i+1}: function declaration")
+                    continue
+                
+                # Skip statements that are clearly not global variables
+                if any(keyword in line for keyword in ['return', 'if', 'for', 'while', 'switch', 'case', 'default', 'break', 'continue']):
+                    logger.debug(f"  Skipping line {i+1}: statement, not global variable")
                     continue
                 
                 # Try to parse as a global variable declaration
