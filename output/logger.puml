@@ -52,6 +52,8 @@ class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 LOGGER --> HEADER_LOGGER : <<include>>
 LOGGER --> HEADER_STDARG_H : <<include>>
 LOGGER --> HEADER_STRING_H : <<include>>
+HEADER_LOGGER --> HEADER_STDIO_H : <<include>>
+HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : declares
 
 @enduml
