@@ -11,6 +11,7 @@ test_plantuml_output/
 !output/
 !output/*.puml
 !output/*.json
+!output/*.png
 
 # Python cache and compiled files
 __pycache__/
