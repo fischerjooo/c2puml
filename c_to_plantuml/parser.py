@@ -85,25 +85,24 @@ class CParser:
         with open(file_path, "r", encoding=encoding) as f:
             content = f.read()
 
-        # Parse file content
-        file_model = FileModel(
-            file_path=str(file_path.resolve()),
+        # Parse structs first
+        structs = self._parse_structs(content)
+        
+        return FileModel(
+            file_path=str(file_path),
             relative_path=relative_path,
             project_root=project_root,
             encoding_used=encoding,
-            structs=self._parse_structs(content),
+            structs=structs,
             enums=self._parse_enums(content),
-            unions=self._parse_unions(content),
             functions=self._parse_functions(content),
             globals=self._parse_globals(content),
             includes=self._parse_includes(content),
             macros=self._parse_macros(content),
             typedefs=self._parse_typedefs(content),
-            typedef_relations=self._parse_typedef_relations(content),
+            typedef_relations=self._parse_typedef_relations(content, structs),
             include_relations=[],
         )
-
-        return file_model
 
     def _find_c_files(self, project_root: Path, recursive: bool) -> List[Path]:
         """Find all C/C++ files in the project"""
@@ -140,6 +139,32 @@ class CParser:
     def _detect_encoding(self, file_path: Path) -> str:
         """Detect file encoding with platform-aware fallbacks"""
         return detect_file_encoding(file_path)
+
+    def _parse_struct_fields(self, struct_body: str) -> List["Field"]:
+        """Parse fields from a struct body"""
+        import re
+        from .models import Field
+        
+        fields = []
+        # Improved regex: match type (with pointers/arrays), name, and array size if present
+        # Handles: int x; char label[32]; double *ptr; int (*cb)(int);
+        field_pattern = r"([A-Za-z_][A-Za-z0-9_\*\s]*?)\s+([A-Za-z_][A-Za-z0-9_]*)(\s*\[[^;]*\])?\s*;"
+        import logging
+        logger = logging.getLogger(__name__)
+        for field_match in re.finditer(field_pattern, struct_body):
+            field_type = field_match.group(1).strip()
+            field_name = field_match.group(2).strip()
+            array_size = field_match.group(3)
+            if array_size:
+                field_type = f"{field_type}{array_size.strip()}"
+            logger.debug(f"[struct] About to create Field: type='{field_type}', name='{field_name}'")
+            try:
+                if field_name:
+                    fields.append(Field(field_name, field_type))
+            except Exception as e:
+                logger.error(f"[struct] Exception creating Field: {e} | type='{field_type}', name='{field_name}'")
+                raise
+        return fields
 
     def _parse_structs(self, content: str) -> Dict[str, "Struct"]:
         """Parse struct definitions from content"""
@@ -562,7 +587,7 @@ class CParser:
                 
         return typedefs
 
-    def _parse_typedef_relations(self, content: str) -> List["TypedefRelation"]:
+    def _parse_typedef_relations(self, content: str, structs: Dict[str, "Struct"]) -> List["TypedefRelation"]:
         """Parse typedef relationships from content"""
         import re
         from .models import TypedefRelation
@@ -665,38 +690,6 @@ class CParser:
                         logging.getLogger(__name__).debug("Pattern 4b is actually executed")
                     else:
                         logging.getLogger(__name__).debug("No pattern is actually executed")
-                    
-                    # Check which pattern is actually executed (after the if/elif chain)
-                    if typedef_body.startswith('struct {') or typedef_body.startswith('struct{'):
-                        logging.getLogger(__name__).debug("Pattern 1 is actually executed")
-                    elif re.match(r'^struct\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
-                        logging.getLogger(__name__).debug("Pattern 2b is actually executed")
-                    elif typedef_body.startswith('enum {') or typedef_body.startswith('enum{'):
-                        logging.getLogger(__name__).debug("Pattern 3 is actually executed")
-                    elif re.match(r'^enum\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
-                        logging.getLogger(__name__).debug("Pattern 3b is actually executed")
-                    elif typedef_body.startswith('union {') or typedef_body.startswith('union{'):
-                        logging.getLogger(__name__).debug("Pattern 4 is actually executed")
-                    elif re.match(r'^union\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
-                        logging.getLogger(__name__).debug("Pattern 4b is actually executed")
-                    else:
-                        logging.getLogger(__name__).debug("No pattern is actually executed")
-                    
-                    # Check which pattern is actually executed (after the if/elif chain)
-                    if typedef_body.startswith('struct {') or typedef_body.startswith('struct{'):
-                        logging.getLogger(__name__).debug("Pattern 1 is actually executed")
-                    elif re.match(r'^struct\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
-                        logging.getLogger(__name__).debug("Pattern 2b is actually executed")
-                    elif typedef_body.startswith('enum {') or typedef_body.startswith('enum{'):
-                        logging.getLogger(__name__).debug("Pattern 3 is actually executed")
-                    elif re.match(r'^enum\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
-                        logging.getLogger(__name__).debug("Pattern 3b is actually executed")
-                    elif typedef_body.startswith('union {') or typedef_body.startswith('union{'):
-                        logging.getLogger(__name__).debug("Pattern 4 is actually executed")
-                    elif re.match(r'^union\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
-                        logging.getLogger(__name__).debug("Pattern 4b is actually executed")
-                    else:
-                        logging.getLogger(__name__).debug("No pattern is actually executed")
                     # Pattern 1: typedef type name; (simple typedef)
                     # Only match if there are no braces in the typedef body
                     if '{' not in typedef_body and '}' not in typedef_body:
@@ -733,6 +726,12 @@ class CParser:
                                 if name_match:
                                     typedef_name = name_match.group(1)
                                     typedef_relations.append(TypedefRelation(typedef_name, 'struct', 'defines'))
+                                    
+                                    # Extract struct field information and add to structs
+                                    struct_body = typedef_body[start_pos+1:pos-1]  # Extract content between braces
+                                    fields = self._parse_struct_fields(struct_body)
+                                    from .models import Struct
+                                    structs[typedef_name] = Struct(typedef_name, fields)
                     # Pattern 2b: typedef struct tag { ... } name; (struct typedef with tag)
                     elif re.match(r'^struct\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
                         # Extract the struct tag name first
@@ -759,6 +758,12 @@ class CParser:
                                     if name_match:
                                         typedef_name = name_match.group(1)
                                         typedef_relations.append(TypedefRelation(typedef_name, 'struct', 'defines', struct_tag_name))
+                                        
+                                        # Extract struct field information and add to structs
+                                        struct_body = typedef_body[start_pos+1:pos-1]  # Extract content between braces
+                                        fields = self._parse_struct_fields(struct_body)
+                                        from .models import Struct
+                                        structs[struct_tag_name] = Struct(struct_tag_name, fields)
                     # Pattern 3: typedef enum { ... } name; (enum typedef)
                     # Use a more robust pattern that handles multiline content and nested braces
                     elif typedef_body.startswith('enum {') or typedef_body.startswith('enum{'):
