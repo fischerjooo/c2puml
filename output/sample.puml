@@ -8,9 +8,6 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     - #define VERSION
     - #define MIN(a, b)
     - #define MAX(a, b)
-    -- Typedefs --
-    + struct
-    + enum
     -- Global Variables --
     + int MAX_POINTS
     + char * DEFAULT_LABEL

@@ -7,9 +7,6 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     - #define PROJECT_NAME
     - #define MAX_LABEL_LEN
     - #define DEFAULT_BUFFER_SIZE
-    -- Typedefs --
-    + uint32_t
-    + int32_t
 }
 
 class "stddef.h" as HEADER_STDDEF <<header>> #LightGray

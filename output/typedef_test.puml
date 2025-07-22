@@ -4,21 +4,6 @@ class "typedef_test" as HEADER_TYPEDEF_TEST <<header>> #LightGreen
 {
     -- Macros --
     - #define TYPEDEF_TEST_H
-    -- Typedefs --
-    + uint32_t
-    + int32_t
-    + char *
-    + struct
-    + int ( * MyCallback ) ( MyBuffer * buffer )
-    + struct
-    + MyComplex *
-    + enum
-    + enum
-    + struct
-    + struct
-    + union
-    + union
-    + MyComplexPtr MyComplexArray [ 10 ]
 }
 
 class "stdint.h" as HEADER_STDINT <<header>> #LightGray

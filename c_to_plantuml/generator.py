@@ -135,51 +135,10 @@ class PlantUMLGenerator:
             "{",
         ]
         
-        # Show typedefs section if we have any typedefs
-        all_typedefs = []
-        
-        # Add primitive typedefs from typedef_relations
-        for typedef_relation in file_model.typedef_relations:
-            typedef_name = typedef_relation.typedef_name
-            original_type = typedef_relation.original_type
-            relationship_type = typedef_relation.relationship_type
-            is_header = file_model.file_path.endswith('.h')
-            visibility = "+" if is_header else "-"
-            # Only show primitive typedefs (not struct/enum/union)
-            if relationship_type == "alias" and not (original_type.startswith("struct") or original_type.startswith("enum") or original_type.startswith("union")):
-                all_typedefs.append(f"    {visibility} {original_type}")
-        
-        # Add simple typedefs from the typedefs dictionary
-        if file_model.typedefs:
-            is_header = file_model.file_path.endswith('.h')
-            visibility = "+" if is_header else "-"
-            for typedef_name, original_type in file_model.typedefs.items():
-                all_typedefs.append(f"    {visibility} {original_type}")
-        
-        # Add primitive typedefs from included files with + visibility
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
-            included_file_model = None
-            for key, model in project_model.files.items():
-                if model.file_path == included_file_path:
-                    included_file_model = model
-                    break
-            if included_file_model:
-                for typedef_relation in included_file_model.typedef_relations:
-                    typedef_name = typedef_relation.typedef_name
-                    original_type = typedef_relation.original_type
-                    relationship_type = typedef_relation.relationship_type
-                    if relationship_type == "alias" and not (original_type.startswith("struct") or original_type.startswith("enum") or original_type.startswith("union")):
-                        primitive_typedefs.append(f"    + {original_type}")
-        
         if file_model.macros:
             lines.append("    -- Macros --")
             for macro in file_model.macros:
                 lines.append(f"    - #define {macro}")
-        
-        if all_typedefs:
-            lines.append("    -- Typedefs --")
-            lines.extend(all_typedefs)
         
         if file_model.globals:
             lines.append("    -- Global Variables --")

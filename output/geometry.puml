@@ -4,8 +4,6 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
     -- Macros --
     - #define GEOMETRY_H
-    -- Typedefs --
-    + struct
     -- Functions --
     triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
     int triangle_area(const triangle_t * tri)

@@ -4,9 +4,6 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
     -- Macros --
     - #define MATH_UTILS_H
-    -- Typedefs --
-    + double
-    + int ( * math_op_t ) ( int , int )
     -- Functions --
     int add(int a, int b)
     int subtract(int a, int b)

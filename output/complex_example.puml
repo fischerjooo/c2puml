@@ -4,10 +4,6 @@ class "complex_example" as HEADER_COMPLEX_EXAMPLE <<header>> #LightGreen
 {
     -- Macros --
     - #define COMPLEX_EXAMPLE_H
-    -- Typedefs --
-    + struct
-    + enum
-    + struct
 }
 
 class "config" as HEADER_CONFIG <<header>> #LightGreen

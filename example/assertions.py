@@ -541,6 +541,9 @@ class PUMLValidator:
         # Check for global variable formatting issues
         self._validate_global_variable_formatting(content, filename)
         
+        # Check that no "-- Typedefs --" sections exist in header or source classes
+        self._validate_no_typedefs_sections_in_header_or_source_classes(content, filename)
+        
         if filename == "typedef_test.puml":
             # Should have specific typedef classes
             assert 'TYPEDEF_MYLEN' in content, "Missing TYPEDEF_MYLEN class"
@@ -731,6 +734,43 @@ class PUMLValidator:
                 # Detect typedefs in header or main class
                 if line.strip().startswith('+ struct') or line.strip().startswith('+ enum') or line.strip().startswith('+ typedef'):
                     raise AssertionError(f"Typedef found in header or source class block {class_name} in {filename}: {line.strip()}")
+
+    def _validate_no_typedefs_sections_in_header_or_source_classes(self, content: str, filename: str) -> None:
+        """Assert that no '-- Typedefs --' sections exist in header or source class blocks."""
+        lines = content.split('\n')
+        in_header_or_source_class = False
+        class_name = None
+        
+        for i, line in enumerate(lines):
+            line = line.strip()
+            
+            # Detect start of a header or source class
+            if line.startswith('class "') and (
+                'as HEADER_' in line or 
+                ('as ' in line and '<<header>>' in line) or 
+                ('as ' in line and '<<main>>' in line) or
+                ('as ' in line and not '<<typedef>>' in line and not '<<enum>>' in line)
+            ):
+                in_header_or_source_class = True
+                class_name = line
+                continue
+                
+            if in_header_or_source_class:
+                if line == '}':
+                    in_header_or_source_class = False
+                    class_name = None
+                    continue
+                    
+                # Check for "-- Typedefs --" section in header or source class
+                if line == '-- Typedefs --':
+                    raise AssertionError(f"'-- Typedefs --' section found in header or source class block in {filename}: {class_name}")
+                    
+                # Also check for typedef values that might appear after the section
+                if line.startswith('+ ') and ('struct' in line or 'enum' in line or 'typedef' in line):
+                    # Look back a few lines to see if we're in a typedefs section
+                    for j in range(max(0, i-5), i):
+                        if lines[j].strip() == '-- Typedefs --':
+                            raise AssertionError(f"Typedef value found in '-- Typedefs --' section of header or source class block in {filename}: {class_name} - {line}")
 
     def validate_file(self, filename: str) -> None:
         """Validate a single PUML file."""
