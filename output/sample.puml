@@ -151,10 +151,10 @@ HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_CONFIG --> HEADER_STDDEF : <<include>>
-HEADER_SAMPLE ..> TYPEDEF_point_t : declares
-HEADER_SAMPLE ..> TYPEDEF_system_state_t : declares
-HEADER_LOGGER ..> TYPEDEF_log_level_t : declares
-HEADER_GEOMETRY ..> TYPEDEF_triangle_t : declares
+HEADER_SAMPLE ..> TYPEDEF_point_t : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_system_state_t : <<declares>>
+HEADER_LOGGER ..> TYPEDEF_log_level_t : <<declares>>
+HEADER_GEOMETRY ..> TYPEDEF_triangle_t : <<declares>>
 TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
 TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>
 HEADER_MATH_UTILS ..> TYPEDEF_real_t : <<declares>>

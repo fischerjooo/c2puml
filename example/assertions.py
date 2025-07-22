@@ -424,19 +424,41 @@ class PUMLValidator:
         include_pattern = r'(\w+)\s+-->\s+(\w+)\s+:\s+<<include>>'
         includes = re.findall(include_pattern, content)
         for source, target in includes:
-            relationships.append((source, target, 'include'))
+            relationships.append((source, target, '<<include>>'))
             
         # Declaration relationships: A ..> B : <<declares>>
         declare_pattern = r'(\w+)\s+\.\.>\s+(\w+)\s+:\s+<<declares>>'
         declares = re.findall(declare_pattern, content)
         for source, target in declares:
-            relationships.append((source, target, 'declares'))
+            relationships.append((source, target, '<<declares>>'))
             
         # Uses relationships: A ..> B : <<uses>>
         uses_pattern = r'(\w+)\s+\.\.>\s+(\w+)\s+:\s+<<uses>>'
         uses = re.findall(uses_pattern, content)
         for source, target in uses:
-            relationships.append((source, target, 'uses'))
+            relationships.append((source, target, '<<uses>>'))
+            
+        # Also check for relationships without angle brackets (to detect violations)
+        # Include relationships without brackets: A --> B : include
+        include_no_brackets_pattern = r'(\w+)\s+-->\s+(\w+)\s+:\s+(?!<<)(\w+)(?!>>)'
+        includes_no_brackets = re.findall(include_no_brackets_pattern, content)
+        for source, target, rel_type in includes_no_brackets:
+            if rel_type == 'include':
+                relationships.append((source, target, rel_type))
+            
+        # Declaration relationships without brackets: A ..> B : declares
+        declare_no_brackets_pattern = r'(\w+)\s+\.\.>\s+(\w+)\s+:\s+(?!<<)(\w+)(?!>>)'
+        declares_no_brackets = re.findall(declare_no_brackets_pattern, content)
+        for source, target, rel_type in declares_no_brackets:
+            if rel_type == 'declares':
+                relationships.append((source, target, rel_type))
+            
+        # Uses relationships without brackets: A ..> B : uses
+        uses_no_brackets_pattern = r'(\w+)\s+\.\.>\s+(\w+)\s+:\s+(?!<<)(\w+)(?!>>)'
+        uses_no_brackets = re.findall(uses_no_brackets_pattern, content)
+        for source, target, rel_type in uses_no_brackets:
+            if rel_type == 'uses':
+                relationships.append((source, target, rel_type))
             
         return relationships
         
@@ -512,9 +534,9 @@ class PUMLValidator:
         print(f"\n🔗 Validating relationships for {filename}:")
         
         # Group relationships by type
-        includes = [(s, t) for s, t, r in relationships if r == 'include']
-        declares = [(s, t) for s, t, r in relationships if r == 'declares']
-        uses = [(s, t) for s, t, r in relationships if r == 'uses']
+        includes = [(s, t) for s, t, r in relationships if r == '<<include>>']
+        declares = [(s, t) for s, t, r in relationships if r == '<<declares>>']
+        uses = [(s, t) for s, t, r in relationships if r == '<<uses>>']
         
         print(f"  📊 Relationship counts:")
         print(f"    Include: {len(includes)}")
@@ -524,10 +546,13 @@ class PUMLValidator:
         # Check for duplicate relationships
         self._validate_no_duplicate_relationships(relationships, filename)
         
+        # Check for consistent relationship formatting
+        self._validate_relationship_formatting(relationships, filename)
+        
         # Assert relationship structure
         for source, target, rel_type in relationships:
             assert source and target, f"Invalid relationship: {source} -> {target}"
-            assert rel_type in ['include', 'declares', 'uses'], f"Invalid relationship type: {rel_type}"
+            assert rel_type in ['<<include>>', '<<declares>>', '<<uses>>'], f"Invalid relationship type: {rel_type}"
             
         print(f"    ✅ Relationship structure valid")
         
@@ -832,6 +857,19 @@ class PUMLValidator:
         if duplicates:
             duplicate_list = ", ".join(duplicates)
             raise AssertionError(f"Duplicate relationships found in {filename}: {duplicate_list}")
+
+    def _validate_relationship_formatting(self, relationships: List[Tuple[str, str, str]], filename: str) -> None:
+        """Assert that all relationships use consistent <<>> formatting."""
+        invalid_relationships = []
+        
+        for source, target, rel_type in relationships:
+            # Check if the relationship type has angle brackets
+            if not rel_type.startswith('<<') or not rel_type.endswith('>>'):
+                invalid_relationships.append(f"{source} -> {target} ({rel_type})")
+        
+        if invalid_relationships:
+            invalid_list = ", ".join(invalid_relationships)
+            raise AssertionError(f"Relationships without <<>> formatting found in {filename}: {invalid_list}")
 
     def validate_file(self, filename: str) -> None:
         """Validate a single PUML file."""

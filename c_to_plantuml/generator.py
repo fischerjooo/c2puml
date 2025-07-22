@@ -1002,13 +1002,13 @@ class PlantUMLGenerator:
             # Typedef is defined in the current file (could be .c or .h)
             if file_model.file_path.endswith('.h'):
                 # Typedef is defined in header file
-                lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+                lines.append(f"{header_class_id} ..> {typedef_class_id} : <<declares>>")
             else:
                 # Typedef is defined in source file
-                lines.append(f"{main_class_id} ..> {typedef_class_id} : declares")
+                lines.append(f"{main_class_id} ..> {typedef_class_id} : <<declares>>")
         else:
             # Typedef is from an included header file
-            lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+            lines.append(f"{header_class_id} ..> {typedef_class_id} : <<declares>>")
         
         # For complex typedefs, show the 'defines' relation from the typedef class to the type class
         if relationship_type == "defines":
@@ -1041,7 +1041,7 @@ class PlantUMLGenerator:
                                 relationship_id = f"{typedef_name}->{field_type}:uses"
                                 if relationship_id not in seen_relationships:
                                     seen_relationships.add(relationship_id)
-                                    lines.append(f"{typedef_class_id} --> {other_typedef_class_id} : uses")
+                                    lines.append(f"{typedef_class_id} --> {other_typedef_class_id} : <<uses>>")
         
         # Show which header declares this typedef (for typedefs from included files)
         # Find which header actually declares this typedef
@@ -1056,7 +1056,7 @@ class PlantUMLGenerator:
                         relationship_id = f"{Path(model.file_path).stem}->{typedef_name}:declares"
                         if relationship_id not in seen_relationships:
                             seen_relationships.add(relationship_id)
-                            lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+                            lines.append(f"{header_class_id} ..> {typedef_class_id} : <<declares>>")
         
         # Also show which header declares typedefs that are used in the current file
         # This helps show the relationship between headers and the typedefs they provide
@@ -1076,7 +1076,7 @@ class PlantUMLGenerator:
                         relationship_id = f"{Path(included_file_model.file_path).stem}->{other_typedef_relation.typedef_name}:declares"
                         if relationship_id not in seen_relationships:
                             seen_relationships.add(relationship_id)
-                            lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+                            lines.append(f"{header_class_id} ..> {typedef_class_id} : <<declares>>")
 
     def _process_type_dependencies(self, file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_relationships: set):
         """Process type dependencies and macro dependencies"""
@@ -1139,7 +1139,7 @@ class PlantUMLGenerator:
                     relationship_id = f"{typedef_relation.typedef_name}->{Path(model.file_path).stem}:macro"
                     if relationship_id not in seen_relationships:
                         seen_relationships.add(relationship_id)
-                        lines.append(f"{typedef_class_id} ..> {header_class_id} : uses MAX_LABEL_LEN")
+                        lines.append(f"{typedef_class_id} ..> {header_class_id} : <<uses>> MAX_LABEL_LEN")
                     break
 
     def _process_macro_dependencies(self, file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_relationships: set):
@@ -1164,7 +1164,7 @@ class PlantUMLGenerator:
                                         relationship_id = f"{typedef_relation.typedef_name}->{Path(file_model.file_path).stem}:{macro}"
                                         if relationship_id not in seen_relationships:
                                             seen_relationships.add(relationship_id)
-                                            lines.append(f"{typedef_class_id} ..> {header_class_id} : uses {macro}")
+                                            lines.append(f"{typedef_class_id} ..> {header_class_id} : <<uses>> {macro}")
 
     def _find_included_file(
         self, include_name: str, project_root: str, project_model: ProjectModel

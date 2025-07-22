@@ -84,7 +84,7 @@ GEOMETRY --> HEADER_STDLIB : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
-HEADER_GEOMETRY ..> TYPEDEF_triangle_t : declares
+HEADER_GEOMETRY ..> TYPEDEF_triangle_t : <<declares>>
 TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
 TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>
 
