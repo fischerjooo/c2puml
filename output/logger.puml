@@ -6,7 +6,7 @@ class "logger" as LOGGER <<source>> #LightBlue
     - log_callback_t current_cb
     -- Functions --
     void set_log_callback(log_callback_t cb)
-    void log_message(log_level_t level, const char * fmt, ... ...)
+    void log_message(log_level_t level, const char * fmt, ...)
 }
 
 class "logger" as HEADER_LOGGER <<header>> #LightGreen
@@ -15,7 +15,7 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
     + #define LOGGER_H
     -- Functions --
     + void set_log_callback(log_callback_t cb);
-    + void log_message(log_level_t level, const char * fmt, ... ...);
+    + void log_message(log_level_t level, const char * fmt, ...);
 }
 class "stdarg.h" as HEADER_STDARG <<header>> #LightGray
 {
@@ -29,9 +29,9 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
     -- Macros --
     + #define CONFIG_H
-    + #define PROJECT_NAME
-    + #define MAX_LABEL_LEN
-    + #define DEFAULT_BUFFER_SIZE
+    + #define PROJECT_NAME "ComplexCProject"
+    + #define MAX_LABEL_LEN 64
+    + #define DEFAULT_BUFFER_SIZE 256
 }
 class "stdio.h" as HEADER_STDIO <<header>> #LightGray
 {
@@ -39,10 +39,10 @@ class "stdio.h" as HEADER_STDIO <<header>> #LightGray
 
 enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 {
-    EnumValue(name='LOG_DEBUG', value='0')
-    EnumValue(name='LOG_INFO', value=None)
-    EnumValue(name='LOG_WARN', value=None)
-    EnumValue(name='LOG_ERROR', value=None)
+    LOG_DEBUG = 0
+    LOG_INFO
+    LOG_WARN
+    LOG_ERROR
 }
 
 class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow

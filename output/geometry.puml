@@ -27,13 +27,13 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
     -- Macros --
     + #define SAMPLE_H
-    + #define PI
-    + #define VERSION
-    + #define MIN
-    + #define MAX
+    + #define PI 3.14159
+    + #define VERSION "1.0.0"
+    + #define MIN(a, b) ((a) < (b) ? (a) : (b))
+    + #define MAX(a, b) ((a) > (b) ? (a) : (b))
     -- Global Variables --
-    + Field(name=MAX_POINTS, type=int)
-    + Field(name=DEFAULT_LABEL, type=char *)
+    + int MAX_POINTS
+    + char * DEFAULT_LABEL
     -- Functions --
     + extern int calculate_sum(int a, int b);
     + extern point_t * create_point(int x, int y, const char * label);
@@ -50,19 +50,22 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 }
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 {
-    + typedef struct triangle_t
+    + point_t 3[ ] vertices
+    + char MAX_LABEL_LEN[ ] label
 }
 
 class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
-    + typedef struct point_t
+    + int x
+    + int y
+    + char 32[ ] label
 }
 
 enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
 {
-    EnumValue(name='STATE_IDLE', value='0')
-    EnumValue(name='STATE_RUNNING', value=None)
-    EnumValue(name='STATE_ERROR', value=None)
+    STATE_IDLE = 0
+    STATE_RUNNING
+    STATE_ERROR
 }
 
 class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow

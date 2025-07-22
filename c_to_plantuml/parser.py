@@ -352,12 +352,15 @@ class CParser:
         
         for token in tokens:
             if token.type == TokenType.DEFINE:
-                # Extract macro name from the token value
-                # e.g., "#define PI 3.14159" -> "PI"
+                # Extract full macro definition from the token value
+                # e.g., "#define PI 3.14159" -> "PI 3.14159"
+                # e.g., "#define MIN(a, b) ((a) < (b) ? (a) : (b))" -> "MIN(a, b) ((a) < (b) ? (a) : (b))"
                 import re
-                match = re.search(r'#define\s+([A-Za-z_][A-Za-z0-9_]*)', token.value)
+                # Remove the #define prefix and extract the rest
+                match = re.search(r'#define\s+(.+)', token.value)
                 if match:
-                    macros.append(match.group(1))
+                    macro_definition = match.group(1).strip()
+                    macros.append(macro_definition)
         
         return macros
 

@@ -532,6 +532,15 @@ class PUMLValidator:
         """Assert specific content requirements for each file."""
         print(f"\n🎯 Validating specific content for {filename}:")
         
+        # Check for macro formatting issues
+        self._validate_macro_formatting(content, filename)
+        
+        # Check for typedef content issues
+        self._validate_typedef_content(content, filename)
+        
+        # Check for global variable formatting issues
+        self._validate_global_variable_formatting(content, filename)
+        
         if filename == "typedef_test.puml":
             # Should have specific typedef classes
             assert 'TYPEDEF_MYLEN' in content, "Missing TYPEDEF_MYLEN class"
@@ -610,6 +619,74 @@ class PUMLValidator:
             assert 'TYPEDEF_STATUS_T' in content, "Missing TYPEDEF_STATUS_T class"
             
         print(f"    ✅ Specific content valid")
+    
+    def _validate_macro_formatting(self, content: str, filename: str) -> None:
+        """Validate that function-like macros include parameter names."""
+        # Look for function-like macros that are missing parameters
+        lines = content.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            if line.startswith('#define'):
+                # Check if this is a function-like macro that should have parameters
+                # Look for common function-like macro names
+                macro_name = line.split()[1] if len(line.split()) > 1 else ""
+                
+                # Check if this macro should have parameters based on common patterns
+                if macro_name in ['MIN', 'MAX', 'CALC'] and '(' not in line:
+                    raise AssertionError(f"Function-like macro {macro_name} missing parameters in {filename}")
+                
+                # Check for variadic function issues
+                if '... ...' in line:
+                    raise AssertionError(f"Malformed variadic function with '... ...' in {filename}")
+        
+        print("    ✅ Macro formatting valid")
+    
+    def _validate_typedef_content(self, content: str, filename: str) -> None:
+        """Validate that typedef content is properly displayed."""
+        # Check for typedef content issues
+        lines = content.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            
+            # Check for struct typedefs that only show "typedef struct Name" without fields
+            if 'typedef struct' in line and 'typedef struct' in line and '{' not in line:
+                # This might be a struct typedef without fields - check if it should have fields
+                if any(keyword in line for keyword in ['MyBuffer', 'MyComplex', 'Point_t', 'triangle_t']):
+                    # These structs should have fields displayed
+                    if 'Field(' not in content and 'field' not in content.lower():
+                        raise AssertionError(f"Struct typedef missing fields in {filename}")
+            
+            # Check for enum typedefs that show EnumValue objects instead of clean values
+            if 'EnumValue(' in line:
+                raise AssertionError(f"Enum typedef showing EnumValue objects instead of clean values in {filename}")
+            
+            # Check for function pointer typedefs with raw tokenized format
+            if 'typedef' in line and '(*' in line and ')' in line and 'typedef' in line:
+                # Check for malformed function pointer typedefs
+                if line.count('typedef') > 1 or '... ...' in line:
+                    raise AssertionError(f"Malformed function pointer typedef in {filename}")
+        
+        print("    ✅ Typedef content valid")
+    
+    def _validate_global_variable_formatting(self, content: str, filename: str) -> None:
+        """Validate that global variables are properly formatted."""
+        # Check for global variable formatting issues
+        lines = content.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            
+            # Check for global variables that show Field objects instead of clean format
+            if 'Field(' in line and 'name=' in line and 'type=' in line:
+                raise AssertionError(f"Global variable showing Field object instead of clean format in {filename}")
+            
+            # Check for malformed variadic functions
+            if '... ...' in line:
+                raise AssertionError(f"Malformed variadic function with '... ...' in {filename}")
+        
+        print("    ✅ Global variable formatting valid")
         
     def validate_file(self, filename: str) -> None:
         """Validate a single PUML file."""

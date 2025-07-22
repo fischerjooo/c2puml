@@ -83,6 +83,9 @@ class PlantUMLGenerator:
         # Remove function bodies (everything after { until the end)
         signature = re.sub(r'\s*\{[^}]*\}(?:\s*;)?$', ';', signature)
         
+        # Fix malformed variadic functions (replace ... ... with ...)
+        signature = re.sub(r'\.\.\.\s+\.\.\.', '...', signature)
+        
         # Clean up extra whitespace
         signature = re.sub(r'\s+', ' ', signature).strip()
         
@@ -425,7 +428,11 @@ class PlantUMLGenerator:
         if file_model.globals:
             lines.append("    -- Global Variables --")
             for global_var in file_model.globals:
-                lines.append(f"    + {global_var}")
+                # Format global variable properly
+                if hasattr(global_var, 'value') and global_var.value is not None:
+                    lines.append(f"    + {global_var.type} {global_var.name} = {global_var.value}")
+                else:
+                    lines.append(f"    + {global_var.type} {global_var.name}")
         
         # Show functions section - only declarations, no implementations
         if file_model.functions:
@@ -519,7 +526,10 @@ class PlantUMLGenerator:
                 
                 if found_enum:
                     for value in found_enum.values:
-                        lines.append(f"    {value}")
+                        if value.value is not None:
+                            lines.append(f"    {value.name} = {value.value}")
+                        else:
+                            lines.append(f"    {value.name}")
                 else:
                     lines.append(f"    + typedef {original_type} {typedef_name}")
             else:
@@ -529,7 +539,51 @@ class PlantUMLGenerator:
             # For non-enum typedefs, create a regular class
             lines.append(f'class "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
             lines.append("{")
-            lines.append(f"    + typedef {original_type} {typedef_name}")
+            
+            # For struct/union typedefs, try to show fields
+            if original_type == "struct":
+                # Try to find the struct in the project model
+                if project_model:
+                    found_struct = None
+                    # Try multiple possible struct names
+                    possible_struct_names = [typedef_name]
+                    if typedef_name.endswith('_t'):
+                        possible_struct_names.append(typedef_name[:-2])  # Remove "_t" suffix
+                    possible_struct_names.append(f"{typedef_name}_tag")
+                    
+                    for f_model in project_model.files.values():
+                        for name in possible_struct_names:
+                            if name in f_model.structs:
+                                found_struct = f_model.structs[name]
+                                break
+                        if found_struct:
+                            break
+                    
+                    if found_struct:
+                        for field in found_struct.fields:
+                            lines.append(f"    + {field.type} {field.name}")
+                    else:
+                        lines.append(f"    + typedef {original_type} {typedef_name}")
+                else:
+                    lines.append(f"    + typedef {original_type} {typedef_name}")
+            elif original_type == "union":
+                # Try to find the union in the project model
+                if project_model:
+                    found_union = None
+                    for f_model in project_model.files.values():
+                        if typedef_name in f_model.unions:
+                            found_union = f_model.unions[typedef_name]
+                            break
+                    
+                    if found_union:
+                        for field in found_union.fields:
+                            lines.append(f"    + {field.type} {field.name}")
+                    else:
+                        lines.append(f"    + typedef {original_type} {typedef_name}")
+                else:
+                    lines.append(f"    + typedef {original_type} {typedef_name}")
+            else:
+                lines.append(f"    + typedef {original_type} {typedef_name}")
             lines.append("}")
         
         lines.append("")
@@ -561,7 +615,10 @@ class PlantUMLGenerator:
             
             if found_enum:
                 for value in found_enum.values:
-                    lines.append(f"    {value}")
+                    if value.value is not None:
+                        lines.append(f"    {value.name} = {value.value}")
+                    else:
+                        lines.append(f"    {value.name}")
             else:
                 logging.getLogger(__name__).debug(f"Enum '{enum_name}' not found in project model")
                 lines.append(f"    + {original_type}")

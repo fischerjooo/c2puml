@@ -3,9 +3,9 @@
 class "sample" as SAMPLE <<source>> #LightBlue
 {
     -- Macros --
-    - #define MAX_SIZE
-    - #define DEBUG_MODE
-    - #define CALC
+    - #define MAX_SIZE 100U
+    - #define DEBUG_MODE 1U
+    - #define CALC(x, y) ((x) + (y))
     -- Global Variables --
     - int global_counter
     - char buffer
@@ -34,13 +34,13 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
     -- Macros --
     + #define SAMPLE_H
-    + #define PI
-    + #define VERSION
-    + #define MIN
-    + #define MAX
+    + #define PI 3.14159
+    + #define VERSION "1.0.0"
+    + #define MIN(a, b) ((a) < (b) ? (a) : (b))
+    + #define MAX(a, b) ((a) > (b) ? (a) : (b))
     -- Global Variables --
-    + Field(name=MAX_POINTS, type=int)
-    + Field(name=DEFAULT_LABEL, type=char *)
+    + int MAX_POINTS
+    + char * DEFAULT_LABEL
     -- Functions --
     + extern int calculate_sum(int a, int b);
     + extern point_t * create_point(int x, int y, const char * label);
@@ -61,7 +61,7 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
     + #define LOGGER_H
     -- Functions --
     + void set_log_callback(log_callback_t cb);
-    + void log_message(log_level_t level, const char * fmt, ... ...);
+    + void log_message(log_level_t level, const char * fmt, ...);
 }
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
@@ -75,9 +75,9 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
     -- Macros --
     + #define CONFIG_H
-    + #define PROJECT_NAME
-    + #define MAX_LABEL_LEN
-    + #define DEFAULT_BUFFER_SIZE
+    + #define PROJECT_NAME "ComplexCProject"
+    + #define MAX_LABEL_LEN 64
+    + #define DEFAULT_BUFFER_SIZE 256
 }
 class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
 {
@@ -85,14 +85,16 @@ class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
 
 class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
-    + typedef struct point_t
+    + int x
+    + int y
+    + char 32[ ] label
 }
 
 enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
 {
-    EnumValue(name='STATE_IDLE', value='0')
-    EnumValue(name='STATE_RUNNING', value=None)
-    EnumValue(name='STATE_ERROR', value=None)
+    STATE_IDLE = 0
+    STATE_RUNNING
+    STATE_ERROR
 }
 
 class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
@@ -107,15 +109,16 @@ class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 {
-    + typedef struct triangle_t
+    + point_t 3[ ] vertices
+    + char MAX_LABEL_LEN[ ] label
 }
 
 enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 {
-    EnumValue(name='LOG_DEBUG', value='0')
-    EnumValue(name='LOG_INFO', value=None)
-    EnumValue(name='LOG_WARN', value=None)
-    EnumValue(name='LOG_ERROR', value=None)
+    LOG_DEBUG = 0
+    LOG_INFO
+    LOG_WARN
+    LOG_ERROR
 }
 
 class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow

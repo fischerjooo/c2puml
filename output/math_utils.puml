@@ -21,9 +21,9 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
     -- Macros --
     + #define CONFIG_H
-    + #define PROJECT_NAME
-    + #define MAX_LABEL_LEN
-    + #define DEFAULT_BUFFER_SIZE
+    + #define PROJECT_NAME "ComplexCProject"
+    + #define MAX_LABEL_LEN 64
+    + #define DEFAULT_BUFFER_SIZE 256
 }
 class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 {

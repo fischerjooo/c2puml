@@ -38,7 +38,7 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
     + #define LOGGER_H
     -- Functions --
     + void set_log_callback(log_callback_t cb);
-    + void log_message(log_level_t level, const char * fmt, ... ...);
+    + void log_message(log_level_t level, const char * fmt, ...);
 }
 class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
 {
@@ -48,13 +48,13 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
     -- Macros --
     + #define SAMPLE_H
-    + #define PI
-    + #define VERSION
-    + #define MIN
-    + #define MAX
+    + #define PI 3.14159
+    + #define VERSION "1.0.0"
+    + #define MIN(a, b) ((a) < (b) ? (a) : (b))
+    + #define MAX(a, b) ((a) > (b) ? (a) : (b))
     -- Global Variables --
-    + Field(name=MAX_POINTS, type=int)
-    + Field(name=DEFAULT_LABEL, type=char *)
+    + int MAX_POINTS
+    + char * DEFAULT_LABEL
     -- Functions --
     + extern int calculate_sum(int a, int b);
     + extern point_t * create_point(int x, int y, const char * label);
@@ -64,9 +64,9 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
     -- Macros --
     + #define CONFIG_H
-    + #define PROJECT_NAME
-    + #define MAX_LABEL_LEN
-    + #define DEFAULT_BUFFER_SIZE
+    + #define PROJECT_NAME "ComplexCProject"
+    + #define MAX_LABEL_LEN 64
+    + #define DEFAULT_BUFFER_SIZE 256
 }
 class "stdint.h" as HEADER_STDINT <<header>> #LightGray
 {
@@ -102,7 +102,8 @@ class "MyString" as TYPEDEF_MYSTRING <<typedef>> #LightYellow
 
 class "MyBuffer" as TYPEDEF_MYBUFFER <<typedef>> #LightYellow
 {
-    + typedef struct MyBuffer
+    + MyLen length
+    + MyString data
 }
 
 class "MyCallback" as TYPEDEF_MYCALLBACK <<typedef>> #LightYellow
@@ -112,7 +113,10 @@ class "MyCallback" as TYPEDEF_MYCALLBACK <<typedef>> #LightYellow
 
 class "MyComplex" as TYPEDEF_MYCOMPLEX <<typedef>> #LightYellow
 {
-    + typedef struct MyComplex
+    + MyLen id
+    + MyString name
+    + MyCallback callback
+    + log_level_t log_level
 }
 
 class "MyComplexPtr" as TYPEDEF_MYCOMPLEXPTR <<typedef>> #LightYellow
@@ -122,8 +126,8 @@ class "MyComplexPtr" as TYPEDEF_MYCOMPLEXPTR <<typedef>> #LightYellow
 
 enum "Color_t" as TYPEDEF_COLOR_T <<typedef>> #LightYellow
 {
-    EnumValue(name='STATUS_OK', value='0')
-    EnumValue(name='STATUS_FAIL', value=None)
+    STATUS_OK = 0
+    STATUS_FAIL
 }
 
 enum "Status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
@@ -138,17 +142,20 @@ class "Point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 
 class "NamedStruct_t" as TYPEDEF_NAMEDSTRUCT_T <<typedef>> #LightYellow
 {
-    + typedef struct NamedStruct_t
+    + int a
+    + int b
 }
 
 class "Number_t" as TYPEDEF_NUMBER_T <<typedef>> #LightYellow
 {
-    + typedef union Number_t
+    + int i
+    + float f
 }
 
 class "NamedUnion_t" as TYPEDEF_NAMEDUNION_T <<typedef>> #LightYellow
 {
-    + typedef union NamedUnion_t
+    + char c
+    + double d
 }
 
 class "MyComplexArray" as TYPEDEF_MYCOMPLEXARRAY <<typedef>> #LightYellow
@@ -158,14 +165,16 @@ class "MyComplexArray" as TYPEDEF_MYCOMPLEXARRAY <<typedef>> #LightYellow
 
 class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
-    + typedef struct point_t
+    + int x
+    + int y
+    + char 32[ ] label
 }
 
 enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
 {
-    EnumValue(name='STATE_IDLE', value='0')
-    EnumValue(name='STATE_RUNNING', value=None)
-    EnumValue(name='STATE_ERROR', value=None)
+    STATE_IDLE = 0
+    STATE_RUNNING
+    STATE_ERROR
 }
 
 class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
@@ -180,10 +189,10 @@ class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 
 enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 {
-    EnumValue(name='LOG_DEBUG', value='0')
-    EnumValue(name='LOG_INFO', value=None)
-    EnumValue(name='LOG_WARN', value=None)
-    EnumValue(name='LOG_ERROR', value=None)
+    LOG_DEBUG = 0
+    LOG_INFO
+    LOG_WARN
+    LOG_ERROR
 }
 
 class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
@@ -193,24 +202,29 @@ class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 
 class "NestedInfo_t" as TYPEDEF_NESTEDINFO_T <<typedef>> #LightYellow
 {
-    + typedef struct NestedInfo_t
+    + id_t id
+    + char MAX_LABEL_LEN[ ] description
+    + log_level_t log_level
 }
 
 enum "CE_Status_t" as TYPEDEF_CE_STATUS_T <<typedef>> #LightYellow
 {
-    EnumValue(name='CE_STATUS_OK', value='0')
-    EnumValue(name='CE_STATUS_WARN', value=None)
-    EnumValue(name='CE_STATUS_FAIL', value=None)
+    CE_STATUS_OK = 0
+    CE_STATUS_WARN
+    CE_STATUS_FAIL
 }
 
 class "ComplexExample_t" as TYPEDEF_COMPLEXEXAMPLE_T <<typedef>> #LightYellow
 {
-    + typedef struct ComplexExample_t
+    + NestedInfo_t info
+    + CE_Status_t status
+    + int 5[ ] values
 }
 
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 {
-    + typedef struct triangle_t
+    + point_t 3[ ] vertices
+    + char MAX_LABEL_LEN[ ] label
 }
 
 class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
