@@ -71,18 +71,6 @@ class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
 + uint32_t
 }
 
-class "stdio.h" as HEADER_STDIO <<header>> #LightGray
-{
-}
-
-class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
-{
-}
-
-class "string.h" as HEADER_STRING <<header>> #LightGray
-{
-}
-
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
 -- Macros --
@@ -124,14 +112,6 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
 + int triangle_area(const triangle_t * tri);
 }
-class "stdint.h" as HEADER_STDINT <<header>> #LightGray
-{
-}
-
-class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
-{
-}
-
 class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
 -- Macros --
@@ -140,21 +120,15 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 + #define MAX_LABEL_LEN
 + #define DEFAULT_BUFFER_SIZE
 }
-SAMPLE --> HEADER_STDIO : <<include>>
-SAMPLE --> HEADER_STDLIB : <<include>>
-SAMPLE --> HEADER_STRING : <<include>>
 SAMPLE --> HEADER_SAMPLE : <<include>>
 SAMPLE --> HEADER_MATH_UTILS : <<include>>
 SAMPLE --> HEADER_LOGGER : <<include>>
 SAMPLE --> HEADER_GEOMETRY : <<include>>
-HEADER_SAMPLE --> HEADER_STDDEF : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
-HEADER_LOGGER --> HEADER_STDIO : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
-HEADER_CONFIG --> HEADER_STDDEF : <<include>>
 HEADER_SAMPLE ..> TYPEDEF_POINT_T : <<declares>>
 HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>

@@ -22,14 +22,14 @@ class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 + void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
-class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
-{
-+ uint32_t
-}
-
 class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 {
 + int32_t
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
++ uint32_t
 }
 
 class "logger" as HEADER_LOGGER <<header>> #LightGreen
@@ -40,26 +40,6 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 + void set_log_callback(log_callback_t cb);
 + void log_message(log_level_t level, const char * fmt, ...);
 }
-class "stdarg.h" as HEADER_STDARG <<header>> #LightGray
-{
-}
-
-class "string.h" as HEADER_STRING <<header>> #LightGray
-{
-}
-
-class "stdint.h" as HEADER_STDINT <<header>> #LightGray
-{
-}
-
-class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
-{
-}
-
-class "stdio.h" as HEADER_STDIO <<header>> #LightGray
-{
-}
-
 class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
 -- Macros --
@@ -69,9 +49,6 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 + #define DEFAULT_BUFFER_SIZE
 }
 LOGGER --> HEADER_LOGGER : <<include>>
-LOGGER --> HEADER_STDARG : <<include>>
-LOGGER --> HEADER_STRING : <<include>>
-HEADER_LOGGER --> HEADER_STDIO : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
 TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>

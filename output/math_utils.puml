@@ -18,14 +18,14 @@ class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
 + int ( * math_op_t ) ( int , int )
 }
 
-class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
-{
-+ uint32_t
-}
-
 class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 {
 + int32_t
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
++ uint32_t
 }
 
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
@@ -37,10 +37,6 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 + int subtract(int a, int b);
 + real_t average(const int * arr, size_t len);
 }
-class "stdint.h" as HEADER_STDINT <<header>> #LightGray
-{
-}
-
 class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
 -- Macros --
@@ -49,10 +45,6 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 + #define MAX_LABEL_LEN
 + #define DEFAULT_BUFFER_SIZE
 }
-class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
-{
-}
-
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
