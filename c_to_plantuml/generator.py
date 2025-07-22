@@ -1206,10 +1206,17 @@ class PlantUMLGenerator:
             name = name[:-2]
         return f"HEADER_{self._get_uml_id(name)}"
 
-    def _get_typedef_uml_id(self, name: str) -> str:
+    def _get_typedef_uml_id(self, name: str, source_file: str = None) -> str:
         """Generate UML ID for a typedef class"""
         # Convert to uppercase and replace special characters
         base_id = name.upper().replace("-", "_").replace(".", "_")
+        
+        # If source file is provided, include it in the ID to make it unique
+        if source_file:
+            # Extract the filename without extension and convert to uppercase
+            file_base = Path(source_file).stem.upper().replace("-", "_").replace(".", "_")
+            return f"TYPEDEF_{base_id}_{file_base}"
+        
         return f"TYPEDEF_{base_id}"
 
     def _get_type_uml_id(self, name: str) -> str:
