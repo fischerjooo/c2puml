@@ -242,10 +242,25 @@ class PUMLValidator:
     def extract_typedefs(self, content: str) -> List[str]:
         """Extract all typedef statements from source file content."""
         typedefs = []
-        typedef_pattern = r'typedef\s+(?:struct|enum|union)?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*[a-zA-Z_][a-zA-Z0-9_]*\s*;?'
-        matches = re.findall(typedef_pattern, content)
-        for match in matches:
+        
+        # Pattern for complex typedefs (struct/enum/union with braces)
+        complex_pattern = r'typedef\s+(struct|enum|union)\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\{[^}]*\}\s*[a-zA-Z_][a-zA-Z0-9_]*\s*;'
+        complex_matches = re.findall(complex_pattern, content)
+        for match in complex_matches:
             typedefs.append(match.strip())
+        
+        # Pattern for simple typedefs: typedef type name;
+        simple_pattern = r'typedef\s+[a-zA-Z_][a-zA-Z0-9_]*\s+\*?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*(?:\[[^\]]*\])?\s*;'
+        simple_matches = re.findall(simple_pattern, content)
+        for match in simple_matches:
+            typedefs.append(match.strip())
+        
+        # Pattern for function pointer typedefs
+        func_ptr_pattern = r'typedef\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\(\s*\*\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\)\s*\([^)]*\)\s*;'
+        func_matches = re.findall(func_ptr_pattern, content)
+        for match in func_matches:
+            typedefs.append(match.strip())
+        
         return typedefs
         
     def extract_functions(self, content: str) -> List[str]:
@@ -266,8 +281,8 @@ class PUMLValidator:
     def extract_globals(self, content: str) -> List[str]:
         """Extract global variable declarations from source file content."""
         globals = []
-        # Pattern for global variable declarations
-        global_pattern = r'(?:extern\s+)?(?:const\s+)?[a-zA-Z_][a-zA-Z0-9_]*\s+\*?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*[=;]'
+        # Pattern for global variable declarations including arrays
+        global_pattern = r'(?:extern\s+)?(?:const\s+)?[a-zA-Z_][a-zA-Z0-9_]*\s+\*?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*(?:\[[^\]]*\])?\s*[=;]'
         matches = re.findall(global_pattern, content)
         for match in matches:
             globals.append(match.strip())

@@ -483,6 +483,14 @@ class CParser:
                 original_type = ' '.join(t.value for t in all_tokens)
                 return (typedef_name, original_type)
         
+        # Pointer typedef: typedef type * name;
+        for i in range(len(all_tokens) - 2):
+            if (all_tokens[i].type == TokenType.ASTERISK and 
+                all_tokens[i+1].type == TokenType.IDENTIFIER):
+                typedef_name = all_tokens[i+1].value
+                original_type = ' '.join(t.value for t in all_tokens)
+                return (typedef_name, original_type)
+        
         # Simple typedef: the last token should be the typedef name, everything else is the type
         typedef_name = all_tokens[-1].value
         type_tokens = all_tokens[:-1]
