@@ -13,6 +13,65 @@ if [ ! -d "output" ]; then
     exit 1
 fi
 
+# Function to install Graphviz
+install_graphviz() {
+    echo "📦 Installing Graphviz..."
+    
+    # Detect OS and install Graphviz
+    if command -v apt-get &> /dev/null; then
+        # Ubuntu/Debian
+        sudo apt-get update
+        sudo apt-get install -y graphviz
+    elif command -v yum &> /dev/null; then
+        # CentOS/RHEL
+        sudo yum install -y graphviz
+    elif command -v brew &> /dev/null; then
+        # macOS with Homebrew
+        brew install graphviz
+    elif command -v pacman &> /dev/null; then
+        # Arch Linux
+        sudo pacman -S graphviz
+    else
+        echo "❌ Error: Could not detect package manager for Graphviz installation"
+        echo "   Please install Graphviz manually:"
+        echo "   - Ubuntu/Debian: sudo apt-get install graphviz"
+        echo "   - CentOS/RHEL: sudo yum install graphviz"
+        echo "   - macOS: brew install graphviz"
+        echo "   - Arch: sudo pacman -S graphviz"
+        return 1
+    fi
+}
+
+# Function to test PlantUML setup
+test_plantuml_setup() {
+    local plantuml_cmd="$1"
+    echo "🔍 Testing PlantUML setup..."
+    
+    # Test if PlantUML can find the dot executable
+    if $plantuml_cmd -testdot 2>&1 | grep -q "Installation seems OK"; then
+        echo "✅ PlantUML setup is working correctly"
+        return 0
+    else
+        echo "❌ PlantUML cannot find the dot executable (Graphviz)"
+        echo "   Attempting to install Graphviz..."
+        
+        if install_graphviz; then
+            echo "✅ Graphviz installed successfully"
+            # Test again after installation
+            if $plantuml_cmd -testdot 2>&1 | grep -q "Installation seems OK"; then
+                echo "✅ PlantUML setup is now working correctly"
+                return 0
+            else
+                echo "❌ PlantUML still cannot find dot executable after Graphviz installation"
+                return 1
+            fi
+        else
+            echo "❌ Failed to install Graphviz automatically"
+            return 1
+        fi
+    fi
+}
+
 # Check if plantuml is installed or if we have the JAR file
 if ! command -v plantuml &> /dev/null; then
     if [ -f "../plantuml.jar" ]; then
@@ -73,6 +132,16 @@ if [[ "$PLANTUML_CMD" == *"plantuml.jar"* ]]; then
     elif [[ "$PLANTUML_CMD" == *"plantuml.jar"* ]]; then
         PLANTUML_CMD="java -jar ${SCRIPT_DIR}/plantuml.jar"
     fi
+fi
+
+# Test PlantUML setup before proceeding
+if ! test_plantuml_setup "$PLANTUML_CMD"; then
+    echo "❌ PlantUML setup test failed. Cannot proceed with conversion."
+    echo "💡 Manual troubleshooting steps:"
+    echo "   1. Install Graphviz: sudo apt-get install graphviz (Ubuntu/Debian)"
+    echo "   2. Verify dot is in PATH: which dot"
+    echo "   3. Test PlantUML: $PLANTUML_CMD -testdot"
+    exit 1
 fi
 
 # Find all .puml files and convert them to PNG

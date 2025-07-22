@@ -41,7 +41,13 @@ python3 -m c_to_plantuml.main generate output/model.json
 picgen.bat
 ```
 
-The scripts automatically download PlantUML.jar if needed.
+The scripts automatically:
+- Download PlantUML.jar if needed
+- Install Graphviz (required for PNG generation)
+- Test the setup before conversion
+- Convert all .puml files to PNG images
+
+**Note**: The script now automatically handles Graphviz installation and testing to resolve the "Dot executable does not exist" error.
 
 ## Configuration
 
@@ -84,7 +90,21 @@ python run_all_tests.py
 
 # Install dev dependencies
 pip install -r requirements-dev.txt
+
+# Test PNG generation
+./test_picgen.sh
 ```
+
+## GitHub Workflow
+
+The repository includes an automated GitHub workflow that:
+- Triggers on pushes to main/master branch when .puml files change
+- Automatically installs Graphviz and PlantUML
+- Converts all .puml files to PNG images
+- Commits the generated images back to the repository
+- Uploads images as workflow artifacts
+
+The workflow is simplified and more reliable, removing complex Git operations and focusing on core functionality.
 
 ## License
 
