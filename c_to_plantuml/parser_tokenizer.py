@@ -632,53 +632,49 @@ class StructureFinder:
                         else:
                             break
                     
-                    # Define modifiers set
-                    modifiers = {TokenType.STATIC, TokenType.EXTERN, TokenType.INLINE}
-                    
-                    # Look back to find the complete return type including modifiers
-                    # We need to include all tokens that are part of the return type
-                    # For example: "static point_t *" should include "static", "point_t", and "*"
-                    
-                    # Look back at most 10 tokens to capture multi-token return types
-                    max_lookback = max(0, func_name_pos - 10)
-                    
-                    # Start from the current position and work backwards
-                    current_pos = return_type_start
-                    
-                    # Collect all tokens that are part of the return type
-                    return_type_tokens = []
-                    
-                    # First, collect any modifiers (static, extern, inline)
-                    while current_pos >= max_lookback:
-                        if self.tokens[current_pos].type in modifiers:
-                            return_type_tokens.insert(0, self.tokens[current_pos])
-                            current_pos -= 1
-                        else:
-                            break
-                    
-                    # Then collect the actual return type (including pointer types)
-                    while current_pos >= max_lookback:
-                        token_type = self.tokens[current_pos].type
-                        if token_type in [TokenType.IDENTIFIER, TokenType.INT, TokenType.VOID, 
-                                        TokenType.CHAR, TokenType.FLOAT, TokenType.DOUBLE,
-                                        TokenType.LONG, TokenType.SHORT, TokenType.UNSIGNED,
-                                        TokenType.SIGNED, TokenType.ASTERISK, TokenType.CONST]:
-                            return_type_tokens.insert(0, self.tokens[current_pos])
-                            current_pos -= 1
-                        else:
-                            break
-                    
-                    # Extract return type
-                    if return_type_tokens:
-                        return_type = ' '.join(t.value for t in return_type_tokens).strip()
+                    # If we found a non-whitespace token, that's the end of the return type
+                    # Now we need to find the start by looking backwards from there
+                    if return_type_start >= 0:
+                        return_type_end = return_type_start
+                        return_type_start = return_type_end
                         
-                        # Find end of function (either ; for declaration or { for definition)
-                        end_pos = self._find_function_end(self.pos)
-                        if end_pos:
-                            # Determine if this is a declaration or definition
-                            is_declaration = self._is_function_declaration(end_pos)
-                            self.pos = end_pos + 1
-                            return (start_pos, end_pos, func_name, return_type, is_declaration)
+                        # Define modifiers set
+                        modifiers = {TokenType.STATIC, TokenType.EXTERN, TokenType.INLINE}
+                        
+                        # Collect all tokens that are part of the return type (including modifiers)
+                        return_type_tokens = []
+                        
+                        # Look back at most 10 tokens to capture multi-token return types
+                        max_lookback = max(0, func_name_pos - 10)
+                        current_pos = return_type_start
+                        
+                        # Collect tokens backwards until we hit a limit or non-return-type token
+                        while current_pos >= max_lookback:
+                            token_type = self.tokens[current_pos].type
+                            if token_type in [TokenType.IDENTIFIER, TokenType.INT, TokenType.VOID, 
+                                            TokenType.CHAR, TokenType.FLOAT, TokenType.DOUBLE,
+                                            TokenType.LONG, TokenType.SHORT, TokenType.UNSIGNED,
+                                            TokenType.SIGNED, TokenType.ASTERISK, TokenType.CONST,
+                                            TokenType.STATIC, TokenType.EXTERN, TokenType.INLINE]:
+                                return_type_tokens.insert(0, self.tokens[current_pos])
+                                current_pos -= 1
+                            elif token_type in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                                # Skip whitespace and continue looking
+                                current_pos -= 1
+                            else:
+                                break
+                        
+                        # Extract return type
+                        if return_type_tokens:
+                            return_type = ' '.join(t.value for t in return_type_tokens).strip()
+                            
+                            # Find end of function (either ; for declaration or { for definition)
+                            end_pos = self._find_function_end(self.pos)
+                            if end_pos:
+                                # Determine if this is a declaration or definition
+                                is_declaration = self._is_function_declaration(end_pos)
+                                self.pos = end_pos + 1
+                                return (start_pos, end_pos, func_name, return_type, is_declaration)
             
             self.pos += 1
             
