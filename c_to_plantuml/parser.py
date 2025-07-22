@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 Parser module for C to PlantUML converter - Step 1: Parse C code files and generate model.json
+
+REFACTORED: Now uses tokenizer-based parsing instead of regex-based parsing
 """
 
 import logging
@@ -12,13 +14,18 @@ if TYPE_CHECKING:
 
 from .models import FileModel, ProjectModel
 from .utils import detect_file_encoding
+from .parser_tokenizer import (
+    CTokenizer, StructureFinder, TokenType,
+    find_struct_fields, find_enum_values, extract_token_range
+)
 
 
 class CParser:
-    """C/C++ parser for extracting structural information from source code"""
+    """C/C++ parser for extracting structural information from source code using tokenization"""
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
+        self.tokenizer = CTokenizer()
 
     def parse_project(self, project_root: str, recursive: bool = True) -> ProjectModel:
         """Parse a C/C++ project and return a model"""
@@ -75,7 +82,7 @@ class CParser:
     def parse_file(
         self, file_path: Path, relative_path: str, project_root: str
     ) -> FileModel:
-        """Parse a single C/C++ file and return a file model"""
+        """Parse a single C/C++ file and return a file model using tokenization"""
         self.logger.debug(f"Parsing file: {file_path}")
 
         # Detect encoding
@@ -85,8 +92,18 @@ class CParser:
         with open(file_path, "r", encoding=encoding) as f:
             content = f.read()
 
-        # Parse structs first
-        structs = self._parse_structs(content)
+        # Tokenize the content
+        tokens = self.tokenizer.tokenize(content)
+        self.logger.debug(f"Tokenized file into {len(tokens)} tokens")
+
+        # Filter out whitespace and comments for structure finding
+        filtered_tokens = self.tokenizer.filter_tokens(tokens)
+        structure_finder = StructureFinder(filtered_tokens)
+
+        # Parse different structures using tokenizer
+        structs = self._parse_structs_with_tokenizer(tokens, structure_finder)
+        enums = self._parse_enums_with_tokenizer(tokens, structure_finder)
+        functions = self._parse_functions_with_tokenizer(tokens, structure_finder)
         
         return FileModel(
             file_path=str(file_path),
@@ -94,15 +111,185 @@ class CParser:
             project_root=project_root,
             encoding_used=encoding,
             structs=structs,
-            enums=self._parse_enums(content),
-            functions=self._parse_functions(content),
-            globals=self._parse_globals(content),
-            includes=self._parse_includes(content),
-            macros=self._parse_macros(content),
-            typedefs=self._parse_typedefs(content),
-            typedef_relations=self._parse_typedef_relations(content, structs),
+            enums=enums,
+            functions=functions,
+            globals=self._parse_globals_with_tokenizer(tokens),
+            includes=self._parse_includes_with_tokenizer(tokens),
+            macros=self._parse_macros_with_tokenizer(tokens),
+            typedefs=self._parse_typedefs_with_tokenizer(tokens),
+            typedef_relations=self._parse_typedef_relations_with_tokenizer(tokens, structs),
             include_relations=[],
         )
+
+    def _parse_structs_with_tokenizer(self, tokens, structure_finder) -> Dict[str, "Struct"]:
+        """Parse struct definitions using tokenizer"""
+        from .models import Struct, Field
+        
+        structs = {}
+        struct_infos = structure_finder.find_structs()
+        
+        for start_pos, end_pos, struct_name in struct_infos:
+            if not struct_name:  # Skip anonymous structs for now
+                continue
+                
+            # Need to map back to original token positions
+            # Find the original token positions by looking at line/column info
+            original_start = self._find_original_token_pos(tokens, structure_finder.tokens, start_pos)
+            original_end = self._find_original_token_pos(tokens, structure_finder.tokens, end_pos)
+            
+            if original_start is not None and original_end is not None:
+                # Extract field information from original token range
+                field_tuples = find_struct_fields(tokens, original_start, original_end)
+                
+                # Convert to Field objects
+                fields = []
+                for field_name, field_type in field_tuples:
+                    try:
+                        fields.append(Field(field_name, field_type))
+                    except Exception as e:
+                        self.logger.warning(f"Error creating field {field_name}: {e}")
+                
+                structs[struct_name] = Struct(struct_name, fields)
+                self.logger.debug(f"Parsed struct: {struct_name} with {len(fields)} fields")
+        
+        return structs
+
+    def _parse_enums_with_tokenizer(self, tokens, structure_finder) -> Dict[str, "Enum"]:
+        """Parse enum definitions using tokenizer"""
+        from .models import Enum
+        
+        enums = {}
+        enum_infos = structure_finder.find_enums()
+        
+        for start_pos, end_pos, enum_name in enum_infos:
+            if not enum_name:  # Skip anonymous enums for now
+                continue
+                
+            # Need to map back to original token positions
+            original_start = self._find_original_token_pos(tokens, structure_finder.tokens, start_pos)
+            original_end = self._find_original_token_pos(tokens, structure_finder.tokens, end_pos)
+            
+            if original_start is not None and original_end is not None:
+                # Extract enum values from original token range
+                values = find_enum_values(tokens, original_start, original_end)
+                
+                enums[enum_name] = Enum(enum_name, values)
+                self.logger.debug(f"Parsed enum: {enum_name} with {len(values)} values")
+        
+        return enums
+
+    def _parse_functions_with_tokenizer(self, tokens, structure_finder) -> List["Function"]:
+        """Parse function declarations/definitions using tokenizer"""
+        from .models import Function, Field
+        
+        functions = []
+        function_infos = structure_finder.find_functions()
+        
+        for start_pos, end_pos, func_name, return_type in function_infos:
+            # For now, create functions with empty parameter lists
+            # TODO: Parse parameters from token range
+            try:
+                functions.append(Function(func_name, return_type, []))
+                self.logger.debug(f"Parsed function: {func_name}")
+            except Exception as e:
+                self.logger.warning(f"Error creating function {func_name}: {e}")
+        
+        return functions
+
+    def _parse_globals_with_tokenizer(self, tokens) -> List["Field"]:
+        """Parse global variables using tokenizer"""
+        from .models import Field
+        
+        globals_list = []
+        
+        # Simple global parsing: look for patterns like "type name;" or "type name = value;"
+        # This is a simplified implementation - we'll need to improve it for complex cases
+        
+        i = 0
+        while i < len(tokens):
+            # Skip preprocessor directives, comments, etc.
+            if tokens[i].type in [TokenType.INCLUDE, TokenType.DEFINE, TokenType.PREPROCESSOR, 
+                                TokenType.COMMENT, TokenType.WHITESPACE]:
+                i += 1
+                continue
+            
+            # Skip function definitions (look for parentheses)
+            if self._looks_like_function(tokens, i):
+                i = self._skip_function(tokens, i)
+                continue
+            
+            # Skip struct/enum/union definitions
+            if tokens[i].type in [TokenType.STRUCT, TokenType.ENUM, TokenType.UNION, TokenType.TYPEDEF]:
+                i = self._skip_structure_definition(tokens, i)
+                continue
+            
+            # Look for global variable patterns: [static/extern] type name [= value];
+            global_info = self._parse_global_variable(tokens, i)
+            if global_info:
+                var_name, var_type, var_value = global_info
+                try:
+                    globals_list.append(Field(name=var_name, type=var_type, value=var_value))
+                    self.logger.debug(f"Parsed global: {var_name} : {var_type}")
+                except Exception as e:
+                    self.logger.warning(f"Error creating global field {var_name}: {e}")
+                i = self._skip_to_semicolon(tokens, i)
+            else:
+                i += 1
+        
+        return globals_list
+
+    def _parse_includes_with_tokenizer(self, tokens) -> List[str]:
+        """Parse #include directives using tokenizer"""
+        includes = []
+        
+        for token in tokens:
+            if token.type == TokenType.INCLUDE:
+                # Extract include filename from the token value
+                # e.g., "#include <stdio.h>" -> "stdio.h"
+                import re
+                match = re.search(r'[<"]([^>"]+)[>"]', token.value)
+                if match:
+                    includes.append(match.group(1))
+        
+        return includes
+
+    def _parse_macros_with_tokenizer(self, tokens) -> List[str]:
+        """Parse macro definitions using tokenizer"""
+        macros = []
+        
+        for token in tokens:
+            if token.type == TokenType.DEFINE:
+                # Extract macro name from the token value
+                # e.g., "#define PI 3.14159" -> "PI"
+                import re
+                match = re.search(r'#define\s+([A-Za-z_][A-Za-z0-9_]*)', token.value)
+                if match:
+                    macros.append(match.group(1))
+        
+        return macros
+
+    def _parse_typedefs_with_tokenizer(self, tokens) -> Dict[str, str]:
+        """Parse typedef definitions using tokenizer"""
+        typedefs = {}
+        
+        i = 0
+        while i < len(tokens):
+            if tokens[i].type == TokenType.TYPEDEF:
+                # Found typedef, parse it
+                typedef_info = self._parse_single_typedef(tokens, i)
+                if typedef_info:
+                    typedef_name, original_type = typedef_info
+                    typedefs[typedef_name] = original_type
+                    
+            i += 1
+        
+        return typedefs
+
+    def _parse_typedef_relations_with_tokenizer(self, tokens, structs) -> List["TypedefRelation"]:
+        """Parse typedef relationships using tokenizer - simplified for now"""
+        # TODO: Implement proper typedef relation parsing with tokenizer
+        # For now, return empty list to avoid breaking the skeleton
+        return []
 
     def _find_c_files(self, project_root: Path, recursive: bool) -> List[Path]:
         """Find all C/C++ files in the project"""
@@ -140,800 +327,206 @@ class CParser:
         """Detect file encoding with platform-aware fallbacks"""
         return detect_file_encoding(file_path)
 
-    def _parse_struct_fields(self, struct_body: str) -> List["Field"]:
-        """Parse fields from a struct body"""
-        import re
-        from .models import Field
+    def _find_original_token_pos(self, all_tokens, filtered_tokens, filtered_pos):
+        """Find the position in all_tokens that corresponds to filtered_tokens[filtered_pos]"""
+        if filtered_pos >= len(filtered_tokens):
+            return None
         
-        fields = []
-        # Improved regex: match type (with pointers/arrays), name, and array size if present
-        # Handles: int x; char label[32]; double *ptr; int (*cb)(int);
-        field_pattern = r"([A-Za-z_][A-Za-z0-9_\*\s]*?)\s+([A-Za-z_][A-Za-z0-9_]*)(\s*\[[^;]*\])?\s*;"
-        import logging
-        logger = logging.getLogger(__name__)
-        for field_match in re.finditer(field_pattern, struct_body):
-            field_type = field_match.group(1).strip()
-            field_name = field_match.group(2).strip()
-            array_size = field_match.group(3)
-            if array_size:
-                field_type = f"{field_type}{array_size.strip()}"
-            logger.debug(f"[struct] About to create Field: type='{field_type}', name='{field_name}'")
-            try:
-                if field_name:
-                    fields.append(Field(field_name, field_type))
-            except Exception as e:
-                logger.error(f"[struct] Exception creating Field: {e} | type='{field_type}', name='{field_name}'")
-                raise
-        return fields
-
-    def _parse_structs(self, content: str) -> Dict[str, "Struct"]:
-        """Parse struct definitions from content"""
-        import re
-
-        from .models import Field, Struct
-
-        structs = {}
+        target_token = filtered_tokens[filtered_pos]
         
-        # Pattern 1: struct name { ... }; (struct definition)
-        pattern1 = r"struct\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{([^}]+)\}"
-        matches1 = re.findall(pattern1, content, re.DOTALL)
-
-        for struct_name, struct_body in matches1:
-            fields = self._parse_struct_fields(struct_body)
-            structs[struct_name] = Struct(struct_name, fields)
-
-        # Pattern 2: typedef struct name { ... } typedef_name; (struct typedef)
-        pattern2 = r"typedef\s+struct\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{([^}]+)\}\s+([A-Za-z_][A-Za-z0-9_]*)\s*;"
-        matches2 = re.findall(pattern2, content, re.DOTALL)
-
-        for struct_tag_name, struct_body, typedef_name in matches2:
-            fields = self._parse_struct_fields(struct_body)
-            # Remove "_tag" suffix if present for consistency
-            clean_struct_name = struct_tag_name.replace('_tag', '')
-            # Store both the struct tag name and the typedef name
-            structs[clean_struct_name] = Struct(clean_struct_name, fields)
-            # Also store under typedef name for backward compatibility
-            structs[typedef_name] = Struct(typedef_name, fields)
-
-        # Pattern 3: typedef struct { ... } typedef_name; (anonymous struct typedef)
-        pattern3 = r"typedef\s+struct\s*\{([^}]+)\}\s+([A-Za-z_][A-Za-z0-9_]*)\s*;"
-        matches3 = re.findall(pattern3, content, re.DOTALL)
-
-        for struct_body, typedef_name in matches3:
-            fields = self._parse_struct_fields(struct_body)
-            structs[typedef_name] = Struct(typedef_name, fields)
-
-        return structs
-
-    def _parse_enums(self, content: str) -> Dict[str, "Enum"]:
-        """Parse enum definitions from content"""
-        import re
-
-        from .models import Enum
-
-        enums = {}
+        # Search for the token in all_tokens by line and column
+        for i, token in enumerate(all_tokens):
+            if (token.line == target_token.line and 
+                token.column == target_token.column and 
+                token.value == target_token.value):
+                return i
         
-        # Pattern 1: enum name { ... }; (enum definition)
-        pattern1 = r"enum\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{([^}]+)\}"
-        matches1 = re.findall(pattern1, content, re.DOTALL)
+        return None
 
-        for enum_name, enum_body in matches1:
-            values = self._parse_enum_values(enum_body)
-            enums[enum_name] = Enum(enum_name, values)
-
-        # Pattern 2: typedef enum name { ... } typedef_name; (enum typedef)
-        pattern2 = r"typedef\s+enum\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{([^}]+)\}\s+([A-Za-z_][A-Za-z0-9_]*)\s*;"
-        matches2 = re.findall(pattern2, content, re.DOTALL)
-
-        for enum_tag_name, enum_body, typedef_name in matches2:
-            values = self._parse_enum_values(enum_body)
-            # Remove "_tag" suffix if present for consistency
-            clean_enum_name = enum_tag_name.replace('_tag', '')
-            # Store both the enum tag name and the typedef name
-            enums[clean_enum_name] = Enum(clean_enum_name, values)
-            # Also store under typedef name for backward compatibility
-            enums[typedef_name] = Enum(typedef_name, values)
-
-        # Pattern 3: typedef enum { ... } typedef_name; (anonymous enum typedef)
-        pattern3 = r"typedef\s+enum\s*\{([^}]+)\}\s+([A-Za-z_][A-Za-z0-9_]*)\s*;"
-        matches3 = re.findall(pattern3, content, re.DOTALL)
-
-        for enum_body, typedef_name in matches3:
-            values = self._parse_enum_values(enum_body)
-            enums[typedef_name] = Enum(typedef_name, values)
-
-        return enums
-
-    def _parse_enum_values(self, enum_body: str) -> List[str]:
-        """Parse enum values from enum body"""
-        import re
+    def _parse_single_typedef(self, tokens, start_pos):
+        """Parse a single typedef starting at the given position"""
+        # Skip 'typedef' keyword
+        pos = start_pos + 1
         
-        values = []
-        # Parse enum values - handle both simple names and assignments
-        # Pattern: NAME or NAME = VALUE
-        value_pattern = r"([A-Za-z_][A-Za-z0-9_]*)(?:\s*=\s*([^,\s]+))?"
-        value_matches = re.findall(value_pattern, enum_body)
+        # Skip whitespace and comments
+        while pos < len(tokens) and tokens[pos].type in [TokenType.WHITESPACE, TokenType.COMMENT]:
+            pos += 1
         
-        for value_match in value_matches:
-            value_name = value_match[0]
-            value_assignment = value_match[1] if value_match[1] else ""
-            if value_assignment:
-                values.append(f"{value_name} = {value_assignment}")
-            else:
-                values.append(value_name)
+        if pos >= len(tokens):
+            return None
         
-        return values
-
-    def _parse_unions(self, content: str) -> Dict[str, "Union"]:
-        """Parse union definitions from content"""
-        # Implementation would go here - simplified for now
-        return {}
-
-    def _parse_functions(self, content: str) -> List["Function"]:
-        """Parse function declarations and definitions from content, including prototypes in headers."""
-        import re
-        from .models import Function, Field
-
-        functions = []
-        seen = set()
-
-        # Match function definitions: return_type name(params) {...}
-        def_pattern = r"(?:static|inline|extern)?\s*([A-Za-z_][A-Za-z0-9_\*\s]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(([^)]*)\)\s*\{"  # with body
-        # Match function declarations (prototypes): return_type name(params);
-        decl_pattern = r"(?:static|inline|extern)?\s*([A-Za-z_][A-Za-z0-9_\*\s]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(([^)]*)\)\s*;"
-
-        # Helper to parse parameter list
-        def parse_params(param_str):
-            params = []
-            param_str = param_str.strip()
-            if not param_str or param_str == 'void':
-                return params
-            for param in param_str.split(','):
-                param = param.strip()
-                if not param:
-                    continue
-                if param == '...':
-                    # Skip variadic parameter
-                    continue
-                # Improved: handle pointer types and multiple spaces
-                import re
-                # Match: type (with pointers/const), name
-                match = re.match(r'^(.*\S)\s+([A-Za-z_][A-Za-z0-9_]*)$', param)
-                if match:
-                    type_, name = match.groups()
-                else:
-                    # If only one word, treat as name if valid identifier, else skip
-                    if re.match(r'^[A-Za-z_][A-Za-z0-9_]*$', param):
-                        type_, name = '', param
-                    else:
-                        continue
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.debug(f"[funcparam] About to create Field: type='{type_}', name='{name}'")
-                try:
-                    if name and type_:
-                        params.append(Field(name=name, type=type_.strip()))
-                except Exception as e:
-                    logger.error(f"[funcparam] Exception creating Field: {e} | type='{type_}', name='{name}'")
-                    raise
-            return params
-
-        # Parse function definitions
-        for match in re.finditer(def_pattern, content):
-            return_type, func_name, params = match.groups()
-            # Skip malformed functions
-            if func_name.lower() in ['return', 'if', 'for', 'while', 'switch']:
-                continue
-            key = (func_name, return_type)
-            if key not in seen:
-                seen.add(key)
-                functions.append(Function(func_name, return_type.strip(), parse_params(params)))
-
-        # Parse function declarations (prototypes)
-        for match in re.finditer(decl_pattern, content):
-            return_type, func_name, params = match.groups()
-            # Skip malformed functions
-            if func_name.lower() in ['return', 'if', 'for', 'while', 'switch']:
-                continue
-            key = (func_name, return_type)
-            if key not in seen:
-                seen.add(key)
-                functions.append(Function(func_name, return_type.strip(), parse_params(params)))
-
-        return functions
-
-    def _parse_globals(self, content: str) -> List["Field"]:
-        """Parse global variable declarations from content"""
-        import re
-        import logging
-
-        from .models import Field
-
-        logger = logging.getLogger(__name__)
-        globals_list = []
+        # Check if it's a struct/enum/union typedef (we'll handle these separately)
+        if tokens[pos].type in [TokenType.STRUCT, TokenType.ENUM, TokenType.UNION]:
+            return self._parse_complex_typedef(tokens, pos)
         
-        brace_depth = 0
-        in_function = False
-        in_struct_or_enum = False
-        struct_enum_brace_depth = 0
-        lines = content.split('\n')
+        # Simple typedef: typedef type name;
+        all_tokens = []
         
-        for i, line in enumerate(lines):
-            original_line = line
-            line = line.strip()
-            
-            # Skip empty lines, comments, and preprocessor directives
-            if not line or line.startswith('//') or line.startswith('/*') or line.startswith('*') or line.startswith('#'):
-                logger.debug(f"  Skipping line {i+1}: empty/comment/preprocessor")
-                continue
-            
-            # Check for struct/enum/union declarations (including typedef struct)
-            if any(keyword in line for keyword in ['struct ', 'enum ', 'union ']):
-                # Check if this is actually a global variable declaration with struct type
-                # Pattern: struct TypeName var_name = ...; (not a struct definition)
-                if '=' in line and line.endswith(';'):
-                    logger.debug(f"  Skipping line {i+1}: struct variable declaration, will process as global")
-                    # Don't skip - let it be processed as a global variable
-                    pass
-                elif '{' in line:
-                    in_struct_or_enum = True
-                    struct_enum_brace_depth = 1  # Start with 1 for the opening brace
-                    logger.debug(f"  Entering struct/enum at line {i+1}: {line}")
-                    logger.debug(f"  Skipping line {i+1}: struct/enum/union declaration")
-                    continue
-                else:
-                    logger.debug(f"  Skipping line {i+1}: struct/enum/union declaration")
-                    continue
-            
-            # Check for typedef declarations (that are not struct/enum/union)
-            if line.startswith('typedef') and not any(keyword in line for keyword in ['struct ', 'enum ', 'union ']):
-                logger.debug(f"  Skipping line {i+1}: typedef")
-                continue
-            
-            # Check for function-like declarations (function prototypes or definitions)
-            # Pattern: return_type function_name(params) {
-            # or: return_type function_name(params)\n {
-            if '(' in line and ')' in line and not in_struct_or_enum and not in_function:
-                # Check if this looks like a function declaration (not a control structure)
-                # Function pattern: type name(params) {
-                # Control structure pattern: if/for/while/switch (condition) {
-                if any(keyword in line for keyword in ['if ', 'for ', 'while ', 'switch ']):
-                    logger.debug(f"  Skipping line {i+1}: control structure, not function")
-                    continue
-                
-                # Check if it has a return type pattern (type name(params))
-                parts = line.split('(')
-                if len(parts) >= 2:
-                    before_paren = parts[0].strip()
-                    # Check if before_paren contains a type and name
-                    if ' ' in before_paren and not before_paren.startswith(('if ', 'for ', 'while ', 'switch ')):
-                        # This looks like a function declaration
-                        in_function = True
-                        logger.debug(f"  Entering function at line {i+1}: {line}")
-                        logger.debug(f"  Skipping line {i+1}: function-like declaration")
-                        continue
-                
-                logger.debug(f"  Skipping line {i+1}: control structure or unknown pattern")
-                continue
-            
-            # Check for opening brace that might be part of a function definition
-            if line.strip() == '{' and not in_struct_or_enum and not in_function:
-                # This might be the opening brace of a function that was declared on the previous line
-                # Check if we're in a function context (previous line was a function declaration)
-                if i > 0 and any(keyword in lines[i-1] for keyword in ['int ', 'void ', 'char ', 'float ', 'double ', 'long ', 'short ']):
-                    in_function = True
-                    brace_depth = 1  # Start with 1 for the opening brace
-                    logger.debug(f"  Entering function at line {i+1}: opening brace after function declaration")
-                    logger.debug(f"  Skipping line {i+1}: function opening brace")
-                    continue
-            
-            # Count braces
-            open_braces = line.count('{')
-            close_braces = line.count('}')
-            
-            # Update brace depth tracking
-            if in_struct_or_enum:
-                struct_enum_brace_depth += open_braces - close_braces
-                logger.debug(f"  Struct/enum brace depth: {struct_enum_brace_depth}")
-                
-                # If we've closed all braces in the struct/enum, we're no longer in it
-                if struct_enum_brace_depth <= 0:
-                    in_struct_or_enum = False
-                    struct_enum_brace_depth = 0
-                    logger.debug(f"  Exiting struct/enum (braces closed) at line {i+1}")
-            else:
-                # For functions, we need to be more careful about brace depth
-                if in_function:
-                    # If we're in a function and encounter an opening brace, increment depth
-                    if open_braces > 0:
-                        brace_depth += open_braces
-                        logger.debug(f"  Function brace depth increased to: {brace_depth}")
-                    # If we encounter a closing brace, decrement depth
-                    if close_braces > 0:
-                        brace_depth -= close_braces
-                        logger.debug(f"  Function brace depth decreased to: {brace_depth}")
-                else:
-                    # Not in a function, use normal brace depth tracking but don't go negative
-                    old_depth = brace_depth
-                    brace_depth += open_braces - close_braces
-                    if brace_depth < 0:
-                        brace_depth = 0
-                        logger.debug(f"  Brace depth would have gone negative ({old_depth} + {open_braces} - {close_braces} = {old_depth + open_braces - close_braces}), resetting to 0")
-                
-                logger.debug(f"  Brace depth: {brace_depth}, in_function: {in_function}")
-                # Check if we've exited a function
-                if in_function and brace_depth <= 0:
-                    in_function = False
-                    brace_depth = 0
-                    logger.debug(f"  Exiting function at line {i+1}")
-            
-            # Skip if we're inside a function, any block, or inside a struct/enum definition
-            if in_function or brace_depth > 0 or in_struct_or_enum:
-                logger.debug(f"  Skipping line {i+1}: inside function/block/struct_enum")
-                continue
-            
-            # Check if line ends with semicolon (basic global variable indicator)
-            if line.endswith(';'):
-                logger.debug(f"  Processing potential global at line {i+1}: '{line}'")
-                
-                # Skip closing braces with names (like "} MyStruct;")
-                if line.startswith('}'):
-                    logger.debug(f"  Skipping line {i+1}: closing brace with name")
-                    continue
-                
-                # Skip function declarations (containing parentheses)
-                if '(' in line and ')' in line:
-                    logger.debug(f"  Skipping line {i+1}: function declaration")
-                    continue
-                
-                # Skip statements that are clearly not global variables
-                if any(keyword in line for keyword in ['return', 'if', 'for', 'while', 'switch', 'case', 'default', 'break', 'continue']):
-                    logger.debug(f"  Skipping line {i+1}: statement, not global variable")
-                    continue
-                
-                # Try to parse as a global variable declaration
-                # Pattern: type name [= value];
-                # Remove the semicolon for parsing
-                declaration = line[:-1].strip()
-                
-                # Split by '=' to separate declaration from initialization
-                if '=' in declaration:
-                    decl_part, init_part = declaration.split('=', 1)
-                    decl_part = decl_part.strip()
-                    init_part = init_part.strip()
-                else:
-                    decl_part = declaration
-                    init_part = None
-                
-                # Parse the declaration part (type name)
-                # Handle multiple spaces and pointers
-                decl_parts = decl_part.split()
-                if len(decl_parts) >= 2:
-                    # Last part is the variable name, rest is the type
-                    var_name = decl_parts[-1]
-                    type_parts = decl_parts[:-1]
-                    
-                    # Handle pointer types
-                    if var_name.startswith('*'):
-                        type_parts.append('*')
-                        var_name = var_name[1:]
-                    
-                    var_type = ' '.join(type_parts)
-                    
-                    # Skip if it looks like a function call or keyword
-                    if var_name in ['return', 'if', 'for', 'while', 'switch', 'case', 'default']:
-                        logger.debug(f"  Skipping line {i+1}: function call or keyword")
-                        continue
-                    
-                    logger.debug(f"About to create Field: type='{var_type}', name='{var_name}', value='{init_part}'")
-                    field = Field(name=var_name, type=var_type, value=init_part)
-                    globals_list.append(field)
-                    logger.debug(f"  Successfully added global: {var_name}")
-                else:
-                    logger.debug(f"  Skipping line {i+1}: insufficient parts for global declaration")
-            else:
-                logger.debug(f"  Line {i+1} doesn't end with semicolon")
+        # Collect all non-whitespace/comment tokens until semicolon
+        while pos < len(tokens) and tokens[pos].type != TokenType.SEMICOLON:
+            if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
+                all_tokens.append(tokens[pos])
+            pos += 1
         
-        logger.debug(f"Global parsing complete. Found {len(globals_list)} globals")
-        return globals_list
-
-    def _parse_includes(self, content: str) -> List[str]:
-        """Parse #include directives from content"""
-        import re
-
-        includes = []
-        # Match #include <header.h> or #include "header.h"
-        pattern = r'#include\s*[<"]([^>"]+)[>"]'
-        matches = re.findall(pattern, content)
-        includes.extend(matches)
-        return includes
-
-    def _parse_macros(self, content: str) -> List[str]:
-        """Parse macro definitions from content"""
-        import re
-
-        macros = []
-        # Match #define MACRO_NAME or #define MACRO_NAME value
-        pattern = r"#define\s+([A-Za-z_][A-Za-z0-9_]*)"
-        matches = re.findall(pattern, content)
-        macros.extend(matches)
-        return macros
-
-    def _parse_typedefs(self, content: str) -> Dict[str, str]:
-        """Parse typedef definitions from content"""
-        import re
-
-        typedefs = {}
+        # The last token should be the typedef name, everything else is the type
+        if len(all_tokens) >= 2:
+            typedef_name = all_tokens[-1].value
+            type_tokens = all_tokens[:-1]
+            original_type = ' '.join(t.value for t in type_tokens)
+            return (typedef_name, original_type)
         
-        # Split content into lines to handle multi-line typedefs
-        lines = content.split('\n')
-        i = 0
-        
-        while i < len(lines):
-            line = lines[i].strip()
-            
-            # Skip empty lines and comments
-            if not line or line.startswith('//') or line.startswith('/*'):
-                i += 1
-                continue
-                
-            # Check for typedef
-            if line.startswith('typedef '):
-                # Collect the full typedef declaration (may span multiple lines)
-                typedef_text = line
-                j = i + 1
-                
-                # For struct/enum/union typedefs, we need to collect until we find the closing brace and semicolon
-                if 'struct {' in line or 'enum {' in line or 'union {' in line:
-                    brace_count = 0
-                    if '{' in line:
-                        brace_count = line.count('{') - line.count('}')
-                    
-                    # Continue collecting lines until we find the closing brace and semicolon
-                    while j < len(lines) and (brace_count > 0 or ';' not in typedef_text):
-                        next_line = lines[j].strip()
-                        typedef_text += ' ' + next_line
-                        if '{' in next_line:
-                            brace_count += next_line.count('{')
-                        if '}' in next_line:
-                            brace_count -= next_line.count('}')
-                        j += 1
-                else:
-                    # For simple typedefs, continue until we find the semicolon
-                    while j < len(lines) and ';' not in typedef_text:
-                        typedef_text += ' ' + lines[j].strip()
-                        j += 1
-                
-                # Now parse the complete typedef
-                if ';' in typedef_text:
-                    # Remove 'typedef ' prefix and ';' suffix
-                    typedef_body = typedef_text[8:].rstrip(';').strip()
-                    
-                    # Handle different typedef patterns
-                    
-                    # Pattern 1: typedef type name; (simple typedef)
-                    simple_pattern = r'^([^;]+)\s+([A-Za-z_][A-Za-z0-9_]*)$'
-                    match = re.match(simple_pattern, typedef_body)
-                    if match:
-                        original_type, typedef_name = match.groups()
-                        typedefs[typedef_name] = original_type.strip()
-                    
-                    # Pattern 2: typedef struct { ... } name; (struct typedef)
-                    elif typedef_body.startswith('struct {') or typedef_body.startswith('struct{'):
-                        # Find the closing brace and typedef name
-                        brace_count = 0
-                        start_pos = typedef_body.find('{')
-                        if start_pos != -1:
-                            brace_count = 1
-                            pos = start_pos + 1
-                            while pos < len(typedef_body) and brace_count > 0:
-                                if typedef_body[pos] == '{':
-                                    brace_count += 1
-                                elif typedef_body[pos] == '}':
-                                    brace_count -= 1
-                                pos += 1
-                            
-                            if brace_count == 0:
-                                # Extract the typedef name after the closing brace
-                                remaining = typedef_body[pos:].strip()
-                                name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
-                                if name_match:
-                                    typedef_name = name_match.group(1)
-                                    typedefs[typedef_name] = 'struct'
-                    
-                    # Pattern 3: typedef enum { ... } name; (enum typedef)
-                    elif typedef_body.startswith('enum {') or typedef_body.startswith('enum{'):
-                        # Find the closing brace and typedef name
-                        brace_count = 0
-                        start_pos = typedef_body.find('{')
-                        if start_pos != -1:
-                            brace_count = 1
-                            pos = start_pos + 1
-                            while pos < len(typedef_body) and brace_count > 0:
-                                if typedef_body[pos] == '{':
-                                    brace_count += 1
-                                elif typedef_body[pos] == '}':
-                                    brace_count -= 1
-                                pos += 1
-                            
-                            if brace_count == 0:
-                                # Extract the typedef name after the closing brace
-                                remaining = typedef_body[pos:].strip()
-                                name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
-                                if name_match:
-                                    typedef_name = name_match.group(1)
-                                    typedefs[typedef_name] = 'enum'
-                    
-                    # Pattern 4: typedef union { ... } name; (union typedef)
-                    elif typedef_body.startswith('union {') or typedef_body.startswith('union{'):
-                        # Find the closing brace and typedef name
-                        brace_count = 0
-                        start_pos = typedef_body.find('{')
-                        if start_pos != -1:
-                            brace_count = 1
-                            pos = start_pos + 1
-                            while pos < len(typedef_body) and brace_count > 0:
-                                if typedef_body[pos] == '{':
-                                    brace_count += 1
-                                elif typedef_body[pos] == '}':
-                                    brace_count -= 1
-                                pos += 1
-                            
-                            if brace_count == 0:
-                                # Extract the typedef name after the closing brace
-                                remaining = typedef_body[pos:].strip()
-                                name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
-                                if name_match:
-                                    typedef_name = name_match.group(1)
-                                    typedefs[typedef_name] = 'union'
-                    
-                    # Pattern 5: typedef void (*name)(params); (function pointer)
-                    func_ptr_pattern = r'^([^(*]+)\s*\(\s*\*\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)\s*\([^)]*\)$'
-                    match = re.match(func_ptr_pattern, typedef_body)
-                    if match:
-                        return_type, typedef_name = match.groups()
-                        typedefs[typedef_name] = f"{return_type.strip()} (*)(...)"
-                    
-                    # Pattern 6: typedef type name[size]; (array typedef)
-                    array_pattern = r'^([A-Za-z_][A-Za-z0-9_\*\s]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\[([^\]]+)\]$'
-                    match = re.match(array_pattern, typedef_body)
-                    if match:
-                        base_type, typedef_name, array_size = match.groups()
-                        typedefs[typedef_name] = f"{base_type.strip()}[{array_size.strip()}]"
-                
-                i = j  # Skip the lines we've processed
-            else:
-                i += 1
-                
-        return typedefs
+        return None
 
-    def _parse_typedef_relations(self, content: str, structs: Dict[str, "Struct"]) -> List["TypedefRelation"]:
-        """Parse typedef relationships from content"""
-        import re
-        from .models import TypedefRelation
-        typedef_relations = []
-        lines = content.split('\n')
-        i = 0
-        while i < len(lines):
-            line = lines[i].strip()
-            if not line or line.startswith('//') or line.startswith('/*'):
-                i += 1
-                continue
-            if line.startswith('typedef '):
-                typedef_text = line
-                j = i + 1
-                # Continue reading lines until we find the closing brace and semicolon
-                brace_count = 0
-                if '{' in typedef_text:
-                    brace_count = typedef_text.count('{') - typedef_text.count('}')
-                
-                while j < len(lines):
-                    next_line = lines[j].strip()
-                    typedef_text += ' ' + next_line
-                    if '{' in next_line:
-                        brace_count += next_line.count('{')
-                    if '}' in next_line:
-                        brace_count -= next_line.count('}')
-                    if ';' in next_line and brace_count == 0:
-                        break
-                    j += 1
-                
-                if ';' in typedef_text:
-                    typedef_body = typedef_text[8:].rstrip(';').strip()
-                    
-                    # Pattern 1: typedef type name; (simple typedef)
-                    # Only match if there are no braces in the typedef body
-                    if '{' not in typedef_body and '}' not in typedef_body:
-                        simple_pattern = r'^([^;]+)\s+([A-Za-z_][A-Za-z0-9_]*)$'
-                        match = re.match(simple_pattern, typedef_body)
-                        if match:
-                            original_type, typedef_name = match.groups()
-                            relationship_type = 'alias'
-                            # If the original type is a known struct/enum/union name, treat as defines
-                            if original_type.startswith('struct') or original_type.startswith('enum') or original_type.startswith('union'):
-                                relationship_type = 'defines'
-                            typedef_relations.append(TypedefRelation(typedef_name, original_type.strip(), relationship_type))
-                    
-                    # Pattern 2: typedef struct { ... } name; (struct typedef)
-                    elif typedef_body.startswith('struct {') or typedef_body.startswith('struct{'):
-                        # Find the closing brace and typedef name
-                        brace_count = 0
-                        start_pos = typedef_body.find('{')
-                        if start_pos != -1:
-                            brace_count = 1
-                            pos = start_pos + 1
-                            while pos < len(typedef_body) and brace_count > 0:
-                                if typedef_body[pos] == '{':
-                                    brace_count += 1
-                                elif typedef_body[pos] == '}':
-                                    brace_count -= 1
-                                pos += 1
-                            
-                            if brace_count == 0:
-                                # Extract the typedef name after the closing brace
-                                remaining = typedef_body[pos:].strip()
-                                name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
-                                if name_match:
-                                    typedef_name = name_match.group(1)
-                                    typedef_relations.append(TypedefRelation(typedef_name, 'struct', 'defines'))
-                                    
-                                    # Extract struct field information and add to structs
-                                    struct_body = typedef_body[start_pos+1:pos-1]  # Extract content between braces
-                                    fields = self._parse_struct_fields(struct_body)
-                                    from .models import Struct
-                                    structs[typedef_name] = Struct(typedef_name, fields)
-                    
-                    # Pattern 2b: typedef struct tag { ... } name; (struct typedef with tag)
-                    elif re.match(r'^struct\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
-                        # Extract the struct tag name first
-                        struct_tag_match = re.match(r'^struct\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{', typedef_body)
-                        if struct_tag_match:
-                            struct_tag_name = struct_tag_match.group(1)
-                            # Remove "_tag" suffix if present for consistency
-                            clean_struct_tag_name = struct_tag_name.replace('_tag', '')
-                            # Find the closing brace and typedef name
-                            brace_count = 0
-                            start_pos = typedef_body.find('{')
-                            if start_pos != -1:
-                                brace_count = 1
-                                pos = start_pos + 1
-                                while pos < len(typedef_body) and brace_count > 0:
-                                    if typedef_body[pos] == '{':
-                                        brace_count += 1
-                                    elif typedef_body[pos] == '}':
-                                        brace_count -= 1
-                                    pos += 1
-                                
-                                if brace_count == 0:
-                                    # Extract the typedef name after the closing brace
-                                    remaining = typedef_body[pos:].strip()
-                                    name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
-                                    if name_match:
-                                        typedef_name = name_match.group(1)
-                                        typedef_relations.append(TypedefRelation(typedef_name, 'struct', 'defines', clean_struct_tag_name))
-                                        
-                                        # Extract struct field information and add to structs
-                                        struct_body = typedef_body[start_pos+1:pos-1]  # Extract content between braces
-                                        fields = self._parse_struct_fields(struct_body)
-                                        from .models import Struct
-                                        structs[clean_struct_tag_name] = Struct(clean_struct_tag_name, fields)
-                    
-                    # Pattern 3: typedef enum { ... } name; (enum typedef)
-                    elif typedef_body.startswith('enum {') or typedef_body.startswith('enum{'):
-                        # Find the closing brace and typedef name
-                        brace_count = 0
-                        start_pos = typedef_body.find('{')
-                        if start_pos != -1:
-                            brace_count = 1
-                            pos = start_pos + 1
-                            while pos < len(typedef_body) and brace_count > 0:
-                                if typedef_body[pos] == '{':
-                                    brace_count += 1
-                                elif typedef_body[pos] == '}':
-                                    brace_count -= 1
-                                pos += 1
-                            
-                            if brace_count == 0:
-                                # Extract the typedef name after the closing brace
-                                remaining = typedef_body[pos:].strip()
-                                name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
-                                if name_match:
-                                    typedef_name = name_match.group(1)
-                                    typedef_relations.append(TypedefRelation(typedef_name, 'enum', 'defines'))
-                    
-                    # Pattern 3b: typedef enum tag { ... } name; (enum typedef with tag)
-                    elif re.match(r'^enum\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
-                        # Extract the enum tag name first
-                        enum_tag_match = re.match(r'^enum\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{', typedef_body)
-                        if enum_tag_match:
-                            enum_tag_name = enum_tag_match.group(1)
-                            # Remove "_tag" suffix if present for consistency
-                            clean_enum_tag_name = enum_tag_name.replace('_tag', '')
-                            # Find the closing brace and typedef name
-                            brace_count = 0
-                            start_pos = typedef_body.find('{')
-                            if start_pos != -1:
-                                brace_count = 1
-                                pos = start_pos + 1
-                                while pos < len(typedef_body) and brace_count > 0:
-                                    if typedef_body[pos] == '{':
-                                        brace_count += 1
-                                    elif typedef_body[pos] == '}':
-                                        brace_count -= 1
-                                    pos += 1
-                                
-                                if brace_count == 0:
-                                    # Extract the typedef name after the closing brace
-                                    remaining = typedef_body[pos:].strip()
-                                    name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
-                                    if name_match:
-                                        typedef_name = name_match.group(1)
-                                        typedef_relations.append(TypedefRelation(typedef_name, 'enum', 'defines', "", clean_enum_tag_name))
-                    
-                    # Pattern 4: typedef union { ... } name; (union typedef)
-                    elif typedef_body.startswith('union {') or typedef_body.startswith('union{'):
-                        # Find the closing brace and typedef name
-                        brace_count = 0
-                        start_pos = typedef_body.find('{')
-                        if start_pos != -1:
-                            brace_count = 1
-                            pos = start_pos + 1
-                            while pos < len(typedef_body) and brace_count > 0:
-                                if typedef_body[pos] == '{':
-                                    brace_count += 1
-                                elif typedef_body[pos] == '}':
-                                    brace_count -= 1
-                                pos += 1
-                            
-                            if brace_count == 0:
-                                # Extract the typedef name after the closing brace
-                                remaining = typedef_body[pos:].strip()
-                                name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
-                                if name_match:
-                                    typedef_name = name_match.group(1)
-                                    typedef_relations.append(TypedefRelation(typedef_name, 'union', 'defines'))
-                    
-                    # Pattern 4b: typedef union tag { ... } name; (union typedef with tag)
-                    elif re.match(r'^union\s+[A-Za-z_][A-Za-z0-9_]*\s*\{', typedef_body):
-                        # Find the closing brace and typedef name
-                        brace_count = 0
-                        start_pos = typedef_body.find('{')
-                        if start_pos != -1:
-                            brace_count = 1
-                            pos = start_pos + 1
-                            while pos < len(typedef_body) and brace_count > 0:
-                                if typedef_body[pos] == '{':
-                                    brace_count += 1
-                                elif typedef_body[pos] == '}':
-                                    brace_count -= 1
-                                pos += 1
-                            
-                            if brace_count == 0:
-                                # Extract the typedef name after the closing brace
-                                remaining = typedef_body[pos:].strip()
-                                name_match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)$', remaining)
-                                if name_match:
-                                    typedef_name = name_match.group(1)
-                                    typedef_relations.append(TypedefRelation(typedef_name, 'union', 'defines'))
-                    
-                    # Pattern 5: typedef void (*name)(params); (function pointer)
-                    func_ptr_pattern = r'^([^(*]+)\s*\(\s*\*\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)\s*\([^)]*\)$'
-                    match = re.match(func_ptr_pattern, typedef_body)
-                    if match:
-                        return_type, typedef_name = match.groups()
-                        typedef_relations.append(TypedefRelation(typedef_name, f"{return_type.strip()} (*)(...)", 'alias'))
-                    
-                    # Pattern 6: typedef type name[size]; (array typedef)
-                    array_pattern = r'^([A-Za-z_][A-Za-z0-9_\*\s]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\[([^\]]+)\]$'
-                    match = re.match(array_pattern, typedef_body)
-                    if match:
-                        base_type, typedef_name, array_size = match.groups()
-                        typedef_relations.append(TypedefRelation(typedef_name, f"{base_type.strip()}[{array_size.strip()}]", 'alias'))
-                
-                i = j
-            else:
-                i += 1
-        return typedef_relations
+    def _parse_complex_typedef(self, tokens, start_pos):
+        """Parse complex typedef (struct/enum/union)"""
+        # For now, return a simplified version
+        # TODO: Implement full complex typedef parsing
+        
+        # Find the typedef name by looking for the pattern after the closing brace
+        brace_count = 0
+        pos = start_pos
+        
+        # Find opening brace
+        while pos < len(tokens) and tokens[pos].type != TokenType.LBRACE:
+            pos += 1
+        
+        if pos >= len(tokens):
+            return None
+        
+        # Skip to closing brace
+        brace_count = 1
+        pos += 1
+        
+        while pos < len(tokens) and brace_count > 0:
+            if tokens[pos].type == TokenType.LBRACE:
+                brace_count += 1
+            elif tokens[pos].type == TokenType.RBRACE:
+                brace_count -= 1
+            pos += 1
+        
+        if brace_count > 0:
+            return None
+        
+        # Find typedef name after closing brace
+        while pos < len(tokens) and tokens[pos].type in [TokenType.WHITESPACE, TokenType.COMMENT]:
+            pos += 1
+        
+        if pos < len(tokens) and tokens[pos].type == TokenType.IDENTIFIER:
+            typedef_name = tokens[pos].value
+            struct_type = tokens[start_pos].value  # struct/enum/union
+            return (typedef_name, struct_type)
+        
+        return None
+
+    def _looks_like_function(self, tokens, start_pos):
+        """Check if the token sequence starting at start_pos looks like a function"""
+        # Look ahead for parentheses within a reasonable distance
+        for i in range(start_pos, min(start_pos + 10, len(tokens))):
+            if tokens[i].type == TokenType.LPAREN:
+                return True
+            if tokens[i].type in [TokenType.SEMICOLON, TokenType.LBRACE, TokenType.RBRACE]:
+                return False
+        return False
+
+    def _skip_function(self, tokens, start_pos):
+        """Skip over a function definition or declaration"""
+        # Find the end (either semicolon for declaration or closing brace for definition)
+        i = start_pos
+        brace_count = 0
+        paren_count = 0
+        
+        while i < len(tokens):
+            if tokens[i].type == TokenType.LPAREN:
+                paren_count += 1
+            elif tokens[i].type == TokenType.RPAREN:
+                paren_count -= 1
+            elif tokens[i].type == TokenType.LBRACE:
+                brace_count += 1
+            elif tokens[i].type == TokenType.RBRACE:
+                brace_count -= 1
+                if brace_count == 0 and paren_count == 0:
+                    return i + 1
+            elif tokens[i].type == TokenType.SEMICOLON and paren_count == 0 and brace_count == 0:
+                return i + 1
+            i += 1
+        
+        return i
+
+    def _skip_structure_definition(self, tokens, start_pos):
+        """Skip over struct/enum/union/typedef definition"""
+        i = start_pos
+        brace_count = 0
+        
+        while i < len(tokens):
+            if tokens[i].type == TokenType.LBRACE:
+                brace_count += 1
+            elif tokens[i].type == TokenType.RBRACE:
+                brace_count -= 1
+                if brace_count == 0:
+                    # Continue until semicolon
+                    while i < len(tokens) and tokens[i].type != TokenType.SEMICOLON:
+                        i += 1
+                    return i + 1 if i < len(tokens) else i
+            elif tokens[i].type == TokenType.SEMICOLON and brace_count == 0:
+                return i + 1
+            i += 1
+        
+        return i
+
+    def _parse_global_variable(self, tokens, start_pos):
+        """Parse a global variable declaration starting at start_pos"""
+        # Look for pattern: [static/extern] type name [= value];
+        i = start_pos
+        collected_tokens = []
+        
+        # Collect tokens until semicolon
+        while i < len(tokens) and tokens[i].type != TokenType.SEMICOLON:
+            if tokens[i].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
+                collected_tokens.append(tokens[i])
+            i += 1
+        
+        if len(collected_tokens) < 2:
+            return None
+        
+        # Skip modifiers
+        start_idx = 0
+        while (start_idx < len(collected_tokens) and 
+               collected_tokens[start_idx].type in [TokenType.STATIC, TokenType.EXTERN, TokenType.CONST]):
+            start_idx += 1
+        
+        # Check if there's an assignment
+        assign_idx = None
+        for j in range(start_idx, len(collected_tokens)):
+            if collected_tokens[j].type == TokenType.ASSIGN:
+                assign_idx = j
+                break
+        
+        # Extract variable name and type
+        if assign_idx is not None:
+            # Has assignment: type name = value
+            if assign_idx > start_idx + 1:
+                var_name = collected_tokens[assign_idx - 1].value
+                type_tokens = collected_tokens[start_idx:assign_idx - 1]
+                value_tokens = collected_tokens[assign_idx + 1:]
+                var_type = ' '.join(t.value for t in type_tokens)
+                var_value = ' '.join(t.value for t in value_tokens)
+                return (var_name, var_type, var_value)
+        else:
+            # No assignment: type name
+            if len(collected_tokens) > start_idx + 1:
+                var_name = collected_tokens[-1].value
+                type_tokens = collected_tokens[start_idx:-1]
+                var_type = ' '.join(t.value for t in type_tokens)
+                return (var_name, var_type, None)
+        
+        return None
+
+    def _skip_to_semicolon(self, tokens, start_pos):
+        """Skip to the next semicolon"""
+        i = start_pos
+        while i < len(tokens) and tokens[i].type != TokenType.SEMICOLON:
+            i += 1
+        return i + 1 if i < len(tokens) else i
 
     def _get_timestamp(self) -> str:
         """Get current timestamp string"""

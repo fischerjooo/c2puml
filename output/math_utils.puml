@@ -3,9 +3,9 @@
 class "math_utils" as MATH_UTILS <<source>> #LightBlue
 {
     -- Functions --
-    int add(int a, int b)
-    int subtract(int a, int b)
-    real_t average(const int * arr, size_t len)
+    #include "math_utils.h" int add()
+    int subtract()
+    real_t average()
 }
 
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
@@ -13,9 +13,9 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     -- Macros --
     + #define MATH_UTILS_H
     -- Functions --
-    + int add(int a, int b)
-    + int subtract(int a, int b)
-    + real_t average(const int * arr, size_t len)
+    + #ifndef MATH_UTILS_H #define MATH_UTILS_H #include "config.h" typedef double real_t ; typedef int ( * math_op_t ) ( int , int ) ; int add()
+    + int subtract()
+    + real_t average()
 }
 
 class "config" as HEADER_CONFIG <<header>> #LightGreen
@@ -29,6 +29,5 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
-TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : uses
 
 @enduml
