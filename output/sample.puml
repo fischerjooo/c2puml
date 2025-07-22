@@ -7,15 +7,16 @@ class "sample" as SAMPLE <<source>> #LightBlue
     - #define DEBUG_MODE
     - #define CALC
     -- Global Variables --
-    int global_counter
-    char buffer[MAX_SIZE]
-    double * global_ptr
+    - int global_counter
+    - char buffer[MAX_SIZE]
+    + double * global_ptr
     -- Functions --
     int calculate_sum(int a, int b)
     point_t * create_point(int x, int y, const char * label)
     void process_point(point_t * p)
     void demo_triangle_usage()
     int main()
+    return CALC()
 }
 
 class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
@@ -45,6 +46,10 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + extern int calculate_sum(int a, int b)
     + extern point_t * create_point(int x, int y, const char * label)
     + extern void process_point(point_t * p)
+    -- Struct Fields --
+    + int x
+    + int y
+    + char[32] label
 }
 
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
@@ -73,6 +78,9 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     -- Functions --
     + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
     + int triangle_area(const triangle_t * tri)
+    -- Struct Fields --
+    + point_t[3] vertices
+    + char[MAX_LABEL_LEN] label
 }
 
 class "config" as HEADER_CONFIG <<header>> #LightGreen
@@ -116,7 +124,6 @@ class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
     + LOG_ERROR
 }
 
-' Include relationships
 SAMPLE --> HEADER_STDIO_H : <<include>>
 SAMPLE --> HEADER_STDLIB_H : <<include>>
 SAMPLE --> HEADER_STRING_H : <<include>>
@@ -132,14 +139,10 @@ HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_CONFIG --> HEADER_STDDEF_H : <<include>>
-
-' Declaration relationships
-HEADER_SAMPLE ..> TYPEDEF_POINT_T : <<declares>>
-HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : <<declares>>
-HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
-HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
-
-' Uses relationships
-TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
+HEADER_SAMPLE ..> TYPEDEF_POINT_T : declares
+HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : declares
+HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : declares
+TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : uses
 
 @enduml

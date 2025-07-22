@@ -27,8 +27,8 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + #define DEFAULT_BUFFER_SIZE
 }
 
-' Include relationships
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
+TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : uses
 
 @enduml

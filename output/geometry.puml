@@ -14,6 +14,9 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     -- Functions --
     + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
     + int triangle_area(const triangle_t * tri)
+    -- Struct Fields --
+    + point_t[3] vertices
+    + char[MAX_LABEL_LEN] label
 }
 
 class "string.h" as HEADER_STRING_H <<header>> #LightGray
@@ -39,6 +42,10 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + extern int calculate_sum(int a, int b)
     + extern point_t * create_point(int x, int y, const char * label)
     + extern void process_point(point_t * p)
+    -- Struct Fields --
+    + int x
+    + int y
+    + char[32] label
 }
 
 class "config" as HEADER_CONFIG <<header>> #LightGreen
@@ -97,18 +104,13 @@ class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
     + LOG_ERROR
 }
 
-' Include relationships
 GEOMETRY --> HEADER_GEOMETRY : <<include>>
 GEOMETRY --> HEADER_STRING_H : <<include>>
 GEOMETRY --> HEADER_STDLIB_H : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
-
-' Declaration relationships
-HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
-
-' Uses relationships
-TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
+HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : declares
+TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : uses
 
 @enduml

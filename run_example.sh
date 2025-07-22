@@ -9,3 +9,7 @@ echo "Running example workflow with config.json..."
 python3 main.py --config example/config.json --verbose
 
 echo "PlantUML diagrams generated in: ./output (see config.json)"
+
+# Run assertions to validate the generated PUML files
+echo "Running assertions to validate generated PUML files..."
+cd example && python3 assertions.py
