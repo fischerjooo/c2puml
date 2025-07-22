@@ -299,7 +299,9 @@ class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 ' Typedef classes for enum typedefs:
 class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 {
-    + {value}
+    + {enum_value_1} = {value_1}
+    + {enum_value_2}
+    + {enum_value_3}
 }
 
 ' Typedef classes for union typedefs:
@@ -348,9 +350,9 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 - **Source/Header files**: Show only primitive typedef declarations (e.g., `typedef int MyInt`, `typedef char* String`) - struct/enum/union typedefs are NOT shown in file/header classes
 - **Typedef classes**: Show the actual content:
   - **Struct typedefs**: Show struct fields with their types (e.g., `+ int x`, `+ char* name`)
-  - **Enum typedefs**: Show enum values (e.g., `+ RED`, `+ GREEN`, `+ BLUE`)
-  - **Union typedefs**: Show union fields with their types (e.g., `+ int data`, `+ char* str`)
-  - **Simple type typedefs**: Show the original type (e.g., `+ int`, `+ char*`)
+  - **Enum typedefs**: Show enum values with their assignments (e.g., `+ LOG_DEBUG = 0`, `+ LOG_INFO`, `+ STATE_IDLE = 0`, `+ STATE_RUNNING`)
+  - **Union typedefs**: Show union fields with their types (e.g., `+ int i`, `+ float f`)
+  - **Primitive typedefs**: Show the original type (e.g., `+ uint32_t`, `+ char*`)
 
 ### 5.3 Include Depth Configuration
 
