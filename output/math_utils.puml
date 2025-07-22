@@ -8,6 +8,26 @@ int subtract(int a, int b)
 real_t average(const int * arr, size_t len)
 }
 
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
+{
++ double
+}
+
+class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
+{
++ int ( * math_op_t ) ( int , int )
+}
+
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+{
++ int32_t
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
++ uint32_t
+}
+
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
 -- Macros --
@@ -25,29 +45,11 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 + #define MAX_LABEL_LEN
 + #define DEFAULT_BUFFER_SIZE
 }
-class "real_t" as TYPEDEF_real_t <<typedef>> #LightYellow
-{
-+ double
-}
-
-class "math_op_t" as TYPEDEF_math_op_t <<typedef>> #LightYellow
-{
-+ int ( * math_op_t ) ( int , int )
-}
-
-class "id_t" as TYPEDEF_id_t <<typedef>> #LightYellow
-{
-+ uint32_t
-}
-
-class "status_t" as TYPEDEF_status_t <<typedef>> #LightYellow
-{
-+ int32_t
-}
-
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
-HEADER_MATH_UTILS ..> TYPEDEF_real_t : <<declares>>
-HEADER_MATH_UTILS ..> TYPEDEF_math_op_t : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MATH_OP_T : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_ID_T : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>
 
 @enduml
