@@ -453,8 +453,12 @@ class CParser:
                         brace_depth -= close_braces
                         logger.debug(f"  Function brace depth decreased to: {brace_depth}")
                 else:
-                    # Not in a function, use normal brace depth tracking
+                    # Not in a function, use normal brace depth tracking but don't go negative
+                    old_depth = brace_depth
                     brace_depth += open_braces - close_braces
+                    if brace_depth < 0:
+                        brace_depth = 0
+                        logger.debug(f"  Brace depth would have gone negative ({old_depth} + {open_braces} - {close_braces} = {old_depth + open_braces - close_braces}), resetting to 0")
                 
                 logger.debug(f"  Brace depth: {brace_depth}, in_function: {in_function}")
                 # Check if we've exited a function
