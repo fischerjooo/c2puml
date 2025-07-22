@@ -56,16 +56,6 @@
   - Don't introduce global variables or hidden state.
   - Make changes that improve readability, not just brevity.
 
-# Prompt Usage Guidance
-- If reusing prompts across files, extract common logic into shared rules or helpers.
-- Write rules as clear internal documentation—no vague instructions like "improve it."
-- When examples help clarify, include them directly or reference a file.
-- Keep this file under 500 lines. If it grows too large, split it into logical rule sets.
-
-# Example Rule
-- ❌ Bad: "Make this function better"
-- ✅ Good: "Split this function into smaller ones, each with a single responsibility. Add a docstring explaining its purpose. Write a test first if functionality changes."
-
 # Final Enforcement
 - Before merging:
   - Run Black, isort, Flake8, Pylint, and Mypy.
