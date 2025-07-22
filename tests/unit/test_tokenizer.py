@@ -188,7 +188,9 @@ class TestCTokenizer(unittest.TestCase):
         
         # Unknown characters
         tokens = self.tokenizer.tokenize("@#$%")
+        print('All tokens:', tokens)
         unknown_tokens = [t for t in tokens if t.type == TokenType.UNKNOWN]
+        print('Unknown tokens:', unknown_tokens)
         self.assertEqual(len(unknown_tokens), 4)
 
     def test_tokenize_line_numbers_and_columns(self):

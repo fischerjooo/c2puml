@@ -127,7 +127,7 @@ class CTokenizer:
             'char': re.compile(r"'([^'\\]|\\.)'"),
             'comment_single': re.compile(r'//.*'),
             'comment_multi': re.compile(r'/\*.*?\*/', re.DOTALL),
-            'preprocessor': re.compile(r'#.*'),
+            'preprocessor': re.compile(r'#(include|define|ifdef|ifndef|endif|elif|else|pragma|error|warning)\b.*'),
             'whitespace': re.compile(r'[ \t]+'),
             'newline': re.compile(r'\n'),
         }
@@ -363,6 +363,25 @@ class StructureFinder:
                 functions.append(result)
         
         return functions
+    
+    def find_unions(self) -> List[Tuple[int, int, str]]:
+        """Find union definitions in token stream"""
+        unions = []
+        self.pos = 0
+        
+        while self.pos < len(self.tokens):
+            if self._current_token_is(TokenType.UNION):
+                union_info = self._parse_union()
+                if union_info:
+                    unions.append(union_info)
+            elif self._current_token_is(TokenType.TYPEDEF):
+                typedef_union = self._parse_typedef_union()
+                if typedef_union:
+                    unions.append(typedef_union)
+            else:
+                self.pos += 1
+        
+        return unions
     
     def _current_token_is(self, token_type: TokenType) -> bool:
         """Check if current token is of specified type"""
@@ -752,6 +771,98 @@ class StructureFinder:
             pos += 1
         
         return None
+
+    def _parse_union(self) -> Optional[Tuple[int, int, str]]:
+        """Parse union definition"""
+        if not self._current_token_is(TokenType.UNION):
+            return None
+        
+        start_pos = self.pos
+        self._advance()  # Consumes 'union'
+        
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
+        # Get union tag name (optional for anonymous unions)
+        union_tag = ""
+        if self._current_token_is(TokenType.IDENTIFIER):
+            union_tag = self._advance().value
+        
+        # Find opening brace
+        while self.pos < len(self.tokens) and not self._current_token_is(TokenType.LBRACE):
+            self.pos += 1
+        
+        if self.pos >= len(self.tokens):
+            return None
+        
+        # Find matching closing brace
+        end_pos = self._find_matching_brace(self.pos)
+        if end_pos is None:
+            return None
+        
+        # Look for union name after closing brace (for typedefs or named unions)
+        union_name = union_tag  # Default to tag name
+        
+        # Skip to semicolon
+        self.pos = end_pos + 1
+        while self.pos < len(self.tokens) and not self._current_token_is(TokenType.SEMICOLON):
+            if self._current_token_is(TokenType.IDENTIFIER):
+                union_name = self._advance().value
+                break
+            self.pos += 1
+        
+        return (start_pos, end_pos, union_name)
+
+    def _parse_typedef_union(self) -> Optional[Tuple[int, int, str]]:
+        """Parse typedef union definition"""
+        if not self._current_token_is(TokenType.TYPEDEF):
+            return None
+        
+        start_pos = self.pos
+        self._advance()  # Consumes 'typedef'
+        
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
+        # Check if next token is 'union'
+        if not self._current_token_is(TokenType.UNION):
+            return None
+        
+        self._advance()  # Consumes 'union'
+        
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
+        # Get union tag name (optional)
+        union_tag = ""
+        if self._current_token_is(TokenType.IDENTIFIER):
+            union_tag = self._advance().value
+        
+        # Find opening brace
+        while self.pos < len(self.tokens) and not self._current_token_is(TokenType.LBRACE):
+            self.pos += 1
+        
+        if self.pos >= len(self.tokens):
+            return None
+        
+        # Find matching closing brace
+        end_pos = self._find_matching_brace(self.pos)
+        if end_pos is None:
+            return None
+        
+        # Look for typedef name after closing brace
+        typedef_name = ""
+        self.pos = end_pos + 1
+        while self.pos < len(self.tokens) and not self._current_token_is(TokenType.SEMICOLON):
+            if self._current_token_is(TokenType.IDENTIFIER):
+                typedef_name = self._advance().value
+                break
+            self.pos += 1
+        
+        return (start_pos, end_pos, typedef_name)
 
 
 def extract_token_range(tokens: List[Token], start: int, end: int) -> str:

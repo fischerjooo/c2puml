@@ -112,18 +112,24 @@ class CParser:
         # Structs
         for typedef_name, original_type in typedefs.items():
             if original_type == 'struct' and typedef_name not in structs:
-                # Find anonymous struct (empty name)
-                anon_struct = structs.get('')
+                # Find anonymous struct (special key)
+                anon_struct = structs.get('__anonymous_struct__')
                 if anon_struct:
                     structs[typedef_name] = Struct(typedef_name, anon_struct.fields)
+                    # Remove the anonymous struct from the dict
+                    del structs['__anonymous_struct__']
             elif original_type == 'enum' and typedef_name not in enums:
-                anon_enum = enums.get('')
+                anon_enum = enums.get('__anonymous_enum__')
                 if anon_enum:
                     enums[typedef_name] = Enum(typedef_name, anon_enum.values)
+                    # Remove the anonymous enum from the dict
+                    del enums['__anonymous_enum__']
             elif original_type == 'union' and typedef_name not in unions:
-                anon_union = unions.get('')
+                anon_union = unions.get('__anonymous_union__')
                 if anon_union:
                     unions[typedef_name] = Union(typedef_name, anon_union.fields)
+                    # Remove the anonymous union from the dict
+                    del unions['__anonymous_union__']
 
         return FileModel(
             file_path=str(file_path),
@@ -150,9 +156,6 @@ class CParser:
         struct_infos = structure_finder.find_structs()
         
         for start_pos, end_pos, struct_name in struct_infos:
-            if not struct_name:  # Skip anonymous structs for now
-                continue
-                
             # Need to map back to original token positions
             # Find the original token positions by looking at line/column info
             original_start = self._find_original_token_pos(tokens, structure_finder.tokens, start_pos)
@@ -170,6 +173,10 @@ class CParser:
                     except Exception as e:
                         self.logger.warning(f"Error creating field {field_name}: {e}")
                 
+                # For anonymous structs, use a special key that can be mapped later
+                if not struct_name:
+                    struct_name = "__anonymous_struct__"
+                
                 structs[struct_name] = Struct(struct_name, fields)
                 self.logger.debug(f"Parsed struct: {struct_name} with {len(fields)} fields")
         
@@ -183,9 +190,6 @@ class CParser:
         enum_infos = structure_finder.find_enums()
         
         for start_pos, end_pos, enum_name in enum_infos:
-            if not enum_name:  # Skip anonymous enums for now
-                continue
-                
             # Need to map back to original token positions
             original_start = self._find_original_token_pos(tokens, structure_finder.tokens, start_pos)
             original_end = self._find_original_token_pos(tokens, structure_finder.tokens, end_pos)
@@ -200,6 +204,11 @@ class CParser:
                         values.append(EnumValue(name=name.strip(), value=val.strip()))
                     else:
                         values.append(EnumValue(name=v.strip()))
+                
+                # For anonymous enums, use a special key that can be mapped later
+                if not enum_name:
+                    enum_name = "__anonymous_enum__"
+                
                 enums[enum_name] = Enum(enum_name, values)
                 self.logger.debug(f"Parsed enum: {enum_name} with {len(values)} values")
         
@@ -210,54 +219,31 @@ class CParser:
         from .models import Union, Field
         
         unions = {}
+        union_infos = structure_finder.find_unions()
         
-        # Look for union definitions in the token stream
-        i = 0
-        while i < len(tokens):
-            if (tokens[i].type == TokenType.UNION and 
-                i + 1 < len(tokens) and 
-                tokens[i + 1].type == TokenType.IDENTIFIER):
+        for start_pos, end_pos, union_name in union_infos:
+            # Need to map back to original token positions
+            original_start = self._find_original_token_pos(tokens, structure_finder.tokens, start_pos)
+            original_end = self._find_original_token_pos(tokens, structure_finder.tokens, end_pos)
+            
+            if original_start is not None and original_end is not None:
+                # Extract field information from original token range
+                field_tuples = find_struct_fields(tokens, original_start, original_end)
                 
-                union_name = tokens[i + 1].value
-                union_start = i
+                # Convert to Field objects
+                fields = []
+                for field_name, field_type in field_tuples:
+                    try:
+                        fields.append(Field(field_name, field_type))
+                    except Exception as e:
+                        self.logger.warning(f"Error creating union field {field_name}: {e}")
                 
-                # Find the opening brace
-                i += 2
-                while i < len(tokens) and tokens[i].type != TokenType.LBRACE:
-                    i += 1
+                # For anonymous unions, use a special key that can be mapped later
+                if not union_name:
+                    union_name = "__anonymous_union__"
                 
-                if i >= len(tokens):
-                    break
-                
-                # Find matching closing brace
-                brace_count = 1
-                i += 1
-                while i < len(tokens) and brace_count > 0:
-                    if tokens[i].type == TokenType.LBRACE:
-                        brace_count += 1
-                    elif tokens[i].type == TokenType.RBRACE:
-                        brace_count -= 1
-                    i += 1
-                
-                if brace_count == 0:
-                    # Extract fields from the union
-                    fields = []
-                    field_start = union_start + 3  # Skip 'union', name, and '{'
-                    field_end = i - 1  # Before the closing '}'
-                    
-                    # Parse fields similar to struct fields
-                    field_tuples = find_struct_fields(tokens, field_start, field_end)
-                    
-                    for field_name, field_type in field_tuples:
-                        try:
-                            fields.append(Field(field_name, field_type))
-                        except Exception as e:
-                            self.logger.warning(f"Error creating union field {field_name}: {e}")
-                    
-                    unions[union_name] = Union(union_name, fields)
-                    self.logger.debug(f"Parsed union: {union_name} with {len(fields)} fields")
-            else:
-                i += 1
+                unions[union_name] = Union(union_name, fields)
+                self.logger.debug(f"Parsed union: {union_name} with {len(fields)} fields")
         
         return unions
 
