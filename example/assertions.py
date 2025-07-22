@@ -552,6 +552,9 @@ class PUMLValidator:
         # Check that all typedef objects have at least one relation
         self._validate_all_typedefs_have_relations(relationships, filename)
         
+        # Check that all relations have corresponding classes
+        self._validate_all_relations_have_classes(relationships, filename)
+        
         # Assert relationship structure
         for source, target, rel_type in relationships:
             assert source and target, f"Invalid relationship: {source} -> {target}"
@@ -903,6 +906,29 @@ class PUMLValidator:
             raise AssertionError(f"Typedef objects without any relations found in {filename}: {missing_list}")
         
         print(f"    ✅ All {len(typedef_objects)} typedef objects have relations")
+
+    def _validate_all_relations_have_classes(self, relationships: List[Tuple[str, str, str]], filename: str) -> None:
+        """Assert that for every relation, both source and target classes exist in the diagram."""
+        # Read the PUML file to extract all classes
+        content = self.read_puml_file(filename)
+        classes = self.extract_classes(content)
+        
+        # Get all class IDs that exist in the diagram
+        existing_classes = set(classes.keys())
+        
+        # Check each relationship
+        missing_classes = []
+        for source, target, rel_type in relationships:
+            if source not in existing_classes:
+                missing_classes.append(f"Source class '{source}' in relation '{source} -> {target} ({rel_type})'")
+            if target not in existing_classes:
+                missing_classes.append(f"Target class '{target}' in relation '{source} -> {target} ({rel_type})'")
+        
+        if missing_classes:
+            missing_list = "\n      ".join(missing_classes)
+            raise AssertionError(f"Relations with missing classes found in {filename}:\n      {missing_list}")
+        
+        print(f"    ✅ All {len(relationships)} relations have corresponding classes")
 
     def validate_file(self, filename: str) -> None:
         """Validate a single PUML file."""
