@@ -7,7 +7,50 @@
       "relative_path": "complex_example.h",
       "project_root": "/workspace/example/source",
       "encoding_used": "utf-8",
-      "structs": {},
+      "structs": {
+        "NestedInfo_t": {
+          "name": "NestedInfo_t",
+          "fields": [
+            {
+              "name": "id",
+              "type": "id_t",
+              "value": null
+            },
+            {
+              "name": "]",
+              "type": "char description [ MAX_LABEL_LEN",
+              "value": null
+            },
+            {
+              "name": "log_level",
+              "type": "log_level_t",
+              "value": null
+            }
+          ],
+          "methods": []
+        },
+        "ComplexExample_t": {
+          "name": "ComplexExample_t",
+          "fields": [
+            {
+              "name": "info",
+              "type": "NestedInfo_t",
+              "value": null
+            },
+            {
+              "name": "status",
+              "type": "CE_Status_t",
+              "value": null
+            },
+            {
+              "name": "]",
+              "type": "int values [ 5",
+              "value": null
+            }
+          ],
+          "methods": []
+        }
+      },
       "enums": {
         "CE_Status_t": {
           "name": "CE_Status_t",
@@ -164,7 +207,24 @@
       "relative_path": "geometry.h",
       "project_root": "/workspace/example/source",
       "encoding_used": "utf-8",
-      "structs": {},
+      "structs": {
+        "triangle_t": {
+          "name": "triangle_t",
+          "fields": [
+            {
+              "name": "]",
+              "type": "point_t vertices [ 3",
+              "value": null
+            },
+            {
+              "name": "]",
+              "type": "char label [ MAX_LABEL_LEN",
+              "value": null
+            }
+          ],
+          "methods": []
+        }
+      },
       "enums": {},
       "functions": [
         {
@@ -1095,6 +1155,48 @@
       "project_root": "/workspace/example/source",
       "encoding_used": "utf-8",
       "structs": {
+        "MyBuffer": {
+          "name": "MyBuffer",
+          "fields": [
+            {
+              "name": "length",
+              "type": "MyLen",
+              "value": null
+            },
+            {
+              "name": "data",
+              "type": "MyString",
+              "value": null
+            }
+          ],
+          "methods": []
+        },
+        "MyComplex": {
+          "name": "MyComplex",
+          "fields": [
+            {
+              "name": "id",
+              "type": "MyLen",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "MyString",
+              "value": null
+            },
+            {
+              "name": "callback",
+              "type": "MyCallback",
+              "value": null
+            },
+            {
+              "name": "log_level",
+              "type": "log_level_t",
+              "value": null
+            }
+          ],
+          "methods": []
+        },
         "NamedStruct_t": {
           "name": "NamedStruct_t",
           "fields": [
@@ -1192,5 +1294,5 @@
       "unions": {}
     }
   },
-  "created_at": "2025-07-22T11:10:42.152231"
+  "created_at": "2025-07-22T11:57:48.709599"
 }
