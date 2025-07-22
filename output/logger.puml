@@ -9,20 +9,64 @@ class "logger" as LOGGER <<source>> #LightBlue
     void log_message(log_level_t level, const char * fmt, ... ...)
 }
 
-class ""logger.h".h" as HEADER_"LOGGER_H" <<header>> #LightGray
+class "logger" as HEADER_LOGGER <<header>> #LightGreen
+{
+    -- Macros --
+    + #define LOGGER_H
+    -- Functions --
+    + void set_log_callback(log_callback_t cb);
+    + void log_message(log_level_t level, const char * fmt, ... ...);
+}
+class "stdarg.h" as HEADER_STDARG <<header>> #LightGray
 {
 }
 
-class "<stdarg.h>.h" as HEADER_<STDARG_H> <<header>> #LightGray
+class "string.h" as HEADER_STRING <<header>> #LightGray
 {
 }
 
-class "<string.h>.h" as HEADER_<STRING_H> <<header>> #LightGray
+class "config" as HEADER_CONFIG <<header>> #LightGreen
+{
+    -- Macros --
+    + #define CONFIG_H
+    + #define PROJECT_NAME
+    + #define MAX_LABEL_LEN
+    + #define DEFAULT_BUFFER_SIZE
+}
+class "stdio.h" as HEADER_STDIO <<header>> #LightGray
 {
 }
 
-LOGGER --> HEADER_"LOGGER_H" : <<include>>
-LOGGER --> HEADER_<STDARG_H> : <<include>>
-LOGGER --> HEADER_<STRING_H> : <<include>>
+enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
+{
+    EnumValue(name='LOG_DEBUG', value='0')
+    EnumValue(name='LOG_INFO', value=None)
+    EnumValue(name='LOG_WARN', value=None)
+    EnumValue(name='LOG_ERROR', value=None)
+}
+
+class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
+{
+    + typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) log_callback_t
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
+    + typedef uint32_t id_t
+}
+
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+{
+    + typedef int32_t status_t
+}
+
+LOGGER --> HEADER_LOGGER : <<include>>
+LOGGER --> HEADER_STDARG : <<include>>
+LOGGER --> HEADER_STRING : <<include>>
+HEADER_LOGGER --> HEADER_STDIO : <<include>>
+HEADER_LOGGER --> HEADER_CONFIG : <<include>>
+TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
+HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
+HEADER_LOGGER ..> TYPEDEF_LOG_CALLBACK_T : <<declares>>
 
 @enduml

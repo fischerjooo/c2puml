@@ -73,8 +73,8 @@
       "functions": [],
       "globals": [],
       "includes": [
-        "\"config.h\"",
-        "\"logger.h\""
+        "config.h",
+        "logger.h"
       ],
       "macros": [
         "COMPLEX_EXAMPLE_H"
@@ -116,8 +116,8 @@
       "functions": [],
       "globals": [],
       "includes": [
-        "<stddef.h>",
-        "<stdint.h>"
+        "stddef.h",
+        "stdint.h"
       ],
       "macros": [
         "CONFIG_H",
@@ -185,9 +185,9 @@
       ],
       "globals": [],
       "includes": [
-        "\"geometry.h\"",
-        "<string.h>",
-        "<stdlib.h>"
+        "geometry.h",
+        "string.h",
+        "stdlib.h"
       ],
       "macros": [],
       "typedefs": {},
@@ -264,8 +264,8 @@
       ],
       "globals": [],
       "includes": [
-        "\"sample.h\"",
-        "\"math_utils.h\""
+        "sample.h",
+        "math_utils.h"
       ],
       "macros": [
         "GEOMETRY_H"
@@ -330,9 +330,9 @@
         }
       ],
       "includes": [
-        "\"logger.h\"",
-        "<stdarg.h>",
-        "<string.h>"
+        "logger.h",
+        "stdarg.h",
+        "string.h"
       ],
       "macros": [],
       "typedefs": {},
@@ -409,8 +409,8 @@
       ],
       "globals": [],
       "includes": [
-        "<stdio.h>",
-        "\"config.h\""
+        "stdio.h",
+        "config.h"
       ],
       "macros": [
         "LOGGER_H"
@@ -488,7 +488,7 @@
       ],
       "globals": [],
       "includes": [
-        "\"math_utils.h\""
+        "math_utils.h"
       ],
       "macros": [],
       "typedefs": {},
@@ -561,7 +561,7 @@
       ],
       "globals": [],
       "includes": [
-        "\"config.h\""
+        "config.h"
       ],
       "macros": [
         "MATH_UTILS_H"
@@ -724,13 +724,13 @@
         }
       ],
       "includes": [
-        "<stdio.h>",
-        "<stdlib.h>",
-        "<string.h>",
-        "\"sample.h\"",
-        "\"math_utils.h\"",
-        "\"logger.h\"",
-        "\"geometry.h\""
+        "stdio.h",
+        "stdlib.h",
+        "string.h",
+        "sample.h",
+        "math_utils.h",
+        "logger.h",
+        "geometry.h"
       ],
       "macros": [
         "MAX_SIZE",
@@ -858,10 +858,10 @@
         }
       ],
       "includes": [
-        "<stddef.h>",
-        "\"config.h\"",
-        "\"geometry.h\"",
-        "\"logger.h\""
+        "stddef.h",
+        "config.h",
+        "geometry.h",
+        "logger.h"
       ],
       "macros": [
         "SAMPLE_H",
@@ -969,11 +969,11 @@
         }
       ],
       "includes": [
-        "\"typedef_test.h\"",
-        "\"complex_example.h\"",
-        "\"geometry.h\"",
-        "\"logger.h\"",
-        "<stdlib.h>"
+        "typedef_test.h",
+        "complex_example.h",
+        "geometry.h",
+        "logger.h",
+        "stdlib.h"
       ],
       "macros": [],
       "typedefs": {},
@@ -1080,10 +1080,10 @@
       "functions": [],
       "globals": [],
       "includes": [
-        "<stdint.h>",
-        "\"sample.h\"",
-        "\"config.h\"",
-        "\"logger.h\""
+        "stdint.h",
+        "sample.h",
+        "config.h",
+        "logger.h"
       ],
       "macros": [
         "TYPEDEF_TEST_H"
@@ -1140,5 +1140,5 @@
       }
     }
   },
-  "created_at": "2025-07-22T18:21:06.274931"
+  "created_at": "2025-07-22T19:18:56.099637"
 }

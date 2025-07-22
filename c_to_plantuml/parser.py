@@ -337,15 +337,12 @@ class CParser:
         for token in tokens:
             if token.type == TokenType.INCLUDE:
                 # Extract include filename from the token value
-                # e.g., "#include <stdio.h>" -> "<stdio.h>"
+                # e.g., "#include <stdio.h>" -> "stdio.h"
                 import re
                 match = re.search(r'[<"]([^>"]+)[>"]', token.value)
                 if match:
-                    # Preserve angle brackets or quotes
-                    if '<' in token.value:
-                        includes.append(f"<{match.group(1)}>")
-                    else:
-                        includes.append(f'"{match.group(1)}"')
+                    # Return just the filename without quotes or angle brackets
+                    includes.append(match.group(1))
         
         return includes
 
