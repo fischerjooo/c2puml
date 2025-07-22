@@ -389,6 +389,10 @@ class StructureFinder:
             return None
         self._advance()
         
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
         # Get struct tag name (optional for anonymous structs)
         struct_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
@@ -408,22 +412,40 @@ class StructureFinder:
         if end_brace_pos is None:
             return None
         
-        # Look for struct name after closing brace (for typedefs or named structs)
+        # Look for struct name after closing brace
         name_pos = end_brace_pos + 1
-        struct_name = struct_tag
-        found_var_after_brace = False
-        while name_pos < len(self.tokens):
-            if self.tokens[name_pos].type == TokenType.IDENTIFIER:
-                if not struct_tag:
-                    # Anonymous struct, variable after brace
-                    found_var_after_brace = True
-                struct_name = self.tokens[name_pos].value
+        struct_name = struct_tag  # Default to tag name
+        
+        # Check if this is a typedef struct by looking backwards
+        is_typedef = False
+        check_pos = start_pos - 1
+        while check_pos >= 0:
+            if self.tokens[check_pos].type == TokenType.TYPEDEF:
+                is_typedef = True
                 break
-            elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+            elif self.tokens[check_pos].type in [TokenType.STRUCT, TokenType.LBRACE, TokenType.RBRACE]:
                 break
-            name_pos += 1
-        if not struct_tag and found_var_after_brace:
-            struct_name = ""
+            check_pos -= 1
+        
+        if is_typedef:
+            # For typedef struct, look for the typedef name after the closing brace
+            while name_pos < len(self.tokens):
+                if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                    struct_name = self.tokens[name_pos].value
+                    break
+                elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+                    break
+                name_pos += 1
+        elif not struct_tag:
+            # Anonymous struct - check if there's a variable name after the brace
+            while name_pos < len(self.tokens):
+                if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                    # This is a variable name, not a struct name
+                    struct_name = ""
+                    break
+                elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+                    break
+                name_pos += 1
         
         # Find semicolon (for struct definitions)
         self.pos = end_brace_pos + 1
@@ -477,6 +499,10 @@ class StructureFinder:
             return None
         self._advance()
         
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
         # Get enum tag name (optional for anonymous enums)
         enum_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
@@ -496,16 +522,40 @@ class StructureFinder:
         if end_brace_pos is None:
             return None
         
-        # Look for enum name after closing brace (for typedefs or named enums)
+        # Look for enum name after closing brace
         name_pos = end_brace_pos + 1
-        enum_name = enum_tag
-        while name_pos < len(self.tokens):
-            if self.tokens[name_pos].type == TokenType.IDENTIFIER:
-                enum_name = self.tokens[name_pos].value
+        enum_name = enum_tag  # Default to tag name
+        
+        # Check if this is a typedef enum by looking backwards
+        is_typedef = False
+        check_pos = start_pos - 1
+        while check_pos >= 0:
+            if self.tokens[check_pos].type == TokenType.TYPEDEF:
+                is_typedef = True
                 break
-            elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+            elif self.tokens[check_pos].type in [TokenType.ENUM, TokenType.LBRACE, TokenType.RBRACE]:
                 break
-            name_pos += 1
+            check_pos -= 1
+        
+        if is_typedef:
+            # For typedef enum, look for the typedef name after the closing brace
+            while name_pos < len(self.tokens):
+                if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                    enum_name = self.tokens[name_pos].value
+                    break
+                elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+                    break
+                name_pos += 1
+        elif not enum_tag:
+            # Anonymous enum - check if there's a variable name after the brace
+            while name_pos < len(self.tokens):
+                if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                    # This is a variable name, not an enum name
+                    enum_name = ""
+                    break
+                elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+                    break
+                name_pos += 1
         
         # Find semicolon
         self.pos = end_brace_pos + 1
@@ -585,34 +635,41 @@ class StructureFinder:
                     # Define modifiers set
                     modifiers = {TokenType.STATIC, TokenType.EXTERN, TokenType.INLINE}
                     
-                    # Now look backwards to find the complete return type
+                    # Look back to find the complete return type including modifiers
                     # We need to include all tokens that are part of the return type
-                    # For example: "point_t *" should include both "point_t" and "*"
-                    # But we need to be careful not to go too far back and include content from other functions
+                    # For example: "static point_t *" should include "static", "point_t", and "*"
                     
-                    # Look back at most 20 tokens to capture multi-token return types like "point_t *"
-                    # This ensures we capture both "point_t" and "*" tokens
-                    max_lookback = max(0, func_name_pos - 20)
-                    if return_type_start < max_lookback:
-                        return_type_start = max_lookback
+                    # Look back at most 10 tokens to capture multi-token return types
+                    max_lookback = max(0, func_name_pos - 10)
                     
-
+                    # Start from the current position and work backwards
+                    current_pos = return_type_start
                     
-                    # Skip modifiers like static, extern, inline
-                    while (return_type_start >= 0 and 
-                           self.tokens[return_type_start].type in modifiers):
-                        return_type_start -= 1
+                    # Collect all tokens that are part of the return type
+                    return_type_tokens = []
                     
-                    # Now collect the return type tokens
-                    # Look back enough to capture multi-token return types like "point_t *"
-                    # We need to look back further to capture the full return type
-                    max_lookback = max(0, func_name_pos - 8)  # Look back at most 8 tokens
-                    if return_type_start < max_lookback:
-                        return_type_start = max_lookback
+                    # First, collect any modifiers (static, extern, inline)
+                    while current_pos >= max_lookback:
+                        if self.tokens[current_pos].type in modifiers:
+                            return_type_tokens.insert(0, self.tokens[current_pos])
+                            current_pos -= 1
+                        else:
+                            break
+                    
+                    # Then collect the actual return type (including pointer types)
+                    while current_pos >= max_lookback:
+                        token_type = self.tokens[current_pos].type
+                        if token_type in [TokenType.IDENTIFIER, TokenType.INT, TokenType.VOID, 
+                                        TokenType.CHAR, TokenType.FLOAT, TokenType.DOUBLE,
+                                        TokenType.LONG, TokenType.SHORT, TokenType.UNSIGNED,
+                                        TokenType.SIGNED, TokenType.ASTERISK, TokenType.CONST]:
+                            return_type_tokens.insert(0, self.tokens[current_pos])
+                            current_pos -= 1
+                        else:
+                            break
                     
                     # Extract return type
-                    if return_type_start >= 0 and return_type_start <= return_type_end:
-                        return_type_tokens = self.tokens[return_type_start:return_type_end + 1]
+                    if return_type_tokens:
                         return_type = ' '.join(t.value for t in return_type_tokens).strip()
                         
                         # Find end of function (either ; for declaration or { for definition)
