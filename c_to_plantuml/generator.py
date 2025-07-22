@@ -48,6 +48,9 @@ class PlantUMLGenerator:
         
         # Generate function and variable type dependencies
         diagram_lines.extend(self.generate_type_dependencies(file_model, project_model))
+        
+        # Generate declares relationships between files and typedefs
+        diagram_lines.extend(self.generate_declares_relationships(file_model, project_model))
 
         # End diagram
         diagram_lines.extend(["", "@enduml"])
@@ -1466,6 +1469,34 @@ class PlantUMLGenerator:
         
         return type_str
 
+    def generate_declares_relationships(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
+        """Generate declares relationships between files and typedefs they define"""
+        lines = []
+        seen_relationships = set()
+        
+        # Get the class ID for the current file
+        if file_model.file_path.endswith('.h'):
+            class_id = self._get_header_uml_id(Path(file_model.file_path).stem)
+        else:
+            class_id = self._get_uml_id(Path(file_model.file_path).stem)
+        
+        # Process typedefs defined in the current file
+        for typedef_name, original_type in file_model.typedefs.items():
+            relationship_key = f"declares_{class_id}_{typedef_name}"
+            if relationship_key not in seen_relationships:
+                seen_relationships.add(relationship_key)
+                lines.append(f"{class_id} ..> {self._get_typedef_uml_id(typedef_name)} : <<declares>>")
+        
+        # Process typedefs from typedef_relations (complex typedefs like structs, enums, unions)
+        for typedef_relation in file_model.typedef_relations:
+            typedef_name = typedef_relation.typedef_name
+            relationship_key = f"declares_{class_id}_{typedef_name}"
+            if relationship_key not in seen_relationships:
+                seen_relationships.add(relationship_key)
+                lines.append(f"{class_id} ..> {self._get_typedef_uml_id(typedef_name)} : <<declares>>")
+        
+        return lines
+
 
 class Generator:
     """Main generator class for Step 3: Generate puml files based on model.json"""
@@ -1495,10 +1526,10 @@ class Generator:
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
 
-        # Generate diagrams for each .c file
+        # Generate diagrams for each .c and .h file
         generated_files = []
         for file_path, file_model in model.files.items():
-            if file_path.endswith(".c"):
+            if file_path.endswith(".c") or file_path.endswith(".h"):
                 try:
                     diagram_content = self.plantuml_generator.generate_diagram(
                         file_model, model, include_depth

@@ -1,0 +1,38 @@
+@startuml config
+
+class "config" as HEADER_CONFIG <<header>> #LightGreen
+{
+    -- Macros --
+    - #define CONFIG_H
+    - #define PROJECT_NAME
+    - #define MAX_LABEL_LEN
+    - #define DEFAULT_BUFFER_SIZE
+    -- Typedefs --
+    + typedef uint32_t id_t
+    + typedef int32_t status_t
+}
+
+class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
+{
+}
+
+class "stdint.h" as HEADER_STDINT <<header>> #LightGray
+{
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
+    + typedef uint32_t id_t
+}
+
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+{
+    + typedef int32_t status_t
+}
+
+HEADER_CONFIG --> HEADER_STDDEF : <<include>>
+HEADER_CONFIG --> HEADER_STDINT : <<include>>
+HEADER_CONFIG ..> TYPEDEF_ID_T : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>
+
+@enduml
