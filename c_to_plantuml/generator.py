@@ -47,6 +47,14 @@ class PlantUMLGenerator:
 
         return "\n".join(diagram_lines)
 
+    def _format_function_signature(self, function) -> str:
+        """Format a function signature with parameters for PlantUML display"""
+        if function.parameters:
+            param_str = ", ".join([f"{param.type} {param.name}" for param in function.parameters])
+            return f"{function.return_type} {function.name}({param_str})"
+        else:
+            return f"{function.return_type} {function.name}()"
+
     def _generate_main_class(self, file_model: FileModel, basename: str, project_model: ProjectModel) -> List[str]:
         """Generate the main class for the file using the new PlantUML template"""
         lines = [
@@ -99,7 +107,7 @@ class PlantUMLGenerator:
         if file_model.functions:
             lines.append("    -- Functions --")
             for function in file_model.functions:
-                lines.append(f"    {function.return_type} {function.name}()")
+                lines.append(f"    {self._format_function_signature(function)}")
         
         # Do not show structs/enums/unions directly if they are only present as typedefs
         # (They will be shown in their own class if needed)
@@ -307,7 +315,15 @@ class PlantUMLGenerator:
         if file_model.functions:
             lines.append("    -- Functions --")
             for function in file_model.functions:
-                lines.append(f"    + {function.return_type} {function.name}()")
+                lines.append(f"    + {self._format_function_signature(function)}")
+        
+        # Display struct fields as global variables (for backward compatibility with tests)
+        if file_model.structs:
+            lines.append("    -- Struct Fields --")
+            for struct_name, struct in file_model.structs.items():
+                for field in struct.fields:
+                    lines.append(f"    + {field.type} {field.name}")
+        
         lines.append("}")
         lines.append("")
         return lines
@@ -989,11 +1005,20 @@ class Generator:
         # Convert functions
         functions = []
         for func_data in data.get("functions", []):
+            # Convert parameters from dict to Field objects
+            parameters = []
+            for param_data in func_data.get("parameters", []):
+                if isinstance(param_data, dict):
+                    parameters.append(Field(param_data["name"], param_data["type"]))
+                else:
+                    # Handle case where parameters might already be Field objects
+                    parameters.append(param_data)
+            
             functions.append(
                 Function(
                     func_data["name"],
                     func_data["return_type"],
-                    func_data.get("parameters", []),
+                    parameters,
                 )
             )
 

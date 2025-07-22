@@ -285,6 +285,10 @@ class CParser:
 
         globals_list = []
         
+        # Track brace depth to ensure we're only parsing at top level
+        brace_depth = 0
+        in_function = False
+        
         # Split content into lines and process each line
         lines = content.split('\n')
         
@@ -303,7 +307,34 @@ class CParser:
                 continue
 
             # Skip lines that are just a closing brace and a name (e.g., '} log_level_t;')
-            if line.startswith('}'):
+            # But we need to count the closing brace for depth tracking
+            if line.startswith('}') and not line.endswith(';'):
+                # This is a closing brace that should be counted for depth tracking
+                pass
+            elif line.startswith('}'):
+                # Still count the closing brace for depth tracking, but skip processing
+                pass
+                
+            # Track brace depth
+            open_braces = line.count('{')
+            close_braces = line.count('}')
+            brace_depth += open_braces - close_braces
+            
+            # Ensure brace_depth doesn't go negative
+            brace_depth = max(0, brace_depth)
+            
+            # Check if we're entering a function (function declaration followed by opening brace)
+            if '(' in line and ')' in line and '{' in line:
+                in_function = True
+            elif brace_depth == 0:
+                in_function = False
+            
+            # Reset in_function flag when we're at top level and not in a function
+            if brace_depth == 0 and not ('(' in line and ')' in line and '{' in line):
+                in_function = False
+            
+            # Skip if we're inside a function or any block
+            if in_function or brace_depth > 0:
                 continue
                 
             # Skip lines with function-like declarations (containing parentheses)
@@ -313,6 +344,10 @@ class CParser:
             # Skip switch/case/default statements (case insensitive)
             line_lower = line.lower()
             if line_lower.startswith('case ') or line_lower.startswith('default:') or line_lower.startswith('switch '):
+                continue
+                
+            # Skip return statements
+            if line_lower.startswith('return '):
                 continue
                 
             # Check if line ends with semicolon (basic global variable indicator)
@@ -337,11 +372,14 @@ class CParser:
                         parts = parts[1:]  # Remove 'static'
                     
                     if len(parts) >= 2:
-                        # Last part is the variable name
+                        # Last part is the variable name (may include array brackets)
                         var_name = parts[-1]
                         
-                        # Check if variable name is valid
-                        if re.match(r'^[A-Za-z_][A-Za-z0-9_]*$', var_name):
+                        # Check if variable name is valid (including array declarations)
+                        if re.match(r'^[A-Za-z_][A-Za-z0-9_]*(\[[^\]]*\])*$', var_name):
+                            # Extract base name without array brackets
+                            base_name = re.sub(r'\[[^\]]*\]', '', var_name)
+                            
                             # Everything before the variable name is the type
                             type_parts = parts[:-1]
                             type_name = ' '.join(type_parts).strip()
@@ -349,11 +387,11 @@ class CParser:
                             if type_name:
                                 import logging
                                 logger = logging.getLogger(__name__)
-                                logger.debug(f"About to create Field: line='{line}', type='{type_name}', name='{var_name}'")
+                                logger.debug(f"About to create Field: line='{line}', type='{type_name}', name='{base_name}'")
                                 try:
-                                    globals_list.append(Field(var_name, type_name))
+                                    globals_list.append(Field(base_name, type_name))
                                 except Exception as e:
-                                    logger.error(f"Exception creating Field: {e} | line='{line}', type='{type_name}', name='{var_name}'")
+                                    logger.error(f"Exception creating Field: {e} | line='{line}', type='{type_name}', name='{base_name}'")
                                     raise
 
         return globals_list

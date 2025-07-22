@@ -4,20 +4,20 @@ class "logger" as LOGGER <<source>> #LightBlue
 {
     -- Global Variables --
     log_callback_t current_cb
-    va_list args
-    const char * level_str
     -- Functions --
-    void set_log_callback()
-    void log_message()
+    void set_log_callback(log_callback_t cb)
+    void log_message(log_level_t level, const char * fmt)
 }
 
 class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
+    -- Global Variables --
+    + } log_level_t
     -- Functions --
-    + void set_log_callback()
-    + void log_message()
+    + void set_log_callback(log_callback_t cb)
+    + void log_message(log_level_t level, const char * fmt)
 }
 
 class "stdarg.h" as HEADER_STDARG_H <<header>> #LightGray

@@ -6,13 +6,11 @@ class "typedef_test" as TYPEDEF_TEST <<source>> #LightBlue
     MyLen global_length
     MyBuffer global_buffer
     MyComplexPtr global_complex
-    return complex
-    MyBuffer buffer
     -- Functions --
-    void log_buffer()
-    MyInt process_buffer()
-    int my_callback()
-    MyComplex * create_complex()
+    void log_buffer(const MyBuffer * buffer)
+    MyInt process_buffer(MyBuffer * buffer)
+    int my_callback(MyBuffer * buffer)
+    MyComplex * create_complex(MyLen id, MyString name)
     int main()
     return process_buffer()
 }
@@ -24,18 +22,33 @@ class "typedef_test" as HEADER_TYPEDEF_TEST <<header>> #LightGreen
     -- Global Variables --
     + MyLen length
     + MyString data
+    + } MyBuffer
     + MyLen id
     + MyString name
     + MyCallback callback
     + log_level_t log_level
+    + } MyComplex
+    + } Color_t
+    + } Status_t
     + int x
     + int y
+    + } Point_t
     + int a
     + int b
+    + } NamedStruct_t
     + int i
     + float f
+    + } Number_t
     + char c
     + double d
+    + } NamedUnion_t
+    -- Struct Fields --
+    + MyLen id
+    + MyString name
+    + MyCallback callback
+    + log_level_t log_level
+    + int a
+    + int b
 }
 
 class "complex_example" as HEADER_COMPLEX_EXAMPLE <<header>> #LightGreen
@@ -44,27 +57,41 @@ class "complex_example" as HEADER_COMPLEX_EXAMPLE <<header>> #LightGreen
     + #define COMPLEX_EXAMPLE_H
     -- Global Variables --
     + id_t id
+    + char description
     + log_level_t log_level
+    + } NestedInfo_t
+    + } CE_Status_t
     + NestedInfo_t info
     + CE_Status_t status
+    + int values
+    + } ComplexExample_t
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
     -- Macros --
     + #define GEOMETRY_H
+    -- Global Variables --
+    + point_t vertices
+    + char label
+    + } triangle_t
     -- Functions --
-    + triangle_t create_triangle()
-    + int triangle_area()
+    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
+    + int triangle_area(const triangle_t * tri)
+    -- Struct Fields --
+    + point_t[3] vertices
+    + char[MAX_LABEL_LEN] label
 }
 
 class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
+    -- Global Variables --
+    + } log_level_t
     -- Functions --
-    + void set_log_callback()
-    + void log_message()
+    + void set_log_callback(log_callback_t cb)
+    + void log_message(log_level_t level, const char * fmt)
 }
 
 class "stdlib.h" as HEADER_STDLIB_H <<header>> #LightGray
@@ -82,12 +109,19 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     -- Global Variables --
     + int x
     + int y
+    + char label
+    + } point_t
+    + } system_state_t
     + extern const int MAX_POINTS
     + extern const char * DEFAULT_LABEL
     -- Functions --
-    + extern int calculate_sum()
-    + extern point_t * create_point()
-    + extern void process_point()
+    + extern int calculate_sum(int a, int b)
+    + extern point_t * create_point(int x, int y, const char * label)
+    + extern void process_point(point_t * p)
+    -- Struct Fields --
+    + int x
+    + int y
+    + char[32] label
 }
 
 class "config" as HEADER_CONFIG <<header>> #LightGreen
@@ -108,9 +142,9 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     -- Macros --
     + #define MATH_UTILS_H
     -- Functions --
-    + int add()
-    + int subtract()
-    + real_t average()
+    + int add(int a, int b)
+    + int subtract(int a, int b)
+    + real_t average(const int * arr, size_t len)
 }
 
 class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
