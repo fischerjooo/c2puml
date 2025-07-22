@@ -103,6 +103,7 @@ class CParser:
         # Parse different structures using tokenizer
         structs = self._parse_structs_with_tokenizer(tokens, structure_finder)
         enums = self._parse_enums_with_tokenizer(tokens, structure_finder)
+        unions = self._parse_unions_with_tokenizer(tokens, structure_finder)
         functions = self._parse_functions_with_tokenizer(tokens, structure_finder)
         
         return FileModel(
@@ -112,6 +113,7 @@ class CParser:
             encoding_used=encoding,
             structs=structs,
             enums=enums,
+            unions=unions,
             functions=functions,
             globals=self._parse_globals_with_tokenizer(tokens),
             includes=self._parse_includes_with_tokenizer(tokens),
@@ -156,7 +158,7 @@ class CParser:
 
     def _parse_enums_with_tokenizer(self, tokens, structure_finder) -> Dict[str, "Enum"]:
         """Parse enum definitions using tokenizer"""
-        from .models import Enum
+        from .models import Enum, EnumValue
         
         enums = {}
         enum_infos = structure_finder.find_enums()
@@ -171,12 +173,74 @@ class CParser:
             
             if original_start is not None and original_end is not None:
                 # Extract enum values from original token range
-                values = find_enum_values(tokens, original_start, original_end)
-                
+                value_strs = find_enum_values(tokens, original_start, original_end)
+                values = []
+                for v in value_strs:
+                    if '=' in v:
+                        name, val = v.split('=', 1)
+                        values.append(EnumValue(name=name.strip(), value=val.strip()))
+                    else:
+                        values.append(EnumValue(name=v.strip()))
                 enums[enum_name] = Enum(enum_name, values)
                 self.logger.debug(f"Parsed enum: {enum_name} with {len(values)} values")
         
         return enums
+
+    def _parse_unions_with_tokenizer(self, tokens, structure_finder) -> Dict[str, "Union"]:
+        """Parse union definitions using tokenizer"""
+        from .models import Union, Field
+        
+        unions = {}
+        
+        # Look for union definitions in the token stream
+        i = 0
+        while i < len(tokens):
+            if (tokens[i].type == TokenType.UNION and 
+                i + 1 < len(tokens) and 
+                tokens[i + 1].type == TokenType.IDENTIFIER):
+                
+                union_name = tokens[i + 1].value
+                union_start = i
+                
+                # Find the opening brace
+                i += 2
+                while i < len(tokens) and tokens[i].type != TokenType.LBRACE:
+                    i += 1
+                
+                if i >= len(tokens):
+                    break
+                
+                # Find matching closing brace
+                brace_count = 1
+                i += 1
+                while i < len(tokens) and brace_count > 0:
+                    if tokens[i].type == TokenType.LBRACE:
+                        brace_count += 1
+                    elif tokens[i].type == TokenType.RBRACE:
+                        brace_count -= 1
+                    i += 1
+                
+                if brace_count == 0:
+                    # Extract fields from the union
+                    fields = []
+                    field_start = union_start + 3  # Skip 'union', name, and '{'
+                    field_end = i - 1  # Before the closing '}'
+                    
+                    # Parse fields similar to struct fields
+                    field_tuples = find_struct_fields(tokens, field_start, field_end)
+                    
+                    for field_name, field_type in field_tuples:
+                        try:
+                            fields.append(Field(field_name, field_type))
+                        except Exception as e:
+                            self.logger.warning(f"Error creating union field {field_name}: {e}")
+                    
+                    unions[union_name] = Union(union_name, fields)
+                    self.logger.debug(f"Parsed union: {union_name} with {len(fields)} fields")
+            else:
+                i += 1
+        
+        return unions
 
     def _parse_functions_with_tokenizer(self, tokens, structure_finder) -> List["Function"]:
         """Parse function declarations/definitions using tokenizer"""
@@ -256,11 +320,15 @@ class CParser:
         for token in tokens:
             if token.type == TokenType.INCLUDE:
                 # Extract include filename from the token value
-                # e.g., "#include <stdio.h>" -> "stdio.h"
+                # e.g., "#include <stdio.h>" -> "<stdio.h>"
                 import re
                 match = re.search(r'[<"]([^>"]+)[>"]', token.value)
                 if match:
-                    includes.append(match.group(1))
+                    # Preserve angle brackets or quotes
+                    if '<' in token.value:
+                        includes.append(f"<{match.group(1)}>")
+                    else:
+                        includes.append(f'"{match.group(1)}"')
         
         return includes
 
@@ -370,10 +438,8 @@ class CParser:
         if tokens[pos].type in [TokenType.STRUCT, TokenType.ENUM, TokenType.UNION]:
             return self._parse_complex_typedef(tokens, pos)
         
-        # Simple typedef: typedef type name; or function pointer: typedef ret (*name)(params);
-        all_tokens = []
-        
         # Collect all non-whitespace/comment tokens until semicolon
+        all_tokens = []
         while pos < len(tokens) and tokens[pos].type != TokenType.SEMICOLON:
             if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
                 all_tokens.append(tokens[pos])
@@ -382,28 +448,21 @@ class CParser:
         if len(all_tokens) < 2:
             return None
         
-        # Check for function pointer pattern: return_type (*name)(params)
-        # Look for the pattern (* name ) in the tokens
-        for i in range(len(all_tokens) - 2):
-            if (all_tokens[i].type == TokenType.LPAREN and 
-                all_tokens[i + 1].type == TokenType.ASTERISK and 
-                all_tokens[i + 2].type == TokenType.IDENTIFIER and
-                i + 3 < len(all_tokens) and all_tokens[i + 3].type == TokenType.RPAREN):
-                
-                # This is a function pointer typedef
-                typedef_name = all_tokens[i + 2].value
-                # The type is everything combined
+        # Function pointer typedef: typedef ret (*name)(params);
+        for i in range(len(all_tokens) - 3):
+            if (all_tokens[i].type in [TokenType.IDENTIFIER, TokenType.INT, TokenType.VOID, TokenType.CHAR, TokenType.FLOAT, TokenType.DOUBLE, TokenType.LONG, TokenType.SHORT, TokenType.UNSIGNED, TokenType.SIGNED] and
+                all_tokens[i+1].type == TokenType.LPAREN and
+                all_tokens[i+2].type == TokenType.ASTERISK and
+                all_tokens[i+3].type == TokenType.IDENTIFIER):
+                # typedef ret (*name)(...)
+                typedef_name = all_tokens[i+3].value
                 original_type = ' '.join(t.value for t in all_tokens)
                 return (typedef_name, original_type)
         
-        # Check for array typedef pattern: type name[size]
+        # Array typedef: typedef type name[size];
         for i in range(len(all_tokens)):
-            if (all_tokens[i].type == TokenType.LBRACKET and 
-                i > 0 and all_tokens[i - 1].type == TokenType.IDENTIFIER):
-                
-                # This is an array typedef
-                typedef_name = all_tokens[i - 1].value
-                # The type is everything combined
+            if (all_tokens[i].type == TokenType.LBRACKET and i > 0 and all_tokens[i-1].type == TokenType.IDENTIFIER):
+                typedef_name = all_tokens[i-1].value
                 original_type = ' '.join(t.value for t in all_tokens)
                 return (typedef_name, original_type)
         
@@ -412,8 +471,6 @@ class CParser:
         type_tokens = all_tokens[:-1]
         original_type = ' '.join(t.value for t in type_tokens)
         return (typedef_name, original_type)
-        
-        return None
 
     def _parse_complex_typedef(self, tokens, start_pos):
         """Parse complex typedef (struct/enum/union)"""
@@ -652,11 +709,16 @@ class CParser:
             type_tokens = param_tokens[:-1]
             param_type = ' '.join(t.value for t in type_tokens)
             
+            # Handle unnamed parameters (just type)
+            if param_name in ['void', 'int', 'char', 'float', 'double', 'long', 'short', 'unsigned', 'signed']:
+                # This is just a type without a name
+                return Field(name='', type=param_type + ' ' + param_name)
+            
             return Field(name=param_name, type=param_type)
         elif len(param_tokens) == 1:
             # Single token - might be just type (like "void") or name
             token_value = param_tokens[0].value
-            if token_value in ['void', 'int', 'char', 'float', 'double', 'long', 'short']:
+            if token_value in ['void', 'int', 'char', 'float', 'double', 'long', 'short', 'unsigned', 'signed']:
                 return Field(name='', type=token_value)
             else:
                 return Field(name=token_value, type='')

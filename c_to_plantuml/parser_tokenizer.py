@@ -122,7 +122,7 @@ class CTokenizer:
         # Compiled regex patterns for efficiency
         self.patterns = {
             'identifier': re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*'),
-            'number': re.compile(r'\d+\.?\d*[fFuUlL]*'),
+            'number': re.compile(r'0[xX][0-9a-fA-F]+[uUlL]*|0[bB][01]+[uUlL]*|0[0-7]+[uUlL]*|\d+\.\d*([eE][+-]?\d+)?[fFlL]*|\d+([eE][+-]?\d+)?[fFlL]*|\d+[uUlL]*'),
             'string': re.compile(r'"([^"\\]|\\.)*"'),
             'char': re.compile(r"'([^'\\]|\\.)'"),
             'comment_single': re.compile(r'//.*'),
@@ -136,12 +136,18 @@ class CTokenizer:
         """Tokenize C/C++ source code content"""
         tokens = []
         lines = content.split('\n')
+        total_lines = len(lines)
         
         for line_num, line in enumerate(lines, 1):
-            tokens.extend(self._tokenize_line(line, line_num))
+            line_tokens = self._tokenize_line(line, line_num)
+            tokens.extend(line_tokens)
+            
+            # Add newline token after each line (except the last line)
+            if line_num < total_lines:
+                tokens.append(Token(TokenType.NEWLINE, '\n', line_num, len(line)))
         
         # Add EOF token
-        tokens.append(Token(TokenType.EOF, '', len(lines), len(lines[-1]) if lines else 0))
+        tokens.append(Token(TokenType.EOF, '', total_lines, len(lines[-1]) if lines else 0))
         
         return tokens
     
@@ -163,10 +169,23 @@ class CTokenizer:
                 pos = len(line)  # Rest of line is comment
                 continue
             
-            if match := self.patterns['comment_multi'].match(line, pos):
-                tokens.append(Token(TokenType.COMMENT, match.group(), line_num, pos))
-                pos = match.end()
-                continue
+            # Multi-line comments - check for /* at start of line or after whitespace
+            if line[pos:].startswith('/*'):
+                # Find the end of the comment
+                comment_start = pos
+                comment_end = line.find('*/', pos)
+                if comment_end != -1:
+                    # Comment ends on this line
+                    comment_text = line[pos:comment_end + 2]
+                    tokens.append(Token(TokenType.COMMENT, comment_text, line_num, pos))
+                    pos = comment_end + 2
+                    continue
+                else:
+                    # Comment continues to next line - handle in tokenize method
+                    comment_text = line[pos:]
+                    tokens.append(Token(TokenType.COMMENT, comment_text, line_num, pos))
+                    pos = len(line)
+                    continue
             
             # Preprocessor directives
             if match := self.patterns['preprocessor'].match(line, pos):
@@ -181,9 +200,34 @@ class CTokenizer:
                 continue
             
             # String literals
-            if match := self.patterns['string'].match(line, pos):
-                tokens.append(Token(TokenType.STRING, match.group(), line_num, pos))
-                pos = match.end()
+            if line[pos] == '"' or (
+                pos > 0 and line[pos-1] in ['L', 'u', 'U', 'R'] and line[pos] == '"') or (
+                pos > 1 and line[pos-2:pos] == 'u8' and line[pos] == '"'):
+                # Handle string literals with possible prefixes
+                string_start = pos
+                prefix = ''
+                if line[pos-2:pos] == 'u8':
+                    prefix = 'u8'
+                    string_start -= 2
+                elif line[pos-1] in ['L', 'u', 'U', 'R']:
+                    prefix = line[pos-1]
+                    string_start -= 1
+                pos += 1  # Skip opening quote
+                while pos < len(line):
+                    if line[pos] == '"':
+                        # Found closing quote
+                        string_text = line[string_start:pos + 1]
+                        tokens.append(Token(TokenType.STRING, string_text, line_num, string_start))
+                        pos += 1
+                        break
+                    elif line[pos] == '\\':
+                        pos += 2
+                    else:
+                        pos += 1
+                else:
+                    string_text = line[string_start:]
+                    tokens.append(Token(TokenType.STRING, string_text, line_num, string_start))
+                    pos = len(line)
                 continue
             
             # Character literals
@@ -391,16 +435,17 @@ class StructureFinder:
         struct_end = struct_info[1]
         self.pos = struct_end
         
-        # Skip backwards to find typedef name
-        while (self.pos > struct_info[1] - 5 and 
-               not self._current_token_is(TokenType.IDENTIFIER)):
-            self.pos -= 1
+        # Look forward to find typedef name
+        while self.pos < len(self.tokens):
+            if self.tokens[self.pos].type == TokenType.IDENTIFIER:
+                typedef_name = self.tokens[self.pos].value
+                return (start_pos, self.pos, typedef_name)
+            elif self.tokens[self.pos].type == TokenType.SEMICOLON:
+                # Reached end without finding name
+                break
+            self.pos += 1
         
-        typedef_name = ""
-        if self._current_token_is(TokenType.IDENTIFIER):
-            typedef_name = self.tokens[self.pos].value
-        
-        return (start_pos, struct_end, typedef_name)
+        return (start_pos, struct_end, "")
     
     def _parse_enum(self) -> Optional[Tuple[int, int, str]]:
         """Parse enum definition starting at current position"""
@@ -464,16 +509,17 @@ class StructureFinder:
         enum_end = enum_info[1]
         self.pos = enum_end
         
-        # Skip backwards to find typedef name
-        while (self.pos > enum_info[1] - 5 and 
-               not self._current_token_is(TokenType.IDENTIFIER)):
-            self.pos -= 1
+        # Look forward to find typedef name
+        while self.pos < len(self.tokens):
+            if self.tokens[self.pos].type == TokenType.IDENTIFIER:
+                typedef_name = self.tokens[self.pos].value
+                return (start_pos, self.pos, typedef_name)
+            elif self.tokens[self.pos].type == TokenType.SEMICOLON:
+                # Reached end without finding name
+                break
+            self.pos += 1
         
-        typedef_name = ""
-        if self._current_token_is(TokenType.IDENTIFIER):
-            typedef_name = self.tokens[self.pos].value
-        
-        return (start_pos, enum_end, typedef_name)
+        return (start_pos, enum_end, "")
     
     def _parse_function(self) -> Optional[Tuple[int, int, str, str, bool]]:
         """Parse function declaration/definition
@@ -538,7 +584,7 @@ class StructureFinder:
                     # Extract return type
                     if return_type_start >= 0 and return_type_start <= return_type_end:
                         return_type_tokens = self.tokens[return_type_start:return_type_end + 1]
-                        return_type = ' '.join(t.value for t in return_type_tokens)
+                        return_type = ' '.join(t.value for t in return_type_tokens).strip()
                         
                         # Find end of function (either ; for declaration or { for definition)
                         end_pos = self._find_function_end(self.pos)
@@ -646,10 +692,21 @@ def find_struct_fields(tokens: List[Token], struct_start: int, struct_end: int) 
         
         # Parse field from collected tokens
         if len(field_tokens) >= 2:
-            # Last token should be field name, rest is type
-            field_name = field_tokens[-1].value
-            field_type = ' '.join(t.value for t in field_tokens[:-1])
-            fields.append((field_name, field_type))
+            # Handle array fields: type name[size]
+            if (len(field_tokens) >= 3 and 
+                field_tokens[-3].type == TokenType.LBRACKET and 
+                field_tokens[-1].type == TokenType.RBRACKET):
+                # Array field: type name[size]
+                field_name = field_tokens[-4].value if len(field_tokens) >= 4 else field_tokens[-2].value
+                field_type = ' '.join(t.value for t in field_tokens[:-4]) + ' ' + field_tokens[-2].value + '[]'
+            else:
+                # Regular field: type name
+                field_name = field_tokens[-1].value
+                field_type = ' '.join(t.value for t in field_tokens[:-1])
+            
+            # Validate field name is not empty or invalid
+            if field_name and field_name not in ['[', ']', ';']:
+                fields.append((field_name, field_type))
         
         if pos <= struct_end:
             pos += 1  # Skip semicolon
