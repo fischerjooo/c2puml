@@ -60,7 +60,6 @@ HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_CONFIG --> HEADER_STDDEF : <<include>>
 HEADER_CONFIG --> HEADER_STDINT : <<include>>
 HEADER_LOGGER ..> TYPEDEF_log_level_t : declares
-TYPEDEF_log_level_t -|> TYPE_ENUM : «alias»
 TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>
 HEADER_LOGGER ..> TYPEDEF_log_level_t : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_log_callback_t : <<declares>>

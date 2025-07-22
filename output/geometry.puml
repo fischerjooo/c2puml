@@ -127,11 +127,8 @@ HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 HEADER_CONFIG --> HEADER_STDDEF : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_GEOMETRY ..> TYPEDEF_triangle_t : declares
-TYPEDEF_triangle_t -|> TYPE_STRUCT : «alias»
 HEADER_SAMPLE ..> TYPEDEF_point_t : declares
-TYPEDEF_point_t -|> TYPE_STRUCT : «alias»
 HEADER_SAMPLE ..> TYPEDEF_system_state_t : declares
-TYPEDEF_system_state_t -|> TYPE_ENUM : «alias»
 TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
 TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
 TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>

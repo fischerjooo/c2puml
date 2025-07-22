@@ -1062,15 +1062,16 @@ class PlantUMLGenerator:
                         f"{typedef_class_id} -|> "
                         f"{self._get_type_uml_id(original_type)} : «alias»"
                     )
-        elif relationship_type == "alias":
-            relationship_id = f"{typedef_name}->{original_type}:alias"
-            if relationship_id not in seen_relationships:
-                seen_relationships.add(relationship_id)
-                lines.append(
-                    f"{typedef_class_id} -|> "
-                    f"{self._get_type_uml_id(original_type)} : «alias»"
-                )
-        
+        # REMOVE: Do not generate alias relationships for typedefs
+        # elif relationship_type == "alias":
+        #     relationship_id = f"{typedef_name}->{original_type}:alias"
+        #     if relationship_id not in seen_relationships:
+        #         seen_relationships.add(relationship_id)
+        #         lines.append(
+        #             f"{typedef_class_id} -|> "
+        #             f"{self._get_type_uml_id(original_type)} : «alias»"
+        #         )
+
         # Check for relationships between typedefs (when one typedef uses another)
         if relationship_type == "defines" and original_type == "struct":
             # Look for the struct definition to find typedef dependencies

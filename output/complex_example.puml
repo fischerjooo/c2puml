@@ -89,13 +89,9 @@ HEADER_CONFIG --> HEADER_STDINT : <<include>>
 HEADER_LOGGER --> HEADER_STDIO : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_NestedInfo_t : declares
-TYPEDEF_NestedInfo_t -|> TYPE_STRUCT : «alias»
 HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_CE_Status_t : declares
-TYPEDEF_CE_Status_t -|> TYPE_ENUM : «alias»
 HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ComplexExample_t : declares
-TYPEDEF_ComplexExample_t -|> TYPE_STRUCT : «alias»
 HEADER_LOGGER ..> TYPEDEF_log_level_t : declares
-TYPEDEF_log_level_t -|> TYPE_ENUM : «alias»
 TYPEDEF_NestedInfo_t ..> TYPEDEF_id_t : <<uses>>
 TYPEDEF_NestedInfo_t ..> TYPEDEF_log_level_t : <<uses>>
 TYPEDEF_ComplexExample_t ..> TYPEDEF_NestedInfo_t : <<uses>>
