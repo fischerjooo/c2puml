@@ -467,7 +467,7 @@ class PlantUMLGenerator:
                 return file_model
         return None
     
-    def _generate_simple_typedef_class(self, typedef_name: str, original_type: str, project_model: ProjectModel = None) -> List[str]:
+    def _generate_simple_typedef_class(self, typedef_name: str, original_type: str, project_model: ProjectModel = None, source_file: str = None) -> List[str]:
         """Generate a class for a simple typedef"""
         lines = []
         
