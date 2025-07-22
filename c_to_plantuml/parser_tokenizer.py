@@ -382,10 +382,10 @@ class StructureFinder:
             return None
         self._advance()
         
-        # Get struct name (optional for anonymous structs)
-        struct_name = ""
+        # Get struct tag name (optional for anonymous structs)
+        struct_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
-            struct_name = self._advance().value
+            struct_tag = self._advance().value
         
         # Find opening brace
         while self.pos < len(self.tokens) and not self._current_token_is(TokenType.LBRACE):
@@ -400,6 +400,17 @@ class StructureFinder:
         
         if end_brace_pos is None:
             return None
+        
+        # Look for struct name after closing brace (for typedefs or named structs)
+        name_pos = end_brace_pos + 1
+        struct_name = struct_tag
+        while name_pos < len(self.tokens):
+            if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                struct_name = self.tokens[name_pos].value
+                break
+            elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+                break
+            name_pos += 1
         
         # Find semicolon (for struct definitions)
         self.pos = end_brace_pos + 1
@@ -431,21 +442,18 @@ class StructureFinder:
             self.pos = start_pos + 1
             return None
         
-        # Look for typedef name after struct
+        # Look for typedef name after struct (after closing brace, before semicolon)
         struct_end = struct_info[1]
-        self.pos = struct_end
-        
-        # Look forward to find typedef name
-        while self.pos < len(self.tokens):
-            if self.tokens[self.pos].type == TokenType.IDENTIFIER:
-                typedef_name = self.tokens[self.pos].value
-                return (start_pos, self.pos, typedef_name)
-            elif self.tokens[self.pos].type == TokenType.SEMICOLON:
-                # Reached end without finding name
+        name_pos = struct_end
+        typedef_name = ""
+        while name_pos < len(self.tokens):
+            if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                typedef_name = self.tokens[name_pos].value
                 break
-            self.pos += 1
-        
-        return (start_pos, struct_end, "")
+            elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+                break
+            name_pos += 1
+        return (start_pos, struct_end, typedef_name)
     
     def _parse_enum(self) -> Optional[Tuple[int, int, str]]:
         """Parse enum definition starting at current position"""
@@ -456,10 +464,10 @@ class StructureFinder:
             return None
         self._advance()
         
-        # Get enum name (optional for anonymous enums)
-        enum_name = ""
+        # Get enum tag name (optional for anonymous enums)
+        enum_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
-            enum_name = self._advance().value
+            enum_tag = self._advance().value
         
         # Find opening brace
         while self.pos < len(self.tokens) and not self._current_token_is(TokenType.LBRACE):
@@ -474,6 +482,17 @@ class StructureFinder:
         
         if end_brace_pos is None:
             return None
+        
+        # Look for enum name after closing brace (for typedefs or named enums)
+        name_pos = end_brace_pos + 1
+        enum_name = enum_tag
+        while name_pos < len(self.tokens):
+            if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                enum_name = self.tokens[name_pos].value
+                break
+            elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+                break
+            name_pos += 1
         
         # Find semicolon
         self.pos = end_brace_pos + 1
@@ -505,21 +524,18 @@ class StructureFinder:
             self.pos = start_pos + 1
             return None
         
-        # Look for typedef name after enum
+        # Look for typedef name after enum (after closing brace, before semicolon)
         enum_end = enum_info[1]
-        self.pos = enum_end
-        
-        # Look forward to find typedef name
-        while self.pos < len(self.tokens):
-            if self.tokens[self.pos].type == TokenType.IDENTIFIER:
-                typedef_name = self.tokens[self.pos].value
-                return (start_pos, self.pos, typedef_name)
-            elif self.tokens[self.pos].type == TokenType.SEMICOLON:
-                # Reached end without finding name
+        name_pos = enum_end
+        typedef_name = ""
+        while name_pos < len(self.tokens):
+            if self.tokens[name_pos].type == TokenType.IDENTIFIER:
+                typedef_name = self.tokens[name_pos].value
                 break
-            self.pos += 1
-        
-        return (start_pos, enum_end, "")
+            elif self.tokens[name_pos].type == TokenType.SEMICOLON:
+                break
+            name_pos += 1
+        return (start_pos, enum_end, typedef_name)
     
     def _parse_function(self) -> Optional[Tuple[int, int, str, str, bool]]:
         """Parse function declaration/definition
@@ -663,95 +679,68 @@ def extract_token_range(tokens: List[Token], start: int, end: int) -> str:
 
 def find_struct_fields(tokens: List[Token], struct_start: int, struct_end: int) -> List[Tuple[str, str]]:
     """Extract field information from struct token range
-    
     Returns:
         List of tuples (field_name, field_type)
     """
     fields = []
-    
-    # Find the opening brace of the struct
     pos = struct_start
     while pos <= struct_end and tokens[pos].type != TokenType.LBRACE:
         pos += 1
-    
     if pos > struct_end:
         return fields
-    
     pos += 1  # Skip opening brace
-    
-    # Parse fields until closing brace
     while pos <= struct_end and tokens[pos].type != TokenType.RBRACE:
-        # Look for field declarations (type name;)
         field_tokens = []
-        
-        # Collect tokens until semicolon
         while pos <= struct_end and tokens[pos].type != TokenType.SEMICOLON:
             if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
                 field_tokens.append(tokens[pos])
             pos += 1
-        
         # Parse field from collected tokens
         if len(field_tokens) >= 2:
-            # Handle array fields: type name[size]
-            if (len(field_tokens) >= 3 and 
-                field_tokens[-3].type == TokenType.LBRACKET and 
+            # Array field: type name [ size ]
+            if (len(field_tokens) >= 4 and
+                field_tokens[-3].type == TokenType.LBRACKET and
                 field_tokens[-1].type == TokenType.RBRACKET):
-                # Array field: type name[size]
-                field_name = field_tokens[-4].value if len(field_tokens) >= 4 else field_tokens[-2].value
-                field_type = ' '.join(t.value for t in field_tokens[:-4]) + ' ' + field_tokens[-2].value + '[]'
+                field_name = field_tokens[-4].value
+                field_type = ' '.join(t.value for t in field_tokens[:-4]) + ' ' + field_tokens[-2].value + '[ ]'
+                fields.append((field_name, field_type.strip()))
             else:
                 # Regular field: type name
                 field_name = field_tokens[-1].value
                 field_type = ' '.join(t.value for t in field_tokens[:-1])
-            
-            # Validate field name is not empty or invalid
-            if field_name and field_name not in ['[', ']', ';']:
-                fields.append((field_name, field_type))
-        
+                if field_name not in ['[', ']', ';'] and field_name:
+                    fields.append((field_name, field_type.strip()))
         if pos <= struct_end:
             pos += 1  # Skip semicolon
-    
     return fields
-
 
 def find_enum_values(tokens: List[Token], enum_start: int, enum_end: int) -> List[str]:
     """Extract enum values from enum token range"""
     values = []
-    
-    # Find the opening brace of the enum
     pos = enum_start
     while pos <= enum_end and tokens[pos].type != TokenType.LBRACE:
         pos += 1
-    
     if pos > enum_end:
         return values
-    
     pos += 1  # Skip opening brace
-    
-    # Parse enum values until closing brace
     current_value = []
-    
     while pos <= enum_end and tokens[pos].type != TokenType.RBRACE:
         token = tokens[pos]
-        
         if token.type == TokenType.COMMA:
-            # End of current enum value
             if current_value:
-                # Filter out whitespace and comments from current value
                 filtered_value = [t for t in current_value if t.type not in [TokenType.WHITESPACE, TokenType.COMMENT]]
                 if filtered_value:
-                    values.append(' '.join(t.value for t in filtered_value))
+                    value_str = ' '.join(t.value for t in filtered_value).strip()
+                    if value_str:
+                        values.append(value_str)
                 current_value = []
         elif token.type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
             current_value.append(token)
-        
         pos += 1
-    
-    # Add last value if exists
     if current_value:
-        # Filter out whitespace and comments from current value
         filtered_value = [t for t in current_value if t.type not in [TokenType.WHITESPACE, TokenType.COMMENT]]
         if filtered_value:
-            values.append(' '.join(t.value for t in filtered_value))
-    
+            value_str = ' '.join(t.value for t in filtered_value).strip()
+            if value_str:
+                values.append(value_str)
     return values
