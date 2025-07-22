@@ -474,18 +474,20 @@ class PlantUMLGenerator:
         lines = []
         seen_typedefs = set()
         
-        # Process simple typedefs from the typedefs dictionary (current file)
-        for typedef_name, original_type in file_model.typedefs.items():
-            if typedef_name not in seen_typedefs:
-                seen_typedefs.add(typedef_name)
-                lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
-        
-        # Process complex typedefs from the current file
+        # First, process complex typedefs from typedef_relations (these have tag names)
         for typedef_relation in file_model.typedef_relations:
             typedef_name = typedef_relation.typedef_name
             if typedef_name not in seen_typedefs:
                 seen_typedefs.add(typedef_name)
+                import logging
+                logging.getLogger(__name__).debug(f"Processing typedef_relation for '{typedef_name}' with tag names: struct='{typedef_relation.struct_tag_name}', enum='{typedef_relation.enum_tag_name}'")
                 lines.extend(self._generate_single_typedef_class(typedef_relation, file_model, project_model))
+        
+        # Then, process simple typedefs from the typedefs dictionary (only if not already processed)
+        for typedef_name, original_type in file_model.typedefs.items():
+            if typedef_name not in seen_typedefs:
+                seen_typedefs.add(typedef_name)
+                lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
         
         # Process typedefs from included header files (respecting include_depth)
         if include_depth > 1:
@@ -608,8 +610,12 @@ class PlantUMLGenerator:
             lines.append(f'enum "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
             lines.append("{")
             
-            # Try to find the enum by the enum tag name if available, otherwise by typedef name
-            enum_name = typedef_relation.enum_tag_name if hasattr(typedef_relation, 'enum_tag_name') and typedef_relation.enum_tag_name else typedef_name
+            # Try to find the enum by the typedef name first, then by the enum tag name
+            enum_name = typedef_name
+            if not any(enum_name in f_model.enums for f_model in project_model.files.values()):
+                # If typedef name not found, try the enum tag name
+                if hasattr(typedef_relation, 'enum_tag_name') and typedef_relation.enum_tag_name:
+                    enum_name = typedef_relation.enum_tag_name
             # Look for the enum in the project model
             found_enum = None
             import logging
@@ -635,31 +641,25 @@ class PlantUMLGenerator:
             lines.append("{")
             
             # For struct/union typedefs, show fields/values
-            if relationship_type == "defines":
+            if original_type in ["struct", "union"]:
                 if original_type == "struct":
-                    # Try to find the struct by the struct tag name if available
-                    struct_name = typedef_relation.struct_tag_name if typedef_relation.struct_tag_name else typedef_name
-                    # Look for the struct in the file model that contains the typedef relation
+                    # Try to find the struct by the typedef name first, then by the struct tag name
                     import logging
-                    logging.getLogger(__name__).debug(f"Looking for struct '{struct_name}' in file '{file_model.file_path}', available structs: {list(file_model.structs.keys())}")
                     logging.getLogger(__name__).debug(f"typedef_relation.struct_tag_name: '{typedef_relation.struct_tag_name}', typedef_name: '{typedef_name}'")
                     
-                    # Try multiple possible struct names
-                    possible_struct_names = [struct_name]
-                    if struct_name != typedef_name:
-                        possible_struct_names.append(typedef_name)
-                    if struct_name.endswith('_tag'):
-                        possible_struct_names.append(struct_name[:-4])  # Remove "_tag" suffix
+                    # Try multiple possible struct names, starting with typedef name
+                    possible_struct_names = [typedef_name]
+                    if typedef_relation.struct_tag_name:
+                        possible_struct_names.append(typedef_relation.struct_tag_name)
                     if typedef_name.endswith('_t'):
                         possible_struct_names.append(typedef_name[:-2])  # Remove "_t" suffix
-                    # Also try adding "_tag" suffix to the struct name
-                    if not struct_name.endswith('_tag'):
-                        possible_struct_names.append(f"{struct_name}_tag")
-                    # Try the typedef name without "_t" suffix
-                    if typedef_name.endswith('_t'):
-                        possible_struct_names.append(typedef_name[:-2])
-                    # Try the typedef name with "_tag" suffix
-                    possible_struct_names.append(f"{typedef_name}_tag")
+                    if typedef_relation.struct_tag_name and typedef_relation.struct_tag_name.endswith('_tag'):
+                        possible_struct_names.append(typedef_relation.struct_tag_name[:-4])  # Remove "_tag" suffix
+                    # Also try adding "_tag" suffix to the typedef name
+                    if not typedef_name.endswith('_tag'):
+                        possible_struct_names.append(f"{typedef_name}_tag")
+                    
+                    logging.getLogger(__name__).debug(f"Looking for struct with possible names: {possible_struct_names} in file '{file_model.file_path}', available structs: {list(file_model.structs.keys())}")
                     
                     found_struct = None
                     for name in possible_struct_names:
@@ -1623,10 +1623,9 @@ class Generator:
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
 
-        # Generate diagrams for each .c file
+        # Generate diagrams for each file
         generated_files = []
         for file_path, file_model in model.files.items():
-            if file_path.endswith(".c"):
                 try:
                     diagram_content = self.plantuml_generator.generate_diagram(
                         file_model, model, include_depth

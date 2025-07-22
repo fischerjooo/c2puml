@@ -1,46 +1,27 @@
 @startuml typedef_test
 
-class "typedef_test" as TYPEDEF_TEST <<source>> #LightBlue
-{
-    -- Global Variables --
-    - MyLen global_length
-    - MyBuffer global_buffer
-    - MyComplexPtr global_complex
-    -- Functions --
-    void log_buffer(const MyBuffer * buffer)
-    MyInt process_buffer(MyBuffer * buffer)
-    int my_callback(MyBuffer * buffer)
-    MyComplex * create_complex(MyLen id, MyString name)
-    int main()
-}
-
 class "typedef_test" as HEADER_TYPEDEF_TEST <<header>> #LightGreen
 {
     -- Macros --
-    + #define TYPEDEF_TEST_H
+    - #define TYPEDEF_TEST_H
+    -- Typedefs --
+    + uint32_t
+    + int32_t
+    + char *
+    + struct
+    + int ( * MyCallback ) ( MyBuffer * buffer )
+    + struct
+    + MyComplex *
+    + enum
+    + enum
+    + struct
+    + struct
+    + union
+    + union
+    + MyComplexPtr MyComplexArray [ 10 ]
 }
-class "complex_example" as HEADER_COMPLEX_EXAMPLE <<header>> #LightGreen
-{
-    -- Macros --
-    + #define COMPLEX_EXAMPLE_H
-}
-class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
-{
-    -- Macros --
-    + #define GEOMETRY_H
-    -- Functions --
-    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
-    + int triangle_area(const triangle_t * tri);
-}
-class "logger" as HEADER_LOGGER <<header>> #LightGreen
-{
-    -- Macros --
-    + #define LOGGER_H
-    -- Functions --
-    + void set_log_callback(log_callback_t cb);
-    + void log_message(log_level_t level, const char * fmt, ...);
-}
-class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
+
+class "stdint.h" as HEADER_STDINT <<header>> #LightGray
 {
 }
 
@@ -68,47 +49,34 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + #define MAX_LABEL_LEN
     + #define DEFAULT_BUFFER_SIZE
 }
-class "stdint.h" as HEADER_STDINT <<header>> #LightGray
-{
-}
-
-class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
+class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
-    + #define MATH_UTILS_H
+    + #define LOGGER_H
     -- Functions --
-    + int add(int a, int b);
-    + int subtract(int a, int b);
-    + real_t average(const int * arr, size_t len);
+    + void set_log_callback(log_callback_t cb);
+    + void log_message(log_level_t level, const char * fmt, ...);
 }
+class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
+{
+    -- Macros --
+    + #define GEOMETRY_H
+    -- Functions --
+    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
+    + int triangle_area(const triangle_t * tri);
+}
+class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
+{
+}
+
 class "stdio.h" as HEADER_STDIO <<header>> #LightGray
 {
-}
-
-class "MyLen" as TYPEDEF_MyLen <<typedef>> #LightYellow
-{
-    + uint32_t
-}
-
-class "MyInt" as TYPEDEF_MyInt <<typedef>> #LightYellow
-{
-    + int32_t
-}
-
-class "MyString" as TYPEDEF_MyString <<typedef>> #LightYellow
-{
-    + char *
 }
 
 class "MyBuffer" as TYPEDEF_MyBuffer <<typedef>> #LightYellow
 {
     + MyLen length
     + MyString data
-}
-
-class "MyCallback" as TYPEDEF_MyCallback <<typedef>> #LightYellow
-{
-    + int ( * MyCallback ) ( MyBuffer * buffer )
 }
 
 class "MyComplex" as TYPEDEF_MyComplex <<typedef>> #LightYellow
@@ -119,20 +87,17 @@ class "MyComplex" as TYPEDEF_MyComplex <<typedef>> #LightYellow
     + log_level_t log_level
 }
 
-class "MyComplexPtr" as TYPEDEF_MyComplexPtr <<typedef>> #LightYellow
-{
-    + MyComplex *
-}
-
 enum "Color_t" as TYPEDEF_Color_t <<typedef>> #LightYellow
 {
-    STATUS_OK = 0
-    STATUS_FAIL
+    COLOR_RED = 0
+    COLOR_GREEN
+    COLOR_BLUE
 }
 
 enum "Status_t" as TYPEDEF_Status_t <<typedef>> #LightYellow
 {
-    + enum
+    STATUS_OK = 0
+    STATUS_FAIL
 }
 
 class "Point_t" as TYPEDEF_Point_t <<typedef>> #LightYellow
@@ -156,6 +121,31 @@ class "NamedUnion_t" as TYPEDEF_NamedUnion_t <<typedef>> #LightYellow
 {
     + char c
     + double d
+}
+
+class "MyLen" as TYPEDEF_MyLen <<typedef>> #LightYellow
+{
+    + uint32_t
+}
+
+class "MyInt" as TYPEDEF_MyInt <<typedef>> #LightYellow
+{
+    + int32_t
+}
+
+class "MyString" as TYPEDEF_MyString <<typedef>> #LightYellow
+{
+    + char *
+}
+
+class "MyCallback" as TYPEDEF_MyCallback <<typedef>> #LightYellow
+{
+    + int ( * MyCallback ) ( MyBuffer * buffer )
+}
+
+class "MyComplexPtr" as TYPEDEF_MyComplexPtr <<typedef>> #LightYellow
+{
+    + MyComplex *
 }
 
 class "MyComplexArray" as TYPEDEF_MyComplexArray <<typedef>> #LightYellow
@@ -187,6 +177,12 @@ class "status_t" as TYPEDEF_status_t <<typedef>> #LightYellow
     + int32_t
 }
 
+class "triangle_t" as TYPEDEF_triangle_t <<typedef>> #LightYellow
+{
+    + point_t 3[ ] vertices
+    + char MAX_LABEL_LEN[ ] label
+}
+
 enum "log_level_t" as TYPEDEF_log_level_t <<typedef>> #LightYellow
 {
     LOG_DEBUG = 0
@@ -200,62 +196,47 @@ class "log_callback_t" as TYPEDEF_log_callback_t <<typedef>> #LightYellow
     + void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
-class "NestedInfo_t" as TYPEDEF_NestedInfo_t <<typedef>> #LightYellow
-{
-    + id_t id
-    + char MAX_LABEL_LEN[ ] description
-    + log_level_t log_level
-}
-
-enum "CE_Status_t" as TYPEDEF_CE_Status_t <<typedef>> #LightYellow
-{
-    CE_STATUS_OK = 0
-    CE_STATUS_WARN
-    CE_STATUS_FAIL
-}
-
-class "ComplexExample_t" as TYPEDEF_ComplexExample_t <<typedef>> #LightYellow
-{
-    + NestedInfo_t info
-    + CE_Status_t status
-    + int 5[ ] values
-}
-
-class "triangle_t" as TYPEDEF_triangle_t <<typedef>> #LightYellow
-{
-    + point_t 3[ ] vertices
-    + char MAX_LABEL_LEN[ ] label
-}
-
-class "real_t" as TYPEDEF_real_t <<typedef>> #LightYellow
-{
-    + double
-}
-
-class "math_op_t" as TYPEDEF_math_op_t <<typedef>> #LightYellow
-{
-    + int ( * math_op_t ) ( int , int )
-}
-
-TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>
-TYPEDEF_TEST --> HEADER_COMPLEX_EXAMPLE : <<include>>
-TYPEDEF_TEST --> HEADER_GEOMETRY : <<include>>
-TYPEDEF_TEST --> HEADER_LOGGER : <<include>>
-TYPEDEF_TEST --> HEADER_STDLIB : <<include>>
 HEADER_TYPEDEF_TEST --> HEADER_STDINT : <<include>>
 HEADER_TYPEDEF_TEST --> HEADER_SAMPLE : <<include>>
 HEADER_TYPEDEF_TEST --> HEADER_CONFIG : <<include>>
-HEADER_COMPLEX_EXAMPLE --> HEADER_CONFIG : <<include>>
-HEADER_COMPLEX_EXAMPLE --> HEADER_LOGGER : <<include>>
-HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
-HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
-HEADER_LOGGER --> HEADER_STDIO : <<include>>
-HEADER_LOGGER --> HEADER_CONFIG : <<include>>
-HEADER_CONFIG --> HEADER_STDINT : <<include>>
-HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
+HEADER_TYPEDEF_TEST --> HEADER_LOGGER : <<include>>
+HEADER_SAMPLE --> HEADER_STDDEF : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
+HEADER_CONFIG --> HEADER_STDDEF : <<include>>
+HEADER_CONFIG --> HEADER_STDINT : <<include>>
+HEADER_LOGGER --> HEADER_STDIO : <<include>>
+HEADER_LOGGER --> HEADER_CONFIG : <<include>>
+HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MyBuffer : declares
+TYPEDEF_MyBuffer -|> TYPE_STRUCT : «alias»
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MyComplex : declares
+TYPEDEF_MyComplex -|> TYPE_STRUCT : «alias»
+HEADER_TYPEDEF_TEST ..> TYPEDEF_Color_t : declares
+TYPEDEF_Color_t -|> TYPE_ENUM : «alias»
+HEADER_TYPEDEF_TEST ..> TYPEDEF_Status_t : declares
+TYPEDEF_Status_t -|> TYPE_ENUM : «alias»
+HEADER_TYPEDEF_TEST ..> TYPEDEF_Point_t : declares
+TYPEDEF_Point_t -|> TYPE_STRUCT : «alias»
+HEADER_TYPEDEF_TEST ..> TYPEDEF_NamedStruct_t : declares
+TYPEDEF_NamedStruct_t -|> TYPE_STRUCT : «alias»
+HEADER_TYPEDEF_TEST ..> TYPEDEF_Number_t : declares
+TYPEDEF_Number_t -|> TYPE_UNION : «alias»
+HEADER_TYPEDEF_TEST ..> TYPEDEF_NamedUnion_t : declares
+TYPEDEF_NamedUnion_t -|> TYPE_UNION : «alias»
+HEADER_SAMPLE ..> TYPEDEF_point_t : declares
+TYPEDEF_point_t -|> TYPE_STRUCT : «alias»
+HEADER_SAMPLE ..> TYPEDEF_system_state_t : declares
+TYPEDEF_system_state_t -|> TYPE_ENUM : «alias»
+HEADER_LOGGER ..> TYPEDEF_log_level_t : declares
+TYPEDEF_log_level_t -|> TYPE_ENUM : «alias»
+TYPEDEF_MyBuffer ..> TYPEDEF_MyLen : <<uses>>
+TYPEDEF_MyBuffer ..> TYPEDEF_MyString : <<uses>>
+TYPEDEF_MyComplex ..> TYPEDEF_MyLen : <<uses>>
+TYPEDEF_MyComplex ..> TYPEDEF_MyString : <<uses>>
+TYPEDEF_MyComplex ..> TYPEDEF_MyCallback : <<uses>>
+TYPEDEF_MyComplex ..> TYPEDEF_log_level_t : <<uses>>
 TYPEDEF_MyBuffer ..> TYPEDEF_MyLen : <<uses>>
 TYPEDEF_MyBuffer ..> TYPEDEF_MyString : <<uses>>
 TYPEDEF_MyCallback ..> TYPEDEF_MyBuffer : <<uses>>
@@ -266,11 +247,8 @@ TYPEDEF_MyComplex ..> TYPEDEF_log_level_t : <<uses>>
 TYPEDEF_MyComplexPtr ..> TYPEDEF_MyComplex : <<uses>>
 TYPEDEF_MyComplexArray ..> TYPEDEF_MyComplexPtr : <<uses>>
 TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
+TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
 TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>
-TYPEDEF_NestedInfo_t ..> TYPEDEF_id_t : <<uses>>
-TYPEDEF_NestedInfo_t ..> TYPEDEF_log_level_t : <<uses>>
-TYPEDEF_ComplexExample_t ..> TYPEDEF_NestedInfo_t : <<uses>>
-TYPEDEF_ComplexExample_t ..> TYPEDEF_CE_Status_t : <<uses>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MyLen : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MyInt : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MyString : <<declares>>
@@ -285,10 +263,10 @@ HEADER_TYPEDEF_TEST ..> TYPEDEF_NamedStruct_t : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_Number_t : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_NamedUnion_t : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MyComplexArray : <<declares>>
-HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_NestedInfo_t : <<declares>>
-HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_CE_Status_t : <<declares>>
-HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ComplexExample_t : <<declares>>
-HEADER_GEOMETRY ..> TYPEDEF_triangle_t : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_point_t : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_system_state_t : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_id_t : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_status_t : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_log_level_t : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_log_callback_t : <<declares>>
 

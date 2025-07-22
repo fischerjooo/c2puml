@@ -1,32 +1,54 @@
 @startuml sample
 
-class "sample" as SAMPLE <<source>> #LightBlue
+class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
     -- Macros --
-    - #define MAX_SIZE
-    - #define DEBUG_MODE
-    - #define CALC(x, y)
+    - #define SAMPLE_H
+    - #define PI
+    - #define VERSION
+    - #define MIN(a, b)
+    - #define MAX(a, b)
+    -- Typedefs --
+    + struct
+    + enum
     -- Global Variables --
-    - int global_counter
-    - char buffer
-    - double * global_ptr
+    + int MAX_POINTS
+    + char * DEFAULT_LABEL
     -- Functions --
-    int calculate_sum(int a, int b)
-    point_t * create_point(int x, int y, const char * label)
-    void process_point(point_t * p)
-    void demo_triangle_usage()
-    int main()
+    extern int calculate_sum(int a, int b)
+    extern point_t * create_point(int x, int y, const char * label)
+    extern void process_point(point_t * p)
 }
 
-class "stdio.h" as HEADER_STDIO <<header>> #LightGray
+class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
 {
 }
 
-class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
+class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
+    -- Macros --
+    + #define CONFIG_H
+    + #define PROJECT_NAME
+    + #define MAX_LABEL_LEN
+    + #define DEFAULT_BUFFER_SIZE
 }
-
-class "string.h" as HEADER_STRING <<header>> #LightGray
+class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
+{
+    -- Macros --
+    + #define GEOMETRY_H
+    -- Functions --
+    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
+    + int triangle_area(const triangle_t * tri);
+}
+class "logger" as HEADER_LOGGER <<header>> #LightGreen
+{
+    -- Macros --
+    + #define LOGGER_H
+    -- Functions --
+    + void set_log_callback(log_callback_t cb);
+    + void log_message(log_level_t level, const char * fmt, ...);
+}
+class "stdint.h" as HEADER_STDINT <<header>> #LightGray
 {
 }
 
@@ -55,31 +77,7 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     + int subtract(int a, int b);
     + real_t average(const int * arr, size_t len);
 }
-class "logger" as HEADER_LOGGER <<header>> #LightGreen
-{
-    -- Macros --
-    + #define LOGGER_H
-    -- Functions --
-    + void set_log_callback(log_callback_t cb);
-    + void log_message(log_level_t level, const char * fmt, ...);
-}
-class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
-{
-    -- Macros --
-    + #define GEOMETRY_H
-    -- Functions --
-    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
-    + int triangle_area(const triangle_t * tri);
-}
-class "config" as HEADER_CONFIG <<header>> #LightGreen
-{
-    -- Macros --
-    + #define CONFIG_H
-    + #define PROJECT_NAME
-    + #define MAX_LABEL_LEN
-    + #define DEFAULT_BUFFER_SIZE
-}
-class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
+class "stdio.h" as HEADER_STDIO <<header>> #LightGray
 {
 }
 
@@ -113,6 +111,16 @@ class "triangle_t" as TYPEDEF_triangle_t <<typedef>> #LightYellow
     + char MAX_LABEL_LEN[ ] label
 }
 
+class "real_t" as TYPEDEF_real_t <<typedef>> #LightYellow
+{
+    + double
+}
+
+class "math_op_t" as TYPEDEF_math_op_t <<typedef>> #LightYellow
+{
+    + int ( * math_op_t ) ( int , int )
+}
+
 enum "log_level_t" as TYPEDEF_log_level_t <<typedef>> #LightYellow
 {
     LOG_DEBUG = 0
@@ -126,39 +134,34 @@ class "log_callback_t" as TYPEDEF_log_callback_t <<typedef>> #LightYellow
     + void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
-class "real_t" as TYPEDEF_real_t <<typedef>> #LightYellow
-{
-    + double
-}
-
-class "math_op_t" as TYPEDEF_math_op_t <<typedef>> #LightYellow
-{
-    + int ( * math_op_t ) ( int , int )
-}
-
-SAMPLE --> HEADER_STDIO : <<include>>
-SAMPLE --> HEADER_STDLIB : <<include>>
-SAMPLE --> HEADER_STRING : <<include>>
-SAMPLE --> HEADER_SAMPLE : <<include>>
-SAMPLE --> HEADER_MATH_UTILS : <<include>>
-SAMPLE --> HEADER_LOGGER : <<include>>
-SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_SAMPLE --> HEADER_STDDEF : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
-HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
-HEADER_LOGGER --> HEADER_STDIO : <<include>>
-HEADER_LOGGER --> HEADER_CONFIG : <<include>>
+HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
+HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
+HEADER_CONFIG --> HEADER_STDDEF : <<include>>
+HEADER_CONFIG --> HEADER_STDINT : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
-HEADER_CONFIG --> HEADER_STDDEF : <<include>>
+HEADER_LOGGER --> HEADER_STDIO : <<include>>
+HEADER_LOGGER --> HEADER_CONFIG : <<include>>
+HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
+HEADER_SAMPLE ..> TYPEDEF_point_t : declares
+TYPEDEF_point_t -|> TYPE_STRUCT : «alias»
+HEADER_SAMPLE ..> TYPEDEF_system_state_t : declares
+TYPEDEF_system_state_t -|> TYPE_ENUM : «alias»
+HEADER_GEOMETRY ..> TYPEDEF_triangle_t : declares
+TYPEDEF_triangle_t -|> TYPE_STRUCT : «alias»
+HEADER_LOGGER ..> TYPEDEF_log_level_t : declares
+TYPEDEF_log_level_t -|> TYPE_ENUM : «alias»
+TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
 TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
 TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>
 HEADER_SAMPLE ..> TYPEDEF_point_t : <<declares>>
 HEADER_SAMPLE ..> TYPEDEF_system_state_t : <<declares>>
-HEADER_MATH_UTILS ..> TYPEDEF_real_t : <<declares>>
-HEADER_MATH_UTILS ..> TYPEDEF_math_op_t : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_id_t : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_status_t : <<declares>>
+HEADER_GEOMETRY ..> TYPEDEF_triangle_t : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_log_level_t : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_log_callback_t : <<declares>>
-HEADER_GEOMETRY ..> TYPEDEF_triangle_t : <<declares>>
 
 @enduml

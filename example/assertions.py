@@ -687,6 +687,10 @@ class PUMLValidator:
                     typedef_name = parts[2]  # e.g., "uint32_t" or "void"
                     if len(parts) > 3 and parts[-1] == typedef_name:
                         raise AssertionError(f"Simple typedef repeating name '{typedef_name}' in {filename}")
+            
+            # Check for enum/struct typedefs that show only the type instead of values/fields
+            if line.strip() in ['+ enum', '+ struct']:
+                raise AssertionError(f"Enum/struct typedef showing only type '{line.strip()}' instead of values/fields in {filename}")
         
         print("    ✅ Typedef content valid")
     

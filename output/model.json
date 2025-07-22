@@ -84,7 +84,29 @@
         "CE_Status_t": "enum",
         "ComplexExample_t": "struct"
       },
-      "typedef_relations": [],
+      "typedef_relations": [
+        {
+          "typedef_name": "NestedInfo_t",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "NestedInfo_tag",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "CE_Status_t",
+          "original_type": "enum",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": "CE_Status_tag"
+        },
+        {
+          "typedef_name": "ComplexExample_t",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "ComplexExample_tag",
+          "enum_tag_name": ""
+        }
+      ],
       "include_relations": [],
       "unions": {}
     },
@@ -273,7 +295,15 @@
       "typedefs": {
         "triangle_t": "struct"
       },
-      "typedef_relations": [],
+      "typedef_relations": [
+        {
+          "typedef_name": "triangle_t",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "triangle_tag",
+          "enum_tag_name": ""
+        }
+      ],
       "include_relations": [],
       "unions": {}
     },
@@ -419,7 +449,15 @@
         "log_level_t": "enum",
         "log_callback_t": "void ( * log_callback_t ) ( log_level_t level , const char * message )"
       },
-      "typedef_relations": [],
+      "typedef_relations": [
+        {
+          "typedef_name": "log_level_t",
+          "original_type": "enum",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": "log_level_tag"
+        }
+      ],
       "include_relations": [],
       "unions": {}
     },
@@ -874,7 +912,22 @@
         "point_t": "struct",
         "system_state_t": "enum"
       },
-      "typedef_relations": [],
+      "typedef_relations": [
+        {
+          "typedef_name": "point_t",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "point_tag",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "system_state_t",
+          "original_type": "enum",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": "system_state_tag"
+        }
+      ],
       "include_relations": [],
       "unions": {}
     },
@@ -1067,6 +1120,23 @@
           "name": "Color_t",
           "values": [
             {
+              "name": "COLOR_RED",
+              "value": "0"
+            },
+            {
+              "name": "COLOR_GREEN",
+              "value": null
+            },
+            {
+              "name": "COLOR_BLUE",
+              "value": null
+            }
+          ]
+        },
+        "Status_t": {
+          "name": "Status_t",
+          "values": [
+            {
               "name": "STATUS_OK",
               "value": "0"
             },
@@ -1104,7 +1174,64 @@
         "NamedUnion_t": "union",
         "MyComplexArray": "MyComplexPtr MyComplexArray [ 10 ]"
       },
-      "typedef_relations": [],
+      "typedef_relations": [
+        {
+          "typedef_name": "MyBuffer",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "MyBuffer_tag",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "MyComplex",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "MyComplexStruct_tag",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "Color_t",
+          "original_type": "enum",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": "Color_tag"
+        },
+        {
+          "typedef_name": "Status_t",
+          "original_type": "enum",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": "StatusEnum_tag"
+        },
+        {
+          "typedef_name": "Point_t",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "Point_tag",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "NamedStruct_t",
+          "original_type": "struct",
+          "relationship_type": "alias",
+          "struct_tag_name": "NamedStruct_tag",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "Number_t",
+          "original_type": "union",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": ""
+        },
+        {
+          "typedef_name": "NamedUnion_t",
+          "original_type": "union",
+          "relationship_type": "alias",
+          "struct_tag_name": "",
+          "enum_tag_name": ""
+        }
+      ],
       "include_relations": [],
       "unions": {
         "Number_t": {
@@ -1140,5 +1267,5 @@
       }
     }
   },
-  "created_at": "2025-07-22T19:52:49.346732"
+  "created_at": "2025-07-22T20:12:52.635206"
 }

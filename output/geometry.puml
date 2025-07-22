@@ -1,26 +1,14 @@
 @startuml geometry
 
-class "geometry" as GEOMETRY <<source>> #LightBlue
-{
-    -- Functions --
-    triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
-    int triangle_area(const triangle_t * tri)
-}
-
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
     -- Macros --
-    + #define GEOMETRY_H
+    - #define GEOMETRY_H
+    -- Typedefs --
+    + struct
     -- Functions --
-    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
-    + int triangle_area(const triangle_t * tri);
-}
-class "string.h" as HEADER_STRING <<header>> #LightGray
-{
-}
-
-class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
-{
+    triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
+    int triangle_area(const triangle_t * tri)
 }
 
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
@@ -48,6 +36,34 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     + int subtract(int a, int b);
     + real_t average(const int * arr, size_t len);
 }
+class "config" as HEADER_CONFIG <<header>> #LightGreen
+{
+    -- Macros --
+    + #define CONFIG_H
+    + #define PROJECT_NAME
+    + #define MAX_LABEL_LEN
+    + #define DEFAULT_BUFFER_SIZE
+}
+class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
+{
+    -- Macros --
+    + #define GEOMETRY_H
+    -- Functions --
+    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
+    + int triangle_area(const triangle_t * tri);
+}
+class "logger" as HEADER_LOGGER <<header>> #LightGreen
+{
+    -- Macros --
+    + #define LOGGER_H
+    -- Functions --
+    + void set_log_callback(log_callback_t cb);
+    + void log_message(log_level_t level, const char * fmt, ...);
+}
+class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
+{
+}
+
 class "triangle_t" as TYPEDEF_triangle_t <<typedef>> #LightYellow
 {
     + point_t 3[ ] vertices
@@ -68,6 +84,29 @@ enum "system_state_t" as TYPEDEF_system_state_t <<typedef>> #LightYellow
     STATE_ERROR
 }
 
+class "id_t" as TYPEDEF_id_t <<typedef>> #LightYellow
+{
+    + uint32_t
+}
+
+class "status_t" as TYPEDEF_status_t <<typedef>> #LightYellow
+{
+    + int32_t
+}
+
+enum "log_level_t" as TYPEDEF_log_level_t <<typedef>> #LightYellow
+{
+    LOG_DEBUG = 0
+    LOG_INFO
+    LOG_WARN
+    LOG_ERROR
+}
+
+class "log_callback_t" as TYPEDEF_log_callback_t <<typedef>> #LightYellow
+{
+    + void ( * log_callback_t ) ( log_level_t level , const char * message )
+}
+
 class "real_t" as TYPEDEF_real_t <<typedef>> #LightYellow
 {
     + double
@@ -78,14 +117,28 @@ class "math_op_t" as TYPEDEF_math_op_t <<typedef>> #LightYellow
     + int ( * math_op_t ) ( int , int )
 }
 
-GEOMETRY --> HEADER_GEOMETRY : <<include>>
-GEOMETRY --> HEADER_STRING : <<include>>
-GEOMETRY --> HEADER_STDLIB : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
+HEADER_SAMPLE --> HEADER_STDDEF : <<include>>
+HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
+HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
+HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
+HEADER_CONFIG --> HEADER_STDDEF : <<include>>
+HEADER_LOGGER --> HEADER_CONFIG : <<include>>
+HEADER_GEOMETRY ..> TYPEDEF_triangle_t : declares
+TYPEDEF_triangle_t -|> TYPE_STRUCT : «alias»
+HEADER_SAMPLE ..> TYPEDEF_point_t : declares
+TYPEDEF_point_t -|> TYPE_STRUCT : «alias»
+HEADER_SAMPLE ..> TYPEDEF_system_state_t : declares
+TYPEDEF_system_state_t -|> TYPE_ENUM : «alias»
+TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
 TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
 TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>
 HEADER_GEOMETRY ..> TYPEDEF_triangle_t : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_point_t : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_system_state_t : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_real_t : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_math_op_t : <<declares>>
 
 @enduml

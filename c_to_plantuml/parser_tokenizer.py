@@ -647,24 +647,15 @@ class StructureFinder:
             self.pos = start_pos + 1
             return None
         
-        # Parse the enum part
+        # Parse the enum part - this will return the tag name (e.g., StatusEnum_tag)
         enum_info = self._parse_enum()
         if not enum_info:
             self.pos = start_pos + 1
             return None
         
-        # Look for typedef name after enum (after closing brace, before semicolon)
-        enum_end = enum_info[1]
-        name_pos = enum_end
-        typedef_name = ""
-        while name_pos < len(self.tokens):
-            if self.tokens[name_pos].type == TokenType.IDENTIFIER:
-                typedef_name = self.tokens[name_pos].value
-                break
-            elif self.tokens[name_pos].type == TokenType.SEMICOLON:
-                break
-            name_pos += 1
-        return (start_pos, enum_end, typedef_name)
+        # For typedef enums, we want to return the tag name, not the typedef name
+        # The typedef name will be handled separately in the parser
+        return enum_info
     
     def _parse_function(self) -> Optional[Tuple[int, int, str, str, bool]]:
         """Parse function declaration/definition

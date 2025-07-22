@@ -387,10 +387,54 @@ class CParser:
         return typedefs
 
     def _parse_typedef_relations_with_tokenizer(self, tokens, structs) -> List["TypedefRelation"]:
-        """Parse typedef relationships using tokenizer - simplified for now"""
-        # TODO: Implement proper typedef relation parsing with tokenizer
-        # For now, return empty list to avoid breaking the skeleton
-        return []
+        """Parse typedef relationships using tokenizer"""
+        from .models import TypedefRelation
+        
+        typedef_relations = []
+        i = 0
+        
+        while i < len(tokens):
+            if tokens[i].type == TokenType.TYPEDEF:
+                # Parse typedef starting at position i
+                typedef_info = self._parse_single_typedef(tokens, i)
+                if typedef_info:
+                    typedef_name, original_type = typedef_info
+                    
+                    # Check if this is a complex typedef (struct/enum/union)
+                    if original_type in ['struct', 'enum', 'union']:
+                        # Try to extract tag name from the typedef
+                        tag_name = self._extract_tag_name_from_typedef(tokens, i)
+                        
+                        # Create TypedefRelation with tag names
+                        if original_type == 'struct':
+                            relation = TypedefRelation(
+                                typedef_name=typedef_name,
+                                original_type=original_type,
+                                relationship_type="alias",
+                                struct_tag_name=tag_name
+                            )
+                        elif original_type == 'enum':
+                            relation = TypedefRelation(
+                                typedef_name=typedef_name,
+                                original_type=original_type,
+                                relationship_type="alias",
+                                enum_tag_name=tag_name
+                            )
+                        else:  # union
+                            relation = TypedefRelation(
+                                typedef_name=typedef_name,
+                                original_type=original_type,
+                                relationship_type="alias"
+                            )
+                        
+                        typedef_relations.append(relation)
+                
+                # Skip to next token after this typedef
+                i = self._skip_structure_definition(tokens, i)
+            else:
+                i += 1
+        
+        return typedef_relations
 
     def _find_c_files(self, project_root: Path, recursive: bool) -> List[Path]:
         """Find all C/C++ files in the project"""
@@ -542,6 +586,36 @@ class CParser:
             return (typedef_name, struct_type)
         
         return None
+
+    def _extract_tag_name_from_typedef(self, tokens, start_pos):
+        """Extract the tag name from a typedef like 'typedef struct TagName { ... } TypedefName;'"""
+        # Skip 'typedef' keyword
+        pos = start_pos + 1
+        
+        # Skip whitespace and comments
+        while pos < len(tokens) and tokens[pos].type in [TokenType.WHITESPACE, TokenType.COMMENT]:
+            pos += 1
+        
+        if pos >= len(tokens):
+            return ""
+        
+        # Check if it's a struct/enum/union
+        if tokens[pos].type not in [TokenType.STRUCT, TokenType.ENUM, TokenType.UNION]:
+            return ""
+        
+        # Skip struct/enum/union keyword
+        pos += 1
+        
+        # Skip whitespace and comments
+        while pos < len(tokens) and tokens[pos].type in [TokenType.WHITESPACE, TokenType.COMMENT]:
+            pos += 1
+        
+        # Look for tag name (identifier before opening brace)
+        if pos < len(tokens) and tokens[pos].type == TokenType.IDENTIFIER:
+            tag_name = tokens[pos].value
+            return tag_name
+        
+        return ""
 
     def _looks_like_function(self, tokens, start_pos):
         """Check if the token sequence starting at start_pos looks like a function"""
