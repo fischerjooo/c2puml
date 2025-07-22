@@ -7,9 +7,9 @@ class "sample" as SAMPLE <<source>> #LightBlue
     - #define DEBUG_MODE
     - #define CALC
     -- Global Variables --
-    int global_counter
+    int = 0 global_counter
     char buffer
-    double * global_ptr
+    double * = NULL global_ptr
     -- Functions --
     int calculate_sum(int a, int b)
     point_t * create_point(int x, int y, const char * label)
@@ -43,8 +43,6 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + int x
     + int y
     + char label
-    + } point_t
-    + } system_state_t
     + extern const int MAX_POINTS
     + extern const char * DEFAULT_LABEL
     -- Functions --
@@ -71,8 +69,6 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
-    -- Global Variables --
-    + } log_level_t
     -- Functions --
     + void set_log_callback(log_callback_t cb)
     + void log_message(log_level_t level, const char * fmt)
@@ -85,7 +81,6 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     -- Global Variables --
     + point_t vertices
     + char label
-    + } triangle_t
     -- Functions --
     + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
     + int triangle_area(const triangle_t * tri)
@@ -154,7 +149,5 @@ HEADER_SAMPLE ..> TYPEDEF_POINT_T : declares
 HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : declares
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : declares
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : declares
-TYPEDEF_TRIANGLE_T --> TYPEDEF_POINT_T : uses
-TYPEDEF_TRIANGLE_T ..> HEADER_CONFIG : uses MAX_LABEL_LEN
 
 @enduml

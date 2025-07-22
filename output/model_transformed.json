@@ -16,6 +16,22 @@
             "CE_STATUS_WARN",
             "CE_STATUS_FAIL"
           ]
+        },
+        "CE_Status": {
+          "name": "CE_Status",
+          "values": [
+            "CE_STATUS_OK = 0",
+            "CE_STATUS_WARN",
+            "CE_STATUS_FAIL"
+          ]
+        },
+        "CE_Status_t": {
+          "name": "CE_Status_t",
+          "values": [
+            "CE_STATUS_OK = 0",
+            "CE_STATUS_WARN",
+            "CE_STATUS_FAIL"
+          ]
         }
       },
       "functions": [],
@@ -36,16 +52,6 @@
           "array_size": null
         },
         {
-          "name": "NestedInfo_t",
-          "type": "}",
-          "array_size": null
-        },
-        {
-          "name": "CE_Status_t",
-          "type": "}",
-          "array_size": null
-        },
-        {
           "name": "info",
           "type": "NestedInfo_t",
           "array_size": null
@@ -58,11 +64,6 @@
         {
           "name": "values",
           "type": "int",
-          "array_size": null
-        },
-        {
-          "name": "ComplexExample_t",
-          "type": "}",
           "array_size": null
         }
       ],
@@ -83,7 +84,7 @@
           "typedef_name": "NestedInfo_t",
           "original_type": "struct",
           "relationship_type": "defines",
-          "struct_tag_name": "NestedInfo_tag",
+          "struct_tag_name": "NestedInfo",
           "enum_tag_name": ""
         },
         {
@@ -91,13 +92,13 @@
           "original_type": "enum",
           "relationship_type": "defines",
           "struct_tag_name": "",
-          "enum_tag_name": "CE_Status_tag"
+          "enum_tag_name": "CE_Status"
         },
         {
           "typedef_name": "ComplexExample_t",
           "original_type": "struct",
           "relationship_type": "defines",
-          "struct_tag_name": "ComplexExample_tag",
+          "struct_tag_name": "ComplexExample",
           "enum_tag_name": ""
         }
       ],
@@ -303,11 +304,6 @@
           "name": "label",
           "type": "char",
           "array_size": null
-        },
-        {
-          "name": "triangle_t",
-          "type": "}",
-          "array_size": null
         }
       ],
       "includes": [
@@ -323,7 +319,7 @@
           "typedef_name": "triangle_t",
           "original_type": "struct",
           "relationship_type": "defines",
-          "struct_tag_name": "triangle_tag",
+          "struct_tag_name": "triangle",
           "enum_tag_name": ""
         }
       ],
@@ -422,7 +418,7 @@
       "globals": [
         {
           "name": "current_cb",
-          "type": "log_callback_t",
+          "type": "log_callback_t = NULL",
           "array_size": null
         }
       ],
@@ -452,6 +448,24 @@
       "enums": {
         "log_level_tag": {
           "name": "log_level_tag",
+          "values": [
+            "LOG_DEBUG = 0",
+            "LOG_INFO",
+            "LOG_WARN",
+            "LOG_ERROR"
+          ]
+        },
+        "log_level": {
+          "name": "log_level",
+          "values": [
+            "LOG_DEBUG = 0",
+            "LOG_INFO",
+            "LOG_WARN",
+            "LOG_ERROR"
+          ]
+        },
+        "log_level_t": {
+          "name": "log_level_t",
           "values": [
             "LOG_DEBUG = 0",
             "LOG_INFO",
@@ -491,13 +505,7 @@
           "is_static": false
         }
       ],
-      "globals": [
-        {
-          "name": "log_level_t",
-          "type": "}",
-          "array_size": null
-        }
-      ],
+      "globals": [],
       "includes": [
         "stdio.h",
         "config.h"
@@ -515,7 +523,7 @@
           "original_type": "enum",
           "relationship_type": "defines",
           "struct_tag_name": "",
-          "enum_tag_name": "log_level_tag"
+          "enum_tag_name": "log_level"
         }
       ],
       "include_relations": [
@@ -810,7 +818,7 @@
       "globals": [
         {
           "name": "global_counter",
-          "type": "int",
+          "type": "int = 0",
           "array_size": null
         },
         {
@@ -820,7 +828,7 @@
         },
         {
           "name": "global_ptr",
-          "type": "double *",
+          "type": "double * = NULL",
           "array_size": null
         }
       ],
@@ -890,11 +898,69 @@
             }
           ],
           "methods": []
+        },
+        "point": {
+          "name": "point",
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "array_size": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "array_size": null
+            },
+            {
+              "name": "label",
+              "type": "char[32]",
+              "array_size": null
+            }
+          ],
+          "methods": []
+        },
+        "point_t": {
+          "name": "point_t",
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "array_size": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "array_size": null
+            },
+            {
+              "name": "label",
+              "type": "char[32]",
+              "array_size": null
+            }
+          ],
+          "methods": []
         }
       },
       "enums": {
         "system_state_tag": {
           "name": "system_state_tag",
+          "values": [
+            "STATE_IDLE = 0",
+            "STATE_RUNNING",
+            "STATE_ERROR"
+          ]
+        },
+        "system_state": {
+          "name": "system_state",
+          "values": [
+            "STATE_IDLE = 0",
+            "STATE_RUNNING",
+            "STATE_ERROR"
+          ]
+        },
+        "system_state_t": {
+          "name": "system_state_t",
           "values": [
             "STATE_IDLE = 0",
             "STATE_RUNNING",
@@ -972,16 +1038,6 @@
           "array_size": null
         },
         {
-          "name": "point_t",
-          "type": "}",
-          "array_size": null
-        },
-        {
-          "name": "system_state_t",
-          "type": "}",
-          "array_size": null
-        },
-        {
           "name": "MAX_POINTS",
           "type": "extern const int",
           "array_size": null
@@ -1014,7 +1070,7 @@
           "typedef_name": "point_t",
           "original_type": "struct",
           "relationship_type": "defines",
-          "struct_tag_name": "point_tag",
+          "struct_tag_name": "point",
           "enum_tag_name": ""
         },
         {
@@ -1022,7 +1078,7 @@
           "original_type": "enum",
           "relationship_type": "defines",
           "struct_tag_name": "",
-          "enum_tag_name": "system_state_tag"
+          "enum_tag_name": "system_state"
         }
       ],
       "include_relations": [
@@ -1166,17 +1222,17 @@
       "globals": [
         {
           "name": "global_length",
-          "type": "MyLen",
+          "type": "MyLen = 0U",
           "array_size": null
         },
         {
           "name": "global_buffer",
-          "type": "MyBuffer",
+          "type": "MyBuffer = {0U, NULL}",
           "array_size": null
         },
         {
           "name": "global_complex",
-          "type": "MyComplexPtr",
+          "type": "MyComplexPtr = NULL",
           "array_size": null
         }
       ],
@@ -1261,6 +1317,64 @@
             }
           ],
           "methods": []
+        },
+        "MyComplexStruct": {
+          "name": "MyComplexStruct",
+          "fields": [
+            {
+              "name": "id",
+              "type": "MyLen",
+              "array_size": null
+            },
+            {
+              "name": "name",
+              "type": "MyString",
+              "array_size": null
+            },
+            {
+              "name": "callback",
+              "type": "MyCallback",
+              "array_size": null
+            },
+            {
+              "name": "log_level",
+              "type": "log_level_t",
+              "array_size": null
+            }
+          ],
+          "methods": []
+        },
+        "NamedStruct": {
+          "name": "NamedStruct",
+          "fields": [
+            {
+              "name": "a",
+              "type": "int",
+              "array_size": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "array_size": null
+            }
+          ],
+          "methods": []
+        },
+        "NamedStruct_t": {
+          "name": "NamedStruct_t",
+          "fields": [
+            {
+              "name": "a",
+              "type": "int",
+              "array_size": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "array_size": null
+            }
+          ],
+          "methods": []
         }
       },
       "enums": {
@@ -1278,6 +1392,36 @@
             "STATUS_OK = 0",
             "STATUS_FAIL"
           ]
+        },
+        "Color": {
+          "name": "Color",
+          "values": [
+            "COLOR_RED = 0",
+            "COLOR_GREEN",
+            "COLOR_BLUE"
+          ]
+        },
+        "Color_t": {
+          "name": "Color_t",
+          "values": [
+            "COLOR_RED = 0",
+            "COLOR_GREEN",
+            "COLOR_BLUE"
+          ]
+        },
+        "StatusEnum": {
+          "name": "StatusEnum",
+          "values": [
+            "STATUS_OK = 0",
+            "STATUS_FAIL"
+          ]
+        },
+        "Status_t": {
+          "name": "Status_t",
+          "values": [
+            "STATUS_OK = 0",
+            "STATUS_FAIL"
+          ]
         }
       },
       "functions": [],
@@ -1290,11 +1434,6 @@
         {
           "name": "data",
           "type": "MyString",
-          "array_size": null
-        },
-        {
-          "name": "MyBuffer",
-          "type": "}",
           "array_size": null
         },
         {
@@ -1318,21 +1457,6 @@
           "array_size": null
         },
         {
-          "name": "MyComplex",
-          "type": "}",
-          "array_size": null
-        },
-        {
-          "name": "Color_t",
-          "type": "}",
-          "array_size": null
-        },
-        {
-          "name": "Status_t",
-          "type": "}",
-          "array_size": null
-        },
-        {
           "name": "x",
           "type": "int",
           "array_size": null
@@ -1340,11 +1464,6 @@
         {
           "name": "y",
           "type": "int",
-          "array_size": null
-        },
-        {
-          "name": "Point_t",
-          "type": "}",
           "array_size": null
         },
         {
@@ -1358,11 +1477,6 @@
           "array_size": null
         },
         {
-          "name": "NamedStruct_t",
-          "type": "}",
-          "array_size": null
-        },
-        {
           "name": "i",
           "type": "int",
           "array_size": null
@@ -1373,11 +1487,6 @@
           "array_size": null
         },
         {
-          "name": "Number_t",
-          "type": "}",
-          "array_size": null
-        },
-        {
           "name": "c",
           "type": "char",
           "array_size": null
@@ -1385,11 +1494,6 @@
         {
           "name": "d",
           "type": "double",
-          "array_size": null
-        },
-        {
-          "name": "NamedUnion_t",
-          "type": "}",
           "array_size": null
         }
       ],
@@ -1415,7 +1519,8 @@
         "x": "struct Point_tag { int",
         "a": "struct NamedStruct_tag { int",
         "i": "union Number_tag { int",
-        "c": "union NamedUnion_tag { char"
+        "c": "union NamedUnion_tag { char",
+        "MyComplexArray": "MyComplexPtr[10]"
       },
       "typedef_relations": [
         {
@@ -1423,20 +1528,20 @@
           "original_type": "enum",
           "relationship_type": "defines",
           "struct_tag_name": "",
-          "enum_tag_name": "StatusEnum_tag"
+          "enum_tag_name": "StatusEnum"
         },
         {
           "typedef_name": "Point_t",
           "original_type": "struct",
           "relationship_type": "defines",
-          "struct_tag_name": "Point_tag",
+          "struct_tag_name": "Point",
           "enum_tag_name": ""
         },
         {
           "typedef_name": "NamedStruct_t",
           "original_type": "struct",
           "relationship_type": "defines",
-          "struct_tag_name": "NamedStruct_tag",
+          "struct_tag_name": "NamedStruct",
           "enum_tag_name": ""
         },
         {
@@ -1489,5 +1594,5 @@
       "unions": {}
     }
   },
-  "created_at": "2025-07-22T07:03:53.625487"
+  "created_at": "2025-07-22T07:18:12.683540"
 }
