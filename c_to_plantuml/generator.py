@@ -118,8 +118,18 @@ class PlantUMLGenerator:
         
         if file_model.globals:
             lines.append("    -- Global Variables --")
-            for global_var in file_model.globals:
-                lines.append(f"    {global_var.type} {global_var.name}")
+            for glob in file_model.globals:
+                # Check if this is a static variable
+                is_static = glob.type.startswith('static ')
+                visibility = "-" if is_static else "+"
+                
+                # Remove 'static ' prefix from type for display
+                display_type = glob.type.replace('static ', '') if is_static else glob.type
+                
+                if hasattr(glob, 'value') and glob.value is not None:
+                    lines.append(f"    {visibility} {display_type} {glob.name} = {glob.value}")
+                else:
+                    lines.append(f"    {visibility} {display_type} {glob.name}")
         
         if file_model.functions:
             lines.append("    -- Functions --")
