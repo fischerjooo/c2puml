@@ -134,9 +134,9 @@ class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 + void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
-class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 {
-+ int32_t
++ double
 }
 
 class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
@@ -151,16 +151,16 @@ STATE_RUNNING
 STATE_ERROR
 }
 
-class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
-{
-+ double
-}
-
 class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
 + int x
 + int y
 + char 32[ ] label
+}
+
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+{
++ int32_t
 }
 
 class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
@@ -194,15 +194,6 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 + void set_log_callback(log_callback_t cb);
 + void log_message(log_level_t level, const char * fmt, ...);
 }
-class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
-{
--- Macros --
-+ #define MATH_UTILS_H
--- Functions --
-+ int add(int a, int b);
-+ int subtract(int a, int b);
-+ real_t average(const int * arr, size_t len);
-}
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
 -- Macros --
@@ -226,6 +217,15 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 + #define PROJECT_NAME
 + #define MAX_LABEL_LEN
 + #define DEFAULT_BUFFER_SIZE
+}
+class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
+{
+-- Macros --
++ #define MATH_UTILS_H
+-- Functions --
++ int add(int a, int b);
++ int subtract(int a, int b);
++ real_t average(const int * arr, size_t len);
 }
 TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>
 TYPEDEF_TEST --> HEADER_COMPLEX_EXAMPLE : <<include>>

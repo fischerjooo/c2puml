@@ -61,14 +61,14 @@ class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 + char MAX_LABEL_LEN[ ] label
 }
 
-class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
-{
-+ int32_t
-}
-
 class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
 {
 + uint32_t
+}
+
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+{
++ int32_t
 }
 
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
