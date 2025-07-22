@@ -711,7 +711,27 @@ class PUMLValidator:
                 raise AssertionError(f"Malformed variadic function with '... ...' in {filename}")
         
         print("    ✅ Global variable formatting valid")
-        
+
+    def _validate_no_typedefs_in_header_or_source_classes(self, puml_lines, filename):
+        """Assert that no typedefs (e.g., '+ struct', '+ enum', or any typedef) are generated in header or source class blocks (HEADER_xxx or main class blocks)."""
+        in_header_or_main_class = False
+        class_name = None
+        for line in puml_lines:
+            # Detect start of a header or main class
+            if line.strip().startswith('class "') and (
+                'as HEADER_' in line or 'as ' in line and '<<header>>' in line or '<<main>>' in line):
+                in_header_or_main_class = True
+                class_name = line.strip()
+                continue
+            if in_header_or_main_class:
+                if line.strip() == '}':
+                    in_header_or_main_class = False
+                    class_name = None
+                    continue
+                # Detect typedefs in header or main class
+                if line.strip().startswith('+ struct') or line.strip().startswith('+ enum') or line.strip().startswith('+ typedef'):
+                    raise AssertionError(f"Typedef found in header or source class block {class_name} in {filename}: {line.strip()}")
+
     def validate_file(self, filename: str) -> None:
         """Validate a single PUML file."""
         print(f"\n{'='*60}")
