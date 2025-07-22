@@ -57,8 +57,21 @@ class PlantUMLGenerator:
 
     def _generate_main_class(self, file_model: FileModel, basename: str, project_model: ProjectModel) -> List[str]:
         """Generate the main class for the file using the new PlantUML template"""
+        # Determine if this is a header file
+        is_header = file_model.file_path.endswith('.h')
+        
+        # Use appropriate stereotype and UML ID method
+        if is_header:
+            stereotype = "<<header>>"
+            color = "#LightGreen"
+            uml_id = self._get_header_uml_id(basename)
+        else:
+            stereotype = "<<source>>"
+            color = "#LightBlue"
+            uml_id = self._get_uml_id(basename)
+        
         lines = [
-            f'class "{basename}" as {self._get_uml_id(basename)} <<source>> #LightBlue',
+            f'class "{basename}" as {uml_id} {stereotype} {color}',
             "{",
         ]
         
@@ -470,7 +483,12 @@ class PlantUMLGenerator:
                 if not external_header_name.endswith('.h'):
                     external_header_name = f"{external_header_name}.h"
                 
-                source_class = self._get_uml_id(Path(file_model.file_path).stem)
+                # Use appropriate UML ID method based on file type
+                is_header = file_model.file_path.endswith('.h')
+                if is_header:
+                    source_class = self._get_header_uml_id(Path(file_model.file_path).stem)
+                else:
+                    source_class = self._get_uml_id(Path(file_model.file_path).stem)
                 target_class = self._get_header_uml_id(external_header_name)
                 
                 # Check if this relationship was already added
@@ -489,7 +507,12 @@ class PlantUMLGenerator:
                     continue
                 if included_file_model:
                     header_basename = Path(included_file_path).stem
-                    source_class = self._get_uml_id(Path(file_model.file_path).stem)
+                    # Use appropriate UML ID method based on file type
+                    is_header = file_model.file_path.endswith('.h')
+                    if is_header:
+                        source_class = self._get_header_uml_id(Path(file_model.file_path).stem)
+                    else:
+                        source_class = self._get_uml_id(Path(file_model.file_path).stem)
                     target_class = self._get_header_uml_id(header_basename)
                     
                     # Check if this relationship was already added
@@ -497,6 +520,39 @@ class PlantUMLGenerator:
                     if relationship_id not in seen_relationships:
                         seen_relationships.add(relationship_id)
                         lines.append(f"{source_class} --> {target_class} : <<include>>")
+        
+        # Process direct include relationships from include_relations (for header-to-header relationships)
+        for include_relation in file_model.include_relations:
+            included_file_path = include_relation.included_file
+            
+            # Find the included file model
+            included_file_model = None
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    included_file_model = model
+                    break
+            
+            if included_file_model:
+                source_basename = Path(file_model.file_path).stem
+                target_basename = Path(included_file_path).stem
+                
+                # Skip self-include
+                if source_basename == target_basename:
+                    continue
+                
+                # Use appropriate UML ID method based on file type
+                is_header = file_model.file_path.endswith('.h')
+                if is_header:
+                    source_class = self._get_header_uml_id(source_basename)
+                else:
+                    source_class = self._get_uml_id(source_basename)
+                target_class = self._get_header_uml_id(target_basename)
+                
+                # Check if this relationship was already added
+                relationship_id = f"{source_basename}->{target_basename}"
+                if relationship_id not in seen_relationships:
+                    seen_relationships.add(relationship_id)
+                    lines.append(f"{source_class} --> {target_class} : <<include>>")
         
         # Process relationships between included headers (only for headers that are in this diagram)
         for include_relation in file_model.include_relations:
