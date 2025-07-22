@@ -2,28 +2,25 @@
 
 class "geometry" as GEOMETRY <<source>> #LightBlue
 {
-    -- Global Variables --
-    triangle_t tri
-    return tri
-    int x1
-    int y1
-    int x2
-    int y2
-    int x3
-    int y3
-    return area
     -- Functions --
-    triangle_t create_triangle()
-    int triangle_area()
+    triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
+    int triangle_area(const triangle_t * tri)
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
     -- Macros --
     + #define GEOMETRY_H
+    -- Global Variables --
+    + point_t vertices
+    + char label
+    + } triangle_t
     -- Functions --
-    + triangle_t create_triangle()
-    + int triangle_area()
+    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
+    + int triangle_area(const triangle_t * tri)
+    -- Struct Fields --
+    + point_t[3] vertices
+    + char[MAX_LABEL_LEN] label
 }
 
 class "string.h" as HEADER_STRING_H <<header>> #LightGray
@@ -45,12 +42,19 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     -- Global Variables --
     + int x
     + int y
+    + char label
+    + } point_t
+    + } system_state_t
     + extern const int MAX_POINTS
     + extern const char * DEFAULT_LABEL
     -- Functions --
-    + extern int calculate_sum()
-    + extern point_t * create_point()
-    + extern void process_point()
+    + extern int calculate_sum(int a, int b)
+    + extern point_t * create_point(int x, int y, const char * label)
+    + extern void process_point(point_t * p)
+    -- Struct Fields --
+    + int x
+    + int y
+    + char[32] label
 }
 
 class "config" as HEADER_CONFIG <<header>> #LightGreen
@@ -66,9 +70,11 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
+    -- Global Variables --
+    + } log_level_t
     -- Functions --
-    + void set_log_callback()
-    + void log_message()
+    + void set_log_callback(log_callback_t cb)
+    + void log_message(log_level_t level, const char * fmt)
 }
 
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
@@ -76,9 +82,9 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     -- Macros --
     + #define MATH_UTILS_H
     -- Functions --
-    + int add()
-    + int subtract()
-    + real_t average()
+    + int add(int a, int b)
+    + int subtract(int a, int b)
+    + real_t average(const int * arr, size_t len)
 }
 
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
