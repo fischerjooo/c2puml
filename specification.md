@@ -293,13 +293,13 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
 ' Typedef classes for struct typedefs:
 class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 {
-    + {type} {field_name}
+    + {field_type} {field_name}
 }
 
 ' Typedef classes for enum typedefs:
 class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 {
-    + {enum_value_1} = {value_1}
+    + {enum_value_1}
     + {enum_value_2}
     + {enum_value_3}
 }
@@ -307,19 +307,19 @@ class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 ' Typedef classes for union typedefs:
 class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 {
-    + {type} {field_name}
+    + {field_type} {field_name}
 }
 
 ' Typedef classes for simple type typedefs:
 class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 {
-    + {original_type}
+    + {original_type_name}
 }
 
 ' Original type classes for struct/enum/union:
 class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 {
-    + {type} {field_name}
+    + {field_type} {field_name}
 }
 
 ' Relationships:
@@ -349,10 +349,10 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 #### 5.2.4 Typedef Content Display
 - **Source/Header files**: Show only primitive typedef declarations (e.g., `typedef int MyInt`, `typedef char* String`) - struct/enum/union typedefs are NOT shown in file/header classes
 - **Typedef classes**: Show the actual content:
-  - **Struct typedefs**: Show struct fields with their types (e.g., `+ int x`, `+ char* name`)
-  - **Enum typedefs**: Show enum values with their assignments (e.g., `+ LOG_DEBUG = 0`, `+ LOG_INFO`, `+ STATE_IDLE = 0`, `+ STATE_RUNNING`)
-  - **Union typedefs**: Show union fields with their types (e.g., `+ int i`, `+ float f`)
-  - **Primitive typedefs**: Show the original type (e.g., `+ uint32_t`, `+ char*`)
+  - **Struct typedefs**: Show struct field names and types (e.g., `+ int x`, `+ char* name`)
+  - **Enum typedefs**: Show enum value names (e.g., `+ LOG_DEBUG`, `+ LOG_INFO`, `+ STATE_IDLE`, `+ STATE_RUNNING`)
+  - **Union typedefs**: Show union field names and types (e.g., `+ int i`, `+ float f`)
+  - **Primitive typedefs**: Show the original type name (e.g., `+ uint32_t`, `+ char*`)
 
 ### 5.3 Include Depth Configuration
 
