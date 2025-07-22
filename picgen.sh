@@ -41,29 +41,26 @@ for puml_file in $puml_files; do
     # Get the base name without extension
     base_name=$(basename "$puml_file" .puml)
     
-    # Convert to JPEG using PlantUML
+    # Convert to PNG using PlantUML
     plantuml -tpng "$puml_file"
     
-    # Convert PNG to JPEG using ImageMagick if available
-    if command -v convert &> /dev/null; then
-        if [ -f "${base_name}.png" ]; then
+    # Check if PNG was created
+    if [ -f "${base_name}.png" ]; then
+        # Try to convert PNG to JPEG using ImageMagick if available
+        if command -v convert &> /dev/null; then
             echo "🔄 Converting ${base_name}.png to JPEG..."
             convert "${base_name}.png" "${base_name}.jpg"
             echo "✅ Created ${base_name}.jpg"
-            
-            # Clean up the temporary PNG file
-            rm "${base_name}.png"
-            echo "🧹 Cleaned up temporary ${base_name}.png"
+        else
+            echo "⚠️  ImageMagick not found. JPEG conversion skipped."
+            echo "   Install ImageMagick with: sudo apt-get install imagemagick"
         fi
-    else
-        echo "⚠️  ImageMagick not found. PNG files created instead of JPEG."
-        echo "   Install ImageMagick with: sudo apt-get install imagemagick"
         
-        # Delete PNG files since we only want JPEG output
-        if [ -f "${base_name}.png" ]; then
-            rm "${base_name}.png"
-            echo "🧹 Deleted ${base_name}.png (JPEG conversion failed)"
-        fi
+        # Always clean up the temporary PNG file
+        rm "${base_name}.png"
+        echo "🧹 Cleaned up temporary ${base_name}.png"
+    else
+        echo "❌ Failed to generate ${base_name}.png"
     fi
 done
 
