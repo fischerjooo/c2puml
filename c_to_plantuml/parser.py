@@ -392,7 +392,8 @@ class CParser:
             
             # Check for function-like declarations (function prototypes or definitions)
             # Pattern: return_type function_name(params) {
-            if '(' in line and ')' in line and '{' in line and not in_struct_or_enum:
+            # or: return_type function_name(params)\n {
+            if '(' in line and ')' in line and not in_struct_or_enum:
                 # Check if this looks like a function declaration (not a control structure)
                 # Function pattern: type name(params) {
                 # Control structure pattern: if/for/while/switch (condition) {
@@ -406,6 +407,7 @@ class CParser:
                     before_paren = parts[0].strip()
                     # Check if before_paren contains a type and name
                     if ' ' in before_paren and not before_paren.startswith(('if ', 'for ', 'while ', 'switch ')):
+                        # This looks like a function declaration
                         in_function = True
                         logger.debug(f"  Entering function at line {i+1}: {line}")
                         logger.debug(f"  Skipping line {i+1}: function-like declaration")
@@ -413,6 +415,17 @@ class CParser:
                 
                 logger.debug(f"  Skipping line {i+1}: control structure or unknown pattern")
                 continue
+            
+            # Check for opening brace that might be part of a function definition
+            if line.strip() == '{' and not in_struct_or_enum and not in_function:
+                # This might be the opening brace of a function that was declared on the previous line
+                # Check if we're in a function context (previous line was a function declaration)
+                if i > 0 and any(keyword in lines[i-1] for keyword in ['int ', 'void ', 'char ', 'float ', 'double ', 'long ', 'short ']):
+                    in_function = True
+                    brace_depth = 1  # Start with 1 for the opening brace
+                    logger.debug(f"  Entering function at line {i+1}: opening brace after function declaration")
+                    logger.debug(f"  Skipping line {i+1}: function opening brace")
+                    continue
             
             # Count braces
             open_braces = line.count('{')
@@ -429,7 +442,21 @@ class CParser:
                     struct_enum_brace_depth = 0
                     logger.debug(f"  Exiting struct/enum (braces closed) at line {i+1}")
             else:
-                brace_depth += open_braces - close_braces
+                # For functions, we need to be more careful about brace depth
+                if in_function:
+                    # If we're in a function and encounter an opening brace, increment depth
+                    if open_braces > 0:
+                        brace_depth += open_braces
+                        logger.debug(f"  Function brace depth increased to: {brace_depth}")
+                    # If we encounter a closing brace, decrement depth
+                    if close_braces > 0:
+                        brace_depth -= close_braces
+                        logger.debug(f"  Function brace depth decreased to: {brace_depth}")
+                else:
+                    # Not in a function, use normal brace depth tracking
+                    brace_depth += open_braces - close_braces
+                
+                logger.debug(f"  Brace depth: {brace_depth}, in_function: {in_function}")
                 # Check if we've exited a function
                 if in_function and brace_depth <= 0:
                     in_function = False
