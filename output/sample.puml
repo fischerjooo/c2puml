@@ -11,11 +11,11 @@ class "sample" as SAMPLE <<source>> #LightBlue
     - char buffer [ MAX_SIZE ]
     - double * global_ptr
     -- Functions --
-    void internal_helper ( void ) ; int calculate_sum(int a, int b)
-    a , int b ) ; point_t * create_point(int x, int y, const char * label)
-    '\0' ; } return p ; } void process_point(point_t * p)
-    ) ; internal_helper ( ) ; } void demo_triangle_usage()
-    . label , area ) ; } int main()
+    int calculate_sum(int a, int b)
+    * create_point(int x, int y, const char * label)
+    void process_point(point_t * p)
+    void demo_triangle_usage()
+    int main()
 }
 
 class "stdio.h" as HEADER_STDIO <<header>> #LightGray
@@ -43,7 +43,7 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + Field(name=DEFAULT_LABEL, type=char *)
     -- Functions --
     + int calculate_sum(int a, int b);
-    + point_t * create_point(int x, int y, const char * label);
+    + * create_point(int x, int y, const char * label);
     + void process_point(point_t * p);
 }
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
@@ -51,25 +51,25 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     -- Macros --
     + #define MATH_UTILS_H
     -- Functions --
-    + ) ( int , int ) ; int add(int a, int b);
-    + int a , int b ) ; int subtract(int a, int b);
-    + int a , int b ) ; real_t average(const int * arr, size_t len);
+    + int add(int a, int b);
+    + int subtract(int a, int b);
+    + real_t average(const int * arr, size_t len);
 }
 class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
     -- Functions --
-    + , const char * message ) ; void set_log_callback(log_callback_t cb);
-    + void set_log_callback ( log_callback_t cb ) ; void log_message(log_level_t level, const char * fmt, . . .);
+    + void set_log_callback(log_callback_t cb);
+    + void log_message(log_level_t level, const char * fmt, . . .);
 }
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
     -- Macros --
     + #define GEOMETRY_H
     -- Functions --
-    + [ MAX_LABEL_LEN ] ; } triangle_t ; triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
-    + , const char * label ) ; int triangle_area(const triangle_t * tri);
+    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
+    + int triangle_area(const triangle_t * tri);
 }
 class "config" as HEADER_CONFIG <<header>> #LightGreen
 {

@@ -4,8 +4,8 @@ class "math_utils" as MATH_UTILS <<source>> #LightBlue
 {
     -- Functions --
     int add(int a, int b)
-    { return a + b ; } int subtract(int a, int b)
-    { return a - b ; } real_t average(const int * arr, size_t len)
+    int subtract(int a, int b)
+    real_t average(const int * arr, size_t len)
 }
 
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
@@ -13,9 +13,9 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     -- Macros --
     + #define MATH_UTILS_H
     -- Functions --
-    + ) ( int , int ) ; int add(int a, int b);
-    + int a , int b ) ; int subtract(int a, int b);
-    + int a , int b ) ; real_t average(const int * arr, size_t len);
+    + int add(int a, int b);
+    + int subtract(int a, int b);
+    + real_t average(const int * arr, size_t len);
 }
 class "config" as HEADER_CONFIG <<header>> #LightGreen
 {

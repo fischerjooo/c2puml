@@ -513,17 +513,13 @@ class StructureFinder:
                     # Now look backwards to find the complete return type
                     # We need to include all tokens that are part of the return type
                     # For example: "point_t *" should include both "point_t" and "*"
-                    original_return_type_start = return_type_start
-                    while return_type_start >= 0:
-                        token_type = self.tokens[return_type_start].type
-                        # Stop if we hit a modifier or if we've gone too far back
-                        if token_type in modifiers or return_type_start < max(0, func_name_pos - 10):
-                            break
-                        return_type_start -= 1
+                    # But we need to be careful not to go too far back and include content from other functions
                     
-                    # Don't include the modifier, start from the next token
-                    if return_type_start >= 0 and self.tokens[return_type_start].type in modifiers:
-                        return_type_start += 1
+                    # Look back at most 20 tokens to capture multi-token return types like "point_t *"
+                    # This ensures we capture both "point_t" and "*" tokens
+                    max_lookback = max(0, func_name_pos - 20)
+                    if return_type_start < max_lookback:
+                        return_type_start = max_lookback
                     
 
                     

@@ -4,7 +4,7 @@ class "geometry" as GEOMETRY <<source>> #LightBlue
 {
     -- Functions --
     triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
-    = '\0' ; return tri ; } int triangle_area(const triangle_t * tri)
+    int triangle_area(const triangle_t * tri)
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
@@ -12,8 +12,8 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     -- Macros --
     + #define GEOMETRY_H
     -- Functions --
-    + [ MAX_LABEL_LEN ] ; } triangle_t ; triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
-    + , const char * label ) ; int triangle_area(const triangle_t * tri);
+    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
+    + int triangle_area(const triangle_t * tri);
 }
 class "string.h" as HEADER_STRING <<header>> #LightGray
 {
@@ -36,7 +36,7 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + Field(name=DEFAULT_LABEL, type=char *)
     -- Functions --
     + int calculate_sum(int a, int b);
-    + point_t * create_point(int x, int y, const char * label);
+    + * create_point(int x, int y, const char * label);
     + void process_point(point_t * p);
 }
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
@@ -44,9 +44,9 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     -- Macros --
     + #define MATH_UTILS_H
     -- Functions --
-    + ) ( int , int ) ; int add(int a, int b);
-    + int a , int b ) ; int subtract(int a, int b);
-    + int a , int b ) ; real_t average(const int * arr, size_t len);
+    + int add(int a, int b);
+    + int subtract(int a, int b);
+    + real_t average(const int * arr, size_t len);
 }
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 {
