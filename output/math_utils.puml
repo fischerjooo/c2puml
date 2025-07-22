@@ -33,26 +33,6 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + typedef int32_t status_t
 }
 
-class "real_t" as TYPEDEF_REAL_T_real_t <<typedef>> #LightYellow
-{
-    + typedef double real_t
-}
-
-class "math_op_t" as TYPEDEF_MATH_OP_T_math_op_t <<typedef>> #LightYellow
-{
-    + typedef int ( * math_op_t ) ( int , int ) math_op_t
-}
-
-class "id_t" as TYPEDEF_ID_T_id_t <<typedef>> #LightYellow
-{
-    + typedef uint32_t id_t
-}
-
-class "status_t" as TYPEDEF_STATUS_T_status_t <<typedef>> #LightYellow
-{
-    + typedef int32_t status_t
-}
-
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 

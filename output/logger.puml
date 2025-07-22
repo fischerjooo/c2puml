@@ -45,26 +45,6 @@ class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
 {
 }
 
-class "log_level_t" as TYPEDEF_LOG_LEVEL_T_log_level_t <<typedef>> #LightYellow
-{
-    + typedef enum log_level_t
-}
-
-class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T_log_callback_t <<typedef>> #LightYellow
-{
-    + typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) log_callback_t
-}
-
-class "id_t" as TYPEDEF_ID_T_id_t <<typedef>> #LightYellow
-{
-    + typedef uint32_t id_t
-}
-
-class "status_t" as TYPEDEF_STATUS_T_status_t <<typedef>> #LightYellow
-{
-    + typedef int32_t status_t
-}
-
 LOGGER --> HEADER_LOGGER : <<include>>
 LOGGER --> HEADER_STDARG_H : <<include>>
 LOGGER --> HEADER_STRING_H : <<include>>
