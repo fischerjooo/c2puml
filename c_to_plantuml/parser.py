@@ -186,11 +186,18 @@ class CParser:
         function_infos = structure_finder.find_functions()
         
         for start_pos, end_pos, func_name, return_type in function_infos:
-            # For now, create functions with empty parameter lists
-            # TODO: Parse parameters from token range
+            # Map back to original token positions to parse parameters
+            original_start = self._find_original_token_pos(tokens, structure_finder.tokens, start_pos)
+            original_end = self._find_original_token_pos(tokens, structure_finder.tokens, end_pos)
+            
+            parameters = []
+            if original_start is not None and original_end is not None:
+                # Parse parameters from the token range
+                parameters = self._parse_function_parameters(tokens, original_start, original_end, func_name)
+            
             try:
-                functions.append(Function(func_name, return_type, []))
-                self.logger.debug(f"Parsed function: {func_name}")
+                functions.append(Function(func_name, return_type, parameters))
+                self.logger.debug(f"Parsed function: {func_name} with {len(parameters)} parameters")
             except Exception as e:
                 self.logger.warning(f"Error creating function {func_name}: {e}")
         
@@ -359,7 +366,7 @@ class CParser:
         if tokens[pos].type in [TokenType.STRUCT, TokenType.ENUM, TokenType.UNION]:
             return self._parse_complex_typedef(tokens, pos)
         
-        # Simple typedef: typedef type name;
+        # Simple typedef: typedef type name; or function pointer: typedef ret (*name)(params);
         all_tokens = []
         
         # Collect all non-whitespace/comment tokens until semicolon
@@ -368,12 +375,39 @@ class CParser:
                 all_tokens.append(tokens[pos])
             pos += 1
         
-        # The last token should be the typedef name, everything else is the type
-        if len(all_tokens) >= 2:
-            typedef_name = all_tokens[-1].value
-            type_tokens = all_tokens[:-1]
-            original_type = ' '.join(t.value for t in type_tokens)
-            return (typedef_name, original_type)
+        if len(all_tokens) < 2:
+            return None
+        
+        # Check for function pointer pattern: return_type (*name)(params)
+        # Look for the pattern (* name ) in the tokens
+        for i in range(len(all_tokens) - 2):
+            if (all_tokens[i].type == TokenType.LPAREN and 
+                all_tokens[i + 1].type == TokenType.ASTERISK and 
+                all_tokens[i + 2].type == TokenType.IDENTIFIER and
+                i + 3 < len(all_tokens) and all_tokens[i + 3].type == TokenType.RPAREN):
+                
+                # This is a function pointer typedef
+                typedef_name = all_tokens[i + 2].value
+                # The type is everything combined
+                original_type = ' '.join(t.value for t in all_tokens)
+                return (typedef_name, original_type)
+        
+        # Check for array typedef pattern: type name[size]
+        for i in range(len(all_tokens)):
+            if (all_tokens[i].type == TokenType.LBRACKET and 
+                i > 0 and all_tokens[i - 1].type == TokenType.IDENTIFIER):
+                
+                # This is an array typedef
+                typedef_name = all_tokens[i - 1].value
+                # The type is everything combined
+                original_type = ' '.join(t.value for t in all_tokens)
+                return (typedef_name, original_type)
+        
+        # Simple typedef: the last token should be the typedef name, everything else is the type
+        typedef_name = all_tokens[-1].value
+        type_tokens = all_tokens[:-1]
+        original_type = ' '.join(t.value for t in type_tokens)
+        return (typedef_name, original_type)
         
         return None
 
@@ -527,6 +561,103 @@ class CParser:
         while i < len(tokens) and tokens[i].type != TokenType.SEMICOLON:
             i += 1
         return i + 1 if i < len(tokens) else i
+
+    def _parse_function_parameters(self, tokens, start_pos, end_pos, func_name):
+        """Parse function parameters from token range"""
+        from .models import Field
+        
+        parameters = []
+        
+        # Find the opening parenthesis for the function
+        paren_start = None
+        paren_end = None
+        
+        for i in range(start_pos, min(end_pos + 1, len(tokens))):
+            if tokens[i].type == TokenType.IDENTIFIER and tokens[i].value == func_name:
+                # Look for opening parenthesis after function name
+                for j in range(i + 1, min(end_pos + 1, len(tokens))):
+                    if tokens[j].type == TokenType.LPAREN:
+                        paren_start = j
+                        break
+                    elif tokens[j].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
+                        break
+                break
+        
+        if paren_start is None:
+            return parameters
+        
+        # Find matching closing parenthesis
+        paren_depth = 1
+        for i in range(paren_start + 1, min(end_pos + 1, len(tokens))):
+            if tokens[i].type == TokenType.LPAREN:
+                paren_depth += 1
+            elif tokens[i].type == TokenType.RPAREN:
+                paren_depth -= 1
+                if paren_depth == 0:
+                    paren_end = i
+                    break
+        
+        if paren_end is None:
+            return parameters
+        
+        # Parse parameter tokens between parentheses
+        param_tokens = []
+        for i in range(paren_start + 1, paren_end):
+            if tokens[i].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
+                param_tokens.append(tokens[i])
+        
+        # If no parameters or just "void", return empty list
+        if not param_tokens or (len(param_tokens) == 1 and param_tokens[0].value == 'void'):
+            return parameters
+        
+        # Split parameters by commas
+        current_param = []
+        for token in param_tokens:
+            if token.type == TokenType.COMMA:
+                if current_param:
+                    param = self._parse_single_parameter(current_param)
+                    if param:
+                        parameters.append(param)
+                    current_param = []
+            else:
+                current_param.append(token)
+        
+        # Handle last parameter
+        if current_param:
+            param = self._parse_single_parameter(current_param)
+            if param:
+                parameters.append(param)
+        
+        return parameters
+
+    def _parse_single_parameter(self, param_tokens):
+        """Parse a single function parameter from tokens"""
+        from .models import Field
+        
+        if not param_tokens:
+            return None
+        
+        # Handle variadic parameters
+        if len(param_tokens) == 1 and param_tokens[0].value == '...':
+            return Field(name='...', type='...')
+        
+        # For parameters like "int x" or "const char *name"
+        if len(param_tokens) >= 2:
+            # Last token is usually the parameter name
+            param_name = param_tokens[-1].value
+            type_tokens = param_tokens[:-1]
+            param_type = ' '.join(t.value for t in type_tokens)
+            
+            return Field(name=param_name, type=param_type)
+        elif len(param_tokens) == 1:
+            # Single token - might be just type (like "void") or name
+            token_value = param_tokens[0].value
+            if token_value in ['void', 'int', 'char', 'float', 'double', 'long', 'short']:
+                return Field(name='', type=token_value)
+            else:
+                return Field(name=token_value, type='')
+        
+        return None
 
     def _get_timestamp(self) -> str:
         """Get current timestamp string"""

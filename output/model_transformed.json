@@ -104,13 +104,40 @@
         {
           "name": "create_triangle",
           "return_type": "#include \"geometry.h\" #include <string.h> #include <stdlib.h> triangle_t",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "c",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "triangle_area",
           "return_type": "int",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "tri",
+              "type": "const triangle_t *",
+              "value": null
+            }
+          ],
           "is_static": false
         }
       ],
@@ -143,13 +170,40 @@
         {
           "name": "create_triangle",
           "return_type": "#ifndef GEOMETRY_H #define GEOMETRY_H #include \"sample.h\" #include \"math_utils.h\" typedef struct triangle_tag { point_t vertices [ 3 ] ; char label [ MAX_LABEL_LEN ] ; } triangle_t ; triangle_t",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "c",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "triangle_area",
           "return_type": "int",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "tri",
+              "type": "const triangle_t *",
+              "value": null
+            }
+          ],
           "is_static": false
         }
       ],
@@ -230,13 +284,35 @@
         {
           "name": "set_log_callback",
           "return_type": "#include \"logger.h\" #include <stdarg.h> #include <string.h> static log_callback_t current_cb = NULL ; void",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "cb",
+              "type": "log_callback_t",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "log_message",
           "return_type": "void",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "level",
+              "type": "log_level_t",
+              "value": null
+            },
+            {
+              "name": "fmt",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": ".",
+              "type": ". .",
+              "value": null
+            }
+          ],
           "is_static": false
         }
       ],
@@ -285,13 +361,35 @@
         {
           "name": "set_log_callback",
           "return_type": "#ifndef LOGGER_H #define LOGGER_H #include <stdio.h> #include \"config.h\" typedef enum log_level_tag { LOG_DEBUG = 0 , LOG_INFO , LOG_WARN , LOG_ERROR } log_level_t ; typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) ; void",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "cb",
+              "type": "log_callback_t",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "log_message",
           "return_type": "void",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "level",
+              "type": "log_level_t",
+              "value": null
+            },
+            {
+              "name": "fmt",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": ".",
+              "type": ". .",
+              "value": null
+            }
+          ],
           "is_static": false
         }
       ],
@@ -305,7 +403,7 @@
       ],
       "typedefs": {
         "log_level_t": "enum",
-        ")": "void ( * log_callback_t ) ( log_level_t level , const char * message"
+        "log_callback_t": "void ( * log_callback_t ) ( log_level_t level , const char * message )"
       },
       "typedef_relations": [],
       "include_relations": [
@@ -358,19 +456,52 @@
         {
           "name": "add",
           "return_type": "#include \"math_utils.h\" int",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "subtract",
           "return_type": "int",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "average",
           "return_type": "real_t",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "arr",
+              "type": "const int *",
+              "value": null
+            },
+            {
+              "name": "len",
+              "type": "size_t",
+              "value": null
+            }
+          ],
           "is_static": false
         }
       ],
@@ -401,19 +532,52 @@
         {
           "name": "add",
           "return_type": "#ifndef MATH_UTILS_H #define MATH_UTILS_H #include \"config.h\" typedef double real_t ; typedef int ( * math_op_t ) ( int , int ) ; int",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "subtract",
           "return_type": "int",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "average",
           "return_type": "real_t",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "arr",
+              "type": "const int *",
+              "value": null
+            },
+            {
+              "name": "len",
+              "type": "size_t",
+              "value": null
+            }
+          ],
           "is_static": false
         }
       ],
@@ -426,7 +590,7 @@
       ],
       "typedefs": {
         "real_t": "double",
-        ")": "int ( * math_op_t ) ( int , int"
+        "math_op_t": "int ( * math_op_t ) ( int , int )"
       },
       "typedef_relations": [],
       "include_relations": [
@@ -464,31 +628,91 @@
         {
           "name": "calculate_sum",
           "return_type": "int",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "create_point",
           "return_type": "point_t *",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "calculate_sum",
           "return_type": "int",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "create_point",
           "return_type": "point_t *",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "process_point",
           "return_type": "void",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "p",
+              "type": "point_t *",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
@@ -603,19 +827,52 @@
         {
           "name": "calculate_sum",
           "return_type": "#ifndef SAMPLE_H #define SAMPLE_H #include <stddef.h> #include \"config.h\" #define PI 3.14159 #define VERSION \"1.0.0\" typedef struct point_tag { int x ; int y ; char label [ 32 ] ; } point_t ; typedef enum system_state_tag { STATE_IDLE = 0 , STATE_RUNNING , STATE_ERROR } system_state_t ; extern int",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "create_point",
           "return_type": "point_t *",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "process_point",
           "return_type": "void",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "p",
+              "type": "point_t *",
+              "value": null
+            }
+          ],
           "is_static": false
         }
       ],
@@ -724,25 +981,54 @@
         {
           "name": "log_buffer",
           "return_type": "#include \"typedef_test.h\" #include \"complex_example.h\" #include \"geometry.h\" #include \"logger.h\" #include <stdlib.h> MyLen global_length = 0U ; MyBuffer global_buffer = { 0U , NULL } ; MyComplexPtr global_complex = NULL ; void",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "buffer",
+              "type": "const MyBuffer *",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "process_buffer",
           "return_type": "MyInt",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "buffer",
+              "type": "MyBuffer *",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "my_callback",
           "return_type": "int",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "buffer",
+              "type": "MyBuffer *",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
           "name": "create_complex",
           "return_type": "MyComplex *",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "id",
+              "type": "MyLen",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "MyString",
+              "value": null
+            }
+          ],
           "is_static": false
         },
         {
@@ -859,7 +1145,7 @@
         "MyInt": "int32_t",
         "MyString": "char *",
         "MyBuffer": "struct",
-        ")": "int ( * MyCallback ) ( MyBuffer * buffer",
+        "MyCallback": "int ( * MyCallback ) ( MyBuffer * buffer )",
         "MyComplex": "struct",
         "MyComplexPtr": "MyComplex *",
         "Color_t": "enum",
@@ -868,7 +1154,7 @@
         "NamedStruct_t": "struct",
         "Number_t": "union",
         "NamedUnion_t": "union",
-        "]": "MyComplexPtr MyComplexArray [ 10"
+        "MyComplexArray": "MyComplexPtr MyComplexArray [ 10 ]"
       },
       "typedef_relations": [],
       "include_relations": [
@@ -906,5 +1192,5 @@
       "unions": {}
     }
   },
-  "created_at": "2025-07-22T10:58:24.840156"
+  "created_at": "2025-07-22T11:06:18.791994"
 }
