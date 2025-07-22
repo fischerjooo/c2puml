@@ -17,8 +17,8 @@
               "value": null
             },
             {
-              "name": "]",
-              "type": "char description [ MAX_LABEL_LEN",
+              "name": "description",
+              "type": "char MAX_LABEL_LEN[ ]",
               "value": null
             },
             {
@@ -43,8 +43,8 @@
               "value": null
             },
             {
-              "name": "]",
-              "type": "int values [ 5",
+              "name": "values",
+              "type": "int 5[ ]",
               "value": null
             }
           ],
@@ -55,17 +55,26 @@
         "CE_Status_t": {
           "name": "CE_Status_t",
           "values": [
-            "CE_STATUS_OK = 0",
-            "CE_STATUS_WARN",
-            "CE_STATUS_FAIL"
+            {
+              "name": "CE_STATUS_OK",
+              "value": "0"
+            },
+            {
+              "name": "CE_STATUS_WARN",
+              "value": null
+            },
+            {
+              "name": "CE_STATUS_FAIL",
+              "value": null
+            }
           ]
         }
       },
       "functions": [],
       "globals": [],
       "includes": [
-        "config.h",
-        "logger.h"
+        "\"config.h\"",
+        "\"logger.h\""
       ],
       "macros": [
         "COMPLEX_EXAMPLE_H"
@@ -89,17 +98,26 @@
         "GlobalStatus": {
           "name": "GlobalStatus",
           "values": [
-            "GS_OK",
-            "GS_ERROR",
-            "GS_UNKNOWN"
+            {
+              "name": "GS_OK",
+              "value": null
+            },
+            {
+              "name": "GS_ERROR",
+              "value": null
+            },
+            {
+              "name": "GS_UNKNOWN",
+              "value": null
+            }
           ]
         }
       },
       "functions": [],
       "globals": [],
       "includes": [
-        "stddef.h",
-        "stdint.h"
+        "<stddef.h>",
+        "<stdint.h>"
       ],
       "macros": [
         "CONFIG_H",
@@ -167,9 +185,9 @@
       ],
       "globals": [],
       "includes": [
-        "geometry.h",
-        "string.h",
-        "stdlib.h"
+        "\"geometry.h\"",
+        "<string.h>",
+        "<stdlib.h>"
       ],
       "macros": [],
       "typedefs": {},
@@ -187,13 +205,13 @@
           "name": "triangle_t",
           "fields": [
             {
-              "name": "]",
-              "type": "point_t vertices [ 3",
+              "name": "vertices",
+              "type": "point_t 3[ ]",
               "value": null
             },
             {
-              "name": "]",
-              "type": "char label [ MAX_LABEL_LEN",
+              "name": "label",
+              "type": "char MAX_LABEL_LEN[ ]",
               "value": null
             }
           ],
@@ -246,8 +264,8 @@
       ],
       "globals": [],
       "includes": [
-        "sample.h",
-        "math_utils.h"
+        "\"sample.h\"",
+        "\"math_utils.h\""
       ],
       "macros": [
         "GEOMETRY_H"
@@ -295,8 +313,8 @@
               "value": null
             },
             {
-              "name": ".",
-              "type": ". .",
+              "name": "...",
+              "type": "...",
               "value": null
             }
           ],
@@ -312,9 +330,9 @@
         }
       ],
       "includes": [
-        "logger.h",
-        "stdarg.h",
-        "string.h"
+        "\"logger.h\"",
+        "<stdarg.h>",
+        "<string.h>"
       ],
       "macros": [],
       "typedefs": {},
@@ -332,10 +350,22 @@
         "log_level_t": {
           "name": "log_level_t",
           "values": [
-            "LOG_DEBUG = 0",
-            "LOG_INFO",
-            "LOG_WARN",
-            "LOG_ERROR"
+            {
+              "name": "LOG_DEBUG",
+              "value": "0"
+            },
+            {
+              "name": "LOG_INFO",
+              "value": null
+            },
+            {
+              "name": "LOG_WARN",
+              "value": null
+            },
+            {
+              "name": "LOG_ERROR",
+              "value": null
+            }
           ]
         }
       },
@@ -368,8 +398,8 @@
               "value": null
             },
             {
-              "name": ".",
-              "type": ". .",
+              "name": "...",
+              "type": "...",
               "value": null
             }
           ],
@@ -379,8 +409,8 @@
       ],
       "globals": [],
       "includes": [
-        "stdio.h",
-        "config.h"
+        "<stdio.h>",
+        "\"config.h\""
       ],
       "macros": [
         "LOGGER_H"
@@ -458,7 +488,7 @@
       ],
       "globals": [],
       "includes": [
-        "math_utils.h"
+        "\"math_utils.h\""
       ],
       "macros": [],
       "typedefs": {},
@@ -531,7 +561,7 @@
       ],
       "globals": [],
       "includes": [
-        "config.h"
+        "\"config.h\""
       ],
       "macros": [
         "MATH_UTILS_H"
@@ -554,7 +584,7 @@
       "functions": [
         {
           "name": "internal_helper",
-          "return_type": "void",
+          "return_type": "static void",
           "parameters": [],
           "is_static": false,
           "is_declaration": true
@@ -579,7 +609,7 @@
         },
         {
           "name": "create_point",
-          "return_type": "*",
+          "return_type": "point_t *",
           "parameters": [
             {
               "name": "x",
@@ -602,7 +632,7 @@
         },
         {
           "name": "internal_helper",
-          "return_type": "void",
+          "return_type": "static void",
           "parameters": [],
           "is_static": false,
           "is_declaration": false
@@ -627,7 +657,7 @@
         },
         {
           "name": "create_point",
-          "return_type": "*",
+          "return_type": "point_t *",
           "parameters": [
             {
               "name": "x",
@@ -683,8 +713,8 @@
           "value": "0"
         },
         {
-          "name": "]",
-          "type": "char buffer [ MAX_SIZE",
+          "name": "buffer",
+          "type": "char",
           "value": null
         },
         {
@@ -694,13 +724,13 @@
         }
       ],
       "includes": [
-        "stdio.h",
-        "stdlib.h",
-        "string.h",
-        "sample.h",
-        "math_utils.h",
-        "logger.h",
-        "geometry.h"
+        "<stdio.h>",
+        "<stdlib.h>",
+        "<string.h>",
+        "\"sample.h\"",
+        "\"math_utils.h\"",
+        "\"logger.h\"",
+        "\"geometry.h\""
       ],
       "macros": [
         "MAX_SIZE",
@@ -732,8 +762,8 @@
               "value": null
             },
             {
-              "name": "]",
-              "type": "char label [ 32",
+              "name": "label",
+              "type": "char 32[ ]",
               "value": null
             }
           ],
@@ -744,16 +774,25 @@
         "system_state_t": {
           "name": "system_state_t",
           "values": [
-            "STATE_IDLE = 0",
-            "STATE_RUNNING",
-            "STATE_ERROR"
+            {
+              "name": "STATE_IDLE",
+              "value": "0"
+            },
+            {
+              "name": "STATE_RUNNING",
+              "value": null
+            },
+            {
+              "name": "STATE_ERROR",
+              "value": null
+            }
           ]
         }
       },
       "functions": [
         {
           "name": "calculate_sum",
-          "return_type": "int",
+          "return_type": "extern int",
           "parameters": [
             {
               "name": "a",
@@ -771,7 +810,7 @@
         },
         {
           "name": "create_point",
-          "return_type": "*",
+          "return_type": "extern point_t *",
           "parameters": [
             {
               "name": "x",
@@ -794,7 +833,7 @@
         },
         {
           "name": "process_point",
-          "return_type": "void",
+          "return_type": "extern void",
           "parameters": [
             {
               "name": "p",
@@ -819,10 +858,10 @@
         }
       ],
       "includes": [
-        "stddef.h",
-        "config.h",
-        "geometry.h",
-        "logger.h"
+        "<stddef.h>",
+        "\"config.h\"",
+        "\"geometry.h\"",
+        "\"logger.h\""
       ],
       "macros": [
         "SAMPLE_H",
@@ -888,7 +927,7 @@
         },
         {
           "name": "create_complex",
-          "return_type": "*",
+          "return_type": "MyComplex *",
           "parameters": [
             {
               "name": "id",
@@ -916,12 +955,12 @@
         {
           "name": "global_length",
           "type": "MyLen",
-          "value": "0U"
+          "value": "0 U"
         },
         {
           "name": "global_buffer",
           "type": "MyBuffer",
-          "value": "{ 0U , NULL }"
+          "value": "{ 0 U , NULL }"
         },
         {
           "name": "global_complex",
@@ -930,11 +969,11 @@
         }
       ],
       "includes": [
-        "typedef_test.h",
-        "complex_example.h",
-        "geometry.h",
-        "logger.h",
-        "stdlib.h"
+        "\"typedef_test.h\"",
+        "\"complex_example.h\"",
+        "\"geometry.h\"",
+        "\"logger.h\"",
+        "<stdlib.h>"
       ],
       "macros": [],
       "typedefs": {},
@@ -1027,26 +1066,24 @@
         "Color_t": {
           "name": "Color_t",
           "values": [
-            "COLOR_RED = 0",
-            "COLOR_GREEN",
-            "COLOR_BLUE"
-          ]
-        },
-        "Status_t": {
-          "name": "Status_t",
-          "values": [
-            "STATUS_OK = 0",
-            "STATUS_FAIL"
+            {
+              "name": "STATUS_OK",
+              "value": "0"
+            },
+            {
+              "name": "STATUS_FAIL",
+              "value": null
+            }
           ]
         }
       },
       "functions": [],
       "globals": [],
       "includes": [
-        "stdint.h",
-        "sample.h",
-        "config.h",
-        "logger.h"
+        "<stdint.h>",
+        "\"sample.h\"",
+        "\"config.h\"",
+        "\"logger.h\""
       ],
       "macros": [
         "TYPEDEF_TEST_H"
@@ -1069,8 +1106,39 @@
       },
       "typedef_relations": [],
       "include_relations": [],
-      "unions": {}
+      "unions": {
+        "Number_t": {
+          "name": "Number_t",
+          "fields": [
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "f",
+              "type": "float",
+              "value": null
+            }
+          ]
+        },
+        "NamedUnion_t": {
+          "name": "NamedUnion_t",
+          "fields": [
+            {
+              "name": "c",
+              "type": "char",
+              "value": null
+            },
+            {
+              "name": "d",
+              "type": "double",
+              "value": null
+            }
+          ]
+        }
+      }
     }
   },
-  "created_at": "2025-07-22T13:38:36.308002"
+  "created_at": "2025-07-22T16:54:35.455763"
 }

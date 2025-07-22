@@ -7,82 +7,20 @@ class "geometry" as GEOMETRY <<source>> #LightBlue
     int triangle_area(const triangle_t * tri)
 }
 
-class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
-{
-    -- Macros --
-    + #define GEOMETRY_H
-    -- Functions --
-    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
-    + int triangle_area(const triangle_t * tri);
-}
-class "string.h" as HEADER_STRING <<header>> #LightGray
+class ""geometry.h".h" as HEADER_"GEOMETRY_H" <<header>> #LightGray
 {
 }
 
-class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
+class "<string.h>.h" as HEADER_<STRING_H> <<header>> #LightGray
 {
 }
 
-class "sample" as HEADER_SAMPLE <<header>> #LightGreen
+class "<stdlib.h>.h" as HEADER_<STDLIB_H> <<header>> #LightGray
 {
-    -- Macros --
-    + #define SAMPLE_H
-    + #define PI
-    + #define VERSION
-    + #define MIN
-    + #define MAX
-    -- Global Variables --
-    + Field(name=MAX_POINTS, type=int)
-    + Field(name=DEFAULT_LABEL, type=char *)
-    -- Functions --
-    + int calculate_sum(int a, int b);
-    + * create_point(int x, int y, const char * label);
-    + void process_point(point_t * p);
-}
-class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
-{
-    -- Macros --
-    + #define MATH_UTILS_H
-    -- Functions --
-    + int add(int a, int b);
-    + int subtract(int a, int b);
-    + real_t average(const int * arr, size_t len);
-}
-class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
-{
-    + typedef struct triangle_t
 }
 
-class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
-{
-    + typedef struct point_t
-}
-
-enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
-{
-    STATE_IDLE = 0
-    STATE_RUNNING
-    STATE_ERROR
-}
-
-class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
-{
-    + typedef double real_t
-}
-
-class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
-{
-    + typedef int ( * math_op_t ) ( int , int ) math_op_t
-}
-
-GEOMETRY --> HEADER_GEOMETRY : <<include>>
-GEOMETRY --> HEADER_STRING : <<include>>
-GEOMETRY --> HEADER_STDLIB : <<include>>
-HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
-HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
-HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
-TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
-TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
-HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
+GEOMETRY --> HEADER_"GEOMETRY_H" : <<include>>
+GEOMETRY --> HEADER_<STRING_H> : <<include>>
+GEOMETRY --> HEADER_<STDLIB_H> : <<include>>
 
 @enduml

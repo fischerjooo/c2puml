@@ -201,9 +201,14 @@ class CParser:
                 for v in value_strs:
                     if '=' in v:
                         name, val = v.split('=', 1)
-                        values.append(EnumValue(name=name.strip(), value=val.strip()))
+                        name = name.strip()
+                        val = val.strip()
+                        if name:  # Only add if name is not empty
+                            values.append(EnumValue(name=name, value=val))
                     else:
-                        values.append(EnumValue(name=v.strip()))
+                        name = v.strip()
+                        if name:  # Only add if name is not empty
+                            values.append(EnumValue(name=name))
                 
                 # For anonymous enums, use a special key that can be mapped later
                 if not enum_name:
@@ -282,14 +287,11 @@ class CParser:
         
         globals_list = []
         
-        # Simple global parsing: look for patterns like "type name;" or "type name = value;"
-        # This is a simplified implementation - we'll need to improve it for complex cases
-        
         i = 0
         while i < len(tokens):
             # Skip preprocessor directives, comments, etc.
             if tokens[i].type in [TokenType.INCLUDE, TokenType.DEFINE, TokenType.PREPROCESSOR, 
-                                TokenType.COMMENT, TokenType.WHITESPACE]:
+                                TokenType.COMMENT, TokenType.WHITESPACE, TokenType.NEWLINE]:
                 i += 1
                 continue
             
@@ -303,15 +305,25 @@ class CParser:
                 i = self._skip_structure_definition(tokens, i)
                 continue
             
+            # Skip macros and other preprocessor content
+            if tokens[i].type == TokenType.DEFINE:
+                # Skip to end of line or next token
+                while i < len(tokens) and tokens[i].type != TokenType.NEWLINE:
+                    i += 1
+                i += 1
+                continue
+            
             # Look for global variable patterns: [static/extern] type name [= value];
             global_info = self._parse_global_variable(tokens, i)
             if global_info:
                 var_name, var_type, var_value = global_info
-                try:
-                    globals_list.append(Field(name=var_name, type=var_type, value=var_value))
-                    self.logger.debug(f"Parsed global: {var_name} : {var_type}")
-                except Exception as e:
-                    self.logger.warning(f"Error creating global field {var_name}: {e}")
+                # Only add if it looks like a real global variable (not a fragment)
+                if var_name and var_type and not var_name.startswith('#') and len(var_type) < 200:
+                    try:
+                        globals_list.append(Field(name=var_name, type=var_type, value=var_value))
+                        self.logger.debug(f"Parsed global: {var_name} : {var_type}")
+                    except Exception as e:
+                        self.logger.warning(f"Error creating global field {var_name}: {e}")
                 i = self._skip_to_semicolon(tokens, i)
             else:
                 i += 1
@@ -612,12 +624,33 @@ class CParser:
                 var_value = ' '.join(t.value for t in value_tokens)
                 return (var_name, var_type, var_value)
         else:
-            # No assignment: type name
+            # No assignment: type name or type name[size]
             if len(collected_tokens) > start_idx + 1:
-                var_name = collected_tokens[-1].value
-                type_tokens = collected_tokens[start_idx:-1]
-                var_type = ' '.join(t.value for t in type_tokens)
-                return (var_name, var_type, None)
+                # Check if this is an array declaration
+                bracket_idx = None
+                for j in range(len(collected_tokens) - 1, start_idx, -1):
+                    if collected_tokens[j].type == TokenType.RBRACKET:
+                        bracket_idx = j
+                        break
+                
+                if bracket_idx is not None:
+                    # Array declaration: find the identifier before the opening bracket
+                    for j in range(bracket_idx - 1, start_idx, -1):
+                        if collected_tokens[j].type == TokenType.LBRACKET:
+                            # Found opening bracket, look for identifier before it
+                            for k in range(j - 1, start_idx, -1):
+                                if collected_tokens[k].type == TokenType.IDENTIFIER:
+                                    var_name = collected_tokens[k].value
+                                    type_tokens = collected_tokens[start_idx:k]
+                                    var_type = ' '.join(t.value for t in type_tokens)
+                                    return (var_name, var_type, None)
+                            break
+                else:
+                    # Regular variable: last token is the name
+                    var_name = collected_tokens[-1].value
+                    type_tokens = collected_tokens[start_idx:-1]
+                    var_type = ' '.join(t.value for t in type_tokens)
+                    return (var_name, var_type, None)
         
         return None
 
@@ -703,7 +736,11 @@ class CParser:
         if not param_tokens:
             return None
         
-        # Handle variadic parameters
+        # Handle variadic parameters (three consecutive dots)
+        if len(param_tokens) == 3 and all(t.value == '.' for t in param_tokens):
+            return Field(name='...', type='...')
+        
+        # Handle variadic parameters (single ... token)
         if len(param_tokens) == 1 and param_tokens[0].value == '...':
             return Field(name='...', type='...')
         
