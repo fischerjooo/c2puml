@@ -190,7 +190,26 @@ class PlantUMLGenerator:
                 else:
                     lines.append(f"    {visibility} {display_type} {glob.name}")
         
-        # Functions are not displayed in PlantUML diagrams
+        if file_model.functions:
+            lines.append("    -- Functions --")
+            # Deduplicate functions but keep both declarations and implementations
+            unique_functions = self._deduplicate_functions(file_model.functions)
+            
+            for function in unique_functions:
+                # Clean up the function signature to remove any unwanted content
+                signature = self._format_function_signature(function)
+                signature = self._clean_function_signature(signature)
+                
+                # For implementations, remove the function body if it's too long
+                if hasattr(function, 'is_declaration') and not function.is_declaration:
+                    # This is an implementation - truncate if it's too long
+                    if len(signature) > 100:
+                        # Find the opening brace and truncate
+                        brace_pos = signature.find('{')
+                        if brace_pos > 0:
+                            signature = signature[:brace_pos].rstrip() + ' { ... }'
+                
+                lines.append(f"    {signature}")
         
         # Do not show structs/enums/unions directly if they are only present as typedefs
         # (They will be shown in their own class if needed)
@@ -399,7 +418,23 @@ class PlantUMLGenerator:
             for global_var in file_model.globals:
                 lines.append(f"    + {global_var}")
         
-        # Functions are not displayed in PlantUML diagrams
+        # Show functions section - only declarations, no implementations
+        if file_model.functions:
+            lines.append("    -- Functions --")
+            # Filter to only declarations and deduplicate
+            declarations = [f for f in file_model.functions if hasattr(f, 'is_declaration') and f.is_declaration]
+            unique_functions = self._deduplicate_functions(declarations)
+            
+            for function in unique_functions:
+                # Clean up the function signature
+                signature = self._format_function_signature(function)
+                signature = self._clean_function_signature(signature)
+                
+                # Ensure it ends with semicolon for declarations
+                if not signature.strip().endswith(';'):
+                    signature = signature.rstrip() + ';'
+                
+                lines.append(f"    + {signature}")
         
         lines.append("}")
         return lines
