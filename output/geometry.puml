@@ -14,7 +14,6 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     -- Global Variables --
     + point_t vertices
     + char label
-    + } triangle_t
     -- Functions --
     + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
     + int triangle_area(const triangle_t * tri)
@@ -43,8 +42,6 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + int x
     + int y
     + char label
-    + } point_t
-    + } system_state_t
     + extern const int MAX_POINTS
     + extern const char * DEFAULT_LABEL
     -- Functions --
@@ -70,8 +67,6 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
-    -- Global Variables --
-    + } log_level_t
     -- Functions --
     + void set_log_callback(log_callback_t cb)
     + void log_message(log_level_t level, const char * fmt)
@@ -122,7 +117,5 @@ HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : declares
-TYPEDEF_TRIANGLE_T --> TYPEDEF_POINT_T : uses
-TYPEDEF_TRIANGLE_T ..> HEADER_CONFIG : uses MAX_LABEL_LEN
 
 @enduml

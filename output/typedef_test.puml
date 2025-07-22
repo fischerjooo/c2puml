@@ -3,9 +3,9 @@
 class "typedef_test" as TYPEDEF_TEST <<source>> #LightBlue
 {
     -- Global Variables --
-    MyLen global_length
-    MyBuffer global_buffer
-    MyComplexPtr global_complex
+    MyLen = 0U global_length
+    MyBuffer = {0U, NULL} global_buffer
+    MyComplexPtr = NULL global_complex
     -- Functions --
     void log_buffer(const MyBuffer * buffer)
     MyInt process_buffer(MyBuffer * buffer)
@@ -22,26 +22,18 @@ class "typedef_test" as HEADER_TYPEDEF_TEST <<header>> #LightGreen
     -- Global Variables --
     + MyLen length
     + MyString data
-    + } MyBuffer
     + MyLen id
     + MyString name
     + MyCallback callback
     + log_level_t log_level
-    + } MyComplex
-    + } Color_t
-    + } Status_t
     + int x
     + int y
-    + } Point_t
     + int a
     + int b
-    + } NamedStruct_t
     + int i
     + float f
-    + } Number_t
     + char c
     + double d
-    + } NamedUnion_t
     -- Struct Fields --
     + MyLen id
     + MyString name
@@ -59,12 +51,9 @@ class "complex_example" as HEADER_COMPLEX_EXAMPLE <<header>> #LightGreen
     + id_t id
     + char description
     + log_level_t log_level
-    + } NestedInfo_t
-    + } CE_Status_t
     + NestedInfo_t info
     + CE_Status_t status
     + int values
-    + } ComplexExample_t
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
@@ -74,7 +63,6 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     -- Global Variables --
     + point_t vertices
     + char label
-    + } triangle_t
     -- Functions --
     + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
     + int triangle_area(const triangle_t * tri)
@@ -87,8 +75,6 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
-    -- Global Variables --
-    + } log_level_t
     -- Functions --
     + void set_log_callback(log_callback_t cb)
     + void log_message(log_level_t level, const char * fmt)
@@ -110,8 +96,6 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + int x
     + int y
     + char label
-    + } point_t
-    + } system_state_t
     + extern const int MAX_POINTS
     + extern const char * DEFAULT_LABEL
     -- Functions --
@@ -251,8 +235,6 @@ HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_NESTEDINFO_T : declares
 HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_CE_STATUS_T : declares
 HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_COMPLEXEXAMPLE_T : declares
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : declares
-TYPEDEF_TRIANGLE_T --> TYPEDEF_POINT_T : uses
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : declares
-TYPEDEF_TRIANGLE_T ..> HEADER_CONFIG : uses MAX_LABEL_LEN
 
 @enduml
