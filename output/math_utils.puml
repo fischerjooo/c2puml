@@ -28,5 +28,6 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 }
 
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
+HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 
 @enduml
