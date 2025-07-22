@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# PlantUML to JPEG converter script
-# This script converts all .puml files in the output folder to JPEG images
+# PlantUML to PNG converter script
+# This script converts all .puml files in the output folder to PNG images
 
 set -e  # Exit on any error
 
-echo "🔄 Starting PlantUML to JPEG conversion..."
+echo "🔄 Starting PlantUML to PNG conversion..."
 
 # Check if output directory exists
 if [ ! -d "output" ]; then
@@ -23,7 +23,7 @@ fi
 # Change to output directory
 cd output
 
-# Find all .puml files and convert them to JPEG
+# Find all .puml files and convert them to PNG
 echo "📁 Scanning for .puml files in output directory..."
 puml_files=$(find . -name "*.puml" -type f)
 
@@ -34,35 +34,21 @@ fi
 
 echo "📊 Found $(echo "$puml_files" | wc -l) .puml file(s)"
 
-# Convert each .puml file to JPEG
+# Convert each .puml file to PNG
 for puml_file in $puml_files; do
-    echo "🔄 Converting $puml_file to JPEG..."
-    
-    # Get the base name without extension
-    base_name=$(basename "$puml_file" .puml)
+    echo "🔄 Converting $puml_file to PNG..."
     
     # Convert to PNG using PlantUML
     plantuml -tpng "$puml_file"
     
-    # Check if PNG was created
+    # Check if PNG was created successfully
+    base_name=$(basename "$puml_file" .puml)
     if [ -f "${base_name}.png" ]; then
-        # Try to convert PNG to JPEG using ImageMagick if available
-        if command -v convert &> /dev/null; then
-            echo "🔄 Converting ${base_name}.png to JPEG..."
-            convert "${base_name}.png" "${base_name}.jpg"
-            echo "✅ Created ${base_name}.jpg"
-        else
-            echo "⚠️  ImageMagick not found. JPEG conversion skipped."
-            echo "   Install ImageMagick with: sudo apt-get install imagemagick"
-        fi
-        
-        # Always clean up the temporary PNG file
-        rm "${base_name}.png"
-        echo "🧹 Cleaned up temporary ${base_name}.png"
+        echo "✅ Created ${base_name}.png"
     else
         echo "❌ Failed to generate ${base_name}.png"
     fi
 done
 
-echo "✅ PlantUML to JPEG conversion completed!"
-echo "📁 Check the output directory for generated images."
+echo "✅ PlantUML to PNG conversion completed!"
+echo "📁 Check the output directory for generated PNG images."
