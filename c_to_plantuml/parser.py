@@ -393,7 +393,7 @@ class CParser:
             # Check for function-like declarations (function prototypes or definitions)
             # Pattern: return_type function_name(params) {
             # or: return_type function_name(params)\n {
-            if '(' in line and ')' in line and not in_struct_or_enum:
+            if '(' in line and ')' in line and not in_struct_or_enum and not in_function:
                 # Check if this looks like a function declaration (not a control structure)
                 # Function pattern: type name(params) {
                 # Control structure pattern: if/for/while/switch (condition) {
