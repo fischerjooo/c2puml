@@ -175,7 +175,7 @@ class "MyComplexArray" as TYPEDEF_MYCOMPLEXARRAY <<typedef>> #LightYellow
 }
 
 ' Typedef classes from other headers
-class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
+class "point_t" as TYPEDEF_POINT_T_2 <<typedef>> #LightYellow
 {
     + int x
     + int y
@@ -282,7 +282,7 @@ TYPEDEF_MYCOMPLEX ..> TYPEDEF_MYCALLBACK : <<uses>>
 TYPEDEF_MYCOMPLEX ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
 TYPEDEF_MYCOMPLEXPTR ..> TYPEDEF_MYCOMPLEX : <<uses>>
 TYPEDEF_MYCOMPLEXARRAY ..> TYPEDEF_MYCOMPLEXPTR : <<uses>>
-TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
+TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T_2 : <<uses>>
 TYPEDEF_LOGCALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
 TYPEDEF_NESTEDINFO_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
 TYPEDEF_COMPLEXEXAMPLE_T ..> TYPEDEF_NESTEDINFO_T : <<uses>>
