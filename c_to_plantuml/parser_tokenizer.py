@@ -509,16 +509,38 @@ class StructureFinder:
             self.pos = start_pos + 1
             return None
         
-        # Parse the struct part
-        struct_info = self._parse_struct()
-        if not struct_info:
+        # Skip 'struct'
+        self._advance()
+        
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
+        # Get struct tag name (optional)
+        struct_tag = ""
+        if self._current_token_is(TokenType.IDENTIFIER):
+            struct_tag = self._advance().value
+        
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+        
+        # Check if this is a forward declaration (no braces)
+        if not self._current_token_is(TokenType.LBRACE):
+            # This is a forward declaration like "typedef struct Node* NodePtr;"
+            # Not a struct definition, so skip it
             self.pos = start_pos + 1
             return None
         
-        # Look for typedef name after struct (after closing brace, before semicolon)
-        struct_end = struct_info[1]
-        name_pos = struct_end
+        # Find matching closing brace
+        end_brace_pos = self._find_matching_brace(self.pos)
+        if end_brace_pos is None:
+            self.pos = start_pos + 1
+            return None
+        
+        # Look for typedef name after closing brace
         typedef_name = ""
+        name_pos = end_brace_pos + 1
         while name_pos < len(self.tokens):
             if self.tokens[name_pos].type == TokenType.IDENTIFIER:
                 typedef_name = self.tokens[name_pos].value
@@ -526,7 +548,13 @@ class StructureFinder:
             elif self.tokens[name_pos].type == TokenType.SEMICOLON:
                 break
             name_pos += 1
-        return (start_pos, struct_end, typedef_name)
+        
+        # Find semicolon
+        while name_pos < len(self.tokens) and not self.tokens[name_pos].type == TokenType.SEMICOLON:
+            name_pos += 1
+        
+        end_pos = name_pos
+        return (start_pos, end_pos, typedef_name)
     
     def _parse_enum(self) -> Optional[Tuple[int, int, str]]:
         """Parse enum definition starting at current position"""
@@ -884,9 +912,16 @@ def find_struct_fields(tokens: List[Token], struct_start: int, struct_end: int) 
     if pos > struct_end:
         return fields
     pos += 1  # Skip opening brace
-    while pos <= struct_end and tokens[pos].type != TokenType.RBRACE:
+    
+    # Find the closing brace position
+    closing_brace_pos = pos
+    while closing_brace_pos <= struct_end and tokens[closing_brace_pos].type != TokenType.RBRACE:
+        closing_brace_pos += 1
+    
+    # Only parse fields up to the closing brace
+    while pos < closing_brace_pos and tokens[pos].type != TokenType.RBRACE:
         field_tokens = []
-        while pos <= struct_end and tokens[pos].type != TokenType.SEMICOLON:
+        while pos < closing_brace_pos and tokens[pos].type != TokenType.SEMICOLON:
             if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
                 field_tokens.append(tokens[pos])
             pos += 1
@@ -905,7 +940,7 @@ def find_struct_fields(tokens: List[Token], struct_start: int, struct_end: int) 
                 field_type = ' '.join(t.value for t in field_tokens[:-1])
                 if field_name not in ['[', ']', ';', '}'] and field_name:
                     fields.append((field_name, field_type.strip()))
-        if pos <= struct_end:
+        if pos < closing_brace_pos:
             pos += 1  # Skip semicolon
     return fields
 
