@@ -13,11 +13,22 @@ if [ ! -d "output" ]; then
     exit 1
 fi
 
-# Check if plantuml is installed
+# Check if plantuml is installed or if we have the JAR file
 if ! command -v plantuml &> /dev/null; then
-    echo "❌ Error: plantuml command not found. Please install PlantUML first."
-    echo "   You can install it with: sudo apt-get install plantuml"
-    exit 1
+    if [ -f "../plantuml.jar" ]; then
+        PLANTUML_CMD="java -jar ../plantuml.jar"
+        echo "📦 Using PlantUML JAR file from parent directory"
+    elif [ -f "plantuml.jar" ]; then
+        PLANTUML_CMD="java -jar ../plantuml.jar"
+        echo "📦 Using PlantUML JAR file from parent directory"
+    else
+        echo "❌ Error: plantuml command not found and plantuml.jar not found in parent directory."
+        echo "   You can install it with: sudo apt-get install plantuml"
+        echo "   Or download the JAR file manually"
+        exit 1
+    fi
+else
+    PLANTUML_CMD="plantuml"
 fi
 
 # Change to output directory
@@ -39,7 +50,7 @@ for puml_file in $puml_files; do
     echo "🔄 Converting $puml_file to PNG..."
     
     # Convert to PNG using PlantUML
-    plantuml -tpng "$puml_file"
+    $PLANTUML_CMD -tpng "$puml_file"
     
     # Check if PNG was created successfully
     base_name=$(basename "$puml_file" .puml)
