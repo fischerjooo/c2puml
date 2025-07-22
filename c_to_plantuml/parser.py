@@ -81,6 +81,19 @@ class CParser:
         for u in model_dict.get("unions", []):
             fields = [Field(name=f["name"], type=f["type"]) for f in u.get("fields", [])]
             structs[u["name"]] = Struct(name=u["name"], fields=fields)
+        
+        # Also store structs with typedef names for easier relationship mapping
+        for t in model_dict.get("typedefs", []):
+            typedef_name = t["name"]
+            typedef_type = t["type"]
+            # If this typedef is for a struct, also store it with the typedef name
+            if typedef_type.startswith("struct ") and "{" in typedef_type:
+                # Find the corresponding struct
+                for s in model_dict.get("structs", []):
+                    if s["name"] in typedef_type:
+                        fields = [Field(name=f["name"], type=f["type"]) for f in s.get("fields", [])]
+                        structs[typedef_name] = Struct(name=typedef_name, fields=fields)
+                        break
         enums = {}
         for e in model_dict.get("enums", []):
             enums[e["name"]] = Enum(name=e["name"], values=e.get("values", []))

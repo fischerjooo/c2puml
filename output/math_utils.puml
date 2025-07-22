@@ -2,6 +2,227 @@
 
 class "math_utils" as MATH_UTILS <<source>> #LightBlue
 {
+    -- Typedefs --
+    - typedef int size_t
+    - typedef int __builtin_va_list
+    - typedef int __gnuc_va_list
+    - typedef int va_list
+    - typedef int __int8_t
+    - typedef int __uint8_t
+    - typedef int __int16_t
+    - typedef int __uint16_t
+    - typedef int __int_least16_t
+    - typedef int __uint_least16_t
+    - typedef int __int32_t
+    - typedef int __uint32_t
+    - typedef int __int64_t
+    - typedef int __uint64_t
+    - typedef int __int_least32_t
+    - typedef int __uint_least32_t
+    - typedef int __s8
+    - typedef int __u8
+    - typedef int __s16
+    - typedef int __u16
+    - typedef int __s32
+    - typedef int __u32
+    - typedef int __s64
+    - typedef int __u64
+    - typedef int _LOCK_T
+    - typedef int _LOCK_RECURSIVE_T
+    - typedef int _off_t
+    - typedef int __dev_t
+    - typedef int __uid_t
+    - typedef int __gid_t
+    - typedef int _off64_t
+    - typedef int _fpos_t
+    - typedef int _ssize_t
+    - typedef int wint_t
+    - typedef int _mbstate_t
+    - typedef int _flock_t
+    - typedef int _iconv_t
+    - typedef int __ULong
+    - typedef int __FILE
+    - typedef int ptrdiff_t
+    - typedef int wchar_t
+    - typedef int char16_t
+    - typedef int char32_t
+    - typedef int __off_t
+    - typedef int __pid_t
+    - typedef int __loff_t
+    - typedef int u_char
+    - typedef int u_short
+    - typedef int u_int
+    - typedef int u_long
+    - typedef int ushort
+    - typedef int uint
+    - typedef int clock_t
+    - typedef int time_t
+    - typedef int daddr_t
+    - typedef int caddr_t
+    - typedef int ino_t
+    - typedef int off_t
+    - typedef int dev_t
+    - typedef int uid_t
+    - typedef int gid_t
+    - typedef int pid_t
+    - typedef int key_t
+    - typedef int ssize_t
+    - typedef int mode_t
+    - typedef int nlink_t
+    - typedef int fd_mask
+    - typedef int _types_fd_set
+    - typedef int clockid_t
+    - typedef int timer_t
+    - typedef int useconds_t
+    - typedef int suseconds_t
+    - typedef int FILE
+    - typedef int fpos_t
+    - typedef int cookie_read_function_t
+    - typedef int cookie_write_function_t
+    - typedef int cookie_seek_function_t
+    - typedef int cookie_close_function_t
+    - typedef int cookie_io_functions_t
+    - typedef int div_t
+    - typedef int ldiv_t
+    - typedef int lldiv_t
+    - typedef int sigset_t
+    - typedef int __sigset_t
+    - typedef int _sig_func_ptr
+    - typedef int sig_atomic_t
+    - typedef int __tzrule_type
+    - typedef int __tzinfo_type
+    - typedef int mbstate_t
+    - typedef int sem_t
+    - typedef int pthread_t
+    - typedef int pthread_attr_t
+    - typedef int pthread_mutex_t
+    - typedef int pthread_mutexattr_t
+    - typedef int pthread_cond_t
+    - typedef int pthread_condattr_t
+    - typedef int pthread_key_t
+    - typedef int pthread_once_t
+    - typedef int pthread_rwlock_t
+    - typedef int pthread_rwlockattr_t
+    - typedef int pthread_spinlock_t
+    - typedef int pthread_barrier_t
+    - typedef int pthread_barrierattr_t
+    - typedef int jmp_buf
+    - typedef int rlim_t
+    - typedef int sa_family_t
+    - typedef int sigjmp_buf
+    - typedef int stack_t
+    - typedef int siginfo_t
+    - typedef int z_stream
+    - typedef int int8_t
+    - typedef int uint8_t
+    - typedef int int16_t
+    - typedef int uint16_t
+    - typedef int int32_t
+    - typedef int uint32_t
+    - typedef int int64_t
+    - typedef int uint64_t
+    - typedef int int_least8_t
+    - typedef int uint_least8_t
+    - typedef int int_least16_t
+    - typedef int uint_least16_t
+    - typedef int int_least32_t
+    - typedef int uint_least32_t
+    - typedef int int_least64_t
+    - typedef int uint_least64_t
+    - typedef int int_fast8_t
+    - typedef int uint_fast8_t
+    - typedef int int_fast16_t
+    - typedef int uint_fast16_t
+    - typedef int int_fast32_t
+    - typedef int uint_fast32_t
+    - typedef int int_fast64_t
+    - typedef int uint_fast64_t
+    - typedef int intptr_t
+    - typedef int uintptr_t
+    - typedef int intmax_t
+    - typedef int uintmax_t
+    - typedef _Bool bool
+    - typedef int __int128_t
+    - typedef int __uint128_t
+    - typedef void * MirEGLNativeWindowType
+    - typedef void * MirEGLNativeDisplayType
+    - typedef struct MirConnection MirConnection
+    - typedef struct MirSurface MirSurface
+    - typedef struct MirSurfaceSpec MirSurfaceSpec
+    - typedef struct MirScreencast MirScreencast
+    - typedef struct MirPromptSession MirPromptSession
+    - typedef struct MirBufferStream MirBufferStream
+    - typedef struct MirPersistentId MirPersistentId
+    - typedef struct MirBlob MirBlob
+    - typedef struct MirDisplayConfig MirDisplayConfig
+    - typedef struct xcb_connection_t xcb_connection_t
+    - typedef uint32_t xcb_window_t
+    - typedef uint32_t xcb_visualid_t
+    - typedef void * DIR
+    - typedef __uint32_t __socklen_t
+    - typedef __socklen_t socklen_t
+    - typedef _Atomic _Bool atomic_bool
+    - typedef _Atomic char atomic_char
+    - typedef _Atomic signed char atomic_schar
+    - typedef _Atomic unsigned char atomic_uchar
+    - typedef _Atomic short atomic_short
+    - typedef _Atomic unsigned short atomic_ushort
+    - typedef _Atomic int atomic_int
+    - typedef _Atomic unsigned int atomic_uint
+    - typedef _Atomic long atomic_long
+    - typedef _Atomic unsigned long atomic_ulong
+    - typedef _Atomic long long atomic_llong
+    - typedef _Atomic unsigned long long atomic_ullong
+    - typedef _Atomic uint_least16_t atomic_char16_t
+    - typedef _Atomic uint_least32_t atomic_char32_t
+    - typedef _Atomic wchar_t atomic_wchar_t
+    - typedef _Atomic int_least8_t atomic_int_least8_t
+    - typedef _Atomic uint_least8_t atomic_uint_least8_t
+    - typedef _Atomic int_least16_t atomic_int_least16_t
+    - typedef _Atomic uint_least16_t atomic_uint_least16_t
+    - typedef _Atomic int_least32_t atomic_int_least32_t
+    - typedef _Atomic uint_least32_t atomic_uint_least32_t
+    - typedef _Atomic int_least64_t atomic_int_least64_t
+    - typedef _Atomic uint_least64_t atomic_uint_least64_t
+    - typedef _Atomic int_fast8_t atomic_int_fast8_t
+    - typedef _Atomic uint_fast8_t atomic_uint_fast8_t
+    - typedef _Atomic int_fast16_t atomic_int_fast16_t
+    - typedef _Atomic uint_fast16_t atomic_uint_fast16_t
+    - typedef _Atomic int_fast32_t atomic_int_fast32_t
+    - typedef _Atomic uint_fast32_t atomic_uint_fast32_t
+    - typedef _Atomic int_fast64_t atomic_int_fast64_t
+    - typedef _Atomic uint_fast64_t atomic_uint_fast64_t
+    - typedef _Atomic intptr_t atomic_intptr_t
+    - typedef _Atomic uintptr_t atomic_uintptr_t
+    - typedef _Atomic size_t atomic_size_t
+    - typedef _Atomic ptrdiff_t atomic_ptrdiff_t
+    - typedef _Atomic intmax_t atomic_intmax_t
+    - typedef _Atomic uintmax_t atomic_uintmax_t
+    - typedef struct atomic_flag
+{
+  atomic_bool _Value;
+} atomic_flag
+    - typedef enum memory_order
+{
+  memory_order_relaxed,
+  memory_order_consume,
+  memory_order_acquire,
+  memory_order_release,
+  memory_order_acq_rel,
+  memory_order_seq_cst
+} memory_order
+    - typedef uint32_t id_t
+    - typedef int32_t status_t
+    - typedef enum GlobalStatus GlobalStatus_t
+    - typedef double real_t
+    - typedef int (*)(int, int) math_op_t
+    -- Global Variables --
+    - int a
+    - int b
+    - int a
+    - int b
+    - const int * arr
+    - size_t len
     -- Functions --
     int add(int a, int b)
     int subtract(int a, int b)
@@ -12,10 +233,13 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
     -- Macros --
     + #define MATH_UTILS_H
-    -- Functions --
-    + int add(int a, int b);
-    + int subtract(int a, int b);
-    + real_t average(const int * arr, size_t len);
+    -- Global Variables --
+    + Field(name=a, type=int)
+    + Field(name=b, type=int)
+    + Field(name=a, type=int)
+    + Field(name=b, type=int)
+    + Field(name=arr, type=const int *)
+    + Field(name=len, type=size_t)
 }
 class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
@@ -25,14 +249,1000 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + #define MAX_LABEL_LEN
     + #define DEFAULT_BUFFER_SIZE
 }
-class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
+class "size_t" as TYPEDEF_SIZE_T <<typedef>> #LightYellow
 {
-    + typedef double real_t
+    + typedef int size_t
 }
 
-class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
+class "__builtin_va_list" as TYPEDEF___BUILTIN_VA_LIST <<typedef>> #LightYellow
 {
-    + typedef int ( * math_op_t ) ( int , int ) math_op_t
+    + typedef int __builtin_va_list
+}
+
+class "__gnuc_va_list" as TYPEDEF___GNUC_VA_LIST <<typedef>> #LightYellow
+{
+    + typedef int __gnuc_va_list
+}
+
+class "va_list" as TYPEDEF_VA_LIST <<typedef>> #LightYellow
+{
+    + typedef int va_list
+}
+
+class "__int8_t" as TYPEDEF___INT8_T <<typedef>> #LightYellow
+{
+    + typedef int __int8_t
+}
+
+class "__uint8_t" as TYPEDEF___UINT8_T <<typedef>> #LightYellow
+{
+    + typedef int __uint8_t
+}
+
+class "__int16_t" as TYPEDEF___INT16_T <<typedef>> #LightYellow
+{
+    + typedef int __int16_t
+}
+
+class "__uint16_t" as TYPEDEF___UINT16_T <<typedef>> #LightYellow
+{
+    + typedef int __uint16_t
+}
+
+class "__int_least16_t" as TYPEDEF___INT_LEAST16_T <<typedef>> #LightYellow
+{
+    + typedef int __int_least16_t
+}
+
+class "__uint_least16_t" as TYPEDEF___UINT_LEAST16_T <<typedef>> #LightYellow
+{
+    + typedef int __uint_least16_t
+}
+
+class "__int32_t" as TYPEDEF___INT32_T <<typedef>> #LightYellow
+{
+    + typedef int __int32_t
+}
+
+class "__uint32_t" as TYPEDEF___UINT32_T <<typedef>> #LightYellow
+{
+    + typedef int __uint32_t
+}
+
+class "__int64_t" as TYPEDEF___INT64_T <<typedef>> #LightYellow
+{
+    + typedef int __int64_t
+}
+
+class "__uint64_t" as TYPEDEF___UINT64_T <<typedef>> #LightYellow
+{
+    + typedef int __uint64_t
+}
+
+class "__int_least32_t" as TYPEDEF___INT_LEAST32_T <<typedef>> #LightYellow
+{
+    + typedef int __int_least32_t
+}
+
+class "__uint_least32_t" as TYPEDEF___UINT_LEAST32_T <<typedef>> #LightYellow
+{
+    + typedef int __uint_least32_t
+}
+
+class "__s8" as TYPEDEF___S8 <<typedef>> #LightYellow
+{
+    + typedef int __s8
+}
+
+class "__u8" as TYPEDEF___U8 <<typedef>> #LightYellow
+{
+    + typedef int __u8
+}
+
+class "__s16" as TYPEDEF___S16 <<typedef>> #LightYellow
+{
+    + typedef int __s16
+}
+
+class "__u16" as TYPEDEF___U16 <<typedef>> #LightYellow
+{
+    + typedef int __u16
+}
+
+class "__s32" as TYPEDEF___S32 <<typedef>> #LightYellow
+{
+    + typedef int __s32
+}
+
+class "__u32" as TYPEDEF___U32 <<typedef>> #LightYellow
+{
+    + typedef int __u32
+}
+
+class "__s64" as TYPEDEF___S64 <<typedef>> #LightYellow
+{
+    + typedef int __s64
+}
+
+class "__u64" as TYPEDEF___U64 <<typedef>> #LightYellow
+{
+    + typedef int __u64
+}
+
+class "_LOCK_T" as TYPEDEF__LOCK_T <<typedef>> #LightYellow
+{
+    + typedef int _LOCK_T
+}
+
+class "_LOCK_RECURSIVE_T" as TYPEDEF__LOCK_RECURSIVE_T <<typedef>> #LightYellow
+{
+    + typedef int _LOCK_RECURSIVE_T
+}
+
+class "_off_t" as TYPEDEF__OFF_T <<typedef>> #LightYellow
+{
+    + typedef int _off_t
+}
+
+class "__dev_t" as TYPEDEF___DEV_T <<typedef>> #LightYellow
+{
+    + typedef int __dev_t
+}
+
+class "__uid_t" as TYPEDEF___UID_T <<typedef>> #LightYellow
+{
+    + typedef int __uid_t
+}
+
+class "__gid_t" as TYPEDEF___GID_T <<typedef>> #LightYellow
+{
+    + typedef int __gid_t
+}
+
+class "_off64_t" as TYPEDEF__OFF64_T <<typedef>> #LightYellow
+{
+    + typedef int _off64_t
+}
+
+class "_fpos_t" as TYPEDEF__FPOS_T <<typedef>> #LightYellow
+{
+    + typedef int _fpos_t
+}
+
+class "_ssize_t" as TYPEDEF__SSIZE_T <<typedef>> #LightYellow
+{
+    + typedef int _ssize_t
+}
+
+class "wint_t" as TYPEDEF_WINT_T <<typedef>> #LightYellow
+{
+    + typedef int wint_t
+}
+
+class "_mbstate_t" as TYPEDEF__MBSTATE_T <<typedef>> #LightYellow
+{
+    + typedef int _mbstate_t
+}
+
+class "_flock_t" as TYPEDEF__FLOCK_T <<typedef>> #LightYellow
+{
+    + typedef int _flock_t
+}
+
+class "_iconv_t" as TYPEDEF__ICONV_T <<typedef>> #LightYellow
+{
+    + typedef int _iconv_t
+}
+
+class "__ULong" as TYPEDEF___ULONG <<typedef>> #LightYellow
+{
+    + typedef int __ULong
+}
+
+class "__FILE" as TYPEDEF___FILE <<typedef>> #LightYellow
+{
+    + typedef int __FILE
+}
+
+class "ptrdiff_t" as TYPEDEF_PTRDIFF_T <<typedef>> #LightYellow
+{
+    + typedef int ptrdiff_t
+}
+
+class "wchar_t" as TYPEDEF_WCHAR_T <<typedef>> #LightYellow
+{
+    + typedef int wchar_t
+}
+
+class "char16_t" as TYPEDEF_CHAR16_T <<typedef>> #LightYellow
+{
+    + typedef int char16_t
+}
+
+class "char32_t" as TYPEDEF_CHAR32_T <<typedef>> #LightYellow
+{
+    + typedef int char32_t
+}
+
+class "__off_t" as TYPEDEF___OFF_T <<typedef>> #LightYellow
+{
+    + typedef int __off_t
+}
+
+class "__pid_t" as TYPEDEF___PID_T <<typedef>> #LightYellow
+{
+    + typedef int __pid_t
+}
+
+class "__loff_t" as TYPEDEF___LOFF_T <<typedef>> #LightYellow
+{
+    + typedef int __loff_t
+}
+
+class "u_char" as TYPEDEF_U_CHAR <<typedef>> #LightYellow
+{
+    + typedef int u_char
+}
+
+class "u_short" as TYPEDEF_U_SHORT <<typedef>> #LightYellow
+{
+    + typedef int u_short
+}
+
+class "u_int" as TYPEDEF_U_INT <<typedef>> #LightYellow
+{
+    + typedef int u_int
+}
+
+class "u_long" as TYPEDEF_U_LONG <<typedef>> #LightYellow
+{
+    + typedef int u_long
+}
+
+class "ushort" as TYPEDEF_USHORT <<typedef>> #LightYellow
+{
+    + typedef int ushort
+}
+
+class "uint" as TYPEDEF_UINT <<typedef>> #LightYellow
+{
+    + typedef int uint
+}
+
+class "clock_t" as TYPEDEF_CLOCK_T <<typedef>> #LightYellow
+{
+    + typedef int clock_t
+}
+
+class "time_t" as TYPEDEF_TIME_T <<typedef>> #LightYellow
+{
+    + typedef int time_t
+}
+
+class "daddr_t" as TYPEDEF_DADDR_T <<typedef>> #LightYellow
+{
+    + typedef int daddr_t
+}
+
+class "caddr_t" as TYPEDEF_CADDR_T <<typedef>> #LightYellow
+{
+    + typedef int caddr_t
+}
+
+class "ino_t" as TYPEDEF_INO_T <<typedef>> #LightYellow
+{
+    + typedef int ino_t
+}
+
+class "off_t" as TYPEDEF_OFF_T <<typedef>> #LightYellow
+{
+    + typedef int off_t
+}
+
+class "dev_t" as TYPEDEF_DEV_T <<typedef>> #LightYellow
+{
+    + typedef int dev_t
+}
+
+class "uid_t" as TYPEDEF_UID_T <<typedef>> #LightYellow
+{
+    + typedef int uid_t
+}
+
+class "gid_t" as TYPEDEF_GID_T <<typedef>> #LightYellow
+{
+    + typedef int gid_t
+}
+
+class "pid_t" as TYPEDEF_PID_T <<typedef>> #LightYellow
+{
+    + typedef int pid_t
+}
+
+class "key_t" as TYPEDEF_KEY_T <<typedef>> #LightYellow
+{
+    + typedef int key_t
+}
+
+class "ssize_t" as TYPEDEF_SSIZE_T <<typedef>> #LightYellow
+{
+    + typedef int ssize_t
+}
+
+class "mode_t" as TYPEDEF_MODE_T <<typedef>> #LightYellow
+{
+    + typedef int mode_t
+}
+
+class "nlink_t" as TYPEDEF_NLINK_T <<typedef>> #LightYellow
+{
+    + typedef int nlink_t
+}
+
+class "fd_mask" as TYPEDEF_FD_MASK <<typedef>> #LightYellow
+{
+    + typedef int fd_mask
+}
+
+class "_types_fd_set" as TYPEDEF__TYPES_FD_SET <<typedef>> #LightYellow
+{
+    + typedef int _types_fd_set
+}
+
+class "clockid_t" as TYPEDEF_CLOCKID_T <<typedef>> #LightYellow
+{
+    + typedef int clockid_t
+}
+
+class "timer_t" as TYPEDEF_TIMER_T <<typedef>> #LightYellow
+{
+    + typedef int timer_t
+}
+
+class "useconds_t" as TYPEDEF_USECONDS_T <<typedef>> #LightYellow
+{
+    + typedef int useconds_t
+}
+
+class "suseconds_t" as TYPEDEF_SUSECONDS_T <<typedef>> #LightYellow
+{
+    + typedef int suseconds_t
+}
+
+class "FILE" as TYPEDEF_FILE <<typedef>> #LightYellow
+{
+    + typedef int FILE
+}
+
+class "fpos_t" as TYPEDEF_FPOS_T <<typedef>> #LightYellow
+{
+    + typedef int fpos_t
+}
+
+class "cookie_read_function_t" as TYPEDEF_COOKIE_READ_FUNCTION_T <<typedef>> #LightYellow
+{
+    + typedef int cookie_read_function_t
+}
+
+class "cookie_write_function_t" as TYPEDEF_COOKIE_WRITE_FUNCTION_T <<typedef>> #LightYellow
+{
+    + typedef int cookie_write_function_t
+}
+
+class "cookie_seek_function_t" as TYPEDEF_COOKIE_SEEK_FUNCTION_T <<typedef>> #LightYellow
+{
+    + typedef int cookie_seek_function_t
+}
+
+class "cookie_close_function_t" as TYPEDEF_COOKIE_CLOSE_FUNCTION_T <<typedef>> #LightYellow
+{
+    + typedef int cookie_close_function_t
+}
+
+class "cookie_io_functions_t" as TYPEDEF_COOKIE_IO_FUNCTIONS_T <<typedef>> #LightYellow
+{
+    + typedef int cookie_io_functions_t
+}
+
+class "div_t" as TYPEDEF_DIV_T <<typedef>> #LightYellow
+{
+    + typedef int div_t
+}
+
+class "ldiv_t" as TYPEDEF_LDIV_T <<typedef>> #LightYellow
+{
+    + typedef int ldiv_t
+}
+
+class "lldiv_t" as TYPEDEF_LLDIV_T <<typedef>> #LightYellow
+{
+    + typedef int lldiv_t
+}
+
+class "sigset_t" as TYPEDEF_SIGSET_T <<typedef>> #LightYellow
+{
+    + typedef int sigset_t
+}
+
+class "__sigset_t" as TYPEDEF___SIGSET_T <<typedef>> #LightYellow
+{
+    + typedef int __sigset_t
+}
+
+class "_sig_func_ptr" as TYPEDEF__SIG_FUNC_PTR <<typedef>> #LightYellow
+{
+    + typedef int _sig_func_ptr
+}
+
+class "sig_atomic_t" as TYPEDEF_SIG_ATOMIC_T <<typedef>> #LightYellow
+{
+    + typedef int sig_atomic_t
+}
+
+class "__tzrule_type" as TYPEDEF___TZRULE_TYPE <<typedef>> #LightYellow
+{
+    + typedef int __tzrule_type
+}
+
+class "__tzinfo_type" as TYPEDEF___TZINFO_TYPE <<typedef>> #LightYellow
+{
+    + typedef int __tzinfo_type
+}
+
+class "mbstate_t" as TYPEDEF_MBSTATE_T <<typedef>> #LightYellow
+{
+    + typedef int mbstate_t
+}
+
+class "sem_t" as TYPEDEF_SEM_T <<typedef>> #LightYellow
+{
+    + typedef int sem_t
+}
+
+class "pthread_t" as TYPEDEF_PTHREAD_T <<typedef>> #LightYellow
+{
+    + typedef int pthread_t
+}
+
+class "pthread_attr_t" as TYPEDEF_PTHREAD_ATTR_T <<typedef>> #LightYellow
+{
+    + typedef int pthread_attr_t
+}
+
+class "pthread_mutex_t" as TYPEDEF_PTHREAD_MUTEX_T <<typedef>> #LightYellow
+{
+    + typedef int pthread_mutex_t
+}
+
+class "pthread_mutexattr_t" as TYPEDEF_PTHREAD_MUTEXATTR_T <<typedef>> #LightYellow
+{
+    + typedef int pthread_mutexattr_t
+}
+
+class "pthread_cond_t" as TYPEDEF_PTHREAD_COND_T <<typedef>> #LightYellow
+{
+    + typedef int pthread_cond_t
+}
+
+class "pthread_condattr_t" as TYPEDEF_PTHREAD_CONDATTR_T <<typedef>> #LightYellow
+{
+    + typedef int pthread_condattr_t
+}
+
+class "pthread_key_t" as TYPEDEF_PTHREAD_KEY_T <<typedef>> #LightYellow
+{
+    + typedef int pthread_key_t
+}
+
+class "pthread_once_t" as TYPEDEF_PTHREAD_ONCE_T <<typedef>> #LightYellow
+{
+    + typedef int pthread_once_t
+}
+
+class "pthread_rwlock_t" as TYPEDEF_PTHREAD_RWLOCK_T <<typedef>> #LightYellow
+{
+    + typedef int pthread_rwlock_t
+}
+
+class "pthread_rwlockattr_t" as TYPEDEF_PTHREAD_RWLOCKATTR_T <<typedef>> #LightYellow
+{
+    + typedef int pthread_rwlockattr_t
+}
+
+class "pthread_spinlock_t" as TYPEDEF_PTHREAD_SPINLOCK_T <<typedef>> #LightYellow
+{
+    + typedef int pthread_spinlock_t
+}
+
+class "pthread_barrier_t" as TYPEDEF_PTHREAD_BARRIER_T <<typedef>> #LightYellow
+{
+    + typedef int pthread_barrier_t
+}
+
+class "pthread_barrierattr_t" as TYPEDEF_PTHREAD_BARRIERATTR_T <<typedef>> #LightYellow
+{
+    + typedef int pthread_barrierattr_t
+}
+
+class "jmp_buf" as TYPEDEF_JMP_BUF <<typedef>> #LightYellow
+{
+    + typedef int jmp_buf
+}
+
+class "rlim_t" as TYPEDEF_RLIM_T <<typedef>> #LightYellow
+{
+    + typedef int rlim_t
+}
+
+class "sa_family_t" as TYPEDEF_SA_FAMILY_T <<typedef>> #LightYellow
+{
+    + typedef int sa_family_t
+}
+
+class "sigjmp_buf" as TYPEDEF_SIGJMP_BUF <<typedef>> #LightYellow
+{
+    + typedef int sigjmp_buf
+}
+
+class "stack_t" as TYPEDEF_STACK_T <<typedef>> #LightYellow
+{
+    + typedef int stack_t
+}
+
+class "siginfo_t" as TYPEDEF_SIGINFO_T <<typedef>> #LightYellow
+{
+    + typedef int siginfo_t
+}
+
+class "z_stream" as TYPEDEF_Z_STREAM <<typedef>> #LightYellow
+{
+    + typedef int z_stream
+}
+
+class "int8_t" as TYPEDEF_INT8_T <<typedef>> #LightYellow
+{
+    + typedef int int8_t
+}
+
+class "uint8_t" as TYPEDEF_UINT8_T <<typedef>> #LightYellow
+{
+    + typedef int uint8_t
+}
+
+class "int16_t" as TYPEDEF_INT16_T <<typedef>> #LightYellow
+{
+    + typedef int int16_t
+}
+
+class "uint16_t" as TYPEDEF_UINT16_T <<typedef>> #LightYellow
+{
+    + typedef int uint16_t
+}
+
+class "int32_t" as TYPEDEF_INT32_T <<typedef>> #LightYellow
+{
+    + typedef int int32_t
+}
+
+class "uint32_t" as TYPEDEF_UINT32_T <<typedef>> #LightYellow
+{
+    + typedef int uint32_t
+}
+
+class "int64_t" as TYPEDEF_INT64_T <<typedef>> #LightYellow
+{
+    + typedef int int64_t
+}
+
+class "uint64_t" as TYPEDEF_UINT64_T <<typedef>> #LightYellow
+{
+    + typedef int uint64_t
+}
+
+class "int_least8_t" as TYPEDEF_INT_LEAST8_T <<typedef>> #LightYellow
+{
+    + typedef int int_least8_t
+}
+
+class "uint_least8_t" as TYPEDEF_UINT_LEAST8_T <<typedef>> #LightYellow
+{
+    + typedef int uint_least8_t
+}
+
+class "int_least16_t" as TYPEDEF_INT_LEAST16_T <<typedef>> #LightYellow
+{
+    + typedef int int_least16_t
+}
+
+class "uint_least16_t" as TYPEDEF_UINT_LEAST16_T <<typedef>> #LightYellow
+{
+    + typedef int uint_least16_t
+}
+
+class "int_least32_t" as TYPEDEF_INT_LEAST32_T <<typedef>> #LightYellow
+{
+    + typedef int int_least32_t
+}
+
+class "uint_least32_t" as TYPEDEF_UINT_LEAST32_T <<typedef>> #LightYellow
+{
+    + typedef int uint_least32_t
+}
+
+class "int_least64_t" as TYPEDEF_INT_LEAST64_T <<typedef>> #LightYellow
+{
+    + typedef int int_least64_t
+}
+
+class "uint_least64_t" as TYPEDEF_UINT_LEAST64_T <<typedef>> #LightYellow
+{
+    + typedef int uint_least64_t
+}
+
+class "int_fast8_t" as TYPEDEF_INT_FAST8_T <<typedef>> #LightYellow
+{
+    + typedef int int_fast8_t
+}
+
+class "uint_fast8_t" as TYPEDEF_UINT_FAST8_T <<typedef>> #LightYellow
+{
+    + typedef int uint_fast8_t
+}
+
+class "int_fast16_t" as TYPEDEF_INT_FAST16_T <<typedef>> #LightYellow
+{
+    + typedef int int_fast16_t
+}
+
+class "uint_fast16_t" as TYPEDEF_UINT_FAST16_T <<typedef>> #LightYellow
+{
+    + typedef int uint_fast16_t
+}
+
+class "int_fast32_t" as TYPEDEF_INT_FAST32_T <<typedef>> #LightYellow
+{
+    + typedef int int_fast32_t
+}
+
+class "uint_fast32_t" as TYPEDEF_UINT_FAST32_T <<typedef>> #LightYellow
+{
+    + typedef int uint_fast32_t
+}
+
+class "int_fast64_t" as TYPEDEF_INT_FAST64_T <<typedef>> #LightYellow
+{
+    + typedef int int_fast64_t
+}
+
+class "uint_fast64_t" as TYPEDEF_UINT_FAST64_T <<typedef>> #LightYellow
+{
+    + typedef int uint_fast64_t
+}
+
+class "intptr_t" as TYPEDEF_INTPTR_T <<typedef>> #LightYellow
+{
+    + typedef int intptr_t
+}
+
+class "uintptr_t" as TYPEDEF_UINTPTR_T <<typedef>> #LightYellow
+{
+    + typedef int uintptr_t
+}
+
+class "intmax_t" as TYPEDEF_INTMAX_T <<typedef>> #LightYellow
+{
+    + typedef int intmax_t
+}
+
+class "uintmax_t" as TYPEDEF_UINTMAX_T <<typedef>> #LightYellow
+{
+    + typedef int uintmax_t
+}
+
+class "bool" as TYPEDEF_BOOL <<typedef>> #LightYellow
+{
+    + typedef _Bool bool
+}
+
+class "__int128_t" as TYPEDEF___INT128_T <<typedef>> #LightYellow
+{
+    + typedef int __int128_t
+}
+
+class "__uint128_t" as TYPEDEF___UINT128_T <<typedef>> #LightYellow
+{
+    + typedef int __uint128_t
+}
+
+class "MirEGLNativeWindowType" as TYPEDEF_MIREGLNATIVEWINDOWTYPE <<typedef>> #LightYellow
+{
+    + typedef void * MirEGLNativeWindowType
+}
+
+class "MirEGLNativeDisplayType" as TYPEDEF_MIREGLNATIVEDISPLAYTYPE <<typedef>> #LightYellow
+{
+    + typedef void * MirEGLNativeDisplayType
+}
+
+class "MirConnection" as TYPEDEF_MIRCONNECTION <<typedef>> #LightYellow
+{
+    + typedef struct MirConnection MirConnection
+}
+
+class "MirSurface" as TYPEDEF_MIRSURFACE <<typedef>> #LightYellow
+{
+    + typedef struct MirSurface MirSurface
+}
+
+class "MirSurfaceSpec" as TYPEDEF_MIRSURFACESPEC <<typedef>> #LightYellow
+{
+    + typedef struct MirSurfaceSpec MirSurfaceSpec
+}
+
+class "MirScreencast" as TYPEDEF_MIRSCREENCAST <<typedef>> #LightYellow
+{
+    + typedef struct MirScreencast MirScreencast
+}
+
+class "MirPromptSession" as TYPEDEF_MIRPROMPTSESSION <<typedef>> #LightYellow
+{
+    + typedef struct MirPromptSession MirPromptSession
+}
+
+class "MirBufferStream" as TYPEDEF_MIRBUFFERSTREAM <<typedef>> #LightYellow
+{
+    + typedef struct MirBufferStream MirBufferStream
+}
+
+class "MirPersistentId" as TYPEDEF_MIRPERSISTENTID <<typedef>> #LightYellow
+{
+    + typedef struct MirPersistentId MirPersistentId
+}
+
+class "MirBlob" as TYPEDEF_MIRBLOB <<typedef>> #LightYellow
+{
+    + typedef struct MirBlob MirBlob
+}
+
+class "MirDisplayConfig" as TYPEDEF_MIRDISPLAYCONFIG <<typedef>> #LightYellow
+{
+    + typedef struct MirDisplayConfig MirDisplayConfig
+}
+
+class "xcb_connection_t" as TYPEDEF_XCB_CONNECTION_T <<typedef>> #LightYellow
+{
+    + typedef struct xcb_connection_t xcb_connection_t
+}
+
+class "xcb_window_t" as TYPEDEF_XCB_WINDOW_T <<typedef>> #LightYellow
+{
+    + typedef uint32_t xcb_window_t
+}
+
+class "xcb_visualid_t" as TYPEDEF_XCB_VISUALID_T <<typedef>> #LightYellow
+{
+    + typedef uint32_t xcb_visualid_t
+}
+
+class "DIR" as TYPEDEF_DIR <<typedef>> #LightYellow
+{
+    + typedef void * DIR
+}
+
+class "__socklen_t" as TYPEDEF___SOCKLEN_T <<typedef>> #LightYellow
+{
+    + typedef __uint32_t __socklen_t
+}
+
+class "socklen_t" as TYPEDEF_SOCKLEN_T <<typedef>> #LightYellow
+{
+    + typedef __socklen_t socklen_t
+}
+
+class "atomic_bool" as TYPEDEF_ATOMIC_BOOL <<typedef>> #LightYellow
+{
+    + typedef _Atomic _Bool atomic_bool
+}
+
+class "atomic_char" as TYPEDEF_ATOMIC_CHAR <<typedef>> #LightYellow
+{
+    + typedef _Atomic char atomic_char
+}
+
+class "atomic_schar" as TYPEDEF_ATOMIC_SCHAR <<typedef>> #LightYellow
+{
+    + typedef _Atomic signed char atomic_schar
+}
+
+class "atomic_uchar" as TYPEDEF_ATOMIC_UCHAR <<typedef>> #LightYellow
+{
+    + typedef _Atomic unsigned char atomic_uchar
+}
+
+class "atomic_short" as TYPEDEF_ATOMIC_SHORT <<typedef>> #LightYellow
+{
+    + typedef _Atomic short atomic_short
+}
+
+class "atomic_ushort" as TYPEDEF_ATOMIC_USHORT <<typedef>> #LightYellow
+{
+    + typedef _Atomic unsigned short atomic_ushort
+}
+
+class "atomic_int" as TYPEDEF_ATOMIC_INT <<typedef>> #LightYellow
+{
+    + typedef _Atomic int atomic_int
+}
+
+class "atomic_uint" as TYPEDEF_ATOMIC_UINT <<typedef>> #LightYellow
+{
+    + typedef _Atomic unsigned int atomic_uint
+}
+
+class "atomic_long" as TYPEDEF_ATOMIC_LONG <<typedef>> #LightYellow
+{
+    + typedef _Atomic long atomic_long
+}
+
+class "atomic_ulong" as TYPEDEF_ATOMIC_ULONG <<typedef>> #LightYellow
+{
+    + typedef _Atomic unsigned long atomic_ulong
+}
+
+class "atomic_llong" as TYPEDEF_ATOMIC_LLONG <<typedef>> #LightYellow
+{
+    + typedef _Atomic long long atomic_llong
+}
+
+class "atomic_ullong" as TYPEDEF_ATOMIC_ULLONG <<typedef>> #LightYellow
+{
+    + typedef _Atomic unsigned long long atomic_ullong
+}
+
+class "atomic_char16_t" as TYPEDEF_ATOMIC_CHAR16_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic uint_least16_t atomic_char16_t
+}
+
+class "atomic_char32_t" as TYPEDEF_ATOMIC_CHAR32_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic uint_least32_t atomic_char32_t
+}
+
+class "atomic_wchar_t" as TYPEDEF_ATOMIC_WCHAR_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic wchar_t atomic_wchar_t
+}
+
+class "atomic_int_least8_t" as TYPEDEF_ATOMIC_INT_LEAST8_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic int_least8_t atomic_int_least8_t
+}
+
+class "atomic_uint_least8_t" as TYPEDEF_ATOMIC_UINT_LEAST8_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic uint_least8_t atomic_uint_least8_t
+}
+
+class "atomic_int_least16_t" as TYPEDEF_ATOMIC_INT_LEAST16_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic int_least16_t atomic_int_least16_t
+}
+
+class "atomic_uint_least16_t" as TYPEDEF_ATOMIC_UINT_LEAST16_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic uint_least16_t atomic_uint_least16_t
+}
+
+class "atomic_int_least32_t" as TYPEDEF_ATOMIC_INT_LEAST32_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic int_least32_t atomic_int_least32_t
+}
+
+class "atomic_uint_least32_t" as TYPEDEF_ATOMIC_UINT_LEAST32_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic uint_least32_t atomic_uint_least32_t
+}
+
+class "atomic_int_least64_t" as TYPEDEF_ATOMIC_INT_LEAST64_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic int_least64_t atomic_int_least64_t
+}
+
+class "atomic_uint_least64_t" as TYPEDEF_ATOMIC_UINT_LEAST64_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic uint_least64_t atomic_uint_least64_t
+}
+
+class "atomic_int_fast8_t" as TYPEDEF_ATOMIC_INT_FAST8_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic int_fast8_t atomic_int_fast8_t
+}
+
+class "atomic_uint_fast8_t" as TYPEDEF_ATOMIC_UINT_FAST8_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic uint_fast8_t atomic_uint_fast8_t
+}
+
+class "atomic_int_fast16_t" as TYPEDEF_ATOMIC_INT_FAST16_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic int_fast16_t atomic_int_fast16_t
+}
+
+class "atomic_uint_fast16_t" as TYPEDEF_ATOMIC_UINT_FAST16_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic uint_fast16_t atomic_uint_fast16_t
+}
+
+class "atomic_int_fast32_t" as TYPEDEF_ATOMIC_INT_FAST32_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic int_fast32_t atomic_int_fast32_t
+}
+
+class "atomic_uint_fast32_t" as TYPEDEF_ATOMIC_UINT_FAST32_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic uint_fast32_t atomic_uint_fast32_t
+}
+
+class "atomic_int_fast64_t" as TYPEDEF_ATOMIC_INT_FAST64_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic int_fast64_t atomic_int_fast64_t
+}
+
+class "atomic_uint_fast64_t" as TYPEDEF_ATOMIC_UINT_FAST64_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic uint_fast64_t atomic_uint_fast64_t
+}
+
+class "atomic_intptr_t" as TYPEDEF_ATOMIC_INTPTR_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic intptr_t atomic_intptr_t
+}
+
+class "atomic_uintptr_t" as TYPEDEF_ATOMIC_UINTPTR_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic uintptr_t atomic_uintptr_t
+}
+
+class "atomic_size_t" as TYPEDEF_ATOMIC_SIZE_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic size_t atomic_size_t
+}
+
+class "atomic_ptrdiff_t" as TYPEDEF_ATOMIC_PTRDIFF_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic ptrdiff_t atomic_ptrdiff_t
+}
+
+class "atomic_intmax_t" as TYPEDEF_ATOMIC_INTMAX_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic intmax_t atomic_intmax_t
+}
+
+class "atomic_uintmax_t" as TYPEDEF_ATOMIC_UINTMAX_T <<typedef>> #LightYellow
+{
+    + typedef _Atomic uintmax_t atomic_uintmax_t
+}
+
+class "atomic_flag" as TYPEDEF_ATOMIC_FLAG <<typedef>> #LightYellow
+{
+    + typedef struct atomic_flag
+{
+  atomic_bool _Value;
+} atomic_flag
+}
+
+class "memory_order" as TYPEDEF_MEMORY_ORDER <<typedef>> #LightYellow
+{
+    + typedef enum memory_order
+{
+  memory_order_relaxed,
+  memory_order_consume,
+  memory_order_acquire,
+  memory_order_release,
+  memory_order_acq_rel,
+  memory_order_seq_cst
+} memory_order
 }
 
 class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
@@ -45,8 +1255,2450 @@ class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
     + typedef int32_t status_t
 }
 
+class "GlobalStatus_t" as TYPEDEF_GLOBALSTATUS_T <<typedef>> #LightYellow
+{
+    + typedef enum GlobalStatus GlobalStatus_t
+}
+
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
+{
+    + typedef double real_t
+}
+
+class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
+{
+    + typedef int (*)(int, int) math_op_t
+}
+
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
+MATH_UTILS ..> TYPEDEF_SIZE_T : declares
+TYPEDEF_SIZE_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_SIZE_T : declares
+HEADER_CONFIG ..> TYPEDEF_SIZE_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_SIZE_T : declares
+HEADER_LOGGER ..> TYPEDEF_SIZE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SIZE_T : declares
+HEADER_SAMPLE ..> TYPEDEF_SIZE_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_SIZE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___BUILTIN_VA_LIST : declares
+HEADER_MATH_UTILS ..> TYPEDEF___GNUC_VA_LIST : declares
+HEADER_MATH_UTILS ..> TYPEDEF_VA_LIST : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT_LEAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT_LEAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT_LEAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT_LEAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___S8 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___U8 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___S16 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___U16 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___S32 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___U32 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___S64 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___U64 : declares
+HEADER_MATH_UTILS ..> TYPEDEF__LOCK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__LOCK_RECURSIVE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__OFF_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___DEV_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___GID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__OFF64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__FPOS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__SSIZE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_WINT_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__MBSTATE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__FLOCK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__ICONV_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___ULONG : declares
+HEADER_MATH_UTILS ..> TYPEDEF___FILE : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTRDIFF_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_WCHAR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_CHAR16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_CHAR32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___OFF_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___PID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___LOFF_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_U_CHAR : declares
+HEADER_MATH_UTILS ..> TYPEDEF_U_SHORT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_U_INT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_U_LONG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_USHORT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_CLOCK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_TIME_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_DADDR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_CADDR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INO_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_OFF_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_DEV_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_GID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_KEY_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SSIZE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MODE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_NLINK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_FD_MASK : declares
+HEADER_MATH_UTILS ..> TYPEDEF__TYPES_FD_SET : declares
+HEADER_MATH_UTILS ..> TYPEDEF_CLOCKID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_TIMER_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_USECONDS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SUSECONDS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_FILE : declares
+HEADER_MATH_UTILS ..> TYPEDEF_FPOS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_READ_FUNCTION_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_WRITE_FUNCTION_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_SEEK_FUNCTION_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_CLOSE_FUNCTION_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_IO_FUNCTIONS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_DIV_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_LDIV_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_LLDIV_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SIGSET_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___SIGSET_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__SIG_FUNC_PTR : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SIG_ATOMIC_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___TZRULE_TYPE : declares
+HEADER_MATH_UTILS ..> TYPEDEF___TZINFO_TYPE : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MBSTATE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SEM_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_ATTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_MUTEX_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_MUTEXATTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_COND_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_CONDATTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_KEY_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_ONCE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_RWLOCK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_RWLOCKATTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_SPINLOCK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_BARRIER_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_BARRIERATTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_JMP_BUF : declares
+HEADER_MATH_UTILS ..> TYPEDEF_RLIM_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SA_FAMILY_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SIGJMP_BUF : declares
+HEADER_MATH_UTILS ..> TYPEDEF_STACK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SIGINFO_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_Z_STREAM : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_LEAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_LEAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_LEAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_LEAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_LEAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_LEAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_LEAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_LEAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_FAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_FAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_FAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_FAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_FAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_FAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_FAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_FAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INTPTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINTPTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INTMAX_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINTMAX_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_BOOL : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT128_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT128_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIREGLNATIVEWINDOWTYPE : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIREGLNATIVEDISPLAYTYPE : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRCONNECTION : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRSURFACE : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRSURFACESPEC : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRSCREENCAST : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRPROMPTSESSION : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRBUFFERSTREAM : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRPERSISTENTID : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRBLOB : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRDISPLAYCONFIG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_XCB_CONNECTION_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_XCB_WINDOW_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_XCB_VISUALID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_DIR : declares
+HEADER_MATH_UTILS ..> TYPEDEF___SOCKLEN_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SOCKLEN_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_BOOL : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_SCHAR : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UCHAR : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_SHORT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_USHORT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_LONG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_ULONG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_LLONG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_ULLONG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_WCHAR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INTPTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINTPTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_SIZE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_PTRDIFF_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INTMAX_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINTMAX_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_FLAG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MEMORY_ORDER : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_STATUS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_GLOBALSTATUS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MATH_OP_T : declares
+MATH_UTILS ..> TYPEDEF___BUILTIN_VA_LIST : declares
+TYPEDEF___BUILTIN_VA_LIST -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___BUILTIN_VA_LIST : declares
+HEADER_CONFIG ..> TYPEDEF___BUILTIN_VA_LIST : declares
+HEADER_GEOMETRY ..> TYPEDEF___BUILTIN_VA_LIST : declares
+HEADER_LOGGER ..> TYPEDEF___BUILTIN_VA_LIST : declares
+HEADER_SAMPLE ..> TYPEDEF___BUILTIN_VA_LIST : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___BUILTIN_VA_LIST : declares
+MATH_UTILS ..> TYPEDEF___GNUC_VA_LIST : declares
+TYPEDEF___GNUC_VA_LIST -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___GNUC_VA_LIST : declares
+HEADER_CONFIG ..> TYPEDEF___GNUC_VA_LIST : declares
+HEADER_GEOMETRY ..> TYPEDEF___GNUC_VA_LIST : declares
+HEADER_LOGGER ..> TYPEDEF___GNUC_VA_LIST : declares
+HEADER_SAMPLE ..> TYPEDEF___GNUC_VA_LIST : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___GNUC_VA_LIST : declares
+MATH_UTILS ..> TYPEDEF_VA_LIST : declares
+TYPEDEF_VA_LIST -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_VA_LIST : declares
+HEADER_CONFIG ..> TYPEDEF_VA_LIST : declares
+HEADER_GEOMETRY ..> TYPEDEF_VA_LIST : declares
+HEADER_LOGGER ..> TYPEDEF_VA_LIST : declares
+HEADER_SAMPLE ..> TYPEDEF_VA_LIST : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_VA_LIST : declares
+MATH_UTILS ..> TYPEDEF___INT8_T : declares
+TYPEDEF___INT8_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___INT8_T : declares
+HEADER_CONFIG ..> TYPEDEF___INT8_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___INT8_T : declares
+HEADER_LOGGER ..> TYPEDEF___INT8_T : declares
+HEADER_SAMPLE ..> TYPEDEF___INT8_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___INT8_T : declares
+MATH_UTILS ..> TYPEDEF___UINT8_T : declares
+TYPEDEF___UINT8_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___UINT8_T : declares
+HEADER_CONFIG ..> TYPEDEF___UINT8_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___UINT8_T : declares
+HEADER_LOGGER ..> TYPEDEF___UINT8_T : declares
+HEADER_SAMPLE ..> TYPEDEF___UINT8_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___UINT8_T : declares
+MATH_UTILS ..> TYPEDEF___INT16_T : declares
+TYPEDEF___INT16_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___INT16_T : declares
+HEADER_CONFIG ..> TYPEDEF___INT16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___INT16_T : declares
+HEADER_LOGGER ..> TYPEDEF___INT16_T : declares
+HEADER_SAMPLE ..> TYPEDEF___INT16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___INT16_T : declares
+MATH_UTILS ..> TYPEDEF___UINT16_T : declares
+TYPEDEF___UINT16_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___UINT16_T : declares
+HEADER_CONFIG ..> TYPEDEF___UINT16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___UINT16_T : declares
+HEADER_LOGGER ..> TYPEDEF___UINT16_T : declares
+HEADER_SAMPLE ..> TYPEDEF___UINT16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___UINT16_T : declares
+MATH_UTILS ..> TYPEDEF___INT_LEAST16_T : declares
+TYPEDEF___INT_LEAST16_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___INT_LEAST16_T : declares
+HEADER_CONFIG ..> TYPEDEF___INT_LEAST16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___INT_LEAST16_T : declares
+HEADER_LOGGER ..> TYPEDEF___INT_LEAST16_T : declares
+HEADER_SAMPLE ..> TYPEDEF___INT_LEAST16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___INT_LEAST16_T : declares
+MATH_UTILS ..> TYPEDEF___UINT_LEAST16_T : declares
+TYPEDEF___UINT_LEAST16_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___UINT_LEAST16_T : declares
+HEADER_CONFIG ..> TYPEDEF___UINT_LEAST16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___UINT_LEAST16_T : declares
+HEADER_LOGGER ..> TYPEDEF___UINT_LEAST16_T : declares
+HEADER_SAMPLE ..> TYPEDEF___UINT_LEAST16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___UINT_LEAST16_T : declares
+MATH_UTILS ..> TYPEDEF___INT32_T : declares
+TYPEDEF___INT32_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___INT32_T : declares
+HEADER_CONFIG ..> TYPEDEF___INT32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___INT32_T : declares
+HEADER_LOGGER ..> TYPEDEF___INT32_T : declares
+HEADER_SAMPLE ..> TYPEDEF___INT32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___INT32_T : declares
+MATH_UTILS ..> TYPEDEF___UINT32_T : declares
+TYPEDEF___UINT32_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___UINT32_T : declares
+HEADER_CONFIG ..> TYPEDEF___UINT32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___UINT32_T : declares
+HEADER_LOGGER ..> TYPEDEF___UINT32_T : declares
+HEADER_SAMPLE ..> TYPEDEF___UINT32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___UINT32_T : declares
+MATH_UTILS ..> TYPEDEF___INT64_T : declares
+TYPEDEF___INT64_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___INT64_T : declares
+HEADER_CONFIG ..> TYPEDEF___INT64_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___INT64_T : declares
+HEADER_LOGGER ..> TYPEDEF___INT64_T : declares
+HEADER_SAMPLE ..> TYPEDEF___INT64_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___INT64_T : declares
+MATH_UTILS ..> TYPEDEF___UINT64_T : declares
+TYPEDEF___UINT64_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___UINT64_T : declares
+HEADER_CONFIG ..> TYPEDEF___UINT64_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___UINT64_T : declares
+HEADER_LOGGER ..> TYPEDEF___UINT64_T : declares
+HEADER_SAMPLE ..> TYPEDEF___UINT64_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___UINT64_T : declares
+MATH_UTILS ..> TYPEDEF___INT_LEAST32_T : declares
+TYPEDEF___INT_LEAST32_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___INT_LEAST32_T : declares
+HEADER_CONFIG ..> TYPEDEF___INT_LEAST32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___INT_LEAST32_T : declares
+HEADER_LOGGER ..> TYPEDEF___INT_LEAST32_T : declares
+HEADER_SAMPLE ..> TYPEDEF___INT_LEAST32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___INT_LEAST32_T : declares
+MATH_UTILS ..> TYPEDEF___UINT_LEAST32_T : declares
+TYPEDEF___UINT_LEAST32_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___UINT_LEAST32_T : declares
+HEADER_CONFIG ..> TYPEDEF___UINT_LEAST32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___UINT_LEAST32_T : declares
+HEADER_LOGGER ..> TYPEDEF___UINT_LEAST32_T : declares
+HEADER_SAMPLE ..> TYPEDEF___UINT_LEAST32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___UINT_LEAST32_T : declares
+MATH_UTILS ..> TYPEDEF___S8 : declares
+TYPEDEF___S8 -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___S8 : declares
+HEADER_CONFIG ..> TYPEDEF___S8 : declares
+HEADER_GEOMETRY ..> TYPEDEF___S8 : declares
+HEADER_LOGGER ..> TYPEDEF___S8 : declares
+HEADER_SAMPLE ..> TYPEDEF___S8 : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___S8 : declares
+MATH_UTILS ..> TYPEDEF___U8 : declares
+TYPEDEF___U8 -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___U8 : declares
+HEADER_CONFIG ..> TYPEDEF___U8 : declares
+HEADER_GEOMETRY ..> TYPEDEF___U8 : declares
+HEADER_LOGGER ..> TYPEDEF___U8 : declares
+HEADER_SAMPLE ..> TYPEDEF___U8 : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___U8 : declares
+MATH_UTILS ..> TYPEDEF___S16 : declares
+TYPEDEF___S16 -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___S16 : declares
+HEADER_CONFIG ..> TYPEDEF___S16 : declares
+HEADER_GEOMETRY ..> TYPEDEF___S16 : declares
+HEADER_LOGGER ..> TYPEDEF___S16 : declares
+HEADER_SAMPLE ..> TYPEDEF___S16 : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___S16 : declares
+MATH_UTILS ..> TYPEDEF___U16 : declares
+TYPEDEF___U16 -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___U16 : declares
+HEADER_CONFIG ..> TYPEDEF___U16 : declares
+HEADER_GEOMETRY ..> TYPEDEF___U16 : declares
+HEADER_LOGGER ..> TYPEDEF___U16 : declares
+HEADER_SAMPLE ..> TYPEDEF___U16 : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___U16 : declares
+MATH_UTILS ..> TYPEDEF___S32 : declares
+TYPEDEF___S32 -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___S32 : declares
+HEADER_CONFIG ..> TYPEDEF___S32 : declares
+HEADER_GEOMETRY ..> TYPEDEF___S32 : declares
+HEADER_LOGGER ..> TYPEDEF___S32 : declares
+HEADER_SAMPLE ..> TYPEDEF___S32 : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___S32 : declares
+MATH_UTILS ..> TYPEDEF___U32 : declares
+TYPEDEF___U32 -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___U32 : declares
+HEADER_CONFIG ..> TYPEDEF___U32 : declares
+HEADER_GEOMETRY ..> TYPEDEF___U32 : declares
+HEADER_LOGGER ..> TYPEDEF___U32 : declares
+HEADER_SAMPLE ..> TYPEDEF___U32 : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___U32 : declares
+MATH_UTILS ..> TYPEDEF___S64 : declares
+TYPEDEF___S64 -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___S64 : declares
+HEADER_CONFIG ..> TYPEDEF___S64 : declares
+HEADER_GEOMETRY ..> TYPEDEF___S64 : declares
+HEADER_LOGGER ..> TYPEDEF___S64 : declares
+HEADER_SAMPLE ..> TYPEDEF___S64 : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___S64 : declares
+MATH_UTILS ..> TYPEDEF___U64 : declares
+TYPEDEF___U64 -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___U64 : declares
+HEADER_CONFIG ..> TYPEDEF___U64 : declares
+HEADER_GEOMETRY ..> TYPEDEF___U64 : declares
+HEADER_LOGGER ..> TYPEDEF___U64 : declares
+HEADER_SAMPLE ..> TYPEDEF___U64 : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___U64 : declares
+MATH_UTILS ..> TYPEDEF__LOCK_T : declares
+TYPEDEF__LOCK_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF__LOCK_T : declares
+HEADER_CONFIG ..> TYPEDEF__LOCK_T : declares
+HEADER_GEOMETRY ..> TYPEDEF__LOCK_T : declares
+HEADER_LOGGER ..> TYPEDEF__LOCK_T : declares
+HEADER_SAMPLE ..> TYPEDEF__LOCK_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF__LOCK_T : declares
+MATH_UTILS ..> TYPEDEF__LOCK_RECURSIVE_T : declares
+TYPEDEF__LOCK_RECURSIVE_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF__LOCK_RECURSIVE_T : declares
+HEADER_CONFIG ..> TYPEDEF__LOCK_RECURSIVE_T : declares
+HEADER_GEOMETRY ..> TYPEDEF__LOCK_RECURSIVE_T : declares
+HEADER_LOGGER ..> TYPEDEF__LOCK_RECURSIVE_T : declares
+HEADER_SAMPLE ..> TYPEDEF__LOCK_RECURSIVE_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF__LOCK_RECURSIVE_T : declares
+MATH_UTILS ..> TYPEDEF__OFF_T : declares
+TYPEDEF__OFF_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF__OFF_T : declares
+HEADER_CONFIG ..> TYPEDEF__OFF_T : declares
+HEADER_GEOMETRY ..> TYPEDEF__OFF_T : declares
+HEADER_LOGGER ..> TYPEDEF__OFF_T : declares
+HEADER_SAMPLE ..> TYPEDEF__OFF_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF__OFF_T : declares
+MATH_UTILS ..> TYPEDEF___DEV_T : declares
+TYPEDEF___DEV_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___DEV_T : declares
+HEADER_CONFIG ..> TYPEDEF___DEV_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___DEV_T : declares
+HEADER_LOGGER ..> TYPEDEF___DEV_T : declares
+HEADER_SAMPLE ..> TYPEDEF___DEV_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___DEV_T : declares
+MATH_UTILS ..> TYPEDEF___UID_T : declares
+TYPEDEF___UID_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___UID_T : declares
+HEADER_CONFIG ..> TYPEDEF___UID_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___UID_T : declares
+HEADER_LOGGER ..> TYPEDEF___UID_T : declares
+HEADER_SAMPLE ..> TYPEDEF___UID_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___UID_T : declares
+MATH_UTILS ..> TYPEDEF___GID_T : declares
+TYPEDEF___GID_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___GID_T : declares
+HEADER_CONFIG ..> TYPEDEF___GID_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___GID_T : declares
+HEADER_LOGGER ..> TYPEDEF___GID_T : declares
+HEADER_SAMPLE ..> TYPEDEF___GID_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___GID_T : declares
+MATH_UTILS ..> TYPEDEF__OFF64_T : declares
+TYPEDEF__OFF64_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF__OFF64_T : declares
+HEADER_CONFIG ..> TYPEDEF__OFF64_T : declares
+HEADER_GEOMETRY ..> TYPEDEF__OFF64_T : declares
+HEADER_LOGGER ..> TYPEDEF__OFF64_T : declares
+HEADER_SAMPLE ..> TYPEDEF__OFF64_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF__OFF64_T : declares
+MATH_UTILS ..> TYPEDEF__FPOS_T : declares
+TYPEDEF__FPOS_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF__FPOS_T : declares
+HEADER_CONFIG ..> TYPEDEF__FPOS_T : declares
+HEADER_GEOMETRY ..> TYPEDEF__FPOS_T : declares
+HEADER_LOGGER ..> TYPEDEF__FPOS_T : declares
+HEADER_SAMPLE ..> TYPEDEF__FPOS_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF__FPOS_T : declares
+MATH_UTILS ..> TYPEDEF__SSIZE_T : declares
+TYPEDEF__SSIZE_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF__SSIZE_T : declares
+HEADER_CONFIG ..> TYPEDEF__SSIZE_T : declares
+HEADER_GEOMETRY ..> TYPEDEF__SSIZE_T : declares
+HEADER_LOGGER ..> TYPEDEF__SSIZE_T : declares
+HEADER_SAMPLE ..> TYPEDEF__SSIZE_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF__SSIZE_T : declares
+MATH_UTILS ..> TYPEDEF_WINT_T : declares
+TYPEDEF_WINT_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_WINT_T : declares
+HEADER_CONFIG ..> TYPEDEF_WINT_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_WINT_T : declares
+HEADER_LOGGER ..> TYPEDEF_WINT_T : declares
+HEADER_SAMPLE ..> TYPEDEF_WINT_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_WINT_T : declares
+MATH_UTILS ..> TYPEDEF__MBSTATE_T : declares
+TYPEDEF__MBSTATE_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF__MBSTATE_T : declares
+HEADER_CONFIG ..> TYPEDEF__MBSTATE_T : declares
+HEADER_GEOMETRY ..> TYPEDEF__MBSTATE_T : declares
+HEADER_LOGGER ..> TYPEDEF__MBSTATE_T : declares
+HEADER_SAMPLE ..> TYPEDEF__MBSTATE_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF__MBSTATE_T : declares
+MATH_UTILS ..> TYPEDEF__FLOCK_T : declares
+TYPEDEF__FLOCK_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF__FLOCK_T : declares
+HEADER_CONFIG ..> TYPEDEF__FLOCK_T : declares
+HEADER_GEOMETRY ..> TYPEDEF__FLOCK_T : declares
+HEADER_LOGGER ..> TYPEDEF__FLOCK_T : declares
+HEADER_SAMPLE ..> TYPEDEF__FLOCK_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF__FLOCK_T : declares
+MATH_UTILS ..> TYPEDEF__ICONV_T : declares
+TYPEDEF__ICONV_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF__ICONV_T : declares
+HEADER_CONFIG ..> TYPEDEF__ICONV_T : declares
+HEADER_GEOMETRY ..> TYPEDEF__ICONV_T : declares
+HEADER_LOGGER ..> TYPEDEF__ICONV_T : declares
+HEADER_SAMPLE ..> TYPEDEF__ICONV_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF__ICONV_T : declares
+MATH_UTILS ..> TYPEDEF___ULONG : declares
+TYPEDEF___ULONG -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___ULONG : declares
+HEADER_CONFIG ..> TYPEDEF___ULONG : declares
+HEADER_GEOMETRY ..> TYPEDEF___ULONG : declares
+HEADER_LOGGER ..> TYPEDEF___ULONG : declares
+HEADER_SAMPLE ..> TYPEDEF___ULONG : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___ULONG : declares
+MATH_UTILS ..> TYPEDEF___FILE : declares
+TYPEDEF___FILE -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___FILE : declares
+HEADER_CONFIG ..> TYPEDEF___FILE : declares
+HEADER_GEOMETRY ..> TYPEDEF___FILE : declares
+HEADER_LOGGER ..> TYPEDEF___FILE : declares
+HEADER_SAMPLE ..> TYPEDEF___FILE : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___FILE : declares
+MATH_UTILS ..> TYPEDEF_PTRDIFF_T : declares
+TYPEDEF_PTRDIFF_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTRDIFF_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTRDIFF_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTRDIFF_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTRDIFF_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTRDIFF_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTRDIFF_T : declares
+MATH_UTILS ..> TYPEDEF_WCHAR_T : declares
+TYPEDEF_WCHAR_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_WCHAR_T : declares
+HEADER_CONFIG ..> TYPEDEF_WCHAR_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_WCHAR_T : declares
+HEADER_LOGGER ..> TYPEDEF_WCHAR_T : declares
+HEADER_SAMPLE ..> TYPEDEF_WCHAR_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_WCHAR_T : declares
+MATH_UTILS ..> TYPEDEF_CHAR16_T : declares
+TYPEDEF_CHAR16_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_CHAR16_T : declares
+HEADER_CONFIG ..> TYPEDEF_CHAR16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_CHAR16_T : declares
+HEADER_LOGGER ..> TYPEDEF_CHAR16_T : declares
+HEADER_SAMPLE ..> TYPEDEF_CHAR16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_CHAR16_T : declares
+MATH_UTILS ..> TYPEDEF_CHAR32_T : declares
+TYPEDEF_CHAR32_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_CHAR32_T : declares
+HEADER_CONFIG ..> TYPEDEF_CHAR32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_CHAR32_T : declares
+HEADER_LOGGER ..> TYPEDEF_CHAR32_T : declares
+HEADER_SAMPLE ..> TYPEDEF_CHAR32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_CHAR32_T : declares
+MATH_UTILS ..> TYPEDEF___OFF_T : declares
+TYPEDEF___OFF_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___OFF_T : declares
+HEADER_CONFIG ..> TYPEDEF___OFF_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___OFF_T : declares
+HEADER_LOGGER ..> TYPEDEF___OFF_T : declares
+HEADER_SAMPLE ..> TYPEDEF___OFF_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___OFF_T : declares
+MATH_UTILS ..> TYPEDEF___PID_T : declares
+TYPEDEF___PID_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___PID_T : declares
+HEADER_CONFIG ..> TYPEDEF___PID_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___PID_T : declares
+HEADER_LOGGER ..> TYPEDEF___PID_T : declares
+HEADER_SAMPLE ..> TYPEDEF___PID_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___PID_T : declares
+MATH_UTILS ..> TYPEDEF___LOFF_T : declares
+TYPEDEF___LOFF_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___LOFF_T : declares
+HEADER_CONFIG ..> TYPEDEF___LOFF_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___LOFF_T : declares
+HEADER_LOGGER ..> TYPEDEF___LOFF_T : declares
+HEADER_SAMPLE ..> TYPEDEF___LOFF_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___LOFF_T : declares
+MATH_UTILS ..> TYPEDEF_U_CHAR : declares
+TYPEDEF_U_CHAR -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_U_CHAR : declares
+HEADER_CONFIG ..> TYPEDEF_U_CHAR : declares
+HEADER_GEOMETRY ..> TYPEDEF_U_CHAR : declares
+HEADER_LOGGER ..> TYPEDEF_U_CHAR : declares
+HEADER_SAMPLE ..> TYPEDEF_U_CHAR : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_U_CHAR : declares
+MATH_UTILS ..> TYPEDEF_U_SHORT : declares
+TYPEDEF_U_SHORT -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_U_SHORT : declares
+HEADER_CONFIG ..> TYPEDEF_U_SHORT : declares
+HEADER_GEOMETRY ..> TYPEDEF_U_SHORT : declares
+HEADER_LOGGER ..> TYPEDEF_U_SHORT : declares
+HEADER_SAMPLE ..> TYPEDEF_U_SHORT : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_U_SHORT : declares
+MATH_UTILS ..> TYPEDEF_U_INT : declares
+TYPEDEF_U_INT -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_U_INT : declares
+HEADER_CONFIG ..> TYPEDEF_U_INT : declares
+HEADER_GEOMETRY ..> TYPEDEF_U_INT : declares
+HEADER_LOGGER ..> TYPEDEF_U_INT : declares
+HEADER_SAMPLE ..> TYPEDEF_U_INT : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_U_INT : declares
+MATH_UTILS ..> TYPEDEF_U_LONG : declares
+TYPEDEF_U_LONG -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_U_LONG : declares
+HEADER_CONFIG ..> TYPEDEF_U_LONG : declares
+HEADER_GEOMETRY ..> TYPEDEF_U_LONG : declares
+HEADER_LOGGER ..> TYPEDEF_U_LONG : declares
+HEADER_SAMPLE ..> TYPEDEF_U_LONG : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_U_LONG : declares
+MATH_UTILS ..> TYPEDEF_USHORT : declares
+TYPEDEF_USHORT -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_USHORT : declares
+HEADER_CONFIG ..> TYPEDEF_USHORT : declares
+HEADER_GEOMETRY ..> TYPEDEF_USHORT : declares
+HEADER_LOGGER ..> TYPEDEF_USHORT : declares
+HEADER_SAMPLE ..> TYPEDEF_USHORT : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_USHORT : declares
+MATH_UTILS ..> TYPEDEF_UINT : declares
+TYPEDEF_UINT -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINT : declares
+HEADER_CONFIG ..> TYPEDEF_UINT : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINT : declares
+HEADER_LOGGER ..> TYPEDEF_UINT : declares
+HEADER_SAMPLE ..> TYPEDEF_UINT : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINT : declares
+MATH_UTILS ..> TYPEDEF_CLOCK_T : declares
+TYPEDEF_CLOCK_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_CLOCK_T : declares
+HEADER_CONFIG ..> TYPEDEF_CLOCK_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_CLOCK_T : declares
+HEADER_LOGGER ..> TYPEDEF_CLOCK_T : declares
+HEADER_SAMPLE ..> TYPEDEF_CLOCK_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_CLOCK_T : declares
+MATH_UTILS ..> TYPEDEF_TIME_T : declares
+TYPEDEF_TIME_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_TIME_T : declares
+HEADER_CONFIG ..> TYPEDEF_TIME_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_TIME_T : declares
+HEADER_LOGGER ..> TYPEDEF_TIME_T : declares
+HEADER_SAMPLE ..> TYPEDEF_TIME_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_TIME_T : declares
+MATH_UTILS ..> TYPEDEF_DADDR_T : declares
+TYPEDEF_DADDR_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_DADDR_T : declares
+HEADER_CONFIG ..> TYPEDEF_DADDR_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_DADDR_T : declares
+HEADER_LOGGER ..> TYPEDEF_DADDR_T : declares
+HEADER_SAMPLE ..> TYPEDEF_DADDR_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_DADDR_T : declares
+MATH_UTILS ..> TYPEDEF_CADDR_T : declares
+TYPEDEF_CADDR_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_CADDR_T : declares
+HEADER_CONFIG ..> TYPEDEF_CADDR_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_CADDR_T : declares
+HEADER_LOGGER ..> TYPEDEF_CADDR_T : declares
+HEADER_SAMPLE ..> TYPEDEF_CADDR_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_CADDR_T : declares
+MATH_UTILS ..> TYPEDEF_INO_T : declares
+TYPEDEF_INO_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INO_T : declares
+HEADER_CONFIG ..> TYPEDEF_INO_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INO_T : declares
+HEADER_LOGGER ..> TYPEDEF_INO_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INO_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INO_T : declares
+MATH_UTILS ..> TYPEDEF_OFF_T : declares
+TYPEDEF_OFF_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_OFF_T : declares
+HEADER_CONFIG ..> TYPEDEF_OFF_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_OFF_T : declares
+HEADER_LOGGER ..> TYPEDEF_OFF_T : declares
+HEADER_SAMPLE ..> TYPEDEF_OFF_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_OFF_T : declares
+MATH_UTILS ..> TYPEDEF_DEV_T : declares
+TYPEDEF_DEV_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_DEV_T : declares
+HEADER_CONFIG ..> TYPEDEF_DEV_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_DEV_T : declares
+HEADER_LOGGER ..> TYPEDEF_DEV_T : declares
+HEADER_SAMPLE ..> TYPEDEF_DEV_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_DEV_T : declares
+MATH_UTILS ..> TYPEDEF_UID_T : declares
+TYPEDEF_UID_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UID_T : declares
+HEADER_CONFIG ..> TYPEDEF_UID_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UID_T : declares
+HEADER_LOGGER ..> TYPEDEF_UID_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UID_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UID_T : declares
+MATH_UTILS ..> TYPEDEF_GID_T : declares
+TYPEDEF_GID_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_GID_T : declares
+HEADER_CONFIG ..> TYPEDEF_GID_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_GID_T : declares
+HEADER_LOGGER ..> TYPEDEF_GID_T : declares
+HEADER_SAMPLE ..> TYPEDEF_GID_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_GID_T : declares
+MATH_UTILS ..> TYPEDEF_PID_T : declares
+TYPEDEF_PID_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PID_T : declares
+HEADER_CONFIG ..> TYPEDEF_PID_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PID_T : declares
+HEADER_LOGGER ..> TYPEDEF_PID_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PID_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PID_T : declares
+MATH_UTILS ..> TYPEDEF_KEY_T : declares
+TYPEDEF_KEY_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_KEY_T : declares
+HEADER_CONFIG ..> TYPEDEF_KEY_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_KEY_T : declares
+HEADER_LOGGER ..> TYPEDEF_KEY_T : declares
+HEADER_SAMPLE ..> TYPEDEF_KEY_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_KEY_T : declares
+MATH_UTILS ..> TYPEDEF_SSIZE_T : declares
+TYPEDEF_SSIZE_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_SSIZE_T : declares
+HEADER_CONFIG ..> TYPEDEF_SSIZE_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_SSIZE_T : declares
+HEADER_LOGGER ..> TYPEDEF_SSIZE_T : declares
+HEADER_SAMPLE ..> TYPEDEF_SSIZE_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_SSIZE_T : declares
+MATH_UTILS ..> TYPEDEF_MODE_T : declares
+TYPEDEF_MODE_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MODE_T : declares
+HEADER_CONFIG ..> TYPEDEF_MODE_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_MODE_T : declares
+HEADER_LOGGER ..> TYPEDEF_MODE_T : declares
+HEADER_SAMPLE ..> TYPEDEF_MODE_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MODE_T : declares
+MATH_UTILS ..> TYPEDEF_NLINK_T : declares
+TYPEDEF_NLINK_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_NLINK_T : declares
+HEADER_CONFIG ..> TYPEDEF_NLINK_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_NLINK_T : declares
+HEADER_LOGGER ..> TYPEDEF_NLINK_T : declares
+HEADER_SAMPLE ..> TYPEDEF_NLINK_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_NLINK_T : declares
+MATH_UTILS ..> TYPEDEF_FD_MASK : declares
+TYPEDEF_FD_MASK -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_FD_MASK : declares
+HEADER_CONFIG ..> TYPEDEF_FD_MASK : declares
+HEADER_GEOMETRY ..> TYPEDEF_FD_MASK : declares
+HEADER_LOGGER ..> TYPEDEF_FD_MASK : declares
+HEADER_SAMPLE ..> TYPEDEF_FD_MASK : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_FD_MASK : declares
+MATH_UTILS ..> TYPEDEF__TYPES_FD_SET : declares
+TYPEDEF__TYPES_FD_SET -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF__TYPES_FD_SET : declares
+HEADER_CONFIG ..> TYPEDEF__TYPES_FD_SET : declares
+HEADER_GEOMETRY ..> TYPEDEF__TYPES_FD_SET : declares
+HEADER_LOGGER ..> TYPEDEF__TYPES_FD_SET : declares
+HEADER_SAMPLE ..> TYPEDEF__TYPES_FD_SET : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF__TYPES_FD_SET : declares
+MATH_UTILS ..> TYPEDEF_CLOCKID_T : declares
+TYPEDEF_CLOCKID_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_CLOCKID_T : declares
+HEADER_CONFIG ..> TYPEDEF_CLOCKID_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_CLOCKID_T : declares
+HEADER_LOGGER ..> TYPEDEF_CLOCKID_T : declares
+HEADER_SAMPLE ..> TYPEDEF_CLOCKID_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_CLOCKID_T : declares
+MATH_UTILS ..> TYPEDEF_TIMER_T : declares
+TYPEDEF_TIMER_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_TIMER_T : declares
+HEADER_CONFIG ..> TYPEDEF_TIMER_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_TIMER_T : declares
+HEADER_LOGGER ..> TYPEDEF_TIMER_T : declares
+HEADER_SAMPLE ..> TYPEDEF_TIMER_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_TIMER_T : declares
+MATH_UTILS ..> TYPEDEF_USECONDS_T : declares
+TYPEDEF_USECONDS_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_USECONDS_T : declares
+HEADER_CONFIG ..> TYPEDEF_USECONDS_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_USECONDS_T : declares
+HEADER_LOGGER ..> TYPEDEF_USECONDS_T : declares
+HEADER_SAMPLE ..> TYPEDEF_USECONDS_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_USECONDS_T : declares
+MATH_UTILS ..> TYPEDEF_SUSECONDS_T : declares
+TYPEDEF_SUSECONDS_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_SUSECONDS_T : declares
+HEADER_CONFIG ..> TYPEDEF_SUSECONDS_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_SUSECONDS_T : declares
+HEADER_LOGGER ..> TYPEDEF_SUSECONDS_T : declares
+HEADER_SAMPLE ..> TYPEDEF_SUSECONDS_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_SUSECONDS_T : declares
+MATH_UTILS ..> TYPEDEF_FILE : declares
+TYPEDEF_FILE -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_FILE : declares
+HEADER_CONFIG ..> TYPEDEF_FILE : declares
+HEADER_GEOMETRY ..> TYPEDEF_FILE : declares
+HEADER_LOGGER ..> TYPEDEF_FILE : declares
+HEADER_SAMPLE ..> TYPEDEF_FILE : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_FILE : declares
+MATH_UTILS ..> TYPEDEF_FPOS_T : declares
+TYPEDEF_FPOS_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_FPOS_T : declares
+HEADER_CONFIG ..> TYPEDEF_FPOS_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_FPOS_T : declares
+HEADER_LOGGER ..> TYPEDEF_FPOS_T : declares
+HEADER_SAMPLE ..> TYPEDEF_FPOS_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_FPOS_T : declares
+MATH_UTILS ..> TYPEDEF_COOKIE_READ_FUNCTION_T : declares
+TYPEDEF_COOKIE_READ_FUNCTION_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_COOKIE_READ_FUNCTION_T : declares
+HEADER_CONFIG ..> TYPEDEF_COOKIE_READ_FUNCTION_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_COOKIE_READ_FUNCTION_T : declares
+HEADER_LOGGER ..> TYPEDEF_COOKIE_READ_FUNCTION_T : declares
+HEADER_SAMPLE ..> TYPEDEF_COOKIE_READ_FUNCTION_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_COOKIE_READ_FUNCTION_T : declares
+MATH_UTILS ..> TYPEDEF_COOKIE_WRITE_FUNCTION_T : declares
+TYPEDEF_COOKIE_WRITE_FUNCTION_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_COOKIE_WRITE_FUNCTION_T : declares
+HEADER_CONFIG ..> TYPEDEF_COOKIE_WRITE_FUNCTION_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_COOKIE_WRITE_FUNCTION_T : declares
+HEADER_LOGGER ..> TYPEDEF_COOKIE_WRITE_FUNCTION_T : declares
+HEADER_SAMPLE ..> TYPEDEF_COOKIE_WRITE_FUNCTION_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_COOKIE_WRITE_FUNCTION_T : declares
+MATH_UTILS ..> TYPEDEF_COOKIE_SEEK_FUNCTION_T : declares
+TYPEDEF_COOKIE_SEEK_FUNCTION_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_COOKIE_SEEK_FUNCTION_T : declares
+HEADER_CONFIG ..> TYPEDEF_COOKIE_SEEK_FUNCTION_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_COOKIE_SEEK_FUNCTION_T : declares
+HEADER_LOGGER ..> TYPEDEF_COOKIE_SEEK_FUNCTION_T : declares
+HEADER_SAMPLE ..> TYPEDEF_COOKIE_SEEK_FUNCTION_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_COOKIE_SEEK_FUNCTION_T : declares
+MATH_UTILS ..> TYPEDEF_COOKIE_CLOSE_FUNCTION_T : declares
+TYPEDEF_COOKIE_CLOSE_FUNCTION_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_COOKIE_CLOSE_FUNCTION_T : declares
+HEADER_CONFIG ..> TYPEDEF_COOKIE_CLOSE_FUNCTION_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_COOKIE_CLOSE_FUNCTION_T : declares
+HEADER_LOGGER ..> TYPEDEF_COOKIE_CLOSE_FUNCTION_T : declares
+HEADER_SAMPLE ..> TYPEDEF_COOKIE_CLOSE_FUNCTION_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_COOKIE_CLOSE_FUNCTION_T : declares
+MATH_UTILS ..> TYPEDEF_COOKIE_IO_FUNCTIONS_T : declares
+TYPEDEF_COOKIE_IO_FUNCTIONS_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_COOKIE_IO_FUNCTIONS_T : declares
+HEADER_CONFIG ..> TYPEDEF_COOKIE_IO_FUNCTIONS_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_COOKIE_IO_FUNCTIONS_T : declares
+HEADER_LOGGER ..> TYPEDEF_COOKIE_IO_FUNCTIONS_T : declares
+HEADER_SAMPLE ..> TYPEDEF_COOKIE_IO_FUNCTIONS_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_COOKIE_IO_FUNCTIONS_T : declares
+MATH_UTILS ..> TYPEDEF_DIV_T : declares
+TYPEDEF_DIV_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_DIV_T : declares
+HEADER_CONFIG ..> TYPEDEF_DIV_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_DIV_T : declares
+HEADER_LOGGER ..> TYPEDEF_DIV_T : declares
+HEADER_SAMPLE ..> TYPEDEF_DIV_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_DIV_T : declares
+MATH_UTILS ..> TYPEDEF_LDIV_T : declares
+TYPEDEF_LDIV_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_LDIV_T : declares
+HEADER_CONFIG ..> TYPEDEF_LDIV_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_LDIV_T : declares
+HEADER_LOGGER ..> TYPEDEF_LDIV_T : declares
+HEADER_SAMPLE ..> TYPEDEF_LDIV_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_LDIV_T : declares
+MATH_UTILS ..> TYPEDEF_LLDIV_T : declares
+TYPEDEF_LLDIV_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_LLDIV_T : declares
+HEADER_CONFIG ..> TYPEDEF_LLDIV_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_LLDIV_T : declares
+HEADER_LOGGER ..> TYPEDEF_LLDIV_T : declares
+HEADER_SAMPLE ..> TYPEDEF_LLDIV_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_LLDIV_T : declares
+MATH_UTILS ..> TYPEDEF_SIGSET_T : declares
+TYPEDEF_SIGSET_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_SIGSET_T : declares
+HEADER_CONFIG ..> TYPEDEF_SIGSET_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_SIGSET_T : declares
+HEADER_LOGGER ..> TYPEDEF_SIGSET_T : declares
+HEADER_SAMPLE ..> TYPEDEF_SIGSET_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_SIGSET_T : declares
+MATH_UTILS ..> TYPEDEF___SIGSET_T : declares
+TYPEDEF___SIGSET_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___SIGSET_T : declares
+HEADER_CONFIG ..> TYPEDEF___SIGSET_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___SIGSET_T : declares
+HEADER_LOGGER ..> TYPEDEF___SIGSET_T : declares
+HEADER_SAMPLE ..> TYPEDEF___SIGSET_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___SIGSET_T : declares
+MATH_UTILS ..> TYPEDEF__SIG_FUNC_PTR : declares
+TYPEDEF__SIG_FUNC_PTR -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF__SIG_FUNC_PTR : declares
+HEADER_CONFIG ..> TYPEDEF__SIG_FUNC_PTR : declares
+HEADER_GEOMETRY ..> TYPEDEF__SIG_FUNC_PTR : declares
+HEADER_LOGGER ..> TYPEDEF__SIG_FUNC_PTR : declares
+HEADER_SAMPLE ..> TYPEDEF__SIG_FUNC_PTR : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF__SIG_FUNC_PTR : declares
+MATH_UTILS ..> TYPEDEF_SIG_ATOMIC_T : declares
+TYPEDEF_SIG_ATOMIC_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_SIG_ATOMIC_T : declares
+HEADER_CONFIG ..> TYPEDEF_SIG_ATOMIC_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_SIG_ATOMIC_T : declares
+HEADER_LOGGER ..> TYPEDEF_SIG_ATOMIC_T : declares
+HEADER_SAMPLE ..> TYPEDEF_SIG_ATOMIC_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_SIG_ATOMIC_T : declares
+MATH_UTILS ..> TYPEDEF___TZRULE_TYPE : declares
+TYPEDEF___TZRULE_TYPE -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___TZRULE_TYPE : declares
+HEADER_CONFIG ..> TYPEDEF___TZRULE_TYPE : declares
+HEADER_GEOMETRY ..> TYPEDEF___TZRULE_TYPE : declares
+HEADER_LOGGER ..> TYPEDEF___TZRULE_TYPE : declares
+HEADER_SAMPLE ..> TYPEDEF___TZRULE_TYPE : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___TZRULE_TYPE : declares
+MATH_UTILS ..> TYPEDEF___TZINFO_TYPE : declares
+TYPEDEF___TZINFO_TYPE -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___TZINFO_TYPE : declares
+HEADER_CONFIG ..> TYPEDEF___TZINFO_TYPE : declares
+HEADER_GEOMETRY ..> TYPEDEF___TZINFO_TYPE : declares
+HEADER_LOGGER ..> TYPEDEF___TZINFO_TYPE : declares
+HEADER_SAMPLE ..> TYPEDEF___TZINFO_TYPE : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___TZINFO_TYPE : declares
+MATH_UTILS ..> TYPEDEF_MBSTATE_T : declares
+TYPEDEF_MBSTATE_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MBSTATE_T : declares
+HEADER_CONFIG ..> TYPEDEF_MBSTATE_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_MBSTATE_T : declares
+HEADER_LOGGER ..> TYPEDEF_MBSTATE_T : declares
+HEADER_SAMPLE ..> TYPEDEF_MBSTATE_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MBSTATE_T : declares
+MATH_UTILS ..> TYPEDEF_SEM_T : declares
+TYPEDEF_SEM_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_SEM_T : declares
+HEADER_CONFIG ..> TYPEDEF_SEM_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_SEM_T : declares
+HEADER_LOGGER ..> TYPEDEF_SEM_T : declares
+HEADER_SAMPLE ..> TYPEDEF_SEM_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_SEM_T : declares
+MATH_UTILS ..> TYPEDEF_PTHREAD_T : declares
+TYPEDEF_PTHREAD_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTHREAD_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTHREAD_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTHREAD_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTHREAD_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTHREAD_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTHREAD_T : declares
+MATH_UTILS ..> TYPEDEF_PTHREAD_ATTR_T : declares
+TYPEDEF_PTHREAD_ATTR_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTHREAD_ATTR_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTHREAD_ATTR_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTHREAD_ATTR_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTHREAD_ATTR_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTHREAD_ATTR_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTHREAD_ATTR_T : declares
+MATH_UTILS ..> TYPEDEF_PTHREAD_MUTEX_T : declares
+TYPEDEF_PTHREAD_MUTEX_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTHREAD_MUTEX_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTHREAD_MUTEX_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTHREAD_MUTEX_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTHREAD_MUTEX_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTHREAD_MUTEX_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTHREAD_MUTEX_T : declares
+MATH_UTILS ..> TYPEDEF_PTHREAD_MUTEXATTR_T : declares
+TYPEDEF_PTHREAD_MUTEXATTR_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTHREAD_MUTEXATTR_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTHREAD_MUTEXATTR_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTHREAD_MUTEXATTR_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTHREAD_MUTEXATTR_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTHREAD_MUTEXATTR_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTHREAD_MUTEXATTR_T : declares
+MATH_UTILS ..> TYPEDEF_PTHREAD_COND_T : declares
+TYPEDEF_PTHREAD_COND_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTHREAD_COND_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTHREAD_COND_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTHREAD_COND_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTHREAD_COND_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTHREAD_COND_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTHREAD_COND_T : declares
+MATH_UTILS ..> TYPEDEF_PTHREAD_CONDATTR_T : declares
+TYPEDEF_PTHREAD_CONDATTR_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTHREAD_CONDATTR_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTHREAD_CONDATTR_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTHREAD_CONDATTR_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTHREAD_CONDATTR_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTHREAD_CONDATTR_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTHREAD_CONDATTR_T : declares
+MATH_UTILS ..> TYPEDEF_PTHREAD_KEY_T : declares
+TYPEDEF_PTHREAD_KEY_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTHREAD_KEY_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTHREAD_KEY_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTHREAD_KEY_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTHREAD_KEY_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTHREAD_KEY_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTHREAD_KEY_T : declares
+MATH_UTILS ..> TYPEDEF_PTHREAD_ONCE_T : declares
+TYPEDEF_PTHREAD_ONCE_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTHREAD_ONCE_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTHREAD_ONCE_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTHREAD_ONCE_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTHREAD_ONCE_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTHREAD_ONCE_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTHREAD_ONCE_T : declares
+MATH_UTILS ..> TYPEDEF_PTHREAD_RWLOCK_T : declares
+TYPEDEF_PTHREAD_RWLOCK_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTHREAD_RWLOCK_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTHREAD_RWLOCK_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTHREAD_RWLOCK_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTHREAD_RWLOCK_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTHREAD_RWLOCK_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTHREAD_RWLOCK_T : declares
+MATH_UTILS ..> TYPEDEF_PTHREAD_RWLOCKATTR_T : declares
+TYPEDEF_PTHREAD_RWLOCKATTR_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTHREAD_RWLOCKATTR_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTHREAD_RWLOCKATTR_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTHREAD_RWLOCKATTR_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTHREAD_RWLOCKATTR_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTHREAD_RWLOCKATTR_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTHREAD_RWLOCKATTR_T : declares
+MATH_UTILS ..> TYPEDEF_PTHREAD_SPINLOCK_T : declares
+TYPEDEF_PTHREAD_SPINLOCK_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTHREAD_SPINLOCK_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTHREAD_SPINLOCK_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTHREAD_SPINLOCK_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTHREAD_SPINLOCK_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTHREAD_SPINLOCK_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTHREAD_SPINLOCK_T : declares
+MATH_UTILS ..> TYPEDEF_PTHREAD_BARRIER_T : declares
+TYPEDEF_PTHREAD_BARRIER_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTHREAD_BARRIER_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTHREAD_BARRIER_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTHREAD_BARRIER_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTHREAD_BARRIER_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTHREAD_BARRIER_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTHREAD_BARRIER_T : declares
+MATH_UTILS ..> TYPEDEF_PTHREAD_BARRIERATTR_T : declares
+TYPEDEF_PTHREAD_BARRIERATTR_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_PTHREAD_BARRIERATTR_T : declares
+HEADER_CONFIG ..> TYPEDEF_PTHREAD_BARRIERATTR_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_PTHREAD_BARRIERATTR_T : declares
+HEADER_LOGGER ..> TYPEDEF_PTHREAD_BARRIERATTR_T : declares
+HEADER_SAMPLE ..> TYPEDEF_PTHREAD_BARRIERATTR_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_PTHREAD_BARRIERATTR_T : declares
+MATH_UTILS ..> TYPEDEF_JMP_BUF : declares
+TYPEDEF_JMP_BUF -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_JMP_BUF : declares
+HEADER_CONFIG ..> TYPEDEF_JMP_BUF : declares
+HEADER_GEOMETRY ..> TYPEDEF_JMP_BUF : declares
+HEADER_LOGGER ..> TYPEDEF_JMP_BUF : declares
+HEADER_SAMPLE ..> TYPEDEF_JMP_BUF : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_JMP_BUF : declares
+MATH_UTILS ..> TYPEDEF_RLIM_T : declares
+TYPEDEF_RLIM_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_RLIM_T : declares
+HEADER_CONFIG ..> TYPEDEF_RLIM_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_RLIM_T : declares
+HEADER_LOGGER ..> TYPEDEF_RLIM_T : declares
+HEADER_SAMPLE ..> TYPEDEF_RLIM_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_RLIM_T : declares
+MATH_UTILS ..> TYPEDEF_SA_FAMILY_T : declares
+TYPEDEF_SA_FAMILY_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_SA_FAMILY_T : declares
+HEADER_CONFIG ..> TYPEDEF_SA_FAMILY_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_SA_FAMILY_T : declares
+HEADER_LOGGER ..> TYPEDEF_SA_FAMILY_T : declares
+HEADER_SAMPLE ..> TYPEDEF_SA_FAMILY_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_SA_FAMILY_T : declares
+MATH_UTILS ..> TYPEDEF_SIGJMP_BUF : declares
+TYPEDEF_SIGJMP_BUF -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_SIGJMP_BUF : declares
+HEADER_CONFIG ..> TYPEDEF_SIGJMP_BUF : declares
+HEADER_GEOMETRY ..> TYPEDEF_SIGJMP_BUF : declares
+HEADER_LOGGER ..> TYPEDEF_SIGJMP_BUF : declares
+HEADER_SAMPLE ..> TYPEDEF_SIGJMP_BUF : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_SIGJMP_BUF : declares
+MATH_UTILS ..> TYPEDEF_STACK_T : declares
+TYPEDEF_STACK_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_STACK_T : declares
+HEADER_CONFIG ..> TYPEDEF_STACK_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_STACK_T : declares
+HEADER_LOGGER ..> TYPEDEF_STACK_T : declares
+HEADER_SAMPLE ..> TYPEDEF_STACK_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_STACK_T : declares
+MATH_UTILS ..> TYPEDEF_SIGINFO_T : declares
+TYPEDEF_SIGINFO_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_SIGINFO_T : declares
+HEADER_CONFIG ..> TYPEDEF_SIGINFO_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_SIGINFO_T : declares
+HEADER_LOGGER ..> TYPEDEF_SIGINFO_T : declares
+HEADER_SAMPLE ..> TYPEDEF_SIGINFO_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_SIGINFO_T : declares
+MATH_UTILS ..> TYPEDEF_Z_STREAM : declares
+TYPEDEF_Z_STREAM -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_Z_STREAM : declares
+HEADER_CONFIG ..> TYPEDEF_Z_STREAM : declares
+HEADER_GEOMETRY ..> TYPEDEF_Z_STREAM : declares
+HEADER_LOGGER ..> TYPEDEF_Z_STREAM : declares
+HEADER_SAMPLE ..> TYPEDEF_Z_STREAM : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_Z_STREAM : declares
+MATH_UTILS ..> TYPEDEF_INT8_T : declares
+TYPEDEF_INT8_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INT8_T : declares
+HEADER_CONFIG ..> TYPEDEF_INT8_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INT8_T : declares
+HEADER_LOGGER ..> TYPEDEF_INT8_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INT8_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INT8_T : declares
+MATH_UTILS ..> TYPEDEF_UINT8_T : declares
+TYPEDEF_UINT8_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINT8_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINT8_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINT8_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINT8_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINT8_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINT8_T : declares
+MATH_UTILS ..> TYPEDEF_INT16_T : declares
+TYPEDEF_INT16_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INT16_T : declares
+HEADER_CONFIG ..> TYPEDEF_INT16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INT16_T : declares
+HEADER_LOGGER ..> TYPEDEF_INT16_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INT16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INT16_T : declares
+MATH_UTILS ..> TYPEDEF_UINT16_T : declares
+TYPEDEF_UINT16_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINT16_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINT16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINT16_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINT16_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINT16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINT16_T : declares
+MATH_UTILS ..> TYPEDEF_INT32_T : declares
+TYPEDEF_INT32_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INT32_T : declares
+HEADER_CONFIG ..> TYPEDEF_INT32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INT32_T : declares
+HEADER_LOGGER ..> TYPEDEF_INT32_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INT32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INT32_T : declares
+MATH_UTILS ..> TYPEDEF_UINT32_T : declares
+TYPEDEF_UINT32_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINT32_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINT32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINT32_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINT32_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINT32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINT32_T : declares
+MATH_UTILS ..> TYPEDEF_INT64_T : declares
+TYPEDEF_INT64_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INT64_T : declares
+HEADER_CONFIG ..> TYPEDEF_INT64_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INT64_T : declares
+HEADER_LOGGER ..> TYPEDEF_INT64_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INT64_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INT64_T : declares
+MATH_UTILS ..> TYPEDEF_UINT64_T : declares
+TYPEDEF_UINT64_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINT64_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINT64_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINT64_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINT64_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINT64_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINT64_T : declares
+MATH_UTILS ..> TYPEDEF_INT_LEAST8_T : declares
+TYPEDEF_INT_LEAST8_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INT_LEAST8_T : declares
+HEADER_CONFIG ..> TYPEDEF_INT_LEAST8_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INT_LEAST8_T : declares
+HEADER_LOGGER ..> TYPEDEF_INT_LEAST8_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INT_LEAST8_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INT_LEAST8_T : declares
+MATH_UTILS ..> TYPEDEF_UINT_LEAST8_T : declares
+TYPEDEF_UINT_LEAST8_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINT_LEAST8_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINT_LEAST8_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINT_LEAST8_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINT_LEAST8_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINT_LEAST8_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINT_LEAST8_T : declares
+MATH_UTILS ..> TYPEDEF_INT_LEAST16_T : declares
+TYPEDEF_INT_LEAST16_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INT_LEAST16_T : declares
+HEADER_CONFIG ..> TYPEDEF_INT_LEAST16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INT_LEAST16_T : declares
+HEADER_LOGGER ..> TYPEDEF_INT_LEAST16_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INT_LEAST16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INT_LEAST16_T : declares
+MATH_UTILS ..> TYPEDEF_UINT_LEAST16_T : declares
+TYPEDEF_UINT_LEAST16_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINT_LEAST16_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINT_LEAST16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINT_LEAST16_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINT_LEAST16_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINT_LEAST16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINT_LEAST16_T : declares
+MATH_UTILS ..> TYPEDEF_INT_LEAST32_T : declares
+TYPEDEF_INT_LEAST32_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INT_LEAST32_T : declares
+HEADER_CONFIG ..> TYPEDEF_INT_LEAST32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INT_LEAST32_T : declares
+HEADER_LOGGER ..> TYPEDEF_INT_LEAST32_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INT_LEAST32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INT_LEAST32_T : declares
+MATH_UTILS ..> TYPEDEF_UINT_LEAST32_T : declares
+TYPEDEF_UINT_LEAST32_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINT_LEAST32_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINT_LEAST32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINT_LEAST32_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINT_LEAST32_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINT_LEAST32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINT_LEAST32_T : declares
+MATH_UTILS ..> TYPEDEF_INT_LEAST64_T : declares
+TYPEDEF_INT_LEAST64_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INT_LEAST64_T : declares
+HEADER_CONFIG ..> TYPEDEF_INT_LEAST64_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INT_LEAST64_T : declares
+HEADER_LOGGER ..> TYPEDEF_INT_LEAST64_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INT_LEAST64_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INT_LEAST64_T : declares
+MATH_UTILS ..> TYPEDEF_UINT_LEAST64_T : declares
+TYPEDEF_UINT_LEAST64_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINT_LEAST64_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINT_LEAST64_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINT_LEAST64_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINT_LEAST64_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINT_LEAST64_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINT_LEAST64_T : declares
+MATH_UTILS ..> TYPEDEF_INT_FAST8_T : declares
+TYPEDEF_INT_FAST8_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INT_FAST8_T : declares
+HEADER_CONFIG ..> TYPEDEF_INT_FAST8_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INT_FAST8_T : declares
+HEADER_LOGGER ..> TYPEDEF_INT_FAST8_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INT_FAST8_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INT_FAST8_T : declares
+MATH_UTILS ..> TYPEDEF_UINT_FAST8_T : declares
+TYPEDEF_UINT_FAST8_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINT_FAST8_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINT_FAST8_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINT_FAST8_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINT_FAST8_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINT_FAST8_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINT_FAST8_T : declares
+MATH_UTILS ..> TYPEDEF_INT_FAST16_T : declares
+TYPEDEF_INT_FAST16_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INT_FAST16_T : declares
+HEADER_CONFIG ..> TYPEDEF_INT_FAST16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INT_FAST16_T : declares
+HEADER_LOGGER ..> TYPEDEF_INT_FAST16_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INT_FAST16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INT_FAST16_T : declares
+MATH_UTILS ..> TYPEDEF_UINT_FAST16_T : declares
+TYPEDEF_UINT_FAST16_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINT_FAST16_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINT_FAST16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINT_FAST16_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINT_FAST16_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINT_FAST16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINT_FAST16_T : declares
+MATH_UTILS ..> TYPEDEF_INT_FAST32_T : declares
+TYPEDEF_INT_FAST32_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INT_FAST32_T : declares
+HEADER_CONFIG ..> TYPEDEF_INT_FAST32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INT_FAST32_T : declares
+HEADER_LOGGER ..> TYPEDEF_INT_FAST32_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INT_FAST32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INT_FAST32_T : declares
+MATH_UTILS ..> TYPEDEF_UINT_FAST32_T : declares
+TYPEDEF_UINT_FAST32_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINT_FAST32_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINT_FAST32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINT_FAST32_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINT_FAST32_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINT_FAST32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINT_FAST32_T : declares
+MATH_UTILS ..> TYPEDEF_INT_FAST64_T : declares
+TYPEDEF_INT_FAST64_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INT_FAST64_T : declares
+HEADER_CONFIG ..> TYPEDEF_INT_FAST64_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INT_FAST64_T : declares
+HEADER_LOGGER ..> TYPEDEF_INT_FAST64_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INT_FAST64_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INT_FAST64_T : declares
+MATH_UTILS ..> TYPEDEF_UINT_FAST64_T : declares
+TYPEDEF_UINT_FAST64_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINT_FAST64_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINT_FAST64_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINT_FAST64_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINT_FAST64_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINT_FAST64_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINT_FAST64_T : declares
+MATH_UTILS ..> TYPEDEF_INTPTR_T : declares
+TYPEDEF_INTPTR_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INTPTR_T : declares
+HEADER_CONFIG ..> TYPEDEF_INTPTR_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INTPTR_T : declares
+HEADER_LOGGER ..> TYPEDEF_INTPTR_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INTPTR_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INTPTR_T : declares
+MATH_UTILS ..> TYPEDEF_UINTPTR_T : declares
+TYPEDEF_UINTPTR_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINTPTR_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINTPTR_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINTPTR_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINTPTR_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINTPTR_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINTPTR_T : declares
+MATH_UTILS ..> TYPEDEF_INTMAX_T : declares
+TYPEDEF_INTMAX_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_INTMAX_T : declares
+HEADER_CONFIG ..> TYPEDEF_INTMAX_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_INTMAX_T : declares
+HEADER_LOGGER ..> TYPEDEF_INTMAX_T : declares
+HEADER_SAMPLE ..> TYPEDEF_INTMAX_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_INTMAX_T : declares
+MATH_UTILS ..> TYPEDEF_UINTMAX_T : declares
+TYPEDEF_UINTMAX_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_UINTMAX_T : declares
+HEADER_CONFIG ..> TYPEDEF_UINTMAX_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_UINTMAX_T : declares
+HEADER_LOGGER ..> TYPEDEF_UINTMAX_T : declares
+HEADER_SAMPLE ..> TYPEDEF_UINTMAX_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_UINTMAX_T : declares
+MATH_UTILS ..> TYPEDEF_BOOL : declares
+TYPEDEF_BOOL -|> TYPE__BOOL : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_BOOL : declares
+HEADER_CONFIG ..> TYPEDEF_BOOL : declares
+HEADER_GEOMETRY ..> TYPEDEF_BOOL : declares
+HEADER_LOGGER ..> TYPEDEF_BOOL : declares
+HEADER_SAMPLE ..> TYPEDEF_BOOL : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_BOOL : declares
+MATH_UTILS ..> TYPEDEF___INT128_T : declares
+TYPEDEF___INT128_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___INT128_T : declares
+HEADER_CONFIG ..> TYPEDEF___INT128_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___INT128_T : declares
+HEADER_LOGGER ..> TYPEDEF___INT128_T : declares
+HEADER_SAMPLE ..> TYPEDEF___INT128_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___INT128_T : declares
+MATH_UTILS ..> TYPEDEF___UINT128_T : declares
+TYPEDEF___UINT128_T -|> TYPE_INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___UINT128_T : declares
+HEADER_CONFIG ..> TYPEDEF___UINT128_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___UINT128_T : declares
+HEADER_LOGGER ..> TYPEDEF___UINT128_T : declares
+HEADER_SAMPLE ..> TYPEDEF___UINT128_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___UINT128_T : declares
+MATH_UTILS ..> TYPEDEF_MIREGLNATIVEWINDOWTYPE : declares
+TYPEDEF_MIREGLNATIVEWINDOWTYPE -|> TYPE_VOID * : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MIREGLNATIVEWINDOWTYPE : declares
+HEADER_CONFIG ..> TYPEDEF_MIREGLNATIVEWINDOWTYPE : declares
+HEADER_GEOMETRY ..> TYPEDEF_MIREGLNATIVEWINDOWTYPE : declares
+HEADER_LOGGER ..> TYPEDEF_MIREGLNATIVEWINDOWTYPE : declares
+HEADER_SAMPLE ..> TYPEDEF_MIREGLNATIVEWINDOWTYPE : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MIREGLNATIVEWINDOWTYPE : declares
+MATH_UTILS ..> TYPEDEF_MIREGLNATIVEDISPLAYTYPE : declares
+TYPEDEF_MIREGLNATIVEDISPLAYTYPE -|> TYPE_VOID * : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MIREGLNATIVEDISPLAYTYPE : declares
+HEADER_CONFIG ..> TYPEDEF_MIREGLNATIVEDISPLAYTYPE : declares
+HEADER_GEOMETRY ..> TYPEDEF_MIREGLNATIVEDISPLAYTYPE : declares
+HEADER_LOGGER ..> TYPEDEF_MIREGLNATIVEDISPLAYTYPE : declares
+HEADER_SAMPLE ..> TYPEDEF_MIREGLNATIVEDISPLAYTYPE : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MIREGLNATIVEDISPLAYTYPE : declares
+MATH_UTILS ..> TYPEDEF_MIRCONNECTION : declares
+TYPEDEF_MIRCONNECTION -|> TYPE_STRUCT MIRCONNECTION : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MIRCONNECTION : declares
+HEADER_CONFIG ..> TYPEDEF_MIRCONNECTION : declares
+HEADER_GEOMETRY ..> TYPEDEF_MIRCONNECTION : declares
+HEADER_LOGGER ..> TYPEDEF_MIRCONNECTION : declares
+HEADER_SAMPLE ..> TYPEDEF_MIRCONNECTION : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MIRCONNECTION : declares
+MATH_UTILS ..> TYPEDEF_MIRSURFACE : declares
+TYPEDEF_MIRSURFACE -|> TYPE_STRUCT MIRSURFACE : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MIRSURFACE : declares
+HEADER_CONFIG ..> TYPEDEF_MIRSURFACE : declares
+HEADER_GEOMETRY ..> TYPEDEF_MIRSURFACE : declares
+HEADER_LOGGER ..> TYPEDEF_MIRSURFACE : declares
+HEADER_SAMPLE ..> TYPEDEF_MIRSURFACE : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MIRSURFACE : declares
+MATH_UTILS ..> TYPEDEF_MIRSURFACESPEC : declares
+TYPEDEF_MIRSURFACESPEC -|> TYPE_STRUCT MIRSURFACESPEC : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MIRSURFACESPEC : declares
+HEADER_CONFIG ..> TYPEDEF_MIRSURFACESPEC : declares
+HEADER_GEOMETRY ..> TYPEDEF_MIRSURFACESPEC : declares
+HEADER_LOGGER ..> TYPEDEF_MIRSURFACESPEC : declares
+HEADER_SAMPLE ..> TYPEDEF_MIRSURFACESPEC : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MIRSURFACESPEC : declares
+MATH_UTILS ..> TYPEDEF_MIRSCREENCAST : declares
+TYPEDEF_MIRSCREENCAST -|> TYPE_STRUCT MIRSCREENCAST : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MIRSCREENCAST : declares
+HEADER_CONFIG ..> TYPEDEF_MIRSCREENCAST : declares
+HEADER_GEOMETRY ..> TYPEDEF_MIRSCREENCAST : declares
+HEADER_LOGGER ..> TYPEDEF_MIRSCREENCAST : declares
+HEADER_SAMPLE ..> TYPEDEF_MIRSCREENCAST : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MIRSCREENCAST : declares
+MATH_UTILS ..> TYPEDEF_MIRPROMPTSESSION : declares
+TYPEDEF_MIRPROMPTSESSION -|> TYPE_STRUCT MIRPROMPTSESSION : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MIRPROMPTSESSION : declares
+HEADER_CONFIG ..> TYPEDEF_MIRPROMPTSESSION : declares
+HEADER_GEOMETRY ..> TYPEDEF_MIRPROMPTSESSION : declares
+HEADER_LOGGER ..> TYPEDEF_MIRPROMPTSESSION : declares
+HEADER_SAMPLE ..> TYPEDEF_MIRPROMPTSESSION : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MIRPROMPTSESSION : declares
+MATH_UTILS ..> TYPEDEF_MIRBUFFERSTREAM : declares
+TYPEDEF_MIRBUFFERSTREAM -|> TYPE_STRUCT MIRBUFFERSTREAM : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MIRBUFFERSTREAM : declares
+HEADER_CONFIG ..> TYPEDEF_MIRBUFFERSTREAM : declares
+HEADER_GEOMETRY ..> TYPEDEF_MIRBUFFERSTREAM : declares
+HEADER_LOGGER ..> TYPEDEF_MIRBUFFERSTREAM : declares
+HEADER_SAMPLE ..> TYPEDEF_MIRBUFFERSTREAM : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MIRBUFFERSTREAM : declares
+MATH_UTILS ..> TYPEDEF_MIRPERSISTENTID : declares
+TYPEDEF_MIRPERSISTENTID -|> TYPE_STRUCT MIRPERSISTENTID : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MIRPERSISTENTID : declares
+HEADER_CONFIG ..> TYPEDEF_MIRPERSISTENTID : declares
+HEADER_GEOMETRY ..> TYPEDEF_MIRPERSISTENTID : declares
+HEADER_LOGGER ..> TYPEDEF_MIRPERSISTENTID : declares
+HEADER_SAMPLE ..> TYPEDEF_MIRPERSISTENTID : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MIRPERSISTENTID : declares
+MATH_UTILS ..> TYPEDEF_MIRBLOB : declares
+TYPEDEF_MIRBLOB -|> TYPE_STRUCT MIRBLOB : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MIRBLOB : declares
+HEADER_CONFIG ..> TYPEDEF_MIRBLOB : declares
+HEADER_GEOMETRY ..> TYPEDEF_MIRBLOB : declares
+HEADER_LOGGER ..> TYPEDEF_MIRBLOB : declares
+HEADER_SAMPLE ..> TYPEDEF_MIRBLOB : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MIRBLOB : declares
+MATH_UTILS ..> TYPEDEF_MIRDISPLAYCONFIG : declares
+TYPEDEF_MIRDISPLAYCONFIG -|> TYPE_STRUCT MIRDISPLAYCONFIG : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MIRDISPLAYCONFIG : declares
+HEADER_CONFIG ..> TYPEDEF_MIRDISPLAYCONFIG : declares
+HEADER_GEOMETRY ..> TYPEDEF_MIRDISPLAYCONFIG : declares
+HEADER_LOGGER ..> TYPEDEF_MIRDISPLAYCONFIG : declares
+HEADER_SAMPLE ..> TYPEDEF_MIRDISPLAYCONFIG : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MIRDISPLAYCONFIG : declares
+MATH_UTILS ..> TYPEDEF_XCB_CONNECTION_T : declares
+TYPEDEF_XCB_CONNECTION_T -|> TYPE_STRUCT XCB_CONNECTION_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_XCB_CONNECTION_T : declares
+HEADER_CONFIG ..> TYPEDEF_XCB_CONNECTION_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_XCB_CONNECTION_T : declares
+HEADER_LOGGER ..> TYPEDEF_XCB_CONNECTION_T : declares
+HEADER_SAMPLE ..> TYPEDEF_XCB_CONNECTION_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_XCB_CONNECTION_T : declares
+MATH_UTILS ..> TYPEDEF_XCB_WINDOW_T : declares
+TYPEDEF_XCB_WINDOW_T -|> TYPE_UINT32_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_XCB_WINDOW_T : declares
+HEADER_CONFIG ..> TYPEDEF_XCB_WINDOW_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_XCB_WINDOW_T : declares
+HEADER_LOGGER ..> TYPEDEF_XCB_WINDOW_T : declares
+HEADER_SAMPLE ..> TYPEDEF_XCB_WINDOW_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_XCB_WINDOW_T : declares
+MATH_UTILS ..> TYPEDEF_XCB_VISUALID_T : declares
+TYPEDEF_XCB_VISUALID_T -|> TYPE_UINT32_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_XCB_VISUALID_T : declares
+HEADER_CONFIG ..> TYPEDEF_XCB_VISUALID_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_XCB_VISUALID_T : declares
+HEADER_LOGGER ..> TYPEDEF_XCB_VISUALID_T : declares
+HEADER_SAMPLE ..> TYPEDEF_XCB_VISUALID_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_XCB_VISUALID_T : declares
+MATH_UTILS ..> TYPEDEF_DIR : declares
+TYPEDEF_DIR -|> TYPE_VOID * : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_DIR : declares
+HEADER_CONFIG ..> TYPEDEF_DIR : declares
+HEADER_GEOMETRY ..> TYPEDEF_DIR : declares
+HEADER_LOGGER ..> TYPEDEF_DIR : declares
+HEADER_SAMPLE ..> TYPEDEF_DIR : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_DIR : declares
+MATH_UTILS ..> TYPEDEF___SOCKLEN_T : declares
+TYPEDEF___SOCKLEN_T -|> TYPE___UINT32_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF___SOCKLEN_T : declares
+HEADER_CONFIG ..> TYPEDEF___SOCKLEN_T : declares
+HEADER_GEOMETRY ..> TYPEDEF___SOCKLEN_T : declares
+HEADER_LOGGER ..> TYPEDEF___SOCKLEN_T : declares
+HEADER_SAMPLE ..> TYPEDEF___SOCKLEN_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF___SOCKLEN_T : declares
+MATH_UTILS ..> TYPEDEF_SOCKLEN_T : declares
+TYPEDEF_SOCKLEN_T -|> TYPE___SOCKLEN_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_SOCKLEN_T : declares
+HEADER_CONFIG ..> TYPEDEF_SOCKLEN_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_SOCKLEN_T : declares
+HEADER_LOGGER ..> TYPEDEF_SOCKLEN_T : declares
+HEADER_SAMPLE ..> TYPEDEF_SOCKLEN_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_SOCKLEN_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_BOOL : declares
+TYPEDEF_ATOMIC_BOOL -|> TYPE__ATOMIC _BOOL : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_BOOL : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_BOOL : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_BOOL : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_BOOL : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_BOOL : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_BOOL : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR : declares
+TYPEDEF_ATOMIC_CHAR -|> TYPE__ATOMIC CHAR : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_CHAR : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_CHAR : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_CHAR : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_CHAR : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_CHAR : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_CHAR : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_SCHAR : declares
+TYPEDEF_ATOMIC_SCHAR -|> TYPE__ATOMIC SIGNED CHAR : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_SCHAR : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_SCHAR : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_SCHAR : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_SCHAR : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_SCHAR : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_SCHAR : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_UCHAR : declares
+TYPEDEF_ATOMIC_UCHAR -|> TYPE__ATOMIC UNSIGNED CHAR : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_UCHAR : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_UCHAR : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_UCHAR : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_UCHAR : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_UCHAR : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_UCHAR : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_SHORT : declares
+TYPEDEF_ATOMIC_SHORT -|> TYPE__ATOMIC SHORT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_SHORT : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_SHORT : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_SHORT : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_SHORT : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_SHORT : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_SHORT : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_USHORT : declares
+TYPEDEF_ATOMIC_USHORT -|> TYPE__ATOMIC UNSIGNED SHORT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_USHORT : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_USHORT : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_USHORT : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_USHORT : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_USHORT : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_USHORT : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT : declares
+TYPEDEF_ATOMIC_INT -|> TYPE__ATOMIC INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_INT : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_INT : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_INT : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_INT : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_INT : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_INT : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT : declares
+TYPEDEF_ATOMIC_UINT -|> TYPE__ATOMIC UNSIGNED INT : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_UINT : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_UINT : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_UINT : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_UINT : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_UINT : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_UINT : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_LONG : declares
+TYPEDEF_ATOMIC_LONG -|> TYPE__ATOMIC LONG : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_LONG : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_LONG : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_LONG : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_LONG : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_LONG : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_LONG : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_ULONG : declares
+TYPEDEF_ATOMIC_ULONG -|> TYPE__ATOMIC UNSIGNED LONG : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_ULONG : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_ULONG : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_ULONG : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_ULONG : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_ULONG : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_ULONG : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_LLONG : declares
+TYPEDEF_ATOMIC_LLONG -|> TYPE__ATOMIC LONG LONG : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_LLONG : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_LLONG : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_LLONG : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_LLONG : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_LLONG : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_LLONG : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_ULLONG : declares
+TYPEDEF_ATOMIC_ULLONG -|> TYPE__ATOMIC UNSIGNED LONG LONG : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_ULLONG : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_ULLONG : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_ULLONG : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_ULLONG : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_ULLONG : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_ULLONG : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR16_T : declares
+TYPEDEF_ATOMIC_CHAR16_T -|> TYPE__ATOMIC UINT_LEAST16_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_CHAR16_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_CHAR16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_CHAR16_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_CHAR16_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_CHAR16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_CHAR16_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR32_T : declares
+TYPEDEF_ATOMIC_CHAR32_T -|> TYPE__ATOMIC UINT_LEAST32_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_CHAR32_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_CHAR32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_CHAR32_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_CHAR32_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_CHAR32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_CHAR32_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_WCHAR_T : declares
+TYPEDEF_ATOMIC_WCHAR_T -|> TYPE__ATOMIC WCHAR_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_WCHAR_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_WCHAR_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_WCHAR_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_WCHAR_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_WCHAR_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_WCHAR_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST8_T : declares
+TYPEDEF_ATOMIC_INT_LEAST8_T -|> TYPE__ATOMIC INT_LEAST8_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_INT_LEAST8_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_INT_LEAST8_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_INT_LEAST8_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_INT_LEAST8_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_INT_LEAST8_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_INT_LEAST8_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST8_T : declares
+TYPEDEF_ATOMIC_UINT_LEAST8_T -|> TYPE__ATOMIC UINT_LEAST8_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_UINT_LEAST8_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_UINT_LEAST8_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_UINT_LEAST8_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_UINT_LEAST8_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_UINT_LEAST8_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_UINT_LEAST8_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST16_T : declares
+TYPEDEF_ATOMIC_INT_LEAST16_T -|> TYPE__ATOMIC INT_LEAST16_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_INT_LEAST16_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_INT_LEAST16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_INT_LEAST16_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_INT_LEAST16_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_INT_LEAST16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_INT_LEAST16_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST16_T : declares
+TYPEDEF_ATOMIC_UINT_LEAST16_T -|> TYPE__ATOMIC UINT_LEAST16_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_UINT_LEAST16_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_UINT_LEAST16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_UINT_LEAST16_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_UINT_LEAST16_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_UINT_LEAST16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_UINT_LEAST16_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST32_T : declares
+TYPEDEF_ATOMIC_INT_LEAST32_T -|> TYPE__ATOMIC INT_LEAST32_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_INT_LEAST32_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_INT_LEAST32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_INT_LEAST32_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_INT_LEAST32_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_INT_LEAST32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_INT_LEAST32_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST32_T : declares
+TYPEDEF_ATOMIC_UINT_LEAST32_T -|> TYPE__ATOMIC UINT_LEAST32_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_UINT_LEAST32_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_UINT_LEAST32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_UINT_LEAST32_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_UINT_LEAST32_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_UINT_LEAST32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_UINT_LEAST32_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST64_T : declares
+TYPEDEF_ATOMIC_INT_LEAST64_T -|> TYPE__ATOMIC INT_LEAST64_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_INT_LEAST64_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_INT_LEAST64_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_INT_LEAST64_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_INT_LEAST64_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_INT_LEAST64_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_INT_LEAST64_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST64_T : declares
+TYPEDEF_ATOMIC_UINT_LEAST64_T -|> TYPE__ATOMIC UINT_LEAST64_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_UINT_LEAST64_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_UINT_LEAST64_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_UINT_LEAST64_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_UINT_LEAST64_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_UINT_LEAST64_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_UINT_LEAST64_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST8_T : declares
+TYPEDEF_ATOMIC_INT_FAST8_T -|> TYPE__ATOMIC INT_FAST8_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_INT_FAST8_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_INT_FAST8_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_INT_FAST8_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_INT_FAST8_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_INT_FAST8_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_INT_FAST8_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST8_T : declares
+TYPEDEF_ATOMIC_UINT_FAST8_T -|> TYPE__ATOMIC UINT_FAST8_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_UINT_FAST8_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_UINT_FAST8_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_UINT_FAST8_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_UINT_FAST8_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_UINT_FAST8_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_UINT_FAST8_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST16_T : declares
+TYPEDEF_ATOMIC_INT_FAST16_T -|> TYPE__ATOMIC INT_FAST16_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_INT_FAST16_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_INT_FAST16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_INT_FAST16_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_INT_FAST16_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_INT_FAST16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_INT_FAST16_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST16_T : declares
+TYPEDEF_ATOMIC_UINT_FAST16_T -|> TYPE__ATOMIC UINT_FAST16_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_UINT_FAST16_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_UINT_FAST16_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_UINT_FAST16_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_UINT_FAST16_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_UINT_FAST16_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_UINT_FAST16_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST32_T : declares
+TYPEDEF_ATOMIC_INT_FAST32_T -|> TYPE__ATOMIC INT_FAST32_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_INT_FAST32_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_INT_FAST32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_INT_FAST32_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_INT_FAST32_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_INT_FAST32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_INT_FAST32_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST32_T : declares
+TYPEDEF_ATOMIC_UINT_FAST32_T -|> TYPE__ATOMIC UINT_FAST32_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_UINT_FAST32_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_UINT_FAST32_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_UINT_FAST32_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_UINT_FAST32_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_UINT_FAST32_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_UINT_FAST32_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST64_T : declares
+TYPEDEF_ATOMIC_INT_FAST64_T -|> TYPE__ATOMIC INT_FAST64_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_INT_FAST64_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_INT_FAST64_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_INT_FAST64_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_INT_FAST64_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_INT_FAST64_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_INT_FAST64_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST64_T : declares
+TYPEDEF_ATOMIC_UINT_FAST64_T -|> TYPE__ATOMIC UINT_FAST64_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_UINT_FAST64_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_UINT_FAST64_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_UINT_FAST64_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_UINT_FAST64_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_UINT_FAST64_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_UINT_FAST64_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_INTPTR_T : declares
+TYPEDEF_ATOMIC_INTPTR_T -|> TYPE__ATOMIC INTPTR_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_INTPTR_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_INTPTR_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_INTPTR_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_INTPTR_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_INTPTR_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_INTPTR_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINTPTR_T : declares
+TYPEDEF_ATOMIC_UINTPTR_T -|> TYPE__ATOMIC UINTPTR_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_UINTPTR_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_UINTPTR_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_UINTPTR_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_UINTPTR_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_UINTPTR_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_UINTPTR_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_SIZE_T : declares
+TYPEDEF_ATOMIC_SIZE_T -|> TYPE__ATOMIC SIZE_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_SIZE_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_SIZE_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_SIZE_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_SIZE_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_SIZE_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_SIZE_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_PTRDIFF_T : declares
+TYPEDEF_ATOMIC_PTRDIFF_T -|> TYPE__ATOMIC PTRDIFF_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_PTRDIFF_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_PTRDIFF_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_PTRDIFF_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_PTRDIFF_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_PTRDIFF_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_PTRDIFF_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_INTMAX_T : declares
+TYPEDEF_ATOMIC_INTMAX_T -|> TYPE__ATOMIC INTMAX_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_INTMAX_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_INTMAX_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_INTMAX_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_INTMAX_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_INTMAX_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_INTMAX_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINTMAX_T : declares
+TYPEDEF_ATOMIC_UINTMAX_T -|> TYPE__ATOMIC UINTMAX_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_UINTMAX_T : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_UINTMAX_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_UINTMAX_T : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_UINTMAX_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_UINTMAX_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_UINTMAX_T : declares
+MATH_UTILS ..> TYPEDEF_ATOMIC_FLAG : declares
+TYPEDEF_ATOMIC_FLAG -|> TYPE_STRUCT ATOMIC_FLAG
+{
+  ATOMIC_BOOL _VALUE;
+} : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ATOMIC_FLAG : declares
+HEADER_CONFIG ..> TYPEDEF_ATOMIC_FLAG : declares
+HEADER_GEOMETRY ..> TYPEDEF_ATOMIC_FLAG : declares
+HEADER_LOGGER ..> TYPEDEF_ATOMIC_FLAG : declares
+HEADER_SAMPLE ..> TYPEDEF_ATOMIC_FLAG : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ATOMIC_FLAG : declares
+MATH_UTILS ..> TYPEDEF_MEMORY_ORDER : declares
+TYPEDEF_MEMORY_ORDER -|> TYPE_ENUM MEMORY_ORDER
+{
+  MEMORY_ORDER_RELAXED,
+  MEMORY_ORDER_CONSUME,
+  MEMORY_ORDER_ACQUIRE,
+  MEMORY_ORDER_RELEASE,
+  MEMORY_ORDER_ACQ_REL,
+  MEMORY_ORDER_SEQ_CST
+} : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_MEMORY_ORDER : declares
+HEADER_CONFIG ..> TYPEDEF_MEMORY_ORDER : declares
+HEADER_GEOMETRY ..> TYPEDEF_MEMORY_ORDER : declares
+HEADER_LOGGER ..> TYPEDEF_MEMORY_ORDER : declares
+HEADER_SAMPLE ..> TYPEDEF_MEMORY_ORDER : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MEMORY_ORDER : declares
+MATH_UTILS ..> TYPEDEF_ID_T : declares
+TYPEDEF_ID_T -|> TYPE_UINT32_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_ID_T : declares
+HEADER_CONFIG ..> TYPEDEF_ID_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_ID_T : declares
+HEADER_LOGGER ..> TYPEDEF_ID_T : declares
+HEADER_SAMPLE ..> TYPEDEF_ID_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ID_T : declares
+MATH_UTILS ..> TYPEDEF_STATUS_T : declares
+TYPEDEF_STATUS_T -|> TYPE_INT32_T : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_STATUS_T : declares
+HEADER_CONFIG ..> TYPEDEF_STATUS_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_STATUS_T : declares
+HEADER_LOGGER ..> TYPEDEF_STATUS_T : declares
+HEADER_SAMPLE ..> TYPEDEF_STATUS_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_STATUS_T : declares
+MATH_UTILS ..> TYPEDEF_GLOBALSTATUS_T : declares
+TYPEDEF_GLOBALSTATUS_T -|> TYPE_ENUM GLOBALSTATUS : «alias»
+HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_GLOBALSTATUS_T : declares
+HEADER_CONFIG ..> TYPEDEF_GLOBALSTATUS_T : declares
+HEADER_GEOMETRY ..> TYPEDEF_GLOBALSTATUS_T : declares
+HEADER_LOGGER ..> TYPEDEF_GLOBALSTATUS_T : declares
+HEADER_SAMPLE ..> TYPEDEF_GLOBALSTATUS_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_GLOBALSTATUS_T : declares
+MATH_UTILS ..> TYPEDEF_REAL_T : declares
+TYPEDEF_REAL_T -|> TYPE_DOUBLE : «alias»
+HEADER_GEOMETRY ..> TYPEDEF_REAL_T : declares
+HEADER_SAMPLE ..> TYPEDEF_REAL_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_REAL_T : declares
+MATH_UTILS ..> TYPEDEF_MATH_OP_T : declares
+TYPEDEF_MATH_OP_T -|> TYPE_INT (*)(INT, INT) : «alias»
+HEADER_GEOMETRY ..> TYPEDEF_MATH_OP_T : declares
+HEADER_SAMPLE ..> TYPEDEF_MATH_OP_T : declares
+HEADER_TYPEDEF_TEST ..> TYPEDEF_MATH_OP_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SIZE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___BUILTIN_VA_LIST : declares
+HEADER_MATH_UTILS ..> TYPEDEF___GNUC_VA_LIST : declares
+HEADER_MATH_UTILS ..> TYPEDEF_VA_LIST : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT_LEAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT_LEAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT_LEAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT_LEAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___S8 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___U8 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___S16 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___U16 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___S32 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___U32 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___S64 : declares
+HEADER_MATH_UTILS ..> TYPEDEF___U64 : declares
+HEADER_MATH_UTILS ..> TYPEDEF__LOCK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__LOCK_RECURSIVE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__OFF_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___DEV_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___GID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__OFF64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__FPOS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__SSIZE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_WINT_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__MBSTATE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__FLOCK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__ICONV_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___ULONG : declares
+HEADER_MATH_UTILS ..> TYPEDEF___FILE : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTRDIFF_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_WCHAR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_CHAR16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_CHAR32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___OFF_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___PID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___LOFF_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_U_CHAR : declares
+HEADER_MATH_UTILS ..> TYPEDEF_U_SHORT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_U_INT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_U_LONG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_USHORT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_CLOCK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_TIME_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_DADDR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_CADDR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INO_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_OFF_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_DEV_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_GID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_KEY_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SSIZE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MODE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_NLINK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_FD_MASK : declares
+HEADER_MATH_UTILS ..> TYPEDEF__TYPES_FD_SET : declares
+HEADER_MATH_UTILS ..> TYPEDEF_CLOCKID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_TIMER_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_USECONDS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SUSECONDS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_FILE : declares
+HEADER_MATH_UTILS ..> TYPEDEF_FPOS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_READ_FUNCTION_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_WRITE_FUNCTION_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_SEEK_FUNCTION_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_CLOSE_FUNCTION_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_IO_FUNCTIONS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_DIV_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_LDIV_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_LLDIV_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SIGSET_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___SIGSET_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF__SIG_FUNC_PTR : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SIG_ATOMIC_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___TZRULE_TYPE : declares
+HEADER_MATH_UTILS ..> TYPEDEF___TZINFO_TYPE : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MBSTATE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SEM_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_ATTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_MUTEX_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_MUTEXATTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_COND_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_CONDATTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_KEY_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_ONCE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_RWLOCK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_RWLOCKATTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_SPINLOCK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_BARRIER_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_BARRIERATTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_JMP_BUF : declares
+HEADER_MATH_UTILS ..> TYPEDEF_RLIM_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SA_FAMILY_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SIGJMP_BUF : declares
+HEADER_MATH_UTILS ..> TYPEDEF_STACK_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SIGINFO_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_Z_STREAM : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_LEAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_LEAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_LEAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_LEAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_LEAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_LEAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_LEAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_LEAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_FAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_FAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_FAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_FAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_FAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_FAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INT_FAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_FAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INTPTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINTPTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_INTMAX_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_UINTMAX_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_BOOL : declares
+HEADER_MATH_UTILS ..> TYPEDEF___INT128_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF___UINT128_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIREGLNATIVEWINDOWTYPE : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIREGLNATIVEDISPLAYTYPE : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRCONNECTION : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRSURFACE : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRSURFACESPEC : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRSCREENCAST : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRPROMPTSESSION : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRBUFFERSTREAM : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRPERSISTENTID : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRBLOB : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MIRDISPLAYCONFIG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_XCB_CONNECTION_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_XCB_WINDOW_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_XCB_VISUALID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_DIR : declares
+HEADER_MATH_UTILS ..> TYPEDEF___SOCKLEN_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_SOCKLEN_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_BOOL : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_SCHAR : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UCHAR : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_SHORT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_USHORT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_LONG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_ULONG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_LLONG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_ULLONG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_WCHAR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST8_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST16_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST32_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST64_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INTPTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINTPTR_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_SIZE_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_PTRDIFF_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INTMAX_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINTMAX_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_FLAG : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MEMORY_ORDER : declares
+HEADER_MATH_UTILS ..> TYPEDEF_ID_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_STATUS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_GLOBALSTATUS_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : declares
+HEADER_MATH_UTILS ..> TYPEDEF_MATH_OP_T : declares
+MATH_UTILS ..> TYPEDEF_SIZE_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___BUILTIN_VA_LIST : <<declares>>
+MATH_UTILS ..> TYPEDEF___GNUC_VA_LIST : <<declares>>
+MATH_UTILS ..> TYPEDEF_VA_LIST : <<declares>>
+MATH_UTILS ..> TYPEDEF___INT8_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___UINT8_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___INT16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___UINT16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___INT_LEAST16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___UINT_LEAST16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___INT32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___UINT32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___INT64_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___UINT64_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___INT_LEAST32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___UINT_LEAST32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___S8 : <<declares>>
+MATH_UTILS ..> TYPEDEF___U8 : <<declares>>
+MATH_UTILS ..> TYPEDEF___S16 : <<declares>>
+MATH_UTILS ..> TYPEDEF___U16 : <<declares>>
+MATH_UTILS ..> TYPEDEF___S32 : <<declares>>
+MATH_UTILS ..> TYPEDEF___U32 : <<declares>>
+MATH_UTILS ..> TYPEDEF___S64 : <<declares>>
+MATH_UTILS ..> TYPEDEF___U64 : <<declares>>
+MATH_UTILS ..> TYPEDEF__LOCK_T : <<declares>>
+MATH_UTILS ..> TYPEDEF__LOCK_RECURSIVE_T : <<declares>>
+MATH_UTILS ..> TYPEDEF__OFF_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___DEV_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___UID_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___GID_T : <<declares>>
+MATH_UTILS ..> TYPEDEF__OFF64_T : <<declares>>
+MATH_UTILS ..> TYPEDEF__FPOS_T : <<declares>>
+MATH_UTILS ..> TYPEDEF__SSIZE_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_WINT_T : <<declares>>
+MATH_UTILS ..> TYPEDEF__MBSTATE_T : <<declares>>
+MATH_UTILS ..> TYPEDEF__FLOCK_T : <<declares>>
+MATH_UTILS ..> TYPEDEF__ICONV_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___ULONG : <<declares>>
+MATH_UTILS ..> TYPEDEF___FILE : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTRDIFF_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_WCHAR_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_CHAR16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_CHAR32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___OFF_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___PID_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___LOFF_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_U_CHAR : <<declares>>
+MATH_UTILS ..> TYPEDEF_U_SHORT : <<declares>>
+MATH_UTILS ..> TYPEDEF_U_INT : <<declares>>
+MATH_UTILS ..> TYPEDEF_U_LONG : <<declares>>
+MATH_UTILS ..> TYPEDEF_USHORT : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINT : <<declares>>
+MATH_UTILS ..> TYPEDEF_CLOCK_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_TIME_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_DADDR_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_CADDR_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INO_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_OFF_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_DEV_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UID_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_GID_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PID_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_KEY_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_SSIZE_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_MODE_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_NLINK_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_FD_MASK : <<declares>>
+MATH_UTILS ..> TYPEDEF__TYPES_FD_SET : <<declares>>
+MATH_UTILS ..> TYPEDEF_CLOCKID_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_TIMER_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_USECONDS_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_SUSECONDS_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_FILE : <<declares>>
+MATH_UTILS ..> TYPEDEF_FPOS_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_COOKIE_READ_FUNCTION_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_COOKIE_WRITE_FUNCTION_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_COOKIE_SEEK_FUNCTION_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_COOKIE_CLOSE_FUNCTION_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_COOKIE_IO_FUNCTIONS_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_DIV_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_LDIV_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_LLDIV_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_SIGSET_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___SIGSET_T : <<declares>>
+MATH_UTILS ..> TYPEDEF__SIG_FUNC_PTR : <<declares>>
+MATH_UTILS ..> TYPEDEF_SIG_ATOMIC_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___TZRULE_TYPE : <<declares>>
+MATH_UTILS ..> TYPEDEF___TZINFO_TYPE : <<declares>>
+MATH_UTILS ..> TYPEDEF_MBSTATE_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_SEM_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTHREAD_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTHREAD_ATTR_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTHREAD_MUTEX_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTHREAD_MUTEXATTR_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTHREAD_COND_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTHREAD_CONDATTR_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTHREAD_KEY_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTHREAD_ONCE_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTHREAD_RWLOCK_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTHREAD_RWLOCKATTR_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTHREAD_SPINLOCK_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTHREAD_BARRIER_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_PTHREAD_BARRIERATTR_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_JMP_BUF : <<declares>>
+MATH_UTILS ..> TYPEDEF_RLIM_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_SA_FAMILY_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_SIGJMP_BUF : <<declares>>
+MATH_UTILS ..> TYPEDEF_STACK_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_SIGINFO_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_Z_STREAM : <<declares>>
+MATH_UTILS ..> TYPEDEF_INT8_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINT8_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INT16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINT16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INT32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINT32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INT64_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINT64_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INT_LEAST8_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINT_LEAST8_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INT_LEAST16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINT_LEAST16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INT_LEAST32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINT_LEAST32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INT_LEAST64_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINT_LEAST64_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INT_FAST8_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINT_FAST8_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INT_FAST16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINT_FAST16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INT_FAST32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINT_FAST32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INT_FAST64_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINT_FAST64_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INTPTR_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINTPTR_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_INTMAX_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_UINTMAX_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_BOOL : <<declares>>
+MATH_UTILS ..> TYPEDEF___INT128_T : <<declares>>
+MATH_UTILS ..> TYPEDEF___UINT128_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_MIREGLNATIVEWINDOWTYPE : <<declares>>
+MATH_UTILS ..> TYPEDEF_MIREGLNATIVEDISPLAYTYPE : <<declares>>
+MATH_UTILS ..> TYPEDEF_MIRCONNECTION : <<declares>>
+MATH_UTILS ..> TYPEDEF_MIRSURFACE : <<declares>>
+MATH_UTILS ..> TYPEDEF_MIRSURFACESPEC : <<declares>>
+MATH_UTILS ..> TYPEDEF_MIRSCREENCAST : <<declares>>
+MATH_UTILS ..> TYPEDEF_MIRPROMPTSESSION : <<declares>>
+MATH_UTILS ..> TYPEDEF_MIRBUFFERSTREAM : <<declares>>
+MATH_UTILS ..> TYPEDEF_MIRPERSISTENTID : <<declares>>
+MATH_UTILS ..> TYPEDEF_MIRBLOB : <<declares>>
+MATH_UTILS ..> TYPEDEF_MIRDISPLAYCONFIG : <<declares>>
+MATH_UTILS ..> TYPEDEF_XCB_CONNECTION_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_XCB_WINDOW_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_XCB_VISUALID_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_DIR : <<declares>>
+MATH_UTILS ..> TYPEDEF___SOCKLEN_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_SOCKLEN_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_BOOL : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_SCHAR : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_UCHAR : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_SHORT : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_USHORT : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_LONG : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_ULONG : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_LLONG : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_ULLONG : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_WCHAR_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST8_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST8_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST64_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST64_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST8_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST8_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST16_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST32_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST64_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST64_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_INTPTR_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINTPTR_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_SIZE_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_PTRDIFF_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_INTMAX_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_UINTMAX_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_ATOMIC_FLAG : <<declares>>
+MATH_UTILS ..> TYPEDEF_MEMORY_ORDER : <<declares>>
+MATH_UTILS ..> TYPEDEF_ID_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_STATUS_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_GLOBALSTATUS_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
+MATH_UTILS ..> TYPEDEF_MATH_OP_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_SIZE_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___BUILTIN_VA_LIST : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___GNUC_VA_LIST : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_VA_LIST : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___INT8_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___UINT8_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___INT16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___UINT16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___INT_LEAST16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___UINT_LEAST16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___INT32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___UINT32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___INT64_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___UINT64_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___INT_LEAST32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___UINT_LEAST32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___S8 : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___U8 : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___S16 : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___U16 : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___S32 : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___U32 : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___S64 : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___U64 : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF__LOCK_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF__LOCK_RECURSIVE_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF__OFF_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___DEV_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___UID_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___GID_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF__OFF64_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF__FPOS_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF__SSIZE_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_WINT_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF__MBSTATE_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF__FLOCK_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF__ICONV_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___ULONG : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___FILE : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTRDIFF_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_WCHAR_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_CHAR16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_CHAR32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___OFF_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___PID_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___LOFF_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_U_CHAR : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_U_SHORT : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_U_INT : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_U_LONG : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_USHORT : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINT : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_CLOCK_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_TIME_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_DADDR_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_CADDR_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INO_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_OFF_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_DEV_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UID_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_GID_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PID_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_KEY_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_SSIZE_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MODE_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_NLINK_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_FD_MASK : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF__TYPES_FD_SET : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_CLOCKID_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_TIMER_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_USECONDS_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_SUSECONDS_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_FILE : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_FPOS_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_READ_FUNCTION_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_WRITE_FUNCTION_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_SEEK_FUNCTION_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_CLOSE_FUNCTION_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_COOKIE_IO_FUNCTIONS_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_DIV_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_LDIV_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_LLDIV_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_SIGSET_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___SIGSET_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF__SIG_FUNC_PTR : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_SIG_ATOMIC_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___TZRULE_TYPE : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___TZINFO_TYPE : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MBSTATE_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_SEM_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_ATTR_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_MUTEX_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_MUTEXATTR_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_COND_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_CONDATTR_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_KEY_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_ONCE_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_RWLOCK_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_RWLOCKATTR_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_SPINLOCK_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_BARRIER_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_PTHREAD_BARRIERATTR_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_JMP_BUF : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_RLIM_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_SA_FAMILY_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_SIGJMP_BUF : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_STACK_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_SIGINFO_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_Z_STREAM : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INT8_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINT8_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INT16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINT16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INT32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINT32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INT64_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINT64_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INT_LEAST8_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_LEAST8_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INT_LEAST16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_LEAST16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INT_LEAST32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_LEAST32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INT_LEAST64_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_LEAST64_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INT_FAST8_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_FAST8_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INT_FAST16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_FAST16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INT_FAST32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_FAST32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INT_FAST64_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINT_FAST64_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INTPTR_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINTPTR_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_INTMAX_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_UINTMAX_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_BOOL : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___INT128_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___UINT128_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MIREGLNATIVEWINDOWTYPE : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MIREGLNATIVEDISPLAYTYPE : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MIRCONNECTION : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MIRSURFACE : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MIRSURFACESPEC : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MIRSCREENCAST : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MIRPROMPTSESSION : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MIRBUFFERSTREAM : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MIRPERSISTENTID : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MIRBLOB : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MIRDISPLAYCONFIG : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_XCB_CONNECTION_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_XCB_WINDOW_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_XCB_VISUALID_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_DIR : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF___SOCKLEN_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_SOCKLEN_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_BOOL : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_SCHAR : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UCHAR : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_SHORT : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_USHORT : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_LONG : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_ULONG : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_LLONG : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_ULLONG : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_CHAR32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_WCHAR_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST8_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST8_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_LEAST64_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_LEAST64_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST8_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST8_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST16_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST32_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INT_FAST64_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINT_FAST64_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INTPTR_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINTPTR_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_SIZE_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_PTRDIFF_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_INTMAX_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_UINTMAX_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ATOMIC_FLAG : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MEMORY_ORDER : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_ID_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_STATUS_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_GLOBALSTATUS_T : <<declares>>
 HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
 HEADER_MATH_UTILS ..> TYPEDEF_MATH_OP_T : <<declares>>
 

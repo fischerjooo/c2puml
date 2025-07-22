@@ -42,6 +42,30 @@ class ModelExtractor(c_ast.NodeVisitor):
             "typedef_name": node.name,
             "base_type": base_type,
         })
+        
+        # Extract struct fields if this typedef contains a struct
+        struct_node = None
+        if isinstance(node.type, c_ast.Struct):
+            struct_node = node.type
+        elif isinstance(node.type, c_ast.TypeDecl) and isinstance(node.type.type, c_ast.Struct):
+            struct_node = node.type.type
+        
+        if struct_node:
+            struct_fields = []
+            if struct_node.decls:
+                for decl in struct_node.decls:
+                    if hasattr(decl, 'name') and decl.name:
+                        field_type = self._type_to_str(decl.type)
+                        struct_fields.append({
+                            "name": decl.name,
+                            "type": field_type,
+                        })
+            # Add the struct to our structs list
+            self.model["structs"].append({
+                "name": struct_node.name or node.name,
+                "fields": struct_fields,
+                "coord": str(node.coord),
+            })
 
     def visit_Struct(self, node: c_ast.Struct) -> None:
         if not node.name:
