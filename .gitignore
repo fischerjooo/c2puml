@@ -13,6 +13,10 @@ test_plantuml_output/
 !output/*.json
 !output/*.png
 
+# Ignore JPG files (we only want PNG)
+output/*.jpg
+output/*.jpeg
+
 # Python cache and compiled files
 __pycache__/
 *.py[cod]
