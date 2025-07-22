@@ -492,7 +492,7 @@ class PlantUMLGenerator:
                 target_class = self._get_header_uml_id(external_header_name)
                 
                 # Check if this relationship was already added
-                relationship_id = f"{Path(file_model.file_path).stem}->{external_header_name}"
+                relationship_id = f"{Path(file_model.file_path).stem}->{external_header_name}:include"
                 if relationship_id not in seen_relationships:
                     seen_relationships.add(relationship_id)
                     lines.append(f"{source_class} --> {target_class} : <<include>>")
@@ -516,7 +516,7 @@ class PlantUMLGenerator:
                     target_class = self._get_header_uml_id(header_basename)
                     
                     # Check if this relationship was already added
-                    relationship_id = f"{Path(file_model.file_path).stem}->{header_basename}"
+                    relationship_id = f"{Path(file_model.file_path).stem}->{header_basename}:include"
                     if relationship_id not in seen_relationships:
                         seen_relationships.add(relationship_id)
                         lines.append(f"{source_class} --> {target_class} : <<include>>")
@@ -549,7 +549,7 @@ class PlantUMLGenerator:
                 target_class = self._get_header_uml_id(target_basename)
                 
                 # Check if this relationship was already added
-                relationship_id = f"{source_basename}->{target_basename}"
+                relationship_id = f"{source_basename}->{target_basename}:include"
                 if relationship_id not in seen_relationships:
                     seen_relationships.add(relationship_id)
                     lines.append(f"{source_class} --> {target_class} : <<include>>")
@@ -584,7 +584,7 @@ class PlantUMLGenerator:
                         
                         # Only add if both source and target are in our diagram
                         if source_basename in included_headers and external_header_name in included_headers:
-                            relationship_id = f"{source_basename}->{external_header_name}"
+                            relationship_id = f"{source_basename}->{external_header_name}:include"
                             if relationship_id not in seen_relationships:
                                 seen_relationships.add(relationship_id)
                                 lines.append(f"{source_class} --> {target_class} : <<include>>")
@@ -600,7 +600,7 @@ class PlantUMLGenerator:
                                     source_class = self._get_header_uml_id(source_basename)
                                     target_class = self._get_header_uml_id(nested_header_basename)
                                     
-                                    relationship_id = f"{source_basename}->{nested_header_basename}"
+                                    relationship_id = f"{source_basename}->{nested_header_basename}:include"
                                     if relationship_id not in seen_relationships:
                                         seen_relationships.add(relationship_id)
                                         lines.append(f"{source_class} --> {target_class} : <<include>>")
@@ -626,18 +626,17 @@ class PlantUMLGenerator:
                             source_class = self._get_header_uml_id(source_basename)
                             target_class = self._get_header_uml_id(target_basename)
                             
-                            relationship_id = f"{source_basename}->{target_basename}"
+                            relationship_id = f"{source_basename}->{target_basename}:include"
                             if relationship_id not in seen_relationships:
                                 seen_relationships.add(relationship_id)
                                 lines.append(f"{source_class} --> {target_class} : <<include>>")
 
-
         # Typedef relationships - process typedefs from current file and included files
-        seen_typedef_relations = set()
+        # Use the same seen_relationships set to avoid duplicates
         
         # Process typedefs from current file
         for typedef_relation in file_model.typedef_relations:
-            self._process_typedef_relationships(typedef_relation, file_model, project_model, lines, seen_typedef_relations)
+            self._process_typedef_relationships(typedef_relation, file_model, project_model, lines, seen_relationships)
         
         # Process typedefs from included header files
         for include_relation in file_model.include_relations:
@@ -649,24 +648,24 @@ class PlantUMLGenerator:
                     break
             if included_file_model:
                 for typedef_relation in included_file_model.typedef_relations:
-                    self._process_typedef_relationships(typedef_relation, included_file_model, project_model, lines, seen_typedef_relations)
+                    self._process_typedef_relationships(typedef_relation, included_file_model, project_model, lines, seen_relationships)
         
         # Process type dependencies and macro dependencies
         self._process_type_dependencies(file_model, project_model, lines, seen_relationships)
         
         return lines
 
-    def _process_typedef_relationships(self, typedef_relation, file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_typedef_relations: set):
+    def _process_typedef_relationships(self, typedef_relation, file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_relationships: set):
         """Process relationships for a single typedef"""
         typedef_name = typedef_relation.typedef_name
         original_type = typedef_relation.original_type
         relationship_type = typedef_relation.relationship_type
         
         # Create a unique identifier for this typedef relation to avoid duplicates
-        relation_id = f"{file_model.file_path}:{typedef_name}"
-        if relation_id in seen_typedef_relations:
+        relation_id = f"{file_model.file_path}:{typedef_name}:declares"
+        if relation_id in seen_relationships:
             return
-        seen_typedef_relations.add(relation_id)
+        seen_relationships.add(relation_id)
         
         # Show a 'declares' relation from the file that defines the typedef
         file_basename = Path(file_model.file_path).stem
@@ -700,15 +699,21 @@ class PlantUMLGenerator:
                 # since the fields/values are already shown in the typedef class itself
                 pass
             else:
+                relationship_id = f"{typedef_name}->{original_type}:alias"
+                if relationship_id not in seen_relationships:
+                    seen_relationships.add(relationship_id)
+                    lines.append(
+                        f"{typedef_class_id} -|> "
+                        f"{self._get_type_uml_id(original_type)} : «alias»"
+                    )
+        elif relationship_type == "alias":
+            relationship_id = f"{typedef_name}->{original_type}:alias"
+            if relationship_id not in seen_relationships:
+                seen_relationships.add(relationship_id)
                 lines.append(
                     f"{typedef_class_id} -|> "
                     f"{self._get_type_uml_id(original_type)} : «alias»"
                 )
-        elif relationship_type == "alias":
-            lines.append(
-                f"{typedef_class_id} -|> "
-                f"{self._get_type_uml_id(original_type)} : «alias»"
-            )
         
         # Check for relationships between typedefs (when one typedef uses another)
         if relationship_type == "defines" and original_type == "struct":
@@ -731,7 +736,10 @@ class PlantUMLGenerator:
                         for other_typedef_relation in model.typedef_relations:
                             if other_typedef_relation.typedef_name == field_type:
                                 other_typedef_class_id = self._get_typedef_uml_id(field_type)
-                                lines.append(f"{typedef_class_id} --> {other_typedef_class_id} : uses")
+                                relationship_id = f"{typedef_name}->{field_type}:uses"
+                                if relationship_id not in seen_relationships:
+                                    seen_relationships.add(relationship_id)
+                                    lines.append(f"{typedef_class_id} --> {other_typedef_class_id} : uses")
         
         # Show which header declares this typedef (for typedefs from included files)
         # Find which header actually declares this typedef
@@ -743,7 +751,10 @@ class PlantUMLGenerator:
                         # It's declared in a different file
                         header_class_id = self._get_header_uml_id(Path(model.file_path).stem)
                         typedef_class_id = self._get_typedef_uml_id(typedef_name)
-                        lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+                        relationship_id = f"{Path(model.file_path).stem}->{typedef_name}:declares"
+                        if relationship_id not in seen_relationships:
+                            seen_relationships.add(relationship_id)
+                            lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
         
         # Also show which header declares typedefs that are used in the current file
         # This helps show the relationship between headers and the typedefs they provide
@@ -760,7 +771,10 @@ class PlantUMLGenerator:
                     for other_typedef_relation in included_file_model.typedef_relations:
                         header_class_id = self._get_header_uml_id(Path(included_file_model.file_path).stem)
                         typedef_class_id = self._get_typedef_uml_id(other_typedef_relation.typedef_name)
-                        lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
+                        relationship_id = f"{Path(included_file_model.file_path).stem}->{other_typedef_relation.typedef_name}:declares"
+                        if relationship_id not in seen_relationships:
+                            seen_relationships.add(relationship_id)
+                            lines.append(f"{header_class_id} ..> {typedef_class_id} : declares")
 
     def _process_type_dependencies(self, file_model: FileModel, project_model: ProjectModel, lines: List[str], seen_relationships: set):
         """Process type dependencies and macro dependencies"""
@@ -808,17 +822,8 @@ class PlantUMLGenerator:
             field_type = field_type[:-1].strip()
         
         # Check if this field type is a typedef in the project
-        for key, model in project_model.files.items():
-            for other_typedef_relation in model.typedef_relations:
-                if other_typedef_relation.typedef_name == field_type:
-                    typedef_class_id = self._get_typedef_uml_id(typedef_relation.typedef_name)
-                    other_typedef_class_id = self._get_typedef_uml_id(field_type)
-                    
-                    # Create a unique identifier for this relationship
-                    relationship_id = f"{typedef_relation.typedef_name}->{field_type}:uses"
-                    if relationship_id not in seen_relationships:
-                        seen_relationships.add(relationship_id)
-                        lines.append(f"{typedef_class_id} --> {other_typedef_class_id} : uses")
+        # Note: We skip this check here because it's already handled in _process_typedef_relationships
+        # to avoid duplicate "uses" relationships
         
         # Check for macro usage in field type (e.g., MAX_LABEL_LEN)
         if 'MAX_LABEL_LEN' in field.type:
