@@ -467,18 +467,18 @@ class PlantUMLGenerator:
         lines = []
         seen_typedefs = set()
         
-        # Process simple typedefs from the typedefs dictionary (current file)
-        for typedef_name, original_type in file_model.typedefs.items():
-            if typedef_name not in seen_typedefs:
-                seen_typedefs.add(typedef_name)
-                lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
-        
-        # Process complex typedefs from the current file
+        # Process complex typedefs from the current file first (prioritize these)
         for typedef_relation in file_model.typedef_relations:
             typedef_name = typedef_relation.typedef_name
             if typedef_name not in seen_typedefs:
                 seen_typedefs.add(typedef_name)
                 lines.extend(self._generate_single_typedef_class(typedef_relation, file_model, project_model))
+        
+        # Process simple typedefs from the typedefs dictionary (only if not already processed)
+        for typedef_name, original_type in file_model.typedefs.items():
+            if typedef_name not in seen_typedefs:
+                seen_typedefs.add(typedef_name)
+                lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
         
         # Process typedefs from included header files (respecting include_depth)
         if include_depth > 1:

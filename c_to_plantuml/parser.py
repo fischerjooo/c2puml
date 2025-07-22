@@ -105,11 +105,48 @@ class CParser:
         typedef_relations = []
         for t in model_dict.get("typedefs", []):
             typedefs[t["name"]] = t["type"]
+            
+            # Determine the original type for the TypedefRelation
+            original_type = t["type"]
+            struct_tag_name = ""
+            enum_tag_name = ""
+            
+            if original_type.startswith("struct "):
+                original_type = "struct"
+                # Extract struct tag name from the typedef type
+                if "{" in t["type"]:
+                    # Find the struct tag name before the opening brace
+                    brace_pos = t["type"].find("{")
+                    struct_part = t["type"][:brace_pos].strip()
+                    if "struct " in struct_part:
+                        struct_tag_name = struct_part.replace("struct ", "").strip()
+            elif original_type.startswith("enum "):
+                original_type = "enum"
+                # Extract enum tag name from the typedef type
+                if "{" in t["type"]:
+                    # Find the enum tag name before the opening brace
+                    brace_pos = t["type"].find("{")
+                    enum_part = t["type"][:brace_pos].strip()
+                    if "enum " in enum_part:
+                        enum_tag_name = enum_part.replace("enum ", "").strip()
+            elif original_type.startswith("union "):
+                original_type = "union"
+            elif "(" in original_type and "*" in original_type:
+                original_type = "function_pointer"
+            elif "*" in original_type:
+                original_type = "pointer"
+            elif "[" in original_type:
+                original_type = "array"
+            else:
+                original_type = "alias"
+            
             # Also create TypedefRelation objects for the generator
             typedef_relations.append(TypedefRelation(
                 typedef_name=t["name"],
-                original_type=t["type"],
-                relationship_type="defines"
+                original_type=original_type,
+                relationship_type="defines",
+                struct_tag_name=struct_tag_name,
+                enum_tag_name=enum_tag_name
             ))
         globals = []
         for g in model_dict.get("globals", []):
