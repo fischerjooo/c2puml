@@ -8,15 +8,16 @@ class "sample" as SAMPLE <<source>> #LightBlue
     - #define CALC
     -- Global Variables --
     - int global_counter
-    - char buffer[MAX_SIZE]
-    + double * global_ptr
+    - char buffer [ MAX_SIZE ]
+    - double * global_ptr
     -- Functions --
+    int calculate_sum(int a, int b)
+    point_t * create_point(int x, int y, const char * label)
     int calculate_sum(int a, int b)
     point_t * create_point(int x, int y, const char * label)
     void process_point(point_t * p)
     void demo_triangle_usage()
     int main()
-    return CALC()
 }
 
 class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
@@ -39,25 +40,31 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + #define VERSION
     + #define MIN
     + #define MAX
+    -- Typedefs --
+    + typedef struct point_t
+    + typedef enum system_state_t
     -- Global Variables --
-    + extern const int MAX_POINTS
-    + extern const char * DEFAULT_LABEL
+    + int MAX_POINTS
+    + char * DEFAULT_LABEL
     -- Functions --
-    + extern int calculate_sum(int a, int b)
-    + extern point_t * create_point(int x, int y, const char * label)
-    + extern void process_point(point_t * p)
+    + #ifndef SAMPLE_H #define SAMPLE_H #include <stddef.h> #include "config.h" #define PI 3.14159 #define VERSION "1.0.0" typedef struct point_tag { int x ; int y ; char label [ 32 ] ; } point_t ; typedef enum system_state_tag { STATE_IDLE = 0 , STATE_RUNNING , STATE_ERROR } system_state_t ; extern int calculate_sum(int a, int b)
+    + point_t * create_point(int x, int y, const char * label)
+    + void process_point(point_t * p)
     -- Struct Fields --
     + int x
     + int y
-    + char[32] label
+    + char label [ 32 ]
 }
 
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
     -- Macros --
     + #define MATH_UTILS_H
+    -- Typedefs --
+    + typedef double real_t
+    + typedef int ( * math_op_t ) ( int , int ) math_op_t
     -- Functions --
-    + int add(int a, int b)
+    + #ifndef MATH_UTILS_H #define MATH_UTILS_H #include "config.h" typedef double real_t ; typedef int ( * math_op_t ) ( int , int ) ; int add(int a, int b)
     + int subtract(int a, int b)
     + real_t average(const int * arr, size_t len)
 }
@@ -66,21 +73,23 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
+    -- Typedefs --
+    + typedef enum log_level_t
+    + typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) log_callback_t
     -- Functions --
-    + void set_log_callback(log_callback_t cb)
-    + void log_message(log_level_t level, const char * fmt)
+    + #ifndef LOGGER_H #define LOGGER_H #include <stdio.h> #include "config.h" typedef enum log_level_tag { LOG_DEBUG = 0 , LOG_INFO , LOG_WARN , LOG_ERROR } log_level_t ; typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) ; void set_log_callback(log_callback_t cb)
+    + void log_message(log_level_t level, const char * fmt, . . .)
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
     -- Macros --
     + #define GEOMETRY_H
+    -- Typedefs --
+    + typedef struct triangle_t
     -- Functions --
-    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
+    + #ifndef GEOMETRY_H #define GEOMETRY_H #include "sample.h" #include "math_utils.h" typedef struct triangle_tag { point_t vertices [ 3 ] ; char label [ MAX_LABEL_LEN ] ; } triangle_t ; triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
     + int triangle_area(const triangle_t * tri)
-    -- Struct Fields --
-    + point_t[3] vertices
-    + char[MAX_LABEL_LEN] label
 }
 
 class "config" as HEADER_CONFIG <<header>> #LightGreen
@@ -90,6 +99,9 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + #define PROJECT_NAME
     + #define MAX_LABEL_LEN
     + #define DEFAULT_BUFFER_SIZE
+    -- Typedefs --
+    + typedef uint32_t id_t
+    + typedef int32_t status_t
 }
 
 class "stddef.h" as HEADER_STDDEF_H <<header>> #LightGray
@@ -98,30 +110,37 @@ class "stddef.h" as HEADER_STDDEF_H <<header>> #LightGray
 
 class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
-    + int x
-    + int y
-    + char[32] label
+    + typedef struct point_t
 }
 
 class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
 {
-    + STATE_IDLE = 0
-    + STATE_RUNNING
-    + STATE_ERROR
+    + typedef enum system_state_t
 }
 
-class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 {
-    + point_t[3] vertices
-    + char[MAX_LABEL_LEN] label
+    + typedef double real_t
+}
+
+class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
+{
+    + typedef int ( * math_op_t ) ( int , int ) math_op_t
 }
 
 class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 {
-    + LOG_DEBUG = 0
-    + LOG_INFO
-    + LOG_WARN
-    + LOG_ERROR
+    + typedef enum log_level_t
+}
+
+class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
+{
+    + typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) log_callback_t
+}
+
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
+{
+    + typedef struct triangle_t
 }
 
 SAMPLE --> HEADER_STDIO_H : <<include>>
@@ -139,10 +158,5 @@ HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_CONFIG --> HEADER_STDDEF_H : <<include>>
-HEADER_SAMPLE ..> TYPEDEF_POINT_T : declares
-HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : declares
-HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : declares
-HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : declares
-TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : uses
 
 @enduml

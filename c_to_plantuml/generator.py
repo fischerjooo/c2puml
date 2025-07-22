@@ -79,8 +79,10 @@ class PlantUMLGenerator:
             "{",
         ]
         
-        # Only show typedefs to primitive types directly in the file class
-        primitive_typedefs = []
+        # Show typedefs section if we have any typedefs
+        all_typedefs = []
+        
+        # Add primitive typedefs from typedef_relations
         for typedef_relation in file_model.typedef_relations:
             typedef_name = typedef_relation.typedef_name
             original_type = typedef_relation.original_type
@@ -89,7 +91,14 @@ class PlantUMLGenerator:
             visibility = "+" if is_header else "-"
             # Only show primitive typedefs (not struct/enum/union)
             if relationship_type == "alias" and not (original_type.startswith("struct") or original_type.startswith("enum") or original_type.startswith("union")):
-                primitive_typedefs.append(f"    {visibility} typedef {original_type} {typedef_name}")
+                all_typedefs.append(f"    {visibility} typedef {original_type} {typedef_name}")
+        
+        # Add simple typedefs from the typedefs dictionary
+        if file_model.typedefs:
+            is_header = file_model.file_path.endswith('.h')
+            visibility = "+" if is_header else "-"
+            for typedef_name, original_type in file_model.typedefs.items():
+                all_typedefs.append(f"    {visibility} typedef {original_type} {typedef_name}")
         
         # Add primitive typedefs from included files with + visibility
         for include_relation in file_model.include_relations:
@@ -112,16 +121,22 @@ class PlantUMLGenerator:
             for macro in file_model.macros:
                 lines.append(f"    - #define {macro}")
         
-        if primitive_typedefs:
+        if all_typedefs:
             lines.append("    -- Typedefs --")
-            lines.extend(primitive_typedefs)
+            lines.extend(all_typedefs)
         
         if file_model.globals:
             lines.append("    -- Global Variables --")
             for glob in file_model.globals:
-                # Check if this is a static variable
+                # Determine visibility based on file type and variable type
+                is_header = file_model.file_path.endswith('.h')
                 is_static = glob.type.startswith('static ')
-                visibility = "-" if is_static else "+"
+                
+                # Headers use + for all globals, source files use - for all globals
+                if is_header:
+                    visibility = "+"
+                else:
+                    visibility = "-"
                 
                 # Remove 'static ' prefix from type for display
                 display_type = glob.type.replace('static ', '') if is_static else glob.type
@@ -327,16 +342,25 @@ class PlantUMLGenerator:
                 lines.append(f"    + #define {macro}")
         
         # Only show primitive typedefs directly in the header class
-        primitive_typedefs = []
+        # Show typedefs section for header files
+        header_typedefs = []
+        
+        # Add primitive typedefs from typedef_relations
         for typedef_relation in file_model.typedef_relations:
             typedef_name = typedef_relation.typedef_name
             original_type = typedef_relation.original_type
             relationship_type = typedef_relation.relationship_type
             if relationship_type == "alias" and not (original_type.startswith("struct") or original_type.startswith("enum") or original_type.startswith("union")):
-                primitive_typedefs.append(f"    + typedef {original_type} {typedef_name}")
-        if primitive_typedefs:
+                header_typedefs.append(f"    + typedef {original_type} {typedef_name}")
+        
+        # Add simple typedefs from the typedefs dictionary
+        if file_model.typedefs:
+            for typedef_name, original_type in file_model.typedefs.items():
+                header_typedefs.append(f"    + typedef {original_type} {typedef_name}")
+        
+        if header_typedefs:
             lines.append("    -- Typedefs --")
-            lines.extend(primitive_typedefs)
+            lines.extend(header_typedefs)
         
         if file_model.globals:
             lines.append("    -- Global Variables --")
@@ -386,7 +410,23 @@ class PlantUMLGenerator:
         lines = []
         seen_typedefs = set()
         
-        # Process typedefs from the current file
+        # Process simple typedefs from the typedefs dictionary (current file)
+        for typedef_name, original_type in file_model.typedefs.items():
+            if typedef_name not in seen_typedefs:
+                seen_typedefs.add(typedef_name)
+                lines.extend(self._generate_simple_typedef_class(typedef_name, original_type))
+        
+        # Process simple typedefs from included header files
+        for include in file_model.includes:
+            # Find the included file model
+            included_file_model = self._find_included_file_model(include, project_model)
+            if included_file_model:
+                for typedef_name, original_type in included_file_model.typedefs.items():
+                    if typedef_name not in seen_typedefs:
+                        seen_typedefs.add(typedef_name)
+                        lines.extend(self._generate_simple_typedef_class(typedef_name, original_type))
+        
+        # Process complex typedefs from the current file
         for typedef_relation in file_model.typedef_relations:
             typedef_name = typedef_relation.typedef_name
             if typedef_name not in seen_typedefs:
@@ -395,6 +435,29 @@ class PlantUMLGenerator:
         
         # Process typedefs from included header files (recursively)
         self._process_nested_typedefs(file_model, project_model, seen_typedefs, lines)
+        
+        return lines
+    
+    def _find_included_file_model(self, include: str, project_model: ProjectModel):
+        """Find the file model for an included file"""
+        # Try different possible paths for the included file
+        for relative_path, file_model in project_model.files.items():
+            if (file_model.relative_path.endswith(include) or 
+                file_model.relative_path == include or
+                relative_path.endswith(include)):
+                return file_model
+        return None
+    
+    def _generate_simple_typedef_class(self, typedef_name: str, original_type: str) -> List[str]:
+        """Generate a class for a simple typedef"""
+        lines = []
+        
+        # Generate typedef class
+        lines.append(f'class "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
+        lines.append("{")
+        lines.append(f"    + typedef {original_type} {typedef_name}")
+        lines.append("}")
+        lines.append("")
         
         return lines
     

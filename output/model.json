@@ -8,69 +8,6 @@
       "project_root": "/workspace/example/source",
       "encoding_used": "utf-8",
       "structs": {
-        "NestedInfo_tag": {
-          "name": "NestedInfo_tag",
-          "fields": [
-            {
-              "name": "id",
-              "type": "id_t",
-              "value": null
-            },
-            {
-              "name": "description",
-              "type": "char[MAX_LABEL_LEN]",
-              "value": null
-            },
-            {
-              "name": "log_level",
-              "type": "log_level_t",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
-        "ComplexExample_tag": {
-          "name": "ComplexExample_tag",
-          "fields": [
-            {
-              "name": "info",
-              "type": "NestedInfo_t",
-              "value": null
-            },
-            {
-              "name": "status",
-              "type": "CE_Status_t",
-              "value": null
-            },
-            {
-              "name": "values",
-              "type": "int[5]",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
-        "NestedInfo": {
-          "name": "NestedInfo",
-          "fields": [
-            {
-              "name": "id",
-              "type": "id_t",
-              "value": null
-            },
-            {
-              "name": "description",
-              "type": "char[MAX_LABEL_LEN]",
-              "value": null
-            },
-            {
-              "name": "log_level",
-              "type": "log_level_t",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
         "NestedInfo_t": {
           "name": "NestedInfo_t",
           "fields": [
@@ -80,34 +17,13 @@
               "value": null
             },
             {
-              "name": "description",
-              "type": "char[MAX_LABEL_LEN]",
+              "name": "]",
+              "type": "char description [ MAX_LABEL_LEN",
               "value": null
             },
             {
               "name": "log_level",
               "type": "log_level_t",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
-        "ComplexExample": {
-          "name": "ComplexExample",
-          "fields": [
-            {
-              "name": "info",
-              "type": "NestedInfo_t",
-              "value": null
-            },
-            {
-              "name": "status",
-              "type": "CE_Status_t",
-              "value": null
-            },
-            {
-              "name": "values",
-              "type": "int[5]",
               "value": null
             }
           ],
@@ -127,8 +43,8 @@
               "value": null
             },
             {
-              "name": "values",
-              "type": "int[5]",
+              "name": "]",
+              "type": "int values [ 5",
               "value": null
             }
           ],
@@ -136,22 +52,6 @@
         }
       },
       "enums": {
-        "CE_Status_tag": {
-          "name": "CE_Status_tag",
-          "values": [
-            "CE_STATUS_OK = 0",
-            "CE_STATUS_WARN",
-            "CE_STATUS_FAIL"
-          ]
-        },
-        "CE_Status": {
-          "name": "CE_Status",
-          "values": [
-            "CE_STATUS_OK = 0",
-            "CE_STATUS_WARN",
-            "CE_STATUS_FAIL"
-          ]
-        },
         "CE_Status_t": {
           "name": "CE_Status_t",
           "values": [
@@ -171,33 +71,11 @@
         "COMPLEX_EXAMPLE_H"
       ],
       "typedefs": {
-        "id": "struct NestedInfo_tag { id_t",
-        "CE_Status_t": "enum CE_Status_tag { CE_STATUS_OK = 0, CE_STATUS_WARN, CE_STATUS_FAIL }",
-        "info": "struct ComplexExample_tag { NestedInfo_t"
+        "NestedInfo_t": "struct",
+        "CE_Status_t": "enum",
+        "ComplexExample_t": "struct"
       },
-      "typedef_relations": [
-        {
-          "typedef_name": "NestedInfo_t",
-          "original_type": "struct",
-          "relationship_type": "defines",
-          "struct_tag_name": "NestedInfo",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "CE_Status_t",
-          "original_type": "enum",
-          "relationship_type": "defines",
-          "struct_tag_name": "",
-          "enum_tag_name": "CE_Status"
-        },
-        {
-          "typedef_name": "ComplexExample_t",
-          "original_type": "struct",
-          "relationship_type": "defines",
-          "struct_tag_name": "ComplexExample",
-          "enum_tag_name": ""
-        }
-      ],
+      "typedef_relations": [],
       "include_relations": [],
       "unions": {}
     },
@@ -231,8 +109,7 @@
       ],
       "typedefs": {
         "id_t": "uint32_t",
-        "status_t": "int32_t",
-        "GlobalStatus_t": "enum GlobalStatus"
+        "status_t": "int32_t"
       },
       "typedef_relations": [],
       "include_relations": [],
@@ -248,7 +125,7 @@
       "functions": [
         {
           "name": "create_triangle",
-          "return_type": "triangle_t",
+          "return_type": "#include \"geometry.h\" #include <string.h> #include <stdlib.h> triangle_t",
           "parameters": [
             {
               "name": "a",
@@ -304,49 +181,17 @@
       "project_root": "/workspace/example/source",
       "encoding_used": "utf-8",
       "structs": {
-        "triangle_tag": {
-          "name": "triangle_tag",
-          "fields": [
-            {
-              "name": "vertices",
-              "type": "point_t[3]",
-              "value": null
-            },
-            {
-              "name": "label",
-              "type": "char[MAX_LABEL_LEN]",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
-        "triangle": {
-          "name": "triangle",
-          "fields": [
-            {
-              "name": "vertices",
-              "type": "point_t[3]",
-              "value": null
-            },
-            {
-              "name": "label",
-              "type": "char[MAX_LABEL_LEN]",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
         "triangle_t": {
           "name": "triangle_t",
           "fields": [
             {
-              "name": "vertices",
-              "type": "point_t[3]",
+              "name": "]",
+              "type": "point_t vertices [ 3",
               "value": null
             },
             {
-              "name": "label",
-              "type": "char[MAX_LABEL_LEN]",
+              "name": "]",
+              "type": "char label [ MAX_LABEL_LEN",
               "value": null
             }
           ],
@@ -357,7 +202,7 @@
       "functions": [
         {
           "name": "create_triangle",
-          "return_type": "triangle_t",
+          "return_type": "#ifndef GEOMETRY_H #define GEOMETRY_H #include \"sample.h\" #include \"math_utils.h\" typedef struct triangle_tag { point_t vertices [ 3 ] ; char label [ MAX_LABEL_LEN ] ; } triangle_t ; triangle_t",
           "parameters": [
             {
               "name": "a",
@@ -403,16 +248,10 @@
       "macros": [
         "GEOMETRY_H"
       ],
-      "typedefs": {},
-      "typedef_relations": [
-        {
-          "typedef_name": "triangle_t",
-          "original_type": "struct",
-          "relationship_type": "defines",
-          "struct_tag_name": "triangle",
-          "enum_tag_name": ""
-        }
-      ],
+      "typedefs": {
+        "triangle_t": "struct"
+      },
+      "typedef_relations": [],
       "include_relations": [],
       "unions": {}
     },
@@ -426,7 +265,7 @@
       "functions": [
         {
           "name": "set_log_callback",
-          "return_type": "void",
+          "return_type": "#include \"logger.h\" #include <stdarg.h> #include <string.h> static log_callback_t current_cb = NULL ; void",
           "parameters": [
             {
               "name": "cb",
@@ -449,6 +288,11 @@
               "name": "fmt",
               "type": "const char *",
               "value": null
+            },
+            {
+              "name": ".",
+              "type": ". .",
+              "value": null
             }
           ],
           "is_static": false
@@ -457,7 +301,7 @@
       "globals": [
         {
           "name": "current_cb",
-          "type": "static log_callback_t",
+          "type": "log_callback_t",
           "value": "NULL"
         }
       ],
@@ -479,24 +323,6 @@
       "encoding_used": "utf-8",
       "structs": {},
       "enums": {
-        "log_level_tag": {
-          "name": "log_level_tag",
-          "values": [
-            "LOG_DEBUG = 0",
-            "LOG_INFO",
-            "LOG_WARN",
-            "LOG_ERROR"
-          ]
-        },
-        "log_level": {
-          "name": "log_level",
-          "values": [
-            "LOG_DEBUG = 0",
-            "LOG_INFO",
-            "LOG_WARN",
-            "LOG_ERROR"
-          ]
-        },
         "log_level_t": {
           "name": "log_level_t",
           "values": [
@@ -510,7 +336,7 @@
       "functions": [
         {
           "name": "set_log_callback",
-          "return_type": "void",
+          "return_type": "#ifndef LOGGER_H #define LOGGER_H #include <stdio.h> #include \"config.h\" typedef enum log_level_tag { LOG_DEBUG = 0 , LOG_INFO , LOG_WARN , LOG_ERROR } log_level_t ; typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) ; void",
           "parameters": [
             {
               "name": "cb",
@@ -533,6 +359,11 @@
               "name": "fmt",
               "type": "const char *",
               "value": null
+            },
+            {
+              "name": ".",
+              "type": ". .",
+              "value": null
             }
           ],
           "is_static": false
@@ -547,18 +378,10 @@
         "LOGGER_H"
       ],
       "typedefs": {
-        "log_level_t": "enum log_level_tag { LOG_DEBUG = 0, LOG_INFO, LOG_WARN, LOG_ERROR }",
-        "log_callback_t": "void (*)(...)"
+        "log_level_t": "enum",
+        "log_callback_t": "void ( * log_callback_t ) ( log_level_t level , const char * message )"
       },
-      "typedef_relations": [
-        {
-          "typedef_name": "log_level_t",
-          "original_type": "enum",
-          "relationship_type": "defines",
-          "struct_tag_name": "",
-          "enum_tag_name": "log_level"
-        }
-      ],
+      "typedef_relations": [],
       "include_relations": [],
       "unions": {}
     },
@@ -572,7 +395,7 @@
       "functions": [
         {
           "name": "add",
-          "return_type": "int",
+          "return_type": "#include \"math_utils.h\" int",
           "parameters": [
             {
               "name": "a",
@@ -642,7 +465,7 @@
       "functions": [
         {
           "name": "add",
-          "return_type": "int",
+          "return_type": "#ifndef MATH_UTILS_H #define MATH_UTILS_H #include \"config.h\" typedef double real_t ; typedef int ( * math_op_t ) ( int , int ) ; int",
           "parameters": [
             {
               "name": "a",
@@ -701,7 +524,7 @@
       ],
       "typedefs": {
         "real_t": "double",
-        "math_op_t": "int (*)(...)"
+        "math_op_t": "int ( * math_op_t ) ( int , int )"
       },
       "typedef_relations": [],
       "include_relations": [],
@@ -717,7 +540,52 @@
       "functions": [
         {
           "name": "internal_helper",
-          "return_type": "static void",
+          "return_type": "#include <stdio.h> #include <stdlib.h> #include <string.h> #include \"sample.h\" #include \"math_utils.h\" #include \"logger.h\" #include \"geometry.h\" #define MAX_SIZE 100U #define DEBUG_MODE 1U #define CALC(x, y) ((x) + (y)) static int global_counter = 0 ; static char buffer [ MAX_SIZE ] ; double * global_ptr = NULL ; static void",
+          "parameters": [],
+          "is_static": false
+        },
+        {
+          "name": "calculate_sum",
+          "return_type": "int",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "is_static": false
+        },
+        {
+          "name": "create_point",
+          "return_type": "point_t *",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "is_static": false
+        },
+        {
+          "name": "internal_helper",
+          "return_type": "void",
           "parameters": [],
           "is_static": false
         },
@@ -783,23 +651,17 @@
           "return_type": "int",
           "parameters": [],
           "is_static": false
-        },
-        {
-          "name": "CALC",
-          "return_type": "return",
-          "parameters": [],
-          "is_static": false
         }
       ],
       "globals": [
         {
           "name": "global_counter",
-          "type": "static int",
+          "type": "int",
           "value": "0"
         },
         {
-          "name": "buffer[MAX_SIZE]",
-          "type": "static char",
+          "name": "]",
+          "type": "char buffer [ MAX_SIZE",
           "value": null
         },
         {
@@ -833,48 +695,6 @@
       "project_root": "/workspace/example/source",
       "encoding_used": "utf-8",
       "structs": {
-        "point_tag": {
-          "name": "point_tag",
-          "fields": [
-            {
-              "name": "x",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "y",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "label",
-              "type": "char[32]",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
-        "point": {
-          "name": "point",
-          "fields": [
-            {
-              "name": "x",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "y",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "label",
-              "type": "char[32]",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
         "point_t": {
           "name": "point_t",
           "fields": [
@@ -889,8 +709,8 @@
               "value": null
             },
             {
-              "name": "label",
-              "type": "char[32]",
+              "name": "]",
+              "type": "char label [ 32",
               "value": null
             }
           ],
@@ -898,22 +718,6 @@
         }
       },
       "enums": {
-        "system_state_tag": {
-          "name": "system_state_tag",
-          "values": [
-            "STATE_IDLE = 0",
-            "STATE_RUNNING",
-            "STATE_ERROR"
-          ]
-        },
-        "system_state": {
-          "name": "system_state",
-          "values": [
-            "STATE_IDLE = 0",
-            "STATE_RUNNING",
-            "STATE_ERROR"
-          ]
-        },
         "system_state_t": {
           "name": "system_state_t",
           "values": [
@@ -926,7 +730,7 @@
       "functions": [
         {
           "name": "calculate_sum",
-          "return_type": "extern int",
+          "return_type": "#ifndef SAMPLE_H #define SAMPLE_H #include <stddef.h> #include \"config.h\" #define PI 3.14159 #define VERSION \"1.0.0\" typedef struct point_tag { int x ; int y ; char label [ 32 ] ; } point_t ; typedef enum system_state_tag { STATE_IDLE = 0 , STATE_RUNNING , STATE_ERROR } system_state_t ; extern int",
           "parameters": [
             {
               "name": "a",
@@ -943,7 +747,7 @@
         },
         {
           "name": "create_point",
-          "return_type": "extern point_t *",
+          "return_type": "point_t *",
           "parameters": [
             {
               "name": "x",
@@ -965,7 +769,7 @@
         },
         {
           "name": "process_point",
-          "return_type": "extern void",
+          "return_type": "void",
           "parameters": [
             {
               "name": "p",
@@ -979,12 +783,12 @@
       "globals": [
         {
           "name": "MAX_POINTS",
-          "type": "extern const int",
+          "type": "int",
           "value": null
         },
         {
           "name": "DEFAULT_LABEL",
-          "type": "extern const char *",
+          "type": "char *",
           "value": null
         }
       ],
@@ -1002,25 +806,10 @@
         "MAX"
       ],
       "typedefs": {
-        "x": "struct point_tag { int",
-        "system_state_t": "enum system_state_tag { STATE_IDLE = 0, STATE_RUNNING, STATE_ERROR }"
+        "point_t": "struct",
+        "system_state_t": "enum"
       },
-      "typedef_relations": [
-        {
-          "typedef_name": "point_t",
-          "original_type": "struct",
-          "relationship_type": "defines",
-          "struct_tag_name": "point",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "system_state_t",
-          "original_type": "enum",
-          "relationship_type": "defines",
-          "struct_tag_name": "",
-          "enum_tag_name": "system_state"
-        }
-      ],
+      "typedef_relations": [],
       "include_relations": [],
       "unions": {}
     },
@@ -1034,7 +823,7 @@
       "functions": [
         {
           "name": "log_buffer",
-          "return_type": "void",
+          "return_type": "#include \"typedef_test.h\" #include \"complex_example.h\" #include \"geometry.h\" #include \"logger.h\" #include <stdlib.h> MyLen global_length = 0U ; MyBuffer global_buffer = { 0U , NULL } ; MyComplexPtr global_complex = NULL ; void",
           "parameters": [
             {
               "name": "buffer",
@@ -1090,12 +879,6 @@
           "return_type": "int",
           "parameters": [],
           "is_static": false
-        },
-        {
-          "name": "process_buffer",
-          "return_type": "return",
-          "parameters": [],
-          "is_static": false
         }
       ],
       "globals": [
@@ -1107,7 +890,7 @@
         {
           "name": "global_buffer",
           "type": "MyBuffer",
-          "value": "{0U, NULL}"
+          "value": "{ 0U , NULL }"
         },
         {
           "name": "global_complex",
@@ -1134,80 +917,6 @@
       "project_root": "/workspace/example/source",
       "encoding_used": "utf-8",
       "structs": {
-        "MyBuffer_tag": {
-          "name": "MyBuffer_tag",
-          "fields": [
-            {
-              "name": "length",
-              "type": "MyLen",
-              "value": null
-            },
-            {
-              "name": "data",
-              "type": "MyString",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
-        "MyComplexStruct_tag": {
-          "name": "MyComplexStruct_tag",
-          "fields": [
-            {
-              "name": "id",
-              "type": "MyLen",
-              "value": null
-            },
-            {
-              "name": "name",
-              "type": "MyString",
-              "value": null
-            },
-            {
-              "name": "callback",
-              "type": "MyCallback",
-              "value": null
-            },
-            {
-              "name": "log_level",
-              "type": "log_level_t",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
-        "Point_tag": {
-          "name": "Point_tag",
-          "fields": [
-            {
-              "name": "x",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "y",
-              "type": "int",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
-        "NamedStruct_tag": {
-          "name": "NamedStruct_tag",
-          "fields": [
-            {
-              "name": "a",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "b",
-              "type": "int",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
         "MyBuffer": {
           "name": "MyBuffer",
           "fields": [
@@ -1219,32 +928,6 @@
             {
               "name": "data",
               "type": "MyString",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
-        "MyComplexStruct": {
-          "name": "MyComplexStruct",
-          "fields": [
-            {
-              "name": "id",
-              "type": "MyLen",
-              "value": null
-            },
-            {
-              "name": "name",
-              "type": "MyString",
-              "value": null
-            },
-            {
-              "name": "callback",
-              "type": "MyCallback",
-              "value": null
-            },
-            {
-              "name": "log_level",
-              "type": "log_level_t",
               "value": null
             }
           ],
@@ -1276,22 +959,6 @@
           ],
           "methods": []
         },
-        "Point": {
-          "name": "Point",
-          "fields": [
-            {
-              "name": "x",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "y",
-              "type": "int",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
         "Point_t": {
           "name": "Point_t",
           "fields": [
@@ -1302,22 +969,6 @@
             },
             {
               "name": "y",
-              "type": "int",
-              "value": null
-            }
-          ],
-          "methods": []
-        },
-        "NamedStruct": {
-          "name": "NamedStruct",
-          "fields": [
-            {
-              "name": "a",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "b",
               "type": "int",
               "value": null
             }
@@ -1342,42 +993,12 @@
         }
       },
       "enums": {
-        "Color_tag": {
-          "name": "Color_tag",
-          "values": [
-            "COLOR_RED = 0",
-            "COLOR_GREEN",
-            "COLOR_BLUE"
-          ]
-        },
-        "StatusEnum_tag": {
-          "name": "StatusEnum_tag",
-          "values": [
-            "STATUS_OK = 0",
-            "STATUS_FAIL"
-          ]
-        },
-        "Color": {
-          "name": "Color",
-          "values": [
-            "COLOR_RED = 0",
-            "COLOR_GREEN",
-            "COLOR_BLUE"
-          ]
-        },
         "Color_t": {
           "name": "Color_t",
           "values": [
             "COLOR_RED = 0",
             "COLOR_GREEN",
             "COLOR_BLUE"
-          ]
-        },
-        "StatusEnum": {
-          "name": "StatusEnum",
-          "values": [
-            "STATUS_OK = 0",
-            "STATUS_FAIL"
           ]
         },
         "Status_t": {
@@ -1403,58 +1024,22 @@
         "MyLen": "uint32_t",
         "MyInt": "int32_t",
         "MyString": "char *",
-        "length": "struct MyBuffer_tag { MyLen",
-        "MyCallback": "int (*)(...)",
-        "id": "struct MyComplexStruct_tag { MyLen",
+        "MyBuffer": "struct",
+        "MyCallback": "int ( * MyCallback ) ( MyBuffer * buffer )",
+        "MyComplex": "struct",
         "MyComplexPtr": "MyComplex *",
-        "Color_t": "enum Color_tag { COLOR_RED = 0, COLOR_GREEN, COLOR_BLUE }",
-        "Status_t": "enum StatusEnum_tag { STATUS_OK = 0, STATUS_FAIL }",
-        "x": "struct Point_tag { int",
-        "a": "struct NamedStruct_tag { int",
-        "i": "union Number_tag { int",
-        "c": "union NamedUnion_tag { char",
-        "MyComplexArray": "MyComplexPtr[10]"
+        "Color_t": "enum",
+        "Status_t": "enum",
+        "Point_t": "struct",
+        "NamedStruct_t": "struct",
+        "Number_t": "union",
+        "NamedUnion_t": "union",
+        "MyComplexArray": "MyComplexPtr MyComplexArray [ 10 ]"
       },
-      "typedef_relations": [
-        {
-          "typedef_name": "Status_t",
-          "original_type": "enum",
-          "relationship_type": "defines",
-          "struct_tag_name": "",
-          "enum_tag_name": "StatusEnum"
-        },
-        {
-          "typedef_name": "Point_t",
-          "original_type": "struct",
-          "relationship_type": "defines",
-          "struct_tag_name": "Point",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "NamedStruct_t",
-          "original_type": "struct",
-          "relationship_type": "defines",
-          "struct_tag_name": "NamedStruct",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "Number_t",
-          "original_type": "union",
-          "relationship_type": "defines",
-          "struct_tag_name": "",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "NamedUnion_t",
-          "original_type": "union",
-          "relationship_type": "defines",
-          "struct_tag_name": "",
-          "enum_tag_name": ""
-        }
-      ],
+      "typedef_relations": [],
       "include_relations": [],
       "unions": {}
     }
   },
-  "created_at": "2025-07-22T10:34:13.470046"
+  "created_at": "2025-07-22T11:10:42.152231"
 }

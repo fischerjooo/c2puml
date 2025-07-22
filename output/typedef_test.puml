@@ -3,27 +3,37 @@
 class "typedef_test" as TYPEDEF_TEST <<source>> #LightBlue
 {
     -- Global Variables --
-    + MyLen global_length
-    + MyBuffer global_buffer
-    + MyComplexPtr global_complex
+    - MyLen global_length
+    - MyBuffer global_buffer
+    - MyComplexPtr global_complex
     -- Functions --
-    void log_buffer(const MyBuffer * buffer)
+    #include "typedef_test.h" #include "complex_example.h" #include "geometry.h" #include "logger.h" #include <stdlib.h> MyLen global_length = 0U ; MyBuffer global_buffer = { 0U , NULL } ; MyComplexPtr global_complex = NULL ; void log_buffer(const MyBuffer * buffer)
     MyInt process_buffer(MyBuffer * buffer)
     int my_callback(MyBuffer * buffer)
     MyComplex * create_complex(MyLen id, MyString name)
     int main()
-    return process_buffer()
 }
 
 class "typedef_test" as HEADER_TYPEDEF_TEST <<header>> #LightGreen
 {
     -- Macros --
     + #define TYPEDEF_TEST_H
+    -- Typedefs --
+    + typedef uint32_t MyLen
+    + typedef int32_t MyInt
+    + typedef char * MyString
+    + typedef struct MyBuffer
+    + typedef int ( * MyCallback ) ( MyBuffer * buffer ) MyCallback
+    + typedef struct MyComplex
+    + typedef MyComplex * MyComplexPtr
+    + typedef enum Color_t
+    + typedef enum Status_t
+    + typedef struct Point_t
+    + typedef struct NamedStruct_t
+    + typedef union Number_t
+    + typedef union NamedUnion_t
+    + typedef MyComplexPtr MyComplexArray [ 10 ] MyComplexArray
     -- Struct Fields --
-    + MyLen id
-    + MyString name
-    + MyCallback callback
-    + log_level_t log_level
     + int a
     + int b
 }
@@ -32,27 +42,33 @@ class "complex_example" as HEADER_COMPLEX_EXAMPLE <<header>> #LightGreen
 {
     -- Macros --
     + #define COMPLEX_EXAMPLE_H
+    -- Typedefs --
+    + typedef struct NestedInfo_t
+    + typedef enum CE_Status_t
+    + typedef struct ComplexExample_t
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
     -- Macros --
     + #define GEOMETRY_H
+    -- Typedefs --
+    + typedef struct triangle_t
     -- Functions --
-    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
+    + #ifndef GEOMETRY_H #define GEOMETRY_H #include "sample.h" #include "math_utils.h" typedef struct triangle_tag { point_t vertices [ 3 ] ; char label [ MAX_LABEL_LEN ] ; } triangle_t ; triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
     + int triangle_area(const triangle_t * tri)
-    -- Struct Fields --
-    + point_t[3] vertices
-    + char[MAX_LABEL_LEN] label
 }
 
 class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
+    -- Typedefs --
+    + typedef enum log_level_t
+    + typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) log_callback_t
     -- Functions --
-    + void set_log_callback(log_callback_t cb)
-    + void log_message(log_level_t level, const char * fmt)
+    + #ifndef LOGGER_H #define LOGGER_H #include <stdio.h> #include "config.h" typedef enum log_level_tag { LOG_DEBUG = 0 , LOG_INFO , LOG_WARN , LOG_ERROR } log_level_t ; typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) ; void set_log_callback(log_callback_t cb)
+    + void log_message(log_level_t level, const char * fmt, . . .)
 }
 
 class "stdlib.h" as HEADER_STDLIB_H <<header>> #LightGray
@@ -67,17 +83,20 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + #define VERSION
     + #define MIN
     + #define MAX
+    -- Typedefs --
+    + typedef struct point_t
+    + typedef enum system_state_t
     -- Global Variables --
-    + extern const int MAX_POINTS
-    + extern const char * DEFAULT_LABEL
+    + int MAX_POINTS
+    + char * DEFAULT_LABEL
     -- Functions --
-    + extern int calculate_sum(int a, int b)
-    + extern point_t * create_point(int x, int y, const char * label)
-    + extern void process_point(point_t * p)
+    + #ifndef SAMPLE_H #define SAMPLE_H #include <stddef.h> #include "config.h" #define PI 3.14159 #define VERSION "1.0.0" typedef struct point_tag { int x ; int y ; char label [ 32 ] ; } point_t ; typedef enum system_state_tag { STATE_IDLE = 0 , STATE_RUNNING , STATE_ERROR } system_state_t ; extern int calculate_sum(int a, int b)
+    + point_t * create_point(int x, int y, const char * label)
+    + void process_point(point_t * p)
     -- Struct Fields --
     + int x
     + int y
-    + char[32] label
+    + char label [ 32 ]
 }
 
 class "config" as HEADER_CONFIG <<header>> #LightGreen
@@ -87,6 +106,9 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + #define PROJECT_NAME
     + #define MAX_LABEL_LEN
     + #define DEFAULT_BUFFER_SIZE
+    -- Typedefs --
+    + typedef uint32_t id_t
+    + typedef int32_t status_t
 }
 
 class "stdint.h" as HEADER_STDINT_H <<header>> #LightGray
@@ -97,8 +119,11 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
     -- Macros --
     + #define MATH_UTILS_H
+    -- Typedefs --
+    + typedef double real_t
+    + typedef int ( * math_op_t ) ( int , int ) math_op_t
     -- Functions --
-    + int add(int a, int b)
+    + #ifndef MATH_UTILS_H #define MATH_UTILS_H #include "config.h" typedef double real_t ; typedef int ( * math_op_t ) ( int , int ) ; int add(int a, int b)
     + int subtract(int a, int b)
     + real_t average(const int * arr, size_t len)
 }
@@ -107,76 +132,104 @@ class "stdio.h" as HEADER_STDIO_H <<header>> #LightGray
 {
 }
 
+class "MyLen" as TYPEDEF_MYLEN <<typedef>> #LightYellow
+{
+    + typedef uint32_t MyLen
+}
+
+class "MyInt" as TYPEDEF_MYINT <<typedef>> #LightYellow
+{
+    + typedef int32_t MyInt
+}
+
+class "MyString" as TYPEDEF_MYSTRING <<typedef>> #LightYellow
+{
+    + typedef char * MyString
+}
+
+class "MyBuffer" as TYPEDEF_MYBUFFER <<typedef>> #LightYellow
+{
+    + typedef struct MyBuffer
+}
+
+class "MyCallback" as TYPEDEF_MYCALLBACK <<typedef>> #LightYellow
+{
+    + typedef int ( * MyCallback ) ( MyBuffer * buffer ) MyCallback
+}
+
+class "MyComplex" as TYPEDEF_MYCOMPLEX <<typedef>> #LightYellow
+{
+    + typedef struct MyComplex
+}
+
+class "MyComplexPtr" as TYPEDEF_MYCOMPLEXPTR <<typedef>> #LightYellow
+{
+    + typedef MyComplex * MyComplexPtr
+}
+
+class "Color_t" as TYPEDEF_COLOR_T <<typedef>> #LightYellow
+{
+    + typedef enum Color_t
+}
+
 class "Status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 {
-    + STATUS_OK = 0
-    + STATUS_FAIL
+    + typedef enum Status_t
 }
 
 class "Point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
-    + struct
+    + typedef struct Point_t
 }
 
 class "NamedStruct_t" as TYPEDEF_NAMEDSTRUCT_T <<typedef>> #LightYellow
 {
-    + int a
-    + int b
+    + typedef struct NamedStruct_t
 }
 
 class "Number_t" as TYPEDEF_NUMBER_T <<typedef>> #LightYellow
 {
-    + union
+    + typedef union Number_t
 }
 
 class "NamedUnion_t" as TYPEDEF_NAMEDUNION_T <<typedef>> #LightYellow
 {
-    + union
+    + typedef union NamedUnion_t
 }
 
-class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
+class "MyComplexArray" as TYPEDEF_MYCOMPLEXARRAY <<typedef>> #LightYellow
 {
-    + int x
-    + int y
-    + char[32] label
-}
-
-class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
-{
-    + STATE_IDLE = 0
-    + STATE_RUNNING
-    + STATE_ERROR
-}
-
-class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
-{
-    + point_t[3] vertices
-    + char[MAX_LABEL_LEN] label
-}
-
-class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
-{
-    + LOG_DEBUG = 0
-    + LOG_INFO
-    + LOG_WARN
-    + LOG_ERROR
+    + typedef MyComplexPtr MyComplexArray [ 10 ] MyComplexArray
 }
 
 class "NestedInfo_t" as TYPEDEF_NESTEDINFO_T <<typedef>> #LightYellow
 {
-    + struct
+    + typedef struct NestedInfo_t
 }
 
 class "CE_Status_t" as TYPEDEF_CE_STATUS_T <<typedef>> #LightYellow
 {
-    + CE_STATUS_OK = 0
-    + CE_STATUS_WARN
-    + CE_STATUS_FAIL
+    + typedef enum CE_Status_t
 }
 
 class "ComplexExample_t" as TYPEDEF_COMPLEXEXAMPLE_T <<typedef>> #LightYellow
 {
-    + struct
+    + typedef struct ComplexExample_t
+}
+
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
+{
+    + typedef struct triangle_t
+}
+
+class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
+{
+    + typedef enum log_level_t
+}
+
+class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
+{
+    + typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) log_callback_t
 }
 
 TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>
@@ -198,16 +251,5 @@ HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
-HEADER_TYPEDEF_TEST ..> TYPEDEF_STATUS_T : declares
-HEADER_TYPEDEF_TEST ..> TYPEDEF_POINT_T : declares
-HEADER_TYPEDEF_TEST ..> TYPEDEF_NAMEDSTRUCT_T : declares
-HEADER_TYPEDEF_TEST ..> TYPEDEF_NUMBER_T : declares
-HEADER_TYPEDEF_TEST ..> TYPEDEF_NAMEDUNION_T : declares
-HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_NESTEDINFO_T : declares
-HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_CE_STATUS_T : declares
-HEADER_COMPLEX_EXAMPLE ..> TYPEDEF_COMPLEXEXAMPLE_T : declares
-HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : declares
-HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : declares
-TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : uses
 
 @enduml
