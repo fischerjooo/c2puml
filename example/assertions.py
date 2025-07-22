@@ -549,7 +549,7 @@ class PUMLValidator:
                             
             print(f"    ✅ Content patterns valid")
             
-    def assert_relationships(self, relationships: List[Tuple[str, str, str]], filename: str) -> None:
+    def assert_relationships(self, relationships: List[Tuple[str, str, str]], classes: Dict[str, Dict], filename: str) -> None:
         """Assert that relationships are properly structured."""
         print(f"\n🔗 Validating relationships for {filename}:")
         
@@ -574,6 +574,9 @@ class PUMLValidator:
         
         # Check that all relations have corresponding classes
         self._validate_all_relations_have_classes(relationships, filename)
+        
+        # Check that all header classes have a path to the main C class
+        self._validate_all_headers_connected_to_main_class(relationships, classes, filename)
         
         # Assert relationship structure
         for source, target, rel_type in relationships:
@@ -950,6 +953,76 @@ class PUMLValidator:
         
         print(f"    ✅ All {len(relationships)} relations have corresponding classes")
 
+    def _validate_all_headers_connected_to_main_class(self, relationships: List[Tuple[str, str, str]], classes: Dict[str, Dict], filename: str) -> None:
+        """Assert that all header classes have a direct or indirect relationship to the main C class."""
+        print(f"  🔍 Checking that all header classes are connected to main C class...")
+        
+        # Find the main C class (source class)
+        main_class = None
+        for uml_id, class_info in classes.items():
+            if class_info['stereotype'] == 'source':
+                main_class = uml_id
+                break
+        
+        if not main_class:
+            print(f"    ⚠️  No main C class found in {filename}")
+            return
+        
+        # Find all header classes
+        header_classes = set()
+        for uml_id, class_info in classes.items():
+            if class_info['stereotype'] == 'header':
+                header_classes.add(uml_id)
+        
+        if not header_classes:
+            print(f"    ✅ No header classes to validate in {filename}")
+            return
+        
+        # Build a graph of relationships for path finding
+        graph = {}
+        for source, target, rel_type in relationships:
+            if source not in graph:
+                graph[source] = []
+            if target not in graph:
+                graph[target] = []
+            graph[source].append(target)
+            # For include relationships, also add reverse direction for path finding
+            if rel_type == '<<include>>':
+                graph[target].append(source)
+        
+        # Check each header class for connectivity to main class
+        orphan_headers = []
+        for header_class in header_classes:
+            if not self._has_path_to_main_class(header_class, main_class, graph, set()):
+                orphan_headers.append(header_class)
+        
+        if orphan_headers:
+            print(f"    ❌ Orphan header classes found in {filename}:")
+            for orphan in orphan_headers:
+                print(f"      Header class '{orphan}' has no path to main class '{main_class}'")
+            raise AssertionError(f"Orphan header classes found in {filename}: {', '.join(orphan_headers)}")
+        
+        print(f"    ✅ All header classes are connected to main C class")
+
+    def _has_path_to_main_class(self, current_class: str, main_class: str, graph: Dict[str, List[str]], visited: Set[str]) -> bool:
+        """Check if there's a path from current_class to main_class using DFS."""
+        if current_class == main_class:
+            return True
+        
+        if current_class in visited:
+            return False
+        
+        visited.add(current_class)
+        
+        if current_class not in graph:
+            return False
+        
+        for neighbor in graph[current_class]:
+            if self._has_path_to_main_class(neighbor, main_class, graph, visited):
+                return True
+        
+        return False
+
     def validate_file(self, filename: str) -> None:
         """Validate a single PUML file."""
         print(f"\n{'='*60}")
@@ -969,7 +1042,7 @@ class PUMLValidator:
         
         # Extract and validate relationships
         relationships = self.extract_relationships(content)
-        self.assert_relationships(relationships, filename)
+        self.assert_relationships(relationships, classes, filename)
         
         # Validate specific content requirements
         self.assert_specific_content(content, filename)

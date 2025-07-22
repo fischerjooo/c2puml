@@ -13,21 +13,17 @@ class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 + char MAX_LABEL_LEN[ ] label
 }
 
-class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 {
-+ int ( * math_op_t ) ( int , int )
++ int32_t
 }
 
-enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
+enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 {
-STATE_IDLE = 0
-STATE_RUNNING
-STATE_ERROR
-}
-
-class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
-{
-+ uint32_t
+LOG_DEBUG = 0
+LOG_INFO
+LOG_WARN
+LOG_ERROR
 }
 
 class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
@@ -47,17 +43,21 @@ class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 + void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
-enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
+class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
 {
-LOG_DEBUG = 0
-LOG_INFO
-LOG_WARN
-LOG_ERROR
++ int ( * math_op_t ) ( int , int )
 }
 
-class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
 {
-+ int32_t
+STATE_IDLE = 0
+STATE_RUNNING
+STATE_ERROR
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
++ uint32_t
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
@@ -76,14 +76,18 @@ class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
 {
 }
 
-class "logger" as HEADER_LOGGER <<header>> #LightGreen
+class "stdint.h" as HEADER_STDINT <<header>> #LightGray
 {
--- Macros --
-+ #define LOGGER_H
--- Functions --
-+ void set_log_callback(log_callback_t cb);
-+ void log_message(log_level_t level, const char * fmt, ...);
 }
+
+class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
+{
+}
+
+class "stdio.h" as HEADER_STDIO <<header>> #LightGray
+{
+}
+
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
 -- Macros --
@@ -109,18 +113,14 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 + int subtract(int a, int b);
 + real_t average(const int * arr, size_t len);
 }
-class "stdint.h" as HEADER_STDINT <<header>> #LightGray
+class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
+-- Macros --
++ #define LOGGER_H
+-- Functions --
++ void set_log_callback(log_callback_t cb);
++ void log_message(log_level_t level, const char * fmt, ...);
 }
-
-class "stdio.h" as HEADER_STDIO <<header>> #LightGray
-{
-}
-
-class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
-{
-}
-
 class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
 -- Macros --
