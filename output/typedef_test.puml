@@ -165,43 +165,6 @@ class "MyComplexArray" as TYPEDEF_MYCOMPLEXARRAY <<typedef>> #LightYellow
 + MyComplexPtr MyComplexArray [ 10 ]
 }
 
-class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
-{
-+ int x
-+ int y
-+ char 32[ ] label
-}
-
-enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
-{
-STATE_IDLE = 0
-STATE_RUNNING
-STATE_ERROR
-}
-
-class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
-{
-+ uint32_t
-}
-
-class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
-{
-+ int32_t
-}
-
-enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
-{
-LOG_DEBUG = 0
-LOG_INFO
-LOG_WARN
-LOG_ERROR
-}
-
-class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
-{
-+ void ( * log_callback_t ) ( log_level_t level , const char * message )
-}
-
 class "NestedInfo_t" as TYPEDEF_NESTEDINFO_T <<typedef>> #LightYellow
 {
 + id_t id
@@ -229,14 +192,17 @@ class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 + char MAX_LABEL_LEN[ ] label
 }
 
-class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
+enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 {
-+ double
+LOG_DEBUG = 0
+LOG_INFO
+LOG_WARN
+LOG_ERROR
 }
 
-class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
+class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 {
-+ int ( * math_op_t ) ( int , int )
++ void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
 TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>

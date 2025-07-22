@@ -97,20 +97,14 @@ STATE_RUNNING
 STATE_ERROR
 }
 
-class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 {
-+ uint32_t
++ double
 }
 
-class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
 {
-+ int32_t
-}
-
-class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
-{
-+ point_t 3[ ] vertices
-+ char MAX_LABEL_LEN[ ] label
++ int ( * math_op_t ) ( int , int )
 }
 
 enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
@@ -126,14 +120,10 @@ class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 + void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
-class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 {
-+ double
-}
-
-class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
-{
-+ int ( * math_op_t ) ( int , int )
++ point_t 3[ ] vertices
++ char MAX_LABEL_LEN[ ] label
 }
 
 SAMPLE --> HEADER_STDIO : <<include>>

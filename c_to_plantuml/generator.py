@@ -357,18 +357,20 @@ class PlantUMLGenerator:
                         included_file_model = model
                         break
             if included_file_model:
-                # Process simple typedefs from the typedefs dictionary
-                for typedef_name, original_type in included_file_model.typedefs.items():
-                    if typedef_name not in seen_typedefs:
-                        seen_typedefs.add(typedef_name)
-                        lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
-                
-                # Process complex typedefs from typedef_relations
-                for typedef_relation in included_file_model.typedef_relations:
-                    typedef_name = typedef_relation.typedef_name
-                    if typedef_name not in seen_typedefs:
-                        seen_typedefs.add(typedef_name)
-                        lines.extend(self._generate_single_typedef_class(typedef_relation, included_file_model, project_model))
+                # Only process typedefs from direct includes (depth 0) to avoid duplicates
+                if depth == 0:
+                    # Process simple typedefs from the typedefs dictionary
+                    for typedef_name, original_type in included_file_model.typedefs.items():
+                        if typedef_name not in seen_typedefs:
+                            seen_typedefs.add(typedef_name)
+                            lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
+                    
+                    # Process complex typedefs from typedef_relations
+                    for typedef_relation in included_file_model.typedef_relations:
+                        typedef_name = typedef_relation.typedef_name
+                        if typedef_name not in seen_typedefs:
+                            seen_typedefs.add(typedef_name)
+                            lines.extend(self._generate_single_typedef_class(typedef_relation, included_file_model, project_model))
                 
                 # Recursively process further nested typedefs (respecting max_depth)
                 self._process_nested_typedefs(included_file_model, project_model, seen_typedefs, lines, visited_files, depth + 1, max_depth)
@@ -467,7 +469,7 @@ class PlantUMLGenerator:
                 return file_model
         return None
     
-    def _generate_simple_typedef_class(self, typedef_name: str, original_type: str, project_model: ProjectModel = None, source_file: str = None) -> List[str]:
+    def _generate_simple_typedef_class(self, typedef_name: str, original_type: str, project_model: ProjectModel = None) -> List[str]:
         """Generate a class for a simple typedef"""
         lines = []
         
@@ -515,6 +517,9 @@ class PlantUMLGenerator:
                         possible_struct_names.append(typedef_name[:-2])  # Remove "_t" suffix
                         possible_struct_names.append(f"{typedef_name[:-2]}_tag")  # Add _tag suffix to base name
                     possible_struct_names.append(f"{typedef_name}_tag")
+                    # Also try the typedef name itself (in case parser stored it that way)
+                    if typedef_name not in possible_struct_names:
+                        possible_struct_names.append(typedef_name)
                     
                     import logging
                     logger = logging.getLogger(__name__)
@@ -1206,17 +1211,10 @@ class PlantUMLGenerator:
             name = name[:-2]
         return f"HEADER_{self._get_uml_id(name)}"
 
-    def _get_typedef_uml_id(self, name: str, source_file: str = None) -> str:
+    def _get_typedef_uml_id(self, name: str) -> str:
         """Generate UML ID for a typedef class"""
         # Convert to uppercase and replace special characters
         base_id = name.upper().replace("-", "_").replace(".", "_")
-        
-        # If source file is provided, include it in the ID to make it unique
-        if source_file:
-            # Extract the filename without extension and convert to uppercase
-            file_base = Path(source_file).stem.upper().replace("-", "_").replace(".", "_")
-            return f"TYPEDEF_{base_id}_{file_base}"
-        
         return f"TYPEDEF_{base_id}"
 
     def _get_type_uml_id(self, name: str) -> str:

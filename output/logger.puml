@@ -50,16 +50,6 @@ class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 + void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
-class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
-{
-+ uint32_t
-}
-
-class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
-{
-+ int32_t
-}
-
 LOGGER --> HEADER_LOGGER : <<include>>
 LOGGER --> HEADER_STDARG : <<include>>
 LOGGER --> HEADER_STRING : <<include>>

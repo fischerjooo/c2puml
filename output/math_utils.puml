@@ -35,16 +35,6 @@ class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
 + int ( * math_op_t ) ( int , int )
 }
 
-class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
-{
-+ uint32_t
-}
-
-class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
-{
-+ int32_t
-}
-
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>

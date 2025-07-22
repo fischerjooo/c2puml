@@ -54,30 +54,6 @@ class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 + char MAX_LABEL_LEN[ ] label
 }
 
-class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
-{
-+ int x
-+ int y
-+ char 32[ ] label
-}
-
-enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
-{
-STATE_IDLE = 0
-STATE_RUNNING
-STATE_ERROR
-}
-
-class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
-{
-+ double
-}
-
-class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
-{
-+ int ( * math_op_t ) ( int , int )
-}
-
 GEOMETRY --> HEADER_GEOMETRY : <<include>>
 GEOMETRY --> HEADER_STRING : <<include>>
 GEOMETRY --> HEADER_STDLIB : <<include>>
