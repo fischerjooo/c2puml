@@ -362,45 +362,37 @@ class CParser:
             original_line = line
             line = line.strip()
             
-            logger.debug(f"Global parsing line {i+1}: '{original_line}' -> '{line}'")
-            
             # Skip empty lines, comments, and preprocessor directives
-            if (not line or 
-                line.startswith('//') or 
-                line.startswith('/*') or 
-                line.startswith('#')):
+            if not line or line.startswith('//') or line.startswith('/*') or line.startswith('*') or line.startswith('#'):
                 logger.debug(f"  Skipping line {i+1}: empty/comment/preprocessor")
                 continue
-                
-            # Skip typedef declarations
-            if line.startswith('typedef '):
+            
+            # Check for struct/enum/union declarations (including typedef struct)
+            if any(keyword in line for keyword in ['struct ', 'enum ', 'union ']):
+                if '{' in line:
+                    in_struct_or_enum = True
+                    struct_enum_brace_depth = 1  # Start with 1 for the opening brace
+                    logger.debug(f"  Entering struct/enum at line {i+1}: {line}")
+                logger.debug(f"  Skipping line {i+1}: struct/enum/union declaration")
+                continue
+            
+            # Check for typedef declarations (that are not struct/enum/union)
+            if line.startswith('typedef') and not any(keyword in line for keyword in ['struct ', 'enum ', 'union ']):
                 logger.debug(f"  Skipping line {i+1}: typedef")
                 continue
-
-            # Skip lines that are just closing braces (e.g., '} triangle_t;')
-            if line.startswith('}') and line.endswith(';'):
-                # This is a closing brace with a name, skip it
-                logger.debug(f"  Skipping line {i+1}: closing brace with name")
+            
+            # Check for function-like declarations (function prototypes or definitions)
+            if '(' in line and ')' in line and '{' in line and not in_struct_or_enum:
+                in_function = True
+                logger.debug(f"  Exiting function at line {i+1}")
+                logger.debug(f"  Skipping line {i+1}: function-like declaration")
                 continue
-            elif line.startswith('}'):
-                # This is a closing brace that should be counted for depth tracking
-                logger.debug(f"  Processing line {i+1}: closing brace")
-                pass
-                
-            # Check if we're entering a struct or enum definition
-            if line.startswith('struct ') or line.startswith('enum '):
-                in_struct_or_enum = True
-                logger.debug(f"  Entering struct/enum at line {i+1}")
-            elif in_struct_or_enum and line.endswith(';') and struct_enum_brace_depth == 0:
-                # End of struct/enum definition (closing brace with semicolon)
-                in_struct_or_enum = False
-                struct_enum_brace_depth = 0
-                logger.debug(f"  Exiting struct/enum at line {i+1}")
-                
-            # Track brace depth separately for struct/enum vs main code
+            
+            # Count braces
             open_braces = line.count('{')
             close_braces = line.count('}')
             
+            # Update brace depth tracking
             if in_struct_or_enum:
                 struct_enum_brace_depth += open_braces - close_braces
                 logger.debug(f"  Struct/enum brace depth: {struct_enum_brace_depth}")
@@ -413,89 +405,68 @@ class CParser:
             else:
                 brace_depth += open_braces - close_braces
             
-            # Ensure brace_depth doesn't go negative
-            brace_depth = max(0, brace_depth)
-            struct_enum_brace_depth = max(0, struct_enum_brace_depth)
-            
-            logger.debug(f"  Line {i+1}: brace_depth={brace_depth}, struct_enum_brace_depth={struct_enum_brace_depth}, in_function={in_function}, in_struct_or_enum={in_struct_or_enum}")
-            
-            # Check if we're entering a function (function declaration followed by opening brace)
-            if '(' in line and ')' in line and '{' in line and not in_struct_or_enum:
-                in_function = True
-                logger.debug(f"  Entering function at line {i+1}")
-            elif brace_depth == 0:
-                in_function = False
-                logger.debug(f"  Exiting function at line {i+1}")
-            
-            # Reset in_function flag when we're at top level and not in a function
-            if brace_depth == 0 and not ('(' in line and ')' in line and '{' in line):
-                in_function = False
-            
             # Skip if we're inside a function, any block, or inside a struct/enum definition
             if in_function or brace_depth > 0 or in_struct_or_enum:
                 logger.debug(f"  Skipping line {i+1}: inside function/block/struct_enum")
                 continue
-                
-            # Skip lines with function-like declarations (containing parentheses)
-            if '(' in line and ')' in line:
-                logger.debug(f"  Skipping line {i+1}: function-like declaration")
-                continue
-                
-            # Skip switch/case/default statements (case insensitive)
-            line_lower = line.lower()
-            if line_lower.startswith('case ') or line_lower.startswith('default:') or line_lower.startswith('switch '):
-                logger.debug(f"  Skipping line {i+1}: switch/case/default")
-                continue
-                
-            # Skip return statements
-            if line_lower.startswith('return '):
-                logger.debug(f"  Skipping line {i+1}: return statement")
-                continue
-                
+            
             # Check if line ends with semicolon (basic global variable indicator)
             if line.endswith(';'):
                 logger.debug(f"  Processing potential global at line {i+1}: '{line}'")
-                line = line[:-1].strip()
                 
-                if '=' in line:
-                    declaration_part = line.split('=')[0].strip()
-                    initialization_part = line.split('=', 1)[1].strip()
+                # Skip closing braces with names (like "} MyStruct;")
+                if line.startswith('}'):
+                    logger.debug(f"  Skipping line {i+1}: closing brace with name")
+                    continue
+                
+                # Skip function declarations (containing parentheses)
+                if '(' in line and ')' in line:
+                    logger.debug(f"  Skipping line {i+1}: function declaration")
+                    continue
+                
+                # Try to parse as a global variable declaration
+                # Pattern: type name [= value];
+                # Remove the semicolon for parsing
+                declaration = line[:-1].strip()
+                
+                # Split by '=' to separate declaration from initialization
+                if '=' in declaration:
+                    decl_part, init_part = declaration.split('=', 1)
+                    decl_part = decl_part.strip()
+                    init_part = init_part.strip()
                 else:
-                    declaration_part = line
-                    initialization_part = None
+                    decl_part = declaration
+                    init_part = None
                 
-                parts = declaration_part.split()
-                
-                if len(parts) >= 2:
-                    if parts[0] == 'static':
-                        parts = parts[1:]
+                # Parse the declaration part (type name)
+                # Handle multiple spaces and pointers
+                decl_parts = decl_part.split()
+                if len(decl_parts) >= 2:
+                    # Last part is the variable name, rest is the type
+                    var_name = decl_parts[-1]
+                    type_parts = decl_parts[:-1]
                     
-                    if len(parts) >= 2:
-                        var_name = parts[-1]
-                        
-                        if re.match(r'^[A-Za-z_][A-Za-z0-9_]*(\[[^\]]*\])*$', var_name):
-                            base_name = re.sub(r'\[[^\]]*\]', '', var_name)
-                            
-                            type_parts = parts[:-1]
-                            type_name = ' '.join(type_parts).strip()
-                            
-                            if type_name:
-                                logger.debug(f"About to create Field: type='{type_name}', name='{base_name}', value='{initialization_part}'")
-                                try:
-                                    globals_list.append(Field(base_name, type_name, initialization_part))
-                                    logger.debug(f"  Successfully added global: {base_name}")
-                                except Exception as e:
-                                    logger.error(f"Exception creating Field: {e} | type='{type_name}', name='{base_name}', value='{initialization_part}'")
-                                    raise
-                        else:
-                            logger.debug(f"  Invalid variable name: {var_name}")
-                    else:
-                        logger.debug(f"  Not enough parts in declaration: {parts}")
+                    # Handle pointer types
+                    if var_name.startswith('*'):
+                        type_parts.append('*')
+                        var_name = var_name[1:]
+                    
+                    var_type = ' '.join(type_parts)
+                    
+                    # Skip if it looks like a function call or keyword
+                    if var_name in ['return', 'if', 'for', 'while', 'switch', 'case', 'default']:
+                        logger.debug(f"  Skipping line {i+1}: function call or keyword")
+                        continue
+                    
+                    logger.debug(f"About to create Field: type='{var_type}', name='{var_name}', value='{init_part}'")
+                    field = Field(name=var_name, type=var_type, value=init_part)
+                    globals_list.append(field)
+                    logger.debug(f"  Successfully added global: {var_name}")
                 else:
-                    logger.debug(f"  Not enough parts in line: {parts}")
+                    logger.debug(f"  Skipping line {i+1}: insufficient parts for global declaration")
             else:
                 logger.debug(f"  Line {i+1} doesn't end with semicolon")
-
+        
         logger.debug(f"Global parsing complete. Found {len(globals_list)} globals")
         return globals_list
 

@@ -162,38 +162,7 @@
         }
       },
       "functions": [],
-      "globals": [
-        {
-          "name": "id",
-          "type": "id_t",
-          "value": null
-        },
-        {
-          "name": "description",
-          "type": "char",
-          "value": null
-        },
-        {
-          "name": "log_level",
-          "type": "log_level_t",
-          "value": null
-        },
-        {
-          "name": "info",
-          "type": "NestedInfo_t",
-          "value": null
-        },
-        {
-          "name": "status",
-          "type": "CE_Status_t",
-          "value": null
-        },
-        {
-          "name": "values",
-          "type": "int",
-          "value": null
-        }
-      ],
+      "globals": [],
       "includes": [
         "config.h",
         "logger.h"
@@ -426,18 +395,7 @@
           "is_static": false
         }
       ],
-      "globals": [
-        {
-          "name": "vertices",
-          "type": "point_t",
-          "value": null
-        },
-        {
-          "name": "label",
-          "type": "char",
-          "value": null
-        }
-      ],
+      "globals": [],
       "includes": [
         "sample.h",
         "math_utils.h"
@@ -499,7 +457,7 @@
       "globals": [
         {
           "name": "current_cb",
-          "type": "log_callback_t",
+          "type": "static log_callback_t",
           "value": "NULL"
         }
       ],
@@ -836,12 +794,12 @@
       "globals": [
         {
           "name": "global_counter",
-          "type": "int",
+          "type": "static int",
           "value": "0"
         },
         {
-          "name": "buffer",
-          "type": "char",
+          "name": "buffer[MAX_SIZE]",
+          "type": "static char",
           "value": null
         },
         {
@@ -1019,21 +977,6 @@
         }
       ],
       "globals": [
-        {
-          "name": "x",
-          "type": "int",
-          "value": null
-        },
-        {
-          "name": "y",
-          "type": "int",
-          "value": null
-        },
-        {
-          "name": "label",
-          "type": "char",
-          "value": null
-        },
         {
           "name": "MAX_POINTS",
           "type": "extern const int",
@@ -1446,78 +1389,7 @@
         }
       },
       "functions": [],
-      "globals": [
-        {
-          "name": "length",
-          "type": "MyLen",
-          "value": null
-        },
-        {
-          "name": "data",
-          "type": "MyString",
-          "value": null
-        },
-        {
-          "name": "id",
-          "type": "MyLen",
-          "value": null
-        },
-        {
-          "name": "name",
-          "type": "MyString",
-          "value": null
-        },
-        {
-          "name": "callback",
-          "type": "MyCallback",
-          "value": null
-        },
-        {
-          "name": "log_level",
-          "type": "log_level_t",
-          "value": null
-        },
-        {
-          "name": "x",
-          "type": "int",
-          "value": null
-        },
-        {
-          "name": "y",
-          "type": "int",
-          "value": null
-        },
-        {
-          "name": "a",
-          "type": "int",
-          "value": null
-        },
-        {
-          "name": "b",
-          "type": "int",
-          "value": null
-        },
-        {
-          "name": "i",
-          "type": "int",
-          "value": null
-        },
-        {
-          "name": "f",
-          "type": "float",
-          "value": null
-        },
-        {
-          "name": "c",
-          "type": "char",
-          "value": null
-        },
-        {
-          "name": "d",
-          "type": "double",
-          "value": null
-        }
-      ],
+      "globals": [],
       "includes": [
         "stdint.h",
         "sample.h",
@@ -1584,5 +1456,5 @@
       "unions": {}
     }
   },
-  "created_at": "2025-07-22T07:28:24.424971"
+  "created_at": "2025-07-22T07:35:31.202452"
 }
