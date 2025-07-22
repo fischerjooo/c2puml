@@ -47,5 +47,6 @@ class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
+MATH_UTILS ..> TYPEDEF_REAL_T : <<uses>>
 
 @enduml

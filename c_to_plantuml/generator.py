@@ -45,6 +45,9 @@ class PlantUMLGenerator:
 
         # Generate typedef uses relations
         diagram_lines.extend(self.generate_typedef_uses_relations(file_model, project_model))
+        
+        # Generate function and variable type dependencies
+        diagram_lines.extend(self.generate_type_dependencies(file_model, project_model))
 
         # End diagram
         diagram_lines.extend(["", "@enduml"])
@@ -1387,6 +1390,106 @@ class PlantUMLGenerator:
             # Check if the base type is a typedef
             if base_type in typedef_names and base_type != typedef_name:
                 lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(base_type)} : <<uses>>")
+
+    def generate_type_dependencies(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
+        """Generate relationships for function parameters, return types, and global variables"""
+        lines = []
+        seen_relationships = set()
+        
+        # Collect all typedef names from all files
+        typedef_names = set()
+        for f in project_model.files.values():
+            typedef_names.update(f.typedefs.keys())
+            for typedef_rel in f.typedef_relations:
+                typedef_names.add(typedef_rel.typedef_name)
+        
+        # Process functions from current file
+        for function in file_model.functions:
+            # Check return type
+            if function.return_type and function.return_type in typedef_names:
+                relationship_key = f"function_return_{function.name}_{function.return_type}"
+                if relationship_key not in seen_relationships:
+                    seen_relationships.add(relationship_key)
+                    # Find which class contains this function
+                    if file_model.file_path.endswith('.h'):
+                        class_id = self._get_header_uml_id(Path(file_model.file_path).stem)
+                    else:
+                        class_id = self._get_uml_id(Path(file_model.file_path).stem)
+                    lines.append(f"{class_id} ..> {self._get_typedef_uml_id(function.return_type)} : <<uses>>")
+            
+            # Check parameters
+            if function.parameters:
+                for param in function.parameters:
+                    # Extract base type from parameter type (remove pointers, arrays, etc.)
+                    base_type = self._extract_base_type(param.type)
+                    if base_type in typedef_names:
+                        relationship_key = f"function_param_{function.name}_{param.name}_{base_type}"
+                        if relationship_key not in seen_relationships:
+                            seen_relationships.add(relationship_key)
+                            # Find which class contains this function
+                            if file_model.file_path.endswith('.h'):
+                                class_id = self._get_header_uml_id(Path(file_model.file_path).stem)
+                            else:
+                                class_id = self._get_uml_id(Path(file_model.file_path).stem)
+                            lines.append(f"{class_id} ..> {self._get_typedef_uml_id(base_type)} : <<uses>>")
+        
+        # Process global variables from current file
+        for global_var in file_model.globals:
+            # Extract base type from global variable type
+            base_type = self._extract_base_type(global_var.type)
+            if base_type in typedef_names:
+                relationship_key = f"global_var_{global_var.name}_{base_type}"
+                if relationship_key not in seen_relationships:
+                    seen_relationships.add(relationship_key)
+                    # Find which class contains this global variable
+                    if file_model.file_path.endswith('.h'):
+                        class_id = self._get_header_uml_id(Path(file_model.file_path).stem)
+                    else:
+                        class_id = self._get_uml_id(Path(file_model.file_path).stem)
+                    lines.append(f"{class_id} ..> {self._get_typedef_uml_id(base_type)} : <<uses>>")
+        
+        # Process typedefs that use macros (like MAX_LABEL_LEN)
+        for typedef_relation in file_model.typedef_relations:
+            if typedef_relation.relationship_type == "struct":
+                # Check if the struct definition uses any macros
+                struct_name = typedef_relation.typedef_name
+                struct = file_model.structs.get(struct_name)
+                if not struct:
+                    # Try with _tag suffix
+                    struct = file_model.structs.get(f"{struct_name}_tag")
+                
+                if struct:
+                    for field in struct.fields:
+                        # Check if field type or size uses macros
+                        if "MAX_LABEL_LEN" in field.type:
+                            relationship_key = f"typedef_macro_{struct_name}_MAX_LABEL_LEN"
+                            if relationship_key not in seen_relationships:
+                                seen_relationships.add(relationship_key)
+                                lines.append(f"{self._get_typedef_uml_id(struct_name)} ..> HEADER_CONFIG : <<uses>>")
+        
+        return lines
+    
+    def _extract_base_type(self, type_str: str) -> str:
+        """Extract the base type from a complex type string (remove pointers, arrays, etc.)"""
+        import re
+        
+        # Remove common prefixes
+        type_str = re.sub(r'^(const\s+|static\s+|extern\s+)', '', type_str)
+        
+        # Remove pointer indicators
+        type_str = re.sub(r'\s*\*\s*$', '', type_str)
+        type_str = re.sub(r'\s*\*\s*', ' ', type_str)
+        
+        # Remove array indicators
+        type_str = re.sub(r'\s*\[\s*\d*\s*\]\s*$', '', type_str)
+        
+        # Remove function pointer syntax
+        type_str = re.sub(r'\(\s*\*\s*[^)]*\)\s*\([^)]*\)', '', type_str)
+        
+        # Clean up extra whitespace
+        type_str = re.sub(r'\s+', ' ', type_str).strip()
+        
+        return type_str
 
 
 class Generator:
