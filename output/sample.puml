@@ -99,12 +99,12 @@ enum "system_state_t" as TYPEDEF_system_state_t <<typedef>> #LightYellow
 
 class "id_t" as TYPEDEF_id_t <<typedef>> #LightYellow
 {
-    + typedef uint32_t id_t
+    + uint32_t
 }
 
 class "status_t" as TYPEDEF_status_t <<typedef>> #LightYellow
 {
-    + typedef int32_t status_t
+    + int32_t
 }
 
 class "triangle_t" as TYPEDEF_triangle_t <<typedef>> #LightYellow
@@ -123,17 +123,17 @@ enum "log_level_t" as TYPEDEF_log_level_t <<typedef>> #LightYellow
 
 class "log_callback_t" as TYPEDEF_log_callback_t <<typedef>> #LightYellow
 {
-    + typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) log_callback_t
+    + void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
 class "real_t" as TYPEDEF_real_t <<typedef>> #LightYellow
 {
-    + typedef double real_t
+    + double
 }
 
 class "math_op_t" as TYPEDEF_math_op_t <<typedef>> #LightYellow
 {
-    + typedef int ( * math_op_t ) ( int , int ) math_op_t
+    + int ( * math_op_t ) ( int , int )
 }
 
 SAMPLE --> HEADER_STDIO : <<include>>

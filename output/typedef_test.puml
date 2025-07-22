@@ -87,17 +87,17 @@ class "stdio.h" as HEADER_STDIO <<header>> #LightGray
 
 class "MyLen" as TYPEDEF_MyLen <<typedef>> #LightYellow
 {
-    + typedef uint32_t MyLen
+    + uint32_t
 }
 
 class "MyInt" as TYPEDEF_MyInt <<typedef>> #LightYellow
 {
-    + typedef int32_t MyInt
+    + int32_t
 }
 
 class "MyString" as TYPEDEF_MyString <<typedef>> #LightYellow
 {
-    + typedef char * MyString
+    + char *
 }
 
 class "MyBuffer" as TYPEDEF_MyBuffer <<typedef>> #LightYellow
@@ -108,7 +108,7 @@ class "MyBuffer" as TYPEDEF_MyBuffer <<typedef>> #LightYellow
 
 class "MyCallback" as TYPEDEF_MyCallback <<typedef>> #LightYellow
 {
-    + typedef int ( * MyCallback ) ( MyBuffer * buffer ) MyCallback
+    + int ( * MyCallback ) ( MyBuffer * buffer )
 }
 
 class "MyComplex" as TYPEDEF_MyComplex <<typedef>> #LightYellow
@@ -121,7 +121,7 @@ class "MyComplex" as TYPEDEF_MyComplex <<typedef>> #LightYellow
 
 class "MyComplexPtr" as TYPEDEF_MyComplexPtr <<typedef>> #LightYellow
 {
-    + typedef MyComplex * MyComplexPtr
+    + MyComplex *
 }
 
 enum "Color_t" as TYPEDEF_Color_t <<typedef>> #LightYellow
@@ -132,12 +132,12 @@ enum "Color_t" as TYPEDEF_Color_t <<typedef>> #LightYellow
 
 enum "Status_t" as TYPEDEF_Status_t <<typedef>> #LightYellow
 {
-    + typedef enum Status_t
+    + enum
 }
 
 class "Point_t" as TYPEDEF_Point_t <<typedef>> #LightYellow
 {
-    + typedef struct Point_t
+    + struct
 }
 
 class "NamedStruct_t" as TYPEDEF_NamedStruct_t <<typedef>> #LightYellow
@@ -160,7 +160,7 @@ class "NamedUnion_t" as TYPEDEF_NamedUnion_t <<typedef>> #LightYellow
 
 class "MyComplexArray" as TYPEDEF_MyComplexArray <<typedef>> #LightYellow
 {
-    + typedef MyComplexPtr MyComplexArray [ 10 ] MyComplexArray
+    + MyComplexPtr MyComplexArray [ 10 ]
 }
 
 class "point_t" as TYPEDEF_point_t <<typedef>> #LightYellow
@@ -179,12 +179,12 @@ enum "system_state_t" as TYPEDEF_system_state_t <<typedef>> #LightYellow
 
 class "id_t" as TYPEDEF_id_t <<typedef>> #LightYellow
 {
-    + typedef uint32_t id_t
+    + uint32_t
 }
 
 class "status_t" as TYPEDEF_status_t <<typedef>> #LightYellow
 {
-    + typedef int32_t status_t
+    + int32_t
 }
 
 enum "log_level_t" as TYPEDEF_log_level_t <<typedef>> #LightYellow
@@ -197,7 +197,7 @@ enum "log_level_t" as TYPEDEF_log_level_t <<typedef>> #LightYellow
 
 class "log_callback_t" as TYPEDEF_log_callback_t <<typedef>> #LightYellow
 {
-    + typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) log_callback_t
+    + void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
 class "NestedInfo_t" as TYPEDEF_NestedInfo_t <<typedef>> #LightYellow
@@ -229,12 +229,12 @@ class "triangle_t" as TYPEDEF_triangle_t <<typedef>> #LightYellow
 
 class "real_t" as TYPEDEF_real_t <<typedef>> #LightYellow
 {
-    + typedef double real_t
+    + double
 }
 
 class "math_op_t" as TYPEDEF_math_op_t <<typedef>> #LightYellow
 {
-    + typedef int ( * math_op_t ) ( int , int ) math_op_t
+    + int ( * math_op_t ) ( int , int )
 }
 
 TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>

@@ -14,7 +14,7 @@ This template defines the structure for generating PlantUML diagrams from C sour
   - Function-like macros show name and parameters only (e.g., `#define MIN(a, b)`, `#define CALC(x, y)`)
   - No macro values/definitions are shown
 - **Function signatures**: Include full parameter lists and return types
-- **Typedef declarations**: All typedefs (structs, enums, unions, function pointers, primitives) are in separate classes
+- **Typedef declarations**: All typedefs (structs, enums, unions, function pointers, primitives) are in separate classes. Simple typedefs show only the type without repeating the name (e.g., `+ uint32_t` not `+ typedef uint32_t id_t`)
 
 ```plantuml
 @startuml {basename}

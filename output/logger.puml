@@ -47,17 +47,17 @@ enum "log_level_t" as TYPEDEF_log_level_t <<typedef>> #LightYellow
 
 class "log_callback_t" as TYPEDEF_log_callback_t <<typedef>> #LightYellow
 {
-    + typedef void ( * log_callback_t ) ( log_level_t level , const char * message ) log_callback_t
+    + void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
 class "id_t" as TYPEDEF_id_t <<typedef>> #LightYellow
 {
-    + typedef uint32_t id_t
+    + uint32_t
 }
 
 class "status_t" as TYPEDEF_status_t <<typedef>> #LightYellow
 {
-    + typedef int32_t status_t
+    + int32_t
 }
 
 LOGGER --> HEADER_LOGGER : <<include>>

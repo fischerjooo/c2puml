@@ -678,6 +678,15 @@ class PUMLValidator:
                 # Check for malformed function pointer typedefs
                 if line.count('typedef') > 1 or '... ...' in line:
                     raise AssertionError(f"Malformed function pointer typedef in {filename}")
+            
+            # Check for simple typedefs that repeat the typedef name
+            if line.startswith('+ typedef') and 'typedef' in line:
+                # Check if the typedef name is repeated at the end
+                parts = line.split()
+                if len(parts) >= 3:
+                    typedef_name = parts[2]  # e.g., "uint32_t" or "void"
+                    if len(parts) > 3 and parts[-1] == typedef_name:
+                        raise AssertionError(f"Simple typedef repeating name '{typedef_name}' in {filename}")
         
         print("    ✅ Typedef content valid")
     

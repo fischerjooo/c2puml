@@ -147,14 +147,14 @@ class PlantUMLGenerator:
             visibility = "+" if is_header else "-"
             # Only show primitive typedefs (not struct/enum/union)
             if relationship_type == "alias" and not (original_type.startswith("struct") or original_type.startswith("enum") or original_type.startswith("union")):
-                all_typedefs.append(f"    {visibility} typedef {original_type} {typedef_name}")
+                all_typedefs.append(f"    {visibility} {original_type}")
         
         # Add simple typedefs from the typedefs dictionary
         if file_model.typedefs:
             is_header = file_model.file_path.endswith('.h')
             visibility = "+" if is_header else "-"
             for typedef_name, original_type in file_model.typedefs.items():
-                all_typedefs.append(f"    {visibility} typedef {original_type} {typedef_name}")
+                all_typedefs.append(f"    {visibility} {original_type}")
         
         # Add primitive typedefs from included files with + visibility
         for include_relation in file_model.include_relations:
@@ -170,7 +170,7 @@ class PlantUMLGenerator:
                     original_type = typedef_relation.original_type
                     relationship_type = typedef_relation.relationship_type
                     if relationship_type == "alias" and not (original_type.startswith("struct") or original_type.startswith("enum") or original_type.startswith("union")):
-                        primitive_typedefs.append(f"    + typedef {original_type} {typedef_name}")
+                        primitive_typedefs.append(f"    + {original_type}")
         
         if file_model.macros:
             lines.append("    -- Macros --")
@@ -531,9 +531,9 @@ class PlantUMLGenerator:
                         else:
                             lines.append(f"    {value.name}")
                 else:
-                    lines.append(f"    + typedef {original_type} {typedef_name}")
+                    lines.append(f"    + {original_type}")
             else:
-                lines.append(f"    + typedef {original_type} {typedef_name}")
+                lines.append(f"    + {original_type}")
             lines.append("}")
         else:
             # For non-enum typedefs, create a regular class
@@ -570,9 +570,9 @@ class PlantUMLGenerator:
                         for field in found_struct.fields:
                             lines.append(f"    + {field.type} {field.name}")
                     else:
-                        lines.append(f"    + typedef {original_type} {typedef_name}")
+                        lines.append(f"    + {original_type}")
                 else:
-                    lines.append(f"    + typedef {original_type} {typedef_name}")
+                    lines.append(f"    + {original_type}")
             elif original_type == "union":
                 # Try to find the union in the project model
                 if project_model:
@@ -586,11 +586,11 @@ class PlantUMLGenerator:
                         for field in found_union.fields:
                             lines.append(f"    + {field.type} {field.name}")
                     else:
-                        lines.append(f"    + typedef {original_type} {typedef_name}")
+                        lines.append(f"    + {original_type}")
                 else:
-                    lines.append(f"    + typedef {original_type} {typedef_name}")
+                    lines.append(f"    + {original_type}")
             else:
-                lines.append(f"    + typedef {original_type} {typedef_name}")
+                lines.append(f"    + {original_type}")
             lines.append("}")
         
         lines.append("")
