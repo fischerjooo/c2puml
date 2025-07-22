@@ -18,16 +18,57 @@ void demo_triangle_usage()
 int main()
 }
 
-class "stdio.h" as HEADER_STDIO <<header>> #LightGray
+class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
++ int x
++ int y
++ char 32[ ] label
 }
 
-class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
+enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
 {
+STATE_IDLE = 0
+STATE_RUNNING
+STATE_ERROR
 }
 
-class "string.h" as HEADER_STRING <<header>> #LightGray
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 {
++ double
+}
+
+class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
+{
++ int ( * math_op_t ) ( int , int )
+}
+
+enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
+{
+LOG_DEBUG = 0
+LOG_INFO
+LOG_WARN
+LOG_ERROR
+}
+
+class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
+{
++ void ( * log_callback_t ) ( log_level_t level , const char * message )
+}
+
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
+{
++ point_t 3[ ] vertices
++ char MAX_LABEL_LEN[ ] label
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
++ uint32_t
+}
+
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+{
++ int32_t
 }
 
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
@@ -79,86 +120,25 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 + #define MAX_LABEL_LEN
 + #define DEFAULT_BUFFER_SIZE
 }
-class "stddef.h" as HEADER_STDDEF <<header>> #LightGray
-{
-}
-
-class "point_t" as TYPEDEF_point_t <<typedef>> #LightYellow
-{
-+ int x
-+ int y
-+ char 32[ ] label
-}
-
-enum "system_state_t" as TYPEDEF_system_state_t <<typedef>> #LightYellow
-{
-STATE_IDLE = 0
-STATE_RUNNING
-STATE_ERROR
-}
-
-class "id_t" as TYPEDEF_id_t <<typedef>> #LightYellow
-{
-+ uint32_t
-}
-
-class "status_t" as TYPEDEF_status_t <<typedef>> #LightYellow
-{
-+ int32_t
-}
-
-class "triangle_t" as TYPEDEF_triangle_t <<typedef>> #LightYellow
-{
-+ point_t 3[ ] vertices
-+ char MAX_LABEL_LEN[ ] label
-}
-
-enum "log_level_t" as TYPEDEF_log_level_t <<typedef>> #LightYellow
-{
-LOG_DEBUG = 0
-LOG_INFO
-LOG_WARN
-LOG_ERROR
-}
-
-class "log_callback_t" as TYPEDEF_log_callback_t <<typedef>> #LightYellow
-{
-+ void ( * log_callback_t ) ( log_level_t level , const char * message )
-}
-
-class "real_t" as TYPEDEF_real_t <<typedef>> #LightYellow
-{
-+ double
-}
-
-class "math_op_t" as TYPEDEF_math_op_t <<typedef>> #LightYellow
-{
-+ int ( * math_op_t ) ( int , int )
-}
-
-SAMPLE --> HEADER_STDIO : <<include>>
-SAMPLE --> HEADER_STDLIB : <<include>>
-SAMPLE --> HEADER_STRING : <<include>>
 SAMPLE --> HEADER_SAMPLE : <<include>>
 SAMPLE --> HEADER_MATH_UTILS : <<include>>
 SAMPLE --> HEADER_LOGGER : <<include>>
 SAMPLE --> HEADER_GEOMETRY : <<include>>
-HEADER_SAMPLE --> HEADER_STDDEF : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
-HEADER_LOGGER --> HEADER_STDIO : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
-HEADER_CONFIG --> HEADER_STDDEF : <<include>>
-HEADER_SAMPLE ..> TYPEDEF_point_t : <<declares>>
-HEADER_SAMPLE ..> TYPEDEF_system_state_t : <<declares>>
-HEADER_LOGGER ..> TYPEDEF_log_level_t : <<declares>>
-HEADER_GEOMETRY ..> TYPEDEF_triangle_t : <<declares>>
-TYPEDEF_triangle_t ..> TYPEDEF_point_t : <<uses>>
-TYPEDEF_log_callback_t ..> TYPEDEF_log_level_t : <<uses>>
-HEADER_MATH_UTILS ..> TYPEDEF_real_t : <<declares>>
-HEADER_MATH_UTILS ..> TYPEDEF_math_op_t : <<declares>>
-HEADER_LOGGER ..> TYPEDEF_log_callback_t : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_POINT_T : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : <<declares>>
+HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
+HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
+TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
+TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
+HEADER_CONFIG ..> TYPEDEF_ID_T : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MATH_OP_T : <<declares>>
+HEADER_LOGGER ..> TYPEDEF_LOG_CALLBACK_T : <<declares>>
 
 @enduml
