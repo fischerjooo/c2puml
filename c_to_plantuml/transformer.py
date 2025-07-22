@@ -483,11 +483,16 @@ class Transformer:
         # Convert functions
         functions = []
         for func_data in data.get("functions", []):
+            parameters = [
+                Field(p["name"], p["type"]) for p in func_data.get("parameters", [])
+            ]
             functions.append(
                 Function(
                     func_data["name"],
                     func_data["return_type"],
-                    func_data.get("parameters", []),
+                    parameters,
+                    is_static=func_data.get("is_static", False),
+                    is_declaration=func_data.get("is_declaration", False),
                 )
             )
 

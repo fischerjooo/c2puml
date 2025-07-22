@@ -278,21 +278,19 @@ class StructureFinder:
         
         return enums
     
-    def find_functions(self) -> List[Tuple[int, int, str, str]]:
-        """Find function declarations/definitions in token stream
+    def find_functions(self) -> List[Tuple[int, int, str, str, bool]]:
+        """Find all function declarations and definitions in the token stream
         
         Returns:
-            List of tuples (start_pos, end_pos, func_name, return_type)
+            List of tuples (start_pos, end_pos, func_name, return_type, is_declaration)
         """
         functions = []
         self.pos = 0
         
         while self.pos < len(self.tokens):
-            func_info = self._parse_function()
-            if func_info:
-                functions.append(func_info)
-            else:
-                self.pos += 1
+            result = self._parse_function()
+            if result:
+                functions.append(result)
         
         return functions
     
@@ -477,15 +475,15 @@ class StructureFinder:
         
         return (start_pos, enum_end, typedef_name)
     
-    def _parse_function(self) -> Optional[Tuple[int, int, str, str]]:
-        """Parse function declaration/definition"""
+    def _parse_function(self) -> Optional[Tuple[int, int, str, str, bool]]:
+        """Parse function declaration/definition
+        
+        Returns:
+            Tuple of (start_pos, end_pos, func_name, return_type, is_declaration)
+        """
         start_pos = self.pos
         
         # Look for function pattern: [modifiers] return_type function_name (params)
-        return_type_tokens = []
-        func_name = ""
-        
-        # Collect tokens until we find a pattern that looks like a function
         while self.pos < len(self.tokens):
             token = self.tokens[self.pos]
             
@@ -494,26 +492,61 @@ class StructureFinder:
                 # Look backwards for function name
                 if self.pos > 0 and self.tokens[self.pos - 1].type == TokenType.IDENTIFIER:
                     func_name = self.tokens[self.pos - 1].value
+                    func_name_pos = self.pos - 1
                     
-                    # Collect return type tokens (everything before function name)
-                    return_type_start = start_pos
-                    return_type_end = self.pos - 1
+                    # Look backwards from function name to find return type
+                    # Start from just before the function name
+                    return_type_end = func_name_pos - 1
+                    return_type_start = return_type_end
+                    
+                    # Skip backwards over whitespace and comments
+                    while return_type_start >= 0:
+                        token_type = self.tokens[return_type_start].type
+                        if token_type in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                            return_type_start -= 1
+                        else:
+                            break
+                    
+                    # Define modifiers set
+                    modifiers = {TokenType.STATIC, TokenType.EXTERN, TokenType.INLINE}
+                    
+                    # Now look backwards to find the complete return type
+                    # We need to include all tokens that are part of the return type
+                    # For example: "point_t *" should include both "point_t" and "*"
+                    # But we need to be careful not to go too far back and include content from other functions
+                    
+                    # Look back at most 20 tokens to capture multi-token return types like "point_t *"
+                    # This ensures we capture both "point_t" and "*" tokens
+                    max_lookback = max(0, func_name_pos - 20)
+                    if return_type_start < max_lookback:
+                        return_type_start = max_lookback
+                    
+
                     
                     # Skip modifiers like static, extern, inline
-                    modifiers = {TokenType.STATIC, TokenType.EXTERN, TokenType.INLINE}
-                    while (return_type_start < return_type_end and 
+                    while (return_type_start >= 0 and 
                            self.tokens[return_type_start].type in modifiers):
-                        return_type_start += 1
+                        return_type_start -= 1
                     
-                    if return_type_start < return_type_end:
-                        return_type_tokens = self.tokens[return_type_start:return_type_end]
+                    # Now collect the return type tokens
+                    # Look back enough to capture multi-token return types like "point_t *"
+                    # We need to look back further to capture the full return type
+                    max_lookback = max(0, func_name_pos - 8)  # Look back at most 8 tokens
+                    if return_type_start < max_lookback:
+                        return_type_start = max_lookback
+                    
+                    # Extract return type
+                    if return_type_start >= 0 and return_type_start <= return_type_end:
+                        return_type_tokens = self.tokens[return_type_start:return_type_end + 1]
                         return_type = ' '.join(t.value for t in return_type_tokens)
                         
                         # Find end of function (either ; for declaration or { for definition)
                         end_pos = self._find_function_end(self.pos)
                         if end_pos:
+                            # Determine if this is a declaration or definition
+                            is_declaration = self._is_function_declaration(end_pos)
                             self.pos = end_pos + 1
-                            return (start_pos, end_pos, func_name, return_type)
+                            return (start_pos, end_pos, func_name, return_type, is_declaration)
             
             self.pos += 1
             
@@ -524,6 +557,21 @@ class StructureFinder:
         # Reset position if no function found
         self.pos = start_pos + 1
         return None
+    
+    def _is_function_declaration(self, end_pos: int) -> bool:
+        """Check if the function at end_pos is a declaration (ends with ;) or definition (ends with })"""
+        if end_pos >= len(self.tokens):
+            return False
+        
+        # Look backwards from end_pos to find the last significant token
+        pos = end_pos
+        while pos >= 0:
+            token_type = self.tokens[pos].type
+            if token_type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                return token_type == TokenType.SEMICOLON
+            pos -= 1
+        
+        return False
     
     def _find_function_end(self, start_pos: int) -> Optional[int]:
         """Find end of function declaration or definition"""

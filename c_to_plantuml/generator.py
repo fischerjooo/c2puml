@@ -45,6 +45,15 @@ class PlantUMLGenerator:
 
         # Generate typedef uses relations
         diagram_lines.extend(self.generate_typedef_uses_relations(file_model, project_model))
+        
+        # Generate function and variable type dependencies
+        diagram_lines.extend(self.generate_type_dependencies(file_model, project_model))
+        
+        # Generate declares relationships between files and typedefs
+        diagram_lines.extend(self.generate_declares_relationships(file_model, project_model))
+        
+        # Generate declares relationships for included header files
+        diagram_lines.extend(self.generate_included_declares_relationships(file_model, project_model))
 
         # End diagram
         diagram_lines.extend(["", "@enduml"])
@@ -58,6 +67,50 @@ class PlantUMLGenerator:
             return f"{function.return_type} {function.name}({param_str})"
         else:
             return f"{function.return_type} {function.name}()"
+
+    def _clean_function_signature(self, signature: str) -> str:
+        """Clean up function signature by removing unwanted content like include statements"""
+        # Remove include statements that might have been mixed in
+        import re
+        
+        # Remove #include statements
+        signature = re.sub(r'#include\s+[<"][^>"]*[>"]', '', signature)
+        
+        # Remove struct definitions and other non-function content
+        signature = re.sub(r'typedef\s+struct[^;]+;', '', signature)
+        signature = re.sub(r'struct\s+\w+\s*{[^}]*}', '', signature)
+        
+        # Remove function bodies (everything after { until the end)
+        signature = re.sub(r'\s*\{[^}]*\}(?:\s*;)?$', ';', signature)
+        
+        # Clean up extra whitespace
+        signature = re.sub(r'\s+', ' ', signature).strip()
+        
+        return signature
+
+    def _deduplicate_functions(self, functions: List) -> List:
+        """Remove duplicate functions and keep only declarations for headers"""
+        seen = set()
+        unique_functions = []
+        
+        for func in functions:
+            # Create a key based on function name and parameters
+            param_str = ', '.join([f"{p.type} {p.name}" for p in func.parameters]) if func.parameters else ""
+            key = f"{func.name}({param_str})"
+            
+            if key not in seen:
+                seen.add(key)
+                unique_functions.append(func)
+        
+        return unique_functions
+
+    def _is_function_declaration_only(self, function) -> bool:
+        """Check if this is a function declaration (no body)"""
+        # If the function has a body, it's an implementation, not a declaration
+        # We can detect this by checking if there are any tokens that indicate a function body
+        # For now, we'll use a simple heuristic: if the function signature ends with ';' it's likely a declaration
+        signature = self._format_function_signature(function)
+        return signature.strip().endswith(';')
 
     def _generate_main_class(self, file_model: FileModel, basename: str, project_model: ProjectModel) -> List[str]:
         """Generate the main class for the file using the new PlantUML template"""
@@ -148,8 +201,24 @@ class PlantUMLGenerator:
         
         if file_model.functions:
             lines.append("    -- Functions --")
-            for function in file_model.functions:
-                lines.append(f"    {self._format_function_signature(function)}")
+            # Deduplicate functions but keep both declarations and implementations
+            unique_functions = self._deduplicate_functions(file_model.functions)
+            
+            for function in unique_functions:
+                # Clean up the function signature to remove any unwanted content
+                signature = self._format_function_signature(function)
+                signature = self._clean_function_signature(signature)
+                
+                # For implementations, remove the function body if it's too long
+                if hasattr(function, 'is_declaration') and not function.is_declaration:
+                    # This is an implementation - truncate if it's too long
+                    if len(signature) > 100:
+                        # Find the opening brace and truncate
+                        brace_pos = signature.find('{')
+                        if brace_pos > 0:
+                            signature = signature[:brace_pos].rstrip() + ' { ... }'
+                
+                lines.append(f"    {signature}")
         
         # Do not show structs/enums/unions directly if they are only present as typedefs
         # (They will be shown in their own class if needed)
@@ -345,26 +414,38 @@ class PlantUMLGenerator:
             f'class "{basename}" as {self._get_header_uml_id(basename)} <<header>> #LightGreen',
             "{",
         ]
+        
+        # Show macros section if we have any macros
         if file_model.macros:
             lines.append("    -- Macros --")
             for macro in file_model.macros:
                 lines.append(f"    + #define {macro}")
         
+        # Show global variables section if we have any globals
         if file_model.globals:
             lines.append("    -- Global Variables --")
             for global_var in file_model.globals:
-                if hasattr(global_var, 'value') and global_var.value is not None:
-                    lines.append(f"    + {global_var.type} {global_var.name} = {global_var.value}")
-                else:
-                    lines.append(f"    + {global_var.type} {global_var.name}")
+                lines.append(f"    + {global_var}")
         
+        # Show functions section - only declarations, no implementations
         if file_model.functions:
             lines.append("    -- Functions --")
-            for function in file_model.functions:
-                lines.append(f"    + {self._format_function_signature(function)}")
+            # Filter to only declarations and deduplicate
+            declarations = [f for f in file_model.functions if hasattr(f, 'is_declaration') and f.is_declaration]
+            unique_functions = self._deduplicate_functions(declarations)
+            
+            for function in unique_functions:
+                # Clean up the function signature
+                signature = self._format_function_signature(function)
+                signature = self._clean_function_signature(signature)
+                
+                # Ensure it ends with semicolon for declarations
+                if not signature.strip().endswith(';'):
+                    signature = signature.rstrip() + ';'
+                
+                lines.append(f"    + {signature}")
         
         lines.append("}")
-        lines.append("")
         return lines
 
     def _generate_external_header_class(self, basename: str) -> List[str]:
@@ -1316,6 +1397,139 @@ class PlantUMLGenerator:
             if base_type in typedef_names and base_type != typedef_name:
                 lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(base_type)} : <<uses>>")
 
+    def generate_type_dependencies(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
+        """Generate relationships for typedef-to-typedef dependencies only"""
+        lines = []
+        seen_relationships = set()
+        
+        # Collect all typedef names from all files
+        typedef_names = set()
+        for f in project_model.files.values():
+            typedef_names.update(f.typedefs.keys())
+            for typedef_rel in f.typedef_relations:
+                typedef_names.add(typedef_rel.typedef_name)
+        
+        # Process typedefs that use other typedefs in their fields
+        for typedef_relation in file_model.typedef_relations:
+            if typedef_relation.relationship_type == "struct":
+                # Check if the struct definition uses other typedefs
+                struct_name = typedef_relation.typedef_name
+                struct = file_model.structs.get(struct_name)
+                if not struct:
+                    # Try with _tag suffix
+                    struct = file_model.structs.get(f"{struct_name}_tag")
+                
+                if struct:
+                    for field in struct.fields:
+                        # Extract base type from field type (remove pointers, arrays, etc.)
+                        base_type = self._extract_base_type(field.type)
+                        if base_type in typedef_names and base_type != struct_name:
+                            relationship_key = f"typedef_field_{struct_name}_{base_type}"
+                            if relationship_key not in seen_relationships:
+                                seen_relationships.add(relationship_key)
+                                lines.append(f"{self._get_typedef_uml_id(struct_name)} ..> {self._get_typedef_uml_id(base_type)} : <<uses>>")
+        
+        # Process function pointer typedefs that use other typedefs
+        for typedef_name, original_type in file_model.typedefs.items():
+            if "(" in original_type and "*" in original_type:
+                # This is a function pointer typedef, check if it uses other typedefs
+                # Extract parameter types from function pointer
+                import re
+                param_match = re.search(r'\(\s*([^)]+)\s*\)', original_type)
+                if param_match:
+                    params_str = param_match.group(1)
+                    # Split parameters and check each one
+                    params = [p.strip() for p in params_str.split(',')]
+                    for param in params:
+                        base_type = self._extract_base_type(param)
+                        if base_type in typedef_names and base_type != typedef_name:
+                            relationship_key = f"typedef_func_ptr_{typedef_name}_{base_type}"
+                            if relationship_key not in seen_relationships:
+                                seen_relationships.add(relationship_key)
+                                lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(base_type)} : <<uses>>")
+        
+        return lines
+    
+    def _extract_base_type(self, type_str: str) -> str:
+        """Extract the base type from a complex type string (remove pointers, arrays, etc.)"""
+        import re
+        
+        # Remove common prefixes
+        type_str = re.sub(r'^(const\s+|static\s+|extern\s+)', '', type_str)
+        
+        # Remove pointer indicators
+        type_str = re.sub(r'\s*\*\s*$', '', type_str)
+        type_str = re.sub(r'\s*\*\s*', ' ', type_str)
+        
+        # Remove array indicators
+        type_str = re.sub(r'\s*\[\s*\d*\s*\]\s*$', '', type_str)
+        
+        # Remove function pointer syntax
+        type_str = re.sub(r'\(\s*\*\s*[^)]*\)\s*\([^)]*\)', '', type_str)
+        
+        # Clean up extra whitespace
+        type_str = re.sub(r'\s+', ' ', type_str).strip()
+        
+        return type_str
+
+    def generate_declares_relationships(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
+        """Generate declares relationships between files and typedefs they define"""
+        lines = []
+        seen_relationships = set()
+        
+        # Get the class ID for the current file
+        if file_model.file_path.endswith('.h'):
+            class_id = self._get_header_uml_id(Path(file_model.file_path).stem)
+        else:
+            class_id = self._get_uml_id(Path(file_model.file_path).stem)
+        
+        # Process typedefs defined in the current file
+        for typedef_name, original_type in file_model.typedefs.items():
+            relationship_key = f"declares_{class_id}_{typedef_name}"
+            if relationship_key not in seen_relationships:
+                seen_relationships.add(relationship_key)
+                lines.append(f"{class_id} ..> {self._get_typedef_uml_id(typedef_name)} : <<declares>>")
+        
+        # Process typedefs from typedef_relations (complex typedefs like structs, enums, unions)
+        for typedef_relation in file_model.typedef_relations:
+            typedef_name = typedef_relation.typedef_name
+            relationship_key = f"declares_{class_id}_{typedef_name}"
+            if relationship_key not in seen_relationships:
+                seen_relationships.add(relationship_key)
+                lines.append(f"{class_id} ..> {self._get_typedef_uml_id(typedef_name)} : <<declares>>")
+        
+        return lines
+
+    def generate_included_declares_relationships(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
+        """Generate declares relationships for typedefs declared in included header files"""
+        lines = []
+        seen_relationships = set()
+        
+        # Process each include in the current file
+        for include in file_model.includes:
+            # Find the included file model
+            included_file_model = self._find_included_file_model(include, project_model)
+            if included_file_model and included_file_model.file_path.endswith('.h'):
+                # Get the header class ID
+                header_class_id = self._get_header_uml_id(Path(included_file_model.file_path).stem)
+                
+                # Process typedefs defined in the included header file
+                for typedef_name, original_type in included_file_model.typedefs.items():
+                    relationship_key = f"declares_{header_class_id}_{typedef_name}"
+                    if relationship_key not in seen_relationships:
+                        seen_relationships.add(relationship_key)
+                        lines.append(f"{header_class_id} ..> {self._get_typedef_uml_id(typedef_name)} : <<declares>>")
+                
+                # Process typedefs from typedef_relations in the included header file
+                for typedef_relation in included_file_model.typedef_relations:
+                    typedef_name = typedef_relation.typedef_name
+                    relationship_key = f"declares_{header_class_id}_{typedef_name}"
+                    if relationship_key not in seen_relationships:
+                        seen_relationships.add(relationship_key)
+                        lines.append(f"{header_class_id} ..> {self._get_typedef_uml_id(typedef_name)} : <<declares>>")
+        
+        return lines
+
 
 class Generator:
     """Main generator class for Step 3: Generate puml files based on model.json"""
@@ -1451,6 +1665,8 @@ class Generator:
                     func_data["name"],
                     func_data["return_type"],
                     parameters,
+                    is_static=func_data.get("is_static", False),
+                    is_declaration=func_data.get("is_declaration", False),
                 )
             )
 
