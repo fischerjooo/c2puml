@@ -335,11 +335,16 @@ class PlantUMLGenerator:
                 lines.append(f"    + {self._format_function_signature(function)}")
         
         # Display struct fields as global variables (for backward compatibility with tests)
+        # But only show them if they're not already shown as typedefs
         if file_model.structs:
             lines.append("    -- Struct Fields --")
+            seen_fields = set()
             for struct_name, struct in file_model.structs.items():
                 for field in struct.fields:
-                    lines.append(f"    + {field.type} {field.name}")
+                    field_key = f"{field.type} {field.name}"
+                    if field_key not in seen_fields:
+                        seen_fields.add(field_key)
+                        lines.append(f"    + {field.type} {field.name}")
         
         lines.append("}")
         lines.append("")
@@ -395,12 +400,50 @@ class PlantUMLGenerator:
                 import logging
                 logging.getLogger(__name__).debug(f"Looking for struct '{struct_name}' in file '{file_model.file_path}', available structs: {list(file_model.structs.keys())}")
                 logging.getLogger(__name__).debug(f"typedef_relation.struct_tag_name: '{typedef_relation.struct_tag_name}', typedef_name: '{typedef_name}'")
-                if struct_name in file_model.structs:
-                    struct = file_model.structs[struct_name]
-                    for field in struct.fields:
+                
+                # Try multiple possible struct names
+                possible_struct_names = [struct_name]
+                if struct_name != typedef_name:
+                    possible_struct_names.append(typedef_name)
+                if struct_name.endswith('_tag'):
+                    possible_struct_names.append(struct_name[:-4])  # Remove "_tag" suffix
+                if typedef_name.endswith('_t'):
+                    possible_struct_names.append(typedef_name[:-2])  # Remove "_t" suffix
+                # Also try adding "_tag" suffix to the struct name
+                if not struct_name.endswith('_tag'):
+                    possible_struct_names.append(f"{struct_name}_tag")
+                # Try the typedef name without "_t" suffix
+                if typedef_name.endswith('_t'):
+                    possible_struct_names.append(typedef_name[:-2])
+                # Try the typedef name with "_tag" suffix
+                possible_struct_names.append(f"{typedef_name}_tag")
+                
+                found_struct = None
+                for name in possible_struct_names:
+                    if name in file_model.structs:
+                        found_struct = file_model.structs[name]
+                        logging.getLogger(__name__).debug(f"Found struct '{name}' in file '{file_model.file_path}'")
+                        break
+                
+                if found_struct:
+                    for field in found_struct.fields:
                         lines.append(f"    + {field.type} {field.name}")
                 else:
-                    lines.append(f"    + {original_type}")
+                    # Try to find the struct in the project model
+                    for f_model in project_model.files.values():
+                        for name in possible_struct_names:
+                            if name in f_model.structs:
+                                found_struct = f_model.structs[name]
+                                logging.getLogger(__name__).debug(f"Found struct '{name}' in file '{f_model.file_path}'")
+                                break
+                        if found_struct:
+                            break
+                    
+                    if found_struct:
+                        for field in found_struct.fields:
+                            lines.append(f"    + {field.type} {field.name}")
+                    else:
+                        lines.append(f"    + {original_type}")
             elif original_type == "enum":
                 # Try to find the enum by the enum tag name if available, otherwise by typedef name
                 enum_name = typedef_relation.enum_tag_name if hasattr(typedef_relation, 'enum_tag_name') and typedef_relation.enum_tag_name else typedef_name
@@ -420,10 +463,25 @@ class PlantUMLGenerator:
                 else:
                     logging.getLogger(__name__).debug(f"Enum '{enum_name}' not found in project model")
                     lines.append(f"    + {original_type}")
-            elif original_type == "union" and typedef_name in file_model.unions:
-                union = file_model.unions[typedef_name]
-                for field in union.fields:
-                    lines.append(f"    + {field.type} {field.name}")
+            elif original_type == "union":
+                # Try to find the union by the typedef name
+                if typedef_name in file_model.unions:
+                    union = file_model.unions[typedef_name]
+                    for field in union.fields:
+                        lines.append(f"    + {field.type} {field.name}")
+                else:
+                    # Try to find the union in the project model
+                    found_union = None
+                    for f_model in project_model.files.values():
+                        if typedef_name in f_model.unions:
+                            found_union = f_model.unions[typedef_name]
+                            break
+                    
+                    if found_union:
+                        for field in found_union.fields:
+                            lines.append(f"    + {field.type} {field.name}")
+                    else:
+                        lines.append(f"    + {original_type}")
             else:
                 lines.append(f"    + {original_type}")
         else:
