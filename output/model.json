@@ -14,17 +14,17 @@
             {
               "name": "id",
               "type": "id_t",
-              "array_size": null
+              "value": null
             },
             {
               "name": "description",
               "type": "char[MAX_LABEL_LEN]",
-              "array_size": null
+              "value": null
             },
             {
               "name": "log_level",
               "type": "log_level_t",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -35,17 +35,17 @@
             {
               "name": "info",
               "type": "NestedInfo_t",
-              "array_size": null
+              "value": null
             },
             {
               "name": "status",
               "type": "CE_Status_t",
-              "array_size": null
+              "value": null
             },
             {
               "name": "values",
               "type": "int[5]",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -56,17 +56,17 @@
             {
               "name": "id",
               "type": "id_t",
-              "array_size": null
+              "value": null
             },
             {
               "name": "description",
               "type": "char[MAX_LABEL_LEN]",
-              "array_size": null
+              "value": null
             },
             {
               "name": "log_level",
               "type": "log_level_t",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -77,17 +77,17 @@
             {
               "name": "id",
               "type": "id_t",
-              "array_size": null
+              "value": null
             },
             {
               "name": "description",
               "type": "char[MAX_LABEL_LEN]",
-              "array_size": null
+              "value": null
             },
             {
               "name": "log_level",
               "type": "log_level_t",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -98,17 +98,17 @@
             {
               "name": "info",
               "type": "NestedInfo_t",
-              "array_size": null
+              "value": null
             },
             {
               "name": "status",
               "type": "CE_Status_t",
-              "array_size": null
+              "value": null
             },
             {
               "name": "values",
               "type": "int[5]",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -119,17 +119,17 @@
             {
               "name": "info",
               "type": "NestedInfo_t",
-              "array_size": null
+              "value": null
             },
             {
               "name": "status",
               "type": "CE_Status_t",
-              "array_size": null
+              "value": null
             },
             {
               "name": "values",
               "type": "int[5]",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -166,32 +166,32 @@
         {
           "name": "id",
           "type": "id_t",
-          "array_size": null
+          "value": null
         },
         {
           "name": "description",
           "type": "char",
-          "array_size": null
+          "value": null
         },
         {
           "name": "log_level",
           "type": "log_level_t",
-          "array_size": null
+          "value": null
         },
         {
           "name": "info",
           "type": "NestedInfo_t",
-          "array_size": null
+          "value": null
         },
         {
           "name": "status",
           "type": "CE_Status_t",
-          "array_size": null
+          "value": null
         },
         {
           "name": "values",
           "type": "int",
-          "array_size": null
+          "value": null
         }
       ],
       "includes": [
@@ -284,22 +284,22 @@
             {
               "name": "a",
               "type": "const point_t *",
-              "array_size": null
+              "value": null
             },
             {
               "name": "b",
               "type": "const point_t *",
-              "array_size": null
+              "value": null
             },
             {
               "name": "c",
               "type": "const point_t *",
-              "array_size": null
+              "value": null
             },
             {
               "name": "label",
               "type": "const char *",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -311,7 +311,7 @@
             {
               "name": "tri",
               "type": "const triangle_t *",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -341,12 +341,12 @@
             {
               "name": "vertices",
               "type": "point_t[3]",
-              "array_size": null
+              "value": null
             },
             {
               "name": "label",
               "type": "char[MAX_LABEL_LEN]",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -357,12 +357,12 @@
             {
               "name": "vertices",
               "type": "point_t[3]",
-              "array_size": null
+              "value": null
             },
             {
               "name": "label",
               "type": "char[MAX_LABEL_LEN]",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -373,12 +373,12 @@
             {
               "name": "vertices",
               "type": "point_t[3]",
-              "array_size": null
+              "value": null
             },
             {
               "name": "label",
               "type": "char[MAX_LABEL_LEN]",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -393,22 +393,22 @@
             {
               "name": "a",
               "type": "const point_t *",
-              "array_size": null
+              "value": null
             },
             {
               "name": "b",
               "type": "const point_t *",
-              "array_size": null
+              "value": null
             },
             {
               "name": "c",
               "type": "const point_t *",
-              "array_size": null
+              "value": null
             },
             {
               "name": "label",
               "type": "const char *",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -420,7 +420,7 @@
             {
               "name": "tri",
               "type": "const triangle_t *",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -430,12 +430,12 @@
         {
           "name": "vertices",
           "type": "point_t",
-          "array_size": null
+          "value": null
         },
         {
           "name": "label",
           "type": "char",
-          "array_size": null
+          "value": null
         }
       ],
       "includes": [
@@ -473,7 +473,7 @@
             {
               "name": "cb",
               "type": "log_callback_t",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -485,12 +485,12 @@
             {
               "name": "level",
               "type": "log_level_t",
-              "array_size": null
+              "value": null
             },
             {
               "name": "fmt",
               "type": "const char *",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -499,8 +499,8 @@
       "globals": [
         {
           "name": "current_cb",
-          "type": "log_callback_t = NULL",
-          "array_size": null
+          "type": "log_callback_t",
+          "value": "NULL"
         }
       ],
       "includes": [
@@ -557,7 +557,7 @@
             {
               "name": "cb",
               "type": "log_callback_t",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -569,12 +569,12 @@
             {
               "name": "level",
               "type": "log_level_t",
-              "array_size": null
+              "value": null
             },
             {
               "name": "fmt",
               "type": "const char *",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -619,12 +619,12 @@
             {
               "name": "a",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "b",
               "type": "int",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -636,12 +636,12 @@
             {
               "name": "a",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "b",
               "type": "int",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -653,12 +653,12 @@
             {
               "name": "arr",
               "type": "const int *",
-              "array_size": null
+              "value": null
             },
             {
               "name": "len",
               "type": "size_t",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -689,12 +689,12 @@
             {
               "name": "a",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "b",
               "type": "int",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -706,12 +706,12 @@
             {
               "name": "a",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "b",
               "type": "int",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -723,12 +723,12 @@
             {
               "name": "arr",
               "type": "const int *",
-              "array_size": null
+              "value": null
             },
             {
               "name": "len",
               "type": "size_t",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -770,12 +770,12 @@
             {
               "name": "a",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "b",
               "type": "int",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -787,17 +787,17 @@
             {
               "name": "x",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "y",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "label",
               "type": "const char *",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -809,7 +809,7 @@
             {
               "name": "p",
               "type": "point_t *",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -836,18 +836,18 @@
       "globals": [
         {
           "name": "global_counter",
-          "type": "int = 0",
-          "array_size": null
+          "type": "int",
+          "value": "0"
         },
         {
           "name": "buffer",
           "type": "char",
-          "array_size": null
+          "value": null
         },
         {
           "name": "global_ptr",
-          "type": "double * = NULL",
-          "array_size": null
+          "type": "double *",
+          "value": "NULL"
         }
       ],
       "includes": [
@@ -881,17 +881,17 @@
             {
               "name": "x",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "y",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "label",
               "type": "char[32]",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -902,17 +902,17 @@
             {
               "name": "x",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "y",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "label",
               "type": "char[32]",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -923,17 +923,17 @@
             {
               "name": "x",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "y",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "label",
               "type": "char[32]",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -973,12 +973,12 @@
             {
               "name": "a",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "b",
               "type": "int",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -990,17 +990,17 @@
             {
               "name": "x",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "y",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "label",
               "type": "const char *",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -1012,7 +1012,7 @@
             {
               "name": "p",
               "type": "point_t *",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -1022,27 +1022,27 @@
         {
           "name": "x",
           "type": "int",
-          "array_size": null
+          "value": null
         },
         {
           "name": "y",
           "type": "int",
-          "array_size": null
+          "value": null
         },
         {
           "name": "label",
           "type": "char",
-          "array_size": null
+          "value": null
         },
         {
           "name": "MAX_POINTS",
           "type": "extern const int",
-          "array_size": null
+          "value": null
         },
         {
           "name": "DEFAULT_LABEL",
           "type": "extern const char *",
-          "array_size": null
+          "value": null
         }
       ],
       "includes": [
@@ -1096,7 +1096,7 @@
             {
               "name": "buffer",
               "type": "const MyBuffer *",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -1108,7 +1108,7 @@
             {
               "name": "buffer",
               "type": "MyBuffer *",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -1120,7 +1120,7 @@
             {
               "name": "buffer",
               "type": "MyBuffer *",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -1132,12 +1132,12 @@
             {
               "name": "id",
               "type": "MyLen",
-              "array_size": null
+              "value": null
             },
             {
               "name": "name",
               "type": "MyString",
-              "array_size": null
+              "value": null
             }
           ],
           "is_static": false
@@ -1158,18 +1158,18 @@
       "globals": [
         {
           "name": "global_length",
-          "type": "MyLen = 0U",
-          "array_size": null
+          "type": "MyLen",
+          "value": "0U"
         },
         {
           "name": "global_buffer",
-          "type": "MyBuffer = {0U, NULL}",
-          "array_size": null
+          "type": "MyBuffer",
+          "value": "{0U, NULL}"
         },
         {
           "name": "global_complex",
-          "type": "MyComplexPtr = NULL",
-          "array_size": null
+          "type": "MyComplexPtr",
+          "value": "NULL"
         }
       ],
       "includes": [
@@ -1197,12 +1197,12 @@
             {
               "name": "length",
               "type": "MyLen",
-              "array_size": null
+              "value": null
             },
             {
               "name": "data",
               "type": "MyString",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -1213,22 +1213,22 @@
             {
               "name": "id",
               "type": "MyLen",
-              "array_size": null
+              "value": null
             },
             {
               "name": "name",
               "type": "MyString",
-              "array_size": null
+              "value": null
             },
             {
               "name": "callback",
               "type": "MyCallback",
-              "array_size": null
+              "value": null
             },
             {
               "name": "log_level",
               "type": "log_level_t",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -1239,12 +1239,12 @@
             {
               "name": "x",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "y",
               "type": "int",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -1255,12 +1255,12 @@
             {
               "name": "a",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "b",
               "type": "int",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -1271,12 +1271,12 @@
             {
               "name": "length",
               "type": "MyLen",
-              "array_size": null
+              "value": null
             },
             {
               "name": "data",
               "type": "MyString",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -1287,22 +1287,22 @@
             {
               "name": "id",
               "type": "MyLen",
-              "array_size": null
+              "value": null
             },
             {
               "name": "name",
               "type": "MyString",
-              "array_size": null
+              "value": null
             },
             {
               "name": "callback",
               "type": "MyCallback",
-              "array_size": null
+              "value": null
             },
             {
               "name": "log_level",
               "type": "log_level_t",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -1313,22 +1313,22 @@
             {
               "name": "id",
               "type": "MyLen",
-              "array_size": null
+              "value": null
             },
             {
               "name": "name",
               "type": "MyString",
-              "array_size": null
+              "value": null
             },
             {
               "name": "callback",
               "type": "MyCallback",
-              "array_size": null
+              "value": null
             },
             {
               "name": "log_level",
               "type": "log_level_t",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -1339,12 +1339,12 @@
             {
               "name": "x",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "y",
               "type": "int",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -1355,12 +1355,12 @@
             {
               "name": "x",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "y",
               "type": "int",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -1371,12 +1371,12 @@
             {
               "name": "a",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "b",
               "type": "int",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -1387,12 +1387,12 @@
             {
               "name": "a",
               "type": "int",
-              "array_size": null
+              "value": null
             },
             {
               "name": "b",
               "type": "int",
-              "array_size": null
+              "value": null
             }
           ],
           "methods": []
@@ -1450,72 +1450,72 @@
         {
           "name": "length",
           "type": "MyLen",
-          "array_size": null
+          "value": null
         },
         {
           "name": "data",
           "type": "MyString",
-          "array_size": null
+          "value": null
         },
         {
           "name": "id",
           "type": "MyLen",
-          "array_size": null
+          "value": null
         },
         {
           "name": "name",
           "type": "MyString",
-          "array_size": null
+          "value": null
         },
         {
           "name": "callback",
           "type": "MyCallback",
-          "array_size": null
+          "value": null
         },
         {
           "name": "log_level",
           "type": "log_level_t",
-          "array_size": null
+          "value": null
         },
         {
           "name": "x",
           "type": "int",
-          "array_size": null
+          "value": null
         },
         {
           "name": "y",
           "type": "int",
-          "array_size": null
+          "value": null
         },
         {
           "name": "a",
           "type": "int",
-          "array_size": null
+          "value": null
         },
         {
           "name": "b",
           "type": "int",
-          "array_size": null
+          "value": null
         },
         {
           "name": "i",
           "type": "int",
-          "array_size": null
+          "value": null
         },
         {
           "name": "f",
           "type": "float",
-          "array_size": null
+          "value": null
         },
         {
           "name": "c",
           "type": "char",
-          "array_size": null
+          "value": null
         },
         {
           "name": "d",
           "type": "double",
-          "array_size": null
+          "value": null
         }
       ],
       "includes": [
@@ -1584,5 +1584,5 @@
       "unions": {}
     }
   },
-  "created_at": "2025-07-22T07:18:12.683540"
+  "created_at": "2025-07-22T07:28:24.424971"
 }

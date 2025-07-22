@@ -352,13 +352,10 @@ class CParser:
         logger = logging.getLogger(__name__)
         globals_list = []
         
-        # Track brace depth to ensure we're only parsing at top level
         brace_depth = 0
         in_function = False
         in_struct_or_enum = False
         struct_enum_brace_depth = 0
-        
-        # Split content into lines and process each line
         lines = content.split('\n')
         
         for i, line in enumerate(lines):
@@ -458,52 +455,37 @@ class CParser:
             # Check if line ends with semicolon (basic global variable indicator)
             if line.endswith(';'):
                 logger.debug(f"  Processing potential global at line {i+1}: '{line}'")
-                # Remove semicolon
                 line = line[:-1].strip()
                 
-                # Split by equals sign to handle assignments
                 if '=' in line:
-                    # Format: type name = value
                     declaration_part = line.split('=')[0].strip()
                     initialization_part = line.split('=', 1)[1].strip()
                 else:
-                    # Format: type name;
                     declaration_part = line
-                    initialization_part = ""
+                    initialization_part = None
                 
-                # Split declaration into parts
                 parts = declaration_part.split()
                 
                 if len(parts) >= 2:
-                    # Handle static keyword
                     if parts[0] == 'static':
-                        parts = parts[1:]  # Remove 'static'
+                        parts = parts[1:]
                     
                     if len(parts) >= 2:
-                        # Last part is the variable name (may include array brackets)
                         var_name = parts[-1]
                         
-                        # Check if variable name is valid (including array declarations)
                         if re.match(r'^[A-Za-z_][A-Za-z0-9_]*(\[[^\]]*\])*$', var_name):
-                            # Extract base name without array brackets
                             base_name = re.sub(r'\[[^\]]*\]', '', var_name)
                             
-                            # Everything before the variable name is the type
                             type_parts = parts[:-1]
                             type_name = ' '.join(type_parts).strip()
                             
                             if type_name:
-                                # Create field with initialization value if present
-                                field_type = type_name
-                                if initialization_part:
-                                    field_type = f"{type_name} = {initialization_part}"
-                                
-                                logger.debug(f"About to create Field: line='{line}', type='{field_type}', name='{base_name}'")
+                                logger.debug(f"About to create Field: type='{type_name}', name='{base_name}', value='{initialization_part}'")
                                 try:
-                                    globals_list.append(Field(base_name, field_type))
+                                    globals_list.append(Field(base_name, type_name, initialization_part))
                                     logger.debug(f"  Successfully added global: {base_name}")
                                 except Exception as e:
-                                    logger.error(f"Exception creating Field: {e} | line='{line}', type='{field_type}', name='{base_name}'")
+                                    logger.error(f"Exception creating Field: {e} | type='{type_name}', name='{base_name}', value='{initialization_part}'")
                                     raise
                         else:
                             logger.debug(f"  Invalid variable name: {var_name}")

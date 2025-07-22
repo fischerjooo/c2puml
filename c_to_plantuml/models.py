@@ -15,7 +15,12 @@ class Field:
 
     name: str
     type: str
-    array_size: Optional[str] = None
+    value: Optional[str] = None
+
+    def __repr__(self):
+        if self.value is not None:
+            return f"Field(name={self.name}, type={self.type}, value={self.value})"
+        return f"Field(name={self.name}, type={self.type})"
 
     def __post_init__(self):
         """Validate field data after initialization"""

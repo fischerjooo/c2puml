@@ -7,9 +7,9 @@ class "sample" as SAMPLE <<source>> #LightBlue
     - #define DEBUG_MODE
     - #define CALC
     -- Global Variables --
-    int = 0 global_counter
+    int global_counter
     char buffer
-    double * = NULL global_ptr
+    double * global_ptr
     -- Functions --
     int calculate_sum(int a, int b)
     point_t * create_point(int x, int y, const char * label)
