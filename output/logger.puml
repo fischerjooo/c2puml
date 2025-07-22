@@ -53,6 +53,5 @@ LOGGER --> HEADER_LOGGER : <<include>>
 LOGGER --> HEADER_STDARG_H : <<include>>
 LOGGER --> HEADER_STRING_H : <<include>>
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : declares
-HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : uses
 
 @enduml
