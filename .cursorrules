@@ -1,6 +1,6 @@
 # Cursor Rules for Python Project – Clean Code & Test-Driven Development
 
-# 📘 Project Workflow Reference
+# Project Workflow Reference
 - Always consider the instructions and practices described in `workflow.md` as part of the coding and testing guidelines.
 - Align refactors, feature implementations, and test practices with the documented workflow whenever applicable.
 
