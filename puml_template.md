@@ -15,8 +15,6 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
     {type} {variable_name}
     -- Functions --
     {return_type} {function_name}()
-    -- Structs --
-    struct {struct_name}
 }
 
 ' Header file class
@@ -29,8 +27,6 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
     + {type} {variable_name}
     -- Functions --
     + {return_type} {function_name}()
-    -- Structs --
-    + struct {struct_name}
 }
 
 ' Typedef classes (all typedefs, including function typedefs, are in separate classes)
@@ -61,4 +57,5 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
 ## Notes
 - All typedefs (including function typedefs) are represented as separate classes and never listed in C or header classes.
 - Enums and unions are not listed in C or header classes; they are only shown in their own typedef/type classes.
+- Structs are not listed in C or header classes; they are only shown in their own typedef/type classes.
 - Relationships are grouped as: Include, Declaration, and Uses.
