@@ -12,9 +12,6 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
     -- Macros --
     + #define MATH_UTILS_H
-    -- Typedefs --
-    + typedef double real_t
-    + typedef int ( * math_op_t ) ( int , int ) math_op_t
     -- Functions --
     + #ifndef MATH_UTILS_H #define MATH_UTILS_H #include "config.h" typedef double real_t ; typedef int ( * math_op_t ) ( int , int ) ; int add(int a, int b)
     + int subtract(int a, int b)
@@ -28,9 +25,6 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + #define PROJECT_NAME
     + #define MAX_LABEL_LEN
     + #define DEFAULT_BUFFER_SIZE
-    -- Typedefs --
-    + typedef uint32_t id_t
-    + typedef int32_t status_t
 }
 
 class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
@@ -41,6 +35,16 @@ class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
 {
     + typedef int ( * math_op_t ) ( int , int ) math_op_t
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
+    + typedef uint32_t id_t
+}
+
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+{
+    + typedef int32_t status_t
 }
 
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>

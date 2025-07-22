@@ -19,7 +19,7 @@ class PlantUMLGenerator:
         self.logger = logging.getLogger(__name__)
 
     def generate_diagram(
-        self, file_model: FileModel, project_model: ProjectModel
+        self, file_model: FileModel, project_model: ProjectModel, include_depth: int = 1
     ) -> str:
         """Generate PlantUML diagram for a single file"""
         self.logger.debug(f"Generating diagram for: {file_model.file_path}")
@@ -34,11 +34,11 @@ class PlantUMLGenerator:
         # Generate main class for the file
         diagram_lines.extend(self._generate_main_class(file_model, basename, project_model))
 
-        # Generate header classes for includes
-        diagram_lines.extend(self._generate_header_classes(file_model, project_model))
+        # Generate header classes for includes (respecting include_depth)
+        diagram_lines.extend(self._generate_header_classes(file_model, project_model, include_depth))
 
-        # Generate typedef classes
-        diagram_lines.extend(self._generate_typedef_classes(file_model, project_model))
+        # Generate typedef classes (respecting include_depth)
+        diagram_lines.extend(self._generate_typedef_classes(file_model, project_model, include_depth))
 
         # Generate relationships
         diagram_lines.extend(self._generate_relationships(file_model, project_model))
@@ -158,13 +158,13 @@ class PlantUMLGenerator:
         return lines
 
     def _generate_header_classes(
-        self, file_model: FileModel, project_model: ProjectModel
+        self, file_model: FileModel, project_model: ProjectModel, include_depth: int = 1
     ) -> List[str]:
         """Generate classes for included header files"""
         lines = []
         seen_headers = set()
 
-        # Process direct includes
+        # Process direct includes (depth 1)
         for include_name in file_model.includes:
             # First try to find the file directly in project_model.files
             included_file_model = None
@@ -207,65 +207,66 @@ class PlantUMLGenerator:
                     )
 
         # Process indirect includes from include_relations (up to configured depth)
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
-            included_file_model = None
-            # Try to find the included file model by matching file_path
-            for key, model in project_model.files.items():
-                if model.file_path == included_file_path:
-                    included_file_model = model
-                    break
-            # If not found by file_path, try to find by relative path
-            if not included_file_model:
-                included_file_basename = Path(included_file_path).name
+        if include_depth > 1:
+            for include_relation in file_model.include_relations:
+                included_file_path = include_relation.included_file
+                included_file_model = None
+                # Try to find the included file model by matching file_path
                 for key, model in project_model.files.items():
-                    if key == included_file_basename:
+                    if model.file_path == included_file_path:
                         included_file_model = model
                         break
-            if included_file_model:
-                header_basename = Path(included_file_model.file_path).stem
-                if header_basename not in seen_headers:
-                    seen_headers.add(header_basename)
-                    lines.extend(
-                        self._generate_header_class(included_file_model, header_basename)
-                    )
+                # If not found by file_path, try to find by relative path
+                if not included_file_model:
+                    included_file_basename = Path(included_file_path).name
+                    for key, model in project_model.files.items():
+                        if key == included_file_basename:
+                            included_file_model = model
+                            break
+                if included_file_model:
+                    header_basename = Path(included_file_model.file_path).stem
+                    if header_basename not in seen_headers:
+                        seen_headers.add(header_basename)
+                        lines.extend(
+                            self._generate_header_class(included_file_model, header_basename)
+                        )
+                    
+                    # Recursively process include relationships from the included file (respecting depth)
+                    self._process_nested_includes(included_file_model, project_model, seen_headers, lines, depth=1, max_depth=include_depth)
+                else:
+                    # Debug logging to see what's happening
+                    import logging
+                    logging.getLogger(__name__).debug(f"Could not find included file model for: {included_file_path}")
+                    logging.getLogger(__name__).debug(f"Available keys: {list(project_model.files.keys())}")
                 
-                # Recursively process include relationships from the included file
-                self._process_nested_includes(included_file_model, project_model, seen_headers, lines)
-            else:
-                # Debug logging to see what's happening
-                import logging
-                logging.getLogger(__name__).debug(f"Could not find included file model for: {included_file_path}")
-                logging.getLogger(__name__).debug(f"Available keys: {list(project_model.files.keys())}")
-            
-            # Also process external headers from included files
-            if included_file_model:
-                for include_name in included_file_model.includes:
-                    # Check if this is an external header
-                    included_file_path = self._find_included_file(
-                        include_name, included_file_model.project_root, project_model
-                    )
-                    if included_file_path and included_file_path.startswith("EXTERNAL:"):
-                        external_header_name = included_file_path.split(":", 1)[1]
-                        # Ensure external header has .h extension for consistency
-                        if not external_header_name.endswith('.h'):
-                            external_header_name = f"{external_header_name}.h"
-                        
-                        if external_header_name not in seen_headers:
-                            seen_headers.add(external_header_name)
-                            lines.extend(
-                                self._generate_external_header_class(external_header_name)
-                            )
+                # Also process external headers from included files
+                if included_file_model:
+                    for include_name in included_file_model.includes:
+                        # Check if this is an external header
+                        included_file_path = self._find_included_file(
+                            include_name, included_file_model.project_root, project_model
+                        )
+                        if included_file_path and included_file_path.startswith("EXTERNAL:"):
+                            external_header_name = included_file_path.split(":", 1)[1]
+                            # Ensure external header has .h extension for consistency
+                            if not external_header_name.endswith('.h'):
+                                external_header_name = f"{external_header_name}.h"
+                            
+                            if external_header_name not in seen_headers:
+                                seen_headers.add(external_header_name)
+                                lines.extend(
+                                    self._generate_external_header_class(external_header_name)
+                                )
 
         return lines
 
-    def _process_nested_includes(self, file_model: FileModel, project_model: ProjectModel, seen_headers: set, lines: List[str], visited_files: set = None, depth: int = 0) -> None:
+    def _process_nested_includes(self, file_model: FileModel, project_model: ProjectModel, seen_headers: set, lines: List[str], visited_files: set = None, depth: int = 0, max_depth: int = 3) -> None:
         """Recursively process include relationships from included files"""
         if visited_files is None:
             visited_files = set()
         
-        # Prevent infinite recursion
-        if depth > 3 or file_model.file_path in visited_files:
+        # Prevent infinite recursion and respect max_depth
+        if depth >= max_depth or file_model.file_path in visited_files:
             return
         
         visited_files.add(file_model.file_path)
@@ -292,16 +293,16 @@ class PlantUMLGenerator:
                     lines.extend(
                         self._generate_header_class(included_file_model, header_basename)
                     )
-                    # Recursively process further nested includes
-                    self._process_nested_includes(included_file_model, project_model, seen_headers, lines, visited_files, depth + 1)
+                    # Recursively process further nested includes (respecting max_depth)
+                    self._process_nested_includes(included_file_model, project_model, seen_headers, lines, visited_files, depth + 1, max_depth)
 
-    def _process_nested_typedefs(self, file_model: FileModel, project_model: ProjectModel, seen_typedefs: set, lines: List[str], visited_files: set = None, depth: int = 0) -> None:
+    def _process_nested_typedefs(self, file_model: FileModel, project_model: ProjectModel, seen_typedefs: set, lines: List[str], visited_files: set = None, depth: int = 0, max_depth: int = 3) -> None:
         """Recursively process typedefs from included files"""
         if visited_files is None:
             visited_files = set()
         
-        # Prevent infinite recursion
-        if depth > 3 or file_model.file_path in visited_files:
+        # Prevent infinite recursion and respect max_depth
+        if depth >= max_depth or file_model.file_path in visited_files:
             return
         
         visited_files.add(file_model.file_path)
@@ -322,13 +323,21 @@ class PlantUMLGenerator:
                         included_file_model = model
                         break
             if included_file_model:
+                # Process simple typedefs from the typedefs dictionary
+                for typedef_name, original_type in included_file_model.typedefs.items():
+                    if typedef_name not in seen_typedefs:
+                        seen_typedefs.add(typedef_name)
+                        lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
+                
+                # Process complex typedefs from typedef_relations
                 for typedef_relation in included_file_model.typedef_relations:
                     typedef_name = typedef_relation.typedef_name
                     if typedef_name not in seen_typedefs:
                         seen_typedefs.add(typedef_name)
                         lines.extend(self._generate_single_typedef_class(typedef_relation, included_file_model, project_model))
-                # Recursively process further nested typedefs
-                self._process_nested_typedefs(included_file_model, project_model, seen_typedefs, lines, visited_files, depth + 1)
+                
+                # Recursively process further nested typedefs (respecting max_depth)
+                self._process_nested_typedefs(included_file_model, project_model, seen_typedefs, lines, visited_files, depth + 1, max_depth)
 
     def _generate_header_class(self, file_model: FileModel, basename: str) -> List[str]:
         """Generate a class for a header file using the new PlantUML template"""
@@ -340,27 +349,6 @@ class PlantUMLGenerator:
             lines.append("    -- Macros --")
             for macro in file_model.macros:
                 lines.append(f"    + #define {macro}")
-        
-        # Only show primitive typedefs directly in the header class
-        # Show typedefs section for header files
-        header_typedefs = []
-        
-        # Add primitive typedefs from typedef_relations
-        for typedef_relation in file_model.typedef_relations:
-            typedef_name = typedef_relation.typedef_name
-            original_type = typedef_relation.original_type
-            relationship_type = typedef_relation.relationship_type
-            if relationship_type == "alias" and not (original_type.startswith("struct") or original_type.startswith("enum") or original_type.startswith("union")):
-                header_typedefs.append(f"    + typedef {original_type} {typedef_name}")
-        
-        # Add simple typedefs from the typedefs dictionary
-        if file_model.typedefs:
-            for typedef_name, original_type in file_model.typedefs.items():
-                header_typedefs.append(f"    + typedef {original_type} {typedef_name}")
-        
-        if header_typedefs:
-            lines.append("    -- Typedefs --")
-            lines.extend(header_typedefs)
         
         if file_model.globals:
             lines.append("    -- Global Variables --")
@@ -374,18 +362,6 @@ class PlantUMLGenerator:
             lines.append("    -- Functions --")
             for function in file_model.functions:
                 lines.append(f"    + {self._format_function_signature(function)}")
-        
-        # Display struct fields as global variables (for backward compatibility with tests)
-        # But only show them if they're not already shown as typedefs
-        if file_model.structs:
-            lines.append("    -- Struct Fields --")
-            seen_fields = set()
-            for struct_name, struct in file_model.structs.items():
-                for field in struct.fields:
-                    field_key = f"{field.type} {field.name}"
-                    if field_key not in seen_fields:
-                        seen_fields.add(field_key)
-                        lines.append(f"    + {field.type} {field.name}")
         
         lines.append("}")
         lines.append("")
@@ -405,7 +381,7 @@ class PlantUMLGenerator:
         ]
         return lines
 
-    def _generate_typedef_classes(self, file_model: FileModel, project_model: ProjectModel) -> List[str]:
+    def _generate_typedef_classes(self, file_model: FileModel, project_model: ProjectModel, include_depth: int = 1) -> List[str]:
         """Generate classes for typedefs using the new PlantUML template"""
         lines = []
         seen_typedefs = set()
@@ -414,17 +390,7 @@ class PlantUMLGenerator:
         for typedef_name, original_type in file_model.typedefs.items():
             if typedef_name not in seen_typedefs:
                 seen_typedefs.add(typedef_name)
-                lines.extend(self._generate_simple_typedef_class(typedef_name, original_type))
-        
-        # Process simple typedefs from included header files
-        for include in file_model.includes:
-            # Find the included file model
-            included_file_model = self._find_included_file_model(include, project_model)
-            if included_file_model:
-                for typedef_name, original_type in included_file_model.typedefs.items():
-                    if typedef_name not in seen_typedefs:
-                        seen_typedefs.add(typedef_name)
-                        lines.extend(self._generate_simple_typedef_class(typedef_name, original_type))
+                lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
         
         # Process complex typedefs from the current file
         for typedef_relation in file_model.typedef_relations:
@@ -433,8 +399,9 @@ class PlantUMLGenerator:
                 seen_typedefs.add(typedef_name)
                 lines.extend(self._generate_single_typedef_class(typedef_relation, file_model, project_model))
         
-        # Process typedefs from included header files (recursively)
-        self._process_nested_typedefs(file_model, project_model, seen_typedefs, lines)
+        # Process typedefs from included header files (respecting include_depth)
+        if include_depth > 1:
+            self._process_nested_typedefs(file_model, project_model, seen_typedefs, lines, max_depth=include_depth)
         
         return lines
     
@@ -448,17 +415,43 @@ class PlantUMLGenerator:
                 return file_model
         return None
     
-    def _generate_simple_typedef_class(self, typedef_name: str, original_type: str) -> List[str]:
+    def _generate_simple_typedef_class(self, typedef_name: str, original_type: str, project_model: ProjectModel = None) -> List[str]:
         """Generate a class for a simple typedef"""
         lines = []
         
-        # Generate typedef class
-        lines.append(f'class "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
-        lines.append("{")
-        lines.append(f"    + typedef {original_type} {typedef_name}")
-        lines.append("}")
-        lines.append("")
+        if original_type == "enum":
+            # For enum typedefs, create an enum class with values
+            lines.append(f'enum "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
+            lines.append("{")
+            
+            # Try to find the enum values from the project model
+            if project_model:
+                found_enum = None
+                # Look for the enum by the typedef name or with _tag suffix
+                for f_model in project_model.files.values():
+                    if typedef_name in f_model.enums:
+                        found_enum = f_model.enums[typedef_name]
+                        break
+                    elif f"{typedef_name}_tag" in f_model.enums:
+                        found_enum = f_model.enums[f"{typedef_name}_tag"]
+                        break
+                
+                if found_enum:
+                    for value in found_enum.values:
+                        lines.append(f"    {value}")
+                else:
+                    lines.append(f"    + typedef {original_type} {typedef_name}")
+            else:
+                lines.append(f"    + typedef {original_type} {typedef_name}")
+            lines.append("}")
+        else:
+            # For non-enum typedefs, create a regular class
+            lines.append(f'class "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
+            lines.append("{")
+            lines.append(f"    + typedef {original_type} {typedef_name}")
+            lines.append("}")
         
+        lines.append("")
         return lines
     
     def _generate_single_typedef_class(self, typedef_relation, file_model: FileModel, project_model: ProjectModel) -> List[str]:
@@ -468,104 +461,111 @@ class PlantUMLGenerator:
         original_type = typedef_relation.original_type
         relationship_type = typedef_relation.relationship_type
         
-        # Typedef class
-        lines.append(f'class "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
-        lines.append("{")
-        # For struct/union/enum typedefs, show fields/values
-        if relationship_type == "defines":
-            if original_type == "struct":
-                # Try to find the struct by the struct tag name if available
-                struct_name = typedef_relation.struct_tag_name if typedef_relation.struct_tag_name else typedef_name
-                # Look for the struct in the file model that contains the typedef relation
-                import logging
-                logging.getLogger(__name__).debug(f"Looking for struct '{struct_name}' in file '{file_model.file_path}', available structs: {list(file_model.structs.keys())}")
-                logging.getLogger(__name__).debug(f"typedef_relation.struct_tag_name: '{typedef_relation.struct_tag_name}', typedef_name: '{typedef_name}'")
-                
-                # Try multiple possible struct names
-                possible_struct_names = [struct_name]
-                if struct_name != typedef_name:
-                    possible_struct_names.append(typedef_name)
-                if struct_name.endswith('_tag'):
-                    possible_struct_names.append(struct_name[:-4])  # Remove "_tag" suffix
-                if typedef_name.endswith('_t'):
-                    possible_struct_names.append(typedef_name[:-2])  # Remove "_t" suffix
-                # Also try adding "_tag" suffix to the struct name
-                if not struct_name.endswith('_tag'):
-                    possible_struct_names.append(f"{struct_name}_tag")
-                # Try the typedef name without "_t" suffix
-                if typedef_name.endswith('_t'):
-                    possible_struct_names.append(typedef_name[:-2])
-                # Try the typedef name with "_tag" suffix
-                possible_struct_names.append(f"{typedef_name}_tag")
-                
-                found_struct = None
-                for name in possible_struct_names:
-                    if name in file_model.structs:
-                        found_struct = file_model.structs[name]
-                        logging.getLogger(__name__).debug(f"Found struct '{name}' in file '{file_model.file_path}'")
-                        break
-                
-                if found_struct:
-                    for field in found_struct.fields:
-                        lines.append(f"    + {field.type} {field.name}")
-                else:
-                    # Try to find the struct in the project model
-                    for f_model in project_model.files.values():
-                        for name in possible_struct_names:
-                            if name in f_model.structs:
-                                found_struct = f_model.structs[name]
-                                logging.getLogger(__name__).debug(f"Found struct '{name}' in file '{f_model.file_path}'")
-                                break
-                        if found_struct:
+        if original_type == "enum":
+            # For enum typedefs, create an enum class with values
+            lines.append(f'enum "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
+            lines.append("{")
+            
+            # Try to find the enum by the enum tag name if available, otherwise by typedef name
+            enum_name = typedef_relation.enum_tag_name if hasattr(typedef_relation, 'enum_tag_name') and typedef_relation.enum_tag_name else typedef_name
+            # Look for the enum in the project model
+            found_enum = None
+            import logging
+            logging.getLogger(__name__).debug(f"Looking for enum '{enum_name}' in project model")
+            for f_model in project_model.files.values():
+                if enum_name in f_model.enums:
+                    found_enum = f_model.enums[enum_name]
+                    logging.getLogger(__name__).debug(f"Found enum '{enum_name}' in file '{f_model.file_path}'")
+                    break
+            
+            if found_enum:
+                for value in found_enum.values:
+                    lines.append(f"    {value}")
+            else:
+                logging.getLogger(__name__).debug(f"Enum '{enum_name}' not found in project model")
+                lines.append(f"    + {original_type}")
+        else:
+            # For non-enum typedefs, create a regular class
+            lines.append(f'class "{typedef_name}" as {self._get_typedef_uml_id(typedef_name)} <<typedef>> #LightYellow')
+            lines.append("{")
+            
+            # For struct/union typedefs, show fields/values
+            if relationship_type == "defines":
+                if original_type == "struct":
+                    # Try to find the struct by the struct tag name if available
+                    struct_name = typedef_relation.struct_tag_name if typedef_relation.struct_tag_name else typedef_name
+                    # Look for the struct in the file model that contains the typedef relation
+                    import logging
+                    logging.getLogger(__name__).debug(f"Looking for struct '{struct_name}' in file '{file_model.file_path}', available structs: {list(file_model.structs.keys())}")
+                    logging.getLogger(__name__).debug(f"typedef_relation.struct_tag_name: '{typedef_relation.struct_tag_name}', typedef_name: '{typedef_name}'")
+                    
+                    # Try multiple possible struct names
+                    possible_struct_names = [struct_name]
+                    if struct_name != typedef_name:
+                        possible_struct_names.append(typedef_name)
+                    if struct_name.endswith('_tag'):
+                        possible_struct_names.append(struct_name[:-4])  # Remove "_tag" suffix
+                    if typedef_name.endswith('_t'):
+                        possible_struct_names.append(typedef_name[:-2])  # Remove "_t" suffix
+                    # Also try adding "_tag" suffix to the struct name
+                    if not struct_name.endswith('_tag'):
+                        possible_struct_names.append(f"{struct_name}_tag")
+                    # Try the typedef name without "_t" suffix
+                    if typedef_name.endswith('_t'):
+                        possible_struct_names.append(typedef_name[:-2])
+                    # Try the typedef name with "_tag" suffix
+                    possible_struct_names.append(f"{typedef_name}_tag")
+                    
+                    found_struct = None
+                    for name in possible_struct_names:
+                        if name in file_model.structs:
+                            found_struct = file_model.structs[name]
+                            logging.getLogger(__name__).debug(f"Found struct '{name}' in file '{file_model.file_path}'")
                             break
                     
                     if found_struct:
                         for field in found_struct.fields:
                             lines.append(f"    + {field.type} {field.name}")
                     else:
-                        lines.append(f"    + {original_type}")
-            elif original_type == "enum":
-                # Try to find the enum by the enum tag name if available, otherwise by typedef name
-                enum_name = typedef_relation.enum_tag_name if hasattr(typedef_relation, 'enum_tag_name') and typedef_relation.enum_tag_name else typedef_name
-                # Look for the enum in the project model
-                found_enum = None
-                import logging
-                logging.getLogger(__name__).debug(f"Looking for enum '{enum_name}' in project model")
-                for f_model in project_model.files.values():
-                    if enum_name in f_model.enums:
-                        found_enum = f_model.enums[enum_name]
-                        logging.getLogger(__name__).debug(f"Found enum '{enum_name}' in file '{f_model.file_path}'")
-                        break
-                
-                if found_enum:
-                    for value in found_enum.values:
-                        lines.append(f"    + {value}")
-                else:
-                    logging.getLogger(__name__).debug(f"Enum '{enum_name}' not found in project model")
-                    lines.append(f"    + {original_type}")
-            elif original_type == "union":
-                # Try to find the union by the typedef name
-                if typedef_name in file_model.unions:
-                    union = file_model.unions[typedef_name]
-                    for field in union.fields:
-                        lines.append(f"    + {field.type} {field.name}")
-                else:
-                    # Try to find the union in the project model
-                    found_union = None
-                    for f_model in project_model.files.values():
-                        if typedef_name in f_model.unions:
-                            found_union = f_model.unions[typedef_name]
-                            break
-                    
-                    if found_union:
-                        for field in found_union.fields:
+                        # Try to find the struct in the project model
+                        for f_model in project_model.files.values():
+                            for name in possible_struct_names:
+                                if name in f_model.structs:
+                                    found_struct = f_model.structs[name]
+                                    logging.getLogger(__name__).debug(f"Found struct '{name}' in file '{f_model.file_path}'")
+                                    break
+                            if found_struct:
+                                break
+                        
+                        if found_struct:
+                            for field in found_struct.fields:
+                                lines.append(f"    + {field.type} {field.name}")
+                        else:
+                            lines.append(f"    + {original_type}")
+                elif original_type == "union":
+                    # Try to find the union by the typedef name
+                    if typedef_name in file_model.unions:
+                        union = file_model.unions[typedef_name]
+                        for field in union.fields:
                             lines.append(f"    + {field.type} {field.name}")
                     else:
-                        lines.append(f"    + {original_type}")
+                        # Try to find the union in the project model
+                        found_union = None
+                        for f_model in project_model.files.values():
+                            if typedef_name in f_model.unions:
+                                found_union = f_model.unions[typedef_name]
+                                break
+                        
+                        if found_union:
+                            for field in found_union.fields:
+                                lines.append(f"    + {field.type} {field.name}")
+                        else:
+                            lines.append(f"    + {original_type}")
+                else:
+                    lines.append(f"    + {original_type}")
             else:
                 lines.append(f"    + {original_type}")
-        else:
-            lines.append(f"    + {original_type}")
+        
         lines.append("}")
         lines.append("")
         return lines
@@ -1110,11 +1110,16 @@ class PlantUMLGenerator:
 
     def _get_header_uml_id(self, name: str) -> str:
         """Generate UML ID for a header class"""
+        # Remove .h extension if present
+        if name.endswith('.h'):
+            name = name[:-2]
         return f"HEADER_{self._get_uml_id(name)}"
 
     def _get_typedef_uml_id(self, name: str) -> str:
         """Generate UML ID for a typedef class"""
-        return f"TYPEDEF_{self._get_uml_id(name)}"
+        # Convert to uppercase and replace special characters
+        base_id = name.upper().replace("-", "_").replace(".", "_")
+        return f"TYPEDEF_{base_id}"
 
     def _get_type_uml_id(self, name: str) -> str:
         """Generate UML ID for a type class"""
@@ -1125,56 +1130,191 @@ class PlantUMLGenerator:
         lines = []
         typedef_names = set()
         
-        # Collect all typedef names from all files
+        # Collect all typedef names from all files (for relationship processing)
         for f in project_model.files.values():
             typedef_names.update(f.typedefs.keys())
             # Also add typedef names from typedef_relations
             for typedef_rel in f.typedef_relations:
                 typedef_names.add(typedef_rel.typedef_name)
         
-        for f in project_model.files.values():
-            for typedef in f.typedef_relations:
-                typedef_name = typedef.typedef_name
-                
-                # Find the struct/union/enum fields for this typedef
-                struct = None
-                
-                # Try to find the struct by the struct tag name
-                if hasattr(typedef, 'struct_tag_name') and typedef.struct_tag_name:
-                    struct = f.structs.get(typedef.struct_tag_name)
-                
-                # If not found, try by the typedef name itself
-                if not struct:
-                    struct = f.structs.get(typedef_name)
-                
-                # If still not found, try common variations
-                if not struct:
-                    # Try with _tag suffix
-                    if not typedef_name.endswith('_tag'):
-                        struct = f.structs.get(f"{typedef_name}_tag")
-                
-                # If still not found, try without _t suffix
-                if not struct and typedef_name.endswith('_t'):
-                    base_name = typedef_name[:-2]
-                    struct = f.structs.get(base_name)
-                    
-                    # Also try with _tag suffix
-                    if not struct:
-                        struct = f.structs.get(f"{base_name}_tag")
-                
-                if struct:
-                    for field in struct.fields:
-                        # If the field type is another typedef, emit a uses relation
-                        # Strip array syntax, pointers, const, etc.
-                        field_type = field.type.replace('const ', '').replace('*', '').strip()
-                        # Remove array syntax like [3], [MAX_LABEL_LEN], etc.
-                        field_type = re.sub(r'\[[^\]]*\]', '', field_type).strip()
-                        
-                        # Check if the field type is a typedef
-                        if field_type in typedef_names and field_type != typedef_name:
-                            lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(field_type)} : uses")
+        # Process typedefs from the current file and its include chain
+        self._process_file_typedef_uses(file_model, project_model, typedef_names, lines)
         
         return lines
+    
+    def _process_file_typedef_uses(self, file_model: FileModel, project_model: ProjectModel, typedef_names: set, lines: List[str], visited_files: set = None, depth: int = 0) -> None:
+        """Process typedef uses for a file and its include chain"""
+        if visited_files is None:
+            visited_files = set()
+        
+        # Prevent infinite recursion
+        if depth > 3 or file_model.file_path in visited_files:
+            return
+        
+        visited_files.add(file_model.file_path)
+        
+        # Process typedefs from the current file
+        for typedef in file_model.typedef_relations:
+            typedef_name = typedef.typedef_name
+            self._process_typedef_uses(typedef_name, file_model, typedef_names, lines, project_model)
+        
+        # Process simple typedefs from the current file
+        for typedef_name, original_type in file_model.typedefs.items():
+            if original_type == "struct":
+                self._process_typedef_uses(typedef_name, file_model, typedef_names, lines, project_model)
+            elif "(" in original_type and "*" in original_type:
+                # This is likely a function pointer typedef
+                self._process_function_pointer_typedef_uses(typedef_name, original_type, typedef_names, lines)
+            elif "*" in original_type and "(" not in original_type:
+                # This is likely a pointer typedef
+                self._process_pointer_typedef_uses(typedef_name, original_type, typedef_names, lines)
+            elif "[" in original_type:
+                # This is likely an array typedef
+                self._process_array_typedef_uses(typedef_name, original_type, typedef_names, lines)
+        
+        # Process typedefs from included files (recursively)
+        for include_relation in file_model.include_relations:
+            included_file_path = include_relation.included_file
+            included_file_model = None
+            # Try to find the included file model
+            for key, model in project_model.files.items():
+                if model.file_path == included_file_path:
+                    included_file_model = model
+                    break
+            if not included_file_model:
+                included_file_basename = Path(included_file_path).name
+                for key, model in project_model.files.items():
+                    if key == included_file_basename:
+                        included_file_model = model
+                        break
+            
+            if included_file_model:
+                self._process_file_typedef_uses(included_file_model, project_model, typedef_names, lines, visited_files, depth + 1)
+    
+    def _process_typedef_uses(self, typedef_name: str, file_model: FileModel, typedef_names: set, lines: List[str], project_model: ProjectModel = None) -> None:
+        """Process uses relationships for a single typedef"""
+        # Find the struct/union/enum fields for this typedef
+        struct = None
+        
+        # Try to find the struct by the typedef name itself
+        struct = file_model.structs.get(typedef_name)
+        
+        # If not found, try common variations
+        if not struct:
+            # Try with _tag suffix
+            if not typedef_name.endswith('_tag'):
+                struct = file_model.structs.get(f"{typedef_name}_tag")
+        
+        # If still not found, try without _t suffix
+        if not struct and typedef_name.endswith('_t'):
+            base_name = typedef_name[:-2]
+            struct = file_model.structs.get(base_name)
+            
+            # Also try with _tag suffix
+            if not struct:
+                struct = file_model.structs.get(f"{base_name}_tag")
+        
+        # If still not found and we have project_model, check included files
+        if not struct and project_model:
+            for include_relation in file_model.include_relations:
+                included_file_path = include_relation.included_file
+                included_file_model = None
+                # Try to find the included file model
+                for key, model in project_model.files.items():
+                    if model.file_path == included_file_path:
+                        included_file_model = model
+                        break
+                if not included_file_model:
+                    included_file_basename = Path(included_file_path).name
+                    for key, model in project_model.files.items():
+                        if key == included_file_basename:
+                            included_file_model = model
+                            break
+                
+                if included_file_model:
+                    # Try to find the struct in the included file
+                    struct = included_file_model.structs.get(typedef_name)
+                    if not struct and not typedef_name.endswith('_tag'):
+                        struct = included_file_model.structs.get(f"{typedef_name}_tag")
+                    if not struct and typedef_name.endswith('_t'):
+                        base_name = typedef_name[:-2]
+                        struct = included_file_model.structs.get(base_name)
+                        if not struct:
+                            struct = included_file_model.structs.get(f"{base_name}_tag")
+                    if struct:
+                        break
+        
+        if struct:
+            for field in struct.fields:
+                # If the field type is another typedef, emit a uses relation
+                # Strip array syntax, pointers, const, etc.
+                field_type = field.type.replace('const ', '').replace('*', '').strip()
+                # Remove array syntax like [3], [MAX_LABEL_LEN], etc.
+                field_type = re.sub(r'\[[^\]]*\]', '', field_type).strip()
+                # Remove field name if present (everything after the first space)
+                if ' ' in field_type:
+                    field_type = field_type.split(' ')[0].strip()
+                
+                # Check if the field type is a typedef
+                if field_type in typedef_names and field_type != typedef_name:
+                    lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(field_type)} : <<uses>>")
+
+    def _process_function_pointer_typedef_uses(self, typedef_name: str, original_type: str, typedef_names: set, lines: List[str]) -> None:
+        """Process uses relationships for a function pointer typedef"""
+        # Extract parameter types from function pointer definition
+        # Example: "int ( * MyCallback ) ( MyBuffer * buffer )"
+        # We need to extract "MyBuffer" from the parameters
+        
+        # Find the parameter list between the last set of parentheses
+        param_start = original_type.rfind('(')
+        param_end = original_type.rfind(')')
+        
+        if param_start != -1 and param_end != -1 and param_end > param_start:
+            param_list = original_type[param_start + 1:param_end].strip()
+            
+            # Split parameters by comma and process each one
+            if param_list:
+                # Handle single parameter case
+                params = [param_list] if ',' not in param_list else [p.strip() for p in param_list.split(',')]
+                
+                for param in params:
+                    # Extract the type from the parameter
+                    # Remove parameter name, pointers, const, etc.
+                    param_type = param.replace('const ', '').replace('*', '').strip()
+                    # Remove parameter name (everything after the last space)
+                    if ' ' in param_type:
+                        param_type = param_type.rsplit(' ', 1)[0].strip()
+                    
+                    # Check if the parameter type is a typedef
+                    if param_type in typedef_names and param_type != typedef_name:
+                        lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(param_type)} : <<uses>>")
+
+    def _process_pointer_typedef_uses(self, typedef_name: str, original_type: str, typedef_names: set, lines: List[str]) -> None:
+        """Process uses relationships for a pointer typedef"""
+        # Extract the base type from pointer typedef
+        # Example: "MyComplex *" -> extract "MyComplex"
+        
+        # Remove pointer symbols and whitespace
+        base_type = original_type.replace('*', '').strip()
+        
+        # Check if the base type is a typedef
+        if base_type in typedef_names and base_type != typedef_name:
+            lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(base_type)} : <<uses>>")
+
+    def _process_array_typedef_uses(self, typedef_name: str, original_type: str, typedef_names: set, lines: List[str]) -> None:
+        """Process uses relationships for an array typedef"""
+        # Extract the base type from array typedef
+        # Example: "MyComplexPtr MyComplexArray [ 10 ]" -> extract "MyComplexPtr"
+        
+        # Find the array name and remove it along with the array syntax
+        # Split by space and take the first part (the base type)
+        parts = original_type.split()
+        if len(parts) >= 2:
+            base_type = parts[0]
+            
+            # Check if the base type is a typedef
+            if base_type in typedef_names and base_type != typedef_name:
+                lines.append(f"{self._get_typedef_uml_id(typedef_name)} ..> {self._get_typedef_uml_id(base_type)} : <<uses>>")
 
 
 class Generator:
@@ -1184,13 +1324,14 @@ class Generator:
         self.plantuml_generator = PlantUMLGenerator()
         self.logger = logging.getLogger(__name__)
 
-    def generate(self, model_file: str, output_dir: str = "./output") -> str:
+    def generate(self, model_file: str, output_dir: str = "./output", include_depth: int = 1) -> str:
         """
         Step 3: Generate puml files based on model.json
 
         Args:
             model_file: Input JSON model file path
             output_dir: Output directory for PlantUML files
+            include_depth: Maximum depth for include processing
 
         Returns:
             Path to the output directory
@@ -1210,7 +1351,7 @@ class Generator:
             if file_path.endswith(".c"):
                 try:
                     diagram_content = self.plantuml_generator.generate_diagram(
-                        file_model, model
+                        file_model, model, include_depth
                     )
 
                     # Create output file

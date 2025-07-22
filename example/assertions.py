@@ -504,21 +504,31 @@ class PUMLValidator:
             assert 'TYPEDEF_MYCALLBACK' in content, "Missing TYPEDEF_MYCALLBACK class"
             assert 'TYPEDEF_MYCOMPLEX' in content, "Missing TYPEDEF_MYCOMPLEX class"
             assert 'TYPEDEF_MYCOMPLEXPTR' in content, "Missing TYPEDEF_MYCOMPLEXPTR class"
-            assert 'TYPEDEF_COLOR_T' in content, "Missing TYPEDEF_COLOR_T class"
-            assert 'TYPEDEF_STATUS_T' in content, "Missing TYPEDEF_STATUS_T class"
+            assert 'TYPEDEF_COLOR_T' in content, "Missing TYPEDEF_COLOR_T enum class"
+            assert 'TYPEDEF_STATUS_T' in content, "Missing TYPEDEF_STATUS_T enum class"
             assert 'TYPEDEF_POINT_T' in content, "Missing TYPEDEF_POINT_T class"
-            assert 'TYPEDEF_POINT_T_2' in content, "Missing TYPEDEF_POINT_T_2 class"
             assert 'TYPEDEF_NAMEDSTRUCT_T' in content, "Missing TYPEDEF_NAMEDSTRUCT_T class"
             assert 'TYPEDEF_NUMBER_T' in content, "Missing TYPEDEF_NUMBER_T class"
             assert 'TYPEDEF_NAMEDUNION_T' in content, "Missing TYPEDEF_NAMEDUNION_T class"
             assert 'TYPEDEF_MYCOMPLEXARRAY' in content, "Missing TYPEDEF_MYCOMPLEXARRAY class"
-            assert 'TYPEDEF_SYSTEM_STATE_T' in content, "Missing TYPEDEF_SYSTEM_STATE_T class"
+            assert 'TYPEDEF_SYSTEM_STATE_T' in content, "Missing TYPEDEF_SYSTEM_STATE_T enum class"
             assert 'TYPEDEF_TRIANGLE_T' in content, "Missing TYPEDEF_TRIANGLE_T class"
-            assert 'TYPEDEF_LOG_LEVEL_T' in content, "Missing TYPEDEF_LOG_LEVEL_T class"
-            assert 'TYPEDEF_LOGCALLBACK_T' in content, "Missing TYPEDEF_LOGCALLBACK_T class"
+            assert 'TYPEDEF_LOG_LEVEL_T' in content, "Missing TYPEDEF_LOG_LEVEL_T enum class"
+            assert 'TYPEDEF_LOG_CALLBACK_T' in content, "Missing TYPEDEF_LOG_CALLBACK_T class"
             assert 'TYPEDEF_NESTEDINFO_T' in content, "Missing TYPEDEF_NESTEDINFO_T class"
-            assert 'TYPEDEF_CE_STATUS_T' in content, "Missing TYPEDEF_CE_STATUS_T class"
+            assert 'TYPEDEF_CE_STATUS_T' in content, "Missing TYPEDEF_CE_STATUS_T enum class"
             assert 'TYPEDEF_COMPLEXEXAMPLE_T' in content, "Missing TYPEDEF_COMPLEXEXAMPLE_T class"
+            
+            # Should have enum values in enum typedefs
+            assert 'COLOR_RED' in content, "Missing COLOR_RED enum value"
+            assert 'COLOR_GREEN' in content, "Missing COLOR_GREEN enum value"
+            assert 'COLOR_BLUE' in content, "Missing COLOR_BLUE enum value"
+            assert 'STATUS_OK' in content, "Missing STATUS_OK enum value"
+            assert 'STATUS_FAIL' in content, "Missing STATUS_FAIL enum value"
+            assert 'LOG_DEBUG' in content, "Missing LOG_DEBUG enum value"
+            assert 'LOG_INFO' in content, "Missing LOG_INFO enum value"
+            assert 'LOG_WARN' in content, "Missing LOG_WARN enum value"
+            assert 'LOG_ERROR' in content, "Missing LOG_ERROR enum value"
             
             # Should have specific relationships
             assert 'TYPEDEF_MYBUFFER ..> TYPEDEF_MYLEN : <<uses>>' in content, "Missing MyBuffer uses MyLen relationship"
@@ -530,8 +540,8 @@ class PUMLValidator:
             assert 'TYPEDEF_MYCOMPLEX ..> TYPEDEF_LOG_LEVEL_T : <<uses>>' in content, "Missing MyComplex uses log_level_t relationship"
             assert 'TYPEDEF_MYCOMPLEXPTR ..> TYPEDEF_MYCOMPLEX : <<uses>>' in content, "Missing MyComplexPtr uses MyComplex relationship"
             assert 'TYPEDEF_MYCOMPLEXARRAY ..> TYPEDEF_MYCOMPLEXPTR : <<uses>>' in content, "Missing MyComplexArray uses MyComplexPtr relationship"
-            assert 'TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T_2 : <<uses>>' in content, "Missing triangle_t uses point_t relationship"
-            assert 'TYPEDEF_LOGCALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>' in content, "Missing log_callback_t uses log_level_t relationship"
+            assert 'TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>' in content, "Missing triangle_t uses point_t relationship"
+            assert 'TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>' in content, "Missing log_callback_t uses log_level_t relationship"
             assert 'TYPEDEF_NESTEDINFO_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>' in content, "Missing NestedInfo_t uses log_level_t relationship"
             assert 'TYPEDEF_COMPLEXEXAMPLE_T ..> TYPEDEF_NESTEDINFO_T : <<uses>>' in content, "Missing ComplexExample_t uses NestedInfo_t relationship"
             assert 'TYPEDEF_COMPLEXEXAMPLE_T ..> TYPEDEF_CE_STATUS_T : <<uses>>' in content, "Missing ComplexExample_t uses CE_Status_t relationship"
@@ -539,25 +549,28 @@ class PUMLValidator:
         elif filename == "geometry.puml":
             assert 'TYPEDEF_TRIANGLE_T' in content, "Missing TYPEDEF_TRIANGLE_T class"
             assert 'TYPEDEF_POINT_T' in content, "Missing TYPEDEF_POINT_T class"
-            assert 'TYPEDEF_SYSTEM_STATE_T' in content, "Missing TYPEDEF_SYSTEM_STATE_T class"
-            assert 'TYPEDEF_LOG_LEVEL_T' in content, "Missing TYPEDEF_LOG_LEVEL_T class"
+            assert 'TYPEDEF_SYSTEM_STATE_T' in content, "Missing TYPEDEF_SYSTEM_STATE_T enum class"
+            assert 'TYPEDEF_LOG_LEVEL_T' in content, "Missing TYPEDEF_LOG_LEVEL_T enum class"
             assert 'TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>' in content, "Missing triangle_t uses point_t relationship"
             
         elif filename == "logger.puml":
-            assert 'TYPEDEF_LOG_LEVEL_T' in content, "Missing TYPEDEF_LOG_LEVEL_T class"
-            assert 'TYPEDEF_LOGCALLBACK_T' in content, "Missing TYPEDEF_LOGCALLBACK_T class"
-            assert 'TYPEDEF_LOGCALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>' in content, "Missing log_callback_t uses log_level_t relationship"
+            assert 'TYPEDEF_LOG_LEVEL_T' in content, "Missing TYPEDEF_LOG_LEVEL_T enum class"
+            assert 'TYPEDEF_LOG_CALLBACK_T' in content, "Missing TYPEDEF_LOG_CALLBACK_T class"
+            assert 'TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>' in content, "Missing log_callback_t uses log_level_t relationship"
             
         elif filename == "sample.puml":
             assert 'TYPEDEF_POINT_T' in content, "Missing TYPEDEF_POINT_T class"
-            assert 'TYPEDEF_SYSTEM_STATE_T' in content, "Missing TYPEDEF_SYSTEM_STATE_T class"
+            assert 'TYPEDEF_SYSTEM_STATE_T' in content, "Missing TYPEDEF_SYSTEM_STATE_T enum class"
             assert 'TYPEDEF_TRIANGLE_T' in content, "Missing TYPEDEF_TRIANGLE_T class"
-            assert 'TYPEDEF_LOG_LEVEL_T' in content, "Missing TYPEDEF_LOG_LEVEL_T class"
+            assert 'TYPEDEF_LOG_LEVEL_T' in content, "Missing TYPEDEF_LOG_LEVEL_T enum class"
             assert 'TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>' in content, "Missing triangle_t uses point_t relationship"
             
         elif filename == "math_utils.puml":
-            # math_utils.puml should be simple with no typedefs
-            assert 'TYPEDEF_' not in content, "math_utils.puml should not contain typedef classes"
+            # math_utils.puml should have separate typedef classes
+            assert 'TYPEDEF_REAL_T' in content, "Missing TYPEDEF_REAL_T class"
+            assert 'TYPEDEF_MATH_OP_T' in content, "Missing TYPEDEF_MATH_OP_T class"
+            assert 'TYPEDEF_ID_T' in content, "Missing TYPEDEF_ID_T class"
+            assert 'TYPEDEF_STATUS_T' in content, "Missing TYPEDEF_STATUS_T class"
             
         print(f"    ✅ Specific content valid")
         
