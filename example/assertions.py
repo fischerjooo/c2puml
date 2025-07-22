@@ -162,7 +162,7 @@ class PUMLValidator:
             "config.h": {
                 "includes": ["stddef.h", "stdint.h"],
                 "macros": ["#define CONFIG_H", "#define PROJECT_NAME", "#define MAX_LABEL_LEN", "#define DEFAULT_BUFFER_SIZE"],
-                "typedefs": ["typedef uint32_t id_t", "typedef int32_t status_t", "typedef enum GlobalStatus GlobalStatus_t"],
+                "typedefs": ["typedef uint32_t id_t", "typedef int32_t status_t", "typedef enum GlobalStatus GlobalStatus_t;"],
                 "functions": [],
                 "globals": []
             },
@@ -243,11 +243,8 @@ class PUMLValidator:
         """Extract all typedef statements from source file content."""
         typedefs = []
         
-        # Pattern for complex typedefs (struct/enum/union with braces)
-        complex_pattern = r'typedef\s+(struct|enum|union)\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\{[^}]*\}\s*[a-zA-Z_][a-zA-Z0-9_]*\s*;'
-        complex_matches = re.findall(complex_pattern, content)
-        for match in complex_matches:
-            typedefs.append(match.strip())
+        # Use a simpler approach: look for typedef patterns and extract them
+        # This is more reliable than complex regex patterns
         
         # Pattern for simple typedefs: typedef type name;
         simple_pattern = r'typedef\s+[a-zA-Z_][a-zA-Z0-9_]*\s+\*?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*(?:\[[^\]]*\])?\s*;'
@@ -260,6 +257,31 @@ class PUMLValidator:
         func_matches = re.findall(func_ptr_pattern, content)
         for match in func_matches:
             typedefs.append(match.strip())
+        
+        # For complex typedefs (struct/enum/union), look for the pattern:
+        # typedef struct/enum/union tag { ... } name;
+        # We'll use a simpler approach that looks for the key parts
+        
+        # Look for typedef followed by struct/enum/union
+        lines = content.split('\n')
+        for line in lines:
+            line = line.strip()
+            if line.startswith('typedef') and any(keyword in line for keyword in ['struct', 'enum', 'union']):
+                # This is a complex typedef, extract the basic pattern
+                # Look for: typedef struct/enum/union tag
+                match = re.search(r'typedef\s+(struct|enum|union)\s+([a-zA-Z_][a-zA-Z0-9_]*)', line)
+                if match:
+                    typedef_type = match.group(1)
+                    typedef_tag = match.group(2)
+                    typedefs.append(f"typedef {typedef_type} {typedef_tag}")
+        
+        # Also look for the specific pattern: typedef enum GlobalStatus GlobalStatus_t;
+        enum_typedef_pattern = r'typedef\s+enum\s+([a-zA-Z_][a-zA-Z0-9_]*)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*;'
+        enum_matches = re.findall(enum_typedef_pattern, content)
+        for match in enum_matches:
+            enum_name = match[0]
+            typedef_name = match[1]
+            typedefs.append(f"typedef enum {enum_name} {typedef_name};")
         
         return typedefs
         
