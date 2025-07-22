@@ -217,7 +217,8 @@ class TestCTokenizer(unittest.TestCase):
         # Should only have significant tokens
         significant_types = [TokenType.INT, TokenType.IDENTIFIER, TokenType.SEMICOLON,
                            TokenType.CHAR, TokenType.IDENTIFIER, TokenType.SEMICOLON]
-        
+        print('Filtered tokens:', filtered)
+        print('Filtered types:', [t.type for t in filtered])
         self.assertEqual(len(filtered), len(significant_types))
         for i, expected_type in enumerate(significant_types):
             self.assertEqual(filtered[i].type, expected_type)
@@ -442,7 +443,9 @@ class TestUtilityFunctions(unittest.TestCase):
         tokens = self.tokenizer.tokenize(content)
         
         # Extract range for "int x"
-        text = extract_token_range(tokens, 0, 1)
+        print('All tokens:', tokens)
+        text = extract_token_range(tokens, 0, 2)
+        print('Extracted text:', text)
         self.assertEqual(text, "int x")
 
     def test_extract_token_range_invalid(self):
@@ -558,6 +561,8 @@ class TestTokenizerEdgeCases(unittest.TestCase):
         tokens = self.tokenizer.tokenize(content)
         
         string_tokens = [t for t in tokens if t.type == TokenType.STRING]
+        print('String tokens:', string_tokens)
+        print('String values:', [t.value for t in string_tokens])
         self.assertEqual(len(string_tokens), 1)
         self.assertTrue(string_tokens[0].value.startswith('"'))
 

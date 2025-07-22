@@ -135,19 +135,38 @@ class CTokenizer:
     def tokenize(self, content: str) -> List[Token]:
         """Tokenize C/C++ source code content"""
         tokens = []
-        lines = content.split('\n')
+        lines = content.splitlines()
         total_lines = len(lines)
-        
-        for line_num, line in enumerate(lines, 1):
-            line_tokens = self._tokenize_line(line, line_num)
-            tokens.extend(line_tokens)
-            
-            # Add newline token after each line (except the last line)
+        line_num = 1
+        in_multiline_string = False
+        multiline_string_value = ''
+        multiline_string_start_line = 0
+        multiline_string_start_col = 0
+        for idx, line in enumerate(lines):
+            if in_multiline_string:
+                multiline_string_value += '\n' + line
+                if '"' in line:
+                    # End of multiline string
+                    in_multiline_string = False
+                    tokens.append(Token(TokenType.STRING, multiline_string_value, multiline_string_start_line, multiline_string_start_col))
+            else:
+                line_tokens = self._tokenize_line(line, line_num)
+                # Check if a string starts but does not end on this line
+                if line_tokens and line_tokens[-1].type == TokenType.STRING and not line_tokens[-1].value.endswith('"'):
+                    in_multiline_string = True
+                    multiline_string_value = line_tokens[-1].value
+                    multiline_string_start_line = line_tokens[-1].line
+                    multiline_string_start_col = line_tokens[-1].column
+                    tokens.extend(line_tokens[:-1])
+                else:
+                    tokens.extend(line_tokens)
             if line_num < total_lines:
                 tokens.append(Token(TokenType.NEWLINE, '\n', line_num, len(line)))
-        
-        # Add EOF token
+            line_num += 1
+        if in_multiline_string:
+            tokens.append(Token(TokenType.STRING, multiline_string_value, multiline_string_start_line, multiline_string_start_col))
         tokens.append(Token(TokenType.EOF, '', total_lines, len(lines[-1]) if lines else 0))
+        # No need for post-processing merge step now
         
         return tokens
     
@@ -274,7 +293,7 @@ class CTokenizer:
                      exclude_types: Optional[List[TokenType]] = None) -> List[Token]:
         """Filter tokens by type"""
         if exclude_types is None:
-            exclude_types = [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]
+            exclude_types = [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE, TokenType.EOF]
         
         return [token for token in tokens if token.type not in exclude_types]
 
@@ -736,11 +755,10 @@ class StructureFinder:
 
 
 def extract_token_range(tokens: List[Token], start: int, end: int) -> str:
-    """Extract raw text from token range"""
+    """Extract raw text from token range, excluding whitespace, comments, and newlines"""
     if start >= len(tokens) or end >= len(tokens) or start > end:
         return ""
-    
-    return ' '.join(token.value for token in tokens[start:end + 1])
+    return ' '.join(token.value for token in tokens[start:end + 1] if token.type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE])
 
 
 def find_struct_fields(tokens: List[Token], struct_start: int, struct_end: int) -> List[Tuple[str, str]]:
