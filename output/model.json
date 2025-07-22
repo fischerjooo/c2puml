@@ -125,7 +125,7 @@
       "functions": [
         {
           "name": "create_triangle",
-          "return_type": "triangle_t",
+          "return_type": "#include \"geometry.h\" #include <string.h> #include <stdlib.h> triangle_t",
           "parameters": [
             {
               "name": "a",
@@ -153,7 +153,7 @@
         },
         {
           "name": "triangle_area",
-          "return_type": "int",
+          "return_type": "= '\\0' ; return tri ; } int",
           "parameters": [
             {
               "name": "tri",
@@ -204,7 +204,7 @@
       "functions": [
         {
           "name": "create_triangle",
-          "return_type": "triangle_t",
+          "return_type": "[ MAX_LABEL_LEN ] ; } triangle_t ; triangle_t",
           "parameters": [
             {
               "name": "a",
@@ -232,7 +232,7 @@
         },
         {
           "name": "triangle_area",
-          "return_type": "int",
+          "return_type": ", const char * label ) ; int",
           "parameters": [
             {
               "name": "tri",
@@ -269,7 +269,7 @@
       "functions": [
         {
           "name": "set_log_callback",
-          "return_type": "void",
+          "return_type": "log_callback_t current_cb = NULL ; void",
           "parameters": [
             {
               "name": "cb",
@@ -282,7 +282,7 @@
         },
         {
           "name": "log_message",
-          "return_type": "void",
+          "return_type": ") { current_cb = cb ; } void",
           "parameters": [
             {
               "name": "level",
@@ -342,7 +342,7 @@
       "functions": [
         {
           "name": "set_log_callback",
-          "return_type": "void",
+          "return_type": ", const char * message ) ; void",
           "parameters": [
             {
               "name": "cb",
@@ -355,7 +355,7 @@
         },
         {
           "name": "log_message",
-          "return_type": "void",
+          "return_type": "void set_log_callback ( log_callback_t cb ) ; void",
           "parameters": [
             {
               "name": "level",
@@ -403,7 +403,7 @@
       "functions": [
         {
           "name": "add",
-          "return_type": "int",
+          "return_type": "#include \"math_utils.h\" int",
           "parameters": [
             {
               "name": "a",
@@ -421,7 +421,7 @@
         },
         {
           "name": "subtract",
-          "return_type": "int",
+          "return_type": "{ return a + b ; } int",
           "parameters": [
             {
               "name": "a",
@@ -439,7 +439,7 @@
         },
         {
           "name": "average",
-          "return_type": "real_t",
+          "return_type": "{ return a - b ; } real_t",
           "parameters": [
             {
               "name": "arr",
@@ -476,7 +476,7 @@
       "functions": [
         {
           "name": "add",
-          "return_type": "int",
+          "return_type": ") ( int , int ) ; int",
           "parameters": [
             {
               "name": "a",
@@ -494,7 +494,7 @@
         },
         {
           "name": "subtract",
-          "return_type": "int",
+          "return_type": "int a , int b ) ; int",
           "parameters": [
             {
               "name": "a",
@@ -512,7 +512,7 @@
         },
         {
           "name": "average",
-          "return_type": "real_t",
+          "return_type": "int a , int b ) ; real_t",
           "parameters": [
             {
               "name": "arr",
@@ -561,7 +561,7 @@
         },
         {
           "name": "calculate_sum",
-          "return_type": "int",
+          "return_type": "void internal_helper ( void ) ; int",
           "parameters": [
             {
               "name": "a",
@@ -579,7 +579,7 @@
         },
         {
           "name": "create_point",
-          "return_type": "*",
+          "return_type": "a , int b ) ; point_t *",
           "parameters": [
             {
               "name": "x",
@@ -609,7 +609,7 @@
         },
         {
           "name": "calculate_sum",
-          "return_type": "int",
+          "return_type": ") ; global_counter + + ; } int",
           "parameters": [
             {
               "name": "a",
@@ -627,7 +627,7 @@
         },
         {
           "name": "create_point",
-          "return_type": "*",
+          "return_type": "a , b ) ; } point_t *",
           "parameters": [
             {
               "name": "x",
@@ -650,7 +650,7 @@
         },
         {
           "name": "process_point",
-          "return_type": "void",
+          "return_type": "'\\0' ; } return p ; } void",
           "parameters": [
             {
               "name": "p",
@@ -663,14 +663,14 @@
         },
         {
           "name": "demo_triangle_usage",
-          "return_type": "void",
+          "return_type": ") ; internal_helper ( ) ; } void",
           "parameters": [],
           "is_static": false,
           "is_declaration": false
         },
         {
           "name": "main",
-          "return_type": "int",
+          "return_type": ". label , area ) ; } int",
           "parameters": [],
           "is_static": false,
           "is_declaration": false
@@ -771,7 +771,7 @@
         },
         {
           "name": "create_point",
-          "return_type": "*",
+          "return_type": "point_t *",
           "parameters": [
             {
               "name": "x",
@@ -849,7 +849,7 @@
       "functions": [
         {
           "name": "log_buffer",
-          "return_type": "void",
+          "return_type": "} ; MyComplexPtr global_complex = NULL ; void",
           "parameters": [
             {
               "name": "buffer",
@@ -862,7 +862,7 @@
         },
         {
           "name": "process_buffer",
-          "return_type": "MyInt",
+          "return_type": "- > data ) ; } } MyInt",
           "parameters": [
             {
               "name": "buffer",
@@ -875,7 +875,7 @@
         },
         {
           "name": "my_callback",
-          "return_type": "int",
+          "return_type": "> length ; return 0 ; } int",
           "parameters": [
             {
               "name": "buffer",
@@ -888,7 +888,7 @@
         },
         {
           "name": "create_complex",
-          "return_type": "*",
+          "return_type": "process_buffer ( buffer ) ; } MyComplex *",
           "parameters": [
             {
               "name": "id",
@@ -906,7 +906,7 @@
         },
         {
           "name": "main",
-          "return_type": "int",
+          "return_type": "LOG_INFO ; } return complex ; } int",
           "parameters": [],
           "is_static": false,
           "is_declaration": false
@@ -1072,5 +1072,5 @@
       "unions": {}
     }
   },
-  "created_at": "2025-07-22T13:03:23.812463"
+  "created_at": "2025-07-22T13:10:29.259453"
 }

@@ -7,11 +7,11 @@ class "typedef_test" as TYPEDEF_TEST <<source>> #LightBlue
     - MyBuffer global_buffer
     - MyComplexPtr global_complex
     -- Functions --
-    void log_buffer(const MyBuffer * buffer)
-    MyInt process_buffer(MyBuffer * buffer)
-    int my_callback(MyBuffer * buffer)
-    * create_complex(MyLen id, MyString name)
-    int main()
+    } ; MyComplexPtr global_complex = NULL ; void log_buffer(const MyBuffer * buffer)
+    - > data ) ; } } MyInt process_buffer(MyBuffer * buffer)
+    > length ; return 0 ; } int my_callback(MyBuffer * buffer)
+    process_buffer ( buffer ) ; } MyComplex * create_complex(MyLen id, MyString name)
+    LOG_INFO ; } return complex ; } int main()
 }
 
 class "typedef_test" as HEADER_TYPEDEF_TEST <<header>> #LightGreen
@@ -29,16 +29,16 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     -- Macros --
     + #define GEOMETRY_H
     -- Functions --
-    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
-    + int triangle_area(const triangle_t * tri);
+    + [ MAX_LABEL_LEN ] ; } triangle_t ; triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label);
+    + , const char * label ) ; int triangle_area(const triangle_t * tri);
 }
 class "logger" as HEADER_LOGGER <<header>> #LightGreen
 {
     -- Macros --
     + #define LOGGER_H
     -- Functions --
-    + void set_log_callback(log_callback_t cb);
-    + void log_message(log_level_t level, const char * fmt, . . .);
+    + , const char * message ) ; void set_log_callback(log_callback_t cb);
+    + void set_log_callback ( log_callback_t cb ) ; void log_message(log_level_t level, const char * fmt, . . .);
 }
 class "stdlib.h" as HEADER_STDLIB <<header>> #LightGray
 {
@@ -57,7 +57,7 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + Field(name=DEFAULT_LABEL, type=char *)
     -- Functions --
     + int calculate_sum(int a, int b);
-    + * create_point(int x, int y, const char * label);
+    + point_t * create_point(int x, int y, const char * label);
     + void process_point(point_t * p);
 }
 class "config" as HEADER_CONFIG <<header>> #LightGreen
@@ -77,9 +77,9 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
     -- Macros --
     + #define MATH_UTILS_H
     -- Functions --
-    + int add(int a, int b);
-    + int subtract(int a, int b);
-    + real_t average(const int * arr, size_t len);
+    + ) ( int , int ) ; int add(int a, int b);
+    + int a , int b ) ; int subtract(int a, int b);
+    + int a , int b ) ; real_t average(const int * arr, size_t len);
 }
 class "stdio.h" as HEADER_STDIO <<header>> #LightGray
 {
