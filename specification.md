@@ -257,6 +257,7 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
 {
     -- Macros --
     - #define {macro_name}
+    - #define {macro_name}({parameters})
     -- Typedefs --
     - typedef {original_type} {typedef_name}  # Only primitive typedefs (relationship_type = "alias" and not struct/enum/union)
     -- Global Variables --
@@ -276,6 +277,7 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
 {
     -- Macros --
     + #define {macro_name}
+    + #define {macro_name}({parameters})
     -- Typedefs --
     + typedef {original_type} {typedef_name}  # Only primitive typedefs (relationship_type = "alias" and not struct/enum/union)
     -- Global Variables --
@@ -353,6 +355,11 @@ class "{original_type}" as {TYPE_UML_ID} <<type>> #LightGray
   - **Enum typedefs**: Show enum value names (e.g., `+ LOG_DEBUG`, `+ LOG_INFO`, `+ STATE_IDLE`, `+ STATE_RUNNING`)
   - **Union typedefs**: Show union field names and types (e.g., `+ int i`, `+ float f`)
   - **Primitive typedefs**: Show the original type name (e.g., `+ uint32_t`, `+ char*`)
+
+#### 5.2.5 Macro Display
+- **Simple defines**: Show only the macro name (e.g., `#define PI`, `#define VERSION`, `#define MAX_LABEL_LEN`)
+- **Function-like macros**: Show the macro name with parameters (e.g., `#define MIN(a, b)`, `#define MAX(a, b)`)
+- **Macro values are not displayed**: Only the macro name and parameters (if any) are shown, not the actual values or definitions
 
 ### 5.3 Include Depth Configuration
 
