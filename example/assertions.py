@@ -207,7 +207,7 @@ class PUMLValidator:
                 "includes": ["complex.h", "stdio.h", "stdlib.h", "string.h"],
                 "globals": [
                     "math_operation_t global_math_ops [ 10 ]",
-                    "Std_ReturnType (*const Crypto_Cfg_ProcessJobLite_acpfct[CRYPTO_CFG_MODULE_COUNT])"
+                    "Std_ReturnType (*const Process_Cfg_ProcessJobLite_acpfct[PROCESSOR_CFG_MODULE_COUNT])"
                 ],
                 "functions": [
                     "static int add_operation(int a, int b)",
@@ -220,7 +220,7 @@ class PUMLValidator:
                     "static int test_callback(int * item)",
                     "void test_process_array(int * arr, int size)",
                     "void test_stringify_macro()",
-                    "void test_crypto_utility_macros()",
+                    "void test_processor_utility_macros()",
                     "void test_handle_operation(operation_type_t op_type, int * data, int size)",
                     "int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], int op_count, void ( * pre_process ) ( int *, int ), void ( * post_process ) ( int *, unknown unnamed)",
                     "void * create_handler(const char * name, int ( * init_func ) ( void * ), void ( * cleanup_func ) ( void * ), unknown unnamed)",
@@ -230,11 +230,11 @@ class PUMLValidator:
                     "void test_mixed_union()",
                     "void test_operation_set()",
                     "void test_handler_table()",
-                    "void test_crypto_job_processing()",
+                    "void test_processor_job_processing()",
                     "void run_complex_tests()",
-                    "static Std_ReturnType rba_CryptoAuAdp_ProcessJobLite(const Crypto_JobType * job_pst)",
-                    "static Std_ReturnType rba_CryptoAuCSC_ProcessJobLite(const Crypto_JobType * job_pst)",
-                    "static Std_ReturnType rba_CryptoAuHSM3_ProcessJobLite(const Crypto_JobType * job_pst)"
+                    "static Std_ReturnType rba_ProcessorAdapter_ProcessJobLite(const Process_JobType * job_pst)",
+                    "static Std_ReturnType rba_ProcessorService_ProcessJobLite(const Process_JobType * job_pst)",
+                    "static Std_ReturnType rba_ProcessorHardware_ProcessJobLite(const Process_JobType * job_pst)"
                 ],
                 "typedefs": []  # No typedefs in C files
             },
@@ -247,10 +247,10 @@ class PUMLValidator:
                     "#define CREATE_FUNC_NAME(prefix, suffix)",
                     "#define STRINGIFY(x)",
                     "#define TOSTRING(x)",
-                    "#define CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8)",
-                    "#define CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8)",
-                    "#define CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)",
-                    "#define CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)",
+                    "#define UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8)",
+                    "#define UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8)",
+                    "#define UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)",
+                    "#define UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)",
                     "#define DEPRECATED",
                     "#define HANDLE_OPERATION(op_type, data, size, callback)"
                 ],
@@ -274,11 +274,11 @@ class PUMLValidator:
                     "typedef handler_entry_t handler_table_t[8]",
                     "typedef void (*debug_callback_t)(const char* message, int level)",
                     "typedef void (*release_callback_t)(const char* message)",
-                    "typedef enum crypto_module_enum_t",
-                    "typedef struct Crypto_JobType",
+                    "typedef enum processor_module_enum_t",
+                    "typedef struct Process_JobType",
                     "typedef int Std_ReturnType",
-                    "typedef Std_ReturnType (*Crypto_Cfg_ProcessJobLite_fct)(const Crypto_JobType *job_pst)",
-                    "typedef Crypto_Cfg_ProcessJobLite_fct (*const Crypto_Cfg_ProcessJobLite_acpfct[CRYPTO_CFG_MODULE_COUNT])(const Crypto_JobType *job_pst)"
+                    "typedef Std_ReturnType (*Process_Cfg_ProcessJobLite_fct)(const Process_JobType *job_pst)",
+                    "typedef Process_Cfg_ProcessJobLite_fct (*const Process_Cfg_ProcessJobLite_acpfct[PROCESSOR_CFG_MODULE_COUNT])(const Process_JobType *job_pst)"
                 ],
                 "functions": [
                     "int process_with_callbacks(int data[], int size, math_operation_t operations[], int op_count, void (*pre_process)(int*, int), void (*post_process)(int*, int))",
@@ -286,9 +286,9 @@ class PUMLValidator:
                     "int execute_operations(int value, math_ops_array_t ops, int op_count)",
                     "math_operation_t* get_math_operations(void)",
                     "complex_handler_t* create_complex_handler(const char* name, int (*validate_func)(const char*), void* (*alloc_func)(size_t), void (*free_func)(void*))",
-                    "void test_crypto_job_processing(void)",
-                    "void test_crypto_utility_macros(void)",
-                    "extern Std_ReturnType (*const Crypto_Cfg_ProcessJobLite_acpfct[CRYPTO_CFG_MODULE_COUNT])(const Crypto_JobType *job_pst)"
+                    "void test_processor_job_processing(void)",
+                    "void test_processor_utility_macros(void)",
+                    "extern Std_ReturnType (*const Process_Cfg_ProcessJobLite_acpfct[PROCESSOR_CFG_MODULE_COUNT])(const Process_JobType *job_pst)"
                 ],
                 "globals": []
             },
@@ -893,11 +893,11 @@ class PUMLValidator:
             assert 'TYPEDEF_HANDLER_TABLE_T' in content, "Missing TYPEDEF_HANDLER_TABLE_T class"
             assert 'TYPEDEF_DEBUG_CALLBACK_T' in content, "Missing TYPEDEF_DEBUG_CALLBACK_T class"
             assert 'TYPEDEF_RELEASE_CALLBACK_T' in content, "Missing TYPEDEF_RELEASE_CALLBACK_T class"
-            assert 'TYPEDEF_CRYPTO_MODULE_ENUM_T' in content, "Missing TYPEDEF_CRYPTO_MODULE_ENUM_T class"
-            assert 'TYPEDEF_CRYPTO_JOBTYPE' in content, "Missing TYPEDEF_CRYPTO_JOBTYPE class"
+            assert 'TYPEDEF_PROCESSOR_MODULE_ENUM_T' in content, "Missing TYPEDEF_PROCESSOR_MODULE_ENUM_T class"
+            assert 'TYPEDEF_PROCESS_JOBTYPE' in content, "Missing TYPEDEF_PROCESS_JOBTYPE class"
             assert 'TYPEDEF_STD_RETURNTYPE' in content, "Missing TYPEDEF_STD_RETURNTYPE class"
-            assert 'TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT' in content, "Missing TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT class"
-            assert 'TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_ACPFCT' in content, "Missing TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_ACPFCT class"
+            assert 'TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT' in content, "Missing TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT class"
+            assert 'TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT' in content, "Missing TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT class"
             assert 'TYPEDEF_UINT8' in content, "Missing TYPEDEF_UINT8 class"
             assert 'TYPEDEF_UINT16' in content, "Missing TYPEDEF_UINT16 class"
             assert 'TYPEDEF_UINT32' in content, "Missing TYPEDEF_UINT32 class"
@@ -906,14 +906,14 @@ class PUMLValidator:
             assert 'COMPLEX_MACRO_FUNC' in content, "Missing COMPLEX_MACRO_FUNC macro"
             assert 'PROCESS_ARRAY' in content, "Missing PROCESS_ARRAY macro"
             assert 'HANDLE_OPERATION' in content, "Missing HANDLE_OPERATION macro"
-            assert 'CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN' in content, "Missing CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN macro"
-            assert 'CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN' in content, "Missing CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN macro"
-            assert 'CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN' in content, "Missing CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN macro"
-            assert 'CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN' in content, "Missing CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN macro"
+            assert 'UTILS_U16_TO_U8ARR_BIG_ENDIAN' in content, "Missing UTILS_U16_TO_U8ARR_BIG_ENDIAN macro"
+            assert 'UTILS_U32_TO_U8ARR_BIG_ENDIAN' in content, "Missing UTILS_U32_TO_U8ARR_BIG_ENDIAN macro"
+            assert 'UTILS_U8ARR_TO_U16_BIG_ENDIAN' in content, "Missing UTILS_U8ARR_TO_U16_BIG_ENDIAN macro"
+            assert 'UTILS_U8ARR_TO_U32_BIG_ENDIAN' in content, "Missing UTILS_U8ARR_TO_U32_BIG_ENDIAN macro"
             
             # Should have specific complex function patterns
-            assert 'test_crypto_job_processing' in content, "Missing test_crypto_job_processing function"
-            assert 'test_crypto_utility_macros' in content, "Missing test_crypto_utility_macros function"
+            assert 'test_processor_job_processing' in content, "Missing test_processor_job_processing function"
+            assert 'test_processor_utility_macros' in content, "Missing test_processor_utility_macros function"
             assert 'test_complex_macro' in content, "Missing test_complex_macro function"
             assert 'test_process_array' in content, "Missing test_process_array function"
             assert 'test_handle_operation' in content, "Missing test_handle_operation function"
@@ -927,19 +927,19 @@ class PUMLValidator:
             assert 'TYPEDEF_DATA_PROCESSOR_ARRAY_T ..> TYPEDEF_DATA_PROCESSOR_T : <<uses>>' in content, "Missing data_processor_array_t uses data_processor_t relationship"
             assert 'TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>' in content, "Missing data_processor_t uses data_item_t relationship"
             assert 'TYPEDEF_HANDLER_TABLE_T ..> TYPEDEF_HANDLER_ENTRY_T : <<uses>>' in content, "Missing handler_table_t uses handler_entry_t relationship"
-            assert 'TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_ACPFCT ..> TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT : <<uses>>' in content, "Missing Crypto_Cfg_ProcessJobLite_acpfct uses Crypto_Cfg_ProcessJobLite_fct relationship"
-            assert 'TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_CRYPTO_JOBTYPE : <<uses>>' in content, "Missing Crypto_Cfg_ProcessJobLite_fct uses Crypto_JobType relationship"
-            assert 'TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>' in content, "Missing Crypto_Cfg_ProcessJobLite_fct uses Std_ReturnType relationship"
+            assert 'TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT ..> TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT : <<uses>>' in content, "Missing Process_Cfg_ProcessJobLite_acpfct uses Process_Cfg_ProcessJobLite_fct relationship"
+            assert 'TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_PROCESS_JOBTYPE : <<uses>>' in content, "Missing Process_Cfg_ProcessJobLite_fct uses Process_JobType relationship"
+            assert 'TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>' in content, "Missing Process_Cfg_ProcessJobLite_fct uses Std_ReturnType relationship"
             
             # Should have specific enum values
             assert 'OP_ADD' in content, "Missing OP_ADD enum value"
             assert 'OP_SUB' in content, "Missing OP_SUB enum value"
             assert 'OP_MUL' in content, "Missing OP_MUL enum value"
             assert 'OP_DIV' in content, "Missing OP_DIV enum value"
-            assert 'CRYPTO_CFG_MODULE_COUNT' in content, "Missing CRYPTO_CFG_MODULE_COUNT enum value"
-            assert 'CRYPTO_CFG_MODULE_AU_ADP' in content, "Missing CRYPTO_CFG_MODULE_AU_ADP enum value"
-            assert 'CRYPTO_CFG_MODULE_AU_CSC' in content, "Missing CRYPTO_CFG_MODULE_AU_CSC enum value"
-            assert 'CRYPTO_CFG_MODULE_AU_HSM3' in content, "Missing CRYPTO_CFG_MODULE_AU_HSM3 enum value"
+            assert 'PROCESSOR_CFG_MODULE_COUNT' in content, "Missing PROCESSOR_CFG_MODULE_COUNT enum value"
+            assert 'PROCESSOR_CFG_MODULE_ADAPTER' in content, "Missing PROCESSOR_CFG_MODULE_ADAPTER enum value"
+            assert 'PROCESSOR_CFG_MODULE_SERVICE' in content, "Missing PROCESSOR_CFG_MODULE_SERVICE enum value"
+            assert 'PROCESSOR_CFG_MODULE_HARDWARE' in content, "Missing PROCESSOR_CFG_MODULE_HARDWARE enum value"
             assert 'TYPEDEF_ID_T' in content, "Missing TYPEDEF_ID_T class"
             assert 'TYPEDEF_STATUS_T' in content, "Missing TYPEDEF_STATUS_T class"
             
@@ -1175,7 +1175,7 @@ class PUMLValidator:
         """Validate array of function pointers parsing."""
         patterns = [
             r'math_operation_t\s+global_math_ops\s*\[\s*10\s*\]',
-            r'Crypto_Cfg_ProcessJobLite_acpfct\s*\[\s*CRYPTO_CFG_MODULE_COUNT\s*\]',
+            r'Process_Cfg_ProcessJobLite_acpfct\s*\[\s*PROCESSOR_CFG_MODULE_COUNT\s*\]',
             r'handler_table_t\s+table\s*\[\s*8\s*\]',
             r'math_ops_array_t\s+local_ops'
         ]
@@ -1202,20 +1202,20 @@ class PUMLValidator:
             else:
                 print(f"      ⚠️  Missing complex macro usage: {pattern}")
 
-    def _validate_crypto_utility_macros(self, content: str, filename: str) -> None:
-        """Validate crypto utility macro usage patterns."""
+    def _validate_processor_utility_macros(self, content: str, filename: str) -> None:
+        """Validate processor utility macro usage patterns."""
         patterns = [
-            r'CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN\s*\(',
-            r'CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN\s*\(',
-            r'CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN\s*\(',
-            r'CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN\s*\('
+            r'UTILS_U16_TO_U8ARR_BIG_ENDIAN\s*\(',
+            r'UTILS_U32_TO_U8ARR_BIG_ENDIAN\s*\(',
+            r'UTILS_U8ARR_TO_U16_BIG_ENDIAN\s*\(',
+            r'UTILS_U8ARR_TO_U32_BIG_ENDIAN\s*\('
         ]
         
         for pattern in patterns:
             if re.search(pattern, content):
-                print(f"      ✅ Found crypto utility macro: {pattern}")
+                print(f"      ✅ Found processor utility macro: {pattern}")
             else:
-                print(f"      ⚠️  Missing crypto utility macro: {pattern}")
+                print(f"      ⚠️  Missing processor utility macro: {pattern}")
 
     def _validate_complex_typedefs(self, content: str, filename: str) -> None:
         """Validate complex typedef patterns."""
@@ -1223,8 +1223,8 @@ class PUMLValidator:
             r'typedef\s+int\s*\(\s*\*\s*math_operation_t\s*\)\s*\(\s*int\s*,\s*int\s*\)',
             r'typedef\s+math_operation_t\s+math_ops_array_t\s*\[\s*10\s*\]',
             r'typedef\s+int\s*\(\s*\*\s*\(\s*\*complex_func_ptr_t\s*\)\s*\(\s*int\s*,\s*char\*\s*\)\s*\)\s*\(\s*double\s*,\s*void\*\s*\)',
-            r'typedef\s+Std_ReturnType\s*\(\s*\*Crypto_Cfg_ProcessJobLite_fct\s*\)\s*\(\s*const\s+Crypto_JobType\s*\*job_pst\s*\)',
-            r'typedef\s+Crypto_Cfg_ProcessJobLite_fct\s*\(\s*\*const\s+Crypto_Cfg_ProcessJobLite_acpfct\s*\[\s*CRYPTO_CFG_MODULE_COUNT\s*\]\s*\)\s*\(\s*const\s+Crypto_JobType\s*\*job_pst\s*\)'
+            r'typedef\s+Std_ReturnType\s*\(\s*\*Process_Cfg_ProcessJobLite_fct\s*\)\s*\(\s*const\s+Process_JobType\s*\*job_pst\s*\)',
+            r'typedef\s+Process_Cfg_ProcessJobLite_fct\s*\(\s*\*const\s+Process_Cfg_ProcessJobLite_acpfct\s*\[\s*PROCESSOR_CFG_MODULE_COUNT\s*\]\s*\)\s*\(\s*const\s+Process_JobType\s*\*job_pst\s*\)'
         ]
         
         for pattern in patterns:

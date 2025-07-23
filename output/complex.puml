@@ -15,20 +15,20 @@ class "complex" as COMPLEX <<source>> #LightBlue
     static int modulo_operation(int a, int b)
     static int multiply_operation(int a, int b)
     int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], int op_count, void ( * pre_process ) ( int *, int ), void ( * post_process ) ( int *, unknown unnamed)
-    static Std_ReturnType rba_CryptoAuAdp_ProcessJobLite(const Crypto_JobType * job_pst)
-    static Std_ReturnType rba_CryptoAuCSC_ProcessJobLite(const Crypto_JobType * job_pst)
-    static Std_ReturnType rba_CryptoAuHSM3_ProcessJobLite(const Crypto_JobType * job_pst)
+    static Std_ReturnType rba_ProcessorAdapter_ProcessJobLite(const Process_JobType * job_pst)
+    static Std_ReturnType rba_ProcessorHardware_ProcessJobLite(const Process_JobType * job_pst)
+    static Std_ReturnType rba_ProcessorService_ProcessJobLite(const Process_JobType * job_pst)
     void run_complex_tests()
     static int subtract_operation(int a, int b)
     static int test_callback(int * item)
     void test_complex_macro(int * x, int y, int z)
-    void test_crypto_job_processing()
-    void test_crypto_utility_macros()
     void test_handle_operation(operation_type_t op_type, int * data, int size)
     void test_handler_table()
     void test_mixed_union()
     void test_operation_set()
     void test_process_array(int * arr, int size)
+    void test_processor_job_processing()
+    void test_processor_utility_macros()
     void test_stringify_macro()
 }
 
@@ -38,16 +38,16 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
     + #define COMPLEX_H
     + #define COMPLEX_MACRO_FUNC(x, y, z)
     + #define CREATE_FUNC_NAME(prefix, suffix)
-    + #define CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8)
-    + #define CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8)
-    + #define CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)
-    + #define CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)
     + #define DEPRECATED
     + #define DEPRECATED
     + #define HANDLE_OPERATION(op_type, data, size, callback)
     + #define PROCESS_ARRAY(arr, size, callback)
     + #define STRINGIFY(x)
     + #define TOSTRING(x)
+    + #define UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8)
+    + #define UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8)
+    + #define UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)
+    + #define UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)
     -- Global Variables --
     + i + + ) { \ 
  if ( ( arr ) [ i ] !
@@ -58,7 +58,7 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
  } 
  
  
- #define CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) \ 
+ #define UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) \ 
  { \ 
  ( ptr_pau8 ) [ 3 U ]
     + \ 
@@ -79,17 +79,17 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
     + } processor_t
     + else { \ temp_var
     -- Functions --
-    + extern Std_ReturnType(* const Crypto_Cfg_ProcessJobLite_acpfct [ CRYPTO_CFG_MODULE_COUNT ])
+    + extern Std_ReturnType(* const Process_Cfg_ProcessJobLite_acpfct [ PROCESSOR_CFG_MODULE_COUNT ])
     + complex_handler_t * create_complex_handler(const char * name, int ( * validate_func ) ( const char * ), void * ( * alloc_func ) ( size_t ), unknown unnamed)
     + void * create_handler(const char * name, int ( * init_func ) ( void * ), void ( * cleanup_func ) ( void * ), unknown unnamed)
     + int execute_operations(int value, math_ops_array_t ops, unknown unnamed)
     + math_operation_t * get_math_operations()
     + int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], int op_count, void ( * pre_process ) ( int *, int ), void ( * post_process ) ( int *, unknown unnamed)
-    + void test_crypto_job_processing()
-    + void test_crypto_utility_macros()
+    + void test_processor_job_processing()
+    + void test_processor_utility_macros()
 }
 
-class "Crypto_JobType" as TYPEDEF_CRYPTO_JOBTYPE <<typedef>> #LightYellow
+class "Process_JobType" as TYPEDEF_PROCESS_JOBTYPE <<typedef>> #LightYellow
 {
     + size_t data_size
     + char * job_data
@@ -151,14 +151,6 @@ class "processor_t" as TYPEDEF_PROCESSOR_T <<typedef>> #LightYellow
     + char[64] name
 }
 
-class "crypto_module_enum_t" as TYPEDEF_CRYPTO_MODULE_ENUM_T <<typedef>> #LightYellow
-{
-    + CRYPTO_CFG_MODULE_AU_ADP = 0
-    + CRYPTO_CFG_MODULE_AU_CSC = 1
-    + CRYPTO_CFG_MODULE_AU_HSM3 = 2
-    + CRYPTO_CFG_MODULE_COUNT = 3
-}
-
 class "operation_type_t" as TYPEDEF_OPERATION_TYPE_T <<typedef>> #LightYellow
 {
     + OP_ADD = 0
@@ -167,14 +159,22 @@ class "operation_type_t" as TYPEDEF_OPERATION_TYPE_T <<typedef>> #LightYellow
     + OP_SUB = 1
 }
 
-class "Crypto_Cfg_ProcessJobLite_acpfct" as TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_ACPFCT <<typedef>> #LightYellow
+class "processor_module_enum_t" as TYPEDEF_PROCESSOR_MODULE_ENUM_T <<typedef>> #LightYellow
 {
-    + Crypto_Cfg_ProcessJobLite_fct ( * const Crypto_Cfg_ProcessJobLite_acpfct [ CRYPTO_CFG_MODULE_COUNT ] ) ( const Crypto_JobType * job_pst )
+    + PROCESSOR_CFG_MODULE_ADAPTER = 0
+    + PROCESSOR_CFG_MODULE_COUNT = 3
+    + PROCESSOR_CFG_MODULE_HARDWARE = 2
+    + PROCESSOR_CFG_MODULE_SERVICE = 1
 }
 
-class "Crypto_Cfg_ProcessJobLite_fct" as TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT <<typedef>> #LightYellow
+class "Process_Cfg_ProcessJobLite_acpfct" as TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT <<typedef>> #LightYellow
 {
-    + Std_ReturnType ( * Crypto_Cfg_ProcessJobLite_fct ) ( const Crypto_JobType * job_pst )
+    + Process_Cfg_ProcessJobLite_fct ( * const Process_Cfg_ProcessJobLite_acpfct [ PROCESSOR_CFG_MODULE_COUNT ] ) ( const Process_JobType * job_pst )
+}
+
+class "Process_Cfg_ProcessJobLite_fct" as TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT <<typedef>> #LightYellow
+{
+    + Std_ReturnType ( * Process_Cfg_ProcessJobLite_fct ) ( const Process_JobType * job_pst )
 }
 
 class "Std_ReturnType" as TYPEDEF_STD_RETURNTYPE <<typedef>> #LightYellow
@@ -260,7 +260,7 @@ class "mixed_union_t" as TYPEDEF_MIXED_UNION_T <<typedef>> #LightYellow
 COMPLEX --> HEADER_COMPLEX : <<include>>
 
 ' Declaration relationships
-HEADER_COMPLEX ..> TYPEDEF_CRYPTO_JOBTYPE : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_PROCESS_JOBTYPE : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF___ANONYMOUS_STRUCT__ : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_COMPLEX_HANDLER_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_DATA_ITEM_T : <<declares>>
@@ -268,10 +268,10 @@ HEADER_COMPLEX ..> TYPEDEF_HANDLER_ENTRY_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_OPERATION_SET_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_PARAM4 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_PROCESSOR_T : <<declares>>
-HEADER_COMPLEX ..> TYPEDEF_CRYPTO_MODULE_ENUM_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_OPERATION_TYPE_T : <<declares>>
-HEADER_COMPLEX ..> TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_ACPFCT : <<declares>>
-HEADER_COMPLEX ..> TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_PROCESSOR_MODULE_ENUM_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_STD_RETURNTYPE : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_COMPLEX_CALLBACK_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_COMPLEX_FUNC_PTR_T : <<declares>>
@@ -289,10 +289,10 @@ HEADER_COMPLEX ..> TYPEDEF_MIXED_UNION_T : <<declares>>
 
 ' Uses relationships
 TYPEDEF_OPERATION_SET_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>
-TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_ACPFCT ..> TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT : <<uses>>
-TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_ACPFCT ..> TYPEDEF_CRYPTO_JOBTYPE : <<uses>>
-TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_CRYPTO_JOBTYPE : <<uses>>
-TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>
+TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT ..> TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT : <<uses>>
+TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT ..> TYPEDEF_PROCESS_JOBTYPE : <<uses>>
+TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_PROCESS_JOBTYPE : <<uses>>
+TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>
 TYPEDEF_DATA_PROCESSOR_ARRAY_T ..> TYPEDEF_DATA_PROCESSOR_T : <<uses>>
 TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>
 TYPEDEF_HANDLER_TABLE_T ..> TYPEDEF_HANDLER_ENTRY_T : <<uses>>

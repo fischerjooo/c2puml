@@ -222,11 +222,11 @@
         {
           "is_declaration": false,
           "is_static": false,
-          "name": "rba_CryptoAuAdp_ProcessJobLite",
+          "name": "rba_ProcessorAdapter_ProcessJobLite",
           "parameters": [
             {
               "name": "job_pst",
-              "type": "const Crypto_JobType *",
+              "type": "const Process_JobType *",
               "value": null
             }
           ],
@@ -235,11 +235,11 @@
         {
           "is_declaration": false,
           "is_static": false,
-          "name": "rba_CryptoAuCSC_ProcessJobLite",
+          "name": "rba_ProcessorHardware_ProcessJobLite",
           "parameters": [
             {
               "name": "job_pst",
-              "type": "const Crypto_JobType *",
+              "type": "const Process_JobType *",
               "value": null
             }
           ],
@@ -248,11 +248,11 @@
         {
           "is_declaration": false,
           "is_static": false,
-          "name": "rba_CryptoAuHSM3_ProcessJobLite",
+          "name": "rba_ProcessorService_ProcessJobLite",
           "parameters": [
             {
               "name": "job_pst",
-              "type": "const Crypto_JobType *",
+              "type": "const Process_JobType *",
               "value": null
             }
           ],
@@ -322,20 +322,6 @@
         {
           "is_declaration": false,
           "is_static": false,
-          "name": "test_crypto_job_processing",
-          "parameters": [],
-          "return_type": "void"
-        },
-        {
-          "is_declaration": false,
-          "is_static": false,
-          "name": "test_crypto_utility_macros",
-          "parameters": [],
-          "return_type": "void"
-        },
-        {
-          "is_declaration": false,
-          "is_static": false,
           "name": "test_handle_operation",
           "parameters": [
             {
@@ -398,6 +384,20 @@
         {
           "is_declaration": false,
           "is_static": false,
+          "name": "test_processor_job_processing",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "test_processor_utility_macros",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
           "name": "test_stringify_macro",
           "parameters": [],
           "return_type": "void"
@@ -425,19 +425,19 @@
     },
     "complex.h": {
       "aliases": {
-        "Crypto_Cfg_ProcessJobLite_acpfct": {
-          "name": "Crypto_Cfg_ProcessJobLite_acpfct",
-          "original_type": "Crypto_Cfg_ProcessJobLite_fct ( * const Crypto_Cfg_ProcessJobLite_acpfct [ CRYPTO_CFG_MODULE_COUNT ] ) ( const Crypto_JobType * job_pst )",
+        "Process_Cfg_ProcessJobLite_acpfct": {
+          "name": "Process_Cfg_ProcessJobLite_acpfct",
+          "original_type": "Process_Cfg_ProcessJobLite_fct ( * const Process_Cfg_ProcessJobLite_acpfct [ PROCESSOR_CFG_MODULE_COUNT ] ) ( const Process_JobType * job_pst )",
           "uses": [
-            "Crypto_Cfg_ProcessJobLite_fct",
-            "Crypto_JobType"
+            "Process_Cfg_ProcessJobLite_fct",
+            "Process_JobType"
           ]
         },
-        "Crypto_Cfg_ProcessJobLite_fct": {
-          "name": "Crypto_Cfg_ProcessJobLite_fct",
-          "original_type": "Std_ReturnType ( * Crypto_Cfg_ProcessJobLite_fct ) ( const Crypto_JobType * job_pst )",
+        "Process_Cfg_ProcessJobLite_fct": {
+          "name": "Process_Cfg_ProcessJobLite_fct",
+          "original_type": "Std_ReturnType ( * Process_Cfg_ProcessJobLite_fct ) ( const Process_JobType * job_pst )",
           "uses": [
-            "Crypto_JobType",
+            "Process_JobType",
             "Std_ReturnType"
           ]
         },
@@ -517,28 +517,6 @@
       },
       "encoding_used": "utf-8",
       "enums": {
-        "crypto_module_enum_t": {
-          "name": "crypto_module_enum_t",
-          "tag_name": "",
-          "values": [
-            {
-              "name": "CRYPTO_CFG_MODULE_COUNT",
-              "value": "3"
-            },
-            {
-              "name": "CRYPTO_CFG_MODULE_AU_ADP",
-              "value": "0"
-            },
-            {
-              "name": "CRYPTO_CFG_MODULE_AU_CSC",
-              "value": "1"
-            },
-            {
-              "name": "CRYPTO_CFG_MODULE_AU_HSM3",
-              "value": "2"
-            }
-          ]
-        },
         "operation_type_t": {
           "name": "operation_type_t",
           "tag_name": "",
@@ -560,6 +538,28 @@
               "value": "3"
             }
           ]
+        },
+        "processor_module_enum_t": {
+          "name": "processor_module_enum_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "PROCESSOR_CFG_MODULE_COUNT",
+              "value": "3"
+            },
+            {
+              "name": "PROCESSOR_CFG_MODULE_ADAPTER",
+              "value": "0"
+            },
+            {
+              "name": "PROCESSOR_CFG_MODULE_SERVICE",
+              "value": "1"
+            },
+            {
+              "name": "PROCESSOR_CFG_MODULE_HARDWARE",
+              "value": "2"
+            }
+          ]
         }
       },
       "file_path": "/workspace/example/source/complex.h",
@@ -571,7 +571,7 @@
           "parameters": [
             {
               "name": "]",
-              "type": "* const Crypto_Cfg_ProcessJobLite_acpfct [ CRYPTO_CFG_MODULE_COUNT",
+              "type": "* const Process_Cfg_ProcessJobLite_acpfct [ PROCESSOR_CFG_MODULE_COUNT",
               "value": null
             }
           ],
@@ -714,14 +714,14 @@
         {
           "is_declaration": true,
           "is_static": false,
-          "name": "test_crypto_job_processing",
+          "name": "test_processor_job_processing",
           "parameters": [],
           "return_type": "void"
         },
         {
           "is_declaration": true,
           "is_static": false,
-          "name": "test_crypto_utility_macros",
+          "name": "test_processor_utility_macros",
           "parameters": [],
           "return_type": "void"
         }
@@ -739,7 +739,7 @@
         },
         {
           "name": "]",
-          "type": "\\ \n } \n \n \n #define CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) \\ \n { \\ \n ( ptr_pau8 ) [ 3 U",
+          "type": "\\ \n } \n \n \n #define UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) \\ \n { \\ \n ( ptr_pau8 ) [ 3 U",
           "value": "( uint8 ) ( ( value_u32 ) )"
         },
         {
@@ -778,21 +778,21 @@
         "COMPLEX_H",
         "COMPLEX_MACRO_FUNC(x, y, z)",
         "CREATE_FUNC_NAME(prefix, suffix)",
-        "CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8)",
-        "CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8)",
-        "CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)",
-        "CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)",
         "DEPRECATED",
         "DEPRECATED",
         "HANDLE_OPERATION(op_type, data, size, callback)",
         "PROCESS_ARRAY(arr, size, callback)",
         "STRINGIFY(x)",
-        "TOSTRING(x)"
+        "TOSTRING(x)",
+        "UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8)",
+        "UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8)",
+        "UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)",
+        "UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)"
       ],
       "project_root": "/workspace/example/source",
       "relative_path": "complex.h",
       "structs": {
-        "Crypto_JobType": {
+        "Process_JobType": {
           "fields": [
             {
               "name": "job_id",
@@ -816,7 +816,7 @@
             }
           ],
           "methods": [],
-          "name": "Crypto_JobType",
+          "name": "Process_JobType",
           "tag_name": "",
           "uses": []
         },

@@ -45,14 +45,14 @@ typedef uint32_t uint32;
  * \param[in]    value_u16   uint16 value
  * \param[out]   ptr_pau8    Pointer to uint8 array with at least 2 elements.
  *********************************************************************************************************************/
-#define CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8) \
+#define UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8) \
 {                                                                     \
     (ptr_pau8)[1U] = (uint8)((value_u16));                            \
     (ptr_pau8)[0U] = (uint8)((value_u16) >> 8U);                      \
 }
 
 // Additional nasty macro patterns for testing
-#define CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) \
+#define UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) \
 {                                                                     \
     (ptr_pau8)[3U] = (uint8)((value_u32));                            \
     (ptr_pau8)[2U] = (uint8)((value_u32) >> 8U);                      \
@@ -60,10 +60,10 @@ typedef uint32_t uint32;
     (ptr_pau8)[0U] = (uint8)((value_u32) >> 24U);                     \
 }
 
-#define CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8) \
+#define UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8) \
     (((uint16)((ptr_pau8)[0U]) << 8U) | ((uint16)((ptr_pau8)[1U])))
 
-#define CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8) \
+#define UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8) \
     (((uint32)((ptr_pau8)[0U]) << 24U) | \
      ((uint32)((ptr_pau8)[1U]) << 16U) | \
      ((uint32)((ptr_pau8)[2U]) << 8U) | \
@@ -171,24 +171,24 @@ typedef handler_entry_t handler_table_t[8];
 
 // Nasty edge case: Complex typedef with const array of function pointers
 typedef enum {
-    CRYPTO_CFG_MODULE_COUNT = 3,
-    CRYPTO_CFG_MODULE_AU_ADP = 0,
-    CRYPTO_CFG_MODULE_AU_CSC = 1,
-    CRYPTO_CFG_MODULE_AU_HSM3 = 2
-} crypto_module_enum_t;
+    PROCESSOR_CFG_MODULE_COUNT = 3,
+    PROCESSOR_CFG_MODULE_ADAPTER = 0,
+    PROCESSOR_CFG_MODULE_SERVICE = 1,
+    PROCESSOR_CFG_MODULE_HARDWARE = 2
+} processor_module_enum_t;
 
 typedef struct {
     int job_id;
     char* job_data;
     size_t data_size;
     int priority;
-} Crypto_JobType;
+} Process_JobType;
 
 typedef int Std_ReturnType;
 
 // The nasty edge case: const array of function pointers with complex name
-typedef Std_ReturnType (*Crypto_Cfg_ProcessJobLite_fct)(const Crypto_JobType *job_pst);
-typedef Crypto_Cfg_ProcessJobLite_fct (*const Crypto_Cfg_ProcessJobLite_acpfct[CRYPTO_CFG_MODULE_COUNT])(const Crypto_JobType *job_pst);
+typedef Std_ReturnType (*Process_Cfg_ProcessJobLite_fct)(const Process_JobType *job_pst);
+typedef Process_Cfg_ProcessJobLite_fct (*const Process_Cfg_ProcessJobLite_acpfct[PROCESSOR_CFG_MODULE_COUNT])(const Process_JobType *job_pst);
 
 // Complex macro function with multiple parameters and nested logic
 #define HANDLE_OPERATION(op_type, data, size, callback) do { \
@@ -255,11 +255,11 @@ complex_handler_t* create_complex_handler(
 );
 
 // Function declarations for the nasty edge case
-void test_crypto_job_processing(void);
-void test_crypto_utility_macros(void);
+void test_processor_job_processing(void);
+void test_processor_utility_macros(void);
 
 // External declaration of the nasty const array of function pointers
-extern Std_ReturnType (*const Crypto_Cfg_ProcessJobLite_acpfct[CRYPTO_CFG_MODULE_COUNT])
-    (const Crypto_JobType *job_pst);
+extern Std_ReturnType (*const Process_Cfg_ProcessJobLite_acpfct[PROCESSOR_CFG_MODULE_COUNT])
+    (const Process_JobType *job_pst);
 
 #endif /* COMPLEX_H */
