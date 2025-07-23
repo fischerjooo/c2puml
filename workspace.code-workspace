@@ -82,6 +82,15 @@
             "other": true,
             "comments": false,
             "strings": true
+        },
+        "terminal.integrated.env.windows": {
+            "plantumlPath": "${env:USERPROFILE}\\.vscode\\extensions\\jebbs.plantuml-2.18.1\\plantuml.jar"
+        },
+        "terminal.integrated.env.linux": {
+            "plantumlPath": "${env:HOME}/.vscode/extensions/jebbs.plantuml-2.18.1/plantuml.jar"
+        },
+        "terminal.integrated.env.osx": {
+            "plantumlPath": "${env:HOME}/.vscode/extensions/jebbs.plantuml-2.18.1/plantuml.jar"
         }
     },
     "extensions": {
