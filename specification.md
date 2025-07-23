@@ -1,11 +1,18 @@
 # C to PlantUML Converter - Component Specification
 
+**Current Implementation Status**: ✅ **FULLY IMPLEMENTED**  
+**Last Updated**: July 2024  
+**Version**: 1.0 (Production Ready)
+
+This specification reflects the current implementation with all features fully functional and tested.
+
 ## 1. High-Level Functional Specification
 
 The C to PlantUML Converter is a Python-based tool that analyzes C/C++ source code projects and generates comprehensive PlantUML class diagrams. The system provides a complete workflow from source code parsing to structured diagram generation with advanced filtering and transformation capabilities.
 
 ### Core Functionality
 - **Source Code Analysis**: Deep parsing of C/C++ files including structs, enums, unions, functions, macros, typedefs, and global variables
+- **Recursive Search**: Configurable recursive directory search for comprehensive project analysis
 - **Typedef Relationship Analysis**: Comprehensive parsing of typedef relationships with proper UML stereotypes («defines», «alias»)
 - **Union Support**: Full parsing and visualization of union definitions with fields
 - **Include Depth Processing**: Configurable depth for processing include relationships and their content
@@ -37,17 +44,18 @@ All steps can be executed individually or can be chained together.
 - **R5**: Provide command-line interface with multiple operation modes
 - **R6**: Parse and visualize typedef relationships with proper UML stereotypes («defines», «alias»)
 - **R7**: Support configurable include depth processing for header relationships
+- **R8**: Support configurable recursive search for comprehensive project analysis
 
 ### 2.2 Advanced Requirements
-- **R8**: Support regex-based filtering of files and code elements
-- **R9**: Enable model transformation with renaming and element addition capabilities
-- **R10**: Support multi-configuration file loading and merging
-- **R11**: Generate structured output with customizable packaging
-- **R12**: Handle encoding issues and provide robust error handling
-- **R13**: Parse and visualize unions with their fields
-- **R14**: Handle typedefs for struct/enum/union (named and anonymous) with content display
-- **R15**: Show relationships between typedefs and their underlying types
-- **R16**: Support file selection for transformer actions (apply to all files or selected ones)
+- **R9**: Support regex-based filtering of files and code elements
+- **R10**: Enable model transformation with renaming and element addition capabilities
+- **R11**: Support multi-configuration file loading and merging
+- **R12**: Generate structured output with customizable packaging
+- **R13**: Handle encoding issues and provide robust error handling
+- **R14**: Parse and visualize unions with their fields
+- **R15**: Handle typedefs for struct/enum/union (named and anonymous) with content display
+- **R16**: Show relationships between typedefs and their underlying types
+- **R17**: Support file selection for transformer actions (apply to all files or selected ones)
 
 ### 2.3 Quality Requirements
 - **R18**: Provide comprehensive error handling and validation
@@ -100,10 +108,11 @@ tests/
 - **Purpose**: Step 1 - Parse C code files and generate model.json
 - **Responsibilities**: 
   - File discovery and essential filtering (hidden files, common exclude patterns)
-  - C/C++ source code parsing
+  - C/C++ source code parsing with configurable recursive search
   - Model assembly and serialization
   - Encoding detection and handling
   - Robust typedef parsing for struct/enum/union (named and anonymous)
+  - Include dependency processing with configurable depth
   - **Note**: Does NOT perform model element filtering - preserves all elements for transformer
 
 #### 3.2.3 Transformer (`transformer.py`)
@@ -125,6 +134,7 @@ tests/
   - File and element filtering logic
   - Configuration serialization and deserialization
   - Backward compatibility handling
+  - Recursive search configuration management
 
 #### 3.2.5 Generator (`generator.py`)
 - **Purpose**: Step 3 - Generate puml files based on model.json
@@ -194,7 +204,53 @@ class Union:
     fields: List[Field]
 ```
 
-### 3.4 Command Interface
+### 3.4 Configuration Parameters
+
+#### 3.4.1 Core Configuration
+The system uses a JSON-based configuration file with the following parameters:
+
+```json
+{
+  "project_name": "example_project",
+  "source_folders": ["example/source"],
+  "output_dir": "./output",
+  "model_output_path": "model.json",
+  "recursive_search": true,
+  "include_depth": 3,
+  "file_filters": {
+    "include": [],
+    "exclude": []
+  },
+  "element_filters": {
+    "structs": {"include": [], "exclude": []},
+    "enums": {"include": [], "exclude": []},
+    "functions": {"include": [], "exclude": []}
+  },
+  "transformations": {
+    "rename": {},
+    "add": {},
+    "remove": {},
+    "file_selection": {
+      "selected_files": []
+    }
+  }
+}
+```
+
+#### 3.4.2 Configuration Parameters
+- **`project_name`**: Name of the project for identification
+- **`source_folders`**: List of source directories to analyze
+- **`output_dir`**: Output directory for generated files
+- **`model_output_path`**: Filename for the generated JSON model
+- **`recursive_search`**: Whether to search subdirectories recursively (default: true)
+- **`include_depth`**: Depth for processing include relationships (default: 1)
+- **`file_filters`**: Regex patterns for including/excluding files
+- **`element_filters`**: Regex patterns for filtering code elements
+- **`transformations`**: Rules for model transformation and file selection
+
+**Note**: The `recursive_search` parameter was renamed from `recursive` in a recent update for better clarity. The system maintains backward compatibility for configuration loading.
+
+### 3.5 Command Interface
 The system provides multiple CLI commands for the 3-step workflow:
 - `parse`: Step 1 - Parse C projects and generate JSON models
 - `transform`: Step 2 - Transform JSON models based on configuration
@@ -289,16 +345,35 @@ The PlantUML formatting template and all diagram structure rules are now maintai
 - **Depth 1**: Only direct includes are processed
 - **Depth 2+**: Includes of includes are also processed and their content is displayed
 - **Header relationships**: All header-to-header relationships are shown with arrows
+- **Recursive search**: When `recursive_search` is true, subdirectories are searched for include files
 
-### 5.4 Styling and Formatting
+### 5.4 Recursive Search Configuration
 
-#### 5.4.1 Color Scheme
+#### 5.4.1 Configuration Parameter
+- **`recursive_search`**: Controls whether to search subdirectories recursively for source files
+- **Default**: true (search subdirectories)
+- **Values**: true/false
+
+#### 5.4.2 Processing Behavior
+- **`recursive_search: true`**: Searches all subdirectories recursively for C/C++ files
+- **`recursive_search: false`**: Only searches the specified source directories (no subdirectories)
+- **File discovery**: Uses `rglob()` for recursive search, `glob()` for non-recursive search
+- **Include file resolution**: Recursive search also affects how included files are found in subdirectories
+
+#### 5.4.3 Use Cases
+- **Large projects**: Use `recursive_search: true` to analyze entire project hierarchies
+- **Focused analysis**: Use `recursive_search: false` to limit analysis to specific directories
+- **Performance optimization**: Non-recursive search can be faster for large projects when only specific directories are needed
+
+### 5.5 Styling and Formatting
+
+#### 5.5.1 Color Scheme
 - **Source files**: `#LightBlue` background, `<<source>>` stereotype
 - **Header files**: `#LightGreen` background, `<<header>>` stereotype
 - **Typedefs**: `#LightYellow` background, `<<typedef>>` stereotype
 - **Types**: `#LightGray` background, `<<type>>` stereotype
 
-#### 5.4.2 Visibility Notation
+#### 5.5.2 Visibility Notation
 - **Source files (C files)**: 
   - Macros: `-` prefix
   - Typedefs: `-` prefix
@@ -312,7 +387,7 @@ The PlantUML formatting template and all diagram structure rules are now maintai
 - **Included typedefs in source files**: `+` prefix (from header files) - only primitive typedefs
 - **Macros**: `#define` prefix with appropriate visibility
 
-#### 5.4.3 Element Representation
+#### 5.5.3 Element Representation
 - **Functions**: `{return_type} {function_name}()` (source) or `+ {return_type} {function_name}()` (header)
 - **Global variables**: `{type} {variable_name}` (source) or `+ {type} {variable_name}` (header)
 - **Macros**: `- #define {macro_name}` (source) or `+ #define {macro_name}` (header)
@@ -324,19 +399,19 @@ The PlantUML formatting template and all diagram structure rules are now maintai
 - **Union fields**: `+ {type} {field_name}` (shown in typedef/type classes only)
 - **Enum values**: `+ {value}` (shown in typedef/type classes only)
 
-#### 5.4.4 Relationships
+#### 5.5.4 Relationships
 - **Include relationships**: `{source} --> {header} : <<include>>` (arrows only)
 - **Header-to-header relationships**: `{header1} --> {header2} : <<include>>`
 - **Typedef relationships**: `*--` for «defines», `-|>` for «alias»
 
-### 5.5 Output Organization
+### 5.6 Output Organization
 - **File naming**: `{basename}.puml` for each .c file (no extension in the name)
 - **Directory structure**: Mirrors source project structure
 - **Header files**: Shown as classes with full content in diagrams, but do not generate separate .puml files
 - **Header relationships**: Include relationships between headers are displayed with arrows
 - **Typedef classes**: Separate classes for typedefs with their content and relationships
 
-### 5.6 Configuration-Driven Customization
+### 5.7 Configuration-Driven Customization
 The output can be customized through JSON configuration:
 - File filtering patterns
 - Element inclusion/exclusion rules
@@ -344,9 +419,10 @@ The output can be customized through JSON configuration:
 - Custom element additions
 - Output directory structure
 - Include depth configuration
+- Recursive search configuration
 - File selection for transformer actions
 
-#### 5.6.1 File Selection for Transformer Actions
+#### 5.7.1 File Selection for Transformer Actions
 The transformer supports applying actions to all model files or only selected ones:
 
 ```json
@@ -368,7 +444,7 @@ The transformer supports applying actions to all model files or only selected on
 - **Empty list or missing field**: Applies transformations to all files
 - **Non-empty list**: Applies transformations only to files matching the patterns
 
-#### 5.6.2 Filtering Separation
+#### 5.7.2 Filtering Separation
 - **Parser Step**: Essential file filtering (hidden files, common exclude patterns)
 - **Transformer Step**: User-configured file filtering and model element filtering
 
