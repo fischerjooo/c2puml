@@ -1191,6 +1191,18 @@ class Parser:
         # Save combined model to JSON file
         combined_model.save(output_file)
 
+        # Step 1.5: Verify model sanity
+        self.logger.info("Step 1.5: Verifying model sanity...")
+        from .verifier import ModelVerifier
+        verifier = ModelVerifier()
+        is_valid, issues = verifier.verify_model(combined_model)
+        
+        if not is_valid:
+            self.logger.warning(f"Model verification found {len(issues)} issues - model may contain parsing errors")
+            # Continue processing but warn about potential issues
+        else:
+            self.logger.info("Model verification passed - all values look sane")
+
         self.logger.info(f"Step 1 complete! Model saved to: {output_file}")
         self.logger.info(f"Found {len(all_files)} total files across {len(source_folders)} source folder(s)")
 
