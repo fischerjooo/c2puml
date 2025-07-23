@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Main (Full Workflow)",
+            "name": "Debug Main",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/debug.py",
@@ -13,48 +13,6 @@
             },
             "args": [],
             "justMyCode": false
-        },
-        {
-            "name": "Debug Parse Only",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/debug.py",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}"
-            },
-            "args": [],
-            "justMyCode": false,
-            "preLaunchTask": "modify-debug-config-parse"
-        },
-        {
-            "name": "Debug Transform Only",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/debug.py",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}"
-            },
-            "args": [],
-            "justMyCode": false,
-            "preLaunchTask": "modify-debug-config-transform"
-        },
-        {
-            "name": "Debug Generate Only",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/debug.py",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}"
-            },
-            "args": [],
-            "justMyCode": false,
-            "preLaunchTask": "modify-debug-config-generate"
         },
         {
             "name": "Debug Tests",
