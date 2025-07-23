@@ -114,7 +114,7 @@
             {
                 "label": "# Run Full Workflow",
                 "type": "shell",
-                "command": "${env:PYTHONHOME}/python.exe",
+                "command": "python",
                 "args": [
                     "-m",
                     "c_to_plantuml.main"
@@ -174,7 +174,7 @@
             {
                 "label": "# Run Tests",
                 "type": "shell",
-                "command": "${env:PYTHONHOME}/python.exe",
+                "command": "python",
                 "args": [
                     "-m",
                     "pytest",
@@ -198,7 +198,7 @@
             {
                 "label": "Install Dependencies",
                 "type": "shell",
-                "command": "${env:PYTHONHOME}/Scripts/pip.exe",
+                "command": "pip",
                 "args": [
                     "install",
                     "-r",
@@ -221,7 +221,7 @@
             {
                 "label": "Format & Lint",
                 "type": "shell",
-                "command": "${env:PYTHONHOME}/python.exe",
+                "command": "python",
                 "args": [
                     "-m",
                     "black",
