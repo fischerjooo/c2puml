@@ -26,7 +26,15 @@ echo.
 REM Step 3: Generate PNG images
 echo 📋 Step 3: Generating PNG images...
 echo ----------------------------------------
-call picgen.bat
+REM Try to find PlantUML JAR in VS Code extensions
+set "PLANTUML_JAR=%USERPROFILE%\.vscode\extensions\jebbs.plantuml-2.18.1\plantuml.jar"
+if not exist "!PLANTUML_JAR!" (
+    echo ⚠️  PlantUML JAR not found at expected location, trying without path...
+    call picgen.bat
+) else (
+    echo 📦 Using PlantUML JAR: !PLANTUML_JAR!
+    call picgen.bat "!PLANTUML_JAR!"
+)
 echo ✅ PNG generation completed successfully!
 
 echo.
