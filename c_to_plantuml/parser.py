@@ -315,9 +315,9 @@ class CParser:
                 i += 1
                 continue
             
-            # Skip entire preprocessor blocks
+            # Skip preprocessor directives but keep their content
             if tokens[i].type == TokenType.PREPROCESSOR:
-                i = self._skip_preprocessor_block(tokens, i)
+                i = self._skip_preprocessor_directives(tokens, i)
                 continue
             
             # Skip function definitions (look for parentheses)
@@ -960,30 +960,12 @@ class CParser:
             i += 1
         return i + 1 if i < len(tokens) else i
 
-    def _skip_preprocessor_block(self, tokens, start_pos):
-        """Skip an entire preprocessor block (from #if to #endif)"""
+    def _skip_preprocessor_directives(self, tokens, start_pos):
+        """Skip preprocessor directives but keep their content for parsing"""
         i = start_pos
-        if i >= len(tokens) or tokens[i].type != TokenType.PREPROCESSOR:
-            return i
-        
-        # Check if this is a #if, #ifdef, or #ifndef
-        directive = tokens[i].value.strip()
-        if not (directive.startswith('#if') or directive.startswith('#ifdef') or directive.startswith('#ifndef')):
-            return i
-        
-        # Count nested #if blocks
-        if_count = 1
-        i += 1
-        
-        while i < len(tokens) and if_count > 0:
-            if tokens[i].type == TokenType.PREPROCESSOR:
-                directive = tokens[i].value.strip()
-                if directive.startswith('#if') or directive.startswith('#ifdef') or directive.startswith('#ifndef'):
-                    if_count += 1
-                elif directive.startswith('#endif'):
-                    if_count -= 1
+        while i < len(tokens) and tokens[i].type == TokenType.PREPROCESSOR:
+            # Skip the preprocessor directive itself
             i += 1
-        
         return i
 
     def _parse_function_parameters(self, tokens, start_pos, end_pos, func_name):
