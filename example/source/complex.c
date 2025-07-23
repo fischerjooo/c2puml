@@ -7,30 +7,30 @@
 static math_operation_t global_math_ops[10] = {NULL};
 
 // Nasty edge case: const array of function pointers with complex name
-static Std_ReturnType rba_CryptoAuAdp_ProcessJobLite(const Crypto_JobType *job_pst) {
+static Std_ReturnType rba_ProcessorAdapter_ProcessJobLite(const Process_JobType *job_pst) {
     if (job_pst == NULL) return -1;
-    printf("Processing job %d with AU_ADP module\n", job_pst->job_id);
+    printf("Processing job %d with Adapter module\n", job_pst->job_id);
     return 0;
 }
 
-static Std_ReturnType rba_CryptoAuCSC_ProcessJobLite(const Crypto_JobType *job_pst) {
+static Std_ReturnType rba_ProcessorService_ProcessJobLite(const Process_JobType *job_pst) {
     if (job_pst == NULL) return -1;
-    printf("Processing job %d with AU_CSC module\n", job_pst->job_id);
+    printf("Processing job %d with Service module\n", job_pst->job_id);
     return 0;
 }
 
-static Std_ReturnType rba_CryptoAuHSM3_ProcessJobLite(const Crypto_JobType *job_pst) {
+static Std_ReturnType rba_ProcessorHardware_ProcessJobLite(const Process_JobType *job_pst) {
     if (job_pst == NULL) return -1;
-    printf("Processing job %d with AU_HSM3 module\n", job_pst->job_id);
+    printf("Processing job %d with Hardware module\n", job_pst->job_id);
     return 0;
 }
 
 // The nasty edge case: const array of function pointers with complex name
-Std_ReturnType (*const Crypto_Cfg_ProcessJobLite_acpfct[CRYPTO_CFG_MODULE_COUNT])
-    (const Crypto_JobType *job_pst) = {
-    &rba_CryptoAuAdp_ProcessJobLite,
-    &rba_CryptoAuCSC_ProcessJobLite,
-    &rba_CryptoAuHSM3_ProcessJobLite,
+Std_ReturnType (*const Process_Cfg_ProcessJobLite_acpfct[PROCESSOR_CFG_MODULE_COUNT])
+    (const Process_JobType *job_pst) = {
+    &rba_ProcessorAdapter_ProcessJobLite,
+    &rba_ProcessorService_ProcessJobLite,
+    &rba_ProcessorHardware_ProcessJobLite,
 };
 
 // Static function implementations for math operations
@@ -86,15 +86,15 @@ void test_stringify_macro(void) {
     printf("Value: %s = %d\n", TOSTRING(value), value);
 }
 
-// Function testing the nasty crypto utility macros
-void test_crypto_utility_macros(void) {
-    printf("=== Testing Crypto Utility Macros (Nasty Edge Cases) ===\n");
+// Function testing the nasty processor utility macros
+void test_processor_utility_macros(void) {
+    printf("=== Testing Processor Utility Macros (Nasty Edge Cases) ===\n");
     
     // Test uint16 to uint8 array conversion
     uint16 test_value_16 = 0x1234;
     uint8 buffer_16[2];
     
-    CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(test_value_16, buffer_16);
+    UTILS_U16_TO_U8ARR_BIG_ENDIAN(test_value_16, buffer_16);
     printf("U16 0x%04X -> U8 array: [0x%02X, 0x%02X]\n", 
            test_value_16, buffer_16[0], buffer_16[1]);
     
@@ -102,28 +102,28 @@ void test_crypto_utility_macros(void) {
     uint32 test_value_32 = 0x12345678;
     uint8 buffer_32[4];
     
-    CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(test_value_32, buffer_32);
+    UTILS_U32_TO_U8ARR_BIG_ENDIAN(test_value_32, buffer_32);
     printf("U32 0x%08X -> U8 array: [0x%02X, 0x%02X, 0x%02X, 0x%02X]\n", 
            test_value_32, buffer_32[0], buffer_32[1], buffer_32[2], buffer_32[3]);
     
     // Test uint8 array to uint16 conversion
-    uint16 converted_16 = CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN(buffer_16);
+    uint16 converted_16 = UTILS_U8ARR_TO_U16_BIG_ENDIAN(buffer_16);
     printf("U8 array [0x%02X, 0x%02X] -> U16: 0x%04X\n", 
            buffer_16[0], buffer_16[1], converted_16);
     
     // Test uint8 array to uint32 conversion
-    uint32 converted_32 = CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN(buffer_32);
+    uint32 converted_32 = UTILS_U8ARR_TO_U32_BIG_ENDIAN(buffer_32);
     printf("U8 array [0x%02X, 0x%02X, 0x%02X, 0x%02X] -> U32: 0x%08X\n", 
            buffer_32[0], buffer_32[1], buffer_32[2], buffer_32[3], converted_32);
     
     // Test with different values
     uint16 test_value_16_2 = 0xABCD;
     uint8 buffer_16_2[2];
-    CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(test_value_16_2, buffer_16_2);
+    UTILS_U16_TO_U8ARR_BIG_ENDIAN(test_value_16_2, buffer_16_2);
     printf("U16 0x%04X -> U8 array: [0x%02X, 0x%02X]\n", 
            test_value_16_2, buffer_16_2[0], buffer_16_2[1]);
     
-    printf("=== Crypto Utility Macros Test Complete ===\n");
+    printf("=== Processor Utility Macros Test Complete ===\n");
 }
 
 // Function using the operation handling macro
@@ -317,31 +317,31 @@ void test_handler_table(void) {
 }
 
 // Function demonstrating the nasty edge case: const array of function pointers
-void test_crypto_job_processing(void) {
-    printf("=== Testing Crypto Job Processing (Nasty Edge Case) ===\n");
+void test_processor_job_processing(void) {
+    printf("=== Testing Processor Job Processing (Nasty Edge Case) ===\n");
     
     // Create test jobs
-    Crypto_JobType jobs[CRYPTO_CFG_MODULE_COUNT] = {
-        {1, "AU_ADP_Data", 10, 1},
-        {2, "AU_CSC_Data", 15, 2},
-        {3, "AU_HSM3_Data", 20, 3}
+    Process_JobType jobs[PROCESSOR_CFG_MODULE_COUNT] = {
+        {1, "Adapter_Data", 10, 1},
+        {2, "Service_Data", 15, 2},
+        {3, "Hardware_Data", 20, 3}
     };
     
     // Process jobs using the nasty const array of function pointers
-    for (int i = 0; i < CRYPTO_CFG_MODULE_COUNT; i++) {
-        if (Crypto_Cfg_ProcessJobLite_acpfct[i] != NULL) {
-            Std_ReturnType result = Crypto_Cfg_ProcessJobLite_acpfct[i](&jobs[i]);
+    for (int i = 0; i < PROCESSOR_CFG_MODULE_COUNT; i++) {
+        if (Process_Cfg_ProcessJobLite_acpfct[i] != NULL) {
+            Std_ReturnType result = Process_Cfg_ProcessJobLite_acpfct[i](&jobs[i]);
             printf("Job %d processing result: %d\n", i + 1, result);
         }
     }
     
     // Test with NULL job
-    if (Crypto_Cfg_ProcessJobLite_acpfct[0] != NULL) {
-        Std_ReturnType result = Crypto_Cfg_ProcessJobLite_acpfct[0](NULL);
+    if (Process_Cfg_ProcessJobLite_acpfct[0] != NULL) {
+        Std_ReturnType result = Process_Cfg_ProcessJobLite_acpfct[0](NULL);
         printf("NULL job processing result: %d\n", result);
     }
     
-    printf("=== Crypto Job Processing Test Complete ===\n");
+    printf("=== Processor Job Processing Test Complete ===\n");
 }
 
 // Main test function that exercises all the nasty parsing edge cases
@@ -384,10 +384,10 @@ void run_complex_tests(void) {
     test_handler_table();
     
     // Test the nasty edge case: const array of function pointers
-    test_crypto_job_processing();
+    test_processor_job_processing();
     
-    // Test the nasty crypto utility macros
-    test_crypto_utility_macros();
+    // Test the nasty processor utility macros
+    test_processor_utility_macros();
     
     printf("=== Complex Tests Complete ===\n");
 }
