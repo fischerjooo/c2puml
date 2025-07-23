@@ -65,7 +65,6 @@ class Transformer:
                 project_name=data["project_name"],
                 project_root=data["project_root"],
                 files={},
-                created_at=data["created_at"],
             )
 
             # Convert file data back to FileModel objects

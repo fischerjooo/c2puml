@@ -1,41 +1,64 @@
 {
-  "project_name": "source",
-  "project_root": "/workspace/example/source",
   "files": {
     "complex_example.h": {
-      "file_path": "/workspace/example/source/complex_example.h",
-      "relative_path": "complex_example.h",
-      "project_root": "/workspace/example/source",
+      "aliases": {},
       "encoding_used": "utf-8",
-      "structs": {
-        "NestedInfo_t": {
-          "name": "NestedInfo_t",
-          "fields": [
+      "enums": {
+        "CE_Status_t": {
+          "name": "CE_Status_t",
+          "tag_name": "",
+          "values": [
             {
-              "name": "id",
-              "type": "id_t",
+              "name": "CE_STATUS_OK",
+              "value": "0"
+            },
+            {
+              "name": "CE_STATUS_WARN",
               "value": null
             },
             {
-              "name": "description",
-              "type": "char[MAX_LABEL_LEN]",
-              "value": null
-            },
-            {
-              "name": "log_level",
-              "type": "log_level_t",
+              "name": "CE_STATUS_FAIL",
               "value": null
             }
-          ],
-          "methods": [],
-          "tag_name": "NestedInfo_tag",
-          "uses": [
-            "id_t",
-            "log_level_t"
           ]
+        }
+      },
+      "file_path": "/workspace/example/source/complex_example.h",
+      "functions": [],
+      "globals": [],
+      "include_relations": [
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/complex_example.h"
         },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/complex_example.h"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/complex_example.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/complex_example.h"
+        }
+      ],
+      "includes": [
+        "config.h",
+        "logger.h"
+      ],
+      "macros": [
+        "COMPLEX_EXAMPLE_H"
+      ],
+      "project_root": "/workspace/example/source",
+      "relative_path": "complex_example.h",
+      "structs": {
         "ComplexExample_t": {
-          "name": "ComplexExample_t",
           "fields": [
             {
               "name": "info",
@@ -54,76 +77,60 @@
             }
           ],
           "methods": [],
+          "name": "ComplexExample_t",
           "tag_name": "ComplexExample_tag",
           "uses": [
             "CE_Status_t",
             "NestedInfo_t"
           ]
-        }
-      },
-      "enums": {
-        "CE_Status_t": {
-          "name": "CE_Status_t",
-          "values": [
+        },
+        "NestedInfo_t": {
+          "fields": [
             {
-              "name": "CE_STATUS_OK",
-              "value": "0"
-            },
-            {
-              "name": "CE_STATUS_WARN",
+              "name": "id",
+              "type": "id_t",
               "value": null
             },
             {
-              "name": "CE_STATUS_FAIL",
+              "name": "description",
+              "type": "char[MAX_LABEL_LEN]",
+              "value": null
+            },
+            {
+              "name": "log_level",
+              "type": "log_level_t",
               "value": null
             }
           ],
-          "tag_name": ""
+          "methods": [],
+          "name": "NestedInfo_t",
+          "tag_name": "NestedInfo_tag",
+          "uses": [
+            "log_level_t",
+            "id_t"
+          ]
         }
       },
-      "functions": [],
-      "globals": [],
-      "includes": [
-        "config.h",
-        "logger.h"
-      ],
-      "macros": [
-        "COMPLEX_EXAMPLE_H"
-      ],
-      "aliases": {},
-      "unions": {},
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/complex_example.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/complex_example.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/complex_example.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/complex_example.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 2
-        }
-      ]
+      "unions": {}
     },
     "config.h": {
-      "file_path": "/workspace/example/source/config.h",
-      "relative_path": "config.h",
-      "project_root": "/workspace/example/source",
+      "aliases": {
+        "id_t": {
+          "name": "id_t",
+          "original_type": "uint32_t",
+          "uses": []
+        },
+        "status_t": {
+          "name": "status_t",
+          "original_type": "int32_t",
+          "uses": []
+        }
+      },
       "encoding_used": "utf-8",
-      "structs": {},
       "enums": {
         "GlobalStatus": {
           "name": "GlobalStatus",
+          "tag_name": "",
           "values": [
             {
               "name": "GS_OK",
@@ -137,48 +144,38 @@
               "name": "GS_UNKNOWN",
               "value": null
             }
-          ],
-          "tag_name": ""
+          ]
         }
       },
+      "file_path": "/workspace/example/source/config.h",
       "functions": [],
       "globals": [],
+      "include_relations": [],
       "includes": [
         "stddef.h",
         "stdint.h"
       ],
       "macros": [
         "CONFIG_H",
-        "PROJECT_NAME",
+        "DEFAULT_BUFFER_SIZE",
         "MAX_LABEL_LEN",
-        "DEFAULT_BUFFER_SIZE"
+        "PROJECT_NAME"
       ],
-      "aliases": {
-        "id_t": {
-          "name": "id_t",
-          "original_type": "uint32_t",
-          "uses": []
-        },
-        "status_t": {
-          "name": "status_t",
-          "original_type": "int32_t",
-          "uses": []
-        }
-      },
-      "unions": {},
-      "include_relations": []
+      "project_root": "/workspace/example/source",
+      "relative_path": "config.h",
+      "structs": {},
+      "unions": {}
     },
     "geometry.c": {
-      "file_path": "/workspace/example/source/geometry.c",
-      "relative_path": "geometry.c",
-      "project_root": "/workspace/example/source",
+      "aliases": {},
       "encoding_used": "utf-8",
-      "structs": {},
       "enums": {},
+      "file_path": "/workspace/example/source/geometry.c",
       "functions": [
         {
+          "is_declaration": false,
+          "is_static": false,
           "name": "create_triangle",
-          "return_type": "triangle_t",
           "parameters": [
             {
               "name": "a",
@@ -201,12 +198,12 @@
               "value": null
             }
           ],
-          "is_static": false,
-          "is_declaration": false
+          "return_type": "triangle_t"
         },
         {
+          "is_declaration": false,
+          "is_static": false,
           "name": "triangle_area",
-          "return_type": "int",
           "parameters": [
             {
               "name": "tri",
@@ -214,35 +211,160 @@
               "value": null
             }
           ],
-          "is_static": false,
-          "is_declaration": false
+          "return_type": "int"
         }
       ],
       "globals": [],
-      "includes": [
-        "geometry.h",
-        "string.h",
-        "stdlib.h"
-      ],
-      "macros": [],
-      "aliases": {},
-      "unions": {},
       "include_relations": [
         {
-          "source_file": "/workspace/example/source/geometry.c",
+          "depth": 1,
           "included_file": "/workspace/example/source/geometry.h",
-          "depth": 1
+          "source_file": "/workspace/example/source/geometry.c"
         }
-      ]
+      ],
+      "includes": [
+        "geometry.h",
+        "stdlib.h",
+        "string.h"
+      ],
+      "macros": [],
+      "project_root": "/workspace/example/source",
+      "relative_path": "geometry.c",
+      "structs": {},
+      "unions": {}
     },
     "geometry.h": {
-      "file_path": "/workspace/example/source/geometry.h",
-      "relative_path": "geometry.h",
-      "project_root": "/workspace/example/source",
+      "aliases": {},
       "encoding_used": "utf-8",
+      "enums": {},
+      "file_path": "/workspace/example/source/geometry.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "create_triangle",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "c",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "triangle_t"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "triangle_area",
+          "parameters": [
+            {
+              "name": "tri",
+              "type": "const triangle_t *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [],
+      "include_relations": [
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/math_utils.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/math_utils.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/math_utils.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/math_utils.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/math_utils.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/math_utils.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/math_utils.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/sample.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/sample.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/sample.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/sample.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/sample.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/sample.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/sample.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        }
+      ],
+      "includes": [
+        "math_utils.h",
+        "sample.h"
+      ],
+      "macros": [
+        "GEOMETRY_H"
+      ],
+      "project_root": "/workspace/example/source",
+      "relative_path": "geometry.h",
       "structs": {
         "triangle_t": {
-          "name": "triangle_t",
           "fields": [
             {
               "name": "vertices",
@@ -256,163 +378,25 @@
             }
           ],
           "methods": [],
+          "name": "triangle_t",
           "tag_name": "triangle_tag",
           "uses": [
             "point_t"
           ]
         }
       },
-      "enums": {},
-      "functions": [
-        {
-          "name": "create_triangle",
-          "return_type": "triangle_t",
-          "parameters": [
-            {
-              "name": "a",
-              "type": "const point_t *",
-              "value": null
-            },
-            {
-              "name": "b",
-              "type": "const point_t *",
-              "value": null
-            },
-            {
-              "name": "c",
-              "type": "const point_t *",
-              "value": null
-            },
-            {
-              "name": "label",
-              "type": "const char *",
-              "value": null
-            }
-          ],
-          "is_static": false,
-          "is_declaration": true
-        },
-        {
-          "name": "triangle_area",
-          "return_type": "int",
-          "parameters": [
-            {
-              "name": "tri",
-              "type": "const triangle_t *",
-              "value": null
-            }
-          ],
-          "is_static": false,
-          "is_declaration": true
-        }
-      ],
-      "globals": [],
-      "includes": [
-        "sample.h",
-        "math_utils.h"
-      ],
-      "macros": [
-        "GEOMETRY_H"
-      ],
-      "aliases": {},
-      "unions": {},
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 3
-        }
-      ]
+      "unions": {}
     },
     "logger.c": {
-      "file_path": "/workspace/example/source/logger.c",
-      "relative_path": "logger.c",
-      "project_root": "/workspace/example/source",
+      "aliases": {},
       "encoding_used": "utf-8",
-      "structs": {},
       "enums": {},
+      "file_path": "/workspace/example/source/logger.c",
       "functions": [
         {
-          "name": "set_log_callback",
-          "return_type": "void",
-          "parameters": [
-            {
-              "name": "cb",
-              "type": "log_callback_t",
-              "value": null
-            }
-          ],
+          "is_declaration": false,
           "is_static": false,
-          "is_declaration": false
-        },
-        {
           "name": "log_message",
-          "return_type": "void",
           "parameters": [
             {
               "name": "level",
@@ -430,8 +414,20 @@
               "value": null
             }
           ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
           "is_static": false,
-          "is_declaration": false
+          "name": "set_log_callback",
+          "parameters": [
+            {
+              "name": "cb",
+              "type": "log_callback_t",
+              "value": null
+            }
+          ],
+          "return_type": "void"
         }
       ],
       "globals": [
@@ -441,31 +437,39 @@
           "value": null
         }
       ],
+      "include_relations": [
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/logger.c"
+        }
+      ],
       "includes": [
         "logger.h",
         "stdarg.h",
         "string.h"
       ],
       "macros": [],
-      "aliases": {},
-      "unions": {},
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/logger.c",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 1
-        }
-      ]
+      "project_root": "/workspace/example/source",
+      "relative_path": "logger.c",
+      "structs": {},
+      "unions": {}
     },
     "logger.h": {
-      "file_path": "/workspace/example/source/logger.h",
-      "relative_path": "logger.h",
-      "project_root": "/workspace/example/source",
+      "aliases": {
+        "log_callback_t": {
+          "name": "log_callback_t",
+          "original_type": "void ( * log_callback_t ) ( log_level_t level , const char * message )",
+          "uses": [
+            "log_level_t"
+          ]
+        }
+      },
       "encoding_used": "utf-8",
-      "structs": {},
       "enums": {
         "log_level_t": {
           "name": "log_level_t",
+          "tag_name": "",
           "values": [
             {
               "name": "LOG_DEBUG",
@@ -483,27 +487,15 @@
               "name": "LOG_ERROR",
               "value": null
             }
-          ],
-          "tag_name": ""
+          ]
         }
       },
+      "file_path": "/workspace/example/source/logger.h",
       "functions": [
         {
-          "name": "set_log_callback",
-          "return_type": "void",
-          "parameters": [
-            {
-              "name": "cb",
-              "type": "log_callback_t",
-              "value": null
-            }
-          ],
+          "is_declaration": true,
           "is_static": false,
-          "is_declaration": true
-        },
-        {
           "name": "log_message",
-          "return_type": "void",
           "parameters": [
             {
               "name": "level",
@@ -521,102 +513,107 @@
               "value": null
             }
           ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
           "is_static": false,
-          "is_declaration": true
+          "name": "set_log_callback",
+          "parameters": [
+            {
+              "name": "cb",
+              "type": "log_callback_t",
+              "value": null
+            }
+          ],
+          "return_type": "void"
         }
       ],
       "globals": [],
+      "include_relations": [
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        }
+      ],
       "includes": [
-        "stdio.h",
-        "config.h"
+        "config.h",
+        "stdio.h"
       ],
       "macros": [
         "LOGGER_H"
       ],
-      "aliases": {
-        "log_callback_t": {
-          "name": "log_callback_t",
-          "original_type": "void ( * log_callback_t ) ( log_level_t level , const char * message )",
-          "uses": [
-            "log_level_t"
-          ]
-        }
-      },
-      "unions": {},
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        }
-      ]
+      "project_root": "/workspace/example/source",
+      "relative_path": "logger.h",
+      "structs": {},
+      "unions": {}
     },
     "math_utils.c": {
-      "file_path": "/workspace/example/source/math_utils.c",
-      "relative_path": "math_utils.c",
-      "project_root": "/workspace/example/source",
+      "aliases": {},
       "encoding_used": "utf-8",
-      "structs": {},
       "enums": {},
+      "file_path": "/workspace/example/source/math_utils.c",
       "functions": [
         {
+          "is_declaration": false,
+          "is_static": false,
           "name": "add",
-          "return_type": "int",
           "parameters": [
             {
               "name": "a",
@@ -629,30 +626,12 @@
               "value": null
             }
           ],
-          "is_static": false,
-          "is_declaration": false
+          "return_type": "int"
         },
         {
-          "name": "subtract",
-          "return_type": "int",
-          "parameters": [
-            {
-              "name": "a",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "b",
-              "type": "int",
-              "value": null
-            }
-          ],
+          "is_declaration": false,
           "is_static": false,
-          "is_declaration": false
-        },
-        {
           "name": "average",
-          "return_type": "real_t",
           "parameters": [
             {
               "name": "arr",
@@ -665,36 +644,65 @@
               "value": null
             }
           ],
+          "return_type": "real_t"
+        },
+        {
+          "is_declaration": false,
           "is_static": false,
-          "is_declaration": false
+          "name": "subtract",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
         }
       ],
       "globals": [],
+      "include_relations": [
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/math_utils.h",
+          "source_file": "/workspace/example/source/math_utils.c"
+        }
+      ],
       "includes": [
         "math_utils.h"
       ],
       "macros": [],
-      "aliases": {},
-      "unions": {},
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/math_utils.c",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 1
-        }
-      ]
+      "project_root": "/workspace/example/source",
+      "relative_path": "math_utils.c",
+      "structs": {},
+      "unions": {}
     },
     "math_utils.h": {
-      "file_path": "/workspace/example/source/math_utils.h",
-      "relative_path": "math_utils.h",
-      "project_root": "/workspace/example/source",
+      "aliases": {
+        "math_op_t": {
+          "name": "math_op_t",
+          "original_type": "int ( * math_op_t ) ( int , int )",
+          "uses": []
+        },
+        "real_t": {
+          "name": "real_t",
+          "original_type": "double",
+          "uses": []
+        }
+      },
       "encoding_used": "utf-8",
-      "structs": {},
       "enums": {},
+      "file_path": "/workspace/example/source/math_utils.h",
       "functions": [
         {
+          "is_declaration": true,
+          "is_static": false,
           "name": "add",
-          "return_type": "int",
           "parameters": [
             {
               "name": "a",
@@ -707,30 +715,12 @@
               "value": null
             }
           ],
-          "is_static": false,
-          "is_declaration": true
+          "return_type": "int"
         },
         {
-          "name": "subtract",
-          "return_type": "int",
-          "parameters": [
-            {
-              "name": "a",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "b",
-              "type": "int",
-              "value": null
-            }
-          ],
+          "is_declaration": true,
           "is_static": false,
-          "is_declaration": true
-        },
-        {
           "name": "average",
-          "return_type": "real_t",
           "parameters": [
             {
               "name": "arr",
@@ -743,84 +733,91 @@
               "value": null
             }
           ],
+          "return_type": "real_t"
+        },
+        {
+          "is_declaration": true,
           "is_static": false,
-          "is_declaration": true
+          "name": "subtract",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
         }
       ],
       "globals": [],
+      "include_relations": [
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/math_utils.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/math_utils.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/math_utils.h"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/math_utils.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/math_utils.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/math_utils.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/math_utils.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/math_utils.h"
+        }
+      ],
       "includes": [
         "config.h"
       ],
       "macros": [
         "MATH_UTILS_H"
       ],
-      "aliases": {
-        "real_t": {
-          "name": "real_t",
-          "original_type": "double",
-          "uses": []
-        },
-        "math_op_t": {
-          "name": "math_op_t",
-          "original_type": "int ( * math_op_t ) ( int , int )",
-          "uses": []
-        }
-      },
-      "unions": {},
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/math_utils.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/math_utils.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/math_utils.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/math_utils.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/math_utils.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/math_utils.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/math_utils.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/math_utils.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 3
-        }
-      ]
+      "project_root": "/workspace/example/source",
+      "relative_path": "math_utils.h",
+      "structs": {},
+      "unions": {}
     },
     "sample.c": {
-      "file_path": "/workspace/example/source/sample.c",
-      "relative_path": "sample.c",
-      "project_root": "/workspace/example/source",
+      "aliases": {},
       "encoding_used": "utf-8",
-      "structs": {},
       "enums": {},
+      "file_path": "/workspace/example/source/sample.c",
       "functions": [
         {
+          "is_declaration": true,
+          "is_static": false,
           "name": "calculate_sum",
-          "return_type": "int",
           "parameters": [
             {
               "name": "a",
@@ -833,12 +830,30 @@
               "value": null
             }
           ],
-          "is_static": false,
-          "is_declaration": true
+          "return_type": "int"
         },
         {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "calculate_sum",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
           "name": "create_point",
-          "return_type": "point_t *",
           "parameters": [
             {
               "name": "x",
@@ -856,30 +871,12 @@
               "value": null
             }
           ],
-          "is_static": false,
-          "is_declaration": true
+          "return_type": "point_t *"
         },
         {
-          "name": "calculate_sum",
-          "return_type": "int",
-          "parameters": [
-            {
-              "name": "a",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "b",
-              "type": "int",
-              "value": null
-            }
-          ],
+          "is_declaration": false,
           "is_static": false,
-          "is_declaration": false
-        },
-        {
           "name": "create_point",
-          "return_type": "point_t *",
           "parameters": [
             {
               "name": "x",
@@ -897,12 +894,26 @@
               "value": null
             }
           ],
-          "is_static": false,
-          "is_declaration": false
+          "return_type": "point_t *"
         },
         {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "demo_triangle_usage",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
           "name": "process_point",
-          "return_type": "void",
           "parameters": [
             {
               "name": "p",
@@ -910,33 +921,18 @@
               "value": null
             }
           ],
-          "is_static": false,
-          "is_declaration": false
-        },
-        {
-          "name": "demo_triangle_usage",
-          "return_type": "void",
-          "parameters": [],
-          "is_static": false,
-          "is_declaration": false
-        },
-        {
-          "name": "main",
-          "return_type": "int",
-          "parameters": [],
-          "is_static": false,
-          "is_declaration": false
+          "return_type": "void"
         }
       ],
       "globals": [
         {
-          "name": "global_counter",
-          "type": "int",
+          "name": "buffer",
+          "type": "char",
           "value": null
         },
         {
-          "name": "buffer",
-          "type": "char",
+          "name": "global_counter",
+          "type": "int",
           "value": null
         },
         {
@@ -945,53 +941,278 @@
           "value": null
         }
       ],
-      "includes": [
-        "stdio.h",
-        "stdlib.h",
-        "string.h",
-        "sample.h",
-        "math_utils.h",
-        "logger.h",
-        "geometry.h"
-      ],
-      "macros": [
-        "MAX_SIZE",
-        "DEBUG_MODE",
-        "CALC(x, y)"
-      ],
-      "aliases": {},
-      "unions": {},
       "include_relations": [
         {
-          "source_file": "/workspace/example/source/sample.c",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/sample.c",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/sample.c",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/sample.c",
+          "depth": 1,
           "included_file": "/workspace/example/source/geometry.h",
-          "depth": 1
+          "source_file": "/workspace/example/source/sample.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/sample.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/math_utils.h",
+          "source_file": "/workspace/example/source/sample.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/sample.h",
+          "source_file": "/workspace/example/source/sample.c"
         }
-      ]
+      ],
+      "includes": [
+        "geometry.h",
+        "logger.h",
+        "math_utils.h",
+        "sample.h",
+        "stdio.h",
+        "stdlib.h",
+        "string.h"
+      ],
+      "macros": [
+        "CALC(x, y)",
+        "DEBUG_MODE",
+        "MAX_SIZE"
+      ],
+      "project_root": "/workspace/example/source",
+      "relative_path": "sample.c",
+      "structs": {},
+      "unions": {}
     },
     "sample.h": {
-      "file_path": "/workspace/example/source/sample.h",
-      "relative_path": "sample.h",
-      "project_root": "/workspace/example/source",
+      "aliases": {},
       "encoding_used": "utf-8",
+      "enums": {
+        "system_state_t": {
+          "name": "system_state_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "STATE_IDLE",
+              "value": "0"
+            },
+            {
+              "name": "STATE_RUNNING",
+              "value": null
+            },
+            {
+              "name": "STATE_ERROR",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/example/source/sample.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "calculate_sum",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "extern int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "create_point",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "extern point_t *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "process_point",
+          "parameters": [
+            {
+              "name": "p",
+              "type": "point_t *",
+              "value": null
+            }
+          ],
+          "return_type": "extern void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "DEFAULT_LABEL",
+          "type": "char *",
+          "value": null
+        },
+        {
+          "name": "MAX_POINTS",
+          "type": "int",
+          "value": null
+        }
+      ],
+      "include_relations": [
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/geometry.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/geometry.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/geometry.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/geometry.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/geometry.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/geometry.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/geometry.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/geometry.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/sample.h"
+        }
+      ],
+      "includes": [
+        "config.h",
+        "geometry.h",
+        "logger.h",
+        "stddef.h"
+      ],
+      "macros": [
+        "MAX(a, b)",
+        "MIN(a, b)",
+        "PI",
+        "SAMPLE_H",
+        "VERSION"
+      ],
+      "project_root": "/workspace/example/source",
+      "relative_path": "sample.h",
       "structs": {
         "point_t": {
-          "name": "point_t",
           "fields": [
             {
               "name": "x",
@@ -1010,286 +1231,23 @@
             }
           ],
           "methods": [],
+          "name": "point_t",
           "tag_name": "point_tag",
           "uses": []
         }
       },
-      "enums": {
-        "system_state_t": {
-          "name": "system_state_t",
-          "values": [
-            {
-              "name": "STATE_IDLE",
-              "value": "0"
-            },
-            {
-              "name": "STATE_RUNNING",
-              "value": null
-            },
-            {
-              "name": "STATE_ERROR",
-              "value": null
-            }
-          ],
-          "tag_name": ""
-        }
-      },
-      "functions": [
-        {
-          "name": "calculate_sum",
-          "return_type": "extern int",
-          "parameters": [
-            {
-              "name": "a",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "b",
-              "type": "int",
-              "value": null
-            }
-          ],
-          "is_static": false,
-          "is_declaration": true
-        },
-        {
-          "name": "create_point",
-          "return_type": "extern point_t *",
-          "parameters": [
-            {
-              "name": "x",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "y",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "label",
-              "type": "const char *",
-              "value": null
-            }
-          ],
-          "is_static": false,
-          "is_declaration": true
-        },
-        {
-          "name": "process_point",
-          "return_type": "extern void",
-          "parameters": [
-            {
-              "name": "p",
-              "type": "point_t *",
-              "value": null
-            }
-          ],
-          "is_static": false,
-          "is_declaration": true
-        }
-      ],
-      "globals": [
-        {
-          "name": "MAX_POINTS",
-          "type": "int",
-          "value": null
-        },
-        {
-          "name": "DEFAULT_LABEL",
-          "type": "char *",
-          "value": null
-        }
-      ],
-      "includes": [
-        "stddef.h",
-        "config.h",
-        "geometry.h",
-        "logger.h"
-      ],
-      "macros": [
-        "SAMPLE_H",
-        "PI",
-        "VERSION",
-        "MIN(a, b)",
-        "MAX(a, b)"
-      ],
-      "aliases": {},
-      "unions": {},
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 3
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 2
-        }
-      ]
+      "unions": {}
     },
     "typedef_test.c": {
-      "file_path": "/workspace/example/source/typedef_test.c",
-      "relative_path": "typedef_test.c",
-      "project_root": "/workspace/example/source",
+      "aliases": {},
       "encoding_used": "utf-8",
-      "structs": {},
       "enums": {},
+      "file_path": "/workspace/example/source/typedef_test.c",
       "functions": [
         {
-          "name": "log_buffer",
-          "return_type": "void",
-          "parameters": [
-            {
-              "name": "buffer",
-              "type": "const MyBuffer *",
-              "value": null
-            }
-          ],
+          "is_declaration": false,
           "is_static": false,
-          "is_declaration": false
-        },
-        {
-          "name": "process_buffer",
-          "return_type": "MyInt",
-          "parameters": [
-            {
-              "name": "buffer",
-              "type": "MyBuffer *",
-              "value": null
-            }
-          ],
-          "is_static": false,
-          "is_declaration": false
-        },
-        {
-          "name": "my_callback",
-          "return_type": "int",
-          "parameters": [
-            {
-              "name": "buffer",
-              "type": "MyBuffer *",
-              "value": null
-            }
-          ],
-          "is_static": false,
-          "is_declaration": false
-        },
-        {
           "name": "create_complex",
-          "return_type": "MyComplex *",
           "parameters": [
             {
               "name": "id",
@@ -1302,23 +1260,56 @@
               "value": null
             }
           ],
-          "is_static": false,
-          "is_declaration": false
+          "return_type": "MyComplex *"
         },
         {
-          "name": "main",
-          "return_type": "int",
-          "parameters": [],
+          "is_declaration": false,
           "is_static": false,
-          "is_declaration": false
+          "name": "log_buffer",
+          "parameters": [
+            {
+              "name": "buffer",
+              "type": "const MyBuffer *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "my_callback",
+          "parameters": [
+            {
+              "name": "buffer",
+              "type": "MyBuffer *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "process_buffer",
+          "parameters": [
+            {
+              "name": "buffer",
+              "type": "MyBuffer *",
+              "value": null
+            }
+          ],
+          "return_type": "MyInt"
         }
       ],
       "globals": [
-        {
-          "name": "global_length",
-          "type": "MyLen",
-          "value": null
-        },
         {
           "name": "global_buffer",
           "type": "MyBuffer",
@@ -1328,49 +1319,170 @@
           "name": "global_complex",
           "type": "MyComplexPtr",
           "value": null
+        },
+        {
+          "name": "global_length",
+          "type": "MyLen",
+          "value": null
+        }
+      ],
+      "include_relations": [
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/complex_example.h",
+          "source_file": "/workspace/example/source/typedef_test.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/geometry.h",
+          "source_file": "/workspace/example/source/typedef_test.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/typedef_test.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/typedef_test.h",
+          "source_file": "/workspace/example/source/typedef_test.c"
         }
       ],
       "includes": [
-        "typedef_test.h",
         "complex_example.h",
         "geometry.h",
         "logger.h",
-        "stdlib.h"
+        "stdlib.h",
+        "typedef_test.h"
       ],
       "macros": [],
-      "aliases": {},
-      "unions": {},
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/typedef_test.c",
-          "included_file": "/workspace/example/source/typedef_test.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.c",
-          "included_file": "/workspace/example/source/complex_example.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.c",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.c",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 1
-        }
-      ]
+      "project_root": "/workspace/example/source",
+      "relative_path": "typedef_test.c",
+      "structs": {},
+      "unions": {}
     },
     "typedef_test.h": {
-      "file_path": "/workspace/example/source/typedef_test.h",
-      "relative_path": "typedef_test.h",
-      "project_root": "/workspace/example/source",
+      "aliases": {
+        "MyCallback": {
+          "name": "MyCallback",
+          "original_type": "int ( * MyCallback ) ( MyBuffer * buffer )",
+          "uses": [
+            "MyBuffer"
+          ]
+        },
+        "MyComplexArray": {
+          "name": "MyComplexArray",
+          "original_type": "MyComplexPtr MyComplexArray [ 10 ]",
+          "uses": [
+            "MyComplexPtr"
+          ]
+        },
+        "MyComplexPtr": {
+          "name": "MyComplexPtr",
+          "original_type": "MyComplex *",
+          "uses": [
+            "MyComplex"
+          ]
+        },
+        "MyInt": {
+          "name": "MyInt",
+          "original_type": "int32_t",
+          "uses": []
+        },
+        "MyLen": {
+          "name": "MyLen",
+          "original_type": "uint32_t",
+          "uses": []
+        },
+        "MyString": {
+          "name": "MyString",
+          "original_type": "char *",
+          "uses": []
+        }
+      },
       "encoding_used": "utf-8",
+      "enums": {
+        "Color_t": {
+          "name": "Color_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "COLOR_RED",
+              "value": "0"
+            },
+            {
+              "name": "COLOR_GREEN",
+              "value": null
+            },
+            {
+              "name": "COLOR_BLUE",
+              "value": null
+            }
+          ]
+        },
+        "Status_t": {
+          "name": "Status_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "STATUS_OK",
+              "value": "0"
+            },
+            {
+              "name": "STATUS_FAIL",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/example/source/typedef_test.h",
+      "functions": [],
+      "globals": [],
+      "include_relations": [
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/typedef_test.h"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/typedef_test.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/typedef_test.h"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/logger.h",
+          "source_file": "/workspace/example/source/typedef_test.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/sample.h",
+          "source_file": "/workspace/example/source/typedef_test.h"
+        },
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/sample.h",
+          "source_file": "/workspace/example/source/typedef_test.h"
+        }
+      ],
+      "includes": [
+        "config.h",
+        "logger.h",
+        "sample.h",
+        "stdint.h"
+      ],
+      "macros": [
+        "TYPEDEF_TEST_H"
+      ],
+      "project_root": "/workspace/example/source",
+      "relative_path": "typedef_test.h",
       "structs": {
         "MyBuffer": {
-          "name": "MyBuffer",
           "fields": [
             {
               "name": "length",
@@ -1384,6 +1496,7 @@
             }
           ],
           "methods": [],
+          "name": "MyBuffer",
           "tag_name": "MyBuffer_tag",
           "uses": [
             "MyString",
@@ -1391,7 +1504,6 @@
           ]
         },
         "MyComplex": {
-          "name": "MyComplex",
           "fields": [
             {
               "name": "id",
@@ -1415,16 +1527,16 @@
             }
           ],
           "methods": [],
+          "name": "MyComplex",
           "tag_name": "MyComplexStruct_tag",
           "uses": [
-            "log_level_t",
             "MyCallback",
             "MyString",
-            "MyLen"
+            "MyLen",
+            "log_level_t"
           ]
         },
         "NamedStruct_t": {
-          "name": "NamedStruct_t",
           "fields": [
             {
               "name": "a",
@@ -1438,113 +1550,13 @@
             }
           ],
           "methods": [],
+          "name": "NamedStruct_t",
           "tag_name": "NamedStruct_tag",
           "uses": []
         }
       },
-      "enums": {
-        "Color_t": {
-          "name": "Color_t",
-          "values": [
-            {
-              "name": "COLOR_RED",
-              "value": "0"
-            },
-            {
-              "name": "COLOR_GREEN",
-              "value": null
-            },
-            {
-              "name": "COLOR_BLUE",
-              "value": null
-            }
-          ],
-          "tag_name": ""
-        },
-        "Status_t": {
-          "name": "Status_t",
-          "values": [
-            {
-              "name": "STATUS_OK",
-              "value": "0"
-            },
-            {
-              "name": "STATUS_FAIL",
-              "value": null
-            }
-          ],
-          "tag_name": ""
-        }
-      },
-      "functions": [],
-      "globals": [],
-      "includes": [
-        "stdint.h",
-        "sample.h",
-        "config.h",
-        "logger.h"
-      ],
-      "macros": [
-        "TYPEDEF_TEST_H"
-      ],
-      "aliases": {
-        "MyLen": {
-          "name": "MyLen",
-          "original_type": "uint32_t",
-          "uses": []
-        },
-        "MyInt": {
-          "name": "MyInt",
-          "original_type": "int32_t",
-          "uses": []
-        },
-        "MyString": {
-          "name": "MyString",
-          "original_type": "char *",
-          "uses": []
-        },
-        "MyCallback": {
-          "name": "MyCallback",
-          "original_type": "int ( * MyCallback ) ( MyBuffer * buffer )",
-          "uses": [
-            "MyBuffer"
-          ]
-        },
-        "MyComplexPtr": {
-          "name": "MyComplexPtr",
-          "original_type": "MyComplex *",
-          "uses": [
-            "MyComplex"
-          ]
-        },
-        "MyComplexArray": {
-          "name": "MyComplexArray",
-          "original_type": "MyComplexPtr MyComplexArray [ 10 ]",
-          "uses": [
-            "MyComplexPtr"
-          ]
-        }
-      },
       "unions": {
-        "Number_t": {
-          "name": "Number_t",
-          "fields": [
-            {
-              "name": "i",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "f",
-              "type": "float",
-              "value": null
-            }
-          ],
-          "tag_name": "Number_tag",
-          "uses": []
-        },
         "NamedUnion_t": {
-          "name": "NamedUnion_t",
           "fields": [
             {
               "name": "c",
@@ -1557,43 +1569,30 @@
               "value": null
             }
           ],
+          "name": "NamedUnion_t",
           "tag_name": "NamedUnion_tag",
           "uses": []
+        },
+        "Number_t": {
+          "fields": [
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "f",
+              "type": "float",
+              "value": null
+            }
+          ],
+          "name": "Number_t",
+          "tag_name": "Number_tag",
+          "uses": []
         }
-      },
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/typedef_test.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 1
-        }
-      ]
+      }
     }
   },
-  "created_at": "2025-07-23T07:12:53.882557"
+  "project_name": "source",
+  "project_root": "/workspace/example/source"
 }

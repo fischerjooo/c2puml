@@ -138,7 +138,6 @@ void process_data() {
             project_name="test_project",
             project_root="/test",
             files={"test.c": file_model},
-            created_at="2023-01-01T00:00:00",
         )
         plantuml_generator = PlantUMLGenerator()
         content = plantuml_generator.generate_diagram(
@@ -170,7 +169,6 @@ void process_data() {
             project_name="test_project",
             project_root="/test",
             files={"main.c": file_model},
-            created_at="2024-01-01T00:00:00",
         )
 
         # Save model to file
@@ -203,7 +201,6 @@ void process_data() {
             project_name="test_project",
             project_root="/test",
             files={"main.c": file_model},
-            created_at="2024-01-01T00:00:00",
         )
 
         # Create configuration
@@ -252,7 +249,6 @@ void process_data() {
             project_name="test_project",
             project_root="/test",
             files={"main.c": file1, "utils.c": file2},
-            created_at="2024-01-01T00:00:00",
         )
 
         # Save and generate
@@ -287,7 +283,6 @@ void process_data() {
             project_name="test_project",
             project_root="/test",
             files={"empty.c": empty_file},
-            created_at="2023-01-01T00:00:00",
         )
         plantuml_generator = PlantUMLGenerator()
         content = plantuml_generator.generate_diagram(
@@ -360,7 +355,6 @@ void test_function() {
             project_name="test_project",
             project_root="/test",
             files={"test.c": file_model},
-            created_at="2023-01-01T00:00:00",
         )
         plantuml_generator = PlantUMLGenerator()
         content = plantuml_generator.generate_diagram(
@@ -388,7 +382,6 @@ void test_function() {
             project_name="test_project",
             project_root="/test",
             files={"test.c": file_model},
-            created_at="2024-01-01T00:00:00",
         )
 
         # Save model

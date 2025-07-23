@@ -181,10 +181,22 @@ class FileModel:
     def to_dict(self) -> dict:
         """Convert to dictionary for JSON serialization"""
         data = asdict(self)
-        # Convert set to list for JSON serialization
-        data["includes"] = list(self.includes)
-        # Convert include_relations to list of dicts
-        data["include_relations"] = [asdict(rel) for rel in self.include_relations]
+        # Convert set to list for JSON serialization and sort for consistency
+        data["includes"] = sorted(list(self.includes))
+        # Convert include_relations to list of dicts and sort for consistency
+        data["include_relations"] = sorted([asdict(rel) for rel in self.include_relations], key=lambda x: (x["source_file"], x["included_file"]))
+        # Sort all dictionary fields for consistent ordering
+        data["structs"] = dict(sorted(data["structs"].items()))
+        data["enums"] = dict(sorted(data["enums"].items()))
+        data["unions"] = dict(sorted(data["unions"].items()))
+        data["aliases"] = dict(sorted(data["aliases"].items()))
+        data["macros"] = sorted(data["macros"])
+        # Sort functions and globals by name (they are already objects, not dicts)
+        data["functions"] = sorted(self.functions, key=lambda x: x.name)
+        data["globals"] = sorted(self.globals, key=lambda x: x.name)
+        # Convert functions and globals to dicts after sorting
+        data["functions"] = [asdict(f) for f in data["functions"]]
+        data["globals"] = [asdict(g) for g in data["globals"]]
         # typedef_relations removed - tag names are now in struct/enum/union
         return data
 
@@ -318,7 +330,6 @@ class ProjectModel:
     project_name: str
     project_root: str
     files: Dict[str, FileModel] = field(default_factory=dict)
-    created_at: str = field(default_factory=lambda: datetime.now().isoformat())
 
     def __post_init__(self):
         """Validate project model data after initialization"""
@@ -333,14 +344,13 @@ class ProjectModel:
             "project_name": self.project_name,
             "project_root": self.project_root,
             "files": {
-                path: file_model.to_dict() for path, file_model in self.files.items()
+                path: file_model.to_dict() for path, file_model in sorted(self.files.items())
             },
-            "created_at": self.created_at,
         }
 
         try:
             with open(file_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=2, ensure_ascii=False)
+                json.dump(data, f, indent=2, ensure_ascii=False, sort_keys=True)
         except Exception as e:
             raise ValueError(f"Failed to save model to {file_path}: {e}")
 
@@ -356,7 +366,6 @@ class ProjectModel:
             project_name=data.get("project_name", "Unknown"),
             project_root=data.get("project_root", ""),
             files=files,
-            created_at=data.get("created_at", datetime.now().isoformat()),
         )
 
     @classmethod
@@ -384,7 +393,6 @@ class ProjectModel:
             "total_enums": total_enums,
             "total_functions": total_functions,
             "total_globals": total_globals,
-            "created_at": self.created_at,
         }
 
     def update_uses_fields(self):

@@ -230,7 +230,6 @@ class TestConfig(unittest.TestCase):
             project_name="test_project",
             project_root="/test",
             files={"main.c": file1, "test_helper.c": file2},
-            created_at="2024-01-01T00:00:00",
         )
 
         # Apply filters - skip model filtering test for now
