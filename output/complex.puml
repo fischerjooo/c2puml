@@ -51,35 +51,8 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
     + #define UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)
     + #define UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)
     -- Global Variables --
-    + \ 
- } \ 
- ( x )
-    + \ 
- } 
- 
- 
- #define UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) \ 
- { \ 
- ( ptr_pau8 ) [ 3 U ]
-    + \ 
- } while ( 0 ) 
- 
- 
- #define PROCESS_ARRAY(arr, size, callback) do { \ 
- for ( int i
     + char name
-    + \ 
- } while ( 0 ) 
- 
- 
- int process_with_callbacks ( 
- int data [ ] , 
- int size , 
- math_operation_t operations
     + } processor_t
-    + i + + ) { \ 
- int result
-    + else { \ temp_var
     -- Functions --
     + complex_handler_t * create_complex_handler(const char * name, int ( * validate_func ) ( const char * ), void * ( * alloc_func ) ( size_t ), unknown unnamed)
     + void * create_handler(const char * name, int ( * init_func ) ( void * ), void ( * cleanup_func ) ( void * ), unknown unnamed)
