@@ -31,17 +31,48 @@ This document describes how to set up and use VSCode for developing and debuggin
 
 ### Using the Debug Entry Point
 
-The `debug.py` file provides a convenient way to debug the converter with predefined configurations:
+The `debug.py` file provides a convenient way to debug the converter with predefined configurations and **interactive mode** for flexible workflow selection.
 
 #### Available Debug Configurations:
 
-1. **Debug Main (Full Workflow)** - Runs the complete workflow
-2. **Debug Parse Only** - Runs only the parsing step
-3. **Debug Transform Only** - Runs only the transformation step
-4. **Debug Generate Only** - Runs only the generation step
-5. **Debug Example** - Runs with example configuration
-6. **Debug Tests** - Runs all tests
-7. **Debug Specific Test** - Runs the currently open test file
+1. **Debug Interactive Mode** - **NEW!** Interactive workflow and configuration selection
+2. **Debug Main (Full Workflow)** - Runs the complete workflow
+3. **Debug Parse Only** - Runs only the parsing step
+4. **Debug Transform Only** - Runs only the transformation step
+5. **Debug Generate Only** - Runs only the generation step
+6. **Debug Example** - Runs with example configuration
+7. **Debug Tests** - Runs all tests
+8. **Debug Specific Test** - Runs the currently open test file
+
+#### Interactive Mode - NEW!
+
+The interactive mode allows you to select your workflow and configuration at runtime:
+
+```bash
+python debug.py --interactive
+```
+
+**Interactive Workflow Options:**
+1. **Full Workflow** (parse → transform → generate)
+2. **Parse Only** (generate model.json)
+3. **Transform Only** (transform existing model.json)
+4. **Generate Only** (generate PlantUML from model)
+5. **Parse + Transform** (skip generation)
+6. **Transform + Generate** (skip parsing)
+
+**Interactive Configuration Options:**
+1. **Test Configuration** (with filters)
+2. **Example Configuration** (minimal)
+3. **Custom Configuration** (interactive setup)
+4. **Use existing config file**
+
+**Custom Configuration Setup:**
+- Project name and source folders
+- Output directory and model filename
+- Recursive search and include depth
+- File filters (include/exclude patterns)
+- Element filters (structs, functions)
+- Verbose output option
 
 #### How to Use:
 
@@ -55,6 +86,9 @@ The `debug.py` file provides a convenient way to debug the converter with predef
 You can also run debug commands directly:
 
 ```bash
+# Interactive mode (recommended for flexible debugging)
+python debug.py --interactive
+
 # Run full workflow
 python debug.py
 
@@ -68,6 +102,9 @@ python debug.py example
 
 # Run with verbose output
 python debug.py --verbose
+
+# Run with custom config
+python debug.py --config path/to/config.json
 ```
 
 ### Debug Configurations
@@ -77,6 +114,7 @@ The debug configurations automatically:
 - Use predefined test configurations
 - Enable detailed logging
 - Provide full stack traces
+- Support interactive workflow selection
 
 ## Tasks
 
@@ -130,6 +168,71 @@ Or use the keyboard shortcut `Ctrl+Shift+P` → "Tasks: Run Build Task" for quic
 - Live preview using PlantUML server
 - Automatic rendering of diagrams
 
+## Interactive Debugging Workflow
+
+### Step-by-Step Interactive Debugging:
+
+1. **Start Interactive Mode:**
+   ```bash
+   python debug.py --interactive
+   ```
+
+2. **Select Workflow:**
+   - Choose from 6 different workflow combinations
+   - Mix and match parsing, transformation, and generation steps
+
+3. **Select Configuration:**
+   - Use predefined configurations
+   - Create custom configurations interactively
+   - Use existing configuration files
+
+4. **Customize Settings:**
+   - Set project name and source folders
+   - Configure file and element filters
+   - Adjust processing parameters
+
+5. **Execute and Debug:**
+   - Set breakpoints in the code
+   - Run the selected workflow
+   - Debug with full control
+
+### Example Interactive Session:
+
+```
+=== C to PlantUML Converter - Interactive Debug Mode ===
+
+1. Select Workflow:
+   1. Full Workflow (parse → transform → generate)
+   2. Parse Only (generate model.json)
+   3. Transform Only (transform existing model.json)
+   4. Generate Only (generate PlantUML from model)
+   5. Parse + Transform (skip generation)
+   6. Transform + Generate (skip parsing)
+
+Select workflow (1-6) [1]: 2
+
+2. Select Configuration:
+   1. Test Configuration (with filters)
+   2. Example Configuration (minimal)
+   3. Custom Configuration (interactive setup)
+   4. Use existing config file
+
+Select configuration (1-4) [1]: 3
+
+=== Custom Configuration Setup ===
+Project name [Debug_Custom_Project]: MyTestProject
+Source folders (comma-separated) [./example]: ./my_source_code
+Output directory [./output/custom]: ./output/my_test
+...
+
+3. Verbose output? (y/n) [n]: y
+
+=== Executing Workflow ===
+Workflow: 2
+Config: ./output/my_test/custom_config.json
+Verbose: True
+```
+
 ## Workspace Settings
 
 The workspace is configured with:
@@ -158,6 +261,10 @@ The workspace is configured with:
 4. **Tasks not running:**
    - Ensure you're in the correct directory
    - Check that the required tools (python, pip, etc.) are in your PATH
+
+5. **Interactive mode issues:**
+   - Make sure you're running in a terminal that supports input
+   - Check that the configuration file paths are valid
 
 ### Getting Help:
 
@@ -194,3 +301,27 @@ The following extensions are recommended for this project:
 - **Remote Development** - Remote development support
 
 These extensions will be automatically suggested when you open the project in VSCode.
+
+## Advanced Debugging Tips
+
+### Custom Workflow Combinations:
+
+The interactive mode supports custom workflow combinations:
+
+- **Parse + Transform**: Useful when you want to process the model but not generate diagrams
+- **Transform + Generate**: Useful when you have an existing model and want to apply transformations before generating diagrams
+
+### Configuration Management:
+
+- **Test Configuration**: Includes comprehensive filters for development testing
+- **Example Configuration**: Minimal configuration for quick testing
+- **Custom Configuration**: Interactive setup for specific requirements
+- **Existing Config**: Use any existing configuration file
+
+### Debugging Specific Issues:
+
+1. **Parsing Issues**: Use "Parse Only" to isolate parsing problems
+2. **Transformation Issues**: Use "Transform Only" with existing model.json
+3. **Generation Issues**: Use "Generate Only" with existing model files
+4. **Filter Issues**: Use custom configuration to test specific filters
+5. **Performance Issues**: Use verbose mode to see detailed execution flow
