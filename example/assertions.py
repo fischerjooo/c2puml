@@ -7,6 +7,7 @@ This script validates that the generator produces the correct PlantUML diagrams.
 import os
 import re
 import sys
+import argparse
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
@@ -14,9 +15,72 @@ from typing import Dict, List, Set, Tuple
 class PUMLValidator:
     """Validates generated PUML files against expected content."""
     
-    def __init__(self, output_dir: str = "../output", source_dir: str = "source"):
-        self.output_dir = Path(output_dir)
-        self.source_dir = Path(source_dir)
+    def _find_output_directory(self, output_dir: str = None) -> str:
+        """
+        Find the correct output directory path regardless of how the script is called.
+        
+        The script can be called from:
+        - /workspace (run_all.sh)
+        - /workspace/example (run_example.sh)
+        - Any other directory
+        
+        Returns the path to the output directory containing .puml files.
+        """
+        if output_dir:
+            return output_dir
+            
+        current_dir = Path.cwd()
+        
+        # Try different possible output directory locations
+        possible_paths = [
+            current_dir / "output",                    # Called from /workspace
+            current_dir / ".." / "output",             # Called from /workspace/example
+            current_dir / ".." / ".." / "output",      # Called from deeper subdirectory
+            current_dir / "example" / "output",        # Called from /workspace with example subdir
+        ]
+        
+        for path in possible_paths:
+            if path.exists() and path.is_dir():
+                # Check if it contains .puml files
+                if list(path.glob("*.puml")):
+                    return str(path)
+        
+        # If no output directory found, return the most likely default
+        return str(current_dir / "output")
+    
+    def _find_source_directory(self, source_dir: str = None) -> str:
+        """
+        Find the correct source directory path regardless of how the script is called.
+        
+        Returns the path to the source directory containing .c and .h files.
+        """
+        if source_dir:
+            return source_dir
+            
+        current_dir = Path.cwd()
+        
+        # Try different possible source directory locations
+        possible_paths = [
+            current_dir / "example" / "source",        # Called from /workspace
+            current_dir / "source",                    # Called from /workspace/example
+            current_dir / ".." / "example" / "source", # Called from deeper subdirectory
+        ]
+        
+        for path in possible_paths:
+            if path.exists() and path.is_dir():
+                # Check if it contains .c and .h files
+                if list(path.glob("*.c")) and list(path.glob("*.h")):
+                    return str(path)
+        
+        # If no source directory found, return the most likely default
+        return str(current_dir / "example" / "source")
+    
+    def __init__(self, output_dir: str = None, source_dir: str = None):
+        # Auto-detect paths based on current working directory
+        self.output_dir = Path(self._find_output_directory(output_dir))
+        self.source_dir = Path(self._find_source_directory(source_dir))
+        
+        # Expected PUML files
         self.expected_files = [
             "typedef_test.puml",
             "geometry.puml", 
@@ -1640,8 +1704,35 @@ class PUMLValidator:
 
 def main():
     """Main function to run the validation."""
-    validator = PUMLValidator()
-    validator.run_all_validations()
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description="Validate generated PlantUML files")
+    parser.add_argument("--output-dir", help="Path to output directory containing .puml files")
+    parser.add_argument("--source-dir", help="Path to source directory containing .c and .h files")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose output")
+    args = parser.parse_args()
+    
+    try:
+        if args.verbose:
+            print("🔍 Auto-detecting directories...")
+            print(f"Current working directory: {Path.cwd().absolute()}")
+        
+        validator = PUMLValidator(
+            output_dir=args.output_dir,
+            source_dir=args.source_dir
+        )
+        
+        if args.verbose:
+            print(f"✅ Found output directory: {validator.output_dir.absolute()}")
+            print(f"✅ Found source directory: {validator.source_dir.absolute()}")
+        
+        validator.run_all_validations()
+    except Exception as e:
+        print(f"\n❌ Validation failed: {e}")
+        print(f"Current working directory: {Path.cwd().absolute()}")
+        print("Tried to find directories automatically. If this fails, you can specify paths manually:")
+        print("  python3 assertions.py --output-dir /path/to/output --source-dir /path/to/source")
+        print("  python3 assertions.py --verbose  # For debugging information")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
