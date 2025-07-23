@@ -1,0 +1,15 @@
+@startuml
+title config
+
+class config {
+    + File: /workspace/example/source/config.h
+    + Structs: 0
+    + Enums: 1
+    + Functions: 0
+    + Globals: 0
+    + Includes: 2
+    + Aliases: 2
+    + Unions: 0
+}
+
+@enduml
