@@ -9,7 +9,7 @@
         }
     ],
     "settings": {
-        "python.defaultInterpreterPath": "./venv/bin/python",
+        "python.defaultInterpreterPath": "${env:PYTHONHOME}/python.exe",
         "python.terminal.activateEnvironment": true,
         "python.linting.enabled": true,
         "python.linting.pylintEnabled": true,
@@ -19,6 +19,24 @@
         "python.testing.pytestArgs": [
             "tests"
         ],
+        "terminal.integrated.defaultProfile.windows": "PowerShell",
+        "terminal.integrated.profiles.windows": {
+            "PowerShell": {
+                "source": "PowerShell",
+                "icon": "terminal-powershell"
+            },
+            "Command Prompt": {
+                "path": [
+                    "${env:windir}\\Sysnative\\cmd.exe",
+                    "${env:windir}\\System32\\cmd.exe"
+                ],
+                "args": [],
+                "icon": "terminal-cmd"
+            },
+            "Git Bash": {
+                "source": "Git Bash"
+            }
+        },
         "files.exclude": {
             "**/__pycache__": true,
             "**/*.pyc": true,
@@ -43,7 +61,32 @@
             "source.organizeImports": true
         },
         "files.autoSave": "afterDelay",
-        "files.autoSaveDelay": 1000
+        "files.autoSaveDelay": 1000,
+        "files.eol": "\r\n",
+        "files.encoding": "utf8",
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
+        "files.trimFinalNewlines": true,
+        "explorer.confirmDelete": false,
+        "explorer.confirmDragAndDrop": false,
+        "workbench.editor.enablePreview": false,
+        "workbench.editor.enablePreviewFromQuickOpen": false,
+        "editor.rulers": [100],
+        "editor.wordWrap": "bounded",
+        "editor.wordWrapColumn": 100,
+        "editor.bracketPairColorization.enabled": true,
+        "editor.guides.bracketPairs": true,
+        "editor.minimap.enabled": true,
+        "editor.renderWhitespace": "boundary",
+        "editor.suggestSelection": "first",
+        "editor.tabCompletion": "on",
+        "editor.acceptSuggestionOnCommitCharacter": false,
+        "editor.acceptSuggestionOnEnter": "on",
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": false,
+            "strings": true
+        }
     },
     "extensions": {
         "recommendations": [
@@ -70,7 +113,8 @@
             {
                 "label": "Run Full Workflow (Windows)",
                 "type": "shell",
-                "command": "run_all.bat",
+                "command": "cmd",
+                "args": ["/c", "run_all.bat"],
                 "group": "build",
                 "presentation": {
                     "echo": true,
@@ -80,7 +124,10 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
             },
             {
                 "label": "Run Full Workflow (Linux/Mac)",
@@ -100,7 +147,8 @@
             {
                 "label": "Run Example (Windows)",
                 "type": "shell",
-                "command": "run_example.bat",
+                "command": "cmd",
+                "args": ["/c", "run_example.bat"],
                 "group": "build",
                 "presentation": {
                     "echo": true,
@@ -110,7 +158,10 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
             },
             {
                 "label": "Run Example (Linux/Mac)",
@@ -130,7 +181,8 @@
             {
                 "label": "Run All Tests (Windows)",
                 "type": "shell",
-                "command": "run_all_tests.bat",
+                "command": "cmd",
+                "args": ["/c", "run_all_tests.bat"],
                 "group": "test",
                 "presentation": {
                     "echo": true,
@@ -140,7 +192,10 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
             },
             {
                 "label": "Run All Tests (Linux/Mac)",
@@ -160,7 +215,8 @@
             {
                 "label": "Generate Pictures (Windows)",
                 "type": "shell",
-                "command": "picgen.bat",
+                "command": "cmd",
+                "args": ["/c", "picgen.bat"],
                 "group": "build",
                 "presentation": {
                     "echo": true,
@@ -170,7 +226,10 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
             },
             {
                 "label": "Generate Pictures (Linux/Mac)",
@@ -190,7 +249,7 @@
             {
                 "label": "Parse Only (Python)",
                 "type": "shell",
-                "command": "python",
+                "command": "${env:PYTHONHOME}/python.exe",
                 "args": [
                     "-m",
                     "c_to_plantuml.main",
@@ -205,12 +264,15 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
             },
             {
                 "label": "Transform Only (Python)",
                 "type": "shell",
-                "command": "python",
+                "command": "${env:PYTHONHOME}/python.exe",
                 "args": [
                     "-m",
                     "c_to_plantuml.main",
@@ -225,12 +287,15 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
             },
             {
                 "label": "Generate Only (Python)",
                 "type": "shell",
-                "command": "python",
+                "command": "${env:PYTHONHOME}/python.exe",
                 "args": [
                     "-m",
                     "c_to_plantuml.main",
@@ -245,12 +310,15 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
             },
             {
                 "label": "Run Pytest",
                 "type": "shell",
-                "command": "python",
+                "command": "${env:PYTHONHOME}/python.exe",
                 "args": [
                     "-m",
                     "pytest",
@@ -266,12 +334,15 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
             },
             {
                 "label": "Install Dependencies",
                 "type": "shell",
-                "command": "pip",
+                "command": "${env:PYTHONHOME}/Scripts/pip.exe",
                 "args": [
                     "install",
                     "-r",
@@ -286,7 +357,10 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
             },
             {
                 "label": "Clean Output",
@@ -309,7 +383,7 @@
             {
                 "label": "Lint Code",
                 "type": "shell",
-                "command": "python",
+                "command": "${env:PYTHONHOME}/python.exe",
                 "args": [
                     "-m",
                     "flake8",
@@ -326,12 +400,15 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
             },
             {
                 "label": "Format Code",
                 "type": "shell",
-                "command": "python",
+                "command": "${env:PYTHONHOME}/python.exe",
                 "args": [
                     "-m",
                     "black",
@@ -347,7 +424,10 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
             }
         ]
     },
@@ -362,7 +442,8 @@
                 "console": "integratedTerminal",
                 "cwd": "${workspaceFolder}",
                 "env": {
-                    "PYTHONPATH": "${workspaceFolder}"
+                    "PYTHONPATH": "${workspaceFolder}",
+                    "PYTHONHOME": "${env:PYTHONHOME}"
                 },
                 "args": [],
                 "justMyCode": false
@@ -375,7 +456,8 @@
                 "console": "integratedTerminal",
                 "cwd": "${workspaceFolder}",
                 "env": {
-                    "PYTHONPATH": "${workspaceFolder}"
+                    "PYTHONPATH": "${workspaceFolder}",
+                    "PYTHONHOME": "${env:PYTHONHOME}"
                 },
                 "args": ["parse"],
                 "justMyCode": false
@@ -388,7 +470,8 @@
                 "console": "integratedTerminal",
                 "cwd": "${workspaceFolder}",
                 "env": {
-                    "PYTHONPATH": "${workspaceFolder}"
+                    "PYTHONPATH": "${workspaceFolder}",
+                    "PYTHONHOME": "${env:PYTHONHOME}"
                 },
                 "args": ["transform"],
                 "justMyCode": false
@@ -401,7 +484,8 @@
                 "console": "integratedTerminal",
                 "cwd": "${workspaceFolder}",
                 "env": {
-                    "PYTHONPATH": "${workspaceFolder}"
+                    "PYTHONPATH": "${workspaceFolder}",
+                    "PYTHONHOME": "${env:PYTHONHOME}"
                 },
                 "args": ["generate"],
                 "justMyCode": false
@@ -414,7 +498,8 @@
                 "console": "integratedTerminal",
                 "cwd": "${workspaceFolder}",
                 "env": {
-                    "PYTHONPATH": "${workspaceFolder}"
+                    "PYTHONPATH": "${workspaceFolder}",
+                    "PYTHONHOME": "${env:PYTHONHOME}"
                 },
                 "args": [
                     "tests/",
@@ -431,7 +516,8 @@
                 "console": "integratedTerminal",
                 "cwd": "${workspaceFolder}",
                 "env": {
-                    "PYTHONPATH": "${workspaceFolder}"
+                    "PYTHONPATH": "${workspaceFolder}",
+                    "PYTHONHOME": "${env:PYTHONHOME}"
                 },
                 "args": [
                     "${file}",
@@ -448,7 +534,8 @@
                 "console": "integratedTerminal",
                 "cwd": "${workspaceFolder}",
                 "env": {
-                    "PYTHONPATH": "${workspaceFolder}"
+                    "PYTHONPATH": "${workspaceFolder}",
+                    "PYTHONHOME": "${env:PYTHONHOME}"
                 },
                 "args": ["example"],
                 "justMyCode": false
