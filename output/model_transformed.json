@@ -904,6 +904,20 @@
           "return_type": "void"
         },
         {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "internal_helper",
+          "parameters": [],
+          "return_type": "static void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "internal_helper",
+          "parameters": [],
+          "return_type": "static void"
+        },
+        {
           "is_declaration": false,
           "is_static": false,
           "name": "main",
@@ -1499,8 +1513,8 @@
           "name": "MyBuffer",
           "tag_name": "MyBuffer_tag",
           "uses": [
-            "MyLen",
-            "MyString"
+            "MyString",
+            "MyLen"
           ]
         },
         "MyComplex": {
@@ -1530,10 +1544,10 @@
           "name": "MyComplex",
           "tag_name": "MyComplexStruct_tag",
           "uses": [
-            "MyLen",
+            "log_level_t",
             "MyCallback",
             "MyString",
-            "log_level_t"
+            "MyLen"
           ]
         },
         "NamedStruct_t": {
@@ -1552,6 +1566,24 @@
           "methods": [],
           "name": "NamedStruct_t",
           "tag_name": "NamedStruct_tag",
+          "uses": []
+        },
+        "Point_t": {
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "Point_t",
+          "tag_name": "Point_tag",
           "uses": []
         }
       },
