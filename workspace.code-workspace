@@ -183,12 +183,7 @@
             {
                 "label": "Install Dependencies",
                 "type": "shell",
-                "command": "pip",
-                "args": [
-                    "install",
-                    "-r",
-                    "requirements-dev.txt"
-                ],
+                "command": "${workspaceFolder}/install_dependencies.bat",
                 "group": "build",
                 "presentation": {
                     "echo": true,
@@ -206,13 +201,7 @@
             {
                 "label": "Format & Lint",
                 "type": "shell",
-                "command": "python",
-                "args": [
-                    "-m",
-                    "black",
-                    "c_to_plantuml/",
-                    "tests/"
-                ],
+                "command": "${workspaceFolder}/format_lint.bat",
                 "group": "build",
                 "presentation": {
                     "echo": true,
