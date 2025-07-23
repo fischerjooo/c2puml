@@ -134,9 +134,11 @@ class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 + void ( * log_callback_t ) ( log_level_t level , const char * message )
 }
 
-class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
-+ uint32_t
++ int x
++ int y
++ char[32] label
 }
 
 class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
@@ -149,6 +151,11 @@ class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
 + int ( * math_op_t ) ( int , int )
 }
 
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
++ uint32_t
+}
+
 class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 {
 + double
@@ -159,13 +166,6 @@ enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
 STATE_IDLE = 0
 STATE_RUNNING
 STATE_ERROR
-}
-
-class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
-{
-+ int x
-+ int y
-+ char[32] label
 }
 
 class "typedef_test" as HEADER_TYPEDEF_TEST <<header>> #LightGreen
@@ -194,14 +194,6 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 + void set_log_callback(log_callback_t cb);
 + void log_message(log_level_t level, const char * fmt, ...);
 }
-class "config" as HEADER_CONFIG <<header>> #LightGreen
-{
--- Macros --
-+ #define CONFIG_H
-+ #define PROJECT_NAME
-+ #define MAX_LABEL_LEN
-+ #define DEFAULT_BUFFER_SIZE
-}
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
 -- Macros --
@@ -226,6 +218,14 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 + extern int calculate_sum(int a, int b);
 + extern point_t * create_point(int x, int y, const char * label);
 + extern void process_point(point_t * p);
+}
+class "config" as HEADER_CONFIG <<header>> #LightGreen
+{
+-- Macros --
++ #define CONFIG_H
++ #define PROJECT_NAME
++ #define MAX_LABEL_LEN
++ #define DEFAULT_BUFFER_SIZE
 }
 TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>
 TYPEDEF_TEST --> HEADER_COMPLEX_EXAMPLE : <<include>>
