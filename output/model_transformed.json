@@ -329,6 +329,13 @@
         {
           "is_declaration": false,
           "is_static": false,
+          "name": "test_crypto_utility_macros",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
           "name": "test_handle_operation",
           "parameters": [
             {
@@ -496,6 +503,21 @@
         "release_callback_t": {
           "name": "release_callback_t",
           "original_type": "void ( * release_callback_t ) ( const char * message )",
+          "uses": []
+        },
+        "uint16": {
+          "name": "uint16",
+          "original_type": "uint16_t",
+          "uses": []
+        },
+        "uint32": {
+          "name": "uint32",
+          "original_type": "uint32_t",
+          "uses": []
+        },
+        "uint8": {
+          "name": "uint8",
+          "original_type": "uint8_t",
           "uses": []
         }
       },
@@ -701,6 +723,13 @@
           "name": "test_crypto_job_processing",
           "parameters": [],
           "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "test_crypto_utility_macros",
+          "parameters": [],
+          "return_type": "void"
         }
       ],
       "globals": [
@@ -712,6 +741,11 @@
         {
           "name": ")",
           "type": "\\ \n } \\ \n ( x",
+          "value": null
+        },
+        {
+          "name": "]",
+          "type": "\\ \n } \n \n \n #define CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) \\ \n { \\ \n ( ptr_pau8 ) [ 3 U",
           "value": null
         },
         {
@@ -750,6 +784,10 @@
         "COMPLEX_H",
         "COMPLEX_MACRO_FUNC(x, y, z)",
         "CREATE_FUNC_NAME(prefix, suffix)",
+        "CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8)",
+        "CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8)",
+        "CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)",
+        "CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)",
         "DEPRECATED",
         "DEPRECATED",
         "HANDLE_OPERATION(op_type, data, size, callback)",

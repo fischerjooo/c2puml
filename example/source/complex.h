@@ -5,6 +5,11 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+// Standard integer type definitions for the nasty macros
+typedef uint8_t uint8;
+typedef uint16_t uint16;
+typedef uint32_t uint32;
+
 // Nasty multiline macro with function-like behavior
 #define COMPLEX_MACRO_FUNC(x, y, z) do { \
     int temp_var = (x) + (y) * (z); \
@@ -32,6 +37,37 @@
 #define CREATE_FUNC_NAME(prefix, suffix) prefix##_##suffix
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
+
+// Nasty edge case: Complex multiline macro with type casting and bit shifting
+/** *******************************************************************************************************************
+ * \brief   Write uint 16 value in big endian format to uint8 array.
+ *
+ * \param[in]    value_u16   uint16 value
+ * \param[out]   ptr_pau8    Pointer to uint8 array with at least 2 elements.
+ *********************************************************************************************************************/
+#define CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8) \
+{                                                                     \
+    (ptr_pau8)[1U] = (uint8)((value_u16));                            \
+    (ptr_pau8)[0U] = (uint8)((value_u16) >> 8U);                      \
+}
+
+// Additional nasty macro patterns for testing
+#define CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) \
+{                                                                     \
+    (ptr_pau8)[3U] = (uint8)((value_u32));                            \
+    (ptr_pau8)[2U] = (uint8)((value_u32) >> 8U);                      \
+    (ptr_pau8)[1U] = (uint8)((value_u32) >> 16U);                     \
+    (ptr_pau8)[0U] = (uint8)((value_u32) >> 24U);                     \
+}
+
+#define CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8) \
+    (((uint16)((ptr_pau8)[0U]) << 8U) | ((uint16)((ptr_pau8)[1U])))
+
+#define CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8) \
+    (((uint32)((ptr_pau8)[0U]) << 24U) | \
+     ((uint32)((ptr_pau8)[1U]) << 16U) | \
+     ((uint32)((ptr_pau8)[2U]) << 8U) | \
+     ((uint32)((ptr_pau8)[3U])))
 
 // Preprocessing directives in typedefs
 #if defined(__GNUC__) && __GNUC__ >= 4
@@ -220,6 +256,7 @@ complex_handler_t* create_complex_handler(
 
 // Function declarations for the nasty edge case
 void test_crypto_job_processing(void);
+void test_crypto_utility_macros(void);
 
 // External declaration of the nasty const array of function pointers
 extern Std_ReturnType (*const Crypto_Cfg_ProcessJobLite_acpfct[CRYPTO_CFG_MODULE_COUNT])
