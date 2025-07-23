@@ -11,7 +11,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 from c_to_plantuml.models import (
-    FileModel, ProjectModel, IncludeRelation, TypedefRelation,
+    Alias, FileModel, ProjectModel, IncludeRelation,
     Struct, Enum, Union, Function, Field
 )
 from c_to_plantuml.parser import CParser

@@ -262,10 +262,10 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         # Note: Complex typedefs (struct/enum/union) are NOT shown in file/header classes
         # but have separate typedef classes with their content
         self.assertIn('class "Point" as TYPEDEF_POINT <<typedef>>', main_content)
-        self.assertIn('MAIN ..> TYPEDEF_POINT : declares', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_POINT : <<declares>>', main_content)
 
         self.assertIn('class "Image" as TYPEDEF_IMAGE <<typedef>>', main_content)
-        self.assertIn('HEADER_TYPES ..> TYPEDEF_IMAGE : declares', main_content)
+        self.assertIn('HEADER_TYPES ..> TYPEDEF_IMAGE : <<declares>>', main_content)
 
         # Check that complex typedefs are NOT shown in file/header classes
         # (they are only shown in separate typedef classes)

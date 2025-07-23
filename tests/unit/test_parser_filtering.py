@@ -12,7 +12,7 @@ from pathlib import Path
 
 from c_to_plantuml.config import Config
 from c_to_plantuml.models import (
-    Enum, Field, FileModel, Function, ProjectModel, Struct, Union
+    Alias, Enum, Field, FileModel, Function, ProjectModel, Struct, Union
 )
 from c_to_plantuml.transformer import Transformer
 
@@ -72,15 +72,13 @@ class TestUserConfigurableFiltering(unittest.TestCase):
                 Field("public_constant", "const int")
             ],
             macros=["MAX_SIZE", "internal_macro", "PUBLIC_DEFINE"],
-            typedefs={
-                "UserPtr": "UserData*",
-                "internal_type": "void*",
-                "PublicType": "int"
+            aliases={
+                "UserPtr": Alias("UserPtr", "UserData*"),
+                "internal_type": Alias("internal_type", "void*"),
+                "PublicType": Alias("PublicType", "int")
             },
             includes={"stdio.h", "stdlib.h", "internal.h"},
-            unions={},
-            typedef_relations=[],
-            include_relations=[]
+            unions={}
         )
 
         # Create project model
@@ -275,7 +273,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         """Test element filtering for typedefs"""
         config = Config()
         config.element_filters = {
-            "typedefs": {
+            "aliases": {
                 "include": [r"^[A-Z].*"],
                 "exclude": [r".*[Ii]nternal.*"]
             }
@@ -289,9 +287,9 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         filtered_model = config._apply_element_filters(file_model)
 
         # Check that only public typedefs are included
-        self.assertIn("UserPtr", filtered_model.typedefs)
-        self.assertIn("PublicType", filtered_model.typedefs)
-        self.assertNotIn("internal_type", filtered_model.typedefs)
+        self.assertIn("UserPtr", filtered_model.aliases)
+        self.assertIn("PublicType", filtered_model.aliases)
+        self.assertNotIn("internal_type", filtered_model.aliases)
 
     def test_multiple_element_filters(self):
         """Test applying multiple element filters simultaneously"""

@@ -41,10 +41,10 @@ struct ComplexStruct {
         file_model = model.files["typedef_test.c"]
         
         # Verify typedefs were parsed (check what was actually parsed)
-        print(f"Debug: typedefs found: {file_model.typedefs}")
-        self.assertIn("UserPtr", file_model.typedefs)
-        self.assertIn("Integer", file_model.typedefs)
-        self.assertIn("Callback", file_model.typedefs)
+        print(f"Debug: aliases found: {file_model.aliases}")
+        self.assertIn("UserPtr", file_model.aliases)
+        self.assertIn("Integer", file_model.aliases)
+        self.assertIn("Callback", file_model.aliases)
 
     def test_parse_unions(self):
         """Test parsing union definitions"""
@@ -72,6 +72,6 @@ typedef union {
         
         # Verify unions were parsed (check what was actually parsed)
         print(f"Debug: unions found: {file_model.unions}")
-        print(f"Debug: typedefs found: {file_model.typedefs}")
+        print(f"Debug: aliases found: {file_model.aliases}")
         # The parser might not support unions yet, so we'll just check that it doesn't crash
         self.assertTrue(True)  # Just ensure the test runs without crashing

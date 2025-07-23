@@ -12,7 +12,7 @@ from pathlib import Path
 
 from c_to_plantuml.config import Config
 from c_to_plantuml.generator import Generator, PlantUMLGenerator
-from c_to_plantuml.models import Enum, Field, FileModel, Function, ProjectModel, Struct, Union
+from c_to_plantuml.models import Alias, Enum, Field, FileModel, Function, ProjectModel, Struct, Union
 
 
 class TestGenerator(unittest.TestCase):
@@ -65,7 +65,7 @@ class TestGenerator(unittest.TestCase):
             globals=[Field("global_var", "int"), Field("global_string", "char*")],
             includes=["stdio.h", "stdlib.h", "local.h"],
             macros=["MAX_SIZE", "DEBUG_MODE", "VERSION"],
-            typedefs={"Integer": "int", "String": "char*", "Callback": "void (*)(int)"},
+            aliases={"Integer": Alias("Integer", "int"), "String": Alias("String", "char*"), "Callback": Alias("Callback", "void (*)(int)")},
         )
 
     def create_test_file(self, filename: str, content: str) -> Path:
@@ -100,7 +100,8 @@ void process_data() {
         file_model = project_model.files["test.c"]
         
         # Generate PlantUML diagram
-        diagram = self.generator.plantuml_generator.generate_diagram(file_model, project_model)
+        plantuml_generator = PlantUMLGenerator()
+        diagram = plantuml_generator.generate_diagram(file_model, project_model)
         
         # Check that PlantUML syntax is correct
         self.assertIn("@startuml test", diagram)
@@ -117,7 +118,7 @@ void process_data() {
         # Check that global variables are included
         self.assertIn("-- Global Variables --", diagram)
         self.assertIn("int global_var", diagram)
-        self.assertIn("char* global_string", diagram)
+        self.assertIn("char * global_string", diagram)
         
         # Check that functions are included
         self.assertIn("-- Functions --", diagram)
@@ -139,7 +140,8 @@ void process_data() {
             files={"test.c": file_model},
             created_at="2023-01-01T00:00:00",
         )
-        content = self.generator.plantuml_generator.generate_diagram(
+        plantuml_generator = PlantUMLGenerator()
+        content = plantuml_generator.generate_diagram(
             file_model, project_model
         )
 
@@ -243,7 +245,7 @@ void process_data() {
             globals=[],
             includes=["stdio.h"],
             macros=[],
-            typedefs={},
+            aliases={},
         )
 
         model = ProjectModel(
@@ -277,7 +279,7 @@ void process_data() {
             globals=[],
             includes=[],
             macros=[],
-            typedefs={},
+            aliases={},
         )
 
         # Create a simple project model for testing
@@ -287,7 +289,8 @@ void process_data() {
             files={"empty.c": empty_file},
             created_at="2023-01-01T00:00:00",
         )
-        content = self.generator.plantuml_generator.generate_diagram(
+        plantuml_generator = PlantUMLGenerator()
+        content = plantuml_generator.generate_diagram(
             empty_file, project_model
         )
 
@@ -316,7 +319,8 @@ void test_function() {
         file_model = project_model.files["test_file.c"]
         
         # Generate PlantUML diagram
-        diagram = self.generator.plantuml_generator.generate_diagram(file_model, project_model)
+        plantuml_generator = PlantUMLGenerator()
+        diagram = plantuml_generator.generate_diagram(file_model, project_model)
         
         # Check that PlantUML syntax is correct
         self.assertIn("@startuml test_file", diagram)
@@ -358,7 +362,8 @@ void test_function() {
             files={"test.c": file_model},
             created_at="2023-01-01T00:00:00",
         )
-        content = self.generator.plantuml_generator.generate_diagram(
+        plantuml_generator = PlantUMLGenerator()
+        content = plantuml_generator.generate_diagram(
             file_model, project_model
         )
 

@@ -12,8 +12,8 @@ from unittest.mock import Mock, patch, mock_open
 import re
 
 from c_to_plantuml.models import (
-    Enum, Field, FileModel, Function, IncludeRelation, 
-    ProjectModel, Struct, TypedefRelation, Union
+    Alias, Enum, Field, FileModel, Function, IncludeRelation, 
+    ProjectModel, Struct, Union
 )
 from c_to_plantuml.transformer import Transformer
 
@@ -60,7 +60,7 @@ class TestTransformer(unittest.TestCase):
             ],
             includes={"stdio.h", "stdlib.h"},
             macros=["MAX_SIZE", "DEBUG_MODE"],
-            typedefs={"point_t": "struct Point", "status_t": "enum Status"}
+            aliases={"point_t": Alias("point_t", "struct Point"), "status_t": Alias("status_t", "enum Status")}
         )
         
         self.sample_project_model = ProjectModel(
@@ -80,7 +80,7 @@ class TestTransformer(unittest.TestCase):
                     globals=[],
                     includes=set(),
                     macros=[],
-                    typedefs={}
+                    aliases={}
                 )
             }
         )
@@ -337,7 +337,7 @@ class TestTransformer(unittest.TestCase):
     def test_apply_element_filters_typedefs(self):
         """Test element filtering for typedefs"""
         config = {
-            "typedefs": {
+            "aliases": {
                 "include": [r"point_t.*"],
                 "exclude": [r"temp.*"]
             }
@@ -347,8 +347,8 @@ class TestTransformer(unittest.TestCase):
         
         # Should only include point_t typedef
         file_model = result.files["sample.c"]
-        self.assertIn("point_t", file_model.typedefs)
-        self.assertNotIn("status_t", file_model.typedefs)
+        self.assertIn("point_t", file_model.aliases)
+        self.assertNotIn("status_t", file_model.aliases)
 
     def test_compile_patterns_valid(self):
         """Test compiling valid regex patterns"""
@@ -538,7 +538,7 @@ class TestTransformer(unittest.TestCase):
             encoding_used="utf-8",
             includes={"file2.h"},
             structs={}, enums={}, unions={}, functions=[], globals=[],
-            macros=[], typedefs={}, typedef_relations=[], include_relations=[]
+            macros=[], aliases={}, include_relations=[]
         )
         
         file2 = FileModel(
@@ -548,7 +548,7 @@ class TestTransformer(unittest.TestCase):
             encoding_used="utf-8",
             includes=set(),
             structs={}, enums={}, unions={}, functions=[], globals=[],
-            macros=[], typedefs={}, typedef_relations=[], include_relations=[]
+            macros=[], aliases={}, include_relations=[]
         )
         
         model = ProjectModel(
