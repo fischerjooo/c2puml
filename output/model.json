@@ -91,7 +91,8 @@
         "COMPLEX_EXAMPLE_H"
       ],
       "aliases": {},
-      "unions": {}
+      "unions": {},
+      "include_relations": []
     },
     "config.h": {
       "file_path": "/workspace/example/source/config.h",
@@ -143,7 +144,8 @@
           "uses": []
         }
       },
-      "unions": {}
+      "unions": {},
+      "include_relations": []
     },
     "geometry.c": {
       "file_path": "/workspace/example/source/geometry.c",
@@ -203,7 +205,8 @@
       ],
       "macros": [],
       "aliases": {},
-      "unions": {}
+      "unions": {},
+      "include_relations": []
     },
     "geometry.h": {
       "file_path": "/workspace/example/source/geometry.h",
@@ -285,7 +288,8 @@
         "GEOMETRY_H"
       ],
       "aliases": {},
-      "unions": {}
+      "unions": {},
+      "include_relations": []
     },
     "logger.c": {
       "file_path": "/workspace/example/source/logger.c",
@@ -346,7 +350,8 @@
       ],
       "macros": [],
       "aliases": {},
-      "unions": {}
+      "unions": {},
+      "include_relations": []
     },
     "logger.h": {
       "file_path": "/workspace/example/source/logger.h",
@@ -433,7 +438,8 @@
           ]
         }
       },
-      "unions": {}
+      "unions": {},
+      "include_relations": []
     },
     "math_utils.c": {
       "file_path": "/workspace/example/source/math_utils.c",
@@ -504,7 +510,8 @@
       ],
       "macros": [],
       "aliases": {},
-      "unions": {}
+      "unions": {},
+      "include_relations": []
     },
     "math_utils.h": {
       "file_path": "/workspace/example/source/math_utils.h",
@@ -588,7 +595,8 @@
           "uses": []
         }
       },
-      "unions": {}
+      "unions": {},
+      "include_relations": []
     },
     "sample.c": {
       "file_path": "/workspace/example/source/sample.c",
@@ -754,7 +762,8 @@
         "CALC(x, y)"
       ],
       "aliases": {},
-      "unions": {}
+      "unions": {},
+      "include_relations": []
     },
     "sample.h": {
       "file_path": "/workspace/example/source/sample.h",
@@ -888,7 +897,8 @@
         "MAX(a, b)"
       ],
       "aliases": {},
-      "unions": {}
+      "unions": {},
+      "include_relations": []
     },
     "typedef_test.c": {
       "file_path": "/workspace/example/source/typedef_test.c",
@@ -989,7 +999,8 @@
       ],
       "macros": [],
       "aliases": {},
-      "unions": {}
+      "unions": {},
+      "include_relations": []
     },
     "typedef_test.h": {
       "file_path": "/workspace/example/source/typedef_test.h",
@@ -1045,10 +1056,10 @@
           "methods": [],
           "tag_name": "MyComplexStruct_tag",
           "uses": [
-            "MyString",
-            "MyLen",
+            "log_level_t",
             "MyCallback",
-            "log_level_t"
+            "MyString",
+            "MyLen"
           ]
         },
         "Point_t": {
@@ -1206,8 +1217,9 @@
           "tag_name": "NamedUnion_tag",
           "uses": []
         }
-      }
+      },
+      "include_relations": []
     }
   },
-  "created_at": "2025-07-23T06:50:28.231030"
+  "created_at": "2025-07-23T07:12:53.882557"
 }

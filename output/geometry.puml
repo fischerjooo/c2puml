@@ -127,9 +127,9 @@ GEOMETRY --> HEADER_GEOMETRY : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
-HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
+HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 
 ' Declaration relationships
