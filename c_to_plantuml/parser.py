@@ -28,7 +28,7 @@ class CParser:
         self.logger = logging.getLogger(__name__)
         self.tokenizer = CTokenizer()
 
-    def parse_project(self, project_root: str, recursive: bool = True, config: "Config" = None) -> ProjectModel:
+    def parse_project(self, project_root: str, recursive_search: bool = True, config: "Config" = None) -> ProjectModel:
         """Parse a C/C++ project and return a model"""
         project_root = Path(project_root).resolve()
 
@@ -42,9 +42,9 @@ class CParser:
 
         # Find C/C++ files based on configuration and include dependencies
         if config:
-            c_files = self._find_files_with_include_dependencies(project_root, recursive, config)
+            c_files = self._find_files_with_include_dependencies(project_root, recursive_search, config)
         else:
-            c_files = self._find_c_files(project_root, recursive)
+            c_files = self._find_c_files(project_root, recursive_search)
         
         self.logger.info(f"Found {len(c_files)} C/C++ files")
 
@@ -480,14 +480,14 @@ class CParser:
 
 
 
-    def _find_c_files(self, project_root: Path, recursive: bool) -> List[Path]:
+    def _find_c_files(self, project_root: Path, recursive_search: bool) -> List[Path]:
         """Find all C/C++ files in the project"""
         c_extensions = {".c", ".h", ".cpp", ".cc", ".cxx", ".hpp", ".hxx"}
         files = []
 
         self.logger.debug(f"Searching for files with extensions: {c_extensions}")
 
-        if recursive:
+        if recursive_search:
             for ext in c_extensions:
                 files.extend(project_root.rglob(f"*{ext}"))
         else:
@@ -512,20 +512,20 @@ class CParser:
         self.logger.debug(f"Found {len(filtered_files)} C/C++ files after filtering")
         return sorted(filtered_files)
 
-    def _find_files_with_include_dependencies(self, project_root: Path, recursive: bool, config: "Config") -> List[Path]:
+    def _find_files_with_include_dependencies(self, project_root: Path, recursive_search: bool, config: "Config") -> List[Path]:
         """Find C/C++ files based on configuration and include dependencies"""
         from .config import Config
         
         # If no config provided, fall back to old behavior
         if config is None:
-            return self._find_c_files(project_root, recursive)
+            return self._find_c_files(project_root, recursive_search)
         
         # Get include depth from config
         include_depth = getattr(config, "include_depth", 1)
         self.logger.info(f"Using include depth: {include_depth}")
         
         # Step 1: Find all C/C++ files in the project
-        all_c_files = self._find_c_files(project_root, recursive)
+        all_c_files = self._find_c_files(project_root, recursive_search)
         self.logger.debug(f"All C files found: {[f.name for f in all_c_files]}")
         
         # Step 2: Apply initial file filtering (include/exclude patterns) and separate .c and .h files
@@ -1047,7 +1047,7 @@ class Parser:
         self.logger = logging.getLogger(__name__)
 
     def parse(
-        self, project_root: str, output_file: str = "model.json", recursive: bool = True, config: "Config" = None
+        self, project_root: str, output_file: str = "model.json", recursive_search: bool = True, config: "Config" = None
     ) -> str:
         """
         Step 1: Parse C code files and generate model.json
@@ -1055,7 +1055,7 @@ class Parser:
         Args:
             project_root: Root directory of C/C++ project
             output_file: Output JSON model file path
-            recursive: Whether to search subdirectories recursively
+            recursive_search: Whether to search subdirectories recursively
             config: Configuration object for filtering and include depth
 
         Returns:
@@ -1065,7 +1065,7 @@ class Parser:
 
         # Parse the project
         try:
-            model = self.c_parser.parse_project(project_root, recursive, config)
+            model = self.c_parser.parse_project(project_root, recursive_search, config)
         except RuntimeError as e:
             self.logger.error(f"Failed to parse project: {e}")
             raise

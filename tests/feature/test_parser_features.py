@@ -36,7 +36,7 @@ struct ComplexStruct {
         self.create_test_file("typedef_test.c", content)
         
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
         
         file_model = model.files["typedef_test.c"]
         
@@ -66,7 +66,7 @@ typedef union {
         self.create_test_file("union_test.c", content)
         
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
         
         file_model = model.files["union_test.c"]
         
