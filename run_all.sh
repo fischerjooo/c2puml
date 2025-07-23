@@ -16,13 +16,7 @@ echo "✅ All tests passed!"
 
 echo ""
 
-# Step 1.5: Run crypto filter pattern demonstration
-echo "📋 Step 1.5: Running crypto filter pattern demonstration..."
-echo "----------------------------------------"
-PYTHONPATH=/workspace python3 demo_crypto_filter_issue.py
-echo "✅ Crypto filter demonstration completed!"
 
-echo ""
 
 # Step 2: Run example
 echo "📋 Step 2: Running example..."
