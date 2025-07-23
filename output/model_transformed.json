@@ -314,6 +314,11 @@
           "source_file": "/workspace/example/source/geometry.h"
         },
         {
+          "depth": 4,
+          "included_file": "/workspace/example/source/math_utils.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
           "depth": 3,
           "included_file": "/workspace/example/source/math_utils.h",
           "source_file": "/workspace/example/source/geometry.h"
@@ -345,6 +350,11 @@
         },
         {
           "depth": 2,
+          "included_file": "/workspace/example/source/sample.h",
+          "source_file": "/workspace/example/source/geometry.h"
+        },
+        {
+          "depth": 4,
           "included_file": "/workspace/example/source/sample.h",
           "source_file": "/workspace/example/source/geometry.h"
         },
@@ -537,6 +547,11 @@
           "source_file": "/workspace/example/source/logger.h"
         },
         {
+          "depth": 4,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
           "depth": 3,
           "included_file": "/workspace/example/source/config.h",
           "source_file": "/workspace/example/source/logger.h"
@@ -552,12 +567,7 @@
           "source_file": "/workspace/example/source/logger.h"
         },
         {
-          "depth": 2,
-          "included_file": "/workspace/example/source/config.h",
-          "source_file": "/workspace/example/source/logger.h"
-        },
-        {
-          "depth": 3,
+          "depth": 4,
           "included_file": "/workspace/example/source/config.h",
           "source_file": "/workspace/example/source/logger.h"
         },
@@ -578,6 +588,26 @@
         },
         {
           "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 4,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/logger.h"
+        },
+        {
+          "depth": 4,
           "included_file": "/workspace/example/source/config.h",
           "source_file": "/workspace/example/source/logger.h"
         },
@@ -787,12 +817,27 @@
           "source_file": "/workspace/example/source/math_utils.h"
         },
         {
+          "depth": 4,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/math_utils.h"
+        },
+        {
           "depth": 3,
           "included_file": "/workspace/example/source/config.h",
           "source_file": "/workspace/example/source/math_utils.h"
         },
         {
           "depth": 3,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/math_utils.h"
+        },
+        {
+          "depth": 5,
+          "included_file": "/workspace/example/source/config.h",
+          "source_file": "/workspace/example/source/math_utils.h"
+        },
+        {
+          "depth": 4,
           "included_file": "/workspace/example/source/config.h",
           "source_file": "/workspace/example/source/math_utils.h"
         }
