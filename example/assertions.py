@@ -786,7 +786,7 @@ class PUMLValidator:
         for line in lines:
             line = line.strip()
             
-            # Check for incorrect array format: type size[ ] name instead of type [size] name
+            # Check for incorrect array format: type size[ ] name instead of type[size] name
             # Pattern: + type size[ ] name
             if line.startswith('+ ') and '[' in line and ']' in line:
                 # Look for the pattern where size comes before [ ]
@@ -814,7 +814,7 @@ class PUMLValidator:
                                 size_part in ['MAX_LABEL_LEN', '5', '3', '32']):
                                 raise AssertionError(
                                     f"Incorrect array format in {filename}: '{line}'. "
-                                    f"Expected format: 'type [size] name', got: 'type size[ ] name'"
+                                    f"Expected format: 'type[size] name', got: 'type size[ ] name'"
                                 )
         
         print("    ✅ Array formatting valid")
