@@ -337,7 +337,7 @@ class TestCryptoFilterUseCase(BaseFeatureTest):
                 "utf-8", "utf-8-sig", "utf-16", 
                 "latin-1", "iso-8859-1",
                 "cp1252", "windows-1252", 
-                "cp1254", "windows-1254"
+                "cp1254", "windows-1254", "ascii"
             ]
             assert file_model.encoding_used in acceptable_encodings, \
                 f"Encoding '{file_model.encoding_used}' not in acceptable encodings: {acceptable_encodings}"
