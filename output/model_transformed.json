@@ -1345,6 +1345,6 @@
       }
     }
   },
-  "project_name": "source",
-  "project_root": "/workspace/example/source"
+  "project_name": "example_project",
+  "project_root": "example/source"
 }
