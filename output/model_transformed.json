@@ -741,18 +741,7 @@
           "return_type": "void"
         }
       ],
-      "globals": [
-        {
-          "name": "name",
-          "type": "char",
-          "value": null
-        },
-        {
-          "name": "processor_t",
-          "type": "}",
-          "value": null
-        }
-      ],
+      "globals": [],
       "include_relations": [],
       "includes": [
         "stdbool.h",
