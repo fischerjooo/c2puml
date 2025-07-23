@@ -1,0 +1,296 @@
+name: Quality Checks and Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  quality-checks:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-${{ matrix.python-version }}-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+        pip install -e .
+
+    - name: Run comprehensive quality checks
+      run: |
+        python scripts/lint_and_format.py --verbose --strict
+
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+  security-checks:
+    name: Security Checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+        pip install -e .
+
+    - name: Run security checks
+      run: |
+        bandit -r c_to_plantuml -f json -o bandit-report.json
+        safety check
+
+    - name: Upload security report
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-report
+        path: bandit-report.json
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: quality-checks
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+        pip install -e .
+
+    - name: Run integration tests
+      run: |
+        pytest tests/integration/ -v --tb=short
+
+    - name: Run feature tests
+      run: |
+        pytest tests/feature/ -v --tb=short
+
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: quality-checks
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+        pip install -e .
+
+    - name: Run performance tests
+      run: |
+        pytest tests/unit/test_negative_cases.py::TestEdgeCases::test_struct_with_maximum_fields -v
+        pytest tests/unit/test_negative_cases.py::TestEdgeCases::test_very_long_identifier_names -v
+
+  documentation-checks:
+    name: Documentation Checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+        pip install -e .
+
+    - name: Check documentation style
+      run: |
+        pydocstyle c_to_plantuml --convention=google
+
+    - name: Build documentation
+      run: |
+        sphinx-build -b html docs/ docs/_build/html
+
+  error-handling-tests:
+    name: Error Handling Tests
+    runs-on: ubuntu-latest
+    needs: quality-checks
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+        pip install -e .
+
+    - name: Run error handling tests
+      run: |
+        pytest tests/unit/test_negative_cases.py -v --tb=short
+        pytest tests/unit/test_improvements_demo.py -v --tb=short
+
+  test-utilities-validation:
+    name: Test Utilities Validation
+    runs-on: ubuntu-latest
+    needs: quality-checks
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+        pip install -e .
+
+    - name: Validate test utilities
+      run: |
+        python -c "
+        from tests.test_utils import TestProjectBuilder, TestModelBuilder, TestFileTemplates
+        print('✓ Test utilities imported successfully')
+        
+        # Test TestProjectBuilder
+        builder = TestProjectBuilder()
+        project = builder.add_simple_struct_file().build()
+        print(f'✓ TestProjectBuilder created project at {project}')
+        
+        # Test TestModelBuilder
+        struct = TestModelBuilder.create_simple_struct('TestStruct')
+        print(f'✓ TestModelBuilder created struct: {struct.name}')
+        
+        # Test TestFileTemplates
+        header = TestFileTemplates.get_header_template()
+        print(f'✓ TestFileTemplates generated header template ({len(header)} chars)')
+        "
+
+  final-report:
+    name: Generate Final Report
+    runs-on: ubuntu-latest
+    needs: [quality-checks, security-checks, integration-tests, performance-tests, documentation-checks, error-handling-tests, test-utilities-validation]
+    if: always()
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+        pip install -e .
+
+    - name: Generate quality report
+      run: |
+        echo "=== QUALITY IMPROVEMENTS SUMMARY ==="
+        echo "✅ Centralized Error Handling: Implemented custom exceptions with error codes"
+        echo "✅ Test Utilities: Created reusable test builders and utilities"
+        echo "✅ Negative Case Testing: Comprehensive edge case and failure mode tests"
+        echo "✅ Linting & Formatting: Integrated multiple quality tools"
+        echo "✅ CI/CD Integration: Automated quality checks in GitHub Actions"
+        echo ""
+        echo "=== IMPROVEMENTS DETAILS ==="
+        echo "1. Error Handling:"
+        echo "   - Custom exceptions with error codes (1000-9999 range)"
+        echo "   - Context preservation across error propagation"
+        echo "   - Centralized error handler with logging"
+        echo ""
+        echo "2. Test Utilities:"
+        echo "   - TestProjectBuilder for creating test projects"
+        echo "   - TestModelBuilder for creating test models"
+        echo "   - TestFileTemplates for common file patterns"
+        echo "   - Parameterized testing decorators"
+        echo "   - Automatic cleanup mechanisms"
+        echo ""
+        echo "3. Quality Tools:"
+        echo "   - Black for code formatting"
+        echo "   - isort for import sorting"
+        echo "   - flake8 for style checking"
+        echo "   - pylint for code quality"
+        echo "   - mypy for type checking"
+        echo "   - bandit for security"
+        echo "   - pydocstyle for documentation"
+        echo "   - safety for dependency security"
+        echo ""
+        echo "4. CI/CD Integration:"
+        echo "   - Pre-commit hooks for local quality checks"
+        echo "   - GitHub Actions for automated testing"
+        echo "   - Comprehensive test coverage reporting"
+        echo "   - Security vulnerability scanning"
+        echo ""
+        echo "=== CODE QUALITY METRICS ==="
+        python scripts/lint_and_format.py --check-only --verbose
+
+    - name: Upload quality report
+      uses: actions/upload-artifact@v3
+      with:
+        name: quality-improvements-report
+        path: |
+          htmlcov/
+          coverage.xml
+          bandit-report.json

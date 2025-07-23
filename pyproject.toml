@@ -71,6 +71,93 @@ skip_glob = [
     ".mypy_cache/*"
 ]
 
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = [
+    "tests.*",
+    "test_*",
+]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[tool.pylint.messages_control]
+disable = [
+    "C0114",  # missing-module-docstring
+    "C0115",  # missing-class-docstring
+    "C0116",  # missing-function-docstring
+    "R0903",  # too-few-public-methods
+    "R0913",  # too-many-arguments
+    "R0914",  # too-many-locals
+    "R0915",  # too-many-statements
+    "W0621",  # redefined-outer-name
+    "W0622",  # redefined-builtin
+    "W0703",  # broad-except
+    "W0612",  # unused-variable
+    "W0611",  # unused-import
+]
+
+[tool.pylint.format]
+max-line-length = 88
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "ex", "Run", "_", "id", "db"]
+
+[tool.pylint.design]
+max-args = 10
+max-locals = 20
+max-returns = 10
+max-branches = 15
+max-statements = 60
+max-parents = 10
+max-attributes = 10
+
+[tool.bandit]
+exclude_dirs = ["tests", "venv", ".venv", "build", "dist"]
+skips = ["B101", "B601"]
+
+[tool.pydocstyle]
+convention = "google"
+add_ignore = ["D100", "D104", "D107", "D200", "D203", "D212", "D406", "D407", "D413"]
+
+[tool.coverage.run]
+source = ["c_to_plantuml"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]

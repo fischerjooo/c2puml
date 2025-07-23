@@ -2,13 +2,17 @@
 
 A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/C++ projects and generates comprehensive PlantUML class diagrams showing structs, enums, unions, functions, global variables, macros, typedefs, and include relationships.
 
-## Features
+## 🚀 Features
 
 - **Comprehensive Parsing**: Parses structs, enums, unions, functions, globals, macros, typedefs, and includes
 - **Project Analysis**: Analyzes entire C/C++ projects with recursive directory scanning
 - **PlantUML Generation**: Creates organized PlantUML diagrams with proper UML notation
 - **Configuration System**: Flexible filtering and transformation capabilities
 - **Cross-Platform**: Works on Linux, macOS, and Windows
+- **Robust Error Handling**: Custom exceptions with error codes and context preservation
+- **Comprehensive Testing**: Extensive test coverage with reusable utilities
+- **Code Quality**: Automated linting, formatting, and security checks
+- **CI/CD Integration**: Automated quality checks and testing pipelines
 
 ## Installation
 
@@ -82,14 +86,60 @@ The tool creates PlantUML diagrams showing:
 2. **Transform** - Modifies model based on config (optional)
 3. **Generate** - Creates PlantUML diagrams
 
+## 🛠️ Quality Improvements
+
+This project has been significantly enhanced with comprehensive quality improvements:
+
+### 1. Centralized Error Handling
+- **Custom exceptions** with error codes (1000-9999 range)
+- **Context preservation** across error propagation
+- **Centralized error handler** with logging and statistics
+- **Graceful failure modes** with helpful diagnostics
+
+### 2. Test Utilities and Maintainability
+- **TestProjectBuilder** for creating test projects
+- **TestModelBuilder** for creating test models
+- **TestFileTemplates** for common file patterns
+- **Parameterized testing** decorators
+- **Automatic cleanup** mechanisms
+
+### 3. Comprehensive Testing
+- **Negative case testing** for failure modes
+- **Edge case testing** for boundary conditions
+- **Malformed file handling** tests
+- **Performance testing** for large files
+- **Unicode and encoding** tests
+
+### 4. Code Quality Tools
+- **Black** for code formatting
+- **isort** for import sorting
+- **flake8** for style checking
+- **pylint** for code quality
+- **mypy** for type checking
+- **bandit** for security
+- **pydocstyle** for documentation
+- **safety** for dependency security
+
+### 5. CI/CD Integration
+- **Pre-commit hooks** for local quality checks
+- **GitHub Actions** for automated testing
+- **Comprehensive test coverage** reporting
+- **Security vulnerability** scanning
+
 ## Development
 
 ```bash
-# Run tests
-python run_all_tests.py
+# Run comprehensive quality checks
+python scripts/lint_and_format.py --verbose
+
+# Run tests with coverage
+pytest --cov=c_to_plantuml --cov-report=html
 
 # Install dev dependencies
 pip install -r requirements-dev.txt
+
+# Setup pre-commit hooks
+pre-commit install
 
 # Test PNG generation
 ./test_picgen.sh

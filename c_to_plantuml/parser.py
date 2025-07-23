@@ -24,6 +24,12 @@ from .parser_tokenizer import (
     extract_token_range,
 )
 from .preprocessor import PreprocessorManager
+from .exceptions import (
+    ParserError,
+    ErrorCode,
+    create_error_context,
+    get_global_error_handler,
+)
 
 
 class CParser:
@@ -43,10 +49,24 @@ class CParser:
         project_root = Path(project_root).resolve()
 
         if not project_root.exists():
-            raise ValueError(f"Project root not found: {project_root}")
+            raise ParserError(
+                message=f"Project root not found: {project_root}",
+                error_code=ErrorCode.PARSER_FILE_NOT_FOUND,
+                context=create_error_context(
+                    project_root=str(project_root),
+                    function_name="parse_project"
+                )
+            )
 
         if not project_root.is_dir():
-            raise ValueError(f"Project root must be a directory: {project_root}")
+            raise ParserError(
+                message=f"Project root must be a directory: {project_root}",
+                error_code=ErrorCode.PARSER_FILE_NOT_FOUND,
+                context=create_error_context(
+                    project_root=str(project_root),
+                    function_name="parse_project"
+                )
+            )
 
         # Clear the failed includes cache for this new project
         cache_size_before = len(self._failed_includes_cache)
@@ -83,8 +103,30 @@ class CParser:
                 self.logger.debug(f"Successfully parsed: {relative_path}")
 
             except Exception as e:
-                self.logger.warning(f"Failed to parse {file_path}: {e}")
-                failed_files.append(str(file_path))
+                error_context = create_error_context(
+                    file_path=str(file_path),
+                    relative_path=relative_path,
+                    function_name="parse_project"
+                )
+                
+                if isinstance(e, ParserError):
+                    # Re-raise parser errors with additional context
+                    raise ParserError(
+                        message=f"Failed to parse file: {e.message}",
+                        error_code=e.error_code,
+                        file_path=file_path,
+                        context=error_context,
+                        original_exception=e
+                    )
+                else:
+                    # Wrap other exceptions
+                    raise ParserError(
+                        message=f"Failed to parse {file_path}: {str(e)}",
+                        error_code=ErrorCode.PARSER_SYNTAX_ERROR,
+                        file_path=file_path,
+                        context=error_context,
+                        original_exception=e
+                    )
 
         if failed_files:
             error_msg = (
@@ -92,7 +134,14 @@ class CParser:
                 "Stopping model processing."
             )
             self.logger.error(error_msg)
-            raise RuntimeError(error_msg)
+            raise ParserError(
+                message=error_msg,
+                error_code=ErrorCode.PARSER_SYNTAX_ERROR,
+                context=create_error_context(
+                    failed_files=failed_files,
+                    function_name="parse_project"
+                )
+            )
 
         model = ProjectModel(
             project_name=project_root.name,
@@ -121,12 +170,48 @@ class CParser:
         """Parse a single C/C++ file and return a file model using tokenization"""
         self.logger.debug(f"Parsing file: {file_path}")
 
+        if not file_path.exists():
+            raise ParserError(
+                message=f"File not found: {file_path}",
+                error_code=ErrorCode.PARSER_FILE_NOT_FOUND,
+                file_path=file_path,
+                context=create_error_context(
+                    relative_path=relative_path,
+                    project_root=project_root,
+                    function_name="parse_file"
+                )
+            )
+
         # Detect encoding
         encoding = self._detect_encoding(file_path)
 
         # Read file content
-        with open(file_path, "r", encoding=encoding) as f:
-            content = f.read()
+        try:
+            with open(file_path, "r", encoding=encoding) as f:
+                content = f.read()
+        except UnicodeDecodeError as e:
+            raise ParserError(
+                message=f"Failed to decode file {file_path} with encoding {encoding}",
+                error_code=ErrorCode.PARSER_INVALID_ENCODING,
+                file_path=file_path,
+                context=create_error_context(
+                    encoding=encoding,
+                    relative_path=relative_path,
+                    function_name="parse_file"
+                ),
+                original_exception=e
+            )
+        except Exception as e:
+            raise ParserError(
+                message=f"Failed to read file {file_path}",
+                error_code=ErrorCode.SYSTEM_IO_ERROR,
+                file_path=file_path,
+                context=create_error_context(
+                    relative_path=relative_path,
+                    function_name="parse_file"
+                ),
+                original_exception=e
+            )
 
         # Tokenize the content
         tokens = self.tokenizer.tokenize(content)
