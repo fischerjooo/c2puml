@@ -106,8 +106,8 @@
           "name": "NestedInfo_t",
           "tag_name": "NestedInfo_tag",
           "uses": [
-            "log_level_t",
-            "id_t"
+            "id_t",
+            "log_level_t"
           ]
         }
       },
@@ -1530,10 +1530,10 @@
           "name": "MyComplex",
           "tag_name": "MyComplexStruct_tag",
           "uses": [
-            "MyCallback",
             "MyString",
             "MyLen",
-            "log_level_t"
+            "log_level_t",
+            "MyCallback"
           ]
         },
         "NamedStruct_t": {
