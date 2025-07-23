@@ -979,10 +979,42 @@ def find_struct_fields(tokens: List[Token], struct_start: int, struct_end: int) 
             if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
                 field_tokens.append(tokens[pos])
             pos += 1
+        
         # Parse field from collected tokens
         if len(field_tokens) >= 2:
+            # Check if this is a nested struct field
+            if (len(field_tokens) >= 3 and 
+                field_tokens[0].type == TokenType.STRUCT and
+                field_tokens[1].type == TokenType.LBRACE):
+                # This is a nested anonymous struct
+                # Find the struct name (last token before semicolon)
+                field_name = field_tokens[-1].value
+                # Create a simplified type representation for nested struct
+                field_type = "struct { ... }"
+                if (field_name and field_name.strip() and 
+                    field_name not in ['[', ']', ';', '}']):
+                    stripped_name = field_name.strip()
+                    if stripped_name:
+                        fields.append((stripped_name, field_type))
+                        # Skip parsing the nested struct's fields as separate fields
+                        continue
+            # Check if this is a nested struct field with more complex structure
+            elif (len(field_tokens) >= 4 and 
+                  field_tokens[0].type == TokenType.STRUCT and
+                  field_tokens[1].type == TokenType.LBRACE and
+                  field_tokens[-1].type == TokenType.IDENTIFIER):
+                # This is a nested anonymous struct with a name
+                field_name = field_tokens[-1].value
+                field_type = "struct { ... }"
+                if (field_name and field_name.strip() and 
+                    field_name not in ['[', ']', ';', '}']):
+                    stripped_name = field_name.strip()
+                    if stripped_name:
+                        fields.append((stripped_name, field_type))
+                        # Skip parsing the nested struct's fields as separate fields
+                        continue
             # Array field: type name [ size ]
-            if (len(field_tokens) >= 4 and
+            elif (len(field_tokens) >= 4 and
                 field_tokens[-3].type == TokenType.LBRACKET and
                 field_tokens[-1].type == TokenType.RBRACKET):
                 field_name = field_tokens[-4].value

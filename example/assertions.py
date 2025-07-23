@@ -1386,6 +1386,23 @@ class PUMLValidator:
         if re.search(r'\\ \n } \n \( x \)', content):
             issues_found.append("Corrupted macro content with broken syntax")
         
+        # Check for corrupted global variables
+        if re.search(r'    \\+ char name$', content, re.MULTILINE):
+            issues_found.append("Corrupted global variable: 'char name' (should be struct field)")
+            print(f"      DEBUG: Found corrupted global 'char name'")
+        
+        if re.search(r'    \\+ } processor_t$', content, re.MULTILINE):
+            issues_found.append("Corrupted global variable: '} processor_t' (should be struct field)")
+            print("      DEBUG: Found corrupted global '} processor_t'")
+        
+        # Check for malformed struct fields
+        if re.search(r'    \\+ struct \\{ \\\\n char\\[32\\] name', content):
+            issues_found.append("Malformed nested struct field in complex_handler_t")
+        
+        # Check for missing proper struct field formatting
+        if re.search(r'    \\+ char\\[32\\] name$', content, re.MULTILINE):
+            issues_found.append("Missing proper struct field formatting for nested struct")
+        
         # Check for missing typedefs
         missing_typedefs = [
             'processor_t',
