@@ -232,9 +232,9 @@ class PUMLValidator:
                     "void test_handler_table()",
                     "void test_processor_job_processing()",
                     "void run_complex_tests()",
-                    "static Std_ReturnType rba_ProcessorAdapter_ProcessJobLite(const Process_JobType * job_pst)",
-                    "static Std_ReturnType rba_ProcessorService_ProcessJobLite(const Process_JobType * job_pst)",
-                    "static Std_ReturnType rba_ProcessorHardware_ProcessJobLite(const Process_JobType * job_pst)"
+                            "static Std_ReturnType rba_ProcessorAdapter_Process(const Process_T * job_pst)",
+        "static Std_ReturnType rba_ProcessorService_Process(const Process_T * job_pst)",
+        "static Std_ReturnType rba_ProcessorHardware_Process(const Process_T * job_pst)"
                 ],
                 "typedefs": []  # No typedefs in C files
             },
@@ -275,10 +275,10 @@ class PUMLValidator:
                     "typedef void (*debug_callback_t)(const char* message, int level)",
                     "typedef void (*release_callback_t)(const char* message)",
                     "typedef enum processor_module_enum_t",
-                    "typedef struct Process_JobType",
+                    "typedef struct Process_T",
                     "typedef int Std_ReturnType",
-                    "typedef Std_ReturnType (*Process_Cfg_ProcessJobLite_fct)(const Process_JobType *job_pst)",
-                    "typedef Process_Cfg_ProcessJobLite_fct (*const Process_Cfg_ProcessJobLite_acpfct[PROCESSOR_CFG_MODULE_COUNT])(const Process_JobType *job_pst)"
+                            "typedef Std_ReturnType (*Process_Cfg_Process_fct)(const Process_T *job_pst)",
+        "typedef Process_Cfg_Process_fct Process_Cfg_Process_acpfct_t[PROCESSOR_CFG_MODULE_COUNT]"
                 ],
                 "functions": [
                     "int process_with_callbacks(int data[], int size, math_operation_t operations[], int op_count, void (*pre_process)(int*, int), void (*post_process)(int*, int))",
@@ -288,7 +288,7 @@ class PUMLValidator:
                     "complex_handler_t* create_complex_handler(const char* name, int (*validate_func)(const char*), void* (*alloc_func)(size_t), void (*free_func)(void*))",
                     "void test_processor_job_processing(void)",
                     "void test_processor_utility_macros(void)",
-                    "extern Std_ReturnType (*const Process_Cfg_ProcessJobLite_acpfct[PROCESSOR_CFG_MODULE_COUNT])(const Process_JobType *job_pst)"
+                    "Process_Cfg_Process_acpfct_t Process_Cfg_Process_acpfct"
                 ],
                 "globals": []
             },
@@ -894,10 +894,10 @@ class PUMLValidator:
             assert 'TYPEDEF_DEBUG_CALLBACK_T' in content, "Missing TYPEDEF_DEBUG_CALLBACK_T class"
             assert 'TYPEDEF_RELEASE_CALLBACK_T' in content, "Missing TYPEDEF_RELEASE_CALLBACK_T class"
             assert 'TYPEDEF_PROCESSOR_MODULE_ENUM_T' in content, "Missing TYPEDEF_PROCESSOR_MODULE_ENUM_T class"
-            assert 'TYPEDEF_PROCESS_JOBTYPE' in content, "Missing TYPEDEF_PROCESS_JOBTYPE class"
+            assert 'TYPEDEF_PROCESS_T' in content, "Missing TYPEDEF_PROCESS_T class"
             assert 'TYPEDEF_STD_RETURNTYPE' in content, "Missing TYPEDEF_STD_RETURNTYPE class"
-            assert 'TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT' in content, "Missing TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT class"
-            assert 'TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT' in content, "Missing TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT class"
+                    assert 'TYPEDEF_PROCESS_CFG_PROCESS_FCT' in content, "Missing TYPEDEF_PROCESS_CFG_PROCESS_FCT class"
+        assert 'TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T' in content, "Missing TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T class"
             assert 'TYPEDEF_UINT8' in content, "Missing TYPEDEF_UINT8 class"
             assert 'TYPEDEF_UINT16' in content, "Missing TYPEDEF_UINT16 class"
             assert 'TYPEDEF_UINT32' in content, "Missing TYPEDEF_UINT32 class"
@@ -927,9 +927,9 @@ class PUMLValidator:
             assert 'TYPEDEF_DATA_PROCESSOR_ARRAY_T ..> TYPEDEF_DATA_PROCESSOR_T : <<uses>>' in content, "Missing data_processor_array_t uses data_processor_t relationship"
             assert 'TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>' in content, "Missing data_processor_t uses data_item_t relationship"
             assert 'TYPEDEF_HANDLER_TABLE_T ..> TYPEDEF_HANDLER_ENTRY_T : <<uses>>' in content, "Missing handler_table_t uses handler_entry_t relationship"
-            assert 'TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT ..> TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT : <<uses>>' in content, "Missing Process_Cfg_ProcessJobLite_acpfct uses Process_Cfg_ProcessJobLite_fct relationship"
-            assert 'TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_PROCESS_JOBTYPE : <<uses>>' in content, "Missing Process_Cfg_ProcessJobLite_fct uses Process_JobType relationship"
-            assert 'TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>' in content, "Missing Process_Cfg_ProcessJobLite_fct uses Std_ReturnType relationship"
+                    assert 'TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T ..> TYPEDEF_PROCESS_CFG_PROCESS_FCT : <<uses>>' in content, "Missing Process_Cfg_Process_acpfct_t uses Process_Cfg_Process_fct relationship"
+        assert 'TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_PROCESS_T : <<uses>>' in content, "Missing Process_Cfg_Process_fct uses Process_T relationship"
+        assert 'TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>' in content, "Missing Process_Cfg_Process_fct uses Std_ReturnType relationship"
             
             # Should have specific enum values
             assert 'OP_ADD' in content, "Missing OP_ADD enum value"
