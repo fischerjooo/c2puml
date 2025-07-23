@@ -246,7 +246,7 @@
                 "label": "# ⚠️ Git Reset & Pull",
                 "type": "shell",
                 "command": "cmd",
-                "args": ["/c", "cd /d ${workspaceFolder} && echo WARNING: This will reset all local changes and pull from remote! && echo. && echo Proceeding with git reset --hard... && git reset --hard && echo Pulling from remote... && git pull && echo Done! && echo. && pause"],
+                "args": ["/c", "cd /d ${workspaceFolder} && echo WARNING: This will reset all local changes and pull from remote! && echo. && echo Proceeding with git reset --hard... && git reset --hard && echo Pulling from remote... && git pull && echo Done!"],
                 "group": "build",
                 "presentation": {
                     "echo": true,
