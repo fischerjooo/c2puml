@@ -58,6 +58,34 @@
             "justMyCode": false
         },
         {
+            "name": "Debug with Custom Config",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/debug.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+                "PYTHONHOME": "${env:PYTHONHOME}"
+            },
+            "args": ["--config", "${input:configPath}"],
+            "justMyCode": false
+        },
+        {
+            "name": "Debug Workflow with Custom Config",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/debug.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+                "PYTHONHOME": "${env:PYTHONHOME}"
+            },
+            "args": ["${input:workflow}", "--config", "${input:configPath}"],
+            "justMyCode": false
+        },
+        {
             "name": "Debug Tests",
             "type": "python",
             "request": "launch",
@@ -92,48 +120,6 @@
                 "--tb=long"
             ],
             "justMyCode": false
-        },
-        {
-            "name": "Debug Example",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/debug.py",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}",
-                "PYTHONHOME": "${env:PYTHONHOME}"
-            },
-            "args": ["--config", "./example/config.json"],
-            "justMyCode": false
-        },
-        {
-            "name": "Debug Custom Config",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/debug.py",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}",
-                "PYTHONHOME": "${env:PYTHONHOME}"
-            },
-            "args": ["--config", "${input:configPath}"],
-            "justMyCode": false
-        },
-        {
-            "name": "Debug Parse with Custom Config",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/debug.py",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}",
-                "PYTHONHOME": "${env:PYTHONHOME}"
-            },
-            "args": ["parse", "--config", "${input:configPath}"],
-            "justMyCode": false
         }
     ],
     "inputs": [
@@ -142,6 +128,13 @@
             "type": "promptString",
             "description": "Enter the path to your config file",
             "default": "./example/config.json"
+        },
+        {
+            "id": "workflow",
+            "type": "pickString",
+            "description": "Select the workflow to run",
+            "options": ["parse", "transform", "generate"],
+            "default": "parse"
         }
     ]
 }
