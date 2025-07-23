@@ -19,6 +19,7 @@ from .parser_tokenizer import (
     CTokenizer, StructureFinder, TokenType,
     find_struct_fields, find_enum_values, extract_token_range
 )
+from .preprocessor import PreprocessorManager
 
 
 class CParser:
@@ -27,6 +28,7 @@ class CParser:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.tokenizer = CTokenizer()
+        self.preprocessor = PreprocessorManager()
         # Cache for failed include searches to avoid repeated lookups
         self._failed_includes_cache = set()
 
@@ -116,16 +118,21 @@ class CParser:
         tokens = self.tokenizer.tokenize(content)
         self.logger.debug(f"Tokenized file into {len(tokens)} tokens")
 
+        # Process preprocessor directives
+        self.preprocessor.add_defines_from_content(tokens)
+        processed_tokens = self.preprocessor.process_file(tokens)
+        self.logger.debug(f"Preprocessor processed {len(tokens)} tokens -> {len(processed_tokens)} tokens")
+
         # Filter out whitespace and comments for structure finding
-        filtered_tokens = self.tokenizer.filter_tokens(tokens)
+        filtered_tokens = self.tokenizer.filter_tokens(processed_tokens)
         structure_finder = StructureFinder(filtered_tokens)
 
         # Parse different structures using tokenizer
-        structs = self._parse_structs_with_tokenizer(tokens, structure_finder)
-        enums = self._parse_enums_with_tokenizer(tokens, structure_finder)
-        unions = self._parse_unions_with_tokenizer(tokens, structure_finder)
-        functions = self._parse_functions_with_tokenizer(tokens, structure_finder)
-        aliases = self._parse_aliases_with_tokenizer(tokens)
+        structs = self._parse_structs_with_tokenizer(processed_tokens, structure_finder)
+        enums = self._parse_enums_with_tokenizer(processed_tokens, structure_finder)
+        unions = self._parse_unions_with_tokenizer(processed_tokens, structure_finder)
+        functions = self._parse_functions_with_tokenizer(processed_tokens, structure_finder)
+        aliases = self._parse_aliases_with_tokenizer(processed_tokens)
         
         # Note: We'll update "uses" fields later when we have the full project model
         # For now, just create the structures with empty uses
@@ -143,9 +150,9 @@ class CParser:
             enums=enums,
             unions=unions,
             functions=functions,
-            globals=self._parse_globals_with_tokenizer(tokens),
-            includes=self._parse_includes_with_tokenizer(tokens),
-            macros=self._parse_macros_with_tokenizer(tokens),
+            globals=self._parse_globals_with_tokenizer(processed_tokens),
+            includes=self._parse_includes_with_tokenizer(processed_tokens),
+            macros=self._parse_macros_with_tokenizer(processed_tokens),
             aliases=aliases,
             # typedef_relations removed - tag names are now in struct/enum/union
         )
@@ -962,6 +969,7 @@ class CParser:
 
     def _skip_preprocessor_directives(self, tokens, start_pos):
         """Skip preprocessor directives but keep their content for parsing"""
+        # This method is deprecated - use the PreprocessorManager instead
         i = start_pos
         while i < len(tokens) and tokens[i].type == TokenType.PREPROCESSOR:
             # Skip the preprocessor directive itself
