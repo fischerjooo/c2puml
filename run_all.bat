@@ -26,10 +26,15 @@ echo.
 REM Step 3: Generate PNG images
 echo 📋 Step 3: Generating PNG images...
 echo ----------------------------------------
-REM Use PlantUML JAR path from VS Code configuration
-set "PLANTUML_JAR=%~1"
-echo 📦 Using PlantUML JAR from VS Code config: !PLANTUML_JAR!
-call picgen.bat "!PLANTUML_JAR!"
+REM Use PlantUML JAR path from VS Code configuration (optional)
+if not "%~1"=="" (
+    set "PLANTUML_JAR=%~1"
+    echo 📦 Using PlantUML JAR from VS Code config: !PLANTUML_JAR!
+    call picgen.bat "!PLANTUML_JAR!"
+) else (
+    echo 📦 No PlantUML JAR path provided, using picgen.bat default behavior
+    call picgen.bat
+)
 echo ✅ PNG generation completed successfully!
 
 echo.
