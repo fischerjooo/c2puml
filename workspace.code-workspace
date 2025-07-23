@@ -54,8 +54,13 @@
         "plantuml.render": "PlantUMLServer",
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
-            "source.organizeImports": true
+            "source.organizeImports": true,
+            "source.fixAll": true
         },
+        "python.linting.lintOnSave": true,
+        "python.formatting.formatOnSave": true,
+        "isort.args": ["--profile", "black"],
+        "black-formatter.args": ["--line-length", "100"],
         "files.autoSave": "afterDelay",
         "files.autoSaveDelay": 1000,
         "files.eol": "\r\n",
