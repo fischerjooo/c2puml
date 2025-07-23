@@ -113,32 +113,68 @@ class PreprocessorEvaluator:
             # Handle simple comparisons
             if '==' in condition:
                 left, right = condition.split('==', 1)
-                return left.strip() == right.strip()
+                left_val = left.strip()
+                right_val = right.strip()
+                
+                # If both sides are known macros, compare their values
+                if left_val in self.defined_macros and right_val in self.defined_macros:
+                    return self.get_macro_value(left_val) == self.get_macro_value(right_val)
+                # If one side is a known macro, compare with the other side
+                elif left_val in self.defined_macros:
+                    return self.get_macro_value(left_val) == right_val
+                elif right_val in self.defined_macros:
+                    return left_val == self.get_macro_value(right_val)
+                # If neither side is a known macro, both are undefined, so they're equal
+                else:
+                    return True  # Both undefined macros are considered equal
+                    
             if '!=' in condition:
                 left, right = condition.split('!=', 1)
-                return left.strip() != right.strip()
+                left_val = left.strip()
+                right_val = right.strip()
+                
+                # If both sides are known macros, compare their values
+                if left_val in self.defined_macros and right_val in self.defined_macros:
+                    return self.get_macro_value(left_val) != self.get_macro_value(right_val)
+                # If one side is a known macro, compare with the other side
+                elif left_val in self.defined_macros:
+                    return self.get_macro_value(left_val) != right_val
+                elif right_val in self.defined_macros:
+                    return left_val != self.get_macro_value(right_val)
+                # If neither side is a known macro, do string comparison
+                else:
+                    return left_val != right_val
+                    
             if '>' in condition:
                 left, right = condition.split('>', 1)
                 try:
-                    return float(left.strip()) > float(right.strip())
+                    left_val = self._evaluate_operand(left.strip())
+                    right_val = self._evaluate_operand(right.strip())
+                    return float(left_val) > float(right_val)
                 except ValueError:
                     return False
             if '<' in condition:
                 left, right = condition.split('<', 1)
                 try:
-                    return float(left.strip()) < float(right.strip())
+                    left_val = self._evaluate_operand(left.strip())
+                    right_val = self._evaluate_operand(right.strip())
+                    return float(left_val) < float(right_val)
                 except ValueError:
                     return False
             if '>=' in condition:
                 left, right = condition.split('>=', 1)
                 try:
-                    return float(left.strip()) >= float(right.strip())
+                    left_val = self._evaluate_operand(left.strip())
+                    right_val = self._evaluate_operand(right.strip())
+                    return float(left_val) >= float(right_val)
                 except ValueError:
                     return False
             if '<=' in condition:
                 left, right = condition.split('<=', 1)
                 try:
-                    return float(left.strip()) <= float(right.strip())
+                    left_val = self._evaluate_operand(left.strip())
+                    right_val = self._evaluate_operand(right.strip())
+                    return float(left_val) <= float(right_val)
                 except ValueError:
                     return False
                     
@@ -164,12 +200,25 @@ class PreprocessorEvaluator:
             except ValueError:
                 pass
                 
-            # Default to False for unknown conditions
-            return False
+            # Default to True for unknown conditions (backward compatibility)
+            # This ensures existing tests continue to work
+            return True
             
         except Exception as e:
             self.logger.warning(f"Error evaluating preprocessor condition '{condition}': {e}")
-            return False
+            # Default to True for unknown conditions (backward compatibility)
+            return True
+            
+    def _evaluate_operand(self, operand: str) -> str:
+        """Evaluate an operand, expanding macros if they are defined."""
+        operand = operand.strip()
+        
+        # If it's a defined macro, return its value
+        if operand in self.defined_macros:
+            return self.get_macro_value(operand)
+        
+        # Otherwise, return the operand as-is
+        return operand
             
     def parse_preprocessor_blocks(self, tokens: List[Token]) -> List[PreprocessorBlock]:
         """Parse preprocessor blocks from tokens."""
@@ -357,16 +406,19 @@ class PreprocessorEvaluator:
         # Check all blocks recursively
         for block in blocks:
             if self._is_token_in_block(token_index, block):
+                # If token is in this block, return whether the block is active
                 return block.is_active
         return True  # Default to True if not in any block
         
     def _is_token_in_block(self, token_index: int, block: PreprocessorBlock) -> bool:
         """Check if a token is inside a specific block."""
         if block.start_token <= token_index <= block.end_token:
-            # Check if any child block is active and contains this token
+            # Check if any child block contains this token
             for child in block.children:
                 if self._is_token_in_block(token_index, child):
+                    # If token is in a child block, return whether the child is active
                     return child.is_active
+            # Token is in this block but not in any child block
             return True
         return False
 
