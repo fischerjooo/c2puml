@@ -28,6 +28,12 @@ class Field:
             raise ValueError("Field name must be a string")
         if not self.type or not isinstance(self.type, str):
             raise ValueError("Field type must be a non-empty string")
+        
+        # Additional validation: ensure name and type are not just whitespace
+        if not self.name.strip():
+            raise ValueError("Field name cannot be empty or whitespace")
+        if not self.type.strip():
+            raise ValueError("Field type cannot be empty or whitespace")
 
 
 # TypedefRelation class removed - tag names moved to struct/enum/union
