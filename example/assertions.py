@@ -15,63 +15,21 @@ class PUMLValidator:
     """Validates generated PUML files against expected content."""
     
     def _find_output_directory(self) -> str:
-        """
-        Find the correct output directory path regardless of how the script is called.
-        
-        The script can be called from:
-        - /workspace (run_all.sh)
-        - /workspace/example (run_example.sh)
-        - Any other directory
-        
-        Returns the path to the output directory containing .puml files.
-        """
-            
-        current_dir = Path.cwd()
-        
-        # Try different possible output directory locations
-        possible_paths = [
-            current_dir / "output",                    # Called from /workspace
-            current_dir / ".." / "output",             # Called from /workspace/example
-            current_dir / ".." / ".." / "output",      # Called from deeper subdirectory
-            current_dir / "example" / "output",        # Called from /workspace with example subdir
-        ]
-        
-        for path in possible_paths:
-            if path.exists() and path.is_dir():
-                # Check if it contains .puml files
-                if list(path.glob("*.puml")):
-                    return str(path)
-        
-        # If no output directory found, return the most likely default
-        return str(current_dir / "output")
+        """Return the output directory path."""
+        # Check if we're in the example directory
+        if Path.cwd().name == "example":
+            return "../output"
+        return "output"
     
     def _find_source_directory(self) -> str:
-        """
-        Find the correct source directory path regardless of how the script is called.
-        
-        Returns the path to the source directory containing .c and .h files.
-        """
-            
-        current_dir = Path.cwd()
-        
-        # Try different possible source directory locations
-        possible_paths = [
-            current_dir / "example" / "source",        # Called from /workspace
-            current_dir / "source",                    # Called from /workspace/example
-            current_dir / ".." / "example" / "source", # Called from deeper subdirectory
-        ]
-        
-        for path in possible_paths:
-            if path.exists() and path.is_dir():
-                # Check if it contains .c and .h files
-                if list(path.glob("*.c")) and list(path.glob("*.h")):
-                    return str(path)
-        
-        # If no source directory found, return the most likely default
-        return str(current_dir / "example" / "source")
+        """Return the source directory path."""
+        # Check if we're in the example directory
+        if Path.cwd().name == "example":
+            return "source"
+        return "example/source"
     
     def __init__(self):
-        # Auto-detect paths based on current working directory
+        # Set paths
         self.output_dir = Path(self._find_output_directory())
         self.source_dir = Path(self._find_source_directory())
         
