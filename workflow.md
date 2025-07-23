@@ -7,40 +7,63 @@
 - Use modern Python packaging with pyproject.toml
 
 ## Overview
-Simple testing workflow for the C to PlantUML Converter using two main scripts.
+Comprehensive testing workflow for the C to PlantUML Converter using three main scripts with distinct purposes.
 
 ## Testing Workflow
 
-### Running Tests
+### Regression Testing (Full System Test)
 ```bash
-# Run all tests
+# Run complete regression testing - validates entire system
+./run_all.sh
+```
+**Purpose**: Full system validation including tests, examples, and image generation. Use for:
+- Final validation before releases
+- Complete system regression testing
+- End-to-end workflow verification
+
+### Debugging and Development Testing
+```bash
+# Run debugging-focused tests with detailed output
 ./run_all_tests.sh
 ```
+**Purpose**: Focused testing for debugging and development. Use for:
+- Debugging specific issues
+- Development iteration
+- Unit and integration test validation
+- Detailed error reporting
 
-### Running Examples
+### Spiking and Integration Testing
 ```bash
-# Run example workflow
+# Run example workflow for spiking and integration testing
 ./run_example.sh
 ```
+**Purpose**: Spiking new features and integration testing. Use for:
+- Testing new C code preprocessing features
+- Integration testing with new source files
+- Validating preprocessing directives (#if, #elif, #else, #endif)
+- Testing edge cases in typedefs and macros
 
 ### Standard Workflow (Manual Steps)
 ```bash
-# 0. Run all tests and check for errors
+# 0. For debugging: Run focused tests
 ./run_all_tests.sh
 
-# 1. Run example workflow (includes cleaning and generation)
+# 1. For spiking: Run example workflow (includes cleaning and generation)
 ./run_example.sh
 
-# 2. Generate images from PlantUML files (optional)
+# 2. For regression: Run complete system test
+./run_all.sh
+
+# 3. Generate images from PlantUML files (optional)
 ./picgen.sh
 
-# 3. Review generated output (optional)
+# 4. Review generated output (optional)
 # Examine the generated PlantUML diagrams and images
 
-# 4. Update specification.md if needed
+# 5. Update specification.md if needed
 # Always review and update specification.md with any new findings or changes
 
-# 5. Development or extend tests for new feature or feature change
+# 6. Development or extend tests for new feature or feature change
 # Add new tests or modify existing tests based on feature development
 ```
 
@@ -48,6 +71,7 @@ Simple testing workflow for the C to PlantUML Converter using two main scripts.
 - **Unit Tests** (`tests/unit/`): Test individual components
 - **Feature Tests** (`tests/feature/`): Test complete workflows
 - **Integration Tests** (`tests/integration/`): Test comprehensive scenarios
+- **Preprocessing Tests** (`example/source/preprocessed.c`): Test C preprocessing directives
 
 ## Test Coverage
 - C/C++ parsing functionality
@@ -57,12 +81,16 @@ Simple testing workflow for the C to PlantUML Converter using two main scripts.
 - Include header processing
 - Cross-platform encoding support
 - Error handling and edge cases
+- **C preprocessing directives** (#if, #elif, #else, #endif)
+- **Preprocessing in typedefs and macros**
+- **Edge cases in conditional compilation**
 
 ## Output
 - **Test Results**: Pass/fail status with detailed reporting
 - **Example Output**: Generated PlantUML diagrams in `./output`
 - **Images**: JPEG images generated from PlantUML files using `picgen.sh`
 - **Logs**: Processing logs and error reports
+- **Preprocessing Validation**: Detection of preprocessing directive issues
 
 ## Image Generation
 The `picgen.sh` script converts all `.puml` files in the output directory to JPEG images:
@@ -70,3 +98,10 @@ The `picgen.sh` script converts all `.puml` files in the output directory to JPE
 - Optionally uses ImageMagick for PNG to JPEG conversion (`sudo apt-get install imagemagick`)
 - Automatically cleans up temporary PNG files
 - Generates high-quality JPEG images for documentation and sharing
+
+## Preprocessing Testing
+The workflow includes testing for C preprocessing directives:
+- **preprocessed.c**: Contains edge cases and examples for preprocessing
+- **preprocessed.h**: Header file with preprocessing directives in typedefs
+- **Validation**: assertions.py includes checks for preprocessing directive processing
+- **Bug Detection**: Tests designed to detect preprocessing-related issues before fixes
