@@ -162,7 +162,13 @@ class CParser:
                     # Check if this struct has a typedef
                     tag_name = self._extract_tag_name_for_struct(tokens, struct_name)
                 
-                structs[struct_name] = Struct(struct_name, fields, tag_name=tag_name)
+                # Extract non-primitive types used by this struct
+                uses = []
+                for field in fields:
+                    field_uses = self._extract_non_primitive_types(field.type)
+                    uses.extend(field_uses)
+                
+                structs[struct_name] = Struct(struct_name, fields, tag_name=tag_name, uses=list(set(uses)))
                 self.logger.debug(f"Parsed struct: {struct_name} with {len(fields)} fields")
         
         return structs
@@ -244,7 +250,13 @@ class CParser:
                     # Check if this union has a typedef
                     tag_name = self._extract_tag_name_for_union(tokens, union_name)
                 
-                unions[union_name] = Union(union_name, fields, tag_name=tag_name)
+                # Extract non-primitive types used by this union
+                uses = []
+                for field in fields:
+                    field_uses = self._extract_non_primitive_types(field.type)
+                    uses.extend(field_uses)
+                
+                unions[union_name] = Union(union_name, fields, tag_name=tag_name, uses=list(set(uses)))
                 self.logger.debug(f"Parsed union: {union_name} with {len(fields)} fields")
         
         return unions
@@ -366,8 +378,10 @@ class CParser:
         
         return macros
 
-    def _parse_aliases_with_tokenizer(self, tokens) -> Dict[str, str]:
+    def _parse_aliases_with_tokenizer(self, tokens) -> Dict[str, "Alias"]:
         """Parse type aliases (primitive or derived typedefs) using tokenizer"""
+        from .models import Alias
+        
         aliases = {}
         
         i = 0
@@ -380,7 +394,14 @@ class CParser:
                     
                     # Only include if it's NOT a struct/enum/union typedef
                     if original_type not in ['struct', 'enum', 'union']:
-                        aliases[typedef_name] = original_type
+                        # Extract non-primitive types used by this alias
+                        uses = self._extract_non_primitive_types(original_type)
+                        
+                        aliases[typedef_name] = Alias(
+                            name=typedef_name,
+                            original_type=original_type,
+                            uses=uses
+                        )
                     
             i += 1
         
@@ -429,6 +450,34 @@ class CParser:
                         return self._extract_tag_name_from_typedef(tokens, i)
             i += 1
         return ""
+
+    def _extract_non_primitive_types(self, type_str: str) -> List[str]:
+        """Extract non-primitive type names from a type string"""
+        # Define primitive types
+        primitive_types = {
+            'void', 'char', 'short', 'int', 'long', 'float', 'double', 'signed', 'unsigned',
+            'const', 'volatile', 'static', 'extern', 'auto', 'register', 'inline', 'restrict',
+            'size_t', 'ptrdiff_t', 'int8_t', 'int16_t', 'int32_t', 'int64_t',
+            'uint8_t', 'uint16_t', 'uint32_t', 'uint64_t', 'intptr_t', 'uintptr_t',
+            'bool', 'true', 'false', 'NULL', 'nullptr'
+        }
+        
+        # Remove common C keywords and operators
+        import re
+        
+        # Split by common delimiters and operators
+        parts = re.split(r'[\[\]\(\)\{\}\s\*&,;]', type_str)
+        
+        # Extract potential type names
+        types = []
+        for part in parts:
+            part = part.strip()
+            if part and len(part) > 1 and part not in primitive_types:
+                # Check if it looks like a type name (starts with letter, contains letters/numbers/underscores)
+                if re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', part):
+                    types.append(part)
+        
+        return list(set(types))  # Remove duplicates
 
     def _find_c_files(self, project_root: Path, recursive: bool) -> List[Path]:
         """Find all C/C++ files in the project"""

@@ -459,6 +459,7 @@ class Transformer:
             Struct,
             Union,
             EnumValue,
+            Alias,
         )
 
         # Convert structs
@@ -467,7 +468,13 @@ class Transformer:
             fields = [
                 Field(f["name"], f["type"]) for f in struct_data.get("fields", [])
             ]
-            structs[name] = Struct(name, fields, struct_data.get("methods", []))
+            structs[name] = Struct(
+                name, 
+                fields, 
+                struct_data.get("methods", []),
+                struct_data.get("tag_name", ""),
+                struct_data.get("uses", [])
+            )
 
         # Convert enums
         enums = {}
@@ -484,7 +491,25 @@ class Transformer:
         unions = {}
         for name, union_data in data.get("unions", {}).items():
             fields = [Field(f["name"], f["type"]) for f in union_data.get("fields", [])]
-            unions[name] = Union(name, fields)
+            unions[name] = Union(
+                name, 
+                fields,
+                union_data.get("tag_name", ""),
+                union_data.get("uses", [])
+            )
+
+        # Convert aliases
+        aliases = {}
+        for name, alias_data in data.get("aliases", {}).items():
+            if isinstance(alias_data, dict):
+                aliases[name] = Alias(
+                    alias_data.get("name", name),
+                    alias_data.get("original_type", ""),
+                    alias_data.get("uses", [])
+                )
+            else:
+                # Handle legacy format where aliases was Dict[str, str]
+                aliases[name] = Alias(name, alias_data, [])
 
         # Convert functions
         functions = []
@@ -532,7 +557,7 @@ class Transformer:
             globals=globals_list,
             includes=data.get("includes", []),
             macros=data.get("macros", []),
-            aliases=data.get("aliases", {}),
+            aliases=aliases,
         )
 
     def _save_model(self, model: ProjectModel, output_file: str) -> None:

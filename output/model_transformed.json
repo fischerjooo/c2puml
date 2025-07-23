@@ -28,7 +28,12 @@
             }
           ],
           "methods": [],
-          "tag_name": ""
+          "tag_name": "NestedInfo_tag",
+          "uses": [
+            "log_level_t",
+            "id_t",
+            "MAX_LABEL_LEN"
+          ]
         },
         "ComplexExample_t": {
           "name": "ComplexExample_t",
@@ -50,7 +55,11 @@
             }
           ],
           "methods": [],
-          "tag_name": ""
+          "tag_name": "ComplexExample_tag",
+          "uses": [
+            "CE_Status_t",
+            "NestedInfo_t"
+          ]
         }
       },
       "enums": {
@@ -124,8 +133,16 @@
         "DEFAULT_BUFFER_SIZE"
       ],
       "aliases": {
-        "id_t": "uint32_t",
-        "status_t": "int32_t"
+        "id_t": {
+          "name": "id_t",
+          "original_type": "uint32_t",
+          "uses": []
+        },
+        "status_t": {
+          "name": "status_t",
+          "original_type": "int32_t",
+          "uses": []
+        }
       },
       "unions": {}
     },
@@ -210,7 +227,11 @@
             }
           ],
           "methods": [],
-          "tag_name": ""
+          "tag_name": "triangle_tag",
+          "uses": [
+            "MAX_LABEL_LEN",
+            "point_t"
+          ]
         }
       },
       "enums": {},
@@ -406,7 +427,16 @@
         "LOGGER_H"
       ],
       "aliases": {
-        "log_callback_t": "void ( * log_callback_t ) ( log_level_t level , const char * message )"
+        "log_callback_t": {
+          "name": "log_callback_t",
+          "original_type": "void ( * log_callback_t ) ( log_level_t level , const char * message )",
+          "uses": [
+            "log_level_t",
+            "message",
+            "level",
+            "log_callback_t"
+          ]
+        }
       },
       "unions": {}
     },
@@ -552,8 +582,18 @@
         "MATH_UTILS_H"
       ],
       "aliases": {
-        "real_t": "double",
-        "math_op_t": "int ( * math_op_t ) ( int , int )"
+        "real_t": {
+          "name": "real_t",
+          "original_type": "double",
+          "uses": []
+        },
+        "math_op_t": {
+          "name": "math_op_t",
+          "original_type": "int ( * math_op_t ) ( int , int )",
+          "uses": [
+            "math_op_t"
+          ]
+        }
       },
       "unions": {}
     },
@@ -735,7 +775,8 @@
             }
           ],
           "methods": [],
-          "tag_name": ""
+          "tag_name": "point_tag",
+          "uses": []
         }
       },
       "enums": {
@@ -964,7 +1005,11 @@
             }
           ],
           "methods": [],
-          "tag_name": ""
+          "tag_name": "MyBuffer_tag",
+          "uses": [
+            "MyLen",
+            "MyString"
+          ]
         },
         "MyComplex": {
           "name": "MyComplex",
@@ -991,7 +1036,13 @@
             }
           ],
           "methods": [],
-          "tag_name": ""
+          "tag_name": "MyComplexStruct_tag",
+          "uses": [
+            "MyCallback",
+            "MyLen",
+            "MyString",
+            "log_level_t"
+          ]
         },
         "NamedStruct_t": {
           "name": "NamedStruct_t",
@@ -1008,7 +1059,8 @@
             }
           ],
           "methods": [],
-          "tag_name": ""
+          "tag_name": "NamedStruct_tag",
+          "uses": []
         }
       },
       "enums": {
@@ -1057,12 +1109,45 @@
         "TYPEDEF_TEST_H"
       ],
       "aliases": {
-        "MyLen": "uint32_t",
-        "MyInt": "int32_t",
-        "MyString": "char *",
-        "MyCallback": "int ( * MyCallback ) ( MyBuffer * buffer )",
-        "MyComplexPtr": "MyComplex *",
-        "MyComplexArray": "MyComplexPtr MyComplexArray [ 10 ]"
+        "MyLen": {
+          "name": "MyLen",
+          "original_type": "uint32_t",
+          "uses": []
+        },
+        "MyInt": {
+          "name": "MyInt",
+          "original_type": "int32_t",
+          "uses": []
+        },
+        "MyString": {
+          "name": "MyString",
+          "original_type": "char *",
+          "uses": []
+        },
+        "MyCallback": {
+          "name": "MyCallback",
+          "original_type": "int ( * MyCallback ) ( MyBuffer * buffer )",
+          "uses": [
+            "MyCallback",
+            "buffer",
+            "MyBuffer"
+          ]
+        },
+        "MyComplexPtr": {
+          "name": "MyComplexPtr",
+          "original_type": "MyComplex *",
+          "uses": [
+            "MyComplex"
+          ]
+        },
+        "MyComplexArray": {
+          "name": "MyComplexArray",
+          "original_type": "MyComplexPtr MyComplexArray [ 10 ]",
+          "uses": [
+            "MyComplexArray",
+            "MyComplexPtr"
+          ]
+        }
       },
       "unions": {
         "Number_t": {
@@ -1079,7 +1164,8 @@
               "value": null
             }
           ],
-          "tag_name": ""
+          "tag_name": "Number_tag",
+          "uses": []
         },
         "NamedUnion_t": {
           "name": "NamedUnion_t",
@@ -1095,10 +1181,11 @@
               "value": null
             }
           ],
-          "tag_name": ""
+          "tag_name": "NamedUnion_tag",
+          "uses": []
         }
       }
     }
   },
-  "created_at": "2025-07-23T05:49:19.630687"
+  "created_at": "2025-07-23T06:04:28.589096"
 }

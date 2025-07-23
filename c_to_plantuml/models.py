@@ -77,6 +77,7 @@ class Struct:
     fields: List[Field] = field(default_factory=list)
     methods: List[Function] = field(default_factory=list)
     tag_name: str = ""  # Tag name for typedef structs
+    uses: List[str] = field(default_factory=list)  # Non-primitive types used by this struct
 
     def __post_init__(self):
         """Validate struct data after initialization"""
@@ -114,11 +115,28 @@ class Union:
     name: str
     fields: List[Field] = field(default_factory=list)
     tag_name: str = ""  # Tag name for typedef unions
+    uses: List[str] = field(default_factory=list)  # Non-primitive types used by this union
 
     def __post_init__(self):
         """Validate union data after initialization"""
         if not self.name or not isinstance(self.name, str):
             raise ValueError("Union name must be a non-empty string")
+
+
+@dataclass
+class Alias:
+    """Represents a type alias (typedef)"""
+
+    name: str
+    original_type: str
+    uses: List[str] = field(default_factory=list)  # Non-primitive types used by this alias
+
+    def __post_init__(self):
+        """Validate alias data after initialization"""
+        if not self.name or not isinstance(self.name, str):
+            raise ValueError("Alias name must be a non-empty string")
+        if not self.original_type or not isinstance(self.original_type, str):
+            raise ValueError("Original type must be a non-empty string")
 
 
 @dataclass
@@ -135,7 +153,7 @@ class FileModel:
     globals: List[Field] = field(default_factory=list)
     includes: Set[str] = field(default_factory=set)
     macros: List[str] = field(default_factory=list)
-    aliases: Dict[str, str] = field(default_factory=dict)
+    aliases: Dict[str, Alias] = field(default_factory=dict)
     unions: Dict[str, Union] = field(default_factory=dict)
 
     def __post_init__(self):
@@ -187,7 +205,11 @@ class FileModel:
                     for method in struct_data.get("methods", [])
                 ]
                 structs[name] = Struct(
-                    name=struct_data.get("name", name), fields=fields, methods=methods
+                    name=struct_data.get("name", name), 
+                    fields=fields, 
+                    methods=methods,
+                    tag_name=struct_data.get("tag_name", ""),
+                    uses=struct_data.get("uses", [])
                 )
             else:
                 structs[name] = struct_data
@@ -222,9 +244,32 @@ class FileModel:
                     Field(**field) if isinstance(field, dict) else field
                     for field in union_data.get("fields", [])
                 ]
-                unions[name] = Union(name=union_data.get("name", name), fields=fields)
+                unions[name] = Union(
+                    name=union_data.get("name", name), 
+                    fields=fields,
+                    tag_name=union_data.get("tag_name", ""),
+                    uses=union_data.get("uses", [])
+                )
             else:
                 unions[name] = union_data
+
+        # Convert aliases back to Alias objects
+        aliases_data = data.get("aliases", {})
+        aliases = {}
+        for name, alias_data in aliases_data.items():
+            if isinstance(alias_data, dict):
+                aliases[name] = Alias(
+                    name=alias_data.get("name", name),
+                    original_type=alias_data.get("original_type", ""),
+                    uses=alias_data.get("uses", [])
+                )
+            else:
+                # Handle legacy format where aliases was Dict[str, str]
+                aliases[name] = Alias(
+                    name=name,
+                    original_type=alias_data,
+                    uses=[]
+                )
 
         # Create new data dict with converted objects
         new_data = data.copy()
@@ -234,6 +279,7 @@ class FileModel:
         new_data["structs"] = structs
         new_data["enums"] = enums
         new_data["unions"] = unions
+        new_data["aliases"] = aliases
 
         return cls(**new_data)
 
