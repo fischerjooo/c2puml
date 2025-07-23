@@ -22,7 +22,8 @@ class PUMLValidator:
             "geometry.puml", 
             "logger.puml",
             "math_utils.puml",
-            "sample.puml"
+            "sample.puml",
+            "preprocessed.puml"
         ]
         
         # Expected source files with their content requirements
@@ -39,6 +40,30 @@ class PUMLValidator:
                     "int main(void)"
                 ],
                 "typedefs": []  # No typedefs in C files
+            },
+            "preprocessed.c": {
+                "includes": ["preprocessed.h", "stdio.h", "stdlib.h", "string.h"],
+                "globals": ["enabled_feature_t global_feature", "debug_struct_t global_debug", "int global_basic"],
+                "functions": [
+                    "int process_feature(enabled_feature_t* feature)",
+                    "void debug_feature(enabled_feature_t* feature)",
+                    "int process_basic(void)",
+                    "void complex_function(void)",
+                    "void test_preprocessing_edge_cases(void)",
+                    "void test_typedef_preprocessing(void)",
+                    "void test_function_pointers(void)",
+                    "int main(void)"
+                ],
+                "typedefs": [],  # No typedefs in C files
+                "preprocessing": [
+                    "#if FEATURE_ENABLED",
+                    "#if DEBUG_MODE",
+                    "#if MAX_SIZE > 50",
+                    "#if MIN_SIZE < 20",
+                    "#elif defined(DEBUG_MODE)",
+                    "#else",
+                    "#endif"
+                ]
             },
             "geometry.c": {
                 "includes": ["geometry.h", "string.h", "stdlib.h"],
@@ -176,6 +201,56 @@ class PUMLValidator:
                 ],
                 "functions": [],
                 "globals": []
+            },
+            "preprocessed.h": {
+                "includes": ["stdint.h", "stddef.h"],
+                "macros": ["#define PREPROCESSED_H", "#define FEATURE_ENABLED", "#define DEBUG_MODE", "#define MAX_SIZE", "#define MIN_SIZE"],
+                "typedefs": [
+                    "typedef struct enabled_feature_tag",
+                    "typedef struct disabled_feature_tag",
+                    "typedef struct debug_struct_tag",
+                    "typedef struct simple_debug_tag",
+                    "typedef struct release_struct_tag",
+                    "typedef enum status_tag",
+                    "typedef struct optimized_struct_tag",
+                    "typedef struct debug_optimized_tag",
+                    "typedef struct default_struct_tag",
+                    "typedef int (*feature_callback_t)(enabled_feature_t* feature)",
+                    "typedef int (*basic_callback_t)(void)",
+                    "typedef char large_buffer_t[MAX_SIZE]",
+                    "typedef char small_buffer_t[MIN_SIZE]",
+                    "typedef struct debug_enabled_tag",
+                    "typedef struct enabled_tag",
+                    "typedef struct disabled_tag",
+                    "typedef struct feature_struct_tag",
+                    "typedef struct debug_feature_tag",
+                    "typedef struct basic_struct_tag",
+                    "typedef union feature_union_tag",
+                    "typedef union basic_union_tag"
+                ],
+                "functions": [
+                    "int process_feature(enabled_feature_t* feature)",
+                    "void debug_feature(enabled_feature_t* feature)",
+                    "int process_basic(void)"
+                ],
+                "globals": [
+                    "extern enabled_feature_t global_feature",
+                    "extern debug_struct_t global_debug",
+                    "extern int global_basic"
+                ],
+                "preprocessing": [
+                    "#if FEATURE_ENABLED",
+                    "#if DEBUG_MODE",
+                    "#if MAX_SIZE > 50",
+                    "#if MIN_SIZE < 20",
+                    "#if defined(FEATURE_ENABLED) && !defined(DEBUG_MODE)",
+                    "#elif defined(DEBUG_MODE)",
+                    "#else",
+                    "#ifdef FEATURE_ENABLED",
+                    "#ifdef DEBUG_MODE",
+                    "#elif DEBUG_MODE",
+                    "#endif"
+                ]
             }
         }
         
@@ -310,6 +385,16 @@ class PUMLValidator:
             globals.append(match.strip())
         return globals
         
+    def extract_preprocessing_directives(self, content: str) -> List[str]:
+        """Extract preprocessing directives from source file content."""
+        directives = []
+        # Pattern for preprocessing directives
+        directive_pattern = r'#(?:if|elif|else|endif|ifdef|ifndef)\s*(?:[a-zA-Z_][a-zA-Z0-9_]*\s*(?:[><=!]=?\s*[a-zA-Z0-9_]+)?\s*(?:&&|\|\||defined\([^)]+\))?)?'
+        matches = re.findall(directive_pattern, content)
+        for match in matches:
+            directives.append(f"#{match.strip()}")
+        return directives
+        
     def validate_source_file(self, filename: str) -> None:
         """Validate a single source file against expected content."""
         print(f"\n📁 Validating source file: {filename}")
@@ -392,6 +477,20 @@ class PUMLValidator:
                     print(f"      ✅ {global_var}")
                 else:
                     print(f"      ❌ Missing: {global_var}")
+                    
+        # Validate preprocessing directives
+        if "preprocessing" in expected:
+            actual_directives = self.extract_preprocessing_directives(content)
+            expected_directives = expected["preprocessing"]
+            
+            print(f"    📋 Validating preprocessing directives ({len(actual_directives)} found):")
+            for directive in expected_directives:
+                # Check if any actual directive contains the expected pattern
+                found = any(directive in actual for actual in actual_directives)
+                if found:
+                    print(f"      ✅ {directive}")
+                else:
+                    print(f"      ❌ Missing: {directive}")
                     
         print(f"    ✅ Source file {filename} validation completed")
         
@@ -607,6 +706,9 @@ class PUMLValidator:
         # Check that PlantUML files are only generated for C files, not header files
         self._validate_only_c_files_have_puml_diagrams(filename)
         
+        # Check for preprocessing directive issues
+        self._validate_preprocessing_directives(content, filename)
+        
         if filename == "typedef_test.puml":
             # Should have specific typedef classes
             assert 'TYPEDEF_MYLEN' in content, "Missing TYPEDEF_MYLEN class"
@@ -683,6 +785,24 @@ class PUMLValidator:
             assert 'TYPEDEF_MATH_OP_T' in content, "Missing TYPEDEF_MATH_OP_T class"
             assert 'TYPEDEF_ID_T' in content, "Missing TYPEDEF_ID_T class"
             assert 'TYPEDEF_STATUS_T' in content, "Missing TYPEDEF_STATUS_T class"
+            
+        elif filename == "preprocessed.puml":
+            # preprocessed.puml should have preprocessing-related typedef classes
+            assert 'TYPEDEF_ENABLED_FEATURE_T' in content, "Missing TYPEDEF_ENABLED_FEATURE_T class"
+            assert 'TYPEDEF_STATUS_T' in content, "Missing TYPEDEF_STATUS_T enum class"
+            assert 'TYPEDEF_FEATURE_CALLBACK_T' in content, "Missing TYPEDEF_FEATURE_CALLBACK_T class"
+            assert 'TYPEDEF_LARGE_BUFFER_T' in content, "Missing TYPEDEF_LARGE_BUFFER_T class"
+            assert 'TYPEDEF_FEATURE_STRUCT_T' in content, "Missing TYPEDEF_FEATURE_STRUCT_T class"
+            assert 'TYPEDEF_FEATURE_UNION_T' in content, "Missing TYPEDEF_FEATURE_UNION_T class"
+            
+            # Should have enum values from preprocessing
+            assert 'STATUS_ENABLED' in content, "Missing STATUS_ENABLED enum value"
+            assert 'STATUS_DISABLED' in content, "Missing STATUS_DISABLED enum value"
+            assert 'STATUS_UNKNOWN' in content, "Missing STATUS_UNKNOWN enum value"
+            
+            # Should have preprocessing-related relationships
+            assert 'TYPEDEF_FEATURE_CALLBACK_T ..> TYPEDEF_ENABLED_FEATURE_T : <<uses>>' in content, "Missing feature_callback_t uses enabled_feature_t relationship"
+            assert 'TYPEDEF_FEATURE_STRUCT_T ..> TYPEDEF_ENABLED_FEATURE_T : <<uses>>' in content, "Missing feature_struct_t uses enabled_feature_t relationship"
             
         print(f"    ✅ Specific content valid")
     
@@ -819,6 +939,58 @@ class PUMLValidator:
         
         print("    ✅ Array formatting valid")
 
+    def _validate_preprocessing_directives(self, content: str, filename: str) -> None:
+        """Validate that preprocessing directives are properly processed and not left as raw text."""
+        print(f"    🔍 Validating preprocessing directives in {filename}...")
+        
+        # Check for raw preprocessing directives that should have been processed
+        raw_directives = [
+            '#if FEATURE_ENABLED',
+            '#if DEBUG_MODE',
+            '#if MAX_SIZE > 50',
+            '#if MIN_SIZE < 20',
+            '#elif defined(DEBUG_MODE)',
+            '#else',
+            '#endif',
+            '#ifdef FEATURE_ENABLED',
+            '#ifdef DEBUG_MODE'
+        ]
+        
+        found_raw_directives = []
+        for directive in raw_directives:
+            if directive in content:
+                found_raw_directives.append(directive)
+        
+        if found_raw_directives:
+            directive_list = ", ".join(found_raw_directives)
+            raise AssertionError(
+                f"Raw preprocessing directives found in {filename}: {directive_list}. "
+                f"These should be processed and not appear as raw text in the PlantUML output."
+            )
+        
+        # Check for malformed preprocessing results
+        # Look for incomplete conditional compilation blocks
+        lines = content.split('\n')
+        for i, line in enumerate(lines):
+            line = line.strip()
+            
+            # Check for incomplete #if blocks (missing #endif)
+            if line.startswith('#if') and not line.endswith(';'):
+                # Look ahead to see if there's a corresponding #endif
+                has_endif = False
+                for j in range(i + 1, min(i + 50, len(lines))):  # Look ahead up to 50 lines
+                    if lines[j].strip() == '#endif':
+                        has_endif = True
+                        break
+                if not has_endif:
+                    raise AssertionError(f"Incomplete preprocessing block in {filename}: {line} (missing #endif)")
+            
+            # Check for malformed preprocessing expressions
+            if '#if' in line and 'defined(' in line and not line.endswith(')'):
+                raise AssertionError(f"Malformed preprocessing expression in {filename}: {line}")
+        
+        print("    ✅ Preprocessing directives properly processed")
+
     def _validate_no_typedefs_in_header_or_source_classes(self, puml_lines, filename):
         """Assert that no typedefs (e.g., '+ struct', '+ enum', or any typedef) are generated in header or source class blocks (HEADER_xxx or main class blocks)."""
         in_header_or_main_class = False
@@ -888,7 +1060,8 @@ class PUMLValidator:
             "geometry",      # geometry.c  
             "logger",        # logger.c
             "math_utils",    # math_utils.c
-            "sample"         # sample.c
+            "sample",        # sample.c
+            "preprocessed"   # preprocessed.c
         ]
         
         # Check if this is a header file by looking for common header patterns
@@ -899,7 +1072,8 @@ class PUMLValidator:
             "logger_h",        # logger.h (if generated separately)
             "math_utils_h",    # math_utils.h (if generated separately)
             "geometry_h",      # geometry.h (if generated separately)
-            "typedef_test_h"   # typedef_test.h (if generated separately)
+            "typedef_test_h",  # typedef_test.h (if generated separately)
+            "preprocessed_h"   # preprocessed.h (if generated separately)
         ]
         
         # If the basename matches a header pattern, throw an error

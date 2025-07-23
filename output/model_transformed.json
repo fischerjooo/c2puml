@@ -648,6 +648,510 @@
       "structs": {},
       "unions": {}
     },
+    "preprocessed.c": {
+      "aliases": {},
+      "encoding_used": "utf-8",
+      "enums": {},
+      "file_path": "/workspace/example/source/preprocessed.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "complex_function",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "debug_feature",
+          "parameters": [
+            {
+              "name": "feature",
+              "type": "enabled_feature_t *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "process_basic",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "process_feature",
+          "parameters": [
+            {
+              "name": "feature",
+              "type": "enabled_feature_t *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "test_function_pointers",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "test_preprocessing_edge_cases",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "test_typedef_preprocessing",
+          "parameters": [],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "global_basic",
+          "type": "int",
+          "value": null
+        },
+        {
+          "name": "global_debug",
+          "type": "debug_struct_t",
+          "value": null
+        },
+        {
+          "name": "global_feature",
+          "type": "enabled_feature_t",
+          "value": null
+        }
+      ],
+      "include_relations": [
+        {
+          "depth": 1,
+          "included_file": "/workspace/example/source/preprocessed.h",
+          "source_file": "/workspace/example/source/preprocessed.c"
+        }
+      ],
+      "includes": [
+        "preprocessed.h",
+        "stdio.h",
+        "stdlib.h",
+        "string.h"
+      ],
+      "macros": [],
+      "project_root": "/workspace/example/source",
+      "relative_path": "preprocessed.c",
+      "structs": {},
+      "unions": {}
+    },
+    "preprocessed.h": {
+      "aliases": {
+        "basic_callback_t": {
+          "name": "basic_callback_t",
+          "original_type": "int ( * basic_callback_t ) ( void )",
+          "uses": []
+        },
+        "feature_callback_t": {
+          "name": "feature_callback_t",
+          "original_type": "int ( * feature_callback_t ) ( enabled_feature_t * feature )",
+          "uses": [
+            "enabled_feature_t"
+          ]
+        },
+        "large_buffer_t": {
+          "name": "large_buffer_t",
+          "original_type": "char large_buffer_t [ MAX_SIZE ]",
+          "uses": []
+        },
+        "small_buffer_t": {
+          "name": "small_buffer_t",
+          "original_type": "char small_buffer_t [ MIN_SIZE ]",
+          "uses": []
+        }
+      },
+      "encoding_used": "utf-8",
+      "enums": {
+        "status_t": {
+          "name": "status_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "#if FEATURE_ENABLED \n STATUS_ENABLED",
+              "value": "1"
+            },
+            {
+              "name": "STATUS_DISABLED",
+              "value": "0"
+            },
+            {
+              "name": "#else \n STATUS_OFF",
+              "value": "0"
+            },
+            {
+              "name": "#endif \n STATUS_UNKNOWN",
+              "value": "- 1"
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/example/source/preprocessed.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "debug_feature",
+          "parameters": [
+            {
+              "name": "feature",
+              "type": "enabled_feature_t *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "process_basic",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "process_feature",
+          "parameters": [
+            {
+              "name": "feature",
+              "type": "enabled_feature_t *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [
+        {
+          "name": "global_basic",
+          "type": "int",
+          "value": null
+        },
+        {
+          "name": "global_debug",
+          "type": "debug_struct_t",
+          "value": null
+        },
+        {
+          "name": "global_feature",
+          "type": "enabled_feature_t",
+          "value": null
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "stddef.h",
+        "stdint.h"
+      ],
+      "macros": [
+        "DEBUG_MODE",
+        "FEATURE_ENABLED",
+        "MAX_SIZE",
+        "MIN_SIZE",
+        "PREPROCESSED_H"
+      ],
+      "project_root": "/workspace/example/source",
+      "relative_path": "preprocessed.h",
+      "structs": {
+        "basic_struct_t": {
+          "fields": [
+            {
+              "name": "basic_id",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "basic_struct_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "debug_enabled_t": {
+          "fields": [
+            {
+              "name": "debug_enabled_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "debug_enabled_name",
+              "type": "char[64]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "debug_enabled_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "debug_feature_t": {
+          "fields": [
+            {
+              "name": "debug_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "debug_name",
+              "type": "char[64]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "debug_feature_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "debug_optimized_t": {
+          "fields": [
+            {
+              "name": "debug_field",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "debug_buffer",
+              "type": "char[128]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "debug_optimized_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "debug_struct_t": {
+          "fields": [
+            {
+              "name": "debug_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "debug_name",
+              "type": "char[64]",
+              "value": null
+            },
+            {
+              "name": "extra_debug_field",
+              "type": "#if MIN_SIZE < 20 \n int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "debug_struct_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "default_struct_t": {
+          "fields": [
+            {
+              "name": "default_field",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "default_struct_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "disabled_feature_t": {
+          "fields": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "disabled_feature_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "disabled_t": {
+          "fields": [
+            {
+              "name": "disabled_id",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "disabled_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "enabled_feature_t": {
+          "fields": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "char[32]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "enabled_feature_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "enabled_t": {
+          "fields": [
+            {
+              "name": "enabled_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "enabled_name",
+              "type": "char[32]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "enabled_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "feature_struct_t": {
+          "fields": [
+            {
+              "name": "feature_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "feature_name",
+              "type": "char[32]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "feature_struct_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "optimized_struct_t": {
+          "fields": [
+            {
+              "name": "optimized_field",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "large_buffer",
+              "type": "#if MAX_SIZE > 50 \n char[MAX_SIZE]",
+              "value": null
+            },
+            {
+              "name": "small_buffer",
+              "type": "#else \n char[MIN_SIZE]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "optimized_struct_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "release_struct_t": {
+          "fields": [
+            {
+              "name": "release_id",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "release_struct_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "simple_debug_t": {
+          "fields": [
+            {
+              "name": "debug_id",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "simple_debug_t",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {
+        "basic_union_t": {
+          "fields": [
+            {
+              "name": "int_value",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "char_value",
+              "type": "char",
+              "value": null
+            }
+          ],
+          "name": "basic_union_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "feature_union_t": {
+          "fields": [
+            {
+              "name": "int_value",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "char_value",
+              "type": "char",
+              "value": null
+            },
+            {
+              "name": "debug_value",
+              "type": "#if DEBUG_MODE \n double",
+              "value": null
+            }
+          ],
+          "name": "feature_union_t",
+          "tag_name": "",
+          "uses": []
+        }
+      }
+    },
     "sample.c": {
       "aliases": {},
       "encoding_used": "utf-8",
