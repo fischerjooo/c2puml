@@ -150,6 +150,7 @@ class FileModel:
     includes: Set[str] = field(default_factory=set)
     macros: List[str] = field(default_factory=list)
     typedefs: Dict[str, str] = field(default_factory=dict)
+    aliases: Dict[str, str] = field(default_factory=dict)
     typedef_relations: List[TypedefRelation] = field(default_factory=list)
     include_relations: List[IncludeRelation] = field(default_factory=list)
     unions: Dict[str, Union] = field(default_factory=dict)
@@ -273,6 +274,7 @@ class FileModel:
             "includes_count": len(self.includes),
             "macros_count": len(self.macros),
             "typedefs_count": len(self.typedefs),
+            "aliases_count": len(self.aliases),
         }
 
 

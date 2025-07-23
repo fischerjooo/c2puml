@@ -84,6 +84,7 @@
         "CE_Status_t": "enum",
         "ComplexExample_t": "struct"
       },
+      "aliases": {},
       "typedef_relations": [
         {
           "typedef_name": "NestedInfo_t",
@@ -147,7 +148,8 @@
         "MAX_LABEL_LEN",
         "DEFAULT_BUFFER_SIZE"
       ],
-      "typedefs": {
+      "typedefs": {},
+      "aliases": {
         "id_t": "uint32_t",
         "status_t": "int32_t"
       },
@@ -213,6 +215,7 @@
       ],
       "macros": [],
       "typedefs": {},
+      "aliases": {},
       "typedef_relations": [],
       "include_relations": [],
       "unions": {}
@@ -295,6 +298,7 @@
       "typedefs": {
         "triangle_t": "struct"
       },
+      "aliases": {},
       "typedef_relations": [
         {
           "typedef_name": "triangle_t",
@@ -366,6 +370,7 @@
       ],
       "macros": [],
       "typedefs": {},
+      "aliases": {},
       "typedef_relations": [],
       "include_relations": [],
       "unions": {}
@@ -446,7 +451,9 @@
         "LOGGER_H"
       ],
       "typedefs": {
-        "log_level_t": "enum",
+        "log_level_t": "enum"
+      },
+      "aliases": {
         "log_callback_t": "void ( * log_callback_t ) ( log_level_t level , const char * message )"
       },
       "typedef_relations": [
@@ -530,6 +537,7 @@
       ],
       "macros": [],
       "typedefs": {},
+      "aliases": {},
       "typedef_relations": [],
       "include_relations": [],
       "unions": {}
@@ -604,7 +612,8 @@
       "macros": [
         "MATH_UTILS_H"
       ],
-      "typedefs": {
+      "typedefs": {},
+      "aliases": {
         "real_t": "double",
         "math_op_t": "int ( * math_op_t ) ( int , int )"
       },
@@ -776,6 +785,7 @@
         "CALC(x, y)"
       ],
       "typedefs": {},
+      "aliases": {},
       "typedef_relations": [],
       "include_relations": [],
       "unions": {}
@@ -912,6 +922,7 @@
         "point_t": "struct",
         "system_state_t": "enum"
       },
+      "aliases": {},
       "typedef_relations": [
         {
           "typedef_name": "point_t",
@@ -1030,6 +1041,7 @@
       ],
       "macros": [],
       "typedefs": {},
+      "aliases": {},
       "typedef_relations": [],
       "include_relations": [],
       "unions": {}
@@ -1159,19 +1171,21 @@
         "TYPEDEF_TEST_H"
       ],
       "typedefs": {
-        "MyLen": "uint32_t",
-        "MyInt": "int32_t",
-        "MyString": "char *",
         "MyBuffer": "struct",
-        "MyCallback": "int ( * MyCallback ) ( MyBuffer * buffer )",
         "MyComplex": "struct",
-        "MyComplexPtr": "MyComplex *",
         "Color_t": "enum",
         "Status_t": "enum",
         "Point_t": "struct",
         "NamedStruct_t": "struct",
         "Number_t": "union",
-        "NamedUnion_t": "union",
+        "NamedUnion_t": "union"
+      },
+      "aliases": {
+        "MyLen": "uint32_t",
+        "MyInt": "int32_t",
+        "MyString": "char *",
+        "MyCallback": "int ( * MyCallback ) ( MyBuffer * buffer )",
+        "MyComplexPtr": "MyComplex *",
         "MyComplexArray": "MyComplexPtr MyComplexArray [ 10 ]"
       },
       "typedef_relations": [
@@ -1267,5 +1281,5 @@
       }
     }
   },
-  "created_at": "2025-07-23T05:03:31.864285"
+  "created_at": "2025-07-23T05:18:21.396799"
 }

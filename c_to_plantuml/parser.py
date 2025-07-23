@@ -106,6 +106,7 @@ class CParser:
         unions = self._parse_unions_with_tokenizer(tokens, structure_finder)
         functions = self._parse_functions_with_tokenizer(tokens, structure_finder)
         typedefs = self._parse_typedefs_with_tokenizer(tokens)
+        aliases = self._parse_aliases_with_tokenizer(tokens)
 
         # Map typedef names to anonymous structs/enums/unions if needed
         from .models import Struct, Enum, Union
@@ -144,6 +145,7 @@ class CParser:
             includes=self._parse_includes_with_tokenizer(tokens),
             macros=self._parse_macros_with_tokenizer(tokens),
             typedefs=typedefs,
+            aliases=aliases,
             typedef_relations=self._parse_typedef_relations_with_tokenizer(tokens, structs),
             include_relations=[],
         )
@@ -370,7 +372,7 @@ class CParser:
         return macros
 
     def _parse_typedefs_with_tokenizer(self, tokens) -> Dict[str, str]:
-        """Parse typedef definitions using tokenizer"""
+        """Parse typedef definitions using tokenizer (only struct/enum/union)"""
         typedefs = {}
         
         i = 0
@@ -380,11 +382,33 @@ class CParser:
                 typedef_info = self._parse_single_typedef(tokens, i)
                 if typedef_info:
                     typedef_name, original_type = typedef_info
-                    typedefs[typedef_name] = original_type
+                    # Only include struct/enum/union typedefs
+                    if original_type in ['struct', 'enum', 'union']:
+                        typedefs[typedef_name] = original_type
                     
             i += 1
         
         return typedefs
+
+    def _parse_aliases_with_tokenizer(self, tokens) -> Dict[str, str]:
+        """Parse type aliases (primitive or derived typedefs) using tokenizer"""
+        aliases = {}
+        
+        i = 0
+        while i < len(tokens):
+            if tokens[i].type == TokenType.TYPEDEF:
+                # Found typedef, parse it
+                typedef_info = self._parse_single_typedef(tokens, i)
+                if typedef_info:
+                    typedef_name, original_type = typedef_info
+                    
+                    # Only include if it's NOT a struct/enum/union typedef
+                    if original_type not in ['struct', 'enum', 'union']:
+                        aliases[typedef_name] = original_type
+                    
+            i += 1
+        
+        return aliases
 
     def _parse_typedef_relations_with_tokenizer(self, tokens, structs) -> List["TypedefRelation"]:
         """Parse typedef relationships using tokenizer"""

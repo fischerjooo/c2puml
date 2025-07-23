@@ -32,16 +32,6 @@ STATE_RUNNING
 STATE_ERROR
 }
 
-class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
-{
-+ double
-}
-
-class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
-{
-+ int ( * math_op_t ) ( int , int )
-}
-
 enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 {
 LOG_DEBUG = 0
@@ -50,25 +40,10 @@ LOG_WARN
 LOG_ERROR
 }
 
-class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
-{
-+ void ( * log_callback_t ) ( log_level_t level , const char * message )
-}
-
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 {
 + point_t[3] vertices
 + char[MAX_LABEL_LEN] label
-}
-
-class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
-{
-+ uint32_t
-}
-
-class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
-{
-+ int32_t
 }
 
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
@@ -134,11 +109,5 @@ HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
 TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
-TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
-HEADER_CONFIG ..> TYPEDEF_ID_T : <<declares>>
-HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>
-HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
-HEADER_MATH_UTILS ..> TYPEDEF_MATH_OP_T : <<declares>>
-HEADER_LOGGER ..> TYPEDEF_LOG_CALLBACK_T : <<declares>>
 
 @enduml

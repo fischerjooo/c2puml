@@ -146,18 +146,31 @@ List of preprocessor macros:
 **Purpose**: Represents #define directives and header guards.
 
 #### 8. **`typedefs`** (Object)
-Maps typedef names to their original types:
+Maps typedef names to their original types (only for struct/enum/union typedefs):
 ```json
 {
   "MyType_t": "struct",
-  "MyInt": "int32_t",
-  "MyCallback": "function_pointer_type"
+  "MyEnum_t": "enum",
+  "MyUnion_t": "union"
 }
 ```
 
-**Purpose**: Tracks type aliases and their base types.
+**Purpose**: Tracks complex typedefs (struct, enum, union) and their base types.
 
-#### 9. **`typedef_relations`** (Array)
+#### 9. **`aliases`** (Object)
+Maps type alias names to their original types (only for primitive or derived typedefs):
+```json
+{
+  "MyInt": "int32_t",
+  "MyString": "char *",
+  "MyCallback": "int (*)(MyBuffer *)",
+  "MySecondInt": "MyInt"
+}
+```
+
+**Purpose**: Tracks type aliases (primitive or derived) that are not struct/enum/union typedefs.
+
+#### 10. **`typedef_relations`** (Array)
 Detailed information about typedef relationships:
 ```json
 {
@@ -171,7 +184,7 @@ Detailed information about typedef relationships:
 
 **Purpose**: Provides detailed mapping between typedef names and their underlying tagged types.
 
-#### 10. **`include_relations`** (Array)
+#### 11. **`include_relations`** (Array)
 Enhanced include relationship information (in transformed model):
 ```json
 {
@@ -183,7 +196,7 @@ Enhanced include relationship information (in transformed model):
 
 **Purpose**: Tracks include hierarchy and dependency depth for PlantUML diagram generation.
 
-#### 11. **`unions`** (Object)
+#### 12. **`unions`** (Object)
 Contains union definitions (similar structure to structs):
 ```json
 {
@@ -216,6 +229,26 @@ Contains union definitions (similar structure to structs):
 - **Enum values**: May contain explicit values like `"0"`, `"1"`, etc.
 - **Macro values**: May contain constant values
 
+## Typedefs vs Aliases
+
+The model distinguishes between two types of typedefs:
+
+### **Typedefs** (Complex Types)
+- **Struct typedefs**: `typedef struct MyStruct_tag MyStruct_t;`
+- **Enum typedefs**: `typedef enum MyEnum_tag MyEnum_t;`
+- **Union typedefs**: `typedef union MyUnion_tag MyUnion_t;`
+
+These are stored in the `typedefs` field and have corresponding entries in `typedef_relations`.
+
+### **Aliases** (Primitive or Derived Types)
+- **Primitive aliases**: `typedef int MyInt;`
+- **Pointer aliases**: `typedef char* MyString;`
+- **Derived aliases**: `typedef MyInt MySecondInt;`
+- **Function pointer aliases**: `typedef int (*MyCallback)(MyBuffer*);`
+- **Array aliases**: `typedef MyType MyArray[10];`
+
+These are stored in the `aliases` field and represent simple type renames or derived types.
+
 ## Transformation Enhancements
 
 The `model_transformed.json` file includes additional information:
@@ -247,6 +280,7 @@ From the example run:
 - **6 enums** identified  
 - **31 functions** identified
 - **Multiple typedefs** and relationships tracked
+- **Type aliases** separated from complex typedefs
 - **Include hierarchies** resolved up to depth 2
 
 ## Conclusion
