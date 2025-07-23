@@ -14,7 +14,7 @@ from typing import Dict, List, Set, Tuple
 class PUMLValidator:
     """Validates generated PUML files against expected content."""
     
-    def __init__(self, output_dir: str = "output", source_dir: str = "example/source"):
+    def __init__(self, output_dir: str = "../output", source_dir: str = "source"):
         self.output_dir = Path(output_dir)
         self.source_dir = Path(source_dir)
         self.expected_files = [
