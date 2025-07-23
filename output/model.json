@@ -30,8 +30,8 @@
           "methods": [],
           "tag_name": "NestedInfo_tag",
           "uses": [
-            "log_level_t",
-            "id_t"
+            "id_t",
+            "log_level_t"
           ]
         },
         "ComplexExample_t": {
@@ -56,8 +56,8 @@
           "methods": [],
           "tag_name": "ComplexExample_tag",
           "uses": [
-            "NestedInfo_t",
-            "CE_Status_t"
+            "CE_Status_t",
+            "NestedInfo_t"
           ]
         }
       },
@@ -1045,10 +1045,10 @@
           "methods": [],
           "tag_name": "MyComplexStruct_tag",
           "uses": [
-            "MyCallback",
             "MyString",
-            "log_level_t",
-            "MyLen"
+            "MyLen",
+            "MyCallback",
+            "log_level_t"
           ]
         },
         "Point_t": {
@@ -1209,5 +1209,5 @@
       }
     }
   },
-  "created_at": "2025-07-23T06:23:31.542907"
+  "created_at": "2025-07-23T06:50:28.231030"
 }
