@@ -127,7 +127,7 @@
             "id": "configPath",
             "type": "promptString",
             "description": "Enter the path to your config file",
-            "default": "./example/config.json"
+            "default": "../config.json"
         },
         {
             "id": "workflow",
