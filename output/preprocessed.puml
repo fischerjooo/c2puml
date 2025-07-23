@@ -2,16 +2,9 @@
 
 class "preprocessed" as PREPROCESSED <<source>> #LightBlue
 {
-    -- Global Variables --
-    int global_basic
-    debug_struct_t global_debug
-    enabled_feature_t global_feature
     -- Functions --
     void complex_function()
-    void debug_feature(enabled_feature_t * feature)
     int main()
-    int process_basic()
-    int process_feature(enabled_feature_t * feature)
     void test_function_pointers()
     void test_preprocessing_edge_cases()
     void test_typedef_preprocessing()
@@ -62,8 +55,7 @@ class "debug_struct_t" as TYPEDEF_DEBUG_STRUCT_T <<typedef>> #LightYellow
 {
     + int debug_id
     + char[64] debug_name
-    + #if MIN_SIZE < 20 
- int extra_debug_field
+    + int extra_debug_field
 }
 
 class "default_struct_t" as TYPEDEF_DEFAULT_STRUCT_T <<typedef>> #LightYellow
@@ -101,11 +93,9 @@ class "feature_struct_t" as TYPEDEF_FEATURE_STRUCT_T <<typedef>> #LightYellow
 
 class "optimized_struct_t" as TYPEDEF_OPTIMIZED_STRUCT_T <<typedef>> #LightYellow
 {
-    + #if MAX_SIZE > 50 
- char[MAX_SIZE] large_buffer
+    + char[MAX_SIZE] large_buffer
     + int optimized_field
-    + #else 
- char[MIN_SIZE] small_buffer
+    + char[MIN_SIZE] small_buffer
 }
 
 class "release_struct_t" as TYPEDEF_RELEASE_STRUCT_T <<typedef>> #LightYellow
@@ -120,13 +110,10 @@ class "simple_debug_t" as TYPEDEF_SIMPLE_DEBUG_T <<typedef>> #LightYellow
 
 class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 {
-    + #else 
- STATUS_OFF = 0
-    + #endif 
- STATUS_UNKNOWN = - 1
-    + #if FEATURE_ENABLED 
- STATUS_ENABLED = 1
     + STATUS_DISABLED = 0
+    + STATUS_ENABLED = 1
+    + STATUS_OFF = 0
+    + STATUS_UNKNOWN = - 1
 }
 
 class "basic_callback_t" as TYPEDEF_BASIC_CALLBACK_T <<typedef>> #LightYellow
@@ -158,8 +145,7 @@ class "basic_union_t" as TYPEDEF_BASIC_UNION_T <<typedef>> #LightYellow
 class "feature_union_t" as TYPEDEF_FEATURE_UNION_T <<typedef>> #LightYellow
 {
     + char char_value
-    + #if DEBUG_MODE 
- double debug_value
+    + double debug_value
     + int int_value
 }
 

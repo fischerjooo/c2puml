@@ -664,41 +664,8 @@
         {
           "is_declaration": false,
           "is_static": false,
-          "name": "debug_feature",
-          "parameters": [
-            {
-              "name": "feature",
-              "type": "enabled_feature_t *",
-              "value": null
-            }
-          ],
-          "return_type": "void"
-        },
-        {
-          "is_declaration": false,
-          "is_static": false,
           "name": "main",
           "parameters": [],
-          "return_type": "int"
-        },
-        {
-          "is_declaration": false,
-          "is_static": false,
-          "name": "process_basic",
-          "parameters": [],
-          "return_type": "int"
-        },
-        {
-          "is_declaration": false,
-          "is_static": false,
-          "name": "process_feature",
-          "parameters": [
-            {
-              "name": "feature",
-              "type": "enabled_feature_t *",
-              "value": null
-            }
-          ],
           "return_type": "int"
         },
         {
@@ -723,23 +690,7 @@
           "return_type": "void"
         }
       ],
-      "globals": [
-        {
-          "name": "global_basic",
-          "type": "int",
-          "value": null
-        },
-        {
-          "name": "global_debug",
-          "type": "debug_struct_t",
-          "value": null
-        },
-        {
-          "name": "global_feature",
-          "type": "enabled_feature_t",
-          "value": null
-        }
-      ],
+      "globals": [],
       "include_relations": [
         {
           "depth": 1,
@@ -791,7 +742,7 @@
           "tag_name": "",
           "values": [
             {
-              "name": "#if FEATURE_ENABLED \n STATUS_ENABLED",
+              "name": "STATUS_ENABLED",
               "value": "1"
             },
             {
@@ -799,11 +750,11 @@
               "value": "0"
             },
             {
-              "name": "#else \n STATUS_OFF",
+              "name": "STATUS_OFF",
               "value": "0"
             },
             {
-              "name": "#endif \n STATUS_UNKNOWN",
+              "name": "STATUS_UNKNOWN",
               "value": "- 1"
             }
           ]
@@ -958,7 +909,7 @@
             },
             {
               "name": "extra_debug_field",
-              "type": "#if MIN_SIZE < 20 \n int",
+              "type": "int",
               "value": null
             }
           ],
@@ -1069,12 +1020,12 @@
             },
             {
               "name": "large_buffer",
-              "type": "#if MAX_SIZE > 50 \n char[MAX_SIZE]",
+              "type": "char[MAX_SIZE]",
               "value": null
             },
             {
               "name": "small_buffer",
-              "type": "#else \n char[MIN_SIZE]",
+              "type": "char[MIN_SIZE]",
               "value": null
             }
           ],
@@ -1142,7 +1093,7 @@
             },
             {
               "name": "debug_value",
-              "type": "#if DEBUG_MODE \n double",
+              "type": "double",
               "value": null
             }
           ],
