@@ -372,3 +372,68 @@ class ProjectModel:
             "total_globals": total_globals,
             "created_at": self.created_at,
         }
+
+    def update_uses_fields(self):
+        """Update all uses fields across the entire project model"""
+        # Collect all available type names from the entire project
+        available_types = set()
+        for file_model in self.files.values():
+            available_types.update(file_model.structs.keys())
+            available_types.update(file_model.enums.keys())
+            available_types.update(file_model.unions.keys())
+            available_types.update(file_model.aliases.keys())
+        
+        # Update uses fields for all structures in all files
+        for file_model in self.files.values():
+            # Update struct uses
+            for struct in file_model.structs.values():
+                filtered_uses = []
+                for field in struct.fields:
+                    field_uses = self._extract_non_primitive_types(field.type, available_types)
+                    filtered_uses.extend(field_uses)
+                struct.uses = list(set(filtered_uses))
+            
+            # Update union uses
+            for union in file_model.unions.values():
+                filtered_uses = []
+                for field in union.fields:
+                    field_uses = self._extract_non_primitive_types(field.type, available_types)
+                    filtered_uses.extend(field_uses)
+                union.uses = list(set(filtered_uses))
+            
+            # Update alias uses
+            for alias in file_model.aliases.values():
+                alias.uses = self._extract_non_primitive_types(alias.original_type, available_types)
+                # Remove the alias name from its own uses list
+                if alias.name in alias.uses:
+                    alias.uses.remove(alias.name)
+
+    def _extract_non_primitive_types(self, type_str: str, available_types: set) -> list:
+        """Extract non-primitive type names from a type string that exist in available_types"""
+        # Define primitive types
+        primitive_types = {
+            'void', 'char', 'short', 'int', 'long', 'float', 'double', 'signed', 'unsigned',
+            'const', 'volatile', 'static', 'extern', 'auto', 'register', 'inline', 'restrict',
+            'size_t', 'ptrdiff_t', 'int8_t', 'int16_t', 'int32_t', 'int64_t',
+            'uint8_t', 'uint16_t', 'uint32_t', 'uint64_t', 'intptr_t', 'uintptr_t',
+            'bool', 'true', 'false', 'NULL', 'nullptr'
+        }
+        
+        # Remove common C keywords and operators
+        import re
+        
+        # Split by common delimiters and operators
+        parts = re.split(r'[\[\]\(\)\{\}\s\*&,;]', type_str)
+        
+        # Extract potential type names that exist in available_types
+        types = []
+        for part in parts:
+            part = part.strip()
+            if part and len(part) > 1 and part not in primitive_types:
+                # Check if it looks like a type name (starts with letter, contains letters/numbers/underscores)
+                if re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', part):
+                    # Only include if it exists in available_types
+                    if part in available_types:
+                        types.append(part)
+        
+        return list(set(types))  # Remove duplicates

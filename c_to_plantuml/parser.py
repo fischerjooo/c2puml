@@ -76,6 +76,9 @@ class CParser:
             created_at=self._get_timestamp(),
         )
 
+        # Update all uses fields across the entire project
+        model.update_uses_fields()
+
         self.logger.info(f"Parsing complete. Parsed {len(files)} files successfully.")
         return model
 
@@ -107,15 +110,8 @@ class CParser:
         functions = self._parse_functions_with_tokenizer(tokens, structure_finder)
         aliases = self._parse_aliases_with_tokenizer(tokens)
         
-        # Collect all available type names for filtering "uses"
-        available_types = set()
-        available_types.update(structs.keys())
-        available_types.update(enums.keys())
-        available_types.update(unions.keys())
-        available_types.update(aliases.keys())
-        
-        # Update "uses" fields with filtered types
-        self._update_uses_fields(structs, enums, unions, aliases, available_types)
+        # Note: We'll update "uses" fields later when we have the full project model
+        # For now, just create the structures with empty uses
 
         # Map typedef names to anonymous structs/enums/unions if needed
         from .models import Struct, Enum, Union
@@ -476,27 +472,7 @@ class CParser:
         
         return list(set(types))  # Remove duplicates
 
-    def _update_uses_fields(self, structs, enums, unions, aliases, available_types):
-        """Update the uses fields to only include types that exist in the model"""
-        # Update struct uses
-        for struct in structs.values():
-            filtered_uses = []
-            for field in struct.fields:
-                field_uses = self._extract_non_primitive_types(field.type, available_types)
-                filtered_uses.extend(field_uses)
-            struct.uses = list(set(filtered_uses))
-        
-        # Update union uses
-        for union in unions.values():
-            filtered_uses = []
-            for field in union.fields:
-                field_uses = self._extract_non_primitive_types(field.type, available_types)
-                filtered_uses.extend(field_uses)
-            union.uses = list(set(filtered_uses))
-        
-        # Update alias uses
-        for alias in aliases.values():
-            alias.uses = self._extract_non_primitive_types(alias.original_type, available_types)
+
 
     def _find_c_files(self, project_root: Path, recursive: bool) -> List[Path]:
         """Find all C/C++ files in the project"""

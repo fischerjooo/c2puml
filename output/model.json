@@ -29,7 +29,10 @@
           ],
           "methods": [],
           "tag_name": "NestedInfo_tag",
-          "uses": []
+          "uses": [
+            "id_t",
+            "log_level_t"
+          ]
         },
         "ComplexExample_t": {
           "name": "ComplexExample_t",
@@ -53,8 +56,8 @@
           "methods": [],
           "tag_name": "ComplexExample_tag",
           "uses": [
-            "CE_Status_t",
-            "NestedInfo_t"
+            "NestedInfo_t",
+            "CE_Status_t"
           ]
         }
       },
@@ -224,7 +227,9 @@
           ],
           "methods": [],
           "tag_name": "triangle_tag",
-          "uses": []
+          "uses": [
+            "point_t"
+          ]
         }
       },
       "enums": {},
@@ -424,8 +429,7 @@
           "name": "log_callback_t",
           "original_type": "void ( * log_callback_t ) ( log_level_t level , const char * message )",
           "uses": [
-            "log_level_t",
-            "log_callback_t"
+            "log_level_t"
           ]
         }
       },
@@ -581,9 +585,7 @@
         "math_op_t": {
           "name": "math_op_t",
           "original_type": "int ( * math_op_t ) ( int , int )",
-          "uses": [
-            "math_op_t"
-          ]
+          "uses": []
         }
       },
       "unions": {}
@@ -1012,8 +1014,8 @@
           "methods": [],
           "tag_name": "MyBuffer_tag",
           "uses": [
-            "MyLen",
-            "MyString"
+            "MyString",
+            "MyLen"
           ]
         },
         "MyComplex": {
@@ -1043,9 +1045,10 @@
           "methods": [],
           "tag_name": "MyComplexStruct_tag",
           "uses": [
+            "MyString",
             "MyCallback",
-            "MyLen",
-            "MyString"
+            "log_level_t",
+            "MyLen"
           ]
         },
         "Point_t": {
@@ -1150,7 +1153,6 @@
           "name": "MyCallback",
           "original_type": "int ( * MyCallback ) ( MyBuffer * buffer )",
           "uses": [
-            "MyCallback",
             "MyBuffer"
           ]
         },
@@ -1165,8 +1167,7 @@
           "name": "MyComplexArray",
           "original_type": "MyComplexPtr MyComplexArray [ 10 ]",
           "uses": [
-            "MyComplexPtr",
-            "MyComplexArray"
+            "MyComplexPtr"
           ]
         }
       },
@@ -1208,5 +1209,5 @@
       }
     }
   },
-  "created_at": "2025-07-23T06:12:44.194349"
+  "created_at": "2025-07-23T06:15:54.583063"
 }
