@@ -337,37 +337,65 @@ class CParser:
                 i = self._skip_structure_definition(tokens, i)
                 continue
             
+            # Skip if we're inside a struct definition (look for opening brace)
+            if i > 0 and tokens[i-1].type == TokenType.LBRACE:
+                # We're inside a struct, skip until closing brace
+                brace_count = 1
+                j = i
+                while j < len(tokens) and brace_count > 0:
+                    if tokens[j].type == TokenType.LBRACE:
+                        brace_count += 1
+                    elif tokens[j].type == TokenType.RBRACE:
+                        brace_count -= 1
+                    j += 1
+                i = j
+                continue
+            
             # Skip macros and other preprocessor content
             if tokens[i].type == TokenType.DEFINE:
                 # Skip the entire macro content (multi-line macros are now merged)
                 i += 1
                 continue
             
-            # Look for global variable patterns: [static/extern] type name [= value];
-            global_info = self._parse_global_variable(tokens, i)
-            if global_info:
-                var_name, var_type, var_value = global_info
-                # Only add if it looks like a real global variable (not a fragment)
-                if (var_name and var_name.strip() and 
-                    var_type and var_type.strip() and 
-                    not var_name.startswith('#') and 
-                    len(var_type) < 200 and
-                    not var_type.startswith('\\') and
-                    not var_name.startswith('\\') and
-                    '\\' not in var_type and
-                    '\\' not in var_name):
-                    try:
-                        # Additional validation before creating Field
-                        stripped_name = var_name.strip()
-                        stripped_type = var_type.strip()
-                        if stripped_name and stripped_type:
-                            globals_list.append(Field(name=stripped_name, type=stripped_type, value=var_value))
-                            self.logger.debug(f"Parsed global: {stripped_name} : {stripped_type}")
-                    except Exception as e:
-                        self.logger.warning(f"Error creating global field {var_name}: {e}")
-                i = self._skip_to_semicolon(tokens, i)
+            # Additional check: skip if we're inside any brace block (struct, function, etc.)
+            brace_count = 0
+            j = i - 1
+            while j >= 0:
+                if tokens[j].type == TokenType.RBRACE:
+                    brace_count += 1
+                elif tokens[j].type == TokenType.LBRACE:
+                    brace_count -= 1
+                    if brace_count < 0:
+                        # We're inside a brace block, skip this token
+                        i += 1
+                        break
+                j -= 1
             else:
-                i += 1
+                # Not inside a brace block, proceed with global variable parsing
+                global_info = self._parse_global_variable(tokens, i)
+                if global_info:
+                    var_name, var_type, var_value = global_info
+                    # Only add if it looks like a real global variable (not a fragment)
+                    if (var_name and var_name.strip() and 
+                        var_type and var_type.strip() and 
+                        not var_name.startswith('#') and 
+                        len(var_type) < 200 and
+                        not var_type.startswith('\\') and
+                        not var_name.startswith('\\') and
+                        '\\' not in var_type and
+                        '\\' not in var_name):
+                        try:
+                            # Additional validation before creating Field
+                            stripped_name = var_name.strip()
+                            stripped_type = var_type.strip()
+                            if stripped_name and stripped_type:
+                                globals_list.append(Field(name=stripped_name, type=stripped_type, value=var_value))
+                                self.logger.debug(f"Parsed global: {stripped_name} : {stripped_type}")
+                        except Exception as e:
+                            self.logger.warning(f"Error creating global field {var_name}: {e}")
+                    i = self._skip_to_semicolon(tokens, i)
+                else:
+                    i += 1
         
         return globals_list
 
