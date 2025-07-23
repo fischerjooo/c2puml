@@ -7,29 +7,29 @@
 static math_operation_t global_math_ops[10] = {NULL};
 
 // Nasty edge case: const array of function pointers with complex name
-static Std_ReturnType rba_ProcessorAdapter_ProcessJobLite(const Process_JobType *job_pst) {
+static Std_ReturnType rba_ProcessorAdapter_Process(const Process_T *job_pst) {
     if (job_pst == NULL) return -1;
     printf("Processing job %d with Adapter module\n", job_pst->job_id);
     return 0;
 }
 
-static Std_ReturnType rba_ProcessorService_ProcessJobLite(const Process_JobType *job_pst) {
+static Std_ReturnType rba_ProcessorService_Process(const Process_T *job_pst) {
     if (job_pst == NULL) return -1;
     printf("Processing job %d with Service module\n", job_pst->job_id);
     return 0;
 }
 
-static Std_ReturnType rba_ProcessorHardware_ProcessJobLite(const Process_JobType *job_pst) {
+static Std_ReturnType rba_ProcessorHardware_Process(const Process_T *job_pst) {
     if (job_pst == NULL) return -1;
     printf("Processing job %d with Hardware module\n", job_pst->job_id);
     return 0;
 }
 
 // The nasty edge case: const array of function pointers with complex name
-Process_Cfg_ProcessJobLite_acpfct_t Process_Cfg_ProcessJobLite_acpfct = {
-    &rba_ProcessorAdapter_ProcessJobLite,
-    &rba_ProcessorService_ProcessJobLite,
-    &rba_ProcessorHardware_ProcessJobLite,
+Process_Cfg_Process_acpfct_t Process_Cfg_Process_acpfct = {
+    &rba_ProcessorAdapter_Process,
+    &rba_ProcessorService_Process,
+    &rba_ProcessorHardware_Process,
 };
 
 // Static function implementations for math operations
@@ -320,7 +320,7 @@ void test_processor_job_processing(void) {
     printf("=== Testing Processor Job Processing (Nasty Edge Case) ===\n");
     
     // Create test jobs
-    Process_JobType jobs[PROCESSOR_CFG_MODULE_COUNT] = {
+    Process_T jobs[PROCESSOR_CFG_MODULE_COUNT] = {
         {1, "Adapter_Data", 10, 1},
         {2, "Service_Data", 15, 2},
         {3, "Hardware_Data", 20, 3}
@@ -328,15 +328,15 @@ void test_processor_job_processing(void) {
     
     // Process jobs using the nasty const array of function pointers
     for (int i = 0; i < PROCESSOR_CFG_MODULE_COUNT; i++) {
-        if (Process_Cfg_ProcessJobLite_acpfct[i] != NULL) {
-            Std_ReturnType result = Process_Cfg_ProcessJobLite_acpfct[i](&jobs[i]);
+        if (Process_Cfg_Process_acpfct[i] != NULL) {
+            Std_ReturnType result = Process_Cfg_Process_acpfct[i](&jobs[i]);
             printf("Job %d processing result: %d\n", i + 1, result);
         }
     }
     
     // Test with NULL job
-    if (Process_Cfg_ProcessJobLite_acpfct[0] != NULL) {
-        Std_ReturnType result = Process_Cfg_ProcessJobLite_acpfct[0](NULL);
+    if (Process_Cfg_Process_acpfct[0] != NULL) {
+        Std_ReturnType result = Process_Cfg_Process_acpfct[0](NULL);
         printf("NULL job processing result: %d\n", result);
     }
     

@@ -180,13 +180,13 @@ typedef struct {
     char* job_data;
     size_t data_size;
     int priority;
-} Process_JobType;
+} Process_T;
 
 typedef int Std_ReturnType;
 
 // The nasty edge case: const array of function pointers with complex name
-typedef Std_ReturnType (*Process_Cfg_ProcessJobLite_fct)(const Process_JobType *job_pst);
-typedef Process_Cfg_ProcessJobLite_fct Process_Cfg_ProcessJobLite_acpfct_t[PROCESSOR_CFG_MODULE_COUNT];
+typedef Std_ReturnType (*Process_Cfg_Process_fct)(const Process_T *job_pst);
+typedef Process_Cfg_Process_fct Process_Cfg_Process_acpfct_t[PROCESSOR_CFG_MODULE_COUNT];
 
 // Complex macro function with multiple parameters and nested logic
 #define HANDLE_OPERATION(op_type, data, size, callback) do { \
