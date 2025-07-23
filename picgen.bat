@@ -18,10 +18,10 @@ if %errorlevel% equ 0 (
     set "PLANTUML_CMD=plantuml"
     echo 📦 Using installed PlantUML command
 ) else (
-    if exist "..\plantuml.jar" (
-        set "PLANTUML_CMD=java -jar ..\plantuml.jar"
-        echo 📦 Using PlantUML JAR file from parent directory
-    ) else if exist "plantuml.jar" (
+    if exist "plantuml.jar" (
+        set "PLANTUML_CMD=java -jar plantuml.jar"
+        echo 📦 Using PlantUML JAR file from current directory
+    ) else if exist "..\plantuml.jar" (
         set "PLANTUML_CMD=java -jar ..\plantuml.jar"
         echo 📦 Using PlantUML JAR file from parent directory
     ) else (
@@ -34,11 +34,11 @@ if %errorlevel% equ 0 (
         echo 🔄 Downloading PlantUML v%PLANTUML_VERSION%...
         
         REM Try using PowerShell to download
-        powershell -Command "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '%PLANTUML_URL%' -OutFile 'plantuml.jar'}"
+        powershell -Command "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '!PLANTUML_URL!' -OutFile 'plantuml.jar'}"
         
         if %errorlevel% equ 0 if exist "plantuml.jar" (
             echo ✅ PlantUML JAR file downloaded successfully
-            set "PLANTUML_CMD=java -jar ..\plantuml.jar"
+            set "PLANTUML_CMD=java -jar plantuml.jar"
         ) else (
             echo ❌ Failed to download PlantUML JAR file
             echo    Please download it manually from: %PLANTUML_URL%
