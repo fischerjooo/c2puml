@@ -9,6 +9,45 @@
         {
           "is_declaration": false,
           "is_static": false,
+          "name": "ProcessorAdapter_Process",
+          "parameters": [
+            {
+              "name": "job_pst",
+              "type": "const Process_T *",
+              "value": null
+            }
+          ],
+          "return_type": "static Std_ReturnType"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "ProcessorHardware_Process",
+          "parameters": [
+            {
+              "name": "job_pst",
+              "type": "const Process_T *",
+              "value": null
+            }
+          ],
+          "return_type": "static Std_ReturnType"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "ProcessorService_Process",
+          "parameters": [
+            {
+              "name": "job_pst",
+              "type": "const Process_T *",
+              "value": null
+            }
+          ],
+          "return_type": "static Std_ReturnType"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
           "name": "add_operation",
           "parameters": [
             {
@@ -174,6 +213,24 @@
         {
           "is_declaration": false,
           "is_static": false,
+          "name": "print_result",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "int *",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "static void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
           "name": "process_with_callbacks",
           "parameters": [
             {
@@ -218,45 +275,6 @@
             }
           ],
           "return_type": "int"
-        },
-        {
-          "is_declaration": false,
-          "is_static": false,
-          "name": "rba_ProcessorAdapter_ProcessJobLite",
-          "parameters": [
-            {
-              "name": "job_pst",
-              "type": "const Process_JobType *",
-              "value": null
-            }
-          ],
-          "return_type": "static Std_ReturnType"
-        },
-        {
-          "is_declaration": false,
-          "is_static": false,
-          "name": "rba_ProcessorHardware_ProcessJobLite",
-          "parameters": [
-            {
-              "name": "job_pst",
-              "type": "const Process_JobType *",
-              "value": null
-            }
-          ],
-          "return_type": "static Std_ReturnType"
-        },
-        {
-          "is_declaration": false,
-          "is_static": false,
-          "name": "rba_ProcessorService_ProcessJobLite",
-          "parameters": [
-            {
-              "name": "job_pst",
-              "type": "const Process_JobType *",
-              "value": null
-            }
-          ],
-          "return_type": "static Std_ReturnType"
         },
         {
           "is_declaration": false,
@@ -405,6 +423,11 @@
       ],
       "globals": [
         {
+          "name": "Process_Cfg_Process_acpfct",
+          "type": "Process_Cfg_Process_acpfct_t",
+          "value": "{ \n & ProcessorAdapter_Process , \n & ProcessorService_Process , \n & ProcessorHardware_Process , \n }"
+        },
+        {
           "name": "]",
           "type": "math_operation_t global_math_ops [ 10",
           "value": "{ NULL }"
@@ -425,19 +448,18 @@
     },
     "complex.h": {
       "aliases": {
-        "Process_Cfg_ProcessJobLite_acpfct": {
-          "name": "Process_Cfg_ProcessJobLite_acpfct",
-          "original_type": "Process_Cfg_ProcessJobLite_fct ( * const Process_Cfg_ProcessJobLite_acpfct [ PROCESSOR_CFG_MODULE_COUNT ] ) ( const Process_JobType * job_pst )",
+        "Process_Cfg_Process_acpfct_t": {
+          "name": "Process_Cfg_Process_acpfct_t",
+          "original_type": "Process_Cfg_Process_fct Process_Cfg_Process_acpfct_t [ PROCESSOR_CFG_MODULE_COUNT ]",
           "uses": [
-            "Process_Cfg_ProcessJobLite_fct",
-            "Process_JobType"
+            "Process_Cfg_Process_fct"
           ]
         },
-        "Process_Cfg_ProcessJobLite_fct": {
-          "name": "Process_Cfg_ProcessJobLite_fct",
-          "original_type": "Std_ReturnType ( * Process_Cfg_ProcessJobLite_fct ) ( const Process_JobType * job_pst )",
+        "Process_Cfg_Process_fct": {
+          "name": "Process_Cfg_Process_fct",
+          "original_type": "Std_ReturnType ( * Process_Cfg_Process_fct ) ( const Process_T * job_pst )",
           "uses": [
-            "Process_JobType",
+            "Process_T",
             "Std_ReturnType"
           ]
         },
@@ -564,19 +586,6 @@
       },
       "file_path": "/workspace/example/source/complex.h",
       "functions": [
-        {
-          "is_declaration": true,
-          "is_static": false,
-          "name": "Std_ReturnType",
-          "parameters": [
-            {
-              "name": "]",
-              "type": "* const Process_Cfg_ProcessJobLite_acpfct [ PROCESSOR_CFG_MODULE_COUNT",
-              "value": null
-            }
-          ],
-          "return_type": "extern"
-        },
         {
           "is_declaration": true,
           "is_static": false,
@@ -728,11 +737,6 @@
       ],
       "globals": [
         {
-          "name": "!",
-          "type": "i + + ) { \\ \n if ( ( arr ) [ i ]",
-          "value": "NULL ) { \\ \n int result = ( callback ) ( ( arr ) [ i ] )"
-        },
-        {
           "name": ")",
           "type": "\\ \n } \\ \n ( x",
           "value": "temp_var"
@@ -761,6 +765,11 @@
           "name": "processor_t",
           "type": "}",
           "value": null
+        },
+        {
+          "name": "result",
+          "type": "i + + ) { \\ \n int",
+          "value": "( callback ) ( & ( arr ) [ i ] )"
         },
         {
           "name": "temp_var",
@@ -792,7 +801,7 @@
       "project_root": "/workspace/example/source",
       "relative_path": "complex.h",
       "structs": {
-        "Process_JobType": {
+        "Process_T": {
           "fields": [
             {
               "name": "job_id",
@@ -816,7 +825,7 @@
             }
           ],
           "methods": [],
-          "name": "Process_JobType",
+          "name": "Process_T",
           "tag_name": "",
           "uses": []
         },
@@ -913,7 +922,7 @@
             },
             {
               "name": ")",
-              "type": "int ( * process_func ) ( int , char *",
+              "type": "int ( * process_func ) ( int , int",
               "value": null
             },
             {

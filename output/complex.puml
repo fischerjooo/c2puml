@@ -3,8 +3,12 @@
 class "complex" as COMPLEX <<source>> #LightBlue
 {
     -- Global Variables --
+    Process_Cfg_Process_acpfct_t Process_Cfg_Process_acpfct
     math_operation_t global_math_ops [ 10 ]
     -- Functions --
+    static Std_ReturnType ProcessorAdapter_Process(const Process_T * job_pst)
+    static Std_ReturnType ProcessorHardware_Process(const Process_T * job_pst)
+    static Std_ReturnType ProcessorService_Process(const Process_T * job_pst)
     static int add_operation(int a, int b)
     complex_handler_t * create_complex_handler(const char * name, int ( * validate_func ) ( const char * ), void * ( * alloc_func ) ( size_t ), unknown unnamed)
     void * create_handler(const char * name, int ( * init_func ) ( void * ), void ( * cleanup_func ) ( void * ), unknown unnamed)
@@ -14,10 +18,8 @@ class "complex" as COMPLEX <<source>> #LightBlue
     static void init_math_operations()
     static int modulo_operation(int a, int b)
     static int multiply_operation(int a, int b)
+    static void print_result(int * data, int size)
     int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], int op_count, void ( * pre_process ) ( int *, int ), void ( * post_process ) ( int *, unknown unnamed)
-    static Std_ReturnType rba_ProcessorAdapter_ProcessJobLite(const Process_JobType * job_pst)
-    static Std_ReturnType rba_ProcessorHardware_ProcessJobLite(const Process_JobType * job_pst)
-    static Std_ReturnType rba_ProcessorService_ProcessJobLite(const Process_JobType * job_pst)
     void run_complex_tests()
     static int subtract_operation(int a, int b)
     static int test_callback(int * item)
@@ -49,8 +51,6 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
     + #define UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)
     + #define UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)
     -- Global Variables --
-    + i + + ) { \ 
- if ( ( arr ) [ i ] !
     + \ 
  } \ 
  ( x )
@@ -77,9 +77,10 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
  int size , 
  math_operation_t operations
     + } processor_t
+    + i + + ) { \ 
+ int result
     + else { \ temp_var
     -- Functions --
-    + extern Std_ReturnType(* const Process_Cfg_ProcessJobLite_acpfct [ PROCESSOR_CFG_MODULE_COUNT ])
     + complex_handler_t * create_complex_handler(const char * name, int ( * validate_func ) ( const char * ), void * ( * alloc_func ) ( size_t ), unknown unnamed)
     + void * create_handler(const char * name, int ( * init_func ) ( void * ), void ( * cleanup_func ) ( void * ), unknown unnamed)
     + int execute_operations(int value, math_ops_array_t ops, unknown unnamed)
@@ -89,7 +90,7 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
     + void test_processor_utility_macros()
 }
 
-class "Process_JobType" as TYPEDEF_PROCESS_JOBTYPE <<typedef>> #LightYellow
+class "Process_T" as TYPEDEF_PROCESS_T <<typedef>> #LightYellow
 {
     + size_t data_size
     + char * job_data
@@ -123,7 +124,7 @@ class "data_item_t" as TYPEDEF_DATA_ITEM_T <<typedef>> #LightYellow
 class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<typedef>> #LightYellow
 {
     + void ( * init_func ) ( void )
-    + int ( * process_func ) ( int , char * )
+    + int ( * process_func ) ( int , int )
     + void ( * cleanup_func ) ( void )
     + int id
     + char[16] name
@@ -167,14 +168,14 @@ class "processor_module_enum_t" as TYPEDEF_PROCESSOR_MODULE_ENUM_T <<typedef>> #
     + PROCESSOR_CFG_MODULE_SERVICE = 1
 }
 
-class "Process_Cfg_ProcessJobLite_acpfct" as TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT <<typedef>> #LightYellow
+class "Process_Cfg_Process_acpfct_t" as TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T <<typedef>> #LightYellow
 {
-    + Process_Cfg_ProcessJobLite_fct ( * const Process_Cfg_ProcessJobLite_acpfct [ PROCESSOR_CFG_MODULE_COUNT ] ) ( const Process_JobType * job_pst )
+    + Process_Cfg_Process_fct Process_Cfg_Process_acpfct_t [ PROCESSOR_CFG_MODULE_COUNT ]
 }
 
-class "Process_Cfg_ProcessJobLite_fct" as TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT <<typedef>> #LightYellow
+class "Process_Cfg_Process_fct" as TYPEDEF_PROCESS_CFG_PROCESS_FCT <<typedef>> #LightYellow
 {
-    + Std_ReturnType ( * Process_Cfg_ProcessJobLite_fct ) ( const Process_JobType * job_pst )
+    + Std_ReturnType ( * Process_Cfg_Process_fct ) ( const Process_T * job_pst )
 }
 
 class "Std_ReturnType" as TYPEDEF_STD_RETURNTYPE <<typedef>> #LightYellow
@@ -260,7 +261,7 @@ class "mixed_union_t" as TYPEDEF_MIXED_UNION_T <<typedef>> #LightYellow
 COMPLEX --> HEADER_COMPLEX : <<include>>
 
 ' Declaration relationships
-HEADER_COMPLEX ..> TYPEDEF_PROCESS_JOBTYPE : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_PROCESS_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF___ANONYMOUS_STRUCT__ : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_COMPLEX_HANDLER_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_DATA_ITEM_T : <<declares>>
@@ -270,8 +271,8 @@ HEADER_COMPLEX ..> TYPEDEF_PARAM4 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_PROCESSOR_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_OPERATION_TYPE_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_PROCESSOR_MODULE_ENUM_T : <<declares>>
-HEADER_COMPLEX ..> TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT : <<declares>>
-HEADER_COMPLEX ..> TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_PROCESS_CFG_PROCESS_FCT : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_STD_RETURNTYPE : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_COMPLEX_CALLBACK_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_COMPLEX_FUNC_PTR_T : <<declares>>
@@ -289,10 +290,9 @@ HEADER_COMPLEX ..> TYPEDEF_MIXED_UNION_T : <<declares>>
 
 ' Uses relationships
 TYPEDEF_OPERATION_SET_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>
-TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT ..> TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT : <<uses>>
-TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_ACPFCT ..> TYPEDEF_PROCESS_JOBTYPE : <<uses>>
-TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_PROCESS_JOBTYPE : <<uses>>
-TYPEDEF_PROCESS_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>
+TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T ..> TYPEDEF_PROCESS_CFG_PROCESS_FCT : <<uses>>
+TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_PROCESS_T : <<uses>>
+TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>
 TYPEDEF_DATA_PROCESSOR_ARRAY_T ..> TYPEDEF_DATA_PROCESSOR_T : <<uses>>
 TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>
 TYPEDEF_HANDLER_TABLE_T ..> TYPEDEF_HANDLER_ENTRY_T : <<uses>>
