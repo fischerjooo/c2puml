@@ -111,11 +111,7 @@
             {
                 "label": "# Run Full Workflow",
                 "type": "shell",
-                "command": "python",
-                "args": [
-                    "-m",
-                    "c_to_plantuml.main"
-                ],
+                "command": "${workspaceFolder}/run_all.bat",
                 "group": "build",
                 "presentation": {
                     "echo": true,
@@ -133,8 +129,7 @@
             {
                 "label": "# Run Example",
                 "type": "shell",
-                "command": "cmd",
-                "args": ["/c", "cd /d ${workspaceFolder} && run_example.bat"],
+                "command": "${workspaceFolder}/run_example.bat",
                 "group": "build",
                 "presentation": {
                     "echo": true,
@@ -152,8 +147,7 @@
             {
                 "label": "# Generate Pictures",
                 "type": "shell",
-                "command": "cmd",
-                "args": ["/c", "cd /d ${workspaceFolder} && picgen.bat"],
+                "command": "${workspaceFolder}/picgen.bat",
                 "group": "build",
                 "presentation": {
                     "echo": true,
@@ -171,13 +165,7 @@
             {
                 "label": "# Run Tests",
                 "type": "shell",
-                "command": "python",
-                "args": [
-                    "-m",
-                    "pytest",
-                    "tests/",
-                    "-v"
-                ],
+                "command": "${workspaceFolder}/run_all_tests.bat",
                 "group": "test",
                 "presentation": {
                     "echo": true,
@@ -242,8 +230,7 @@
             {
                 "label": "# ⚠️ Git Reset & Pull",
                 "type": "shell",
-                "command": "cmd",
-                "args": ["/c", "cd /d ${workspaceFolder} && echo WARNING: This will reset all local changes and pull from remote! && echo. && echo Proceeding with git reset --hard... && git reset --hard && echo Pulling from remote... && git pull && echo Done!"],
+                "command": "${workspaceFolder}/git_reset_pull.bat",
                 "group": "build",
                 "presentation": {
                     "echo": true,
