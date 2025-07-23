@@ -147,7 +147,10 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
             },
             {
                 "label": "# Generate Pictures",
