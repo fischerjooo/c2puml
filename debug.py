@@ -5,7 +5,7 @@ Debug entry point for C to PlantUML converter
 This script provides a convenient way to debug the converter with predefined configurations.
 It can be run directly from VSCode in debug mode.
 
-Configuration is done by modifying the variables at the top of this file.
+Configuration is done by modifying the constants at the top of this file.
 """
 
 import logging
@@ -19,17 +19,17 @@ sys.path.insert(0, str(Path(__file__).parent))
 from c_to_plantuml.main import main as main_function
 
 # =============================================================================
-# DEBUG CONFIGURATION - Modify these variables as needed
+# DEBUG CONFIGURATION - Modify these constants as needed
 # =============================================================================
 
 # Workflow selection: "full", "parse", "transform", "generate"
-WORKFLOW = "full"
+WORKFLOW: str = "full"
 
 # Configuration file path (relative to project root)
-CONFIG_PATH = "./example/config.json"
+CONFIG_PATH: str = "./example/config.json"
 
 # Verbose output
-VERBOSE = True
+VERBOSE: bool = True
 
 # =============================================================================
 # END CONFIGURATION
