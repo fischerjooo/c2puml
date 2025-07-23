@@ -229,7 +229,6 @@ class Config:
             macros=file_model.macros.copy(),
             aliases=file_model.aliases.copy(),
             typedef_relations=file_model.typedef_relations.copy(),
-            include_relations=file_model.include_relations.copy(),
         )
 
         # Filter structs

@@ -111,9 +111,9 @@ class Transformer:
         if "transformations" in config:
             model = self._apply_model_transformations(model, config["transformations"])
 
-        # Apply include depth processing
-        if "include_depth" in config and config["include_depth"] > 1:
-            model = self._process_include_relations(model, config["include_depth"])
+        # Apply include depth processing (disabled - include_relations field removed)
+        # if "include_depth" in config and config["include_depth"] > 1:
+        #     model = self._process_include_relations(model, config["include_depth"])
 
         self.logger.info(
             f"Transformations complete. Model now has {len(model.files)} files"
@@ -521,16 +521,16 @@ class Transformer:
             )
         )
 
-        # Convert include relations
-        include_relations = []
-        for rel_data in data.get("include_relations", []):
-            include_relations.append(
-                IncludeRelation(
-                    rel_data["source_file"],
-                    rel_data["included_file"],
-                    rel_data["depth"],
-                )
-            )
+        # Convert include relations (disabled - include_relations field removed)
+        # include_relations = []
+        # for rel_data in data.get("include_relations", []):
+        #     include_relations.append(
+        #         IncludeRelation(
+        #             rel_data["source_file"],
+        #             rel_data["included_file"],
+        #             rel_data["depth"],
+        #         )
+        #     )
 
         return FileModel(
             file_path=data["file_path"],
@@ -546,7 +546,6 @@ class Transformer:
             macros=data.get("macros", []),
             aliases=data.get("aliases", {}),
             typedef_relations=typedef_relations,
-            include_relations=include_relations,
         )
 
     def _save_model(self, model: ProjectModel, output_file: str) -> None:

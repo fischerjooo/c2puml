@@ -249,8 +249,6 @@ class PlantUMLGenerator:
 
         # Process indirect includes from include_relations (up to configured depth)
         if include_depth > 1:
-            for include_relation in file_model.include_relations:
-                included_file_path = include_relation.included_file
                 included_file_model = None
                 # Try to find the included file model by matching file_path
                 for key, model in project_model.files.items():
@@ -312,8 +310,12 @@ class PlantUMLGenerator:
         
         visited_files.add(file_model.file_path)
         
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
+        # Process each include
+        for include_name in file_model.includes:
+            included_file_path = self._find_included_file(include_name, file_model.project_root, project_model)
+            if not included_file_path:
+                continue
+                
             included_file_model = None
             # Try to find the included file model by matching file_path
             for key, model in project_model.files.items():
@@ -349,8 +351,12 @@ class PlantUMLGenerator:
         
         visited_files.add(file_model.file_path)
         
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
+        # Process each include
+        for include_name in file_model.includes:
+            included_file_path = self._find_included_file(include_name, file_model.project_root, project_model)
+            if not included_file_path:
+                continue
+                
             included_file_model = None
             # Try to find the included file model by matching file_path
             for key, model in project_model.files.items():
@@ -715,9 +721,7 @@ class PlantUMLGenerator:
             hierarchy.add(Path(file_path).stem)
             
             # Process includes recursively
-            for include_relation in file_model_to_process.include_relations:
-                included_file_path = include_relation.included_file
-                add_to_hierarchy(included_file_path, depth + 1, max_depth)
+            add_to_hierarchy(included_file_path, depth + 1, max_depth)
             
             # Process direct includes
             for include_name in file_model_to_process.includes:
@@ -1005,8 +1009,6 @@ class PlantUMLGenerator:
                         break
         
         # Add headers from include_relations (only if they're in the include hierarchy)
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
             for key, model in project_model.files.items():
                 if model.file_path == included_file_path:
                     header_basename = Path(model.file_path).stem
@@ -1016,8 +1018,6 @@ class PlantUMLGenerator:
                     break
         
         # Add external headers that are included by project headers (only if they're in the include hierarchy)
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
             for key, model in project_model.files.items():
                 if model.file_path == included_file_path:
                     # This is a project header, check its includes
@@ -1098,8 +1098,6 @@ class PlantUMLGenerator:
                         lines.append(f"{source_class} --> {target_class} : <<include>>")
         
         # Process direct include relationships from include_relations (for header-to-header relationships)
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
             
             # Find the included file model
             included_file_model = None
@@ -1131,8 +1129,6 @@ class PlantUMLGenerator:
                     lines.append(f"{source_class} --> {target_class} : <<include>>")
         
         # Process relationships between included headers (only for headers that are in this diagram)
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
             included_file_model = None
             
             # Find the included file model
@@ -1183,8 +1179,6 @@ class PlantUMLGenerator:
                                 break
                 
                 # Also process include_relations from the included file (transitive includes)
-                for nested_include_relation in included_file_model.include_relations:
-                    nested_included_file_path = nested_include_relation.included_file
                     
                     # Find the nested included file model
                     nested_included_file_model = None
@@ -1264,8 +1258,6 @@ class PlantUMLGenerator:
             self._process_typedef_relationships(typedef_relation, file_model, project_model, lines, seen_relationships)
         
         # Process typedefs from included header files
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
             included_file_model = None
             for key, model in project_model.files.items():
                 if model.file_path == included_file_path:
@@ -1369,8 +1361,6 @@ class PlantUMLGenerator:
         # This helps show the relationship between headers and the typedefs they provide
         if file_model.file_path.endswith('.c'):
             # For source files, show which headers declare the typedefs they use
-            for include_relation in file_model.include_relations:
-                included_file_path = include_relation.included_file
                 included_file_model = None
                 for key, model in project_model.files.items():
                     if model.file_path == included_file_path:
@@ -1395,8 +1385,6 @@ class PlantUMLGenerator:
             all_typedefs.append((typedef_relation, file_model))
         
         # Add typedefs from included files
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
             included_file_model = None
             for key, model in project_model.files.items():
                 if model.file_path == included_file_path:
@@ -1609,8 +1597,6 @@ class PlantUMLGenerator:
                 self._process_array_typedef_uses(typedef_name, original_type, typedef_names, lines, include_hierarchy, project_model)
         
         # Process typedefs from included files (recursively)
-        for include_relation in file_model.include_relations:
-            included_file_path = include_relation.included_file
             included_file_model = None
             # Try to find the included file model
             for key, model in project_model.files.items():
@@ -1652,33 +1638,19 @@ class PlantUMLGenerator:
         
         # If still not found and we have project_model, check included files
         if not struct and project_model:
-            for include_relation in file_model.include_relations:
-                included_file_path = include_relation.included_file
-                included_file_model = None
-                # Try to find the included file model
-                for key, model in project_model.files.items():
-                    if model.file_path == included_file_path:
-                        included_file_model = model
-                        break
-                if not included_file_model:
-                    included_file_basename = Path(included_file_path).name
-                    for key, model in project_model.files.items():
-                        if key == included_file_basename:
-                            included_file_model = model
-                            break
-                
-                if included_file_model:
-                    # Try to find the struct in the included file
-                    struct = included_file_model.structs.get(typedef_name)
-                    if not struct and not typedef_name.endswith('_tag'):
-                        struct = included_file_model.structs.get(f"{typedef_name}_tag")
-                    if not struct and typedef_name.endswith('_t'):
-                        base_name = typedef_name[:-2]
-                        struct = included_file_model.structs.get(base_name)
-                        if not struct:
-                            struct = included_file_model.structs.get(f"{base_name}_tag")
-                    if struct:
-                        break
+            # Check all files in the project for the struct
+            for key, included_file_model in project_model.files.items():
+                # Try to find the struct in the included file
+                struct = included_file_model.structs.get(typedef_name)
+                if not struct and not typedef_name.endswith('_tag'):
+                    struct = included_file_model.structs.get(f"{typedef_name}_tag")
+                if not struct and typedef_name.endswith('_t'):
+                    base_name = typedef_name[:-2]
+                    struct = included_file_model.structs.get(base_name)
+                    if not struct:
+                        struct = included_file_model.structs.get(f"{base_name}_tag")
+                if struct:
+                    break
         
         if struct:
             for field in struct.fields:
@@ -2113,16 +2085,16 @@ class Generator:
             )
         )
 
-        # Convert include relations
-        include_relations = []
-        for rel_data in data.get("include_relations", []):
-            include_relations.append(
-                IncludeRelation(
-                    rel_data["source_file"],
-                    rel_data["included_file"],
-                    rel_data["depth"],
-                )
-            )
+        # Convert include relations (disabled - include_relations field removed)
+        # include_relations = []
+        # for rel_data in data.get("include_relations", []):
+        #     include_relations.append(
+        #         IncludeRelation(
+        #             rel_data["source_file"],
+        #             rel_data["included_file"],
+        #             rel_data["depth"],
+        #         )
+        #     )
 
         return FileModel(
             file_path=data["file_path"],
@@ -2138,5 +2110,4 @@ class Generator:
             macros=data.get("macros", []),
             aliases=data.get("aliases", {}),
             typedef_relations=typedef_relations,
-            include_relations=include_relations,
         )

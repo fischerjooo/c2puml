@@ -151,7 +151,6 @@ class FileModel:
     macros: List[str] = field(default_factory=list)
     aliases: Dict[str, str] = field(default_factory=dict)
     typedef_relations: List[TypedefRelation] = field(default_factory=list)
-    include_relations: List[IncludeRelation] = field(default_factory=list)
     unions: Dict[str, Union] = field(default_factory=dict)
 
     def __post_init__(self):
@@ -170,9 +169,8 @@ class FileModel:
         data = asdict(self)
         # Convert set to list for JSON serialization
         data["includes"] = list(self.includes)
-        # Convert typedef_relations and include_relations to lists of dicts
+        # Convert typedef_relations to list of dicts
         data["typedef_relations"] = [asdict(rel) for rel in self.typedef_relations]
-        data["include_relations"] = [asdict(rel) for rel in self.include_relations]
         return data
 
     @classmethod
@@ -229,12 +227,12 @@ class FileModel:
             for rel in typedef_relations_data
         ]
 
-        # Convert include_relations back to IncludeRelation objects
-        include_relations_data = data.get("include_relations", [])
-        include_relations = [
-            IncludeRelation(**rel) if isinstance(rel, dict) else rel
-            for rel in include_relations_data
-        ]
+        # Convert include_relations back to IncludeRelation objects (disabled - field removed)
+        # include_relations_data = data.get("include_relations", [])
+        # include_relations = [
+        #     IncludeRelation(**rel) if isinstance(rel, dict) else rel
+        #     for rel in include_relations_data
+        # ]
 
         # Convert unions back to Union objects
         unions_data = data.get("unions", {})
@@ -257,7 +255,6 @@ class FileModel:
         new_data["structs"] = structs
         new_data["enums"] = enums
         new_data["typedef_relations"] = typedef_relations
-        new_data["include_relations"] = include_relations
         new_data["unions"] = unions
 
         return cls(**new_data)

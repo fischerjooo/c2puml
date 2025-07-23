@@ -125,7 +125,6 @@ class CParser:
             macros=self._parse_macros_with_tokenizer(tokens),
             aliases=aliases,
             typedef_relations=self._parse_typedef_relations_with_tokenizer(tokens, structs),
-            include_relations=[],
         )
 
     def _parse_structs_with_tokenizer(self, tokens, structure_finder) -> Dict[str, "Struct"]:
