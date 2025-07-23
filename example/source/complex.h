@@ -24,11 +24,9 @@ typedef uint32_t uint32;
 // Another nasty multiline macro with nested conditions
 #define PROCESS_ARRAY(arr, size, callback) do { \
     for (int i = 0; i < (size); i++) { \
-        if ((arr)[i] != NULL) { \
-            int result = (callback)((arr)[i]); \
-            if (result < 0) { \
-                break; \
-            } \
+        int result = (callback)(&(arr)[i]); \
+        if (result < 0) { \
+            break; \
         } \
     } \
 } while(0)
@@ -156,7 +154,7 @@ typedef struct {
     int id;
     char name[16];
     void (*init_func)(void);
-    int (*process_func)(int, char*);
+    int (*process_func)(int, int);
     void (*cleanup_func)(void);
 } handler_entry_t;
 
@@ -188,7 +186,7 @@ typedef int Std_ReturnType;
 
 // The nasty edge case: const array of function pointers with complex name
 typedef Std_ReturnType (*Process_Cfg_ProcessJobLite_fct)(const Process_JobType *job_pst);
-typedef Process_Cfg_ProcessJobLite_fct (*const Process_Cfg_ProcessJobLite_acpfct[PROCESSOR_CFG_MODULE_COUNT])(const Process_JobType *job_pst);
+typedef Process_Cfg_ProcessJobLite_fct Process_Cfg_ProcessJobLite_acpfct_t[PROCESSOR_CFG_MODULE_COUNT];
 
 // Complex macro function with multiple parameters and nested logic
 #define HANDLE_OPERATION(op_type, data, size, callback) do { \
@@ -258,8 +256,6 @@ complex_handler_t* create_complex_handler(
 void test_processor_job_processing(void);
 void test_processor_utility_macros(void);
 
-// External declaration of the nasty const array of function pointers
-extern Std_ReturnType (*const Process_Cfg_ProcessJobLite_acpfct[PROCESSOR_CFG_MODULE_COUNT])
-    (const Process_JobType *job_pst);
+// The nasty const array of function pointers is defined in complex.c
 
 #endif /* COMPLEX_H */
