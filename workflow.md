@@ -9,6 +9,12 @@
 ## Overview
 Comprehensive testing workflow for the C to PlantUML Converter using three main scripts with distinct purposes.
 
+## Processing Flow
+1. **Parse C/C++ files** and generate model.json
+2. **Verify model sanity** - perform sanity checks on parsed values
+3. **Transform model** based on configuration
+4. **Generate PlantUML files** from the transformed model
+
 ## Testing Workflow
 
 ### Regression Testing (Full System Test)
@@ -75,6 +81,7 @@ Comprehensive testing workflow for the C to PlantUML Converter using three main 
 
 ## Test Coverage
 - C/C++ parsing functionality
+- **Model verification and sanity checks**
 - PlantUML diagram generation
 - Model transformation and filtering
 - Configuration loading and validation
