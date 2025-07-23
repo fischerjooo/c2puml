@@ -737,44 +737,14 @@
       ],
       "globals": [
         {
-          "name": ")",
-          "type": "\\ \n } \\ \n ( x",
-          "value": "temp_var"
-        },
-        {
-          "name": "]",
-          "type": "\\ \n } \n \n \n #define UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) \\ \n { \\ \n ( ptr_pau8 ) [ 3 U",
-          "value": "( uint8 ) ( ( value_u32 ) )"
-        },
-        {
-          "name": "i",
-          "type": "\\ \n } while ( 0 ) \n \n \n #define PROCESS_ARRAY(arr, size, callback) do { \\ \n for ( int",
-          "value": "0"
-        },
-        {
           "name": "name",
           "type": "char",
-          "value": null
-        },
-        {
-          "name": "operations",
-          "type": "\\ \n } while ( 0 ) \n \n \n int process_with_callbacks ( \n int data [ ] , \n int size , \n math_operation_t",
           "value": null
         },
         {
           "name": "processor_t",
           "type": "}",
           "value": null
-        },
-        {
-          "name": "result",
-          "type": "i + + ) { \\ \n int",
-          "value": "( callback ) ( & ( arr ) [ i ] )"
-        },
-        {
-          "name": "temp_var",
-          "type": "else { \\",
-          "value": "temp_var * 3"
         }
       ],
       "include_relations": [],
