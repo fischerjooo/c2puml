@@ -861,6 +861,9 @@ class PUMLValidator:
         # Check for complex parsing edge cases
         self._validate_complex_parsing_edge_cases(content, filename)
         
+        # Check for complex.puml specific content issues
+        self._validate_complex_specific_content(content, filename)
+        
         if filename == "typedef_test.puml":
             # Should have specific typedef classes
             assert 'TYPEDEF_MYLEN' in content, "Missing TYPEDEF_MYLEN class"
@@ -1360,6 +1363,111 @@ class PUMLValidator:
                 print(f"      ✅ Found bit shift/type casting pattern: {pattern}")
             else:
                 print(f"      ⚠️  Missing bit shift/type casting pattern: {pattern}")
+
+    def _validate_complex_specific_content(self, content: str, filename: str) -> None:
+        """Validate specific content issues in complex.puml."""
+        if "complex.puml" not in filename.lower():
+            return
+            
+        print("    🔍 Validating complex.puml specific content issues...")
+        issues_found = []
+        
+        # Check for corrupted macro content
+        if re.search(r'} \\ \n \( x \)', content):
+            issues_found.append("Corrupted macro content detected")
+        
+        if re.search(r'} \\ \n \n \n #define UTILS_U32_TO_U8ARR_BIG_ENDIAN', content):
+            issues_found.append("Broken macro definitions detected")
+        
+        # Check for other corrupted content patterns
+        if re.search(r'} \\ \n \n \n #define', content):
+            issues_found.append("Additional broken macro definitions detected")
+        
+        if re.search(r'\\ \n } \n \( x \)', content):
+            issues_found.append("Corrupted macro content with broken syntax")
+        
+        # Check for missing typedefs
+        missing_typedefs = [
+            'processor_t',
+            'complex_func_ptr_t', 
+            'data_item_t',
+            'data_processor_array_t',
+            'mixed_union_t',
+            'operation_set_t',
+            'complex_handler_t',
+            'operation_type_t',
+            'complex_callback_t',
+            'handler_entry_t',
+            'processor_module_enum_t',
+            'Process_T'
+        ]
+        
+        for typedef in missing_typedefs:
+            if f'class "{typedef}" as TYPEDEF_{typedef.upper()}' not in content:
+                issues_found.append(f"Missing typedef: {typedef}")
+        
+        # Check for missing functions
+        missing_functions = [
+            'init_math_operations',
+            'test_complex_macro',
+            'test_callback',
+            'test_process_array',
+            'test_stringify_macro',
+            'test_processor_utility_macros',
+            'test_handle_operation',
+            'process_with_callbacks',
+            'create_handler',
+            'test_mixed_union',
+            'test_operation_set',
+            'test_handler_table',
+            'test_processor_job_processing',
+            'run_complex_tests',
+            'ProcessorAdapter_Process',
+            'ProcessorService_Process',
+            'ProcessorHardware_Process'
+        ]
+        
+        for func in missing_functions:
+            if func not in content:
+                issues_found.append(f"Missing function: {func}")
+        
+        # Check for missing global variables
+        missing_globals = [
+            'global_math_ops',
+            'Process_Cfg_Process_acpfct'
+        ]
+        
+        for global_var in missing_globals:
+            if global_var not in content:
+                issues_found.append(f"Missing global variable: {global_var}")
+        
+        # Check for proper macro content
+        expected_macros = [
+            'COMPLEX_MACRO_FUNC',
+            'PROCESS_ARRAY',
+            'CREATE_FUNC_NAME',
+            'STRINGIFY',
+            'TOSTRING',
+            'UTILS_U16_TO_U8ARR_BIG_ENDIAN',
+            'UTILS_U32_TO_U8ARR_BIG_ENDIAN',
+            'UTILS_U8ARR_TO_U16_BIG_ENDIAN',
+            'UTILS_U8ARR_TO_U32_BIG_ENDIAN',
+            'DEPRECATED',
+            'HANDLE_OPERATION'
+        ]
+        
+        for macro in expected_macros:
+            if f'#define {macro}' not in content:
+                issues_found.append(f"Missing or corrupted macro: {macro}")
+        
+        if issues_found:
+            print(f"    ❌ Complex.puml content issues detected:")
+            for issue in issues_found:
+                print(f"      - {issue}")
+            print(f"    📊 Total issues found: {len(issues_found)}")
+            raise AssertionError(f"Complex.puml has {len(issues_found)} content issues")
+        else:
+            print("    ✅ Complex.puml content validation passed")
 
     def _validate_no_typedefs_in_header_or_source_classes(self, puml_lines, filename):
         """Assert that no typedefs (e.g., '+ struct', '+ enum', or any typedef) are generated in header or source class blocks (HEADER_xxx or main class blocks)."""
