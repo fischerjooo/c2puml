@@ -9,12 +9,27 @@ void set_log_callback(log_callback_t cb)
 void log_message(log_level_t level, const char * fmt, ...)
 }
 
+class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
+{
++ void ( * log_callback_t ) ( log_level_t level , const char * message )
+}
+
 enum "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 {
 LOG_DEBUG = 0
 LOG_INFO
 LOG_WARN
 LOG_ERROR
+}
+
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+{
++ int32_t
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
++ uint32_t
 }
 
 class "logger" as HEADER_LOGGER <<header>> #LightGreen
@@ -36,5 +51,9 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 LOGGER --> HEADER_LOGGER : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
+TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
+HEADER_LOGGER ..> TYPEDEF_LOG_CALLBACK_T : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_ID_T : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>
 
 @enduml

@@ -227,7 +227,7 @@ class Config:
             globals=file_model.globals.copy(),
             includes=file_model.includes.copy(),
             macros=file_model.macros.copy(),
-            typedefs=file_model.typedefs.copy(),
+            aliases=file_model.aliases.copy(),
             typedef_relations=file_model.typedef_relations.copy(),
             include_relations=file_model.include_relations.copy(),
         )
@@ -272,10 +272,10 @@ class Config:
                 filtered_model.macros, self.element_filters["macros"]
             )
 
-        # Filter typedefs
-        if "typedefs" in self.element_filters:
-            filtered_model.typedefs = self._filter_dict(
-                filtered_model.typedefs, self.element_filters["typedefs"]
+        # Filter aliases
+        if "aliases" in self.element_filters:
+            filtered_model.aliases = self._filter_dict(
+                filtered_model.aliases, self.element_filters["aliases"]
             )
 
         return filtered_model

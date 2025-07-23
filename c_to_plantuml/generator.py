@@ -367,8 +367,8 @@ class PlantUMLGenerator:
             if included_file_model:
                 # Only process typedefs from direct includes (depth 0) to avoid duplicates
                 if depth == 0:
-                    # Process simple typedefs from the typedefs dictionary
-                    for typedef_name, original_type in included_file_model.typedefs.items():
+                    # Process simple typedefs from the aliases dictionary
+                    for typedef_name, original_type in included_file_model.aliases.items():
                         if typedef_name not in seen_typedefs:
                             seen_typedefs.add(typedef_name)
                             lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
@@ -456,7 +456,7 @@ class PlantUMLGenerator:
                 lines.extend(self._generate_single_typedef_class(typedef_relation, file_model, project_model))
         
         # Then, process simple typedefs from the typedefs dictionary (only if not already processed)
-        for typedef_name, original_type in file_model.typedefs.items():
+        for typedef_name, original_type in file_model.aliases.items():
             if typedef_name not in seen_typedefs:
                 seen_typedefs.add(typedef_name)
                 lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
@@ -736,7 +736,7 @@ class PlantUMLGenerator:
         referenced_typedefs = set()
         
         # Collect typedefs from the current file's relationships
-        for typedef_name, original_type in file_model.typedefs.items():
+        for typedef_name, original_type in file_model.aliases.items():
             referenced_typedefs.add(typedef_name)
         
         for typedef_relation in file_model.typedef_relations:
@@ -769,7 +769,7 @@ class PlantUMLGenerator:
                     continue
                 
                 # Add typedefs from this included file
-                for typedef_name, original_type in included_file_model.typedefs.items():
+                for typedef_name, original_type in included_file_model.aliases.items():
                     referenced_typedefs.add(typedef_name)
                 
                 for typedef_relation in included_file_model.typedef_relations:
@@ -793,7 +793,7 @@ class PlantUMLGenerator:
                 lines.extend(self._generate_single_typedef_class(typedef_relation, file_model, project_model))
         
         # Then, process simple typedefs from the typedefs dictionary (only if not already processed)
-        for typedef_name, original_type in file_model.typedefs.items():
+        for typedef_name, original_type in file_model.aliases.items():
             if typedef_name not in seen_typedefs:
                 seen_typedefs.add(typedef_name)
                 lines.extend(self._generate_simple_typedef_class(typedef_name, original_type, project_model))
@@ -813,8 +813,8 @@ class PlantUMLGenerator:
                 for f_model in project_model.files.values():
                     # Only process files that are in the include hierarchy
                     file_basename = Path(f_model.file_path).stem
-                    if file_basename in include_hierarchy and typedef_name in f_model.typedefs:
-                        lines.extend(self._generate_simple_typedef_class(typedef_name, f_model.typedefs[typedef_name], project_model))
+                    if file_basename in include_hierarchy and typedef_name in f_model.aliases:
+                        lines.extend(self._generate_simple_typedef_class(typedef_name, f_model.aliases[typedef_name], project_model))
                         typedef_found = True
                         break
                 
@@ -1563,7 +1563,7 @@ class PlantUMLGenerator:
             file_basename = Path(f.file_path).stem
             if include_hierarchy and file_basename not in include_hierarchy:
                 continue
-            typedef_names.update(f.typedefs.keys())
+            typedef_names.update(f.aliases.keys())
             # Also add typedef names from typedef_relations
             for typedef_rel in f.typedef_relations:
                 typedef_names.add(typedef_rel.typedef_name)
@@ -1595,7 +1595,7 @@ class PlantUMLGenerator:
             self._process_typedef_uses(typedef_name, file_model, typedef_names, lines, project_model)
         
         # Process simple typedefs from the current file
-        for typedef_name, original_type in file_model.typedefs.items():
+        for typedef_name, original_type in file_model.aliases.items():
             if original_type == "struct":
                 self._process_typedef_uses(typedef_name, file_model, typedef_names, lines, project_model)
             elif "(" in original_type and "*" in original_type:
@@ -1729,7 +1729,7 @@ class PlantUMLGenerator:
                             for f_model in project_model.files.values():
                                 file_basename = Path(f_model.file_path).stem
                                 if file_basename in include_hierarchy:
-                                    if param_type in f_model.typedefs or any(tr.typedef_name == param_type for tr in f_model.typedef_relations):
+                                    if param_type in f_model.aliases or any(tr.typedef_name == param_type for tr in f_model.typedef_relations):
                                         typedef_in_hierarchy = True
                                         break
                             if not typedef_in_hierarchy:
@@ -1752,7 +1752,7 @@ class PlantUMLGenerator:
                 for f_model in project_model.files.values():
                     file_basename = Path(f_model.file_path).stem
                     if file_basename in include_hierarchy:
-                        if base_type in f_model.typedefs or any(tr.typedef_name == base_type for tr in f_model.typedef_relations):
+                        if base_type in f_model.aliases or any(tr.typedef_name == base_type for tr in f_model.typedef_relations):
                             typedef_in_hierarchy = True
                             break
                 if not typedef_in_hierarchy:
@@ -1778,7 +1778,7 @@ class PlantUMLGenerator:
                     for f_model in project_model.files.values():
                         file_basename = Path(f_model.file_path).stem
                         if file_basename in include_hierarchy:
-                            if base_type in f_model.typedefs or any(tr.typedef_name == base_type for tr in f_model.typedef_relations):
+                            if base_type in f_model.aliases or any(tr.typedef_name == base_type for tr in f_model.typedef_relations):
                                 typedef_in_hierarchy = True
                                 break
                     if not typedef_in_hierarchy:
@@ -1793,7 +1793,7 @@ class PlantUMLGenerator:
         # Collect all typedef names from all files
         typedef_names = set()
         for f in project_model.files.values():
-            typedef_names.update(f.typedefs.keys())
+            typedef_names.update(f.aliases.keys())
             for typedef_rel in f.typedef_relations:
                 typedef_names.add(typedef_rel.typedef_name)
         
@@ -1818,7 +1818,7 @@ class PlantUMLGenerator:
                                 lines.append(f"{self._get_typedef_uml_id(struct_name)} ..> {self._get_typedef_uml_id(base_type)} : <<uses>>")
         
         # Process function pointer typedefs that use other typedefs
-        for typedef_name, original_type in file_model.typedefs.items():
+        for typedef_name, original_type in file_model.aliases.items():
             if "(" in original_type and "*" in original_type:
                 # This is a function pointer typedef, check if it uses other typedefs
                 # Extract parameter types from function pointer
@@ -1877,7 +1877,7 @@ class PlantUMLGenerator:
             return lines
         
         # Process typedefs defined in the current file
-        for typedef_name, original_type in file_model.typedefs.items():
+        for typedef_name, original_type in file_model.aliases.items():
             relationship_key = f"declares_{class_id}_{typedef_name}"
             if relationship_key not in seen_relationships:
                 seen_relationships.add(relationship_key)
@@ -1928,7 +1928,7 @@ class PlantUMLGenerator:
                 header_class_id = self._get_header_uml_id(Path(included_file_model.file_path).stem)
                 
                 # Process typedefs defined in the included header file
-                for typedef_name, original_type in included_file_model.typedefs.items():
+                for typedef_name, original_type in included_file_model.aliases.items():
                     relationship_key = f"declares_{header_class_id}_{typedef_name}"
                     if relationship_key not in seen_relationships:
                         seen_relationships.add(relationship_key)
@@ -2038,6 +2038,7 @@ class Generator:
         """Convert dictionary back to FileModel"""
         from .models import (
             Enum,
+            EnumValue,
             Field,
             FileModel,
             Function,
@@ -2135,7 +2136,7 @@ class Generator:
             globals=globals_list,
             includes=data.get("includes", []),
             macros=data.get("macros", []),
-            typedefs=data.get("typedefs", {}),
+            aliases=data.get("aliases", {}),
             typedef_relations=typedef_relations,
             include_relations=include_relations,
         )

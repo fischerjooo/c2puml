@@ -105,32 +105,11 @@ class CParser:
         enums = self._parse_enums_with_tokenizer(tokens, structure_finder)
         unions = self._parse_unions_with_tokenizer(tokens, structure_finder)
         functions = self._parse_functions_with_tokenizer(tokens, structure_finder)
-        typedefs = self._parse_typedefs_with_tokenizer(tokens)
         aliases = self._parse_aliases_with_tokenizer(tokens)
 
         # Map typedef names to anonymous structs/enums/unions if needed
         from .models import Struct, Enum, Union
-        # Structs
-        for typedef_name, original_type in typedefs.items():
-            if original_type == 'struct' and typedef_name not in structs:
-                # Find anonymous struct (special key)
-                anon_struct = structs.get('__anonymous_struct__')
-                if anon_struct:
-                    structs[typedef_name] = Struct(typedef_name, anon_struct.fields)
-                    # Remove the anonymous struct from the dict
-                    del structs['__anonymous_struct__']
-            elif original_type == 'enum' and typedef_name not in enums:
-                anon_enum = enums.get('__anonymous_enum__')
-                if anon_enum:
-                    enums[typedef_name] = Enum(typedef_name, anon_enum.values)
-                    # Remove the anonymous enum from the dict
-                    del enums['__anonymous_enum__']
-            elif original_type == 'union' and typedef_name not in unions:
-                anon_union = unions.get('__anonymous_union__')
-                if anon_union:
-                    unions[typedef_name] = Union(typedef_name, anon_union.fields)
-                    # Remove the anonymous union from the dict
-                    del unions['__anonymous_union__']
+        # This logic will be handled by typedef_relations instead
 
         return FileModel(
             file_path=str(file_path),
@@ -144,7 +123,6 @@ class CParser:
             globals=self._parse_globals_with_tokenizer(tokens),
             includes=self._parse_includes_with_tokenizer(tokens),
             macros=self._parse_macros_with_tokenizer(tokens),
-            typedefs=typedefs,
             aliases=aliases,
             typedef_relations=self._parse_typedef_relations_with_tokenizer(tokens, structs),
             include_relations=[],
@@ -371,25 +349,6 @@ class CParser:
         
         return macros
 
-    def _parse_typedefs_with_tokenizer(self, tokens) -> Dict[str, str]:
-        """Parse typedef definitions using tokenizer (only struct/enum/union)"""
-        typedefs = {}
-        
-        i = 0
-        while i < len(tokens):
-            if tokens[i].type == TokenType.TYPEDEF:
-                # Found typedef, parse it
-                typedef_info = self._parse_single_typedef(tokens, i)
-                if typedef_info:
-                    typedef_name, original_type = typedef_info
-                    # Only include struct/enum/union typedefs
-                    if original_type in ['struct', 'enum', 'union']:
-                        typedefs[typedef_name] = original_type
-                    
-            i += 1
-        
-        return typedefs
-
     def _parse_aliases_with_tokenizer(self, tokens) -> Dict[str, str]:
         """Parse type aliases (primitive or derived typedefs) using tokenizer"""
         aliases = {}
@@ -411,7 +370,7 @@ class CParser:
         return aliases
 
     def _parse_typedef_relations_with_tokenizer(self, tokens, structs) -> List["TypedefRelation"]:
-        """Parse typedef relationships using tokenizer"""
+        """Parse typedef relationships using tokenizer (only for struct/enum/union)"""
         from .models import TypedefRelation
         
         typedef_relations = []
@@ -424,7 +383,7 @@ class CParser:
                 if typedef_info:
                     typedef_name, original_type = typedef_info
                     
-                    # Check if this is a complex typedef (struct/enum/union)
+                    # Only create relations for complex typedefs (struct/enum/union)
                     if original_type in ['struct', 'enum', 'union']:
                         # Try to extract tag name from the typedef
                         tag_name = self._extract_tag_name_from_typedef(tokens, i)

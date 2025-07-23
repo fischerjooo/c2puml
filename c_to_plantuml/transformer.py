@@ -182,10 +182,10 @@ class Transformer:
         if "macros" in filters:
             file_model.macros = self._filter_list(file_model.macros, filters["macros"])
 
-        # Filter typedefs
-        if "typedefs" in filters:
-            file_model.typedefs = self._filter_dict(
-                file_model.typedefs, filters["typedefs"]
+        # Filter aliases (replaces typedefs)
+        if "aliases" in filters:
+            file_model.aliases = self._filter_dict(
+                file_model.aliases, filters["aliases"]
             )
 
         return file_model
@@ -544,7 +544,7 @@ class Transformer:
             globals=globals_list,
             includes=data.get("includes", []),
             macros=data.get("macros", []),
-            typedefs=data.get("typedefs", {}),
+            aliases=data.get("aliases", {}),
             typedef_relations=typedef_relations,
             include_relations=include_relations,
         )

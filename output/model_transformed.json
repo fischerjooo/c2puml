@@ -79,11 +79,6 @@
       "macros": [
         "COMPLEX_EXAMPLE_H"
       ],
-      "typedefs": {
-        "NestedInfo_t": "struct",
-        "CE_Status_t": "enum",
-        "ComplexExample_t": "struct"
-      },
       "aliases": {},
       "typedef_relations": [
         {
@@ -169,8 +164,10 @@
         "MAX_LABEL_LEN",
         "DEFAULT_BUFFER_SIZE"
       ],
-      "typedefs": {},
-      "aliases": {},
+      "aliases": {
+        "id_t": "uint32_t",
+        "status_t": "int32_t"
+      },
       "typedef_relations": [],
       "include_relations": [],
       "unions": {}
@@ -232,7 +229,6 @@
         "stdlib.h"
       ],
       "macros": [],
-      "typedefs": {},
       "aliases": {},
       "typedef_relations": [],
       "include_relations": [
@@ -319,9 +315,6 @@
       "macros": [
         "GEOMETRY_H"
       ],
-      "typedefs": {
-        "triangle_t": "struct"
-      },
       "aliases": {},
       "typedef_relations": [
         {
@@ -444,7 +437,6 @@
         "string.h"
       ],
       "macros": [],
-      "typedefs": {},
       "aliases": {},
       "typedef_relations": [],
       "include_relations": [
@@ -531,10 +523,9 @@
       "macros": [
         "LOGGER_H"
       ],
-      "typedefs": {
-        "log_level_t": "enum"
+      "aliases": {
+        "log_callback_t": "void ( * log_callback_t ) ( log_level_t level , const char * message )"
       },
-      "aliases": {},
       "typedef_relations": [
         {
           "typedef_name": "log_level_t",
@@ -651,7 +642,6 @@
         "math_utils.h"
       ],
       "macros": [],
-      "typedefs": {},
       "aliases": {},
       "typedef_relations": [],
       "include_relations": [
@@ -733,8 +723,10 @@
       "macros": [
         "MATH_UTILS_H"
       ],
-      "typedefs": {},
-      "aliases": {},
+      "aliases": {
+        "real_t": "double",
+        "math_op_t": "int ( * math_op_t ) ( int , int )"
+      },
       "typedef_relations": [],
       "include_relations": [
         {
@@ -909,7 +901,6 @@
         "DEBUG_MODE",
         "CALC(x, y)"
       ],
-      "typedefs": {},
       "aliases": {},
       "typedef_relations": [],
       "include_relations": [
@@ -1064,10 +1055,6 @@
         "MIN(a, b)",
         "MAX(a, b)"
       ],
-      "typedefs": {
-        "point_t": "struct",
-        "system_state_t": "enum"
-      },
       "aliases": {},
       "typedef_relations": [
         {
@@ -1247,7 +1234,6 @@
         "stdlib.h"
       ],
       "macros": [],
-      "typedefs": {},
       "aliases": {},
       "typedef_relations": [],
       "include_relations": [
@@ -1382,17 +1368,14 @@
       "macros": [
         "TYPEDEF_TEST_H"
       ],
-      "typedefs": {
-        "MyBuffer": "struct",
-        "MyComplex": "struct",
-        "Color_t": "enum",
-        "Status_t": "enum",
-        "Point_t": "struct",
-        "NamedStruct_t": "struct",
-        "Number_t": "union",
-        "NamedUnion_t": "union"
+      "aliases": {
+        "MyLen": "uint32_t",
+        "MyInt": "int32_t",
+        "MyString": "char *",
+        "MyCallback": "int ( * MyCallback ) ( MyBuffer * buffer )",
+        "MyComplexPtr": "MyComplex *",
+        "MyComplexArray": "MyComplexPtr MyComplexArray [ 10 ]"
       },
-      "aliases": {},
       "typedef_relations": [
         {
           "typedef_name": "MyBuffer",
@@ -1517,5 +1500,5 @@
       }
     }
   },
-  "created_at": "2025-07-23T05:18:21.396799"
+  "created_at": "2025-07-23T05:23:22.245270"
 }

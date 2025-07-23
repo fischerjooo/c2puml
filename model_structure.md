@@ -145,19 +145,7 @@ List of preprocessor macros:
 
 **Purpose**: Represents #define directives and header guards.
 
-#### 8. **`typedefs`** (Object)
-Maps typedef names to their original types (only for struct/enum/union typedefs):
-```json
-{
-  "MyType_t": "struct",
-  "MyEnum_t": "enum",
-  "MyUnion_t": "union"
-}
-```
-
-**Purpose**: Tracks complex typedefs (struct, enum, union) and their base types.
-
-#### 9. **`aliases`** (Object)
+#### 8. **`aliases`** (Object)
 Maps type alias names to their original types (only for primitive or derived typedefs):
 ```json
 {
