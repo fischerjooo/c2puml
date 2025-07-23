@@ -3,10 +3,10 @@
   "source_folders": ["example/source"],
   "output_dir": "./output",
   "model_output_path": "model.json",
-  "recursive": true,
+  "recursive_search": true,
   "include_depth": 3,
   "file_filters": {
-    "include": [".*\\.c$", ".*\\.h$"],
-    "exclude": ["test_.*\\.c$"]
+    "include": [],
+    "exclude": []
   }
 }
