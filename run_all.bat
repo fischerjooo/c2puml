@@ -23,6 +23,9 @@ echo ✅ Example completed successfully!
 
 echo.
 
+REM Return to workspace root directory for picgen.bat
+cd /d "%~dp0"
+
 REM Step 3: Generate PNG images
 echo 📋 Step 3: Generating PNG images...
 echo ----------------------------------------
