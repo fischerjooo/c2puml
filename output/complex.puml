@@ -23,6 +23,7 @@ class "complex" as COMPLEX <<source>> #LightBlue
     static int test_callback(int * item)
     void test_complex_macro(int * x, int y, int z)
     void test_crypto_job_processing()
+    void test_crypto_utility_macros()
     void test_handle_operation(operation_type_t op_type, int * data, int size)
     void test_handler_table()
     void test_mixed_union()
@@ -37,6 +38,10 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
     + #define COMPLEX_H
     + #define COMPLEX_MACRO_FUNC(x, y, z)
     + #define CREATE_FUNC_NAME(prefix, suffix)
+    + #define CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8)
+    + #define CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8)
+    + #define CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)
+    + #define CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)
     + #define DEPRECATED
     + #define DEPRECATED
     + #define HANDLE_OPERATION(op_type, data, size, callback)
@@ -49,6 +54,13 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
     + \ 
  } \ 
  ( x )
+    + \ 
+ } 
+ 
+ 
+ #define CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) \ 
+ { \ 
+ ( ptr_pau8 ) [ 3 U ]
     + \ 
  } while ( 0 ) 
  
@@ -74,6 +86,7 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
     + math_operation_t * get_math_operations()
     + int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], int op_count, void ( * pre_process ) ( int *, int ), void ( * post_process ) ( int *, unknown unnamed)
     + void test_crypto_job_processing()
+    + void test_crypto_utility_macros()
 }
 
 class "Crypto_JobType" as TYPEDEF_CRYPTO_JOBTYPE <<typedef>> #LightYellow
@@ -219,6 +232,21 @@ class "release_callback_t" as TYPEDEF_RELEASE_CALLBACK_T <<typedef>> #LightYello
     + void ( * release_callback_t ) ( const char * message )
 }
 
+class "uint16" as TYPEDEF_UINT16 <<typedef>> #LightYellow
+{
+    + uint16_t
+}
+
+class "uint32" as TYPEDEF_UINT32 <<typedef>> #LightYellow
+{
+    + uint32_t
+}
+
+class "uint8" as TYPEDEF_UINT8 <<typedef>> #LightYellow
+{
+    + uint8_t
+}
+
 class "mixed_union_t" as TYPEDEF_MIXED_UNION_T <<typedef>> #LightYellow
 {
     + void ( * void_func ) ( void )
@@ -254,6 +282,9 @@ HEADER_COMPLEX ..> TYPEDEF_HANDLER_TABLE_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_MATH_OPERATION_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_MATH_OPS_ARRAY_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_RELEASE_CALLBACK_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_UINT16 : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_UINT32 : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_UINT8 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_MIXED_UNION_T : <<declares>>
 
 ' Uses relationships
