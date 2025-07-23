@@ -111,9 +111,9 @@ class Transformer:
         if "transformations" in config:
             model = self._apply_model_transformations(model, config["transformations"])
 
-        # Apply include depth processing
-        if "include_depth" in config and config["include_depth"] > 1:
-            model = self._process_include_relations(model, config["include_depth"])
+        # Apply include depth processing (disabled - include_relations field removed)
+        # if "include_depth" in config and config["include_depth"] > 1:
+        #     model = self._process_include_relations(model, config["include_depth"])
 
         self.logger.info(
             f"Transformations complete. Model now has {len(model.files)} files"
@@ -182,10 +182,10 @@ class Transformer:
         if "macros" in filters:
             file_model.macros = self._filter_list(file_model.macros, filters["macros"])
 
-        # Filter typedefs
-        if "typedefs" in filters:
-            file_model.typedefs = self._filter_dict(
-                file_model.typedefs, filters["typedefs"]
+        # Filter aliases (replaces typedefs)
+        if "aliases" in filters:
+            file_model.aliases = self._filter_dict(
+                file_model.aliases, filters["aliases"]
             )
 
         return file_model
@@ -457,9 +457,9 @@ class Transformer:
             Function,
             IncludeRelation,
             Struct,
-            TypedefRelation,
             Union,
             EnumValue,
+            Alias,
         )
 
         # Convert structs
@@ -468,7 +468,13 @@ class Transformer:
             fields = [
                 Field(f["name"], f["type"]) for f in struct_data.get("fields", [])
             ]
-            structs[name] = Struct(name, fields, struct_data.get("methods", []))
+            structs[name] = Struct(
+                name, 
+                fields, 
+                struct_data.get("methods", []),
+                struct_data.get("tag_name", ""),
+                struct_data.get("uses", [])
+            )
 
         # Convert enums
         enums = {}
@@ -485,7 +491,25 @@ class Transformer:
         unions = {}
         for name, union_data in data.get("unions", {}).items():
             fields = [Field(f["name"], f["type"]) for f in union_data.get("fields", [])]
-            unions[name] = Union(name, fields)
+            unions[name] = Union(
+                name, 
+                fields,
+                union_data.get("tag_name", ""),
+                union_data.get("uses", [])
+            )
+
+        # Convert aliases
+        aliases = {}
+        for name, alias_data in data.get("aliases", {}).items():
+            if isinstance(alias_data, dict):
+                aliases[name] = Alias(
+                    alias_data.get("name", name),
+                    alias_data.get("original_type", ""),
+                    alias_data.get("uses", [])
+                )
+            else:
+                # Handle legacy format where aliases was Dict[str, str]
+                aliases[name] = Alias(name, alias_data, [])
 
         # Convert functions
         functions = []
@@ -508,29 +532,18 @@ class Transformer:
         for global_data in data.get("globals", []):
             globals_list.append(Field(global_data["name"], global_data["type"]))
 
-        # Convert typedef relations
-        typedef_relations = []
-        for rel_data in data.get("typedef_relations", []):
-                    typedef_relations.append(
-            TypedefRelation(
-                rel_data["typedef_name"],
-                rel_data["original_type"],
-                rel_data["relationship_type"],
-                rel_data.get("struct_tag_name", ""),  # Include struct_tag_name with default empty string
-                rel_data.get("enum_tag_name", ""),  # Include enum_tag_name with default empty string
-            )
-        )
+                # typedef_relations removed - tag names are now in struct/enum/union
 
-        # Convert include relations
-        include_relations = []
-        for rel_data in data.get("include_relations", []):
-            include_relations.append(
-                IncludeRelation(
-                    rel_data["source_file"],
-                    rel_data["included_file"],
-                    rel_data["depth"],
-                )
-            )
+        # Convert include relations (disabled - include_relations field removed)
+        # include_relations = []
+        # for rel_data in data.get("include_relations", []):
+        #     include_relations.append(
+        #         IncludeRelation(
+        #             rel_data["source_file"],
+        #             rel_data["included_file"],
+        #             rel_data["depth"],
+        #         )
+        #     )
 
         return FileModel(
             file_path=data["file_path"],
@@ -544,9 +557,7 @@ class Transformer:
             globals=globals_list,
             includes=data.get("includes", []),
             macros=data.get("macros", []),
-            typedefs=data.get("typedefs", {}),
-            typedef_relations=typedef_relations,
-            include_relations=include_relations,
+            aliases=aliases,
         )
 
     def _save_model(self, model: ProjectModel, output_file: str) -> None:

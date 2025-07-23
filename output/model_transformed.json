@@ -27,7 +27,12 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "NestedInfo_tag",
+          "uses": [
+            "log_level_t",
+            "id_t"
+          ]
         },
         "ComplexExample_t": {
           "name": "ComplexExample_t",
@@ -48,7 +53,12 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "ComplexExample_tag",
+          "uses": [
+            "NestedInfo_t",
+            "CE_Status_t"
+          ]
         }
       },
       "enums": {
@@ -67,7 +77,8 @@
               "name": "CE_STATUS_FAIL",
               "value": null
             }
-          ]
+          ],
+          "tag_name": ""
         }
       },
       "functions": [],
@@ -79,56 +90,7 @@
       "macros": [
         "COMPLEX_EXAMPLE_H"
       ],
-      "typedefs": {
-        "NestedInfo_t": "struct",
-        "CE_Status_t": "enum",
-        "ComplexExample_t": "struct"
-      },
-      "typedef_relations": [
-        {
-          "typedef_name": "NestedInfo_t",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "NestedInfo_tag",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "CE_Status_t",
-          "original_type": "enum",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": "CE_Status_tag"
-        },
-        {
-          "typedef_name": "ComplexExample_t",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "ComplexExample_tag",
-          "enum_tag_name": ""
-        }
-      ],
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/complex_example.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/complex_example.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/complex_example.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/complex_example.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 2
-        }
-      ],
+      "aliases": {},
       "unions": {}
     },
     "config.h": {
@@ -153,7 +115,8 @@
               "name": "GS_UNKNOWN",
               "value": null
             }
-          ]
+          ],
+          "tag_name": ""
         }
       },
       "functions": [],
@@ -168,12 +131,18 @@
         "MAX_LABEL_LEN",
         "DEFAULT_BUFFER_SIZE"
       ],
-      "typedefs": {
-        "id_t": "uint32_t",
-        "status_t": "int32_t"
+      "aliases": {
+        "id_t": {
+          "name": "id_t",
+          "original_type": "uint32_t",
+          "uses": []
+        },
+        "status_t": {
+          "name": "status_t",
+          "original_type": "int32_t",
+          "uses": []
+        }
       },
-      "typedef_relations": [],
-      "include_relations": [],
       "unions": {}
     },
     "geometry.c": {
@@ -233,15 +202,7 @@
         "stdlib.h"
       ],
       "macros": [],
-      "typedefs": {},
-      "typedef_relations": [],
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/geometry.c",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 1
-        }
-      ],
+      "aliases": {},
       "unions": {}
     },
     "geometry.h": {
@@ -264,7 +225,11 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "triangle_tag",
+          "uses": [
+            "point_t"
+          ]
         }
       },
       "enums": {},
@@ -319,70 +284,7 @@
       "macros": [
         "GEOMETRY_H"
       ],
-      "typedefs": {
-        "triangle_t": "struct"
-      },
-      "typedef_relations": [
-        {
-          "typedef_name": "triangle_t",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "triangle_tag",
-          "enum_tag_name": ""
-        }
-      ],
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/geometry.h",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 2
-        }
-      ],
+      "aliases": {},
       "unions": {}
     },
     "logger.c": {
@@ -443,15 +345,7 @@
         "string.h"
       ],
       "macros": [],
-      "typedefs": {},
-      "typedef_relations": [],
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/logger.c",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 1
-        }
-      ],
+      "aliases": {},
       "unions": {}
     },
     "logger.h": {
@@ -480,7 +374,8 @@
               "name": "LOG_ERROR",
               "value": null
             }
-          ]
+          ],
+          "tag_name": ""
         }
       },
       "functions": [
@@ -529,56 +424,15 @@
       "macros": [
         "LOGGER_H"
       ],
-      "typedefs": {
-        "log_level_t": "enum",
-        "log_callback_t": "void ( * log_callback_t ) ( log_level_t level , const char * message )"
+      "aliases": {
+        "log_callback_t": {
+          "name": "log_callback_t",
+          "original_type": "void ( * log_callback_t ) ( log_level_t level , const char * message )",
+          "uses": [
+            "log_level_t"
+          ]
+        }
       },
-      "typedef_relations": [
-        {
-          "typedef_name": "log_level_t",
-          "original_type": "enum",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": "log_level_tag"
-        }
-      ],
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/logger.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        }
-      ],
       "unions": {}
     },
     "math_utils.c": {
@@ -649,15 +503,7 @@
         "math_utils.h"
       ],
       "macros": [],
-      "typedefs": {},
-      "typedef_relations": [],
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/math_utils.c",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 1
-        }
-      ],
+      "aliases": {},
       "unions": {}
     },
     "math_utils.h": {
@@ -730,33 +576,18 @@
       "macros": [
         "MATH_UTILS_H"
       ],
-      "typedefs": {
-        "real_t": "double",
-        "math_op_t": "int ( * math_op_t ) ( int , int )"
-      },
-      "typedef_relations": [],
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/math_utils.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
+      "aliases": {
+        "real_t": {
+          "name": "real_t",
+          "original_type": "double",
+          "uses": []
         },
-        {
-          "source_file": "/workspace/example/source/math_utils.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/math_utils.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/math_utils.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
+        "math_op_t": {
+          "name": "math_op_t",
+          "original_type": "int ( * math_op_t ) ( int , int )",
+          "uses": []
         }
-      ],
+      },
       "unions": {}
     },
     "sample.c": {
@@ -908,30 +739,7 @@
         "DEBUG_MODE",
         "CALC(x, y)"
       ],
-      "typedefs": {},
-      "typedef_relations": [],
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/sample.c",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/sample.c",
-          "included_file": "/workspace/example/source/math_utils.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/sample.c",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/sample.c",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 1
-        }
-      ],
+      "aliases": {},
       "unions": {}
     },
     "sample.h": {
@@ -959,7 +767,9 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "point_tag",
+          "uses": []
         }
       },
       "enums": {
@@ -978,7 +788,8 @@
               "name": "STATE_ERROR",
               "value": null
             }
-          ]
+          ],
+          "tag_name": ""
         }
       },
       "functions": [
@@ -1062,88 +873,7 @@
         "MIN(a, b)",
         "MAX(a, b)"
       ],
-      "typedefs": {
-        "point_t": "struct",
-        "system_state_t": "enum"
-      },
-      "typedef_relations": [
-        {
-          "typedef_name": "point_t",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "point_tag",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "system_state_t",
-          "original_type": "enum",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": "system_state_tag"
-        }
-      ],
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/sample.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 2
-        }
-      ],
+      "aliases": {},
       "unions": {}
     },
     "typedef_test.c": {
@@ -1244,30 +974,7 @@
         "stdlib.h"
       ],
       "macros": [],
-      "typedefs": {},
-      "typedef_relations": [],
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/typedef_test.c",
-          "included_file": "/workspace/example/source/typedef_test.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.c",
-          "included_file": "/workspace/example/source/complex_example.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.c",
-          "included_file": "/workspace/example/source/geometry.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.c",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 1
-        }
-      ],
+      "aliases": {},
       "unions": {}
     },
     "typedef_test.h": {
@@ -1290,7 +997,12 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "MyBuffer_tag",
+          "uses": [
+            "MyString",
+            "MyLen"
+          ]
         },
         "MyComplex": {
           "name": "MyComplex",
@@ -1316,7 +1028,14 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "MyComplexStruct_tag",
+          "uses": [
+            "MyCallback",
+            "MyString",
+            "log_level_t",
+            "MyLen"
+          ]
         },
         "NamedStruct_t": {
           "name": "NamedStruct_t",
@@ -1332,7 +1051,9 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "NamedStruct_tag",
+          "uses": []
         }
       },
       "enums": {
@@ -1351,7 +1072,8 @@
               "name": "COLOR_BLUE",
               "value": null
             }
-          ]
+          ],
+          "tag_name": ""
         },
         "Status_t": {
           "name": "Status_t",
@@ -1364,7 +1086,8 @@
               "name": "STATUS_FAIL",
               "value": null
             }
-          ]
+          ],
+          "tag_name": ""
         }
       },
       "functions": [],
@@ -1378,112 +1101,44 @@
       "macros": [
         "TYPEDEF_TEST_H"
       ],
-      "typedefs": {
-        "MyLen": "uint32_t",
-        "MyInt": "int32_t",
-        "MyString": "char *",
-        "MyBuffer": "struct",
-        "MyCallback": "int ( * MyCallback ) ( MyBuffer * buffer )",
-        "MyComplex": "struct",
-        "MyComplexPtr": "MyComplex *",
-        "Color_t": "enum",
-        "Status_t": "enum",
-        "Point_t": "struct",
-        "NamedStruct_t": "struct",
-        "Number_t": "union",
-        "NamedUnion_t": "union",
-        "MyComplexArray": "MyComplexPtr MyComplexArray [ 10 ]"
+      "aliases": {
+        "MyLen": {
+          "name": "MyLen",
+          "original_type": "uint32_t",
+          "uses": []
+        },
+        "MyInt": {
+          "name": "MyInt",
+          "original_type": "int32_t",
+          "uses": []
+        },
+        "MyString": {
+          "name": "MyString",
+          "original_type": "char *",
+          "uses": []
+        },
+        "MyCallback": {
+          "name": "MyCallback",
+          "original_type": "int ( * MyCallback ) ( MyBuffer * buffer )",
+          "uses": [
+            "MyBuffer"
+          ]
+        },
+        "MyComplexPtr": {
+          "name": "MyComplexPtr",
+          "original_type": "MyComplex *",
+          "uses": [
+            "MyComplex"
+          ]
+        },
+        "MyComplexArray": {
+          "name": "MyComplexArray",
+          "original_type": "MyComplexPtr MyComplexArray [ 10 ]",
+          "uses": [
+            "MyComplexPtr"
+          ]
+        }
       },
-      "typedef_relations": [
-        {
-          "typedef_name": "MyBuffer",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "MyBuffer_tag",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "MyComplex",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "MyComplexStruct_tag",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "Color_t",
-          "original_type": "enum",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": "Color_tag"
-        },
-        {
-          "typedef_name": "Status_t",
-          "original_type": "enum",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": "StatusEnum_tag"
-        },
-        {
-          "typedef_name": "Point_t",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "Point_tag",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "NamedStruct_t",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "NamedStruct_tag",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "Number_t",
-          "original_type": "union",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "NamedUnion_t",
-          "original_type": "union",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": ""
-        }
-      ],
-      "include_relations": [
-        {
-          "source_file": "/workspace/example/source/typedef_test.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 2
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.h",
-          "included_file": "/workspace/example/source/sample.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.h",
-          "included_file": "/workspace/example/source/config.h",
-          "depth": 1
-        },
-        {
-          "source_file": "/workspace/example/source/typedef_test.h",
-          "included_file": "/workspace/example/source/logger.h",
-          "depth": 1
-        }
-      ],
       "unions": {
         "Number_t": {
           "name": "Number_t",
@@ -1498,7 +1153,9 @@
               "type": "float",
               "value": null
             }
-          ]
+          ],
+          "tag_name": "Number_tag",
+          "uses": []
         },
         "NamedUnion_t": {
           "name": "NamedUnion_t",
@@ -1513,10 +1170,12 @@
               "type": "double",
               "value": null
             }
-          ]
+          ],
+          "tag_name": "NamedUnion_tag",
+          "uses": []
         }
       }
     }
   },
-  "created_at": "2025-07-23T04:55:13.582554"
+  "created_at": "2025-07-23T06:23:31.542907"
 }

@@ -27,7 +27,12 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "NestedInfo_tag",
+          "uses": [
+            "log_level_t",
+            "id_t"
+          ]
         },
         "ComplexExample_t": {
           "name": "ComplexExample_t",
@@ -48,7 +53,12 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "ComplexExample_tag",
+          "uses": [
+            "NestedInfo_t",
+            "CE_Status_t"
+          ]
         }
       },
       "enums": {
@@ -67,7 +77,8 @@
               "name": "CE_STATUS_FAIL",
               "value": null
             }
-          ]
+          ],
+          "tag_name": "CE_Status_tag"
         }
       },
       "functions": [],
@@ -79,35 +90,7 @@
       "macros": [
         "COMPLEX_EXAMPLE_H"
       ],
-      "typedefs": {
-        "NestedInfo_t": "struct",
-        "CE_Status_t": "enum",
-        "ComplexExample_t": "struct"
-      },
-      "typedef_relations": [
-        {
-          "typedef_name": "NestedInfo_t",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "NestedInfo_tag",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "CE_Status_t",
-          "original_type": "enum",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": "CE_Status_tag"
-        },
-        {
-          "typedef_name": "ComplexExample_t",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "ComplexExample_tag",
-          "enum_tag_name": ""
-        }
-      ],
-      "include_relations": [],
+      "aliases": {},
       "unions": {}
     },
     "config.h": {
@@ -132,7 +115,8 @@
               "name": "GS_UNKNOWN",
               "value": null
             }
-          ]
+          ],
+          "tag_name": ""
         }
       },
       "functions": [],
@@ -147,12 +131,18 @@
         "MAX_LABEL_LEN",
         "DEFAULT_BUFFER_SIZE"
       ],
-      "typedefs": {
-        "id_t": "uint32_t",
-        "status_t": "int32_t"
+      "aliases": {
+        "id_t": {
+          "name": "id_t",
+          "original_type": "uint32_t",
+          "uses": []
+        },
+        "status_t": {
+          "name": "status_t",
+          "original_type": "int32_t",
+          "uses": []
+        }
       },
-      "typedef_relations": [],
-      "include_relations": [],
       "unions": {}
     },
     "geometry.c": {
@@ -212,9 +202,7 @@
         "stdlib.h"
       ],
       "macros": [],
-      "typedefs": {},
-      "typedef_relations": [],
-      "include_relations": [],
+      "aliases": {},
       "unions": {}
     },
     "geometry.h": {
@@ -237,7 +225,11 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "triangle_tag",
+          "uses": [
+            "point_t"
+          ]
         }
       },
       "enums": {},
@@ -292,19 +284,7 @@
       "macros": [
         "GEOMETRY_H"
       ],
-      "typedefs": {
-        "triangle_t": "struct"
-      },
-      "typedef_relations": [
-        {
-          "typedef_name": "triangle_t",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "triangle_tag",
-          "enum_tag_name": ""
-        }
-      ],
-      "include_relations": [],
+      "aliases": {},
       "unions": {}
     },
     "logger.c": {
@@ -365,9 +345,7 @@
         "string.h"
       ],
       "macros": [],
-      "typedefs": {},
-      "typedef_relations": [],
-      "include_relations": [],
+      "aliases": {},
       "unions": {}
     },
     "logger.h": {
@@ -396,7 +374,8 @@
               "name": "LOG_ERROR",
               "value": null
             }
-          ]
+          ],
+          "tag_name": "log_level_tag"
         }
       },
       "functions": [
@@ -445,20 +424,15 @@
       "macros": [
         "LOGGER_H"
       ],
-      "typedefs": {
-        "log_level_t": "enum",
-        "log_callback_t": "void ( * log_callback_t ) ( log_level_t level , const char * message )"
-      },
-      "typedef_relations": [
-        {
-          "typedef_name": "log_level_t",
-          "original_type": "enum",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": "log_level_tag"
+      "aliases": {
+        "log_callback_t": {
+          "name": "log_callback_t",
+          "original_type": "void ( * log_callback_t ) ( log_level_t level , const char * message )",
+          "uses": [
+            "log_level_t"
+          ]
         }
-      ],
-      "include_relations": [],
+      },
       "unions": {}
     },
     "math_utils.c": {
@@ -529,9 +503,7 @@
         "math_utils.h"
       ],
       "macros": [],
-      "typedefs": {},
-      "typedef_relations": [],
-      "include_relations": [],
+      "aliases": {},
       "unions": {}
     },
     "math_utils.h": {
@@ -604,12 +576,18 @@
       "macros": [
         "MATH_UTILS_H"
       ],
-      "typedefs": {
-        "real_t": "double",
-        "math_op_t": "int ( * math_op_t ) ( int , int )"
+      "aliases": {
+        "real_t": {
+          "name": "real_t",
+          "original_type": "double",
+          "uses": []
+        },
+        "math_op_t": {
+          "name": "math_op_t",
+          "original_type": "int ( * math_op_t ) ( int , int )",
+          "uses": []
+        }
       },
-      "typedef_relations": [],
-      "include_relations": [],
       "unions": {}
     },
     "sample.c": {
@@ -775,9 +753,7 @@
         "DEBUG_MODE",
         "CALC(x, y)"
       ],
-      "typedefs": {},
-      "typedef_relations": [],
-      "include_relations": [],
+      "aliases": {},
       "unions": {}
     },
     "sample.h": {
@@ -805,7 +781,9 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "point_tag",
+          "uses": []
         }
       },
       "enums": {
@@ -824,7 +802,8 @@
               "name": "STATE_ERROR",
               "value": null
             }
-          ]
+          ],
+          "tag_name": "system_state_tag"
         }
       },
       "functions": [
@@ -908,27 +887,7 @@
         "MIN(a, b)",
         "MAX(a, b)"
       ],
-      "typedefs": {
-        "point_t": "struct",
-        "system_state_t": "enum"
-      },
-      "typedef_relations": [
-        {
-          "typedef_name": "point_t",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "point_tag",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "system_state_t",
-          "original_type": "enum",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": "system_state_tag"
-        }
-      ],
-      "include_relations": [],
+      "aliases": {},
       "unions": {}
     },
     "typedef_test.c": {
@@ -1029,9 +988,7 @@
         "stdlib.h"
       ],
       "macros": [],
-      "typedefs": {},
-      "typedef_relations": [],
-      "include_relations": [],
+      "aliases": {},
       "unions": {}
     },
     "typedef_test.h": {
@@ -1054,7 +1011,12 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "MyBuffer_tag",
+          "uses": [
+            "MyString",
+            "MyLen"
+          ]
         },
         "MyComplex": {
           "name": "MyComplex",
@@ -1080,7 +1042,14 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "MyComplexStruct_tag",
+          "uses": [
+            "MyCallback",
+            "MyString",
+            "log_level_t",
+            "MyLen"
+          ]
         },
         "Point_t": {
           "name": "Point_t",
@@ -1096,7 +1065,9 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "Point_tag",
+          "uses": []
         },
         "NamedStruct_t": {
           "name": "NamedStruct_t",
@@ -1112,7 +1083,9 @@
               "value": null
             }
           ],
-          "methods": []
+          "methods": [],
+          "tag_name": "NamedStruct_tag",
+          "uses": []
         }
       },
       "enums": {
@@ -1131,7 +1104,8 @@
               "name": "COLOR_BLUE",
               "value": null
             }
-          ]
+          ],
+          "tag_name": "Color_tag"
         },
         "Status_t": {
           "name": "Status_t",
@@ -1144,7 +1118,8 @@
               "name": "STATUS_FAIL",
               "value": null
             }
-          ]
+          ],
+          "tag_name": "StatusEnum_tag"
         }
       },
       "functions": [],
@@ -1158,81 +1133,44 @@
       "macros": [
         "TYPEDEF_TEST_H"
       ],
-      "typedefs": {
-        "MyLen": "uint32_t",
-        "MyInt": "int32_t",
-        "MyString": "char *",
-        "MyBuffer": "struct",
-        "MyCallback": "int ( * MyCallback ) ( MyBuffer * buffer )",
-        "MyComplex": "struct",
-        "MyComplexPtr": "MyComplex *",
-        "Color_t": "enum",
-        "Status_t": "enum",
-        "Point_t": "struct",
-        "NamedStruct_t": "struct",
-        "Number_t": "union",
-        "NamedUnion_t": "union",
-        "MyComplexArray": "MyComplexPtr MyComplexArray [ 10 ]"
-      },
-      "typedef_relations": [
-        {
-          "typedef_name": "MyBuffer",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "MyBuffer_tag",
-          "enum_tag_name": ""
+      "aliases": {
+        "MyLen": {
+          "name": "MyLen",
+          "original_type": "uint32_t",
+          "uses": []
         },
-        {
-          "typedef_name": "MyComplex",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "MyComplexStruct_tag",
-          "enum_tag_name": ""
+        "MyInt": {
+          "name": "MyInt",
+          "original_type": "int32_t",
+          "uses": []
         },
-        {
-          "typedef_name": "Color_t",
-          "original_type": "enum",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": "Color_tag"
+        "MyString": {
+          "name": "MyString",
+          "original_type": "char *",
+          "uses": []
         },
-        {
-          "typedef_name": "Status_t",
-          "original_type": "enum",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": "StatusEnum_tag"
+        "MyCallback": {
+          "name": "MyCallback",
+          "original_type": "int ( * MyCallback ) ( MyBuffer * buffer )",
+          "uses": [
+            "MyBuffer"
+          ]
         },
-        {
-          "typedef_name": "Point_t",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "Point_tag",
-          "enum_tag_name": ""
+        "MyComplexPtr": {
+          "name": "MyComplexPtr",
+          "original_type": "MyComplex *",
+          "uses": [
+            "MyComplex"
+          ]
         },
-        {
-          "typedef_name": "NamedStruct_t",
-          "original_type": "struct",
-          "relationship_type": "alias",
-          "struct_tag_name": "NamedStruct_tag",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "Number_t",
-          "original_type": "union",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": ""
-        },
-        {
-          "typedef_name": "NamedUnion_t",
-          "original_type": "union",
-          "relationship_type": "alias",
-          "struct_tag_name": "",
-          "enum_tag_name": ""
+        "MyComplexArray": {
+          "name": "MyComplexArray",
+          "original_type": "MyComplexPtr MyComplexArray [ 10 ]",
+          "uses": [
+            "MyComplexPtr"
+          ]
         }
-      ],
-      "include_relations": [],
+      },
       "unions": {
         "Number_t": {
           "name": "Number_t",
@@ -1247,7 +1185,9 @@
               "type": "float",
               "value": null
             }
-          ]
+          ],
+          "tag_name": "Number_tag",
+          "uses": []
         },
         "NamedUnion_t": {
           "name": "NamedUnion_t",
@@ -1262,10 +1202,12 @@
               "type": "double",
               "value": null
             }
-          ]
+          ],
+          "tag_name": "NamedUnion_tag",
+          "uses": []
         }
       }
     }
   },
-  "created_at": "2025-07-23T04:55:13.582554"
+  "created_at": "2025-07-23T06:23:31.542907"
 }

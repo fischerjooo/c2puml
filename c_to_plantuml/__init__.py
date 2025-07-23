@@ -17,8 +17,8 @@ from .models import (
     IncludeRelation,
     ProjectModel,
     Struct,
-    TypedefRelation,
     Union,
+    Alias,
 )
 from .parser import CParser, Parser
 from .transformer import Transformer
@@ -37,6 +37,6 @@ __all__ = [
     "Union",
     "Function",
     "Field",
-    "TypedefRelation",
     "IncludeRelation",
+    "Alias",
 ]
