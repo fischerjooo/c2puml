@@ -35,7 +35,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             int y;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -47,11 +47,11 @@ class TestPreprocessorHandling(unittest.TestCase):
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
-            
+
             # Should parse the variable from preprocessor block
             global_names = [g.name for g in file_model.globals]
             self.assertIn("bulk_job_processing_enabled", global_names)
-            
+
             # Check the type
             for global_var in file_model.globals:
                 if global_var.name == "bulk_job_processing_enabled":
@@ -74,7 +74,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             int y;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -86,13 +86,17 @@ class TestPreprocessorHandling(unittest.TestCase):
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
-            
+
             # Should parse both variables from preprocessor blocks
             global_names = [g.name for g in file_model.globals]
             self.assertEqual(global_names.count("bulk_job_processing_enabled"), 2)
-            
+
             # Check both types are present
-            types = [g.type for g in file_model.globals if g.name == "bulk_job_processing_enabled"]
+            types = [
+                g.type
+                for g in file_model.globals
+                if g.name == "bulk_job_processing_enabled"
+            ]
             self.assertIn("uint32_t", types)
             self.assertIn("int", types)
 
@@ -112,7 +116,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             int y;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -124,7 +128,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
-            
+
             # Should parse the variable from preprocessor block
             global_names = [g.name for g in file_model.globals]
             self.assertIn("bulk_job_processing_enabled", global_names)
@@ -146,7 +150,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             int y;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -158,7 +162,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
-            
+
             # Should parse the variable from nested preprocessor blocks
             global_names = [g.name for g in file_model.globals]
             self.assertIn("bulk_job_processing_enabled", global_names)
@@ -182,7 +186,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             int y;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -194,13 +198,17 @@ class TestPreprocessorHandling(unittest.TestCase):
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
-            
+
             # Should parse all three variables from preprocessor blocks
             global_names = [g.name for g in file_model.globals]
             self.assertEqual(global_names.count("bulk_job_processing_enabled"), 3)
-            
+
             # Check all types are present
-            types = [g.type for g in file_model.globals if g.name == "bulk_job_processing_enabled"]
+            types = [
+                g.type
+                for g in file_model.globals
+                if g.name == "bulk_job_processing_enabled"
+            ]
             self.assertIn("uint32_t", types)
             self.assertIn("int", types)
             self.assertIn("char", types)
@@ -222,7 +230,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             int y;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -234,7 +242,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
-            
+
             # Should parse both variables from preprocessor blocks
             global_names = [g.name for g in file_model.globals]
             self.assertEqual(global_names.count("bulk_job_processing_enabled"), 2)
@@ -262,7 +270,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             int y;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -295,7 +303,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             int y;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -307,7 +315,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
-            
+
             # Should parse both functions from preprocessor blocks
             function_names = [f.name for f in file_model.functions]
             self.assertIn("process_bulk_jobs", function_names)
@@ -338,7 +346,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             int y;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -350,7 +358,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
-            
+
             # Should parse typedefs from preprocessor blocks
             alias_names = list(file_model.aliases.keys())
             self.assertIn("job_id_t", alias_names)
@@ -359,11 +367,11 @@ class TestPreprocessorHandling(unittest.TestCase):
             struct_names = list(file_model.structs.keys())
             self.assertTrue(
                 "bulk_job_t" in alias_names or "bulk_job_t" in struct_names,
-                f"bulk_job_t not found in aliases {alias_names} or structs {struct_names}"
+                f"bulk_job_t not found in aliases {alias_names} or structs {struct_names}",
             )
             self.assertTrue(
                 "simple_job_t" in alias_names or "simple_job_t" in struct_names,
-                f"simple_job_t not found in aliases {alias_names} or structs {struct_names}"
+                f"simple_job_t not found in aliases {alias_names} or structs {struct_names}",
             )
 
         finally:
@@ -391,7 +399,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             int y;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -403,7 +411,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
-            
+
             # Should parse enums from preprocessor blocks
             enum_names = list(file_model.enums.keys())
             self.assertIn("BulkJobStatus", enum_names)
@@ -450,7 +458,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             int y;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -462,28 +470,28 @@ class TestPreprocessorHandling(unittest.TestCase):
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
-            
+
             # Should parse all content from both preprocessor branches
             # Check typedefs
             alias_names = list(file_model.aliases.keys())
             self.assertIn("bulk_job_id_t", alias_names)
             self.assertIn("simple_job_id_t", alias_names)
-            
+
             # Check structs
             struct_names = list(file_model.structs.keys())
             self.assertIn("BulkJobConfig", struct_names)
             self.assertIn("SimpleJobConfig", struct_names)
-            
+
             # Check globals
             global_names = [g.name for g in file_model.globals]
             self.assertIn("bulk_job_count", global_names)
             self.assertIn("simple_job_count", global_names)
-            
+
             # Check functions
             function_names = [f.name for f in file_model.functions]
             self.assertIn("process_bulk_jobs", function_names)
             self.assertIn("process_simple_jobs", function_names)
-            
+
             # Check enums
             enum_names = list(file_model.enums.keys())
             self.assertIn("BulkJobState", enum_names)
@@ -501,18 +509,20 @@ class TestPreprocessorHandling(unittest.TestCase):
         int bulk_job_processing_enabled;
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Check that preprocessor directives are tokenized correctly
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should have 3 preprocessor tokens: #if, #else, #endif
         self.assertEqual(len(preprocessor_tokens), 3)
-        
+
         # Check the values
         directive_values = [t.value.strip() for t in preprocessor_tokens]
-        self.assertIn("#if (STD_ON == CRYPTO_CFG_BULK_JOB_PROCESSING_ENABLED)", directive_values)
+        self.assertIn(
+            "#if (STD_ON == CRYPTO_CFG_BULK_JOB_PROCESSING_ENABLED)", directive_values
+        )
         self.assertIn("#else", directive_values)
         self.assertIn("#endif", directive_values)
 
@@ -527,7 +537,7 @@ class TestPreprocessorHandling(unittest.TestCase):
         char bulk_job_processing_enabled;
         #endif
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -557,7 +567,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             int y;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -569,7 +579,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
-            
+
             # Should parse only the variable from the else block
             global_names = [g.name for g in file_model.globals]
             self.assertEqual(global_names.count("bulk_job_processing_enabled"), 1)
@@ -578,5 +588,5 @@ class TestPreprocessorHandling(unittest.TestCase):
             os.unlink(temp_file)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

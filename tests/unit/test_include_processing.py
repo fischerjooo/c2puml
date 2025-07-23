@@ -10,8 +10,15 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 from c_to_plantuml.models import (
-    Alias, FileModel, ProjectModel, IncludeRelation,
-    Struct, Enum, Union, Function, Field
+    Alias,
+    FileModel,
+    ProjectModel,
+    IncludeRelation,
+    Struct,
+    Enum,
+    Union,
+    Function,
+    Field,
 )
 from c_to_plantuml.parser import CParser
 from c_to_plantuml.transformer import Transformer
@@ -26,7 +33,7 @@ class TestIncludeProcessing(unittest.TestCase):
         self.parser = CParser()
         self.transformer = Transformer()
         self.generator = PlantUMLGenerator()
-        
+
         # Create temporary directory for test files
         self.temp_dir = tempfile.mkdtemp()
         self.test_dir = Path(self.temp_dir)
@@ -34,12 +41,13 @@ class TestIncludeProcessing(unittest.TestCase):
     def tearDown(self):
         """Clean up test fixtures"""
         import shutil
+
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def create_test_file(self, filename: str, content: str) -> Path:
         """Create a test file with given content"""
         file_path = self.test_dir / filename
-        with open(file_path, 'w', encoding='utf-8') as f:
+        with open(file_path, "w", encoding="utf-8") as f:
             f.write(content)
         return file_path
 
@@ -53,14 +61,21 @@ class TestIncludeProcessing(unittest.TestCase):
 #include "config.h"
 #include "types.h"
         """
-        
+
         file_path = self.create_test_file("test.c", content)
         file_model = self.parser.parse_file(
             file_path, file_path.name, str(self.test_dir)
         )
-        
+
         # Check that all includes are parsed correctly
-        expected_includes = {"stdio.h", "stdlib.h", "string.h", "utils.h", "config.h", "types.h"}
+        expected_includes = {
+            "stdio.h",
+            "stdlib.h",
+            "string.h",
+            "utils.h",
+            "config.h",
+            "types.h",
+        }
         self.assertEqual(set(file_model.includes), expected_includes)
 
     def test_parse_includes_with_comments(self):
@@ -74,12 +89,12 @@ class TestIncludeProcessing(unittest.TestCase):
 #include "utils.h"  // Utility functions
 #include "config.h" /* Configuration */
         """
-        
+
         file_path = self.create_test_file("test.c", content)
         file_model = self.parser.parse_file(
             file_path, file_path.name, str(self.test_dir)
         )
-        
+
         expected_includes = {"stdio.h", "stdlib.h", "utils.h", "config.h"}
         self.assertEqual(set(file_model.includes), expected_includes)
 
@@ -91,12 +106,12 @@ class TestIncludeProcessing(unittest.TestCase):
 #include <string.h>
 #include "config.h"
         """
-        
+
         file_path = self.create_test_file("test.c", content)
         file_model = self.parser.parse_file(
             file_path, file_path.name, str(self.test_dir)
         )
-        
+
         expected_includes = {"stdio.h", "stdlib.h", "string.h", "config.h"}
         self.assertEqual(set(file_model.includes), expected_includes)
 
@@ -106,17 +121,19 @@ class TestIncludeProcessing(unittest.TestCase):
         main_c = self.create_test_file("main.c", '#include "utils.h"')
         utils_h = self.create_test_file("utils.h", '#include "config.h"')
         config_h = self.create_test_file("config.h", "")
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Process include relations
-        transformed_model = self.transformer._process_include_relations(project_model, 2)
-        
+        transformed_model = self.transformer._process_include_relations(
+            project_model, 2
+        )
+
         # Check that include relations are created
         main_file = transformed_model.files["main.c"]
         self.assertGreater(len(main_file.include_relations), 0)
-        
+
         # Check the include relation details
         include_rel = main_file.include_relations[0]
         self.assertEqual(include_rel.source_file, str(main_c.resolve()))
@@ -130,26 +147,40 @@ class TestIncludeProcessing(unittest.TestCase):
         utils_h = self.create_test_file("utils.h", '#include "config.h"')
         config_h = self.create_test_file("config.h", '#include "types.h"')
         types_h = self.create_test_file("types.h", "")
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Process include relations with depth 3
-        transformed_model = self.transformer._process_include_relations(project_model, 3)
-        
+        transformed_model = self.transformer._process_include_relations(
+            project_model, 3
+        )
+
         # Check that nested include relations are created
         main_file = transformed_model.files["main.c"]
         utils_file = transformed_model.files["utils.h"]
-        
+
         # Main.c should have relation to utils.h
-        main_utils_rel = next((rel for rel in main_file.include_relations 
-                              if "utils.h" in rel.included_file), None)
+        main_utils_rel = next(
+            (
+                rel
+                for rel in main_file.include_relations
+                if "utils.h" in rel.included_file
+            ),
+            None,
+        )
         self.assertIsNotNone(main_utils_rel)
         self.assertEqual(main_utils_rel.depth, 1)
-        
+
         # Utils.h should have relation to config.h
-        utils_config_rel = next((rel for rel in utils_file.include_relations 
-                                if "config.h" in rel.included_file), None)
+        utils_config_rel = next(
+            (
+                rel
+                for rel in utils_file.include_relations
+                if "config.h" in rel.included_file
+            ),
+            None,
+        )
         self.assertIsNotNone(utils_config_rel)
         self.assertEqual(utils_config_rel.depth, 2)  # Depth 2 because it's nested
 
@@ -161,33 +192,53 @@ class TestIncludeProcessing(unittest.TestCase):
         level2_h = self.create_test_file("level2.h", '#include "level3.h"')
         level3_h = self.create_test_file("level3.h", '#include "level4.h"')
         level4_h = self.create_test_file("level4.h", "")
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Process include relations with max depth 2
-        transformed_model = self.transformer._process_include_relations(project_model, 2)
-        
+        transformed_model = self.transformer._process_include_relations(
+            project_model, 2
+        )
+
         # Check that only relations up to depth 2 are created
         main_file = transformed_model.files["main.c"]
         level1_file = transformed_model.files["level1.h"]
-        
+
         # Main.c should have relation to level1.h (depth 1)
-        main_level1_rel = next((rel for rel in main_file.include_relations 
-                               if "level1.h" in rel.included_file), None)
+        main_level1_rel = next(
+            (
+                rel
+                for rel in main_file.include_relations
+                if "level1.h" in rel.included_file
+            ),
+            None,
+        )
         self.assertIsNotNone(main_level1_rel)
         self.assertEqual(main_level1_rel.depth, 1)
-        
+
         # Level1.h should have relation to level2.h (depth 1)
-        level1_level2_rel = next((rel for rel in level1_file.include_relations 
-                                 if "level2.h" in rel.included_file), None)
+        level1_level2_rel = next(
+            (
+                rel
+                for rel in level1_file.include_relations
+                if "level2.h" in rel.included_file
+            ),
+            None,
+        )
         self.assertIsNotNone(level1_level2_rel)
         self.assertEqual(level1_level2_rel.depth, 1)
-        
+
         # Level2.h should have relation to level3.h (depth 2, which is within max depth)
         level2_file = transformed_model.files["level2.h"]
-        level2_level3_rel = next((rel for rel in level2_file.include_relations 
-                                 if "level3.h" in rel.included_file), None)
+        level2_level3_rel = next(
+            (
+                rel
+                for rel in level2_file.include_relations
+                if "level3.h" in rel.included_file
+            ),
+            None,
+        )
         self.assertIsNotNone(level2_level3_rel)
         self.assertEqual(level2_level3_rel.depth, 2)
 
@@ -197,13 +248,15 @@ class TestIncludeProcessing(unittest.TestCase):
         main_c = self.create_test_file("main.c", '#include "utils.h"')
         utils_h = self.create_test_file("utils.h", '#include "config.h"')
         config_h = self.create_test_file("config.h", '#include "utils.h"')
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Process include relations
-        transformed_model = self.transformer._process_include_relations(project_model, 3)
-        
+        transformed_model = self.transformer._process_include_relations(
+            project_model, 3
+        )
+
         # Should not crash and should create some relations
         main_file = transformed_model.files["main.c"]
         self.assertGreaterEqual(len(main_file.include_relations), 0)
@@ -213,7 +266,7 @@ class TestIncludeProcessing(unittest.TestCase):
         # Test with system headers (should return None as they're not in project)
         result = self.transformer._find_included_file("stdio.h", str(self.test_dir))
         self.assertIsNone(result)
-        
+
         result = self.transformer._find_included_file("stdlib.h", str(self.test_dir))
         self.assertIsNone(result)
 
@@ -222,11 +275,11 @@ class TestIncludeProcessing(unittest.TestCase):
         # Create test header files
         utils_h = self.create_test_file("utils.h", "")
         config_h = self.create_test_file("config.h", "")
-        
+
         # Test finding local headers
         result = self.transformer._find_included_file("utils.h", str(self.test_dir))
         self.assertEqual(result, str(utils_h.resolve()))
-        
+
         result = self.transformer._find_included_file("config.h", str(self.test_dir))
         self.assertEqual(result, str(config_h.resolve()))
 
@@ -235,11 +288,11 @@ class TestIncludeProcessing(unittest.TestCase):
         # Create header files with different extensions
         utils_h = self.create_test_file("utils.h", "")
         config_hpp = self.create_test_file("config.hpp", "")
-        
+
         # Test finding .h file
         result = self.transformer._find_included_file("utils", str(self.test_dir))
         self.assertEqual(result, str(utils_h.resolve()))
-        
+
         # Test finding .hpp file
         result = self.transformer._find_included_file("config", str(self.test_dir))
         self.assertEqual(result, str(config_hpp.resolve()))
@@ -251,7 +304,7 @@ class TestIncludeProcessing(unittest.TestCase):
         include_dir.mkdir()
         utils_h = include_dir / "utils.h"
         utils_h.touch()
-        
+
         # Test finding file in subdirectory
         result = self.transformer._find_included_file("utils.h", str(self.test_dir))
         self.assertEqual(result, str(utils_h.resolve()))
@@ -261,14 +314,14 @@ class TestIncludeProcessing(unittest.TestCase):
         # Create test files
         main_c = self.create_test_file("main.c", '#include "utils.h"')
         utils_h = self.create_test_file("utils.h", "")
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Generate PlantUML diagram
         main_file_model = project_model.files["main.c"]
         diagram = self.generator.generate_diagram(main_file_model, project_model)
-        
+
         # Check that include relationship is generated
         self.assertIn("MAIN --> HEADER_UTILS : <<include>>", diagram)
         # Header class should be generated since utils.h exists in the project
@@ -279,17 +332,19 @@ class TestIncludeProcessing(unittest.TestCase):
         # Create test files with header-to-header includes
         utils_h = self.create_test_file("utils.h", '#include "config.h"')
         config_h = self.create_test_file("config.h", "")
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Process include relations
-        transformed_model = self.transformer._process_include_relations(project_model, 2)
-        
+        transformed_model = self.transformer._process_include_relations(
+            project_model, 2
+        )
+
         # Generate PlantUML diagram for utils.h
         utils_file_model = transformed_model.files["utils.h"]
         diagram = self.generator.generate_diagram(utils_file_model, transformed_model)
-        
+
         # Check that header-to-header relationship is generated
         self.assertIn("HEADER_UTILS --> HEADER_CONFIG : <<include>>", diagram)
 
@@ -306,14 +361,14 @@ typedef struct {
 } Point;
         """
         test_c = self.create_test_file("test.c", content)
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Generate PlantUML diagram
         file_model = project_model.files["test.c"]
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Note: Current implementation does not show typedef declarations in file/header classes
         # Only typedef classes are created for complex typedefs (struct/enum/union)
         # Primitive typedefs are not being processed due to parser issues
@@ -339,21 +394,21 @@ typedef enum {
 typedef Color* ColorPtr;
         """
         test_c = self.create_test_file("test.c", content)
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Generate PlantUML diagram
         file_model = project_model.files["test.c"]
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Note: Current implementation does not show typedef declarations in file/header classes
         # Only typedef classes are created for complex typedefs (struct/enum/union)
         # Primitive typedefs are not being processed due to parser issues
-        
+
         # Check that complex typedefs have separate typedef classes
         self.assertIn('class "Point" as TYPEDEF_POINT <<typedef>>', diagram)
-        self.assertIn('TEST ..> TYPEDEF_POINT : <<declares>>', diagram)
+        self.assertIn("TEST ..> TYPEDEF_POINT : <<declares>>", diagram)
 
     def test_include_processing_with_typedefs(self):
         """Test include processing when headers contain typedefs"""
@@ -372,7 +427,7 @@ int y;
         """
         utils_h_path = Path(self.temp_dir) / "utils.h"
         utils_h_path.write_text(utils_h_content)
-        
+
         # Create main.c that includes utils.h
         main_c_content = """
 #include "utils.h"
@@ -383,12 +438,12 @@ int main() {
         """
         main_c_path = Path(self.temp_dir) / "main.c"
         main_c_path.write_text(main_c_content)
-        
+
         # Parse and generate diagram
         project_model = self.parser.parse_project(str(self.temp_dir))
         file_model = project_model.files["main.c"]
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Note: Current implementation does not show typedef declarations in file/header classes
         # Only typedef classes are created for complex typedefs (struct/enum/union)
         # Primitive typedefs are not being processed due to parser issues
@@ -407,17 +462,17 @@ int main() {
 #define VERSION "1.0"
         """
         config_h = self.create_test_file("config.h", config_h_content)
-        
+
         # Create main file that includes the header
         main_c = self.create_test_file("main.c", '#include "config.h"')
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Generate PlantUML diagram
         main_file_model = project_model.files["main.c"]
         diagram = self.generator.generate_diagram(main_file_model, project_model)
-        
+
         # Check that header class includes macros
         self.assertIn('class "config" as HEADER_CONFIG <<header>> #LightGreen', diagram)
         self.assertIn("+ #define MAX_SIZE", diagram)
@@ -433,17 +488,17 @@ int helper_function(int param);
 float calculate_value(float x, float y);
         """
         utils_h = self.create_test_file("utils.h", utils_h_content)
-        
+
         # Create main file that includes the header
         main_c = self.create_test_file("main.c", '#include "utils.h"')
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Generate PlantUML diagram
         main_file_model = project_model.files["main.c"]
         diagram = self.generator.generate_diagram(main_file_model, project_model)
-        
+
         # Check that header class includes functions
         self.assertIn('class "utils" as HEADER_UTILS <<header>> #LightGreen', diagram)
         # Note: Function declarations in headers are not being parsed correctly in the current implementation
@@ -465,17 +520,17 @@ struct Config {
 };
         """
         types_h = self.create_test_file("types.h", types_h_content)
-        
+
         # Create main file that includes the header
         main_c = self.create_test_file("main.c", '#include "types.h"')
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Generate PlantUML diagram
         main_file_model = project_model.files["main.c"]
         diagram = self.generator.generate_diagram(main_file_model, project_model)
-        
+
         # Check that header class includes struct fields as global variables
         self.assertIn('class "types" as HEADER_TYPES <<header>> #LightGreen', diagram)
         self.assertIn("+ char * name", diagram)
@@ -500,20 +555,20 @@ enum Color {
 };
         """
         types_h = self.create_test_file("types.h", types_h_content)
-        
+
         # Create main file that includes the header
         main_c = self.create_test_file("main.c", '#include "types.h"')
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Generate PlantUML diagram
         main_file_model = project_model.files["main.c"]
         diagram = self.generator.generate_diagram(main_file_model, project_model)
-        
+
         # Check that header class exists
         self.assertIn('class "types" as HEADER_TYPES <<header>> #LightGreen', diagram)
-        
+
         # Note: Enum values are not being parsed as global variables in the current implementation
         # This test will be updated when enum parsing is improved
 
@@ -531,7 +586,7 @@ void utility_function();
         """
         utils_h_path = Path(self.temp_dir) / "utils.h"
         utils_h_path.write_text(utils_h_content)
-        
+
         config_h_content = """
 #define DEFAULT_PORT 8080
 #define MAX_CONNECTIONS 1000
@@ -544,7 +599,7 @@ PortNumber port;
         """
         config_h_path = Path(self.temp_dir) / "config.h"
         config_h_path.write_text(config_h_content)
-        
+
         types_h_content = """
 #define IMAGE_MAX_SIZE 4096
 
@@ -555,7 +610,7 @@ Byte r, g, b, a;
         """
         types_h_path = Path(self.temp_dir) / "types.h"
         types_h_path.write_text(types_h_content)
-        
+
         # Create main.c that includes all headers
         main_c_content = """
 #include "utils.h"
@@ -571,18 +626,18 @@ int main() {
         """
         main_c_path = Path(self.temp_dir) / "main.c"
         main_c_path.write_text(main_c_content)
-        
+
         # Parse and generate diagram
         project_model = self.parser.parse_project(str(self.temp_dir))
         file_model = project_model.files["main.c"]
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Check that all header classes are generated
         self.assertIn('class "main" as MAIN <<source>> #LightBlue', diagram)
         self.assertIn('class "utils" as HEADER_UTILS <<header>> #LightGreen', diagram)
         self.assertIn('class "config" as HEADER_CONFIG <<header>> #LightGreen', diagram)
         self.assertIn('class "types" as HEADER_TYPES <<header>> #LightGreen', diagram)
-        
+
         # Note: Current implementation does not show typedef declarations in file/header classes
         # Only typedef classes are created for complex typedefs (struct/enum/union)
         # Primitive typedefs are not being processed due to parser issues

@@ -11,8 +11,15 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 from c_to_plantuml.models import (
-    Alias, FileModel, ProjectModel, IncludeRelation,
-    Struct, Enum, Union, Function, Field
+    Alias,
+    FileModel,
+    ProjectModel,
+    IncludeRelation,
+    Struct,
+    Enum,
+    Union,
+    Function,
+    Field,
 )
 from c_to_plantuml.parser import CParser
 from c_to_plantuml.transformer import Transformer
@@ -27,7 +34,7 @@ class TestIncludeProcessingEnhanced(unittest.TestCase):
         self.parser = CParser()
         self.transformer = Transformer()
         self.generator = PlantUMLGenerator()
-        
+
         # Create temporary directory for test files
         self.temp_dir = tempfile.mkdtemp()
         self.test_dir = Path(self.temp_dir)
@@ -35,12 +42,13 @@ class TestIncludeProcessingEnhanced(unittest.TestCase):
     def tearDown(self):
         """Clean up test fixtures"""
         import shutil
+
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def create_test_file(self, filename: str, content: str) -> Path:
         """Create a test file with given content"""
         file_path = self.test_dir / filename
-        with open(file_path, 'w', encoding='utf-8') as f:
+        with open(file_path, "w", encoding="utf-8") as f:
             f.write(content)
         return file_path
 
@@ -103,8 +111,9 @@ typedef Point* PointPtr;
 
     def write_json_config(self, config_file: str, config: dict):
         """Writes a JSON configuration file."""
-        with open(config_file, 'w', encoding='utf-8') as f:
+        with open(config_file, "w", encoding="utf-8") as f:
             import json
+
             json.dump(config, f, indent=4)
 
     def test_include_processing_with_complex_nested_typedefs(self):
@@ -130,7 +139,7 @@ int main() {
     return 0;
 }
         """
-        
+
         types_h_content = """
 typedef unsigned char Byte;
 typedef unsigned short Word;
@@ -142,7 +151,7 @@ typedef struct {
 
 typedef RGBA* RGBAPtr;
         """
-        
+
         utils_h_content = """
 #include "types.h"
 
@@ -153,30 +162,32 @@ typedef struct {
 
 typedef Point* PointPtr;
         """
-        
+
         # Create test files
         main_c = self.create_test_file("main.c", main_c_content)
         types_h = self.create_test_file("types.h", types_h_content)
         utils_h = self.create_test_file("utils.h", utils_h_content)
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Process include relations
-        transformed_model = self.transformer._process_include_relations(project_model, 3)
-        
+        transformed_model = self.transformer._process_include_relations(
+            project_model, 3
+        )
+
         # Generate PlantUML diagram
         main_file_model = transformed_model.files["main.c"]
         diagram = self.generator.generate_diagram(main_file_model, transformed_model)
-        
+
         # Verify include relationships are correct
         self.assertIn("MAIN --> HEADER_TYPES : <<include>>", diagram)
         self.assertIn("MAIN --> HEADER_UTILS : <<include>>", diagram)
-        
+
         # Verify header classes are generated
         self.assertIn('class "types" as HEADER_TYPES <<header>> #LightGreen', diagram)
         self.assertIn('class "utils" as HEADER_UTILS <<header>> #LightGreen', diagram)
-        
+
         # Note: Current implementation does not show typedef declarations in file/header classes
         # Only typedef classes are created for complex typedefs (struct/enum/union)
         # Primitive typedefs are not being processed due to parser issues
@@ -196,7 +207,7 @@ typedef struct {
     ColorPtr colors;
 } ComplexShape;
         """
-        
+
         utils_h_content = """
 #include "types.h"
 
@@ -213,24 +224,26 @@ typedef struct {
 
 typedef types_PointPtr* PointPtrPtr;
         """
-        
+
         # Create test files
         types_h = self.create_test_file("types.h", types_h_content)
         utils_h = self.create_test_file("utils.h", utils_h_content)
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Process include relations
-        transformed_model = self.transformer._process_include_relations(project_model, 3)
-        
+        transformed_model = self.transformer._process_include_relations(
+            project_model, 3
+        )
+
         # Generate PlantUML diagram for types.h
         types_file_model = transformed_model.files["types.h"]
         diagram = self.generator.generate_diagram(types_file_model, transformed_model)
-        
+
         # Verify include relationships
         self.assertIn("HEADER_TYPES --> HEADER_UTILS : <<include>>", diagram)
-        
+
         # Note: Current implementation does not show typedef declarations in file/header classes
         # Only typedef classes are created for complex typedefs (struct/enum/union)
         # Primitive typedefs are not being processed due to parser issues
@@ -248,7 +261,7 @@ int main() {
     return 0;
 }
         """
-        
+
         api_h_content = """
 #ifndef API_H
 #define API_H
@@ -273,7 +286,7 @@ typedef struct {
 
 #endif // API_H
         """
-        
+
         utils_h_content = """
 #ifndef UTILS_H
 #define UTILS_H
@@ -292,7 +305,7 @@ static inline types_Byte utils_get_byte(types_Byte* data, types_Word offset) {
 
 #endif // UTILS_H
         """
-        
+
         types_h_content = """
 #ifndef TYPES_H
 #define TYPES_H
@@ -303,31 +316,33 @@ typedef unsigned long DWord;
 
 #endif // TYPES_H
         """
-        
+
         # Create test files
         main_c = self.create_test_file("main.c", main_c_content)
         api_h = self.create_test_file("api.h", api_h_content)
         utils_h = self.create_test_file("utils.h", utils_h_content)
         types_h = self.create_test_file("types.h", types_h_content)
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Process include relations
-        transformed_model = self.transformer._process_include_relations(project_model, 3)
-        
+        transformed_model = self.transformer._process_include_relations(
+            project_model, 3
+        )
+
         # Generate PlantUML diagram for main.c
         main_file_model = transformed_model.files["main.c"]
         diagram = self.generator.generate_diagram(main_file_model, transformed_model)
-        
+
         # Verify include relationships
         self.assertIn("MAIN --> HEADER_API : <<include>>", diagram)
         self.assertIn("MAIN --> HEADER_UTILS : <<include>>", diagram)
-        
+
         # Verify header classes are generated
         self.assertIn('class "api" as HEADER_API <<header>> #LightGreen', diagram)
         self.assertIn('class "utils" as HEADER_UTILS <<header>> #LightGreen', diagram)
-        
+
         # Verify function declarations are included in headers
         # Note: The current parser may not parse function declarations in headers
         # This test documents the expected behavior when that feature is implemented
@@ -353,7 +368,7 @@ int main() {
     return 0;
 }
         """
-        
+
         config_h_content = """
 #ifndef CONFIG_H
 #define CONFIG_H
@@ -371,7 +386,7 @@ typedef struct {
 
 #endif // CONFIG_H
         """
-        
+
         debug_h_content = """
 #ifndef DEBUG_H
 #define DEBUG_H
@@ -391,7 +406,7 @@ void debug_cleanup(void);
 
 #endif // DEBUG_H
         """
-        
+
         limits_h_content = """
 #ifndef LIMITS_H
 #define LIMITS_H
@@ -408,33 +423,35 @@ typedef struct {
 
 #endif // LIMITS_H
         """
-        
+
         # Create test files
         main_c = self.create_test_file("main.c", main_c_content)
         config_h = self.create_test_file("config.h", config_h_content)
         debug_h = self.create_test_file("debug.h", debug_h_content)
         limits_h = self.create_test_file("limits.h", limits_h_content)
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.test_dir))
-        
+
         # Process include relations
-        transformed_model = self.transformer._process_include_relations(project_model, 3)
-        
+        transformed_model = self.transformer._process_include_relations(
+            project_model, 3
+        )
+
         # Generate PlantUML diagram for main.c
         main_file_model = transformed_model.files["main.c"]
         diagram = self.generator.generate_diagram(main_file_model, transformed_model)
-        
+
         # Verify include relationships
         self.assertIn("MAIN --> HEADER_CONFIG : <<include>>", diagram)
         self.assertIn("MAIN --> HEADER_DEBUG : <<include>>", diagram)
         self.assertIn("MAIN --> HEADER_LIMITS : <<include>>", diagram)
-        
+
         # Verify header classes are generated
         self.assertIn('class "config" as HEADER_CONFIG <<header>> #LightGreen', diagram)
         self.assertIn('class "debug" as HEADER_DEBUG <<header>> #LightGreen', diagram)
         self.assertIn('class "limits" as HEADER_LIMITS <<header>> #LightGreen', diagram)
-        
+
         # Verify macros are included in headers
         self.assertIn("+ #define DEBUG_MODE", diagram)  # from config.h
         self.assertIn("+ #define MAX_BUFFER_SIZE", diagram)  # from config.h
@@ -468,7 +485,7 @@ int main() {
         """
         main_c_path = Path(self.temp_dir) / "main.c"
         main_c_path.write_text(main_c_content)
-        
+
         base_types_h_content = """
 #ifndef BASE_TYPES_H
 #define BASE_TYPES_H
@@ -497,7 +514,7 @@ typedef struct {
         """
         base_types_h_path = Path(self.temp_dir) / "base_types.h"
         base_types_h_path.write_text(base_types_h_content)
-        
+
         derived_types_h_content = """
 #ifndef DERIVED_TYPES_H
 #define DERIVED_TYPES_H
@@ -518,25 +535,30 @@ typedef struct {
         """
         derived_types_h_path = Path(self.temp_dir) / "derived_types.h"
         derived_types_h_path.write_text(derived_types_h_content)
-        
+
         # Parse and generate diagram
         project_model = self.parser.parse_project(str(self.temp_dir))
         file_model = project_model.files["main.c"]
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Check that all header classes are generated
         self.assertIn('class "main" as MAIN <<source>> #LightBlue', diagram)
-        self.assertIn('class "base_types" as HEADER_BASE_TYPES <<header>> #LightGreen', diagram)
-        self.assertIn('class "derived_types" as HEADER_DERIVED_TYPES <<header>> #LightGreen', diagram)
-        
+        self.assertIn(
+            'class "base_types" as HEADER_BASE_TYPES <<header>> #LightGreen', diagram
+        )
+        self.assertIn(
+            'class "derived_types" as HEADER_DERIVED_TYPES <<header>> #LightGreen',
+            diagram,
+        )
+
         # Note: Current implementation does not show typedef declarations in file/header classes
         # Only typedef classes are created for complex typedefs (struct/enum/union)
         # Primitive typedefs are not being processed due to parser issues
-        
+
         # Check that header-to-header relationships exist (if they do)
         # Note: These may not exist if the headers don't actually include each other
         # self.assertIn("HEADER_DERIVED_TYPES --> HEADER_BASE_TYPES : <<include>>", diagram) - MAY NOT EXIST
-        
+
         # Remove assertions for struct/enum declarations in file/header classes
         # self.assertIn("+ typedef enum ShapeType", diagram)  # from base_types.h - REMOVED
         # self.assertIn("+ typedef struct { ShapeType type", diagram)  # from base_types.h - REMOVED
@@ -567,7 +589,7 @@ int main() {
         """
         main_c_path = Path(self.temp_dir) / "main.c"
         main_c_path.write_text(main_c_content)
-        
+
         core_types_h_content = """
 #ifndef CORE_TYPES_H
 #define CORE_TYPES_H
@@ -583,7 +605,7 @@ Float width, height;
         """
         core_types_h_path = Path(self.temp_dir) / "core_types.h"
         core_types_h_path.write_text(core_types_h_content)
-        
+
         graphics_types_h_content = """
 #ifndef GRAPHICS_TYPES_H
 #define GRAPHICS_TYPES_H
@@ -598,7 +620,7 @@ core_Integer width, height;
         """
         graphics_types_h_path = Path(self.temp_dir) / "graphics_types.h"
         graphics_types_h_path.write_text(graphics_types_h_content)
-        
+
         network_types_h_content = """
 #ifndef NETWORK_TYPES_H
 #define NETWORK_TYPES_H
@@ -612,22 +634,30 @@ core_Integer port;
         """
         network_types_h_path = Path(self.temp_dir) / "network_types.h"
         network_types_h_path.write_text(network_types_h_content)
-        
+
         # Parse and generate diagram
         project_model = self.parser.parse_project(str(self.temp_dir))
         file_model = project_model.files["main.c"]
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Check that all header classes are generated
         self.assertIn('class "main" as MAIN <<source>> #LightBlue', diagram)
-        self.assertIn('class "core_types" as HEADER_CORE_TYPES <<header>> #LightGreen', diagram)
-        self.assertIn('class "graphics_types" as HEADER_GRAPHICS_TYPES <<header>> #LightGreen', diagram)
-        self.assertIn('class "network_types" as HEADER_NETWORK_TYPES <<header>> #LightGreen', diagram)
-        
+        self.assertIn(
+            'class "core_types" as HEADER_CORE_TYPES <<header>> #LightGreen', diagram
+        )
+        self.assertIn(
+            'class "graphics_types" as HEADER_GRAPHICS_TYPES <<header>> #LightGreen',
+            diagram,
+        )
+        self.assertIn(
+            'class "network_types" as HEADER_NETWORK_TYPES <<header>> #LightGreen',
+            diagram,
+        )
+
         # Note: Current implementation does not show typedef declarations in file/header classes
         # Only typedef classes are created for complex typedefs (struct/enum/union)
         # Primitive typedefs are not being processed due to parser issues
-        
+
         # Check that header-to-header relationships exist (if they do)
         # Note: These may not exist if the headers don't actually include each other
         # self.assertIn("HEADER_GRAPHICS_TYPES --> HEADER_CORE_TYPES : <<include>>", diagram) - MAY NOT EXIST

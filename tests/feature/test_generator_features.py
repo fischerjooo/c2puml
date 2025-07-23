@@ -33,20 +33,21 @@ struct Container {
         """
 
         self.create_test_file("typedef_test.c", content)
-        
+
         # Parse and generate
         parser = Parser()
         model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
-        
+
         model_path = os.path.join(self.temp_dir, "test_model.json")
         model.save(model_path)
-        
+
         generator = Generator()
         output_dir = self.temp_dir + "/output"
         generator.generate(model_path, output_dir)
-        
+
         # Verify generation
         from pathlib import Path
+
         puml_files = list(Path(output_dir).glob("*.puml"))
         self.assertGreaterEqual(len(puml_files), 1)
 
@@ -69,19 +70,20 @@ struct Container {
         """
 
         self.create_test_file("union_test.c", content)
-        
+
         # Parse and generate
         parser = Parser()
         model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
-        
+
         model_path = os.path.join(self.temp_dir, "test_model.json")
         model.save(model_path)
-        
+
         generator = Generator()
         output_dir = self.temp_dir + "/output"
         generator.generate(model_path, output_dir)
-        
+
         # Verify generation
         from pathlib import Path
+
         puml_files = list(Path(output_dir).glob("*.puml"))
         self.assertGreaterEqual(len(puml_files), 1)

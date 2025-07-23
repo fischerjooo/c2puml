@@ -33,32 +33,32 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
         """Test comprehensive verification of C to H file relationships"""
         # Create a comprehensive test project
         project_dir = self.create_comprehensive_test_project()
-        
+
         # Parse the project
         model_file = os.path.join(self.temp_dir, "model.json")
         self.parser.parse(str(project_dir), model_file)
-        
+
         # Transform with include processing
         config = {"include_depth": 5}
         config_file = os.path.join(self.temp_dir, "config.json")
         self.write_json_config(config_file, config)
-        
+
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
-        
+
         # Generate PlantUML diagrams
         output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
-        
+
         # Verify output files were created
         self.assertTrue(os.path.exists(output_dir))
         self.assertTrue(os.path.exists(os.path.join(output_dir, "main.puml")))
-        
+
         # Check main.puml for comprehensive C to H relationships
         main_puml_path = os.path.join(output_dir, "main.puml")
-        with open(main_puml_path, 'r', encoding='utf-8') as f:
+        with open(main_puml_path, "r", encoding="utf-8") as f:
             main_content = f.read()
-        
+
         # Verify C to H file relationships are correctly generated
         expected_c_to_h_relationships = [
             "MAIN --> HEADER_CORE : <<include>>",
@@ -66,13 +66,16 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
             "MAIN --> HEADER_NETWORK : <<include>>",
             "MAIN --> HEADER_UTILS : <<include>>",
             "MAIN --> HEADER_CONFIG : <<include>>",
-            "MAIN --> HEADER_TYPES : <<include>>"
+            "MAIN --> HEADER_TYPES : <<include>>",
         ]
-        
+
         for relationship in expected_c_to_h_relationships:
-            self.assertIn(relationship, main_content, 
-                         f"Expected C to H relationship not found: {relationship}")
-        
+            self.assertIn(
+                relationship,
+                main_content,
+                f"Expected C to H relationship not found: {relationship}",
+            )
+
         # Verify header classes are correctly generated
         expected_header_classes = [
             'class "core" as HEADER_CORE <<header>> #LightGreen',
@@ -80,71 +83,76 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
             'class "network" as HEADER_NETWORK <<header>> #LightGreen',
             'class "utils" as HEADER_UTILS <<header>> #LightGreen',
             'class "config" as HEADER_CONFIG <<header>> #LightGreen',
-            'class "types" as HEADER_TYPES <<header>> #LightGreen'
+            'class "types" as HEADER_TYPES <<header>> #LightGreen',
         ]
-        
+
         for header_class in expected_header_classes:
-            self.assertIn(header_class, main_content,
-                         f"Expected header class not found: {header_class}")
+            self.assertIn(
+                header_class,
+                main_content,
+                f"Expected header class not found: {header_class}",
+            )
 
     def test_comprehensive_h_to_h_file_relationships(self):
         """Test comprehensive verification of H to H file relationships"""
         # Create a test project with header-to-header includes
         project_dir = self.create_header_to_header_test_project()
-        
+
         # Parse and generate diagrams
         model_file = os.path.join(self.temp_dir, "model.json")
         self.parser.parse(str(project_dir), model_file)
-        
+
         config = {"include_depth": 5}
         config_file = os.path.join(self.temp_dir, "config.json")
         self.write_json_config(config_file, config)
-        
+
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
-        
+
         output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
-        
+
         # Check main.puml for H to H relationships
         main_puml_path = os.path.join(output_dir, "main.puml")
-        with open(main_puml_path, 'r', encoding='utf-8') as f:
+        with open(main_puml_path, "r", encoding="utf-8") as f:
             main_content = f.read()
-        
+
         # Verify that header-to-header relationships are correctly represented
         # Note: The current implementation shows all includes from the main file
         # Header-to-header relationships are shown through the include_relations
         self.assertIn("MAIN --> HEADER_CORE : <<include>>", main_content)
         # Note: graphics.h and network.h are included by core.h, not directly by main.c
-        
+
         # Verify that all header classes are generated
-        self.assertIn('class "core" as HEADER_CORE <<header>> #LightGreen', main_content)
+        self.assertIn(
+            'class "core" as HEADER_CORE <<header>> #LightGreen', main_content
+        )
         # Note: graphics.h and network.h classes may not be generated if they're not directly included
 
     def test_comprehensive_typedef_relationships(self):
         """Test comprehensive verification of typedef relationships"""
         # Create a test project with complex typedef relationships
         project_dir = self.create_typedef_relationship_test_project()
-        
+
         # Parse and generate diagrams
         model_file = os.path.join(self.temp_dir, "model.json")
         self.parser.parse(str(project_dir), model_file)
-        
+
         config = {"include_depth": 5}
         config_file = os.path.join(self.temp_dir, "config.json")
         self.write_json_config(config_file, config)
-        
+
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
-        
+
         output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
-        
+
         # Check main.puml for typedef relationships
         main_puml_path = os.path.join(output_dir, "main.puml")
-        with open(main_puml_path, 'r', encoding='utf-8') as f:
+        with open(main_puml_path, "r", encoding="utf-8") as f:
             main_content = f.read()
-        
+
         # Verify typedefs are correctly displayed in main class
         # Note: Current implementation does not show typedef declarations in file/header classes
         # Only typedef classes are created for complex typedefs (struct/enum/union)
@@ -154,37 +162,49 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
         """Test comprehensive include processing correctness"""
         # Create comprehensive test project
         project_dir = self.create_comprehensive_project()
-        
+
         # Parse and generate diagrams
         model_file = os.path.join(self.temp_dir, "model.json")
         self.parser.parse(str(project_dir), model_file)
-        
+
         config = {"include_depth": 3}
         config_file = os.path.join(self.temp_dir, "config.json")
         self.write_json_config(config_file, config)
-        
+
         transformed_model_file = os.path.join(self.temp_dir, "transformed_model.json")
         self.transformer.transform(model_file, config_file, transformed_model_file)
-        
+
         output_dir = os.path.join(self.temp_dir, "output")
         self.generator.generate(transformed_model_file, output_dir)
-        
+
         # Check that all expected files are generated
         self.assertTrue(os.path.exists(os.path.join(output_dir, "main.puml")))
-        
+
         # Check main.puml content
         main_puml_path = os.path.join(output_dir, "main.puml")
-        with open(main_puml_path, 'r', encoding='utf-8') as f:
+        with open(main_puml_path, "r", encoding="utf-8") as f:
             main_content = f.read()
-        
+
         # Check that all header classes exist
-        self.assertIn('class "core" as HEADER_CORE <<header>> #LightGreen', main_content)
-        self.assertIn('class "graphics" as HEADER_GRAPHICS <<header>> #LightGreen', main_content)
-        self.assertIn('class "network" as HEADER_NETWORK <<header>> #LightGreen', main_content)
-        self.assertIn('class "utils" as HEADER_UTILS <<header>> #LightGreen', main_content)
-        self.assertIn('class "config" as HEADER_CONFIG <<header>> #LightGreen', main_content)
-        self.assertIn('class "types" as HEADER_TYPES <<header>> #LightGreen', main_content)
-        
+        self.assertIn(
+            'class "core" as HEADER_CORE <<header>> #LightGreen', main_content
+        )
+        self.assertIn(
+            'class "graphics" as HEADER_GRAPHICS <<header>> #LightGreen', main_content
+        )
+        self.assertIn(
+            'class "network" as HEADER_NETWORK <<header>> #LightGreen', main_content
+        )
+        self.assertIn(
+            'class "utils" as HEADER_UTILS <<header>> #LightGreen', main_content
+        )
+        self.assertIn(
+            'class "config" as HEADER_CONFIG <<header>> #LightGreen', main_content
+        )
+        self.assertIn(
+            'class "types" as HEADER_TYPES <<header>> #LightGreen', main_content
+        )
+
         # Note: Current implementation does not show typedef declarations in file/header classes
         # Only typedef classes are created for complex typedefs (struct/enum/union)
         # Primitive typedefs are not being processed due to parser issues
@@ -193,7 +213,7 @@ class TestIncludeProcessingComprehensive(BaseFeatureTest):
         """Create a comprehensive test project with all types of relationships"""
         project_dir = Path(self.temp_dir) / "comprehensive_test_project"
         project_dir.mkdir()
-        
+
         # Create main.c with includes to all headers
         main_c_content = """
 #include <stdio.h>
@@ -221,7 +241,7 @@ int main() {
 }
         """
         (project_dir / "main.c").write_text(main_c_content)
-        
+
         # Create core.h
         core_h_content = """
 #ifndef CORE_H
@@ -247,7 +267,7 @@ void core_cleanup(void);
 #endif // CORE_H
         """
         (project_dir / "core.h").write_text(core_h_content)
-        
+
         # Create graphics.h
         graphics_h_content = """
 #ifndef GRAPHICS_H
@@ -277,7 +297,7 @@ void graphics_draw_rectangle(Rectangle* rect);
 #endif // GRAPHICS_H
         """
         (project_dir / "graphics.h").write_text(graphics_h_content)
-        
+
         # Create network.h
         network_h_content = """
 #ifndef NETWORK_H
@@ -306,7 +326,7 @@ int network_connect(Endpoint* endpoint);
 #endif // NETWORK_H
         """
         (project_dir / "network.h").write_text(network_h_content)
-        
+
         # Create utils.h
         utils_h_content = """
 #ifndef UTILS_H
@@ -323,7 +343,7 @@ void utils_cleanup(void);
 #endif // UTILS_H
         """
         (project_dir / "utils.h").write_text(utils_h_content)
-        
+
         # Create config.h
         config_h_content = """
 #ifndef CONFIG_H
@@ -347,7 +367,7 @@ struct Config {
 #endif // CONFIG_H
         """
         (project_dir / "config.h").write_text(config_h_content)
-        
+
         # Create types.h
         types_h_content = """
 #ifndef TYPES_H
@@ -370,14 +390,14 @@ enum Status {
 #endif // TYPES_H
         """
         (project_dir / "types.h").write_text(types_h_content)
-        
+
         return project_dir
 
     def create_header_to_header_test_project(self) -> Path:
         """Create a test project with header-to-header includes"""
         project_dir = Path(self.temp_dir) / "header_to_header_test_project"
         project_dir.mkdir()
-        
+
         # Create main.c
         main_c_content = """
 #include "core.h"
@@ -388,7 +408,7 @@ int main() {
 }
         """
         (project_dir / "main.c").write_text(main_c_content)
-        
+
         # Create core.h that includes graphics.h and network.h
         core_h_content = """
 #ifndef CORE_H
@@ -405,7 +425,7 @@ void core_init(void);
 #endif // CORE_H
         """
         (project_dir / "core.h").write_text(core_h_content)
-        
+
         # Create graphics.h
         graphics_h_content = """
 #ifndef GRAPHICS_H
@@ -422,7 +442,7 @@ void graphics_init(void);
 #endif // GRAPHICS_H
         """
         (project_dir / "graphics.h").write_text(graphics_h_content)
-        
+
         # Create network.h
         network_h_content = """
 #ifndef NETWORK_H
@@ -439,7 +459,7 @@ void network_init(void);
 #endif // NETWORK_H
         """
         (project_dir / "network.h").write_text(network_h_content)
-        
+
         # Create types.h
         types_h_content = """
 #ifndef TYPES_H
@@ -451,14 +471,14 @@ typedef unsigned short Word;
 #endif // TYPES_H
         """
         (project_dir / "types.h").write_text(types_h_content)
-        
+
         return project_dir
 
     def create_typedef_relationship_test_project(self) -> Path:
         """Create a test project with complex typedef relationships"""
         project_dir = Path(self.temp_dir) / "typedef_relationship_test_project"
         project_dir.mkdir()
-        
+
         # Create main.c
         main_c_content = """
 #include "core.h"
@@ -481,7 +501,7 @@ int main() {
 }
         """
         (project_dir / "main.c").write_text(main_c_content)
-        
+
         # Create core.h
         core_h_content = """
 #ifndef CORE_H
@@ -502,7 +522,7 @@ typedef struct {
 #endif // CORE_H
         """
         (project_dir / "core.h").write_text(core_h_content)
-        
+
         # Create graphics.h
         graphics_h_content = """
 #ifndef GRAPHICS_H
@@ -523,7 +543,7 @@ typedef struct {
 #endif // GRAPHICS_H
         """
         (project_dir / "graphics.h").write_text(graphics_h_content)
-        
+
         # Create network.h
         network_h_content = """
 #ifndef NETWORK_H
@@ -543,7 +563,7 @@ typedef struct {
 #endif // NETWORK_H
         """
         (project_dir / "network.h").write_text(network_h_content)
-        
+
         # Create types.h
         types_h_content = """
 #ifndef TYPES_H
@@ -560,7 +580,7 @@ typedef struct {
 #endif // TYPES_H
         """
         (project_dir / "types.h").write_text(types_h_content)
-        
+
         return project_dir
 
     def create_comprehensive_project(self) -> Path:

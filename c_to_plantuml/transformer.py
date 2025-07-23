@@ -135,7 +135,9 @@ class Transformer:
                 filtered_files[file_path] = file_model
 
         model.files = filtered_files
-        self.logger.debug(f"User file filtering: {len(model.files)} files after filtering")
+        self.logger.debug(
+            f"User file filtering: {len(model.files)} files after filtering"
+        )
         return model
 
     def _apply_element_filters(
@@ -196,7 +198,7 @@ class Transformer:
         # Get file selection configuration
         file_selection = transformations.get("file_selection", {})
         selected_files = file_selection.get("selected_files", [])
-        
+
         # Determine which files to apply transformations to
         # If selected_files is empty or not specified, apply to all files
         if not selected_files:
@@ -208,8 +210,10 @@ class Transformer:
                 for file_path in model.files.keys():
                     if self._matches_pattern(file_path, pattern):
                         target_files.add(file_path)
-        
-        self.logger.debug(f"Applying transformations to {len(target_files)} files: {list(target_files)}")
+
+        self.logger.debug(
+            f"Applying transformations to {len(target_files)} files: {list(target_files)}"
+        )
 
         # Rename elements
         if "rename" in transformations:
@@ -229,8 +233,10 @@ class Transformer:
         self, model: ProjectModel, rename_config: Dict[str, Any], target_files: Set[str]
     ) -> ProjectModel:
         """Apply renaming transformations to selected files"""
-        self.logger.debug(f"Applying renaming transformations to {len(target_files)} files")
-        
+        self.logger.debug(
+            f"Applying renaming transformations to {len(target_files)} files"
+        )
+
         # Apply renaming only to target files
         for file_path in target_files:
             if file_path in model.files:
@@ -238,15 +244,17 @@ class Transformer:
                 # Apply renaming logic here
                 # This would handle renaming structs, enums, functions, etc.
                 self.logger.debug(f"Applying renaming to file: {file_path}")
-        
+
         return model
 
     def _apply_additions(
         self, model: ProjectModel, add_config: Dict[str, Any], target_files: Set[str]
     ) -> ProjectModel:
         """Apply addition transformations to selected files"""
-        self.logger.debug(f"Applying addition transformations to {len(target_files)} files")
-        
+        self.logger.debug(
+            f"Applying addition transformations to {len(target_files)} files"
+        )
+
         # Apply additions only to target files
         for file_path in target_files:
             if file_path in model.files:
@@ -254,15 +262,17 @@ class Transformer:
                 # Apply addition logic here
                 # This would handle adding new elements like structs, enums, functions, etc.
                 self.logger.debug(f"Applying additions to file: {file_path}")
-        
+
         return model
 
     def _apply_removals(
         self, model: ProjectModel, remove_config: Dict[str, Any], target_files: Set[str]
     ) -> ProjectModel:
         """Apply removal transformations to selected files"""
-        self.logger.debug(f"Applying removal transformations to {len(target_files)} files")
-        
+        self.logger.debug(
+            f"Applying removal transformations to {len(target_files)} files"
+        )
+
         # Apply removals only to target files
         for file_path in target_files:
             if file_path in model.files:
@@ -270,7 +280,7 @@ class Transformer:
                 # Apply removal logic here
                 # This would handle removing elements like structs, enums, functions, etc.
                 self.logger.debug(f"Applying removals to file: {file_path}")
-        
+
         return model
 
     def _process_include_relations(
@@ -314,19 +324,24 @@ class Transformer:
             if included_file_path and included_file_path in file_map:
                 # Prevent self-referencing include relations
                 if file_model.file_path == included_file_path:
-                    self.logger.debug(f"Skipping self-include relation for {file_model.file_path}")
+                    self.logger.debug(
+                        f"Skipping self-include relation for {file_model.file_path}"
+                    )
                     continue
-                
+
                 # Check if this include relation already exists to prevent cycles
                 relation_exists = any(
-                    rel.source_file == file_model.file_path and rel.included_file == included_file_path
+                    rel.source_file == file_model.file_path
+                    and rel.included_file == included_file_path
                     for rel in file_model.include_relations
                 )
-                
+
                 if relation_exists:
-                    self.logger.debug(f"Cyclic include detected and skipped: {file_model.file_path} -> {included_file_path}")
+                    self.logger.debug(
+                        f"Cyclic include detected and skipped: {file_model.file_path} -> {included_file_path}"
+                    )
                     continue
-                
+
                 # Create include relation
                 from .models import IncludeRelation
 
@@ -378,6 +393,7 @@ class Transformer:
         """Check if a file path matches a pattern"""
         try:
             import re
+
             return bool(re.search(pattern, file_path))
         except re.error:
             self.logger.warning(f"Invalid pattern '{pattern}' for file matching")
@@ -479,11 +495,11 @@ class Transformer:
                 Field(f["name"], f["type"]) for f in struct_data.get("fields", [])
             ]
             structs[name] = Struct(
-                name, 
-                fields, 
+                name,
+                fields,
                 struct_data.get("methods", []),
                 struct_data.get("tag_name", ""),
-                struct_data.get("uses", [])
+                struct_data.get("uses", []),
             )
 
         # Convert enums
@@ -492,7 +508,9 @@ class Transformer:
             values = []
             for value_data in enum_data.get("values", []):
                 if isinstance(value_data, dict):
-                    values.append(EnumValue(value_data["name"], value_data.get("value")))
+                    values.append(
+                        EnumValue(value_data["name"], value_data.get("value"))
+                    )
                 else:
                     values.append(EnumValue(value_data))
             enums[name] = Enum(name, values)
@@ -502,10 +520,7 @@ class Transformer:
         for name, union_data in data.get("unions", {}).items():
             fields = [Field(f["name"], f["type"]) for f in union_data.get("fields", [])]
             unions[name] = Union(
-                name, 
-                fields,
-                union_data.get("tag_name", ""),
-                union_data.get("uses", [])
+                name, fields, union_data.get("tag_name", ""), union_data.get("uses", [])
             )
 
         # Convert aliases
@@ -515,7 +530,7 @@ class Transformer:
                 aliases[name] = Alias(
                     alias_data.get("name", name),
                     alias_data.get("original_type", ""),
-                    alias_data.get("uses", [])
+                    alias_data.get("uses", []),
                 )
             else:
                 # Handle legacy format where aliases was Dict[str, str]
@@ -542,7 +557,7 @@ class Transformer:
         for global_data in data.get("globals", []):
             globals_list.append(Field(global_data["name"], global_data["type"]))
 
-                # typedef_relations removed - tag names are now in struct/enum/union
+            # typedef_relations removed - tag names are now in struct/enum/union
 
         # Convert include relations (disabled - include_relations field removed)
         # include_relations = []

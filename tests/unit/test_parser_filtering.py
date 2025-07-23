@@ -12,7 +12,14 @@ from pathlib import Path
 
 from c_to_plantuml.config import Config
 from c_to_plantuml.models import (
-    Alias, Enum, Field, FileModel, Function, ProjectModel, Struct, Union
+    Alias,
+    Enum,
+    Field,
+    FileModel,
+    Function,
+    ProjectModel,
+    Struct,
+    Union,
 )
 from c_to_plantuml.transformer import Transformer
 
@@ -52,33 +59,35 @@ class TestUserConfigurableFiltering(unittest.TestCase):
             structs={
                 "PublicStruct": Struct("PublicStruct", [Field("id", "int")]),
                 "InternalStruct": Struct("InternalStruct", [Field("data", "char*")]),
-                "UserData": Struct("UserData", [Field("name", "char*"), Field("age", "int")]),
-                "temp_data": Struct("temp_data", [Field("buffer", "void*")])
+                "UserData": Struct(
+                    "UserData", [Field("name", "char*"), Field("age", "int")]
+                ),
+                "temp_data": Struct("temp_data", [Field("buffer", "void*")]),
             },
             enums={
                 "Status": Enum("Status", ["OK", "ERROR", "PENDING"]),
                 "internal_state": Enum("internal_state", ["IDLE", "BUSY"]),
-                "UserType": Enum("UserType", ["ADMIN", "USER", "GUEST"])
+                "UserType": Enum("UserType", ["ADMIN", "USER", "GUEST"]),
             },
             functions=[
                 Function("public_function", "int", [Field("param", "int")]),
                 Function("private_function", "void", [Field("data", "char*")]),
                 Function("main", "int", []),
-                Function("internal_helper", "void", [])
+                Function("internal_helper", "void", []),
             ],
             globals=[
                 Field("global_var", "int"),
                 Field("internal_var", "char*"),
-                Field("public_constant", "const int")
+                Field("public_constant", "const int"),
             ],
             macros=["MAX_SIZE", "internal_macro", "PUBLIC_DEFINE"],
             aliases={
                 "UserPtr": Alias("UserPtr", "UserData*"),
                 "internal_type": Alias("internal_type", "void*"),
-                "PublicType": Alias("PublicType", "int")
+                "PublicType": Alias("PublicType", "int"),
             },
             includes={"stdio.h", "stdlib.h", "internal.h"},
-            unions={}
+            unions={},
         )
 
         # Create project model
@@ -93,10 +102,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
     def test_file_filters_include_patterns(self):
         """Test file filtering with include patterns"""
         config = Config()
-        config.file_filters = {
-            "include": [r".*\.c$", r".*\.h$"],
-            "exclude": []
-        }
+        config.file_filters = {"include": [r".*\.c$", r".*\.h$"], "exclude": []}
         config._compile_patterns()
 
         # Test files that should be included
@@ -115,7 +121,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         config = Config()
         config.file_filters = {
             "include": [],
-            "exclude": [r".*test.*", r".*temp.*", r".*\.bak$"]
+            "exclude": [r".*test.*", r".*temp.*", r".*\.bak$"],
         }
         config._compile_patterns()
 
@@ -136,7 +142,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         config = Config()
         config.file_filters = {
             "include": [r".*\.c$", r".*\.h$"],
-            "exclude": [r".*test.*", r".*temp.*"]
+            "exclude": [r".*test.*", r".*temp.*"],
         }
         config._compile_patterns()
 
@@ -160,7 +166,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         config.element_filters = {
             "structs": {
                 "include": [r"^[A-Z].*"],
-                "exclude": [r".*[Ii]nternal.*", r".*temp.*"]
+                "exclude": [r".*[Ii]nternal.*", r".*temp.*"],
             }
         }
         config._compile_patterns()
@@ -183,7 +189,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         config.element_filters = {
             "functions": {
                 "include": [r"^public_.*", r"^main$"],
-                "exclude": [r".*private.*", r".*internal.*"]
+                "exclude": [r".*private.*", r".*internal.*"],
             }
         }
         config._compile_patterns()
@@ -205,10 +211,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         """Test element filtering for enums"""
         config = Config()
         config.element_filters = {
-            "enums": {
-                "include": [r"^[A-Z].*"],
-                "exclude": [r".*[Ii]nternal.*"]
-            }
+            "enums": {"include": [r"^[A-Z].*"], "exclude": [r".*[Ii]nternal.*"]}
         }
         config._compile_patterns()
 
@@ -227,10 +230,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         """Test element filtering for global variables"""
         config = Config()
         config.element_filters = {
-            "globals": {
-                "include": [r"^public_.*"],
-                "exclude": [r".*[Ii]nternal.*"]
-            }
+            "globals": {"include": [r"^public_.*"], "exclude": [r".*[Ii]nternal.*"]}
         }
         config._compile_patterns()
 
@@ -250,10 +250,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         """Test element filtering for macros"""
         config = Config()
         config.element_filters = {
-            "macros": {
-                "include": [r"^[A-Z].*"],
-                "exclude": [r".*[Ii]nternal.*"]
-            }
+            "macros": {"include": [r"^[A-Z].*"], "exclude": [r".*[Ii]nternal.*"]}
         }
         config._compile_patterns()
 
@@ -272,10 +269,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         """Test element filtering for typedefs"""
         config = Config()
         config.element_filters = {
-            "aliases": {
-                "include": [r"^[A-Z].*"],
-                "exclude": [r".*[Ii]nternal.*"]
-            }
+            "aliases": {"include": [r"^[A-Z].*"], "exclude": [r".*[Ii]nternal.*"]}
         }
         config._compile_patterns()
 
@@ -294,18 +288,9 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         """Test applying multiple element filters simultaneously"""
         config = Config()
         config.element_filters = {
-            "structs": {
-                "include": [r"^[A-Z].*"],
-                "exclude": [r".*[Ii]nternal.*"]
-            },
-            "functions": {
-                "include": [r"^public_.*"],
-                "exclude": [r".*private.*"]
-            },
-            "enums": {
-                "include": [r"^[A-Z].*"],
-                "exclude": [r".*[Ii]nternal.*"]
-            }
+            "structs": {"include": [r"^[A-Z].*"], "exclude": [r".*[Ii]nternal.*"]},
+            "functions": {"include": [r"^public_.*"], "exclude": [r".*private.*"]},
+            "enums": {"include": [r"^[A-Z].*"], "exclude": [r".*[Ii]nternal.*"]},
         }
         config._compile_patterns()
 
@@ -339,14 +324,11 @@ class TestUserConfigurableFiltering(unittest.TestCase):
             "source_folders": ["./src"],
             "file_filters": {
                 "include": [r".*\.c$", r".*\.h$"],
-                "exclude": [r".*test.*"]
+                "exclude": [r".*test.*"],
             },
             "element_filters": {
-                "structs": {
-                    "include": [r"^[A-Z].*"],
-                    "exclude": [r".*[Ii]nternal.*"]
-                }
-            }
+                "structs": {"include": [r"^[A-Z].*"], "exclude": [r".*[Ii]nternal.*"]}
+            },
         }
 
         config = Config()
@@ -366,12 +348,12 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         config = Config()
         config.file_filters = {
             "include": [r"valid_pattern", r"[invalid_regex"],
-            "exclude": [r"another_valid", r"[invalid_exclude"]
+            "exclude": [r"another_valid", r"[invalid_exclude"],
         }
         config.element_filters = {
             "structs": {
                 "include": [r"^[A-Z].*", r"[invalid_struct"],
-                "exclude": [r".*[Ii]nternal.*"]
+                "exclude": [r".*[Ii]nternal.*"],
             }
         }
         config._compile_patterns()
@@ -406,23 +388,11 @@ class TestUserConfigurableFiltering(unittest.TestCase):
 
         # Create configuration with multiple filters
         config = Config()
-        config.file_filters = {
-            "include": [r".*\.c$"],
-            "exclude": [r".*test.*"]
-        }
+        config.file_filters = {"include": [r".*\.c$"], "exclude": [r".*test.*"]}
         config.element_filters = {
-            "structs": {
-                "include": [r"^[A-Z].*"],
-                "exclude": [r".*internal.*"]
-            },
-            "functions": {
-                "include": [r"^public_.*"],
-                "exclude": [r".*private.*"]
-            },
-            "enums": {
-                "include": [r"^[A-Z].*"],
-                "exclude": [r".*internal.*"]
-            }
+            "structs": {"include": [r"^[A-Z].*"], "exclude": [r".*internal.*"]},
+            "functions": {"include": [r"^public_.*"], "exclude": [r".*private.*"]},
+            "enums": {"include": [r"^[A-Z].*"], "exclude": [r".*internal.*"]},
         }
         config._compile_patterns()
 

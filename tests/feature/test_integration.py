@@ -109,28 +109,28 @@ void init_config(void);
 
         # Create test configuration
         import json
+
         config_content = {
             "source_folders": [self.temp_dir],
-            "file_filters": {
-                "include": [r"\.c$", r"\.h$"],
-                "exclude": [r"test"]
-            },
+            "file_filters": {"include": [r"\.c$", r"\.h$"], "exclude": [r"test"]},
             "include_depth": 2,
             "transformations": {
                 "rename": {"old_name": "new_name"},
-                "add_elements": [{"type": "macro", "name": "TEST_MACRO", "value": "1"}]
-            }
+                "add_elements": [{"type": "macro", "name": "TEST_MACRO", "value": "1"}],
+            },
         }
 
-        config_file = self.create_test_file("test_config.json", json.dumps(config_content))
-        
+        config_file = self.create_test_file(
+            "test_config.json", json.dumps(config_content)
+        )
+
         # Test configuration loading
         config = Config()
         config.load(config_file)
-        
+
         # Verify configuration loaded successfully
-        self.assertTrue(hasattr(config, 'file_filters'))
-        self.assertTrue(hasattr(config, 'include_depth'))
+        self.assertTrue(hasattr(config, "file_filters"))
+        self.assertTrue(hasattr(config, "include_depth"))
         # The source_folders might be processed differently, so just check it's a list
         self.assertTrue(isinstance(config.source_folders, list))
 
@@ -140,13 +140,11 @@ void init_config(void);
 
         # Test parsing non-existent file
         parser = Parser()
-        
+
         # This should not crash and should handle the error gracefully
         try:
             result = parser.c_parser.parse_file(
-                Path("/non/existent/file.c"), 
-                "file.c", 
-                "/non/existent"
+                Path("/non/existent/file.c"), "file.c", "/non/existent"
             )
             # If it doesn't raise an exception, that's fine too
         except Exception as e:
@@ -212,7 +210,7 @@ void cleanup_resources() {
         # Verify parsing completed successfully
         self.assertIn("large_test.c", model.files)
         file_model = model.files["large_test.c"]
-        
+
         # Verify all elements were parsed
         self.assertIn("LargeStruct", file_model.structs)
         self.assertIn("LargeEnum", file_model.enums)
