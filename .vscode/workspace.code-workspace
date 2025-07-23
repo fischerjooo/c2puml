@@ -240,12 +240,12 @@
                 "label": "# ⚠️ Git Reset & Pull",
                 "type": "shell",
                 "command": "cmd",
-                "args": ["/c", "cd /d ${workspaceFolder} && echo WARNING: This will reset all local changes and pull from remote! && echo Press any key to continue or Ctrl+C to cancel... && pause >nul && echo Proceeding with git reset --hard... && git reset --hard && echo Pulling from remote... && git pull && echo Done!"],
+                "args": ["/c", "cd /d ${workspaceFolder} && echo WARNING: This will reset all local changes and pull from remote! && echo. && echo Proceeding with git reset --hard... && git reset --hard && echo Pulling from remote... && git pull && echo Done! && echo. && pause"],
                 "group": "build",
                 "presentation": {
                     "echo": true,
                     "reveal": "always",
-                    "focus": true,
+                    "focus": false,
                     "panel": "shared",
                     "showReuseMessage": true,
                     "clear": false
