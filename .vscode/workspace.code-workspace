@@ -91,9 +91,10 @@
     "extensions": {
         "recommendations": [
             "ms-python.python",
-            "ms-python.flake8",
+            "ms-python.vscode-pylance",
             "ms-python.black-formatter",
-            "ms-python.pylint",
+            "ms-python.isort",
+            "ms-python.flake8",
             "ms-python.pytest-adapter",
             "jebbs.plantuml",
             "ms-vscode.vscode-json",
