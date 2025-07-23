@@ -326,6 +326,10 @@ class TestCryptoFilterUseCase(BaseFeatureTest):
         
         # Verify that each parsed file has the expected structure
         for file_path, file_model in project_model.files.items():
-            assert file_model.file_path == file_path
+            # file_path is the key (filename), file_model.file_path is full path
+            # Compare just the filename part
+            expected_filename = Path(file_path).name
+            actual_filename = Path(file_model.file_path).name
+            assert actual_filename == expected_filename, f"Filename mismatch: {actual_filename} != {expected_filename}"
             assert file_model.project_root == self.temp_dir
             assert file_model.encoding_used in ["utf-8", "latin-1", "cp1252"]  # Common encodings
