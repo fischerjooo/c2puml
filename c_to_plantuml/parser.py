@@ -522,34 +522,43 @@ class CParser:
         include_depth = getattr(config, "include_depth", 1)
         self.logger.info(f"Using include depth: {include_depth}")
         
-        # Start with all C/C++ files in the project
+        # Step 1: Find all C/C++ files in the project
         all_c_files = self._find_c_files(project_root, recursive)
+        self.logger.debug(f"All C files found: {[f.name for f in all_c_files]}")
         
-        # Apply file filters from configuration to get initial files
+        # Step 2: Apply initial file filtering (include/exclude patterns)
         initial_files = []
         for file_path in all_c_files:
             relative_path = str(file_path.relative_to(project_root))
             if self._should_include_file(relative_path, config):
                 initial_files.append(file_path)
+                self.logger.debug(f"Included file after filtering: {relative_path}")
+            else:
+                self.logger.debug(f"Excluded file after filtering: {relative_path}")
         
         self.logger.info(f"Initial files after filtering: {len(initial_files)} files")
+        self.logger.debug(f"Initial files: {[f.name for f in initial_files]}")
         
-        # If include_depth is 0, return only the initially filtered files
+        # Step 3: If include_depth is 0, return only the initially filtered files
         if include_depth == 0:
             return initial_files
         
-        # Start with initial files
+        # Step 4: Process include dependencies for N iterations
         files_to_parse = set(initial_files)
         
-        # Do N iterations of include processing
         for iteration in range(include_depth):
             self.logger.info(f"Processing include iteration {iteration + 1}")
             
-            # Find all includes from current files
+            # Get the files that were in the list at the start of this iteration
+            files_at_start_of_iteration = list(files_to_parse)
+            self.logger.debug(f"Files at start of iteration {iteration + 1}: {[f.name for f in files_at_start_of_iteration]}")
+            
+            # Find all includes from files that were in the list at the start of this iteration
             new_includes = set()
-            for file_path in files_to_parse:
+            for file_path in files_at_start_of_iteration:
                 # Extract includes from this file
                 includes = self._extract_includes_from_file(file_path)
+                self.logger.debug(f"Found includes in {file_path.name}: {includes}")
                 
                 # Find the actual header files
                 for include_name in includes:
@@ -562,6 +571,10 @@ class CParser:
                             self.logger.debug(f"Added included file in iteration {iteration + 1}: {relative_included_path}")
                         else:
                             self.logger.debug(f"Excluded included file due to config: {relative_included_path}")
+                    elif included_file:
+                        self.logger.debug(f"Included file already in list: {included_file.name}")
+                    else:
+                        self.logger.debug(f"Could not find included file: {include_name}")
             
             # Add new includes to the parsing list
             files_to_parse.update(new_includes)
@@ -574,6 +587,7 @@ class CParser:
         
         result = list(files_to_parse)
         self.logger.info(f"Final file list: {len(result)} files")
+        self.logger.debug(f"Final files: {[f.name for f in result]}")
         return result
 
     def _should_include_file(self, relative_path: str, config: "Config") -> bool:
@@ -602,7 +616,7 @@ class CParser:
         ]
         
         for path in possible_paths:
-            if path.exists():
+            if path.exists() and path.is_file():
                 return path
         
         # Try to find the file in subdirectories of the project root
@@ -611,7 +625,8 @@ class CParser:
                 full_name = include_name if include_name.endswith(ext) else f"{include_name}{ext}"
                 # Search recursively in project root
                 for found_file in project_root.rglob(full_name):
-                    return found_file
+                    if found_file.is_file():
+                        return found_file
         
         return None
 
