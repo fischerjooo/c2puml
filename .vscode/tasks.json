@@ -22,7 +22,7 @@
         {
             "label": "# Run Example",
             "type": "shell",
-            "command": "${workspaceFolder}/run_example.bat",
+            "command": "${workspaceFolder}/run_example_fixed.bat",
             "group": "build",
             "presentation": {
                 "echo": true,
