@@ -239,11 +239,8 @@
             {
                 "label": "# ⚠️ Git Reset & Pull",
                 "type": "shell",
-                "command": "powershell",
-                "args": [
-                    "-Command",
-                    "Write-Host 'WARNING: This will reset all local changes and pull from remote!' -ForegroundColor Red; Write-Host 'Press any key to continue or Ctrl+C to cancel...' -ForegroundColor Yellow; $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown'); Write-Host 'Proceeding with git reset --hard...' -ForegroundColor Green; git reset --hard; Write-Host 'Pulling from remote...' -ForegroundColor Green; git pull; Write-Host 'Done!' -ForegroundColor Green"
-                ],
+                "command": "cmd",
+                "args": ["/c", "cd /d ${workspaceFolder} && echo WARNING: This will reset all local changes and pull from remote! && echo Press any key to continue or Ctrl+C to cancel... && pause >nul && echo Proceeding with git reset --hard... && git reset --hard && echo Pulling from remote... && git pull && echo Done!"],
                 "group": "build",
                 "presentation": {
                     "echo": true,
@@ -253,10 +250,7 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": [],
-                "options": {
-                    "cwd": "${workspaceFolder}"
-                }
+                "problemMatcher": []
             }
         ]
     },
