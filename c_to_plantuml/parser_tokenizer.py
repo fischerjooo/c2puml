@@ -127,7 +127,7 @@ class CTokenizer:
             'char': re.compile(r"'([^'\\]|\\.)'"),
             'comment_single': re.compile(r'//.*'),
             'comment_multi': re.compile(r'/\*.*?\*/', re.DOTALL),
-            'preprocessor': re.compile(r'#(include|define|ifdef|ifndef|endif|elif|else|pragma|error|warning)\b.*'),
+            'preprocessor': re.compile(r'#(include|define|ifdef|ifndef|if|endif|elif|else|pragma|error|warning)\b.*'),
             'whitespace': re.compile(r'[ \t]+'),
             'newline': re.compile(r'\n'),
         }
