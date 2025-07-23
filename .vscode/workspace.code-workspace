@@ -111,7 +111,7 @@
         "version": "2.0.0",
         "tasks": [
             {
-                "label": "Run Full Workflow",
+                "label": "# Run Full Workflow",
                 "type": "shell",
                 "command": "${env:PYTHONHOME}/python.exe",
                 "args": [
@@ -133,7 +133,45 @@
                 }
             },
             {
-                "label": "Run Tests",
+                "label": "# Run Example",
+                "type": "shell",
+                "command": "cmd",
+                "args": ["/c", "run_example.bat"],
+                "group": "build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared",
+                    "showReuseMessage": true,
+                    "clear": false
+                },
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
+            },
+            {
+                "label": "# Generate Pictures",
+                "type": "shell",
+                "command": "cmd",
+                "args": ["/c", "picgen.bat"],
+                "group": "build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared",
+                    "showReuseMessage": true,
+                    "clear": false
+                },
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
+            },
+            {
+                "label": "# Run Tests",
                 "type": "shell",
                 "command": "${env:PYTHONHOME}/python.exe",
                 "args": [
