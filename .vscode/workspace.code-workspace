@@ -237,12 +237,12 @@
                 }
             },
             {
-                "label": "⚠️ Git Reset & Pull",
+                "label": "# ⚠️ Git Reset & Pull",
                 "type": "shell",
                 "command": "powershell",
                 "args": [
                     "-Command",
-                    "$confirm = Read-Host 'Are you sure you want to reset --hard and pull? (y/N)'; if ($confirm -eq 'y' -or $confirm -eq 'Y') { Write-Host 'Proceeding with git reset --hard and pull...' -ForegroundColor Yellow; git reset --hard; git pull; Write-Host 'Done!' -ForegroundColor Green } else { Write-Host 'Operation cancelled.' -ForegroundColor Red }"
+                    "Write-Host 'WARNING: This will reset all local changes and pull from remote!' -ForegroundColor Red; Write-Host 'Press any key to continue or Ctrl+C to cancel...' -ForegroundColor Yellow; $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown'); Write-Host 'Proceeding with git reset --hard...' -ForegroundColor Green; git reset --hard; Write-Host 'Pulling from remote...' -ForegroundColor Green; git pull; Write-Host 'Done!' -ForegroundColor Green"
                 ],
                 "group": "build",
                 "presentation": {
