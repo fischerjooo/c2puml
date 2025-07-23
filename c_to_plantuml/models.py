@@ -25,15 +25,15 @@ class Field:
     def __post_init__(self):
         """Validate field data after initialization"""
         if not isinstance(self.name, str):
-            raise ValueError("Field name must be a string")
+            raise ValueError(f"Field name must be a string, got {type(self.name)}: {repr(self.name)}")
         if not self.type or not isinstance(self.type, str):
-            raise ValueError("Field type must be a non-empty string")
+            raise ValueError(f"Field type must be a non-empty string, got {type(self.type)}: {repr(self.type)}")
         
         # Additional validation: ensure name and type are not just whitespace
         if not self.name.strip():
-            raise ValueError("Field name cannot be empty or whitespace")
+            raise ValueError(f"Field name cannot be empty or whitespace, got: {repr(self.name)}")
         if not self.type.strip():
-            raise ValueError("Field type cannot be empty or whitespace")
+            raise ValueError(f"Field type cannot be empty or whitespace, got: {repr(self.type)}")
 
 
 # TypedefRelation class removed - tag names moved to struct/enum/union

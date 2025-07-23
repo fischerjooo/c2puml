@@ -338,10 +338,17 @@ class CParser:
             if global_info:
                 var_name, var_type, var_value = global_info
                 # Only add if it looks like a real global variable (not a fragment)
-                if var_name and var_type and not var_name.startswith('#') and len(var_type) < 200:
+                if (var_name and var_name.strip() and 
+                    var_type and var_type.strip() and 
+                    not var_name.startswith('#') and 
+                    len(var_type) < 200):
                     try:
-                        globals_list.append(Field(name=var_name, type=var_type, value=var_value))
-                        self.logger.debug(f"Parsed global: {var_name} : {var_type}")
+                        # Additional validation before creating Field
+                        stripped_name = var_name.strip()
+                        stripped_type = var_type.strip()
+                        if stripped_name and stripped_type:
+                            globals_list.append(Field(name=stripped_name, type=stripped_type, value=var_value))
+                            self.logger.debug(f"Parsed global: {stripped_name} : {stripped_type}")
                     except Exception as e:
                         self.logger.warning(f"Error creating global field {var_name}: {e}")
                 i = self._skip_to_semicolon(tokens, i)
@@ -1043,7 +1050,12 @@ class CParser:
                 # This is just a type without a name
                 return Field(name='unnamed', type=param_type + ' ' + param_name)
             
-            return Field(name=param_name, type=param_type)
+            # Additional validation before creating Field
+            if param_name and param_name.strip() and param_type and param_type.strip():
+                return Field(name=param_name.strip(), type=param_type.strip())
+            else:
+                # Fallback for invalid parameters
+                return Field(name='unnamed', type='unknown')
         elif len(param_tokens) == 1:
             # Single token - might be just type (like "void") or name
             token_value = param_tokens[0].value
@@ -1051,7 +1063,10 @@ class CParser:
                 return Field(name='unnamed', type=token_value)
             else:
                 # If we can't determine the type, use 'unknown' as a fallback
-                return Field(name=token_value, type='unknown')
+                if token_value and token_value.strip():
+                    return Field(name=token_value.strip(), type='unknown')
+                else:
+                    return Field(name='unnamed', type='unknown')
         
         return None
 
