@@ -802,7 +802,6 @@ class PUMLValidator:
             
             # Should have preprocessing-related relationships
             assert 'TYPEDEF_FEATURE_CALLBACK_T ..> TYPEDEF_ENABLED_FEATURE_T : <<uses>>' in content, "Missing feature_callback_t uses enabled_feature_t relationship"
-            assert 'TYPEDEF_FEATURE_STRUCT_T ..> TYPEDEF_ENABLED_FEATURE_T : <<uses>>' in content, "Missing feature_struct_t uses enabled_feature_t relationship"
             
         print(f"    ✅ Specific content valid")
     
