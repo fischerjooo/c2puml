@@ -925,13 +925,17 @@ def find_struct_fields(tokens: List[Token], struct_start: int, struct_end: int) 
                 field_name = field_tokens[-4].value
                 # Fix: Put the size inside the brackets, not before them
                 field_type = ' '.join(t.value for t in field_tokens[:-4]) + '[' + field_tokens[-2].value + ']'
-                fields.append((field_name, field_type.strip()))
+                if (field_name and field_name.strip() and 
+                    field_type.strip() and field_name not in ['[', ']', ';', '}']):
+                    fields.append((field_name.strip(), field_type.strip()))
             else:
                 # Regular field: type name
                 field_name = field_tokens[-1].value
                 field_type = ' '.join(t.value for t in field_tokens[:-1])
-                if field_name not in ['[', ']', ';', '}'] and field_name:
-                    fields.append((field_name, field_type.strip()))
+                if (field_name not in ['[', ']', ';', '}'] and 
+                    field_name and field_name.strip() and 
+                    field_type.strip()):
+                    fields.append((field_name.strip(), field_type.strip()))
         if pos < closing_brace_pos:
             pos += 1  # Skip semicolon
     return fields

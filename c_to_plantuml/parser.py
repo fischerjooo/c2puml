@@ -1019,16 +1019,17 @@ class CParser:
             # Handle unnamed parameters (just type)
             if param_name in ['void', 'int', 'char', 'float', 'double', 'long', 'short', 'unsigned', 'signed']:
                 # This is just a type without a name
-                return Field(name='', type=param_type + ' ' + param_name)
+                return Field(name='unnamed', type=param_type + ' ' + param_name)
             
             return Field(name=param_name, type=param_type)
         elif len(param_tokens) == 1:
             # Single token - might be just type (like "void") or name
             token_value = param_tokens[0].value
             if token_value in ['void', 'int', 'char', 'float', 'double', 'long', 'short', 'unsigned', 'signed']:
-                return Field(name='', type=token_value)
+                return Field(name='unnamed', type=token_value)
             else:
-                return Field(name=token_value, type='')
+                # If we can't determine the type, use 'unknown' as a fallback
+                return Field(name=token_value, type='unknown')
         
         return None
 
