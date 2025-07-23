@@ -169,13 +169,13 @@ typedef struct {
         self.assertEqual(config.source_folders[2], self.source_folder3)
 
     def test_parser_multiple_source_folders_method(self):
-        """Test the parse_multiple_source_folders method directly"""
+        """Test the parse method with multiple source folders"""
         parser = Parser()
         output_file = os.path.join(self.temp_dir, "combined_model.json")
         
         # Test with multiple source folders
-        result = parser.parse_multiple_source_folders(
-            source_folders=[self.source_folder1, self.source_folder2, self.source_folder3],
+        result = parser.parse(
+            project_root=[self.source_folder1, self.source_folder2, self.source_folder3],
             output_file=output_file,
             recursive_search=True
         )
@@ -210,7 +210,7 @@ typedef struct {
         parser = Parser()
         output_file = os.path.join(self.temp_dir, "single_model.json")
         
-        # Test with single source folder
+        # Test with single source folder (string parameter for backward compatibility)
         result = parser.parse(
             project_root=self.source_folder1,
             output_file=output_file,
@@ -236,8 +236,8 @@ typedef struct {
         output_file = os.path.join(self.temp_dir, "error_model.json")
         
         with self.assertRaises(ValueError):
-            parser.parse_multiple_source_folders(
-                source_folders=[],
+            parser.parse(
+                project_root=[],
                 output_file=output_file,
                 recursive_search=True
             )
@@ -248,8 +248,8 @@ typedef struct {
         output_file = os.path.join(self.temp_dir, "error_model.json")
         
         with self.assertRaises(Exception):  # Should raise some kind of error
-            parser.parse_multiple_source_folders(
-                source_folders=["/nonexistent/path"],
+            parser.parse(
+                project_root=["/nonexistent/path"],
                 output_file=output_file,
                 recursive_search=True
             )
@@ -271,8 +271,8 @@ typedef struct {
         parser = Parser()
         output_file = os.path.join(self.temp_dir, "filtered_model.json")
         
-        result = parser.parse_multiple_source_folders(
-            source_folders=config.source_folders,
+        result = parser.parse(
+            project_root=config.source_folders,
             output_file=output_file,
             recursive_search=config.recursive_search,
             config=config
@@ -296,8 +296,8 @@ typedef struct {
         parser = Parser()
         output_file = os.path.join(self.temp_dir, "collision_model.json")
         
-        result = parser.parse_multiple_source_folders(
-            source_folders=[self.source_folder1, self.source_folder2],
+        result = parser.parse(
+            project_root=[self.source_folder1, self.source_folder2],
             output_file=output_file,
             recursive_search=True
         )
@@ -317,6 +317,34 @@ typedef struct {
         self.assertEqual(len(src1_common), 1)
         self.assertEqual(len(src2_common), 1)
         self.assertNotEqual(src1_common[0], src2_common[0])
+
+    def test_project_name_from_config(self):
+        """Test that project name is taken from configuration"""
+        config_path = self.create_config_file([
+            self.source_folder1,
+            self.source_folder2
+        ])
+        
+        config = Config.load(config_path)
+        config.project_name = "TestProject"
+        
+        parser = Parser()
+        output_file = os.path.join(self.temp_dir, "named_model.json")
+        
+        result = parser.parse(
+            project_root=config.source_folders,
+            output_file=output_file,
+            recursive_search=True,
+            config=config
+        )
+        
+        self.assertEqual(result, output_file)
+        
+        # Load and verify the project name is correct
+        with open(output_file, "r") as f:
+            model_data = json.load(f)
+        
+        self.assertEqual(model_data.get("project_name"), "TestProject")
 
 
 if __name__ == "__main__":

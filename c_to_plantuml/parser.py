@@ -7,7 +7,7 @@ REFACTORED: Now uses tokenizer-based parsing instead of regex-based parsing
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Set, Optional
+from typing import TYPE_CHECKING, Dict, List, Set, Optional, Union
 
 if TYPE_CHECKING:
     from .models import Struct, Enum, Union, Function, Field, TypedefRelation
@@ -1092,72 +1092,41 @@ class Parser:
         self.logger = logging.getLogger(__name__)
 
     def parse(
-        self, project_root: str, output_file: str = "model.json", recursive_search: bool = True, config: "Config" = None
+        self, project_root: Union[str, List[str]], output_file: str = "model.json", recursive_search: bool = True, config: "Config" = None
     ) -> str:
         """
         Step 1: Parse C code files and generate model.json
 
         Args:
-            project_root: Root directory of C/C++ project
+            project_root: Either a single root directory of C/C++ project (for backward compatibility)
+                         or a list of source folder directories within the project
             output_file: Output JSON model file path
             recursive_search: Whether to search subdirectories recursively
-            config: Configuration object for filtering and include depth
+            config: Configuration object for filtering, include depth, and project name
 
         Returns:
             Path to the generated model.json file
         """
-        self.logger.info(f"Step 1: Parsing C/C++ project: {project_root}")
+        # Handle both single project_root (backward compatibility) and list of source_folders
+        if isinstance(project_root, str):
+            # Single source folder - backward compatibility
+            source_folders = [project_root]
+            self.logger.info(f"Step 1: Parsing C/C++ project: {project_root}")
+        else:
+            # Multiple source folders
+            source_folders = project_root
+            if not source_folders:
+                raise ValueError("At least one source folder must be provided")
+            self.logger.info(f"Step 1: Parsing C/C++ project with {len(source_folders)} source folders")
 
-        # Parse the project
-        try:
-            model = self.c_parser.parse_project(project_root, recursive_search, config)
-        except RuntimeError as e:
-            self.logger.error(f"Failed to parse project: {e}")
-            raise
+        # Get project name from config or use default
+        project_name = getattr(config, "project_name", "C_Project") if config else "C_Project"
 
-        # Save model to JSON file
-        model.save(output_file)
-
-        self.logger.info(f"Step 1 complete! Model saved to: {output_file}")
-        self.logger.info(f"Found {len(model.files)} files")
-
-        # Print summary
-        total_structs = sum(len(f.structs) for f in model.files.values())
-        total_enums = sum(len(f.enums) for f in model.files.values())
-        total_functions = sum(len(f.functions) for f in model.files.values())
-        self.logger.info(
-            f"Summary: {total_structs} structs, {total_enums} enums, "
-            f"{total_functions} functions"
-        )
-
-        return output_file
-
-    def parse_multiple_source_folders(
-        self, source_folders: List[str], output_file: str = "model.json", recursive_search: bool = True, config: "Config" = None
-    ) -> str:
-        """
-        Step 1: Parse a C/C++ project with multiple source folders and generate model.json
-
-        Args:
-            source_folders: List of source folder directories within the project
-            output_file: Output JSON model file path
-            recursive_search: Whether to search subdirectories recursively
-            config: Configuration object for filtering and include depth
-
-        Returns:
-            Path to the generated model.json file
-        """
-        if not source_folders:
-            raise ValueError("At least one source folder must be provided")
-
-        self.logger.info(f"Step 1: Parsing C/C++ project with {len(source_folders)} source folders")
-        
         # Parse each source folder and combine results
         all_files = {}
         total_structs = 0
         total_enums = 0
         total_functions = 0
-        project_name = "Multi_Source_Project"
         
         for i, source_folder in enumerate(source_folders):
             self.logger.info(f"Parsing source folder {i+1}/{len(source_folders)}: {source_folder}")
@@ -1166,13 +1135,16 @@ class Parser:
                 # Parse the individual source folder
                 model = self.c_parser.parse_project(source_folder, recursive_search, config)
                 
-                # Add files from this source folder to the combined model
-                # Use source folder name as prefix to avoid conflicts
-                source_folder_prefix = f"{Path(source_folder).name}_"
-                for relative_path, file_model in model.files.items():
-                    # Create a unique key for each file across all source folders
-                    unique_key = f"{source_folder_prefix}{relative_path}"
-                    all_files[unique_key] = file_model
+                if len(source_folders) == 1:
+                    # Single source folder - use original behavior (no prefix)
+                    all_files.update(model.files)
+                else:
+                    # Multiple source folders - use source folder name as prefix to avoid conflicts
+                    source_folder_prefix = f"{Path(source_folder).name}_"
+                    for relative_path, file_model in model.files.items():
+                        # Create a unique key for each file across all source folders
+                        unique_key = f"{source_folder_prefix}{relative_path}"
+                        all_files[unique_key] = file_model
                 
                 # Update totals
                 total_structs += sum(len(f.structs) for f in model.files.values())
@@ -1188,7 +1160,7 @@ class Parser:
         # Create combined project model
         combined_model = ProjectModel(
             project_name=project_name,
-            project_root=",".join(source_folders),  # Use comma-separated list as project root
+            project_root=",".join(source_folders) if len(source_folders) > 1 else source_folders[0],
             files=all_files,
         )
 
@@ -1198,8 +1170,8 @@ class Parser:
         # Save combined model to JSON file
         combined_model.save(output_file)
 
-        self.logger.info(f"Step 1 complete! Combined model saved to: {output_file}")
-        self.logger.info(f"Found {len(all_files)} total files across {len(source_folders)} source folders")
+        self.logger.info(f"Step 1 complete! Model saved to: {output_file}")
+        self.logger.info(f"Found {len(all_files)} total files across {len(source_folders)} source folder(s)")
 
         # Print summary
         self.logger.info(
