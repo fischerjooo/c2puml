@@ -2,63 +2,6 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "modify-debug-config-parse",
-            "type": "shell",
-            "command": "python",
-            "args": [
-                "-c",
-                "import re; content=open('debug.py','r').read(); content=re.sub(r'WORKFLOW: str = \"[^\"]*\"', 'WORKFLOW: str = \"parse\"', content); open('debug.py','w').write(content)"
-            ],
-            "group": "build",
-            "presentation": {
-                "echo": false,
-                "reveal": "silent",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "modify-debug-config-transform",
-            "type": "shell",
-            "command": "python",
-            "args": [
-                "-c",
-                "import re; content=open('debug.py','r').read(); content=re.sub(r'WORKFLOW: str = \"[^\"]*\"', 'WORKFLOW: str = \"transform\"', content); open('debug.py','w').write(content)"
-            ],
-            "group": "build",
-            "presentation": {
-                "echo": false,
-                "reveal": "silent",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "modify-debug-config-generate",
-            "type": "shell",
-            "command": "python",
-            "args": [
-                "-c",
-                "import re; content=open('debug.py','r').read(); content=re.sub(r'WORKFLOW: str = \"[^\"]*\"', 'WORKFLOW = \"generate\"', content); open('debug.py','w').write(content)"
-            ],
-            "group": "build",
-            "presentation": {
-                "echo": false,
-                "reveal": "silent",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "Run Full Workflow (Windows)",
             "type": "shell",
             "command": "run_all.bat",
