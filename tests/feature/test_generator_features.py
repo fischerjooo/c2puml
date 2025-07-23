@@ -36,7 +36,7 @@ struct Container {
         
         # Parse and generate
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
         
         model_path = os.path.join(self.temp_dir, "test_model.json")
         model.save(model_path)
@@ -72,7 +72,7 @@ struct Container {
         
         # Parse and generate
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
         
         model_path = os.path.join(self.temp_dir, "test_model.json")
         model.save(model_path)

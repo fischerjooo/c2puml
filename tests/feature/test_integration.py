@@ -74,7 +74,7 @@ void init_config(void);
 
         # Step 1: Analyze project
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
 
         # Verify analysis
         self.assertEqual(len(model.files), 2)
@@ -207,7 +207,7 @@ void cleanup_resources() {
 
         # Test parsing performance
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
 
         # Verify parsing completed successfully
         self.assertIn("large_test.c", model.files)

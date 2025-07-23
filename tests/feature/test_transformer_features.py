@@ -117,7 +117,7 @@ struct Config {
 
         # Parse the project
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
 
         # Save the model to a temporary file
         model_file = os.path.join(self.temp_dir, "model.json")
@@ -248,7 +248,7 @@ struct Struct2 {
 
         # Parse the project
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
 
         # Save the model
         model_file = os.path.join(self.temp_dir, "model.json")
@@ -312,7 +312,7 @@ int old_function(int param) {
 
         # Parse the project
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
 
         # Save the model
         model_file = os.path.join(self.temp_dir, "model.json")
@@ -368,7 +368,7 @@ struct ExistingStruct {
 
         # Parse the project
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
 
         # Save the model
         model_file = os.path.join(self.temp_dir, "model.json")
@@ -441,7 +441,7 @@ enum RemoveEnum {
 
         # Parse the project
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
 
         # Save the model
         model_file = os.path.join(self.temp_dir, "model.json")
@@ -519,7 +519,7 @@ static void helper_function(void) { }
 
         # Parse the project
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
 
         # Save the model
         model_file = os.path.join(self.temp_dir, "model.json")
@@ -591,7 +591,7 @@ struct TestStruct {
 
         # Parse the project
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
 
         # Save the model
         model_file = os.path.join(self.temp_dir, "model.json")
@@ -699,7 +699,7 @@ static void internal_helper(void);
 
         # Step 1: Parse the project
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
 
         # Save the parsed model
         model_file = os.path.join(self.temp_dir, "parsed_model.json")
