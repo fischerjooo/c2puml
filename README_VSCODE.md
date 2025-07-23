@@ -15,6 +15,8 @@ This document describes how to set up and use VSCode for developing and debuggin
    - Git extension
    - And others listed in `.vscode/extensions.json`
 
+   **Note:** The `.vscode/` directory is included in the repository, so all workspace settings, tasks, and debug configurations are automatically available.
+
 3. **Set up Python environment:**
    ```bash
    python -m venv venv
@@ -33,21 +35,21 @@ This document describes how to set up and use VSCode for developing and debuggin
 
 The `debug.py` file provides a convenient way to debug the converter with **in-file configuration**. Simply modify the configuration variables at the top of the file and run it.
 
-#### Configuration Variables in debug.py:
+#### Configuration Constants in debug.py:
 
 ```python
 # =============================================================================
-# DEBUG CONFIGURATION - Modify these variables as needed
+# DEBUG CONFIGURATION - Modify these constants as needed
 # =============================================================================
 
 # Workflow selection: "full", "parse", "transform", "generate"
-WORKFLOW = "full"
+WORKFLOW: str = "full"
 
 # Configuration file path (relative to project root)
-CONFIG_PATH = "./example/config.json"
+CONFIG_PATH: str = "./example/config.json"
 
 # Verbose output
-VERBOSE = True
+VERBOSE: bool = True
 
 # =============================================================================
 # END CONFIGURATION
@@ -65,7 +67,7 @@ VERBOSE = True
 
 #### How to Use:
 
-1. **Configure debug.py** by modifying the variables at the top of the file:
+1. **Configure debug.py** by modifying the constants at the top of the file:
    ```python
    WORKFLOW = "parse"  # or "transform", "generate", "full"
    CONFIG_PATH = "./my_config.json"  # path to your config file
@@ -297,8 +299,8 @@ VERBOSE = True
 ### Pre-launch Tasks:
 
 The debug configurations use pre-launch tasks to automatically modify `debug.py`:
-- **modify-debug-config-parse**: Sets `WORKFLOW = "parse"`
-- **modify-debug-config-transform**: Sets `WORKFLOW = "transform"`
-- **modify-debug-config-generate**: Sets `WORKFLOW = "generate"`
+- **modify-debug-config-parse**: Sets `WORKFLOW: str = "parse"`
+- **modify-debug-config-transform**: Sets `WORKFLOW: str = "transform"`
+- **modify-debug-config-generate**: Sets `WORKFLOW: str = "generate"`
 
 This allows you to quickly switch between workflows without manually editing the file.
