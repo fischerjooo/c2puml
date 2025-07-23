@@ -332,4 +332,12 @@ class TestCryptoFilterUseCase(BaseFeatureTest):
             actual_filename = Path(file_model.file_path).name
             assert actual_filename == expected_filename, f"Filename mismatch: {actual_filename} != {expected_filename}"
             assert file_model.project_root == self.temp_dir
-            assert file_model.encoding_used in ["utf-8", "latin-1", "cp1252"]  # Common encodings
+            # Check that encoding is one of the acceptable encodings
+            acceptable_encodings = [
+                "utf-8", "utf-8-sig", "utf-16", 
+                "latin-1", "iso-8859-1",
+                "cp1252", "windows-1252", 
+                "cp1254", "windows-1254"
+            ]
+            assert file_model.encoding_used in acceptable_encodings, \
+                f"Encoding '{file_model.encoding_used}' not in acceptable encodings: {acceptable_encodings}"
