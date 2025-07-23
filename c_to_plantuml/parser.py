@@ -310,9 +310,14 @@ class CParser:
         i = 0
         while i < len(tokens):
             # Skip preprocessor directives, comments, etc.
-            if tokens[i].type in [TokenType.INCLUDE, TokenType.DEFINE, TokenType.PREPROCESSOR, 
-                                TokenType.COMMENT, TokenType.WHITESPACE, TokenType.NEWLINE]:
+            if tokens[i].type in [TokenType.INCLUDE, TokenType.DEFINE, TokenType.COMMENT, 
+                                TokenType.WHITESPACE, TokenType.NEWLINE]:
                 i += 1
+                continue
+            
+            # Skip entire preprocessor blocks
+            if tokens[i].type == TokenType.PREPROCESSOR:
+                i = self._skip_preprocessor_block(tokens, i)
                 continue
             
             # Skip function definitions (look for parentheses)
@@ -954,6 +959,32 @@ class CParser:
         while i < len(tokens) and tokens[i].type != TokenType.SEMICOLON:
             i += 1
         return i + 1 if i < len(tokens) else i
+
+    def _skip_preprocessor_block(self, tokens, start_pos):
+        """Skip an entire preprocessor block (from #if to #endif)"""
+        i = start_pos
+        if i >= len(tokens) or tokens[i].type != TokenType.PREPROCESSOR:
+            return i
+        
+        # Check if this is a #if, #ifdef, or #ifndef
+        directive = tokens[i].value.strip()
+        if not (directive.startswith('#if') or directive.startswith('#ifdef') or directive.startswith('#ifndef')):
+            return i
+        
+        # Count nested #if blocks
+        if_count = 1
+        i += 1
+        
+        while i < len(tokens) and if_count > 0:
+            if tokens[i].type == TokenType.PREPROCESSOR:
+                directive = tokens[i].value.strip()
+                if directive.startswith('#if') or directive.startswith('#ifdef') or directive.startswith('#ifndef'):
+                    if_count += 1
+                elif directive.startswith('#endif'):
+                    if_count -= 1
+            i += 1
+        
+        return i
 
     def _parse_function_parameters(self, tokens, start_pos, end_pos, func_name):
         """Parse function parameters from token range"""
