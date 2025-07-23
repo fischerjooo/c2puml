@@ -1045,10 +1045,10 @@
           "methods": [],
           "tag_name": "MyComplexStruct_tag",
           "uses": [
-            "MyCallback",
+            "log_level_t",
             "MyString",
             "MyLen",
-            "log_level_t"
+            "MyCallback"
           ]
         },
         "Point_t": {
@@ -1209,5 +1209,5 @@
       }
     }
   },
-  "created_at": "2025-07-23T06:40:55.479496"
+  "created_at": "2025-07-23T06:44:46.483801"
 }

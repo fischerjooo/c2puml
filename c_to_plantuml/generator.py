@@ -64,58 +64,26 @@ class PlantUMLGenerator:
         include_tree = {}
         visited = set()
         
-        def add_file_to_tree(file_path: str, depth: int):
-            if depth > include_depth or file_path in visited:
+        def add_file_to_tree(file_name: str, depth: int):
+            if depth > include_depth or file_name in visited:
                 return
             
-            visited.add(file_path)
-            if file_path in project_model.files:
-                include_tree[file_path] = project_model.files[file_path]
+            visited.add(file_name)
+            if file_name in project_model.files:
+                include_tree[file_name] = project_model.files[file_name]
                 
                 # Add included files
                 if depth < include_depth:
-                    for include in project_model.files[file_path].includes:
-                        # Find the actual file path for this include
-                        include_path = self._find_include_file(include, project_model)
-                        if include_path:
-                            add_file_to_tree(include_path, depth + 1)
+                    for include in project_model.files[file_name].includes:
+                        # Clean the include name (remove quotes/angle brackets)
+                        clean_include = include.strip('<>"')
+                        add_file_to_tree(clean_include, depth + 1)
         
-        # Start with the root file - use the key that matches the model files
+        # Start with the root file - use just the filename
         root_key = Path(root_file.file_path).name
         add_file_to_tree(root_key, 0)
         
-        # Also add the root file itself if it's not already in the tree
-        if root_key not in include_tree:
-            include_tree[root_key] = root_file
-        
         return include_tree
-
-    def _find_include_file(self, include_name: str, project_model: ProjectModel) -> Optional[str]:
-        """Find the actual file path for an include"""
-        # Remove angle brackets and quotes
-        clean_include = include_name.strip('<>"')
-        
-        # Look for exact match first
-        for file_path in project_model.files:
-            if Path(file_path).name == clean_include:
-                return file_path
-        
-        # Look for header with .h extension
-        for file_path in project_model.files:
-            if Path(file_path).name == f"{clean_include}.h":
-                return file_path
-        
-        # Look for header without extension if clean_include doesn't have one
-        if not clean_include.endswith('.h'):
-            for file_path in project_model.files:
-                if Path(file_path).name == f"{clean_include}.h":
-                    return file_path
-        
-        # If the model files are stored with just the filename, try direct match
-        if clean_include in project_model.files:
-            return clean_include
-        
-        return None
 
     def _generate_uml_ids(self, include_tree: Dict[str, FileModel], project_model: ProjectModel) -> Dict[str, str]:
         """Generate UML IDs for all elements in the include tree"""
@@ -301,21 +269,22 @@ class PlantUMLGenerator:
         """Generate relationships between elements"""
         # 1. Include relationships
         lines.append("' Include relationships")
-        for file_path, file_model in include_tree.items():
-            file_uml_id = uml_ids.get(file_path)
+        for file_name, file_model in include_tree.items():
+            file_uml_id = uml_ids.get(file_name)
             if file_uml_id:
                 for include in file_model.includes:
-                    include_path = self._find_include_file(include, project_model)
-                    if include_path and include_path in uml_ids:
-                        include_uml_id = uml_ids[include_path]
+                    # Clean the include name (remove quotes/angle brackets)
+                    clean_include = include.strip('<>"')
+                    if clean_include in uml_ids:
+                        include_uml_id = uml_ids[clean_include]
                         lines.append(f"{file_uml_id} --> {include_uml_id} : <<include>>")
         
         lines.append("")
         
         # 2. Declaration relationships
         lines.append("' Declaration relationships")
-        for file_path, file_model in include_tree.items():
-            file_uml_id = uml_ids.get(file_path)
+        for file_name, file_model in include_tree.items():
+            file_uml_id = uml_ids.get(file_name)
             if file_uml_id:
                 # Find all typedefs declared in this file
                 for typedef_name in file_model.structs:
@@ -342,7 +311,7 @@ class PlantUMLGenerator:
         
         # 3. Uses relationships
         lines.append("' Uses relationships")
-        for file_path, file_model in include_tree.items():
+        for file_name, file_model in include_tree.items():
             # Struct uses relationships
             for struct_name, struct_data in file_model.structs.items():
                 struct_uml_id = uml_ids.get(f"typedef_{struct_name}")
