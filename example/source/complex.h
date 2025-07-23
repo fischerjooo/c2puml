@@ -133,6 +133,27 @@ typedef handler_entry_t handler_table_t[8];
     typedef void (*release_callback_t)(const char* message);
 #endif
 
+// Nasty edge case: Complex typedef with const array of function pointers
+typedef enum {
+    CRYPTO_CFG_MODULE_COUNT = 3,
+    CRYPTO_CFG_MODULE_AU_ADP = 0,
+    CRYPTO_CFG_MODULE_AU_CSC = 1,
+    CRYPTO_CFG_MODULE_AU_HSM3 = 2
+} crypto_module_enum_t;
+
+typedef struct {
+    int job_id;
+    char* job_data;
+    size_t data_size;
+    int priority;
+} Crypto_JobType;
+
+typedef int Std_ReturnType;
+
+// The nasty edge case: const array of function pointers with complex name
+typedef Std_ReturnType (*Crypto_Cfg_ProcessJobLite_fct)(const Crypto_JobType *job_pst);
+typedef Crypto_Cfg_ProcessJobLite_fct (*const Crypto_Cfg_ProcessJobLite_acpfct[CRYPTO_CFG_MODULE_COUNT])(const Crypto_JobType *job_pst);
+
 // Complex macro function with multiple parameters and nested logic
 #define HANDLE_OPERATION(op_type, data, size, callback) do { \
     switch ((op_type)) { \
@@ -196,5 +217,12 @@ complex_handler_t* create_complex_handler(
     void* (*alloc_func)(size_t),
     void (*free_func)(void*)
 );
+
+// Function declarations for the nasty edge case
+void test_crypto_job_processing(void);
+
+// External declaration of the nasty const array of function pointers
+extern Std_ReturnType (*const Crypto_Cfg_ProcessJobLite_acpfct[CRYPTO_CFG_MODULE_COUNT])
+    (const Crypto_JobType *job_pst);
 
 #endif /* COMPLEX_H */
