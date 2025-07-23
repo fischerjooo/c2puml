@@ -1131,3 +1131,80 @@ class Parser:
         )
 
         return output_file
+
+    def parse_multiple_projects(
+        self, source_folders: List[str], output_file: str = "model.json", recursive_search: bool = True, config: "Config" = None
+    ) -> str:
+        """
+        Step 1: Parse multiple C/C++ projects and generate model.json
+
+        Args:
+            source_folders: List of root directories of C/C++ projects
+            output_file: Output JSON model file path
+            recursive_search: Whether to search subdirectories recursively
+            config: Configuration object for filtering and include depth
+
+        Returns:
+            Path to the generated model.json file
+        """
+        if not source_folders:
+            raise ValueError("At least one source folder must be provided")
+
+        self.logger.info(f"Step 1: Parsing {len(source_folders)} C/C++ projects")
+        
+        # Parse each project and combine results
+        all_files = {}
+        total_structs = 0
+        total_enums = 0
+        total_functions = 0
+        project_name = "Multi_Project"
+        
+        for i, project_root in enumerate(source_folders):
+            self.logger.info(f"Parsing project {i+1}/{len(source_folders)}: {project_root}")
+            
+            try:
+                # Parse the individual project
+                model = self.c_parser.parse_project(project_root, recursive_search, config)
+                
+                # Add files from this project to the combined model
+                # Use project name as prefix to avoid conflicts
+                project_prefix = f"{Path(project_root).name}_"
+                for relative_path, file_model in model.files.items():
+                    # Create a unique key for each file across all projects
+                    unique_key = f"{project_prefix}{relative_path}"
+                    all_files[unique_key] = file_model
+                
+                # Update totals
+                total_structs += sum(len(f.structs) for f in model.files.values())
+                total_enums += sum(len(f.enums) for f in model.files.values())
+                total_functions += sum(len(f.functions) for f in model.files.values())
+                
+                self.logger.info(f"Successfully parsed project {project_root}: {len(model.files)} files")
+                
+            except Exception as e:
+                self.logger.error(f"Failed to parse project {project_root}: {e}")
+                raise
+
+        # Create combined project model
+        combined_model = ProjectModel(
+            project_name=project_name,
+            project_root=",".join(source_folders),  # Use comma-separated list as project root
+            files=all_files,
+        )
+
+        # Update all uses fields across the entire combined project
+        combined_model.update_uses_fields()
+
+        # Save combined model to JSON file
+        combined_model.save(output_file)
+
+        self.logger.info(f"Step 1 complete! Combined model saved to: {output_file}")
+        self.logger.info(f"Found {len(all_files)} total files across {len(source_folders)} projects")
+
+        # Print summary
+        self.logger.info(
+            f"Summary: {total_structs} structs, {total_enums} enums, "
+            f"{total_functions} functions"
+        )
+
+        return output_file
