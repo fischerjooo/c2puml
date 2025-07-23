@@ -923,7 +923,8 @@ def find_struct_fields(tokens: List[Token], struct_start: int, struct_end: int) 
                 field_tokens[-3].type == TokenType.LBRACKET and
                 field_tokens[-1].type == TokenType.RBRACKET):
                 field_name = field_tokens[-4].value
-                field_type = ' '.join(t.value for t in field_tokens[:-4]) + ' ' + field_tokens[-2].value + '[ ]'
+                # Fix: Put the size inside the brackets, not before them
+                field_type = ' '.join(t.value for t in field_tokens[:-4]) + '[' + field_tokens[-2].value + ']'
                 fields.append((field_name, field_type.strip()))
             else:
                 # Regular field: type name
