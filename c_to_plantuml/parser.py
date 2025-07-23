@@ -345,8 +345,10 @@ class CParser:
             if token.type == TokenType.INCLUDE:
                 # Extract include filename from the token value
                 # e.g., "#include <stdio.h>" -> "stdio.h"
+                # e.g., '#include "header.h"' -> "header.h"
+                # e.g., "#include 'header.h'" -> "header.h"
                 import re
-                match = re.search(r'[<"]([^>"]+)[>"]', token.value)
+                match = re.search(r'[<"\']([^>\'"]+)[>\'"]', token.value)
                 if match:
                     # Return just the filename without quotes or angle brackets
                     includes.append(match.group(1))
@@ -526,25 +528,31 @@ class CParser:
         all_c_files = self._find_c_files(project_root, recursive)
         self.logger.debug(f"All C files found: {[f.name for f in all_c_files]}")
         
-        # Step 2: Apply initial file filtering (include/exclude patterns)
-        initial_files = []
+        # Step 2: Apply initial file filtering (include/exclude patterns) and separate .c and .h files
+        initial_c_files = []  # Only .c files as starting files
+        all_header_files = []  # All .h files for later include processing
+        
         for file_path in all_c_files:
             relative_path = str(file_path.relative_to(project_root))
             if self._should_include_file(relative_path, config):
-                initial_files.append(file_path)
-                self.logger.debug(f"Included file after filtering: {relative_path}")
+                if file_path.suffix in ['.c', '.cpp', '.cc', '.cxx']:
+                    initial_c_files.append(file_path)
+                    self.logger.debug(f"Included C file after filtering: {relative_path}")
+                else:
+                    all_header_files.append(file_path)
+                    self.logger.debug(f"Found header file: {relative_path}")
             else:
                 self.logger.debug(f"Excluded file after filtering: {relative_path}")
         
-        self.logger.info(f"Initial files after filtering: {len(initial_files)} files")
-        self.logger.debug(f"Initial files: {[f.name for f in initial_files]}")
+        self.logger.info(f"Initial C files after filtering: {len(initial_c_files)} files")
+        self.logger.debug(f"Initial C files: {[f.name for f in initial_c_files]}")
         
-        # Step 3: If include_depth is 0, return only the initially filtered files
+        # Step 3: If include_depth is 0, return only the initially filtered C files
         if include_depth == 0:
-            return initial_files
+            return initial_c_files
         
         # Step 4: Process include dependencies for N iterations
-        files_to_parse = set(initial_files)
+        files_to_parse = set(initial_c_files)
         
         for iteration in range(include_depth):
             self.logger.info(f"Processing include iteration {iteration + 1}")
@@ -592,15 +600,8 @@ class CParser:
 
     def _should_include_file(self, relative_path: str, config: "Config") -> bool:
         """Check if a file should be included based on configuration filters"""
-        # Check file filters
-        if hasattr(config, 'file_filters') and config.file_filters:
-            for pattern in config.file_filters.get('include', []):
-                if pattern in relative_path:
-                    return True
-            for pattern in config.file_filters.get('exclude', []):
-                if pattern in relative_path:
-                    return False
-        return True
+        # Use the Config class's _should_include_file method which properly handles regex patterns
+        return config._should_include_file(relative_path)
 
     def _find_included_file(self, include_name: str, source_file: Path, project_root: Path) -> Optional[Path]:
         """Find the actual file path for an include statement"""
