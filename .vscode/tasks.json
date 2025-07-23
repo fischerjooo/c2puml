@@ -41,7 +41,7 @@
             "label": "# Generate Pictures",
             "type": "shell",
             "command": "${workspaceFolder}/picgen.bat",
-            "args": ["${env:plantumlPath}"],
+            "args": ["${config:plantumlPath}"],
             "group": "build",
             "presentation": {
                 "echo": true,
