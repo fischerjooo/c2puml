@@ -656,6 +656,128 @@ class TestTokenizerEdgeCases(unittest.TestCase):
         self.assertGreater(len(ampersand_tokens), 0)
         self.assertGreater(len(bracket_tokens), 0)
 
+    def test_tokenize_large_multiline_comment_block(self):
+        """Test tokenization of large multi-line comment blocks"""
+        content = """
+/* This is a large comment block
+   that spans multiple lines
+   and should be completely filtered out
+   during parsing */
+struct Point {
+    int x;
+    int y;
+};
+
+/* Another large comment
+   with more content
+   that should also be ignored */
+int main() {
+    return 0;
+}
+"""
+        tokens = self.tokenizer.tokenize(content)
+        
+        # Check that comment tokens are present
+        comment_tokens = [t for t in tokens if t.type == TokenType.COMMENT]
+        self.assertGreater(len(comment_tokens), 0)
+        
+        # Check that the struct and function are still found
+        struct_tokens = [t for t in tokens if t.type == TokenType.STRUCT]
+        self.assertGreater(len(struct_tokens), 0)
+        
+        # Filter out comments and verify structure is preserved
+        filtered_tokens = self.tokenizer.filter_tokens(tokens, exclude_types=[TokenType.COMMENT, TokenType.WHITESPACE, TokenType.NEWLINE])
+        
+        # Should still find struct and function keywords
+        struct_keywords = [t for t in filtered_tokens if t.type == TokenType.STRUCT]
+        int_keywords = [t for t in filtered_tokens if t.type == TokenType.INT]
+        
+        self.assertGreater(len(struct_keywords), 0)
+        self.assertGreater(len(int_keywords), 0)
+        
+        # Verify that the filtered tokens don't contain any comment content
+        for token in filtered_tokens:
+            self.assertNotIn("/*", token.value)
+            self.assertNotIn("*/", token.value)
+            self.assertNotIn("This is a large comment", token.value)
+            self.assertNotIn("Another large comment", token.value)
+
+    def test_very_large_comment_block_parsing(self):
+        """Test that very large comment blocks are properly filtered out during parsing"""
+        # Create a very large comment block
+        large_comment = "/* " + "This is a very large comment block. " * 100 + "*/"
+        
+        content = f"""
+{large_comment}
+struct Point {{
+    int x;
+    int y;
+}};
+
+/* Another large comment
+   with multiple lines
+   that should be ignored */
+int main() {{
+    return 0;
+}}
+"""
+        
+        # Test tokenization
+        tokens = self.tokenizer.tokenize(content)
+        
+        # Check that comment tokens are present
+        comment_tokens = [t for t in tokens if t.type == TokenType.COMMENT]
+        self.assertGreater(len(comment_tokens), 0)
+        
+        # Filter out comments and verify structure is preserved
+        filtered_tokens = self.tokenizer.filter_tokens(tokens, exclude_types=[TokenType.COMMENT, TokenType.WHITESPACE, TokenType.NEWLINE])
+        
+        # Should still find struct and function keywords
+        struct_keywords = [t for t in filtered_tokens if t.type == TokenType.STRUCT]
+        int_keywords = [t for t in filtered_tokens if t.type == TokenType.INT]
+        
+        self.assertGreater(len(struct_keywords), 0)
+        self.assertGreater(len(int_keywords), 0)
+        
+        # Verify that the filtered tokens don't contain any comment content
+        for token in filtered_tokens:
+            self.assertNotIn("/*", token.value)
+            self.assertNotIn("*/", token.value)
+            self.assertNotIn("This is a very large comment block", token.value)
+            self.assertNotIn("Another large comment", token.value)
+
+    def test_comment_block_with_code_inside(self):
+        """Test that comment blocks containing code-like content are properly ignored"""
+        content = """
+/* This comment contains code that should be ignored:
+   struct IgnoredStruct {
+       int ignored_field;
+   };
+   
+   int ignored_function() {
+       return 42;
+   }
+*/
+struct RealStruct {
+    int real_field;
+};
+"""
+        
+        tokens = self.tokenizer.tokenize(content)
+        
+        # Filter out comments and verify only real code is found
+        filtered_tokens = self.tokenizer.filter_tokens(tokens, exclude_types=[TokenType.COMMENT, TokenType.WHITESPACE, TokenType.NEWLINE])
+        
+        # Should find the real struct but not the commented one
+        struct_keywords = [t for t in filtered_tokens if t.type == TokenType.STRUCT]
+        self.assertEqual(len(struct_keywords), 1)  # Only the real struct
+        
+        # Verify no commented code leaked through
+        for token in filtered_tokens:
+            self.assertNotIn("IgnoredStruct", token.value)
+            self.assertNotIn("ignored_field", token.value)
+            self.assertNotIn("ignored_function", token.value)
+
 
 if __name__ == '__main__':
     unittest.main()
