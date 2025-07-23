@@ -11,7 +11,7 @@ echo "=================================="
 # Step 1: Run all tests
 echo "📋 Step 1: Running all tests..."
 echo "----------------------------------------"
-python3 run_all_tests.py
+./run_all_tests.sh
 echo "✅ All tests passed!"
 
 echo ""
