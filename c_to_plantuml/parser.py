@@ -27,6 +27,8 @@ class CParser:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.tokenizer = CTokenizer()
+        # Cache for failed include searches to avoid repeated lookups
+        self._failed_includes_cache = set()
 
     def parse_project(self, project_root: str, recursive: bool = True, config: "Config" = None) -> ProjectModel:
         """Parse a C/C++ project and return a model"""
@@ -37,6 +39,12 @@ class CParser:
 
         if not project_root.is_dir():
             raise ValueError(f"Project root must be a directory: {project_root}")
+
+        # Clear the failed includes cache for this new project
+        cache_size_before = len(self._failed_includes_cache)
+        self._failed_includes_cache.clear()
+        if cache_size_before > 0:
+            self.logger.debug(f"Cleared failed includes cache ({cache_size_before} entries)")
 
         self.logger.info(f"Parsing project: {project_root}")
 
@@ -82,6 +90,11 @@ class CParser:
 
         # Update all uses fields across the entire project
         model.update_uses_fields()
+
+        # Log cache statistics
+        if self._failed_includes_cache:
+            self.logger.info(f"Failed includes cache contains {len(self._failed_includes_cache)} entries")
+            self.logger.debug(f"Failed includes: {list(self._failed_includes_cache)[:10]}{'...' if len(self._failed_includes_cache) > 10 else ''}")
 
         self.logger.info(f"Parsing complete. Parsed {len(files)} files successfully.")
         return model
@@ -608,6 +621,12 @@ class CParser:
         # Remove quotes and angle brackets
         include_name = include_name.strip('"<>')
         
+        # Check if this include has already been searched and failed
+        cache_key = f"{include_name}:{project_root}"
+        if cache_key in self._failed_includes_cache:
+            self.logger.debug(f"Include '{include_name}' already known to be not found (cached)")
+            return None
+        
         # Try to find the file relative to the source file's directory
         source_dir = source_file.parent
         possible_paths = [
@@ -629,6 +648,9 @@ class CParser:
                     if found_file.is_file():
                         return found_file
         
+        # If we get here, the file was not found - cache this result
+        self._failed_includes_cache.add(cache_key)
+        self.logger.debug(f"Cached failed include search for '{include_name}'")
         return None
 
     def _extract_includes_from_file(self, file_path: Path) -> List[str]:
@@ -1038,6 +1060,13 @@ class CParser:
         from datetime import datetime
 
         return datetime.now().isoformat()
+
+    def get_failed_includes_cache_stats(self) -> dict:
+        """Get statistics about the failed includes cache"""
+        return {
+            "cache_size": len(self._failed_includes_cache),
+            "cached_includes": list(self._failed_includes_cache)
+        }
 
 
 class Parser:
