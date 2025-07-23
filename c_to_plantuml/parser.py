@@ -73,7 +73,6 @@ class CParser:
             project_name=project_root.name,
             project_root=str(project_root),
             files=files,
-            created_at=self._get_timestamp(),
         )
 
         # Update all uses fields across the entire project

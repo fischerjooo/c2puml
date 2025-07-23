@@ -86,7 +86,6 @@ class TestUserConfigurableFiltering(unittest.TestCase):
             project_name="TestProject",
             project_root="/test/project",
             files={"main.c": file_model},
-            created_at="2024-01-01T00:00:00"
         )
 
         return model
