@@ -148,7 +148,7 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         
         # Check that complex typedefs (struct/enum/union) have separate typedef classes
         self.assertIn('class "Point" as TYPEDEF_POINT <<typedef>>', main_content)
-        self.assertIn('HEADER_UTILS ..> TYPEDEF_POINT : declares', main_content)
+        self.assertIn('HEADER_UTILS ..> TYPEDEF_POINT : <<declares>>', main_content)
 
     def test_feature_complex_typedef_processing(self):
         """Test complex typedef processing with structs, enums, and unions"""
@@ -178,10 +178,10 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         # Note: Complex typedefs (struct/enum/union) are NOT shown in file/header classes
         # but have separate typedef classes with their content
         self.assertIn('class "Point" as TYPEDEF_POINT <<typedef>>', main_content)
-        self.assertIn('MAIN ..> TYPEDEF_POINT : declares', main_content)
+        self.assertIn('MAIN ..> TYPEDEF_POINT : <<declares>>', main_content)
 
         self.assertIn('class "Image" as TYPEDEF_IMAGE <<typedef>>', main_content)
-        self.assertIn('HEADER_TYPES ..> TYPEDEF_IMAGE : declares', main_content)
+        self.assertIn('HEADER_TYPES ..> TYPEDEF_IMAGE : <<declares>>', main_content)
 
         # Check that complex typedefs are NOT shown in file/header classes
         # (they are only shown in separate typedef classes)
@@ -327,16 +327,16 @@ class TestIncludeProcessingFeatures(BaseFeatureTest):
         self.assertIn('class "types" as HEADER_TYPES <<header>> #LightGreen', main_content)
         
         # Check that struct fields are shown as global variables in header classes
-        self.assertIn("+ char* name", main_content)
+        self.assertIn("+ char * name", main_content)
         self.assertIn("+ int age", main_content)
         self.assertIn("+ int id", main_content)
-        self.assertIn("+ char* street", main_content)
-        self.assertIn("+ char* city", main_content)
+        self.assertIn("+ char * street", main_content)
+        self.assertIn("+ char * city", main_content)
         self.assertIn("+ int zip_code", main_content)
         
         # Check that config fields are shown as global variables in header classes
         self.assertIn("+ int max_users", main_content)
-        self.assertIn("+ char* server_name", main_content)
+        self.assertIn("+ char * server_name", main_content)
         self.assertIn("+ int port", main_content)
         self.assertIn("+ int timeout", main_content)
         self.assertIn("+ int retries", main_content)

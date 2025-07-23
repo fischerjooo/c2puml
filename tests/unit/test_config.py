@@ -171,7 +171,7 @@ class TestConfig(unittest.TestCase):
             globals=[],
             includes=[],
             macros=[],
-            typedefs={},
+            aliases={},
         )
 
         # Apply filters
@@ -209,7 +209,7 @@ class TestConfig(unittest.TestCase):
             globals=[],
             includes=[],
             macros=[],
-            typedefs={},
+            aliases={},
         )
 
         file2 = FileModel(
@@ -223,7 +223,7 @@ class TestConfig(unittest.TestCase):
             globals=[],
             includes=[],
             macros=[],
-            typedefs={},
+            aliases={},
         )
 
         model = ProjectModel(
