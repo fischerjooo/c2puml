@@ -356,10 +356,10 @@ class TestConfig(unittest.TestCase):
         # Note: repr may not include project details depending on implementation
 
     def test_multiple_source_folders(self):
-        """Test that configuration with multiple source folders is handled correctly"""
+        """Test that configuration with multiple source folders for targeted searching is handled correctly"""
         config_data = {
             "project_name": "test_project",
-            "source_folders": ["/path/to/project1", "/path/to/project2", "/path/to/project3"],
+            "source_folders": ["/path/to/src1", "/path/to/src2", "/path/to/src3"],
             "output_dir": "./output",
             "recursive_search": True,
         }
@@ -369,9 +369,9 @@ class TestConfig(unittest.TestCase):
 
         # Verify that all source folders are loaded correctly
         self.assertEqual(len(config.source_folders), 3)
-        self.assertEqual(config.source_folders[0], "/path/to/project1")
-        self.assertEqual(config.source_folders[1], "/path/to/project2")
-        self.assertEqual(config.source_folders[2], "/path/to/project3")
+        self.assertEqual(config.source_folders[0], "/path/to/src1")
+        self.assertEqual(config.source_folders[1], "/path/to/src2")
+        self.assertEqual(config.source_folders[2], "/path/to/src3")
 
         # Test that the configuration can be saved and loaded back
         save_path = os.path.join(self.temp_dir, "saved_config.json")
@@ -403,7 +403,7 @@ class TestConfig(unittest.TestCase):
         """Test that single source folder is handled correctly (backward compatibility)"""
         config_data = {
             "project_name": "test_project",
-            "source_folders": ["/path/to/project"],
+            "source_folders": ["/path/to/src"],
             "output_dir": "./output",
         }
 
@@ -411,4 +411,4 @@ class TestConfig(unittest.TestCase):
         config = Config.load(config_path)
 
         self.assertEqual(len(config.source_folders), 1)
-        self.assertEqual(config.source_folders[0], "/path/to/project")
+        self.assertEqual(config.source_folders[0], "/path/to/src")
