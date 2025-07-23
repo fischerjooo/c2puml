@@ -137,7 +137,7 @@
                 "label": "# Run Example",
                 "type": "shell",
                 "command": "cmd",
-                "args": ["/c", "run_example.bat"],
+                "args": ["/c", "cd /d ${workspaceFolder} && run_example.bat"],
                 "group": "build",
                 "presentation": {
                     "echo": true,
@@ -147,16 +147,13 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": [],
-                "options": {
-                    "cwd": "${workspaceFolder}"
-                }
+                "problemMatcher": []
             },
             {
                 "label": "# Generate Pictures",
                 "type": "shell",
                 "command": "cmd",
-                "args": ["/c", "picgen.bat"],
+                "args": ["/c", "cd /d ${workspaceFolder} && picgen.bat"],
                 "group": "build",
                 "presentation": {
                     "echo": true,
@@ -166,10 +163,7 @@
                     "showReuseMessage": true,
                     "clear": false
                 },
-                "problemMatcher": [],
-                "options": {
-                    "cwd": "${workspaceFolder}"
-                }
+                "problemMatcher": []
             },
             {
                 "label": "# Run Tests",
