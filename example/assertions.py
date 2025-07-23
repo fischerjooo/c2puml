@@ -7,7 +7,6 @@ This script validates that the generator produces the correct PlantUML diagrams.
 import os
 import re
 import sys
-import argparse
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
@@ -15,7 +14,7 @@ from typing import Dict, List, Set, Tuple
 class PUMLValidator:
     """Validates generated PUML files against expected content."""
     
-    def _find_output_directory(self, output_dir: str = None) -> str:
+    def _find_output_directory(self) -> str:
         """
         Find the correct output directory path regardless of how the script is called.
         
@@ -26,8 +25,6 @@ class PUMLValidator:
         
         Returns the path to the output directory containing .puml files.
         """
-        if output_dir:
-            return output_dir
             
         current_dir = Path.cwd()
         
@@ -48,14 +45,12 @@ class PUMLValidator:
         # If no output directory found, return the most likely default
         return str(current_dir / "output")
     
-    def _find_source_directory(self, source_dir: str = None) -> str:
+    def _find_source_directory(self) -> str:
         """
         Find the correct source directory path regardless of how the script is called.
         
         Returns the path to the source directory containing .c and .h files.
         """
-        if source_dir:
-            return source_dir
             
         current_dir = Path.cwd()
         
@@ -75,10 +70,10 @@ class PUMLValidator:
         # If no source directory found, return the most likely default
         return str(current_dir / "example" / "source")
     
-    def __init__(self, output_dir: str = None, source_dir: str = None):
+    def __init__(self):
         # Auto-detect paths based on current working directory
-        self.output_dir = Path(self._find_output_directory(output_dir))
-        self.source_dir = Path(self._find_source_directory(source_dir))
+        self.output_dir = Path(self._find_output_directory())
+        self.source_dir = Path(self._find_source_directory())
         
         # Expected PUML files
         self.expected_files = [
@@ -1704,34 +1699,12 @@ class PUMLValidator:
 
 def main():
     """Main function to run the validation."""
-    # Parse command line arguments
-    parser = argparse.ArgumentParser(description="Validate generated PlantUML files")
-    parser.add_argument("--output-dir", help="Path to output directory containing .puml files")
-    parser.add_argument("--source-dir", help="Path to source directory containing .c and .h files")
-    parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose output")
-    args = parser.parse_args()
-    
     try:
-        if args.verbose:
-            print("🔍 Auto-detecting directories...")
-            print(f"Current working directory: {Path.cwd().absolute()}")
-        
-        validator = PUMLValidator(
-            output_dir=args.output_dir,
-            source_dir=args.source_dir
-        )
-        
-        if args.verbose:
-            print(f"✅ Found output directory: {validator.output_dir.absolute()}")
-            print(f"✅ Found source directory: {validator.source_dir.absolute()}")
-        
+        validator = PUMLValidator()
         validator.run_all_validations()
     except Exception as e:
         print(f"\n❌ Validation failed: {e}")
         print(f"Current working directory: {Path.cwd().absolute()}")
-        print("Tried to find directories automatically. If this fails, you can specify paths manually:")
-        print("  python3 assertions.py --output-dir /path/to/output --source-dir /path/to/source")
-        print("  python3 assertions.py --verbose  # For debugging information")
         sys.exit(1)
 
 
