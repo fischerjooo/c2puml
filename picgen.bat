@@ -25,26 +25,80 @@ if %errorlevel% equ 0 (
         set "PLANTUML_CMD=java -jar ..\plantuml.jar"
         echo 📦 Using PlantUML JAR file from parent directory
     ) else (
-        echo 📥 PlantUML JAR file not found. Downloading...
+        echo 📥 PlantUML JAR file not found. Attempting to download...
         
         REM Download PlantUML JAR file
         set "PLANTUML_VERSION=1.2024.0"
         set "PLANTUML_URL=https://github.com/plantuml/plantuml/releases/download/v%PLANTUML_VERSION%/plantuml-%PLANTUML_VERSION%.jar"
         
         echo 🔄 Downloading PlantUML v%PLANTUML_VERSION%...
+        echo 📡 URL: %PLANTUML_URL%
         
-        REM Try using PowerShell to download
-        powershell -Command "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '!PLANTUML_URL!' -OutFile 'plantuml.jar'}"
+        REM Try multiple download methods
+        set "download_success=false"
         
+        REM Method 1: PowerShell with TLS 1.2
+        echo 🔄 Trying PowerShell download method...
+        powershell -Command "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '%PLANTUML_URL%' -OutFile 'plantuml.jar' -UseBasicParsing}"
         if %errorlevel% equ 0 if exist "plantuml.jar" (
-            echo ✅ PlantUML JAR file downloaded successfully
-            set "PLANTUML_CMD=java -jar plantuml.jar"
+            echo ✅ PlantUML JAR file downloaded successfully via PowerShell
+            set "download_success=true"
         ) else (
-            echo ❌ Failed to download PlantUML JAR file
-            echo    Please download it manually from: %PLANTUML_URL%
+            echo ⚠️  PowerShell download failed, trying alternative method...
+            
+            REM Method 2: Try with curl if available
+            where curl >nul 2>&1
+            if %errorlevel% equ 0 (
+                echo 🔄 Trying curl download method...
+                curl -L -o plantuml.jar "%PLANTUML_URL%"
+                if %errorlevel% equ 0 if exist "plantuml.jar" (
+                    echo ✅ PlantUML JAR file downloaded successfully via curl
+                    set "download_success=true"
+                ) else (
+                    echo ⚠️  curl download also failed
+                )
+            ) else (
+                echo ⚠️  curl not available
+            )
+        )
+        
+        REM If all download methods failed, provide manual instructions
+        if "!download_success!"=="false" (
+            echo.
+            echo ❌ Failed to download PlantUML JAR file automatically
+            echo.
+            echo 📋 Manual download instructions:
+            echo    1. Open your web browser
+            echo    2. Go to: %PLANTUML_URL%
+            echo    3. Save the file as 'plantuml.jar' in the current directory
+            echo    4. Run this script again
+            echo.
+            echo 🔗 Alternative download sources:
+            echo    - Official PlantUML releases: https://github.com/plantuml/plantuml/releases
+            echo    - PlantUML website: https://plantuml.com/download
+            echo.
+            echo 💡 You can also install PlantUML via:
+            echo    - Chocolatey: choco install plantuml
+            echo    - Scoop: scoop install plantuml
+            echo    - Or download from: https://plantuml.com/download
+            echo.
             exit /b 1
         )
+        
+        set "PLANTUML_CMD=java -jar plantuml.jar"
     )
+)
+
+REM Test PlantUML setup
+echo 🔍 Testing PlantUML setup...
+%PLANTUML_CMD% -version >nul 2>&1
+if %errorlevel% equ 0 (
+    echo ✅ PlantUML setup is working correctly
+) else (
+    echo ❌ PlantUML setup test failed
+    echo    Please ensure Java is installed and accessible
+    echo    You can download Java from: https://adoptium.net/
+    exit /b 1
 )
 
 REM Change to output directory
@@ -66,6 +120,9 @@ if %puml_count% equ 0 (
 echo 📊 Found %puml_count% .puml file(s)
 
 REM Convert each .puml file to PNG
+set "success_count=0"
+set "fail_count=0"
+
 for %%f in (*.puml) do (
     echo 🔄 Converting %%f to PNG...
     
@@ -76,10 +133,22 @@ for %%f in (*.puml) do (
     set "base_name=%%~nf"
     if exist "!base_name!.png" (
         echo ✅ Created !base_name!.png
+        set /a success_count+=1
     ) else (
         echo ❌ Failed to generate !base_name!.png
+        set /a fail_count+=1
     )
 )
 
-echo ✅ PlantUML to PNG conversion completed!
+echo.
+echo 📊 PlantUML to PNG conversion summary:
+echo    ✅ Successfully converted: %success_count% file(s)
+echo    ❌ Failed conversions: %fail_count% file(s)
+
+if %fail_count% equ 0 (
+    echo ✅ All PlantUML files converted successfully!
+) else (
+    echo ⚠️  Some conversions failed. Check the output above for details.
+)
+
 echo 📁 Check the output directory for generated PNG images.
