@@ -32,5 +32,14 @@
         "plantuml": "html"
     },
     "plantuml.server": "https://www.plantuml.com/plantuml",
-    "plantuml.render": "PlantUMLServer"
+    "plantuml.render": "PlantUMLServer",
+    "terminal.integrated.env.windows": {
+        "plantumlPath": "${env:USERPROFILE}\\.vscode\\extensions\\jebbs.plantuml-2.18.1\\plantuml.jar"
+    },
+    "terminal.integrated.env.linux": {
+        "plantumlPath": "${env:HOME}/.vscode/extensions/jebbs.plantuml-2.18.1/plantuml.jar"
+    },
+    "terminal.integrated.env.osx": {
+        "plantumlPath": "${env:HOME}/.vscode/extensions/jebbs.plantuml-2.18.1/plantuml.jar"
+    }
 }

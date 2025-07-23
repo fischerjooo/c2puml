@@ -2,8 +2,17 @@
 
 # PlantUML to PNG converter script
 # This script converts all .puml files in the output folder to PNG images
+# Usage: ./picgen.sh [plantuml_jar_path]
+# Example: ./picgen.sh "/home/username/.vscode/extensions/jebbs.plantuml-2.18.1/plantuml.jar"
 
 set -e  # Exit on any error
+
+# Parse command line arguments
+CUSTOM_PLANTUML_JAR=""
+if [ $# -gt 0 ]; then
+    CUSTOM_PLANTUML_JAR="$1"
+    echo "📁 Using custom PlantUML JAR path: $CUSTOM_PLANTUML_JAR"
+fi
 
 echo "🔄 Starting PlantUML to PNG conversion..."
 
@@ -74,7 +83,11 @@ test_plantuml_setup() {
 
 # Check if plantuml is installed or if we have the JAR file
 if ! command -v plantuml &> /dev/null; then
-    if [ -f "../plantuml.jar" ]; then
+    # Check custom PlantUML JAR path first
+    if [ -n "$CUSTOM_PLANTUML_JAR" ] && [ -f "$CUSTOM_PLANTUML_JAR" ]; then
+        PLANTUML_CMD="java -jar \"$CUSTOM_PLANTUML_JAR\""
+        echo "📦 Using custom PlantUML JAR file: $CUSTOM_PLANTUML_JAR"
+    elif [ -f "../plantuml.jar" ]; then
         PLANTUML_CMD="java -jar ../plantuml.jar"
         echo "📦 Using PlantUML JAR file from parent directory"
     elif [ -f "plantuml.jar" ]; then
