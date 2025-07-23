@@ -36,17 +36,17 @@ class PlantUMLGenerator:
         lines.append("")
         
         # Generate classes for C files in include tree
-        for file_path, file_data in include_tree.items():
+        for file_path, file_data in sorted(include_tree.items()):
             if file_path.endswith('.c'):
                 self._generate_c_file_class(lines, file_data, uml_ids)
         
         # Generate classes for H files in include tree
-        for file_path, file_data in include_tree.items():
+        for file_path, file_data in sorted(include_tree.items()):
             if file_path.endswith('.h'):
                 self._generate_header_class(lines, file_data, uml_ids)
         
         # Generate typedef classes
-        for file_path, file_data in include_tree.items():
+        for file_path, file_data in sorted(include_tree.items()):
             self._generate_typedef_classes(lines, file_data, uml_ids)
         
         lines.append("")
@@ -130,7 +130,7 @@ class PlantUMLGenerator:
         # Add macros
         if file_model.macros:
             lines.append("    -- Macros --")
-            for macro in file_model.macros:
+            for macro in sorted(file_model.macros):
                 if '(' in macro and ')' in macro:
                     # Function-like macro
                     macro_name = macro.split('(')[0].replace('#define ', '')
@@ -144,13 +144,13 @@ class PlantUMLGenerator:
         # Add global variables
         if file_model.globals:
             lines.append("    -- Global Variables --")
-            for global_var in file_model.globals:
+            for global_var in sorted(file_model.globals, key=lambda x: x.name):
                 lines.append(f"    {global_var.type} {global_var.name}")
         
         # Add functions
         if file_model.functions:
             lines.append("    -- Functions --")
-            for func in file_model.functions:
+            for func in sorted(file_model.functions, key=lambda x: x.name):
                 if not func.is_declaration:  # Only implementation, not declarations
                     params = []
                     for p in func.parameters:
@@ -183,7 +183,7 @@ class PlantUMLGenerator:
         # Add macros
         if file_model.macros:
             lines.append("    -- Macros --")
-            for macro in file_model.macros:
+            for macro in sorted(file_model.macros):
                 if '(' in macro and ')' in macro:
                     # Function-like macro
                     macro_name = macro.split('(')[0].replace('#define ', '')
@@ -197,13 +197,13 @@ class PlantUMLGenerator:
         # Add global variables
         if file_model.globals:
             lines.append("    -- Global Variables --")
-            for global_var in file_model.globals:
+            for global_var in sorted(file_model.globals, key=lambda x: x.name):
                 lines.append(f"    + {global_var.type} {global_var.name}")
         
         # Add functions (only declarations)
         if file_model.functions:
             lines.append("    -- Functions --")
-            for func in file_model.functions:
+            for func in sorted(file_model.functions, key=lambda x: x.name):
                 if func.is_declaration:  # Only declarations
                     params = []
                     for p in func.parameters:
@@ -220,23 +220,23 @@ class PlantUMLGenerator:
     def _generate_typedef_classes(self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]):
         """Generate classes for typedefs"""
         # Structs
-        for struct_name, struct_data in file_model.structs.items():
+        for struct_name, struct_data in sorted(file_model.structs.items()):
             uml_id = uml_ids.get(f"typedef_{struct_name}")
             if uml_id:
                 lines.append(f"class \"{struct_name}\" as {uml_id} <<typedef>> #LightYellow")
                 lines.append("{")
-                for field in struct_data.fields:
+                for field in sorted(struct_data.fields, key=lambda x: x.name):
                     lines.append(f"    + {field.type} {field.name}")
                 lines.append("}")
                 lines.append("")
         
         # Enums
-        for enum_name, enum_data in file_model.enums.items():
+        for enum_name, enum_data in sorted(file_model.enums.items()):
             uml_id = uml_ids.get(f"typedef_{enum_name}")
             if uml_id:
                 lines.append(f"class \"{enum_name}\" as {uml_id} <<typedef>> #LightYellow")
                 lines.append("{")
-                for value in enum_data.values:
+                for value in sorted(enum_data.values, key=lambda x: x.name):
                     if value.value:
                         lines.append(f"    + {value.name} = {value.value}")
                     else:
@@ -245,7 +245,7 @@ class PlantUMLGenerator:
                 lines.append("")
         
         # Aliases (simple typedefs)
-        for alias_name, alias_data in file_model.aliases.items():
+        for alias_name, alias_data in sorted(file_model.aliases.items()):
             uml_id = uml_ids.get(f"typedef_{alias_name}")
             if uml_id:
                 lines.append(f"class \"{alias_name}\" as {uml_id} <<typedef>> #LightYellow")
@@ -255,12 +255,12 @@ class PlantUMLGenerator:
                 lines.append("")
         
         # Unions
-        for union_name, union_data in file_model.unions.items():
+        for union_name, union_data in sorted(file_model.unions.items()):
             uml_id = uml_ids.get(f"typedef_{union_name}")
             if uml_id:
                 lines.append(f"class \"{union_name}\" as {uml_id} <<typedef>> #LightYellow")
                 lines.append("{")
-                for field in union_data.fields:
+                for field in sorted(union_data.fields, key=lambda x: x.name):
                     lines.append(f"    + {field.type} {field.name}")
                 lines.append("}")
                 lines.append("")
@@ -269,10 +269,10 @@ class PlantUMLGenerator:
         """Generate relationships between elements"""
         # 1. Include relationships
         lines.append("' Include relationships")
-        for file_name, file_model in include_tree.items():
+        for file_name, file_model in sorted(include_tree.items()):
             file_uml_id = uml_ids.get(file_name)
             if file_uml_id:
-                for include in file_model.includes:
+                for include in sorted(file_model.includes):
                     # Clean the include name (remove quotes/angle brackets)
                     clean_include = include.strip('<>"')
                     if clean_include in uml_ids:
@@ -283,26 +283,26 @@ class PlantUMLGenerator:
         
         # 2. Declaration relationships
         lines.append("' Declaration relationships")
-        for file_name, file_model in include_tree.items():
+        for file_name, file_model in sorted(include_tree.items()):
             file_uml_id = uml_ids.get(file_name)
             if file_uml_id:
                 # Find all typedefs declared in this file
-                for typedef_name in file_model.structs:
+                for typedef_name in sorted(file_model.structs.keys()):
                     typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
                     if typedef_uml_id:
                         lines.append(f"{file_uml_id} ..> {typedef_uml_id} : <<declares>>")
                 
-                for typedef_name in file_model.enums:
+                for typedef_name in sorted(file_model.enums.keys()):
                     typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
                     if typedef_uml_id:
                         lines.append(f"{file_uml_id} ..> {typedef_uml_id} : <<declares>>")
                 
-                for typedef_name in file_model.aliases:
+                for typedef_name in sorted(file_model.aliases.keys()):
                     typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
                     if typedef_uml_id:
                         lines.append(f"{file_uml_id} ..> {typedef_uml_id} : <<declares>>")
                 
-                for typedef_name in file_model.unions:
+                for typedef_name in sorted(file_model.unions.keys()):
                     typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
                     if typedef_uml_id:
                         lines.append(f"{file_uml_id} ..> {typedef_uml_id} : <<declares>>")
@@ -311,21 +311,21 @@ class PlantUMLGenerator:
         
         # 3. Uses relationships
         lines.append("' Uses relationships")
-        for file_name, file_model in include_tree.items():
+        for file_name, file_model in sorted(include_tree.items()):
             # Struct uses relationships
-            for struct_name, struct_data in file_model.structs.items():
+            for struct_name, struct_data in sorted(file_model.structs.items()):
                 struct_uml_id = uml_ids.get(f"typedef_{struct_name}")
                 if struct_uml_id and hasattr(struct_data, 'uses'):
-                    for used_type in struct_data.uses:
+                    for used_type in sorted(struct_data.uses):
                         used_uml_id = uml_ids.get(f"typedef_{used_type}")
                         if used_uml_id:
                             lines.append(f"{struct_uml_id} ..> {used_uml_id} : <<uses>>")
             
             # Alias uses relationships
-            for alias_name, alias_data in file_model.aliases.items():
+            for alias_name, alias_data in sorted(file_model.aliases.items()):
                 alias_uml_id = uml_ids.get(f"typedef_{alias_name}")
                 if alias_uml_id and hasattr(alias_data, 'uses'):
-                    for used_type in alias_data.uses:
+                    for used_type in sorted(alias_data.uses):
                         used_uml_id = uml_ids.get(f"typedef_{used_type}")
                         if used_uml_id:
                             lines.append(f"{alias_uml_id} ..> {used_uml_id} : <<uses>>")
@@ -349,7 +349,7 @@ class Generator:
         generated_files = []
         generator = PlantUMLGenerator()
         
-        for file_path, file_model in project_model.files.items():
+        for file_path, file_model in sorted(project_model.files.items()):
             # Only process C files (not headers) for diagram generation
             if file_model.file_path.endswith('.c'):
                 # Generate PlantUML content
