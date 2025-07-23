@@ -1,15 +1,71 @@
-@startuml
-title math_utils
+@startuml math_utils
 
-class math_utils {
-    + File: /workspace/example/source/math_utils.h
-    + Structs: 0
-    + Enums: 0
-    + Functions: 3
-    + Globals: 0
-    + Includes: 1
-    + Aliases: 2
-    + Unions: 0
+class "math_utils" as MATH_UTILS <<source>> #LightBlue
+{
+    -- Functions --
+    int add(int a, int b)
+    int subtract(int a, int b)
+    real_t average(const int * arr, size_t len)
 }
+
+class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
+{
+    -- Macros --
+    + #define MATH_UTILS_H
+    -- Functions --
+    + int add(int a, int b)
+    + int subtract(int a, int b)
+    + real_t average(const int * arr, size_t len)
+}
+
+class "config" as HEADER_CONFIG <<header>> #LightGreen
+{
+    -- Macros --
+    + #define CONFIG_H
+    + #define PROJECT_NAME
+    + #define MAX_LABEL_LEN
+    + #define DEFAULT_BUFFER_SIZE
+}
+
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
+{
+    + double
+}
+
+class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
+{
+    + int ( * math_op_t ) ( int , int )
+}
+
+class "GlobalStatus" as TYPEDEF_GLOBALSTATUS <<typedef>> #LightYellow
+{
+    + GS_OK
+    + GS_ERROR
+    + GS_UNKNOWN
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
+    + uint32_t
+}
+
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+{
+    + int32_t
+}
+
+
+' Include relationships
+MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
+HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
+
+' Declaration relationships
+HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MATH_OP_T : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_GLOBALSTATUS : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_ID_T : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>
+
+' Uses relationships
 
 @enduml

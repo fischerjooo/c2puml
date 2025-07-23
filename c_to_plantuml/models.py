@@ -67,6 +67,16 @@ class Function:
             raise ValueError("Function name must be a non-empty string")
         if not self.return_type or not isinstance(self.return_type, str):
             raise ValueError("Function return type must be a non-empty string")
+        
+        # Convert parameters to Field objects if they're dictionaries
+        if self.parameters:
+            converted_params = []
+            for param in self.parameters:
+                if isinstance(param, dict):
+                    converted_params.append(Field(**param))
+                else:
+                    converted_params.append(param)
+            self.parameters = converted_params
 
 
 @dataclass
