@@ -197,6 +197,18 @@ class FileModel:
         # Convert functions and globals to dicts after sorting
         data["functions"] = [asdict(f) for f in data["functions"]]
         data["globals"] = [asdict(g) for g in data["globals"]]
+        
+        # Sort "uses" arrays in structs, unions, and aliases for consistent ordering
+        for struct_data in data["structs"].values():
+            if "uses" in struct_data:
+                struct_data["uses"] = sorted(struct_data["uses"])
+        for union_data in data["unions"].values():
+            if "uses" in union_data:
+                union_data["uses"] = sorted(union_data["uses"])
+        for alias_data in data["aliases"].values():
+            if "uses" in alias_data:
+                alias_data["uses"] = sorted(alias_data["uses"])
+        
         # typedef_relations removed - tag names are now in struct/enum/union
         return data
 
