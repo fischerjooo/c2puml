@@ -598,6 +598,9 @@ class PUMLValidator:
         # Check for global variable formatting issues
         self._validate_global_variable_formatting(content, filename)
         
+        # Check for array formatting issues
+        self._validate_array_formatting(content, filename)
+        
         # Check that no "-- Typedefs --" sections exist in header or source classes
         self._validate_no_typedefs_sections_in_header_or_source_classes(content, filename)
         
@@ -774,6 +777,47 @@ class PUMLValidator:
                 raise AssertionError(f"Malformed variadic function with '... ...' in {filename}")
         
         print("    ✅ Global variable formatting valid")
+
+    def _validate_array_formatting(self, content: str, filename: str) -> None:
+        """Validate that array declarations are properly formatted with size inside brackets."""
+        # Check for array formatting issues
+        lines = content.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            
+            # Check for incorrect array format: type size[ ] name instead of type[size] name
+            # Pattern: + type size[ ] name
+            if line.startswith('+ ') and '[' in line and ']' in line:
+                # Look for the pattern where size comes before [ ]
+                # Examples of incorrect format:
+                # + char MAX_LABEL_LEN[ ] description
+                # + int 5[ ] values
+                # + point_t 3[ ] vertices
+                # + char 32[ ] label
+                
+                # Split the line to analyze the parts
+                parts = line.split()
+                if len(parts) >= 4:  # + type size[ ] name
+                    # Check if we have the pattern: type size[ ] name
+                    for i in range(1, len(parts) - 2):
+                        if (parts[i+1] == '[' and 
+                            parts[i+2] == ']' and 
+                            parts[i] not in ['[', ']', ';', '}'] and
+                            not parts[i].startswith('[') and
+                            not parts[i].endswith(']')):
+                            # This looks like an array with size before brackets
+                            # Check if the size part looks like a number or identifier
+                            size_part = parts[i]
+                            if (size_part.isdigit() or 
+                                size_part.isidentifier() or 
+                                size_part in ['MAX_LABEL_LEN', '5', '3', '32']):
+                                raise AssertionError(
+                                    f"Incorrect array format in {filename}: '{line}'. "
+                                    f"Expected format: 'type[size] name', got: 'type size[ ] name'"
+                                )
+        
+        print("    ✅ Array formatting valid")
 
     def _validate_no_typedefs_in_header_or_source_classes(self, puml_lines, filename):
         """Assert that no typedefs (e.g., '+ struct', '+ enum', or any typedef) are generated in header or source class blocks (HEADER_xxx or main class blocks)."""
