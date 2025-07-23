@@ -47,6 +47,16 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
     + void set_log_callback(log_callback_t cb)
 }
 
+class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
+{
+    -- Macros --
+    + #define MATH_UTILS_H
+    -- Functions --
+    + int add(int a, int b)
+    + real_t average(const int * arr, size_t len)
+    + int subtract(int a, int b)
+}
+
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
     -- Macros --
@@ -125,6 +135,16 @@ class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 {
     + void ( * log_callback_t ) ( log_level_t level , const char * message )
+}
+
+class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
+{
+    + int ( * math_op_t ) ( int , int )
+}
+
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
+{
+    + double
 }
 
 class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
@@ -226,8 +246,10 @@ class "Number_t" as TYPEDEF_NUMBER_T <<typedef>> #LightYellow
 ' Include relationships
 HEADER_COMPLEX_EXAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_COMPLEX_EXAMPLE --> HEADER_LOGGER : <<include>>
+HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
+HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
@@ -249,6 +271,8 @@ HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_LOG_CALLBACK_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MATH_OP_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
 HEADER_SAMPLE ..> TYPEDEF_POINT_T : <<declares>>
 HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MYBUFFER : <<declares>>
