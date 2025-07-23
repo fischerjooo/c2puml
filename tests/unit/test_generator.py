@@ -209,7 +209,7 @@ void process_data() {
                 "project_name": "test_project",
                 "source_folders": ["/test"],
                 "output_dir": os.path.join(self.temp_dir, "config_output"),
-                "recursive": True,
+                "recursive_search": True,
                 "file_filters": {},
                 "element_filters": {},
             }

@@ -101,7 +101,7 @@ Usage:
             parser_obj.parse(
                 project_root=config.source_folders[0],
                 output_file=model_file,
-                recursive=getattr(config, "recursive", True),
+                recursive_search=getattr(config, "recursive_search", True),
                 config=config,
             )
             logging.info(f"Model saved to: {model_file}")
@@ -155,7 +155,7 @@ Usage:
         parser_obj.parse(
             project_root=config.source_folders[0],
             output_file=model_file,
-            recursive=getattr(config, "recursive", True),
+            recursive_search=getattr(config, "recursive_search", True),
             config=config,
         )
         logging.info(f"Model saved to: {model_file}")

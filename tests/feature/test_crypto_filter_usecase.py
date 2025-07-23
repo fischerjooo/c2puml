@@ -128,7 +128,7 @@ class TestCryptoFilterUseCase(BaseFeatureTest):
         # Parse the project with crypto filter
         project_model = parser.parse_project(
             self.temp_dir,
-            recursive=True,
+            recursive_search=True,
             config=config
         )
         
@@ -295,7 +295,7 @@ class TestCryptoFilterUseCase(BaseFeatureTest):
         # Parse the project
         project_model = parser.parse_project(
             self.temp_dir,
-            recursive=True,
+            recursive_search=True,
             config=config
         )
         

@@ -19,7 +19,7 @@ class TestCLIFeature(BaseFeatureTest):
         self.write_json_config(self.config_path, {
             "project_name": "cli_test",
             "source_folders": [self.temp_dir],
-            "recursive": True,
+            "recursive_search": True,
             "output_dir": self.output_dir
         })
         self.cli = [sys.executable, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../main.py'))]

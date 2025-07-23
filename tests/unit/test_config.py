@@ -40,7 +40,7 @@ class TestConfig(unittest.TestCase):
             "source_folders": ["/path/to/project"],
             "output_dir": "./output",
             "model_output_path": "model.json",
-            "recursive": True,
+            "recursive_search": True,
         }
 
         config_path = self.create_test_config(config_data)
@@ -50,7 +50,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(config.source_folders, ["/path/to/project"])
         self.assertEqual(config.output_dir, "./output")
         self.assertEqual(config.model_output_path, "model.json")
-        self.assertTrue(config.recursive)
+        self.assertTrue(config.recursive_search)
 
     def test_load_config_with_filters(self):
         """Test loading configuration with file and element filters"""
@@ -92,7 +92,7 @@ class TestConfig(unittest.TestCase):
                 "project_name": "test_project",
                 "source_folders": ["/path/to/project"],
                 "output_dir": "./output",
-                "recursive": False,
+                "recursive_search": False,
                 "file_filters": {"include": [".*\\.c$"]},
                 "element_filters": {},
             }
@@ -109,7 +109,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(loaded_config.project_name, original_config.project_name)
         self.assertEqual(loaded_config.source_folders, original_config.source_folders)
         self.assertEqual(loaded_config.output_dir, original_config.output_dir)
-        self.assertEqual(loaded_config.recursive, original_config.recursive)
+        self.assertEqual(loaded_config.recursive_search, original_config.recursive_search)
         self.assertEqual(len(loaded_config.file_include_patterns), 1)
 
     def test_file_filtering(self):
@@ -269,7 +269,7 @@ class TestConfig(unittest.TestCase):
                 "project_name": "test_project",
                 "source_folders": ["/path/to/project"],
                 "output_dir": "./output",
-                "recursive": True,
+                "recursive_search": True,
                 "file_filters": {"include": [".*\\.c$"], "exclude": ["test_.*\\.c$"]},
                 "element_filters": {},
             }
@@ -297,7 +297,7 @@ class TestConfig(unittest.TestCase):
         # Check default values
         self.assertEqual(config.output_dir, "./output")
         # Note: model_output_path may be derived from project_name
-        self.assertTrue(config.recursive)
+        self.assertTrue(config.recursive_search)
         self.assertFalse(config.has_filters())
 
     def test_config_equality(self):

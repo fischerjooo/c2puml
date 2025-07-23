@@ -20,7 +20,7 @@ class Config:
     source_folders: List[str] = field(default_factory=list)
     output_dir: str = "./output"
     model_output_path: str = "model.json"
-    recursive: bool = True
+    recursive_search: bool = True
     include_depth: int = 1
 
     # Filters
@@ -57,8 +57,8 @@ class Config:
             self.output_dir = "./output"
         if not hasattr(self, "model_output_path"):
             self.model_output_path = "model.json"
-        if not hasattr(self, "recursive"):
-            self.recursive = True
+        if not hasattr(self, "recursive_search"):
+            self.recursive_search = True
         if not hasattr(self, "include_depth"):
             self.include_depth = 1
         if not hasattr(self, "file_filters"):
@@ -175,7 +175,7 @@ class Config:
             "source_folders": self.source_folders,
             "output_dir": self.output_dir,
             "model_output_path": self.model_output_path,
-            "recursive": self.recursive,
+            "recursive_search": self.recursive_search,
             "include_depth": self.include_depth,
             "file_filters": self.file_filters,
             "element_filters": self.element_filters,
@@ -361,7 +361,7 @@ class Config:
             "project_name": self.project_name,
             "source_folders": self.source_folders,
             "output_dir": self.output_dir,
-            "recursive": self.recursive,
+            "recursive_search": self.recursive_search,
             "include_depth": self.include_depth,
             "has_file_filters": bool(self.file_filters),
             "has_element_filters": bool(self.element_filters),
@@ -378,7 +378,7 @@ class Config:
             and self.source_folders == other.source_folders
             and self.output_dir == other.output_dir
             and self.model_output_path == other.model_output_path
-            and self.recursive == other.recursive
+            and self.recursive_search == other.recursive_search
             and self.include_depth == other.include_depth
             and self.file_filters == other.file_filters
             and self.element_filters == other.element_filters
