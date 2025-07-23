@@ -143,6 +143,23 @@ class TestCTokenizer(unittest.TestCase):
         self.assertEqual(preprocessor_tokens[1].type, TokenType.DEFINE)
         self.assertEqual(preprocessor_tokens[2].type, TokenType.PREPROCESSOR)
 
+    def test_tokenize_preprocessor_if_directives(self):
+        """Test tokenization of #if preprocessor directives"""
+        content = "#if (STD_ON == CRYPTO_CFG_BULK_JOB_PROCESSING_ENABLED)\n#elif (STD_ON == CRYPTO_CFG_FEATURE_ENABLED)\n#else\n#endif"
+        tokens = self.tokenizer.tokenize(content)
+        
+        # Filter out whitespace, newlines and EOF
+        preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
+        
+        self.assertEqual(len(preprocessor_tokens), 4)
+        
+        # Check that all directives are properly tokenized
+        directive_values = [t.value.strip() for t in preprocessor_tokens]
+        self.assertIn("#if (STD_ON == CRYPTO_CFG_BULK_JOB_PROCESSING_ENABLED)", directive_values)
+        self.assertIn("#elif (STD_ON == CRYPTO_CFG_FEATURE_ENABLED)", directive_values)
+        self.assertIn("#else", directive_values)
+        self.assertIn("#endif", directive_values)
+
     def test_tokenize_whitespace(self):
         """Test tokenization of whitespace"""
         content = "  \t  \n  "
