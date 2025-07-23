@@ -212,6 +212,76 @@ class TestModelVerifier(unittest.TestCase):
         self.assertGreater(len(issues), 0)
         self.assertTrue(any("Suspicious field type" in issue for issue in issues))
 
+    def test_missing_opening_brackets_detected(self):
+        """Test that missing opening brackets are detected"""
+        # Test missing opening brackets in types
+        test_cases = [
+            ("]int", "Missing opening bracket in type"),
+            (")char*", "Missing opening bracket in type"),
+            ("}struct", "Missing opening bracket in type"),
+            ("int]", "Missing opening bracket in type"),
+            ("char* ptr]", "Missing opening bracket in type"),
+        ]
+        
+        for type_str, description in test_cases:
+            with self.subTest(type_str=type_str, description=description):
+                field = Field(name="test", type=type_str)
+                
+                file_model = FileModel(
+                    file_path="/test/file.c",
+                    relative_path="file.c",
+                    project_root="/test",
+                    encoding_used="utf-8",
+                    globals=[field]
+                )
+                
+                model = ProjectModel(
+                    project_name="TestProject",
+                    project_root="/test",
+                    files={"file.c": file_model}
+                )
+                
+                is_valid, issues = self.verifier.verify_model(model)
+                
+                self.assertFalse(is_valid, f"Should detect missing opening bracket in '{type_str}'")
+                self.assertGreater(len(issues), 0)
+                self.assertTrue(any("Suspicious field type" in issue for issue in issues), 
+                               f"Should flag '{type_str}' as suspicious field type")
+
+    def test_missing_opening_brackets_in_values_detected(self):
+        """Test that missing opening brackets in values are detected"""
+        # Test missing opening brackets in values
+        test_cases = [
+            ("]42", "Missing opening bracket in value"),
+            (")hello", "Missing opening bracket in value"),
+            ("}data", "Missing opening bracket in value"),
+        ]
+        
+        for value_str, description in test_cases:
+            with self.subTest(value_str=value_str, description=description):
+                field = Field(name="test", type="int", value=value_str)
+                
+                file_model = FileModel(
+                    file_path="/test/file.c",
+                    relative_path="file.c",
+                    project_root="/test",
+                    encoding_used="utf-8",
+                    globals=[field]
+                )
+                
+                model = ProjectModel(
+                    project_name="TestProject",
+                    project_root="/test",
+                    files={"file.c": file_model}
+                )
+                
+                is_valid, issues = self.verifier.verify_model(model)
+                
+                self.assertFalse(is_valid, f"Should detect missing opening bracket in value '{value_str}'")
+                self.assertGreater(len(issues), 0)
+                self.assertTrue(any("Suspicious field value" in issue for issue in issues), 
+                               f"Should flag '{value_str}' as suspicious field value")
+
     def test_valid_identifiers_pass(self):
         """Test that valid identifiers pass verification"""
         valid_identifiers = [
