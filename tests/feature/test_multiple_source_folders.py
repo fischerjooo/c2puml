@@ -16,21 +16,21 @@ from c_to_plantuml.parser import Parser
 
 
 class TestMultipleSourceFolders(unittest.TestCase):
-    """Test cases for multiple source folders functionality"""
+    """Test cases for multiple source folders functionality within a single project"""
 
     def setUp(self):
         """Set up test fixtures"""
         self.temp_dir = tempfile.mkdtemp()
-        self.project1_dir = os.path.join(self.temp_dir, "project1")
-        self.project2_dir = os.path.join(self.temp_dir, "project2")
-        self.project3_dir = os.path.join(self.temp_dir, "project3")
+        self.source_folder1 = os.path.join(self.temp_dir, "src1")
+        self.source_folder2 = os.path.join(self.temp_dir, "src2")
+        self.source_folder3 = os.path.join(self.temp_dir, "src3")
         
-        # Create project directories
-        os.makedirs(self.project1_dir, exist_ok=True)
-        os.makedirs(self.project2_dir, exist_ok=True)
-        os.makedirs(self.project3_dir, exist_ok=True)
+        # Create source folder directories
+        os.makedirs(self.source_folder1, exist_ok=True)
+        os.makedirs(self.source_folder2, exist_ok=True)
+        os.makedirs(self.source_folder3, exist_ok=True)
         
-        # Create test files in each project
+        # Create test files in each source folder
         self._create_test_files()
 
     def tearDown(self):
@@ -38,10 +38,10 @@ class TestMultipleSourceFolders(unittest.TestCase):
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def _create_test_files(self):
-        """Create test C files in each project"""
-        # Project 1: Basic structures
-        project1_main = os.path.join(self.project1_dir, "main.c")
-        with open(project1_main, "w") as f:
+        """Create test C files in each source folder"""
+        # Source folder 1: Basic structures
+        src1_main = os.path.join(self.source_folder1, "main.c")
+        with open(src1_main, "w") as f:
             f.write("""
 #include "utils.h"
 
@@ -56,8 +56,8 @@ int main() {
 }
 """)
 
-        project1_utils = os.path.join(self.project1_dir, "utils.h")
-        with open(project1_utils, "w") as f:
+        src1_utils = os.path.join(self.source_folder1, "utils.h")
+        with open(src1_utils, "w") as f:
             f.write("""
 #ifndef UTILS_H
 #define UTILS_H
@@ -71,9 +71,9 @@ void print_point(Point p);
 #endif
 """)
 
-        # Project 2: Enums and functions
-        project2_main = os.path.join(self.project2_dir, "app.c")
-        with open(project2_main, "w") as f:
+        # Source folder 2: Enums and functions
+        src2_main = os.path.join(self.source_folder2, "app.c")
+        with open(src2_main, "w") as f:
             f.write("""
 #include "types.h"
 
@@ -88,8 +88,8 @@ void process_color(enum Color c) {
 }
 """)
 
-        project2_types = os.path.join(self.project2_dir, "types.h")
-        with open(project2_types, "w") as f:
+        src2_types = os.path.join(self.source_folder2, "types.h")
+        with open(src2_types, "w") as f:
             f.write("""
 #ifndef TYPES_H
 #define TYPES_H
@@ -103,9 +103,9 @@ typedef struct {
 #endif
 """)
 
-        # Project 3: Complex structures
-        project3_main = os.path.join(self.project3_dir, "complex.c")
-        with open(project3_main, "w") as f:
+        # Source folder 3: Complex structures
+        src3_main = os.path.join(self.source_folder3, "complex.c")
+        with open(src3_main, "w") as f:
             f.write("""
 #include "data.h"
 
@@ -121,8 +121,8 @@ struct Container {
 };
 """)
 
-        project3_data = os.path.join(self.project3_dir, "data.h")
-        with open(project3_data, "w") as f:
+        src3_data = os.path.join(self.source_folder3, "data.h")
+        with open(src3_data, "w") as f:
             f.write("""
 #ifndef DATA_H
 #define DATA_H
@@ -140,7 +140,7 @@ typedef struct {
     def create_config_file(self, source_folders):
         """Create a configuration file with specified source folders"""
         config_data = {
-            "project_name": "multi_project_test",
+            "project_name": "multi_source_test",
             "source_folders": source_folders,
             "output_dir": os.path.join(self.temp_dir, "output"),
             "recursive_search": True,
@@ -156,26 +156,26 @@ typedef struct {
     def test_multiple_source_folders_parsing(self):
         """Test that multiple source folders are parsed correctly"""
         config_path = self.create_config_file([
-            self.project1_dir,
-            self.project2_dir,
-            self.project3_dir
+            self.source_folder1,
+            self.source_folder2,
+            self.source_folder3
         ])
         
         # Load config to verify it's correct
         config = Config.load(config_path)
         self.assertEqual(len(config.source_folders), 3)
-        self.assertEqual(config.source_folders[0], self.project1_dir)
-        self.assertEqual(config.source_folders[1], self.project2_dir)
-        self.assertEqual(config.source_folders[2], self.project3_dir)
+        self.assertEqual(config.source_folders[0], self.source_folder1)
+        self.assertEqual(config.source_folders[1], self.source_folder2)
+        self.assertEqual(config.source_folders[2], self.source_folder3)
 
-    def test_parser_multiple_projects_method(self):
-        """Test the parse_multiple_projects method directly"""
+    def test_parser_multiple_source_folders_method(self):
+        """Test the parse_multiple_source_folders method directly"""
         parser = Parser()
         output_file = os.path.join(self.temp_dir, "combined_model.json")
         
         # Test with multiple source folders
-        result = parser.parse_multiple_projects(
-            source_folders=[self.project1_dir, self.project2_dir, self.project3_dir],
+        result = parser.parse_multiple_source_folders(
+            source_folders=[self.source_folder1, self.source_folder2, self.source_folder3],
             output_file=output_file,
             recursive_search=True
         )
@@ -187,23 +187,23 @@ typedef struct {
         with open(output_file, "r") as f:
             model_data = json.load(f)
         
-        # Check that files from all projects are included
+        # Check that files from all source folders are included
         files = model_data.get("files", {})
         self.assertGreater(len(files), 0)
         
-        # Check for files from each project
-        project1_files = [f for f in files.keys() if f.startswith("project1_")]
-        project2_files = [f for f in files.keys() if f.startswith("project2_")]
-        project3_files = [f for f in files.keys() if f.startswith("project3_")]
+        # Check for files from each source folder
+        src1_files = [f for f in files.keys() if f.startswith("src1_")]
+        src2_files = [f for f in files.keys() if f.startswith("src2_")]
+        src3_files = [f for f in files.keys() if f.startswith("src3_")]
         
-        self.assertGreater(len(project1_files), 0)
-        self.assertGreater(len(project2_files), 0)
-        self.assertGreater(len(project3_files), 0)
+        self.assertGreater(len(src1_files), 0)
+        self.assertGreater(len(src2_files), 0)
+        self.assertGreater(len(src3_files), 0)
         
         # Verify specific files are present
-        self.assertTrue(any("main.c" in f for f in project1_files))
-        self.assertTrue(any("app.c" in f for f in project2_files))
-        self.assertTrue(any("complex.c" in f for f in project3_files))
+        self.assertTrue(any("main.c" in f for f in src1_files))
+        self.assertTrue(any("app.c" in f for f in src2_files))
+        self.assertTrue(any("complex.c" in f for f in src3_files))
 
     def test_single_source_folder_backward_compatibility(self):
         """Test that single source folder still works (backward compatibility)"""
@@ -212,7 +212,7 @@ typedef struct {
         
         # Test with single source folder
         result = parser.parse(
-            project_root=self.project1_dir,
+            project_root=self.source_folder1,
             output_file=output_file,
             recursive_search=True
         )
@@ -227,16 +227,16 @@ typedef struct {
         files = model_data.get("files", {})
         self.assertGreater(len(files), 0)
         
-        # Check that files are present without project prefix
+        # Check that files are present without source folder prefix
         self.assertTrue(any("main.c" in f for f in files.keys()))
 
     def test_empty_source_folders_error(self):
-        """Test that empty source folders list raises an error"""
+        """Test that empty source_folders list raises an error"""
         parser = Parser()
         output_file = os.path.join(self.temp_dir, "error_model.json")
         
         with self.assertRaises(ValueError):
-            parser.parse_multiple_projects(
+            parser.parse_multiple_source_folders(
                 source_folders=[],
                 output_file=output_file,
                 recursive_search=True
@@ -248,7 +248,7 @@ typedef struct {
         output_file = os.path.join(self.temp_dir, "error_model.json")
         
         with self.assertRaises(Exception):  # Should raise some kind of error
-            parser.parse_multiple_projects(
+            parser.parse_multiple_source_folders(
                 source_folders=["/nonexistent/path"],
                 output_file=output_file,
                 recursive_search=True
@@ -257,13 +257,13 @@ typedef struct {
     def test_multiple_source_folders_with_config(self):
         """Test multiple source folders with configuration and filters"""
         config_path = self.create_config_file([
-            self.project1_dir,
-            self.project2_dir
+            self.source_folder1,
+            self.source_folder2
         ])
         
         config = Config.load(config_path)
         
-        # Add some filters to test they work with multiple projects
+        # Add some filters to test they work with multiple source folders
         config.file_filters = {
             "include": [".*\\.c$", ".*\\.h$"]
         }
@@ -271,7 +271,7 @@ typedef struct {
         parser = Parser()
         output_file = os.path.join(self.temp_dir, "filtered_model.json")
         
-        result = parser.parse_multiple_projects(
+        result = parser.parse_multiple_source_folders(
             source_folders=config.source_folders,
             output_file=output_file,
             recursive_search=config.recursive_search,
@@ -281,23 +281,23 @@ typedef struct {
         self.assertEqual(result, output_file)
         self.assertTrue(os.path.exists(output_file))
 
-    def test_project_name_collision_handling(self):
-        """Test that files with same names from different projects are handled correctly"""
-        # Create a file with the same name in different projects
-        same_name_file1 = os.path.join(self.project1_dir, "common.h")
-        same_name_file2 = os.path.join(self.project2_dir, "common.h")
+    def test_source_folder_name_collision_handling(self):
+        """Test that files with same names from different source folders are handled correctly"""
+        # Create a file with the same name in different source folders
+        same_name_file1 = os.path.join(self.source_folder1, "common.h")
+        same_name_file2 = os.path.join(self.source_folder2, "common.h")
         
         with open(same_name_file1, "w") as f:
-            f.write("#ifndef COMMON1_H\n#define COMMON1_H\nint project1_var;\n#endif\n")
+            f.write("#ifndef COMMON1_H\n#define COMMON1_H\nint src1_var;\n#endif\n")
         
         with open(same_name_file2, "w") as f:
-            f.write("#ifndef COMMON2_H\n#define COMMON2_H\nint project2_var;\n#endif\n")
+            f.write("#ifndef COMMON2_H\n#define COMMON2_H\nint src2_var;\n#endif\n")
         
         parser = Parser()
         output_file = os.path.join(self.temp_dir, "collision_model.json")
         
-        result = parser.parse_multiple_projects(
-            source_folders=[self.project1_dir, self.project2_dir],
+        result = parser.parse_multiple_source_folders(
+            source_folders=[self.source_folder1, self.source_folder2],
             output_file=output_file,
             recursive_search=True
         )
@@ -310,13 +310,13 @@ typedef struct {
         
         files = model_data.get("files", {})
         
-        # Check that both common.h files are present with project prefixes
-        project1_common = [f for f in files.keys() if f.startswith("project1_") and "common.h" in f]
-        project2_common = [f for f in files.keys() if f.startswith("project2_") and "common.h" in f]
+        # Check that both common.h files are present with source folder prefixes
+        src1_common = [f for f in files.keys() if f.startswith("src1_") and "common.h" in f]
+        src2_common = [f for f in files.keys() if f.startswith("src2_") and "common.h" in f]
         
-        self.assertEqual(len(project1_common), 1)
-        self.assertEqual(len(project2_common), 1)
-        self.assertNotEqual(project1_common[0], project2_common[0])
+        self.assertEqual(len(src1_common), 1)
+        self.assertEqual(len(src2_common), 1)
+        self.assertNotEqual(src1_common[0], src2_common[0])
 
 
 if __name__ == "__main__":
