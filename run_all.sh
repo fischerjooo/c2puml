@@ -16,8 +16,6 @@ echo "✅ All tests passed!"
 
 echo ""
 
-
-
 # Step 2: Run example
 echo "📋 Step 2: Running example..."
 echo "----------------------------------------"
