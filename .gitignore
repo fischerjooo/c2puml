@@ -152,3 +152,6 @@ Thumbs.db
 
 # Ignore C object files
 *.o
+
+# PlantUML JAR file
+plantuml.jar
