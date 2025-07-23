@@ -104,8 +104,44 @@
                 "PYTHONPATH": "${workspaceFolder}",
                 "PYTHONHOME": "${env:PYTHONHOME}"
             },
-            "args": ["example"],
+            "args": ["--config", "./example/config.json"],
             "justMyCode": false
+        },
+        {
+            "name": "Debug Custom Config",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/debug.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+                "PYTHONHOME": "${env:PYTHONHOME}"
+            },
+            "args": ["--config", "${input:configPath}"],
+            "justMyCode": false
+        },
+        {
+            "name": "Debug Parse with Custom Config",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/debug.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+                "PYTHONHOME": "${env:PYTHONHOME}"
+            },
+            "args": ["parse", "--config", "${input:configPath}"],
+            "justMyCode": false
+        }
+    ],
+    "inputs": [
+        {
+            "id": "configPath",
+            "type": "promptString",
+            "description": "Enter the path to your config file",
+            "default": "./example/config.json"
         }
     ]
 }
