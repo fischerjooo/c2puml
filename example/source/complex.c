@@ -26,8 +26,7 @@ static Std_ReturnType rba_ProcessorHardware_ProcessJobLite(const Process_JobType
 }
 
 // The nasty edge case: const array of function pointers with complex name
-Std_ReturnType (*const Process_Cfg_ProcessJobLite_acpfct[PROCESSOR_CFG_MODULE_COUNT])
-    (const Process_JobType *job_pst) = {
+Process_Cfg_ProcessJobLite_acpfct_t Process_Cfg_ProcessJobLite_acpfct = {
     &rba_ProcessorAdapter_ProcessJobLite,
     &rba_ProcessorService_ProcessJobLite,
     &rba_ProcessorHardware_ProcessJobLite,
@@ -126,18 +125,18 @@ void test_processor_utility_macros(void) {
     printf("=== Processor Utility Macros Test Complete ===\n");
 }
 
+// Static callback function for operation handling
+static void print_result(int* data, int size) {
+    printf("Result: ");
+    for (int i = 0; i < size; i++) {
+        printf("%d ", data[i]);
+    }
+    printf("\n");
+}
+
 // Function using the operation handling macro
 void test_handle_operation(operation_type_t op_type, int* data, int size) {
     void (*callback)(int*, int) = NULL;
-    
-    // Define a callback function inline
-    static void print_result(int* data, int size) {
-        printf("Result: ");
-        for (int i = 0; i < size; i++) {
-            printf("%d ", data[i]);
-        }
-        printf("\n");
-    }
     
     callback = print_result;
     HANDLE_OPERATION(op_type, data, size, callback);
@@ -311,7 +310,7 @@ void test_handler_table(void) {
     }
     
     if (table[0].process_func != NULL) {
-        int result = table[0].process_func(5, "test");
+        int result = table[0].process_func(5, 42);
         printf("Handler result: %d\n", result);
     }
 }
