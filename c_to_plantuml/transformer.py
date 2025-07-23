@@ -316,6 +316,17 @@ class Transformer:
                 if file_model.file_path == included_file_path:
                     self.logger.debug(f"Skipping self-include relation for {file_model.file_path}")
                     continue
+                
+                # Check if this include relation already exists to prevent cycles
+                relation_exists = any(
+                    rel.source_file == file_model.file_path and rel.included_file == included_file_path
+                    for rel in file_model.include_relations
+                )
+                
+                if relation_exists:
+                    self.logger.debug(f"Cyclic include detected and skipped: {file_model.file_path} -> {included_file_path}")
+                    continue
+                
                 # Create include relation
                 from .models import IncludeRelation
 
