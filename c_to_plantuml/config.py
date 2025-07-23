@@ -44,7 +44,7 @@ class Config:
         """Initialize configuration with keyword arguments or a single dict"""
         # Initialize logger
         self.logger = logging.getLogger(__name__)
-        
+
         # Initialize with default values first
         object.__init__(self)
 
@@ -112,7 +112,7 @@ class Config:
             except re.error as e:
                 self.logger.warning(f"Invalid include pattern '{pattern}': {e}")
                 # Skip invalid patterns
-                
+
         self.file_exclude_patterns = []
         for pattern in self.file_filters.get("exclude", []):
             try:
@@ -129,17 +129,25 @@ class Config:
             self.element_include_patterns[element_type] = []
             for pattern in filters.get("include", []):
                 try:
-                    self.element_include_patterns[element_type].append(re.compile(pattern))
+                    self.element_include_patterns[element_type].append(
+                        re.compile(pattern)
+                    )
                 except re.error as e:
-                    self.logger.warning(f"Invalid {element_type} include pattern '{pattern}': {e}")
+                    self.logger.warning(
+                        f"Invalid {element_type} include pattern '{pattern}': {e}"
+                    )
                     # Skip invalid patterns
-                    
+
             self.element_exclude_patterns[element_type] = []
             for pattern in filters.get("exclude", []):
                 try:
-                    self.element_exclude_patterns[element_type].append(re.compile(pattern))
+                    self.element_exclude_patterns[element_type].append(
+                        re.compile(pattern)
+                    )
                 except re.error as e:
-                    self.logger.warning(f"Invalid {element_type} exclude pattern '{pattern}': {e}")
+                    self.logger.warning(
+                        f"Invalid {element_type} exclude pattern '{pattern}': {e}"
+                    )
                     # Skip invalid patterns
 
     @classmethod

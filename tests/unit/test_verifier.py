@@ -10,8 +10,15 @@ from pathlib import Path
 
 from c_to_plantuml.verifier import ModelVerifier
 from c_to_plantuml.models import (
-    ProjectModel, FileModel, Field, Struct, Enum, Union, 
-    Function, Alias, EnumValue
+    ProjectModel,
+    FileModel,
+    Field,
+    Struct,
+    Enum,
+    Union,
+    Function,
+    Alias,
+    EnumValue,
 )
 
 
@@ -26,6 +33,7 @@ class TestModelVerifier(unittest.TestCase):
     def tearDown(self):
         """Clean up test fixtures"""
         import shutil
+
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def test_valid_model_passes_verification(self):
@@ -33,23 +41,23 @@ class TestModelVerifier(unittest.TestCase):
         # Create a valid model
         valid_field = Field(name="valid_field", type="int", value="42")
         valid_struct = Struct(name="valid_struct", fields=[valid_field])
-        
+
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
             project_root="/test",
             encoding_used="utf-8",
-            structs={"valid_struct": valid_struct}
+            structs={"valid_struct": valid_struct},
         )
-        
+
         model = ProjectModel(
             project_name="TestProject",
             project_root="/test",
-            files={"file.c": file_model}
+            files={"file.c": file_model},
         )
-        
+
         is_valid, issues = self.verifier.verify_model(model)
-        
+
         self.assertTrue(is_valid)
         self.assertEqual(len(issues), 0)
 
@@ -57,23 +65,23 @@ class TestModelVerifier(unittest.TestCase):
         """Test that invalid global variable names are detected"""
         # Create a global with invalid name (just a bracket)
         invalid_global = Field(name="]", type="int", value="42")
-        
+
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
             project_root="/test",
             encoding_used="utf-8",
-            globals=[invalid_global]
+            globals=[invalid_global],
         )
-        
+
         model = ProjectModel(
             project_name="TestProject",
             project_root="/test",
-            files={"file.c": file_model}
+            files={"file.c": file_model},
         )
-        
+
         is_valid, issues = self.verifier.verify_model(model)
-        
+
         self.assertFalse(is_valid)
         self.assertGreater(len(issues), 0)
         self.assertTrue(any("Invalid field name ']'" in issue for issue in issues))
@@ -82,27 +90,27 @@ class TestModelVerifier(unittest.TestCase):
         """Test that suspicious types are detected"""
         # Create a global with suspicious type (mostly brackets and whitespace)
         suspicious_global = Field(
-            name="test_var", 
-            type="{ \\ \n ( ptr_pau8 ) [ 3 U", 
-            value="( uint8 ) ( value_u32 )"
+            name="test_var",
+            type="{ \\ \n ( ptr_pau8 ) [ 3 U",
+            value="( uint8 ) ( value_u32 )",
         )
-        
+
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
             project_root="/test",
             encoding_used="utf-8",
-            globals=[suspicious_global]
+            globals=[suspicious_global],
         )
-        
+
         model = ProjectModel(
             project_name="TestProject",
             project_root="/test",
-            files={"file.c": file_model}
+            files={"file.c": file_model},
         )
-        
+
         is_valid, issues = self.verifier.verify_model(model)
-        
+
         self.assertFalse(is_valid)
         self.assertGreater(len(issues), 0)
         self.assertTrue(any("Suspicious field type" in issue for issue in issues))
@@ -111,27 +119,27 @@ class TestModelVerifier(unittest.TestCase):
         """Test that suspicious values are detected"""
         # Create a global with suspicious value
         suspicious_global = Field(
-            name="test_var", 
-            type="int", 
-            value="\\ \n } \n \n \n \n \n \n \n \n \n #define CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8) \\ \n { \\ \n ( ptr_pau8 ) [ 1 U"
+            name="test_var",
+            type="int",
+            value="\\ \n } \n \n \n \n \n \n \n \n \n #define CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8) \\ \n { \\ \n ( ptr_pau8 ) [ 1 U",
         )
-        
+
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
             project_root="/test",
             encoding_used="utf-8",
-            globals=[suspicious_global]
+            globals=[suspicious_global],
         )
-        
+
         model = ProjectModel(
             project_name="TestProject",
             project_root="/test",
-            files={"file.c": file_model}
+            files={"file.c": file_model},
         )
-        
+
         is_valid, issues = self.verifier.verify_model(model)
-        
+
         self.assertFalse(is_valid)
         self.assertGreater(len(issues), 0)
         self.assertTrue(any("Suspicious field value" in issue for issue in issues))
@@ -141,23 +149,23 @@ class TestModelVerifier(unittest.TestCase):
         # Create a struct with empty name by directly setting the attribute
         empty_struct = Struct(name="dummy", fields=[])
         empty_struct.name = ""  # Override the validation
-        
+
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
             project_root="/test",
             encoding_used="utf-8",
-            structs={"": empty_struct}
+            structs={"": empty_struct},
         )
-        
+
         model = ProjectModel(
             project_name="TestProject",
             project_root="/test",
-            files={"file.c": file_model}
+            files={"file.c": file_model},
         )
-        
+
         is_valid, issues = self.verifier.verify_model(model)
-        
+
         self.assertFalse(is_valid)
         self.assertGreater(len(issues), 0)
         self.assertTrue(any("Struct name is empty" in issue for issue in issues))
@@ -166,48 +174,50 @@ class TestModelVerifier(unittest.TestCase):
         """Test that invalid identifiers are detected"""
         # Create a struct with invalid name (starts with number)
         invalid_struct = Struct(name="123invalid", fields=[])
-        
+
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
             project_root="/test",
             encoding_used="utf-8",
-            structs={"123invalid": invalid_struct}
+            structs={"123invalid": invalid_struct},
         )
-        
+
         model = ProjectModel(
             project_name="TestProject",
             project_root="/test",
-            files={"file.c": file_model}
+            files={"file.c": file_model},
         )
-        
+
         is_valid, issues = self.verifier.verify_model(model)
-        
+
         self.assertFalse(is_valid)
         self.assertGreater(len(issues), 0)
-        self.assertTrue(any("Invalid struct name '123invalid'" in issue for issue in issues))
+        self.assertTrue(
+            any("Invalid struct name '123invalid'" in issue for issue in issues)
+        )
 
     def test_unbalanced_brackets_detected(self):
         """Test that unbalanced brackets are detected"""
         # Create a field with unbalanced brackets
         unbalanced_field = Field(name="test", type="int[10", value="42")
-        
+
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
             project_root="/test",
             encoding_used="utf-8",
-            globals=[unbalanced_field]
+            globals=[unbalanced_field],
         )
-        
+
         model = ProjectModel(
             project_name="TestProject",
             project_root="/test",
-            files={"file.c": file_model}
+            files={"file.c": file_model},
         )
-        
+
         is_valid, issues = self.verifier.verify_model(model)
-        
+
         self.assertFalse(is_valid)
         self.assertGreater(len(issues), 0)
         self.assertTrue(any("Suspicious field type" in issue for issue in issues))
@@ -222,31 +232,35 @@ class TestModelVerifier(unittest.TestCase):
             ("int]", "Missing opening bracket in type"),
             ("char* ptr]", "Missing opening bracket in type"),
         ]
-        
+
         for type_str, description in test_cases:
             with self.subTest(type_str=type_str, description=description):
                 field = Field(name="test", type=type_str)
-                
+
                 file_model = FileModel(
                     file_path="/test/file.c",
                     relative_path="file.c",
                     project_root="/test",
                     encoding_used="utf-8",
-                    globals=[field]
+                    globals=[field],
                 )
-                
+
                 model = ProjectModel(
                     project_name="TestProject",
                     project_root="/test",
-                    files={"file.c": file_model}
+                    files={"file.c": file_model},
                 )
-                
+
                 is_valid, issues = self.verifier.verify_model(model)
-                
-                self.assertFalse(is_valid, f"Should detect missing opening bracket in '{type_str}'")
+
+                self.assertFalse(
+                    is_valid, f"Should detect missing opening bracket in '{type_str}'"
+                )
                 self.assertGreater(len(issues), 0)
-                self.assertTrue(any("Suspicious field type" in issue for issue in issues), 
-                               f"Should flag '{type_str}' as suspicious field type")
+                self.assertTrue(
+                    any("Suspicious field type" in issue for issue in issues),
+                    f"Should flag '{type_str}' as suspicious field type",
+                )
 
     def test_missing_opening_brackets_in_values_detected(self):
         """Test that missing opening brackets in values are detected"""
@@ -256,31 +270,36 @@ class TestModelVerifier(unittest.TestCase):
             (")hello", "Missing opening bracket in value"),
             ("}data", "Missing opening bracket in value"),
         ]
-        
+
         for value_str, description in test_cases:
             with self.subTest(value_str=value_str, description=description):
                 field = Field(name="test", type="int", value=value_str)
-                
+
                 file_model = FileModel(
                     file_path="/test/file.c",
                     relative_path="file.c",
                     project_root="/test",
                     encoding_used="utf-8",
-                    globals=[field]
+                    globals=[field],
                 )
-                
+
                 model = ProjectModel(
                     project_name="TestProject",
                     project_root="/test",
-                    files={"file.c": file_model}
+                    files={"file.c": file_model},
                 )
-                
+
                 is_valid, issues = self.verifier.verify_model(model)
-                
-                self.assertFalse(is_valid, f"Should detect missing opening bracket in value '{value_str}'")
+
+                self.assertFalse(
+                    is_valid,
+                    f"Should detect missing opening bracket in value '{value_str}'",
+                )
                 self.assertGreater(len(issues), 0)
-                self.assertTrue(any("Suspicious field value" in issue for issue in issues), 
-                               f"Should flag '{value_str}' as suspicious field value")
+                self.assertTrue(
+                    any("Suspicious field value" in issue for issue in issues),
+                    f"Should flag '{value_str}' as suspicious field value",
+                )
 
     def test_valid_identifiers_pass(self):
         """Test that valid identifiers pass verification"""
@@ -290,9 +309,9 @@ class TestModelVerifier(unittest.TestCase):
             "_valid_name",
             "valid123",
             "VALID_NAME",
-            "validName"
+            "validName",
         ]
-        
+
         for identifier in valid_identifiers:
             with self.subTest(identifier=identifier):
                 valid_field = Field(name=identifier, type="int")
@@ -301,17 +320,19 @@ class TestModelVerifier(unittest.TestCase):
                     relative_path="file.c",
                     project_root="/test",
                     encoding_used="utf-8",
-                    globals=[valid_field]
+                    globals=[valid_field],
                 )
-                
+
                 model = ProjectModel(
                     project_name="TestProject",
                     project_root="/test",
-                    files={"file.c": file_model}
+                    files={"file.c": file_model},
                 )
-                
+
                 is_valid, issues = self.verifier.verify_model(model)
-                self.assertTrue(is_valid, f"Valid identifier '{identifier}' failed verification")
+                self.assertTrue(
+                    is_valid, f"Valid identifier '{identifier}' failed verification"
+                )
 
     def test_invalid_identifiers_fail(self):
         """Test that invalid identifiers fail verification"""
@@ -325,31 +346,33 @@ class TestModelVerifier(unittest.TestCase):
             "{",
             "}",
             "(",
-            ")"
+            ")",
         ]
-        
+
         for identifier in invalid_identifiers:
             with self.subTest(identifier=identifier):
                 # Create field with valid name first, then override
                 invalid_field = Field(name="dummy", type="int")
                 invalid_field.name = identifier  # Override the validation
-                
+
                 file_model = FileModel(
                     file_path="/test/file.c",
                     relative_path="file.c",
                     project_root="/test",
                     encoding_used="utf-8",
-                    globals=[invalid_field]
+                    globals=[invalid_field],
                 )
-                
+
                 model = ProjectModel(
                     project_name="TestProject",
                     project_root="/test",
-                    files={"file.c": file_model}
+                    files={"file.c": file_model},
                 )
-                
+
                 is_valid, issues = self.verifier.verify_model(model)
-                self.assertFalse(is_valid, f"Invalid identifier '{identifier}' passed verification")
+                self.assertFalse(
+                    is_valid, f"Invalid identifier '{identifier}' passed verification"
+                )
                 self.assertTrue(any("Invalid field name" in issue for issue in issues))
 
     def test_project_level_validation(self):
@@ -359,16 +382,16 @@ class TestModelVerifier(unittest.TestCase):
             file_path="/test/file.c",
             relative_path="file.c",
             project_root="/test",
-            encoding_used="utf-8"
+            encoding_used="utf-8",
         )
-        
+
         model = ProjectModel(
             project_name="TestProject",
             project_root="/test",
-            files={"file.c": file_model}
+            files={"file.c": file_model},
         )
         model.project_name = ""  # Override the validation
-        
+
         is_valid, issues = self.verifier.verify_model(model)
         self.assertFalse(is_valid)
         self.assertTrue(any("Project name is empty" in issue for issue in issues))
@@ -377,21 +400,17 @@ class TestModelVerifier(unittest.TestCase):
         model = ProjectModel(
             project_name="TestProject",
             project_root="/test",
-            files={"file.c": file_model}
+            files={"file.c": file_model},
         )
         model.project_root = ""  # Override the validation
-        
+
         is_valid, issues = self.verifier.verify_model(model)
         self.assertFalse(is_valid)
         self.assertTrue(any("Project root is empty" in issue for issue in issues))
 
         # Test no files
-        model = ProjectModel(
-            project_name="TestProject",
-            project_root="/test",
-            files={}
-        )
-        
+        model = ProjectModel(project_name="TestProject", project_root="/test", files={})
+
         is_valid, issues = self.verifier.verify_model(model)
         self.assertFalse(is_valid)
         self.assertTrue(any("No files found" in issue for issue in issues))

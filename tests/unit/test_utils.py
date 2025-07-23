@@ -22,13 +22,13 @@ class TestUtils(unittest.TestCase):
     def test_get_acceptable_encodings(self):
         """Test getting acceptable encodings"""
         encodings = get_acceptable_encodings()
-        
+
         # Should include common encodings
         self.assertIn("utf-8", encodings)
         self.assertIn("utf-8-sig", encodings)
         self.assertIn("windows-1252", encodings)
         self.assertIn("windows-1254", encodings)
-        
+
         # Should be a list
         self.assertIsInstance(encodings, list)
         self.assertGreater(len(encodings), 0)
@@ -38,11 +38,11 @@ class TestUtils(unittest.TestCase):
         # Should accept UTF-8
         self.assertTrue(is_acceptable_encoding("utf-8"))
         self.assertTrue(is_acceptable_encoding("UTF-8"))
-        
+
         # Should accept Windows encodings
         self.assertTrue(is_acceptable_encoding("windows-1252"))
         self.assertTrue(is_acceptable_encoding("windows-1254"))
-        
+
         # Should reject unknown encodings
         self.assertFalse(is_acceptable_encoding("unknown-encoding"))
         self.assertFalse(is_acceptable_encoding(""))
@@ -53,11 +53,11 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(normalize_encoding("cp1252"), "windows-1252")
         self.assertEqual(normalize_encoding("cp1254"), "windows-1254")
         self.assertEqual(normalize_encoding("latin-1"), "iso-8859-1")
-        
+
         # Should preserve other encodings
         self.assertEqual(normalize_encoding("utf-8"), "utf-8")
         self.assertEqual(normalize_encoding("utf-16"), "utf-16")
-        
+
         # Should handle case
         self.assertEqual(normalize_encoding("UTF-8"), "utf-8")
         self.assertEqual(normalize_encoding("CP1252"), "windows-1252")
@@ -65,17 +65,19 @@ class TestUtils(unittest.TestCase):
     def test_get_platform_default_encoding(self):
         """Test platform default encoding detection"""
         encoding = get_platform_default_encoding()
-        
+
         # Should return a valid encoding
         self.assertIsInstance(encoding, str)
         self.assertGreater(len(encoding), 0)
-        
+
         # Should be acceptable
         self.assertTrue(is_acceptable_encoding(encoding))
 
     def test_detect_file_encoding_utf8(self):
         """Test encoding detection for UTF-8 files"""
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False, encoding="utf-8") as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".txt", delete=False, encoding="utf-8"
+        ) as f:
             f.write("Hello, World! 🌍")
             temp_file = f.name
 
@@ -89,7 +91,7 @@ class TestUtils(unittest.TestCase):
         """Test encoding detection for files with BOM"""
         # Create a file with UTF-8 BOM
         with tempfile.NamedTemporaryFile(mode="wb", suffix=".txt", delete=False) as f:
-            f.write(b'\xef\xbb\xbfHello, World!')
+            f.write(b"\xef\xbb\xbfHello, World!")
             temp_file = f.name
 
         try:
@@ -101,7 +103,9 @@ class TestUtils(unittest.TestCase):
 
     def test_detect_file_encoding_ascii(self):
         """Test encoding detection for ASCII files"""
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False, encoding="ascii") as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".txt", delete=False, encoding="ascii"
+        ) as f:
             f.write("Hello, World!")
             temp_file = f.name
 

@@ -34,12 +34,12 @@ struct ComplexStruct {
         """
 
         self.create_test_file("typedef_test.c", content)
-        
+
         parser = Parser()
         model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
-        
+
         file_model = model.files["typedef_test.c"]
-        
+
         # Verify typedefs were parsed (check what was actually parsed)
         print(f"Debug: aliases found: {file_model.aliases}")
         self.assertIn("UserPtr", file_model.aliases)
@@ -64,12 +64,12 @@ typedef union {
         """
 
         self.create_test_file("union_test.c", content)
-        
+
         parser = Parser()
         model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
-        
+
         file_model = model.files["union_test.c"]
-        
+
         # Verify unions were parsed (check what was actually parsed)
         print(f"Debug: unions found: {file_model.unions}")
         print(f"Debug: aliases found: {file_model.aliases}")

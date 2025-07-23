@@ -25,15 +25,23 @@ class Field:
     def __post_init__(self):
         """Validate field data after initialization"""
         if not isinstance(self.name, str):
-            raise ValueError(f"Field name must be a string, got {type(self.name)}: {repr(self.name)}")
+            raise ValueError(
+                f"Field name must be a string, got {type(self.name)}: {repr(self.name)}"
+            )
         if not self.type or not isinstance(self.type, str):
-            raise ValueError(f"Field type must be a non-empty string, got {type(self.type)}: {repr(self.type)}")
-        
+            raise ValueError(
+                f"Field type must be a non-empty string, got {type(self.type)}: {repr(self.type)}"
+            )
+
         # Additional validation: ensure name and type are not just whitespace
         if not self.name.strip():
-            raise ValueError(f"Field name cannot be empty or whitespace, got: {repr(self.name)}")
+            raise ValueError(
+                f"Field name cannot be empty or whitespace, got: {repr(self.name)}"
+            )
         if not self.type.strip():
-            raise ValueError(f"Field type cannot be empty or whitespace, got: {repr(self.type)}")
+            raise ValueError(
+                f"Field type cannot be empty or whitespace, got: {repr(self.type)}"
+            )
 
 
 # TypedefRelation class removed - tag names moved to struct/enum/union
@@ -73,7 +81,7 @@ class Function:
             raise ValueError("Function name must be a non-empty string")
         if not self.return_type or not isinstance(self.return_type, str):
             raise ValueError("Function return type must be a non-empty string")
-        
+
         # Convert parameters to Field objects if they're dictionaries
         if self.parameters:
             converted_params = []
@@ -93,7 +101,9 @@ class Struct:
     fields: List[Field] = field(default_factory=list)
     methods: List[Function] = field(default_factory=list)
     tag_name: str = ""  # Tag name for typedef structs
-    uses: List[str] = field(default_factory=list)  # Non-primitive types used by this struct
+    uses: List[str] = field(
+        default_factory=list
+    )  # Non-primitive types used by this struct
 
     def __post_init__(self):
         """Validate struct data after initialization"""
@@ -110,9 +120,11 @@ class EnumValue:
         if not self.name or not isinstance(self.name, str):
             raise ValueError("Enum value name must be a non-empty string")
 
+
 @dataclass
 class Enum:
     """Represents a C enum"""
+
     name: str
     values: List[EnumValue] = field(default_factory=list)
     tag_name: str = ""  # Tag name for typedef enums
@@ -121,7 +133,9 @@ class Enum:
         if not self.name or not isinstance(self.name, str):
             raise ValueError("Enum name must be a non-empty string")
         # Convert any string values to EnumValue
-        self.values = [v if isinstance(v, EnumValue) else EnumValue(v) for v in self.values]
+        self.values = [
+            v if isinstance(v, EnumValue) else EnumValue(v) for v in self.values
+        ]
 
 
 @dataclass
@@ -131,7 +145,9 @@ class Union:
     name: str
     fields: List[Field] = field(default_factory=list)
     tag_name: str = ""  # Tag name for typedef unions
-    uses: List[str] = field(default_factory=list)  # Non-primitive types used by this union
+    uses: List[str] = field(
+        default_factory=list
+    )  # Non-primitive types used by this union
 
     def __post_init__(self):
         """Validate union data after initialization"""
@@ -145,7 +161,9 @@ class Alias:
 
     name: str
     original_type: str
-    uses: List[str] = field(default_factory=list)  # Non-primitive types used by this alias
+    uses: List[str] = field(
+        default_factory=list
+    )  # Non-primitive types used by this alias
 
     def __post_init__(self):
         """Validate alias data after initialization"""
@@ -190,7 +208,10 @@ class FileModel:
         # Convert set to list for JSON serialization and sort for consistency
         data["includes"] = sorted(list(self.includes))
         # Convert include_relations to list of dicts and sort for consistency
-        data["include_relations"] = sorted([asdict(rel) for rel in self.include_relations], key=lambda x: (x["source_file"], x["included_file"]))
+        data["include_relations"] = sorted(
+            [asdict(rel) for rel in self.include_relations],
+            key=lambda x: (x["source_file"], x["included_file"]),
+        )
         # Sort all dictionary fields for consistent ordering
         data["structs"] = dict(sorted(data["structs"].items()))
         data["enums"] = dict(sorted(data["enums"].items()))
@@ -203,7 +224,7 @@ class FileModel:
         # Convert functions and globals to dicts after sorting
         data["functions"] = [asdict(f) for f in data["functions"]]
         data["globals"] = [asdict(g) for g in data["globals"]]
-        
+
         # Sort "uses" arrays in structs, unions, and aliases for consistent ordering
         for struct_data in data["structs"].values():
             if "uses" in struct_data:
@@ -214,7 +235,7 @@ class FileModel:
         for alias_data in data["aliases"].values():
             if "uses" in alias_data:
                 alias_data["uses"] = sorted(alias_data["uses"])
-        
+
         # typedef_relations removed - tag names are now in struct/enum/union
         return data
 
@@ -248,11 +269,11 @@ class FileModel:
                     for method in struct_data.get("methods", [])
                 ]
                 structs[name] = Struct(
-                    name=struct_data.get("name", name), 
-                    fields=fields, 
+                    name=struct_data.get("name", name),
+                    fields=fields,
                     methods=methods,
                     tag_name=struct_data.get("tag_name", ""),
-                    uses=struct_data.get("uses", [])
+                    uses=struct_data.get("uses", []),
                 )
             else:
                 structs[name] = struct_data
@@ -262,10 +283,11 @@ class FileModel:
         enums = {}
         for name, enum_data in enums_data.items():
             if isinstance(enum_data, dict):
-                values = [EnumValue(**val) if isinstance(val, dict) else EnumValue(val) for val in enum_data.get("values", [])]
-                enums[name] = Enum(
-                    name=enum_data.get("name", name), values=values
-                )
+                values = [
+                    EnumValue(**val) if isinstance(val, dict) else EnumValue(val)
+                    for val in enum_data.get("values", [])
+                ]
+                enums[name] = Enum(name=enum_data.get("name", name), values=values)
             else:
                 enums[name] = enum_data
 
@@ -288,10 +310,10 @@ class FileModel:
                     for field in union_data.get("fields", [])
                 ]
                 unions[name] = Union(
-                    name=union_data.get("name", name), 
+                    name=union_data.get("name", name),
                     fields=fields,
                     tag_name=union_data.get("tag_name", ""),
-                    uses=union_data.get("uses", [])
+                    uses=union_data.get("uses", []),
                 )
             else:
                 unions[name] = union_data
@@ -304,15 +326,11 @@ class FileModel:
                 aliases[name] = Alias(
                     name=alias_data.get("name", name),
                     original_type=alias_data.get("original_type", ""),
-                    uses=alias_data.get("uses", [])
+                    uses=alias_data.get("uses", []),
                 )
             else:
                 # Handle legacy format where aliases was Dict[str, str]
-                aliases[name] = Alias(
-                    name=name,
-                    original_type=alias_data,
-                    uses=[]
-                )
+                aliases[name] = Alias(name=name, original_type=alias_data, uses=[])
 
         # Create new data dict with converted objects
         new_data = data.copy()
@@ -362,7 +380,8 @@ class ProjectModel:
             "project_name": self.project_name,
             "project_root": self.project_root,
             "files": {
-                path: file_model.to_dict() for path, file_model in sorted(self.files.items())
+                path: file_model.to_dict()
+                for path, file_model in sorted(self.files.items())
             },
         }
 
@@ -422,28 +441,34 @@ class ProjectModel:
             available_types.update(file_model.enums.keys())
             available_types.update(file_model.unions.keys())
             available_types.update(file_model.aliases.keys())
-        
+
         # Update uses fields for all structures in all files
         for file_model in self.files.values():
             # Update struct uses
             for struct in file_model.structs.values():
                 filtered_uses = []
                 for field in struct.fields:
-                    field_uses = self._extract_non_primitive_types(field.type, available_types)
+                    field_uses = self._extract_non_primitive_types(
+                        field.type, available_types
+                    )
                     filtered_uses.extend(field_uses)
                 struct.uses = list(set(filtered_uses))
-            
+
             # Update union uses
             for union in file_model.unions.values():
                 filtered_uses = []
                 for field in union.fields:
-                    field_uses = self._extract_non_primitive_types(field.type, available_types)
+                    field_uses = self._extract_non_primitive_types(
+                        field.type, available_types
+                    )
                     filtered_uses.extend(field_uses)
                 union.uses = list(set(filtered_uses))
-            
+
             # Update alias uses
             for alias in file_model.aliases.values():
-                alias.uses = self._extract_non_primitive_types(alias.original_type, available_types)
+                alias.uses = self._extract_non_primitive_types(
+                    alias.original_type, available_types
+                )
                 # Remove the alias name from its own uses list
                 if alias.name in alias.uses:
                     alias.uses.remove(alias.name)
@@ -452,28 +477,57 @@ class ProjectModel:
         """Extract non-primitive type names from a type string that exist in available_types"""
         # Define primitive types
         primitive_types = {
-            'void', 'char', 'short', 'int', 'long', 'float', 'double', 'signed', 'unsigned',
-            'const', 'volatile', 'static', 'extern', 'auto', 'register', 'inline', 'restrict',
-            'size_t', 'ptrdiff_t', 'int8_t', 'int16_t', 'int32_t', 'int64_t',
-            'uint8_t', 'uint16_t', 'uint32_t', 'uint64_t', 'intptr_t', 'uintptr_t',
-            'bool', 'true', 'false', 'NULL', 'nullptr'
+            "void",
+            "char",
+            "short",
+            "int",
+            "long",
+            "float",
+            "double",
+            "signed",
+            "unsigned",
+            "const",
+            "volatile",
+            "static",
+            "extern",
+            "auto",
+            "register",
+            "inline",
+            "restrict",
+            "size_t",
+            "ptrdiff_t",
+            "int8_t",
+            "int16_t",
+            "int32_t",
+            "int64_t",
+            "uint8_t",
+            "uint16_t",
+            "uint32_t",
+            "uint64_t",
+            "intptr_t",
+            "uintptr_t",
+            "bool",
+            "true",
+            "false",
+            "NULL",
+            "nullptr",
         }
-        
+
         # Remove common C keywords and operators
         import re
-        
+
         # Split by common delimiters and operators
-        parts = re.split(r'[\[\]\(\)\{\}\s\*&,;]', type_str)
-        
+        parts = re.split(r"[\[\]\(\)\{\}\s\*&,;]", type_str)
+
         # Extract potential type names that exist in available_types
         types = []
         for part in parts:
             part = part.strip()
             if part and len(part) > 1 and part not in primitive_types:
                 # Check if it looks like a type name (starts with letter, contains letters/numbers/underscores)
-                if re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', part):
+                if re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", part):
                     # Only include if it exists in available_types
                     if part in available_types:
                         types.append(part)
-        
+
         return list(set(types))  # Remove duplicates

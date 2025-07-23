@@ -43,39 +43,52 @@ class TestGlobalParsing(unittest.TestCase):
         // Another global
         extern const int MAX_SIZE;
         """
-        
+
         # Create temporary file
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(test_code)
             temp_file = f.name
-        
+
         try:
             # Parse the file
             file_model = self.parser.parse_file(
-                Path(temp_file), 
-                os.path.basename(temp_file), 
-                os.path.dirname(temp_file)
+                Path(temp_file), os.path.basename(temp_file), os.path.dirname(temp_file)
             )
-            
+
             # Check that only actual globals are found
             global_names = [g.name for g in file_model.globals]
             global_types = [g.type for g in file_model.globals]
-            
+
             # Should only contain actual global variables
-            expected_globals = ['global_counter', 'global_value', 'global_string', 'MAX_SIZE']
+            expected_globals = [
+                "global_counter",
+                "global_value",
+                "global_string",
+                "MAX_SIZE",
+            ]
             for expected in expected_globals:
-                self.assertIn(expected, global_names, f"Expected global '{expected}' not found")
-            
+                self.assertIn(
+                    expected, global_names, f"Expected global '{expected}' not found"
+                )
+
             # Should NOT contain function internals
-            function_internals = ['sum', 'local_var', 'result']
+            function_internals = ["sum", "local_var", "result"]
             for internal in function_internals:
-                self.assertNotIn(internal, global_names, f"Function internal '{internal}' incorrectly identified as global")
-            
+                self.assertNotIn(
+                    internal,
+                    global_names,
+                    f"Function internal '{internal}' incorrectly identified as global",
+                )
+
             # Should NOT contain return statements
-            return_statements = ['return sum', 'return']
+            return_statements = ["return sum", "return"]
             for ret in return_statements:
-                self.assertNotIn(ret, global_names, f"Return statement '{ret}' incorrectly identified as global")
-            
+                self.assertNotIn(
+                    ret,
+                    global_names,
+                    f"Return statement '{ret}' incorrectly identified as global",
+                )
+
         finally:
             os.unlink(temp_file)
 
@@ -109,33 +122,40 @@ class TestGlobalParsing(unittest.TestCase):
         // More globals
         extern const char * DEFAULT_NAME;
         """
-        
+
         # Create temporary file
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(test_code)
             temp_file = f.name
-        
+
         try:
             # Parse the file
             file_model = self.parser.parse_file(
-                Path(temp_file), 
-                os.path.basename(temp_file), 
-                os.path.dirname(temp_file)
+                Path(temp_file), os.path.basename(temp_file), os.path.dirname(temp_file)
             )
-            
+
             # Check globals
             global_names = [g.name for g in file_model.globals]
-            
+
             # Should contain actual globals
-            expected_globals = ['global_array', 'DEFAULT_NAME']  # global_point not parsed as global due to struct initialization
+            expected_globals = [
+                "global_array",
+                "DEFAULT_NAME",
+            ]  # global_point not parsed as global due to struct initialization
             for expected in expected_globals:
-                self.assertIn(expected, global_names, f"Expected global '{expected}' not found")
-            
+                self.assertIn(
+                    expected, global_names, f"Expected global '{expected}' not found"
+                )
+
             # Should NOT contain function internals
-            function_internals = ['temp', 'nested_var', 'i', 'loop_var']
+            function_internals = ["temp", "nested_var", "i", "loop_var"]
             for internal in function_internals:
-                self.assertNotIn(internal, global_names, f"Function internal '{internal}' incorrectly identified as global")
-            
+                self.assertNotIn(
+                    internal,
+                    global_names,
+                    f"Function internal '{internal}' incorrectly identified as global",
+                )
+
         finally:
             os.unlink(temp_file)
 
@@ -157,34 +177,38 @@ class TestGlobalParsing(unittest.TestCase):
         // Regular global
         int regular_global = 42;
         """
-        
+
         # Create temporary file
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(test_code)
             temp_file = f.name
-        
+
         try:
             # Parse the file
             file_model = self.parser.parse_file(
-                Path(temp_file), 
-                os.path.basename(temp_file), 
-                os.path.dirname(temp_file)
+                Path(temp_file), os.path.basename(temp_file), os.path.dirname(temp_file)
             )
-            
+
             # Check globals
             global_names = [g.name for g in file_model.globals]
-            
+
             # Should contain global statics and regular globals
-            expected_globals = ['static_global', 'static_string', 'regular_global']
+            expected_globals = ["static_global", "static_string", "regular_global"]
             for expected in expected_globals:
-                self.assertIn(expected, global_names, f"Expected global '{expected}' not found")
-            
+                self.assertIn(
+                    expected, global_names, f"Expected global '{expected}' not found"
+                )
+
             # Should NOT contain static local variables
-            self.assertNotIn('static_local', global_names, "Static local variable incorrectly identified as global")
-            
+            self.assertNotIn(
+                "static_local",
+                global_names,
+                "Static local variable incorrectly identified as global",
+            )
+
         finally:
             os.unlink(temp_file)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

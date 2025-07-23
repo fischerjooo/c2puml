@@ -109,7 +109,9 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(loaded_config.project_name, original_config.project_name)
         self.assertEqual(loaded_config.source_folders, original_config.source_folders)
         self.assertEqual(loaded_config.output_dir, original_config.output_dir)
-        self.assertEqual(loaded_config.recursive_search, original_config.recursive_search)
+        self.assertEqual(
+            loaded_config.recursive_search, original_config.recursive_search
+        )
         self.assertEqual(len(loaded_config.file_include_patterns), 1)
 
     def test_file_filtering(self):
@@ -376,10 +378,10 @@ class TestConfig(unittest.TestCase):
         # Test that the configuration can be saved and loaded back
         save_path = os.path.join(self.temp_dir, "saved_config.json")
         config.save(save_path)
-        
+
         loaded_config = Config.load(save_path)
         self.assertEqual(loaded_config.source_folders, config.source_folders)
-        
+
         # Test that the summary includes all source folders
         summary = config.get_summary()
         self.assertIn("source_folders", summary)

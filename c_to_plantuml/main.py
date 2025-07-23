@@ -29,6 +29,7 @@ def setup_logging(verbose: bool = False) -> None:
         handlers=[logging.StreamHandler(sys.stdout)],
     )
 
+
 def load_config_from_path(config_path: str) -> dict:
     path = Path(config_path)
     if path.is_file():
@@ -45,6 +46,7 @@ def load_config_from_path(config_path: str) -> dict:
     else:
         raise FileNotFoundError(f"Config path not found: {config_path}")
 
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="C to PlantUML Converter (Simplified CLI)",
@@ -58,10 +60,17 @@ Usage:
         """,
     )
     parser.add_argument(
-        "--config", "-c", type=str, default=None, help="Path to config.json or config folder (optional, default: current directory)"
+        "--config",
+        "-c",
+        type=str,
+        default=None,
+        help="Path to config.json or config folder (optional, default: current directory)",
     )
     parser.add_argument(
-        "command", nargs="?", choices=["parse", "transform", "generate"], help="Which step to run: parse, transform, or generate. If omitted, runs full workflow."
+        "command",
+        nargs="?",
+        choices=["parse", "transform", "generate"],
+        help="Which step to run: parse, transform, or generate. If omitted, runs full workflow.",
     )
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose output"
@@ -86,7 +95,9 @@ Usage:
         return 1
 
     # Determine output folder from config, default to ./output
-    output_folder = getattr(config, "output_dir", None) or os.path.join(os.getcwd(), "output")
+    output_folder = getattr(config, "output_dir", None) or os.path.join(
+        os.getcwd(), "output"
+    )
     output_folder = os.path.abspath(output_folder)
     os.makedirs(output_folder, exist_ok=True)
     logging.info(f"Output folder: {output_folder}")
@@ -117,7 +128,9 @@ Usage:
             transformer = Transformer()
             transformer.transform(
                 model_file=model_file,
-                config_file=config_path if Path(config_path).is_file() else str(list(Path(config_path).glob("*.json"))[0]),
+                config_file=config_path
+                if Path(config_path).is_file()
+                else str(list(Path(config_path).glob("*.json"))[0]),
                 output_file=transformed_model_file,
             )
             logging.info(f"Transformed model saved to: {transformed_model_file}")
@@ -143,7 +156,9 @@ Usage:
                     output_dir=output_folder,
                     include_depth=getattr(config, "include_depth", 1),
                 )
-                logging.info(f"PlantUML generation complete! Output in: {output_folder}")
+                logging.info(
+                    f"PlantUML generation complete! Output in: {output_folder}"
+                )
                 return 0
             except Exception as e:
                 logging.error(f"Error generating PlantUML: {e}")
@@ -165,7 +180,9 @@ Usage:
         transformer = Transformer()
         transformer.transform(
             model_file=model_file,
-            config_file=config_path if Path(config_path).is_file() else str(list(Path(config_path).glob("*.json"))[0]),
+            config_file=config_path
+            if Path(config_path).is_file()
+            else str(list(Path(config_path).glob("*.json"))[0]),
             output_file=transformed_model_file,
         )
         logging.info(f"Transformed model saved to: {transformed_model_file}")
@@ -182,6 +199,7 @@ Usage:
     except Exception as e:
         logging.error(f"Error in workflow: {e}")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

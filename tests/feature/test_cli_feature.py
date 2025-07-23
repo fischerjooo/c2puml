@@ -5,29 +5,47 @@ import json
 from pathlib import Path
 from tests.feature.base import BaseFeatureTest
 
+
 class TestCLIFeature(BaseFeatureTest):
     def setUp(self):
         super().setUp()
         # Minimal C file
-        self.c_file = self.create_test_file("test.c", """
+        self.c_file = self.create_test_file(
+            "test.c",
+            """
         typedef struct { int x; } Point;
         int main() { return 0; }
-        """)
+        """,
+        )
         # Minimal config.json with explicit output_dir
         self.output_dir = os.path.join(self.temp_dir, "output")
         self.config_path = os.path.join(self.temp_dir, "config.json")
-        self.write_json_config(self.config_path, {
-            "project_name": "cli_test",
-            "source_folders": [self.temp_dir],
-            "recursive_search": True,
-            "output_dir": self.output_dir
-        })
-        self.cli = [sys.executable, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../main.py'))]
+        self.write_json_config(
+            self.config_path,
+            {
+                "project_name": "cli_test",
+                "source_folders": [self.temp_dir],
+                "recursive_search": True,
+                "output_dir": self.output_dir,
+            },
+        )
+        self.cli = [
+            sys.executable,
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "../../main.py")),
+        ]
         self.env = os.environ.copy()
-        self.env["PYTHONPATH"] = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+        self.env["PYTHONPATH"] = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "../../")
+        )
 
     def run_cli(self, args, cwd=None):
-        result = subprocess.run(self.cli + args, cwd=cwd or self.temp_dir, env=self.env, capture_output=True, text=True)
+        result = subprocess.run(
+            self.cli + args,
+            cwd=cwd or self.temp_dir,
+            env=self.env,
+            capture_output=True,
+            text=True,
+        )
         print(result.stdout)
         print(result.stderr)
         return result

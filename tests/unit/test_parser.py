@@ -193,7 +193,9 @@ float get_average(float* values, int count) {
             self.assertIn("VERSION", file_model.macros)
             # Check for MIN macro - it might be stored with full definition
             min_macro_found = any("MIN" in macro for macro in file_model.macros)
-            self.assertTrue(min_macro_found, f"MIN macro not found in {file_model.macros}")
+            self.assertTrue(
+                min_macro_found, f"MIN macro not found in {file_model.macros}"
+            )
 
         finally:
             os.unlink(temp_file)
@@ -293,13 +295,13 @@ typedef struct {
             file_model = self.parser.parse_file(
                 Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
             )
-            
+
             # Accept both UTF-8 and common Windows encodings for cross-platform compatibility
             acceptable_encodings = get_acceptable_encodings()
             self.assertIn(
-                file_model.encoding_used.lower(), 
+                file_model.encoding_used.lower(),
                 [enc.lower() for enc in acceptable_encodings],
-                f"Encoding '{file_model.encoding_used}' not in acceptable encodings: {acceptable_encodings}"
+                f"Encoding '{file_model.encoding_used}' not in acceptable encodings: {acceptable_encodings}",
             )
             self.assertEqual(len(file_model.functions), 1)
 

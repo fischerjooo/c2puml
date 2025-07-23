@@ -14,12 +14,12 @@ from c_to_plantuml.parser_tokenizer import CTokenizer, TokenType
 
 class TestPreprocessorBug(unittest.TestCase):
     """Test preprocessing directive handling bug and edge cases."""
-    
+
     def setUp(self):
         """Set up test fixtures."""
         self.parser = CParser()
         self.tokenizer = CTokenizer()
-        
+
     def test_simple_if_endif_block(self):
         """Test simple #if/#endif block processing."""
         code = """
@@ -30,18 +30,18 @@ class TestPreprocessorBug(unittest.TestCase):
         } enabled_feature_t;
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         # The bug: preprocessor directives should be processed, not included as raw text
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should have preprocessor tokens (this is expected)
         self.assertGreater(len(preprocessor_tokens), 0)
-        
+
         # But the content should be processed, not raw
         # This test will fail until the bug is fixed
-        self.assertTrue(any('#if' in t.value for t in preprocessor_tokens))
-        
+        self.assertTrue(any("#if" in t.value for t in preprocessor_tokens))
+
     def test_if_else_endif_block(self):
         """Test #if/#else/#endif block processing."""
         code = """
@@ -56,19 +56,19 @@ class TestPreprocessorBug(unittest.TestCase):
         } disabled_feature_t;
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect both #if and #else directives
-        if_directives = [t for t in preprocessor_tokens if '#if' in t.value]
-        else_directives = [t for t in preprocessor_tokens if '#else' in t.value]
-        endif_directives = [t for t in preprocessor_tokens if '#endif' in t.value]
-        
+        if_directives = [t for t in preprocessor_tokens if "#if" in t.value]
+        else_directives = [t for t in preprocessor_tokens if "#else" in t.value]
+        endif_directives = [t for t in preprocessor_tokens if "#endif" in t.value]
+
         self.assertGreater(len(if_directives), 0)
         self.assertGreater(len(else_directives), 0)
         self.assertGreater(len(endif_directives), 0)
-        
+
     def test_nested_preprocessor_blocks(self):
         """Test nested #if blocks processing."""
         code = """
@@ -92,17 +92,17 @@ class TestPreprocessorBug(unittest.TestCase):
             } release_struct_t;
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect all preprocessor directives
-        if_count = len([t for t in preprocessor_tokens if '#if' in t.value])
-        endif_count = len([t for t in preprocessor_tokens if '#endif' in t.value])
-        
+        if_count = len([t for t in preprocessor_tokens if "#if" in t.value])
+        endif_count = len([t for t in preprocessor_tokens if "#endif" in t.value])
+
         # Should have matching #if and #endif pairs
         self.assertEqual(if_count, endif_count)
-        
+
     def test_preprocessor_in_typedefs(self):
         """Test preprocessing directives within typedef definitions."""
         code = """
@@ -116,13 +116,13 @@ class TestPreprocessorBug(unittest.TestCase):
             STATUS_UNKNOWN = -1
         } status_t;
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect preprocessor directives within enum
         self.assertGreater(len(preprocessor_tokens), 0)
-        
+
     def test_complex_preprocessor_conditions(self):
         """Test complex preprocessor conditions."""
         code = """
@@ -146,21 +146,21 @@ class TestPreprocessorBug(unittest.TestCase):
             } default_struct_t;
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect complex conditions
-        if_directives = [t for t in preprocessor_tokens if '#if' in t.value]
-        elif_directives = [t for t in preprocessor_tokens if '#elif' in t.value]
-        else_directives = [t for t in preprocessor_tokens if '#else' in t.value]
-        endif_directives = [t for t in preprocessor_tokens if '#endif' in t.value]
-        
+        if_directives = [t for t in preprocessor_tokens if "#if" in t.value]
+        elif_directives = [t for t in preprocessor_tokens if "#elif" in t.value]
+        else_directives = [t for t in preprocessor_tokens if "#else" in t.value]
+        endif_directives = [t for t in preprocessor_tokens if "#endif" in t.value]
+
         self.assertGreater(len(if_directives), 0)
         self.assertGreater(len(elif_directives), 0)
         self.assertGreater(len(else_directives), 0)
         self.assertGreater(len(endif_directives), 0)
-        
+
     def test_preprocessor_in_function_pointers(self):
         """Test preprocessing directives in function pointer typedefs."""
         code = """
@@ -170,13 +170,13 @@ class TestPreprocessorBug(unittest.TestCase):
             typedef int (*basic_callback_t)(void);
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect preprocessor directives in function pointer typedefs
         self.assertGreater(len(preprocessor_tokens), 0)
-        
+
     def test_preprocessor_in_array_typedefs(self):
         """Test preprocessing directives in array typedefs."""
         code = """
@@ -186,13 +186,13 @@ class TestPreprocessorBug(unittest.TestCase):
             typedef char small_buffer_t[MIN_SIZE];
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect preprocessor directives in array typedefs
         self.assertGreater(len(preprocessor_tokens), 0)
-        
+
     def test_preprocessor_in_unions(self):
         """Test preprocessing directives in union typedefs."""
         code = """
@@ -211,13 +211,13 @@ class TestPreprocessorBug(unittest.TestCase):
             } basic_union_t;
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect preprocessor directives in unions
         self.assertGreater(len(preprocessor_tokens), 0)
-        
+
     def test_preprocessor_with_comments(self):
         """Test preprocessing directives with comments."""
         code = """
@@ -232,13 +232,13 @@ class TestPreprocessorBug(unittest.TestCase):
         } disabled_feature_t;
         #endif  // End of feature conditional
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect preprocessor directives with comments
         self.assertGreater(len(preprocessor_tokens), 0)
-        
+
     def test_preprocessor_with_whitespace_variations(self):
         """Test preprocessing directives with various whitespace patterns."""
         code = """
@@ -256,13 +256,13 @@ class TestPreprocessorBug(unittest.TestCase):
         } basic_t;
         #  endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect preprocessor directives with extra whitespace
         self.assertGreater(len(preprocessor_tokens), 0)
-        
+
     def test_preprocessor_with_multiline_conditions(self):
         """Test preprocessing directives with multiline conditions."""
         code = """
@@ -275,13 +275,13 @@ class TestPreprocessorBug(unittest.TestCase):
         } optimized_struct_t;
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect multiline preprocessor directives
         self.assertGreater(len(preprocessor_tokens), 0)
-        
+
     def test_preprocessor_with_defined_operator(self):
         """Test preprocessing directives with defined() operator."""
         code = """
@@ -303,14 +303,14 @@ class TestPreprocessorBug(unittest.TestCase):
             } disabled_t;
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect #ifdef directives
-        ifdef_directives = [t for t in preprocessor_tokens if '#ifdef' in t.value]
+        ifdef_directives = [t for t in preprocessor_tokens if "#ifdef" in t.value]
         self.assertGreater(len(ifdef_directives), 0)
-        
+
     def test_preprocessor_with_ifndef(self):
         """Test preprocessing directives with #ifndef."""
         code = """
@@ -325,14 +325,14 @@ class TestPreprocessorBug(unittest.TestCase):
             } basic_struct_t;
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect #ifndef directives
-        ifndef_directives = [t for t in preprocessor_tokens if '#ifndef' in t.value]
+        ifndef_directives = [t for t in preprocessor_tokens if "#ifndef" in t.value]
         self.assertGreater(len(ifndef_directives), 0)
-        
+
     def test_preprocessor_edge_case_empty_blocks(self):
         """Test preprocessing directives with empty blocks."""
         code = """
@@ -340,13 +340,13 @@ class TestPreprocessorBug(unittest.TestCase):
         #else
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect empty preprocessor blocks
         self.assertGreater(len(preprocessor_tokens), 0)
-        
+
     def test_preprocessor_edge_case_malformed(self):
         """Test preprocessing directives with malformed conditions."""
         code = """
@@ -360,13 +360,13 @@ class TestPreprocessorBug(unittest.TestCase):
         } debug_t;
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect malformed preprocessor directives
         self.assertGreater(len(preprocessor_tokens), 0)
-        
+
     def test_preprocessor_in_global_variables(self):
         """Test preprocessing directives in global variable declarations."""
         code = """
@@ -379,13 +379,13 @@ class TestPreprocessorBug(unittest.TestCase):
         int global_basic = 0;
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect preprocessor directives in global variables
         self.assertGreater(len(preprocessor_tokens), 0)
-        
+
     def test_preprocessor_in_function_declarations(self):
         """Test preprocessing directives in function declarations."""
         code = """
@@ -398,13 +398,13 @@ class TestPreprocessorBug(unittest.TestCase):
             int process_basic(void);
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect preprocessor directives in function declarations
         self.assertGreater(len(preprocessor_tokens), 0)
-        
+
     def test_preprocessor_with_complex_expressions(self):
         """Test preprocessing directives with complex expressions."""
         code = """
@@ -423,13 +423,13 @@ class TestPreprocessorBug(unittest.TestCase):
         } default_struct_t;
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect complex preprocessor expressions
         self.assertGreater(len(preprocessor_tokens), 0)
-        
+
     def test_preprocessor_with_string_literals(self):
         """Test preprocessing directives with string literals in conditions."""
         code = """
@@ -447,13 +447,13 @@ class TestPreprocessorBug(unittest.TestCase):
         } unknown_version_struct_t;
         #endif
         """
-        
+
         tokens = self.tokenizer.tokenize(code)
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         # Should detect preprocessor directives with string literals
         self.assertGreater(len(preprocessor_tokens), 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -12,7 +12,16 @@ from pathlib import Path
 
 from c_to_plantuml.config import Config
 from c_to_plantuml.generator import Generator, PlantUMLGenerator
-from c_to_plantuml.models import Alias, Enum, Field, FileModel, Function, ProjectModel, Struct, Union
+from c_to_plantuml.models import (
+    Alias,
+    Enum,
+    Field,
+    FileModel,
+    Function,
+    ProjectModel,
+    Struct,
+    Union,
+)
 
 
 class TestGenerator(unittest.TestCase):
@@ -22,6 +31,7 @@ class TestGenerator(unittest.TestCase):
         """Set up test fixtures"""
         super().setUp()
         from c_to_plantuml.parser import CParser
+
         self.parser = CParser()
         self.generator = Generator()
         self.temp_dir = tempfile.mkdtemp()
@@ -65,7 +75,11 @@ class TestGenerator(unittest.TestCase):
             globals=[Field("global_var", "int"), Field("global_string", "char*")],
             includes=["stdio.h", "stdlib.h", "local.h"],
             macros=["MAX_SIZE", "DEBUG_MODE", "VERSION"],
-            aliases={"Integer": Alias("Integer", "int"), "String": Alias("String", "char*"), "Callback": Alias("Callback", "void (*)(int)")},
+            aliases={
+                "Integer": Alias("Integer", "int"),
+                "String": Alias("String", "char*"),
+                "Callback": Alias("Callback", "void (*)(int)"),
+            },
         )
 
     def create_test_file(self, filename: str, content: str) -> Path:
@@ -94,37 +108,37 @@ void process_data() {
 }
         """
         test_file = self.create_test_file("test.c", content)
-        
+
         # Parse the file
         project_model = self.parser.parse_project(str(self.temp_dir))
         file_model = project_model.files["test.c"]
-        
+
         # Generate PlantUML diagram
         plantuml_generator = PlantUMLGenerator()
         diagram = plantuml_generator.generate_diagram(file_model, project_model)
-        
+
         # Check that PlantUML syntax is correct
         self.assertIn("@startuml test", diagram)
         self.assertIn("@enduml", diagram)
-        
+
         # Check that main class is generated
         self.assertIn('class "test" as TEST <<source>> #LightBlue', diagram)
-        
+
         # Check that macros are included
         self.assertIn("-- Macros --", diagram)
         self.assertIn("- #define MAX_SIZE", diagram)
         self.assertIn("- #define DEBUG", diagram)
-        
+
         # Check that global variables are included
         self.assertIn("-- Global Variables --", diagram)
         self.assertIn("int global_var", diagram)
         self.assertIn("char * global_string", diagram)
-        
+
         # Check that functions are included
         self.assertIn("-- Functions --", diagram)
         self.assertIn("int main()", diagram)
         self.assertIn("void process_data()", diagram)
-        
+
         # Remove assertion for typedefs section if no typedefs exist
         # self.assertIn("-- Typedefs --", diagram) - REMOVED
 
@@ -140,9 +154,7 @@ void process_data() {
             files={"test.c": file_model},
         )
         plantuml_generator = PlantUMLGenerator()
-        content = plantuml_generator.generate_diagram(
-            file_model, project_model
-        )
+        content = plantuml_generator.generate_diagram(file_model, project_model)
 
         # Write the content to file
         puml_file = output_dir / "test.puml"
@@ -285,9 +297,7 @@ void process_data() {
             files={"empty.c": empty_file},
         )
         plantuml_generator = PlantUMLGenerator()
-        content = plantuml_generator.generate_diagram(
-            empty_file, project_model
-        )
+        content = plantuml_generator.generate_diagram(empty_file, project_model)
 
         # Should still generate valid PlantUML
         self.assertIn("@startuml empty", content)
@@ -308,26 +318,26 @@ void test_function() {
 }
         """
         test_file = self.create_test_file("test_file.c", content)
-        
+
         # Parse the file
         project_model = self.parser.parse_project(str(self.temp_dir))
         file_model = project_model.files["test_file.c"]
-        
+
         # Generate PlantUML diagram
         plantuml_generator = PlantUMLGenerator()
         diagram = plantuml_generator.generate_diagram(file_model, project_model)
-        
+
         # Check that PlantUML syntax is correct
         self.assertIn("@startuml test_file", diagram)
         self.assertIn("@enduml", diagram)
-        
+
         # Check that main class is generated with correct name
         self.assertIn('class "test_file" as TEST_FILE <<source>> #LightBlue', diagram)
-        
+
         # Check that functions are included
         self.assertIn("-- Functions --", diagram)
         self.assertIn("void test_function()", diagram)
-        
+
         # Remove assertions for struct/enum declarations in file/header classes
         # self.assertIn("struct Test_Struct", content)  # no + prefix in source files - REMOVED
 
@@ -357,9 +367,7 @@ void test_function() {
             files={"test.c": file_model},
         )
         plantuml_generator = PlantUMLGenerator()
-        content = plantuml_generator.generate_diagram(
-            file_model, project_model
-        )
+        content = plantuml_generator.generate_diagram(file_model, project_model)
 
         # Check for required PlantUML elements
         self.assertIn("@startuml", content)

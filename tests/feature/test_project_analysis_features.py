@@ -42,11 +42,11 @@ struct Data {
 
         self.create_test_file("main.c", main_content)
         self.create_test_file("subdir/header.h", header_content)
-        
+
         # Test recursive analysis
         parser = Parser()
         model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
-        
+
         # Verify both files were found
         self.assertIn("main.c", model.files)
         # Use os.path.join to handle cross-platform path separators
@@ -62,11 +62,11 @@ struct Data {
         self.create_test_file("test.c", "void test() {}")
         self.create_test_file("ignore.txt", "ignore this file")
         self.create_test_file("backup.c~", "backup file")
-        
+
         # Test analysis with default filtering
         parser = Parser()
         model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
-        
+
         # Should only include .c and .h files
         self.assertIn("main.c", model.files)
         self.assertIn("test.c", model.files)

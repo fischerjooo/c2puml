@@ -125,33 +125,21 @@ struct Config {
 
         # Create configuration for transformation
         config = {
-            "file_filters": {
-                "include": [r".*\.c$"],
-                "exclude": [r".*test.*"]
-            },
+            "file_filters": {"include": [r".*\.c$"], "exclude": [r".*test.*"]},
             "element_filters": {
                 "structs": {
                     "include": [r"Person.*", r"Address.*"],
-                    "exclude": [r"Temp.*"]
+                    "exclude": [r"Temp.*"],
                 },
-                "enums": {
-                    "include": [r"Status.*"],
-                    "exclude": [r"Temp.*"]
-                },
+                "enums": {"include": [r"Status.*"], "exclude": [r"Temp.*"]},
                 "functions": {
                     "include": [r"main.*", r"calculate.*"],
-                    "exclude": [r"temp.*", r"internal.*"]
+                    "exclude": [r"temp.*", r"internal.*"],
                 },
-                "globals": {
-                    "include": [r"global.*"],
-                    "exclude": [r"temp.*"]
-                },
-                "macros": {
-                    "include": [r"MAX.*"],
-                    "exclude": [r"TEMP.*"]
-                }
+                "globals": {"include": [r"global.*"], "exclude": [r"temp.*"]},
+                "macros": {"include": [r"MAX.*"], "exclude": [r"TEMP.*"]},
             },
-            "include_depth": 2
+            "include_depth": 2,
         }
 
         config_file = os.path.join(self.temp_dir, "config.json")
@@ -168,14 +156,14 @@ struct Config {
 
         # Verify transformations
         files = transformed_data["files"]
-        
+
         # Should only have main.c (filtered by file_filters)
         self.assertIn("main.c", files)
         self.assertNotIn("utils.h", files)
         self.assertNotIn("config.h", files)
 
         main_file = files["main.c"]
-        
+
         # Check struct filtering
         self.assertIn("Person", main_file["structs"])
         self.assertIn("Address", main_file["structs"])
@@ -255,12 +243,7 @@ struct Struct2 {
         model.save(model_file)
 
         # Create configuration with include depth processing
-        config = {
-            "include_depth": 3,
-            "file_filters": {
-                "include": [r".*\.(c|h)$"]
-            }
-        }
+        config = {"include_depth": 3, "file_filters": {"include": [r".*\.(c|h)$"]}}
 
         config_file = os.path.join(self.temp_dir, "config.json")
         with open(config_file, "w") as f:
@@ -276,13 +259,13 @@ struct Struct2 {
 
         # Verify include relations were processed
         files = transformed_data["files"]
-        
+
         # Check that include relations were created
         main_file = files["main.c"]
         # Note: Current implementation doesn't include include_relations field
         # The include relationships are processed during diagram generation
         self.assertIn("includes", main_file)
-        
+
         # The transformer should have processed include relationships
         # Note: The actual include relation processing depends on file discovery
         # which may not work in the test environment, but the structure should be there
@@ -322,15 +305,9 @@ int old_function(int param) {
         config = {
             "transformations": {
                 "rename": {
-                    "structs": {
-                        "OldStruct": "NewStruct"
-                    },
-                    "enums": {
-                        "OldEnum": "NewEnum"
-                    },
-                    "functions": {
-                        "old_function": "new_function"
-                    }
+                    "structs": {"OldStruct": "NewStruct"},
+                    "enums": {"OldEnum": "NewEnum"},
+                    "functions": {"old_function": "new_function"},
                 }
             }
         }
@@ -380,16 +357,10 @@ struct ExistingStruct {
                 "add": {
                     "structs": {
                         "AddedStruct": {
-                            "fields": [
-                                {"name": "added_field", "type": "int"}
-                            ]
+                            "fields": [{"name": "added_field", "type": "int"}]
                         }
                     },
-                    "enums": {
-                        "AddedEnum": {
-                            "values": ["ADDED_VAL1", "ADDED_VAL2"]
-                        }
-                    }
+                    "enums": {"AddedEnum": {"values": ["ADDED_VAL1", "ADDED_VAL2"]}},
                 }
             }
         }
@@ -450,10 +421,7 @@ enum RemoveEnum {
         # Create configuration with removals
         config = {
             "transformations": {
-                "remove": {
-                    "structs": ["RemoveStruct"],
-                    "enums": ["RemoveEnum"]
-                }
+                "remove": {"structs": ["RemoveStruct"], "enums": ["RemoveEnum"]}
             }
         }
 
@@ -530,12 +498,12 @@ static void helper_function(void) { }
             "element_filters": {
                 "structs": {
                     "include": [r"^Public.*", r".*API$"],
-                    "exclude": [r"Internal.*", r".*Test.*"]
+                    "exclude": [r"Internal.*", r".*Test.*"],
                 },
                 "functions": {
                     "include": [r"^public_.*"],
-                    "exclude": [r"internal_.*", r"test_.*", r".*_function$"]
-                }
+                    "exclude": [r"internal_.*", r"test_.*", r".*_function$"],
+                },
             }
         }
 
@@ -602,7 +570,7 @@ struct TestStruct {
             "element_filters": {
                 "structs": {
                     "include": [r"[invalid regex pattern"],
-                    "exclude": [r"valid.*"]
+                    "exclude": [r"valid.*"],
                 }
             }
         }
@@ -707,28 +675,16 @@ static void internal_helper(void);
 
         # Step 2: Transform the model (filter to public API only)
         config = {
-            "file_filters": {
-                "include": [r".*\.(c|h)$"],
-                "exclude": [r".*internal.*"]
-            },
+            "file_filters": {"include": [r".*\.(c|h)$"], "exclude": [r".*internal.*"]},
             "element_filters": {
-                "structs": {
-                    "include": [r"Public.*"],
-                    "exclude": [r"Internal.*"]
-                },
-                "enums": {
-                    "include": [r"Public.*"],
-                    "exclude": [r"Internal.*"]
-                },
+                "structs": {"include": [r"Public.*"], "exclude": [r"Internal.*"]},
+                "enums": {"include": [r"Public.*"], "exclude": [r"Internal.*"]},
                 "functions": {
                     "include": [r"public.*", r"main"],
-                    "exclude": [r"internal.*"]
+                    "exclude": [r"internal.*"],
                 },
-                "macros": {
-                    "include": [r"PUBLIC.*"],
-                    "exclude": [r"INTERNAL.*"]
-                }
-            }
+                "macros": {"include": [r"PUBLIC.*"], "exclude": [r"INTERNAL.*"]},
+            },
         }
 
         config_file = os.path.join(self.temp_dir, "transform_config.json")
@@ -745,7 +701,7 @@ static void internal_helper(void);
             "include_functions": True,
             "include_structs": True,
             "include_enums": True,
-            "include_macros": True
+            "include_macros": True,
         }
 
         generator_config_file = os.path.join(self.temp_dir, "generator_config.json")
@@ -754,8 +710,7 @@ static void internal_helper(void);
 
         generator = Generator()
         output_dir = generator.generate(
-            transformed_model_file, 
-            os.path.join(self.temp_dir, "output")
+            transformed_model_file, os.path.join(self.temp_dir, "output")
         )
 
         # Verify the integration worked
@@ -767,37 +722,39 @@ static void internal_helper(void);
             transformed_data = json.load(f)
 
         files = transformed_data["files"]
-        
+
         # Should have main.c and api.h, but not internal.h
         self.assertIn("main.c", files)
         self.assertIn("api.h", files)
         self.assertNotIn("internal.h", files)
 
         main_file = files["main.c"]
-        
+
         # Should only have public elements
         self.assertIn("PublicAPI", main_file["structs"])
         self.assertNotIn("InternalData", main_file["structs"])
-        
+
         self.assertIn("PublicStatus", main_file["enums"])
-        
+
         function_names = [f["name"] for f in main_file["functions"]]
         self.assertIn("public_function", function_names)
         self.assertIn("main", function_names)
         self.assertNotIn("internal_helper", function_names)
-        
+
         self.assertIn("PUBLIC_API_VERSION", main_file["macros"])
         self.assertNotIn("INTERNAL_DEBUG", main_file["macros"])
 
         # Verify PlantUML output was generated
         output_files = list(Path(output_dir).glob("*.puml"))
         self.assertGreater(len(output_files), 0)
-        
+
         # Check the first PlantUML file
         with open(output_files[0], "r") as f:
             plantuml_content = f.read()
-        
+
         self.assertIn("@startuml", plantuml_content)
         self.assertIn("api", plantuml_content)  # Changed from "PublicAPI" to "api"
-        self.assertIn("api", plantuml_content)  # Changed from "PublicStatus" to "api" - both structs and enums are in the api header
+        self.assertIn(
+            "api", plantuml_content
+        )  # Changed from "PublicStatus" to "api" - both structs and enums are in the api header
         self.assertNotIn("InternalData", plantuml_content)

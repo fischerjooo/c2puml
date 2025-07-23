@@ -31,7 +31,7 @@ class TestCParserComprehensive(unittest.TestCase):
             char label[32];
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -44,7 +44,7 @@ class TestCParserComprehensive(unittest.TestCase):
             self.assertIn("Point", file_model.structs)
             point_struct = file_model.structs["Point"]
             self.assertEqual(len(point_struct.fields), 3)
-            
+
             # Check field names
             field_names = [field.name for field in point_struct.fields]
             self.assertIn("x", field_names)
@@ -62,7 +62,7 @@ class TestCParserComprehensive(unittest.TestCase):
             int y;
         } point_t;
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -87,7 +87,7 @@ class TestCParserComprehensive(unittest.TestCase):
             int y;
         } point;
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -114,7 +114,7 @@ class TestCParserComprehensive(unittest.TestCase):
             int height;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -140,7 +140,7 @@ class TestCParserComprehensive(unittest.TestCase):
             PENDING = 2
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -153,7 +153,7 @@ class TestCParserComprehensive(unittest.TestCase):
             self.assertIn("Status", file_model.enums)
             status_enum = file_model.enums["Status"]
             self.assertEqual(len(status_enum.values), 3)
-            
+
             # Check enum values
             enum_values = [value.name for value in status_enum.values]
             self.assertIn("OK", enum_values)
@@ -172,7 +172,7 @@ class TestCParserComprehensive(unittest.TestCase):
             BLUE = 2
         } color_t;
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -198,7 +198,7 @@ class TestCParserComprehensive(unittest.TestCase):
             double d;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -222,7 +222,7 @@ class TestCParserComprehensive(unittest.TestCase):
         void process_data(char* data);
         point_t* create_point(int x, int y);
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -233,7 +233,7 @@ class TestCParserComprehensive(unittest.TestCase):
             )
 
             self.assertEqual(len(file_model.functions), 3)
-            
+
             # Check function names
             func_names = [func.name for func in file_model.functions]
             self.assertIn("calculate_sum", func_names)
@@ -254,7 +254,7 @@ class TestCParserComprehensive(unittest.TestCase):
             printf("%s", data);
         }
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -265,7 +265,7 @@ class TestCParserComprehensive(unittest.TestCase):
             )
 
             self.assertEqual(len(file_model.functions), 2)
-            
+
             # Check function names
             func_names = [func.name for func in file_model.functions]
             self.assertIn("calculate_sum", func_names)
@@ -282,7 +282,7 @@ class TestCParserComprehensive(unittest.TestCase):
         inline int fast_function(int x);
         const char* get_string(void);
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -293,7 +293,7 @@ class TestCParserComprehensive(unittest.TestCase):
             )
 
             self.assertEqual(len(file_model.functions), 4)
-            
+
             # Check function names
             func_names = [func.name for func in file_model.functions]
             self.assertIn("internal_function", func_names)
@@ -312,7 +312,7 @@ class TestCParserComprehensive(unittest.TestCase):
         extern double* global_ptr;
         const int MAX_SIZE = 100;
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -323,7 +323,7 @@ class TestCParserComprehensive(unittest.TestCase):
             )
 
             self.assertGreaterEqual(len(file_model.globals), 1)
-            
+
             # Check global variable names
             global_names = [g.name for g in file_model.globals]
             self.assertIn("global_counter", global_names)
@@ -339,7 +339,7 @@ class TestCParserComprehensive(unittest.TestCase):
         #include "local.h"
         #include "config.h"
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -350,7 +350,7 @@ class TestCParserComprehensive(unittest.TestCase):
             )
 
             self.assertGreaterEqual(len(file_model.includes), 2)
-            
+
             # Check include paths
             include_paths = [inc for inc in file_model.includes]
             self.assertIn("stdio.h", include_paths)
@@ -367,7 +367,7 @@ class TestCParserComprehensive(unittest.TestCase):
         #define SQUARE(x) ((x) * (x))
         #define MIN(a, b) ((a) < (b) ? (a) : (b))
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -390,7 +390,7 @@ class TestCParserComprehensive(unittest.TestCase):
         typedef struct Point* PointPtr;
         typedef int (*Callback)(int, int);
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -467,7 +467,7 @@ class TestCParserComprehensive(unittest.TestCase):
             return p;
         }
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -508,7 +508,7 @@ class TestCParserComprehensive(unittest.TestCase):
             return a + b;  // Return comment
         }
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -543,7 +543,7 @@ class TestCParserComprehensive(unittest.TestCase):
             int y;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -575,7 +575,7 @@ class TestCParserComprehensive(unittest.TestCase):
             struct Rectangle rect;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -603,7 +603,7 @@ class TestCParserComprehensive(unittest.TestCase):
         
         int process_with_callback(int x, int y, Callback cb);
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -614,7 +614,9 @@ class TestCParserComprehensive(unittest.TestCase):
             )
 
             self.assertIn("Handler", file_model.structs)
-            self.assertIn("process_with_callback", [f.name for f in file_model.functions])
+            self.assertIn(
+                "process_with_callback", [f.name for f in file_model.functions]
+            )
 
         finally:
             os.unlink(temp_file)
@@ -630,7 +632,7 @@ class TestCParserComprehensive(unittest.TestCase):
         int matrix[10][10];
         char* strings[5];
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -659,7 +661,7 @@ class TestCParserComprehensive(unittest.TestCase):
         const char* get_name(void);
         void set_status(volatile int* status);
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -686,7 +688,7 @@ class TestCParserComprehensive(unittest.TestCase):
             unsigned int reserved : 29;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -717,7 +719,7 @@ class TestCParserComprehensive(unittest.TestCase):
             struct Point bottom_right;
         };
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -743,7 +745,7 @@ class TestCParserComprehensive(unittest.TestCase):
             return count;
         }
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -765,7 +767,7 @@ class TestCParserComprehensive(unittest.TestCase):
         int printf(const char* format, ...);
         int sprintf(char* buffer, const char* format, ...);
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -796,7 +798,7 @@ class TestCParserComprehensive(unittest.TestCase):
         void sort_array(int* array, int size, Comparator cmp);
         void process_items(int count, Callback callback, void* user_data);
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -863,7 +865,7 @@ class TestCParserComprehensive(unittest.TestCase):
             return p;
         }
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -891,7 +893,7 @@ class TestCParserComprehensive(unittest.TestCase):
         # Create a temporary project directory
         with tempfile.TemporaryDirectory() as temp_dir:
             project_path = Path(temp_dir)
-            
+
             # Create multiple C files
             files_content = {
                 "main.c": """
@@ -921,22 +923,22 @@ class TestCParserComprehensive(unittest.TestCase):
                 int calculate_sum(int a, int b) {
                     return a + b;
                 }
-                """
+                """,
             }
-            
+
             # Write files
             for filename, content in files_content.items():
                 file_path = project_path / filename
                 with open(file_path, "w") as f:
                     f.write(content)
-            
+
             # Parse the project
             project_model = self.parser.parse_project(str(project_path))
-            
+
             # Check results
             self.assertEqual(project_model.project_name, project_path.name)
             self.assertEqual(len(project_model.files), 3)
-            
+
             # Check that all files were parsed
             file_names = list(project_model.files.keys())
             self.assertIn("main.c", file_names)
@@ -946,9 +948,11 @@ class TestCParserComprehensive(unittest.TestCase):
     def test_parse_file_encoding_detection(self):
         """Test parsing file with different encodings"""
         content = "struct Point { int x; int y; };"
-        
+
         # Test with UTF-8 encoding
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False, encoding="utf-8") as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", delete=False, encoding="utf-8"
+        ) as f:
             f.write(content)
             temp_file = f.name
 
@@ -967,7 +971,7 @@ class TestCParserComprehensive(unittest.TestCase):
             self.parser.parse_file(
                 Path("/nonexistent/file.c"), "file.c", "/nonexistent"
             )
-        
+
         # Test with non-C file
         with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
             f.write("This is not C code")
@@ -995,7 +999,7 @@ class TestCParserComprehensive(unittest.TestCase):
             return 0;
         }
         """
-        
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
             f.write(content)
             temp_file = f.name
@@ -1010,5 +1014,5 @@ class TestCParserComprehensive(unittest.TestCase):
             os.unlink(temp_file)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

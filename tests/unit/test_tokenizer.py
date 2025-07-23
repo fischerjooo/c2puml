@@ -7,8 +7,13 @@ import unittest
 from typing import List
 
 from c_to_plantuml.parser_tokenizer import (
-    CTokenizer, StructureFinder, Token, TokenType,
-    find_struct_fields, find_enum_values, extract_token_range
+    CTokenizer,
+    StructureFinder,
+    Token,
+    TokenType,
+    find_struct_fields,
+    find_enum_values,
+    extract_token_range,
 )
 
 
@@ -22,15 +27,28 @@ class TestCTokenizer(unittest.TestCase):
         """Test tokenization of C keywords"""
         content = "struct enum union typedef static extern inline const void"
         tokens = self.tokenizer.tokenize(content)
-        
+
         expected_types = [
-            TokenType.STRUCT, TokenType.WHITESPACE, TokenType.ENUM, TokenType.WHITESPACE,
-            TokenType.UNION, TokenType.WHITESPACE, TokenType.TYPEDEF, TokenType.WHITESPACE,
-            TokenType.STATIC, TokenType.WHITESPACE, TokenType.EXTERN, TokenType.WHITESPACE,
-            TokenType.INLINE, TokenType.WHITESPACE, TokenType.CONST, TokenType.WHITESPACE,
-            TokenType.VOID, TokenType.EOF
+            TokenType.STRUCT,
+            TokenType.WHITESPACE,
+            TokenType.ENUM,
+            TokenType.WHITESPACE,
+            TokenType.UNION,
+            TokenType.WHITESPACE,
+            TokenType.TYPEDEF,
+            TokenType.WHITESPACE,
+            TokenType.STATIC,
+            TokenType.WHITESPACE,
+            TokenType.EXTERN,
+            TokenType.WHITESPACE,
+            TokenType.INLINE,
+            TokenType.WHITESPACE,
+            TokenType.CONST,
+            TokenType.WHITESPACE,
+            TokenType.VOID,
+            TokenType.EOF,
         ]
-        
+
         self.assertEqual(len(tokens), len(expected_types))
         for i, expected_type in enumerate(expected_types):
             self.assertEqual(tokens[i].type, expected_type)
@@ -39,14 +57,26 @@ class TestCTokenizer(unittest.TestCase):
         """Test tokenization of C data types"""
         content = "char int float double long short unsigned signed"
         tokens = self.tokenizer.tokenize(content)
-        
+
         expected_types = [
-            TokenType.CHAR, TokenType.WHITESPACE, TokenType.INT, TokenType.WHITESPACE,
-            TokenType.FLOAT, TokenType.WHITESPACE, TokenType.DOUBLE, TokenType.WHITESPACE,
-            TokenType.LONG, TokenType.WHITESPACE, TokenType.SHORT, TokenType.WHITESPACE,
-            TokenType.UNSIGNED, TokenType.WHITESPACE, TokenType.SIGNED, TokenType.EOF
+            TokenType.CHAR,
+            TokenType.WHITESPACE,
+            TokenType.INT,
+            TokenType.WHITESPACE,
+            TokenType.FLOAT,
+            TokenType.WHITESPACE,
+            TokenType.DOUBLE,
+            TokenType.WHITESPACE,
+            TokenType.LONG,
+            TokenType.WHITESPACE,
+            TokenType.SHORT,
+            TokenType.WHITESPACE,
+            TokenType.UNSIGNED,
+            TokenType.WHITESPACE,
+            TokenType.SIGNED,
+            TokenType.EOF,
         ]
-        
+
         self.assertEqual(len(tokens), len(expected_types))
         for i, expected_type in enumerate(expected_types):
             self.assertEqual(tokens[i].type, expected_type)
@@ -55,13 +85,22 @@ class TestCTokenizer(unittest.TestCase):
         """Test tokenization of operators and punctuation"""
         content = "{}()[];,=*&"
         tokens = self.tokenizer.tokenize(content)
-        
+
         expected_types = [
-            TokenType.LBRACE, TokenType.RBRACE, TokenType.LPAREN, TokenType.RPAREN,
-            TokenType.LBRACKET, TokenType.RBRACKET, TokenType.SEMICOLON, TokenType.COMMA,
-            TokenType.ASSIGN, TokenType.ASTERISK, TokenType.AMPERSAND, TokenType.EOF
+            TokenType.LBRACE,
+            TokenType.RBRACE,
+            TokenType.LPAREN,
+            TokenType.RPAREN,
+            TokenType.LBRACKET,
+            TokenType.RBRACKET,
+            TokenType.SEMICOLON,
+            TokenType.COMMA,
+            TokenType.ASSIGN,
+            TokenType.ASTERISK,
+            TokenType.AMPERSAND,
+            TokenType.EOF,
         ]
-        
+
         self.assertEqual(len(tokens), len(expected_types))
         for i, expected_type in enumerate(expected_types):
             self.assertEqual(tokens[i].type, expected_type)
@@ -70,11 +109,16 @@ class TestCTokenizer(unittest.TestCase):
         """Test tokenization of identifiers"""
         content = "variable_name _underscore camelCase UPPER_CASE"
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Filter out whitespace and EOF
         identifier_tokens = [t for t in tokens if t.type == TokenType.IDENTIFIER]
-        
-        expected_identifiers = ["variable_name", "_underscore", "camelCase", "UPPER_CASE"]
+
+        expected_identifiers = [
+            "variable_name",
+            "_underscore",
+            "camelCase",
+            "UPPER_CASE",
+        ]
         self.assertEqual(len(identifier_tokens), len(expected_identifiers))
         for i, expected_id in enumerate(expected_identifiers):
             self.assertEqual(identifier_tokens[i].value, expected_id)
@@ -83,11 +127,19 @@ class TestCTokenizer(unittest.TestCase):
         """Test tokenization of numbers"""
         content = "123 456.789 0x1A 0b1010 42L 3.14f 2.5e-10"
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Filter out whitespace and EOF
         number_tokens = [t for t in tokens if t.type == TokenType.NUMBER]
-        
-        expected_numbers = ["123", "456.789", "0x1A", "0b1010", "42L", "3.14f", "2.5e-10"]
+
+        expected_numbers = [
+            "123",
+            "456.789",
+            "0x1A",
+            "0b1010",
+            "42L",
+            "3.14f",
+            "2.5e-10",
+        ]
         self.assertEqual(len(number_tokens), len(expected_numbers))
         for i, expected_num in enumerate(expected_numbers):
             self.assertEqual(number_tokens[i].value, expected_num)
@@ -96,10 +148,10 @@ class TestCTokenizer(unittest.TestCase):
         """Test tokenization of string literals"""
         content = '"Hello, World!" "Escape\\n\\t\\"quotes\\""'
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Filter out whitespace and EOF
         string_tokens = [t for t in tokens if t.type == TokenType.STRING]
-        
+
         expected_strings = ['"Hello, World!"', '"Escape\\n\\t\\"quotes\\""']
         self.assertEqual(len(string_tokens), len(expected_strings))
         for i, expected_str in enumerate(expected_strings):
@@ -109,10 +161,10 @@ class TestCTokenizer(unittest.TestCase):
         """Test tokenization of character literals"""
         content = "'a' '\\n' '\\t' '\\''"
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Filter out whitespace and EOF
         char_tokens = [t for t in tokens if t.type == TokenType.CHAR_LITERAL]
-        
+
         expected_chars = ["'a'", "'\\n'", "'\\t'", "'\\''"]
         self.assertEqual(len(char_tokens), len(expected_chars))
         for i, expected_char in enumerate(expected_chars):
@@ -122,10 +174,10 @@ class TestCTokenizer(unittest.TestCase):
         """Test tokenization of comments"""
         content = "// Single line comment\n/* Multi-line\ncomment */"
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Filter out whitespace, newlines and EOF
         comment_tokens = [t for t in tokens if t.type == TokenType.COMMENT]
-        
+
         self.assertEqual(len(comment_tokens), 2)
         self.assertTrue(comment_tokens[0].value.startswith("//"))
         self.assertTrue(comment_tokens[1].value.startswith("/*"))
@@ -134,10 +186,14 @@ class TestCTokenizer(unittest.TestCase):
         """Test tokenization of preprocessor directives"""
         content = "#include <stdio.h>\n#define MAX_SIZE 100\n#ifdef DEBUG"
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Filter out whitespace, newlines and EOF
-        preprocessor_tokens = [t for t in tokens if t.type in [TokenType.INCLUDE, TokenType.DEFINE, TokenType.PREPROCESSOR]]
-        
+        preprocessor_tokens = [
+            t
+            for t in tokens
+            if t.type in [TokenType.INCLUDE, TokenType.DEFINE, TokenType.PREPROCESSOR]
+        ]
+
         self.assertEqual(len(preprocessor_tokens), 3)
         self.assertEqual(preprocessor_tokens[0].type, TokenType.INCLUDE)
         self.assertEqual(preprocessor_tokens[1].type, TokenType.DEFINE)
@@ -147,15 +203,17 @@ class TestCTokenizer(unittest.TestCase):
         """Test tokenization of #if preprocessor directives"""
         content = "#if (STD_ON == CRYPTO_CFG_BULK_JOB_PROCESSING_ENABLED)\n#elif (STD_ON == CRYPTO_CFG_FEATURE_ENABLED)\n#else\n#endif"
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Filter out whitespace, newlines and EOF
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         self.assertEqual(len(preprocessor_tokens), 4)
-        
+
         # Check that all directives are properly tokenized
         directive_values = [t.value.strip() for t in preprocessor_tokens]
-        self.assertIn("#if (STD_ON == CRYPTO_CFG_BULK_JOB_PROCESSING_ENABLED)", directive_values)
+        self.assertIn(
+            "#if (STD_ON == CRYPTO_CFG_BULK_JOB_PROCESSING_ENABLED)", directive_values
+        )
         self.assertIn("#elif (STD_ON == CRYPTO_CFG_FEATURE_ENABLED)", directive_values)
         self.assertIn("#else", directive_values)
         self.assertIn("#endif", directive_values)
@@ -164,10 +222,10 @@ class TestCTokenizer(unittest.TestCase):
         """Test tokenization of whitespace"""
         content = "  \t  \n  "
         tokens = self.tokenizer.tokenize(content)
-        
+
         whitespace_tokens = [t for t in tokens if t.type == TokenType.WHITESPACE]
         newline_tokens = [t for t in tokens if t.type == TokenType.NEWLINE]
-        
+
         self.assertGreater(len(whitespace_tokens), 0)
         self.assertGreater(len(newline_tokens), 0)
 
@@ -175,17 +233,31 @@ class TestCTokenizer(unittest.TestCase):
         """Test tokenization of complex C expressions"""
         content = "int* ptr = (int*)malloc(sizeof(int));"
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Filter out whitespace and EOF
-        significant_tokens = [t for t in tokens if t.type not in [TokenType.WHITESPACE, TokenType.EOF]]
-        
-        expected_types = [
-            TokenType.INT, TokenType.ASTERISK, TokenType.IDENTIFIER, TokenType.ASSIGN,
-            TokenType.LPAREN, TokenType.INT, TokenType.ASTERISK, TokenType.RPAREN,
-            TokenType.IDENTIFIER, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.LPAREN,
-            TokenType.INT, TokenType.RPAREN, TokenType.RPAREN, TokenType.SEMICOLON
+        significant_tokens = [
+            t for t in tokens if t.type not in [TokenType.WHITESPACE, TokenType.EOF]
         ]
-        
+
+        expected_types = [
+            TokenType.INT,
+            TokenType.ASTERISK,
+            TokenType.IDENTIFIER,
+            TokenType.ASSIGN,
+            TokenType.LPAREN,
+            TokenType.INT,
+            TokenType.ASTERISK,
+            TokenType.RPAREN,
+            TokenType.IDENTIFIER,
+            TokenType.LPAREN,
+            TokenType.IDENTIFIER,
+            TokenType.LPAREN,
+            TokenType.INT,
+            TokenType.RPAREN,
+            TokenType.RPAREN,
+            TokenType.SEMICOLON,
+        ]
+
         self.assertEqual(len(significant_tokens), len(expected_types))
         for i, expected_type in enumerate(expected_types):
             self.assertEqual(significant_tokens[i].type, expected_type)
@@ -196,30 +268,30 @@ class TestCTokenizer(unittest.TestCase):
         tokens = self.tokenizer.tokenize("")
         self.assertEqual(len(tokens), 1)  # Only EOF token
         self.assertEqual(tokens[0].type, TokenType.EOF)
-        
+
         # Single character
         tokens = self.tokenizer.tokenize("a")
         self.assertEqual(len(tokens), 2)  # Identifier + EOF
         self.assertEqual(tokens[0].type, TokenType.IDENTIFIER)
         self.assertEqual(tokens[0].value, "a")
-        
+
         # Unknown characters
         tokens = self.tokenizer.tokenize("@#$%")
-        print('All tokens:', tokens)
+        print("All tokens:", tokens)
         unknown_tokens = [t for t in tokens if t.type == TokenType.UNKNOWN]
-        print('Unknown tokens:', unknown_tokens)
+        print("Unknown tokens:", unknown_tokens)
         self.assertEqual(len(unknown_tokens), 4)
 
     def test_tokenize_line_numbers_and_columns(self):
         """Test that line numbers and columns are correctly tracked"""
         content = "int x;\nchar y;"
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Find the 'x' identifier
         x_token = next(t for t in tokens if t.value == "x")
         self.assertEqual(x_token.line, 1)
         self.assertEqual(x_token.column, 4)
-        
+
         # Find the 'y' identifier
         y_token = next(t for t in tokens if t.value == "y")
         self.assertEqual(y_token.line, 2)
@@ -229,15 +301,21 @@ class TestCTokenizer(unittest.TestCase):
         """Test token filtering functionality"""
         content = "int x; // comment\nchar y;"
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Filter out whitespace, comments, and newlines
         filtered = self.tokenizer.filter_tokens(tokens)
-        
+
         # Should only have significant tokens
-        significant_types = [TokenType.INT, TokenType.IDENTIFIER, TokenType.SEMICOLON,
-                           TokenType.CHAR, TokenType.IDENTIFIER, TokenType.SEMICOLON]
-        print('Filtered tokens:', filtered)
-        print('Filtered types:', [t.type for t in filtered])
+        significant_types = [
+            TokenType.INT,
+            TokenType.IDENTIFIER,
+            TokenType.SEMICOLON,
+            TokenType.CHAR,
+            TokenType.IDENTIFIER,
+            TokenType.SEMICOLON,
+        ]
+        print("Filtered tokens:", filtered)
+        print("Filtered types:", [t.type for t in filtered])
         self.assertEqual(len(filtered), len(significant_types))
         for i, expected_type in enumerate(significant_types):
             self.assertEqual(filtered[i].type, expected_type)
@@ -246,14 +324,16 @@ class TestCTokenizer(unittest.TestCase):
         """Test token filtering with custom exclude types"""
         content = "int x; // comment\nchar y;"
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Filter out only comments
-        filtered = self.tokenizer.filter_tokens(tokens, exclude_types=[TokenType.COMMENT])
-        
+        filtered = self.tokenizer.filter_tokens(
+            tokens, exclude_types=[TokenType.COMMENT]
+        )
+
         # Should still have whitespace and newlines
         comment_tokens = [t for t in filtered if t.type == TokenType.COMMENT]
         self.assertEqual(len(comment_tokens), 0)
-        
+
         whitespace_tokens = [t for t in filtered if t.type == TokenType.WHITESPACE]
         self.assertGreater(len(whitespace_tokens), 0)
 
@@ -274,10 +354,10 @@ class TestStructureFinder(unittest.TestCase):
         """
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         structs = finder.find_structs()
         self.assertEqual(len(structs), 1)
-        
+
         start_pos, end_pos, name = structs[0]
         self.assertEqual(name, "Point")
 
@@ -291,10 +371,10 @@ class TestStructureFinder(unittest.TestCase):
         """
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         structs = finder.find_structs()
         self.assertEqual(len(structs), 1)
-        
+
         start_pos, end_pos, name = structs[0]
         self.assertEqual(name, "")  # Anonymous struct
 
@@ -308,10 +388,10 @@ class TestStructureFinder(unittest.TestCase):
         """
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         structs = finder.find_structs()
         self.assertEqual(len(structs), 1)
-        
+
         start_pos, end_pos, name = structs[0]
         self.assertEqual(name, "point_t")
 
@@ -325,10 +405,10 @@ class TestStructureFinder(unittest.TestCase):
         """
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         enums = finder.find_enums()
         self.assertEqual(len(enums), 1)
-        
+
         start_pos, end_pos, name = enums[0]
         self.assertEqual(name, "Status")
 
@@ -343,10 +423,10 @@ class TestStructureFinder(unittest.TestCase):
         """
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         enums = finder.find_enums()
         self.assertEqual(len(enums), 1)
-        
+
         start_pos, end_pos, name = enums[0]
         self.assertEqual(name, "color_t")
 
@@ -358,16 +438,16 @@ class TestStructureFinder(unittest.TestCase):
         """
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         functions = finder.find_functions()
         self.assertEqual(len(functions), 2)
-        
+
         # Check first function
         start_pos, end_pos, name, return_type, is_declaration = functions[0]
         self.assertEqual(name, "calculate_sum")
         self.assertEqual(return_type, "int")
         self.assertTrue(is_declaration)
-        
+
         # Check second function
         start_pos, end_pos, name, return_type, is_declaration = functions[1]
         self.assertEqual(name, "process_data")
@@ -383,10 +463,10 @@ class TestStructureFinder(unittest.TestCase):
         """
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         functions = finder.find_functions()
         self.assertEqual(len(functions), 1)
-        
+
         start_pos, end_pos, name, return_type, is_declaration = functions[0]
         self.assertEqual(name, "calculate_sum")
         self.assertEqual(return_type, "int")
@@ -401,10 +481,10 @@ class TestStructureFinder(unittest.TestCase):
         """
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         functions = finder.find_functions()
         self.assertEqual(len(functions), 3)
-        
+
         # Check that return types include modifiers
         return_types = [f[3] for f in functions]
         self.assertIn("static int", return_types)
@@ -419,10 +499,10 @@ class TestStructureFinder(unittest.TestCase):
         """
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         functions = finder.find_functions()
         self.assertEqual(len(functions), 2)
-        
+
         # Check pointer return types
         return_types = [f[3] for f in functions]
         self.assertIn("point_t *", return_types)
@@ -433,7 +513,7 @@ class TestStructureFinder(unittest.TestCase):
         content = "{ int x; { int y; } int z; }"
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         # Find matching brace for first opening brace
         match_pos = finder._find_matching_brace(0)
         self.assertIsNotNone(match_pos)
@@ -444,7 +524,7 @@ class TestStructureFinder(unittest.TestCase):
         content = "{ int x; { int y;"
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         # Should return None for unmatched brace
         match_pos = finder._find_matching_brace(0)
         self.assertIsNone(match_pos)
@@ -460,22 +540,22 @@ class TestUtilityFunctions(unittest.TestCase):
         """Test extracting text from token range"""
         content = "int x = 42;"
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Extract range for "int x"
-        print('All tokens:', tokens)
+        print("All tokens:", tokens)
         text = extract_token_range(tokens, 0, 2)
-        print('Extracted text:', text)
+        print("Extracted text:", text)
         self.assertEqual(text, "int x")
 
     def test_extract_token_range_invalid(self):
         """Test extracting token range with invalid indices"""
         content = "int x;"
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Invalid range
         text = extract_token_range(tokens, 10, 20)
         self.assertEqual(text, "")
-        
+
         # Reversed range
         text = extract_token_range(tokens, 2, 1)
         self.assertEqual(text, "")
@@ -491,19 +571,15 @@ class TestUtilityFunctions(unittest.TestCase):
         """
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         structs = finder.find_structs()
         self.assertEqual(len(structs), 1)
-        
+
         start_pos, end_pos, name = structs[0]
         fields = find_struct_fields(tokens, start_pos, end_pos)
-        
-        expected_fields = [
-            ("x", "int"),
-            ("label", "char [32]"),
-            ("value", "double")
-        ]
-        
+
+        expected_fields = [("x", "int"), ("label", "char [32]"), ("value", "double")]
+
         self.assertEqual(len(fields), len(expected_fields))
         for i, (field_name, field_type) in enumerate(fields):
             self.assertEqual(field_name, expected_fields[i][0])
@@ -521,13 +597,13 @@ class TestUtilityFunctions(unittest.TestCase):
         """
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         enums = finder.find_enums()
         self.assertEqual(len(enums), 1)
-        
+
         start_pos, end_pos, name = enums[0]
         values = find_enum_values(tokens, start_pos, end_pos)
-        
+
         expected_values = ["OK = 0", "ERROR = 1", "PENDING"]
         self.assertEqual(len(values), len(expected_values))
         for i, value in enumerate(values):
@@ -545,13 +621,13 @@ class TestUtilityFunctions(unittest.TestCase):
         """
         tokens = self.tokenizer.tokenize(content)
         finder = StructureFinder(tokens)
-        
+
         enums = finder.find_enums()
         self.assertEqual(len(enums), 1)
-        
+
         start_pos, end_pos, name = enums[0]
         values = find_enum_values(tokens, start_pos, end_pos)
-        
+
         self.assertEqual(len(values), 4)
         self.assertEqual(values[0], "FLAG_NONE = 0")
         self.assertEqual(values[1], "FLAG_READ = 1 << 0")
@@ -569,7 +645,7 @@ class TestTokenizerEdgeCases(unittest.TestCase):
         """Test tokenization with nested comments"""
         content = "/* Outer /* Inner */ comment */"
         tokens = self.tokenizer.tokenize(content)
-        
+
         comment_tokens = [t for t in tokens if t.type == TokenType.COMMENT]
         self.assertEqual(len(comment_tokens), 1)
         self.assertTrue(comment_tokens[0].value.startswith("/*"))
@@ -578,10 +654,10 @@ class TestTokenizerEdgeCases(unittest.TestCase):
         """Test tokenization of multiline strings"""
         content = '"Line 1\nLine 2\nLine 3"'
         tokens = self.tokenizer.tokenize(content)
-        
+
         string_tokens = [t for t in tokens if t.type == TokenType.STRING]
-        print('String tokens:', string_tokens)
-        print('String values:', [t.value for t in string_tokens])
+        print("String tokens:", string_tokens)
+        print("String values:", [t.value for t in string_tokens])
         self.assertEqual(len(string_tokens), 1)
         self.assertTrue(string_tokens[0].value.startswith('"'))
 
@@ -589,7 +665,7 @@ class TestTokenizerEdgeCases(unittest.TestCase):
         """Test tokenization of escaped characters"""
         content = "'\\n' '\\t' '\\r' '\\\\' '\\'' '\\\"'"
         tokens = self.tokenizer.tokenize(content)
-        
+
         char_tokens = [t for t in tokens if t.type == TokenType.CHAR_LITERAL]
         self.assertEqual(len(char_tokens), 6)
 
@@ -618,21 +694,39 @@ class TestTokenizerEdgeCases(unittest.TestCase):
         }
         """
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Check that all expected token types are present
         token_types = set(t.type for t in tokens)
         expected_types = {
-            TokenType.INCLUDE, TokenType.DEFINE, TokenType.COMMENT,
-            TokenType.STRUCT, TokenType.ENUM, TokenType.IDENTIFIER,
-            TokenType.STRING, TokenType.CHAR_LITERAL, TokenType.NUMBER,
-            TokenType.LBRACE, TokenType.RBRACE, TokenType.LPAREN, TokenType.RPAREN,
-            TokenType.SEMICOLON, TokenType.ASSIGN, TokenType.COMMA,
-            TokenType.INT, TokenType.CHAR, TokenType.ASTERISK, TokenType.VOID,
-            TokenType.WHITESPACE, TokenType.NEWLINE, TokenType.EOF
+            TokenType.INCLUDE,
+            TokenType.DEFINE,
+            TokenType.COMMENT,
+            TokenType.STRUCT,
+            TokenType.ENUM,
+            TokenType.IDENTIFIER,
+            TokenType.STRING,
+            TokenType.CHAR_LITERAL,
+            TokenType.NUMBER,
+            TokenType.LBRACE,
+            TokenType.RBRACE,
+            TokenType.LPAREN,
+            TokenType.RPAREN,
+            TokenType.SEMICOLON,
+            TokenType.ASSIGN,
+            TokenType.COMMA,
+            TokenType.INT,
+            TokenType.CHAR,
+            TokenType.ASTERISK,
+            TokenType.VOID,
+            TokenType.WHITESPACE,
+            TokenType.NEWLINE,
+            TokenType.EOF,
         }
-        
+
         for expected_type in expected_types:
-            self.assertIn(expected_type, token_types, f"Missing token type: {expected_type}")
+            self.assertIn(
+                expected_type, token_types, f"Missing token type: {expected_type}"
+            )
 
     def test_tokenize_preprocessor_edge_cases(self):
         """Test tokenization of preprocessor edge cases"""
@@ -645,11 +739,11 @@ class TestTokenizerEdgeCases(unittest.TestCase):
         #pragma once
         """
         tokens = self.tokenizer.tokenize(content)
-        
+
         include_tokens = [t for t in tokens if t.type == TokenType.INCLUDE]
         define_tokens = [t for t in tokens if t.type == TokenType.DEFINE]
         preprocessor_tokens = [t for t in tokens if t.type == TokenType.PREPROCESSOR]
-        
+
         self.assertEqual(len(include_tokens), 2)
         self.assertEqual(len(define_tokens), 1)
         self.assertGreater(len(preprocessor_tokens), 0)
@@ -663,12 +757,14 @@ class TestTokenizerEdgeCases(unittest.TestCase):
         int result = (*ptr) + arr[0] + p->x;
         """
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Check for specific tokens
         asterisk_tokens = [t for t in tokens if t.type == TokenType.ASTERISK]
         ampersand_tokens = [t for t in tokens if t.type == TokenType.AMPERSAND]
-        bracket_tokens = [t for t in tokens if t.type in [TokenType.LBRACKET, TokenType.RBRACKET]]
-        
+        bracket_tokens = [
+            t for t in tokens if t.type in [TokenType.LBRACKET, TokenType.RBRACKET]
+        ]
+
         self.assertGreater(len(asterisk_tokens), 0)
         self.assertGreater(len(ampersand_tokens), 0)
         self.assertGreater(len(bracket_tokens), 0)
@@ -693,25 +789,28 @@ int main() {
 }
 """
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Check that comment tokens are present
         comment_tokens = [t for t in tokens if t.type == TokenType.COMMENT]
         self.assertGreater(len(comment_tokens), 0)
-        
+
         # Check that the struct and function are still found
         struct_tokens = [t for t in tokens if t.type == TokenType.STRUCT]
         self.assertGreater(len(struct_tokens), 0)
-        
+
         # Filter out comments and verify structure is preserved
-        filtered_tokens = self.tokenizer.filter_tokens(tokens, exclude_types=[TokenType.COMMENT, TokenType.WHITESPACE, TokenType.NEWLINE])
-        
+        filtered_tokens = self.tokenizer.filter_tokens(
+            tokens,
+            exclude_types=[TokenType.COMMENT, TokenType.WHITESPACE, TokenType.NEWLINE],
+        )
+
         # Should still find struct and function keywords
         struct_keywords = [t for t in filtered_tokens if t.type == TokenType.STRUCT]
         int_keywords = [t for t in filtered_tokens if t.type == TokenType.INT]
-        
+
         self.assertGreater(len(struct_keywords), 0)
         self.assertGreater(len(int_keywords), 0)
-        
+
         # Verify that the filtered tokens don't contain any comment content
         for token in filtered_tokens:
             self.assertNotIn("/*", token.value)
@@ -723,7 +822,7 @@ int main() {
         """Test that very large comment blocks are properly filtered out during parsing"""
         # Create a very large comment block
         large_comment = "/* " + "This is a very large comment block. " * 100 + "*/"
-        
+
         content = f"""
 {large_comment}
 struct Point {{
@@ -738,24 +837,27 @@ int main() {{
     return 0;
 }}
 """
-        
+
         # Test tokenization
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Check that comment tokens are present
         comment_tokens = [t for t in tokens if t.type == TokenType.COMMENT]
         self.assertGreater(len(comment_tokens), 0)
-        
+
         # Filter out comments and verify structure is preserved
-        filtered_tokens = self.tokenizer.filter_tokens(tokens, exclude_types=[TokenType.COMMENT, TokenType.WHITESPACE, TokenType.NEWLINE])
-        
+        filtered_tokens = self.tokenizer.filter_tokens(
+            tokens,
+            exclude_types=[TokenType.COMMENT, TokenType.WHITESPACE, TokenType.NEWLINE],
+        )
+
         # Should still find struct and function keywords
         struct_keywords = [t for t in filtered_tokens if t.type == TokenType.STRUCT]
         int_keywords = [t for t in filtered_tokens if t.type == TokenType.INT]
-        
+
         self.assertGreater(len(struct_keywords), 0)
         self.assertGreater(len(int_keywords), 0)
-        
+
         # Verify that the filtered tokens don't contain any comment content
         for token in filtered_tokens:
             self.assertNotIn("/*", token.value)
@@ -779,16 +881,19 @@ struct RealStruct {
     int real_field;
 };
 """
-        
+
         tokens = self.tokenizer.tokenize(content)
-        
+
         # Filter out comments and verify only real code is found
-        filtered_tokens = self.tokenizer.filter_tokens(tokens, exclude_types=[TokenType.COMMENT, TokenType.WHITESPACE, TokenType.NEWLINE])
-        
+        filtered_tokens = self.tokenizer.filter_tokens(
+            tokens,
+            exclude_types=[TokenType.COMMENT, TokenType.WHITESPACE, TokenType.NEWLINE],
+        )
+
         # Should find the real struct but not the commented one
         struct_keywords = [t for t in filtered_tokens if t.type == TokenType.STRUCT]
         self.assertEqual(len(struct_keywords), 1)  # Only the real struct
-        
+
         # Verify no commented code leaked through
         for token in filtered_tokens:
             self.assertNotIn("IgnoredStruct", token.value)
@@ -796,5 +901,5 @@ struct RealStruct {
             self.assertNotIn("ignored_function", token.value)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
