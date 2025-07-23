@@ -3,6 +3,9 @@
         {
             "name": "C to PlantUML Converter",
             "path": "."
+        },
+        {
+            "path": ".."
         }
     ],
     "settings": {
