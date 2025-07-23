@@ -124,7 +124,7 @@ class CParser:
             includes=self._parse_includes_with_tokenizer(tokens),
             macros=self._parse_macros_with_tokenizer(tokens),
             aliases=aliases,
-            typedef_relations=self._parse_typedef_relations_with_tokenizer(tokens, structs),
+            # typedef_relations removed - tag names are now in struct/enum/union
         )
 
     def _parse_structs_with_tokenizer(self, tokens, structure_finder) -> Dict[str, "Struct"]:
@@ -156,7 +156,13 @@ class CParser:
                 if not struct_name:
                     struct_name = "__anonymous_struct__"
                 
-                structs[struct_name] = Struct(struct_name, fields)
+                # Extract tag name if this is a typedef struct
+                tag_name = ""
+                if struct_name and not struct_name.startswith("__anonymous"):
+                    # Check if this struct has a typedef
+                    tag_name = self._extract_tag_name_for_struct(tokens, struct_name)
+                
+                structs[struct_name] = Struct(struct_name, fields, tag_name=tag_name)
                 self.logger.debug(f"Parsed struct: {struct_name} with {len(fields)} fields")
         
         return structs
@@ -193,7 +199,13 @@ class CParser:
                 if not enum_name:
                     enum_name = "__anonymous_enum__"
                 
-                enums[enum_name] = Enum(enum_name, values)
+                # Extract tag name if this is a typedef enum
+                tag_name = ""
+                if enum_name and not enum_name.startswith("__anonymous"):
+                    # Check if this enum has a typedef
+                    tag_name = self._extract_tag_name_for_enum(tokens, enum_name)
+                
+                enums[enum_name] = Enum(enum_name, values, tag_name=tag_name)
                 self.logger.debug(f"Parsed enum: {enum_name} with {len(values)} values")
         
         return enums
@@ -226,7 +238,13 @@ class CParser:
                 if not union_name:
                     union_name = "__anonymous_union__"
                 
-                unions[union_name] = Union(union_name, fields)
+                # Extract tag name if this is a typedef union
+                tag_name = ""
+                if union_name and not union_name.startswith("__anonymous"):
+                    # Check if this union has a typedef
+                    tag_name = self._extract_tag_name_for_union(tokens, union_name)
+                
+                unions[union_name] = Union(union_name, fields, tag_name=tag_name)
                 self.logger.debug(f"Parsed union: {union_name} with {len(fields)} fields")
         
         return unions
@@ -368,55 +386,49 @@ class CParser:
         
         return aliases
 
-    def _parse_typedef_relations_with_tokenizer(self, tokens, structs) -> List["TypedefRelation"]:
-        """Parse typedef relationships using tokenizer (only for struct/enum/union)"""
-        from .models import TypedefRelation
-        
-        typedef_relations = []
+    # _parse_typedef_relations_with_tokenizer method removed - tag names are now in struct/enum/union
+
+    def _extract_tag_name_for_struct(self, tokens, struct_name: str) -> str:
+        """Extract tag name for a struct if it has a typedef"""
         i = 0
-        
         while i < len(tokens):
             if tokens[i].type == TokenType.TYPEDEF:
-                # Parse typedef starting at position i
                 typedef_info = self._parse_single_typedef(tokens, i)
                 if typedef_info:
                     typedef_name, original_type = typedef_info
-                    
-                    # Only create relations for complex typedefs (struct/enum/union)
-                    if original_type in ['struct', 'enum', 'union']:
-                        # Try to extract tag name from the typedef
-                        tag_name = self._extract_tag_name_from_typedef(tokens, i)
-                        
-                        # Create TypedefRelation with tag names
-                        if original_type == 'struct':
-                            relation = TypedefRelation(
-                                typedef_name=typedef_name,
-                                original_type=original_type,
-                                relationship_type="alias",
-                                struct_tag_name=tag_name
-                            )
-                        elif original_type == 'enum':
-                            relation = TypedefRelation(
-                                typedef_name=typedef_name,
-                                original_type=original_type,
-                                relationship_type="alias",
-                                enum_tag_name=tag_name
-                            )
-                        else:  # union
-                            relation = TypedefRelation(
-                                typedef_name=typedef_name,
-                                original_type=original_type,
-                                relationship_type="alias"
-                            )
-                        
-                        typedef_relations.append(relation)
-                
-                # Skip to next token after this typedef
-                i = self._skip_structure_definition(tokens, i)
-            else:
-                i += 1
-        
-        return typedef_relations
+                    if original_type == 'struct' and typedef_name == struct_name:
+                        # Extract the tag name from the typedef
+                        return self._extract_tag_name_from_typedef(tokens, i)
+            i += 1
+        return ""
+
+    def _extract_tag_name_for_enum(self, tokens, enum_name: str) -> str:
+        """Extract tag name for an enum if it has a typedef"""
+        i = 0
+        while i < len(tokens):
+            if tokens[i].type == TokenType.TYPEDEF:
+                typedef_info = self._parse_single_typedef(tokens, i)
+                if typedef_info:
+                    typedef_name, original_type = typedef_info
+                    if original_type == 'enum' and typedef_name == enum_name:
+                        # Extract the tag name from the typedef
+                        return self._extract_tag_name_from_typedef(tokens, i)
+            i += 1
+        return ""
+
+    def _extract_tag_name_for_union(self, tokens, union_name: str) -> str:
+        """Extract tag name for a union if it has a typedef"""
+        i = 0
+        while i < len(tokens):
+            if tokens[i].type == TokenType.TYPEDEF:
+                typedef_info = self._parse_single_typedef(tokens, i)
+                if typedef_info:
+                    typedef_name, original_type = typedef_info
+                    if original_type == 'union' and typedef_name == union_name:
+                        # Extract the tag name from the typedef
+                        return self._extract_tag_name_from_typedef(tokens, i)
+            i += 1
+        return ""
 
     def _find_c_files(self, project_root: Path, recursive: bool) -> List[Path]:
         """Find all C/C++ files in the project"""

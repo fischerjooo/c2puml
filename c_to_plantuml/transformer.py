@@ -508,18 +508,7 @@ class Transformer:
         for global_data in data.get("globals", []):
             globals_list.append(Field(global_data["name"], global_data["type"]))
 
-        # Convert typedef relations
-        typedef_relations = []
-        for rel_data in data.get("typedef_relations", []):
-                    typedef_relations.append(
-            TypedefRelation(
-                rel_data["typedef_name"],
-                rel_data["original_type"],
-                rel_data["relationship_type"],
-                rel_data.get("struct_tag_name", ""),  # Include struct_tag_name with default empty string
-                rel_data.get("enum_tag_name", ""),  # Include enum_tag_name with default empty string
-            )
-        )
+                # typedef_relations removed - tag names are now in struct/enum/union
 
         # Convert include relations (disabled - include_relations field removed)
         # include_relations = []
@@ -545,7 +534,6 @@ class Transformer:
             includes=data.get("includes", []),
             macros=data.get("macros", []),
             aliases=data.get("aliases", {}),
-            typedef_relations=typedef_relations,
         )
 
     def _save_model(self, model: ProjectModel, output_file: str) -> None:

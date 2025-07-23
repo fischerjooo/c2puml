@@ -228,7 +228,7 @@ class Config:
             includes=file_model.includes.copy(),
             macros=file_model.macros.copy(),
             aliases=file_model.aliases.copy(),
-            typedef_relations=file_model.typedef_relations.copy(),
+            # typedef_relations removed - tag names are now in struct/enum/union
         )
 
         # Filter structs

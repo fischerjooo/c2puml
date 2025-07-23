@@ -30,24 +30,7 @@ class Field:
             raise ValueError("Field type must be a non-empty string")
 
 
-@dataclass
-class TypedefRelation:
-    """Represents a typedef relationship"""
-
-    typedef_name: str
-    original_type: str
-    relationship_type: str  # 'defines' or 'alias'
-    struct_tag_name: str = ""  # For struct typedefs, store the struct tag name
-    enum_tag_name: str = ""  # For enum typedefs, store the enum tag name
-
-    def __post_init__(self):
-        """Validate typedef relation data after initialization"""
-        if not self.typedef_name or not isinstance(self.typedef_name, str):
-            raise ValueError("Typedef name must be a non-empty string")
-        if not self.original_type or not isinstance(self.original_type, str):
-            raise ValueError("Original type must be a non-empty string")
-        if self.relationship_type not in ["defines", "alias"]:
-            raise ValueError("Relationship type must be 'defines' or 'alias'")
+# TypedefRelation class removed - tag names moved to struct/enum/union
 
 
 @dataclass
@@ -93,6 +76,7 @@ class Struct:
     name: str
     fields: List[Field] = field(default_factory=list)
     methods: List[Function] = field(default_factory=list)
+    tag_name: str = ""  # Tag name for typedef structs
 
     def __post_init__(self):
         """Validate struct data after initialization"""
@@ -114,6 +98,7 @@ class Enum:
     """Represents a C enum"""
     name: str
     values: List[EnumValue] = field(default_factory=list)
+    tag_name: str = ""  # Tag name for typedef enums
 
     def __post_init__(self):
         if not self.name or not isinstance(self.name, str):
@@ -128,6 +113,7 @@ class Union:
 
     name: str
     fields: List[Field] = field(default_factory=list)
+    tag_name: str = ""  # Tag name for typedef unions
 
     def __post_init__(self):
         """Validate union data after initialization"""
@@ -150,7 +136,6 @@ class FileModel:
     includes: Set[str] = field(default_factory=set)
     macros: List[str] = field(default_factory=list)
     aliases: Dict[str, str] = field(default_factory=dict)
-    typedef_relations: List[TypedefRelation] = field(default_factory=list)
     unions: Dict[str, Union] = field(default_factory=dict)
 
     def __post_init__(self):
@@ -169,8 +154,7 @@ class FileModel:
         data = asdict(self)
         # Convert set to list for JSON serialization
         data["includes"] = list(self.includes)
-        # Convert typedef_relations to list of dicts
-        data["typedef_relations"] = [asdict(rel) for rel in self.typedef_relations]
+        # typedef_relations removed - tag names are now in struct/enum/union
         return data
 
     @classmethod
@@ -220,12 +204,7 @@ class FileModel:
             else:
                 enums[name] = enum_data
 
-        # Convert typedef_relations back to TypedefRelation objects
-        typedef_relations_data = data.get("typedef_relations", [])
-        typedef_relations = [
-            TypedefRelation(**rel) if isinstance(rel, dict) else rel
-            for rel in typedef_relations_data
-        ]
+        # typedef_relations removed - tag names are now in struct/enum/union
 
         # Convert include_relations back to IncludeRelation objects (disabled - field removed)
         # include_relations_data = data.get("include_relations", [])
@@ -254,7 +233,6 @@ class FileModel:
         new_data["functions"] = functions
         new_data["structs"] = structs
         new_data["enums"] = enums
-        new_data["typedef_relations"] = typedef_relations
         new_data["unions"] = unions
 
         return cls(**new_data)
