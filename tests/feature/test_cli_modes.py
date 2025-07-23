@@ -105,3 +105,12 @@ class TestCLIModes(BaseFeatureTest):
         self.assertTrue(os.path.exists(transformed_path))
         puml_files = list(Path(self.output_dir).glob("*.puml"))
         self.assertGreaterEqual(len(puml_files), 1)
+
+    def test_generate_mode_isolation(self):
+        """Test that generate mode works when called independently without model files"""
+        # This test would have caught the CLI indentation bug
+        # It tests the generate command in isolation without any pre-existing model files
+        result = self.run_cli(["--config", self.config_path, "generate"])
+        # Should fail gracefully with proper error message when no model files exist
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("No model file found for generation", result.stdout)

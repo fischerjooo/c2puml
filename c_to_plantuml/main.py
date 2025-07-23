@@ -139,30 +139,30 @@ Usage:
             logging.error(f"Error during transformation: {e}")
             return 1
 
-            # Generate command
-        if args.command == "generate":
-            try:
-                generator = Generator()
-                # Prefer transformed model, else fallback to model.json
-                if os.path.exists(transformed_model_file):
-                    model_to_use = transformed_model_file
-                elif os.path.exists(model_file):
-                    model_to_use = model_file
-                else:
-                    logging.error("No model file found for generation.")
-                    return 1
-                generator.generate(
-                    model_file=model_to_use,
-                    output_dir=output_folder,
-                    include_depth=getattr(config, "include_depth", 1),
-                )
-                logging.info(
-                    f"PlantUML generation complete! Output in: {output_folder}"
-                )
-                return 0
-            except Exception as e:
-                logging.error(f"Error generating PlantUML: {e}")
+    # Generate command
+    if args.command == "generate":
+        try:
+            generator = Generator()
+            # Prefer transformed model, else fallback to model.json
+            if os.path.exists(transformed_model_file):
+                model_to_use = transformed_model_file
+            elif os.path.exists(model_file):
+                model_to_use = model_file
+            else:
+                logging.error("No model file found for generation.")
                 return 1
+            generator.generate(
+                model_file=model_to_use,
+                output_dir=output_folder,
+                include_depth=getattr(config, "include_depth", 1),
+            )
+            logging.info(
+                f"PlantUML generation complete! Output in: {output_folder}"
+            )
+            return 0
+        except Exception as e:
+            logging.error(f"Error generating PlantUML: {e}")
+            return 1
 
     # Default: full workflow
     try:
