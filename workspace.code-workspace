@@ -6,7 +6,6 @@
         }
     ],
     "settings": {
-        "python.defaultInterpreterPath": "${env:PYTHONHOME}/python.exe",
         "python.terminal.activateEnvironment": true,
         "python.linting.enabled": true,
         "python.linting.pylintEnabled": true,
