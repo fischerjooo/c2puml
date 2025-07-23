@@ -354,3 +354,61 @@ class TestConfig(unittest.TestCase):
         # Verify representation contains key information
         self.assertIn("Config", repr_str)
         # Note: repr may not include project details depending on implementation
+
+    def test_multiple_source_folders(self):
+        """Test that configuration with multiple source folders is handled correctly"""
+        config_data = {
+            "project_name": "test_project",
+            "source_folders": ["/path/to/project1", "/path/to/project2", "/path/to/project3"],
+            "output_dir": "./output",
+            "recursive_search": True,
+        }
+
+        config_path = self.create_test_config(config_data)
+        config = Config.load(config_path)
+
+        # Verify that all source folders are loaded correctly
+        self.assertEqual(len(config.source_folders), 3)
+        self.assertEqual(config.source_folders[0], "/path/to/project1")
+        self.assertEqual(config.source_folders[1], "/path/to/project2")
+        self.assertEqual(config.source_folders[2], "/path/to/project3")
+
+        # Test that the configuration can be saved and loaded back
+        save_path = os.path.join(self.temp_dir, "saved_config.json")
+        config.save(save_path)
+        
+        loaded_config = Config.load(save_path)
+        self.assertEqual(loaded_config.source_folders, config.source_folders)
+        
+        # Test that the summary includes all source folders
+        summary = config.get_summary()
+        self.assertIn("source_folders", summary)
+        self.assertEqual(summary["source_folders"], config.source_folders)
+
+    def test_empty_source_folders(self):
+        """Test that empty source_folders list is handled correctly"""
+        config_data = {
+            "project_name": "test_project",
+            "source_folders": [],
+            "output_dir": "./output",
+        }
+
+        config_path = self.create_test_config(config_data)
+        config = Config.load(config_path)
+
+        self.assertEqual(config.source_folders, [])
+        self.assertTrue(isinstance(config.source_folders, list))
+
+    def test_single_source_folder(self):
+        """Test that single source folder is handled correctly (backward compatibility)"""
+        config_data = {
+            "project_name": "test_project",
+            "source_folders": ["/path/to/project"],
+            "output_dir": "./output",
+        }
+
+        config_path = self.create_test_config(config_data)
+        config = Config.load(config_path)
+
+        self.assertEqual(len(config.source_folders), 1)
+        self.assertEqual(config.source_folders[0], "/path/to/project")

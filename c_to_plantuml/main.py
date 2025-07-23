@@ -98,12 +98,22 @@ Usage:
     if args.command == "parse":
         try:
             parser_obj = Parser()
-            parser_obj.parse(
-                project_root=config.source_folders[0],
-                output_file=model_file,
-                recursive_search=getattr(config, "recursive_search", True),
-                config=config,
-            )
+            if len(config.source_folders) > 1:
+                # Multiple source folders - use new method
+                parser_obj.parse_multiple_projects(
+                    source_folders=config.source_folders,
+                    output_file=model_file,
+                    recursive_search=getattr(config, "recursive_search", True),
+                    config=config,
+                )
+            else:
+                # Single source folder - use existing method for backward compatibility
+                parser_obj.parse(
+                    project_root=config.source_folders[0],
+                    output_file=model_file,
+                    recursive_search=getattr(config, "recursive_search", True),
+                    config=config,
+                )
             logging.info(f"Model saved to: {model_file}")
             return 0
         except Exception as e:
@@ -152,12 +162,22 @@ Usage:
     try:
         # Step 1: Parse
         parser_obj = Parser()
-        parser_obj.parse(
-            project_root=config.source_folders[0],
-            output_file=model_file,
-            recursive_search=getattr(config, "recursive_search", True),
-            config=config,
-        )
+        if len(config.source_folders) > 1:
+            # Multiple source folders - use new method
+            parser_obj.parse_multiple_projects(
+                source_folders=config.source_folders,
+                output_file=model_file,
+                recursive_search=getattr(config, "recursive_search", True),
+                config=config,
+            )
+        else:
+            # Single source folder - use existing method for backward compatibility
+            parser_obj.parse(
+                project_root=config.source_folders[0],
+                output_file=model_file,
+                recursive_search=getattr(config, "recursive_search", True),
+                config=config,
+            )
         logging.info(f"Model saved to: {model_file}")
         # Step 2: Transform
         transformer = Transformer()
