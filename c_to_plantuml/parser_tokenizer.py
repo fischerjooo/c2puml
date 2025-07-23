@@ -927,7 +927,11 @@ def find_struct_fields(tokens: List[Token], struct_start: int, struct_end: int) 
                 field_type = ' '.join(t.value for t in field_tokens[:-4]) + '[' + field_tokens[-2].value + ']'
                 if (field_name and field_name.strip() and 
                     field_type.strip() and field_name not in ['[', ']', ';', '}']):
-                    fields.append((field_name.strip(), field_type.strip()))
+                    # Additional validation to ensure we don't have empty strings
+                    stripped_name = field_name.strip()
+                    stripped_type = field_type.strip()
+                    if stripped_name and stripped_type:
+                        fields.append((stripped_name, stripped_type))
             else:
                 # Regular field: type name
                 field_name = field_tokens[-1].value
@@ -935,7 +939,11 @@ def find_struct_fields(tokens: List[Token], struct_start: int, struct_end: int) 
                 if (field_name not in ['[', ']', ';', '}'] and 
                     field_name and field_name.strip() and 
                     field_type.strip()):
-                    fields.append((field_name.strip(), field_type.strip()))
+                    # Additional validation to ensure we don't have empty strings
+                    stripped_name = field_name.strip()
+                    stripped_type = field_type.strip()
+                    if stripped_name and stripped_type:
+                        fields.append((stripped_name, stripped_type))
         if pos < closing_brace_pos:
             pos += 1  # Skip semicolon
     return fields
