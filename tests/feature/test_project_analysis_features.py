@@ -45,7 +45,7 @@ struct Data {
         
         # Test recursive analysis
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
         
         # Verify both files were found
         self.assertIn("main.c", model.files)
@@ -65,7 +65,7 @@ struct Data {
         
         # Test analysis with default filtering
         parser = Parser()
-        model = parser.c_parser.parse_project(self.temp_dir, recursive=True)
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
         
         # Should only include .c and .h files
         self.assertIn("main.c", model.files)

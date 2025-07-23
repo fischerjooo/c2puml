@@ -17,7 +17,7 @@ class TestCLIModes(BaseFeatureTest):
         self.write_json_config(self.config_path, {
             "project_name": "cli_modes_test",
             "source_folders": [self.temp_dir],
-            "recursive": True
+            "recursive_search": True
         })
         self.cli = [sys.executable, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../main.py'))]
         self.env = os.environ.copy()

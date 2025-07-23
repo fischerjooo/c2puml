@@ -205,7 +205,7 @@ class TestCryptoFilterPattern:
         # Parse the project with crypto filter
         project_model = parser.parse_project(
             str(self.project_root),
-            recursive=True,
+            recursive_search=True,
             config=config
         )
         
