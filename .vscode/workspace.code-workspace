@@ -111,149 +111,12 @@
         "version": "2.0.0",
         "tasks": [
             {
-                "label": "Run Full Workflow (Windows)",
-                "type": "shell",
-                "command": "cmd",
-                "args": ["/c", "run_all.bat"],
-                "group": "build",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared",
-                    "showReuseMessage": true,
-                    "clear": false
-                },
-                "problemMatcher": [],
-                "options": {
-                    "cwd": "${workspaceFolder}"
-                }
-            },
-            {
-                "label": "Run Full Workflow (Linux/Mac)",
-                "type": "shell",
-                "command": "./run_all.sh",
-                "group": "build",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared",
-                    "showReuseMessage": true,
-                    "clear": false
-                },
-                "problemMatcher": []
-            },
-            {
-                "label": "Run Example (Windows)",
-                "type": "shell",
-                "command": "cmd",
-                "args": ["/c", "run_example.bat"],
-                "group": "build",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared",
-                    "showReuseMessage": true,
-                    "clear": false
-                },
-                "problemMatcher": [],
-                "options": {
-                    "cwd": "${workspaceFolder}"
-                }
-            },
-            {
-                "label": "Run Example (Linux/Mac)",
-                "type": "shell",
-                "command": "./run_example.sh",
-                "group": "build",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared",
-                    "showReuseMessage": true,
-                    "clear": false
-                },
-                "problemMatcher": []
-            },
-            {
-                "label": "Run All Tests (Windows)",
-                "type": "shell",
-                "command": "cmd",
-                "args": ["/c", "run_all_tests.bat"],
-                "group": "test",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared",
-                    "showReuseMessage": true,
-                    "clear": false
-                },
-                "problemMatcher": [],
-                "options": {
-                    "cwd": "${workspaceFolder}"
-                }
-            },
-            {
-                "label": "Run All Tests (Linux/Mac)",
-                "type": "shell",
-                "command": "./run_all_tests.sh",
-                "group": "test",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared",
-                    "showReuseMessage": true,
-                    "clear": false
-                },
-                "problemMatcher": []
-            },
-            {
-                "label": "Generate Pictures (Windows)",
-                "type": "shell",
-                "command": "cmd",
-                "args": ["/c", "picgen.bat"],
-                "group": "build",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared",
-                    "showReuseMessage": true,
-                    "clear": false
-                },
-                "problemMatcher": [],
-                "options": {
-                    "cwd": "${workspaceFolder}"
-                }
-            },
-            {
-                "label": "Generate Pictures (Linux/Mac)",
-                "type": "shell",
-                "command": "./picgen.sh",
-                "group": "build",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared",
-                    "showReuseMessage": true,
-                    "clear": false
-                },
-                "problemMatcher": []
-            },
-            {
-                "label": "Parse Only (Python)",
+                "label": "Run Full Workflow",
                 "type": "shell",
                 "command": "${env:PYTHONHOME}/python.exe",
                 "args": [
                     "-m",
-                    "c_to_plantuml.main",
-                    "parse"
+                    "c_to_plantuml.main"
                 ],
                 "group": "build",
                 "presentation": {
@@ -270,53 +133,7 @@
                 }
             },
             {
-                "label": "Transform Only (Python)",
-                "type": "shell",
-                "command": "${env:PYTHONHOME}/python.exe",
-                "args": [
-                    "-m",
-                    "c_to_plantuml.main",
-                    "transform"
-                ],
-                "group": "build",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared",
-                    "showReuseMessage": true,
-                    "clear": false
-                },
-                "problemMatcher": [],
-                "options": {
-                    "cwd": "${workspaceFolder}"
-                }
-            },
-            {
-                "label": "Generate Only (Python)",
-                "type": "shell",
-                "command": "${env:PYTHONHOME}/python.exe",
-                "args": [
-                    "-m",
-                    "c_to_plantuml.main",
-                    "generate"
-                ],
-                "group": "build",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared",
-                    "showReuseMessage": true,
-                    "clear": false
-                },
-                "problemMatcher": [],
-                "options": {
-                    "cwd": "${workspaceFolder}"
-                }
-            },
-            {
-                "label": "Run Pytest",
+                "label": "Run Tests",
                 "type": "shell",
                 "command": "${env:PYTHONHOME}/python.exe",
                 "args": [
@@ -363,50 +180,7 @@
                 }
             },
             {
-                "label": "Clean Output",
-                "type": "shell",
-                "command": "${command:python.deleteFile}",
-                "args": [
-                    "${workspaceFolder}/output"
-                ],
-                "group": "build",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared",
-                    "showReuseMessage": true,
-                    "clear": false
-                },
-                "problemMatcher": []
-            },
-            {
-                "label": "Lint Code",
-                "type": "shell",
-                "command": "${env:PYTHONHOME}/python.exe",
-                "args": [
-                    "-m",
-                    "flake8",
-                    "c_to_plantuml/",
-                    "tests/",
-                    "--max-line-length=100"
-                ],
-                "group": "build",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared",
-                    "showReuseMessage": true,
-                    "clear": false
-                },
-                "problemMatcher": [],
-                "options": {
-                    "cwd": "${workspaceFolder}"
-                }
-            },
-            {
-                "label": "Format Code",
+                "label": "Format & Lint",
                 "type": "shell",
                 "command": "${env:PYTHONHOME}/python.exe",
                 "args": [
