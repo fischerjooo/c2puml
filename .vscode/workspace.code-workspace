@@ -240,6 +240,28 @@
                 "options": {
                     "cwd": "${workspaceFolder}"
                 }
+            },
+            {
+                "label": "⚠️ Git Reset & Pull",
+                "type": "shell",
+                "command": "powershell",
+                "args": [
+                    "-Command",
+                    "$confirm = Read-Host 'Are you sure you want to reset --hard and pull? (y/N)'; if ($confirm -eq 'y' -or $confirm -eq 'Y') { Write-Host 'Proceeding with git reset --hard and pull...' -ForegroundColor Yellow; git reset --hard; git pull; Write-Host 'Done!' -ForegroundColor Green } else { Write-Host 'Operation cancelled.' -ForegroundColor Red }"
+                ],
+                "group": "build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": true,
+                    "panel": "shared",
+                    "showReuseMessage": true,
+                    "clear": false
+                },
+                "problemMatcher": [],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                }
             }
         ]
     },
