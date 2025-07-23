@@ -99,8 +99,8 @@ Usage:
         try:
             parser_obj = Parser()
             if len(config.source_folders) > 1:
-                # Multiple source folders - use new method
-                parser_obj.parse_multiple_projects(
+                # Multiple source folders - use new method for targeted searching
+                parser_obj.parse_multiple_source_folders(
                     source_folders=config.source_folders,
                     output_file=model_file,
                     recursive_search=getattr(config, "recursive_search", True),
@@ -163,8 +163,8 @@ Usage:
         # Step 1: Parse
         parser_obj = Parser()
         if len(config.source_folders) > 1:
-            # Multiple source folders - use new method
-            parser_obj.parse_multiple_projects(
+            # Multiple source folders - use new method for targeted searching
+            parser_obj.parse_multiple_source_folders(
                 source_folders=config.source_folders,
                 output_file=model_file,
                 recursive_search=getattr(config, "recursive_search", True),
