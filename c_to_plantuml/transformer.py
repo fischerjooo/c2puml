@@ -111,9 +111,9 @@ class Transformer:
         if "transformations" in config:
             model = self._apply_model_transformations(model, config["transformations"])
 
-        # Apply include depth processing (disabled - include_relations field removed)
-        # if "include_depth" in config and config["include_depth"] > 1:
-        #     model = self._process_include_relations(model, config["include_depth"])
+        # Apply include depth processing
+        if "include_depth" in config and config["include_depth"] > 1:
+            model = self._process_include_relations(model, config["include_depth"])
 
         self.logger.info(
             f"Transformations complete. Model now has {len(model.files)} files"

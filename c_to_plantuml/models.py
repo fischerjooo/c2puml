@@ -165,6 +165,7 @@ class FileModel:
     macros: List[str] = field(default_factory=list)
     aliases: Dict[str, Alias] = field(default_factory=dict)
     unions: Dict[str, Union] = field(default_factory=dict)
+    include_relations: List[IncludeRelation] = field(default_factory=list)
 
     def __post_init__(self):
         """Validate file model data after initialization"""
@@ -182,6 +183,8 @@ class FileModel:
         data = asdict(self)
         # Convert set to list for JSON serialization
         data["includes"] = list(self.includes)
+        # Convert include_relations to list of dicts
+        data["include_relations"] = [asdict(rel) for rel in self.include_relations]
         # typedef_relations removed - tag names are now in struct/enum/union
         return data
 
@@ -238,12 +241,12 @@ class FileModel:
 
         # typedef_relations removed - tag names are now in struct/enum/union
 
-        # Convert include_relations back to IncludeRelation objects (disabled - field removed)
-        # include_relations_data = data.get("include_relations", [])
-        # include_relations = [
-        #     IncludeRelation(**rel) if isinstance(rel, dict) else rel
-        #     for rel in include_relations_data
-        # ]
+        # Convert include_relations back to IncludeRelation objects
+        include_relations_data = data.get("include_relations", [])
+        include_relations = [
+            IncludeRelation(**rel) if isinstance(rel, dict) else rel
+            for rel in include_relations_data
+        ]
 
         # Convert unions back to Union objects
         unions_data = data.get("unions", {})
@@ -290,6 +293,7 @@ class FileModel:
         new_data["enums"] = enums
         new_data["unions"] = unions
         new_data["aliases"] = aliases
+        new_data["include_relations"] = include_relations
 
         return cls(**new_data)
 

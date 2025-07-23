@@ -10,7 +10,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 from c_to_plantuml.models import (
-    FileModel, ProjectModel, IncludeRelation, TypedefRelation,
+    Alias, FileModel, ProjectModel, IncludeRelation,
     Struct, Enum, Union, Function, Field
 )
 from c_to_plantuml.parser import CParser
@@ -353,7 +353,7 @@ typedef Color* ColorPtr;
         
         # Check that complex typedefs have separate typedef classes
         self.assertIn('class "Point" as TYPEDEF_POINT <<typedef>>', diagram)
-        self.assertIn('TEST ..> TYPEDEF_POINT : declares', diagram)
+        self.assertIn('TEST ..> TYPEDEF_POINT : <<declares>>', diagram)
 
     def test_include_processing_with_typedefs(self):
         """Test include processing when headers contain typedefs"""
@@ -478,10 +478,10 @@ struct Config {
         
         # Check that header class includes struct fields as global variables
         self.assertIn('class "types" as HEADER_TYPES <<header>> #LightGreen', diagram)
-        self.assertIn("+ char* name", diagram)
+        self.assertIn("+ char * name", diagram)
         self.assertIn("+ int age", diagram)
         self.assertIn("+ int max_users", diagram)
-        self.assertIn("+ char* server_name", diagram)
+        self.assertIn("+ char * server_name", diagram)
 
     def test_include_processing_with_enums(self):
         """Test include processing when headers contain enums"""

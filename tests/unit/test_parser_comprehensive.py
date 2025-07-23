@@ -10,7 +10,7 @@ import unittest
 from pathlib import Path
 from typing import Dict, List
 
-from c_to_plantuml.models import Enum, Field, Function, Struct, Union, TypedefRelation
+from c_to_plantuml.models import Alias, Enum, Field, Function, Struct, Union
 from c_to_plantuml.parser import CParser
 from c_to_plantuml.parser_tokenizer import CTokenizer, TokenType
 
@@ -353,8 +353,8 @@ class TestCParserComprehensive(unittest.TestCase):
             
             # Check include paths
             include_paths = [inc for inc in file_model.includes]
-            self.assertIn("<stdio.h>", include_paths)
-            self.assertIn("<stdlib.h>", include_paths)
+            self.assertIn("stdio.h", include_paths)
+            self.assertIn("stdlib.h", include_paths)
 
         finally:
             os.unlink(temp_file)
@@ -400,7 +400,7 @@ class TestCParserComprehensive(unittest.TestCase):
                 Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
             )
 
-            self.assertGreaterEqual(len(file_model.typedefs), 2)
+            self.assertGreaterEqual(len(file_model.aliases), 2)
 
         finally:
             os.unlink(temp_file)
@@ -485,7 +485,7 @@ class TestCParserComprehensive(unittest.TestCase):
             self.assertGreaterEqual(len(file_model.globals), 1)
             self.assertGreaterEqual(len(file_model.includes), 2)
             self.assertGreaterEqual(len(file_model.macros), 1)
-            self.assertGreaterEqual(len(file_model.typedefs), 1)
+            self.assertGreaterEqual(len(file_model.aliases), 1)
 
         finally:
             os.unlink(temp_file)
