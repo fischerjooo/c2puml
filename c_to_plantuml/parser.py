@@ -538,25 +538,16 @@ class CParser:
         if include_depth == 0:
             return initial_files
         
-        # Process include dependencies with depth tracking
+        # Start with initial files
         files_to_parse = set(initial_files)
-        processed_files = set()  # Track files we've already processed for includes
-        current_depth = 0
         
-        while current_depth < include_depth:
-            current_depth += 1
-            self.logger.info(f"Processing include depth {current_depth}")
+        # Do N iterations of include processing
+        for iteration in range(include_depth):
+            self.logger.info(f"Processing include iteration {iteration + 1}")
             
-            # Find new files to process at this depth
-            new_files_to_process = files_to_parse - processed_files
-            if not new_files_to_process:
-                break
-                
-            # Process includes from files at current depth
+            # Find all includes from current files
             new_includes = set()
-            for file_path in new_files_to_process:
-                processed_files.add(file_path)
-                
+            for file_path in files_to_parse:
                 # Extract includes from this file
                 includes = self._extract_includes_from_file(file_path)
                 
@@ -568,13 +559,18 @@ class CParser:
                         relative_included_path = str(included_file.relative_to(project_root))
                         if self._should_include_file(relative_included_path, config):
                             new_includes.add(included_file)
-                            self.logger.debug(f"Added included file at depth {current_depth}: {relative_included_path}")
+                            self.logger.debug(f"Added included file in iteration {iteration + 1}: {relative_included_path}")
                         else:
                             self.logger.debug(f"Excluded included file due to config: {relative_included_path}")
             
             # Add new includes to the parsing list
             files_to_parse.update(new_includes)
-            self.logger.info(f"Depth {current_depth}: Added {len(new_includes)} new files")
+            self.logger.info(f"Iteration {iteration + 1}: Added {len(new_includes)} new files")
+            
+            # If no new files were found, we can stop early
+            if not new_includes:
+                self.logger.info(f"No new files found in iteration {iteration + 1}, stopping early")
+                break
         
         result = list(files_to_parse)
         self.logger.info(f"Final file list: {len(result)} files")
