@@ -1045,9 +1045,9 @@
           "methods": [],
           "tag_name": "MyComplexStruct_tag",
           "uses": [
-            "MyString",
-            "MyCallback",
             "log_level_t",
+            "MyCallback",
+            "MyString",
             "MyLen"
           ]
         },
@@ -1209,5 +1209,5 @@
       }
     }
   },
-  "created_at": "2025-07-23T06:15:54.583063"
+  "created_at": "2025-07-23T06:21:20.737638"
 }
