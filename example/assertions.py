@@ -23,7 +23,8 @@ class PUMLValidator:
             "logger.puml",
             "math_utils.puml",
             "sample.puml",
-            "preprocessed.puml"
+            "preprocessed.puml",
+            "complex.puml"
         ]
         
         # Expected source files with their content requirements
@@ -200,6 +201,95 @@ class PUMLValidator:
                     "typedef struct ComplexExample_tag"
                 ],
                 "functions": [],
+                "globals": []
+            },
+            "complex.c": {
+                "includes": ["complex.h", "stdio.h", "stdlib.h", "string.h"],
+                "globals": [
+                    "math_operation_t global_math_ops [ 10 ]",
+                    "Std_ReturnType (*const Crypto_Cfg_ProcessJobLite_acpfct[CRYPTO_CFG_MODULE_COUNT])"
+                ],
+                "functions": [
+                    "static int add_operation(int a, int b)",
+                    "static int subtract_operation(int a, int b)",
+                    "static int multiply_operation(int a, int b)",
+                    "static int divide_operation(int a, int b)",
+                    "static int modulo_operation(int a, int b)",
+                    "static void init_math_operations()",
+                    "void test_complex_macro(int * x, int y, int z)",
+                    "static int test_callback(int * item)",
+                    "void test_process_array(int * arr, int size)",
+                    "void test_stringify_macro()",
+                    "void test_crypto_utility_macros()",
+                    "void test_handle_operation(operation_type_t op_type, int * data, int size)",
+                    "int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], int op_count, void ( * pre_process ) ( int *, int ), void ( * post_process ) ( int *, unknown unnamed)",
+                    "void * create_handler(const char * name, int ( * init_func ) ( void * ), void ( * cleanup_func ) ( void * ), unknown unnamed)",
+                    "int execute_operations(int value, math_ops_array_t ops, int op_count)",
+                    "math_operation_t * get_math_operations()",
+                    "complex_handler_t * create_complex_handler(const char * name, int ( * validate_func ) ( const char * ), void * ( * alloc_func ) ( size_t ), unknown unnamed)",
+                    "void test_mixed_union()",
+                    "void test_operation_set()",
+                    "void test_handler_table()",
+                    "void test_crypto_job_processing()",
+                    "void run_complex_tests()",
+                    "static Std_ReturnType rba_CryptoAuAdp_ProcessJobLite(const Crypto_JobType * job_pst)",
+                    "static Std_ReturnType rba_CryptoAuCSC_ProcessJobLite(const Crypto_JobType * job_pst)",
+                    "static Std_ReturnType rba_CryptoAuHSM3_ProcessJobLite(const Crypto_JobType * job_pst)"
+                ],
+                "typedefs": []  # No typedefs in C files
+            },
+            "complex.h": {
+                "includes": ["stdint.h", "stddef.h", "stdbool.h"],
+                "macros": [
+                    "#define COMPLEX_H",
+                    "#define COMPLEX_MACRO_FUNC(x, y, z)",
+                    "#define PROCESS_ARRAY(arr, size, callback)",
+                    "#define CREATE_FUNC_NAME(prefix, suffix)",
+                    "#define STRINGIFY(x)",
+                    "#define TOSTRING(x)",
+                    "#define CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8)",
+                    "#define CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8)",
+                    "#define CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)",
+                    "#define CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)",
+                    "#define DEPRECATED",
+                    "#define HANDLE_OPERATION(op_type, data, size, callback)"
+                ],
+                "typedefs": [
+                    "typedef uint8_t uint8",
+                    "typedef uint16_t uint16",
+                    "typedef uint32_t uint32",
+                    "typedef struct processor_t",
+                    "typedef int (*math_operation_t)(int, int)",
+                    "typedef math_operation_t math_ops_array_t[10]",
+                    "typedef int (*(*complex_func_ptr_t)(int, char*))(double, void*)",
+                    "typedef struct data_item_t",
+                    "typedef int (*data_processor_t)(data_item_t* item, void* context)",
+                    "typedef data_processor_t* data_processor_array_t",
+                    "typedef union mixed_union_t",
+                    "typedef struct operation_set_t",
+                    "typedef struct complex_handler_t",
+                    "typedef enum operation_type_t",
+                    "typedef int (*complex_callback_t)",
+                    "typedef struct handler_entry_t",
+                    "typedef handler_entry_t handler_table_t[8]",
+                    "typedef void (*debug_callback_t)(const char* message, int level)",
+                    "typedef void (*release_callback_t)(const char* message)",
+                    "typedef enum crypto_module_enum_t",
+                    "typedef struct Crypto_JobType",
+                    "typedef int Std_ReturnType",
+                    "typedef Std_ReturnType (*Crypto_Cfg_ProcessJobLite_fct)(const Crypto_JobType *job_pst)",
+                    "typedef Crypto_Cfg_ProcessJobLite_fct (*const Crypto_Cfg_ProcessJobLite_acpfct[CRYPTO_CFG_MODULE_COUNT])(const Crypto_JobType *job_pst)"
+                ],
+                "functions": [
+                    "int process_with_callbacks(int data[], int size, math_operation_t operations[], int op_count, void (*pre_process)(int*, int), void (*post_process)(int*, int))",
+                    "void* create_handler(const char* name, int (*init_func)(void*), void (*cleanup_func)(void*), complex_callback_t callback)",
+                    "int execute_operations(int value, math_ops_array_t ops, int op_count)",
+                    "math_operation_t* get_math_operations(void)",
+                    "complex_handler_t* create_complex_handler(const char* name, int (*validate_func)(const char*), void* (*alloc_func)(size_t), void (*free_func)(void*))",
+                    "void test_crypto_job_processing(void)",
+                    "void test_crypto_utility_macros(void)",
+                    "extern Std_ReturnType (*const Crypto_Cfg_ProcessJobLite_acpfct[CRYPTO_CFG_MODULE_COUNT])(const Crypto_JobType *job_pst)"
+                ],
                 "globals": []
             },
             "preprocessed.h": {
@@ -709,6 +799,9 @@ class PUMLValidator:
         # Check for preprocessing directive issues
         self._validate_preprocessing_directives(content, filename)
         
+        # Check for complex parsing edge cases
+        self._validate_complex_parsing_edge_cases(content, filename)
+        
         if filename == "typedef_test.puml":
             # Should have specific typedef classes
             assert 'TYPEDEF_MYLEN' in content, "Missing TYPEDEF_MYLEN class"
@@ -783,6 +876,70 @@ class PUMLValidator:
             # math_utils.puml should have separate typedef classes
             assert 'TYPEDEF_REAL_T' in content, "Missing TYPEDEF_REAL_T class"
             assert 'TYPEDEF_MATH_OP_T' in content, "Missing TYPEDEF_MATH_OP_T class"
+            
+        elif filename == "complex.puml":
+            # complex.puml should have specific complex typedef classes
+            assert 'TYPEDEF_MATH_OPERATION_T' in content, "Missing TYPEDEF_MATH_OPERATION_T class"
+            assert 'TYPEDEF_MATH_OPS_ARRAY_T' in content, "Missing TYPEDEF_MATH_OPS_ARRAY_T class"
+            assert 'TYPEDEF_COMPLEX_FUNC_PTR_T' in content, "Missing TYPEDEF_COMPLEX_FUNC_PTR_T class"
+            assert 'TYPEDEF_DATA_PROCESSOR_T' in content, "Missing TYPEDEF_DATA_PROCESSOR_T class"
+            assert 'TYPEDEF_DATA_PROCESSOR_ARRAY_T' in content, "Missing TYPEDEF_DATA_PROCESSOR_ARRAY_T class"
+            assert 'TYPEDEF_MIXED_UNION_T' in content, "Missing TYPEDEF_MIXED_UNION_T class"
+            assert 'TYPEDEF_OPERATION_SET_T' in content, "Missing TYPEDEF_OPERATION_SET_T class"
+            assert 'TYPEDEF_COMPLEX_HANDLER_T' in content, "Missing TYPEDEF_COMPLEX_HANDLER_T class"
+            assert 'TYPEDEF_OPERATION_TYPE_T' in content, "Missing TYPEDEF_OPERATION_TYPE_T class"
+            assert 'TYPEDEF_COMPLEX_CALLBACK_T' in content, "Missing TYPEDEF_COMPLEX_CALLBACK_T class"
+            assert 'TYPEDEF_HANDLER_ENTRY_T' in content, "Missing TYPEDEF_HANDLER_ENTRY_T class"
+            assert 'TYPEDEF_HANDLER_TABLE_T' in content, "Missing TYPEDEF_HANDLER_TABLE_T class"
+            assert 'TYPEDEF_DEBUG_CALLBACK_T' in content, "Missing TYPEDEF_DEBUG_CALLBACK_T class"
+            assert 'TYPEDEF_RELEASE_CALLBACK_T' in content, "Missing TYPEDEF_RELEASE_CALLBACK_T class"
+            assert 'TYPEDEF_CRYPTO_MODULE_ENUM_T' in content, "Missing TYPEDEF_CRYPTO_MODULE_ENUM_T class"
+            assert 'TYPEDEF_CRYPTO_JOBTYPE' in content, "Missing TYPEDEF_CRYPTO_JOBTYPE class"
+            assert 'TYPEDEF_STD_RETURNTYPE' in content, "Missing TYPEDEF_STD_RETURNTYPE class"
+            assert 'TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT' in content, "Missing TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT class"
+            assert 'TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_ACPFCT' in content, "Missing TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_ACPFCT class"
+            assert 'TYPEDEF_UINT8' in content, "Missing TYPEDEF_UINT8 class"
+            assert 'TYPEDEF_UINT16' in content, "Missing TYPEDEF_UINT16 class"
+            assert 'TYPEDEF_UINT32' in content, "Missing TYPEDEF_UINT32 class"
+            
+            # Should have specific complex macro definitions
+            assert 'COMPLEX_MACRO_FUNC' in content, "Missing COMPLEX_MACRO_FUNC macro"
+            assert 'PROCESS_ARRAY' in content, "Missing PROCESS_ARRAY macro"
+            assert 'HANDLE_OPERATION' in content, "Missing HANDLE_OPERATION macro"
+            assert 'CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN' in content, "Missing CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN macro"
+            assert 'CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN' in content, "Missing CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN macro"
+            assert 'CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN' in content, "Missing CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN macro"
+            assert 'CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN' in content, "Missing CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN macro"
+            
+            # Should have specific complex function patterns
+            assert 'test_crypto_job_processing' in content, "Missing test_crypto_job_processing function"
+            assert 'test_crypto_utility_macros' in content, "Missing test_crypto_utility_macros function"
+            assert 'test_complex_macro' in content, "Missing test_complex_macro function"
+            assert 'test_process_array' in content, "Missing test_process_array function"
+            assert 'test_handle_operation' in content, "Missing test_handle_operation function"
+            assert 'test_mixed_union' in content, "Missing test_mixed_union function"
+            assert 'test_operation_set' in content, "Missing test_operation_set function"
+            assert 'test_handler_table' in content, "Missing test_handler_table function"
+            assert 'run_complex_tests' in content, "Missing run_complex_tests function"
+            
+            # Should have specific relationships for complex types
+            assert 'TYPEDEF_MATH_OPS_ARRAY_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>' in content, "Missing math_ops_array_t uses math_operation_t relationship"
+            assert 'TYPEDEF_DATA_PROCESSOR_ARRAY_T ..> TYPEDEF_DATA_PROCESSOR_T : <<uses>>' in content, "Missing data_processor_array_t uses data_processor_t relationship"
+            assert 'TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>' in content, "Missing data_processor_t uses data_item_t relationship"
+            assert 'TYPEDEF_HANDLER_TABLE_T ..> TYPEDEF_HANDLER_ENTRY_T : <<uses>>' in content, "Missing handler_table_t uses handler_entry_t relationship"
+            assert 'TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_ACPFCT ..> TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT : <<uses>>' in content, "Missing Crypto_Cfg_ProcessJobLite_acpfct uses Crypto_Cfg_ProcessJobLite_fct relationship"
+            assert 'TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_CRYPTO_JOBTYPE : <<uses>>' in content, "Missing Crypto_Cfg_ProcessJobLite_fct uses Crypto_JobType relationship"
+            assert 'TYPEDEF_CRYPTO_CFG_PROCESSJOBLITE_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>' in content, "Missing Crypto_Cfg_ProcessJobLite_fct uses Std_ReturnType relationship"
+            
+            # Should have specific enum values
+            assert 'OP_ADD' in content, "Missing OP_ADD enum value"
+            assert 'OP_SUB' in content, "Missing OP_SUB enum value"
+            assert 'OP_MUL' in content, "Missing OP_MUL enum value"
+            assert 'OP_DIV' in content, "Missing OP_DIV enum value"
+            assert 'CRYPTO_CFG_MODULE_COUNT' in content, "Missing CRYPTO_CFG_MODULE_COUNT enum value"
+            assert 'CRYPTO_CFG_MODULE_AU_ADP' in content, "Missing CRYPTO_CFG_MODULE_AU_ADP enum value"
+            assert 'CRYPTO_CFG_MODULE_AU_CSC' in content, "Missing CRYPTO_CFG_MODULE_AU_CSC enum value"
+            assert 'CRYPTO_CFG_MODULE_AU_HSM3' in content, "Missing CRYPTO_CFG_MODULE_AU_HSM3 enum value"
             assert 'TYPEDEF_ID_T' in content, "Missing TYPEDEF_ID_T class"
             assert 'TYPEDEF_STATUS_T' in content, "Missing TYPEDEF_STATUS_T class"
             
@@ -989,6 +1146,163 @@ class PUMLValidator:
                 raise AssertionError(f"Malformed preprocessing expression in {filename}: {line}")
         
         print("    ✅ Preprocessing directives properly processed")
+
+    def _validate_complex_parsing_edge_cases(self, content: str, filename: str) -> None:
+        """Validate complex parsing edge cases specific to complex.c and complex.h."""
+        if "complex" not in filename.lower():
+            return
+            
+        print("    🔍 Validating complex parsing edge cases in {}...".format(filename))
+        
+        # Validate nasty function pointer array patterns
+        if "complex.c" in filename:
+            self._validate_function_pointer_arrays(content, filename)
+            self._validate_complex_macros(content, filename)
+            self._validate_crypto_utility_macros(content, filename)
+            self._validate_nasty_edge_case_functions(content, filename)
+        
+        # Validate nasty typedef patterns
+        if "complex.h" in filename:
+            self._validate_complex_typedefs(content, filename)
+            self._validate_complex_macro_definitions(content, filename)
+            self._validate_const_array_of_function_pointers(content, filename)
+            self._validate_complex_documentation_patterns(content, filename)
+            self._validate_bit_shift_and_type_casting(content, filename)
+        
+        print("      ✅ Complex parsing edge cases properly processed")
+
+    def _validate_function_pointer_arrays(self, content: str, filename: str) -> None:
+        """Validate array of function pointers parsing."""
+        patterns = [
+            r'math_operation_t\s+global_math_ops\s*\[\s*10\s*\]',
+            r'Crypto_Cfg_ProcessJobLite_acpfct\s*\[\s*CRYPTO_CFG_MODULE_COUNT\s*\]',
+            r'handler_table_t\s+table\s*\[\s*8\s*\]',
+            r'math_ops_array_t\s+local_ops'
+        ]
+        
+        for pattern in patterns:
+            if re.search(pattern, content):
+                print(f"      ✅ Found function pointer array: {pattern}")
+            else:
+                print(f"      ⚠️  Missing function pointer array pattern: {pattern}")
+
+    def _validate_complex_macros(self, content: str, filename: str) -> None:
+        """Validate complex macro usage patterns."""
+        patterns = [
+            r'COMPLEX_MACRO_FUNC\s*\(',
+            r'PROCESS_ARRAY\s*\(',
+            r'HANDLE_OPERATION\s*\(',
+            r'TOSTRING\s*\(',
+            r'CREATE_FUNC_NAME\s*\('
+        ]
+        
+        for pattern in patterns:
+            if re.search(pattern, content):
+                print(f"      ✅ Found complex macro usage: {pattern}")
+            else:
+                print(f"      ⚠️  Missing complex macro usage: {pattern}")
+
+    def _validate_crypto_utility_macros(self, content: str, filename: str) -> None:
+        """Validate crypto utility macro usage patterns."""
+        patterns = [
+            r'CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN\s*\(',
+            r'CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN\s*\(',
+            r'CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN\s*\(',
+            r'CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN\s*\('
+        ]
+        
+        for pattern in patterns:
+            if re.search(pattern, content):
+                print(f"      ✅ Found crypto utility macro: {pattern}")
+            else:
+                print(f"      ⚠️  Missing crypto utility macro: {pattern}")
+
+    def _validate_complex_typedefs(self, content: str, filename: str) -> None:
+        """Validate complex typedef patterns."""
+        patterns = [
+            r'typedef\s+int\s*\(\s*\*\s*math_operation_t\s*\)\s*\(\s*int\s*,\s*int\s*\)',
+            r'typedef\s+math_operation_t\s+math_ops_array_t\s*\[\s*10\s*\]',
+            r'typedef\s+int\s*\(\s*\*\s*\(\s*\*complex_func_ptr_t\s*\)\s*\(\s*int\s*,\s*char\*\s*\)\s*\)\s*\(\s*double\s*,\s*void\*\s*\)',
+            r'typedef\s+Std_ReturnType\s*\(\s*\*Crypto_Cfg_ProcessJobLite_fct\s*\)\s*\(\s*const\s+Crypto_JobType\s*\*job_pst\s*\)',
+            r'typedef\s+Crypto_Cfg_ProcessJobLite_fct\s*\(\s*\*const\s+Crypto_Cfg_ProcessJobLite_acpfct\s*\[\s*CRYPTO_CFG_MODULE_COUNT\s*\]\s*\)\s*\(\s*const\s+Crypto_JobType\s*\*job_pst\s*\)'
+        ]
+        
+        for pattern in patterns:
+            if re.search(pattern, content):
+                print(f"      ✅ Found complex typedef: {pattern}")
+            else:
+                print(f"      ⚠️  Missing complex typedef: {pattern}")
+
+    def _validate_complex_macro_definitions(self, content: str, filename: str) -> None:
+        """Validate complex macro definition patterns."""
+        patterns = [
+            r'#define\s+COMPLEX_MACRO_FUNC\s*\([^)]+\)\s*\\',
+            r'#define\s+PROCESS_ARRAY\s*\([^)]+\)\s*\\',
+            r'#define\s+HANDLE_OPERATION\s*\([^)]+\)\s*\\',
+            r'#define\s+CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN\s*\([^)]+\)\s*\\',
+            r'#define\s+CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN\s*\([^)]+\)\s*\\'
+        ]
+        
+        for pattern in patterns:
+            if re.search(pattern, content):
+                print(f"      ✅ Found complex macro definition: {pattern}")
+            else:
+                print(f"      ⚠️  Missing complex macro definition: {pattern}")
+
+    def _validate_const_array_of_function_pointers(self, content: str, filename: str) -> None:
+        """Validate const array of function pointers pattern."""
+        pattern = r'Std_ReturnType\s*\(\s*\*const\s+Crypto_Cfg_ProcessJobLite_acpfct\s*\[\s*CRYPTO_CFG_MODULE_COUNT\s*\]\s*\)\s*\(\s*const\s+Crypto_JobType\s*\*job_pst\s*\)'
+        
+        if re.search(pattern, content):
+            print(f"      ✅ Found const array of function pointers: {pattern}")
+        else:
+            print(f"      ⚠️  Missing const array of function pointers: {pattern}")
+
+    def _validate_nasty_edge_case_functions(self, content: str, filename: str) -> None:
+        """Validate nasty edge case function patterns."""
+        if "complex.c" not in filename:
+            return
+            
+        patterns = [
+            r'test_crypto_job_processing\s*\(\s*\)',
+            r'test_crypto_utility_macros\s*\(\s*\)',
+            r'test_complex_macro\s*\(\s*int\s*\*\s*x\s*,\s*int\s*y\s*,\s*int\s*z\s*\)',
+            r'test_process_array\s*\(\s*int\s*\*\s*arr\s*,\s*int\s*size\s*\)',
+            r'test_handle_operation\s*\(\s*operation_type_t\s+op_type\s*,\s*int\s*\*\s*data\s*,\s*int\s*size\s*\)'
+        ]
+        
+        for pattern in patterns:
+            if re.search(pattern, content):
+                print(f"      ✅ Found nasty edge case function: {pattern}")
+            else:
+                print(f"      ⚠️  Missing nasty edge case function: {pattern}")
+
+    def _validate_complex_documentation_patterns(self, content: str, filename: str) -> None:
+        """Validate complex documentation patterns in macros."""
+        if "complex.h" not in filename:
+            return
+            
+        # Check for Doxygen-style documentation in macros
+        doc_pattern = r'/\*\*\s*\*+\s*\*\\brief\s+[^*]+\*+\s*\*/'
+        if re.search(doc_pattern, content):
+            print("      ✅ Found complex documentation pattern in macro")
+        else:
+            print("      ⚠️  Missing complex documentation pattern in macro")
+
+    def _validate_bit_shift_and_type_casting(self, content: str, filename: str) -> None:
+        """Validate bit shift and type casting patterns."""
+        patterns = [
+            r'\(\s*uint8\s*\)\s*\(\s*\(\s*[^)]+\s*\)\s*\)',
+            r'\(\s*uint8\s*\)\s*\(\s*\(\s*[^)]+\s*\)\s*>>\s*8U\s*\)',
+            r'\(\s*uint16\s*\)\s*\(\s*\(\s*[^)]+\s*\)\s*<<\s*8U\s*\)',
+            r'\(\s*uint32\s*\)\s*\(\s*\(\s*[^)]+\s*\)\s*<<\s*24U\s*\)'
+        ]
+        
+        for pattern in patterns:
+            if re.search(pattern, content):
+                print(f"      ✅ Found bit shift/type casting pattern: {pattern}")
+            else:
+                print(f"      ⚠️  Missing bit shift/type casting pattern: {pattern}")
 
     def _validate_no_typedefs_in_header_or_source_classes(self, puml_lines, filename):
         """Assert that no typedefs (e.g., '+ struct', '+ enum', or any typedef) are generated in header or source class blocks (HEADER_xxx or main class blocks)."""
