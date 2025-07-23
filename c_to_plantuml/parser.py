@@ -339,9 +339,7 @@ class CParser:
             
             # Skip macros and other preprocessor content
             if tokens[i].type == TokenType.DEFINE:
-                # Skip to end of line or next token
-                while i < len(tokens) and tokens[i].type != TokenType.NEWLINE:
-                    i += 1
+                # Skip the entire macro content (multi-line macros are now merged)
                 i += 1
                 continue
             
@@ -353,7 +351,11 @@ class CParser:
                 if (var_name and var_name.strip() and 
                     var_type and var_type.strip() and 
                     not var_name.startswith('#') and 
-                    len(var_type) < 200):
+                    len(var_type) < 200 and
+                    not var_type.startswith('\\') and
+                    not var_name.startswith('\\') and
+                    '\\' not in var_type and
+                    '\\' not in var_name):
                     try:
                         # Additional validation before creating Field
                         stripped_name = var_name.strip()

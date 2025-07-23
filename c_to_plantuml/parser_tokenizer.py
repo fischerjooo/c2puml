@@ -190,6 +190,9 @@ class CTokenizer:
             tokens.append(Token(TokenType.STRING, multiline_string_value, multiline_string_start_line, multiline_string_start_col))
         if in_multiline_comment:
             tokens.append(Token(TokenType.COMMENT, multiline_comment_value, multiline_comment_start_line, multiline_comment_start_col))
+        
+        # Post-process tokens to merge multi-line macros
+        tokens = self._merge_multiline_macros(tokens, lines)
             
         tokens.append(Token(TokenType.EOF, '', total_lines, len(lines[-1]) if lines else 0))
         
@@ -321,6 +324,41 @@ class CTokenizer:
             exclude_types = [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE, TokenType.EOF]
         
         return [token for token in tokens if token.type not in exclude_types]
+
+    def _merge_multiline_macros(self, tokens: List[Token], lines: List[str]) -> List[Token]:
+        """Merge multi-line macro tokens that span multiple lines with backslashes"""
+        merged_tokens = []
+        i = 0
+        
+        while i < len(tokens):
+            token = tokens[i]
+            
+            if token.type == TokenType.DEFINE and token.value.rstrip().endswith('\\'):
+                # Found a multi-line macro, merge with subsequent lines
+                macro_content = token.value
+                current_line = token.line
+                
+                # Continue merging lines until we find one that doesn't end with backslash
+                while macro_content.rstrip().endswith('\\'):
+                    # Remove the backslash and add a newline
+                    macro_content = macro_content.rstrip()[:-1] + '\n'
+                    current_line += 1
+                    
+                    # Find the next line content
+                    if current_line <= len(lines):
+                        next_line = lines[current_line - 1]
+                        macro_content += next_line
+                    else:
+                        break
+                
+                # Create a new token with the merged content
+                merged_tokens.append(Token(TokenType.DEFINE, macro_content, token.line, token.column))
+            else:
+                merged_tokens.append(token)
+            
+            i += 1
+        
+        return merged_tokens
 
 
 class StructureFinder:
