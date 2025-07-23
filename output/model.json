@@ -59,8 +59,8 @@
           "name": "ComplexExample_t",
           "tag_name": "ComplexExample_tag",
           "uses": [
-            "CE_Status_t",
-            "NestedInfo_t"
+            "NestedInfo_t",
+            "CE_Status_t"
           ]
         },
         "NestedInfo_t": {
@@ -85,8 +85,8 @@
           "name": "NestedInfo_t",
           "tag_name": "NestedInfo_tag",
           "uses": [
-            "log_level_t",
-            "id_t"
+            "id_t",
+            "log_level_t"
           ]
         }
       },
@@ -1107,8 +1107,8 @@
           "name": "MyBuffer",
           "tag_name": "MyBuffer_tag",
           "uses": [
-            "MyString",
-            "MyLen"
+            "MyLen",
+            "MyString"
           ]
         },
         "MyComplex": {
@@ -1138,10 +1138,10 @@
           "name": "MyComplex",
           "tag_name": "MyComplexStruct_tag",
           "uses": [
-            "log_level_t",
-            "MyCallback",
+            "MyLen",
             "MyString",
-            "MyLen"
+            "MyCallback",
+            "log_level_t"
           ]
         },
         "NamedStruct_t": {
