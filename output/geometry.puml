@@ -1,0 +1,15 @@
+@startuml
+title geometry
+
+class geometry {
+    + File: /workspace/example/source/geometry.h
+    + Structs: 1
+    + Enums: 0
+    + Functions: 2
+    + Globals: 0
+    + Includes: 2
+    + Aliases: 0
+    + Unions: 0
+}
+
+@enduml

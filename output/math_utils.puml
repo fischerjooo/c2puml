@@ -1,0 +1,15 @@
+@startuml
+title math_utils
+
+class math_utils {
+    + File: /workspace/example/source/math_utils.h
+    + Structs: 0
+    + Enums: 0
+    + Functions: 3
+    + Globals: 0
+    + Includes: 1
+    + Aliases: 2
+    + Unions: 0
+}
+
+@enduml

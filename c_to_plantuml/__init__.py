@@ -17,7 +17,6 @@ from .models import (
     IncludeRelation,
     ProjectModel,
     Struct,
-    TypedefRelation,
     Union,
 )
 from .parser import CParser, Parser
@@ -37,6 +36,5 @@ __all__ = [
     "Union",
     "Function",
     "Field",
-    "TypedefRelation",
     "IncludeRelation",
 ]

@@ -1,0 +1,15 @@
+@startuml
+title logger
+
+class logger {
+    + File: /workspace/example/source/logger.h
+    + Structs: 0
+    + Enums: 1
+    + Functions: 2
+    + Globals: 0
+    + Includes: 2
+    + Aliases: 1
+    + Unions: 0
+}
+
+@enduml

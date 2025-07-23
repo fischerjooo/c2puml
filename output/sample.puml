@@ -1,0 +1,15 @@
+@startuml
+title sample
+
+class sample {
+    + File: /workspace/example/source/sample.h
+    + Structs: 1
+    + Enums: 1
+    + Functions: 3
+    + Globals: 2
+    + Includes: 4
+    + Aliases: 0
+    + Unions: 0
+}
+
+@enduml

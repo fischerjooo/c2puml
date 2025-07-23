@@ -1,0 +1,15 @@
+@startuml
+title typedef_test
+
+class typedef_test {
+    + File: /workspace/example/source/typedef_test.h
+    + Structs: 3
+    + Enums: 2
+    + Functions: 0
+    + Globals: 0
+    + Includes: 4
+    + Aliases: 6
+    + Unions: 2
+}
+
+@enduml

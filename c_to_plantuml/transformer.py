@@ -457,7 +457,6 @@ class Transformer:
             Function,
             IncludeRelation,
             Struct,
-            TypedefRelation,
             Union,
             EnumValue,
         )

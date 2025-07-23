@@ -1,0 +1,15 @@
+@startuml
+title complex_example
+
+class complex_example {
+    + File: /workspace/example/source/complex_example.h
+    + Structs: 2
+    + Enums: 1
+    + Functions: 0
+    + Globals: 0
+    + Includes: 2
+    + Aliases: 0
+    + Unions: 0
+}
+
+@enduml
