@@ -22,7 +22,7 @@ class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
 {
 + int x
 + int y
-+ char 32[ ] label
++ char [32] label
 }
 
 enum "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
@@ -57,8 +57,8 @@ class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 {
-+ point_t 3[ ] vertices
-+ char MAX_LABEL_LEN[ ] label
++ point_t [3] vertices
++ char [MAX_LABEL_LEN] label
 }
 
 class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
