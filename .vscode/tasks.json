@@ -5,6 +5,7 @@
             "label": "# Run Full Workflow",
             "type": "shell",
             "command": "${workspaceFolder}/run_all.bat",
+            "args": ["${config:plantumlPath}"],
             "group": "build",
             "presentation": {
                 "echo": true,
