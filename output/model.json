@@ -29,11 +29,7 @@
           ],
           "methods": [],
           "tag_name": "NestedInfo_tag",
-          "uses": [
-            "log_level_t",
-            "id_t",
-            "MAX_LABEL_LEN"
-          ]
+          "uses": []
         },
         "ComplexExample_t": {
           "name": "ComplexExample_t",
@@ -228,10 +224,7 @@
           ],
           "methods": [],
           "tag_name": "triangle_tag",
-          "uses": [
-            "MAX_LABEL_LEN",
-            "point_t"
-          ]
+          "uses": []
         }
       },
       "enums": {},
@@ -432,8 +425,6 @@
           "original_type": "void ( * log_callback_t ) ( log_level_t level , const char * message )",
           "uses": [
             "log_level_t",
-            "message",
-            "level",
             "log_callback_t"
           ]
         }
@@ -1054,8 +1045,7 @@
           "uses": [
             "MyCallback",
             "MyLen",
-            "MyString",
-            "log_level_t"
+            "MyString"
           ]
         },
         "Point_t": {
@@ -1161,7 +1151,6 @@
           "original_type": "int ( * MyCallback ) ( MyBuffer * buffer )",
           "uses": [
             "MyCallback",
-            "buffer",
             "MyBuffer"
           ]
         },
@@ -1176,8 +1165,8 @@
           "name": "MyComplexArray",
           "original_type": "MyComplexPtr MyComplexArray [ 10 ]",
           "uses": [
-            "MyComplexArray",
-            "MyComplexPtr"
+            "MyComplexPtr",
+            "MyComplexArray"
           ]
         }
       },
@@ -1219,5 +1208,5 @@
       }
     }
   },
-  "created_at": "2025-07-23T06:04:28.589096"
+  "created_at": "2025-07-23T06:12:44.194349"
 }

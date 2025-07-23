@@ -7,7 +7,7 @@ REFACTORED: Now uses tokenizer-based parsing instead of regex-based parsing
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Dict, List, Set
 
 if TYPE_CHECKING:
     from .models import Struct, Enum, Union, Function, Field, TypedefRelation
@@ -106,6 +106,16 @@ class CParser:
         unions = self._parse_unions_with_tokenizer(tokens, structure_finder)
         functions = self._parse_functions_with_tokenizer(tokens, structure_finder)
         aliases = self._parse_aliases_with_tokenizer(tokens)
+        
+        # Collect all available type names for filtering "uses"
+        available_types = set()
+        available_types.update(structs.keys())
+        available_types.update(enums.keys())
+        available_types.update(unions.keys())
+        available_types.update(aliases.keys())
+        
+        # Update "uses" fields with filtered types
+        self._update_uses_fields(structs, enums, unions, aliases, available_types)
 
         # Map typedef names to anonymous structs/enums/unions if needed
         from .models import Struct, Enum, Union
@@ -162,13 +172,7 @@ class CParser:
                     # Check if this struct has a typedef
                     tag_name = self._extract_tag_name_for_struct(tokens, struct_name)
                 
-                # Extract non-primitive types used by this struct
-                uses = []
-                for field in fields:
-                    field_uses = self._extract_non_primitive_types(field.type)
-                    uses.extend(field_uses)
-                
-                structs[struct_name] = Struct(struct_name, fields, tag_name=tag_name, uses=list(set(uses)))
+                structs[struct_name] = Struct(struct_name, fields, tag_name=tag_name, uses=[])
                 self.logger.debug(f"Parsed struct: {struct_name} with {len(fields)} fields")
         
         return structs
@@ -250,13 +254,7 @@ class CParser:
                     # Check if this union has a typedef
                     tag_name = self._extract_tag_name_for_union(tokens, union_name)
                 
-                # Extract non-primitive types used by this union
-                uses = []
-                for field in fields:
-                    field_uses = self._extract_non_primitive_types(field.type)
-                    uses.extend(field_uses)
-                
-                unions[union_name] = Union(union_name, fields, tag_name=tag_name, uses=list(set(uses)))
+                unions[union_name] = Union(union_name, fields, tag_name=tag_name, uses=[])
                 self.logger.debug(f"Parsed union: {union_name} with {len(fields)} fields")
         
         return unions
@@ -394,13 +392,10 @@ class CParser:
                     
                     # Only include if it's NOT a struct/enum/union typedef
                     if original_type not in ['struct', 'enum', 'union']:
-                        # Extract non-primitive types used by this alias
-                        uses = self._extract_non_primitive_types(original_type)
-                        
                         aliases[typedef_name] = Alias(
                             name=typedef_name,
                             original_type=original_type,
-                            uses=uses
+                            uses=[]
                         )
                     
             i += 1
@@ -451,8 +446,8 @@ class CParser:
             i += 1
         return ""
 
-    def _extract_non_primitive_types(self, type_str: str) -> List[str]:
-        """Extract non-primitive type names from a type string"""
+    def _extract_non_primitive_types(self, type_str: str, available_types: Set[str]) -> List[str]:
+        """Extract non-primitive type names from a type string that exist in available_types"""
         # Define primitive types
         primitive_types = {
             'void', 'char', 'short', 'int', 'long', 'float', 'double', 'signed', 'unsigned',
@@ -468,16 +463,40 @@ class CParser:
         # Split by common delimiters and operators
         parts = re.split(r'[\[\]\(\)\{\}\s\*&,;]', type_str)
         
-        # Extract potential type names
+        # Extract potential type names that exist in available_types
         types = []
         for part in parts:
             part = part.strip()
             if part and len(part) > 1 and part not in primitive_types:
                 # Check if it looks like a type name (starts with letter, contains letters/numbers/underscores)
                 if re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', part):
-                    types.append(part)
+                    # Only include if it exists in available_types
+                    if part in available_types:
+                        types.append(part)
         
         return list(set(types))  # Remove duplicates
+
+    def _update_uses_fields(self, structs, enums, unions, aliases, available_types):
+        """Update the uses fields to only include types that exist in the model"""
+        # Update struct uses
+        for struct in structs.values():
+            filtered_uses = []
+            for field in struct.fields:
+                field_uses = self._extract_non_primitive_types(field.type, available_types)
+                filtered_uses.extend(field_uses)
+            struct.uses = list(set(filtered_uses))
+        
+        # Update union uses
+        for union in unions.values():
+            filtered_uses = []
+            for field in union.fields:
+                field_uses = self._extract_non_primitive_types(field.type, available_types)
+                filtered_uses.extend(field_uses)
+            union.uses = list(set(filtered_uses))
+        
+        # Update alias uses
+        for alias in aliases.values():
+            alias.uses = self._extract_non_primitive_types(alias.original_type, available_types)
 
     def _find_c_files(self, project_root: Path, recursive: bool) -> List[Path]:
         """Find all C/C++ files in the project"""
