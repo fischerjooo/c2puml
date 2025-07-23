@@ -7,10 +7,11 @@ REFACTORED: Now uses tokenizer-based parsing instead of regex-based parsing
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Set
+from typing import TYPE_CHECKING, Dict, List, Set, Optional
 
 if TYPE_CHECKING:
     from .models import Struct, Enum, Union, Function, Field, TypedefRelation
+    from .config import Config
 
 from .models import FileModel, ProjectModel
 from .utils import detect_file_encoding
@@ -27,7 +28,7 @@ class CParser:
         self.logger = logging.getLogger(__name__)
         self.tokenizer = CTokenizer()
 
-    def parse_project(self, project_root: str, recursive: bool = True) -> ProjectModel:
+    def parse_project(self, project_root: str, recursive: bool = True, config: "Config" = None) -> ProjectModel:
         """Parse a C/C++ project and return a model"""
         project_root = Path(project_root).resolve()
 
@@ -39,8 +40,12 @@ class CParser:
 
         self.logger.info(f"Parsing project: {project_root}")
 
-        # Find C/C++ files
-        c_files = self._find_c_files(project_root, recursive)
+        # Find C/C++ files based on configuration and include dependencies
+        if config:
+            c_files = self._find_files_with_include_dependencies(project_root, recursive, config)
+        else:
+            c_files = self._find_c_files(project_root, recursive)
+        
         self.logger.info(f"Found {len(c_files)} C/C++ files")
 
         # Parse each file
@@ -505,6 +510,130 @@ class CParser:
         self.logger.debug(f"Found {len(filtered_files)} C/C++ files after filtering")
         return sorted(filtered_files)
 
+    def _find_files_with_include_dependencies(self, project_root: Path, recursive: bool, config: "Config") -> List[Path]:
+        """Find C/C++ files based on configuration and include dependencies"""
+        from .config import Config
+        
+        # If no config provided, fall back to old behavior
+        if config is None:
+            return self._find_c_files(project_root, recursive)
+        
+        # Get include depth from config
+        include_depth = getattr(config, "include_depth", 1)
+        self.logger.info(f"Using include depth: {include_depth}")
+        
+        # Start with all C/C++ files in the project
+        all_c_files = self._find_c_files(project_root, recursive)
+        
+        # Apply file filters from configuration to get initial files
+        initial_files = []
+        for file_path in all_c_files:
+            relative_path = str(file_path.relative_to(project_root))
+            if self._should_include_file(relative_path, config):
+                initial_files.append(file_path)
+        
+        self.logger.info(f"Initial files after filtering: {len(initial_files)} files")
+        
+        # If include_depth is 0, return only the initially filtered files
+        if include_depth == 0:
+            return initial_files
+        
+        # Process include dependencies with depth tracking
+        files_to_parse = set(initial_files)
+        processed_files = set()  # Track files we've already processed for includes
+        current_depth = 0
+        
+        while current_depth < include_depth:
+            current_depth += 1
+            self.logger.info(f"Processing include depth {current_depth}")
+            
+            # Find new files to process at this depth
+            new_files_to_process = files_to_parse - processed_files
+            if not new_files_to_process:
+                break
+                
+            # Process includes from files at current depth
+            new_includes = set()
+            for file_path in new_files_to_process:
+                processed_files.add(file_path)
+                
+                # Extract includes from this file
+                includes = self._extract_includes_from_file(file_path)
+                
+                # Find the actual header files
+                for include_name in includes:
+                    included_file = self._find_included_file(include_name, file_path, project_root)
+                    if included_file and included_file not in files_to_parse:
+                        # Check if the included file should be included based on config
+                        relative_included_path = str(included_file.relative_to(project_root))
+                        if self._should_include_file(relative_included_path, config):
+                            new_includes.add(included_file)
+                            self.logger.debug(f"Added included file at depth {current_depth}: {relative_included_path}")
+                        else:
+                            self.logger.debug(f"Excluded included file due to config: {relative_included_path}")
+            
+            # Add new includes to the parsing list
+            files_to_parse.update(new_includes)
+            self.logger.info(f"Depth {current_depth}: Added {len(new_includes)} new files")
+        
+        result = list(files_to_parse)
+        self.logger.info(f"Final file list: {len(result)} files")
+        return result
+
+    def _should_include_file(self, relative_path: str, config: "Config") -> bool:
+        """Check if a file should be included based on configuration filters"""
+        # Check file filters
+        if hasattr(config, 'file_filters') and config.file_filters:
+            for pattern in config.file_filters.get('include', []):
+                if pattern in relative_path:
+                    return True
+            for pattern in config.file_filters.get('exclude', []):
+                if pattern in relative_path:
+                    return False
+        return True
+
+    def _find_included_file(self, include_name: str, source_file: Path, project_root: Path) -> Optional[Path]:
+        """Find the actual file path for an include statement"""
+        # Remove quotes and angle brackets
+        include_name = include_name.strip('"<>')
+        
+        # Try to find the file relative to the source file's directory
+        source_dir = source_file.parent
+        possible_paths = [
+            source_dir / include_name,
+            source_dir / f"{include_name}.h",
+            source_dir / f"{include_name}.hpp",
+        ]
+        
+        for path in possible_paths:
+            if path.exists():
+                return path
+        
+        # Try to find the file in subdirectories of the project root
+        if project_root:
+            for ext in [".h", ".hpp", ".c", ".cpp"]:
+                full_name = include_name if include_name.endswith(ext) else f"{include_name}{ext}"
+                # Search recursively in project root
+                for found_file in project_root.rglob(full_name):
+                    return found_file
+        
+        return None
+
+    def _extract_includes_from_file(self, file_path: Path) -> List[str]:
+        """Extract include statements from a file without full parsing"""
+        try:
+            encoding = self._detect_encoding(file_path)
+            with open(file_path, "r", encoding=encoding) as f:
+                content = f.read()
+            
+            # Tokenize and extract includes
+            tokens = self.tokenizer.tokenize(content)
+            return self._parse_includes_with_tokenizer(tokens)
+            
+        except Exception as e:
+            self.logger.warning(f"Failed to extract includes from {file_path}: {e}")
+            return []
+
     def _detect_encoding(self, file_path: Path) -> str:
         """Detect file encoding with platform-aware fallbacks"""
         return detect_file_encoding(file_path)
@@ -906,7 +1035,7 @@ class Parser:
         self.logger = logging.getLogger(__name__)
 
     def parse(
-        self, project_root: str, output_file: str = "model.json", recursive: bool = True
+        self, project_root: str, output_file: str = "model.json", recursive: bool = True, config: "Config" = None
     ) -> str:
         """
         Step 1: Parse C code files and generate model.json
@@ -915,6 +1044,7 @@ class Parser:
             project_root: Root directory of C/C++ project
             output_file: Output JSON model file path
             recursive: Whether to search subdirectories recursively
+            config: Configuration object for filtering and include depth
 
         Returns:
             Path to the generated model.json file
@@ -923,7 +1053,7 @@ class Parser:
 
         # Parse the project
         try:
-            model = self.c_parser.parse_project(project_root, recursive)
+            model = self.c_parser.parse_project(project_root, recursive, config)
         except RuntimeError as e:
             self.logger.error(f"Failed to parse project: {e}")
             raise

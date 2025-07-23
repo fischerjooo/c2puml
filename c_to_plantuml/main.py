@@ -102,6 +102,7 @@ Usage:
                 project_root=config.source_folders[0],
                 output_file=model_file,
                 recursive=getattr(config, "recursive", True),
+                config=config,
             )
             logging.info(f"Model saved to: {model_file}")
             return 0
@@ -155,6 +156,7 @@ Usage:
             project_root=config.source_folders[0],
             output_file=model_file,
             recursive=getattr(config, "recursive", True),
+            config=config,
         )
         logging.info(f"Model saved to: {model_file}")
         # Step 2: Transform
