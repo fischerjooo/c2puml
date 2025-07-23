@@ -222,6 +222,45 @@
         {
           "is_declaration": false,
           "is_static": false,
+          "name": "rba_CryptoAuAdp_ProcessJobLite",
+          "parameters": [
+            {
+              "name": "job_pst",
+              "type": "const Crypto_JobType *",
+              "value": null
+            }
+          ],
+          "return_type": "static Std_ReturnType"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "rba_CryptoAuCSC_ProcessJobLite",
+          "parameters": [
+            {
+              "name": "job_pst",
+              "type": "const Crypto_JobType *",
+              "value": null
+            }
+          ],
+          "return_type": "static Std_ReturnType"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "rba_CryptoAuHSM3_ProcessJobLite",
+          "parameters": [
+            {
+              "name": "job_pst",
+              "type": "const Crypto_JobType *",
+              "value": null
+            }
+          ],
+          "return_type": "static Std_ReturnType"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
           "name": "run_complex_tests",
           "parameters": [],
           "return_type": "void"
@@ -278,6 +317,13 @@
               "value": null
             }
           ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "test_crypto_job_processing",
+          "parameters": [],
           "return_type": "void"
         },
         {
@@ -372,6 +418,27 @@
     },
     "complex.h": {
       "aliases": {
+        "Crypto_Cfg_ProcessJobLite_acpfct": {
+          "name": "Crypto_Cfg_ProcessJobLite_acpfct",
+          "original_type": "Crypto_Cfg_ProcessJobLite_fct ( * const Crypto_Cfg_ProcessJobLite_acpfct [ CRYPTO_CFG_MODULE_COUNT ] ) ( const Crypto_JobType * job_pst )",
+          "uses": [
+            "Crypto_Cfg_ProcessJobLite_fct",
+            "Crypto_JobType"
+          ]
+        },
+        "Crypto_Cfg_ProcessJobLite_fct": {
+          "name": "Crypto_Cfg_ProcessJobLite_fct",
+          "original_type": "Std_ReturnType ( * Crypto_Cfg_ProcessJobLite_fct ) ( const Crypto_JobType * job_pst )",
+          "uses": [
+            "Crypto_JobType",
+            "Std_ReturnType"
+          ]
+        },
+        "Std_ReturnType": {
+          "name": "Std_ReturnType",
+          "original_type": "int",
+          "uses": []
+        },
         "complex_callback_t": {
           "name": "complex_callback_t",
           "original_type": "int ( * complex_callback_t ) ( \n int param1 , \n char * param2 , \n void * param3 , \n struct { \n int nested1",
@@ -428,6 +495,28 @@
       },
       "encoding_used": "utf-8",
       "enums": {
+        "crypto_module_enum_t": {
+          "name": "crypto_module_enum_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "CRYPTO_CFG_MODULE_COUNT",
+              "value": "3"
+            },
+            {
+              "name": "CRYPTO_CFG_MODULE_AU_ADP",
+              "value": "0"
+            },
+            {
+              "name": "CRYPTO_CFG_MODULE_AU_CSC",
+              "value": "1"
+            },
+            {
+              "name": "CRYPTO_CFG_MODULE_AU_HSM3",
+              "value": "2"
+            }
+          ]
+        },
         "operation_type_t": {
           "name": "operation_type_t",
           "tag_name": "",
@@ -453,6 +542,19 @@
       },
       "file_path": "/workspace/example/source/complex.h",
       "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "Std_ReturnType",
+          "parameters": [
+            {
+              "name": "]",
+              "type": "* const Crypto_Cfg_ProcessJobLite_acpfct [ CRYPTO_CFG_MODULE_COUNT",
+              "value": null
+            }
+          ],
+          "return_type": "extern"
+        },
         {
           "is_declaration": true,
           "is_static": false,
@@ -586,6 +688,13 @@
             }
           ],
           "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "test_crypto_job_processing",
+          "parameters": [],
+          "return_type": "void"
         }
       ],
       "globals": [
@@ -645,6 +754,34 @@
       "project_root": "/workspace/example/source",
       "relative_path": "complex.h",
       "structs": {
+        "Crypto_JobType": {
+          "fields": [
+            {
+              "name": "job_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "job_data",
+              "type": "char *",
+              "value": null
+            },
+            {
+              "name": "data_size",
+              "type": "size_t",
+              "value": null
+            },
+            {
+              "name": "priority",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "Crypto_JobType",
+          "tag_name": "",
+          "uses": []
+        },
         "__anonymous_struct__": {
           "fields": [
             {

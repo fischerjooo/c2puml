@@ -6,6 +6,33 @@
 // Global array of function pointers - nasty parsing edge case
 static math_operation_t global_math_ops[10] = {NULL};
 
+// Nasty edge case: const array of function pointers with complex name
+static Std_ReturnType rba_CryptoAuAdp_ProcessJobLite(const Crypto_JobType *job_pst) {
+    if (job_pst == NULL) return -1;
+    printf("Processing job %d with AU_ADP module\n", job_pst->job_id);
+    return 0;
+}
+
+static Std_ReturnType rba_CryptoAuCSC_ProcessJobLite(const Crypto_JobType *job_pst) {
+    if (job_pst == NULL) return -1;
+    printf("Processing job %d with AU_CSC module\n", job_pst->job_id);
+    return 0;
+}
+
+static Std_ReturnType rba_CryptoAuHSM3_ProcessJobLite(const Crypto_JobType *job_pst) {
+    if (job_pst == NULL) return -1;
+    printf("Processing job %d with AU_HSM3 module\n", job_pst->job_id);
+    return 0;
+}
+
+// The nasty edge case: const array of function pointers with complex name
+Std_ReturnType (*const Crypto_Cfg_ProcessJobLite_acpfct[CRYPTO_CFG_MODULE_COUNT])
+    (const Crypto_JobType *job_pst) = {
+    &rba_CryptoAuAdp_ProcessJobLite,
+    &rba_CryptoAuCSC_ProcessJobLite,
+    &rba_CryptoAuHSM3_ProcessJobLite,
+};
+
 // Static function implementations for math operations
 static int add_operation(int a, int b) {
     return a + b;
@@ -249,6 +276,34 @@ void test_handler_table(void) {
     }
 }
 
+// Function demonstrating the nasty edge case: const array of function pointers
+void test_crypto_job_processing(void) {
+    printf("=== Testing Crypto Job Processing (Nasty Edge Case) ===\n");
+    
+    // Create test jobs
+    Crypto_JobType jobs[CRYPTO_CFG_MODULE_COUNT] = {
+        {1, "AU_ADP_Data", 10, 1},
+        {2, "AU_CSC_Data", 15, 2},
+        {3, "AU_HSM3_Data", 20, 3}
+    };
+    
+    // Process jobs using the nasty const array of function pointers
+    for (int i = 0; i < CRYPTO_CFG_MODULE_COUNT; i++) {
+        if (Crypto_Cfg_ProcessJobLite_acpfct[i] != NULL) {
+            Std_ReturnType result = Crypto_Cfg_ProcessJobLite_acpfct[i](&jobs[i]);
+            printf("Job %d processing result: %d\n", i + 1, result);
+        }
+    }
+    
+    // Test with NULL job
+    if (Crypto_Cfg_ProcessJobLite_acpfct[0] != NULL) {
+        Std_ReturnType result = Crypto_Cfg_ProcessJobLite_acpfct[0](NULL);
+        printf("NULL job processing result: %d\n", result);
+    }
+    
+    printf("=== Crypto Job Processing Test Complete ===\n");
+}
+
 // Main test function that exercises all the nasty parsing edge cases
 void run_complex_tests(void) {
     printf("=== Complex Parsing Edge Cases Test ===\n");
@@ -287,6 +342,9 @@ void run_complex_tests(void) {
     
     // Test handler table
     test_handler_table();
+    
+    // Test the nasty edge case: const array of function pointers
+    test_crypto_job_processing();
     
     printf("=== Complex Tests Complete ===\n");
 }
