@@ -59,8 +59,8 @@
           "name": "ComplexExample_t",
           "tag_name": "ComplexExample_tag",
           "uses": [
-            "NestedInfo_t",
-            "CE_Status_t"
+            "CE_Status_t",
+            "NestedInfo_t"
           ]
         },
         "NestedInfo_t": {
@@ -1140,8 +1140,8 @@
           "uses": [
             "MyLen",
             "MyCallback",
-            "log_level_t",
-            "MyString"
+            "MyString",
+            "log_level_t"
           ]
         },
         "NamedStruct_t": {

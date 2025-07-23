@@ -10,7 +10,7 @@ echo ==================================
 REM Step 1: Run all tests
 echo 📋 Step 1: Running all tests...
 echo ----------------------------------------
-python run_all_tests.py
+call run_all_tests.bat
 echo ✅ All tests passed!
 
 echo.
