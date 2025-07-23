@@ -142,6 +142,11 @@ class CTokenizer:
         multiline_string_value = ''
         multiline_string_start_line = 0
         multiline_string_start_col = 0
+        in_multiline_comment = False
+        multiline_comment_value = ''
+        multiline_comment_start_line = 0
+        multiline_comment_start_col = 0
+        
         for idx, line in enumerate(lines):
             if in_multiline_string:
                 multiline_string_value += '\n' + line
@@ -149,6 +154,15 @@ class CTokenizer:
                     # End of multiline string
                     in_multiline_string = False
                     tokens.append(Token(TokenType.STRING, multiline_string_value, multiline_string_start_line, multiline_string_start_col))
+            elif in_multiline_comment:
+                # Continue multi-line comment
+                multiline_comment_value += '\n' + line
+                comment_end = line.find('*/')
+                if comment_end != -1:
+                    # End of multi-line comment
+                    in_multiline_comment = False
+                    multiline_comment_value = multiline_comment_value[:multiline_comment_value.rfind('*/') + 2]
+                    tokens.append(Token(TokenType.COMMENT, multiline_comment_value, multiline_comment_start_line, multiline_comment_start_col))
             else:
                 line_tokens = self._tokenize_line(line, line_num)
                 # Check if a string starts but does not end on this line
@@ -158,15 +172,26 @@ class CTokenizer:
                     multiline_string_start_line = line_tokens[-1].line
                     multiline_string_start_col = line_tokens[-1].column
                     tokens.extend(line_tokens[:-1])
+                # Check if a multi-line comment starts but does not end on this line
+                elif line_tokens and line_tokens[-1].type == TokenType.COMMENT and line_tokens[-1].value.startswith('/*') and not line_tokens[-1].value.endswith('*/'):
+                    in_multiline_comment = True
+                    multiline_comment_value = line_tokens[-1].value
+                    multiline_comment_start_line = line_tokens[-1].line
+                    multiline_comment_start_col = line_tokens[-1].column
+                    tokens.extend(line_tokens[:-1])
                 else:
                     tokens.extend(line_tokens)
+            
             if line_num < total_lines:
                 tokens.append(Token(TokenType.NEWLINE, '\n', line_num, len(line)))
             line_num += 1
+            
         if in_multiline_string:
             tokens.append(Token(TokenType.STRING, multiline_string_value, multiline_string_start_line, multiline_string_start_col))
+        if in_multiline_comment:
+            tokens.append(Token(TokenType.COMMENT, multiline_comment_value, multiline_comment_start_line, multiline_comment_start_col))
+            
         tokens.append(Token(TokenType.EOF, '', total_lines, len(lines[-1]) if lines else 0))
-        # No need for post-processing merge step now
         
         return tokens
     
@@ -200,7 +225,7 @@ class CTokenizer:
                     pos = comment_end + 2
                     continue
                 else:
-                    # Comment continues to next line - handle in tokenize method
+                    # Comment continues to next line - create a partial comment token
                     comment_text = line[pos:]
                     tokens.append(Token(TokenType.COMMENT, comment_text, line_num, pos))
                     pos = len(line)
