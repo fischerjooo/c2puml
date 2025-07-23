@@ -1107,8 +1107,8 @@
           "name": "MyBuffer",
           "tag_name": "MyBuffer_tag",
           "uses": [
-            "MyLen",
-            "MyString"
+            "MyString",
+            "MyLen"
           ]
         },
         "MyComplex": {
@@ -1138,10 +1138,10 @@
           "name": "MyComplex",
           "tag_name": "MyComplexStruct_tag",
           "uses": [
-            "MyLen",
+            "log_level_t",
             "MyCallback",
             "MyString",
-            "log_level_t"
+            "MyLen"
           ]
         },
         "NamedStruct_t": {

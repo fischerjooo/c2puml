@@ -181,6 +181,12 @@ class "NamedStruct_t" as TYPEDEF_NAMEDSTRUCT_T <<typedef>> #LightYellow
     + int b
 }
 
+class "Point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
+{
+    + int x
+    + int y
+}
+
 class "Color_t" as TYPEDEF_COLOR_T <<typedef>> #LightYellow
 {
     + COLOR_BLUE
@@ -272,6 +278,7 @@ HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MYBUFFER : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MYCOMPLEX : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_NAMEDSTRUCT_T : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_POINT_T : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_COLOR_T : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_STATUS_T : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MYCALLBACK : <<declares>>
