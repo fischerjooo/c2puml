@@ -7,19 +7,19 @@
 static math_operation_t global_math_ops[10] = {NULL};
 
 // Nasty edge case: const array of function pointers with complex name
-static Std_ReturnType rba_ProcessorAdapter_Process(const Process_T *job_pst) {
+static Std_ReturnType ProcessorAdapter_Process(const Process_T *job_pst) {
     if (job_pst == NULL) return -1;
     printf("Processing job %d with Adapter module\n", job_pst->job_id);
     return 0;
 }
 
-static Std_ReturnType rba_ProcessorService_Process(const Process_T *job_pst) {
+static Std_ReturnType ProcessorService_Process(const Process_T *job_pst) {
     if (job_pst == NULL) return -1;
     printf("Processing job %d with Service module\n", job_pst->job_id);
     return 0;
 }
 
-static Std_ReturnType rba_ProcessorHardware_Process(const Process_T *job_pst) {
+static Std_ReturnType ProcessorHardware_Process(const Process_T *job_pst) {
     if (job_pst == NULL) return -1;
     printf("Processing job %d with Hardware module\n", job_pst->job_id);
     return 0;
@@ -27,9 +27,9 @@ static Std_ReturnType rba_ProcessorHardware_Process(const Process_T *job_pst) {
 
 // The nasty edge case: const array of function pointers with complex name
 Process_Cfg_Process_acpfct_t Process_Cfg_Process_acpfct = {
-    &rba_ProcessorAdapter_Process,
-    &rba_ProcessorService_Process,
-    &rba_ProcessorHardware_Process,
+    &ProcessorAdapter_Process,
+    &ProcessorService_Process,
+    &ProcessorHardware_Process,
 };
 
 // Static function implementations for math operations
