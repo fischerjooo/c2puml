@@ -86,6 +86,46 @@ void test_stringify_macro(void) {
     printf("Value: %s = %d\n", TOSTRING(value), value);
 }
 
+// Function testing the nasty crypto utility macros
+void test_crypto_utility_macros(void) {
+    printf("=== Testing Crypto Utility Macros (Nasty Edge Cases) ===\n");
+    
+    // Test uint16 to uint8 array conversion
+    uint16 test_value_16 = 0x1234;
+    uint8 buffer_16[2];
+    
+    CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(test_value_16, buffer_16);
+    printf("U16 0x%04X -> U8 array: [0x%02X, 0x%02X]\n", 
+           test_value_16, buffer_16[0], buffer_16[1]);
+    
+    // Test uint32 to uint8 array conversion
+    uint32 test_value_32 = 0x12345678;
+    uint8 buffer_32[4];
+    
+    CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN(test_value_32, buffer_32);
+    printf("U32 0x%08X -> U8 array: [0x%02X, 0x%02X, 0x%02X, 0x%02X]\n", 
+           test_value_32, buffer_32[0], buffer_32[1], buffer_32[2], buffer_32[3]);
+    
+    // Test uint8 array to uint16 conversion
+    uint16 converted_16 = CRYPTO_PRV_UTILS_U8ARR_TO_U16_BIG_ENDIAN(buffer_16);
+    printf("U8 array [0x%02X, 0x%02X] -> U16: 0x%04X\n", 
+           buffer_16[0], buffer_16[1], converted_16);
+    
+    // Test uint8 array to uint32 conversion
+    uint32 converted_32 = CRYPTO_PRV_UTILS_U8ARR_TO_U32_BIG_ENDIAN(buffer_32);
+    printf("U8 array [0x%02X, 0x%02X, 0x%02X, 0x%02X] -> U32: 0x%08X\n", 
+           buffer_32[0], buffer_32[1], buffer_32[2], buffer_32[3], converted_32);
+    
+    // Test with different values
+    uint16 test_value_16_2 = 0xABCD;
+    uint8 buffer_16_2[2];
+    CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(test_value_16_2, buffer_16_2);
+    printf("U16 0x%04X -> U8 array: [0x%02X, 0x%02X]\n", 
+           test_value_16_2, buffer_16_2[0], buffer_16_2[1]);
+    
+    printf("=== Crypto Utility Macros Test Complete ===\n");
+}
+
 // Function using the operation handling macro
 void test_handle_operation(operation_type_t op_type, int* data, int size) {
     void (*callback)(int*, int) = NULL;
@@ -345,6 +385,9 @@ void run_complex_tests(void) {
     
     // Test the nasty edge case: const array of function pointers
     test_crypto_job_processing();
+    
+    // Test the nasty crypto utility macros
+    test_crypto_utility_macros();
     
     printf("=== Complex Tests Complete ===\n");
 }
