@@ -7,11 +7,11 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
+from c_to_plantuml.generator import Generator
 from c_to_plantuml.parser import Parser
 from c_to_plantuml.transformer import Transformer
-from c_to_plantuml.generator import Generator
 from tests.feature.base import BaseFeatureTest
 
 

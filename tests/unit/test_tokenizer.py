@@ -11,9 +11,9 @@ from c_to_plantuml.parser_tokenizer import (
     StructureFinder,
     Token,
     TokenType,
-    find_struct_fields,
-    find_enum_values,
     extract_token_range,
+    find_enum_values,
+    find_struct_fields,
 )
 
 

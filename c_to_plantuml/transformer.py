@@ -32,7 +32,7 @@ class Transformer:
         Returns:
             Path to the transformed model file
         """
-        self.logger.info(f"Step 2: Transforming model: {model_file}")
+        self.logger.info("Step 2: Transforming model: %s", model_file)
 
         # Load the model
         model = self._load_model(model_file)
@@ -47,7 +47,7 @@ class Transformer:
         output_path = output_file or model_file
         self._save_model(transformed_model, output_path)
 
-        self.logger.info(f"Step 2 complete! Transformed model saved to: {output_path}")
+        self.logger.info("Step 2 complete! Transformed model saved to: %s", output_path)
 
         return output_path
 
@@ -71,7 +71,7 @@ class Transformer:
             for file_path, file_data in data["files"].items():
                 model.files[file_path] = self._dict_to_file_model(file_data)
 
-            self.logger.debug(f"Loaded model with {len(model.files)} files")
+            self.logger.debug("Loaded model with %d files", len(model.files))
             return model
 
         except Exception as e:
@@ -86,7 +86,7 @@ class Transformer:
             with open(config_file, "r", encoding="utf-8") as f:
                 config = json.load(f)
 
-            self.logger.debug(f"Loaded configuration from: {config_file}")
+            self.logger.debug("Loaded configuration from: %s", config_file)
             return config
 
         except Exception as e:
@@ -240,10 +240,9 @@ class Transformer:
         # Apply renaming only to target files
         for file_path in target_files:
             if file_path in model.files:
-                file_model = model.files[file_path]
                 # Apply renaming logic here
                 # This would handle renaming structs, enums, functions, etc.
-                self.logger.debug(f"Applying renaming to file: {file_path}")
+                self.logger.debug("Applying renaming to file: %s", file_path)
 
         return model
 
@@ -252,16 +251,15 @@ class Transformer:
     ) -> ProjectModel:
         """Apply addition transformations to selected files"""
         self.logger.debug(
-            f"Applying addition transformations to {len(target_files)} files"
+            "Applying addition transformations to %d files", len(target_files)
         )
 
         # Apply additions only to target files
         for file_path in target_files:
             if file_path in model.files:
-                file_model = model.files[file_path]
                 # Apply addition logic here
                 # This would handle adding new elements like structs, enums, functions, etc.
-                self.logger.debug(f"Applying additions to file: {file_path}")
+                self.logger.debug("Applying additions to file: %s", file_path)
 
         return model
 
@@ -270,16 +268,15 @@ class Transformer:
     ) -> ProjectModel:
         """Apply removal transformations to selected files"""
         self.logger.debug(
-            f"Applying removal transformations to {len(target_files)} files"
+            "Applying removal transformations to %d files", len(target_files)
         )
 
         # Apply removals only to target files
         for file_path in target_files:
             if file_path in model.files:
-                file_model = model.files[file_path]
                 # Apply removal logic here
                 # This would handle removing elements like structs, enums, functions, etc.
-                self.logger.debug(f"Applying removals to file: {file_path}")
+                self.logger.debug("Applying removals to file: %s", file_path)
 
         return model
 
@@ -287,7 +284,7 @@ class Transformer:
         self, model: ProjectModel, max_depth: int
     ) -> ProjectModel:
         """Process include relationships up to specified depth"""
-        self.logger.info(f"Processing include relations with max depth: {max_depth}")
+        self.logger.info("Processing include relations with max depth: %d", max_depth)
 
         # Create a mapping of file paths to their models for quick lookup
         file_map = {
@@ -396,7 +393,7 @@ class Transformer:
 
             return bool(re.search(pattern, file_path))
         except re.error:
-            self.logger.warning(f"Invalid pattern '{pattern}' for file matching")
+            self.logger.warning("Invalid pattern '%s' for file matching", pattern)
             return False
 
     def _compile_patterns(self, patterns: List[str]) -> List[re.Pattern]:
@@ -407,7 +404,7 @@ class Transformer:
             try:
                 compiled_patterns.append(re.compile(pattern))
             except re.error as e:
-                self.logger.warning(f"Invalid regex pattern '{pattern}': {e}")
+                self.logger.warning("Invalid regex pattern '%s': %s", pattern, e)
 
         return compiled_patterns
 
@@ -477,15 +474,14 @@ class Transformer:
     def _dict_to_file_model(self, data: Dict) -> FileModel:
         """Convert dictionary back to FileModel"""
         from .models import (
+            Alias,
             Enum,
+            EnumValue,
             Field,
             FileModel,
             Function,
-            IncludeRelation,
             Struct,
             Union,
-            EnumValue,
-            Alias,
         )
 
         # Convert structs
@@ -589,6 +585,6 @@ class Transformer:
         """Save model to JSON file"""
         try:
             model.save(output_file)
-            self.logger.debug(f"Model saved to: {output_file}")
+            self.logger.debug("Model saved to: %s", output_file)
         except Exception as e:
             raise ValueError(f"Failed to save model to {output_file}: {e}")

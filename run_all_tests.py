@@ -4,8 +4,8 @@ Test Runner for C to PlantUML Converter
 Dynamically finds and runs all tests in the tests folder
 """
 
-import sys
 import os
+import sys
 import unittest
 from pathlib import Path
 
@@ -22,14 +22,14 @@ def main():
     print("=" * 50)
     print(f"Working directory: {os.getcwd()}")
     print(f"Python version: {sys.version}")
-    
+
     # Use unittest discovery to find and run all tests
     test_loader = unittest.TestLoader()
-    test_suite = test_loader.discover('tests', pattern='test_*.py')
-    
+    test_suite = test_loader.discover("tests", pattern="test_*.py")
+
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(test_suite)
-    
+
     # Print summary
     print("\n" + "=" * 50)
     print("TEST SUMMARY")
@@ -37,17 +37,17 @@ def main():
     print(f"Tests run: {result.testsRun}")
     print(f"Failures: {len(result.failures)}")
     print(f"Errors: {len(result.errors)}")
-    
+
     if result.failures:
         print("\n❌ FAILURES:")
         for test, traceback in result.failures:
             print(f"  {test}: {traceback}")
-    
+
     if result.errors:
         print("\n❌ ERRORS:")
         for test, traceback in result.errors:
             print(f"  {test}: {traceback}")
-    
+
     if result.wasSuccessful():
         print("\n✅ All tests passed!")
         return 0

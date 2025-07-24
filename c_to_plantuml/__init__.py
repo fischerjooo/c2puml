@@ -10,6 +10,7 @@ __author__ = "C to PlantUML Team"
 from .config import Config
 from .generator import Generator, PlantUMLGenerator
 from .models import (
+    Alias,
     Enum,
     Field,
     FileModel,
@@ -18,7 +19,6 @@ from .models import (
     ProjectModel,
     Struct,
     Union,
-    Alias,
 )
 from .parser import CParser, Parser
 from .transformer import Transformer

@@ -3,13 +3,13 @@
 Integration tests for include caching feature in the full parsing workflow.
 """
 
-import unittest
 import tempfile
+import unittest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-from c_to_plantuml.parser import CParser
 from c_to_plantuml.config import Config
+from c_to_plantuml.parser import CParser
 
 
 class TestIncludeCachingIntegration(unittest.TestCase):
@@ -90,13 +90,13 @@ enum TestEnum {
         config.include_depth = 2
 
         # Mock the file finding methods to avoid actual file system operations
-        with patch.object(
-            self.parser, "_find_c_files"
-        ) as mock_find_files, patch.object(
-            self.parser, "_extract_includes_from_file"
-        ) as mock_extract_includes, patch.object(
-            self.parser, "_should_include_file"
-        ) as mock_should_include:
+        with (
+            patch.object(self.parser, "_find_c_files") as mock_find_files,
+            patch.object(
+                self.parser, "_extract_includes_from_file"
+            ) as mock_extract_includes,
+            patch.object(self.parser, "_should_include_file") as mock_should_include,
+        ):
 
             # Setup mocks
             mock_find_files.return_value = [self.project_root / "main.c"]
@@ -154,13 +154,13 @@ enum TestEnum {
             test_file.write_text('#include "missing_header.h"')
 
             # Mock the parsing methods to avoid actual parsing
-            with patch.object(
-                self.parser, "_find_c_files"
-            ) as mock_find_files, patch.object(
-                self.parser, "_find_files_with_include_dependencies"
-            ) as mock_find_with_deps, patch.object(
-                self.parser, "parse_file"
-            ) as mock_parse_file:
+            with (
+                patch.object(self.parser, "_find_c_files") as mock_find_files,
+                patch.object(
+                    self.parser, "_find_files_with_include_dependencies"
+                ) as mock_find_with_deps,
+                patch.object(self.parser, "parse_file") as mock_parse_file,
+            ):
 
                 mock_find_files.return_value = []
                 mock_find_with_deps.return_value = []
@@ -233,11 +233,10 @@ enum TestEnum {
         )
 
         # Mock the file finding methods
-        with patch.object(
-            self.parser, "_find_c_files"
-        ) as mock_find_files, patch.object(
-            self.parser, "_should_include_file"
-        ) as mock_should_include:
+        with (
+            patch.object(self.parser, "_find_c_files") as mock_find_files,
+            patch.object(self.parser, "_should_include_file") as mock_should_include,
+        ):
 
             mock_find_files.return_value = [self.project_root / "main.c"]
             mock_should_include.return_value = True

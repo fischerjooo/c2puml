@@ -1,8 +1,9 @@
+import json
 import os
 import subprocess
 import sys
-import json
 from pathlib import Path
+
 from tests.feature.base import BaseFeatureTest
 
 

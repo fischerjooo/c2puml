@@ -5,11 +5,11 @@ Unit tests for the transformer module
 
 import json
 import os
+import re
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import Mock, patch, mock_open
-import re
+from unittest.mock import Mock, mock_open, patch
 
 from c_to_plantuml.models import (
     Alias,

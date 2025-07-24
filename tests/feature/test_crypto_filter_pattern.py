@@ -12,6 +12,7 @@ not as a path separator. This test shows the problem and validates the fix.
 import os
 import tempfile
 from pathlib import Path
+
 from c_to_plantuml.config import Config
 from c_to_plantuml.parser import CParser
 

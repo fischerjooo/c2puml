@@ -7,22 +7,22 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
+from c_to_plantuml.generator import PlantUMLGenerator
 from c_to_plantuml.models import (
     Alias,
-    FileModel,
-    ProjectModel,
-    IncludeRelation,
-    Struct,
     Enum,
-    Union,
-    Function,
     Field,
+    FileModel,
+    Function,
+    IncludeRelation,
+    ProjectModel,
+    Struct,
+    Union,
 )
 from c_to_plantuml.parser import CParser
 from c_to_plantuml.transformer import Transformer
-from c_to_plantuml.generator import PlantUMLGenerator
 
 
 class TestIncludeProcessing(unittest.TestCase):

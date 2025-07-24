@@ -4,10 +4,11 @@ Unit tests for preprocessing directive bug and edge cases.
 Tests the parser's handling of #if, #elif, #else, #endif directives.
 """
 
+import os
+import tempfile
 import unittest
 from pathlib import Path
-import tempfile
-import os
+
 from c_to_plantuml.parser import CParser
 from c_to_plantuml.parser_tokenizer import CTokenizer, TokenType
 

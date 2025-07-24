@@ -6,8 +6,7 @@ Follows the template format with strict separation of typedefs and clear relatio
 
 import os
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
-from collections import defaultdict
+from typing import Dict, List
 
 from .models import FileModel, ProjectModel
 

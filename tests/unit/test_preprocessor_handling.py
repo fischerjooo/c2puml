@@ -6,9 +6,9 @@ Tests various preprocessor directive scenarios and edge cases to ensure
 they are properly ignored while their content is parsed correctly.
 """
 
-import unittest
-import tempfile
 import os
+import tempfile
+import unittest
 from pathlib import Path
 
 from c_to_plantuml.parser import CParser

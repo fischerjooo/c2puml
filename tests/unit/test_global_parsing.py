@@ -3,9 +3,9 @@
 Test global variable parsing to ensure function internals are not misidentified as globals
 """
 
-import unittest
-import tempfile
 import os
+import tempfile
+import unittest
 from pathlib import Path
 
 from c_to_plantuml.parser import CParser

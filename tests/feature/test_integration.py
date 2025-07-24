@@ -105,10 +105,10 @@ void init_config(void);
 
     def test_configuration_features(self):
         """Test configuration loading and filtering features"""
-        from c_to_plantuml.config import Config
-
         # Create test configuration
         import json
+
+        from c_to_plantuml.config import Config
 
         config_content = {
             "source_folders": [self.temp_dir],

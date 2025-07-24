@@ -5,6 +5,7 @@ Tests advanced PlantUML generation features.
 """
 
 import os
+
 from tests.feature.base import BaseFeatureTest
 
 

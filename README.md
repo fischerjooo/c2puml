@@ -82,14 +82,70 @@ The tool creates PlantUML diagrams showing:
 2. **Transform** - Modifies model based on config (optional)
 3. **Generate** - Creates PlantUML diagrams
 
-## Development
+## Development Setup
+
+### Quick Setup (Linux/macOS)
+
+For a complete development environment setup:
+
+```bash
+# Run the comprehensive setup script
+./setup-linux.sh
+```
+
+This script will:
+- Install system dependencies
+- Create a Python virtual environment
+- Install all development dependencies
+- Set up git hooks
+- Configure VSCode settings
+- Test the setup
+
+### Manual Setup
+
+```bash
+# Create virtual environment
+python3 -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate  # Linux/macOS
+# or
+venv\Scripts\activate     # Windows
+
+# Install development dependencies
+pip install -r requirements-dev.txt
+
+# Install package in development mode
+pip install -e .
+
+# Set up git hooks
+./setup-hooks.sh  # Linux/macOS
+# or
+setup-hooks.bat   # Windows
+```
+
+### VSCode Configuration
+
+The project includes pre-configured VSCode settings for:
+- Python auto-formatting with Black
+- Import sorting with isort
+- Linting with flake8
+- Auto-save and formatting on save
+
+**Troubleshooting**: If auto-formatting isn't working, see [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+
+### Development Commands
 
 ```bash
 # Run tests
 python run_all_tests.py
 
-# Install dev dependencies
-pip install -r requirements-dev.txt
+# Format code
+black .
+isort .
+
+# Lint code
+flake8 .
 
 # Test PNG generation
 ./test_picgen.sh

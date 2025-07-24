@@ -110,7 +110,7 @@ class Config:
             try:
                 self.file_include_patterns.append(re.compile(pattern))
             except re.error as e:
-                self.logger.warning(f"Invalid include pattern '{pattern}': {e}")
+                self.logger.warning("Invalid include pattern '%s': %s", pattern, e)
                 # Skip invalid patterns
 
         self.file_exclude_patterns = []
@@ -118,7 +118,7 @@ class Config:
             try:
                 self.file_exclude_patterns.append(re.compile(pattern))
             except re.error as e:
-                self.logger.warning(f"Invalid exclude pattern '{pattern}': {e}")
+                self.logger.warning("Invalid exclude pattern '%s': %s", pattern, e)
                 # Skip invalid patterns
 
         # Compile element filter patterns with error handling
@@ -134,7 +134,7 @@ class Config:
                     )
                 except re.error as e:
                     self.logger.warning(
-                        f"Invalid {element_type} include pattern '{pattern}': {e}"
+                        "Invalid %s include pattern '%s': %s", element_type, pattern, e
                     )
                     # Skip invalid patterns
 
@@ -146,7 +146,7 @@ class Config:
                     )
                 except re.error as e:
                     self.logger.warning(
-                        f"Invalid {element_type} exclude pattern '{pattern}': {e}"
+                        "Invalid %s exclude pattern '%s': %s", element_type, pattern, e
                     )
                     # Skip invalid patterns
 

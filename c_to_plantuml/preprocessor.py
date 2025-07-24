@@ -8,7 +8,8 @@ import logging
 import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Dict, Set, Optional, Tuple, Any
+from typing import Dict, List, Optional, Set, Tuple
+
 from c_to_plantuml.parser_tokenizer import Token, TokenType
 
 
@@ -487,4 +488,4 @@ class PreprocessorManager:
                 name, value = self.evaluator._parse_define(token.value)
                 if name:
                     self.evaluator.add_define(name, value)
-                    self.logger.debug(f"Preprocessor: Added define {name} = {value}")
+                    self.logger.debug("Preprocessor: Added define %s = %s", name, value)
