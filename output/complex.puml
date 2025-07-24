@@ -82,7 +82,7 @@ class "complex_handler_t" as TYPEDEF_COMPLEX_HANDLER_T <<typedef>> #LightYellow
     + void ( * format_func ) ( char * , int )
     + int id
     + struct { 
-        + char[32] name
+    + char[32] name
     }
 }
 
@@ -161,7 +161,7 @@ class "complex_callback_t" as TYPEDEF_COMPLEX_CALLBACK_T <<typedef>> #LightYello
 + char * param2 ,
 + void * param3 ,
     + struct {
-        + int nested1
+    + int nested1
     }
 }
 
