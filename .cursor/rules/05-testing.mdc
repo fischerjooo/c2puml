@@ -8,7 +8,6 @@
 - **Unit Tests** (`tests/unit/`): Test individual components
 - **Feature Tests** (`tests/feature/`): Test complete workflows
 - **Integration Tests** (`tests/integration/`): Test comprehensive scenarios
-- **Preprocessing Tests** (`example/source/preprocessed.c`): Test C preprocessing directives
 
 ## Test Coverage Requirements
 - Every new function must be accompanied by tests that cover normal, edge, and failure cases.
@@ -24,6 +23,3 @@
 - Include header processing
 - Cross-platform encoding support
 - Error handling and edge cases
-- **C preprocessing directives** (#if, #elif, #else, #endif)
-- **Preprocessing in typedefs and macros**
-- **Edge cases in conditional compilation**

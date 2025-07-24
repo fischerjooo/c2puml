@@ -29,10 +29,9 @@
 ./run_example.sh
 ```
 **Purpose**: Spiking new features and integration testing. Use for:
-- Testing new C code preprocessing features
 - Integration testing with new source files
-- Validating preprocessing directives (#if, #elif, #else, #endif)
-- Testing edge cases in typedefs and macros
+- Testing new C code features
+- Validating edge cases in typedefs and macros
 
 ## Standard Workflow (Manual Steps)
 ```bash
@@ -63,7 +62,6 @@
 - **Example Output**: Generated PlantUML diagrams in `./output`
 - **Images**: JPEG images generated from PlantUML files using `picgen.sh`
 - **Logs**: Processing logs and error reports
-- **Preprocessing Validation**: Detection of preprocessing directive issues
 
 ## Image Generation
 The `picgen.sh` script converts all `.puml` files in the output directory to JPEG images:
@@ -72,9 +70,3 @@ The `picgen.sh` script converts all `.puml` files in the output directory to JPE
 - Automatically cleans up temporary PNG files
 - Generates high-quality JPEG images for documentation and sharing
 
-## Preprocessing Testing
-The workflow includes testing for C preprocessing directives:
-- **preprocessed.c**: Contains edge cases and examples for preprocessing
-- **preprocessed.h**: Header file with preprocessing directives in typedefs
-- **Validation**: assertions.py includes checks for preprocessing directive processing
-- **Bug Detection**: Tests designed to detect preprocessing-related issues before fixes
