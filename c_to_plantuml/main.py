@@ -106,7 +106,7 @@ Usage:
     transformed_model_file = os.path.join(output_folder, "model_transformed.json")
 
     # Parse command
-    if args.command == "parse":
+    if args.command ==  "parse":
         try:
             parser_obj = Parser()
             # Use the refactored parse function that handles both single and multiple source folders
@@ -116,10 +116,10 @@ Usage:
                 recursive_search=getattr(config, "recursive_search", True),
                 config=config,
             )
-            logging.info(f"Model saved to: {model_file}")
+            logging.info("Model saved to: %s", model_file)
             return 0
-        except Exception as e:
-            logging.error(f"Error during parsing: {e}")
+        except (OSError, ValueError, RuntimeError) as e:
+            logging.error("Error during parsing: %s", e)
             return 1
 
     # Transform command
@@ -133,10 +133,10 @@ Usage:
                 else str(list(Path(config_path).glob("*.json"))[0]),
                 output_file=transformed_model_file,
             )
-            logging.info(f"Transformed model saved to: {transformed_model_file}")
+            logging.info("Transformed model saved to: %s", transformed_model_file)
             return 0
-        except Exception as e:
-            logging.error(f"Error during transformation: {e}")
+        except (OSError, ValueError, RuntimeError) as e:
+            logging.error("Error during transformation: %s", e)
             return 1
 
     # Generate command
@@ -156,12 +156,10 @@ Usage:
                 output_dir=output_folder,
                 include_depth=getattr(config, "include_depth", 1),
             )
-            logging.info(
-                f"PlantUML generation complete! Output in: {output_folder}"
-            )
+            logging.info("PlantUML generation complete! Output in: %s", output_folder)
             return 0
-        except Exception as e:
-            logging.error(f"Error generating PlantUML: {e}")
+        except (OSError, ValueError, RuntimeError) as e:
+            logging.error("Error generating PlantUML: %s", e)
             return 1
 
     # Default: full workflow
@@ -193,11 +191,11 @@ Usage:
             output_dir=output_folder,
             include_depth=getattr(config, "include_depth", 1),
         )
-        logging.info(f"PlantUML generation complete! Output in: {output_folder}")
+        logging.info("PlantUML generation complete! Output in: %s", output_folder)
         logging.info("Complete workflow finished successfully!")
         return 0
-    except Exception as e:
-        logging.error(f"Error in workflow: {e}")
+    except (OSError, ValueError, RuntimeError) as e:
+        logging.error("Error in workflow: %s", e)
         return 1
 
 
