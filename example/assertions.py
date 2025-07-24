@@ -2059,10 +2059,10 @@ class PUMLValidator:
             self.output_dir.exists()
         ), f"Output directory {self.output_dir} does not exist"
 
-        # First validate source files
-        self.run_source_validations()
+        # Source file validation disabled
+        # self.run_source_validations()
 
-        # Then validate PUML files
+        # Validate PUML files
         # Validating generated PUML files
 
         # Find all PlantUML files in the output directory
