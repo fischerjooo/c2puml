@@ -21,7 +21,7 @@
         120
         ],
         "editor.wordWrap": "bounded",
-        "editor.wordWrapColumn": 100,
+        "editor.wordWrapColumn": 120,
         "editor.bracketPairColorization.enabled": true,
         "editor.guides.bracketPairs": true,
         "editor.minimap.enabled": true,
@@ -108,14 +108,16 @@
             "black"
         ],
         "cSpell.words": [
+            "black",
+            "enduml",
+            "flake8",
+            "isort",
             "plantuml",
             "puml",
             "pyproject",
             "pytest",
-            "venv",
-            "black",
-            "isort",
-            "flake8"
+            "startuml",
+            "venv"
         ],
         "files.autoSave": "afterDelay",
         "files.autoSaveDelay": 1000,

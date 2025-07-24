@@ -1,19 +1,12 @@
 #!/usr/bin/env python3
 """
 Parser module for C to PlantUML converter - Step 1: Parse C code files and generate model.json
-
-REFACTORED: Now uses tokenizer-based parsing instead of regex-based parsing
 """
-
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Set
 
-if TYPE_CHECKING:
-    from .models import Struct, Enum, Union, Function, Field, Alias
-    from .config import Config
-
-from .models import FileModel, ProjectModel
+from .models import FileModel, ProjectModel, Field, Struct, Enum, EnumValue
 from .parser_tokenizer import (
     CTokenizer,
     StructureFinder,
@@ -23,6 +16,10 @@ from .parser_tokenizer import (
 )
 from .preprocessor import PreprocessorManager
 from .utils import detect_file_encoding
+
+if TYPE_CHECKING:
+    from .models import Struct, Enum, Union, Function, Field, Alias
+    from .config import Config
 
 
 class CParser:
@@ -52,7 +49,7 @@ class CParser:
         self._failed_includes_cache.clear()
         if cache_size_before > 0:
             self.logger.debug(
-                f"Cleared failed includes cache ({cache_size_before} entries)"
+                "Cleared failed includes cache (%d entries)", cache_size_before
             )
 
         self.logger.info("Parsing project: %s", project_root)
@@ -81,7 +78,7 @@ class CParser:
 
                 self.logger.debug("Successfully parsed: %s", relative_path)
 
-            except Exception as e:
+            except (OSError, ValueError) as e:
                 self.logger.warning("Failed to parse %s: %s", file_path, e)
                 failed_files.append(str(file_path))
 
@@ -105,7 +102,8 @@ class CParser:
         # Log cache statistics
         if self._failed_includes_cache:
             self.logger.info(
-                f"Failed includes cache contains {len(self._failed_includes_cache)} entries"
+                "Failed includes cache contains %d entries",
+                len(self._failed_includes_cache),
             )
             self.logger.debug(
                 "Failed includes: %s%s",
@@ -181,7 +179,6 @@ class CParser:
         self, tokens, structure_finder
     ) -> Dict[str, "Struct"]:
         """Parse struct definitions using tokenizer"""
-        from .models import Field, Struct
 
         structs = {}
         struct_infos = structure_finder.find_structs()
@@ -205,7 +202,7 @@ class CParser:
                 for field_name, field_type in field_tuples:
                     try:
                         fields.append(Field(field_name, field_type))
-                    except Exception as e:
+                    except ValueError as e:
                         self.logger.warning(
                             "Error creating field %s: %s", field_name, e
                         )
@@ -224,7 +221,7 @@ class CParser:
                     struct_name, fields, tag_name=tag_name, uses=[]
                 )
                 self.logger.debug(
-                    f"Parsed struct: {struct_name} with {len(fields)} fields"
+                    "Parsed struct: %s with %d fields", struct_name, len(fields)
                 )
 
         return structs
@@ -233,8 +230,6 @@ class CParser:
         self, tokens, structure_finder
     ) -> Dict[str, "Enum"]:
         """Parse enum definitions using tokenizer"""
-        from .models import Enum, EnumValue
-
         enums = {}
         enum_infos = structure_finder.find_enums()
 
@@ -307,9 +302,9 @@ class CParser:
                 for field_name, field_type in field_tuples:
                     try:
                         fields.append(Field(field_name, field_type))
-                    except Exception as e:
+                    except ValueError as e:
                         self.logger.warning(
-                            f"Error creating union field {field_name}: {e}"
+                            "Error creating union field %s: %s", field_name, e
                         )
 
                 # For anonymous unions, use a special key that can be mapped later
@@ -326,7 +321,7 @@ class CParser:
                     union_name, fields, tag_name=tag_name, uses=[]
                 )
                 self.logger.debug(
-                    f"Parsed union: {union_name} with {len(fields)} fields"
+                    "Parsed union: %s with %d fields", union_name, len(fields)
                 )
 
         return unions

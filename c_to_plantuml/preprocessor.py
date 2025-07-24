@@ -218,9 +218,9 @@ class PreprocessorEvaluator:
             # This ensures existing tests continue to work
             return True
 
-        except Exception as e:
+        except ValueError as e:
             self.logger.warning(
-                f"Error evaluating preprocessor condition '{condition}': {e}"
+                "Error evaluating preprocessor condition '%s': %s", condition, e
             )
             # Default to True for unknown conditions (backward compatibility)
             return True

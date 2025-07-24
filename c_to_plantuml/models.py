@@ -388,7 +388,7 @@ class ProjectModel:
             with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False, sort_keys=True)
         except Exception as e:
-            raise ValueError(f"Failed to save model to {file_path}: {e}")
+            raise ValueError(f"Failed to save model to {file_path}: {e}") from e
 
     @classmethod
     def from_dict(cls, data: dict) -> "ProjectModel":
@@ -412,7 +412,7 @@ class ProjectModel:
                 data = json.load(f)
             return cls.from_dict(data)
         except Exception as e:
-            raise ValueError(f"Failed to load model from {file_path}: {e}")
+            raise ValueError(f"Failed to load model from {file_path}: {e}") from e
 
     def get_summary(self) -> dict:
         """Get a summary of the project"""
