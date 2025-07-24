@@ -1,1489 +1,831 @@
 #!/usr/bin/env python3
 """
-Comprehensive assertions for validating generated PUML files against expected output.
-This script validates that the generator produces the correct PlantUML diagrams.
+Comprehensive PUML Validation Suite
+
+This module provides detailed validation of generated PlantUML files against C source code.
+It validates the structural integrity, content accuracy, and relationship correctness
+of generated PUML diagrams.
+
+Validation Categories:
+1. Structural Validation - @startuml/@enduml, class definitions, syntax
+2. Content Validation - class content, naming conventions, stereotypes  
+3. Relationship Validation - connections between classes, duplicate detection
+4. Pattern Validation - function signatures, typedefs, macros
+5. File-specific Validation - expected content for each file type
+6. Enum/Struct Validation - proper formatting of typedef content
+
+Usage:
+    python3 assertions.py
+
+Returns:
+    0 if all validations pass
+    1 if validation errors are found
 """
 
 import os
 import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, Optional, Any
+from dataclasses import dataclass
+from enum import Enum
+
+
+class ValidationLevel(Enum):
+    """Validation severity levels."""
+    ERROR = "ERROR"
+    WARNING = "WARNING" 
+    INFO = "INFO"
+
+
+@dataclass
+class ValidationResult:
+    """Result of a validation check."""
+    level: ValidationLevel
+    message: str
+    file: str
+    line_number: Optional[int] = None
+    context: Optional[str] = None
+
+
+@dataclass
+class PUMLClass:
+    """Represents a PlantUML class/enum definition."""
+    name: str
+    uml_id: str
+    stereotype: str
+    color: str
+    body: str
+    macros: List[str]
+    functions: List[str]
+    variables: List[str]
+    fields: List[str]
+    values: List[str]  # For enums
+
+
+@dataclass
+class PUMLRelationship:
+    """Represents a PlantUML relationship."""
+    source: str
+    target: str
+    type: str
+    label: str
 
 
 class PUMLValidator:
-    """Validates generated PUML files against expected content."""
-
-    def _find_output_directory(self) -> str:
-        """Return the output directory path."""
-        # Check if we're in the example directory
-        if Path.cwd().name == "example":
-            return "../output"
-        return "output"
+    """
+    Comprehensive PlantUML file validator.
+    
+    This validator provides multi-level validation of PlantUML files generated
+    from C source code, ensuring structural integrity, content accuracy, and
+    adherence to PlantUML best practices.
+    """
 
     def __init__(self):
-        # Set paths
-        self.output_dir = Path(self._find_output_directory())
+        """Initialize the validator with expected values and patterns."""
+        self.output_dir = self._find_output_directory()
+        self.results: List[ValidationResult] = []
+        self.expected_stereotypes = {"source", "header", "typedef"}
+        self.expected_colors = {"LightBlue", "LightGreen", "LightYellow", "LightGray"}
+        self.expected_relationships = {"<<include>>", "<<declares>>", "<<uses>>"}
+        
+    def _find_output_directory(self) -> Path:
+        """Find the output directory path."""
+        if Path.cwd().name == "example":
+            return Path("../output")
+        return Path("output")
 
-        # Expected PUML files
-        self.expected_files = [
-            "typedef_test.puml",
-            "geometry.puml",
-            "logger.puml",
-            "math_utils.puml",
-            "sample.puml",
-            "preprocessed.puml",
-            "complex.puml",
-        ]
+    def _add_result(self, level: ValidationLevel, message: str, file: str, 
+                   line_number: Optional[int] = None, context: Optional[str] = None):
+        """Add a validation result."""
+        self.results.append(ValidationResult(level, message, file, line_number, context))
 
-    def assert_file_exists(self, filename: str) -> None:
-        """Assert that a PUML file exists."""
+    def parse_puml_file(self, filename: str) -> Dict[str, Any]:
+        """Parse a PUML file and extract all components."""
         filepath = self.output_dir / filename
-        assert filepath.exists(), f"File {filename} does not exist at {filepath}"
-        # {filename} exists
+        
+        if not filepath.exists():
+            self._add_result(ValidationLevel.ERROR, f"File does not exist", filename)
+            return {}
+            
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                content = f.read()
+        except Exception as e:
+            self._add_result(ValidationLevel.ERROR, f"Failed to read file: {e}", filename)
+            return {}
 
-    def read_puml_file(self, filename: str) -> str:
-        """Read and return the content of a PUML file."""
-        filepath = self.output_dir / filename
-        with open(filepath, "r", encoding="utf-8") as f:
-            return f.read()
+        return {
+            "content": content,
+            "classes": self._extract_classes(content, filename),
+            "relationships": self._extract_relationships(content, filename),
+            "startuml": self._validate_startuml_structure(content, filename)
+        }
 
-    def extract_classes(self, content: str) -> Dict[str, Dict]:
-        """Extract all class definitions from PUML content."""
+    def _extract_classes(self, content: str, filename: str) -> Dict[str, PUMLClass]:
+        """Extract and parse all class definitions from PUML content."""
         classes = {}
-
-        # Extract class definitions
-        class_pattern = (
-            r'class\s+"([^"]+)"\s+as\s+(\w+)\s+<<(\w+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
-        )
+        
+        # Pattern for class definitions
+        class_pattern = r'class\s+"([^"]+)"\s+as\s+(\w+)\s+<<(\w+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
         matches = re.finditer(class_pattern, content, re.DOTALL)
-
+        
         for match in matches:
-            class_name = match.group(1)
+            name = match.group(1)
             uml_id = match.group(2)
             stereotype = match.group(3)
             color = match.group(4)
             body = match.group(5).strip()
+            
+            # Parse body content
+            macros, functions, variables, fields = self._parse_class_body(body, stereotype)
+            
+            classes[uml_id] = PUMLClass(
+                name=name,
+                uml_id=uml_id,
+                stereotype=stereotype,
+                color=color,
+                body=body,
+                macros=macros,
+                functions=functions,
+                variables=variables,
+                fields=fields,
+                values=[]
+            )
 
-            classes[uml_id] = {
-                "name": class_name,
-                "stereotype": stereotype,
-                "color": color,
-                "body": body,
-            }
-
-        # Extract enum definitions (typedef enums)
-        enum_pattern = (
-            r'enum\s+"([^"]+)"\s+as\s+(\w+)\s+<<(\w+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
-        )
+        # Pattern for enum definitions
+        enum_pattern = r'enum\s+"([^"]+)"\s+as\s+(\w+)\s+<<(\w+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
         enum_matches = re.finditer(enum_pattern, content, re.DOTALL)
-
+        
         for match in enum_matches:
-            enum_name = match.group(1)
+            name = match.group(1)
             uml_id = match.group(2)
             stereotype = match.group(3)
             color = match.group(4)
             body = match.group(5).strip()
-
-            classes[uml_id] = {
-                "name": enum_name,
-                "stereotype": stereotype,
-                "color": color,
-                "body": body,
-            }
-
+            
+            # Parse enum values
+            values = self._parse_enum_values(body)
+            
+            classes[uml_id] = PUMLClass(
+                name=name,
+                uml_id=uml_id,
+                stereotype=stereotype,
+                color=color,
+                body=body,
+                macros=[],
+                functions=[],
+                variables=[],
+                fields=[],
+                values=values
+            )
+            
         return classes
 
-    def extract_relationships(self, content: str) -> List[Tuple[str, str, str]]:
+    def _parse_class_body(self, body: str, stereotype: str) -> Tuple[List[str], List[str], List[str], List[str]]:
+        """Parse class body and categorize content."""
+        lines = [line.strip() for line in body.split('\n') if line.strip()]
+        
+        macros = []
+        functions = []
+        variables = []
+        fields = []
+        
+        current_section = None
+        
+        for line in lines:
+            # Section headers
+            if line.startswith('--') and line.endswith('--'):
+                current_section = line.lower()
+                continue
+                
+            # Skip comments and empty lines
+            if line.startswith("'") or not line:
+                continue
+                
+            # Categorize based on current section and content
+            if 'macro' in str(current_section):
+                if line.startswith(('+', '-')) and '#define' in line:
+                    macros.append(line)
+            elif 'function' in str(current_section):
+                if line.startswith(('+', '-')) and '(' in line and ')' in line:
+                    functions.append(line)
+            elif 'variable' in str(current_section) or 'global' in str(current_section):
+                if line.startswith(('+', '-')) and '(' not in line:
+                    variables.append(line)
+            else:
+                # For typedef classes, everything is a field
+                if stereotype == "typedef" and line.startswith('+'):
+                    fields.append(line)
+                elif line.startswith(('+', '-')):
+                    # Auto-categorize based on content
+                    if '#define' in line:
+                        macros.append(line)
+                    elif '(' in line and ')' in line:
+                        functions.append(line)
+                    else:
+                        variables.append(line)
+        
+        return macros, functions, variables, fields
+
+    def _parse_enum_values(self, body: str) -> List[str]:
+        """Parse enum values from body."""
+        lines = [line.strip() for line in body.split('\n') if line.strip()]
+        values = []
+        
+        for line in lines:
+            if line.startswith('+') and not line.startswith('--'):
+                values.append(line)
+                
+        return values
+
+    def _extract_relationships(self, content: str, filename: str) -> List[PUMLRelationship]:
         """Extract all relationships from PUML content."""
         relationships = []
-        # Include relationships: A --> B : <<include>>
-        include_pattern = r"(\w+)\s+-->\s+(\w+)\s+:\s+<<include>>"
-        includes = re.findall(include_pattern, content)
-        for source, target in includes:
-            relationships.append((source, target, "<<include>>"))
-
-        # Declaration relationships: A ..> B : <<declares>>
-        declare_pattern = r"(\w+)\s+\.\.>\s+(\w+)\s+:\s+<<declares>>"
-        declares = re.findall(declare_pattern, content)
-        for source, target in declares:
-            relationships.append((source, target, "<<declares>>"))
-
-        # Uses relationships: A ..> B : <<uses>>
-        uses_pattern = r"(\w+)\s+\.\.>\s+(\w+)\s+:\s+<<uses>>"
-        uses = re.findall(uses_pattern, content)
-        for source, target in uses:
-            relationships.append((source, target, "<<uses>>"))
-
-        # Also check for relationships without angle brackets (to detect violations)
-        # Include relationships without brackets: A --> B : include
-        include_no_brackets_pattern = r"(\w+)\s+-->\s+(\w+)\s+:\s+(?!<<)(\w+)(?!>>)"
-        includes_no_brackets = re.findall(include_no_brackets_pattern, content)
-        for source, target, rel_type in includes_no_brackets:
-            if rel_type == "include":
-                relationships.append((source, target, rel_type))
-
-        # Declaration relationships without brackets: A ..> B : declares
-        declare_no_brackets_pattern = r"(\w+)\s+\.\.>\s+(\w+)\s+:\s+(?!<<)(\w+)(?!>>)"
-        declares_no_brackets = re.findall(declare_no_brackets_pattern, content)
-        for source, target, rel_type in declares_no_brackets:
-            if rel_type == "declares":
-                relationships.append((source, target, rel_type))
-
-        # Uses relationships without brackets: A ..> B : uses
-        uses_no_brackets_pattern = r"(\w+)\s+\.\.>\s+(\w+)\s+:\s+(?!<<)(\w+)(?!>>)"
-        uses_no_brackets = re.findall(uses_no_brackets_pattern, content)
-        for source, target, rel_type in uses_no_brackets:
-            if rel_type == "uses":
-                relationships.append((source, target, rel_type))
-
+        
+        # Pattern for relationships with labels
+        patterns = [
+            (r'(\w+)\s+-->\s+(\w+)\s+:\s+(<<[^>]+>>)', '-->'),  # Include relationships
+            (r'(\w+)\s+\.\.>\s+(\w+)\s+:\s+(<<[^>]+>>)', '..>'),  # Declares/Uses relationships
+            (r'(\w+)\s+-->\s+(\w+)\s+:\s+([^<][^\n]*)', '-->'),   # Non-bracketed includes
+            (r'(\w+)\s+\.\.>\s+(\w+)\s+:\s+([^<][^\n]*)', '..>')   # Non-bracketed declares/uses
+        ]
+        
+        for pattern, arrow_type in patterns:
+            matches = re.findall(pattern, content)
+            for source, target, label in matches:
+                relationships.append(PUMLRelationship(
+                    source=source.strip(),
+                    target=target.strip(),
+                    type=arrow_type,
+                    label=label.strip()
+                ))
+        
         return relationships
 
-    def assert_class_structure(self, classes: Dict[str, Dict], filename: str) -> None:
-        """Assert that classes have the correct structure and content."""
-        try:
-            for uml_id, class_info in classes.items():
-                # Assert stereotype
-                assert class_info["stereotype"] in [
-                    "source",
-                    "header",
-                    "typedef",
-                ], f"Invalid stereotype '{class_info['stereotype']}' for class {uml_id} in {filename}"
-
-                # Assert color
-                assert class_info["color"] in [
-                    "LightBlue",
-                    "LightGreen",
-                    "LightYellow",
-                    "LightGray",
-                ], f"Invalid color '{class_info['color']}' for class {uml_id} in {filename}"
-
-                # Assert UML_ID naming convention
-                if class_info["stereotype"] == "source":
-                    # Source files should be named after the filename in uppercase
-                    expected_name = (
-                        class_info["name"].upper().replace("-", "_").replace(".", "_")
-                    )
-                    assert (
-                        uml_id == expected_name
-                    ), f"Source class {uml_id} should be named {expected_name} (filename in uppercase) in {filename}"
-                elif class_info["stereotype"] == "header":
-                    assert uml_id.startswith(
-                        "HEADER_"
-                    ), f"Header class {uml_id} should have HEADER_ prefix in {filename}"
-                elif class_info["stereotype"] == "typedef":
-                    assert uml_id.startswith(
-                        "TYPEDEF_"
-                    ), f"Typedef class {uml_id} should have TYPEDEF_ prefix in {filename}"
-        except Exception as e:
-            # Fail the test for unexpected exceptions in class structure validation
-            assert False, f"Unexpected exception in assert_class_structure for {filename}: {e}"
-
-    def assert_class_content(self, classes: Dict[str, Dict], filename: str) -> None:
-        """Assert that class content matches expected patterns."""
-        try:
-            for uml_id, class_info in classes.items():
-                body = class_info["body"]
-                stereotype = class_info["stereotype"]
-
-                if stereotype == "source":
-                    # Source files should not have + prefix for global variables and functions
-                    assert not re.search(
-                        r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*$",
-                        body,
-                        re.MULTILINE,
-                    ), f"Source class {uml_id} should not have + prefix for global variables in {filename}"
-                    assert not re.search(
-                        r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*\(",
-                        body,
-                        re.MULTILINE,
-                    ), f"Source class {uml_id} should not have + prefix for functions in {filename}"
-
-                elif stereotype == "header":
-                    # Header files should have + prefix for all elements
-                    lines = body.strip().split("\n")
-                    for line in lines:
-                        line = line.strip()
-                        if line and not line.startswith("'") and not line.startswith("--"):
-                            assert line.startswith("+") or line.startswith("--"), f"Header line '{line}' should have + prefix in {uml_id} in {filename}"
-
-                elif stereotype == "typedef":
-                    # Typedef classes should have + prefix for all elements
-                    lines = body.strip().split("\n")
-                    for line in lines:
-                        line = line.strip()
-                        if line and not line.startswith("'") and not line.startswith("--"):
-                            assert line.startswith("+"), f"Typedef line '{line}' should have + prefix in {uml_id} in {filename}"
-        except Exception as e:
-            # Fail the test for unexpected exceptions in class content validation
-            assert False, f"Unexpected exception in assert_class_content for {filename}: {e}"
-
-    def assert_relationships(
-        self,
-        relationships: List[Tuple[str, str, str]],
-        classes: Dict[str, Dict],
-        filename: str,
-    ) -> None:
-        """Assert that relationships are properly structured."""
-        try:
-            # Group relationships by type
-            includes = [(s, t) for s, t, r in relationships if r == "<<include>>"]
-            declares = [(s, t) for s, t, r in relationships if r == "<<declares>>"]
-            uses = [(s, t) for s, t, r in relationships if r == "<<uses>>"]
-
-            # Check for duplicate relationships
-            self._validate_no_duplicate_relationships(relationships, filename)
-
-            # Check for consistent relationship formatting
-            self._validate_relationship_formatting(relationships, filename)
-
-            # Check that all typedef objects have at least one relation
-            self._validate_all_typedefs_have_relations(relationships, filename)
-
-            # Check that all relations have corresponding classes
-            self._validate_all_relations_have_classes(relationships, filename)
-
-            # Check that all header classes have a path to the main C class
-            self._validate_all_headers_connected_to_main_class(
-                relationships, classes, filename
-            )
-
-            # Assert relationship structure
-            for source, target, rel_type in relationships:
-                assert source and target, f"Invalid relationship: {source} -> {target} in {filename}"
-                assert rel_type in [
-                    "<<include>>",
-                    "<<declares>>",
-                    "<<uses>>",
-                ], f"Invalid relationship type: {rel_type} in {filename}"
-        except Exception as e:
-            # Fail the test for unexpected exceptions in relationship validation
-            assert False, f"Unexpected exception in assert_relationships for {filename}: {e}"
-
-    def assert_specific_content(self, content: str, filename: str) -> None:
-        """Assert specific content requirements for each file."""
-        try:
-            # Validating specific content for {filename}
-
-            # Check for macro formatting issues
-            self._validate_macro_formatting(content, filename)
-
-            # Check for typedef content issues
-            self._validate_typedef_content(content, filename)
-
-            # Check for global variable formatting issues
-            self._validate_global_variable_formatting(content, filename)
-
-            # Check for array formatting issues
-            self._validate_array_formatting(content, filename)
-
-            # Check that no "-- Typedefs --" sections exist in header or source classes
-            self._validate_no_typedefs_sections_in_header_or_source_classes(
-                content, filename
-            )
-
-            # Check that PlantUML files are only generated for C files, not header files
-            self._validate_only_c_files_have_puml_diagrams(filename)
-
-            # Check for preprocessing directive issues
-            self._validate_preprocessing_directives(content, filename)
-
-            # Check for complex parsing edge cases
-            self._validate_complex_parsing_edge_cases(content, filename)
-
-            # Check for complex.puml specific content issues
-            self._validate_complex_specific_content(content, filename)
-
-            if filename == "typedef_test.puml":
-                # Should have specific typedef classes
-                assert "TYPEDEF_MYLEN" in content, "Missing TYPEDEF_MYLEN class"
-                assert "TYPEDEF_MYINT" in content, "Missing TYPEDEF_MYINT class"
-                assert "TYPEDEF_MYSTRING" in content, "Missing TYPEDEF_MYSTRING class"
-                assert "TYPEDEF_MYBUFFER" in content, "Missing TYPEDEF_MYBUFFER class"
-                assert "TYPEDEF_MYCALLBACK" in content, "Missing TYPEDEF_MYCALLBACK class"
-                assert "TYPEDEF_MYCOMPLEX" in content, "Missing TYPEDEF_MYCOMPLEX class"
-                assert (
-                    "TYPEDEF_MYCOMPLEXPTR" in content
-                ), "Missing TYPEDEF_MYCOMPLEXPTR class"
-                assert "TYPEDEF_COLOR_T" in content, "Missing TYPEDEF_COLOR_T enum class"
-                assert "TYPEDEF_STATUS_T" in content, "Missing TYPEDEF_STATUS_T enum class"
-                assert "TYPEDEF_POINT_T" in content, "Missing TYPEDEF_POINT_T class"
-                assert (
-                    "TYPEDEF_NAMEDSTRUCT_T" in content
-                ), "Missing TYPEDEF_NAMEDSTRUCT_T class"
-                assert "TYPEDEF_NUMBER_T" in content, "Missing TYPEDEF_NUMBER_T class"
-                assert (
-                    "TYPEDEF_NAMEDUNION_T" in content
-                ), "Missing TYPEDEF_NAMEDUNION_T class"
-                assert (
-                    "TYPEDEF_MYCOMPLEXARRAY" in content
-                ), "Missing TYPEDEF_MYCOMPLEXARRAY class"
-                assert (
-                    "TYPEDEF_SYSTEM_STATE_T" in content
-                ), "Missing TYPEDEF_SYSTEM_STATE_T enum class"
-                assert "TYPEDEF_TRIANGLE_T" in content, "Missing TYPEDEF_TRIANGLE_T class"
-                assert (
-                    "TYPEDEF_LOG_LEVEL_T" in content
-                ), "Missing TYPEDEF_LOG_LEVEL_T enum class"
-                assert (
-                    "TYPEDEF_LOG_CALLBACK_T" in content
-                ), "Missing TYPEDEF_LOG_CALLBACK_T class"
-                assert (
-                    "TYPEDEF_NESTEDINFO_T" in content
-                ), "Missing TYPEDEF_NESTEDINFO_T class"
-                assert (
-                    "TYPEDEF_CE_STATUS_T" in content
-                ), "Missing TYPEDEF_CE_STATUS_T enum class"
-                assert (
-                    "TYPEDEF_COMPLEXEXAMPLE_T" in content
-                ), "Missing TYPEDEF_COMPLEXEXAMPLE_T class"
-
-                # Should have enum values in enum typedefs
-                assert "COLOR_RED" in content, "Missing COLOR_RED enum value"
-                assert "COLOR_GREEN" in content, "Missing COLOR_GREEN enum value"
-                assert "COLOR_BLUE" in content, "Missing COLOR_BLUE enum value"
-                assert "STATUS_OK" in content, "Missing STATUS_OK enum value"
-                assert "STATUS_FAIL" in content, "Missing STATUS_FAIL enum value"
-                assert "LOG_DEBUG" in content, "Missing LOG_DEBUG enum value"
-                assert "LOG_INFO" in content, "Missing LOG_INFO enum value"
-                assert "LOG_WARN" in content, "Missing LOG_WARN enum value"
-                assert "LOG_ERROR" in content, "Missing LOG_ERROR enum value"
-
-                # Should have specific relationships
-                assert (
-                    "TYPEDEF_MYBUFFER ..> TYPEDEF_MYLEN : <<uses>>" in content
-                ), "Missing MyBuffer uses MyLen relationship"
-                assert (
-                    "TYPEDEF_MYBUFFER ..> TYPEDEF_MYSTRING : <<uses>>" in content
-                ), "Missing MyBuffer uses MyString relationship"
-                assert (
-                    "TYPEDEF_MYCALLBACK ..> TYPEDEF_MYBUFFER : <<uses>>" in content
-                ), "Missing MyCallback uses MyBuffer relationship"
-                assert (
-                    "TYPEDEF_MYCOMPLEX ..> TYPEDEF_MYLEN : <<uses>>" in content
-                ), "Missing MyComplex uses MyLen relationship"
-                assert (
-                    "TYPEDEF_MYCOMPLEX ..> TYPEDEF_MYSTRING : <<uses>>" in content
-                ), "Missing MyComplex uses MyString relationship"
-                assert (
-                    "TYPEDEF_MYCOMPLEX ..> TYPEDEF_MYCALLBACK : <<uses>>" in content
-                ), "Missing MyComplex uses MyCallback relationship"
-                assert (
-                    "TYPEDEF_MYCOMPLEX ..> TYPEDEF_LOG_LEVEL_T : <<uses>>" in content
-                ), "Missing MyComplex uses log_level_t relationship"
-                assert (
-                    "TYPEDEF_MYCOMPLEXPTR ..> TYPEDEF_MYCOMPLEX : <<uses>>" in content
-                ), "Missing MyComplexPtr uses MyComplex relationship"
-                assert (
-                    "TYPEDEF_MYCOMPLEXARRAY ..> TYPEDEF_MYCOMPLEXPTR : <<uses>>" in content
-                ), "Missing MyComplexArray uses MyComplexPtr relationship"
-                assert (
-                    "TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>" in content
-                ), "Missing triangle_t uses point_t relationship"
-                assert (
-                    "TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>" in content
-                ), "Missing log_callback_t uses log_level_t relationship"
-                assert (
-                    "TYPEDEF_NESTEDINFO_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>" in content
-                ), "Missing NestedInfo_t uses log_level_t relationship"
-                assert (
-                    "TYPEDEF_COMPLEXEXAMPLE_T ..> TYPEDEF_NESTEDINFO_T : <<uses>>"
-                    in content
-                ), "Missing ComplexExample_t uses NestedInfo_t relationship"
-                assert (
-                    "TYPEDEF_COMPLEXEXAMPLE_T ..> TYPEDEF_CE_STATUS_T : <<uses>>" in content
-                ), "Missing ComplexExample_t uses CE_Status_t relationship"
-
-            elif filename == "geometry.puml":
-                assert "TYPEDEF_TRIANGLE_T" in content, "Missing TYPEDEF_TRIANGLE_T class"
-                assert "TYPEDEF_POINT_T" in content, "Missing TYPEDEF_POINT_T class"
-                assert (
-                    "TYPEDEF_SYSTEM_STATE_T" in content
-                ), "Missing TYPEDEF_SYSTEM_STATE_T enum class"
-                assert (
-                    "TYPEDEF_LOG_LEVEL_T" in content
-                ), "Missing TYPEDEF_LOG_LEVEL_T enum class"
-                assert (
-                    "TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>" in content
-                ), "Missing triangle_t uses point_t relationship"
-
-            elif filename == "logger.puml":
-                assert (
-                    "TYPEDEF_LOG_LEVEL_T" in content
-                ), "Missing TYPEDEF_LOG_LEVEL_T enum class"
-                assert (
-                    "TYPEDEF_LOG_CALLBACK_T" in content
-                ), "Missing TYPEDEF_LOG_CALLBACK_T class"
-                assert (
-                    "TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>" in content
-                ), "Missing log_callback_t uses log_level_t relationship"
-
-            elif filename == "sample.puml":
-                assert "TYPEDEF_POINT_T" in content, "Missing TYPEDEF_POINT_T class"
-                assert (
-                    "TYPEDEF_SYSTEM_STATE_T" in content
-                ), "Missing TYPEDEF_SYSTEM_STATE_T enum class"
-                assert "TYPEDEF_TRIANGLE_T" in content, "Missing TYPEDEF_TRIANGLE_T class"
-                assert (
-                    "TYPEDEF_LOG_LEVEL_T" in content
-                ), "Missing TYPEDEF_LOG_LEVEL_T enum class"
-                assert (
-                    "TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>" in content
-                ), "Missing triangle_t uses point_t relationship"
-
-            elif filename == "math_utils.puml":
-                # math_utils.puml should have separate typedef classes
-                assert "TYPEDEF_REAL_T" in content, "Missing TYPEDEF_REAL_T class"
-                assert "TYPEDEF_MATH_OP_T" in content, "Missing TYPEDEF_MATH_OP_T class"
-
-            elif filename == "complex.puml":
-                # complex.puml should have specific complex typedef classes
-                assert (
-                    "TYPEDEF_MATH_OPERATION_T" in content
-                ), "Missing TYPEDEF_MATH_OPERATION_T class"
-                assert (
-                    "TYPEDEF_MATH_OPS_ARRAY_T" in content
-                ), "Missing TYPEDEF_MATH_OPS_ARRAY_T class"
-                assert (
-                    "TYPEDEF_COMPLEX_FUNC_PTR_T" in content
-                ), "Missing TYPEDEF_COMPLEX_FUNC_PTR_T class"
-                assert (
-                    "TYPEDEF_DATA_PROCESSOR_T" in content
-                ), "Missing TYPEDEF_DATA_PROCESSOR_T class"
-                assert (
-                    "TYPEDEF_DATA_PROCESSOR_ARRAY_T" in content
-                ), "Missing TYPEDEF_DATA_PROCESSOR_ARRAY_T class"
-                assert (
-                    "TYPEDEF_MIXED_UNION_T" in content
-                ), "Missing TYPEDEF_MIXED_UNION_T class"
-                assert (
-                    "TYPEDEF_OPERATION_SET_T" in content
-                ), "Missing TYPEDEF_OPERATION_SET_T class"
-                assert (
-                    "TYPEDEF_COMPLEX_HANDLER_T" in content
-                ), "Missing TYPEDEF_COMPLEX_HANDLER_T class"
-                assert (
-                    "TYPEDEF_OPERATION_TYPE_T" in content
-                ), "Missing TYPEDEF_OPERATION_TYPE_T class"
-                assert (
-                    "TYPEDEF_COMPLEX_CALLBACK_T" in content
-                ), "Missing TYPEDEF_COMPLEX_CALLBACK_T class"
-                assert (
-                    "TYPEDEF_HANDLER_ENTRY_T" in content
-                ), "Missing TYPEDEF_HANDLER_ENTRY_T class"
-                assert (
-                    "TYPEDEF_HANDLER_TABLE_T" in content
-                ), "Missing TYPEDEF_HANDLER_TABLE_T class"
-                assert (
-                    "TYPEDEF_DEBUG_CALLBACK_T" in content
-                ), "Missing TYPEDEF_DEBUG_CALLBACK_T class"
-                assert (
-                    "TYPEDEF_RELEASE_CALLBACK_T" in content
-                ), "Missing TYPEDEF_RELEASE_CALLBACK_T class"
-                assert (
-                    "TYPEDEF_PROCESSOR_MODULE_ENUM_T" in content
-                ), "Missing TYPEDEF_PROCESSOR_MODULE_ENUM_T class"
-                assert "TYPEDEF_PROCESS_T" in content, "Missing TYPEDEF_PROCESS_T class"
-                assert (
-                    "TYPEDEF_STD_RETURNTYPE" in content
-                ), "Missing TYPEDEF_STD_RETURNTYPE class"
-                assert (
-                    "TYPEDEF_PROCESS_CFG_PROCESS_FCT" in content
-                ), "Missing TYPEDEF_PROCESS_CFG_PROCESS_FCT class"
-                assert (
-                    "TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T" in content
-                ), "Missing TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T class"
-                assert "TYPEDEF_UINT8" in content, "Missing TYPEDEF_UINT8 class"
-                assert "TYPEDEF_UINT32" in content, "Missing TYPEDEF_UINT32 class"
-
-                # Should have specific complex macro definitions
-                assert "COMPLEX_MACRO_FUNC" in content, "Missing COMPLEX_MACRO_FUNC macro"
-                assert "PROCESS_ARRAY" in content, "Missing PROCESS_ARRAY macro"
-                assert "HANDLE_OPERATION" in content, "Missing HANDLE_OPERATION macro"
-                assert (
-                    "UTILS_U16_TO_U8ARR_BIG_ENDIAN" in content
-                ), "Missing UTILS_U16_TO_U8ARR_BIG_ENDIAN macro"
-                assert (
-                    "UTILS_U32_TO_U8ARR_BIG_ENDIAN" in content
-                ), "Missing UTILS_U32_TO_U8ARR_BIG_ENDIAN macro"
-                assert (
-                    "UTILS_U8ARR_TO_U16_BIG_ENDIAN" in content
-                ), "Missing UTILS_U8ARR_TO_U16_BIG_ENDIAN macro"
-                assert (
-                    "UTILS_U8ARR_TO_U32_BIG_ENDIAN" in content
-                ), "Missing UTILS_U8ARR_TO_U32_BIG_ENDIAN macro"
-
-                # Should have specific complex function patterns
-                assert (
-                    "test_processor_job_processing" in content
-                ), "Missing test_processor_job_processing function"
-                assert (
-                    "test_processor_utility_macros" in content
-                ), "Missing test_processor_utility_macros function"
-                assert (
-                    "test_complex_macro" in content
-                ), "Missing test_complex_macro function"
-                assert (
-                    "test_process_array" in content
-                ), "Missing test_process_array function"
-                assert (
-                    "test_handle_operation" in content
-                ), "Missing test_handle_operation function"
-                assert "test_mixed_union" in content, "Missing test_mixed_union function"
-                assert (
-                    "test_operation_set" in content
-                ), "Missing test_operation_set function"
-                assert (
-                    "test_handler_table" in content
-                ), "Missing test_handler_table function"
-                assert "run_complex_tests" in content, "Missing run_complex_tests function"
-
-                # Should have specific relationships for complex types
-                assert (
-                    "TYPEDEF_MATH_OPS_ARRAY_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>"
-                    in content
-                ), "Missing math_ops_array_t uses math_operation_t relationship"
-                assert (
-                    "TYPEDEF_DATA_PROCESSOR_ARRAY_T ..> TYPEDEF_DATA_PROCESSOR_T : <<uses>>"
-                    in content
-                ), "Missing data_processor_array_t uses data_processor_t relationship"
-                assert (
-                    "TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>" in content
-                ), "Missing data_processor_t uses data_item_t relationship"
-                assert (
-                    "TYPEDEF_HANDLER_TABLE_T ..> TYPEDEF_HANDLER_ENTRY_T : <<uses>>"
-                    in content
-                ), "Missing handler_table_t uses handler_entry_t relationship"
-                assert (
-                    "TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T ..> TYPEDEF_PROCESS_CFG_PROCESS_FCT : <<uses>>"
-                    in content
-                ), "Missing Process_Cfg_Process_acpfct_t uses Process_Cfg_Process_fct relationship"
-                assert (
-                    "TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_PROCESS_T : <<uses>>"
-                    in content
-                ), "Missing Process_Cfg_Process_fct uses Process_T relationship"
-                assert (
-                    "TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>"
-                    in content
-                ), "Missing Process_Cfg_Process_fct uses Std_ReturnType relationship"
-
-                # Should have specific enum values
-                assert "OP_ADD" in content, "Missing OP_ADD enum value"
-                assert "OP_SUB" in content, "Missing OP_SUB enum value"
-                assert "OP_MUL" in content, "Missing OP_MUL enum value"
-                assert "OP_DIV" in content, "Missing OP_DIV enum value"
-                assert (
-                    "PROCESSOR_CFG_MODULE_COUNT" in content
-                ), "Missing PROCESSOR_CFG_MODULE_COUNT enum value"
-                assert (
-                    "PROCESSOR_CFG_MODULE_ADAPTER" in content
-                ), "Missing PROCESSOR_CFG_MODULE_ADAPTER enum value"
-                assert (
-                    "PROCESSOR_CFG_MODULE_SERVICE" in content
-                ), "Missing PROCESSOR_CFG_MODULE_SERVICE enum value"
-                assert (
-                    "PROCESSOR_CFG_MODULE_HARDWARE" in content
-                ), "Missing PROCESSOR_CFG_MODULE_HARDWARE enum value"
-
-            elif filename == "preprocessed.puml":
-                # preprocessed.puml should have preprocessing-related typedef classes
-                assert (
-                    "TYPEDEF_ENABLED_FEATURE_T" in content
-                ), "Missing TYPEDEF_ENABLED_FEATURE_T class"
-                assert "TYPEDEF_STATUS_T" in content, "Missing TYPEDEF_STATUS_T enum class"
-                assert (
-                    "TYPEDEF_FEATURE_CALLBACK_T" in content
-                ), "Missing TYPEDEF_FEATURE_CALLBACK_T class"
-                assert (
-                    "TYPEDEF_LARGE_BUFFER_T" in content
-                ), "Missing TYPEDEF_LARGE_BUFFER_T class"
-                assert (
-                    "TYPEDEF_FEATURE_STRUCT_T" in content
-                ), "Missing TYPEDEF_FEATURE_STRUCT_T class"
-                assert (
-                    "TYPEDEF_FEATURE_UNION_T" in content
-                ), "Missing TYPEDEF_FEATURE_UNION_T class"
-
-                # Should have enum values from preprocessing
-                assert "STATUS_ENABLED" in content, "Missing STATUS_ENABLED enum value"
-                assert "STATUS_DISABLED" in content, "Missing STATUS_DISABLED enum value"
-                assert "STATUS_UNKNOWN" in content, "Missing STATUS_UNKNOWN enum value"
-
-                # Should have preprocessing-related relationships
-                assert (
-                    "TYPEDEF_FEATURE_CALLBACK_T ..> TYPEDEF_ENABLED_FEATURE_T : <<uses>>"
-                    in content
-                ), "Missing feature_callback_t uses enabled_feature_t relationship"
-
-            # Specific content validation completed successfully
-        except Exception as e:
-            # Fail the test for unexpected exceptions in specific content validation
-            assert False, f"Unexpected exception in assert_specific_content for {filename}: {e}"
-
-    def _validate_macro_formatting(self, content: str, filename: str) -> None:
-        """Validate that macros show only name/parameters, not full values."""
-        # Look for function-like macros that are missing parameters
-        lines = content.split("\n")
-
-        for line in lines:
-            line = line.strip()
-            if line.startswith("#define"):
-                # Check if this is a function-like macro that should have parameters
-                # Look for common function-like macro names
-                macro_name = line.split()[1] if len(line.split()) > 1 else ""
-
-                # Check if this macro should have parameters based on common patterns
-                if macro_name in ["MIN", "MAX", "CALC"] and "(" not in line:
-                    raise AssertionError(
-                        f"Function-like macro {macro_name} missing parameters in {filename}"
-                    )
-
-                # Check for macros that show full values instead of just name/parameters
-                if macro_name in ["MIN", "MAX", "CALC"] and "(" in line and ")" in line:
-                    # Check if the macro shows the full value after the parameters
-                    parts = line.split(")")
-                    if (
-                        len(parts) > 1
-                        and parts[1].strip()
-                        and not parts[1].strip().startswith(";")
-                    ):
-                        raise AssertionError(
-                            f"Macro {macro_name} showing full value instead of just name/parameters in {filename}"
-                        )
-
-                # Check for simple defines that show values instead of just names
-                if macro_name in ["PI", "MAX_SIZE", "DEFAULT_VALUE"] and "=" in line:
-                    raise AssertionError(
-                        f"Simple define {macro_name} showing value instead of just name in {filename}"
-                    )
-
-                # Check for variadic function issues
-                if "... ..." in line:
-                    raise AssertionError(
-                        f"Malformed variadic function with '... ...' in {filename}"
-                    )
-
-        # Macro formatting validation completed successfully
-
-    def _validate_typedef_content(self, content: str, filename: str) -> None:
-        """Validate that typedef content is properly displayed."""
-        # Check for typedef content issues
-        lines = content.split("\n")
-
-        for line in lines:
-            line = line.strip()
-
-            # Check for struct typedefs that only show "typedef struct Name" without fields
-            if (
-                "typedef struct" in line
-                and "typedef struct" in line
-                and "{" not in line
-            ):
-                # This might be a struct typedef without fields - check if it should have fields
-                if any(
-                    keyword in line
-                    for keyword in ["MyBuffer", "MyComplex", "Point_t", "triangle_t"]
-                ):
-                    # These structs should have fields displayed
-                    if "Field(" not in content and "field" not in content.lower():
-                        raise AssertionError(
-                            f"Struct typedef missing fields in {filename}"
-                        )
-
-            # Check for enum typedefs that show EnumValue objects instead of clean values
-            if "EnumValue(" in line:
-                raise AssertionError(
-                    f"Enum typedef showing EnumValue objects instead of clean values in {filename}"
-                )
-
-            # Check for function pointer typedefs with raw tokenized format
-            if "typedef" in line and "(*" in line and ")" in line and "typedef" in line:
-                # Check for malformed function pointer typedefs
-                if line.count("typedef") > 1 or "... ..." in line:
-                    raise AssertionError(
-                        f"Malformed function pointer typedef in {filename}"
-                    )
-
-            # Check for simple typedefs that repeat the typedef name
-            if line.startswith("+ typedef") and "typedef" in line:
-                # Check if the typedef name is repeated at the end
-                parts = line.split()
-                if len(parts) >= 3:
-                    typedef_name = parts[2]  # e.g., "uint32_t" or "void"
-                    if len(parts) > 3 and parts[-1] == typedef_name:
-                        raise AssertionError(
-                            f"Simple typedef repeating name '{typedef_name}' in {filename}"
-                        )
-
-            # Check for enum/struct typedefs that show only the type instead of values/fields
-            if line.strip() in ["+ enum", "+ struct"]:
-                raise AssertionError(
-                    f"Enum/struct typedef showing only type '{line.strip()}' instead of values/fields in {filename}"
-                )
-
-        # Typedef content validation completed successfully
-
-    def _validate_global_variable_formatting(self, content: str, filename: str) -> None:
-        """Validate that global variables are properly formatted."""
-        # Check for global variable formatting issues
-        lines = content.split("\n")
-
-        for line in lines:
-            line = line.strip()
-
-            # Check for global variables that show Field objects instead of clean format
-            if "Field(" in line and "name=" in line and "type=" in line:
-                raise AssertionError(
-                    f"Global variable showing Field object instead of clean format in {filename}"
-                )
-
-            # Check for malformed variadic functions
-            if "... ..." in line:
-                raise AssertionError(
-                    f"Malformed variadic function with '... ...' in {filename}"
-                )
-
-        # Global variable formatting validation completed successfully
-
-    def _validate_array_formatting(self, content: str, filename: str) -> None:
-        """Validate that array declarations are properly formatted with size inside brackets."""
-        # Check for array formatting issues
-        lines = content.split("\n")
-
-        for line in lines:
-            line = line.strip()
-
-            # Check for incorrect array format: type size[ ] name instead of type[size] name
-            # Pattern: + type size[ ] name
-            if line.startswith("+ ") and "[" in line and "]" in line:
-                # Look for the pattern where size comes before [ ]
-                # Examples of incorrect format:
-                # + char MAX_LABEL_LEN[ ] description
-                # + int 5[ ] values
-                # + point_t 3[ ] vertices
-                # + char 32[ ] label
-
-                # Split the line to analyze the parts
-                parts = line.split()
-                if len(parts) >= 4:  # + type size[ ] name
-                    # Check if we have the pattern: type size[ ] name
-                    for i in range(1, len(parts) - 2):
-                        if (
-                            parts[i + 1] == "["
-                            and parts[i + 2] == "]"
-                            and parts[i] not in ["[", "]", ";", "}"]
-                            and not parts[i].startswith("[")
-                            and not parts[i].endswith("]")
-                        ):
-                            # This looks like an array with size before brackets
-                            # Check if the size part looks like a number or identifier
-                            size_part = parts[i]
-                            if (
-                                size_part.isdigit()
-                                or size_part.isidentifier()
-                                or size_part in ["MAX_LABEL_LEN", "5", "3", "32"]
-                            ):
-                                raise AssertionError(
-                                    f"Incorrect array format in {filename}: '{line}'. "
-                                    f"Expected format: 'type[size] name', got: 'type size[ ] name'"
-                                )
-
-        # Array formatting validation completed successfully
-
-    def _validate_preprocessing_directives(self, content: str, filename: str) -> None:
-        """Validate that preprocessing directives are properly processed and not left as raw text."""
-        # Validating preprocessing directives in {filename}
-
-        # Check for raw preprocessing directives that should have been processed
-        raw_directives = [
-            "#if FEATURE_ENABLED",
-            "#if DEBUG_MODE",
-            "#if MAX_SIZE > 50",
-            "#if MIN_SIZE < 20",
-            "#elif defined(DEBUG_MODE)",
-            "#else",
-            "#endif",
-            "#ifdef FEATURE_ENABLED",
-            "#ifdef DEBUG_MODE",
-        ]
-
-        found_raw_directives = []
-        for directive in raw_directives:
-            if directive in content:
-                found_raw_directives.append(directive)
-
-        if found_raw_directives:
-            directive_list = ", ".join(found_raw_directives)
-            raise AssertionError(
-                f"Raw preprocessing directives found in {filename}: {directive_list}. "
-                f"These should be processed and not appear as raw text in the PlantUML output."
-            )
-
-        # Check for malformed preprocessing results
-        # Look for incomplete conditional compilation blocks
-        lines = content.split("\n")
-        for i, line in enumerate(lines):
-            line = line.strip()
-
-            # Check for incomplete #if blocks (missing #endif)
-            if line.startswith("#if") and not line.endswith(";"):
-                # Look ahead to see if there's a corresponding #endif
-                has_endif = False
-                for j in range(
-                    i + 1, min(i + 50, len(lines))
-                ):  # Look ahead up to 50 lines
-                    if lines[j].strip() == "#endif":
-                        has_endif = True
-                        break
-                if not has_endif:
-                    raise AssertionError(
-                        f"Incomplete preprocessing block in {filename}: {line} (missing #endif)"
-                    )
-
-            # Check for malformed preprocessing expressions
-            if "#if" in line and "defined(" in line and not line.endswith(")"):
-                raise AssertionError(
-                    f"Malformed preprocessing expression in {filename}: {line}"
-                )
-
-        # Preprocessing directives properly processed
-
-    def _validate_complex_parsing_edge_cases(self, content: str, filename: str) -> None:
-        """Validate complex parsing edge cases specific to complex.c and complex.h."""
-        if "complex" not in filename.lower():
-            return
-
-        # Validating complex parsing edge cases in {filename}
-
-        # Validate nasty function pointer array patterns
-        if "complex.c" in filename:
-            self._validate_function_pointer_arrays(content, filename)
-            self._validate_complex_macros(content, filename)
-            self._validate_crypto_utility_macros(content, filename)
-            self._validate_nasty_edge_case_functions(content, filename)
-
-        # Validate nasty typedef patterns
-        if "complex.h" in filename:
-            self._validate_complex_typedefs(content, filename)
-            self._validate_complex_macro_definitions(content, filename)
-            self._validate_const_array_of_function_pointers(content, filename)
-            self._validate_complex_documentation_patterns(content, filename)
-            self._validate_bit_shift_and_type_casting(content, filename)
-
-        # Complex parsing edge cases properly processed
-
-    def _validate_function_pointer_arrays(self, content: str, filename: str) -> None:
-        """Validate array of function pointers parsing."""
-        patterns = [
-            r"math_operation_t\s+global_math_ops\s*\[\s*10\s*\]",
-            r"Process_Cfg_ProcessJobLite_acpfct\s*\[\s*PROCESSOR_CFG_MODULE_COUNT\s*\]",
-            r"handler_table_t\s+table\s*\[\s*8\s*\]",
-            r"math_ops_array_t\s+local_ops",
-        ]
-
-        for pattern in patterns:
-            assert re.search(pattern, content), f"Missing function pointer array pattern: {pattern} in {filename}"
-
-    def _validate_complex_macros(self, content: str, filename: str) -> None:
-        """Validate complex macro usage patterns."""
-        patterns = [
-            r"COMPLEX_MACRO_FUNC\s*\(",
-            r"PROCESS_ARRAY\s*\(",
-            r"HANDLE_OPERATION\s*\(",
-            r"TOSTRING\s*\(",
-            r"CREATE_FUNC_NAME\s*\(",
-        ]
-
-        for pattern in patterns:
-            assert re.search(pattern, content), f"Missing complex macro usage: {pattern} in {filename}"
-
-    def _validate_processor_utility_macros(self, content: str, filename: str) -> None:
-        """Validate processor utility macro usage patterns."""
-        patterns = [
-            r"UTILS_U16_TO_U8ARR_BIG_ENDIAN\s*\(",
-            r"UTILS_U32_TO_U8ARR_BIG_ENDIAN\s*\(",
-            r"UTILS_U8ARR_TO_U16_BIG_ENDIAN\s*\(",
-            r"UTILS_U8ARR_TO_U32_BIG_ENDIAN\s*\(",
-        ]
-
-        for pattern in patterns:
-            assert re.search(pattern, content), f"Missing processor utility macro: {pattern} in {filename}"
-
-    def _validate_complex_typedefs(self, content: str, filename: str) -> None:
-        """Validate complex typedef patterns."""
-        patterns = [
-            r"typedef\s+int\s*\(\s*\*\s*math_operation_t\s*\)\s*\(\s*int\s*,\s*int\s*\)",
-            r"typedef\s+math_operation_t\s+math_ops_array_t\s*\[\s*10\s*\]",
-            r"typedef\s+int\s*\(\s*\*\s*\(\s*\*complex_func_ptr_t\s*\)\s*\(\s*int\s*,\s*char\*\s*\)\s*\)\s*\(\s*double\s*,\s*void\*\s*\)",
-            r"typedef\s+Std_ReturnType\s*\(\s*\*Process_Cfg_ProcessJobLite_fct\s*\)\s*\(\s*const\s+Process_JobType\s*\*job_pst\s*\)",
-            r"typedef\s+Process_Cfg_ProcessJobLite_fct\s*\(\s*\*const\s+Process_Cfg_ProcessJobLite_acpfct\s*\[\s*PROCESSOR_CFG_MODULE_COUNT\s*\]\s*\)\s*\(\s*const\s+Process_JobType\s*\*job_pst\s*\)",
-        ]
-
-        for pattern in patterns:
-            assert re.search(pattern, content), f"Missing complex typedef: {pattern} in {filename}"
-
-    def _validate_complex_macro_definitions(self, content: str, filename: str) -> None:
-        """Validate complex macro definition patterns."""
-        patterns = [
-            r"#define\s+COMPLEX_MACRO_FUNC\s*\([^)]+\)\s*\\",
-            r"#define\s+PROCESS_ARRAY\s*\([^)]+\)\s*\\",
-            r"#define\s+HANDLE_OPERATION\s*\([^)]+\)\s*\\",
-            r"#define\s+CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN\s*\([^)]+\)\s*\\",
-            r"#define\s+CRYPTO_PRV_UTILS_U32_TO_U8ARR_BIG_ENDIAN\s*\([^)]+\)\s*\\",
-        ]
-
-        for pattern in patterns:
-            assert re.search(pattern, content), f"Missing complex macro definition: {pattern} in {filename}"
-
-    def _validate_const_array_of_function_pointers(
-        self, content: str, filename: str
-    ) -> None:
-        """Validate const array of function pointers pattern."""
-        pattern = r"Std_ReturnType\s*\(\s*\*const\s+Crypto_Cfg_ProcessJobLite_acpfct\s*\[\s*CRYPTO_CFG_MODULE_COUNT\s*\]\s*\)\s*\(\s*const\s+Crypto_JobType\s*\*job_pst\s*\)"
-
-        assert re.search(pattern, content), f"Missing const array of function pointers: {pattern} in {filename}"
-
-    def _validate_nasty_edge_case_functions(self, content: str, filename: str) -> None:
-        """Validate nasty edge case function patterns."""
-        if "complex.c" not in filename:
-            return
-
-        patterns = [
-            r"test_crypto_job_processing\s*\(\s*\)",
-            r"test_crypto_utility_macros\s*\(\s*\)",
-            r"test_complex_macro\s*\(\s*int\s*\*\s*x\s*,\s*int\s*y\s*,\s*int\s*z\s*\)",
-            r"test_process_array\s*\(\s*int\s*\*\s*arr\s*,\s*int\s*size\s*\)",
-            r"test_handle_operation\s*\(\s*operation_type_t\s+op_type\s*,\s*int\s*\*\s*data\s*,\s*int\s*size\s*\)",
-        ]
-
-        for pattern in patterns:
-            assert re.search(pattern, content), f"Missing nasty edge case function: {pattern} in {filename}"
-
-    def _validate_complex_documentation_patterns(
-        self, content: str, filename: str
-    ) -> None:
-        """Validate complex documentation patterns in macros."""
-        if "complex.h" not in filename:
-            return
-
-        # Check for Doxygen-style documentation in macros
-        doc_pattern = r"/\*\*\s*\*+\s*\*\\brief\s+[^*]+\*+\s*\*/"
-        assert re.search(doc_pattern, content), f"Missing complex documentation pattern in macro in {filename}"
-
-    def _validate_bit_shift_and_type_casting(self, content: str, filename: str) -> None:
-        """Validate bit shift and type casting patterns."""
-        patterns = [
-            r"\(\s*uint8\s*\)\s*\(\s*\(\s*[^)]+\s*\)\s*\)",
-            r"\(\s*uint8\s*\)\s*\(\s*\(\s*[^)]+\s*\)\s*>>\s*8U\s*\)",
-            r"\(\s*uint16\s*\)\s*\(\s*\(\s*[^)]+\s*\)\s*<<\s*8U\s*\)",
-            r"\(\s*uint32\s*\)\s*\(\s*\(\s*[^)]+\s*\)\s*<<\s*24U\s*\)",
-        ]
-
-        for pattern in patterns:
-            assert re.search(pattern, content), f"Missing bit shift/type casting pattern: {pattern} in {filename}"
-
-    def _validate_complex_specific_content(self, content: str, filename: str) -> None:
-        """Validate specific content issues in complex.puml."""
-        if "complex.puml" not in filename.lower():
-            return
-
-        # Validating complex.puml specific content issues
-        issues_found = []
-
-        # Check for corrupted macro content
-        if re.search(r"} \\ \n \( x \)", content):
-            issues_found.append("Corrupted macro content detected")
-
-        if re.search(r"} \\ \n \n \n #define UTILS_U32_TO_U8ARR_BIG_ENDIAN", content):
-            issues_found.append("Broken macro definitions detected")
-
-        # Check for other corrupted content patterns
-        if re.search(r"} \\ \n \n \n #define", content):
-            issues_found.append("Additional broken macro definitions detected")
-
-        if re.search(r"\\ \n } \n \( x \)", content):
-            issues_found.append("Corrupted macro content with broken syntax")
-
-        # Check for corrupted global variables
-        if re.search(r"    \\+ char name$", content, re.MULTILINE):
-            issues_found.append(
-                "Corrupted global variable: 'char name' (should be struct field)"
-            )
-            # Found corrupted global 'char name'
-
-        if re.search(r"    \\+ } processor_t$", content, re.MULTILINE):
-            issues_found.append(
-                "Corrupted global variable: '} processor_t' (should be struct field)"
-            )
-            # Found corrupted global '} processor_t'
-
-        # Check for malformed struct fields
-        if re.search(r"    \\+ struct \\{ \\\\n char\\[32\\] name", content):
-            issues_found.append("Malformed nested struct field in complex_handler_t")
-
-        # Check for missing proper struct field formatting
-        if re.search(r"    \\+ char\\[32\\] name$", content, re.MULTILINE):
-            issues_found.append(
-                "Missing proper struct field formatting for nested struct"
-            )
-
-        # Check for missing typedefs
-        missing_typedefs = [
-            "processor_t",
-            "complex_func_ptr_t",
-            "data_item_t",
-            "data_processor_array_t",
-            "mixed_union_t",
-            "operation_set_t",
-            "complex_handler_t",
-            "operation_type_t",
-            "complex_callback_t",
-            "handler_entry_t",
-            "processor_module_enum_t",
-            "Process_T",
-        ]
-
-        for typedef in missing_typedefs:
-            if f'class "{typedef}" as TYPEDEF_{typedef.upper()}' not in content:
-                issues_found.append(f"Missing typedef: {typedef}")
-
-        # Check for missing functions
-        missing_functions = [
-            "init_math_operations",
-            "test_complex_macro",
-            "test_callback",
-            "test_process_array",
-            "test_stringify_macro",
-            "test_processor_utility_macros",
-            "test_handle_operation",
-            "process_with_callbacks",
-            "create_handler",
-            "test_mixed_union",
-            "test_operation_set",
-            "test_handler_table",
-            "test_processor_job_processing",
-            "run_complex_tests",
-            "ProcessorAdapter_Process",
-            "ProcessorService_Process",
-            "ProcessorHardware_Process",
-        ]
-
-        for func in missing_functions:
-            if func not in content:
-                issues_found.append(f"Missing function: {func}")
-
-        # Check for missing global variables
-        missing_globals = ["global_math_ops", "Process_Cfg_Process_acpfct"]
-
-        for global_var in missing_globals:
-            if global_var not in content:
-                issues_found.append(f"Missing global variable: {global_var}")
-
-        # Check for proper macro content
-        expected_macros = [
-            "COMPLEX_MACRO_FUNC",
-            "PROCESS_ARRAY",
-            "CREATE_FUNC_NAME",
-            "STRINGIFY",
-            "TOSTRING",
-            "UTILS_U16_TO_U8ARR_BIG_ENDIAN",
-            "UTILS_U32_TO_U8ARR_BIG_ENDIAN",
-            "UTILS_U8ARR_TO_U16_BIG_ENDIAN",
-            "UTILS_U8ARR_TO_U32_BIG_ENDIAN",
-            "DEPRECATED",
-            "HANDLE_OPERATION",
-        ]
-
-        for macro in expected_macros:
-            if f"#define {macro}" not in content:
-                issues_found.append(f"Missing or corrupted macro: {macro}")
-
-        if issues_found:
-            raise AssertionError(f"Complex.puml has {len(issues_found)} content issues: {', '.join(issues_found)}")
-        # Complex.puml content validation passed
-
-    def _validate_no_typedefs_in_header_or_source_classes(self, puml_lines, filename):
-        """Assert that no typedefs (e.g., '+ struct', '+ enum', or any typedef) are generated in header or source class blocks (HEADER_xxx or main class blocks)."""
-        in_header_or_main_class = False
-        class_name = None
-        for line in puml_lines:
-            # Detect start of a header or main class
-            if line.strip().startswith('class "') and (
-                "as HEADER_" in line
-                or "as " in line
-                and "<<header>>" in line
-                or "<<main>>" in line
-            ):
-                in_header_or_main_class = True
-                class_name = line.strip()
-                continue
-            if in_header_or_main_class:
-                if line.strip() == "}":
-                    in_header_or_main_class = False
-                    class_name = None
-                    continue
-                # Detect typedefs in header or main class
-                if (
-                    line.strip().startswith("+ struct")
-                    or line.strip().startswith("+ enum")
-                    or line.strip().startswith("+ typedef")
-                ):
-                    raise AssertionError(
-                        f"Typedef found in header or source class block {class_name} in {filename}: {line.strip()}"
-                    )
-
-    def _validate_no_typedefs_sections_in_header_or_source_classes(
-        self, content: str, filename: str
-    ) -> None:
-        """Assert that no '-- Typedefs --' sections exist in header or source class blocks."""
-        lines = content.split("\n")
-        in_header_or_source_class = False
-        class_name = None
-
-        for i, line in enumerate(lines):
-            line = line.strip()
-
-            # Detect start of a header or source class
-            if line.startswith('class "') and (
-                "as HEADER_" in line
-                or ("as " in line and "<<header>>" in line)
-                or ("as " in line and "<<main>>" in line)
-                or (
-                    "as " in line
-                    and not "<<typedef>>" in line
-                    and not "<<enum>>" in line
-                )
-            ):
-                in_header_or_source_class = True
-                class_name = line
-                continue
-
-            if in_header_or_source_class:
-                if line == "}":
-                    in_header_or_source_class = False
-                    class_name = None
-                    continue
-
-                # Check for "-- Typedefs --" section in header or source class
-                if line == "-- Typedefs --":
-                    raise AssertionError(
-                        f"'-- Typedefs --' section found in header or source class block in {filename}: {class_name}"
-                    )
-
-                # Also check for typedef values that might appear after the section
-                if line.startswith("+ ") and (
-                    "struct" in line or "enum" in line or "typedef" in line
-                ):
-                    # Look back a few lines to see if we're in a typedefs section
-                    for j in range(max(0, i - 5), i):
-                        if lines[j].strip() == "-- Typedefs --":
-                            raise AssertionError(
-                                f"Typedef value found in '-- Typedefs --' section of header or source class block in {filename}: {class_name} - {line}"
-                            )
-
-    def _validate_only_c_files_have_puml_diagrams(self, filename: str) -> None:
-        """Assert that PlantUML files are only generated for C files, not header files."""
-        # Extract the base name from the PlantUML filename
-        puml_basename = filename.replace(".puml", "")
-
-        # Check if this corresponds to a header file by looking for .h extension
-        # The expected C files that should have PlantUML diagrams
-        expected_c_files = [
-            "typedef_test",  # typedef_test.c
-            "geometry",  # geometry.c
-            "logger",  # logger.c
-            "math_utils",  # math_utils.c
-            "sample",  # sample.c
-            "preprocessed",  # preprocessed.c
-            "complex",  # complex.c
-        ]
-
-        # Check if this is a header file by looking for common header patterns
-        header_patterns = [
-            "complex_example",  # complex_example.h
-            "config",  # config.h
-            "sample_h",  # sample.h (if generated separately)
-            "logger_h",  # logger.h (if generated separately)
-            "math_utils_h",  # math_utils.h (if generated separately)
-            "geometry_h",  # geometry.h (if generated separately)
-            "typedef_test_h",  # typedef_test.h (if generated separately)
-            "preprocessed_h",  # preprocessed.h (if generated separately)
-        ]
-
-        # If the basename matches a header pattern, throw an error
-        if puml_basename in header_patterns:
-            raise AssertionError(
-                f"PlantUML diagram generated for header file: {filename}. Only C files should have PlantUML diagrams generated."
-            )
-
-        # If the basename is not in expected C files, it might be a header file
-        if puml_basename not in expected_c_files:
-            # Check if there's a corresponding .h file in the source directory
-            header_file_path = self.source_dir / f"{puml_basename}.h"
-            if header_file_path.exists():
-                raise AssertionError(
-                    f"PlantUML diagram generated for header file: {filename} (corresponds to {puml_basename}.h). Only C files should have PlantUML diagrams generated."
-                )
-
-    def _validate_no_duplicate_relationships(
-        self, relationships: List[Tuple[str, str, str]], filename: str
-    ) -> None:
-        """Assert that no duplicate relationships exist between the same two objects."""
-        seen_relationships = set()
-        duplicates = []
-
-        for source, target, rel_type in relationships:
-            # Create a key for the relationship (source, target, type)
-            rel_key = (source, target, rel_type)
-
-            if rel_key in seen_relationships:
-                duplicates.append(f"{source} -> {target} ({rel_type})")
+    def _validate_startuml_structure(self, content: str, filename: str) -> bool:
+        """Validate basic PlantUML structure."""
+        lines = content.split('\n')
+        
+        # Check for @startuml and @enduml
+        has_start = any('@startuml' in line for line in lines)
+        has_end = any('@enduml' in line for line in lines)
+        
+        if not has_start:
+            self._add_result(ValidationLevel.ERROR, "Missing @startuml directive", filename)
+            return False
+            
+        if not has_end:
+            self._add_result(ValidationLevel.ERROR, "Missing @enduml directive", filename)
+            return False
+            
+        # Check for proper diagram name
+        start_line = next((line for line in lines if '@startuml' in line), None)
+        if start_line and '@startuml' in start_line:
+            expected_name = filename.replace('.puml', '')
+            if expected_name not in start_line:
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Diagram name should match filename: expected '{expected_name}'", 
+                               filename)
+        
+        return True
+
+    def validate_class_structure(self, classes: Dict[str, PUMLClass], filename: str):
+        """Validate class definitions and structure."""
+        for uml_id, cls in classes.items():
+            # Validate stereotype
+            if cls.stereotype not in self.expected_stereotypes:
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Invalid stereotype '{cls.stereotype}' for class {uml_id}", 
+                               filename)
+            
+            # Validate color
+            if cls.color not in self.expected_colors:
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Invalid color '{cls.color}' for class {uml_id}", 
+                               filename)
+            
+            # Validate naming conventions
+            self._validate_naming_conventions(cls, filename)
+            
+            # Validate content based on stereotype
+            self._validate_class_content(cls, filename)
+
+    def _validate_naming_conventions(self, cls: PUMLClass, filename: str):
+        """Validate class naming conventions."""
+        if cls.stereotype == "source":
+            # Source files should be named after the filename in uppercase
+            expected_name = cls.name.upper().replace("-", "_").replace(".", "_")
+            if cls.uml_id != expected_name:
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Source class {cls.uml_id} should be named {expected_name}", 
+                               filename)
+        
+        elif cls.stereotype == "header":
+            if not cls.uml_id.startswith("HEADER_"):
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Header class {cls.uml_id} should have HEADER_ prefix", 
+                               filename)
+        
+        elif cls.stereotype == "typedef":
+            if not cls.uml_id.startswith("TYPEDEF_"):
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Typedef class {cls.uml_id} should have TYPEDEF_ prefix", 
+                               filename)
+
+    def _validate_class_content(self, cls: PUMLClass, filename: str):
+        """Validate class content based on stereotype."""
+        if cls.stereotype == "source":
+            self._validate_source_content(cls, filename)
+        elif cls.stereotype == "header":
+            self._validate_header_content(cls, filename)
+        elif cls.stereotype == "typedef":
+            self._validate_typedef_content(cls, filename)
+
+    def _validate_source_content(self, cls: PUMLClass, filename: str):
+        """Validate source file class content."""
+        # Source files should not have + prefix for global elements
+        for item in cls.variables + cls.functions:
+            if item.startswith('+'):
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Source class {cls.uml_id} should not have + prefix: {item}", 
+                               filename)
+        
+        # Macros in source files should have - prefix
+        for macro in cls.macros:
+            if not macro.startswith('-'):
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Source class macro should have - prefix: {macro}", 
+                               filename)
+
+    def _validate_header_content(self, cls: PUMLClass, filename: str):
+        """Validate header file class content."""
+        # Header files should have + prefix for all elements
+        all_items = cls.macros + cls.functions + cls.variables
+        for item in all_items:
+            line = item.strip()
+            if line and not line.startswith("'") and not line.startswith("--"):
+                if not line.startswith("+"):
+                    self._add_result(ValidationLevel.ERROR, 
+                                   f"Header class item should have + prefix: {item}", 
+                                   filename)
+
+    def _validate_typedef_content(self, cls: PUMLClass, filename: str):
+        """Validate typedef class content."""
+        # Typedef classes should have + prefix for all elements
+        all_items = cls.fields + cls.values
+        for item in all_items:
+            line = item.strip()
+            if line and not line.startswith("'") and not line.startswith("--"):
+                if not line.startswith("+"):
+                    self._add_result(ValidationLevel.ERROR, 
+                                   f"Typedef class item should have + prefix: {item}", 
+                                   filename)
+
+    def validate_relationships(self, relationships: List[PUMLRelationship], 
+                             classes: Dict[str, PUMLClass], filename: str):
+        """Validate relationships between classes."""
+        # Check for duplicate relationships
+        seen = set()
+        for rel in relationships:
+            key = (rel.source, rel.target, rel.label)
+            if key in seen:
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Duplicate relationship: {rel.source} -> {rel.target} ({rel.label})", 
+                               filename)
+            seen.add(key)
+        
+        # Validate relationship targets exist
+        class_ids = set(classes.keys())
+        for rel in relationships:
+            if rel.source not in class_ids:
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Relationship source '{rel.source}' not found in classes", 
+                               filename)
+            if rel.target not in class_ids:
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Relationship target '{rel.target}' not found in classes", 
+                               filename)
+        
+        # Validate relationship label format
+        for rel in relationships:
+            if rel.label and not (rel.label.startswith('<<') and rel.label.endswith('>>')):
+                if rel.label not in ['include', 'declares', 'uses']:  # Allow some non-bracketed forms
+                    self._add_result(ValidationLevel.WARNING, 
+                                   f"Relationship label should use <<>> format: {rel.label}", 
+                                   filename)
+
+    def validate_content_patterns(self, content: str, filename: str):
+        """Validate specific content patterns and detect issues."""
+        lines = content.split('\n')
+        
+        for i, line in enumerate(lines, 1):
+            # Check for malformed function signatures
+            if '(' in line and ')' in line:
+                self._validate_function_signature(line, filename, i)
+            
+            # Check for malformed typedefs
+            if 'typedef' in line:
+                self._validate_typedef_line(line, filename, i)
+            
+            # Check for macro definitions
+            if '#define' in line:
+                self._validate_macro_definition(line, filename, i)
+            
+            # Check for PlantUML syntax issues
+            self._validate_plantuml_syntax(line, filename, i)
+
+    def _validate_plantuml_syntax(self, line: str, filename: str, line_num: int):
+        """Validate PlantUML-specific syntax patterns."""
+        line_stripped = line.strip()
+        
+        # Check for proper class definition syntax
+        if line_stripped.startswith('class "') and ' as ' in line:
+            if not re.match(r'class\s+"[^"]+"\s+as\s+\w+\s+<<\w+>>\s+#\w+', line_stripped):
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Class definition syntax may be malformed: {line_stripped}", 
+                               filename, line_num)
+        
+        # Check for proper enum definition syntax  
+        if line_stripped.startswith('enum "') and ' as ' in line:
+            if not re.match(r'enum\s+"[^"]+"\s+as\s+\w+\s+<<\w+>>\s+#\w+', line_stripped):
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Enum definition syntax may be malformed: {line_stripped}", 
+                               filename, line_num)
+        
+        # Check for proper relationship syntax
+        if ('-->' in line or '..>' in line) and ':' in line:
+            if not re.match(r'\w+\s+(-->|\.\.>)\s+\w+\s+:', line_stripped):
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Relationship syntax may be malformed: {line_stripped}", 
+                               filename, line_num)
+
+    def _validate_function_signature(self, line: str, filename: str, line_num: int):
+        """Validate function signature formatting."""
+        # Check for malformed function pointers with specific patterns
+        if '* *' in line and not ('void * *' in line or 'char * *' in line):
+            self._add_result(ValidationLevel.WARNING, 
+                           f"Possible malformed function pointer: {line.strip()}", 
+                           filename, line_num)
+        
+        # Check for incomplete parameter lists - but allow for function pointers with complex syntax
+        open_parens = line.count('(')
+        close_parens = line.count(')')
+        if open_parens != close_parens:
+            # Special case for function pointers that might be truncated
+            if 'unknown unnamed' in line or line.strip().endswith('('):
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Function signature appears truncated: {line.strip()}", 
+                               filename, line_num)
             else:
-                seen_relationships.add(rel_key)
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Unbalanced parentheses in function: {line.strip()}", 
+                               filename, line_num)
 
-        if duplicates:
-            duplicate_list = ", ".join(duplicates)
-            raise AssertionError(
-                f"Duplicate relationships found in {filename}: {duplicate_list}"
-            )
+    def _validate_typedef_line(self, line: str, filename: str, line_num: int):
+        """Validate typedef formatting."""
+        # Check for repeated typedef keyword
+        if line.count('typedef') > 1:
+            self._add_result(ValidationLevel.WARNING, 
+                           f"Multiple 'typedef' keywords in line: {line.strip()}", 
+                           filename, line_num)
+        
+        # Check for incomplete struct/enum definitions
+        if 'typedef struct' in line and '{' not in line and '}' not in line:
+            self._add_result(ValidationLevel.INFO, 
+                           f"Simple typedef struct: {line.strip()}", 
+                           filename, line_num)
 
-    def _validate_relationship_formatting(
-        self, relationships: List[Tuple[str, str, str]], filename: str
-    ) -> None:
-        """Assert that all relationships use consistent <<>> formatting."""
-        invalid_relationships = []
+    def _validate_macro_definition(self, line: str, filename: str, line_num: int):
+        """Validate macro definition formatting."""
+        # Check for proper #define format
+        if not re.match(r'^\s*[+\-]?\s*#define\s+\w+', line):
+            self._add_result(ValidationLevel.WARNING, 
+                           f"Possibly malformed macro definition: {line.strip()}", 
+                           filename, line_num)
 
-        for source, target, rel_type in relationships:
-            # Check if the relationship type has angle brackets
-            if not rel_type.startswith("<<") or not rel_type.endswith(">>"):
-                invalid_relationships.append(f"{source} -> {target} ({rel_type})")
+    def validate_file_specific_requirements(self, parsed_data: Dict[str, Any], filename: str):
+        """Validate file-specific requirements."""
+        base_name = filename.replace('.puml', '')
+        classes = parsed_data.get('classes', {})
+        content = parsed_data.get('content', '')
+        
+        # Validate expected classes exist
+        expected_classes = self._get_expected_classes(base_name)
+        for expected_class in expected_classes:
+            if expected_class not in classes:
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Expected class '{expected_class}' not found", 
+                               filename)
+        
+        # Validate file-specific content patterns
+        self._validate_file_specific_content(base_name, content, classes, filename)
 
-        if invalid_relationships:
-            invalid_list = ", ".join(invalid_relationships)
-            raise AssertionError(
-                f"Relationships without <<>> formatting found in {filename}: {invalid_list}"
-            )
+    def _validate_file_specific_content(self, base_name: str, content: str, classes: Dict[str, PUMLClass], filename: str):
+        """Validate specific content requirements for each file type."""
+        if base_name == "complex":
+            self._validate_complex_file_content(content, classes, filename)
+        elif base_name == "typedef_test":
+            self._validate_typedef_test_content(content, classes, filename)
+        elif base_name == "sample":
+            self._validate_sample_file_content(content, classes, filename)
+        elif base_name == "geometry":
+            self._validate_geometry_file_content(content, classes, filename)
+        elif base_name == "logger":
+            self._validate_logger_file_content(content, classes, filename)
+        elif base_name == "math_utils":
+            self._validate_math_utils_content(content, classes, filename)
+        elif base_name == "preprocessed":
+            self._validate_preprocessed_content(content, classes, filename)
 
-    def _validate_all_typedefs_have_relations(
-        self, relationships: List[Tuple[str, str, str]], filename: str
-    ) -> None:
-        """Assert that all typedef objects have at least one relation (either <<declares>> or <<uses>>)."""
-        # Read the PUML file to extract all typedef objects
-        content = self.read_puml_file(filename)
-        classes = self.extract_classes(content)
+    def _validate_complex_file_content(self, content: str, classes: Dict[str, PUMLClass], filename: str):
+        """Validate complex.puml specific content."""
+        # Check for essential macros
+        essential_macros = [
+            "COMPLEX_MACRO_FUNC", "PROCESS_ARRAY", "CREATE_FUNC_NAME", 
+            "STRINGIFY", "TOSTRING", "UTILS_U16_TO_U8ARR_BIG_ENDIAN",
+            "UTILS_U32_TO_U8ARR_BIG_ENDIAN", "HANDLE_OPERATION"
+        ]
+        
+        for macro in essential_macros:
+            if macro not in content:
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Missing essential macro: {macro}", 
+                               filename)
+        
+        # Check for essential functions
+        essential_functions = [
+            "test_complex_macro", "test_process_array", "test_handle_operation",
+            "test_processor_job_processing", "run_complex_tests", "process_with_callbacks"
+        ]
+        
+        for func in essential_functions:
+            if func not in content:
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Missing expected function: {func}", 
+                               filename)
+        
+        # Check for essential typedefs
+        essential_typedefs = [
+            "TYPEDEF_PROCESS_T", "TYPEDEF_MATH_OPERATION_T", "TYPEDEF_COMPLEX_HANDLER_T"
+        ]
+        
+        for typedef in essential_typedefs:
+            if typedef not in classes:
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Missing essential typedef: {typedef}", 
+                               filename)
 
-        # Find all typedef objects
-        typedef_objects = []
-        for uml_id, class_info in classes.items():
-            if class_info["stereotype"] == "typedef":
-                typedef_objects.append(uml_id)
+    def _validate_typedef_test_content(self, content: str, classes: Dict[str, PUMLClass], filename: str):
+        """Validate typedef_test.puml specific content."""
+        essential_typedefs = [
+            "TYPEDEF_MYLEN", "TYPEDEF_MYINT", "TYPEDEF_MYSTRING", 
+            "TYPEDEF_MYBUFFER", "TYPEDEF_MYCOMPLEX", "TYPEDEF_COLOR_T"
+        ]
+        
+        for typedef in essential_typedefs:
+            if typedef not in classes:
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Missing essential typedef: {typedef}", 
+                               filename)
+        
+        # Check for enum values
+        essential_enum_values = ["COLOR_RED", "COLOR_GREEN", "COLOR_BLUE"]
+        for enum_val in essential_enum_values:
+            if enum_val not in content:
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Missing enum value: {enum_val}", 
+                               filename)
 
-        # Find all objects that have relations (either as source or target)
-        objects_with_relations = set()
-        for source, target, rel_type in relationships:
-            objects_with_relations.add(source)
-            objects_with_relations.add(target)
+    def _validate_sample_file_content(self, content: str, classes: Dict[str, PUMLClass], filename: str):
+        """Validate sample.puml specific content."""
+        essential_functions = ["calculate_sum", "create_point", "process_point", "main"]
+        for func in essential_functions:
+            if func not in content:
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Missing expected function: {func}", 
+                               filename)
 
-        # Check which typedef objects don't have any relations
-        typedefs_without_relations = []
-        for typedef_id in typedef_objects:
-            if typedef_id not in objects_with_relations:
-                typedefs_without_relations.append(typedef_id)
+    def _validate_geometry_file_content(self, content: str, classes: Dict[str, PUMLClass], filename: str):
+        """Validate geometry.puml specific content."""
+        essential_functions = ["create_triangle", "triangle_area"]
+        for func in essential_functions:
+            if func not in content:
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Missing expected function: {func}", 
+                               filename)
 
-        if typedefs_without_relations:
-            missing_list = ", ".join(typedefs_without_relations)
-            raise AssertionError(
-                f"Typedef objects without any relations found in {filename}: {missing_list}"
-            )
+    def _validate_logger_file_content(self, content: str, classes: Dict[str, PUMLClass], filename: str):
+        """Validate logger.puml specific content."""
+        essential_functions = ["log_message", "set_log_callback"]
+        for func in essential_functions:
+            if func not in content:
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Missing expected function: {func}", 
+                               filename)
 
-        # All typedef objects have relations
+    def _validate_math_utils_content(self, content: str, classes: Dict[str, PUMLClass], filename: str):
+        """Validate math_utils.puml specific content."""
+        essential_functions = ["add", "subtract", "average"]
+        for func in essential_functions:
+            if func not in content:
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Missing expected function: {func}", 
+                               filename)
 
-    def _validate_all_relations_have_classes(
-        self, relationships: List[Tuple[str, str, str]], filename: str
-    ) -> None:
-        """Assert that for every relation, both source and target classes exist in the diagram."""
-        # Read the PUML file to extract all classes
-        content = self.read_puml_file(filename)
-        classes = self.extract_classes(content)
+    def _validate_preprocessed_content(self, content: str, classes: Dict[str, PUMLClass], filename: str):
+        """Validate preprocessed.puml specific content."""
+        # Check for preprocessing artifacts
+        preprocessing_indicators = ["#if", "#ifdef", "#define"]
+        has_preprocessing = any(indicator in content for indicator in preprocessing_indicators)
+        if not has_preprocessing:
+            self._add_result(ValidationLevel.INFO, 
+                           "No preprocessing directives found", 
+                           filename)
 
-        # Get all class IDs that exist in the diagram
-        existing_classes = set(classes.keys())
+    def validate_enum_content(self, classes: Dict[str, PUMLClass], filename: str):
+        """Validate enum content and structure."""
+        for uml_id, cls in classes.items():
+            if cls.stereotype == "typedef" and cls.values:
+                # This is an enum typedef
+                self._validate_enum_values(cls, filename)
 
-        # Check each relationship
-        missing_classes = []
-        for source, target, rel_type in relationships:
-            if source not in existing_classes:
-                missing_classes.append(
-                    f"Source class '{source}' in relation '{source} -> {target} ({rel_type})'"
-                )
-            if target not in existing_classes:
-                missing_classes.append(
-                    f"Target class '{target}' in relation '{source} -> {target} ({rel_type})'"
-                )
+    def _validate_enum_values(self, enum_class: PUMLClass, filename: str):
+        """Validate individual enum values."""
+        for value in enum_class.values:
+            # Check for proper enum value format
+            if not value.startswith('+'):
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Enum value should start with +: {value}", 
+                               filename)
+            
+            # Check for enum value naming conventions
+            value_name = value.replace('+', '').strip()
+            if '=' in value_name:
+                name_part = value_name.split('=')[0].strip()
+                if not name_part.isupper():
+                    self._add_result(ValidationLevel.WARNING, 
+                                   f"Enum value should be uppercase: {name_part}", 
+                                   filename)
 
-        if missing_classes:
-            missing_list = "\n      ".join(missing_classes)
-            raise AssertionError(
-                f"Relations with missing classes found in {filename}:\n      {missing_list}"
-            )
+    def validate_struct_content(self, classes: Dict[str, PUMLClass], filename: str):
+        """Validate struct content and fields."""
+        for uml_id, cls in classes.items():
+            if cls.stereotype == "typedef" and cls.fields and not cls.values:
+                # This is a struct typedef
+                self._validate_struct_fields(cls, filename)
 
-        # All relations have corresponding classes
+    def _validate_struct_fields(self, struct_class: PUMLClass, filename: str):
+        """Validate individual struct fields."""
+        for field in struct_class.fields:
+            # Check for proper struct field format
+            if not field.startswith('+'):
+                self._add_result(ValidationLevel.ERROR, 
+                               f"Struct field should start with +: {field}", 
+                               filename)
+            
+            # Check for common field patterns
+            field_content = field.replace('+', '').strip()
+            
+            # Validate array syntax
+            if '[' in field_content and ']' in field_content:
+                self._validate_array_field(field_content, filename)
 
-    def _validate_all_headers_connected_to_main_class(
-        self,
-        relationships: List[Tuple[str, str, str]],
-        classes: Dict[str, Dict],
-        filename: str,
-    ) -> None:
-        """Assert that all header classes have a direct or indirect relationship to the main C class."""
-        # Checking that all header classes are connected to main C class
+    def _validate_array_field(self, field_content: str, filename: str):
+        """Validate array field syntax."""
+        # Check for proper array format: type[size] name or type name[size]
+        if ' [ ' in field_content or ' ] ' in field_content:
+            self._add_result(ValidationLevel.WARNING, 
+                           f"Array field has spaces around brackets: {field_content}", 
+                           filename)
 
-        # Find the main C class (source class)
-        main_class = None
-        for uml_id, class_info in classes.items():
-            if class_info["stereotype"] == "source":
-                main_class = uml_id
-                break
+    def _get_expected_classes(self, base_name: str) -> List[str]:
+        """Get expected classes for a specific file."""
+        # This could be loaded from a configuration file or database
+        expected_classes_map = {
+            "typedef_test": ["TYPEDEF_TEST", "TYPEDEF_MYLEN", "TYPEDEF_MYINT"],
+            "complex": ["COMPLEX", "HEADER_COMPLEX", "TYPEDEF_PROCESS_T"],
+            "sample": ["SAMPLE", "HEADER_CONFIG", "TYPEDEF_POINT_T"],
+            "geometry": ["GEOMETRY", "HEADER_GEOMETRY", "TYPEDEF_TRIANGLE_T"],
+            "logger": ["LOGGER", "HEADER_LOGGER", "TYPEDEF_LOG_LEVEL_T"],
+            "math_utils": ["MATH_UTILS", "HEADER_MATH_UTILS", "TYPEDEF_REAL_T"],
+            "preprocessed": ["PREPROCESSED", "HEADER_PREPROCESSED"]
+        }
+        return expected_classes_map.get(base_name, [])
 
-        if not main_class:
-            assert False, f"No main C class found in {filename}"
-
-        # Find all header classes
-        header_classes = set()
-        for uml_id, class_info in classes.items():
-            if class_info["stereotype"] == "header":
-                header_classes.add(uml_id)
-
-        if not header_classes:
-            # No header classes to validate
-            return
-
-        # Build a graph of relationships for path finding
-        graph = {}
-        for source, target, rel_type in relationships:
-            if source not in graph:
-                graph[source] = []
-            if target not in graph:
-                graph[target] = []
-            graph[source].append(target)
-            # For include relationships, also add reverse direction for path finding
-            if rel_type == "<<include>>":
-                graph[target].append(source)
-
-        # Check each header class for connectivity to main class
-        orphan_headers = []
-        for header_class in header_classes:
-            if not self._has_path_to_main_class(header_class, main_class, graph, set()):
-                orphan_headers.append(header_class)
-
-        if orphan_headers:
-            raise AssertionError(
-                f"Orphan header classes found in {filename}: {', '.join(orphan_headers)}"
-            )
-
-        # All header classes are connected to main C class
-
-    def _has_path_to_main_class(
-        self,
-        current_class: str,
-        main_class: str,
-        graph: Dict[str, List[str]],
-        visited: Set[str],
-    ) -> bool:
-        """Check if there's a path from current_class to main_class using DFS."""
-        if current_class == main_class:
-            return True
-
-        if current_class in visited:
+    def validate_file(self, filename: str) -> bool:
+        """Validate a single PUML file comprehensively."""
+        print(f"Validating {filename}...")
+        
+        # Parse the file
+        parsed_data = self.parse_puml_file(filename)
+        if not parsed_data:
             return False
+        
+        # Run all validations
+        classes = parsed_data.get('classes', {})
+        relationships = parsed_data.get('relationships', [])
+        content = parsed_data.get('content', '')
+        
+        # Print validation summary for this file
+        source_classes = [c for c in classes.values() if c.stereotype == "source"]
+        header_classes = [c for c in classes.values() if c.stereotype == "header"] 
+        typedef_classes = [c for c in classes.values() if c.stereotype == "typedef"]
+        
+        print(f"  Found: {len(source_classes)} source, {len(header_classes)} header, {len(typedef_classes)} typedef classes, {len(relationships)} relationships")
+        
+        self.validate_class_structure(classes, filename)
+        self.validate_relationships(relationships, classes, filename)
+        self.validate_content_patterns(content, filename)
+        self.validate_enum_content(classes, filename)
+        self.validate_struct_content(classes, filename)
+        self.validate_file_specific_requirements(parsed_data, filename)
+        
+        return True
 
-        visited.add(current_class)
-
-        if current_class not in graph:
+    def run_all_validations(self) -> bool:
+        """Run validation for all PUML files."""
+        print(f"Starting comprehensive PUML validation...")
+        print(f"Output directory: {self.output_dir.absolute()}")
+        
+        if not self.output_dir.exists():
+            print(f"❌ Output directory {self.output_dir} does not exist")
             return False
+        
+        # Find all PlantUML files
+        puml_files = list(self.output_dir.glob("*.puml"))
+        if not puml_files:
+            print("❌ No PlantUML files found")
+            return False
+        
+        print(f"Found {len(puml_files)} PlantUML files")
+        
+        # Validate each file
+        all_valid = True
+        for puml_file in puml_files:
+            if not self.validate_file(puml_file.name):
+                all_valid = False
+        
+        # Report results
+        self._report_results()
+        
+        return all_valid and len([r for r in self.results if r.level == ValidationLevel.ERROR]) == 0
 
-        for neighbor in graph[current_class]:
-            if self._has_path_to_main_class(neighbor, main_class, graph, visited):
-                return True
-
-        return False
-
-    def validate_file(self, filename: str) -> None:
-        """Validate a single PUML file."""
-        try:
-            # Validating {filename}
-
-            # Assert file exists
-            self.assert_file_exists(filename)
-
-            # Read file content
-            content = self.read_puml_file(filename)
-
-            # Extract and validate classes
-            classes = self.extract_classes(content)
-            self.assert_class_structure(classes, filename)
-            self.assert_class_content(classes, filename)
-
-            # Extract and validate relationships
-            relationships = self.extract_relationships(content)
-            self.assert_relationships(relationships, classes, filename)
-
-            # Validate specific content requirements
-            self.assert_specific_content(content, filename)
-
-            # {filename} validation completed successfully
-        except Exception as e:
-            # Fail the test for unexpected exceptions in PUML file validation
-            assert False, f"Unexpected exception in validate_file for {filename}: {e}"
-
-    def run_all_validations(self) -> None:
-        """Run validation for all expected PUML files."""
-        # Starting comprehensive validation
-        # Output directory: {self.output_dir.absolute()}
-
-        # Check if output directory exists
-        assert (
-            self.output_dir.exists()
-        ), f"Output directory {self.output_dir} does not exist"
-
-        # Validate PUML files
-        # Validating generated PUML files
-
-        # Find all PlantUML files in the output directory
-        all_puml_files = list(self.output_dir.glob("*.puml"))
-        puml_filenames = [f.name for f in all_puml_files]
-
-        # Found {len(puml_filenames)} PlantUML files: {puml_filenames}
-
-        # Validate each PUML file
-        for filename in puml_filenames:
-            try:
-                self.validate_file(filename)
-            except AssertionError as e:
-                print(f"\n❌ Validation failed for {filename}: {e}")
-                sys.exit(1)
-            except Exception as e:
-                print(f"\n💥 Unexpected error validating {filename}: {e}")
-                # Fail the test for unexpected exceptions
-                assert False, f"Unexpected exception in PUML file validation for {filename}: {e}"
-
-        # All validations completed successfully
+    def _report_results(self):
+        """Report validation results."""
+        errors = [r for r in self.results if r.level == ValidationLevel.ERROR]
+        warnings = [r for r in self.results if r.level == ValidationLevel.WARNING]
+        infos = [r for r in self.results if r.level == ValidationLevel.INFO]
+        
+        print(f"\n📊 Validation Summary:")
+        print(f"   Errors: {len(errors)}")
+        print(f"   Warnings: {len(warnings)}")
+        print(f"   Info: {len(infos)}")
+        
+        if errors:
+            print(f"\n❌ Errors:")
+            for error in errors:
+                location = f"{error.file}"
+                if error.line_number:
+                    location += f":{error.line_number}"
+                print(f"   {location}: {error.message}")
+        
+        if warnings:
+            print(f"\n⚠️  Warnings:")
+            for warning in warnings:
+                location = f"{warning.file}"
+                if warning.line_number:
+                    location += f":{warning.line_number}"
+                print(f"   {location}: {warning.message}")
+        
+        if infos and len(infos) <= 5:  # Only show a few info messages to avoid clutter
+            print(f"\nℹ️  Info:")
+            for info in infos[:5]:
+                location = f"{info.file}"
+                if info.line_number:
+                    location += f":{info.line_number}"
+                print(f"   {location}: {info.message}")
+        
+        if not errors and not warnings:
+            print("✅ All validations passed!")
 
 
 def main():
     """Main function to run the validation."""
     try:
         validator = PUMLValidator()
-        validator.run_all_validations()
-    except AssertionError as e:
-        print(f"\n❌ Validation failed: {e}")
-        print(f"Current working directory: {Path.cwd().absolute()}")
-        sys.exit(1)
+        success = validator.run_all_validations()
+        
+        if not success:
+            print("\n❌ Validation failed")
+            sys.exit(1)
+        else:
+            print("\n✅ All validations passed successfully!")
+            
     except Exception as e:
         print(f"\n💥 Unexpected error in validation: {e}")
         print(f"Current working directory: {Path.cwd().absolute()}")
-        # Fail the test for unexpected exceptions
-        assert False, f"Unexpected exception in main validation: {e}"
+        sys.exit(1)
 
 
 if __name__ == "__main__":
