@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
-Feature test for crypto filter pattern issue
+Crypto Filter Pattern tests.
+
+Comprehensive test suite for verifying the functionality of
+crypto filter pattern components.
 
 This test demonstrates the problem with the filter pattern:
 "include": ["^crypto.*//.c$", "^crypto.*//.h$"]
@@ -11,28 +14,28 @@ not as a path separator. This test shows the problem and validates the fix.
 
 import os
 import tempfile
+import unittest
 from pathlib import Path
 
 from c_to_plantuml.config import Config
 from c_to_plantuml.parser import CParser
+from tests.feature.base import BaseFeatureTest
 
 
-class TestCryptoFilterPattern:
+class TestCryptoFilterPattern(BaseFeatureTest):
     """Test crypto filter pattern functionality"""
 
-    def setup_method(self):
+    def setUp(self):
         """Set up test environment"""
-        self.temp_dir = tempfile.mkdtemp()
+        super().setUp()
         self.project_root = Path(self.temp_dir)
 
         # Create test files
         self.create_test_files()
 
-    def teardown_method(self):
+    def tearDown(self):
         """Clean up test environment"""
-        import shutil
-
-        shutil.rmtree(self.temp_dir, ignore_errors=True)
+        super().tearDown()
 
     def create_test_files(self):
         """Create test files for the crypto filter test"""
