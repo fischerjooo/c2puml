@@ -257,7 +257,14 @@ class PlantUMLGenerator:
                 )
                 lines.append("{")
                 for field in sorted(struct_data.fields, key=lambda x: x.name):
-                    lines.append(f"    + {field.type} {field.name}")
+                    # Handle multi-line field types by adding + prefix to each line
+                    field_text = f"{field.type} {field.name}"
+                    field_lines = field_text.split('\n')
+                    for i, line in enumerate(field_lines):
+                        if i == 0:
+                            lines.append(f"    + {line}")
+                        else:
+                            lines.append(f"+ {line}")
                 lines.append("}")
                 lines.append("")
 
@@ -285,7 +292,13 @@ class PlantUMLGenerator:
                     f'class "{alias_name}" as {uml_id} <<typedef>> #LightYellow'
                 )
                 lines.append("{")
-                lines.append(f"    + {alias_data.original_type}")
+                # Handle multi-line alias types by adding + prefix to each line
+                alias_lines = alias_data.original_type.split('\n')
+                for i, line in enumerate(alias_lines):
+                    if i == 0:
+                        lines.append(f"    + {line}")
+                    else:
+                        lines.append(f"+ {line}")
                 lines.append("}")
                 lines.append("")
 
@@ -298,7 +311,14 @@ class PlantUMLGenerator:
                 )
                 lines.append("{")
                 for field in sorted(union_data.fields, key=lambda x: x.name):
-                    lines.append(f"    + {field.type} {field.name}")
+                    # Handle multi-line field types by adding + prefix to each line
+                    field_text = f"{field.type} {field.name}"
+                    field_lines = field_text.split('\n')
+                    for i, line in enumerate(field_lines):
+                        if i == 0:
+                            lines.append(f"    + {line}")
+                        else:
+                            lines.append(f"+ {line}")
                 lines.append("}")
                 lines.append("")
 
