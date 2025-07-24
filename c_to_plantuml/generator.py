@@ -257,14 +257,7 @@ class PlantUMLGenerator:
                 )
                 lines.append("{")
                 for field in sorted(struct_data.fields, key=lambda x: x.name):
-                    # Handle multi-line field types by adding + prefix to each line
-                    field_text = f"{field.type} {field.name}"
-                    field_lines = field_text.split('\n')
-                    for i, line in enumerate(field_lines):
-                        if i == 0:
-                            lines.append(f"    + {line}")
-                        else:
-                            lines.append(f"+ {line}")
+                    self._generate_field_with_nested_structs(lines, field, "    ")
                 lines.append("}")
                 lines.append("")
 
@@ -292,13 +285,30 @@ class PlantUMLGenerator:
                     f'class "{alias_name}" as {uml_id} <<typedef>> #LightYellow'
                 )
                 lines.append("{")
-                # Handle multi-line alias types by adding + prefix to each line
+                # Handle multi-line alias types with proper nested struct indentation
                 alias_lines = alias_data.original_type.split('\n')
+                inside_struct = False
+                
                 for i, line in enumerate(alias_lines):
+                    line = line.strip()
+                    
                     if i == 0:
                         lines.append(f"    + {line}")
-                    else:
-                        lines.append(f"+ {line}")
+                    elif line.startswith("struct {"):
+                        lines.append(f"    + {line}")
+                        inside_struct = True
+                    elif line == "}":
+                        lines.append(f"    }}")  # Close nested struct with proper indentation
+                        inside_struct = False
+                    elif line and line != "}":
+                        if inside_struct:
+                            lines.append(f"        + {line}")  # 8 spaces for nested content
+                        else:
+                            lines.append(f"+ {line}")
+                
+                # If we were inside a struct but didn't find a closing brace, add one
+                if inside_struct:
+                    lines.append(f"    }}")
                 lines.append("}")
                 lines.append("")
 
@@ -311,16 +321,40 @@ class PlantUMLGenerator:
                 )
                 lines.append("{")
                 for field in sorted(union_data.fields, key=lambda x: x.name):
-                    # Handle multi-line field types by adding + prefix to each line
-                    field_text = f"{field.type} {field.name}"
-                    field_lines = field_text.split('\n')
-                    for i, line in enumerate(field_lines):
-                        if i == 0:
-                            lines.append(f"    + {line}")
-                        else:
-                            lines.append(f"+ {line}")
+                    self._generate_field_with_nested_structs(lines, field, "    ")
                 lines.append("}")
                 lines.append("")
+
+    def _generate_field_with_nested_structs(self, lines: List[str], field, base_indent: str):
+        """Generate field with proper handling of nested structures"""
+        field_text = f"{field.type} {field.name}"
+        
+        # Check if this is a nested struct field
+        if field.type.startswith("struct {") and '\n' in field.type:
+            # Parse the nested struct content
+            struct_parts = field.type.split('\n')
+            struct_header = struct_parts[0]  # "struct {"
+            
+            # Start the struct definition
+            lines.append(f"{base_indent}+ {struct_header}")
+            
+            # Process the nested content with deeper indentation
+            nested_indent = base_indent + "    "  # Add 4 more spaces
+            for part in struct_parts[1:]:
+                part = part.strip()
+                if part and part != "}":
+                    lines.append(f"{nested_indent}+ {part} {field.name}")
+            
+            # Close the struct
+            lines.append(f"{base_indent}}}")
+        else:
+            # Handle regular multi-line field types
+            field_lines = field_text.split('\n')
+            for i, line in enumerate(field_lines):
+                if i == 0:
+                    lines.append(f"{base_indent}+ {line}")
+                else:
+                    lines.append(f"+ {line}")
 
     def _generate_relationships(
         self,
