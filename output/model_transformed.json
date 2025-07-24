@@ -4,7 +4,7 @@
       "aliases": {},
       "encoding_used": "utf-8",
       "enums": {},
-      "file_path": "/tmp/tmpxw_40l_g/api.h",
+      "file_path": "/tmp/tmpjsx_sykl/api.h",
       "functions": [
         {
           "is_declaration": true,
@@ -18,13 +18,13 @@
       "include_relations": [
         {
           "depth": 1,
-          "included_file": "/tmp/tmpxw_40l_g/internal.h",
-          "source_file": "/tmp/tmpxw_40l_g/api.h"
+          "included_file": "/tmp/tmpjsx_sykl/internal.h",
+          "source_file": "/tmp/tmpjsx_sykl/api.h"
         },
         {
           "depth": 2,
-          "included_file": "/tmp/tmpxw_40l_g/internal.h",
-          "source_file": "/tmp/tmpxw_40l_g/api.h"
+          "included_file": "/tmp/tmpjsx_sykl/internal.h",
+          "source_file": "/tmp/tmpjsx_sykl/api.h"
         }
       ],
       "includes": [
@@ -33,7 +33,7 @@
       "macros": [
         "API_H"
       ],
-      "project_root": "/tmp/tmpxw_40l_g",
+      "project_root": "/tmp/tmpjsx_sykl",
       "relative_path": "api.h",
       "structs": {},
       "unions": {}
@@ -42,7 +42,7 @@
       "aliases": {},
       "encoding_used": "utf-8",
       "enums": {},
-      "file_path": "/tmp/tmpxw_40l_g/internal.h",
+      "file_path": "/tmp/tmpjsx_sykl/internal.h",
       "functions": [],
       "globals": [
         {
@@ -56,7 +56,7 @@
       "macros": [
         "INTERNAL_H"
       ],
-      "project_root": "/tmp/tmpxw_40l_g",
+      "project_root": "/tmp/tmpjsx_sykl",
       "relative_path": "internal.h",
       "structs": {
         "ApiContext": {
@@ -84,7 +84,7 @@
       "aliases": {},
       "encoding_used": "utf-8",
       "enums": {},
-      "file_path": "/tmp/tmpxw_40l_g/main.c",
+      "file_path": "/tmp/tmpjsx_sykl/main.c",
       "functions": [
         {
           "is_declaration": false,
@@ -98,20 +98,20 @@
       "include_relations": [
         {
           "depth": 1,
-          "included_file": "/tmp/tmpxw_40l_g/api.h",
-          "source_file": "/tmp/tmpxw_40l_g/main.c"
+          "included_file": "/tmp/tmpjsx_sykl/api.h",
+          "source_file": "/tmp/tmpjsx_sykl/main.c"
         }
       ],
       "includes": [
         "api.h"
       ],
       "macros": [],
-      "project_root": "/tmp/tmpxw_40l_g",
+      "project_root": "/tmp/tmpjsx_sykl",
       "relative_path": "main.c",
       "structs": {},
       "unions": {}
     }
   },
   "project_name": "Unknown_Project",
-  "project_root": "/tmp/tmpxw_40l_g"
+  "project_root": "/tmp/tmpjsx_sykl"
 }
