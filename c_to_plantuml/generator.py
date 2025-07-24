@@ -68,23 +68,20 @@ class PlantUMLGenerator:
         visited = set()
 
         def find_file_key(file_name: str) -> str:
-            """Find the correct key for a file in project_model.files"""
+            """Find the correct key for a file in project_model.files using filename matching"""
+            # Since we now use filenames as keys, this is much simpler
+            filename = Path(file_name).name
+            
             # First try exact match
             if file_name in project_model.files:
                 return file_name
             
-            # Try matching by filename (for absolute paths)
-            file_basename = Path(file_name).name
-            for key in project_model.files.keys():
-                if Path(key).name == file_basename:
-                    return key
+            # Try matching by filename
+            if filename in project_model.files:
+                return filename
             
-            # Try matching by relative path
-            for key in project_model.files.keys():
-                if key == file_name:
-                    return key
-            
-            return file_name  # Return original if not found
+            # If not found, return the filename (will be handled gracefully)
+            return filename
 
         def add_file_to_tree(file_name: str, depth: int):
             if depth > include_depth or file_name in visited:
@@ -104,7 +101,7 @@ class PlantUMLGenerator:
                         add_file_to_tree(clean_include, depth + 1)
 
         # Start with the root file - find the correct key
-        root_key = find_file_key(root_file.file_path)
+        root_key = find_file_key(root_file.relative_path)
         add_file_to_tree(root_key, 0)
 
         return include_tree
@@ -112,18 +109,18 @@ class PlantUMLGenerator:
     def _generate_uml_ids(
         self, include_tree: Dict[str, FileModel], project_model: ProjectModel
     ) -> Dict[str, str]:
-        """Generate UML IDs for all elements in the include tree"""
+        """Generate UML IDs for all elements in the include tree using filename-based keys"""
         uml_ids = {}
 
-        for file_path, file_model in include_tree.items():
-            basename = Path(file_path).stem.upper()
+        for filename, file_model in include_tree.items():
+            basename = Path(filename).stem.upper()
 
-            if file_path.endswith(".c"):
+            if filename.endswith(".c"):
                 # C files: no prefix
-                uml_ids[file_path] = basename
-            elif file_path.endswith(".h"):
+                uml_ids[filename] = basename
+            elif filename.endswith(".h"):
                 # H files: HEADER_ prefix
-                uml_ids[file_path] = f"HEADER_{basename}"
+                uml_ids[filename] = f"HEADER_{basename}"
 
             # Generate typedef UML IDs
             for typedef_name in file_model.structs:
@@ -140,14 +137,10 @@ class PlantUMLGenerator:
     def _generate_c_file_class(
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
     ):
-        """Generate class for C file"""
-        basename = Path(file_model.file_path).stem
-        # Find the UML ID for this file by looking for the key that matches this file
-        uml_id = None
-        for file_key, uml_id_value in uml_ids.items():
-            if file_key.endswith(".c") and Path(file_key).stem == basename:
-                uml_id = uml_id_value
-                break
+        """Generate class for C file using filename-based keys"""
+        basename = Path(file_model.relative_path).stem
+        # Find the UML ID for this file using filename
+        uml_id = uml_ids.get(file_model.relative_path)
 
         if not uml_id:
             return  # Skip if no UML ID found
@@ -195,14 +188,10 @@ class PlantUMLGenerator:
     def _generate_header_class(
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
     ):
-        """Generate class for header file"""
-        basename = Path(file_model.file_path).stem
-        # Find the UML ID for this file by looking for the key that matches this file
-        uml_id = None
-        for file_key, uml_id_value in uml_ids.items():
-            if file_key.endswith(".h") and Path(file_key).stem == basename:
-                uml_id = uml_id_value
-                break
+        """Generate class for header file using filename-based keys"""
+        basename = Path(file_model.relative_path).stem
+        # Find the UML ID for this file using filename
+        uml_id = uml_ids.get(file_model.relative_path)
 
         if not uml_id:
             return  # Skip if no UML ID found
@@ -409,16 +398,16 @@ class Generator:
         generated_files = []
         generator = PlantUMLGenerator()
 
-        for file_path, file_model in sorted(project_model.files.items()):
+        for filename, file_model in sorted(project_model.files.items()):
             # Only process C files (not headers) for diagram generation
-            if file_model.file_path.endswith(".c"):
+            if file_model.relative_path.endswith(".c"):
                 # Generate PlantUML content
                 puml_content = generator.generate_diagram(
                     file_model, project_model, include_depth
                 )
 
                 # Create output filename
-                basename = Path(file_model.file_path).stem
+                basename = Path(filename).stem
                 output_file = os.path.join(output_dir, f"{basename}.puml")
 
                 # Write the file
