@@ -82,13 +82,17 @@ def create_backup_directory() -> Path:
 
 def backup_file(file_path: str, backup_dir: Path) -> bool:
     """Backup a single file to the backup directory."""
-    source_path = Path(file_path)
+    source_path = Path(file_path).resolve()
     if not source_path.exists():
         print_warning(f"File not found: {file_path}")
         return False
-    
+
     # Preserve directory structure in backup
-    relative_path = source_path.relative_to(Path.cwd())
+    try:
+        relative_path = source_path.relative_to(Path.cwd().resolve())
+    except ValueError:
+        # If file is not in current directory tree, use just the filename
+        relative_path = source_path.name
     backup_path = backup_dir / relative_path
     backup_path.parent.mkdir(parents=True, exist_ok=True)
     
