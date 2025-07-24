@@ -85,6 +85,9 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+test-results.xml
+test-report.html
+test_backups_*/
 
 # Jupyter Notebook
 .ipynb_checkpoints
