@@ -1,0 +1,8 @@
+# Refactoring & Suggestions
+
+## Code Rewriting Guidelines
+When rewriting code:
+- Preserve existing docstrings and comments.
+- Extract long methods into smaller functions.
+- Don't introduce global variables or hidden state.
+- Make changes that improve readability, not just brevity.

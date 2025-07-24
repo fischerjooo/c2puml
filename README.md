@@ -95,6 +95,24 @@ pip install -r requirements-dev.txt
 ./test_picgen.sh
 ```
 
+### Git Hooks Setup
+
+The project includes pre-commit hooks for code quality:
+
+```bash
+# Linux/macOS
+./setup-hooks.sh
+
+# Windows
+setup-hooks.bat
+```
+
+This installs a pre-commit hook that automatically runs:
+- **Black** formatting check
+- **isort** import sorting check
+
+The hook will prevent commits if formatting issues are detected.
+
 ## GitHub Workflow
 
 The repository includes an automated GitHub workflow that:
