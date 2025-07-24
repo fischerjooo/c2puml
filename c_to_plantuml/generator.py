@@ -68,17 +68,20 @@ class PlantUMLGenerator:
         visited = set()
 
         def find_file_key(file_name: str) -> str:
-            """Find the correct key for a file in project_model.files using filename matching"""
-            # Since we now use filenames as keys, this is much simpler
-            filename = Path(file_name).name
-            
+            """Find the correct key for a file in project_model.files using path matching"""
             # First try exact match
             if file_name in project_model.files:
                 return file_name
             
             # Try matching by filename
+            filename = Path(file_name).name
             if filename in project_model.files:
                 return filename
+            
+            # Try matching by relative path
+            for key in project_model.files.keys():
+                if Path(key).name == filename:
+                    return key
             
             # If not found, return the filename (will be handled gracefully)
             return filename
