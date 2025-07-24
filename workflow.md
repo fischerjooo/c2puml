@@ -71,6 +71,21 @@ Comprehensive testing workflow for the C to PlantUML Converter using three main 
 
 # 6. Development or extend tests for new feature or feature change
 # Add new tests or modify existing tests based on feature development
+
+## Testing Guidelines
+
+### Bug Fixing Workflow
+- **Before fixing a bug**: Develop a test that reproduces the bug if it makes sense
+- Write a failing test that demonstrates the issue
+- Fix the bug to make the test pass
+- This ensures the bug is properly understood and won't regress
+
+### New Feature Development
+- **After developing a new feature**: Always add comprehensive tests for it
+- Include unit tests for individual components
+- Add integration tests for complete workflows
+- Test both normal cases and edge cases
+- Ensure the feature works as expected and doesn't break existing functionality
 ```
 
 ## Test Structure
