@@ -1,0 +1,7 @@
+# Project Structure
+
+## Organization Principles
+- Keep logic and I/O separate. Pure logic in `src/`, entry points in `main.py` or CLI.
+- Avoid deeply nested directories. Prefer flat and clear structure.
+- Use `__init__.py` to define module boundaries when needed.
+- Group related files together (e.g. models, services, tests).

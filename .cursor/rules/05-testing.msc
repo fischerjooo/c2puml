@@ -1,0 +1,10 @@
+# Testing
+
+## Test Framework and Structure
+- Use `pytest` for all unit and integration tests.
+- Name all test files with the prefix `test_`, and place them in the `tests/` directory.
+
+## Test Coverage Requirements
+- Every new function must be accompanied by tests that cover normal, edge, and failure cases.
+- Target 90%+ test coverage, tracked by `coverage.py`.
+- Avoid testing internal implementation details; test behaviors instead.

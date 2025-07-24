@@ -1,0 +1,13 @@
+# Project Overview
+
+This is a Python project focused on clean code and test-driven development practices.
+
+## Project Workflow Reference
+- Always consider the instructions and practices described in `workflow.md` as part of the coding and testing guidelines.
+- Align refactors, feature implementations, and test practices with the documented workflow whenever applicable.
+
+## General Principles
+- Write readable, maintainable code following Pythonic conventions.
+- Every new function must have a corresponding test written first (TDD).
+- Keep each file focused on a single concern or responsibility.
+- Avoid side effects in functions unless explicitly needed.

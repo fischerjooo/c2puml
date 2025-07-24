@@ -1,0 +1,10 @@
+# Style and Formatting
+
+## Naming Conventions
+- Use `snake_case` for variables and function names.
+- Use `PascalCase` for class names.
+
+## Code Formatting
+- Use 4 spaces per indent level.
+- Limit lines to 88 characters (follow Black formatting).
+- All files must be auto-formatted using Black and isort before commit.
