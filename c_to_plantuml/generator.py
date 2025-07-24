@@ -302,7 +302,7 @@ class PlantUMLGenerator:
                         inside_struct = False
                     elif line and line != "}":
                         if inside_struct:
-                            lines.append(f"        + {line}")  # 8 spaces for nested content
+                            lines.append(f"    + {line}")  # 4 spaces for nested content
                         else:
                             lines.append(f"+ {line}")
                 
@@ -338,8 +338,8 @@ class PlantUMLGenerator:
             # Start the struct definition
             lines.append(f"{base_indent}+ {struct_header}")
             
-            # Process the nested content with deeper indentation
-            nested_indent = base_indent + "    "  # Add 4 more spaces
+            # Process the nested content with same indentation as base
+            nested_indent = "    "  # Use same indentation as base level
             for part in struct_parts[1:]:
                 part = part.strip()
                 if part and part != "}":
