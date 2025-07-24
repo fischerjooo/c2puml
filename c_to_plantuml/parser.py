@@ -64,19 +64,20 @@ class CParser:
 
         self.logger.info("Found %d C/C++ files", len(c_files))
 
-        # Parse each file
+        # Parse each file using filename as key for simplified tracking
         files = {}
         failed_files = []
 
         for file_path in c_files:
             try:
-                relative_path = str(file_path.relative_to(project_root))
+                # Use filename as key for simplified tracking
+                filename = file_path.name
                 file_model = self.parse_file(
-                    file_path, relative_path, str(project_root)
+                    file_path, filename, str(project_root)
                 )
-                files[relative_path] = file_model
+                files[filename] = file_model
 
-                self.logger.debug("Successfully parsed: %s", relative_path)
+                self.logger.debug("Successfully parsed: %s", filename)
 
             except (OSError, ValueError) as e:
                 self.logger.warning("Failed to parse %s: %s", file_path, e)
@@ -115,7 +116,7 @@ class CParser:
         return model
 
     def parse_file(
-        self, file_path: Path, relative_path: str, project_root: str
+        self, file_path: Path, filename: str, project_root: str
     ) -> FileModel:
         """Parse a single C/C++ file and return a file model using tokenization"""
         self.logger.debug("Parsing file: %s", file_path)
@@ -161,7 +162,7 @@ class CParser:
 
         return FileModel(
             file_path=str(file_path),
-            relative_path=relative_path,
+            relative_path=filename,  # Use filename for simplified tracking
             project_root=project_root,
             encoding_used=encoding,
             structs=structs,
