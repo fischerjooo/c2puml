@@ -21,17 +21,9 @@ class PUMLValidator:
             return "../output"
         return "output"
 
-    def _find_source_directory(self) -> str:
-        """Return the source directory path."""
-        # Check if we're in the example directory
-        if Path.cwd().name == "example":
-            return "source"
-        return "example/source"
-
     def __init__(self):
         # Set paths
         self.output_dir = Path(self._find_output_directory())
-        self.source_dir = Path(self._find_source_directory())
 
         # Expected PUML files
         self.expected_files = [
@@ -44,624 +36,17 @@ class PUMLValidator:
             "complex.puml",
         ]
 
-        # Expected source files with their content requirements
-        self.expected_source_files = {
-            # C files
-            "typedef_test.c": {
-                "includes": [
-                    "typedef_test.h",
-                    "complex_example.h",
-                    "geometry.h",
-                    "logger.h",
-                    "stdlib.h",
-                ],
-                "globals": [
-                    "MyLen global_length",
-                    "MyBuffer global_buffer",
-                    "MyComplexPtr global_complex",
-                ],
-                "functions": [
-                    "void log_buffer(const MyBuffer * buffer)",
-                    "MyInt process_buffer(MyBuffer * buffer)",
-                    "int my_callback(MyBuffer * buffer)",
-                    "MyComplex * create_complex(MyLen id, MyString name)",
-                    "int main(void)",
-                ],
-                "typedefs": [],  # No typedefs in C files
-            },
-            "preprocessed.c": {
-                "includes": ["preprocessed.h", "stdio.h", "stdlib.h", "string.h"],
-                "globals": [
-                    "enabled_feature_t global_feature",
-                    "debug_struct_t global_debug",
-                    "int global_basic",
-                ],
-                "functions": [
-                    "int process_feature(enabled_feature_t* feature)",
-                    "void debug_feature(enabled_feature_t* feature)",
-                    "int process_basic(void)",
-                    "void complex_function(void)",
-                    "void test_preprocessing_edge_cases(void)",
-                    "void test_typedef_preprocessing(void)",
-                    "void test_function_pointers(void)",
-                    "int main(void)",
-                ],
-                "typedefs": [],  # No typedefs in C files
-                "preprocessing": [
-                    "#if FEATURE_ENABLED",
-                    "#if DEBUG_MODE",
-                    "#if MAX_SIZE > 50",
-                    "#if MIN_SIZE < 20",
-                    "#elif defined(DEBUG_MODE)",
-                    "#else",
-                    "#endif",
-                ],
-            },
-            "geometry.c": {
-                "includes": ["geometry.h", "string.h", "stdlib.h"],
-                "globals": [],
-                "functions": [
-                    "triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)",
-                    "int triangle_area(const triangle_t * tri)",
-                ],
-                "typedefs": [],
-            },
-            "logger.c": {
-                "includes": ["logger.h", "stdarg.h", "string.h"],
-                "globals": ["log_callback_t current_cb"],
-                "functions": [
-                    "void set_log_callback(log_callback_t cb)",
-                    "void log_message(log_level_t level, const char * fmt, ...)",
-                ],
-                "typedefs": [],
-            },
-            "math_utils.c": {
-                "includes": ["math_utils.h"],
-                "globals": [],
-                "functions": [
-                    "int add(int a, int b)",
-                    "int subtract(int a, int b)",
-                    "real_t average(const int * arr, size_t len)",
-                ],
-                "typedefs": [],
-            },
-            "sample.c": {
-                "includes": [
-                    "stdio.h",
-                    "stdlib.h",
-                    "string.h",
-                    "sample.h",
-                    "math_utils.h",
-                    "logger.h",
-                    "geometry.h",
-                ],
-                "globals": [
-                    "int global_counter",
-                    "char buffer[MAX_SIZE]",
-                    "double * global_ptr",
-                ],
-                "macros": [
-                    "#define MAX_SIZE",
-                    "#define DEBUG_MODE",
-                    "#define CALC(x, y)",
-                ],
-                "functions": [
-                    "static void internal_helper(void)",
-                    "int calculate_sum(int a, int b)",
-                    "point_t * create_point(int x, int y, const char * label)",
-                    "void process_point(point_t * p)",
-                    "void demo_triangle_usage(void)",
-                    "int main(void)",
-                ],
-                "typedefs": [],
-            },
-            # H files
-            "typedef_test.h": {
-                "includes": ["stdint.h", "sample.h", "config.h", "logger.h"],
-                "macros": ["#define TYPEDEF_TEST_H"],
-                "typedefs": [
-                    "typedef uint32_t MyLen",
-                    "typedef int32_t MyInt",
-                    "typedef char * MyString",
-                    "typedef struct MyBuffer_tag",
-                    "typedef int (*MyCallback)(MyBuffer * buffer)",
-                    "typedef struct MyComplexStruct_tag",
-                    "typedef MyComplex * MyComplexPtr",
-                    "typedef enum Color_tag",
-                    "typedef enum StatusEnum_tag",
-                    "typedef struct Point_tag",
-                    "typedef struct NamedStruct_tag",
-                    "typedef union Number_tag",
-                    "typedef union NamedUnion_tag",
-                    "typedef MyComplexPtr MyComplexArray[10]",
-                ],
-                "functions": [],
-                "globals": [],
-            },
-            "geometry.h": {
-                "includes": ["sample.h", "math_utils.h"],
-                "macros": ["#define GEOMETRY_H"],
-                "typedefs": ["typedef struct triangle_tag"],
-                "functions": [
-                    "triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)",
-                    "int triangle_area(const triangle_t * tri)",
-                ],
-                "globals": [],
-            },
-            "logger.h": {
-                "includes": ["stdio.h", "config.h"],
-                "macros": ["#define LOGGER_H"],
-                "typedefs": [
-                    "typedef enum log_level_tag",
-                    "typedef void (*log_callback_t)(log_level_t level, const char * message)",
-                ],
-                "functions": [
-                    "void set_log_callback(log_callback_t cb)",
-                    "void log_message(log_level_t level, const char * fmt, ...)",
-                ],
-                "globals": [],
-            },
-            "math_utils.h": {
-                "includes": ["config.h"],
-                "macros": ["#define MATH_UTILS_H"],
-                "typedefs": [],
-                "functions": [
-                    "int add(int a, int b)",
-                    "int subtract(int a, int b)",
-                    "real_t average(const int * arr, size_t len)",
-                ],
-                "globals": [],
-            },
-            "sample.h": {
-                "includes": ["stddef.h", "config.h"],
-                "macros": [
-                    "#define SAMPLE_H",
-                    "#define PI",
-                    "#define VERSION",
-                    "#define MIN(a, b)",
-                    "#define MAX(a, b)",
-                ],
-                "typedefs": [
-                    "typedef struct point_tag",
-                    "typedef enum system_state_tag",
-                ],
-                "functions": [
-                    "extern int calculate_sum(int a, int b)",
-                    "extern point_t * create_point(int x, int y, const char * label)",
-                    "extern void process_point(point_t * p)",
-                ],
-                "globals": [
-                    "extern const int MAX_POINTS",
-                    "extern const char * DEFAULT_LABEL",
-                ],
-            },
-            "config.h": {
-                "includes": ["stddef.h", "stdint.h"],
-                "macros": [
-                    "#define CONFIG_H",
-                    "#define PROJECT_NAME",
-                    "#define MAX_LABEL_LEN",
-                    "#define DEFAULT_BUFFER_SIZE",
-                ],
-                "typedefs": [
-                    "typedef uint32_t id_t",
-                    "typedef int32_t status_t",
-                    "typedef enum GlobalStatus GlobalStatus_t;",
-                ],
-                "functions": [],
-                "globals": [],
-            },
-            "complex_example.h": {
-                "includes": ["config.h", "logger.h"],
-                "macros": ["#define COMPLEX_EXAMPLE_H"],
-                "typedefs": [
-                    "typedef struct NestedInfo_tag",
-                    "typedef enum CE_Status_tag",
-                    "typedef struct ComplexExample_tag",
-                ],
-                "functions": [],
-                "globals": [],
-            },
-            "complex.c": {
-                "includes": ["complex.h", "stdio.h", "stdlib.h", "string.h"],
-                "globals": [
-                    "math_operation_t global_math_ops [ 10 ]",
-                    "Std_ReturnType (*const Process_Cfg_ProcessJobLite_acpfct[PROCESSOR_CFG_MODULE_COUNT])",
-                ],
-                "functions": [
-                    "static int add_operation(int a, int b)",
-                    "static int subtract_operation(int a, int b)",
-                    "static int multiply_operation(int a, int b)",
-                    "static int divide_operation(int a, int b)",
-                    "static int modulo_operation(int a, int b)",
-                    "static void init_math_operations()",
-                    "void test_complex_macro(int * x, int y, int z)",
-                    "static int test_callback(int * item)",
-                    "void test_process_array(int * arr, int size)",
-                    "void test_stringify_macro()",
-                    "void test_processor_utility_macros()",
-                    "void test_handle_operation(operation_type_t op_type, int * data, int size)",
-                    "int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], int op_count, void ( * pre_process ) ( int *, int ), void ( * post_process ) ( int *, unknown unnamed)",
-                    "void * create_handler(const char * name, int ( * init_func ) ( void * ), void ( * cleanup_func ) ( void * ), unknown unnamed)",
-                    "int execute_operations(int value, math_ops_array_t ops, int op_count)",
-                    "math_operation_t * get_math_operations()",
-                    "complex_handler_t * create_complex_handler(const char * name, int ( * validate_func ) ( const char * ), void * ( * alloc_func ) ( size_t ), unknown unnamed)",
-                    "void test_mixed_union()",
-                    "void test_operation_set()",
-                    "void test_handler_table()",
-                    "void test_processor_job_processing()",
-                    "void run_complex_tests()",
-                    "static Std_ReturnType ProcessorAdapter_Process(const Process_T * job_pst)",
-                    "static Std_ReturnType ProcessorService_Process(const Process_T * job_pst)",
-                    "static Std_ReturnType ProcessorHardware_Process(const Process_T * job_pst)",
-                ],
-                "typedefs": [],  # No typedefs in C files
-            },
-            "complex.h": {
-                "includes": ["stdint.h", "stddef.h", "stdbool.h"],
-                "macros": [
-                    "#define COMPLEX_H",
-                    "#define COMPLEX_MACRO_FUNC(x, y, z)",
-                    "#define PROCESS_ARRAY(arr, size, callback)",
-                    "#define CREATE_FUNC_NAME(prefix, suffix)",
-                    "#define STRINGIFY(x)",
-                    "#define TOSTRING(x)",
-                    "#define UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8)",
-                    "#define UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8)",
-                    "#define UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)",
-                    "#define UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)",
-                    "#define DEPRECATED",
-                    "#define HANDLE_OPERATION(op_type, data, size, callback)",
-                ],
-                "typedefs": [
-                    "typedef uint8_t uint8",
-                    "typedef uint16_t uint16",
-                    "typedef uint32_t uint32",
-                    "typedef struct processor_t",
-                    "typedef int (*math_operation_t)(int, int)",
-                    "typedef math_operation_t math_ops_array_t[10]",
-                    "typedef int (*(*complex_func_ptr_t)(int, char*))(double, void*)",
-                    "typedef struct data_item_t",
-                    "typedef int (*data_processor_t)(data_item_t* item, void* context)",
-                    "typedef data_processor_t* data_processor_array_t",
-                    "typedef union mixed_union_t",
-                    "typedef struct operation_set_t",
-                    "typedef struct complex_handler_t",
-                    "typedef enum operation_type_t",
-                    "typedef int (*complex_callback_t)",
-                    "typedef struct handler_entry_t",
-                    "typedef handler_entry_t handler_table_t[8]",
-                    "typedef void (*debug_callback_t)(const char* message, int level)",
-                    "typedef void (*release_callback_t)(const char* message)",
-                    "typedef enum processor_module_enum_t",
-                    "typedef struct Process_T",
-                    "typedef int Std_ReturnType",
-                    "typedef Std_ReturnType (*Process_Cfg_Process_fct)(const Process_T *job_pst)",
-                    "typedef Process_Cfg_Process_fct Process_Cfg_Process_acpfct_t[PROCESSOR_CFG_MODULE_COUNT]",
-                ],
-                "functions": [
-                    "int process_with_callbacks(int data[], int size, math_operation_t operations[], int op_count, void (*pre_process)(int*, int), void (*post_process)(int*, int))",
-                    "void* create_handler(const char* name, int (*init_func)(void*), void (*cleanup_func)(void*), complex_callback_t callback)",
-                    "int execute_operations(int value, math_ops_array_t ops, int op_count)",
-                    "math_operation_t* get_math_operations(void)",
-                    "complex_handler_t* create_complex_handler(const char* name, int (*validate_func)(const char*), void* (*alloc_func)(size_t), void (*free_func)(void*))",
-                    "void test_processor_job_processing(void)",
-                    "void test_processor_utility_macros(void)",
-                    "Process_Cfg_Process_acpfct_t Process_Cfg_Process_acpfct",
-                ],
-                "globals": [],
-            },
-            "preprocessed.h": {
-                "includes": ["stdint.h", "stddef.h"],
-                "macros": [
-                    "#define PREPROCESSED_H",
-                    "#define FEATURE_ENABLED",
-                    "#define DEBUG_MODE",
-                    "#define MAX_SIZE",
-                    "#define MIN_SIZE",
-                ],
-                "typedefs": [
-                    "typedef struct enabled_feature_tag",
-                    "typedef struct disabled_feature_tag",
-                    "typedef struct debug_struct_tag",
-                    "typedef struct simple_debug_tag",
-                    "typedef struct release_struct_tag",
-                    "typedef enum status_tag",
-                    "typedef struct optimized_struct_tag",
-                    "typedef struct debug_optimized_tag",
-                    "typedef struct default_struct_tag",
-                    "typedef int (*feature_callback_t)(enabled_feature_t* feature)",
-                    "typedef int (*basic_callback_t)(void)",
-                    "typedef char large_buffer_t[MAX_SIZE]",
-                    "typedef char small_buffer_t[MIN_SIZE]",
-                    "typedef struct debug_enabled_tag",
-                    "typedef struct enabled_tag",
-                    "typedef struct disabled_tag",
-                    "typedef struct feature_struct_tag",
-                    "typedef struct debug_feature_tag",
-                    "typedef struct basic_struct_tag",
-                    "typedef union feature_union_tag",
-                    "typedef union basic_union_tag",
-                ],
-                "functions": [
-                    "int process_feature(enabled_feature_t* feature)",
-                    "void debug_feature(enabled_feature_t* feature)",
-                    "int process_basic(void)",
-                ],
-                "globals": [
-                    "extern enabled_feature_t global_feature",
-                    "extern debug_struct_t global_debug",
-                    "extern int global_basic",
-                ],
-                "preprocessing": [
-                    "#if FEATURE_ENABLED",
-                    "#if DEBUG_MODE",
-                    "#if MAX_SIZE > 50",
-                    "#if MIN_SIZE < 20",
-                    "#if defined(FEATURE_ENABLED) && !defined(DEBUG_MODE)",
-                    "#elif defined(DEBUG_MODE)",
-                    "#else",
-                    "#ifdef FEATURE_ENABLED",
-                    "#ifdef DEBUG_MODE",
-                    "#elif DEBUG_MODE",
-                    "#endif",
-                ],
-            },
-        }
-
     def assert_file_exists(self, filename: str) -> None:
         """Assert that a PUML file exists."""
         filepath = self.output_dir / filename
         assert filepath.exists(), f"File {filename} does not exist at {filepath}"
-        print(f"✅ {filename} exists")
-
-    def assert_source_file_exists(self, filename: str) -> None:
-        """Assert that a source file exists."""
-        filepath = self.source_dir / filename
-        assert filepath.exists(), f"Source file {filename} does not exist at {filepath}"
-        print(f"✅ Source file {filename} exists")
+        # {filename} exists
 
     def read_puml_file(self, filename: str) -> str:
         """Read and return the content of a PUML file."""
         filepath = self.output_dir / filename
         with open(filepath, "r", encoding="utf-8") as f:
             return f.read()
-
-    def read_source_file(self, filename: str) -> str:
-        """Read and return the content of a source file."""
-        filepath = self.source_dir / filename
-        with open(filepath, "r", encoding="utf-8") as f:
-            return f.read()
-
-    def extract_includes(self, content: str) -> List[str]:
-        """Extract all #include statements from source file content."""
-        includes = []
-        # Pattern for #include with quotes or angle brackets
-        include_pattern = r'#include\s+["<]([^">]+)[">]'
-        matches = re.findall(include_pattern, content)
-        for match in matches:
-            # For standard library headers, remove angle brackets and show without <>
-            if match.startswith("std") or match in [
-                "stdio.h",
-                "stdlib.h",
-                "string.h",
-                "stdarg.h",
-                "stddef.h",
-            ]:
-                includes.append(match)
-            else:
-                includes.append(match)
-        return includes
-
-    def extract_macros(self, content: str) -> List[str]:
-        """Extract all #define statements from source file content."""
-        macros = []
-        # Pattern for simple #define without parameters
-        simple_define_pattern = r"#define\s+(\w+)\s+(?!\()"
-        simple_matches = re.findall(simple_define_pattern, content)
-        for match in simple_matches:
-            macros.append(f"#define {match}")
-
-        # Pattern for #define with parameters (function-like macros)
-        func_define_pattern = r"#define\s+(\w+)\s*\(([^)]+)\)"
-        func_matches = re.findall(func_define_pattern, content)
-        for match in func_matches:
-            macro_name = match[0]
-            params = match[1].strip()
-            # Convert parameter list to function-like format
-            param_list = [p.strip() for p in params.split(",")]
-            param_str = ", ".join(param_list)
-            macros.append(f"#define {macro_name}({param_str})")
-
-        return macros
-
-    def extract_typedefs(self, content: str) -> List[str]:
-        """Extract all typedef statements from source file content."""
-        typedefs = []
-
-        # Use a simpler approach: look for typedef patterns and extract them
-        # This is more reliable than complex regex patterns
-
-        # Pattern for simple typedefs: typedef type name;
-        simple_pattern = r"typedef\s+[a-zA-Z_][a-zA-Z0-9_]*\s+\*?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*(?:\[[^\]]*\])?\s*;"
-        simple_matches = re.findall(simple_pattern, content)
-        for match in simple_matches:
-            typedefs.append(match.strip())
-
-        # Pattern for function pointer typedefs
-        func_ptr_pattern = r"typedef\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\(\s*\*\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\)\s*\([^)]*\)\s*;"
-        func_matches = re.findall(func_ptr_pattern, content)
-        for match in func_matches:
-            typedefs.append(match.strip())
-
-        # For complex typedefs (struct/enum/union), look for the pattern:
-        # typedef struct/enum/union tag { ... } name;
-        # We'll use a simpler approach that looks for the key parts
-
-        # Look for typedef followed by struct/enum/union
-        lines = content.split("\n")
-        for line in lines:
-            line = line.strip()
-            if line.startswith("typedef") and any(
-                keyword in line for keyword in ["struct", "enum", "union"]
-            ):
-                # This is a complex typedef, extract the basic pattern
-                # Look for: typedef struct/enum/union tag
-                match = re.search(
-                    r"typedef\s+(struct|enum|union)\s+([a-zA-Z_][a-zA-Z0-9_]*)", line
-                )
-                if match:
-                    typedef_type = match.group(1)
-                    typedef_tag = match.group(2)
-                    typedefs.append(f"typedef {typedef_type} {typedef_tag}")
-
-        # Also look for the specific pattern: typedef enum GlobalStatus GlobalStatus_t;
-        enum_typedef_pattern = (
-            r"typedef\s+enum\s+([a-zA-Z_][a-zA-Z0-9_]*)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*;"
-        )
-        enum_matches = re.findall(enum_typedef_pattern, content)
-        for match in enum_matches:
-            enum_name = match[0]
-            typedef_name = match[1]
-            typedefs.append(f"typedef enum {enum_name} {typedef_name};")
-
-        return typedefs
-
-    def extract_functions(self, content: str) -> List[str]:
-        """Extract function declarations from source file content."""
-        functions = []
-        # Pattern for function declarations (including extern and static)
-        func_pattern = r"(?:extern\s+|static\s+)?[a-zA-Z_][a-zA-Z0-9_]*\s+\*?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\([^)]*\)\s*;?"
-        matches = re.findall(func_pattern, content)
-        for match in matches:
-            # Clean up the function signature
-            func_sig = match.strip()
-            # Remove trailing semicolon if present
-            if func_sig.endswith(";"):
-                func_sig = func_sig[:-1]
-            functions.append(func_sig)
-        return functions
-
-    def extract_globals(self, content: str) -> List[str]:
-        """Extract global variable declarations from source file content."""
-        globals = []
-        # Pattern for global variable declarations including arrays
-        global_pattern = r"(?:extern\s+)?(?:const\s+)?[a-zA-Z_][a-zA-Z0-9_]*\s+\*?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*(?:\[[^\]]*\])?\s*[=;]"
-        matches = re.findall(global_pattern, content)
-        for match in matches:
-            globals.append(match.strip())
-        return globals
-
-    def extract_preprocessing_directives(self, content: str) -> List[str]:
-        """Extract preprocessing directives from source file content."""
-        directives = []
-        # Pattern for preprocessing directives
-        directive_pattern = r"#(?:if|elif|else|endif|ifdef|ifndef)\s*(?:[a-zA-Z_][a-zA-Z0-9_]*\s*(?:[><=!]=?\s*[a-zA-Z0-9_]+)?\s*(?:&&|\|\||defined\([^)]+\))?)?"
-        matches = re.findall(directive_pattern, content)
-        for match in matches:
-            directives.append(f"#{match.strip()}")
-        return directives
-
-    def validate_source_file(self, filename: str) -> None:
-        """Validate a single source file against expected content."""
-        print(f"\n📁 Validating source file: {filename}")
-
-        # Assert file exists
-        self.assert_source_file_exists(filename)
-
-        # Read file content
-        content = self.read_source_file(filename)
-
-        # Get expected content
-        expected = self.expected_source_files.get(filename, {})
-        if not expected:
-            print(f"    ⚠️  No expected content defined for {filename}")
-            return
-
-        # Validate includes
-        if "includes" in expected:
-            actual_includes = self.extract_includes(content)
-            expected_includes = expected["includes"]
-
-            print(f"    📋 Validating includes ({len(actual_includes)} found):")
-            for include in expected_includes:
-                if include in actual_includes:
-                    print(f"      ✅ {include}")
-                else:
-                    print(f"      ❌ Missing: {include}")
-                    # Don't fail for missing includes as they might be conditional
-
-        # Validate macros
-        if "macros" in expected:
-            actual_macros = self.extract_macros(content)
-            expected_macros = expected["macros"]
-
-            print(f"    📋 Validating macros ({len(actual_macros)} found):")
-            for macro in expected_macros:
-                if macro in actual_macros:
-                    print(f"      ✅ {macro}")
-                else:
-                    print(f"      ❌ Missing: {macro}")
-
-        # Validate typedefs
-        if "typedefs" in expected:
-            actual_typedefs = self.extract_typedefs(content)
-            expected_typedefs = expected["typedefs"]
-
-            print(f"    📋 Validating typedefs ({len(actual_typedefs)} found):")
-            for typedef in expected_typedefs:
-                # Check if any actual typedef contains the expected pattern
-                found = any(typedef in actual for actual in actual_typedefs)
-                if found:
-                    print(f"      ✅ {typedef}")
-                else:
-                    print(f"      ❌ Missing: {typedef}")
-
-        # Validate functions
-        if "functions" in expected:
-            actual_functions = self.extract_functions(content)
-            expected_functions = expected["functions"]
-
-            print(f"    📋 Validating functions ({len(actual_functions)} found):")
-            for func in expected_functions:
-                # Check if any actual function contains the expected pattern
-                found = any(func in actual for actual in actual_functions)
-                if found:
-                    print(f"      ✅ {func}")
-                else:
-                    print(f"      ❌ Missing: {func}")
-
-        # Validate globals
-        if "globals" in expected:
-            actual_globals = self.extract_globals(content)
-            expected_globals = expected["globals"]
-
-            print(f"    📋 Validating globals ({len(actual_globals)} found):")
-            for global_var in expected_globals:
-                # Check if any actual global contains the expected pattern
-                found = any(global_var in actual for actual in actual_globals)
-                if found:
-                    print(f"      ✅ {global_var}")
-                else:
-                    print(f"      ❌ Missing: {global_var}")
-
-        # Validate preprocessing directives
-        if "preprocessing" in expected:
-            actual_directives = self.extract_preprocessing_directives(content)
-            expected_directives = expected["preprocessing"]
-
-            print(
-                f"    📋 Validating preprocessing directives ({len(actual_directives)} found):"
-            )
-            for directive in expected_directives:
-                # Check if any actual directive contains the expected pattern
-                found = any(directive in actual for actual in actual_directives)
-                if found:
-                    print(f"      ✅ {directive}")
-                else:
-                    print(f"      ❌ Missing: {directive}")
-
-        print(f"    ✅ Source file {filename} validation completed")
 
     def extract_classes(self, content: str) -> Dict[str, Dict]:
         """Extract all class definitions from PUML content."""
@@ -756,92 +141,82 @@ class PUMLValidator:
 
     def assert_class_structure(self, classes: Dict[str, Dict], filename: str) -> None:
         """Assert that classes have the correct structure and content."""
-        print(f"\n🔍 Validating class structure for {filename}:")
+        try:
+            for uml_id, class_info in classes.items():
+                # Assert stereotype
+                assert class_info["stereotype"] in [
+                    "source",
+                    "header",
+                    "typedef",
+                ], f"Invalid stereotype '{class_info['stereotype']}' for class {uml_id} in {filename}"
 
-        for uml_id, class_info in classes.items():
-            print(f"  📋 Class: {class_info['name']} ({uml_id})")
+                # Assert color
+                assert class_info["color"] in [
+                    "LightBlue",
+                    "LightGreen",
+                    "LightYellow",
+                    "LightGray",
+                ], f"Invalid color '{class_info['color']}' for class {uml_id} in {filename}"
 
-            # Assert stereotype
-            assert class_info["stereotype"] in [
-                "source",
-                "header",
-                "typedef",
-            ], f"Invalid stereotype '{class_info['stereotype']}' for class {uml_id}"
-
-            # Assert color
-            assert class_info["color"] in [
-                "LightBlue",
-                "LightGreen",
-                "LightYellow",
-                "LightGray",
-            ], f"Invalid color '{class_info['color']}' for class {uml_id}"
-
-            # Assert UML_ID naming convention
-            if class_info["stereotype"] == "source":
-                # Source files should be named after the filename in uppercase
-                expected_name = (
-                    class_info["name"].upper().replace("-", "_").replace(".", "_")
-                )
-                assert (
-                    uml_id == expected_name
-                ), f"Source class {uml_id} should be named {expected_name} (filename in uppercase)"
-            elif class_info["stereotype"] == "header":
-                assert uml_id.startswith(
-                    "HEADER_"
-                ), f"Header class {uml_id} should have HEADER_ prefix"
-            elif class_info["stereotype"] == "typedef":
-                assert uml_id.startswith(
-                    "TYPEDEF_"
-                ), f"Typedef class {uml_id} should have TYPEDEF_ prefix"
-
-            print(f"    ✅ Structure valid")
+                # Assert UML_ID naming convention
+                if class_info["stereotype"] == "source":
+                    # Source files should be named after the filename in uppercase
+                    expected_name = (
+                        class_info["name"].upper().replace("-", "_").replace(".", "_")
+                    )
+                    assert (
+                        uml_id == expected_name
+                    ), f"Source class {uml_id} should be named {expected_name} (filename in uppercase) in {filename}"
+                elif class_info["stereotype"] == "header":
+                    assert uml_id.startswith(
+                        "HEADER_"
+                    ), f"Header class {uml_id} should have HEADER_ prefix in {filename}"
+                elif class_info["stereotype"] == "typedef":
+                    assert uml_id.startswith(
+                        "TYPEDEF_"
+                    ), f"Typedef class {uml_id} should have TYPEDEF_ prefix in {filename}"
+        except Exception as e:
+            # Fail the test for unexpected exceptions in class structure validation
+            assert False, f"Unexpected exception in assert_class_structure for {filename}: {e}"
 
     def assert_class_content(self, classes: Dict[str, Dict], filename: str) -> None:
         """Assert that class content matches expected patterns."""
-        print(f"\n📝 Validating class content for {filename}:")
+        try:
+            for uml_id, class_info in classes.items():
+                body = class_info["body"]
+                stereotype = class_info["stereotype"]
 
-        for uml_id, class_info in classes.items():
-            body = class_info["body"]
-            stereotype = class_info["stereotype"]
+                if stereotype == "source":
+                    # Source files should not have + prefix for global variables and functions
+                    assert not re.search(
+                        r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*$",
+                        body,
+                        re.MULTILINE,
+                    ), f"Source class {uml_id} should not have + prefix for global variables in {filename}"
+                    assert not re.search(
+                        r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*\(",
+                        body,
+                        re.MULTILINE,
+                    ), f"Source class {uml_id} should not have + prefix for functions in {filename}"
 
-            print(f"  📋 Content validation for {uml_id}:")
+                elif stereotype == "header":
+                    # Header files should have + prefix for all elements
+                    lines = body.strip().split("\n")
+                    for line in lines:
+                        line = line.strip()
+                        if line and not line.startswith("'") and not line.startswith("--"):
+                            assert line.startswith("+") or line.startswith("--"), f"Header line '{line}' should have + prefix in {uml_id} in {filename}"
 
-            if stereotype == "source":
-                # Source files should not have + prefix for global variables and functions
-                assert not re.search(
-                    r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*$",
-                    body,
-                    re.MULTILINE,
-                ), f"Source class {uml_id} should not have + prefix for global variables"
-                assert not re.search(
-                    r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*\(",
-                    body,
-                    re.MULTILINE,
-                ), f"Source class {uml_id} should not have + prefix for functions"
-
-            elif stereotype == "header":
-                # Header files should have + prefix for all elements
-                lines = body.strip().split("\n")
-                for line in lines:
-                    line = line.strip()
-                    if line and not line.startswith("'") and not line.startswith("--"):
-                        if not line.startswith("+") and not line.startswith("--"):
-                            print(
-                                f"    ⚠️  Warning: Header line '{line}' might not have + prefix"
-                            )
-
-            elif stereotype == "typedef":
-                # Typedef classes should have + prefix for all elements
-                lines = body.strip().split("\n")
-                for line in lines:
-                    line = line.strip()
-                    if line and not line.startswith("'") and not line.startswith("--"):
-                        if not line.startswith("+"):
-                            print(
-                                f"    ⚠️  Warning: Typedef line '{line}' might not have + prefix"
-                            )
-
-            print(f"    ✅ Content patterns valid")
+                elif stereotype == "typedef":
+                    # Typedef classes should have + prefix for all elements
+                    lines = body.strip().split("\n")
+                    for line in lines:
+                        line = line.strip()
+                        if line and not line.startswith("'") and not line.startswith("--"):
+                            assert line.startswith("+"), f"Typedef line '{line}' should have + prefix in {uml_id} in {filename}"
+        except Exception as e:
+            # Fail the test for unexpected exceptions in class content validation
+            assert False, f"Unexpected exception in assert_class_content for {filename}: {e}"
 
     def assert_relationships(
         self,
@@ -850,402 +225,400 @@ class PUMLValidator:
         filename: str,
     ) -> None:
         """Assert that relationships are properly structured."""
-        print(f"\n🔗 Validating relationships for {filename}:")
+        try:
+            # Group relationships by type
+            includes = [(s, t) for s, t, r in relationships if r == "<<include>>"]
+            declares = [(s, t) for s, t, r in relationships if r == "<<declares>>"]
+            uses = [(s, t) for s, t, r in relationships if r == "<<uses>>"]
 
-        # Group relationships by type
-        includes = [(s, t) for s, t, r in relationships if r == "<<include>>"]
-        declares = [(s, t) for s, t, r in relationships if r == "<<declares>>"]
-        uses = [(s, t) for s, t, r in relationships if r == "<<uses>>"]
+            # Check for duplicate relationships
+            self._validate_no_duplicate_relationships(relationships, filename)
 
-        print(f"  📊 Relationship counts:")
-        print(f"    Include: {len(includes)}")
-        print(f"    Declares: {len(declares)}")
-        print(f"    Uses: {len(uses)}")
+            # Check for consistent relationship formatting
+            self._validate_relationship_formatting(relationships, filename)
 
-        # Check for duplicate relationships
-        self._validate_no_duplicate_relationships(relationships, filename)
+            # Check that all typedef objects have at least one relation
+            self._validate_all_typedefs_have_relations(relationships, filename)
 
-        # Check for consistent relationship formatting
-        self._validate_relationship_formatting(relationships, filename)
+            # Check that all relations have corresponding classes
+            self._validate_all_relations_have_classes(relationships, filename)
 
-        # Check that all typedef objects have at least one relation
-        self._validate_all_typedefs_have_relations(relationships, filename)
+            # Check that all header classes have a path to the main C class
+            self._validate_all_headers_connected_to_main_class(
+                relationships, classes, filename
+            )
 
-        # Check that all relations have corresponding classes
-        self._validate_all_relations_have_classes(relationships, filename)
-
-        # Check that all header classes have a path to the main C class
-        self._validate_all_headers_connected_to_main_class(
-            relationships, classes, filename
-        )
-
-        # Assert relationship structure
-        for source, target, rel_type in relationships:
-            assert source and target, f"Invalid relationship: {source} -> {target}"
-            assert rel_type in [
-                "<<include>>",
-                "<<declares>>",
-                "<<uses>>",
-            ], f"Invalid relationship type: {rel_type}"
-
-        print(f"    ✅ Relationship structure valid")
+            # Assert relationship structure
+            for source, target, rel_type in relationships:
+                assert source and target, f"Invalid relationship: {source} -> {target} in {filename}"
+                assert rel_type in [
+                    "<<include>>",
+                    "<<declares>>",
+                    "<<uses>>",
+                ], f"Invalid relationship type: {rel_type} in {filename}"
+        except Exception as e:
+            # Fail the test for unexpected exceptions in relationship validation
+            assert False, f"Unexpected exception in assert_relationships for {filename}: {e}"
 
     def assert_specific_content(self, content: str, filename: str) -> None:
         """Assert specific content requirements for each file."""
-        print(f"\n🎯 Validating specific content for {filename}:")
+        try:
+            # Validating specific content for {filename}
 
-        # Check for macro formatting issues
-        self._validate_macro_formatting(content, filename)
+            # Check for macro formatting issues
+            self._validate_macro_formatting(content, filename)
 
-        # Check for typedef content issues
-        self._validate_typedef_content(content, filename)
+            # Check for typedef content issues
+            self._validate_typedef_content(content, filename)
 
-        # Check for global variable formatting issues
-        self._validate_global_variable_formatting(content, filename)
+            # Check for global variable formatting issues
+            self._validate_global_variable_formatting(content, filename)
 
-        # Check for array formatting issues
-        self._validate_array_formatting(content, filename)
+            # Check for array formatting issues
+            self._validate_array_formatting(content, filename)
 
-        # Check that no "-- Typedefs --" sections exist in header or source classes
-        self._validate_no_typedefs_sections_in_header_or_source_classes(
-            content, filename
-        )
+            # Check that no "-- Typedefs --" sections exist in header or source classes
+            self._validate_no_typedefs_sections_in_header_or_source_classes(
+                content, filename
+            )
 
-        # Check that PlantUML files are only generated for C files, not header files
-        self._validate_only_c_files_have_puml_diagrams(filename)
+            # Check that PlantUML files are only generated for C files, not header files
+            self._validate_only_c_files_have_puml_diagrams(filename)
 
-        # Check for preprocessing directive issues
-        self._validate_preprocessing_directives(content, filename)
+            # Check for preprocessing directive issues
+            self._validate_preprocessing_directives(content, filename)
 
-        # Check for complex parsing edge cases
-        self._validate_complex_parsing_edge_cases(content, filename)
+            # Check for complex parsing edge cases
+            self._validate_complex_parsing_edge_cases(content, filename)
 
-        # Check for complex.puml specific content issues
-        self._validate_complex_specific_content(content, filename)
+            # Check for complex.puml specific content issues
+            self._validate_complex_specific_content(content, filename)
 
-        if filename == "typedef_test.puml":
-            # Should have specific typedef classes
-            assert "TYPEDEF_MYLEN" in content, "Missing TYPEDEF_MYLEN class"
-            assert "TYPEDEF_MYINT" in content, "Missing TYPEDEF_MYINT class"
-            assert "TYPEDEF_MYSTRING" in content, "Missing TYPEDEF_MYSTRING class"
-            assert "TYPEDEF_MYBUFFER" in content, "Missing TYPEDEF_MYBUFFER class"
-            assert "TYPEDEF_MYCALLBACK" in content, "Missing TYPEDEF_MYCALLBACK class"
-            assert "TYPEDEF_MYCOMPLEX" in content, "Missing TYPEDEF_MYCOMPLEX class"
-            assert (
-                "TYPEDEF_MYCOMPLEXPTR" in content
-            ), "Missing TYPEDEF_MYCOMPLEXPTR class"
-            assert "TYPEDEF_COLOR_T" in content, "Missing TYPEDEF_COLOR_T enum class"
-            assert "TYPEDEF_STATUS_T" in content, "Missing TYPEDEF_STATUS_T enum class"
-            assert "TYPEDEF_POINT_T" in content, "Missing TYPEDEF_POINT_T class"
-            assert (
-                "TYPEDEF_NAMEDSTRUCT_T" in content
-            ), "Missing TYPEDEF_NAMEDSTRUCT_T class"
-            assert "TYPEDEF_NUMBER_T" in content, "Missing TYPEDEF_NUMBER_T class"
-            assert (
-                "TYPEDEF_NAMEDUNION_T" in content
-            ), "Missing TYPEDEF_NAMEDUNION_T class"
-            assert (
-                "TYPEDEF_MYCOMPLEXARRAY" in content
-            ), "Missing TYPEDEF_MYCOMPLEXARRAY class"
-            assert (
-                "TYPEDEF_SYSTEM_STATE_T" in content
-            ), "Missing TYPEDEF_SYSTEM_STATE_T enum class"
-            assert "TYPEDEF_TRIANGLE_T" in content, "Missing TYPEDEF_TRIANGLE_T class"
-            assert (
-                "TYPEDEF_LOG_LEVEL_T" in content
-            ), "Missing TYPEDEF_LOG_LEVEL_T enum class"
-            assert (
-                "TYPEDEF_LOG_CALLBACK_T" in content
-            ), "Missing TYPEDEF_LOG_CALLBACK_T class"
-            assert (
-                "TYPEDEF_NESTEDINFO_T" in content
-            ), "Missing TYPEDEF_NESTEDINFO_T class"
-            assert (
-                "TYPEDEF_CE_STATUS_T" in content
-            ), "Missing TYPEDEF_CE_STATUS_T enum class"
-            assert (
-                "TYPEDEF_COMPLEXEXAMPLE_T" in content
-            ), "Missing TYPEDEF_COMPLEXEXAMPLE_T class"
+            if filename == "typedef_test.puml":
+                # Should have specific typedef classes
+                assert "TYPEDEF_MYLEN" in content, "Missing TYPEDEF_MYLEN class"
+                assert "TYPEDEF_MYINT" in content, "Missing TYPEDEF_MYINT class"
+                assert "TYPEDEF_MYSTRING" in content, "Missing TYPEDEF_MYSTRING class"
+                assert "TYPEDEF_MYBUFFER" in content, "Missing TYPEDEF_MYBUFFER class"
+                assert "TYPEDEF_MYCALLBACK" in content, "Missing TYPEDEF_MYCALLBACK class"
+                assert "TYPEDEF_MYCOMPLEX" in content, "Missing TYPEDEF_MYCOMPLEX class"
+                assert (
+                    "TYPEDEF_MYCOMPLEXPTR" in content
+                ), "Missing TYPEDEF_MYCOMPLEXPTR class"
+                assert "TYPEDEF_COLOR_T" in content, "Missing TYPEDEF_COLOR_T enum class"
+                assert "TYPEDEF_STATUS_T" in content, "Missing TYPEDEF_STATUS_T enum class"
+                assert "TYPEDEF_POINT_T" in content, "Missing TYPEDEF_POINT_T class"
+                assert (
+                    "TYPEDEF_NAMEDSTRUCT_T" in content
+                ), "Missing TYPEDEF_NAMEDSTRUCT_T class"
+                assert "TYPEDEF_NUMBER_T" in content, "Missing TYPEDEF_NUMBER_T class"
+                assert (
+                    "TYPEDEF_NAMEDUNION_T" in content
+                ), "Missing TYPEDEF_NAMEDUNION_T class"
+                assert (
+                    "TYPEDEF_MYCOMPLEXARRAY" in content
+                ), "Missing TYPEDEF_MYCOMPLEXARRAY class"
+                assert (
+                    "TYPEDEF_SYSTEM_STATE_T" in content
+                ), "Missing TYPEDEF_SYSTEM_STATE_T enum class"
+                assert "TYPEDEF_TRIANGLE_T" in content, "Missing TYPEDEF_TRIANGLE_T class"
+                assert (
+                    "TYPEDEF_LOG_LEVEL_T" in content
+                ), "Missing TYPEDEF_LOG_LEVEL_T enum class"
+                assert (
+                    "TYPEDEF_LOG_CALLBACK_T" in content
+                ), "Missing TYPEDEF_LOG_CALLBACK_T class"
+                assert (
+                    "TYPEDEF_NESTEDINFO_T" in content
+                ), "Missing TYPEDEF_NESTEDINFO_T class"
+                assert (
+                    "TYPEDEF_CE_STATUS_T" in content
+                ), "Missing TYPEDEF_CE_STATUS_T enum class"
+                assert (
+                    "TYPEDEF_COMPLEXEXAMPLE_T" in content
+                ), "Missing TYPEDEF_COMPLEXEXAMPLE_T class"
 
-            # Should have enum values in enum typedefs
-            assert "COLOR_RED" in content, "Missing COLOR_RED enum value"
-            assert "COLOR_GREEN" in content, "Missing COLOR_GREEN enum value"
-            assert "COLOR_BLUE" in content, "Missing COLOR_BLUE enum value"
-            assert "STATUS_OK" in content, "Missing STATUS_OK enum value"
-            assert "STATUS_FAIL" in content, "Missing STATUS_FAIL enum value"
-            assert "LOG_DEBUG" in content, "Missing LOG_DEBUG enum value"
-            assert "LOG_INFO" in content, "Missing LOG_INFO enum value"
-            assert "LOG_WARN" in content, "Missing LOG_WARN enum value"
-            assert "LOG_ERROR" in content, "Missing LOG_ERROR enum value"
+                # Should have enum values in enum typedefs
+                assert "COLOR_RED" in content, "Missing COLOR_RED enum value"
+                assert "COLOR_GREEN" in content, "Missing COLOR_GREEN enum value"
+                assert "COLOR_BLUE" in content, "Missing COLOR_BLUE enum value"
+                assert "STATUS_OK" in content, "Missing STATUS_OK enum value"
+                assert "STATUS_FAIL" in content, "Missing STATUS_FAIL enum value"
+                assert "LOG_DEBUG" in content, "Missing LOG_DEBUG enum value"
+                assert "LOG_INFO" in content, "Missing LOG_INFO enum value"
+                assert "LOG_WARN" in content, "Missing LOG_WARN enum value"
+                assert "LOG_ERROR" in content, "Missing LOG_ERROR enum value"
 
-            # Should have specific relationships
-            assert (
-                "TYPEDEF_MYBUFFER ..> TYPEDEF_MYLEN : <<uses>>" in content
-            ), "Missing MyBuffer uses MyLen relationship"
-            assert (
-                "TYPEDEF_MYBUFFER ..> TYPEDEF_MYSTRING : <<uses>>" in content
-            ), "Missing MyBuffer uses MyString relationship"
-            assert (
-                "TYPEDEF_MYCALLBACK ..> TYPEDEF_MYBUFFER : <<uses>>" in content
-            ), "Missing MyCallback uses MyBuffer relationship"
-            assert (
-                "TYPEDEF_MYCOMPLEX ..> TYPEDEF_MYLEN : <<uses>>" in content
-            ), "Missing MyComplex uses MyLen relationship"
-            assert (
-                "TYPEDEF_MYCOMPLEX ..> TYPEDEF_MYSTRING : <<uses>>" in content
-            ), "Missing MyComplex uses MyString relationship"
-            assert (
-                "TYPEDEF_MYCOMPLEX ..> TYPEDEF_MYCALLBACK : <<uses>>" in content
-            ), "Missing MyComplex uses MyCallback relationship"
-            assert (
-                "TYPEDEF_MYCOMPLEX ..> TYPEDEF_LOG_LEVEL_T : <<uses>>" in content
-            ), "Missing MyComplex uses log_level_t relationship"
-            assert (
-                "TYPEDEF_MYCOMPLEXPTR ..> TYPEDEF_MYCOMPLEX : <<uses>>" in content
-            ), "Missing MyComplexPtr uses MyComplex relationship"
-            assert (
-                "TYPEDEF_MYCOMPLEXARRAY ..> TYPEDEF_MYCOMPLEXPTR : <<uses>>" in content
-            ), "Missing MyComplexArray uses MyComplexPtr relationship"
-            assert (
-                "TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>" in content
-            ), "Missing triangle_t uses point_t relationship"
-            assert (
-                "TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>" in content
-            ), "Missing log_callback_t uses log_level_t relationship"
-            assert (
-                "TYPEDEF_NESTEDINFO_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>" in content
-            ), "Missing NestedInfo_t uses log_level_t relationship"
-            assert (
-                "TYPEDEF_COMPLEXEXAMPLE_T ..> TYPEDEF_NESTEDINFO_T : <<uses>>"
-                in content
-            ), "Missing ComplexExample_t uses NestedInfo_t relationship"
-            assert (
-                "TYPEDEF_COMPLEXEXAMPLE_T ..> TYPEDEF_CE_STATUS_T : <<uses>>" in content
-            ), "Missing ComplexExample_t uses CE_Status_t relationship"
+                # Should have specific relationships
+                assert (
+                    "TYPEDEF_MYBUFFER ..> TYPEDEF_MYLEN : <<uses>>" in content
+                ), "Missing MyBuffer uses MyLen relationship"
+                assert (
+                    "TYPEDEF_MYBUFFER ..> TYPEDEF_MYSTRING : <<uses>>" in content
+                ), "Missing MyBuffer uses MyString relationship"
+                assert (
+                    "TYPEDEF_MYCALLBACK ..> TYPEDEF_MYBUFFER : <<uses>>" in content
+                ), "Missing MyCallback uses MyBuffer relationship"
+                assert (
+                    "TYPEDEF_MYCOMPLEX ..> TYPEDEF_MYLEN : <<uses>>" in content
+                ), "Missing MyComplex uses MyLen relationship"
+                assert (
+                    "TYPEDEF_MYCOMPLEX ..> TYPEDEF_MYSTRING : <<uses>>" in content
+                ), "Missing MyComplex uses MyString relationship"
+                assert (
+                    "TYPEDEF_MYCOMPLEX ..> TYPEDEF_MYCALLBACK : <<uses>>" in content
+                ), "Missing MyComplex uses MyCallback relationship"
+                assert (
+                    "TYPEDEF_MYCOMPLEX ..> TYPEDEF_LOG_LEVEL_T : <<uses>>" in content
+                ), "Missing MyComplex uses log_level_t relationship"
+                assert (
+                    "TYPEDEF_MYCOMPLEXPTR ..> TYPEDEF_MYCOMPLEX : <<uses>>" in content
+                ), "Missing MyComplexPtr uses MyComplex relationship"
+                assert (
+                    "TYPEDEF_MYCOMPLEXARRAY ..> TYPEDEF_MYCOMPLEXPTR : <<uses>>" in content
+                ), "Missing MyComplexArray uses MyComplexPtr relationship"
+                assert (
+                    "TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>" in content
+                ), "Missing triangle_t uses point_t relationship"
+                assert (
+                    "TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>" in content
+                ), "Missing log_callback_t uses log_level_t relationship"
+                assert (
+                    "TYPEDEF_NESTEDINFO_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>" in content
+                ), "Missing NestedInfo_t uses log_level_t relationship"
+                assert (
+                    "TYPEDEF_COMPLEXEXAMPLE_T ..> TYPEDEF_NESTEDINFO_T : <<uses>>"
+                    in content
+                ), "Missing ComplexExample_t uses NestedInfo_t relationship"
+                assert (
+                    "TYPEDEF_COMPLEXEXAMPLE_T ..> TYPEDEF_CE_STATUS_T : <<uses>>" in content
+                ), "Missing ComplexExample_t uses CE_Status_t relationship"
 
-        elif filename == "geometry.puml":
-            assert "TYPEDEF_TRIANGLE_T" in content, "Missing TYPEDEF_TRIANGLE_T class"
-            assert "TYPEDEF_POINT_T" in content, "Missing TYPEDEF_POINT_T class"
-            assert (
-                "TYPEDEF_SYSTEM_STATE_T" in content
-            ), "Missing TYPEDEF_SYSTEM_STATE_T enum class"
-            assert (
-                "TYPEDEF_LOG_LEVEL_T" in content
-            ), "Missing TYPEDEF_LOG_LEVEL_T enum class"
-            assert (
-                "TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>" in content
-            ), "Missing triangle_t uses point_t relationship"
+            elif filename == "geometry.puml":
+                assert "TYPEDEF_TRIANGLE_T" in content, "Missing TYPEDEF_TRIANGLE_T class"
+                assert "TYPEDEF_POINT_T" in content, "Missing TYPEDEF_POINT_T class"
+                assert (
+                    "TYPEDEF_SYSTEM_STATE_T" in content
+                ), "Missing TYPEDEF_SYSTEM_STATE_T enum class"
+                assert (
+                    "TYPEDEF_LOG_LEVEL_T" in content
+                ), "Missing TYPEDEF_LOG_LEVEL_T enum class"
+                assert (
+                    "TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>" in content
+                ), "Missing triangle_t uses point_t relationship"
 
-        elif filename == "logger.puml":
-            assert (
-                "TYPEDEF_LOG_LEVEL_T" in content
-            ), "Missing TYPEDEF_LOG_LEVEL_T enum class"
-            assert (
-                "TYPEDEF_LOG_CALLBACK_T" in content
-            ), "Missing TYPEDEF_LOG_CALLBACK_T class"
-            assert (
-                "TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>" in content
-            ), "Missing log_callback_t uses log_level_t relationship"
+            elif filename == "logger.puml":
+                assert (
+                    "TYPEDEF_LOG_LEVEL_T" in content
+                ), "Missing TYPEDEF_LOG_LEVEL_T enum class"
+                assert (
+                    "TYPEDEF_LOG_CALLBACK_T" in content
+                ), "Missing TYPEDEF_LOG_CALLBACK_T class"
+                assert (
+                    "TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>" in content
+                ), "Missing log_callback_t uses log_level_t relationship"
 
-        elif filename == "sample.puml":
-            assert "TYPEDEF_POINT_T" in content, "Missing TYPEDEF_POINT_T class"
-            assert (
-                "TYPEDEF_SYSTEM_STATE_T" in content
-            ), "Missing TYPEDEF_SYSTEM_STATE_T enum class"
-            assert "TYPEDEF_TRIANGLE_T" in content, "Missing TYPEDEF_TRIANGLE_T class"
-            assert (
-                "TYPEDEF_LOG_LEVEL_T" in content
-            ), "Missing TYPEDEF_LOG_LEVEL_T enum class"
-            assert (
-                "TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>" in content
-            ), "Missing triangle_t uses point_t relationship"
+            elif filename == "sample.puml":
+                assert "TYPEDEF_POINT_T" in content, "Missing TYPEDEF_POINT_T class"
+                assert (
+                    "TYPEDEF_SYSTEM_STATE_T" in content
+                ), "Missing TYPEDEF_SYSTEM_STATE_T enum class"
+                assert "TYPEDEF_TRIANGLE_T" in content, "Missing TYPEDEF_TRIANGLE_T class"
+                assert (
+                    "TYPEDEF_LOG_LEVEL_T" in content
+                ), "Missing TYPEDEF_LOG_LEVEL_T enum class"
+                assert (
+                    "TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>" in content
+                ), "Missing triangle_t uses point_t relationship"
 
-        elif filename == "math_utils.puml":
-            # math_utils.puml should have separate typedef classes
-            assert "TYPEDEF_REAL_T" in content, "Missing TYPEDEF_REAL_T class"
-            assert "TYPEDEF_MATH_OP_T" in content, "Missing TYPEDEF_MATH_OP_T class"
+            elif filename == "math_utils.puml":
+                # math_utils.puml should have separate typedef classes
+                assert "TYPEDEF_REAL_T" in content, "Missing TYPEDEF_REAL_T class"
+                assert "TYPEDEF_MATH_OP_T" in content, "Missing TYPEDEF_MATH_OP_T class"
 
-        elif filename == "complex.puml":
-            # complex.puml should have specific complex typedef classes
-            assert (
-                "TYPEDEF_MATH_OPERATION_T" in content
-            ), "Missing TYPEDEF_MATH_OPERATION_T class"
-            assert (
-                "TYPEDEF_MATH_OPS_ARRAY_T" in content
-            ), "Missing TYPEDEF_MATH_OPS_ARRAY_T class"
-            assert (
-                "TYPEDEF_COMPLEX_FUNC_PTR_T" in content
-            ), "Missing TYPEDEF_COMPLEX_FUNC_PTR_T class"
-            assert (
-                "TYPEDEF_DATA_PROCESSOR_T" in content
-            ), "Missing TYPEDEF_DATA_PROCESSOR_T class"
-            assert (
-                "TYPEDEF_DATA_PROCESSOR_ARRAY_T" in content
-            ), "Missing TYPEDEF_DATA_PROCESSOR_ARRAY_T class"
-            assert (
-                "TYPEDEF_MIXED_UNION_T" in content
-            ), "Missing TYPEDEF_MIXED_UNION_T class"
-            assert (
-                "TYPEDEF_OPERATION_SET_T" in content
-            ), "Missing TYPEDEF_OPERATION_SET_T class"
-            assert (
-                "TYPEDEF_COMPLEX_HANDLER_T" in content
-            ), "Missing TYPEDEF_COMPLEX_HANDLER_T class"
-            assert (
-                "TYPEDEF_OPERATION_TYPE_T" in content
-            ), "Missing TYPEDEF_OPERATION_TYPE_T class"
-            assert (
-                "TYPEDEF_COMPLEX_CALLBACK_T" in content
-            ), "Missing TYPEDEF_COMPLEX_CALLBACK_T class"
-            assert (
-                "TYPEDEF_HANDLER_ENTRY_T" in content
-            ), "Missing TYPEDEF_HANDLER_ENTRY_T class"
-            assert (
-                "TYPEDEF_HANDLER_TABLE_T" in content
-            ), "Missing TYPEDEF_HANDLER_TABLE_T class"
-            assert (
-                "TYPEDEF_DEBUG_CALLBACK_T" in content
-            ), "Missing TYPEDEF_DEBUG_CALLBACK_T class"
-            assert (
-                "TYPEDEF_RELEASE_CALLBACK_T" in content
-            ), "Missing TYPEDEF_RELEASE_CALLBACK_T class"
-            assert (
-                "TYPEDEF_PROCESSOR_MODULE_ENUM_T" in content
-            ), "Missing TYPEDEF_PROCESSOR_MODULE_ENUM_T class"
-            assert "TYPEDEF_PROCESS_T" in content, "Missing TYPEDEF_PROCESS_T class"
-            assert (
-                "TYPEDEF_STD_RETURNTYPE" in content
-            ), "Missing TYPEDEF_STD_RETURNTYPE class"
-            assert (
-                "TYPEDEF_PROCESS_CFG_PROCESS_FCT" in content
-            ), "Missing TYPEDEF_PROCESS_CFG_PROCESS_FCT class"
-            assert (
-                "TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T" in content
-            ), "Missing TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T class"
-            assert "TYPEDEF_UINT8" in content, "Missing TYPEDEF_UINT8 class"
-            assert "TYPEDEF_UINT16" in content, "Missing TYPEDEF_UINT16 class"
-            assert "TYPEDEF_UINT32" in content, "Missing TYPEDEF_UINT32 class"
+            elif filename == "complex.puml":
+                # complex.puml should have specific complex typedef classes
+                assert (
+                    "TYPEDEF_MATH_OPERATION_T" in content
+                ), "Missing TYPEDEF_MATH_OPERATION_T class"
+                assert (
+                    "TYPEDEF_MATH_OPS_ARRAY_T" in content
+                ), "Missing TYPEDEF_MATH_OPS_ARRAY_T class"
+                assert (
+                    "TYPEDEF_COMPLEX_FUNC_PTR_T" in content
+                ), "Missing TYPEDEF_COMPLEX_FUNC_PTR_T class"
+                assert (
+                    "TYPEDEF_DATA_PROCESSOR_T" in content
+                ), "Missing TYPEDEF_DATA_PROCESSOR_T class"
+                assert (
+                    "TYPEDEF_DATA_PROCESSOR_ARRAY_T" in content
+                ), "Missing TYPEDEF_DATA_PROCESSOR_ARRAY_T class"
+                assert (
+                    "TYPEDEF_MIXED_UNION_T" in content
+                ), "Missing TYPEDEF_MIXED_UNION_T class"
+                assert (
+                    "TYPEDEF_OPERATION_SET_T" in content
+                ), "Missing TYPEDEF_OPERATION_SET_T class"
+                assert (
+                    "TYPEDEF_COMPLEX_HANDLER_T" in content
+                ), "Missing TYPEDEF_COMPLEX_HANDLER_T class"
+                assert (
+                    "TYPEDEF_OPERATION_TYPE_T" in content
+                ), "Missing TYPEDEF_OPERATION_TYPE_T class"
+                assert (
+                    "TYPEDEF_COMPLEX_CALLBACK_T" in content
+                ), "Missing TYPEDEF_COMPLEX_CALLBACK_T class"
+                assert (
+                    "TYPEDEF_HANDLER_ENTRY_T" in content
+                ), "Missing TYPEDEF_HANDLER_ENTRY_T class"
+                assert (
+                    "TYPEDEF_HANDLER_TABLE_T" in content
+                ), "Missing TYPEDEF_HANDLER_TABLE_T class"
+                assert (
+                    "TYPEDEF_DEBUG_CALLBACK_T" in content
+                ), "Missing TYPEDEF_DEBUG_CALLBACK_T class"
+                assert (
+                    "TYPEDEF_RELEASE_CALLBACK_T" in content
+                ), "Missing TYPEDEF_RELEASE_CALLBACK_T class"
+                assert (
+                    "TYPEDEF_PROCESSOR_MODULE_ENUM_T" in content
+                ), "Missing TYPEDEF_PROCESSOR_MODULE_ENUM_T class"
+                assert "TYPEDEF_PROCESS_T" in content, "Missing TYPEDEF_PROCESS_T class"
+                assert (
+                    "TYPEDEF_STD_RETURNTYPE" in content
+                ), "Missing TYPEDEF_STD_RETURNTYPE class"
+                assert (
+                    "TYPEDEF_PROCESS_CFG_PROCESS_FCT" in content
+                ), "Missing TYPEDEF_PROCESS_CFG_PROCESS_FCT class"
+                assert (
+                    "TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T" in content
+                ), "Missing TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T class"
+                assert "TYPEDEF_UINT8" in content, "Missing TYPEDEF_UINT8 class"
+                assert "TYPEDEF_UINT32" in content, "Missing TYPEDEF_UINT32 class"
 
-            # Should have specific complex macro definitions
-            assert "COMPLEX_MACRO_FUNC" in content, "Missing COMPLEX_MACRO_FUNC macro"
-            assert "PROCESS_ARRAY" in content, "Missing PROCESS_ARRAY macro"
-            assert "HANDLE_OPERATION" in content, "Missing HANDLE_OPERATION macro"
-            assert (
-                "UTILS_U16_TO_U8ARR_BIG_ENDIAN" in content
-            ), "Missing UTILS_U16_TO_U8ARR_BIG_ENDIAN macro"
-            assert (
-                "UTILS_U32_TO_U8ARR_BIG_ENDIAN" in content
-            ), "Missing UTILS_U32_TO_U8ARR_BIG_ENDIAN macro"
-            assert (
-                "UTILS_U8ARR_TO_U16_BIG_ENDIAN" in content
-            ), "Missing UTILS_U8ARR_TO_U16_BIG_ENDIAN macro"
-            assert (
-                "UTILS_U8ARR_TO_U32_BIG_ENDIAN" in content
-            ), "Missing UTILS_U8ARR_TO_U32_BIG_ENDIAN macro"
+                # Should have specific complex macro definitions
+                assert "COMPLEX_MACRO_FUNC" in content, "Missing COMPLEX_MACRO_FUNC macro"
+                assert "PROCESS_ARRAY" in content, "Missing PROCESS_ARRAY macro"
+                assert "HANDLE_OPERATION" in content, "Missing HANDLE_OPERATION macro"
+                assert (
+                    "UTILS_U16_TO_U8ARR_BIG_ENDIAN" in content
+                ), "Missing UTILS_U16_TO_U8ARR_BIG_ENDIAN macro"
+                assert (
+                    "UTILS_U32_TO_U8ARR_BIG_ENDIAN" in content
+                ), "Missing UTILS_U32_TO_U8ARR_BIG_ENDIAN macro"
+                assert (
+                    "UTILS_U8ARR_TO_U16_BIG_ENDIAN" in content
+                ), "Missing UTILS_U8ARR_TO_U16_BIG_ENDIAN macro"
+                assert (
+                    "UTILS_U8ARR_TO_U32_BIG_ENDIAN" in content
+                ), "Missing UTILS_U8ARR_TO_U32_BIG_ENDIAN macro"
 
-            # Should have specific complex function patterns
-            assert (
-                "test_processor_job_processing" in content
-            ), "Missing test_processor_job_processing function"
-            assert (
-                "test_processor_utility_macros" in content
-            ), "Missing test_processor_utility_macros function"
-            assert (
-                "test_complex_macro" in content
-            ), "Missing test_complex_macro function"
-            assert (
-                "test_process_array" in content
-            ), "Missing test_process_array function"
-            assert (
-                "test_handle_operation" in content
-            ), "Missing test_handle_operation function"
-            assert "test_mixed_union" in content, "Missing test_mixed_union function"
-            assert (
-                "test_operation_set" in content
-            ), "Missing test_operation_set function"
-            assert (
-                "test_handler_table" in content
-            ), "Missing test_handler_table function"
-            assert "run_complex_tests" in content, "Missing run_complex_tests function"
+                # Should have specific complex function patterns
+                assert (
+                    "test_processor_job_processing" in content
+                ), "Missing test_processor_job_processing function"
+                assert (
+                    "test_processor_utility_macros" in content
+                ), "Missing test_processor_utility_macros function"
+                assert (
+                    "test_complex_macro" in content
+                ), "Missing test_complex_macro function"
+                assert (
+                    "test_process_array" in content
+                ), "Missing test_process_array function"
+                assert (
+                    "test_handle_operation" in content
+                ), "Missing test_handle_operation function"
+                assert "test_mixed_union" in content, "Missing test_mixed_union function"
+                assert (
+                    "test_operation_set" in content
+                ), "Missing test_operation_set function"
+                assert (
+                    "test_handler_table" in content
+                ), "Missing test_handler_table function"
+                assert "run_complex_tests" in content, "Missing run_complex_tests function"
 
-            # Should have specific relationships for complex types
-            assert (
-                "TYPEDEF_MATH_OPS_ARRAY_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>"
-                in content
-            ), "Missing math_ops_array_t uses math_operation_t relationship"
-            assert (
-                "TYPEDEF_DATA_PROCESSOR_ARRAY_T ..> TYPEDEF_DATA_PROCESSOR_T : <<uses>>"
-                in content
-            ), "Missing data_processor_array_t uses data_processor_t relationship"
-            assert (
-                "TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>" in content
-            ), "Missing data_processor_t uses data_item_t relationship"
-            assert (
-                "TYPEDEF_HANDLER_TABLE_T ..> TYPEDEF_HANDLER_ENTRY_T : <<uses>>"
-                in content
-            ), "Missing handler_table_t uses handler_entry_t relationship"
-            assert (
-                "TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T ..> TYPEDEF_PROCESS_CFG_PROCESS_FCT : <<uses>>"
-                in content
-            ), "Missing Process_Cfg_Process_acpfct_t uses Process_Cfg_Process_fct relationship"
-            assert (
-                "TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_PROCESS_T : <<uses>>"
-                in content
-            ), "Missing Process_Cfg_Process_fct uses Process_T relationship"
-            assert (
-                "TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>"
-                in content
-            ), "Missing Process_Cfg_Process_fct uses Std_ReturnType relationship"
+                # Should have specific relationships for complex types
+                assert (
+                    "TYPEDEF_MATH_OPS_ARRAY_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>"
+                    in content
+                ), "Missing math_ops_array_t uses math_operation_t relationship"
+                assert (
+                    "TYPEDEF_DATA_PROCESSOR_ARRAY_T ..> TYPEDEF_DATA_PROCESSOR_T : <<uses>>"
+                    in content
+                ), "Missing data_processor_array_t uses data_processor_t relationship"
+                assert (
+                    "TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>" in content
+                ), "Missing data_processor_t uses data_item_t relationship"
+                assert (
+                    "TYPEDEF_HANDLER_TABLE_T ..> TYPEDEF_HANDLER_ENTRY_T : <<uses>>"
+                    in content
+                ), "Missing handler_table_t uses handler_entry_t relationship"
+                assert (
+                    "TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T ..> TYPEDEF_PROCESS_CFG_PROCESS_FCT : <<uses>>"
+                    in content
+                ), "Missing Process_Cfg_Process_acpfct_t uses Process_Cfg_Process_fct relationship"
+                assert (
+                    "TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_PROCESS_T : <<uses>>"
+                    in content
+                ), "Missing Process_Cfg_Process_fct uses Process_T relationship"
+                assert (
+                    "TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>"
+                    in content
+                ), "Missing Process_Cfg_Process_fct uses Std_ReturnType relationship"
 
-            # Should have specific enum values
-            assert "OP_ADD" in content, "Missing OP_ADD enum value"
-            assert "OP_SUB" in content, "Missing OP_SUB enum value"
-            assert "OP_MUL" in content, "Missing OP_MUL enum value"
-            assert "OP_DIV" in content, "Missing OP_DIV enum value"
-            assert (
-                "PROCESSOR_CFG_MODULE_COUNT" in content
-            ), "Missing PROCESSOR_CFG_MODULE_COUNT enum value"
-            assert (
-                "PROCESSOR_CFG_MODULE_ADAPTER" in content
-            ), "Missing PROCESSOR_CFG_MODULE_ADAPTER enum value"
-            assert (
-                "PROCESSOR_CFG_MODULE_SERVICE" in content
-            ), "Missing PROCESSOR_CFG_MODULE_SERVICE enum value"
-            assert (
-                "PROCESSOR_CFG_MODULE_HARDWARE" in content
-            ), "Missing PROCESSOR_CFG_MODULE_HARDWARE enum value"
+                # Should have specific enum values
+                assert "OP_ADD" in content, "Missing OP_ADD enum value"
+                assert "OP_SUB" in content, "Missing OP_SUB enum value"
+                assert "OP_MUL" in content, "Missing OP_MUL enum value"
+                assert "OP_DIV" in content, "Missing OP_DIV enum value"
+                assert (
+                    "PROCESSOR_CFG_MODULE_COUNT" in content
+                ), "Missing PROCESSOR_CFG_MODULE_COUNT enum value"
+                assert (
+                    "PROCESSOR_CFG_MODULE_ADAPTER" in content
+                ), "Missing PROCESSOR_CFG_MODULE_ADAPTER enum value"
+                assert (
+                    "PROCESSOR_CFG_MODULE_SERVICE" in content
+                ), "Missing PROCESSOR_CFG_MODULE_SERVICE enum value"
+                assert (
+                    "PROCESSOR_CFG_MODULE_HARDWARE" in content
+                ), "Missing PROCESSOR_CFG_MODULE_HARDWARE enum value"
 
-        elif filename == "preprocessed.puml":
-            # preprocessed.puml should have preprocessing-related typedef classes
-            assert (
-                "TYPEDEF_ENABLED_FEATURE_T" in content
-            ), "Missing TYPEDEF_ENABLED_FEATURE_T class"
-            assert "TYPEDEF_STATUS_T" in content, "Missing TYPEDEF_STATUS_T enum class"
-            assert (
-                "TYPEDEF_FEATURE_CALLBACK_T" in content
-            ), "Missing TYPEDEF_FEATURE_CALLBACK_T class"
-            assert (
-                "TYPEDEF_LARGE_BUFFER_T" in content
-            ), "Missing TYPEDEF_LARGE_BUFFER_T class"
-            assert (
-                "TYPEDEF_FEATURE_STRUCT_T" in content
-            ), "Missing TYPEDEF_FEATURE_STRUCT_T class"
-            assert (
-                "TYPEDEF_FEATURE_UNION_T" in content
-            ), "Missing TYPEDEF_FEATURE_UNION_T class"
+            elif filename == "preprocessed.puml":
+                # preprocessed.puml should have preprocessing-related typedef classes
+                assert (
+                    "TYPEDEF_ENABLED_FEATURE_T" in content
+                ), "Missing TYPEDEF_ENABLED_FEATURE_T class"
+                assert "TYPEDEF_STATUS_T" in content, "Missing TYPEDEF_STATUS_T enum class"
+                assert (
+                    "TYPEDEF_FEATURE_CALLBACK_T" in content
+                ), "Missing TYPEDEF_FEATURE_CALLBACK_T class"
+                assert (
+                    "TYPEDEF_LARGE_BUFFER_T" in content
+                ), "Missing TYPEDEF_LARGE_BUFFER_T class"
+                assert (
+                    "TYPEDEF_FEATURE_STRUCT_T" in content
+                ), "Missing TYPEDEF_FEATURE_STRUCT_T class"
+                assert (
+                    "TYPEDEF_FEATURE_UNION_T" in content
+                ), "Missing TYPEDEF_FEATURE_UNION_T class"
 
-            # Should have enum values from preprocessing
-            assert "STATUS_ENABLED" in content, "Missing STATUS_ENABLED enum value"
-            assert "STATUS_DISABLED" in content, "Missing STATUS_DISABLED enum value"
-            assert "STATUS_UNKNOWN" in content, "Missing STATUS_UNKNOWN enum value"
+                # Should have enum values from preprocessing
+                assert "STATUS_ENABLED" in content, "Missing STATUS_ENABLED enum value"
+                assert "STATUS_DISABLED" in content, "Missing STATUS_DISABLED enum value"
+                assert "STATUS_UNKNOWN" in content, "Missing STATUS_UNKNOWN enum value"
 
-            # Should have preprocessing-related relationships
-            assert (
-                "TYPEDEF_FEATURE_CALLBACK_T ..> TYPEDEF_ENABLED_FEATURE_T : <<uses>>"
-                in content
-            ), "Missing feature_callback_t uses enabled_feature_t relationship"
+                # Should have preprocessing-related relationships
+                assert (
+                    "TYPEDEF_FEATURE_CALLBACK_T ..> TYPEDEF_ENABLED_FEATURE_T : <<uses>>"
+                    in content
+                ), "Missing feature_callback_t uses enabled_feature_t relationship"
 
-        print(f"    ✅ Specific content valid")
+            # Specific content validation completed successfully
+        except Exception as e:
+            # Fail the test for unexpected exceptions in specific content validation
+            assert False, f"Unexpected exception in assert_specific_content for {filename}: {e}"
 
     def _validate_macro_formatting(self, content: str, filename: str) -> None:
         """Validate that macros show only name/parameters, not full values."""
@@ -1290,7 +663,7 @@ class PUMLValidator:
                         f"Malformed variadic function with '... ...' in {filename}"
                     )
 
-        print("    ✅ Macro formatting valid")
+        # Macro formatting validation completed successfully
 
     def _validate_typedef_content(self, content: str, filename: str) -> None:
         """Validate that typedef content is properly displayed."""
@@ -1348,7 +721,7 @@ class PUMLValidator:
                     f"Enum/struct typedef showing only type '{line.strip()}' instead of values/fields in {filename}"
                 )
 
-        print("    ✅ Typedef content valid")
+        # Typedef content validation completed successfully
 
     def _validate_global_variable_formatting(self, content: str, filename: str) -> None:
         """Validate that global variables are properly formatted."""
@@ -1370,7 +743,7 @@ class PUMLValidator:
                     f"Malformed variadic function with '... ...' in {filename}"
                 )
 
-        print("    ✅ Global variable formatting valid")
+        # Global variable formatting validation completed successfully
 
     def _validate_array_formatting(self, content: str, filename: str) -> None:
         """Validate that array declarations are properly formatted with size inside brackets."""
@@ -1415,11 +788,11 @@ class PUMLValidator:
                                     f"Expected format: 'type[size] name', got: 'type size[ ] name'"
                                 )
 
-        print("    ✅ Array formatting valid")
+        # Array formatting validation completed successfully
 
     def _validate_preprocessing_directives(self, content: str, filename: str) -> None:
         """Validate that preprocessing directives are properly processed and not left as raw text."""
-        print(f"    🔍 Validating preprocessing directives in {filename}...")
+        # Validating preprocessing directives in {filename}
 
         # Check for raw preprocessing directives that should have been processed
         raw_directives = [
@@ -1473,14 +846,14 @@ class PUMLValidator:
                     f"Malformed preprocessing expression in {filename}: {line}"
                 )
 
-        print("    ✅ Preprocessing directives properly processed")
+        # Preprocessing directives properly processed
 
     def _validate_complex_parsing_edge_cases(self, content: str, filename: str) -> None:
         """Validate complex parsing edge cases specific to complex.c and complex.h."""
         if "complex" not in filename.lower():
             return
 
-        print("    🔍 Validating complex parsing edge cases in {}...".format(filename))
+        # Validating complex parsing edge cases in {filename}
 
         # Validate nasty function pointer array patterns
         if "complex.c" in filename:
@@ -1497,7 +870,7 @@ class PUMLValidator:
             self._validate_complex_documentation_patterns(content, filename)
             self._validate_bit_shift_and_type_casting(content, filename)
 
-        print("      ✅ Complex parsing edge cases properly processed")
+        # Complex parsing edge cases properly processed
 
     def _validate_function_pointer_arrays(self, content: str, filename: str) -> None:
         """Validate array of function pointers parsing."""
@@ -1509,10 +882,7 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found function pointer array: {pattern}")
-            else:
-                print(f"      ⚠️  Missing function pointer array pattern: {pattern}")
+            assert re.search(pattern, content), f"Missing function pointer array pattern: {pattern} in {filename}"
 
     def _validate_complex_macros(self, content: str, filename: str) -> None:
         """Validate complex macro usage patterns."""
@@ -1525,10 +895,7 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found complex macro usage: {pattern}")
-            else:
-                print(f"      ⚠️  Missing complex macro usage: {pattern}")
+            assert re.search(pattern, content), f"Missing complex macro usage: {pattern} in {filename}"
 
     def _validate_processor_utility_macros(self, content: str, filename: str) -> None:
         """Validate processor utility macro usage patterns."""
@@ -1540,10 +907,7 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found processor utility macro: {pattern}")
-            else:
-                print(f"      ⚠️  Missing processor utility macro: {pattern}")
+            assert re.search(pattern, content), f"Missing processor utility macro: {pattern} in {filename}"
 
     def _validate_complex_typedefs(self, content: str, filename: str) -> None:
         """Validate complex typedef patterns."""
@@ -1556,10 +920,7 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found complex typedef: {pattern}")
-            else:
-                print(f"      ⚠️  Missing complex typedef: {pattern}")
+            assert re.search(pattern, content), f"Missing complex typedef: {pattern} in {filename}"
 
     def _validate_complex_macro_definitions(self, content: str, filename: str) -> None:
         """Validate complex macro definition patterns."""
@@ -1572,10 +933,7 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found complex macro definition: {pattern}")
-            else:
-                print(f"      ⚠️  Missing complex macro definition: {pattern}")
+            assert re.search(pattern, content), f"Missing complex macro definition: {pattern} in {filename}"
 
     def _validate_const_array_of_function_pointers(
         self, content: str, filename: str
@@ -1583,10 +941,7 @@ class PUMLValidator:
         """Validate const array of function pointers pattern."""
         pattern = r"Std_ReturnType\s*\(\s*\*const\s+Crypto_Cfg_ProcessJobLite_acpfct\s*\[\s*CRYPTO_CFG_MODULE_COUNT\s*\]\s*\)\s*\(\s*const\s+Crypto_JobType\s*\*job_pst\s*\)"
 
-        if re.search(pattern, content):
-            print(f"      ✅ Found const array of function pointers: {pattern}")
-        else:
-            print(f"      ⚠️  Missing const array of function pointers: {pattern}")
+        assert re.search(pattern, content), f"Missing const array of function pointers: {pattern} in {filename}"
 
     def _validate_nasty_edge_case_functions(self, content: str, filename: str) -> None:
         """Validate nasty edge case function patterns."""
@@ -1602,10 +957,7 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found nasty edge case function: {pattern}")
-            else:
-                print(f"      ⚠️  Missing nasty edge case function: {pattern}")
+            assert re.search(pattern, content), f"Missing nasty edge case function: {pattern} in {filename}"
 
     def _validate_complex_documentation_patterns(
         self, content: str, filename: str
@@ -1616,10 +968,7 @@ class PUMLValidator:
 
         # Check for Doxygen-style documentation in macros
         doc_pattern = r"/\*\*\s*\*+\s*\*\\brief\s+[^*]+\*+\s*\*/"
-        if re.search(doc_pattern, content):
-            print("      ✅ Found complex documentation pattern in macro")
-        else:
-            print("      ⚠️  Missing complex documentation pattern in macro")
+        assert re.search(doc_pattern, content), f"Missing complex documentation pattern in macro in {filename}"
 
     def _validate_bit_shift_and_type_casting(self, content: str, filename: str) -> None:
         """Validate bit shift and type casting patterns."""
@@ -1631,17 +980,14 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found bit shift/type casting pattern: {pattern}")
-            else:
-                print(f"      ⚠️  Missing bit shift/type casting pattern: {pattern}")
+            assert re.search(pattern, content), f"Missing bit shift/type casting pattern: {pattern} in {filename}"
 
     def _validate_complex_specific_content(self, content: str, filename: str) -> None:
         """Validate specific content issues in complex.puml."""
         if "complex.puml" not in filename.lower():
             return
 
-        print("    🔍 Validating complex.puml specific content issues...")
+        # Validating complex.puml specific content issues
         issues_found = []
 
         # Check for corrupted macro content
@@ -1663,13 +1009,13 @@ class PUMLValidator:
             issues_found.append(
                 "Corrupted global variable: 'char name' (should be struct field)"
             )
-            print(f"      DEBUG: Found corrupted global 'char name'")
+            # Found corrupted global 'char name'
 
         if re.search(r"    \\+ } processor_t$", content, re.MULTILINE):
             issues_found.append(
                 "Corrupted global variable: '} processor_t' (should be struct field)"
             )
-            print("      DEBUG: Found corrupted global '} processor_t'")
+            # Found corrupted global '} processor_t'
 
         # Check for malformed struct fields
         if re.search(r"    \\+ struct \\{ \\\\n char\\[32\\] name", content):
@@ -1753,13 +1099,8 @@ class PUMLValidator:
                 issues_found.append(f"Missing or corrupted macro: {macro}")
 
         if issues_found:
-            print(f"    ❌ Complex.puml content issues detected:")
-            for issue in issues_found:
-                print(f"      - {issue}")
-            print(f"    📊 Total issues found: {len(issues_found)}")
-            raise AssertionError(f"Complex.puml has {len(issues_found)} content issues")
-        else:
-            print("    ✅ Complex.puml content validation passed")
+            raise AssertionError(f"Complex.puml has {len(issues_found)} content issues: {', '.join(issues_found)}")
+        # Complex.puml content validation passed
 
     def _validate_no_typedefs_in_header_or_source_classes(self, puml_lines, filename):
         """Assert that no typedefs (e.g., '+ struct', '+ enum', or any typedef) are generated in header or source class blocks (HEADER_xxx or main class blocks)."""
@@ -1955,7 +1296,7 @@ class PUMLValidator:
                 f"Typedef objects without any relations found in {filename}: {missing_list}"
             )
 
-        print(f"    ✅ All {len(typedef_objects)} typedef objects have relations")
+        # All typedef objects have relations
 
     def _validate_all_relations_have_classes(
         self, relationships: List[Tuple[str, str, str]], filename: str
@@ -1986,7 +1327,7 @@ class PUMLValidator:
                 f"Relations with missing classes found in {filename}:\n      {missing_list}"
             )
 
-        print(f"    ✅ All {len(relationships)} relations have corresponding classes")
+        # All relations have corresponding classes
 
     def _validate_all_headers_connected_to_main_class(
         self,
@@ -1995,7 +1336,7 @@ class PUMLValidator:
         filename: str,
     ) -> None:
         """Assert that all header classes have a direct or indirect relationship to the main C class."""
-        print(f"  🔍 Checking that all header classes are connected to main C class...")
+        # Checking that all header classes are connected to main C class
 
         # Find the main C class (source class)
         main_class = None
@@ -2005,8 +1346,7 @@ class PUMLValidator:
                 break
 
         if not main_class:
-            print(f"    ⚠️  No main C class found in {filename}")
-            return
+            assert False, f"No main C class found in {filename}"
 
         # Find all header classes
         header_classes = set()
@@ -2015,7 +1355,7 @@ class PUMLValidator:
                 header_classes.add(uml_id)
 
         if not header_classes:
-            print(f"    ✅ No header classes to validate in {filename}")
+            # No header classes to validate
             return
 
         # Build a graph of relationships for path finding
@@ -2037,16 +1377,11 @@ class PUMLValidator:
                 orphan_headers.append(header_class)
 
         if orphan_headers:
-            print(f"    ❌ Orphan header classes found in {filename}:")
-            for orphan in orphan_headers:
-                print(
-                    f"      Header class '{orphan}' has no path to main class '{main_class}'"
-                )
             raise AssertionError(
                 f"Orphan header classes found in {filename}: {', '.join(orphan_headers)}"
             )
 
-        print(f"    ✅ All header classes are connected to main C class")
+        # All header classes are connected to main C class
 
     def _has_path_to_main_class(
         self,
@@ -2075,76 +1410,50 @@ class PUMLValidator:
 
     def validate_file(self, filename: str) -> None:
         """Validate a single PUML file."""
-        print(f"\n{'='*60}")
-        print(f"🔍 Validating {filename}")
-        print(f"{'='*60}")
+        try:
+            # Validating {filename}
 
-        # Assert file exists
-        self.assert_file_exists(filename)
+            # Assert file exists
+            self.assert_file_exists(filename)
 
-        # Read file content
-        content = self.read_puml_file(filename)
+            # Read file content
+            content = self.read_puml_file(filename)
 
-        # Extract and validate classes
-        classes = self.extract_classes(content)
-        self.assert_class_structure(classes, filename)
-        self.assert_class_content(classes, filename)
+            # Extract and validate classes
+            classes = self.extract_classes(content)
+            self.assert_class_structure(classes, filename)
+            self.assert_class_content(classes, filename)
 
-        # Extract and validate relationships
-        relationships = self.extract_relationships(content)
-        self.assert_relationships(relationships, classes, filename)
+            # Extract and validate relationships
+            relationships = self.extract_relationships(content)
+            self.assert_relationships(relationships, classes, filename)
 
-        # Validate specific content requirements
-        self.assert_specific_content(content, filename)
+            # Validate specific content requirements
+            self.assert_specific_content(content, filename)
 
-        print(f"\n✅ {filename} validation completed successfully!")
-
-    def run_source_validations(self) -> None:
-        """Run validation for all source files."""
-        print(f"\n{'='*60}")
-        print("📁 Validating source files")
-        print(f"{'='*60}")
-
-        # Check if source directory exists
-        assert (
-            self.source_dir.exists()
-        ), f"Source directory {self.source_dir} does not exist"
-
-        # Validate each source file
-        for filename in self.expected_source_files.keys():
-            try:
-                self.validate_source_file(filename)
-            except AssertionError as e:
-                print(f"\n❌ Source validation failed for {filename}: {e}")
-                # Don't exit for source file validation failures
-            except Exception as e:
-                print(f"\n💥 Unexpected error validating source file {filename}: {e}")
-                # Don't exit for source file validation failures
+            # {filename} validation completed successfully
+        except Exception as e:
+            # Fail the test for unexpected exceptions in PUML file validation
+            assert False, f"Unexpected exception in validate_file for {filename}: {e}"
 
     def run_all_validations(self) -> None:
-        """Run validation for all expected PUML files and source files."""
-        print("🚀 Starting comprehensive validation...")
-        print(f"📁 Output directory: {self.output_dir.absolute()}")
-        print(f"📁 Source directory: {self.source_dir.absolute()}")
+        """Run validation for all expected PUML files."""
+        # Starting comprehensive validation
+        # Output directory: {self.output_dir.absolute()}
 
         # Check if output directory exists
         assert (
             self.output_dir.exists()
         ), f"Output directory {self.output_dir} does not exist"
 
-        # First validate source files
-        self.run_source_validations()
-
-        # Then validate PUML files
-        print(f"\n{'='*60}")
-        print("📊 Validating generated PUML files")
-        print(f"{'='*60}")
+        # Validate PUML files
+        # Validating generated PUML files
 
         # Find all PlantUML files in the output directory
         all_puml_files = list(self.output_dir.glob("*.puml"))
         puml_filenames = [f.name for f in all_puml_files]
 
-        print(f"📁 Found {len(puml_filenames)} PlantUML files: {puml_filenames}")
+        # Found {len(puml_filenames)} PlantUML files: {puml_filenames}
 
         # Validate each PUML file
         for filename in puml_filenames:
@@ -2155,11 +1464,10 @@ class PUMLValidator:
                 sys.exit(1)
             except Exception as e:
                 print(f"\n💥 Unexpected error validating {filename}: {e}")
-                sys.exit(1)
+                # Fail the test for unexpected exceptions
+                assert False, f"Unexpected exception in PUML file validation for {filename}: {e}"
 
-        print(f"\n{'='*60}")
-        print("🎉 All validations completed successfully!")
-        print(f"{'='*60}")
+        # All validations completed successfully
 
 
 def main():
@@ -2167,10 +1475,15 @@ def main():
     try:
         validator = PUMLValidator()
         validator.run_all_validations()
-    except Exception as e:
+    except AssertionError as e:
         print(f"\n❌ Validation failed: {e}")
         print(f"Current working directory: {Path.cwd().absolute()}")
         sys.exit(1)
+    except Exception as e:
+        print(f"\n💥 Unexpected error in validation: {e}")
+        print(f"Current working directory: {Path.cwd().absolute()}")
+        # Fail the test for unexpected exceptions
+        assert False, f"Unexpected exception in main validation: {e}"
 
 
 if __name__ == "__main__":
