@@ -117,13 +117,14 @@ class PlantUMLGenerator:
 
         for filename, file_model in include_tree.items():
             basename = Path(filename).stem.upper()
+            file_key = Path(filename).name  # Use just the filename as key
 
             if filename.endswith(".c"):
                 # C files: no prefix
-                uml_ids[filename] = basename
+                uml_ids[file_key] = basename
             elif filename.endswith(".h"):
                 # H files: HEADER_ prefix
-                uml_ids[filename] = f"HEADER_{basename}"
+                uml_ids[file_key] = f"HEADER_{basename}"
 
             # Generate typedef UML IDs
             for typedef_name in file_model.structs:
@@ -142,8 +143,10 @@ class PlantUMLGenerator:
     ):
         """Generate class for C file using filename-based keys"""
         basename = Path(file_model.relative_path).stem
+        
         # Find the UML ID for this file using filename
-        uml_id = uml_ids.get(file_model.relative_path)
+        filename = Path(file_model.relative_path).name
+        uml_id = uml_ids.get(filename)
 
         if not uml_id:
             return  # Skip if no UML ID found
@@ -193,8 +196,10 @@ class PlantUMLGenerator:
     ):
         """Generate class for header file using filename-based keys"""
         basename = Path(file_model.relative_path).stem
+        
         # Find the UML ID for this file using filename
-        uml_id = uml_ids.get(file_model.relative_path)
+        filename = Path(file_model.relative_path).name
+        uml_id = uml_ids.get(filename)
 
         if not uml_id:
             return  # Skip if no UML ID found
@@ -308,13 +313,20 @@ class PlantUMLGenerator:
         # 1. Include relationships
         lines.append("' Include relationships")
         for file_name, file_model in sorted(include_tree.items()):
-            file_uml_id = uml_ids.get(file_name)
+            # Use filename for file UML ID lookup
+            file_key = Path(file_name).name
+            file_uml_id = uml_ids.get(file_key)
             if file_uml_id:
                 for include in sorted(file_model.includes):
                     # Clean the include name (remove quotes/angle brackets)
                     clean_include = include.strip('<>"')
-                    if clean_include in uml_ids:
-                        include_uml_id = uml_ids[clean_include]
+                    
+                    # Find the included file's UML ID using filename
+                    include_filename = Path(clean_include).name
+                    include_uml_id = uml_ids.get(include_filename)
+                    
+                    # If found, create the relationship
+                    if include_uml_id:
                         lines.append(
                             f"{file_uml_id} --> {include_uml_id} : <<include>>"
                         )
@@ -324,7 +336,9 @@ class PlantUMLGenerator:
         # 2. Declaration relationships
         lines.append("' Declaration relationships")
         for file_name, file_model in sorted(include_tree.items()):
-            file_uml_id = uml_ids.get(file_name)
+            # Use filename for file UML ID lookup
+            file_key = Path(file_name).name
+            file_uml_id = uml_ids.get(file_key)
             if file_uml_id:
                 # Find all typedefs declared in this file
                 for typedef_name in sorted(file_model.structs.keys()):
@@ -360,6 +374,7 @@ class PlantUMLGenerator:
         # 3. Uses relationships
         lines.append("' Uses relationships")
         for file_name, file_model in sorted(include_tree.items()):
+            # Note: file_uml_id not needed for uses relationships, only typedef UML IDs are used
             # Struct uses relationships
             for struct_name, struct_data in sorted(file_model.structs.items()):
                 struct_uml_id = uml_ids.get(f"typedef_{struct_name}")
