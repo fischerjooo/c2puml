@@ -1,0 +1,7 @@
+# Final Enforcement
+
+## Pre-Merge Requirements
+Before merging:
+- Run Black, isort, Flake8, Pylint, and Mypy.
+- Run the full pytest suite.
+- Ensure all public APIs are documented and tested.

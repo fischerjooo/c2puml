@@ -1,0 +1,14 @@
+# Style and Formatting
+
+## Naming Conventions
+- Use `snake_case` for variables and function names.
+- Use `PascalCase` for class names.
+
+## Code Formatting
+- Use 4 spaces per indent level.
+- Limit lines to 88 characters (follow Black formatting).
+
+## Git Pre-commit Hook
+- Use git pre-commit hooks to automatically run Black and isort before each commit.
+- This ensures consistent code formatting across the project.
+- Pre-commit hooks should be configured to format code and check for linting issues.

@@ -1,0 +1,9 @@
+# Documentation
+
+## Docstrings
+- Every public function, class, and module must include a docstring.
+- Use Google-style docstrings for consistency.
+
+## Comments
+- Write comments only when the code's intention isn't self-evident.
+- Update docstrings and comments when changing behavior.
