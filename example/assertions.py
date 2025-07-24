@@ -413,13 +413,13 @@ class PUMLValidator:
         """Assert that a PUML file exists."""
         filepath = self.output_dir / filename
         assert filepath.exists(), f"File {filename} does not exist at {filepath}"
-        print(f"✅ {filename} exists")
+        # {filename} exists
 
     def assert_source_file_exists(self, filename: str) -> None:
         """Assert that a source file exists."""
         filepath = self.source_dir / filename
         assert filepath.exists(), f"Source file {filename} does not exist at {filepath}"
-        print(f"✅ Source file {filename} exists")
+        # Source file {filename} exists
 
     def read_puml_file(self, filename: str) -> str:
         """Read and return the content of a PUML file."""
@@ -565,7 +565,7 @@ class PUMLValidator:
     def validate_source_file(self, filename: str) -> None:
         """Validate a single source file against expected content."""
         try:
-            print(f"\n📁 Validating source file: {filename}")
+            # Validating source file: {filename}
 
             # Assert file exists
             self.assert_source_file_exists(filename)
@@ -576,93 +576,65 @@ class PUMLValidator:
             # Get expected content
             expected = self.expected_source_files.get(filename, {})
             if not expected:
-                print(f"    ⚠️  No expected content defined for {filename}")
-                return
+                            assert False, f"No expected content defined for {filename}"
 
-            # Validate includes
-            if "includes" in expected:
-                actual_includes = self.extract_includes(content)
-                expected_includes = expected["includes"]
+                    # Validate includes
+        if "includes" in expected:
+            actual_includes = self.extract_includes(content)
+            expected_includes = expected["includes"]
 
-                print(f"    📋 Validating includes ({len(actual_includes)} found):")
-                for include in expected_includes:
-                    if include in actual_includes:
-                        print(f"      ✅ {include}")
-                    else:
-                        print(f"      ❌ Missing: {include}")
-                        # Don't fail for missing includes as they might be conditional
+            for include in expected_includes:
+                assert include in actual_includes, f"Missing include: {include} in {filename}"
 
-            # Validate macros
-            if "macros" in expected:
-                actual_macros = self.extract_macros(content)
-                expected_macros = expected["macros"]
+        # Validate macros
+        if "macros" in expected:
+            actual_macros = self.extract_macros(content)
+            expected_macros = expected["macros"]
 
-                print(f"    📋 Validating macros ({len(actual_macros)} found):")
-                for macro in expected_macros:
-                    if macro in actual_macros:
-                        print(f"      ✅ {macro}")
-                    else:
-                        print(f"      ❌ Missing: {macro}")
+            for macro in expected_macros:
+                assert macro in actual_macros, f"Missing macro: {macro} in {filename}"
 
-            # Validate typedefs
-            if "typedefs" in expected:
-                actual_typedefs = self.extract_typedefs(content)
-                expected_typedefs = expected["typedefs"]
+        # Validate typedefs
+        if "typedefs" in expected:
+            actual_typedefs = self.extract_typedefs(content)
+            expected_typedefs = expected["typedefs"]
 
-                print(f"    📋 Validating typedefs ({len(actual_typedefs)} found):")
-                for typedef in expected_typedefs:
-                    # Check if any actual typedef contains the expected pattern
-                    found = any(typedef in actual for actual in actual_typedefs)
-                    if found:
-                        print(f"      ✅ {typedef}")
-                    else:
-                        print(f"      ❌ Missing: {typedef}")
+            for typedef in expected_typedefs:
+                # Check if any actual typedef contains the expected pattern
+                found = any(typedef in actual for actual in actual_typedefs)
+                assert found, f"Missing typedef: {typedef} in {filename}"
 
-            # Validate functions
-            if "functions" in expected:
-                actual_functions = self.extract_functions(content)
-                expected_functions = expected["functions"]
+        # Validate functions
+        if "functions" in expected:
+            actual_functions = self.extract_functions(content)
+            expected_functions = expected["functions"]
 
-                print(f"    📋 Validating functions ({len(actual_functions)} found):")
-                for func in expected_functions:
-                    # Check if any actual function contains the expected pattern
-                    found = any(func in actual for actual in actual_functions)
-                    if found:
-                        print(f"      ✅ {func}")
-                    else:
-                        print(f"      ❌ Missing: {func}")
+            for func in expected_functions:
+                # Check if any actual function contains the expected pattern
+                found = any(func in actual for actual in actual_functions)
+                assert found, f"Missing function: {func} in {filename}"
 
-            # Validate globals
-            if "globals" in expected:
-                actual_globals = self.extract_globals(content)
-                expected_globals = expected["globals"]
+        # Validate globals
+        if "globals" in expected:
+            actual_globals = self.extract_globals(content)
+            expected_globals = expected["globals"]
 
-                print(f"    📋 Validating globals ({len(actual_globals)} found):")
-                for global_var in expected_globals:
-                    # Check if any actual global contains the expected pattern
-                    found = any(global_var in actual for actual in actual_globals)
-                    if found:
-                        print(f"      ✅ {global_var}")
-                    else:
-                        print(f"      ❌ Missing: {global_var}")
+            for global_var in expected_globals:
+                # Check if any actual global contains the expected pattern
+                found = any(global_var in actual for actual in actual_globals)
+                assert found, f"Missing global: {global_var} in {filename}"
 
-            # Validate preprocessing directives
-            if "preprocessing" in expected:
-                actual_directives = self.extract_preprocessing_directives(content)
-                expected_directives = expected["preprocessing"]
+        # Validate preprocessing directives
+        if "preprocessing" in expected:
+            actual_directives = self.extract_preprocessing_directives(content)
+            expected_directives = expected["preprocessing"]
 
-                print(
-                    f"    📋 Validating preprocessing directives ({len(actual_directives)} found):"
-                )
-                for directive in expected_directives:
-                    # Check if any actual directive contains the expected pattern
-                    found = any(directive in actual for actual in actual_directives)
-                    if found:
-                        print(f"      ✅ {directive}")
-                    else:
-                        print(f"      ❌ Missing: {directive}")
+            for directive in expected_directives:
+                # Check if any actual directive contains the expected pattern
+                found = any(directive in actual for actual in actual_directives)
+                assert found, f"Missing preprocessing directive: {directive} in {filename}"
 
-            print(f"    ✅ Source file {filename} validation completed")
+            # Source file validation completed successfully
         except Exception as e:
             # Fail the test for unexpected exceptions in source file validation
             assert False, f"Unexpected exception in validate_source_file for {filename}: {e}"
@@ -761,45 +733,39 @@ class PUMLValidator:
     def assert_class_structure(self, classes: Dict[str, Dict], filename: str) -> None:
         """Assert that classes have the correct structure and content."""
         try:
-            print(f"\n🔍 Validating class structure for {filename}:")
+                    for uml_id, class_info in classes.items():
+            # Assert stereotype
+            assert class_info["stereotype"] in [
+                "source",
+                "header",
+                "typedef",
+            ], f"Invalid stereotype '{class_info['stereotype']}' for class {uml_id} in {filename}"
 
-            for uml_id, class_info in classes.items():
-                print(f"  📋 Class: {class_info['name']} ({uml_id})")
+            # Assert color
+            assert class_info["color"] in [
+                "LightBlue",
+                "LightGreen",
+                "LightYellow",
+                "LightGray",
+            ], f"Invalid color '{class_info['color']}' for class {uml_id} in {filename}"
 
-                # Assert stereotype
-                assert class_info["stereotype"] in [
-                    "source",
-                    "header",
-                    "typedef",
-                ], f"Invalid stereotype '{class_info['stereotype']}' for class {uml_id}"
-
-                # Assert color
-                assert class_info["color"] in [
-                    "LightBlue",
-                    "LightGreen",
-                    "LightYellow",
-                    "LightGray",
-                ], f"Invalid color '{class_info['color']}' for class {uml_id}"
-
-                # Assert UML_ID naming convention
-                if class_info["stereotype"] == "source":
-                    # Source files should be named after the filename in uppercase
-                    expected_name = (
-                        class_info["name"].upper().replace("-", "_").replace(".", "_")
-                    )
-                    assert (
-                        uml_id == expected_name
-                    ), f"Source class {uml_id} should be named {expected_name} (filename in uppercase)"
-                elif class_info["stereotype"] == "header":
-                    assert uml_id.startswith(
-                        "HEADER_"
-                    ), f"Header class {uml_id} should have HEADER_ prefix"
-                elif class_info["stereotype"] == "typedef":
-                    assert uml_id.startswith(
-                        "TYPEDEF_"
-                    ), f"Typedef class {uml_id} should have TYPEDEF_ prefix"
-
-                print(f"    ✅ Structure valid")
+            # Assert UML_ID naming convention
+            if class_info["stereotype"] == "source":
+                # Source files should be named after the filename in uppercase
+                expected_name = (
+                    class_info["name"].upper().replace("-", "_").replace(".", "_")
+                )
+                assert (
+                    uml_id == expected_name
+                ), f"Source class {uml_id} should be named {expected_name} (filename in uppercase) in {filename}"
+            elif class_info["stereotype"] == "header":
+                assert uml_id.startswith(
+                    "HEADER_"
+                ), f"Header class {uml_id} should have HEADER_ prefix in {filename}"
+            elif class_info["stereotype"] == "typedef":
+                assert uml_id.startswith(
+                    "TYPEDEF_"
+                ), f"Typedef class {uml_id} should have TYPEDEF_ prefix in {filename}"
         except Exception as e:
             # Fail the test for unexpected exceptions in class structure validation
             assert False, f"Unexpected exception in assert_class_structure for {filename}: {e}"
@@ -807,50 +773,38 @@ class PUMLValidator:
     def assert_class_content(self, classes: Dict[str, Dict], filename: str) -> None:
         """Assert that class content matches expected patterns."""
         try:
-            print(f"\n📝 Validating class content for {filename}:")
+                    for uml_id, class_info in classes.items():
+            body = class_info["body"]
+            stereotype = class_info["stereotype"]
 
-            for uml_id, class_info in classes.items():
-                body = class_info["body"]
-                stereotype = class_info["stereotype"]
+            if stereotype == "source":
+                # Source files should not have + prefix for global variables and functions
+                assert not re.search(
+                    r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*$",
+                    body,
+                    re.MULTILINE,
+                ), f"Source class {uml_id} should not have + prefix for global variables in {filename}"
+                assert not re.search(
+                    r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*\(",
+                    body,
+                    re.MULTILINE,
+                ), f"Source class {uml_id} should not have + prefix for functions in {filename}"
 
-                print(f"  📋 Content validation for {uml_id}:")
+            elif stereotype == "header":
+                # Header files should have + prefix for all elements
+                lines = body.strip().split("\n")
+                for line in lines:
+                    line = line.strip()
+                    if line and not line.startswith("'") and not line.startswith("--"):
+                        assert line.startswith("+") or line.startswith("--"), f"Header line '{line}' should have + prefix in {uml_id} in {filename}"
 
-                if stereotype == "source":
-                    # Source files should not have + prefix for global variables and functions
-                    assert not re.search(
-                        r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*$",
-                        body,
-                        re.MULTILINE,
-                    ), f"Source class {uml_id} should not have + prefix for global variables"
-                    assert not re.search(
-                        r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*\(",
-                        body,
-                        re.MULTILINE,
-                    ), f"Source class {uml_id} should not have + prefix for functions"
-
-                elif stereotype == "header":
-                    # Header files should have + prefix for all elements
-                    lines = body.strip().split("\n")
-                    for line in lines:
-                        line = line.strip()
-                        if line and not line.startswith("'") and not line.startswith("--"):
-                            if not line.startswith("+") and not line.startswith("--"):
-                                print(
-                                    f"    ⚠️  Warning: Header line '{line}' might not have + prefix"
-                                )
-
-                elif stereotype == "typedef":
-                    # Typedef classes should have + prefix for all elements
-                    lines = body.strip().split("\n")
-                    for line in lines:
-                        line = line.strip()
-                        if line and not line.startswith("'") and not line.startswith("--"):
-                            if not line.startswith("+"):
-                                print(
-                                    f"    ⚠️  Warning: Typedef line '{line}' might not have + prefix"
-                                )
-
-                print(f"    ✅ Content patterns valid")
+            elif stereotype == "typedef":
+                # Typedef classes should have + prefix for all elements
+                lines = body.strip().split("\n")
+                for line in lines:
+                    line = line.strip()
+                    if line and not line.startswith("'") and not line.startswith("--"):
+                        assert line.startswith("+"), f"Typedef line '{line}' should have + prefix in {uml_id} in {filename}"
         except Exception as e:
             # Fail the test for unexpected exceptions in class content validation
             assert False, f"Unexpected exception in assert_class_content for {filename}: {e}"
@@ -863,45 +817,36 @@ class PUMLValidator:
     ) -> None:
         """Assert that relationships are properly structured."""
         try:
-            print(f"\n🔗 Validating relationships for {filename}:")
+                    # Group relationships by type
+        includes = [(s, t) for s, t, r in relationships if r == "<<include>>"]
+        declares = [(s, t) for s, t, r in relationships if r == "<<declares>>"]
+        uses = [(s, t) for s, t, r in relationships if r == "<<uses>>"]
 
-            # Group relationships by type
-            includes = [(s, t) for s, t, r in relationships if r == "<<include>>"]
-            declares = [(s, t) for s, t, r in relationships if r == "<<declares>>"]
-            uses = [(s, t) for s, t, r in relationships if r == "<<uses>>"]
+        # Check for duplicate relationships
+        self._validate_no_duplicate_relationships(relationships, filename)
 
-            print(f"  📊 Relationship counts:")
-            print(f"    Include: {len(includes)}")
-            print(f"    Declares: {len(declares)}")
-            print(f"    Uses: {len(uses)}")
+        # Check for consistent relationship formatting
+        self._validate_relationship_formatting(relationships, filename)
 
-            # Check for duplicate relationships
-            self._validate_no_duplicate_relationships(relationships, filename)
+        # Check that all typedef objects have at least one relation
+        self._validate_all_typedefs_have_relations(relationships, filename)
 
-            # Check for consistent relationship formatting
-            self._validate_relationship_formatting(relationships, filename)
+        # Check that all relations have corresponding classes
+        self._validate_all_relations_have_classes(relationships, filename)
 
-            # Check that all typedef objects have at least one relation
-            self._validate_all_typedefs_have_relations(relationships, filename)
+        # Check that all header classes have a path to the main C class
+        self._validate_all_headers_connected_to_main_class(
+            relationships, classes, filename
+        )
 
-            # Check that all relations have corresponding classes
-            self._validate_all_relations_have_classes(relationships, filename)
-
-            # Check that all header classes have a path to the main C class
-            self._validate_all_headers_connected_to_main_class(
-                relationships, classes, filename
-            )
-
-            # Assert relationship structure
-            for source, target, rel_type in relationships:
-                assert source and target, f"Invalid relationship: {source} -> {target}"
-                assert rel_type in [
-                    "<<include>>",
-                    "<<declares>>",
-                    "<<uses>>",
-                ], f"Invalid relationship type: {rel_type}"
-
-            print(f"    ✅ Relationship structure valid")
+        # Assert relationship structure
+        for source, target, rel_type in relationships:
+            assert source and target, f"Invalid relationship: {source} -> {target} in {filename}"
+            assert rel_type in [
+                "<<include>>",
+                "<<declares>>",
+                "<<uses>>",
+            ], f"Invalid relationship type: {rel_type} in {filename}"
         except Exception as e:
             # Fail the test for unexpected exceptions in relationship validation
             assert False, f"Unexpected exception in assert_relationships for {filename}: {e}"
@@ -909,7 +854,7 @@ class PUMLValidator:
     def assert_specific_content(self, content: str, filename: str) -> None:
         """Assert specific content requirements for each file."""
         try:
-            print(f"\n🎯 Validating specific content for {filename}:")
+            # Validating specific content for {filename}
 
             # Check for macro formatting issues
             self._validate_macro_formatting(content, filename)
@@ -1261,7 +1206,7 @@ class PUMLValidator:
                     in content
                 ), "Missing feature_callback_t uses enabled_feature_t relationship"
 
-            print(f"    ✅ Specific content valid")
+            # Specific content validation completed successfully
         except Exception as e:
             # Fail the test for unexpected exceptions in specific content validation
             assert False, f"Unexpected exception in assert_specific_content for {filename}: {e}"
@@ -1309,7 +1254,7 @@ class PUMLValidator:
                         f"Malformed variadic function with '... ...' in {filename}"
                     )
 
-        print("    ✅ Macro formatting valid")
+        # Macro formatting validation completed successfully
 
     def _validate_typedef_content(self, content: str, filename: str) -> None:
         """Validate that typedef content is properly displayed."""
@@ -1367,7 +1312,7 @@ class PUMLValidator:
                     f"Enum/struct typedef showing only type '{line.strip()}' instead of values/fields in {filename}"
                 )
 
-        print("    ✅ Typedef content valid")
+        # Typedef content validation completed successfully
 
     def _validate_global_variable_formatting(self, content: str, filename: str) -> None:
         """Validate that global variables are properly formatted."""
@@ -1389,7 +1334,7 @@ class PUMLValidator:
                     f"Malformed variadic function with '... ...' in {filename}"
                 )
 
-        print("    ✅ Global variable formatting valid")
+        # Global variable formatting validation completed successfully
 
     def _validate_array_formatting(self, content: str, filename: str) -> None:
         """Validate that array declarations are properly formatted with size inside brackets."""
@@ -1434,11 +1379,11 @@ class PUMLValidator:
                                     f"Expected format: 'type[size] name', got: 'type size[ ] name'"
                                 )
 
-        print("    ✅ Array formatting valid")
+        # Array formatting validation completed successfully
 
     def _validate_preprocessing_directives(self, content: str, filename: str) -> None:
         """Validate that preprocessing directives are properly processed and not left as raw text."""
-        print(f"    🔍 Validating preprocessing directives in {filename}...")
+        # Validating preprocessing directives in {filename}
 
         # Check for raw preprocessing directives that should have been processed
         raw_directives = [
@@ -1492,14 +1437,14 @@ class PUMLValidator:
                     f"Malformed preprocessing expression in {filename}: {line}"
                 )
 
-        print("    ✅ Preprocessing directives properly processed")
+        # Preprocessing directives properly processed
 
     def _validate_complex_parsing_edge_cases(self, content: str, filename: str) -> None:
         """Validate complex parsing edge cases specific to complex.c and complex.h."""
         if "complex" not in filename.lower():
             return
 
-        print("    🔍 Validating complex parsing edge cases in {}...".format(filename))
+        # Validating complex parsing edge cases in {filename}
 
         # Validate nasty function pointer array patterns
         if "complex.c" in filename:
@@ -1516,7 +1461,7 @@ class PUMLValidator:
             self._validate_complex_documentation_patterns(content, filename)
             self._validate_bit_shift_and_type_casting(content, filename)
 
-        print("      ✅ Complex parsing edge cases properly processed")
+        # Complex parsing edge cases properly processed
 
     def _validate_function_pointer_arrays(self, content: str, filename: str) -> None:
         """Validate array of function pointers parsing."""
@@ -1528,10 +1473,7 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found function pointer array: {pattern}")
-            else:
-                print(f"      ⚠️  Missing function pointer array pattern: {pattern}")
+            assert re.search(pattern, content), f"Missing function pointer array pattern: {pattern} in {filename}"
 
     def _validate_complex_macros(self, content: str, filename: str) -> None:
         """Validate complex macro usage patterns."""
@@ -1544,10 +1486,7 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found complex macro usage: {pattern}")
-            else:
-                print(f"      ⚠️  Missing complex macro usage: {pattern}")
+            assert re.search(pattern, content), f"Missing complex macro usage: {pattern} in {filename}"
 
     def _validate_processor_utility_macros(self, content: str, filename: str) -> None:
         """Validate processor utility macro usage patterns."""
@@ -1559,10 +1498,7 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found processor utility macro: {pattern}")
-            else:
-                print(f"      ⚠️  Missing processor utility macro: {pattern}")
+            assert re.search(pattern, content), f"Missing processor utility macro: {pattern} in {filename}"
 
     def _validate_complex_typedefs(self, content: str, filename: str) -> None:
         """Validate complex typedef patterns."""
@@ -1575,10 +1511,7 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found complex typedef: {pattern}")
-            else:
-                print(f"      ⚠️  Missing complex typedef: {pattern}")
+            assert re.search(pattern, content), f"Missing complex typedef: {pattern} in {filename}"
 
     def _validate_complex_macro_definitions(self, content: str, filename: str) -> None:
         """Validate complex macro definition patterns."""
@@ -1591,10 +1524,7 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found complex macro definition: {pattern}")
-            else:
-                print(f"      ⚠️  Missing complex macro definition: {pattern}")
+            assert re.search(pattern, content), f"Missing complex macro definition: {pattern} in {filename}"
 
     def _validate_const_array_of_function_pointers(
         self, content: str, filename: str
@@ -1602,10 +1532,7 @@ class PUMLValidator:
         """Validate const array of function pointers pattern."""
         pattern = r"Std_ReturnType\s*\(\s*\*const\s+Crypto_Cfg_ProcessJobLite_acpfct\s*\[\s*CRYPTO_CFG_MODULE_COUNT\s*\]\s*\)\s*\(\s*const\s+Crypto_JobType\s*\*job_pst\s*\)"
 
-        if re.search(pattern, content):
-            print(f"      ✅ Found const array of function pointers: {pattern}")
-        else:
-            print(f"      ⚠️  Missing const array of function pointers: {pattern}")
+        assert re.search(pattern, content), f"Missing const array of function pointers: {pattern} in {filename}"
 
     def _validate_nasty_edge_case_functions(self, content: str, filename: str) -> None:
         """Validate nasty edge case function patterns."""
@@ -1621,10 +1548,7 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found nasty edge case function: {pattern}")
-            else:
-                print(f"      ⚠️  Missing nasty edge case function: {pattern}")
+            assert re.search(pattern, content), f"Missing nasty edge case function: {pattern} in {filename}"
 
     def _validate_complex_documentation_patterns(
         self, content: str, filename: str
@@ -1635,10 +1559,7 @@ class PUMLValidator:
 
         # Check for Doxygen-style documentation in macros
         doc_pattern = r"/\*\*\s*\*+\s*\*\\brief\s+[^*]+\*+\s*\*/"
-        if re.search(doc_pattern, content):
-            print("      ✅ Found complex documentation pattern in macro")
-        else:
-            print("      ⚠️  Missing complex documentation pattern in macro")
+        assert re.search(doc_pattern, content), f"Missing complex documentation pattern in macro in {filename}"
 
     def _validate_bit_shift_and_type_casting(self, content: str, filename: str) -> None:
         """Validate bit shift and type casting patterns."""
@@ -1650,17 +1571,14 @@ class PUMLValidator:
         ]
 
         for pattern in patterns:
-            if re.search(pattern, content):
-                print(f"      ✅ Found bit shift/type casting pattern: {pattern}")
-            else:
-                print(f"      ⚠️  Missing bit shift/type casting pattern: {pattern}")
+            assert re.search(pattern, content), f"Missing bit shift/type casting pattern: {pattern} in {filename}"
 
     def _validate_complex_specific_content(self, content: str, filename: str) -> None:
         """Validate specific content issues in complex.puml."""
         if "complex.puml" not in filename.lower():
             return
 
-        print("    🔍 Validating complex.puml specific content issues...")
+        # Validating complex.puml specific content issues
         issues_found = []
 
         # Check for corrupted macro content
@@ -1682,13 +1600,13 @@ class PUMLValidator:
             issues_found.append(
                 "Corrupted global variable: 'char name' (should be struct field)"
             )
-            print(f"      DEBUG: Found corrupted global 'char name'")
+            # Found corrupted global 'char name'
 
         if re.search(r"    \\+ } processor_t$", content, re.MULTILINE):
             issues_found.append(
                 "Corrupted global variable: '} processor_t' (should be struct field)"
             )
-            print("      DEBUG: Found corrupted global '} processor_t'")
+            # Found corrupted global '} processor_t'
 
         # Check for malformed struct fields
         if re.search(r"    \\+ struct \\{ \\\\n char\\[32\\] name", content):
@@ -1772,13 +1690,8 @@ class PUMLValidator:
                 issues_found.append(f"Missing or corrupted macro: {macro}")
 
         if issues_found:
-            print(f"    ❌ Complex.puml content issues detected:")
-            for issue in issues_found:
-                print(f"      - {issue}")
-            print(f"    📊 Total issues found: {len(issues_found)}")
-            raise AssertionError(f"Complex.puml has {len(issues_found)} content issues")
-        else:
-            print("    ✅ Complex.puml content validation passed")
+            raise AssertionError(f"Complex.puml has {len(issues_found)} content issues: {', '.join(issues_found)}")
+        # Complex.puml content validation passed
 
     def _validate_no_typedefs_in_header_or_source_classes(self, puml_lines, filename):
         """Assert that no typedefs (e.g., '+ struct', '+ enum', or any typedef) are generated in header or source class blocks (HEADER_xxx or main class blocks)."""
@@ -1974,7 +1887,7 @@ class PUMLValidator:
                 f"Typedef objects without any relations found in {filename}: {missing_list}"
             )
 
-        print(f"    ✅ All {len(typedef_objects)} typedef objects have relations")
+        # All typedef objects have relations
 
     def _validate_all_relations_have_classes(
         self, relationships: List[Tuple[str, str, str]], filename: str
@@ -2005,7 +1918,7 @@ class PUMLValidator:
                 f"Relations with missing classes found in {filename}:\n      {missing_list}"
             )
 
-        print(f"    ✅ All {len(relationships)} relations have corresponding classes")
+        # All relations have corresponding classes
 
     def _validate_all_headers_connected_to_main_class(
         self,
@@ -2014,7 +1927,7 @@ class PUMLValidator:
         filename: str,
     ) -> None:
         """Assert that all header classes have a direct or indirect relationship to the main C class."""
-        print(f"  🔍 Checking that all header classes are connected to main C class...")
+        # Checking that all header classes are connected to main C class
 
         # Find the main C class (source class)
         main_class = None
@@ -2024,8 +1937,7 @@ class PUMLValidator:
                 break
 
         if not main_class:
-            print(f"    ⚠️  No main C class found in {filename}")
-            return
+            assert False, f"No main C class found in {filename}"
 
         # Find all header classes
         header_classes = set()
@@ -2034,7 +1946,7 @@ class PUMLValidator:
                 header_classes.add(uml_id)
 
         if not header_classes:
-            print(f"    ✅ No header classes to validate in {filename}")
+            # No header classes to validate
             return
 
         # Build a graph of relationships for path finding
@@ -2056,16 +1968,11 @@ class PUMLValidator:
                 orphan_headers.append(header_class)
 
         if orphan_headers:
-            print(f"    ❌ Orphan header classes found in {filename}:")
-            for orphan in orphan_headers:
-                print(
-                    f"      Header class '{orphan}' has no path to main class '{main_class}'"
-                )
             raise AssertionError(
                 f"Orphan header classes found in {filename}: {', '.join(orphan_headers)}"
             )
 
-        print(f"    ✅ All header classes are connected to main C class")
+        # All header classes are connected to main C class
 
     def _has_path_to_main_class(
         self,
@@ -2095,9 +2002,7 @@ class PUMLValidator:
     def validate_file(self, filename: str) -> None:
         """Validate a single PUML file."""
         try:
-            print(f"\n{'='*60}")
-            print(f"🔍 Validating {filename}")
-            print(f"{'='*60}")
+                    # Validating {filename}
 
             # Assert file exists
             self.assert_file_exists(filename)
@@ -2117,16 +2022,14 @@ class PUMLValidator:
             # Validate specific content requirements
             self.assert_specific_content(content, filename)
 
-            print(f"\n✅ {filename} validation completed successfully!")
+            # {filename} validation completed successfully
         except Exception as e:
             # Fail the test for unexpected exceptions in PUML file validation
             assert False, f"Unexpected exception in validate_file for {filename}: {e}"
 
     def run_source_validations(self) -> None:
         """Run validation for all source files."""
-        print(f"\n{'='*60}")
-        print("📁 Validating source files")
-        print(f"{'='*60}")
+        # Validating source files
 
         # Check if source directory exists
         assert (
@@ -2147,9 +2050,9 @@ class PUMLValidator:
 
     def run_all_validations(self) -> None:
         """Run validation for all expected PUML files and source files."""
-        print("🚀 Starting comprehensive validation...")
-        print(f"📁 Output directory: {self.output_dir.absolute()}")
-        print(f"📁 Source directory: {self.source_dir.absolute()}")
+        # Starting comprehensive validation
+        # Output directory: {self.output_dir.absolute()}
+        # Source directory: {self.source_dir.absolute()}
 
         # Check if output directory exists
         assert (
@@ -2160,15 +2063,13 @@ class PUMLValidator:
         self.run_source_validations()
 
         # Then validate PUML files
-        print(f"\n{'='*60}")
-        print("📊 Validating generated PUML files")
-        print(f"{'='*60}")
+        # Validating generated PUML files
 
         # Find all PlantUML files in the output directory
         all_puml_files = list(self.output_dir.glob("*.puml"))
         puml_filenames = [f.name for f in all_puml_files]
 
-        print(f"📁 Found {len(puml_filenames)} PlantUML files: {puml_filenames}")
+        # Found {len(puml_filenames)} PlantUML files: {puml_filenames}
 
         # Validate each PUML file
         for filename in puml_filenames:
@@ -2182,9 +2083,7 @@ class PUMLValidator:
                 # Fail the test for unexpected exceptions
                 assert False, f"Unexpected exception in PUML file validation for {filename}: {e}"
 
-        print(f"\n{'='*60}")
-        print("🎉 All validations completed successfully!")
-        print(f"{'='*60}")
+        # All validations completed successfully
 
 
 def main():
