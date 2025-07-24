@@ -9,6 +9,7 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List
+from .models import FileModel
 
 
 @dataclass
@@ -174,7 +175,9 @@ class Config:
             return cls(**data)
 
         except Exception as e:
-            raise ValueError(f"Failed to load configuration from {config_file}: {e}")
+            raise ValueError(
+                f"Failed to load configuration from {config_file}: {e}"
+            ) from e
 
     def save(self, config_file: str) -> None:
         """Save configuration to JSON file"""
@@ -194,7 +197,9 @@ class Config:
             with open(config_file, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
         except Exception as e:
-            raise ValueError(f"Failed to save configuration to {config_file}: {e}")
+            raise ValueError(
+                f"Failed to save configuration to {config_file}: {e}"
+            ) from e
 
     def has_filters(self) -> bool:
         """Check if configuration has any filters defined"""
@@ -220,7 +225,6 @@ class Config:
 
     def _apply_element_filters(self, file_model) -> Any:
         """Apply element filters to a file model"""
-        from .models import FileModel
 
         # Create a copy of the file model to avoid modifying the original
         filtered_model = FileModel(

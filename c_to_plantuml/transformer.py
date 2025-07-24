@@ -9,7 +9,18 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
-from .models import FileModel, ProjectModel
+from .models import (
+    FileModel,
+    ProjectModel,
+    IncludeRelation,
+    Alias,
+    Enum,
+    EnumValue,
+    Field,
+    Function,
+    Struct,
+    Union,
+)
 
 
 class Transformer:
@@ -75,7 +86,7 @@ class Transformer:
             return model
 
         except Exception as e:
-            raise ValueError(f"Failed to load model from {model_file}: {e}")
+            raise ValueError(f"Failed to load model from {model_file}: {e}") from e
 
     def _load_config(self, config_file: str) -> Dict[str, Any]:
         """Load configuration from JSON file"""
@@ -90,7 +101,9 @@ class Transformer:
             return config
 
         except Exception as e:
-            raise ValueError(f"Failed to load configuration from {config_file}: {e}")
+            raise ValueError(
+                f"Failed to load configuration from {config_file}: {e}"
+            ) from e
 
     def _apply_transformations(
         self, model: ProjectModel, config: Dict[str, Any]
@@ -115,7 +128,7 @@ class Transformer:
             model = self._process_include_relations(model, config["include_depth"])
 
         self.logger.info(
-            f"Transformations complete. Model now has {len(model.files)} files"
+            "Transformations complete. Model now has %d files", len(model.files)
         )
         return model
 
@@ -136,7 +149,7 @@ class Transformer:
 
         model.files = filtered_files
         self.logger.debug(
-            f"User file filtering: {len(model.files)} files after filtering"
+            "User file filtering: %d files after filtering", len(model.files)
         )
         return model
 
@@ -212,7 +225,9 @@ class Transformer:
                         target_files.add(file_path)
 
         self.logger.debug(
-            f"Applying transformations to {len(target_files)} files: {list(target_files)}"
+            "Applying transformations to %d files: %s",
+            len(target_files),
+            list(target_files),
         )
 
         # Rename elements
@@ -234,7 +249,7 @@ class Transformer:
     ) -> ProjectModel:
         """Apply renaming transformations to selected files"""
         self.logger.debug(
-            f"Applying renaming transformations to {len(target_files)} files"
+            "Applying renaming transformations to %d files", len(target_files)
         )
 
         # Apply renaming only to target files
@@ -322,7 +337,7 @@ class Transformer:
                 # Prevent self-referencing include relations
                 if file_model.file_path == included_file_path:
                     self.logger.debug(
-                        f"Skipping self-include relation for {file_model.file_path}"
+                        "Skipping self-include relation for %s", file_model.file_path
                     )
                     continue
 
@@ -335,13 +350,13 @@ class Transformer:
 
                 if relation_exists:
                     self.logger.debug(
-                        f"Cyclic include detected and skipped: {file_model.file_path} -> {included_file_path}"
+                        "Cyclic include detected and skipped: %s -> %s",
+                        file_model.file_path,
+                        included_file_path,
                     )
                     continue
 
                 # Create include relation
-                from .models import IncludeRelation
-
                 include_relation = IncludeRelation(
                     source_file=file_model.file_path,
                     included_file=included_file_path,
@@ -389,8 +404,6 @@ class Transformer:
     def _matches_pattern(self, file_path: str, pattern: str) -> bool:
         """Check if a file path matches a pattern"""
         try:
-            import re
-
             return bool(re.search(pattern, file_path))
         except re.error:
             self.logger.warning("Invalid pattern '%s' for file matching", pattern)
@@ -473,16 +486,6 @@ class Transformer:
 
     def _dict_to_file_model(self, data: Dict) -> FileModel:
         """Convert dictionary back to FileModel"""
-        from .models import (
-            Alias,
-            Enum,
-            EnumValue,
-            Field,
-            FileModel,
-            Function,
-            Struct,
-            Union,
-        )
 
         # Convert structs
         structs = {}
@@ -553,19 +556,6 @@ class Transformer:
         for global_data in data.get("globals", []):
             globals_list.append(Field(global_data["name"], global_data["type"]))
 
-            # typedef_relations removed - tag names are now in struct/enum/union
-
-        # Convert include relations (disabled - include_relations field removed)
-        # include_relations = []
-        # for rel_data in data.get("include_relations", []):
-        #     include_relations.append(
-        #         IncludeRelation(
-        #             rel_data["source_file"],
-        #             rel_data["included_file"],
-        #             rel_data["depth"],
-        #         )
-        #     )
-
         return FileModel(
             file_path=data["file_path"],
             relative_path=data["relative_path"],
@@ -587,4 +577,4 @@ class Transformer:
             model.save(output_file)
             self.logger.debug("Model saved to: %s", output_file)
         except Exception as e:
-            raise ValueError(f"Failed to save model to {output_file}: {e}")
+            raise ValueError(f"Failed to save model to {output_file}: {e}") from e
