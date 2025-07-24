@@ -576,8 +576,9 @@ class StructureFinder:
             self.pos += 1
 
         # Get struct tag name (optional for anonymous structs)
+        struct_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
-            self._advance()
+            struct_tag = self._advance().value
 
         # Find opening brace
         while self.pos < len(self.tokens) and not self._current_token_is(
@@ -597,7 +598,7 @@ class StructureFinder:
 
         # Look for struct name after closing brace
         name_pos = end_brace_pos + 1
-        struct_name = ""  # Default to empty name
+        struct_name = struct_tag  # Default to tag name
 
         # Check if this is a typedef struct by looking backwards
         is_typedef = False
@@ -669,8 +670,9 @@ class StructureFinder:
             self.pos += 1
 
         # Get struct tag name (optional)
+        struct_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
-            self._advance()
+            struct_tag = self._advance().value
 
         # Skip whitespace
         while self.pos < len(self.tokens) and self._current_token_is(
@@ -1005,8 +1007,9 @@ class StructureFinder:
             self.pos += 1
 
         # Get union tag name (optional for anonymous unions)
+        union_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
-            self._advance()
+            union_tag = self._advance().value
 
         # Find opening brace
         while self.pos < len(self.tokens) and not self._current_token_is(
@@ -1023,7 +1026,7 @@ class StructureFinder:
             return None
 
         # Look for union name after closing brace (for typedefs or named unions)
-        union_name = ""  # Default to empty name
+        union_name = union_tag  # Default to tag name
 
         # Skip to semicolon
         self.pos = end_pos + 1
@@ -1064,8 +1067,9 @@ class StructureFinder:
             self.pos += 1
 
         # Get union tag name (optional)
+        union_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
-            self._advance()
+            union_tag = self._advance().value
 
         # Find opening brace
         while self.pos < len(self.tokens) and not self._current_token_is(
