@@ -301,9 +301,9 @@ class Transformer:
         """Process include relationships up to specified depth"""
         self.logger.info("Processing include relations with max depth: %d", max_depth)
 
-        # Create a mapping of file paths to their models for quick lookup
+        # Create a mapping of filenames to their models for quick lookup
         file_map = {
-            file_model.file_path: file_model for file_model in model.files.values()
+            file_model.relative_path: file_model for file_model in model.files.values()
         }
 
         # Process each file's includes
@@ -320,52 +320,52 @@ class Transformer:
         current_depth: int,
         visited: Set[str],
     ) -> None:
-        """Recursively process includes for a file"""
-        if current_depth > max_depth or file_model.file_path in visited:
+        """Recursively process includes for a file using filename-based matching"""
+        if current_depth > max_depth or file_model.relative_path in visited:
             return
 
-        visited.add(file_model.file_path)
+        visited.add(file_model.relative_path)
 
         # Process each include
         for include_name in file_model.includes:
             # Try to find the included file
-            included_file_path = self._find_included_file(
+            included_filename = self._find_included_file(
                 include_name, file_model.project_root
             )
 
-            if included_file_path and included_file_path in file_map:
+            if included_filename and included_filename in file_map:
                 # Prevent self-referencing include relations
-                if file_model.file_path == included_file_path:
+                if file_model.relative_path == included_filename:
                     self.logger.debug(
-                        "Skipping self-include relation for %s", file_model.file_path
+                        "Skipping self-include relation for %s", file_model.relative_path
                     )
                     continue
 
                 # Check if this include relation already exists to prevent cycles
                 relation_exists = any(
-                    rel.source_file == file_model.file_path
-                    and rel.included_file == included_file_path
+                    rel.source_file == file_model.relative_path
+                    and rel.included_file == included_filename
                     for rel in file_model.include_relations
                 )
 
                 if relation_exists:
                     self.logger.debug(
                         "Cyclic include detected and skipped: %s -> %s",
-                        file_model.file_path,
-                        included_file_path,
+                        file_model.relative_path,
+                        included_filename,
                     )
                     continue
 
-                # Create include relation
+                # Create include relation using filenames
                 include_relation = IncludeRelation(
-                    source_file=file_model.file_path,
-                    included_file=included_file_path,
+                    source_file=file_model.relative_path,
+                    included_file=included_filename,
                     depth=current_depth,
                 )
                 file_model.include_relations.append(include_relation)
 
                 # Recursively process the included file
-                included_file_model = file_map[included_file_path]
+                included_file_model = file_map[included_filename]
                 self._process_file_includes(
                     included_file_model,
                     file_map,
@@ -377,7 +377,10 @@ class Transformer:
     def _find_included_file(
         self, include_name: str, project_root: str
     ) -> Optional[str]:
-        """Find the actual file path for an include"""
+        """Find the actual file path for an include using simplified filename matching"""
+        # Since we now use filenames as keys, we can simplify this significantly
+        # Just return the filename if it exists in the project files
+        
         # Common include paths to search
         search_paths = [
             Path(project_root),
@@ -397,7 +400,8 @@ class Transformer:
             for ext in extensions:
                 file_path = search_path / f"{include_name}{ext}"
                 if file_path.exists():
-                    return str(file_path.resolve())
+                    # Return filename instead of full path for simplified tracking
+                    return file_path.name
 
         return None
 
