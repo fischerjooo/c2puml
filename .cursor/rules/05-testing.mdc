@@ -4,7 +4,26 @@
 - Use `pytest` for all unit and integration tests.
 - Name all test files with the prefix `test_`, and place them in the `tests/` directory.
 
+## Test Structure
+- **Unit Tests** (`tests/unit/`): Test individual components
+- **Feature Tests** (`tests/feature/`): Test complete workflows
+- **Integration Tests** (`tests/integration/`): Test comprehensive scenarios
+- **Preprocessing Tests** (`example/source/preprocessed.c`): Test C preprocessing directives
+
 ## Test Coverage Requirements
 - Every new function must be accompanied by tests that cover normal, edge, and failure cases.
 - Target 90%+ test coverage, tracked by `coverage.py`.
 - Avoid testing internal implementation details; test behaviors instead.
+
+## Test Coverage Areas
+- C/C++ parsing functionality
+- **Model verification and sanity checks**
+- PlantUML diagram generation
+- Model transformation and filtering
+- Configuration loading and validation
+- Include header processing
+- Cross-platform encoding support
+- Error handling and edge cases
+- **C preprocessing directives** (#if, #elif, #else, #endif)
+- **Preprocessing in typedefs and macros**
+- **Edge cases in conditional compilation**
