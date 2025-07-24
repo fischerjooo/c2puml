@@ -13,13 +13,13 @@
     "python.testing.nosetestsEnabled": false,
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-        "source.organizeImports": true,
-        "source.fixAll": true
+        "source.organizeImports": "explicit",
+        "source.fixAll": "explicit"
     },
     "python.linting.lintOnSave": true,
     "python.formatting.formatOnSave": true,
     "isort.args": ["--profile", "black"],
-    "black-formatter.args": ["--line-length", "100"]
+    "black-formatter.args": ["--line-length", "100"],
     "files.exclude": {
         "**/__pycache__": true,
         "**/*.pyc": true,
