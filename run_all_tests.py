@@ -99,13 +99,15 @@ def check_dependencies() -> bool:
 
 
 def run_unittest_tests(test_pattern: str = "test_*.py", verbosity: int = 2) -> bool:
-    """Run tests using unittest framework."""
+    """Run tests using unittest framework sequentially (no parallel execution)."""
     print_subheader("Running Tests with unittest")
     
-    # Use unittest discovery to find and run all tests
+    # Use unittest discovery to find and run all tests sequentially
+    # unittest runs tests in a single thread by default (no parallel execution)
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover("tests", pattern=test_pattern)
     
+    # Run tests sequentially in a single thread
     runner = unittest.TextTestRunner(verbosity=verbosity, stream=sys.stdout)
     result = runner.run(test_suite)
     
@@ -137,10 +139,13 @@ def run_pytest_tests(
     verbosity: int = 1,
     with_coverage: bool = False
 ) -> bool:
-    """Run tests using pytest framework."""
+    """Run tests using pytest framework sequentially (no parallel execution)."""
     print_subheader("Running Tests with pytest")
     
     cmd = ["python", "-m", "pytest"]
+    
+    # Ensure sequential execution (no parallel workers)
+    cmd.extend(["-n", "0"])  # Explicitly disable parallel execution
     
     # Add verbosity
     if verbosity >= 2:
