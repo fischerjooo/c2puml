@@ -60,13 +60,11 @@
 ## Output and Validation
 - **Test Results**: Pass/fail status with detailed reporting
 - **Example Output**: Generated PlantUML diagrams in `./output`
-- **Images**: JPEG images generated from PlantUML files using `picgen.sh`
+- **Images**: PNG images generated from PlantUML files using `picgen.sh`
 - **Logs**: Processing logs and error reports
 
 ## Image Generation
-The `picgen.sh` script converts all `.puml` files in the output directory to JPEG images:
+The `picgen.sh` script converts all `.puml` files in the output directory to PNG images:
 - Requires PlantUML to be installed (`sudo apt-get install plantuml`)
-- Optionally uses ImageMagick for PNG to JPEG conversion (`sudo apt-get install imagemagick`)
-- Automatically cleans up temporary PNG files
-- Generates high-quality JPEG images for documentation and sharing
+- Generates high-quality PNG images for documentation and sharing
 
