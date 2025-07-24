@@ -142,8 +142,29 @@ class PlantUMLGenerator:
     ):
         """Generate class for C file using filename-based keys"""
         basename = Path(file_model.relative_path).stem
-        # Find the UML ID for this file using filename
+        
+        # Find the UML ID for this file - try multiple key formats
+        uml_id = None
+        
+        # Try using relative_path first (for backward compatibility)
         uml_id = uml_ids.get(file_model.relative_path)
+        
+        # If not found, try using the filename
+        if not uml_id:
+            filename = Path(file_model.relative_path).name
+            uml_id = uml_ids.get(filename)
+        
+        # If still not found, try using the full file_path
+        if not uml_id:
+            uml_id = uml_ids.get(file_model.file_path)
+        
+        # If still not found, try matching by filename in any key
+        if not uml_id:
+            filename = Path(file_model.relative_path).name
+            for key in uml_ids.keys():
+                if Path(key).name == filename:
+                    uml_id = uml_ids[key]
+                    break
 
         if not uml_id:
             return  # Skip if no UML ID found
@@ -193,8 +214,29 @@ class PlantUMLGenerator:
     ):
         """Generate class for header file using filename-based keys"""
         basename = Path(file_model.relative_path).stem
-        # Find the UML ID for this file using filename
+        
+        # Find the UML ID for this file - try multiple key formats
+        uml_id = None
+        
+        # Try using relative_path first (for backward compatibility)
         uml_id = uml_ids.get(file_model.relative_path)
+        
+        # If not found, try using the filename
+        if not uml_id:
+            filename = Path(file_model.relative_path).name
+            uml_id = uml_ids.get(filename)
+        
+        # If still not found, try using the full file_path
+        if not uml_id:
+            uml_id = uml_ids.get(file_model.file_path)
+        
+        # If still not found, try matching by filename in any key
+        if not uml_id:
+            filename = Path(file_model.relative_path).name
+            for key in uml_ids.keys():
+                if Path(key).name == filename:
+                    uml_id = uml_ids[key]
+                    break
 
         if not uml_id:
             return  # Skip if no UML ID found
@@ -313,8 +355,24 @@ class PlantUMLGenerator:
                 for include in sorted(file_model.includes):
                     # Clean the include name (remove quotes/angle brackets)
                     clean_include = include.strip('<>"')
+                    
+                    # Try to find the included file's UML ID using multiple strategies
+                    include_uml_id = None
+                    
+                    # First try exact match
                     if clean_include in uml_ids:
                         include_uml_id = uml_ids[clean_include]
+                    
+                    # If not found, try matching by filename
+                    if not include_uml_id:
+                        include_filename = Path(clean_include).name
+                        for key in uml_ids.keys():
+                            if Path(key).name == include_filename:
+                                include_uml_id = uml_ids[key]
+                                break
+                    
+                    # If found, create the relationship
+                    if include_uml_id:
                         lines.append(
                             f"{file_uml_id} --> {include_uml_id} : <<include>>"
                         )
