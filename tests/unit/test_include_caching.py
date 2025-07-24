@@ -3,10 +3,10 @@
 Unit tests for include caching feature in C to PlantUML parser.
 """
 
-import unittest
 import tempfile
+import unittest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from c_to_plantuml.parser import CParser
 
@@ -164,11 +164,12 @@ class TestIncludeCaching(unittest.TestCase):
         self.assertEqual(stats["cache_size"], 2)
 
         # Start a new project (this should clear the cache)
-        with patch.object(
-            self.parser, "_find_c_files"
-        ) as mock_find_files, patch.object(
-            self.parser, "_find_files_with_include_dependencies"
-        ) as mock_find_with_deps:
+        with (
+            patch.object(self.parser, "_find_c_files") as mock_find_files,
+            patch.object(
+                self.parser, "_find_files_with_include_dependencies"
+            ) as mock_find_with_deps,
+        ):
 
             mock_find_files.return_value = []
             mock_find_with_deps.return_value = []

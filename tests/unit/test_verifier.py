@@ -3,23 +3,23 @@
 Unit tests for the ModelVerifier class
 """
 
-import unittest
-import tempfile
 import os
+import tempfile
+import unittest
 from pathlib import Path
 
-from c_to_plantuml.verifier import ModelVerifier
 from c_to_plantuml.models import (
-    ProjectModel,
-    FileModel,
-    Field,
-    Struct,
-    Enum,
-    Union,
-    Function,
     Alias,
+    Enum,
     EnumValue,
+    Field,
+    FileModel,
+    Function,
+    ProjectModel,
+    Struct,
+    Union,
 )
+from c_to_plantuml.verifier import ModelVerifier
 
 
 class TestModelVerifier(unittest.TestCase):

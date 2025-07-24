@@ -7,23 +7,22 @@ REFACTORED: Now uses tokenizer-based parsing instead of regex-based parsing
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Set, Optional, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Set
 
 if TYPE_CHECKING:
-    from .models import Struct, Enum, Union, Function, Field, TypedefRelation
+    from .models import Struct, Enum, Union, Function, Field, Alias
     from .config import Config
 
 from .models import FileModel, ProjectModel
-from .utils import detect_file_encoding
 from .parser_tokenizer import (
     CTokenizer,
     StructureFinder,
     TokenType,
-    find_struct_fields,
     find_enum_values,
-    extract_token_range,
+    find_struct_fields,
 )
 from .preprocessor import PreprocessorManager
+from .utils import detect_file_encoding
 
 
 class CParser:
@@ -56,7 +55,7 @@ class CParser:
                 f"Cleared failed includes cache ({cache_size_before} entries)"
             )
 
-        self.logger.info(f"Parsing project: {project_root}")
+        self.logger.info("Parsing project: %s", project_root)
 
         # Find C/C++ files based on configuration and include dependencies
         if config:
@@ -66,7 +65,7 @@ class CParser:
         else:
             c_files = self._find_c_files(project_root, recursive_search)
 
-        self.logger.info(f"Found {len(c_files)} C/C++ files")
+        self.logger.info("Found %d C/C++ files", len(c_files))
 
         # Parse each file
         files = {}
@@ -80,10 +79,10 @@ class CParser:
                 )
                 files[relative_path] = file_model
 
-                self.logger.debug(f"Successfully parsed: {relative_path}")
+                self.logger.debug("Successfully parsed: %s", relative_path)
 
             except Exception as e:
-                self.logger.warning(f"Failed to parse {file_path}: {e}")
+                self.logger.warning("Failed to parse %s: %s", file_path, e)
                 failed_files.append(str(file_path))
 
         if failed_files:
@@ -109,17 +108,19 @@ class CParser:
                 f"Failed includes cache contains {len(self._failed_includes_cache)} entries"
             )
             self.logger.debug(
-                f"Failed includes: {list(self._failed_includes_cache)[:10]}{'...' if len(self._failed_includes_cache) > 10 else ''}"
+                "Failed includes: %s%s",
+                list(self._failed_includes_cache)[:10],
+                "..." if len(self._failed_includes_cache) > 10 else "",
             )
 
-        self.logger.info(f"Parsing complete. Parsed {len(files)} files successfully.")
+        self.logger.info("Parsing complete. Parsed %d files successfully.", len(files))
         return model
 
     def parse_file(
         self, file_path: Path, relative_path: str, project_root: str
     ) -> FileModel:
         """Parse a single C/C++ file and return a file model using tokenization"""
-        self.logger.debug(f"Parsing file: {file_path}")
+        self.logger.debug("Parsing file: %s", file_path)
 
         # Detect encoding
         encoding = self._detect_encoding(file_path)
@@ -130,13 +131,15 @@ class CParser:
 
         # Tokenize the content
         tokens = self.tokenizer.tokenize(content)
-        self.logger.debug(f"Tokenized file into {len(tokens)} tokens")
+        self.logger.debug("Tokenized file into %d tokens", len(tokens))
 
         # Process preprocessor directives
         self.preprocessor.add_defines_from_content(tokens)
         processed_tokens = self.preprocessor.process_file(tokens)
         self.logger.debug(
-            f"Preprocessor processed {len(tokens)} tokens -> {len(processed_tokens)} tokens"
+            "Preprocessor processed %d tokens -> %d tokens",
+            len(tokens),
+            len(processed_tokens),
         )
 
         # Filter out whitespace and comments for structure finding
@@ -156,8 +159,6 @@ class CParser:
         # For now, just create the structures with empty uses
 
         # Map typedef names to anonymous structs/enums/unions if needed
-        from .models import Struct, Enum, Union
-
         # This logic will be handled by typedef_relations instead
 
         return FileModel(
@@ -180,7 +181,7 @@ class CParser:
         self, tokens, structure_finder
     ) -> Dict[str, "Struct"]:
         """Parse struct definitions using tokenizer"""
-        from .models import Struct, Field
+        from .models import Field, Struct
 
         structs = {}
         struct_infos = structure_finder.find_structs()
@@ -205,7 +206,9 @@ class CParser:
                     try:
                         fields.append(Field(field_name, field_type))
                     except Exception as e:
-                        self.logger.warning(f"Error creating field {field_name}: {e}")
+                        self.logger.warning(
+                            "Error creating field %s: %s", field_name, e
+                        )
 
                 # For anonymous structs, use a special key that can be mapped later
                 if not struct_name:
@@ -271,7 +274,9 @@ class CParser:
                     tag_name = self._extract_tag_name_for_enum(tokens, enum_name)
 
                 enums[enum_name] = Enum(enum_name, values, tag_name=tag_name)
-                self.logger.debug(f"Parsed enum: {enum_name} with {len(values)} values")
+                self.logger.debug(
+                    "Parsed enum: %s with %d values", enum_name, len(values)
+                )
 
         return enums
 
@@ -279,7 +284,7 @@ class CParser:
         self, tokens, structure_finder
     ) -> Dict[str, "Union"]:
         """Parse union definitions using tokenizer"""
-        from .models import Union, Field
+        from .models import Field, Union
 
         unions = {}
         union_infos = structure_finder.find_unions()
@@ -330,7 +335,7 @@ class CParser:
         self, tokens, structure_finder
     ) -> List["Function"]:
         """Parse function declarations/definitions using tokenizer"""
-        from .models import Function, Field
+        from .models import Function
 
         functions = []
         function_infos = structure_finder.find_functions()
@@ -367,7 +372,7 @@ class CParser:
                     f"Parsed function: {func_name} with {len(parameters)} parameters (declaration: {is_declaration})"
                 )
             except Exception as e:
-                self.logger.warning(f"Error creating function {func_name}: {e}")
+                self.logger.warning("Error creating function %s: %s", func_name, e)
 
         return functions
 
@@ -666,7 +671,7 @@ class CParser:
         c_extensions = {".c", ".h", ".cpp", ".cc", ".cxx", ".hpp", ".hxx"}
         files = []
 
-        self.logger.debug(f"Searching for files with extensions: {c_extensions}")
+        self.logger.debug("Searching for files with extensions: %s", c_extensions)
 
         if recursive_search:
             for ext in c_extensions:
@@ -690,14 +695,13 @@ class CParser:
 
             filtered_files.append(file_path)
 
-        self.logger.debug(f"Found {len(filtered_files)} C/C++ files after filtering")
+        self.logger.debug("Found %d C/C++ files after filtering", len(filtered_files))
         return sorted(filtered_files)
 
     def _find_files_with_include_dependencies(
         self, project_root: Path, recursive_search: bool, config: "Config"
     ) -> List[Path]:
         """Find C/C++ files based on configuration and include dependencies"""
-        from .config import Config
 
         # If no config provided, fall back to old behavior
         if config is None:
@@ -705,11 +709,11 @@ class CParser:
 
         # Get include depth from config
         include_depth = getattr(config, "include_depth", 1)
-        self.logger.info(f"Using include depth: {include_depth}")
+        self.logger.info("Using include depth: %d", include_depth)
 
         # Step 1: Find all C/C++ files in the project
         all_c_files = self._find_c_files(project_root, recursive_search)
-        self.logger.debug(f"All C files found: {[f.name for f in all_c_files]}")
+        self.logger.debug("All C files found: %s", [f.name for f in all_c_files])
 
         # Step 2: Apply initial file filtering (include/exclude patterns) and separate .c and .h files
         initial_c_files = []  # Only .c files as starting files
@@ -725,14 +729,14 @@ class CParser:
                     )
                 else:
                     all_header_files.append(file_path)
-                    self.logger.debug(f"Found header file: {relative_path}")
+                    self.logger.debug("Found header file: %s", relative_path)
             else:
-                self.logger.debug(f"Excluded file after filtering: {relative_path}")
+                self.logger.debug("Excluded file after filtering: %s", relative_path)
 
         self.logger.info(
             f"Initial C files after filtering: {len(initial_c_files)} files"
         )
-        self.logger.debug(f"Initial C files: {[f.name for f in initial_c_files]}")
+        self.logger.debug("Initial C files: %s", [f.name for f in initial_c_files])
 
         # Step 3: If include_depth is 0, return only the initially filtered C files
         if include_depth == 0:
@@ -742,7 +746,7 @@ class CParser:
         files_to_parse = set(initial_c_files)
 
         for iteration in range(include_depth):
-            self.logger.info(f"Processing include iteration {iteration + 1}")
+            self.logger.info("Processing include iteration %d", iteration + 1)
 
             # Get the files that were in the list at the start of this iteration
             files_at_start_of_iteration = list(files_to_parse)
@@ -755,7 +759,7 @@ class CParser:
             for file_path in files_at_start_of_iteration:
                 # Extract includes from this file
                 includes = self._extract_includes_from_file(file_path)
-                self.logger.debug(f"Found includes in {file_path.name}: {includes}")
+                self.logger.debug("Found includes in %s: %s", file_path.name, includes)
 
                 # Find the actual header files
                 for include_name in includes:
@@ -799,8 +803,8 @@ class CParser:
                 break
 
         result = list(files_to_parse)
-        self.logger.info(f"Final file list: {len(result)} files")
-        self.logger.debug(f"Final files: {[f.name for f in result]}")
+        self.logger.info("Final file list: %d files", len(result))
+        self.logger.debug("Final files: %s", [f.name for f in result])
         return result
 
     def _should_include_file(self, relative_path: str, config: "Config") -> bool:
@@ -850,7 +854,7 @@ class CParser:
 
         # If we get here, the file was not found - cache this result
         self._failed_includes_cache.add(cache_key)
-        self.logger.debug(f"Cached failed include search for '{include_name}'")
+        self.logger.debug("Cached failed include search for '%s'", include_name)
         return None
 
     def _extract_includes_from_file(self, file_path: Path) -> List[str]:
@@ -865,7 +869,7 @@ class CParser:
             return self._parse_includes_with_tokenizer(tokens)
 
         except Exception as e:
-            self.logger.warning(f"Failed to extract includes from {file_path}: {e}")
+            self.logger.warning("Failed to extract includes from %s: %s", file_path, e)
             return []
 
     def _detect_encoding(self, file_path: Path) -> str:
@@ -1202,7 +1206,6 @@ class CParser:
 
     def _parse_function_parameters(self, tokens, start_pos, end_pos, func_name):
         """Parse function parameters from token range"""
-        from .models import Field
 
         parameters = []
 
@@ -1363,7 +1366,7 @@ class Parser:
 
     def parse(
         self,
-        project_root: Union[str, List[str]],
+        project_root: "Union[str, List[str]]",
         output_file: str = "model.json",
         recursive_search: bool = True,
         config: "Config" = None,
@@ -1385,7 +1388,7 @@ class Parser:
         if isinstance(project_root, str):
             # Single source folder - backward compatibility
             source_folders = [project_root]
-            self.logger.info(f"Step 1: Parsing C/C++ project: {project_root}")
+            self.logger.info("Step 1: Parsing C/C++ project: %s", project_root)
         else:
             # Multiple source folders
             source_folders = project_root
@@ -1438,15 +1441,19 @@ class Parser:
                 )
 
             except Exception as e:
-                self.logger.error(f"Failed to parse source folder {source_folder}: {e}")
+                self.logger.error(
+                    "Failed to parse source folder %s: %s", source_folder, e
+                )
                 raise
 
         # Create combined project model
         combined_model = ProjectModel(
             project_name=project_name,
-            project_root=",".join(source_folders)
-            if len(source_folders) > 1
-            else source_folders[0],
+            project_root=(
+                ",".join(source_folders)
+                if len(source_folders) > 1
+                else source_folders[0]
+            ),
             files=all_files,
         )
 
@@ -1471,7 +1478,7 @@ class Parser:
         else:
             self.logger.info("Model verification passed - all values look sane")
 
-        self.logger.info(f"Step 1 complete! Model saved to: {output_file}")
+        self.logger.info("Step 1 complete! Model saved to: %s", output_file)
         self.logger.info(
             f"Found {len(all_files)} total files across {len(source_folders)} source folder(s)"
         )

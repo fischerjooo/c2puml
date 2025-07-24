@@ -7,8 +7,9 @@ Performs sanity checks on the parsed model to ensure values make sense for C cod
 
 import logging
 import re
-from typing import Dict, List, Any, Tuple
-from .models import ProjectModel, FileModel, Field, Struct, Enum, Union, Function, Alias
+from typing import List, Tuple
+
+from .models import Alias, Enum, Field, FileModel, Function, ProjectModel, Struct, Union
 
 
 class ModelVerifier:
@@ -40,9 +41,9 @@ class ModelVerifier:
         is_valid = len(self.issues) == 0
 
         if self.issues:
-            self.logger.warning(f"Model verification found {len(self.issues)} issues:")
+            self.logger.warning("Model verification found %d issues:", len(self.issues))
             for issue in self.issues:
-                self.logger.warning(f"  - {issue}")
+                self.logger.warning("  - %s", issue)
         else:
             self.logger.info("Model verification passed - all values look sane")
 

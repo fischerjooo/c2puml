@@ -5,7 +5,6 @@ Data models for C to PlantUML converter
 
 import json
 from dataclasses import asdict, dataclass, field
-from datetime import datetime
 from typing import Dict, List, Optional, Set
 
 
@@ -447,9 +446,9 @@ class ProjectModel:
             # Update struct uses
             for struct in file_model.structs.values():
                 filtered_uses = []
-                for field in struct.fields:
+                for struct_field in struct.fields:
                     field_uses = self._extract_non_primitive_types(
-                        field.type, available_types
+                        struct_field.type, available_types
                     )
                     filtered_uses.extend(field_uses)
                 struct.uses = list(set(filtered_uses))
@@ -457,9 +456,9 @@ class ProjectModel:
             # Update union uses
             for union in file_model.unions.values():
                 filtered_uses = []
-                for field in union.fields:
+                for union_field in union.fields:
                     field_uses = self._extract_non_primitive_types(
-                        field.type, available_types
+                        union_field.type, available_types
                     )
                     filtered_uses.extend(field_uses)
                 union.uses = list(set(filtered_uses))

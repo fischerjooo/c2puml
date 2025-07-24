@@ -7,7 +7,7 @@ import logging
 import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import Iterator, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 
 class TokenType(Enum):
@@ -125,7 +125,8 @@ class CTokenizer:
         self.patterns = {
             "identifier": re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*"),
             "number": re.compile(
-                r"0[xX][0-9a-fA-F]+[uUlL]*|0[bB][01]+[uUlL]*|0[0-7]+[uUlL]*|\d+\.\d*([eE][+-]?\d+)?[fFlL]*|\d+([eE][+-]?\d+)?[fFlL]*|\d+[uUlL]*"
+                r"0[xX][0-9a-fA-F]+[uUlL]*|0[bB][01]+[uUlL]*|0[0-7]+[uUlL]*|"
+                r"\d+\.\d*([eE][+-]?\d+)?[fFlL]*|\d+([eE][+-]?\d+)?[fFlL]*|\d+[uUlL]*"
             ),
             "string": re.compile(r'"([^"\\]|\\.)*"'),
             "char": re.compile(r"'([^'\\]|\\.)'"),
@@ -266,7 +267,6 @@ class CTokenizer:
             # Multi-line comments - check for /* at start of line or after whitespace
             if line[pos:].startswith("/*"):
                 # Find the end of the comment
-                comment_start = pos
                 comment_end = line.find("*/", pos)
                 if comment_end != -1:
                     # Comment ends on this line
@@ -305,12 +305,9 @@ class CTokenizer:
             ):
                 # Handle string literals with possible prefixes
                 string_start = pos
-                prefix = ""
                 if line[pos - 2 : pos] == "u8":
-                    prefix = "u8"
                     string_start -= 2
                 elif line[pos - 1] in ["L", "u", "U", "R"]:
-                    prefix = line[pos - 1]
                     string_start -= 1
                 pos += 1  # Skip opening quote
                 while pos < len(line):
@@ -360,9 +357,11 @@ class CTokenizer:
                 op = line[pos : pos + 2]
                 tokens.append(
                     Token(
-                        TokenType.OPERATOR
-                        if hasattr(TokenType, "OPERATOR")
-                        else TokenType.UNKNOWN,
+                        (
+                            TokenType.OPERATOR
+                            if hasattr(TokenType, "OPERATOR")
+                            else TokenType.UNKNOWN
+                        ),
                         op,
                         line_num,
                         pos,
@@ -577,9 +576,8 @@ class StructureFinder:
             self.pos += 1
 
         # Get struct tag name (optional for anonymous structs)
-        struct_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
-            struct_tag = self._advance().value
+            self._advance()
 
         # Find opening brace
         while self.pos < len(self.tokens) and not self._current_token_is(
@@ -599,7 +597,7 @@ class StructureFinder:
 
         # Look for struct name after closing brace
         name_pos = end_brace_pos + 1
-        struct_name = struct_tag  # Default to tag name
+        struct_name = ""  # Default to empty name
 
         # Check if this is a typedef struct by looking backwards
         is_typedef = False
@@ -625,8 +623,8 @@ class StructureFinder:
                 elif self.tokens[name_pos].type == TokenType.SEMICOLON:
                     break
                 name_pos += 1
-        elif not struct_tag:
-            # Anonymous struct - check if there's a variable name after the brace
+        else:
+            # Check if there's a variable name after the brace
             while name_pos < len(self.tokens):
                 if self.tokens[name_pos].type == TokenType.IDENTIFIER:
                     # This is a variable name, not a struct name
@@ -671,9 +669,8 @@ class StructureFinder:
             self.pos += 1
 
         # Get struct tag name (optional)
-        struct_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
-            struct_tag = self._advance().value
+            self._advance()
 
         # Skip whitespace
         while self.pos < len(self.tokens) and self._current_token_is(
@@ -870,12 +867,7 @@ class StructureFinder:
                         return_type_end = return_type_start
                         return_type_start = return_type_end
 
-                        # Define modifiers set
-                        modifiers = {
-                            TokenType.STATIC,
-                            TokenType.EXTERN,
-                            TokenType.INLINE,
-                        }
+                        # Define modifiers set (used in token type checking below)
 
                         # Collect all tokens that are part of the return type (including modifiers)
                         return_type_tokens = []
@@ -1013,9 +1005,8 @@ class StructureFinder:
             self.pos += 1
 
         # Get union tag name (optional for anonymous unions)
-        union_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
-            union_tag = self._advance().value
+            self._advance()
 
         # Find opening brace
         while self.pos < len(self.tokens) and not self._current_token_is(
@@ -1032,7 +1023,7 @@ class StructureFinder:
             return None
 
         # Look for union name after closing brace (for typedefs or named unions)
-        union_name = union_tag  # Default to tag name
+        union_name = ""  # Default to empty name
 
         # Skip to semicolon
         self.pos = end_pos + 1
@@ -1073,9 +1064,8 @@ class StructureFinder:
             self.pos += 1
 
         # Get union tag name (optional)
-        union_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
-            union_tag = self._advance().value
+            self._advance()
 
         # Find opening brace
         while self.pos < len(self.tokens) and not self._current_token_is(

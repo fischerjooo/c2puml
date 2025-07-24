@@ -7,7 +7,7 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from c_to_plantuml.main import main as c_to_plantuml_main
 from tests.feature.base import BaseFeatureTest
@@ -19,9 +19,9 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
     def setUp(self):
         """Set up test fixtures"""
         super().setUp()
+        from c_to_plantuml.generator import Generator
         from c_to_plantuml.parser import Parser
         from c_to_plantuml.transformer import Transformer
-        from c_to_plantuml.generator import Generator
 
         self.parser = Parser()
         self.transformer = Transformer()
@@ -93,9 +93,9 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         output_dir = os.path.join(self.temp_dir, "output")
 
         # Execute workflow
+        from c_to_plantuml.generator import Generator
         from c_to_plantuml.parser import Parser
         from c_to_plantuml.transformer import Transformer
-        from c_to_plantuml.generator import Generator
 
         parser = Parser()
         transformer = Transformer()
@@ -174,9 +174,9 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         output_dir = os.path.join(self.temp_dir, "output")
 
         # Execute workflow
+        from c_to_plantuml.generator import Generator
         from c_to_plantuml.parser import Parser
         from c_to_plantuml.transformer import Transformer
-        from c_to_plantuml.generator import Generator
 
         parser = Parser()
         transformer = Transformer()
@@ -212,9 +212,9 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         output_dir = os.path.join(self.temp_dir, "output")
 
         # Execute workflow
+        from c_to_plantuml.generator import Generator
         from c_to_plantuml.parser import Parser
         from c_to_plantuml.transformer import Transformer
-        from c_to_plantuml.generator import Generator
 
         parser = Parser()
         transformer = Transformer()
@@ -279,9 +279,9 @@ class TestIncludeProcessingIntegration(BaseFeatureTest):
         output_dir = os.path.join(self.temp_dir, "output")
 
         # Execute workflow
+        from c_to_plantuml.generator import Generator
         from c_to_plantuml.parser import Parser
         from c_to_plantuml.transformer import Transformer
-        from c_to_plantuml.generator import Generator
 
         parser = Parser()
         transformer = Transformer()

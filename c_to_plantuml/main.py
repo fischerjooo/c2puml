@@ -9,16 +9,16 @@ Processing Flow:
 """
 
 import argparse
+import json
 import logging
 import os
 import sys
-import json
 from pathlib import Path
 
+from .config import Config
 from .generator import Generator
 from .parser import Parser
 from .transformer import Transformer
-from .config import Config
 
 
 def setup_logging(verbose: bool = False) -> None:
@@ -84,14 +84,14 @@ Usage:
     if config_path is None:
         config_path = os.getcwd()
 
-    logging.info(f"Using config: {config_path}")
+    logging.info("Using config: %s", config_path)
 
     # Load config
     try:
         config_data = load_config_from_path(config_path)
         config = Config(**config_data)
     except Exception as e:
-        logging.error(f"Failed to load configuration: {e}")
+        logging.error("Failed to load configuration: %s", e)
         return 1
 
     # Determine output folder from config, default to ./output
@@ -100,13 +100,13 @@ Usage:
     )
     output_folder = os.path.abspath(output_folder)
     os.makedirs(output_folder, exist_ok=True)
-    logging.info(f"Output folder: {output_folder}")
+    logging.info("Output folder: %s", output_folder)
 
     model_file = os.path.join(output_folder, "model.json")
     transformed_model_file = os.path.join(output_folder, "model_transformed.json")
 
     # Parse command
-    if args.command ==  "parse":
+    if args.command == "parse":
         try:
             parser_obj = Parser()
             # Use the refactored parse function that handles both single and multiple source folders
@@ -128,9 +128,11 @@ Usage:
             transformer = Transformer()
             transformer.transform(
                 model_file=model_file,
-                config_file=config_path
-                if Path(config_path).is_file()
-                else str(list(Path(config_path).glob("*.json"))[0]),
+                config_file=(
+                    config_path
+                    if Path(config_path).is_file()
+                    else str(list(Path(config_path).glob("*.json"))[0])
+                ),
                 output_file=transformed_model_file,
             )
             logging.info("Transformed model saved to: %s", transformed_model_file)
@@ -173,17 +175,19 @@ Usage:
             recursive_search=getattr(config, "recursive_search", True),
             config=config,
         )
-        logging.info(f"Model saved to: {model_file}")
+        logging.info("Model saved to: %s", model_file)
         # Step 2: Transform
         transformer = Transformer()
         transformer.transform(
             model_file=model_file,
-            config_file=config_path
-            if Path(config_path).is_file()
-            else str(list(Path(config_path).glob("*.json"))[0]),
+            config_file=(
+                config_path
+                if Path(config_path).is_file()
+                else str(list(Path(config_path).glob("*.json"))[0])
+            ),
             output_file=transformed_model_file,
         )
-        logging.info(f"Transformed model saved to: {transformed_model_file}")
+        logging.info("Transformed model saved to: %s", transformed_model_file)
         # Step 3: Generate
         generator = Generator()
         generator.generate(

@@ -596,9 +596,9 @@ struct TestStruct {
 
     def test_transform_integration_with_parser_and_generator(self):
         """Test full integration: parse -> transform -> generate"""
+        from c_to_plantuml.generator import Generator
         from c_to_plantuml.parser import Parser
         from c_to_plantuml.transformer import Transformer
-        from c_to_plantuml.generator import Generator
 
         # Create a comprehensive test project
         main_c = """
