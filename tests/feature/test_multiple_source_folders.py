@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
-Feature tests for multiple source folders functionality
+Multiple Source Folders tests.
+
+Comprehensive test suite for verifying the functionality of
+multiple source folders components.
 """
 
 import json
@@ -13,14 +16,15 @@ from pathlib import Path
 from c_to_plantuml.config import Config
 from c_to_plantuml.main import main
 from c_to_plantuml.parser import Parser
+from tests.feature.base import BaseFeatureTest
 
 
-class TestMultipleSourceFolders(unittest.TestCase):
+class TestMultipleSourceFolders(BaseFeatureTest):
     """Test cases for multiple source folders functionality within a single project"""
 
     def setUp(self):
         """Set up test fixtures"""
-        self.temp_dir = tempfile.mkdtemp()
+        super().setUp()
         self.source_folder1 = os.path.join(self.temp_dir, "src1")
         self.source_folder2 = os.path.join(self.temp_dir, "src2")
         self.source_folder3 = os.path.join(self.temp_dir, "src3")
@@ -35,7 +39,7 @@ class TestMultipleSourceFolders(unittest.TestCase):
 
     def tearDown(self):
         """Clean up test fixtures"""
-        shutil.rmtree(self.temp_dir, ignore_errors=True)
+        super().tearDown()
 
     def _create_test_files(self):
         """Create test C files in each source folder"""

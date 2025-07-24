@@ -4,7 +4,7 @@
       "aliases": {},
       "encoding_used": "utf-8",
       "enums": {},
-      "file_path": "/tmp/tmphpxyy2xe/api.h",
+      "file_path": "/tmp/tmp4clrqi1l/api.h",
       "functions": [
         {
           "is_declaration": true,
@@ -22,7 +22,7 @@
       "macros": [
         "API_H"
       ],
-      "project_root": "/tmp/tmphpxyy2xe",
+      "project_root": "/tmp/tmp4clrqi1l",
       "relative_path": "api.h",
       "structs": {},
       "unions": {}
@@ -31,7 +31,7 @@
       "aliases": {},
       "encoding_used": "utf-8",
       "enums": {},
-      "file_path": "/tmp/tmphpxyy2xe/internal.h",
+      "file_path": "/tmp/tmp4clrqi1l/internal.h",
       "functions": [],
       "globals": [
         {
@@ -45,7 +45,7 @@
       "macros": [
         "INTERNAL_H"
       ],
-      "project_root": "/tmp/tmphpxyy2xe",
+      "project_root": "/tmp/tmp4clrqi1l",
       "relative_path": "internal.h",
       "structs": {
         "ApiContext": {
@@ -73,7 +73,7 @@
       "aliases": {},
       "encoding_used": "utf-8",
       "enums": {},
-      "file_path": "/tmp/tmphpxyy2xe/main.c",
+      "file_path": "/tmp/tmp4clrqi1l/main.c",
       "functions": [
         {
           "is_declaration": false,
@@ -89,12 +89,12 @@
         "api.h"
       ],
       "macros": [],
-      "project_root": "/tmp/tmphpxyy2xe",
+      "project_root": "/tmp/tmp4clrqi1l",
       "relative_path": "main.c",
       "structs": {},
       "unions": {}
     }
   },
   "project_name": "Unknown_Project",
-  "project_root": "/tmp/tmphpxyy2xe"
+  "project_root": "/tmp/tmp4clrqi1l"
 }
