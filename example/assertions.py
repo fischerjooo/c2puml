@@ -576,63 +576,63 @@ class PUMLValidator:
             # Get expected content
             expected = self.expected_source_files.get(filename, {})
             if not expected:
-                            assert False, f"No expected content defined for {filename}"
+                assert False, f"No expected content defined for {filename}"
 
-                    # Validate includes
-        if "includes" in expected:
-            actual_includes = self.extract_includes(content)
-            expected_includes = expected["includes"]
+            # Validate includes
+            if "includes" in expected:
+                actual_includes = self.extract_includes(content)
+                expected_includes = expected["includes"]
 
-            for include in expected_includes:
-                assert include in actual_includes, f"Missing include: {include} in {filename}"
+                for include in expected_includes:
+                    assert include in actual_includes, f"Missing include: {include} in {filename}"
 
-        # Validate macros
-        if "macros" in expected:
-            actual_macros = self.extract_macros(content)
-            expected_macros = expected["macros"]
+            # Validate macros
+            if "macros" in expected:
+                actual_macros = self.extract_macros(content)
+                expected_macros = expected["macros"]
 
-            for macro in expected_macros:
-                assert macro in actual_macros, f"Missing macro: {macro} in {filename}"
+                for macro in expected_macros:
+                    assert macro in actual_macros, f"Missing macro: {macro} in {filename}"
 
-        # Validate typedefs
-        if "typedefs" in expected:
-            actual_typedefs = self.extract_typedefs(content)
-            expected_typedefs = expected["typedefs"]
+            # Validate typedefs
+            if "typedefs" in expected:
+                actual_typedefs = self.extract_typedefs(content)
+                expected_typedefs = expected["typedefs"]
 
-            for typedef in expected_typedefs:
-                # Check if any actual typedef contains the expected pattern
-                found = any(typedef in actual for actual in actual_typedefs)
-                assert found, f"Missing typedef: {typedef} in {filename}"
+                for typedef in expected_typedefs:
+                    # Check if any actual typedef contains the expected pattern
+                    found = any(typedef in actual for actual in actual_typedefs)
+                    assert found, f"Missing typedef: {typedef} in {filename}"
 
-        # Validate functions
-        if "functions" in expected:
-            actual_functions = self.extract_functions(content)
-            expected_functions = expected["functions"]
+            # Validate functions
+            if "functions" in expected:
+                actual_functions = self.extract_functions(content)
+                expected_functions = expected["functions"]
 
-            for func in expected_functions:
-                # Check if any actual function contains the expected pattern
-                found = any(func in actual for actual in actual_functions)
-                assert found, f"Missing function: {func} in {filename}"
+                for func in expected_functions:
+                    # Check if any actual function contains the expected pattern
+                    found = any(func in actual for actual in actual_functions)
+                    assert found, f"Missing function: {func} in {filename}"
 
-        # Validate globals
-        if "globals" in expected:
-            actual_globals = self.extract_globals(content)
-            expected_globals = expected["globals"]
+            # Validate globals
+            if "globals" in expected:
+                actual_globals = self.extract_globals(content)
+                expected_globals = expected["globals"]
 
-            for global_var in expected_globals:
-                # Check if any actual global contains the expected pattern
-                found = any(global_var in actual for actual in actual_globals)
-                assert found, f"Missing global: {global_var} in {filename}"
+                for global_var in expected_globals:
+                    # Check if any actual global contains the expected pattern
+                    found = any(global_var in actual for actual in actual_globals)
+                    assert found, f"Missing global: {global_var} in {filename}"
 
-        # Validate preprocessing directives
-        if "preprocessing" in expected:
-            actual_directives = self.extract_preprocessing_directives(content)
-            expected_directives = expected["preprocessing"]
+            # Validate preprocessing directives
+            if "preprocessing" in expected:
+                actual_directives = self.extract_preprocessing_directives(content)
+                expected_directives = expected["preprocessing"]
 
-            for directive in expected_directives:
-                # Check if any actual directive contains the expected pattern
-                found = any(directive in actual for actual in actual_directives)
-                assert found, f"Missing preprocessing directive: {directive} in {filename}"
+                for directive in expected_directives:
+                    # Check if any actual directive contains the expected pattern
+                    found = any(directive in actual for actual in actual_directives)
+                    assert found, f"Missing preprocessing directive: {directive} in {filename}"
 
             # Source file validation completed successfully
         except Exception as e:
@@ -733,39 +733,39 @@ class PUMLValidator:
     def assert_class_structure(self, classes: Dict[str, Dict], filename: str) -> None:
         """Assert that classes have the correct structure and content."""
         try:
-                    for uml_id, class_info in classes.items():
-            # Assert stereotype
-            assert class_info["stereotype"] in [
-                "source",
-                "header",
-                "typedef",
-            ], f"Invalid stereotype '{class_info['stereotype']}' for class {uml_id} in {filename}"
+            for uml_id, class_info in classes.items():
+                # Assert stereotype
+                assert class_info["stereotype"] in [
+                    "source",
+                    "header",
+                    "typedef",
+                ], f"Invalid stereotype '{class_info['stereotype']}' for class {uml_id} in {filename}"
 
-            # Assert color
-            assert class_info["color"] in [
-                "LightBlue",
-                "LightGreen",
-                "LightYellow",
-                "LightGray",
-            ], f"Invalid color '{class_info['color']}' for class {uml_id} in {filename}"
+                # Assert color
+                assert class_info["color"] in [
+                    "LightBlue",
+                    "LightGreen",
+                    "LightYellow",
+                    "LightGray",
+                ], f"Invalid color '{class_info['color']}' for class {uml_id} in {filename}"
 
-            # Assert UML_ID naming convention
-            if class_info["stereotype"] == "source":
-                # Source files should be named after the filename in uppercase
-                expected_name = (
-                    class_info["name"].upper().replace("-", "_").replace(".", "_")
-                )
-                assert (
-                    uml_id == expected_name
-                ), f"Source class {uml_id} should be named {expected_name} (filename in uppercase) in {filename}"
-            elif class_info["stereotype"] == "header":
-                assert uml_id.startswith(
-                    "HEADER_"
-                ), f"Header class {uml_id} should have HEADER_ prefix in {filename}"
-            elif class_info["stereotype"] == "typedef":
-                assert uml_id.startswith(
-                    "TYPEDEF_"
-                ), f"Typedef class {uml_id} should have TYPEDEF_ prefix in {filename}"
+                # Assert UML_ID naming convention
+                if class_info["stereotype"] == "source":
+                    # Source files should be named after the filename in uppercase
+                    expected_name = (
+                        class_info["name"].upper().replace("-", "_").replace(".", "_")
+                    )
+                    assert (
+                        uml_id == expected_name
+                    ), f"Source class {uml_id} should be named {expected_name} (filename in uppercase) in {filename}"
+                elif class_info["stereotype"] == "header":
+                    assert uml_id.startswith(
+                        "HEADER_"
+                    ), f"Header class {uml_id} should have HEADER_ prefix in {filename}"
+                elif class_info["stereotype"] == "typedef":
+                    assert uml_id.startswith(
+                        "TYPEDEF_"
+                    ), f"Typedef class {uml_id} should have TYPEDEF_ prefix in {filename}"
         except Exception as e:
             # Fail the test for unexpected exceptions in class structure validation
             assert False, f"Unexpected exception in assert_class_structure for {filename}: {e}"
@@ -773,38 +773,38 @@ class PUMLValidator:
     def assert_class_content(self, classes: Dict[str, Dict], filename: str) -> None:
         """Assert that class content matches expected patterns."""
         try:
-                    for uml_id, class_info in classes.items():
-            body = class_info["body"]
-            stereotype = class_info["stereotype"]
+            for uml_id, class_info in classes.items():
+                body = class_info["body"]
+                stereotype = class_info["stereotype"]
 
-            if stereotype == "source":
-                # Source files should not have + prefix for global variables and functions
-                assert not re.search(
-                    r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*$",
-                    body,
-                    re.MULTILINE,
-                ), f"Source class {uml_id} should not have + prefix for global variables in {filename}"
-                assert not re.search(
-                    r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*\(",
-                    body,
-                    re.MULTILINE,
-                ), f"Source class {uml_id} should not have + prefix for functions in {filename}"
+                if stereotype == "source":
+                    # Source files should not have + prefix for global variables and functions
+                    assert not re.search(
+                        r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*$",
+                        body,
+                        re.MULTILINE,
+                    ), f"Source class {uml_id} should not have + prefix for global variables in {filename}"
+                    assert not re.search(
+                        r"^\s*\+\s+[a-zA-Z_][a-zA-Z0-9_]*\s+[a-zA-Z_][a-zA-Z0-9_]*\(",
+                        body,
+                        re.MULTILINE,
+                    ), f"Source class {uml_id} should not have + prefix for functions in {filename}"
 
-            elif stereotype == "header":
-                # Header files should have + prefix for all elements
-                lines = body.strip().split("\n")
-                for line in lines:
-                    line = line.strip()
-                    if line and not line.startswith("'") and not line.startswith("--"):
-                        assert line.startswith("+") or line.startswith("--"), f"Header line '{line}' should have + prefix in {uml_id} in {filename}"
+                elif stereotype == "header":
+                    # Header files should have + prefix for all elements
+                    lines = body.strip().split("\n")
+                    for line in lines:
+                        line = line.strip()
+                        if line and not line.startswith("'") and not line.startswith("--"):
+                            assert line.startswith("+") or line.startswith("--"), f"Header line '{line}' should have + prefix in {uml_id} in {filename}"
 
-            elif stereotype == "typedef":
-                # Typedef classes should have + prefix for all elements
-                lines = body.strip().split("\n")
-                for line in lines:
-                    line = line.strip()
-                    if line and not line.startswith("'") and not line.startswith("--"):
-                        assert line.startswith("+"), f"Typedef line '{line}' should have + prefix in {uml_id} in {filename}"
+                elif stereotype == "typedef":
+                    # Typedef classes should have + prefix for all elements
+                    lines = body.strip().split("\n")
+                    for line in lines:
+                        line = line.strip()
+                        if line and not line.startswith("'") and not line.startswith("--"):
+                            assert line.startswith("+"), f"Typedef line '{line}' should have + prefix in {uml_id} in {filename}"
         except Exception as e:
             # Fail the test for unexpected exceptions in class content validation
             assert False, f"Unexpected exception in assert_class_content for {filename}: {e}"
@@ -817,36 +817,36 @@ class PUMLValidator:
     ) -> None:
         """Assert that relationships are properly structured."""
         try:
-                    # Group relationships by type
-        includes = [(s, t) for s, t, r in relationships if r == "<<include>>"]
-        declares = [(s, t) for s, t, r in relationships if r == "<<declares>>"]
-        uses = [(s, t) for s, t, r in relationships if r == "<<uses>>"]
+            # Group relationships by type
+            includes = [(s, t) for s, t, r in relationships if r == "<<include>>"]
+            declares = [(s, t) for s, t, r in relationships if r == "<<declares>>"]
+            uses = [(s, t) for s, t, r in relationships if r == "<<uses>>"]
 
-        # Check for duplicate relationships
-        self._validate_no_duplicate_relationships(relationships, filename)
+            # Check for duplicate relationships
+            self._validate_no_duplicate_relationships(relationships, filename)
 
-        # Check for consistent relationship formatting
-        self._validate_relationship_formatting(relationships, filename)
+            # Check for consistent relationship formatting
+            self._validate_relationship_formatting(relationships, filename)
 
-        # Check that all typedef objects have at least one relation
-        self._validate_all_typedefs_have_relations(relationships, filename)
+            # Check that all typedef objects have at least one relation
+            self._validate_all_typedefs_have_relations(relationships, filename)
 
-        # Check that all relations have corresponding classes
-        self._validate_all_relations_have_classes(relationships, filename)
+            # Check that all relations have corresponding classes
+            self._validate_all_relations_have_classes(relationships, filename)
 
-        # Check that all header classes have a path to the main C class
-        self._validate_all_headers_connected_to_main_class(
-            relationships, classes, filename
-        )
+            # Check that all header classes have a path to the main C class
+            self._validate_all_headers_connected_to_main_class(
+                relationships, classes, filename
+            )
 
-        # Assert relationship structure
-        for source, target, rel_type in relationships:
-            assert source and target, f"Invalid relationship: {source} -> {target} in {filename}"
-            assert rel_type in [
-                "<<include>>",
-                "<<declares>>",
-                "<<uses>>",
-            ], f"Invalid relationship type: {rel_type} in {filename}"
+            # Assert relationship structure
+            for source, target, rel_type in relationships:
+                assert source and target, f"Invalid relationship: {source} -> {target} in {filename}"
+                assert rel_type in [
+                    "<<include>>",
+                    "<<declares>>",
+                    "<<uses>>",
+                ], f"Invalid relationship type: {rel_type} in {filename}"
         except Exception as e:
             # Fail the test for unexpected exceptions in relationship validation
             assert False, f"Unexpected exception in assert_relationships for {filename}: {e}"
@@ -2002,7 +2002,7 @@ class PUMLValidator:
     def validate_file(self, filename: str) -> None:
         """Validate a single PUML file."""
         try:
-                    # Validating {filename}
+            # Validating {filename}
 
             # Assert file exists
             self.assert_file_exists(filename)
