@@ -288,6 +288,7 @@ class PlantUMLGenerator:
                 # Handle multi-line alias types with proper nested struct indentation
                 alias_lines = alias_data.original_type.split('\n')
                 inside_struct = False
+                nested_content = []
                 
                 for i, line in enumerate(alias_lines):
                     line = line.strip()
@@ -295,20 +296,31 @@ class PlantUMLGenerator:
                     if i == 0:
                         lines.append(f"    + {line}")
                     elif line.startswith("struct {"):
-                        lines.append(f"    + {line}")
+                        # Start collecting nested struct content
                         inside_struct = True
+                        nested_content = []
                     elif line == "}":
-                        lines.append(f"    }}")  # Close nested struct with proper indentation
-                        inside_struct = False
+                        if inside_struct:
+                            # Close nested struct with flattened content
+                            if nested_content:
+                                content_str = "; ".join(nested_content)
+                                lines.append(f"    + struct {{ {content_str} }}")
+                            else:
+                                lines.append(f"    + struct {{ }}")
+                            inside_struct = False
+                            nested_content = []
+                        else:
+                            lines.append(f"    }}")
                     elif line and line != "}":
                         if inside_struct:
-                            lines.append(f"    + {line}")  # 4 spaces for nested content
+                            nested_content.append(line)  # Collect nested content
                         else:
                             lines.append(f"+ {line}")
                 
                 # If we were inside a struct but didn't find a closing brace, add one
-                if inside_struct:
-                    lines.append(f"    }}")
+                if inside_struct and nested_content:
+                    content_str = "; ".join(nested_content)
+                    lines.append(f"    + struct {{ {content_str} }}")
                 lines.append("}")
                 lines.append("")
 
@@ -331,22 +343,23 @@ class PlantUMLGenerator:
         
         # Check if this is a nested struct field
         if field.type.startswith("struct {") and '\n' in field.type:
-            # Parse the nested struct content
+            # Parse the nested struct content and flatten it
             struct_parts = field.type.split('\n')
-            struct_header = struct_parts[0]  # "struct {"
             
-            # Start the struct definition
-            lines.append(f"{base_indent}+ {struct_header}")
-            
-            # Process the nested content with same indentation as base
-            nested_indent = "    "  # Use same indentation as base level
+            # For nested structs, flatten them to avoid PlantUML parsing issues
+            # Format as: + struct { field_type field_name }
+            nested_content = []
             for part in struct_parts[1:]:
                 part = part.strip()
                 if part and part != "}":
-                    lines.append(f"{nested_indent}+ {part} {field.name}")
+                    nested_content.append(part)
             
-            # Close the struct
-            lines.append(f"{base_indent}}}")
+            if nested_content:
+                # Create a flattened representation
+                content_str = "; ".join(nested_content)
+                lines.append(f"{base_indent}+ struct {{ {content_str} }} {field.name}")
+            else:
+                lines.append(f"{base_indent}+ struct {{ }} {field.name}")
         else:
             # Handle regular multi-line field types
             field_lines = field_text.split('\n')
