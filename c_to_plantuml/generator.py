@@ -67,23 +67,44 @@ class PlantUMLGenerator:
         include_tree = {}
         visited = set()
 
+        def find_file_key(file_name: str) -> str:
+            """Find the correct key for a file in project_model.files"""
+            # First try exact match
+            if file_name in project_model.files:
+                return file_name
+            
+            # Try matching by filename (for absolute paths)
+            file_basename = Path(file_name).name
+            for key in project_model.files.keys():
+                if Path(key).name == file_basename:
+                    return key
+            
+            # Try matching by relative path
+            for key in project_model.files.keys():
+                if key == file_name:
+                    return key
+            
+            return file_name  # Return original if not found
+
         def add_file_to_tree(file_name: str, depth: int):
             if depth > include_depth or file_name in visited:
                 return
 
             visited.add(file_name)
-            if file_name in project_model.files:
-                include_tree[file_name] = project_model.files[file_name]
+            file_key = find_file_key(file_name)
+            
+            if file_key in project_model.files:
+                include_tree[file_key] = project_model.files[file_key]
 
                 # Add included files
                 if depth < include_depth:
-                    for include in project_model.files[file_name].includes:
+                    for include in project_model.files[file_key].includes:
                         # Clean the include name (remove quotes/angle brackets)
                         clean_include = include.strip('<>"')
                         add_file_to_tree(clean_include, depth + 1)
 
-        # Start with the root file - use just the filename
-        root_key = Path(root_file.file_path).name
+        # Start with the root file - find the correct key
+        root_key = find_file_key(root_file.file_path)
         add_file_to_tree(root_key, 0)
 
         return include_tree
