@@ -157,3 +157,10 @@ Thumbs.db
 
 # PlantUML JAR file
 plantuml.jar
+
+# Allow test report logs
+!tests/reports/*.log
+
+# Allow all files in tests/reports/
+!tests/reports/
+!tests/reports/**

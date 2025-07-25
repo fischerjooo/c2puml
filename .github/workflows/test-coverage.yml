@@ -8,26 +8,6 @@ on:
 
   # Manual trigger
   workflow_dispatch:
-    inputs:
-      coverage_format:
-        description: 'Coverage report format'
-        required: false
-        default: 'all'
-        type: choice
-        options:
-        - all
-        - html
-        - xml
-        - json
-      test_verbosity:
-        description: 'Test output verbosity (0-2)'
-        required: false
-        default: '1'
-        type: choice
-        options:
-        - '0'
-        - '1'
-        - '2'
 
 jobs:
   test-coverage:
@@ -66,67 +46,10 @@ jobs:
         pip install -e .
         pip install -r requirements-dev.txt
 
-        # Ensure coverage tools are available
-        pip install coverage[toml] pytest-cov pytest-html pytest-json-report
-
     - name: 🧪 Run comprehensive test suite with coverage
       run: |
         echo "🧪 Running comprehensive test suite with coverage analysis..."
-
-        # Create reports directory
-        mkdir -p tests/reports
-
-        # Set verbosity from input or default
-        VERBOSITY="${{ github.event.inputs.test_verbosity || '1' }}"
-        COVERAGE_FORMAT="${{ github.event.inputs.coverage_format || 'all' }}"
-
-        echo "📊 Test verbosity: $VERBOSITY"
-        echo "📈 Coverage format: $COVERAGE_FORMAT"
-
-                          # First, run tests with coverage using coverage directly for better control
-         echo "🧪 Running tests with coverage..."
-         coverage erase
-         coverage run -m unittest discover tests -v
-
-         # Save test results separately (re-run without coverage for clean output)
-         echo "📋 Generating clean test output..."
-         python3 run_all_tests.py --verbosity $VERBOSITY --stats > tests/reports/test-results.txt 2>&1 || true
-
-         # Generate coverage reports in multiple formats
-         echo "📈 Generating coverage reports..."
-
-         if [ "$COVERAGE_FORMAT" = "all" ] || [ "$COVERAGE_FORMAT" = "html" ]; then
-           coverage html -d tests/reports/coverage-html
-           echo "✅ HTML coverage report generated"
-         fi
-
-         if [ "$COVERAGE_FORMAT" = "all" ] || [ "$COVERAGE_FORMAT" = "xml" ]; then
-           coverage xml -o tests/reports/coverage.xml
-           echo "✅ XML coverage report generated"
-         fi
-
-         if [ "$COVERAGE_FORMAT" = "all" ] || [ "$COVERAGE_FORMAT" = "json" ]; then
-           coverage json -o tests/reports/coverage.json
-           echo "✅ JSON coverage report generated"
-         fi
-
-         # Generate text summary
-         coverage report > tests/reports/coverage-summary.txt
-
-         # Generate detailed coverage data
-         coverage report --show-missing > tests/reports/coverage-detailed.txt
-
-         # Generate detailed coverage report with code context
-         echo "📊 Generating detailed coverage report with code context..."
-         python3 tests/reports/generate_coverage_report.py
-
-        echo "📊 Coverage analysis complete"
-
-    - name: 📊 Generate test execution summary
-      run: |
-        echo "📊 Generating test execution summary..."
-        python3 tests/reports/generate_test_summary.py
-        echo "📝 Test summary generated"
+        ./run_tests_with_coverage.sh
 
     - name: 📈 Upload coverage to Codecov (if available)
       uses: codecov/codecov-action@v3
@@ -135,27 +58,6 @@ jobs:
         flags: unittests
         fail_ci_if_error: false  # Don't fail if codecov is not configured
         verbose: true
-
-    - name: 📋 Display test results summary
-      run: |
-        echo "🏆 Test Execution Complete!"
-        echo "================================"
-
-        if [ -f tests/reports/coverage-summary.txt ]; then
-          echo "📊 Coverage Summary:"
-          echo "-------------------"
-          cat tests/reports/coverage-summary.txt
-          echo ""
-        fi
-
-        echo "📁 Generated Reports:"
-        echo "--------------------"
-        find tests/reports -type f -name "*" | sort
-        echo ""
-
-        echo "📏 Report Sizes:"
-        echo "---------------"
-        du -h tests/reports/* 2>/dev/null || true
 
     - name: 🔧 Validate and configure Git credentials
       if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
@@ -237,10 +139,10 @@ jobs:
         echo "## 🎯 Final Test Results Summary" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
 
-        if [ -f tests/reports/index.html ]; then
+        if [ -f tests/reports/coverage-html/index.html ]; then
           echo "📊 HTML reports generated successfully!" >> $GITHUB_STEP_SUMMARY
-          echo "- [Test Reports Dashboard](tests/reports/index.html)" >> $GITHUB_STEP_SUMMARY
-          echo "- [Detailed Coverage Report](tests/reports/coverage.html)" >> $GITHUB_STEP_SUMMARY
+          echo "- [Coverage Report](tests/reports/coverage-html/index.html)" >> $GITHUB_STEP_SUMMARY
+          echo "- [Test Summary](tests/reports/test-summary.txt)" >> $GITHUB_STEP_SUMMARY
         fi
 
         echo "" >> $GITHUB_STEP_SUMMARY
