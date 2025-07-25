@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 from datetime import datetime
 import html
+import re
 
 
 def generate_html_header():
@@ -92,7 +93,6 @@ def generate_html_header():
 
 def apply_syntax_highlighting(line_content):
     """Apply basic syntax highlighting to code lines."""
-    import re
     
     # Only apply highlighting if line contains code (not just whitespace)
     if not line_content.strip():
@@ -133,6 +133,22 @@ def generate_html_footer():
     </div>
 </body>
 </html>"""
+
+
+def get_function_name_at_line(source_lines, line_number):
+    """Get the function name that contains the given line number."""
+    # Look backwards from the line to find the function definition
+    for i in range(line_number - 1, -1, -1):
+        line = source_lines[i].strip()
+        # Match function definitions (def function_name)
+        match = re.match(r'^def\s+(\w+)\s*\(', line)
+        if match:
+            return match.group(1)
+        # Match class definitions (class ClassName)
+        match = re.match(r'^class\s+(\w+)', line)
+        if match:
+            return f"class {match.group(1)}"
+    return "unknown function"
 
 
 def generate_detailed_coverage_report():
@@ -256,10 +272,13 @@ def generate_detailed_coverage_report():
         
         # Show context for each missing range
         for start_line, end_line in missing_ranges:
+            # Get function name for the first missing line
+            function_name = get_function_name_at_line(source_lines, start_line)
+            
             if start_line == end_line:
-                html_content.append(f'<h4>Line {start_line}</h4>')
+                html_content.append(f'<h4>Function: {function_name} - Line {start_line}</h4>')
             else:
-                html_content.append(f'<h4>Lines {start_line}-{end_line}</h4>')
+                html_content.append(f'<h4>Function: {function_name} - Lines {start_line}-{end_line}</h4>')
             
             html_content.append('<pre>')
             
