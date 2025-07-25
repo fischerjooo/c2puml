@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Reports Index</title>
+    <title>Test Results Summary</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,7 +13,7 @@
             background-color: #f5f5f5;
         }
         .container {
-            max-width: 800px;
+            max-width: 1400px;
             margin: 0 auto;
             background-color: white;
             padding: 30px;
@@ -27,34 +27,151 @@
             margin-bottom: 30px;
             text-align: center;
         }
-        .report-card {
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 25px;
-            border-radius: 8px;
-            margin: 20px 0;
+            border-radius: 12px;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.2s;
         }
-        .report-card:hover {
+        .stat-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
-        .report-card a {
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        .coverage-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .coverage-table th {
+            background-color: #34495e;
             color: white;
-            text-decoration: none;
-            font-size: 1.2em;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .coverage-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .coverage-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        .coverage-high {
+            color: #27ae60;
             font-weight: bold;
         }
-        .report-description {
-            margin-top: 10px;
+        .coverage-medium {
+            color: #f39c12;
+            font-weight: bold;
+        }
+        .coverage-low {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .link-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 20px 0;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .link-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .test-stats {
+            background-color: #ecf0f1;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-x: auto;
+            border-left: 4px solid #3498db;
+        }
+        .navigation-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        .nav-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .nav-description {
+            margin-bottom: 25px;
             opacity: 0.9;
-            font-size: 0.9em;
+        }
+        .nav-button {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .summary-section {
+            background-color: #fafafa;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+            border: 1px solid #ecf0f1;
         }
         .footer {
-            margin-top: 40px;
-            padding-top: 20px;
+            margin-top: 50px;
+            padding-top: 30px;
             border-top: 1px solid #ecf0f1;
             text-align: center;
             color: #7f8c8d;
@@ -63,25 +180,71 @@
 </head>
 <body>
     <div class="container">
-        <h1>🧪 Test Reports</h1>
-        
-        <div class="report-card">
-            <a href="summary.html">📊 Test Summary Report</a>
-            <div class="report-description">
-                Overview of test execution statistics and coverage summary
-            </div>
+<h1>🧪 Test Reports Dashboard</h1>
+<div class="summary-section">
+<h2>📊 Test Results Summary</h2>
+<div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-value">84.27%</div>
+            <div class="stat-label">Overall Coverage</div>
         </div>
-        
-        <div class="report-card">
-            <a href="coverage.html">🔍 Detailed Coverage Report</a>
-            <div class="report-description">
-                In-depth analysis of uncovered code lines with context and background coloring
-            </div>
+
+        <div class="stat-card">
+            <div class="stat-value">27</div>
+            <div class="stat-label">Total Test Files</div>
         </div>
-        
-        <div class="footer">
-            <p>Generated by Test Report System</p>
+
+        <div class="stat-card">
+            <div class="stat-value">17</div>
+            <div class="stat-label">Unit Tests</div>
         </div>
+
+        <div class="stat-card">
+            <div class="stat-value">9</div>
+            <div class="stat-label">Feature Tests</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-value">1</div>
+            <div class="stat-label">Integration Tests</div>
+        </div>
+</div>
+<h2>📊 Test Suite Overview</h2>
+<div class="test-stats">
+--------------------------------------------------
+              Test Suite Statistics               
+--------------------------------------------------
+Total test files: 27
+Unit tests: 17
+Feature tests: 9
+Integration tests: 1
+Total lines of test code: 12459
+</div>
+<h2>📈 Code Coverage Report</h2>
+<table class="coverage-table">
+<thead><tr><th>File</th><th>Statements</th><th>Missing</th><th>Coverage</th><th>Missing Lines</th></tr></thead>
+<tbody>
+<tr style="background-color: #f8f9fa; font-weight: bold;">
+<td>TOTAL</td>
+<td>2962</td>
+<td>466</td>
+<td class="coverage-medium">84.27%</td>
+<td style="font-family: monospace; font-size: 0.9em;"></td>
+</tr>
+</tbody></table>
+</div>
+<div class="navigation-section">
+<div class="nav-title">🔍 Detailed Analysis</div>
+<div class="nav-description">
+View comprehensive coverage analysis with code context, background coloring, and line-by-line breakdown
+</div>
+<a href="coverage.html" class="nav-button">📊 View Detailed Coverage Report</a>
+</div>
+
+    </div>
+    <div class="footer">
+        <p>Generated by Test Report System</p>
     </div>
 </body>
 </html>

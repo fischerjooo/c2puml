@@ -237,9 +237,9 @@ jobs:
         echo "## 🎯 Final Test Results Summary" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
 
-        if [ -f tests/reports/summary.html ]; then
+        if [ -f tests/reports/index.html ]; then
           echo "📊 HTML reports generated successfully!" >> $GITHUB_STEP_SUMMARY
-          echo "- [Test Summary](tests/reports/summary.html)" >> $GITHUB_STEP_SUMMARY
+          echo "- [Test Reports Dashboard](tests/reports/index.html)" >> $GITHUB_STEP_SUMMARY
           echo "- [Detailed Coverage Report](tests/reports/coverage.html)" >> $GITHUB_STEP_SUMMARY
         fi
 
