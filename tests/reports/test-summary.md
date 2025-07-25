@@ -1,6 +1,5 @@
 # Test Execution Summary
 
-**Generated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 **Branch:** main
 **Commit:** d1fec4b1669f7bf0e6edb1e842bf5a860dd4f9be
 **Python Version:** 3.9
@@ -52,7 +51,6 @@ TOTAL                                2962    466  84.27%
 
 ### Metadata
 - **Repository:** fischerjooo/generator_project
-- **Run ID:** 16518531980
 - **Actor:** fischerjooo
 - **PR Number:** 103
 - **PR Title:** Condense test coverage report commits
