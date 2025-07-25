@@ -1,13 +1,11 @@
-https://fischerjooo.github.io/generator_project/tests/reports/index.html
-
 # C to PlantUML Converter
 
 A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/C++ projects and generates comprehensive PlantUML class diagrams showing structs, enums, unions, functions, global variables, macros, typedefs, and include relationships.
 
 ## Test Coverage Reports
 
-- [📊 Coverage Report](tests/reports/coverage-html/index.html) - Detailed HTML coverage report
-- [📝 Test Summary](tests/reports/test-summary.txt) - Test execution summary and statistics
+- [📊 Coverage Report](https://fischerjooo.github.io/generator_project/tests/reports/coverage-html/index.html) - Detailed HTML coverage report
+- [📝 Test Summary](https://fischerjooo.github.io/generator_project/tests/reports/test-summary.txt) - Test execution summary and statistics
 
 ## Features
 
