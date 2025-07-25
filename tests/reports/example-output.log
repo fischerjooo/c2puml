@@ -1,129 +1,129 @@
 Cleaning previous output...
 Running example workflow with config.json...
-2025-07-25 20:28:35,745 - root - INFO - Using config: example/config.json
-2025-07-25 20:28:35,745 - root - INFO - Output folder: /workspace/output
-2025-07-25 20:28:35,746 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
-2025-07-25 20:28:35,746 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: example/source
-2025-07-25 20:28:35,746 - c_to_plantuml.parser - INFO - Parsing project: /workspace/example/source
-2025-07-25 20:28:35,746 - c_to_plantuml.parser - INFO - Using include depth: 10
-2025-07-25 20:28:35,747 - c_to_plantuml.parser - INFO - Initial C files after filtering: 7 files
-2025-07-25 20:28:35,747 - c_to_plantuml.parser - INFO - Processing include iteration 1
-2025-07-25 20:28:35,756 - c_to_plantuml.parser - INFO - Iteration 1: Added 8 new files
-2025-07-25 20:28:35,756 - c_to_plantuml.parser - INFO - Processing include iteration 2
-2025-07-25 20:28:35,766 - c_to_plantuml.parser - INFO - Iteration 2: Added 1 new files
-2025-07-25 20:28:35,766 - c_to_plantuml.parser - INFO - Processing include iteration 3
-2025-07-25 20:28:35,775 - c_to_plantuml.parser - INFO - Iteration 3: Added 0 new files
-2025-07-25 20:28:35,776 - c_to_plantuml.parser - INFO - No new files found in iteration 3, stopping early
-2025-07-25 20:28:35,776 - c_to_plantuml.parser - INFO - Final file list: 16 files
-2025-07-25 20:28:35,776 - c_to_plantuml.parser - INFO - Found 16 C/C++ files
-2025-07-25 20:28:35,813 - c_to_plantuml.parser - INFO - Failed includes cache contains 7 entries
-2025-07-25 20:28:35,813 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 16 files successfully.
-2025-07-25 20:28:35,813 - c_to_plantuml.parser - INFO - Successfully parsed source folder example/source: 16 files
-2025-07-25 20:28:35,816 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
-2025-07-25 20:28:35,817 - c_to_plantuml.verifier - WARNING - Model verification found 66 issues:
-2025-07-25 20:28:35,817 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct processor_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * process_func ) ( int , char *' for ')' in struct processor_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct processor_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * cleanup_func ) ( void *' for ')' in struct processor_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct operation_set_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * callbacks [ 3 ] ) ( int , char *' for ')' in struct operation_set_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'struct { 
- char[32]' for 'name' in struct complex_handler_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct complex_handler_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * validate_func ) ( const char *' for ')' in struct complex_handler_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct complex_handler_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * format_func ) ( char * , int' for ')' in struct complex_handler_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct __anonymous_struct__ in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void * ( * alloc_func ) ( size_t' for ')' in struct __anonymous_struct__ in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct __anonymous_struct__ in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * free_func ) ( void *' for ')' in struct __anonymous_struct__ in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct __anonymous_struct__ in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * resize_func ) ( void * * , size_t' for ')' in struct __anonymous_struct__ in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct param4 in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * nested_func ) ( int' for ')' in struct param4 in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct handler_entry_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * init_func ) ( void' for ')' in struct handler_entry_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct handler_entry_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * process_func ) ( int , int' for ')' in struct handler_entry_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct handler_entry_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * cleanup_func ) ( void' for ')' in struct handler_entry_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in union mixed_union_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * void_func ) ( void' for ')' in union mixed_union_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in union mixed_union_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * int_func ) ( int' for ')' in union mixed_union_t in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int data [' for ']' in function process_with_callbacks in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'math_operation_t operations [' for ']' in function process_with_callbacks in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * pre_process ) ( int' for '*' in function process_with_callbacks in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function process_with_callbacks in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * post_process ) ( int' for '*' in function process_with_callbacks in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_handler in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * init_func ) ( void *' for ')' in function create_handler in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_handler in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * cleanup_func ) ( void *' for ')' in function create_handler in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_complex_handler in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * validate_func ) ( const char *' for ')' in function create_complex_handler in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_complex_handler in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void * ( * alloc_func ) ( size_t' for ')' in function create_complex_handler in complex.h
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int data [' for ']' in function process_with_callbacks in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'math_operation_t operations [' for ']' in function process_with_callbacks in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * pre_process ) ( int' for '*' in function process_with_callbacks in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function process_with_callbacks in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * post_process ) ( int' for '*' in function process_with_callbacks in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_handler in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * init_func ) ( void *' for ')' in function create_handler in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_handler in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * cleanup_func ) ( void *' for ')' in function create_handler in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_complex_handler in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * validate_func ) ( const char *' for ')' in function create_complex_handler in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_complex_handler in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void * ( * alloc_func ) ( size_t' for ')' in function create_complex_handler in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Invalid field name ']' in global in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'math_operation_t global_math_ops [ 10' for ']' in global in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.verifier - WARNING -   - Suspicious field value '{ 
+2025-07-25 21:03:44,432 - root - INFO - Using config: example/config.json
+2025-07-25 21:03:44,433 - root - INFO - Output folder: /home/runner/work/generator_project/generator_project/output
+2025-07-25 21:03:44,434 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
+2025-07-25 21:03:44,434 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: example/source
+2025-07-25 21:03:44,434 - c_to_plantuml.parser - INFO - Parsing project: /home/runner/work/generator_project/generator_project/example/source
+2025-07-25 21:03:44,434 - c_to_plantuml.parser - INFO - Using include depth: 10
+2025-07-25 21:03:44,436 - c_to_plantuml.parser - INFO - Initial C files after filtering: 7 files
+2025-07-25 21:03:44,436 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 21:03:44,455 - c_to_plantuml.parser - INFO - Iteration 1: Added 8 new files
+2025-07-25 21:03:44,455 - c_to_plantuml.parser - INFO - Processing include iteration 2
+2025-07-25 21:03:44,483 - c_to_plantuml.parser - INFO - Iteration 2: Added 1 new files
+2025-07-25 21:03:44,483 - c_to_plantuml.parser - INFO - Processing include iteration 3
+2025-07-25 21:03:44,510 - c_to_plantuml.parser - INFO - Iteration 3: Added 0 new files
+2025-07-25 21:03:44,510 - c_to_plantuml.parser - INFO - No new files found in iteration 3, stopping early
+2025-07-25 21:03:44,510 - c_to_plantuml.parser - INFO - Final file list: 16 files
+2025-07-25 21:03:44,511 - c_to_plantuml.parser - INFO - Found 16 C/C++ files
+2025-07-25 21:03:44,643 - c_to_plantuml.parser - INFO - Failed includes cache contains 7 entries
+2025-07-25 21:03:44,643 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 16 files successfully.
+2025-07-25 21:03:44,643 - c_to_plantuml.parser - INFO - Successfully parsed source folder example/source: 16 files
+2025-07-25 21:03:44,652 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 21:03:44,654 - c_to_plantuml.verifier - WARNING - Model verification found 66 issues:
+2025-07-25 21:03:44,654 - c_to_plantuml.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.c
+2025-07-25 21:03:44,654 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int data [' for ']' in function process_with_callbacks in complex.c
+2025-07-25 21:03:44,654 - c_to_plantuml.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.c
+2025-07-25 21:03:44,654 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'math_operation_t operations [' for ']' in function process_with_callbacks in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * pre_process ) ( int' for '*' in function process_with_callbacks in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function process_with_callbacks in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * post_process ) ( int' for '*' in function process_with_callbacks in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_handler in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * init_func ) ( void *' for ')' in function create_handler in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_handler in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * cleanup_func ) ( void *' for ')' in function create_handler in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_complex_handler in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * validate_func ) ( const char *' for ')' in function create_complex_handler in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_complex_handler in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void * ( * alloc_func ) ( size_t' for ')' in function create_complex_handler in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Invalid field name ']' in global in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'math_operation_t global_math_ops [ 10' for ']' in global in complex.c
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Suspicious field value '{ 
  & ProcessorAdapter_Process , 
  & ProcessorService_Process , 
  & ProcessorHardware_Process , 
  }' for 'Process_Cfg_Process_acpfct' in global in complex.c
-2025-07-25 20:28:35,818 - c_to_plantuml.parser - WARNING - Model verification found 66 issues - model may contain parsing errors
-2025-07-25 20:28:35,818 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /workspace/output/model.json
-2025-07-25 20:28:35,818 - c_to_plantuml.parser - INFO - Found 16 total files across 1 source folder(s)
-2025-07-25 20:28:35,818 - c_to_plantuml.parser - INFO - Summary: 30 structs, 9 enums, 72 functions
-2025-07-25 20:28:35,818 - root - INFO - Model saved to: /workspace/output/model.json
-2025-07-25 20:28:35,818 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /workspace/output/model.json
-2025-07-25 20:28:35,819 - c_to_plantuml.transformer - INFO - Applying transformations to model
-2025-07-25 20:28:35,819 - c_to_plantuml.transformer - INFO - Processing include relations with max depth: 10
-2025-07-25 20:28:35,823 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 16 files
-2025-07-25 20:28:35,826 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /workspace/output/model_transformed.json
-2025-07-25 20:28:35,826 - root - INFO - Transformed model saved to: /workspace/output/model_transformed.json
-2025-07-25 20:28:35,829 - root - INFO - PlantUML generation complete! Output in: /workspace/output
-2025-07-25 20:28:35,829 - root - INFO - Complete workflow finished successfully!
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct processor_t in complex.h
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * process_func ) ( int , char *' for ')' in struct processor_t in complex.h
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct processor_t in complex.h
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * cleanup_func ) ( void *' for ')' in struct processor_t in complex.h
+2025-07-25 21:03:44,655 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct operation_set_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * callbacks [ 3 ] ) ( int , char *' for ')' in struct operation_set_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'struct { 
+ char[32]' for 'name' in struct complex_handler_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct complex_handler_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * validate_func ) ( const char *' for ')' in struct complex_handler_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct complex_handler_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * format_func ) ( char * , int' for ')' in struct complex_handler_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct __anonymous_struct__ in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void * ( * alloc_func ) ( size_t' for ')' in struct __anonymous_struct__ in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct __anonymous_struct__ in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * free_func ) ( void *' for ')' in struct __anonymous_struct__ in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct __anonymous_struct__ in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * resize_func ) ( void * * , size_t' for ')' in struct __anonymous_struct__ in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct param4 in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * nested_func ) ( int' for ')' in struct param4 in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct handler_entry_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * init_func ) ( void' for ')' in struct handler_entry_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct handler_entry_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * process_func ) ( int , int' for ')' in struct handler_entry_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in struct handler_entry_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * cleanup_func ) ( void' for ')' in struct handler_entry_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in union mixed_union_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * void_func ) ( void' for ')' in union mixed_union_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in union mixed_union_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * int_func ) ( int' for ')' in union mixed_union_t in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int data [' for ']' in function process_with_callbacks in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'math_operation_t operations [' for ']' in function process_with_callbacks in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.h
+2025-07-25 21:03:44,656 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * pre_process ) ( int' for '*' in function process_with_callbacks in complex.h
+2025-07-25 21:03:44,657 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function process_with_callbacks in complex.h
+2025-07-25 21:03:44,657 - c_to_plantuml.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.h
+2025-07-25 21:03:44,657 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * post_process ) ( int' for '*' in function process_with_callbacks in complex.h
+2025-07-25 21:03:44,657 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_handler in complex.h
+2025-07-25 21:03:44,657 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * init_func ) ( void *' for ')' in function create_handler in complex.h
+2025-07-25 21:03:44,657 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_handler in complex.h
+2025-07-25 21:03:44,657 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void ( * cleanup_func ) ( void *' for ')' in function create_handler in complex.h
+2025-07-25 21:03:44,657 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_complex_handler in complex.h
+2025-07-25 21:03:44,657 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int ( * validate_func ) ( const char *' for ')' in function create_complex_handler in complex.h
+2025-07-25 21:03:44,657 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in function create_complex_handler in complex.h
+2025-07-25 21:03:44,657 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'void * ( * alloc_func ) ( size_t' for ')' in function create_complex_handler in complex.h
+2025-07-25 21:03:44,657 - c_to_plantuml.parser - WARNING - Model verification found 66 issues - model may contain parsing errors
+2025-07-25 21:03:44,657 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /home/runner/work/generator_project/generator_project/output/model.json
+2025-07-25 21:03:44,657 - c_to_plantuml.parser - INFO - Found 16 total files across 1 source folder(s)
+2025-07-25 21:03:44,657 - c_to_plantuml.parser - INFO - Summary: 30 structs, 9 enums, 72 functions
+2025-07-25 21:03:44,657 - root - INFO - Model saved to: /home/runner/work/generator_project/generator_project/output/model.json
+2025-07-25 21:03:44,657 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /home/runner/work/generator_project/generator_project/output/model.json
+2025-07-25 21:03:44,659 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 21:03:44,659 - c_to_plantuml.transformer - INFO - Processing include relations with max depth: 10
+2025-07-25 21:03:44,670 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 16 files
+2025-07-25 21:03:44,679 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /home/runner/work/generator_project/generator_project/output/model_transformed.json
+2025-07-25 21:03:44,679 - root - INFO - Transformed model saved to: /home/runner/work/generator_project/generator_project/output/model_transformed.json
+2025-07-25 21:03:44,684 - root - INFO - PlantUML generation complete! Output in: /home/runner/work/generator_project/generator_project/output
+2025-07-25 21:03:44,684 - root - INFO - Complete workflow finished successfully!
 PlantUML diagrams generated in: ./output (see config.json)
 Running assertions to validate generated PUML files...
 Starting comprehensive PUML validation...
-Output directory: /workspace/example/../output
+Output directory: /home/runner/work/generator_project/generator_project/example/../output
 Found 7 PlantUML files
-Validating math_utils.puml...
-  Found: 1 source, 2 header, 5 typedef classes, 7 relationships
 Validating sample.puml...
   Found: 1 source, 5 header, 10 typedef classes, 23 relationships
 Validating geometry.puml...
   Found: 1 source, 5 header, 10 typedef classes, 20 relationships
-Validating typedef_test.puml...
-  Found: 1 source, 7 header, 25 typedef classes, 58 relationships
-Validating complex.puml...
-  Found: 1 source, 1 header, 26 typedef classes, 35 relationships
-Validating preprocessed.puml...
-  Found: 1 source, 1 header, 21 typedef classes, 23 relationships
 Validating logger.puml...
   Found: 1 source, 2 header, 5 typedef classes, 8 relationships
+Validating typedef_test.puml...
+  Found: 1 source, 7 header, 25 typedef classes, 58 relationships
+Validating math_utils.puml...
+  Found: 1 source, 2 header, 5 typedef classes, 7 relationships
+Validating preprocessed.puml...
+  Found: 1 source, 1 header, 21 typedef classes, 23 relationships
+Validating complex.puml...
+  Found: 1 source, 1 header, 26 typedef classes, 35 relationships
 
 📊 Validation Summary:
    Errors: 0
@@ -132,6 +132,8 @@ Validating logger.puml...
 
 ⚠️  Warnings:
    typedef_test.puml: Array field has spaces around brackets: MyComplexPtr MyComplexArray [ 10 ]
+   preprocessed.puml: Array field has spaces around brackets: char large_buffer_t [ MAX_SIZE ]
+   preprocessed.puml: Array field has spaces around brackets: char small_buffer_t [ MIN_SIZE ]
    complex.puml:22: Function signature appears truncated: int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], int op_count, void ( * pre_process ) ( int *, int ), void ( * post_process ) ( int *, unknown unnamed)
    complex.puml:58: Function signature appears truncated: + int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], int op_count, void ( * pre_process ) ( int *, int ), void ( * post_process ) ( int *, unknown unnamed)
    complex.puml:157: Function signature appears truncated: + int ( * complex_callback_t ) (
@@ -139,7 +141,5 @@ Validating logger.puml...
    complex.puml: Array field has spaces around brackets: Process_Cfg_Process_fct Process_Cfg_Process_acpfct_t [ PROCESSOR_CFG_MODULE_COUNT ]
    complex.puml: Array field has spaces around brackets: handler_entry_t handler_table_t [ 8 ]
    complex.puml: Array field has spaces around brackets: math_operation_t math_ops_array_t [ 10 ]
-   preprocessed.puml: Array field has spaces around brackets: char large_buffer_t [ MAX_SIZE ]
-   preprocessed.puml: Array field has spaces around brackets: char small_buffer_t [ MIN_SIZE ]
 
 ✅ All validations passed successfully!
