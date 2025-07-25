@@ -1,25 +1,9 @@
-# Test Execution Summary
+# Test Results Summary
 
-**Branch:** main
-**Commit:** 26e37cd33e3be6653f38cc62172d728d8e6b82d4
-**Python Version:** 3.9
-**Workflow:** Test Suite with Coverage Reports
-**Trigger:** pull_request
+## Test Execution Statistics
 
-## Test Results
-
+### Test Suite Overview
 ```
-### Test Output
-```
-
-======================================================================
-                 🧪 C to PlantUML Converter Test Suite                 
-======================================================================
-Working directory: /home/runner/work/generator_project/generator_project
-Python version: 3.9.23 (main, Jun  4 2025, 04:11:23) 
-[GCC 13.3.0]
-Script directory: /home/runner/work/generator_project/generator_project
-
 --------------------------------------------------
               Test Suite Statistics               
 --------------------------------------------------
@@ -30,7 +14,7 @@ Integration tests: 1
 Total lines of test code: 12459
 ```
 
-### Coverage Summary
+### Code Coverage Report
 ```
 Name                                Stmts   Miss   Cover   Missing
 ------------------------------------------------------------------
@@ -49,8 +33,9 @@ c_to_plantuml/verifier.py             139     22  84.17%   67, 70, 111, 114, 119
 TOTAL                                2962    466  84.27%
 ```
 
-### Metadata
-- **Repository:** fischerjooo/generator_project
-- **Actor:** fischerjooo
-- **PR Number:** 104
-- **PR Title:** Clean test reports for consistent results
+### Overall Results
+- **Overall Coverage:** 84.27%
+- **Total Test Files:** 27
+- **Unit Tests:** 17
+- **Feature Tests:** 9
+- **Integration Tests:** 1
