@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Generate detailed coverage report in HTML format with code context.
-This script creates an HTML file showing uncovered code lines with context and background coloring.
+This script creates an HTML file showing uncovered code lines with improved styling
+and complete function context.
 """
 
 import coverage
@@ -11,178 +12,426 @@ from pathlib import Path
 from datetime import datetime
 import html
 import re
+import ast
 
 
 def generate_html_header():
-    """Generate HTML header with simple CSS styling."""
+    """Generate HTML header with improved CSS styling."""
     return """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code Coverage Report</title>
     <style>
         body {
-            font-family: sans-serif;
-            background-color: #f9f9f9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
+            margin: 0;
             line-height: 1.6;
             color: #333;
+            min-height: 100vh;
         }
-        pre {
-            background-color: #fff;
-            color: #111;
-            padding: 1rem;
-            border-radius: 8px;
-            overflow-x: auto;
-            font-family: Consolas, Monaco, 'Courier New', monospace;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin: 1rem 0;
-            border: 1px solid #eee;
-        }
-        code {
-            white-space: pre;
-        }
-        .line-number {
-            color: #858585;
-            margin-right: 1rem;
-            user-select: none;
-        }
-        .covered {
-            color: #111;
-        }
-        .uncovered {
-            background-color: #ffeaea;
-            color: #111;
-        }
-        .context {
-            background-color: #ffeaea;
-        }
-        .legend {
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
             background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 1.5rem 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .content {
+            padding: 2rem;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .stat {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            border-left: 4px solid #3498db;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .legend {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border: 1px solid #e9ecef;
+        }
+        
+        .legend h3 {
+            margin: 0 0 1rem 0;
+            color: #2c3e50;
+        }
+        
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
         .legend-item {
             display: flex;
             align-items: center;
-            margin: 0.5rem 0;
+            gap: 0.5rem;
         }
+        
         .legend-color {
             width: 20px;
             height: 20px;
-            margin-right: 0.5rem;
             border-radius: 3px;
+            border: 1px solid #ddd;
         }
+        
+        .file-section {
+            margin: 2rem 0;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .file-header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .function-section {
+            margin: 1rem 0;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .function-header {
+            background: #34495e;
+            color: white;
+            padding: 0.8rem 1rem;
+            font-weight: 500;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .function-stats {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .code-block {
+            background: white;
+            border-radius: 0;
+            margin: 0;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .code-line {
+            display: flex;
+            min-height: 20px;
+            border-bottom: 1px solid #f1f3f4;
+        }
+        
+        .line-number {
+            background: #f8f9fa;
+            color: #6c757d;
+            padding: 0.25rem 0.75rem;
+            border-right: 1px solid #e9ecef;
+            text-align: right;
+            min-width: 60px;
+            user-select: none;
+            font-weight: 500;
+        }
+        
+        .line-content {
+            padding: 0.25rem 1rem;
+            flex: 1;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        .line-covered {
+            background: white;
+        }
+        
+        .line-uncovered {
+            background: #ffebee;
+            border-left: 3px solid #f44336;
+        }
+        
+        .line-uncovered .line-number {
+            background: #ffcdd2;
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        
+        .syntax-keyword {
+            color: #d73a49;
+            font-weight: 600;
+        }
+        
+        .syntax-string {
+            color: #032f62;
+        }
+        
+        .syntax-comment {
+            color: #6a737d;
+            font-style: italic;
+        }
+        
+        .syntax-number {
+            color: #005cc5;
+        }
+        
+        .syntax-function {
+            color: #6f42c1;
+            font-weight: 600;
+        }
+        
+        .no-coverage-files {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            color: #155724;
+        }
+        
         .footer {
             text-align: center;
-            margin-top: 2rem;
-            padding: 1rem;
+            margin-top: 3rem;
+            padding: 2rem;
             color: #7f8c8d;
             border-top: 1px solid #ecf0f1;
+            background: #f8f9fa;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header h1 { font-size: 2rem; }
+            .stats { grid-template-columns: 1fr; }
+            .legend-items { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <h1>Code Coverage Report</h1>
-    <p>Generated on """ + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + """</p>"""
+    <div class="container">
+        <div class="header">
+            <h1>📊 Code Coverage Report</h1>
+            <p>Generated on """ + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + """</p>
+        </div>
+        <div class="content">"""
 
 
 def apply_syntax_highlighting(line_content):
-    """Apply basic syntax highlighting to code lines."""
-    
-    # Only apply highlighting if line contains code (not just whitespace)
+    """Apply syntax highlighting to code lines."""
     if not line_content.strip():
         return line_content
     
-    # Keywords (most common ones first for efficiency)
-    keywords = ['def', 'class', 'import', 'from', 'if', 'else', 'elif', 'for', 'while', 'try', 'except', 'finally', 'with', 'as', 'return', 'yield', 'break', 'continue', 'pass', 'raise', 'assert', 'del', 'global', 'nonlocal', 'lambda', 'True', 'False', 'None', 'and', 'or', 'not', 'in', 'is']
+    # Escape HTML first
+    line_content = html.escape(line_content)
+    
+    # Keywords
+    keywords = ['def', 'class', 'import', 'from', 'if', 'else', 'elif', 'for', 'while', 
+                'try', 'except', 'finally', 'with', 'as', 'return', 'yield', 'break', 
+                'continue', 'pass', 'raise', 'assert', 'del', 'global', 'nonlocal', 
+                'lambda', 'True', 'False', 'None', 'and', 'or', 'not', 'in', 'is']
+    
     for keyword in keywords:
-        if keyword in line_content:
-            line_content = re.sub(r'\b' + re.escape(keyword) + r'\b', f'<span class="keyword">{keyword}</span>', line_content)
+        pattern = r'\b' + re.escape(keyword) + r'\b'
+        line_content = re.sub(pattern, f'<span class="syntax-keyword">{keyword}</span>', line_content)
     
-    # Comments (check first to avoid highlighting keywords in comments)
-    if '#' in line_content:
-        line_content = re.sub(r'#.*$', lambda m: f'<span class="comment">{m.group(0)}</span>', line_content)
+    # Comments
+    line_content = re.sub(r'(#.*$)', r'<span class="syntax-comment">\1</span>', line_content)
     
-    # Strings (only if not already in a comment)
-    if '"' in line_content and 'comment' not in line_content:
-        line_content = re.sub(r'"[^"]*"', lambda m: f'<span class="string">{m.group(0)}</span>', line_content)
-    if "'" in line_content and 'comment' not in line_content:
-        line_content = re.sub(r"'[^']*'", lambda m: f'<span class="string">{m.group(0)}</span>', line_content)
+    # Strings (avoid replacing if already highlighted)
+    if 'syntax-comment' not in line_content:
+        line_content = re.sub(r'("[^"]*")', r'<span class="syntax-string">\1</span>', line_content)
+        line_content = re.sub(r"('[^']*')", r'<span class="syntax-string">\1</span>', line_content)
     
-    # Numbers (only if not in strings or comments)
-    if any(c.isdigit() for c in line_content) and 'string' not in line_content and 'comment' not in line_content:
-        line_content = re.sub(r'\b\d+\b', lambda m: f'<span class="number">{m.group(0)}</span>', line_content)
+    # Numbers
+    if 'syntax-string' not in line_content and 'syntax-comment' not in line_content:
+        line_content = re.sub(r'\b(\d+\.?\d*)\b', r'<span class="syntax-number">\1</span>', line_content)
     
-    # Function calls (only if not in strings or comments)
-    if '(' in line_content and 'string' not in line_content and 'comment' not in line_content:
-        line_content = re.sub(r'\b([a-zA-Z_][a-zA-Z0-9_]*)\s*\(', r'<span class="function">\1</span>(', line_content)
+    # Function calls
+    if 'syntax-string' not in line_content and 'syntax-comment' not in line_content:
+        line_content = re.sub(r'\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()', 
+                             r'<span class="syntax-function">\1</span>', line_content)
     
     return line_content
+
+
+def find_functions_and_classes(source_lines):
+    """Find all functions and classes with their start and end lines using AST."""
+    try:
+        source_code = ''.join(source_lines)
+        tree = ast.parse(source_code)
+        
+        functions = []
+        
+        class FunctionVisitor(ast.NodeVisitor):
+            def visit_FunctionDef(self, node):
+                end_line = node.end_lineno if hasattr(node, 'end_lineno') else self._find_end_line(node)
+                functions.append({
+                    'name': node.name,
+                    'type': 'function',
+                    'start': node.lineno,
+                    'end': end_line,
+                    'level': 0  # We'll calculate nesting level separately
+                })
+                self.generic_visit(node)
+            
+            def visit_AsyncFunctionDef(self, node):
+                end_line = node.end_lineno if hasattr(node, 'end_lineno') else self._find_end_line(node)
+                functions.append({
+                    'name': f"async {node.name}",
+                    'type': 'function',
+                    'start': node.lineno,
+                    'end': end_line,
+                    'level': 0
+                })
+                self.generic_visit(node)
+            
+            def visit_ClassDef(self, node):
+                end_line = node.end_lineno if hasattr(node, 'end_lineno') else self._find_end_line(node)
+                functions.append({
+                    'name': node.name,
+                    'type': 'class',
+                    'start': node.lineno,
+                    'end': end_line,
+                    'level': 0
+                })
+                self.generic_visit(node)
+            
+            def _find_end_line(self, node):
+                """Fallback method to find end line for older Python versions."""
+                max_line = node.lineno
+                for child in ast.walk(node):
+                    if hasattr(child, 'lineno') and child.lineno > max_line:
+                        max_line = child.lineno
+                return min(max_line + 5, len(source_lines))  # Add some buffer
+        
+        visitor = FunctionVisitor()
+        visitor.visit(tree)
+        
+        return sorted(functions, key=lambda x: x['start'])
+        
+    except SyntaxError:
+        # Fallback to regex-based parsing for files with syntax errors
+        return find_functions_regex(source_lines)
+
+
+def find_functions_regex(source_lines):
+    """Fallback function finder using regex."""
+    functions = []
+    func_stack = []
+    
+    for i, line in enumerate(source_lines, 1):
+        # Detect function/class definition
+        func_match = re.match(r'^(\s*)(def|class|async def)\s+(\w+)', line)
+        if func_match:
+            indent = len(func_match.group(1))
+            func_type = 'class' if func_match.group(2) == 'class' else 'function'
+            func_name = func_match.group(3)
+            if func_match.group(2) == 'async def':
+                func_name = f"async {func_name}"
+            
+            # Close previous functions at same or higher indentation
+            while func_stack and func_stack[-1]['indent'] >= indent:
+                prev_func = func_stack.pop()
+                functions.append({
+                    'name': prev_func['name'],
+                    'type': prev_func['type'],
+                    'start': prev_func['start'],
+                    'end': i - 1,
+                    'level': len(func_stack)
+                })
+            
+            func_stack.append({
+                'name': func_name,
+                'type': func_type,
+                'start': i,
+                'indent': indent
+            })
+    
+    # Close remaining functions
+    while func_stack:
+        func = func_stack.pop()
+        functions.append({
+            'name': func['name'],
+            'type': func['type'],
+            'start': func['start'],
+            'end': len(source_lines),
+            'level': len(func_stack)
+        })
+    
+    return sorted(functions, key=lambda x: x['start'])
 
 
 def generate_html_footer():
     """Generate HTML footer."""
     return """
-    <div class="footer">
-        <p>Generated by Test Report System</p>
+        </div>
+        <div class="footer">
+            <p>Generated by Enhanced Coverage Report System</p>
+        </div>
     </div>
 </body>
 </html>"""
 
 
-def get_function_name_at_line(source_lines, line_number):
-    """Get the function name that contains the given line number."""
-    # Look backwards from the line to find the function definition
-    for i in range(line_number - 1, -1, -1):
-        line = source_lines[i].strip()
-        # Match function definitions (def function_name)
-        match = re.match(r'^def\s+(\w+)\s*\(', line)
-        if match:
-            return match.group(1)
-        # Match class definitions (class ClassName)
-        match = re.match(r'^class\s+(\w+)', line)
-        if match:
-            return f"class {match.group(1)}"
-    return "unknown function"
-
-
-def find_functions(source_lines):
-    """Return a list of (func_name, start_line, end_line) for all functions in the file."""
-    functions = []
-    func_stack = []
-    for i, line in enumerate(source_lines):
-        # Detect function definition
-        match = re.match(r'^(\s*)def\s+(\w+)\s*\(', line)
-        if match:
-            indent = len(match.group(1))
-            func_name = match.group(2)
-            func_stack.append((func_name, i, indent))
-        # Detect end of function by dedent
-        if func_stack:
-            curr_func = func_stack[-1]
-            curr_indent = curr_func[2]
-            if (line.strip() == '' or line.lstrip().startswith('#')):
-                continue
-            line_indent = len(line) - len(line.lstrip())
-            if line_indent <= curr_indent and i > curr_func[1]:
-                # Function ends before this line
-                func_name, start, _ = func_stack.pop()
-                functions.append((func_name, start, i-1))
-    # Handle function that goes to EOF
-    while func_stack:
-        func_name, start, _ = func_stack.pop()
-        functions.append((func_name, start, len(source_lines)-1))
-    return sorted(functions, key=lambda x: x[1])
-
-
 def generate_detailed_coverage_report():
-    """Generate a detailed coverage report with code context in HTML format."""
+    """Generate a detailed coverage report with improved styling and function grouping."""
     
     # Initialize coverage
     cov = coverage.Coverage()
@@ -198,7 +447,6 @@ def generate_detailed_coverage_report():
     for filename in cov.get_data().measured_files():
         try:
             result = cov.analysis2(filename)
-            # analysis2 returns (filename, statements, excluded, missing, missing_branches)
             analysis[filename] = result
         except Exception as e:
             print(f"Warning: Could not analyze {filename}: {e}")
@@ -206,10 +454,6 @@ def generate_detailed_coverage_report():
     
     # Start building HTML
     html_content = [generate_html_header()]
-    
-    # Title
-    html_content.append('<h1>📊 Detailed Coverage Report</h1>')
-    html_content.append('<p>This report shows all uncovered code lines with context, highlighting which lines are covered and which are not.</p>')
     
     # Overall stats
     total_statements = sum(len(stmts) for _, stmts, _, missing, _ in analysis.values())
@@ -220,7 +464,7 @@ def generate_detailed_coverage_report():
     html_content.append('<div class="stats">')
     html_content.append(f'''
     <div class="stat">
-        <div class="stat-number">{total_coverage:.2f}%</div>
+        <div class="stat-number">{total_coverage:.1f}%</div>
         <div class="stat-label">Total Coverage</div>
     </div>''')
     html_content.append(f'''
@@ -242,38 +486,36 @@ def generate_detailed_coverage_report():
     
     # Legend
     html_content.append('<div class="legend">')
-    html_content.append('<h3>Legend</h3>')
+    html_content.append('<h3>📖 Legend</h3>')
+    html_content.append('<div class="legend-items">')
     html_content.append('<div class="legend-item">')
-    html_content.append('<div class="legend-color" style="background-color: #4caf50;"></div>')
-    html_content.append('<span>Covered lines: Code that was executed during testing</span>')
+    html_content.append('<div class="legend-color" style="background-color: white; border: 2px solid #ddd;"></div>')
+    html_content.append('<span><strong>Covered lines:</strong> Code executed during testing</span>')
     html_content.append('</div>')
     html_content.append('<div class="legend-item">')
-    html_content.append('<div class="legend-color" style="background-color: #f44336;"></div>')
-    html_content.append('<span>Uncovered lines: Code that was not executed during testing</span>')
+    html_content.append('<div class="legend-color" style="background-color: #ffebee; border: 2px solid #f44336;"></div>')
+    html_content.append('<span><strong>Uncovered lines:</strong> Code not executed during testing</span>')
     html_content.append('</div>')
-    html_content.append('<div class="legend-item">')
-    html_content.append('<div class="legend-color" style="background-color: #858585;"></div>')
-    html_content.append('<span>Context lines: Code before and after uncovered lines</span>')
     html_content.append('</div>')
     html_content.append('</div>')
     
+    # Files with no coverage issues
+    files_with_perfect_coverage = []
+    
     # Process each file
+    has_issues = False
     for filename, (_, statements, excluded, missing, missing_branches) in analysis.items():
-        if not missing:  # Skip files with 100% coverage
+        if not missing:
+            files_with_perfect_coverage.append(filename)
             continue
             
-        # Skip files with very high coverage (>95%) to make report more compact
-        coverage_pct = ((len(statements) - len(missing)) / len(statements) * 100) if statements else 0
-        if coverage_pct > 95:
-            continue
-            
-        # Calculate file coverage
+        has_issues = True
         file_coverage = ((len(statements) - len(missing)) / len(statements) * 100) if statements else 0
         covered_count = len(statements) - len(missing)
         
         html_content.append('<div class="file-section">')
-        html_content.append(f'<div class="file-header">')
-        html_content.append(f'{filename} - {file_coverage:.2f}% coverage ({covered_count}/{len(statements)} lines)')
+        html_content.append('<div class="file-header">')
+        html_content.append(f'📄 {filename} — {file_coverage:.1f}% coverage ({covered_count}/{len(statements)} lines)')
         html_content.append('</div>')
         
         # Read the source file
@@ -281,31 +523,76 @@ def generate_detailed_coverage_report():
             with open(filename, 'r', encoding='utf-8') as f:
                 source_lines = f.readlines()
         except Exception as e:
-            html_content.append(f'<p><em>Unable to read source file: {filename} - {e}</em></p>')
+            html_content.append(f'<p><em>❌ Unable to read source file: {filename} - {e}</em></p>')
             html_content.append('</div>')
             continue
         
-        # Group missing lines by function
-        functions = find_functions(source_lines)
-        for func_name, func_start, func_end in functions:
-            func_lines = set(range(func_start+1, func_end+2))  # 1-based
-            missed_in_func = sorted(set(missing) & func_lines)
-            if not missed_in_func:
-                continue
-            html_content.append(f'<h4>Function: {func_name} (lines {func_start+1}-{func_end+1})</h4>')
-            html_content.append('<pre>')
-            for i in range(func_start+1, func_end+2):
-                line_content = source_lines[i-1].rstrip()
-                escaped_content = html.escape(line_content)
-                if i in missed_in_func:
-                    html_content.append(f'<span class="line-number">{i:3d}</span><span class="uncovered">{escaped_content}</span>')
-                else:
-                    html_content.append(f'<span class="line-number">{i:3d}</span>{escaped_content}')
-            html_content.append('</pre>')
+        # Find functions and classes
+        functions = find_functions_and_classes(source_lines)
+        
+        # Group missing lines by function/class
+        functions_with_issues = []
+        missing_set = set(missing)
+        
+        for func in functions:
+            func_lines = set(range(func['start'], func['end'] + 1))
+            missed_in_func = sorted(missing_set & func_lines)
+            if missed_in_func:
+                func_coverage = ((len(func_lines) - len(missed_in_func)) / len(func_lines) * 100) if func_lines else 0
+                functions_with_issues.append({
+                    **func,
+                    'missing_lines': missed_in_func,
+                    'coverage': func_coverage,
+                    'total_lines': len(func_lines)
+                })
+        
+        # Display functions with coverage issues
+        for func in functions_with_issues:
+            missing_count = len(func['missing_lines'])
+            icon = "🏛️" if func['type'] == 'class' else "⚙️"
+            
+            html_content.append('<div class="function-section">')
+            html_content.append('<div class="function-header">')
+            html_content.append(f'<span>{icon} {func["type"].title()}: {func["name"]}</span>')
+            html_content.append(f'<span class="function-stats">{func["coverage"]:.1f}% coverage, {missing_count} uncovered lines</span>')
+            html_content.append('</div>')
+            
+            html_content.append('<div class="code-block">')
+            
+            # Show the complete function
+            for line_num in range(func['start'], func['end'] + 1):
+                if line_num <= len(source_lines):
+                    line_content = source_lines[line_num - 1].rstrip()
+                    highlighted_content = apply_syntax_highlighting(line_content)
+                    
+                    is_uncovered = line_num in func['missing_lines']
+                    line_class = 'line-uncovered' if is_uncovered else 'line-covered'
+                    
+                    html_content.append(f'<div class="code-line {line_class}">')
+                    html_content.append(f'<div class="line-number">{line_num}</div>')
+                    html_content.append(f'<div class="line-content">{highlighted_content}</div>')
+                    html_content.append('</div>')
+            
+            html_content.append('</div>')
+            html_content.append('</div>')
         
         html_content.append('</div>')
     
-
+    # Show files with perfect coverage
+    if files_with_perfect_coverage:
+        html_content.append('<div class="no-coverage-files">')
+        html_content.append('<h3>✅ Files with 100% Coverage</h3>')
+        html_content.append('<ul>')
+        for filename in sorted(files_with_perfect_coverage):
+            html_content.append(f'<li>{filename}</li>')
+        html_content.append('</ul>')
+        html_content.append('</div>')
+    
+    if not has_issues:
+        html_content.append('<div class="no-coverage-files">')
+        html_content.append('<h2>🎉 Congratulations!</h2>')
+        html_content.append('<p>All measured files have 100% code coverage!</p>')
+        html_content.append('</div>')
     
     # Footer
     html_content.append(generate_html_footer())
@@ -317,7 +604,7 @@ def generate_detailed_coverage_report():
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write('\n'.join(html_content))
     
-    print(f'✅ Detailed coverage report generated: {output_file}')
+    print(f'✅ Enhanced coverage report generated: {output_file}')
     return True
 
 
