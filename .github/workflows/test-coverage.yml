@@ -122,47 +122,55 @@ jobs:
       run: |
         echo "📊 Generating test execution summary..."
 
-        # Create comprehensive test summary
+        # Create clean, focused test summary
         cat > tests/reports/test-summary.md << 'EOF'
-        # Test Execution Summary
+        # Test Results Summary
 
-        **Branch:** ${{ github.ref_name }}
-        **Commit:** ${{ github.sha }}
-        **Python Version:** ${{ matrix.python-version }}
-        **Workflow:** ${{ github.workflow }}
-        **Trigger:** ${{ github.event_name }}
+        ## Test Execution Statistics
 
-        ## Test Results
-
-        ```
         EOF
 
-        # Add test results to summary
+        # Extract and format test statistics
         if [ -f tests/reports/test-results.txt ]; then
-          echo "### Test Output" >> tests/reports/test-summary.md
+          echo "### Test Suite Overview" >> tests/reports/test-summary.md
           echo '```' >> tests/reports/test-summary.md
-          tail -20 tests/reports/test-results.txt >> tests/reports/test-summary.md
+          
+          # Extract only the statistics section
+          grep -A 10 "Test Suite Statistics" tests/reports/test-results.txt | head -11 >> tests/reports/test-summary.md
+          
           echo '```' >> tests/reports/test-summary.md
+          echo "" >> tests/reports/test-summary.md
         fi
 
-        # Add coverage summary
+        # Add coverage summary with better formatting
         if [ -f tests/reports/coverage-summary.txt ]; then
-          echo "" >> tests/reports/test-summary.md
-          echo "### Coverage Summary" >> tests/reports/test-summary.md
+          echo "### Code Coverage Report" >> tests/reports/test-summary.md
           echo '```' >> tests/reports/test-summary.md
           cat tests/reports/coverage-summary.txt >> tests/reports/test-summary.md
           echo '```' >> tests/reports/test-summary.md
+          echo "" >> tests/reports/test-summary.md
         fi
 
-        # Add metadata
-        echo "" >> tests/reports/test-summary.md
-        echo "### Metadata" >> tests/reports/test-summary.md
-        echo "- **Repository:** ${{ github.repository }}" >> tests/reports/test-summary.md
-        echo "- **Actor:** ${{ github.actor }}" >> tests/reports/test-summary.md
-
-        if [ "${{ github.event_name }}" = "pull_request" ]; then
-          echo "- **PR Number:** ${{ github.event.pull_request.number }}" >> tests/reports/test-summary.md
-          echo "- **PR Title:** ${{ github.event.pull_request.title }}" >> tests/reports/test-summary.md
+        # Add overall summary
+        echo "### Overall Results" >> tests/reports/test-summary.md
+        
+        # Extract total coverage percentage
+        if [ -f tests/reports/coverage-summary.txt ]; then
+          TOTAL_COVERAGE=$(grep "TOTAL" tests/reports/coverage-summary.txt | awk '{print $4}')
+          echo "- **Overall Coverage:** $TOTAL_COVERAGE" >> tests/reports/test-summary.md
+        fi
+        
+        # Extract test counts
+        if [ -f tests/reports/test-results.txt ]; then
+          TOTAL_TESTS=$(grep "Total test files" tests/reports/test-results.txt | awk '{print $4}')
+          UNIT_TESTS=$(grep "Unit tests" tests/reports/test-results.txt | awk '{print $3}')
+          FEATURE_TESTS=$(grep "Feature tests" tests/reports/test-results.txt | awk '{print $3}')
+          INTEGRATION_TESTS=$(grep "Integration tests" tests/reports/test-results.txt | awk '{print $3}')
+          
+          echo "- **Total Test Files:** $TOTAL_TESTS" >> tests/reports/test-summary.md
+          echo "- **Unit Tests:** $UNIT_TESTS" >> tests/reports/test-summary.md
+          echo "- **Feature Tests:** $FEATURE_TESTS" >> tests/reports/test-summary.md
+          echo "- **Integration Tests:** $INTEGRATION_TESTS" >> tests/reports/test-summary.md
         fi
 
         echo "📝 Test summary generated"
