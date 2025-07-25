@@ -2,10 +2,10 @@
 
 **Generated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 **Branch:** main
-**Commit:** 29c52eef63a76de128f5199e15607caf965ef5b0
+**Commit:** d1fec4b1669f7bf0e6edb1e842bf5a860dd4f9be
 **Python Version:** 3.9
 **Workflow:** Test Suite with Coverage Reports
-**Trigger:** push
+**Trigger:** pull_request
 
 ## Test Results
 
@@ -52,5 +52,7 @@ TOTAL                                2962    466  84.27%
 
 ### Metadata
 - **Repository:** fischerjooo/generator_project
-- **Run ID:** 16517934472
+- **Run ID:** 16518531980
 - **Actor:** fischerjooo
+- **PR Number:** 103
+- **PR Title:** Condense test coverage report commits
