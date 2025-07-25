@@ -2,7 +2,7 @@
 
 **Generated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 **Branch:** main
-**Commit:** a8eecef19922a6215febfdc81fa0b1cc979ca957
+**Commit:** 6e2703eda6125bbf6ca4ce4fe2d41b3251d50ea3
 **Python Version:** 3.9
 **Workflow:** Test Suite with Coverage Reports
 **Trigger:** push
@@ -52,5 +52,5 @@ TOTAL                                2962    466  84.27%
 
 ### Metadata
 - **Repository:** fischerjooo/generator_project
-- **Run ID:** 16517349610
+- **Run ID:** 16517359035
 - **Actor:** fischerjooo
