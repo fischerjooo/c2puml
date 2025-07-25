@@ -113,7 +113,7 @@ def generate_html_header():
             background-color: #f5f5f5;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background-color: white;
             padding: 30px;
@@ -125,11 +125,16 @@ def generate_html_header():
             border-bottom: 3px solid #3498db;
             padding-bottom: 10px;
             margin-bottom: 30px;
+            text-align: center;
         }
         h2 {
             color: #34495e;
-            margin-top: 30px;
-            margin-bottom: 15px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
         }
         h3 {
             color: #7f8c8d;
@@ -145,15 +150,20 @@ def generate_html_header():
         .stat-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px;
-            border-radius: 8px;
+            padding: 25px;
+            border-radius: 12px;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
         .stat-value {
-            font-size: 2em;
+            font-size: 2.5em;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
         .stat-label {
             font-size: 0.9em;
@@ -211,16 +221,57 @@ def generate_html_header():
         }
         .test-stats {
             background-color: #ecf0f1;
-            padding: 20px;
+            padding: 25px;
             border-radius: 8px;
             margin: 20px 0;
             font-family: 'Courier New', monospace;
             white-space: pre;
             overflow-x: auto;
+            border-left: 4px solid #3498db;
+        }
+        .navigation-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        .nav-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .nav-description {
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+        .nav-button {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .summary-section {
+            background-color: #fafafa;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+            border: 1px solid #ecf0f1;
         }
         .footer {
-            margin-top: 40px;
-            padding-top: 20px;
+            margin-top: 50px;
+            padding-top: 30px;
             border-top: 1px solid #ecf0f1;
             text-align: center;
             color: #7f8c8d;
@@ -248,7 +299,7 @@ def generate_test_summary_report():
     # File paths
     test_results_file = 'tests/reports/test-results.txt'
     coverage_summary_file = 'tests/reports/coverage-summary.txt'
-    output_file = 'tests/reports/summary.html'
+    output_file = 'tests/reports/index.html'
     
     # Extract data
     test_stats = extract_test_statistics(test_results_file)
@@ -258,7 +309,11 @@ def generate_test_summary_report():
     html_content = [generate_html_header()]
     
     # Title
-    html_content.append('<h1>🧪 Test Results Summary</h1>')
+    html_content.append('<h1>🧪 Test Reports Dashboard</h1>')
+    
+    # Summary Section
+    html_content.append('<div class="summary-section">')
+    html_content.append('<h2>📊 Test Results Summary</h2>')
     
     # Overall stats grid
     html_content.append('<div class="stats-grid">')
@@ -359,12 +414,16 @@ def generate_test_summary_report():
         except FileNotFoundError:
             html_content.append('<p>Coverage data not available</p>')
     
-    # Link to detailed coverage report
-    coverage_detail_file = 'tests/reports/coverage.html'
-    if os.path.exists(coverage_detail_file):
-        html_content.append('<h2>🔍 Detailed Analysis</h2>')
-        html_content.append('<a href="coverage.html" class="link-button">📊 View Detailed Coverage Report</a>')
-        html_content.append('<p>See uncovered code lines with context and background coloring</p>')
+    html_content.append('</div>')
+    
+    # Navigation Section
+    html_content.append('<div class="navigation-section">')
+    html_content.append('<div class="nav-title">🔍 Detailed Analysis</div>')
+    html_content.append('<div class="nav-description">')
+    html_content.append('View comprehensive coverage analysis with code context, background coloring, and line-by-line breakdown')
+    html_content.append('</div>')
+    html_content.append('<a href="coverage.html" class="nav-button">📊 View Detailed Coverage Report</a>')
+    html_content.append('</div>')
     
     # Footer
     html_content.append(generate_html_footer())
