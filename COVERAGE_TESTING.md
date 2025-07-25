@@ -6,6 +6,11 @@ This document explains how to run tests and generate coverage reports both local
 
 ### Quick Start
 
+For basic testing without coverage (fastest):
+```bash
+bash run_all_tests.sh
+```
+
 For basic testing with HTML coverage reports:
 ```bash
 ./run_tests_with_coverage.sh
@@ -97,10 +102,10 @@ pip install -r requirements-dev.txt
 
 The project includes two GitHub Actions workflows:
 
-1. **`test.yml`** - Basic testing with coverage (runs on every push/PR)
-2. **`test-coverage.yml`** - Comprehensive coverage analysis (manual trigger or PR merge)
+1. **`test.yml`** - Basic testing without coverage (runs on every push/PR)
+2. **`test-coverage.yml`** - Comprehensive coverage analysis with reports (manual trigger or PR merge)
 
-Both workflows use the same shell scripts, ensuring consistency between local and CI environments.
+The coverage workflow uses the shell scripts for consistency with local development, while the basic test workflow runs tests directly for faster execution.
 
 ### Workflow Inputs
 
