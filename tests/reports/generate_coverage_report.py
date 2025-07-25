@@ -29,52 +29,9 @@ def generate_html_header():
             line-height: 1.6;
             color: #333;
         }
-        
-        h1, h2, h3 {
-            color: #2c3e50;
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-        
-        .stat {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #3498db;
-        }
-        
-        .file-section {
-            background: white;
-            margin: 1.5rem 0;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .file-header {
-            background: #34495e;
-            color: white;
-            padding: 0.75rem 1rem;
-            margin: -1rem -1rem 1rem -1rem;
-            border-radius: 8px 8px 0 0;
-            font-weight: bold;
-        }
-        
         pre {
-            background-color: #2d2d2d;
-            color: #f8f8f2;
+            background-color: #fff;
+            color: #111;
             padding: 1rem;
             border-radius: 8px;
             overflow-x: auto;
@@ -82,26 +39,25 @@ def generate_html_header():
             font-size: 0.95rem;
             line-height: 1.5;
             margin: 1rem 0;
+            border: 1px solid #eee;
         }
-        
         code {
             white-space: pre;
         }
-        
         .line-number {
             color: #858585;
             margin-right: 1rem;
             user-select: none;
         }
-        
         .covered {
-            color: #4caf50;
+            color: #111;
         }
-        
         .uncovered {
             color: #f44336;
         }
-        
+        .context {
+            background-color: #ffeaea;
+        }
         .legend {
             background: white;
             padding: 1rem;
@@ -109,20 +65,17 @@ def generate_html_header():
             margin: 1.5rem 0;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        
         .legend-item {
             display: flex;
             align-items: center;
             margin: 0.5rem 0;
         }
-        
         .legend-color {
             width: 20px;
             height: 20px;
             margin-right: 0.5rem;
             border-radius: 3px;
         }
-        
         .footer {
             text-align: center;
             margin-top: 2rem;
@@ -319,7 +272,7 @@ def generate_detailed_coverage_report():
                 escaped_content = html.escape(line_content)
                 if i < start_line or i > end_line:
                     # This is context (covered or outside missing range)
-                    html_content.append(f'<span class="line-number">{i:3d}</span>{escaped_content}')
+                    html_content.append(f'<span class="line-number">{i:3d}</span><span class="context">{escaped_content}</span>')
                 else:
                     # This is a missing line
                     html_content.append(f'<span class="line-number">{i:3d}</span><span class="uncovered">{escaped_content}</span>')
