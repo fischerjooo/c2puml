@@ -39,3 +39,5 @@ TOTAL                                2962    466  84.27%
 - **Unit Tests:** 17
 - **Feature Tests:** 9
 - **Integration Tests:** 1
+
+📊 **[View Detailed Coverage Report](coverage.md)** - See uncovered code lines with context
