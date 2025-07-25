@@ -125,58 +125,7 @@ jobs:
     - name: 📊 Generate test execution summary
       run: |
         echo "📊 Generating test execution summary..."
-
-        # Create clean, focused test summary
-        cat > tests/reports/test-summary.md << 'EOF'
-        # Test Results Summary
-
-        ## Test Execution Statistics
-
-        EOF
-
-        # Extract and format test statistics
-        if [ -f tests/reports/test-results.txt ]; then
-          echo "### Test Suite Overview" >> tests/reports/test-summary.md
-          echo '```' >> tests/reports/test-summary.md
-          
-          # Extract only the statistics section
-          grep -A 10 "Test Suite Statistics" tests/reports/test-results.txt | head -11 >> tests/reports/test-summary.md
-          
-          echo '```' >> tests/reports/test-summary.md
-          echo "" >> tests/reports/test-summary.md
-        fi
-
-        # Add coverage summary with better formatting
-        if [ -f tests/reports/coverage-summary.txt ]; then
-          echo "### Code Coverage Report" >> tests/reports/test-summary.md
-          echo '```' >> tests/reports/test-summary.md
-          cat tests/reports/coverage-summary.txt >> tests/reports/test-summary.md
-          echo '```' >> tests/reports/test-summary.md
-          echo "" >> tests/reports/test-summary.md
-        fi
-
-        # Add overall summary
-        echo "### Overall Results" >> tests/reports/test-summary.md
-        
-        # Extract total coverage percentage
-        if [ -f tests/reports/coverage-summary.txt ]; then
-          TOTAL_COVERAGE=$(grep "TOTAL" tests/reports/coverage-summary.txt | awk '{print $4}')
-          echo "- **Overall Coverage:** $TOTAL_COVERAGE" >> tests/reports/test-summary.md
-        fi
-        
-        # Extract test counts
-        if [ -f tests/reports/test-results.txt ]; then
-          TOTAL_TESTS=$(grep "Total test files" tests/reports/test-results.txt | awk '{print $4}')
-          UNIT_TESTS=$(grep "Unit tests" tests/reports/test-results.txt | awk '{print $3}')
-          FEATURE_TESTS=$(grep "Feature tests" tests/reports/test-results.txt | awk '{print $3}')
-          INTEGRATION_TESTS=$(grep "Integration tests" tests/reports/test-results.txt | awk '{print $3}')
-          
-          echo "- **Total Test Files:** $TOTAL_TESTS" >> tests/reports/test-summary.md
-          echo "- **Unit Tests:** $UNIT_TESTS" >> tests/reports/test-summary.md
-          echo "- **Feature Tests:** $FEATURE_TESTS" >> tests/reports/test-summary.md
-          echo "- **Integration Tests:** $INTEGRATION_TESTS" >> tests/reports/test-summary.md
-        fi
-
+        python3 tests/generate_test_summary.py
         echo "📝 Test summary generated"
 
     - name: 📈 Upload coverage to Codecov (if available)
@@ -288,8 +237,8 @@ jobs:
         echo "## 🎯 Final Test Results Summary" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
 
-        if [ -f tests/reports/test-summary.md ]; then
-          cat tests/reports/test-summary.md >> $GITHUB_STEP_SUMMARY
+        if [ -f tests/reports/summary.md ]; then
+          cat tests/reports/summary.md >> $GITHUB_STEP_SUMMARY
         fi
 
         echo "" >> $GITHUB_STEP_SUMMARY
