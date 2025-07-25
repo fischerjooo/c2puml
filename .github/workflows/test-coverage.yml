@@ -1,9 +1,7 @@
 name: Test Suite with Coverage Reports
 
 on:
-  # Automatic triggers
-  push:
-    branches: [ main, master ]
+  # Automatic triggers - only on closed and merged pull requests
   pull_request:
     branches: [ main, master ]
     types: [closed]  # Trigger when PR is closed (merged)
