@@ -66,42 +66,102 @@ cat > "$REPORTS_DIR/coverage-index.html" << 'EOF'
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coverage Reports Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        .card { background: #f5f5f5; padding: 20px; margin: 15px 0; border-radius: 8px; }
-        .card h3 { margin-top: 0; color: #333; }
-        .card p { color: #666; margin: 10px 0; }
-        .btn { background: #007cba; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block; }
-        .btn:hover { background: #005a87; }
-        .timestamp { color: #888; font-size: 0.9em; }
+        body {
+            font-family: monospace;
+            line-height: 1.4;
+            margin: 0;
+            padding: 15px;
+            background-color: white;
+            color: #333;
+            font-size: 14px;
+        }
+        h1, h2, h3 {
+            color: #333;
+            font-weight: normal;
+            margin: 20px 0 10px 0;
+            padding: 0;
+            border: none;
+            background: none;
+            font-family: monospace;
+        }
+        h1 {
+            font-size: 18px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+        h3 {
+            font-size: 14px;
+            margin: 15px 0 5px 0;
+        }
+        p {
+            margin: 5px 0 10px 0;
+            color: #666;
+            font-size: 13px;
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+            display: block;
+            margin: 5px 0;
+            padding: 3px 0;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .timestamp {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+        .report-section {
+            margin: 20px 0;
+            padding: 10px 0;
+            border-bottom: 1px dotted #ccc;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+                font-size: 13px;
+            }
+            h1 {
+                font-size: 16px;
+            }
+            h3 {
+                font-size: 13px;
+            }
+            p {
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>📊 Code Coverage Reports</h1>
+    <h1>Coverage Reports Dashboard</h1>
     <p class="timestamp">Generated: $(date)</p>
     
-    <div class="card">
-        <h3>🌐 Interactive HTML Report</h3>
+    <div class="report-section">
+        <h3>Interactive HTML Report</h3>
         <p>Complete coverage report with syntax highlighting and interactive features.</p>
-        <a href="coverage-html/index.html" class="btn">View HTML Report</a>
+        <a href="coverage-html/index.html">View HTML Report</a>
     </div>
     
-    <div class="card">
-        <h3>📝 Annotated Source Files</h3>
+    <div class="report-section">
+        <h3>Annotated Source Files</h3>
         <p>Source code with coverage annotations showing covered/uncovered lines.</p>
-        <a href="coverage-annotated/" class="btn">View Annotated Files</a>
+        <a href="coverage-annotated/">View Annotated Files</a>
     </div>
     
-    <div class="card">
-        <h3>📄 Text Reports</h3>
+    <div class="report-section">
+        <h3>Text Reports</h3>
         <p>Coverage summary and detailed missing line information in text format.</p>
-        <a href="coverage-summary.txt" class="btn">Summary</a>
-        <a href="coverage-detailed.txt" class="btn">Detailed</a>
+        <a href="coverage-summary.txt">Coverage Summary</a>
+        <a href="coverage-detailed.txt">Detailed Report</a>
     </div>
     
-    <div class="card">
-        <h3>🧪 Test Execution Results</h3>
+    <div class="report-section">
+        <h3>Test Execution Results</h3>
         <p>Complete test execution logs and results.</p>
-        <a href="test-results.txt" class="btn">View Test Results</a>
+        <a href="test-results.txt">View Test Results</a>
     </div>
 </body>
 </html>

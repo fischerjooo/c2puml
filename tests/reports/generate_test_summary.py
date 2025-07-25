@@ -97,7 +97,7 @@ def extract_coverage_summary(coverage_summary_file):
 
 
 def generate_html_header():
-    """Generate HTML header with CSS styling."""
+    """Generate HTML header with minimal, mobile-friendly styling."""
     return """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -106,175 +106,126 @@ def generate_html_header():
     <title>Test Results Summary</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
+            font-family: monospace;
+            line-height: 1.4;
             margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
+            padding: 15px;
+            background-color: white;
+            color: #333;
+            font-size: 14px;
         }
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        h1, h2, h3 {
+            color: #333;
+            font-weight: normal;
+            margin: 20px 0 10px 0;
+            padding: 0;
+            border: none;
+            background: none;
+            font-family: monospace;
         }
         h1 {
-            color: #2c3e50;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 10px;
-            margin-bottom: 30px;
-            text-align: center;
+            font-size: 18px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
         }
         h2 {
-            color: #34495e;
-            margin-top: 40px;
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #ecf0f1;
-            border-radius: 8px;
-            border-left: 4px solid #3498db;
+            font-size: 16px;
+            margin-top: 30px;
         }
         h3 {
-            color: #7f8c8d;
-            margin-top: 25px;
-            margin-bottom: 10px;
+            font-size: 14px;
         }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
+        .stats-list {
+            margin: 15px 0;
+            padding: 0;
+            list-style: none;
         }
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-        .stat-value {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
+        .stats-list li {
+            margin: 3px 0;
+            padding: 3px 0;
+            border-bottom: 1px dotted #ddd;
         }
         .coverage-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 15px 0;
+            font-size: 12px;
+            font-family: monospace;
         }
         .coverage-table th {
-            background-color: #34495e;
-            color: white;
-            padding: 12px;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 6px 4px;
             text-align: left;
-            font-weight: 600;
+            font-weight: normal;
+            border: 1px solid #ccc;
         }
         .coverage-table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #ecf0f1;
+            padding: 4px;
+            border: 1px solid #ccc;
+            vertical-align: top;
         }
-        .coverage-table tr:hover {
-            background-color: #f8f9fa;
-        }
-        .coverage-high {
-            color: #27ae60;
-            font-weight: bold;
-        }
-        .coverage-medium {
-            color: #f39c12;
-            font-weight: bold;
-        }
-        .coverage-low {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-        .link-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 6px;
-            margin: 20px 0;
-            transition: transform 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .link-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        .coverage-table tr:nth-child(even) {
+            background-color: #fafafa;
         }
         .test-stats {
-            background-color: #ecf0f1;
-            padding: 25px;
-            border-radius: 8px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
+            background-color: #f8f8f8;
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            font-family: monospace;
             white-space: pre;
             overflow-x: auto;
-            border-left: 4px solid #3498db;
+            font-size: 12px;
         }
-        .navigation-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 12px;
-            margin: 40px 0;
-            text-align: center;
+        .nav-links {
+            margin: 20px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
         }
-        .nav-title {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-bottom: 20px;
+        .nav-links h3 {
+            margin: 0 0 10px 0;
         }
-        .nav-description {
-            margin-bottom: 25px;
-            opacity: 0.9;
-        }
-        .nav-button {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 15px 30px;
+        .nav-links a {
+            display: block;
+            color: #0066cc;
             text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: all 0.3s;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            margin: 5px 0;
+            padding: 3px 0;
         }
-        .nav-button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        .summary-section {
-            background-color: #fafafa;
-            padding: 25px;
-            border-radius: 8px;
-            margin: 30px 0;
-            border: 1px solid #ecf0f1;
+        .nav-links a:hover {
+            text-decoration: underline;
         }
         .footer {
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 1px solid #ecf0f1;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #ccc;
+            font-size: 12px;
+            color: #666;
             text-align: center;
-            color: #7f8c8d;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+                font-size: 13px;
+            }
+            .coverage-table {
+                font-size: 10px;
+            }
+            .coverage-table th,
+            .coverage-table td {
+                padding: 2px;
+            }
+            .test-stats {
+                font-size: 10px;
+                padding: 8px;
+            }
         }
     </style>
 </head>
@@ -309,52 +260,28 @@ def generate_test_summary_report():
     html_content = [generate_html_header()]
     
     # Title
-    html_content.append('<h1>🧪 Test Reports Dashboard</h1>')
+    html_content.append('<h1>Test Reports Dashboard</h1>')
     
     # Summary Section
-    html_content.append('<div class="summary-section">')
-    html_content.append('<h2>📊 Test Results Summary</h2>')
+    html_content.append('<h2>Test Results Summary</h2>')
     
-    # Overall stats grid
-    html_content.append('<div class="stats-grid">')
+    # Overall stats list
+    html_content.append('<ul class="stats-list">')
     
     if coverage_data['coverage_percentage'] != '0.00%':
-        html_content.append(f'''
-        <div class="stat-card">
-            <div class="stat-value">{coverage_data["coverage_percentage"]}</div>
-            <div class="stat-label">Overall Coverage</div>
-        </div>''')
+        html_content.append(f'<li>Overall Coverage: {coverage_data["coverage_percentage"]}</li>')
     
     if test_stats['total_files'] != '0':
-        html_content.append(f'''
-        <div class="stat-card">
-            <div class="stat-value">{test_stats["total_files"]}</div>
-            <div class="stat-label">Total Test Files</div>
-        </div>''')
-        
-        html_content.append(f'''
-        <div class="stat-card">
-            <div class="stat-value">{test_stats["unit_tests"]}</div>
-            <div class="stat-label">Unit Tests</div>
-        </div>''')
-        
-        html_content.append(f'''
-        <div class="stat-card">
-            <div class="stat-value">{test_stats["feature_tests"]}</div>
-            <div class="stat-label">Feature Tests</div>
-        </div>''')
-        
-        html_content.append(f'''
-        <div class="stat-card">
-            <div class="stat-value">{test_stats["integration_tests"]}</div>
-            <div class="stat-label">Integration Tests</div>
-        </div>''')
+        html_content.append(f'<li>Total Test Files: {test_stats["total_files"]}</li>')
+        html_content.append(f'<li>Unit Tests: {test_stats["unit_tests"]}</li>')
+        html_content.append(f'<li>Feature Tests: {test_stats["feature_tests"]}</li>')
+        html_content.append(f'<li>Integration Tests: {test_stats["integration_tests"]}</li>')
     
-    html_content.append('</div>')
+    html_content.append('</ul>')
     
     # Test suite overview
     if test_stats['total_files'] != '0':
-        html_content.append('<h2>📊 Test Suite Overview</h2>')
+        html_content.append('<h2>Test Suite Overview</h2>')
         html_content.append('<div class="test-stats">')
         html_content.append('--------------------------------------------------')
         html_content.append('              Test Suite Statistics               ')
@@ -368,7 +295,7 @@ def generate_test_summary_report():
     
     # Coverage summary
     if coverage_data['coverage_percentage'] != '0.00%':
-        html_content.append('<h2>📈 Code Coverage Report</h2>')
+        html_content.append('<h2>Code Coverage Report</h2>')
         
         try:
             with open(coverage_summary_file, 'r', encoding='utf-8') as f:
@@ -394,18 +321,10 @@ def generate_test_summary_report():
                         coverage = parts[3]
                         missing_lines = ' '.join(parts[4:]) if len(parts) > 4 else ''
                         
-                        # Determine coverage class
-                        if coverage == '100.00%':
-                            coverage_class = 'coverage-high'
-                        elif float(coverage.replace('%', '')) >= 80:
-                            coverage_class = 'coverage-medium'
-                        else:
-                            coverage_class = 'coverage-low'
-                        
                         html_content.append(f'<td>{filename}</td>')
                         html_content.append(f'<td>{statements}</td>')
                         html_content.append(f'<td>{missing}</td>')
-                        html_content.append(f'<td class="{coverage_class}">{coverage}</td>')
+                        html_content.append(f'<td>{coverage}</td>')
                         html_content.append(f'<td style="font-family: monospace; font-size: 0.9em;">{missing_lines}</td>')
                         html_content.append('</tr>')
             
@@ -414,16 +333,11 @@ def generate_test_summary_report():
         except FileNotFoundError:
             html_content.append('<p>Coverage data not available</p>')
     
-    html_content.append('</div>')
-    
     # Navigation Section
-    html_content.append('<div class="navigation-section">')
-    html_content.append('<div class="nav-title">🔍 Detailed Analysis</div>')
-    html_content.append('<div class="nav-description">')
-    html_content.append('View comprehensive coverage analysis with code context, background coloring, and line-by-line breakdown')
-    html_content.append('</div>')
-    html_content.append('<a href="coverage-index.html" class="nav-button">📊 View Coverage Reports Dashboard</a>')
-    html_content.append('<a href="coverage-html/index.html" class="nav-button">📈 Interactive HTML Coverage</a>')
+    html_content.append('<div class="nav-links">')
+    html_content.append('<h3>Coverage Reports</h3>')
+    html_content.append('<a href="coverage-index.html">Coverage Reports Dashboard</a>')
+    html_content.append('<a href="coverage-html/index.html">Interactive HTML Coverage</a>')
     html_content.append('</div>')
     
     # Footer
