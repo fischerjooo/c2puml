@@ -134,11 +134,45 @@ Coverage analysis is configured via `.coveragerc`:
 - **Developer friendly**: Clear, actionable coverage information
 - **Quality assurance**: Ensures all code changes are properly tested
 
+## ⚙️ Setup Requirements
+
+### Authentication Configuration
+
+For the workflow to commit coverage reports back to the repository, proper authentication must be configured:
+
+#### Option 1: Personal Access Token (Recommended)
+1. **Create a Personal Access Token**:
+   - Go to GitHub → Settings → Developer settings → Personal access tokens
+   - Generate a new token with `repo` scope
+   
+2. **Add as Repository Secret**:
+   - Go to your repository → Settings → Secrets and variables → Actions
+   - Add a new secret named `PERSONAL_ACCESS_TOKEN`
+   - Paste your token as the value
+
+#### Option 2: GitHub Token (Default)
+- The workflow will automatically use the default `GITHUB_TOKEN`
+- This has limited permissions but should work for most cases
+- You may see warning messages about PAT not being configured
+
+### Repository Permissions
+Ensure the workflow has necessary permissions:
+- `contents: write` - To commit coverage reports
+- `pull-requests: write` - To handle PR-triggered runs
+
+These are automatically configured in the workflow file.
+
 ## 🚨 Troubleshooting
 
 ### Common Issues
 
-#### 1. Coverage Not Generated
+#### 1. Authentication Failures
+```bash
+# Error: Permission denied when pushing coverage reports
+# Solution: Configure PERSONAL_ACCESS_TOKEN as described above
+```
+
+#### 2. Coverage Not Generated
 ```bash
 # Check if coverage tools are installed
 pip install coverage pytest-cov
@@ -147,10 +181,13 @@ pip install coverage pytest-cov
 python run_all_tests.py --coverage --help
 ```
 
-#### 2. Workflow Permissions
-Ensure the repository has write permissions for GitHub Actions to commit reports.
+#### 3. Workflow Permissions
+```bash
+# Error: Workflow cannot commit changes
+# Solution: Verify repository permissions and PAT configuration
+```
 
-#### 3. Missing Dependencies
+#### 4. Missing Dependencies
 The workflow installs all required dependencies, but local testing may need:
 ```bash
 pip install -r requirements-dev.txt
