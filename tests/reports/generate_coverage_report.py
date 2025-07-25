@@ -9,6 +9,7 @@ import os
 import sys
 from pathlib import Path
 from datetime import datetime
+import html
 
 
 def generate_html_header():
@@ -315,14 +316,13 @@ def generate_detailed_coverage_report():
             
             for i in range(context_start, context_end + 1):
                 line_content = source_lines[i-1].rstrip()
-                highlighted_content = apply_syntax_highlighting(line_content)
-                
+                escaped_content = html.escape(line_content)
                 if i < start_line or i > end_line:
                     # This is context (covered or outside missing range)
-                    html_content.append(f'<span class="line-number">{i:3d}</span>{highlighted_content}')
+                    html_content.append(f'<span class="line-number">{i:3d}</span>{escaped_content}')
                 else:
                     # This is a missing line
-                    html_content.append(f'<span class="line-number">{i:3d}</span><span class="uncovered">{highlighted_content}</span>')
+                    html_content.append(f'<span class="line-number">{i:3d}</span><span class="uncovered">{escaped_content}</span>')
             
             html_content.append('</pre>')
         
