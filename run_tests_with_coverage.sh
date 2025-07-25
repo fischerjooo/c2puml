@@ -100,17 +100,30 @@ EOF
 
 # Extract test results from log
 if [ -f "tests/reports/test-output.log" ]; then
-    # Look for unittest test results
+    # Look for unittest test results summary line
     if grep -q "Ran [0-9]* test" tests/reports/test-output.log; then
         TEST_SUMMARY=$(grep -E "Ran [0-9]* test" tests/reports/test-output.log | tail -1)
         echo "$TEST_SUMMARY" >> tests/reports/test-summary.txt
         
+        # Extract the actual test count from the summary
+        ACTUAL_TEST_COUNT=$(echo "$TEST_SUMMARY" | grep -oE "[0-9]+" | head -1)
+        
         # Check for OK or FAILED
-        if grep -q "OK" tests/reports/test-output.log; then
+        if grep -q "^OK$" tests/reports/test-output.log; then
             echo "Status: OK - All tests passed" >> tests/reports/test-summary.txt
+            FAILED_COUNT=0
+            PASSED_COUNT=$ACTUAL_TEST_COUNT
         elif grep -q "FAILED" tests/reports/test-output.log; then
             FAILURES=$(grep -E "FAILED \(.*\)" tests/reports/test-output.log | tail -1)
             echo "Status: FAILED - $FAILURES" >> tests/reports/test-summary.txt
+            # Extract failure count
+            FAILED_COUNT=$(echo "$FAILURES" | grep -oE "failures=[0-9]+" | grep -oE "[0-9]+" || echo "0")
+            ERROR_COUNT=$(echo "$FAILURES" | grep -oE "errors=[0-9]+" | grep -oE "[0-9]+" || echo "0")
+            FAILED_COUNT=$((FAILED_COUNT + ERROR_COUNT))
+            PASSED_COUNT=$((ACTUAL_TEST_COUNT - FAILED_COUNT))
+        else
+            FAILED_COUNT=0
+            PASSED_COUNT=$ACTUAL_TEST_COUNT
         fi
         echo "" >> tests/reports/test-summary.txt
     fi
@@ -123,20 +136,22 @@ if [ -f "tests/reports/test-output.log" ]; then
         echo "" >> tests/reports/test-summary.txt
     fi
     
-    # Extract detailed test counts
-    TOTAL_TESTS=$(grep -E "test_.*\(.*\)" tests/reports/test-output.log | wc -l || echo "0")
-    PASSED_TESTS=$(grep -E "\.\.\. ok$" tests/reports/test-output.log | wc -l || echo "0")
-    FAILED_TESTS=$(grep -E "FAILED|ERROR" tests/reports/test-output.log | wc -l || echo "0")
-    SKIPPED_TESTS=$(grep -E "\.\.\. skipped" tests/reports/test-output.log | wc -l || echo "0")
+    # Extract unittest summary if available
+    if grep -q "unittest Summary" tests/reports/test-output.log; then
+        echo "Unittest Summary" >> tests/reports/test-summary.txt
+        echo "----------------" >> tests/reports/test-summary.txt
+        grep -A3 "unittest Summary" tests/reports/test-output.log | tail -3 >> tests/reports/test-summary.txt
+        echo "" >> tests/reports/test-summary.txt
+    fi
     
-    if [ "$TOTAL_TESTS" -gt 0 ]; then
+    # Use the actual counts from the test run
+    if [ -n "$ACTUAL_TEST_COUNT" ]; then
         echo "Detailed Test Count" >> tests/reports/test-summary.txt
         echo "-------------------" >> tests/reports/test-summary.txt
         cat >> tests/reports/test-summary.txt << EOF
-Total Tests Run: $TOTAL_TESTS
-Passed: $PASSED_TESTS
-Failed: $FAILED_TESTS
-Skipped: $SKIPPED_TESTS
+Total Tests Run: ${ACTUAL_TEST_COUNT:-0}
+Passed: ${PASSED_COUNT:-0}
+Failed: ${FAILED_COUNT:-0}
 EOF
         echo "" >> tests/reports/test-summary.txt
     fi

@@ -1,0 +1,1451 @@
+
+======================================================================
+                 🧪 C to PlantUML Converter Test Suite                 
+======================================================================
+Working directory: /workspace
+Python version: 3.13.3 (main, Apr  8 2025, 19:55:40) [GCC 14.2.0]
+Script directory: /workspace
+
+--------------------------------------------------
+              Checking Dependencies               
+--------------------------------------------------
+❌ pytest is not available
+❌ coverage is not available
+⚠️  Missing dependencies: pytest, coverage
+ℹ️  Install with: pip install pytest coverage
+
+--------------------------------------------------
+           Running Tests with unittest            
+--------------------------------------------------
+test_generate_command_isolation (feature.test_cli_feature.TestCLIFeature.test_generate_command_isolation)
+Test that generate command works when called independently without model files ... 2025-07-25 20:28:34,671 - root - INFO - Using config: /tmp/tmpf6ih3c8v/config.json
+2025-07-25 20:28:34,671 - root - INFO - Output folder: /tmp/tmpf6ih3c8v/output
+2025-07-25 20:28:34,671 - root - ERROR - No model file found for generation.
+
+
+ok
+test_generate_fallback_to_model (feature.test_cli_feature.TestCLIFeature.test_generate_fallback_to_model) ... 2025-07-25 20:28:34,714 - root - INFO - Using config: /tmp/tmpdqw78wz_/config.json
+2025-07-25 20:28:34,714 - root - INFO - Output folder: /tmp/tmpdqw78wz_/output
+2025-07-25 20:28:34,715 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
+2025-07-25 20:28:34,715 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmpdqw78wz_
+2025-07-25 20:28:34,715 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpdqw78wz_
+2025-07-25 20:28:34,715 - c_to_plantuml.parser - INFO - Using include depth: 1
+2025-07-25 20:28:34,716 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:34,716 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:34,716 - c_to_plantuml.parser - INFO - Iteration 1: Added 0 new files
+2025-07-25 20:28:34,716 - c_to_plantuml.parser - INFO - No new files found in iteration 1, stopping early
+2025-07-25 20:28:34,716 - c_to_plantuml.parser - INFO - Final file list: 1 files
+2025-07-25 20:28:34,716 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:34,716 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:34,716 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmpdqw78wz_: 1 files
+2025-07-25 20:28:34,717 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:34,717 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:34,717 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:34,717 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpdqw78wz_/output/model.json
+2025-07-25 20:28:34,717 - c_to_plantuml.parser - INFO - Found 1 total files across 1 source folder(s)
+2025-07-25 20:28:34,717 - c_to_plantuml.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
+2025-07-25 20:28:34,717 - root - INFO - Model saved to: /tmp/tmpdqw78wz_/output/model.json
+
+
+2025-07-25 20:28:34,764 - root - INFO - Using config: /tmp/tmpdqw78wz_/config.json
+2025-07-25 20:28:34,764 - root - INFO - Output folder: /tmp/tmpdqw78wz_/output
+2025-07-25 20:28:34,765 - root - INFO - PlantUML generation complete! Output in: /tmp/tmpdqw78wz_/output
+
+
+ok
+test_generate_prefers_transformed (feature.test_cli_feature.TestCLIFeature.test_generate_prefers_transformed) ... 2025-07-25 20:28:34,809 - root - INFO - Using config: /tmp/tmp1gu_6qi5/config.json
+2025-07-25 20:28:34,810 - root - INFO - Output folder: /tmp/tmp1gu_6qi5/output
+2025-07-25 20:28:34,810 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
+2025-07-25 20:28:34,810 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmp1gu_6qi5
+2025-07-25 20:28:34,810 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmp1gu_6qi5
+2025-07-25 20:28:34,810 - c_to_plantuml.parser - INFO - Using include depth: 1
+2025-07-25 20:28:34,811 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:34,811 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:34,811 - c_to_plantuml.parser - INFO - Iteration 1: Added 0 new files
+2025-07-25 20:28:34,811 - c_to_plantuml.parser - INFO - No new files found in iteration 1, stopping early
+2025-07-25 20:28:34,811 - c_to_plantuml.parser - INFO - Final file list: 1 files
+2025-07-25 20:28:34,811 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:34,812 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:34,812 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmp1gu_6qi5: 1 files
+2025-07-25 20:28:34,812 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:34,812 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:34,812 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:34,812 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmp1gu_6qi5/output/model.json
+2025-07-25 20:28:34,812 - c_to_plantuml.parser - INFO - Found 1 total files across 1 source folder(s)
+2025-07-25 20:28:34,812 - c_to_plantuml.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
+2025-07-25 20:28:34,812 - root - INFO - Model saved to: /tmp/tmp1gu_6qi5/output/model.json
+
+
+2025-07-25 20:28:34,856 - root - INFO - Using config: /tmp/tmp1gu_6qi5/config.json
+2025-07-25 20:28:34,856 - root - INFO - Output folder: /tmp/tmp1gu_6qi5/output
+2025-07-25 20:28:34,856 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmp1gu_6qi5/output/model.json
+2025-07-25 20:28:34,856 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:34,856 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 1 files
+2025-07-25 20:28:34,857 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmp1gu_6qi5/output/model_transformed.json
+2025-07-25 20:28:34,857 - root - INFO - Transformed model saved to: /tmp/tmp1gu_6qi5/output/model_transformed.json
+
+
+2025-07-25 20:28:34,899 - root - INFO - Using config: /tmp/tmp1gu_6qi5/config.json
+2025-07-25 20:28:34,899 - root - INFO - Output folder: /tmp/tmp1gu_6qi5/output
+2025-07-25 20:28:34,899 - root - INFO - PlantUML generation complete! Output in: /tmp/tmp1gu_6qi5/output
+
+
+ok
+test_parse_only (feature.test_cli_feature.TestCLIFeature.test_parse_only) ... 2025-07-25 20:28:34,948 - root - INFO - Using config: /tmp/tmp5585zbai/config.json
+2025-07-25 20:28:34,948 - root - INFO - Output folder: /tmp/tmp5585zbai/output
+2025-07-25 20:28:34,949 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
+2025-07-25 20:28:34,949 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmp5585zbai
+2025-07-25 20:28:34,949 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmp5585zbai
+2025-07-25 20:28:34,949 - c_to_plantuml.parser - INFO - Using include depth: 1
+2025-07-25 20:28:34,950 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:34,950 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:34,950 - c_to_plantuml.parser - INFO - Iteration 1: Added 0 new files
+2025-07-25 20:28:34,950 - c_to_plantuml.parser - INFO - No new files found in iteration 1, stopping early
+2025-07-25 20:28:34,950 - c_to_plantuml.parser - INFO - Final file list: 1 files
+2025-07-25 20:28:34,950 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:34,950 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:34,950 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmp5585zbai: 1 files
+2025-07-25 20:28:34,950 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:34,951 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:34,951 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:34,951 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmp5585zbai/output/model.json
+2025-07-25 20:28:34,951 - c_to_plantuml.parser - INFO - Found 1 total files across 1 source folder(s)
+2025-07-25 20:28:34,951 - c_to_plantuml.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
+2025-07-25 20:28:34,951 - root - INFO - Model saved to: /tmp/tmp5585zbai/output/model.json
+
+
+ok
+test_transform_only (feature.test_cli_feature.TestCLIFeature.test_transform_only) ... 2025-07-25 20:28:34,993 - root - INFO - Using config: /tmp/tmppnn3bglv/config.json
+2025-07-25 20:28:34,994 - root - INFO - Output folder: /tmp/tmppnn3bglv/output
+2025-07-25 20:28:34,994 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
+2025-07-25 20:28:34,994 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmppnn3bglv
+2025-07-25 20:28:34,994 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmppnn3bglv
+2025-07-25 20:28:34,994 - c_to_plantuml.parser - INFO - Using include depth: 1
+2025-07-25 20:28:34,995 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:34,995 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:34,995 - c_to_plantuml.parser - INFO - Iteration 1: Added 0 new files
+2025-07-25 20:28:34,995 - c_to_plantuml.parser - INFO - No new files found in iteration 1, stopping early
+2025-07-25 20:28:34,995 - c_to_plantuml.parser - INFO - Final file list: 1 files
+2025-07-25 20:28:34,995 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:34,996 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:34,996 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmppnn3bglv: 1 files
+2025-07-25 20:28:34,996 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:34,996 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:34,996 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:34,996 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmppnn3bglv/output/model.json
+2025-07-25 20:28:34,996 - c_to_plantuml.parser - INFO - Found 1 total files across 1 source folder(s)
+2025-07-25 20:28:34,996 - c_to_plantuml.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
+2025-07-25 20:28:34,996 - root - INFO - Model saved to: /tmp/tmppnn3bglv/output/model.json
+
+
+2025-07-25 20:28:35,039 - root - INFO - Using config: /tmp/tmppnn3bglv/config.json
+2025-07-25 20:28:35,039 - root - INFO - Output folder: /tmp/tmppnn3bglv/output
+2025-07-25 20:28:35,039 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmppnn3bglv/output/model.json
+2025-07-25 20:28:35,039 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,039 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 1 files
+2025-07-25 20:28:35,040 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmppnn3bglv/output/model_transformed.json
+2025-07-25 20:28:35,040 - root - INFO - Transformed model saved to: /tmp/tmppnn3bglv/output/model_transformed.json
+
+
+ok
+test_full_workflow_default (feature.test_cli_modes.TestCLIModes.test_full_workflow_default) ... 2025-07-25 20:28:35,082 - root - INFO - Using config: /tmp/tmp9siu7yet/config.json
+2025-07-25 20:28:35,082 - root - INFO - Output folder: /tmp/tmp9siu7yet/output
+2025-07-25 20:28:35,083 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
+2025-07-25 20:28:35,083 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmp9siu7yet
+2025-07-25 20:28:35,083 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmp9siu7yet
+2025-07-25 20:28:35,083 - c_to_plantuml.parser - INFO - Using include depth: 1
+2025-07-25 20:28:35,084 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:35,084 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:35,084 - c_to_plantuml.parser - INFO - Iteration 1: Added 0 new files
+2025-07-25 20:28:35,084 - c_to_plantuml.parser - INFO - No new files found in iteration 1, stopping early
+2025-07-25 20:28:35,084 - c_to_plantuml.parser - INFO - Final file list: 1 files
+2025-07-25 20:28:35,084 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:35,084 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:35,084 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmp9siu7yet: 1 files
+2025-07-25 20:28:35,085 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,085 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,085 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,085 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmp9siu7yet/output/model.json
+2025-07-25 20:28:35,085 - c_to_plantuml.parser - INFO - Found 1 total files across 1 source folder(s)
+2025-07-25 20:28:35,085 - c_to_plantuml.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
+2025-07-25 20:28:35,085 - root - INFO - Model saved to: /tmp/tmp9siu7yet/output/model.json
+2025-07-25 20:28:35,085 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmp9siu7yet/output/model.json
+2025-07-25 20:28:35,085 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,085 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 1 files
+2025-07-25 20:28:35,085 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmp9siu7yet/output/model_transformed.json
+2025-07-25 20:28:35,085 - root - INFO - Transformed model saved to: /tmp/tmp9siu7yet/output/model_transformed.json
+2025-07-25 20:28:35,086 - root - INFO - PlantUML generation complete! Output in: /tmp/tmp9siu7yet/output
+2025-07-25 20:28:35,086 - root - INFO - Complete workflow finished successfully!
+
+
+ok
+test_generate_mode_fallback_to_model (feature.test_cli_modes.TestCLIModes.test_generate_mode_fallback_to_model) ... 2025-07-25 20:28:35,133 - root - INFO - Using config: /tmp/tmpm_ky2dqp/config.json
+2025-07-25 20:28:35,133 - root - INFO - Output folder: /tmp/tmpm_ky2dqp/output
+2025-07-25 20:28:35,134 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
+2025-07-25 20:28:35,134 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmpm_ky2dqp
+2025-07-25 20:28:35,134 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpm_ky2dqp
+2025-07-25 20:28:35,134 - c_to_plantuml.parser - INFO - Using include depth: 1
+2025-07-25 20:28:35,135 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:35,135 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:35,135 - c_to_plantuml.parser - INFO - Iteration 1: Added 0 new files
+2025-07-25 20:28:35,135 - c_to_plantuml.parser - INFO - No new files found in iteration 1, stopping early
+2025-07-25 20:28:35,135 - c_to_plantuml.parser - INFO - Final file list: 1 files
+2025-07-25 20:28:35,135 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:35,135 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:35,135 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmpm_ky2dqp: 1 files
+2025-07-25 20:28:35,136 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,136 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,136 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,136 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpm_ky2dqp/output/model.json
+2025-07-25 20:28:35,136 - c_to_plantuml.parser - INFO - Found 1 total files across 1 source folder(s)
+2025-07-25 20:28:35,136 - c_to_plantuml.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
+2025-07-25 20:28:35,136 - root - INFO - Model saved to: /tmp/tmpm_ky2dqp/output/model.json
+
+
+2025-07-25 20:28:35,179 - root - INFO - Using config: /tmp/tmpm_ky2dqp/config.json
+2025-07-25 20:28:35,179 - root - INFO - Output folder: /tmp/tmpm_ky2dqp/output
+2025-07-25 20:28:35,179 - root - INFO - PlantUML generation complete! Output in: /tmp/tmpm_ky2dqp/output
+
+
+ok
+test_generate_mode_isolation (feature.test_cli_modes.TestCLIModes.test_generate_mode_isolation)
+Test that generate mode works when called independently without model files ... 2025-07-25 20:28:35,222 - root - INFO - Using config: /tmp/tmpv7tbjf1t/config.json
+2025-07-25 20:28:35,222 - root - INFO - Output folder: /tmp/tmpv7tbjf1t/output
+2025-07-25 20:28:35,222 - root - ERROR - No model file found for generation.
+
+
+ok
+test_generate_mode_prefers_transformed (feature.test_cli_modes.TestCLIModes.test_generate_mode_prefers_transformed) ... 2025-07-25 20:28:35,264 - root - INFO - Using config: /tmp/tmptw79924i/config.json
+2025-07-25 20:28:35,264 - root - INFO - Output folder: /tmp/tmptw79924i/output
+2025-07-25 20:28:35,265 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
+2025-07-25 20:28:35,265 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmptw79924i
+2025-07-25 20:28:35,265 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmptw79924i
+2025-07-25 20:28:35,265 - c_to_plantuml.parser - INFO - Using include depth: 1
+2025-07-25 20:28:35,266 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:35,266 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:35,266 - c_to_plantuml.parser - INFO - Iteration 1: Added 0 new files
+2025-07-25 20:28:35,266 - c_to_plantuml.parser - INFO - No new files found in iteration 1, stopping early
+2025-07-25 20:28:35,266 - c_to_plantuml.parser - INFO - Final file list: 1 files
+2025-07-25 20:28:35,266 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:35,266 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:35,266 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmptw79924i: 1 files
+2025-07-25 20:28:35,267 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,267 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,267 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,267 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmptw79924i/output/model.json
+2025-07-25 20:28:35,267 - c_to_plantuml.parser - INFO - Found 1 total files across 1 source folder(s)
+2025-07-25 20:28:35,267 - c_to_plantuml.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
+2025-07-25 20:28:35,267 - root - INFO - Model saved to: /tmp/tmptw79924i/output/model.json
+
+
+2025-07-25 20:28:35,312 - root - INFO - Using config: /tmp/tmptw79924i/config.json
+2025-07-25 20:28:35,312 - root - INFO - Output folder: /tmp/tmptw79924i/output
+2025-07-25 20:28:35,312 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmptw79924i/output/model.json
+2025-07-25 20:28:35,312 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,312 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 1 files
+2025-07-25 20:28:35,312 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmptw79924i/output/model_transformed.json
+2025-07-25 20:28:35,313 - root - INFO - Transformed model saved to: /tmp/tmptw79924i/output/model_transformed.json
+
+
+2025-07-25 20:28:35,355 - root - INFO - Using config: /tmp/tmptw79924i/config.json
+2025-07-25 20:28:35,355 - root - INFO - Output folder: /tmp/tmptw79924i/output
+2025-07-25 20:28:35,355 - root - INFO - PlantUML generation complete! Output in: /tmp/tmptw79924i/output
+
+
+ok
+test_parse_mode (feature.test_cli_modes.TestCLIModes.test_parse_mode) ... 2025-07-25 20:28:35,397 - root - INFO - Using config: /tmp/tmpy3zc3foc/config.json
+2025-07-25 20:28:35,398 - root - INFO - Output folder: /tmp/tmpy3zc3foc/output
+2025-07-25 20:28:35,398 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
+2025-07-25 20:28:35,398 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmpy3zc3foc
+2025-07-25 20:28:35,398 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpy3zc3foc
+2025-07-25 20:28:35,398 - c_to_plantuml.parser - INFO - Using include depth: 1
+2025-07-25 20:28:35,399 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:35,399 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:35,399 - c_to_plantuml.parser - INFO - Iteration 1: Added 0 new files
+2025-07-25 20:28:35,399 - c_to_plantuml.parser - INFO - No new files found in iteration 1, stopping early
+2025-07-25 20:28:35,399 - c_to_plantuml.parser - INFO - Final file list: 1 files
+2025-07-25 20:28:35,399 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:35,400 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:35,400 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmpy3zc3foc: 1 files
+2025-07-25 20:28:35,400 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,400 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,400 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,400 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpy3zc3foc/output/model.json
+2025-07-25 20:28:35,400 - c_to_plantuml.parser - INFO - Found 1 total files across 1 source folder(s)
+2025-07-25 20:28:35,401 - c_to_plantuml.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
+2025-07-25 20:28:35,401 - root - INFO - Model saved to: /tmp/tmpy3zc3foc/output/model.json
+
+
+ok
+test_transform_mode (feature.test_cli_modes.TestCLIModes.test_transform_mode) ... 2025-07-25 20:28:35,443 - root - INFO - Using config: /tmp/tmpfyzjds69/config.json
+2025-07-25 20:28:35,443 - root - INFO - Output folder: /tmp/tmpfyzjds69/output
+2025-07-25 20:28:35,444 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
+2025-07-25 20:28:35,444 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmpfyzjds69
+2025-07-25 20:28:35,444 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpfyzjds69
+2025-07-25 20:28:35,444 - c_to_plantuml.parser - INFO - Using include depth: 1
+2025-07-25 20:28:35,445 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:35,445 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:35,445 - c_to_plantuml.parser - INFO - Iteration 1: Added 0 new files
+2025-07-25 20:28:35,445 - c_to_plantuml.parser - INFO - No new files found in iteration 1, stopping early
+2025-07-25 20:28:35,445 - c_to_plantuml.parser - INFO - Final file list: 1 files
+2025-07-25 20:28:35,445 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:35,445 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:35,445 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmpfyzjds69: 1 files
+2025-07-25 20:28:35,445 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,446 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,446 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,446 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpfyzjds69/output/model.json
+2025-07-25 20:28:35,446 - c_to_plantuml.parser - INFO - Found 1 total files across 1 source folder(s)
+2025-07-25 20:28:35,446 - c_to_plantuml.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
+2025-07-25 20:28:35,446 - root - INFO - Model saved to: /tmp/tmpfyzjds69/output/model.json
+
+
+2025-07-25 20:28:35,488 - root - INFO - Using config: /tmp/tmpfyzjds69/config.json
+2025-07-25 20:28:35,488 - root - INFO - Output folder: /tmp/tmpfyzjds69/output
+2025-07-25 20:28:35,488 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmpfyzjds69/output/model.json
+2025-07-25 20:28:35,488 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,488 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 1 files
+2025-07-25 20:28:35,489 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmpfyzjds69/output/model_transformed.json
+2025-07-25 20:28:35,489 - root - INFO - Transformed model saved to: /tmp/tmpfyzjds69/output/model_transformed.json
+
+
+ok
+test_generate_with_complex_relationships (feature.test_component_features.TestGeneratorComponentFeatures.test_generate_with_complex_relationships)
+Test PlantUML generation with complex type relationships. ... ok
+test_generate_with_typedefs (feature.test_component_features.TestGeneratorComponentFeatures.test_generate_with_typedefs)
+Test PlantUML generation with typedef relationships. ... ok
+test_generate_with_unions (feature.test_component_features.TestGeneratorComponentFeatures.test_generate_with_unions)
+Test PlantUML generation with union definitions. ... ok
+test_parse_complex_typedefs (feature.test_component_features.TestParserComponentFeatures.test_parse_complex_typedefs)
+Test parsing complex typedef relationships. ... ok
+test_parse_function_pointers (feature.test_component_features.TestParserComponentFeatures.test_parse_function_pointers)
+Test parsing function pointer definitions. ... ok
+test_parse_unions (feature.test_component_features.TestParserComponentFeatures.test_parse_unions)
+Test parsing union definitions. ... ok
+test_cross_file_type_dependencies (feature.test_component_features.TestProjectAnalysisComponentFeatures.test_cross_file_type_dependencies)
+Test analysis of type dependencies across files. ... ok
+test_project_structure_analysis (feature.test_component_features.TestProjectAnalysisComponentFeatures.test_project_structure_analysis)
+Test analysis of project structure and dependencies. ... ok
+test_recursive_include_handling (feature.test_component_features.TestProjectAnalysisComponentFeatures.test_recursive_include_handling)
+Test handling of recursive include relationships. ... ok
+test_alternative_crypto_filter_patterns (feature.test_crypto_filter_pattern.TestCryptoFilterPattern.test_alternative_crypto_filter_patterns)
+Test alternative ways to write crypto filter patterns ... 
+Testing pattern set 1: ['^crypto.*\\.c$', '^crypto.*\\.h$']
+  Crypto_Cfg_Partitions.c: False
+  Crypto_Cfg_JobQueues.c: False
+  Crypto.c: False
+
+Testing pattern set 2: ['^crypto.*cfg.*\\.c$', '^crypto.*cfg.*\\.h$']
+  Crypto_Cfg_Partitions.c: False
+  Crypto_Cfg_JobQueues.c: False
+  Crypto.c: False
+
+Testing pattern set 3: ['(?i)\\bcrypto.*\\.c$', '(?i)\\bcrypto.*\\.h$']
+  Crypto_Cfg_Partitions.c: True
+  Crypto_Cfg_JobQueues.c: True
+  Crypto.c: True
+
+Testing pattern set 4: ['.*crypto.*\\.c$', '.*crypto.*\\.h$']
+  Crypto_Cfg_Partitions.c: False
+  Crypto_Cfg_JobQueues.c: False
+  Crypto.c: False
+ok
+test_broken_crypto_filter_pattern (feature.test_crypto_filter_pattern.TestCryptoFilterPattern.test_broken_crypto_filter_pattern)
+Test the broken filter pattern that doesn't work ... Broken pattern - Crypto_Cfg_Partitions.c: False
+Broken pattern - Crypto_Cfg_JobQueues.c: False
+Broken pattern - Crypto.c: False
+Broken pattern - Crypto.h: False
+Broken pattern - Crypto_Cfg_Partitions.h: False
+Broken pattern - Crypto_Cfg_JobQueues.h: False
+ok
+test_case_insensitive_crypto_filter_pattern (feature.test_crypto_filter_pattern.TestCryptoFilterPattern.test_case_insensitive_crypto_filter_pattern)
+Test case-insensitive crypto filter pattern ... Case-insensitive pattern - crypto.c: True
+Case-insensitive pattern - CRYPTO.c: True
+Case-insensitive pattern - Crypto.c: True
+Case-insensitive pattern - crypto_config.c: True
+Case-insensitive pattern - CRYPTO_CONFIG.c: True
+Case-insensitive pattern - Crypto_Cfg_Partitions.c: True
+ok
+test_fixed_crypto_filter_pattern (feature.test_crypto_filter_pattern.TestCryptoFilterPattern.test_fixed_crypto_filter_pattern)
+Test the corrected filter pattern that should work ... Fixed pattern - Crypto_Cfg_Partitions.c: True
+Fixed pattern - Crypto_Cfg_JobQueues.c: True
+Fixed pattern - Crypto.c: True
+Fixed pattern - Crypto.h: True
+Fixed pattern - Crypto_Cfg_Partitions.h: True
+Fixed pattern - Crypto_Cfg_JobQueues.h: True
+Fixed pattern - main.c: False
+Fixed pattern - utils.c: False
+Fixed pattern - config.h: False
+Fixed pattern - types.h: False
+ok
+test_parser_integration_with_crypto_filter (feature.test_crypto_filter_pattern.TestCryptoFilterPattern.test_parser_integration_with_crypto_filter)
+Test that the parser correctly applies crypto filters ... Parsed files: ['Crypto.c', 'Crypto_Cfg_JobQueues.c', 'Crypto_Cfg_Partitions.c']
+ok
+test_alternative_crypto_patterns (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_alternative_crypto_patterns)
+Test alternative ways to write crypto filter patterns ... ok
+test_broken_crypto_filter_pattern (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_broken_crypto_filter_pattern)
+Test that the broken pattern from user's question doesn't work ... ok
+test_case_insensitive_variations (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_case_insensitive_variations)
+Test different case variations with crypto filter ... ok
+test_fixed_crypto_filter_pattern (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_fixed_crypto_filter_pattern)
+Test that the corrected pattern works correctly ... ok
+test_integration_with_full_workflow (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_integration_with_full_workflow)
+Test crypto filter integration with full parsing workflow ... ok
+test_parser_with_crypto_filter (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_parser_with_crypto_filter)
+Test that the parser correctly applies crypto filters ... ok
+test_regex_escaping_importance (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_regex_escaping_importance)
+Test the importance of proper regex escaping ... ok
+test_user_question_scenario (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_user_question_scenario)
+Test the exact scenario from the user's question ... ok
+test_feature_c_to_h_relationships (feature.test_include_processing_features.TestIncludeProcessingBasicFeatures.test_feature_c_to_h_relationships)
+Test feature-level C to H file relationships. ... ok
+test_feature_header_to_header_relationships (feature.test_include_processing_features.TestIncludeProcessingBasicFeatures.test_feature_header_to_header_relationships)
+Test feature-level header to header relationships. ... ok
+test_feature_include_processing_basic_workflow (feature.test_include_processing_features.TestIncludeProcessingBasicFeatures.test_feature_include_processing_basic_workflow)
+Test basic include processing workflow from parsing to generation. ... ok
+test_feature_complex_project_structure (feature.test_include_processing_features.TestIncludeProcessingComplexFeatures.test_feature_complex_project_structure)
+Test complex project structure with multiple layers of includes. ... ok
+test_feature_typedef_relationships_across_files (feature.test_include_processing_features.TestIncludeProcessingComplexFeatures.test_feature_typedef_relationships_across_files)
+Test typedef relationships across multiple include files. ... ok
+test_comprehensive_real_world_project_structure (feature.test_include_processing_features.TestIncludeProcessingComprehensive.test_comprehensive_real_world_project_structure)
+Test with realistic project structure resembling real C projects. ... ok
+test_comprehensive_typedef_and_struct_relationships (feature.test_include_processing_features.TestIncludeProcessingComprehensive.test_comprehensive_typedef_and_struct_relationships)
+Test comprehensive typedef and struct relationships across files. ... ok
+test_dependency_circular_include_handling (feature.test_include_processing_features.TestIncludeProcessingDependencies.test_dependency_circular_include_handling)
+Test handling of circular include dependencies. ... ok
+test_dependency_include_depth_levels (feature.test_include_processing_features.TestIncludeProcessingDependencies.test_dependency_include_depth_levels)
+Test that include processing respects depth levels. ... ok
+test_dependency_missing_includes_handling (feature.test_include_processing_features.TestIncludeProcessingDependencies.test_dependency_missing_includes_handling)
+Test handling of missing include files. ... ok
+test_integration_complete_workflow_with_cli (feature.test_include_processing_features.TestIncludeProcessingIntegration.test_integration_complete_workflow_with_cli)
+Test complete workflow using CLI interface. ... 2025-07-25 20:28:35,556 - root - INFO - Using config: /tmp/tmp9oq08ph6/config.json
+2025-07-25 20:28:35,557 - root - INFO - Output folder: /tmp/tmp9oq08ph6/output
+2025-07-25 20:28:35,557 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
+2025-07-25 20:28:35,557 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmp9oq08ph6
+2025-07-25 20:28:35,557 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmp9oq08ph6
+2025-07-25 20:28:35,557 - c_to_plantuml.parser - INFO - Using include depth: 3
+2025-07-25 20:28:35,557 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:35,557 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:35,557 - c_to_plantuml.parser - INFO - Iteration 1: Added 1 new files
+2025-07-25 20:28:35,557 - c_to_plantuml.parser - INFO - Processing include iteration 2
+2025-07-25 20:28:35,557 - c_to_plantuml.parser - INFO - Iteration 2: Added 1 new files
+2025-07-25 20:28:35,557 - c_to_plantuml.parser - INFO - Processing include iteration 3
+2025-07-25 20:28:35,558 - c_to_plantuml.parser - INFO - Iteration 3: Added 0 new files
+2025-07-25 20:28:35,558 - c_to_plantuml.parser - INFO - No new files found in iteration 3, stopping early
+2025-07-25 20:28:35,558 - c_to_plantuml.parser - INFO - Final file list: 3 files
+2025-07-25 20:28:35,558 - c_to_plantuml.parser - INFO - Found 3 C/C++ files
+2025-07-25 20:28:35,558 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 3 files successfully.
+2025-07-25 20:28:35,558 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmp9oq08ph6: 3 files
+2025-07-25 20:28:35,558 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,559 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,559 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,559 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmp9oq08ph6/output/model.json
+2025-07-25 20:28:35,559 - c_to_plantuml.parser - INFO - Found 3 total files across 1 source folder(s)
+2025-07-25 20:28:35,559 - c_to_plantuml.parser - INFO - Summary: 1 structs, 0 enums, 2 functions
+2025-07-25 20:28:35,559 - root - INFO - Model saved to: /tmp/tmp9oq08ph6/output/model.json
+2025-07-25 20:28:35,559 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmp9oq08ph6/output/model.json
+2025-07-25 20:28:35,559 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,559 - c_to_plantuml.transformer - INFO - Processing include relations with max depth: 3
+2025-07-25 20:28:35,559 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 3 files
+2025-07-25 20:28:35,559 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmp9oq08ph6/output/model_transformed.json
+2025-07-25 20:28:35,559 - root - INFO - Transformed model saved to: /tmp/tmp9oq08ph6/output/model_transformed.json
+2025-07-25 20:28:35,560 - root - INFO - PlantUML generation complete! Output in: /tmp/tmp9oq08ph6/output
+2025-07-25 20:28:35,560 - root - INFO - Complete workflow finished successfully!
+ok
+test_integration_plantuml_output_generation (feature.test_include_processing_features.TestIncludeProcessingIntegration.test_integration_plantuml_output_generation)
+Test that PlantUML output is correctly generated. ... 2025-07-25 20:28:35,560 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project: /tmp/tmpm0rcbi23
+2025-07-25 20:28:35,560 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmpm0rcbi23
+2025-07-25 20:28:35,560 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpm0rcbi23
+2025-07-25 20:28:35,560 - c_to_plantuml.parser - INFO - Found 2 C/C++ files
+2025-07-25 20:28:35,561 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 2 files successfully.
+2025-07-25 20:28:35,561 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmpm0rcbi23: 2 files
+2025-07-25 20:28:35,561 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,561 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,561 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,561 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpm0rcbi23/output/model.json
+2025-07-25 20:28:35,561 - c_to_plantuml.parser - INFO - Found 2 total files across 1 source folder(s)
+2025-07-25 20:28:35,561 - c_to_plantuml.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
+2025-07-25 20:28:35,561 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmpm0rcbi23/output/model.json
+2025-07-25 20:28:35,561 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,561 - c_to_plantuml.transformer - INFO - Processing include relations with max depth: 2
+2025-07-25 20:28:35,561 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 2 files
+2025-07-25 20:28:35,562 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmpm0rcbi23/output/transformed_model.json
+ok
+test_complete_workflow (feature.test_integration.TestIntegration.test_complete_workflow)
+Test complete end-to-end workflow from parsing to PlantUML generation ... 2025-07-25 20:28:35,562 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpfc7lwtty
+2025-07-25 20:28:35,563 - c_to_plantuml.parser - INFO - Found 2 C/C++ files
+2025-07-25 20:28:35,563 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 2 files successfully.
+ok
+test_configuration_features (feature.test_integration.TestIntegration.test_configuration_features)
+Test configuration loading and filtering features ... ok
+test_error_handling (feature.test_integration.TestIntegration.test_error_handling)
+Test error handling for various scenarios ... 2025-07-25 20:28:35,565 - root - WARNING - Failed to detect encoding for /non/existent/file.c: [Errno 2] No such file or directory: '/non/existent/file.c'
+ok
+test_performance_features (feature.test_integration.TestIntegration.test_performance_features)
+Test performance with larger files ... 2025-07-25 20:28:35,565 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpa6wjgfkl
+2025-07-25 20:28:35,565 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:35,566 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+ok
+test_empty_source_folders_error (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_empty_source_folders_error)
+Test that empty source_folders list raises an error ... ok
+test_invalid_source_folder_error (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_invalid_source_folder_error)
+Test that invalid source folder raises an error ... 2025-07-25 20:28:35,567 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
+2025-07-25 20:28:35,567 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /nonexistent/path
+2025-07-25 20:28:35,567 - c_to_plantuml.parser - ERROR - Failed to parse source folder /nonexistent/path: Project root not found: /nonexistent/path
+ok
+test_multiple_source_folders_parsing (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_multiple_source_folders_parsing)
+Test that multiple source folders are parsed correctly ... ok
+test_multiple_source_folders_with_config (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_multiple_source_folders_with_config)
+Test multiple source folders with configuration and filters ... 2025-07-25 20:28:35,568 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 2 source folders
+2025-07-25 20:28:35,568 - c_to_plantuml.parser - INFO - Parsing source folder 1/2: /tmp/tmpfq4hinob/src1
+2025-07-25 20:28:35,569 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpfq4hinob/src1
+2025-07-25 20:28:35,569 - c_to_plantuml.parser - INFO - Using include depth: 1
+2025-07-25 20:28:35,569 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:35,569 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:35,569 - c_to_plantuml.parser - INFO - Iteration 1: Added 1 new files
+2025-07-25 20:28:35,569 - c_to_plantuml.parser - INFO - Final file list: 2 files
+2025-07-25 20:28:35,569 - c_to_plantuml.parser - INFO - Found 2 C/C++ files
+2025-07-25 20:28:35,569 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 2 files successfully.
+2025-07-25 20:28:35,569 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmpfq4hinob/src1: 2 files
+2025-07-25 20:28:35,569 - c_to_plantuml.parser - INFO - Parsing source folder 2/2: /tmp/tmpfq4hinob/src2
+2025-07-25 20:28:35,570 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpfq4hinob/src2
+2025-07-25 20:28:35,570 - c_to_plantuml.parser - INFO - Using include depth: 1
+2025-07-25 20:28:35,570 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:35,570 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:35,570 - c_to_plantuml.parser - INFO - Iteration 1: Added 1 new files
+2025-07-25 20:28:35,570 - c_to_plantuml.parser - INFO - Final file list: 2 files
+2025-07-25 20:28:35,570 - c_to_plantuml.parser - INFO - Found 2 C/C++ files
+2025-07-25 20:28:35,570 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 2 files successfully.
+2025-07-25 20:28:35,570 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmpfq4hinob/src2: 2 files
+2025-07-25 20:28:35,571 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,571 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,571 - c_to_plantuml.verifier - WARNING -   - Invalid field name '30' in struct Person in src1_main.c
+2025-07-25 20:28:35,571 - c_to_plantuml.parser - WARNING - Model verification found 1 issues - model may contain parsing errors
+2025-07-25 20:28:35,571 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpfq4hinob/filtered_model.json
+2025-07-25 20:28:35,571 - c_to_plantuml.parser - INFO - Found 4 total files across 2 source folder(s)
+2025-07-25 20:28:35,571 - c_to_plantuml.parser - INFO - Summary: 3 structs, 1 enums, 3 functions
+ok
+test_parser_multiple_source_folders_method (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_parser_multiple_source_folders_method)
+Test the parse method with multiple source folders ... 2025-07-25 20:28:35,572 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 3 source folders
+2025-07-25 20:28:35,572 - c_to_plantuml.parser - INFO - Parsing source folder 1/3: /tmp/tmppdma7vbc/src1
+2025-07-25 20:28:35,572 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmppdma7vbc/src1
+2025-07-25 20:28:35,572 - c_to_plantuml.parser - INFO - Found 2 C/C++ files
+2025-07-25 20:28:35,572 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 2 files successfully.
+2025-07-25 20:28:35,572 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmppdma7vbc/src1: 2 files
+2025-07-25 20:28:35,572 - c_to_plantuml.parser - INFO - Parsing source folder 2/3: /tmp/tmppdma7vbc/src2
+2025-07-25 20:28:35,572 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmppdma7vbc/src2
+2025-07-25 20:28:35,573 - c_to_plantuml.parser - INFO - Found 2 C/C++ files
+2025-07-25 20:28:35,573 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 2 files successfully.
+2025-07-25 20:28:35,573 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmppdma7vbc/src2: 2 files
+2025-07-25 20:28:35,573 - c_to_plantuml.parser - INFO - Parsing source folder 3/3: /tmp/tmppdma7vbc/src3
+2025-07-25 20:28:35,573 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmppdma7vbc/src3
+2025-07-25 20:28:35,573 - c_to_plantuml.parser - INFO - Found 2 C/C++ files
+2025-07-25 20:28:35,574 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 2 files successfully.
+2025-07-25 20:28:35,574 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmppdma7vbc/src3: 2 files
+2025-07-25 20:28:35,574 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,574 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,574 - c_to_plantuml.verifier - WARNING -   - Invalid field name '30' in struct Person in src1_main.c
+2025-07-25 20:28:35,574 - c_to_plantuml.parser - WARNING - Model verification found 1 issues - model may contain parsing errors
+2025-07-25 20:28:35,574 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmppdma7vbc/combined_model.json
+2025-07-25 20:28:35,574 - c_to_plantuml.parser - INFO - Found 6 total files across 3 source folder(s)
+2025-07-25 20:28:35,574 - c_to_plantuml.parser - INFO - Summary: 5 structs, 1 enums, 3 functions
+ok
+test_project_name_from_config (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_project_name_from_config)
+Test that project name is taken from configuration ... 2025-07-25 20:28:35,575 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 2 source folders
+2025-07-25 20:28:35,575 - c_to_plantuml.parser - INFO - Parsing source folder 1/2: /tmp/tmps6hb2o3z/src1
+2025-07-25 20:28:35,575 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmps6hb2o3z/src1
+2025-07-25 20:28:35,575 - c_to_plantuml.parser - INFO - Using include depth: 1
+2025-07-25 20:28:35,576 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:35,576 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:35,576 - c_to_plantuml.parser - INFO - Iteration 1: Added 1 new files
+2025-07-25 20:28:35,576 - c_to_plantuml.parser - INFO - Final file list: 2 files
+2025-07-25 20:28:35,576 - c_to_plantuml.parser - INFO - Found 2 C/C++ files
+2025-07-25 20:28:35,576 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 2 files successfully.
+2025-07-25 20:28:35,576 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmps6hb2o3z/src1: 2 files
+2025-07-25 20:28:35,576 - c_to_plantuml.parser - INFO - Parsing source folder 2/2: /tmp/tmps6hb2o3z/src2
+2025-07-25 20:28:35,576 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmps6hb2o3z/src2
+2025-07-25 20:28:35,576 - c_to_plantuml.parser - INFO - Using include depth: 1
+2025-07-25 20:28:35,577 - c_to_plantuml.parser - INFO - Initial C files after filtering: 1 files
+2025-07-25 20:28:35,577 - c_to_plantuml.parser - INFO - Processing include iteration 1
+2025-07-25 20:28:35,577 - c_to_plantuml.parser - INFO - Iteration 1: Added 1 new files
+2025-07-25 20:28:35,577 - c_to_plantuml.parser - INFO - Final file list: 2 files
+2025-07-25 20:28:35,577 - c_to_plantuml.parser - INFO - Found 2 C/C++ files
+2025-07-25 20:28:35,577 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 2 files successfully.
+2025-07-25 20:28:35,577 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmps6hb2o3z/src2: 2 files
+2025-07-25 20:28:35,577 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,578 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,578 - c_to_plantuml.verifier - WARNING -   - Invalid field name '30' in struct Person in src1_main.c
+2025-07-25 20:28:35,578 - c_to_plantuml.parser - WARNING - Model verification found 1 issues - model may contain parsing errors
+2025-07-25 20:28:35,578 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmps6hb2o3z/named_model.json
+2025-07-25 20:28:35,578 - c_to_plantuml.parser - INFO - Found 4 total files across 2 source folder(s)
+2025-07-25 20:28:35,578 - c_to_plantuml.parser - INFO - Summary: 3 structs, 1 enums, 3 functions
+ok
+test_single_source_folder_backward_compatibility (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_single_source_folder_backward_compatibility)
+Test that single source folder still works (backward compatibility) ... 2025-07-25 20:28:35,578 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project: /tmp/tmpktwdkxuc/src1
+2025-07-25 20:28:35,578 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmpktwdkxuc/src1
+2025-07-25 20:28:35,578 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpktwdkxuc/src1
+2025-07-25 20:28:35,579 - c_to_plantuml.parser - INFO - Found 2 C/C++ files
+2025-07-25 20:28:35,579 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 2 files successfully.
+2025-07-25 20:28:35,579 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmpktwdkxuc/src1: 2 files
+2025-07-25 20:28:35,579 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,579 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,579 - c_to_plantuml.verifier - WARNING -   - Invalid field name '30' in struct Person in main.c
+2025-07-25 20:28:35,579 - c_to_plantuml.parser - WARNING - Model verification found 1 issues - model may contain parsing errors
+2025-07-25 20:28:35,579 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpktwdkxuc/single_model.json
+2025-07-25 20:28:35,579 - c_to_plantuml.parser - INFO - Found 2 total files across 1 source folder(s)
+2025-07-25 20:28:35,579 - c_to_plantuml.parser - INFO - Summary: 2 structs, 0 enums, 2 functions
+ok
+test_source_folder_name_collision_handling (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_source_folder_name_collision_handling)
+Test that files with same names from different source folders are handled correctly ... 2025-07-25 20:28:35,580 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 2 source folders
+2025-07-25 20:28:35,580 - c_to_plantuml.parser - INFO - Parsing source folder 1/2: /tmp/tmpv6hubb0q/src1
+2025-07-25 20:28:35,580 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpv6hubb0q/src1
+2025-07-25 20:28:35,580 - c_to_plantuml.parser - INFO - Found 3 C/C++ files
+2025-07-25 20:28:35,581 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 3 files successfully.
+2025-07-25 20:28:35,581 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmpv6hubb0q/src1: 3 files
+2025-07-25 20:28:35,581 - c_to_plantuml.parser - INFO - Parsing source folder 2/2: /tmp/tmpv6hubb0q/src2
+2025-07-25 20:28:35,581 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpv6hubb0q/src2
+2025-07-25 20:28:35,581 - c_to_plantuml.parser - INFO - Found 3 C/C++ files
+2025-07-25 20:28:35,582 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 3 files successfully.
+2025-07-25 20:28:35,582 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmpv6hubb0q/src2: 3 files
+2025-07-25 20:28:35,582 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,582 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,582 - c_to_plantuml.verifier - WARNING -   - Invalid field name '30' in struct Person in src1_main.c
+2025-07-25 20:28:35,582 - c_to_plantuml.parser - WARNING - Model verification found 1 issues - model may contain parsing errors
+2025-07-25 20:28:35,582 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpv6hubb0q/collision_model.json
+2025-07-25 20:28:35,582 - c_to_plantuml.parser - INFO - Found 6 total files across 2 source folder(s)
+2025-07-25 20:28:35,582 - c_to_plantuml.parser - INFO - Summary: 3 structs, 1 enums, 3 functions
+ok
+test_transform_complex_project_with_filters (feature.test_transformer_features.TestTransformerFeatures.test_transform_complex_project_with_filters)
+Test transforming a complex project with various filters ... 2025-07-25 20:28:35,583 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpaq5faga4
+2025-07-25 20:28:35,583 - c_to_plantuml.parser - INFO - Found 3 C/C++ files
+2025-07-25 20:28:35,585 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 3 files successfully.
+2025-07-25 20:28:35,585 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmpaq5faga4/model.json
+2025-07-25 20:28:35,585 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,586 - c_to_plantuml.transformer - INFO - Processing include relations with max depth: 2
+2025-07-25 20:28:35,586 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 1 files
+2025-07-25 20:28:35,587 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmpaq5faga4/model.json
+ok
+test_transform_complex_regex_patterns (feature.test_transformer_features.TestTransformerFeatures.test_transform_complex_regex_patterns)
+Test transforming with complex regex patterns ... 2025-07-25 20:28:35,587 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpeqjhr36v
+2025-07-25 20:28:35,588 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:35,588 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:35,589 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmpeqjhr36v/model.json
+2025-07-25 20:28:35,589 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,589 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 1 files
+2025-07-25 20:28:35,589 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmpeqjhr36v/model.json
+Debug: Available functions: []
+ok
+test_transform_error_handling (feature.test_transformer_features.TestTransformerFeatures.test_transform_error_handling)
+Test transformer error handling with invalid configurations ... 2025-07-25 20:28:35,590 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmp1dmkl5eq
+2025-07-25 20:28:35,590 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:35,590 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:35,590 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmp1dmkl5eq/model.json
+2025-07-25 20:28:35,590 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,590 - c_to_plantuml.transformer - WARNING - Invalid regex pattern '[invalid regex pattern': unterminated character set at position 0
+2025-07-25 20:28:35,590 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 1 files
+2025-07-25 20:28:35,591 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmp1dmkl5eq/model.json
+2025-07-25 20:28:35,591 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /nonexistent/model.json
+2025-07-25 20:28:35,591 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmp1dmkl5eq/model.json
+ok
+test_transform_integration_with_parser_and_generator (feature.test_transformer_features.TestTransformerFeatures.test_transform_integration_with_parser_and_generator)
+Test full integration: parse -> transform -> generate ... 2025-07-25 20:28:35,591 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmp3dbo37za
+2025-07-25 20:28:35,591 - c_to_plantuml.parser - INFO - Found 3 C/C++ files
+2025-07-25 20:28:35,592 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 3 files successfully.
+2025-07-25 20:28:35,593 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmp3dbo37za/parsed_model.json
+2025-07-25 20:28:35,593 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,593 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 2 files
+2025-07-25 20:28:35,593 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmp3dbo37za/parsed_model.json
+ok
+test_transform_with_additions (feature.test_transformer_features.TestTransformerFeatures.test_transform_with_additions)
+Test transforming with element additions ... 2025-07-25 20:28:35,594 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmp7hneflpd
+2025-07-25 20:28:35,594 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:35,594 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:35,595 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmp7hneflpd/model.json
+2025-07-25 20:28:35,595 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,595 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 1 files
+2025-07-25 20:28:35,595 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmp7hneflpd/model.json
+ok
+test_transform_with_include_relations (feature.test_transformer_features.TestTransformerFeatures.test_transform_with_include_relations)
+Test transforming with include relation processing ... 2025-07-25 20:28:35,596 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpj0xl7kyu
+2025-07-25 20:28:35,596 - c_to_plantuml.parser - INFO - Found 3 C/C++ files
+2025-07-25 20:28:35,597 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 3 files successfully.
+2025-07-25 20:28:35,597 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmpj0xl7kyu/model.json
+2025-07-25 20:28:35,597 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,597 - c_to_plantuml.transformer - INFO - Processing include relations with max depth: 3
+2025-07-25 20:28:35,597 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 3 files
+2025-07-25 20:28:35,598 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmpj0xl7kyu/model.json
+ok
+test_transform_with_removals (feature.test_transformer_features.TestTransformerFeatures.test_transform_with_removals)
+Test transforming with element removals ... 2025-07-25 20:28:35,598 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmp8haoc235
+2025-07-25 20:28:35,599 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:35,599 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:35,599 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmp8haoc235/model.json
+2025-07-25 20:28:35,599 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,600 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 1 files
+2025-07-25 20:28:35,600 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmp8haoc235/model.json
+ok
+test_transform_with_renaming (feature.test_transformer_features.TestTransformerFeatures.test_transform_with_renaming)
+Test transforming with element renaming ... 2025-07-25 20:28:35,600 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpzg5mxkdk
+2025-07-25 20:28:35,601 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:35,601 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+2025-07-25 20:28:35,601 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmpzg5mxkdk/model.json
+2025-07-25 20:28:35,601 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,601 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 1 files
+2025-07-25 20:28:35,602 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmpzg5mxkdk/model.json
+ok
+test_complete_system_integration_real_world_project (integration.test_comprehensive.TestEndToEndSystemIntegration.test_complete_system_integration_real_world_project)
+Test complete system integration with realistic project. ... 2025-07-25 20:28:35,603 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project: /tmp/tmpw8wmum_7
+2025-07-25 20:28:35,603 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmpw8wmum_7
+2025-07-25 20:28:35,603 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpw8wmum_7
+2025-07-25 20:28:35,604 - c_to_plantuml.parser - INFO - Found 11 C/C++ files
+2025-07-25 20:28:35,607 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 11 files successfully.
+2025-07-25 20:28:35,607 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmpw8wmum_7: 11 files
+2025-07-25 20:28:35,608 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,608 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,608 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,608 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpw8wmum_7/output/model.json
+2025-07-25 20:28:35,608 - c_to_plantuml.parser - INFO - Found 11 total files across 1 source folder(s)
+2025-07-25 20:28:35,608 - c_to_plantuml.parser - INFO - Summary: 10 structs, 0 enums, 12 functions
+2025-07-25 20:28:35,608 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmpw8wmum_7/output/model.json
+2025-07-25 20:28:35,608 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,608 - c_to_plantuml.transformer - INFO - Processing include relations with max depth: 5
+2025-07-25 20:28:35,610 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 11 files
+2025-07-25 20:28:35,611 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmpw8wmum_7/output/transformed_model.json
+ok
+test_comprehensive_c_to_h_relationships_integration (integration.test_comprehensive.TestIncludeProcessingIntegrationComprehensive.test_comprehensive_c_to_h_relationships_integration)
+Test comprehensive C to H file relationships with full integration. ... 2025-07-25 20:28:35,613 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project: /tmp/tmp3o2u7qpt
+2025-07-25 20:28:35,613 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmp3o2u7qpt
+2025-07-25 20:28:35,613 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmp3o2u7qpt
+2025-07-25 20:28:35,613 - c_to_plantuml.parser - INFO - Found 9 C/C++ files
+2025-07-25 20:28:35,616 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 9 files successfully.
+2025-07-25 20:28:35,616 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmp3o2u7qpt: 9 files
+2025-07-25 20:28:35,616 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,616 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,616 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,616 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmp3o2u7qpt/output/model.json
+2025-07-25 20:28:35,616 - c_to_plantuml.parser - INFO - Found 9 total files across 1 source folder(s)
+2025-07-25 20:28:35,616 - c_to_plantuml.parser - INFO - Summary: 7 structs, 0 enums, 10 functions
+2025-07-25 20:28:35,616 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmp3o2u7qpt/output/model.json
+2025-07-25 20:28:35,617 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,617 - c_to_plantuml.transformer - INFO - Processing include relations with max depth: 4
+2025-07-25 20:28:35,618 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 9 files
+2025-07-25 20:28:35,619 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmp3o2u7qpt/output/transformed_model.json
+ok
+test_comprehensive_header_to_header_relationships_integration (integration.test_comprehensive.TestIncludeProcessingIntegrationComprehensive.test_comprehensive_header_to_header_relationships_integration)
+Test comprehensive header to header relationships integration. ... 2025-07-25 20:28:35,620 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project: /tmp/tmpj5fenpng
+2025-07-25 20:28:35,620 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmpj5fenpng
+2025-07-25 20:28:35,620 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpj5fenpng
+2025-07-25 20:28:35,621 - c_to_plantuml.parser - INFO - Found 5 C/C++ files
+2025-07-25 20:28:35,622 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 5 files successfully.
+2025-07-25 20:28:35,622 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmpj5fenpng: 5 files
+2025-07-25 20:28:35,622 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,622 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,622 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,622 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpj5fenpng/output/model.json
+2025-07-25 20:28:35,622 - c_to_plantuml.parser - INFO - Found 5 total files across 1 source folder(s)
+2025-07-25 20:28:35,622 - c_to_plantuml.parser - INFO - Summary: 4 structs, 0 enums, 3 functions
+2025-07-25 20:28:35,622 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmpj5fenpng/output/model.json
+2025-07-25 20:28:35,622 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,622 - c_to_plantuml.transformer - INFO - Processing include relations with max depth: 4
+2025-07-25 20:28:35,623 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 5 files
+2025-07-25 20:28:35,623 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmpj5fenpng/output/transformed_model.json
+ok
+test_comprehensive_typedef_relationships_integration (integration.test_comprehensive.TestIncludeProcessingIntegrationComprehensive.test_comprehensive_typedef_relationships_integration)
+Test comprehensive typedef relationships across files integration. ... 2025-07-25 20:28:35,624 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project: /tmp/tmp2n5cinqg
+2025-07-25 20:28:35,624 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /tmp/tmp2n5cinqg
+2025-07-25 20:28:35,624 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmp2n5cinqg
+2025-07-25 20:28:35,625 - c_to_plantuml.parser - INFO - Found 4 C/C++ files
+2025-07-25 20:28:35,626 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 4 files successfully.
+2025-07-25 20:28:35,626 - c_to_plantuml.parser - INFO - Successfully parsed source folder /tmp/tmp2n5cinqg: 4 files
+2025-07-25 20:28:35,627 - c_to_plantuml.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-25 20:28:35,627 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,627 - c_to_plantuml.parser - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,627 - c_to_plantuml.parser - INFO - Step 1 complete! Model saved to: /tmp/tmp2n5cinqg/output/model.json
+2025-07-25 20:28:35,627 - c_to_plantuml.parser - INFO - Found 4 total files across 1 source folder(s)
+2025-07-25 20:28:35,627 - c_to_plantuml.parser - INFO - Summary: 4 structs, 1 enums, 4 functions
+2025-07-25 20:28:35,627 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmp2n5cinqg/output/model.json
+2025-07-25 20:28:35,627 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,627 - c_to_plantuml.transformer - INFO - Processing include relations with max depth: 3
+2025-07-25 20:28:35,627 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 4 files
+2025-07-25 20:28:35,628 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmp2n5cinqg/output/transformed_model.json
+ok
+test_parser_tokenizer_complex_syntax_integration (integration.test_comprehensive.TestParserTokenizerIntegration.test_parser_tokenizer_complex_syntax_integration)
+Test parser-tokenizer integration with complex C syntax. ... ok
+test_parser_tokenizer_error_handling_integration (integration.test_comprehensive.TestParserTokenizerIntegration.test_parser_tokenizer_error_handling_integration)
+Test that parser gracefully handles tokenizer errors. ... ok
+test_parser_tokenizer_function_parsing_integration (integration.test_comprehensive.TestParserTokenizerIntegration.test_parser_tokenizer_function_parsing_integration)
+Test that parser correctly uses tokenizer for function parsing. ... ok
+test_parser_tokenizer_preprocessor_integration (integration.test_comprehensive.TestParserTokenizerIntegration.test_parser_tokenizer_preprocessor_integration)
+Test that parser handles preprocessor directives through tokenizer. ... ok
+test_parser_tokenizer_struct_parsing_integration (integration.test_comprehensive.TestParserTokenizerIntegration.test_parser_tokenizer_struct_parsing_integration)
+Test that parser correctly uses tokenizer for struct parsing. ... ok
+test_absolute_path_file_keys_in_project_model (unit.test_absolute_path_bug_detection.TestAbsolutePathBugDetection.test_absolute_path_file_keys_in_project_model)
+Test that files with absolute path keys are properly handled ... ok
+test_deep_include_dependencies_with_absolute_paths (unit.test_absolute_path_bug_detection.TestAbsolutePathBugDetection.test_deep_include_dependencies_with_absolute_paths)
+Test deep include dependencies work correctly with absolute paths ... ok
+test_error_handling_for_missing_files (unit.test_absolute_path_bug_detection.TestAbsolutePathBugDetection.test_error_handling_for_missing_files)
+Test that missing files are handled gracefully ... ok
+test_file_key_matching_robustness (unit.test_absolute_path_bug_detection.TestAbsolutePathBugDetection.test_file_key_matching_robustness)
+Test that file key matching is robust with various path formats ... ok
+test_include_relationships_preserved_with_absolute_paths (unit.test_absolute_path_bug_detection.TestAbsolutePathBugDetection.test_include_relationships_preserved_with_absolute_paths)
+Test that include relationships are preserved when using absolute paths ... ok
+test_missing_header_classes_in_generated_diagram (unit.test_absolute_path_bug_detection.TestAbsolutePathBugDetection.test_missing_header_classes_in_generated_diagram)
+Test that header file classes are not missing from generated diagrams ... ok
+test_missing_source_files_in_generated_diagram (unit.test_absolute_path_bug_detection.TestAbsolutePathBugDetection.test_missing_source_files_in_generated_diagram)
+Test that source files are not missing from generated diagrams ... ok
+test_mixed_absolute_and_relative_paths (unit.test_absolute_path_bug_detection.TestAbsolutePathBugDetection.test_mixed_absolute_and_relative_paths)
+Test handling of mixed absolute and relative paths in project model ... ok
+test_config_equality (unit.test_config.TestConfig.test_config_equality)
+Test configuration equality comparison ... ok
+test_config_repr (unit.test_config.TestConfig.test_config_repr)
+Test configuration string representation ... ok
+test_config_validation (unit.test_config.TestConfig.test_config_validation)
+Test configuration validation ... ok
+test_default_config_values (unit.test_config.TestConfig.test_default_config_values)
+Test default configuration values ... ok
+test_element_filtering (unit.test_config.TestConfig.test_element_filtering)
+Test element filtering functionality ... ok
+test_empty_source_folders (unit.test_config.TestConfig.test_empty_source_folders)
+Test that empty source_folders list is handled correctly ... ok
+test_file_filtering (unit.test_config.TestConfig.test_file_filtering)
+Test file filtering functionality ... ok
+test_get_summary (unit.test_config.TestConfig.test_get_summary)
+Test configuration summary generation ... ok
+test_invalid_regex_patterns (unit.test_config.TestConfig.test_invalid_regex_patterns)
+Test handling of invalid regex patterns ... 2025-07-25 20:28:35,636 - c_to_plantuml.config - WARNING - Invalid include pattern '[invalid_regex': unterminated character set at position 0
+2025-07-25 20:28:35,636 - c_to_plantuml.config - WARNING - Invalid exclude pattern '[invalid_regex': unterminated character set at position 0
+ok
+test_load_config_with_filters (unit.test_config.TestConfig.test_load_config_with_filters)
+Test loading configuration with file and element filters ... ok
+test_load_valid_config (unit.test_config.TestConfig.test_load_valid_config)
+Test loading a valid configuration file ... ok
+test_model_filtering (unit.test_config.TestConfig.test_model_filtering)
+Test applying filters to a complete model ... ok
+test_multiple_source_folders (unit.test_config.TestConfig.test_multiple_source_folders)
+Test that configuration with multiple source folders for targeted searching is handled correctly ... ok
+test_save_and_load_config (unit.test_config.TestConfig.test_save_and_load_config)
+Test saving and loading configuration ... ok
+test_single_source_folder (unit.test_config.TestConfig.test_single_source_folder)
+Test that single source folder is handled correctly (backward compatibility) ... ok
+test_complex_parameter_types (unit.test_function_parameters.TestFunctionParameters.test_complex_parameter_types)
+Test functions with complex parameter types ... ok
+test_empty_parameter_list (unit.test_function_parameters.TestFunctionParameters.test_empty_parameter_list)
+Test functions with no parameters (void) ... ok
+test_function_parameter_display (unit.test_function_parameters.TestFunctionParameters.test_function_parameter_display)
+Test that function parameters are correctly displayed in PlantUML ... ok
+test_function_parameter_parsing (unit.test_function_parameters.TestFunctionParameters.test_function_parameter_parsing)
+Test that function parameters are correctly parsed ... ok
+test_generate_empty_file_model (unit.test_generator.TestGenerator.test_generate_empty_file_model)
+Test generating diagram for empty file model ... ok
+test_generate_error_handling (unit.test_generator.TestGenerator.test_generate_error_handling)
+Test error handling in diagram generation ... ok
+test_generate_file_diagram (unit.test_generator.TestGenerator.test_generate_file_diagram)
+Test generating a PlantUML diagram file ... ok
+test_generate_from_model (unit.test_generator.TestGenerator.test_generate_from_model)
+Test generating diagrams from a model file ... ok
+test_generate_multiple_files (unit.test_generator.TestGenerator.test_generate_multiple_files)
+Test generating diagrams for multiple files ... ok
+test_generate_plantuml_content (unit.test_generator.TestGenerator.test_generate_plantuml_content)
+Test that PlantUML content is generated correctly ... 2025-07-25 20:28:35,640 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpqscjeg1v
+2025-07-25 20:28:35,640 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:35,641 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+ok
+test_generate_with_config (unit.test_generator.TestGenerator.test_generate_with_config)
+Test generating diagrams using configuration ... ok
+test_generate_with_special_characters (unit.test_generator.TestGenerator.test_generate_with_special_characters)
+Test generation with special characters in names ... 2025-07-25 20:28:35,642 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmpe3ujrxds
+2025-07-25 20:28:35,642 - c_to_plantuml.parser - INFO - Found 1 C/C++ files
+2025-07-25 20:28:35,642 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 1 files successfully.
+ok
+test_output_directory_creation (unit.test_generator.TestGenerator.test_output_directory_creation)
+Test that output directory is created if it doesn't exist ... ok
+test_plantuml_syntax_validity (unit.test_generator.TestGenerator.test_plantuml_syntax_validity)
+Test that generated PlantUML syntax is valid ... ok
+test_build_include_tree_debug_info (unit.test_generator_include_tree_bug.TestGeneratorIncludeTreeBug.test_build_include_tree_debug_info)
+Test to provide debug information about the bug ... Project model files keys: ['/tmp/tmpdi0who2w/main.c', '/tmp/tmpdi0who2w/utils.h']
+Root file path: /tmp/tmpdi0who2w/main.c
+Root file name: main.c
+Root file key used: main.c
+Include tree keys: ['/tmp/tmpdi0who2w/main.c', '/tmp/tmpdi0who2w/utils.h']
+Expected keys: ['/tmp/tmpdi0who2w/main.c', '/tmp/tmpdi0who2w/utils.h']
+ok
+test_build_include_tree_mixed_paths (unit.test_generator_include_tree_bug.TestGeneratorIncludeTreeBug.test_build_include_tree_mixed_paths)
+Test the bug with mixed absolute and relative paths ... ok
+test_build_include_tree_with_absolute_paths (unit.test_generator_include_tree_bug.TestGeneratorIncludeTreeBug.test_build_include_tree_with_absolute_paths)
+Test that _build_include_tree works correctly with absolute paths ... ok
+test_build_include_tree_with_relative_paths (unit.test_generator_include_tree_bug.TestGeneratorIncludeTreeBug.test_build_include_tree_with_relative_paths)
+Test that _build_include_tree works correctly with relative paths (control test) ... ok
+test_complex_function_bodies (unit.test_global_parsing.TestGlobalParsing.test_complex_function_bodies)
+Test that complex function bodies don't interfere with global parsing ... ok
+test_global_variables_only (unit.test_global_parsing.TestGlobalParsing.test_global_variables_only)
+Test that only actual global variables are parsed ... ok
+test_static_variables (unit.test_global_parsing.TestGlobalParsing.test_static_variables)
+Test that static variables are correctly identified as globals ... ok
+test_include_caching_prevents_duplicate_processing (unit.test_include_processing.TestIncludeProcessingCaching.test_include_caching_prevents_duplicate_processing)
+Test that include caching prevents duplicate file processing. ... ok
+test_parse_basic_includes (unit.test_include_processing.TestIncludeProcessingCore.test_parse_basic_includes)
+Test parsing basic system and local include statements. ... ok
+test_parse_includes_with_comments_and_whitespace (unit.test_include_processing.TestIncludeProcessingCore.test_parse_includes_with_comments_and_whitespace)
+Test parsing includes with comments and whitespace. ... ok
+test_parse_includes_with_preprocessor_directives (unit.test_include_processing.TestIncludeProcessingCore.test_parse_includes_with_preprocessor_directives)
+Test parsing includes with preprocessor directives. ... ok
+test_circular_includes (unit.test_include_processing.TestIncludeProcessingEdgeCases.test_circular_includes)
+Test handling of circular include dependencies. ... ok
+test_missing_include_files (unit.test_include_processing.TestIncludeProcessingEdgeCases.test_missing_include_files)
+Test handling of missing include files. ... ok
+test_c_to_h_file_relationships (unit.test_include_processing.TestIncludeProcessingRelationships.test_c_to_h_file_relationships)
+Test relationships between C files and their header files. ... ok
+test_header_to_header_relationships (unit.test_include_processing.TestIncludeProcessingRelationships.test_header_to_header_relationships)
+Test relationships between header files. ... ok
+test_complex_nested_typedef_relationships (unit.test_include_processing.TestIncludeProcessingTypedefs.test_complex_nested_typedef_relationships)
+Test complex nested typedef relationships. ... ok
+test_simple_typedef_relationships (unit.test_include_processing.TestIncludeProcessingTypedefs.test_simple_typedef_relationships)
+Test simple typedef relationships across files. ... ok
+test_complete_file_parsing (unit.test_parser.TestCParser.test_complete_file_parsing)
+Test parsing a complete C file with all elements ... ok
+test_encoding_detection (unit.test_parser.TestCParser.test_encoding_detection)
+Test encoding detection and handling ... ok
+test_parse_enums (unit.test_parser.TestCParser.test_parse_enums)
+Test parsing enum definitions ... ok
+test_parse_functions (unit.test_parser.TestCParser.test_parse_functions)
+Test parsing function declarations ... ok
+test_parse_globals (unit.test_parser.TestCParser.test_parse_globals)
+Test parsing global variables ... ok
+test_parse_includes (unit.test_parser.TestCParser.test_parse_includes)
+Test parsing include statements ... ok
+test_parse_macros (unit.test_parser.TestCParser.test_parse_macros)
+Test parsing macro definitions ... ok
+test_parse_simple_c_file (unit.test_parser.TestCParser.test_parse_simple_c_file)
+Test parsing a simple C file ... ok
+test_parse_structs (unit.test_parser.TestCParser.test_parse_structs)
+Test parsing struct definitions ... ok
+test_parse_typedefs (unit.test_parser.TestCParser.test_parse_typedefs)
+Test parsing typedef declarations ... ok
+test_parse_anonymous_struct (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_anonymous_struct)
+Test parsing anonymous struct definitions ... ok
+test_parse_complex_file (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_complex_file)
+Test parsing a complex C file with multiple constructs ... ok
+test_parse_enum_simple (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_enum_simple)
+Test parsing simple enum definitions ... ok
+test_parse_file_encoding_detection (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_encoding_detection)
+Test parsing file with different encodings ... ok
+test_parse_file_error_handling (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_error_handling)
+Test error handling for invalid files ... 2025-07-25 20:28:35,656 - root - WARNING - Failed to detect encoding for /nonexistent/file.c: [Errno 2] No such file or directory: '/nonexistent/file.c'
+ok
+test_parse_file_with_arrays (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_with_arrays)
+Test parsing file with array declarations ... ok
+test_parse_file_with_bit_fields (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_with_bit_fields)
+Test parsing file with bit fields ... ok
+test_parse_file_with_comments (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_with_comments)
+Test parsing file with various comment types ... ok
+test_parse_file_with_complex_typedefs (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_with_complex_typedefs)
+Test parsing file with complex typedef definitions ... ok
+test_parse_file_with_const_and_volatile (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_with_const_and_volatile)
+Test parsing file with const and volatile qualifiers ... ok
+test_parse_file_with_forward_declarations (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_with_forward_declarations)
+Test parsing file with forward declarations ... ok
+test_parse_file_with_function_pointers (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_with_function_pointers)
+Test parsing file with function pointers ... ok
+test_parse_file_with_malformed_code (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_with_malformed_code)
+Test parsing file with malformed C code ... ok
+test_parse_file_with_mixed_content (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_with_mixed_content)
+Test parsing file with mixed content from example files ... ok
+test_parse_file_with_nested_structures (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_with_nested_structures)
+Test parsing file with nested structures ... ok
+test_parse_file_with_preprocessor_conditionals (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_with_preprocessor_conditionals)
+Test parsing file with preprocessor conditionals ... ok
+test_parse_file_with_unnamed_parameters (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_with_unnamed_parameters)
+Test parsing file with unnamed function parameters ... ok
+test_parse_file_with_variadic_functions (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_file_with_variadic_functions)
+Test parsing file with variadic functions ... ok
+test_parse_function_declaration (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_function_declaration)
+Test parsing function declarations ... ok
+test_parse_function_definition (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_function_definition)
+Test parsing function definitions ... ok
+test_parse_function_with_modifiers (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_function_with_modifiers)
+Test parsing functions with modifiers ... ok
+test_parse_global_variables (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_global_variables)
+Test parsing global variables ... ok
+test_parse_includes (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_includes)
+Test parsing include directives ... ok
+test_parse_macros (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_macros)
+Test parsing macro definitions ... ok
+test_parse_nested_struct (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_nested_struct)
+Test parsing nested struct definitions ... ok
+test_parse_project (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_project)
+Test parsing an entire project ... 2025-07-25 20:28:35,664 - c_to_plantuml.parser - INFO - Parsing project: /tmp/tmp_1nqqm0c
+2025-07-25 20:28:35,664 - c_to_plantuml.parser - INFO - Found 3 C/C++ files
+2025-07-25 20:28:35,665 - c_to_plantuml.parser - INFO - Parsing complete. Parsed 3 files successfully.
+ok
+test_parse_simple_struct (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_simple_struct)
+Test parsing a simple struct definition ... ok
+test_parse_typedef_enum (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_typedef_enum)
+Test parsing typedef enum definitions ... ok
+test_parse_typedef_struct (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_typedef_struct)
+Test parsing typedef struct definitions ... ok
+test_parse_typedefs (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_typedefs)
+Test parsing typedef definitions ... ok
+test_parse_union (unit.test_parser_comprehensive.TestCParserComprehensive.test_parse_union)
+Test parsing union definitions ... ok
+test_config_equality (unit.test_parser_filtering.TestUserConfigurableFiltering.test_config_equality)
+Test configuration equality comparison ... ok
+test_config_has_filters (unit.test_parser_filtering.TestUserConfigurableFiltering.test_config_has_filters)
+Test the has_filters method ... ok
+test_config_loading_with_filters (unit.test_parser_filtering.TestUserConfigurableFiltering.test_config_loading_with_filters)
+Test loading configuration with filters from JSON ... ok
+test_element_filters_enums (unit.test_parser_filtering.TestUserConfigurableFiltering.test_element_filters_enums)
+Test element filtering for enums ... ok
+test_element_filters_functions (unit.test_parser_filtering.TestUserConfigurableFiltering.test_element_filters_functions)
+Test element filtering for functions ... ok
+test_element_filters_globals (unit.test_parser_filtering.TestUserConfigurableFiltering.test_element_filters_globals)
+Test element filtering for global variables ... ok
+test_element_filters_macros (unit.test_parser_filtering.TestUserConfigurableFiltering.test_element_filters_macros)
+Test element filtering for macros ... ok
+test_element_filters_structs (unit.test_parser_filtering.TestUserConfigurableFiltering.test_element_filters_structs)
+Test element filtering for structs ... ok
+test_element_filters_typedefs (unit.test_parser_filtering.TestUserConfigurableFiltering.test_element_filters_typedefs)
+Test element filtering for typedefs ... ok
+test_empty_filters (unit.test_parser_filtering.TestUserConfigurableFiltering.test_empty_filters)
+Test behavior with empty filter configurations ... ok
+test_file_filters_exclude_patterns (unit.test_parser_filtering.TestUserConfigurableFiltering.test_file_filters_exclude_patterns)
+Test file filtering with exclude patterns ... ok
+test_file_filters_include_and_exclude (unit.test_parser_filtering.TestUserConfigurableFiltering.test_file_filters_include_and_exclude)
+Test file filtering with both include and exclude patterns ... ok
+test_file_filters_include_patterns (unit.test_parser_filtering.TestUserConfigurableFiltering.test_file_filters_include_patterns)
+Test file filtering with include patterns ... ok
+test_filter_performance (unit.test_parser_filtering.TestUserConfigurableFiltering.test_filter_performance)
+Test that filtering doesn't significantly impact performance ... ok
+test_invalid_regex_patterns (unit.test_parser_filtering.TestUserConfigurableFiltering.test_invalid_regex_patterns)
+Test handling of invalid regex patterns in filters ... 2025-07-25 20:28:35,669 - c_to_plantuml.config - WARNING - Invalid include pattern '[invalid_regex': unterminated character set at position 0
+2025-07-25 20:28:35,669 - c_to_plantuml.config - WARNING - Invalid exclude pattern '[invalid_exclude': unterminated character set at position 0
+2025-07-25 20:28:35,669 - c_to_plantuml.config - WARNING - Invalid structs include pattern '[invalid_struct': unterminated character set at position 0
+ok
+test_multiple_element_filters (unit.test_parser_filtering.TestUserConfigurableFiltering.test_multiple_element_filters)
+Test applying multiple element filters simultaneously ... ok
+test_complex_preprocessor_conditions (unit.test_preprocessor_bug.TestPreprocessorBug.test_complex_preprocessor_conditions)
+Test complex preprocessor conditions. ... ok
+test_if_else_endif_block (unit.test_preprocessor_bug.TestPreprocessorBug.test_if_else_endif_block)
+Test #if/#else/#endif block processing. ... ok
+test_nested_preprocessor_blocks (unit.test_preprocessor_bug.TestPreprocessorBug.test_nested_preprocessor_blocks)
+Test nested #if blocks processing. ... ok
+test_preprocessor_edge_case_empty_blocks (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_edge_case_empty_blocks)
+Test preprocessing directives with empty blocks. ... ok
+test_preprocessor_edge_case_malformed (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_edge_case_malformed)
+Test preprocessing directives with malformed conditions. ... ok
+test_preprocessor_in_array_typedefs (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_in_array_typedefs)
+Test preprocessing directives in array typedefs. ... ok
+test_preprocessor_in_function_declarations (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_in_function_declarations)
+Test preprocessing directives in function declarations. ... ok
+test_preprocessor_in_function_pointers (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_in_function_pointers)
+Test preprocessing directives in function pointer typedefs. ... ok
+test_preprocessor_in_global_variables (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_in_global_variables)
+Test preprocessing directives in global variable declarations. ... ok
+test_preprocessor_in_typedefs (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_in_typedefs)
+Test preprocessing directives within typedef definitions. ... ok
+test_preprocessor_in_unions (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_in_unions)
+Test preprocessing directives in union typedefs. ... ok
+test_preprocessor_with_comments (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_with_comments)
+Test preprocessing directives with comments. ... ok
+test_preprocessor_with_complex_expressions (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_with_complex_expressions)
+Test preprocessing directives with complex expressions. ... ok
+test_preprocessor_with_defined_operator (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_with_defined_operator)
+Test preprocessing directives with defined() operator. ... ok
+test_preprocessor_with_ifndef (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_with_ifndef)
+Test preprocessing directives with #ifndef. ... ok
+test_preprocessor_with_multiline_conditions (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_with_multiline_conditions)
+Test preprocessing directives with multiline conditions. ... ok
+test_preprocessor_with_string_literals (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_with_string_literals)
+Test preprocessing directives with string literals in conditions. ... ok
+test_preprocessor_with_whitespace_variations (unit.test_preprocessor_bug.TestPreprocessorBug.test_preprocessor_with_whitespace_variations)
+Test preprocessing directives with various whitespace patterns. ... ok
+test_simple_if_endif_block (unit.test_preprocessor_bug.TestPreprocessorBug.test_simple_if_endif_block)
+Test simple #if/#endif block processing. ... ok
+test_multiline_preprocessor_directive (unit.test_preprocessor_handling.TestPreprocessorHandling.test_multiline_preprocessor_directive)
+Test multiline preprocessor directive ... ok
+test_nested_preprocessor_blocks (unit.test_preprocessor_handling.TestPreprocessorHandling.test_nested_preprocessor_blocks)
+Test nested #if blocks ... ok
+test_preprocessor_directive_tokenization (unit.test_preprocessor_handling.TestPreprocessorHandling.test_preprocessor_directive_tokenization)
+Test that preprocessor directives are properly tokenized ... ok
+test_preprocessor_with_comments (unit.test_preprocessor_handling.TestPreprocessorHandling.test_preprocessor_with_comments)
+Test preprocessor directives with comments ... ok
+test_preprocessor_with_elif (unit.test_preprocessor_handling.TestPreprocessorHandling.test_preprocessor_with_elif)
+Test #if/#elif/#else/#endif block ... ok
+test_preprocessor_with_else_branch (unit.test_preprocessor_handling.TestPreprocessorHandling.test_preprocessor_with_else_branch)
+Test #if/#else/#endif block ... ok
+test_preprocessor_with_empty_blocks (unit.test_preprocessor_handling.TestPreprocessorHandling.test_preprocessor_with_empty_blocks)
+Test preprocessor directives with empty blocks ... ok
+test_preprocessor_with_enums (unit.test_preprocessor_handling.TestPreprocessorHandling.test_preprocessor_with_enums)
+Test preprocessor directives containing enum definitions ... ok
+test_preprocessor_with_functions (unit.test_preprocessor_handling.TestPreprocessorHandling.test_preprocessor_with_functions)
+Test preprocessor directives containing function declarations ... ok
+test_preprocessor_with_mixed_content (unit.test_preprocessor_handling.TestPreprocessorHandling.test_preprocessor_with_mixed_content)
+Test preprocessor directives with mixed content types ... ok
+test_preprocessor_with_structs (unit.test_preprocessor_handling.TestPreprocessorHandling.test_preprocessor_with_structs)
+Test preprocessor directives containing struct definitions ... ok
+test_preprocessor_with_typedefs (unit.test_preprocessor_handling.TestPreprocessorHandling.test_preprocessor_with_typedefs)
+Test preprocessor directives containing typedef definitions ... ok
+test_preprocessor_with_whitespace_variations (unit.test_preprocessor_handling.TestPreprocessorHandling.test_preprocessor_with_whitespace_variations)
+Test preprocessor directives with various whitespace patterns ... ok
+test_simple_preprocessor_conditional (unit.test_preprocessor_handling.TestPreprocessorHandling.test_simple_preprocessor_conditional)
+Test simple #if/#endif block ... ok
+test_filter_tokens (unit.test_tokenizer.TestCTokenizer.test_filter_tokens)
+Test token filtering functionality ... Filtered tokens: [Token(INT, 'int', 1:0), Token(IDENTIFIER, 'x', 1:4), Token(SEMICOLON, ';', 1:5), Token(CHAR, 'char', 2:0), Token(IDENTIFIER, 'y', 2:5), Token(SEMICOLON, ';', 2:6)]
+Filtered types: [<TokenType.INT: 'INT'>, <TokenType.IDENTIFIER: 'IDENTIFIER'>, <TokenType.SEMICOLON: 'SEMICOLON'>, <TokenType.CHAR: 'CHAR'>, <TokenType.IDENTIFIER: 'IDENTIFIER'>, <TokenType.SEMICOLON: 'SEMICOLON'>]
+ok
+test_filter_tokens_custom_exclude (unit.test_tokenizer.TestCTokenizer.test_filter_tokens_custom_exclude)
+Test token filtering with custom exclude types ... ok
+test_tokenize_char_literals (unit.test_tokenizer.TestCTokenizer.test_tokenize_char_literals)
+Test tokenization of character literals ... ok
+test_tokenize_comments (unit.test_tokenizer.TestCTokenizer.test_tokenize_comments)
+Test tokenization of comments ... ok
+test_tokenize_complex_expression (unit.test_tokenizer.TestCTokenizer.test_tokenize_complex_expression)
+Test tokenization of complex C expressions ... ok
+test_tokenize_data_types (unit.test_tokenizer.TestCTokenizer.test_tokenize_data_types)
+Test tokenization of C data types ... ok
+test_tokenize_edge_cases (unit.test_tokenizer.TestCTokenizer.test_tokenize_edge_cases)
+Test tokenization of edge cases ... All tokens: [Token(UNKNOWN, '@', 1:0), Token(UNKNOWN, '#', 1:1), Token(UNKNOWN, '$', 1:2), Token(UNKNOWN, '%', 1:3), Token(EOF, '', 1:4)]
+Unknown tokens: [Token(UNKNOWN, '@', 1:0), Token(UNKNOWN, '#', 1:1), Token(UNKNOWN, '$', 1:2), Token(UNKNOWN, '%', 1:3)]
+ok
+test_tokenize_identifiers (unit.test_tokenizer.TestCTokenizer.test_tokenize_identifiers)
+Test tokenization of identifiers ... ok
+test_tokenize_keywords (unit.test_tokenizer.TestCTokenizer.test_tokenize_keywords)
+Test tokenization of C keywords ... ok
+test_tokenize_line_numbers_and_columns (unit.test_tokenizer.TestCTokenizer.test_tokenize_line_numbers_and_columns)
+Test that line numbers and columns are correctly tracked ... ok
+test_tokenize_numbers (unit.test_tokenizer.TestCTokenizer.test_tokenize_numbers)
+Test tokenization of numbers ... ok
+test_tokenize_operators_and_punctuation (unit.test_tokenizer.TestCTokenizer.test_tokenize_operators_and_punctuation)
+Test tokenization of operators and punctuation ... ok
+test_tokenize_preprocessor (unit.test_tokenizer.TestCTokenizer.test_tokenize_preprocessor)
+Test tokenization of preprocessor directives ... ok
+test_tokenize_preprocessor_if_directives (unit.test_tokenizer.TestCTokenizer.test_tokenize_preprocessor_if_directives)
+Test tokenization of #if preprocessor directives ... ok
+test_tokenize_strings (unit.test_tokenizer.TestCTokenizer.test_tokenize_strings)
+Test tokenization of string literals ... ok
+test_tokenize_whitespace (unit.test_tokenizer.TestCTokenizer.test_tokenize_whitespace)
+Test tokenization of whitespace ... ok
+test_find_enums_simple (unit.test_tokenizer.TestStructureFinder.test_find_enums_simple)
+Test finding simple enum definitions ... ok
+test_find_functions_declarations (unit.test_tokenizer.TestStructureFinder.test_find_functions_declarations)
+Test finding function declarations ... ok
+test_find_functions_definitions (unit.test_tokenizer.TestStructureFinder.test_find_functions_definitions)
+Test finding function definitions ... ok
+test_find_functions_pointer_return (unit.test_tokenizer.TestStructureFinder.test_find_functions_pointer_return)
+Test finding functions with pointer return types ... ok
+test_find_functions_with_modifiers (unit.test_tokenizer.TestStructureFinder.test_find_functions_with_modifiers)
+Test finding functions with modifiers ... ok
+test_find_matching_brace (unit.test_tokenizer.TestStructureFinder.test_find_matching_brace)
+Test finding matching braces ... ok
+test_find_matching_brace_no_match (unit.test_tokenizer.TestStructureFinder.test_find_matching_brace_no_match)
+Test finding matching brace when there's no match ... ok
+test_find_structs_anonymous (unit.test_tokenizer.TestStructureFinder.test_find_structs_anonymous)
+Test finding anonymous struct definitions ... ok
+test_find_structs_simple (unit.test_tokenizer.TestStructureFinder.test_find_structs_simple)
+Test finding simple struct definitions ... ok
+test_find_typedef_enums (unit.test_tokenizer.TestStructureFinder.test_find_typedef_enums)
+Test finding typedef enum definitions ... ok
+test_find_typedef_structs (unit.test_tokenizer.TestStructureFinder.test_find_typedef_structs)
+Test finding typedef struct definitions ... ok
+test_comment_block_with_code_inside (unit.test_tokenizer.TestTokenizerEdgeCases.test_comment_block_with_code_inside)
+Test that comment blocks containing code-like content are properly ignored ... ok
+test_tokenize_complex_expressions (unit.test_tokenizer.TestTokenizerEdgeCases.test_tokenize_complex_expressions)
+Test tokenization of complex C expressions ... ok
+test_tokenize_escaped_characters (unit.test_tokenizer.TestTokenizerEdgeCases.test_tokenize_escaped_characters)
+Test tokenization of escaped characters ... ok
+test_tokenize_large_multiline_comment_block (unit.test_tokenizer.TestTokenizerEdgeCases.test_tokenize_large_multiline_comment_block)
+Test tokenization of large multi-line comment blocks ... ok
+test_tokenize_mixed_content (unit.test_tokenizer.TestTokenizerEdgeCases.test_tokenize_mixed_content)
+Test tokenization of mixed content with all token types ... ok
+test_tokenize_multiline_strings (unit.test_tokenizer.TestTokenizerEdgeCases.test_tokenize_multiline_strings)
+Test tokenization of multiline strings ... String tokens: [Token(STRING, '"Line 1
+Line 2
+Line 3"', 1:0)]
+String values: ['"Line 1\nLine 2\nLine 3"']
+ok
+test_tokenize_nested_comments (unit.test_tokenizer.TestTokenizerEdgeCases.test_tokenize_nested_comments)
+Test tokenization with nested comments ... ok
+test_tokenize_preprocessor_edge_cases (unit.test_tokenizer.TestTokenizerEdgeCases.test_tokenize_preprocessor_edge_cases)
+Test tokenization of preprocessor edge cases ... ok
+test_very_large_comment_block_parsing (unit.test_tokenizer.TestTokenizerEdgeCases.test_very_large_comment_block_parsing)
+Test that very large comment blocks are properly filtered out during parsing ... ok
+test_extract_token_range (unit.test_tokenizer.TestUtilityFunctions.test_extract_token_range)
+Test extracting text from token range ... All tokens: [Token(INT, 'int', 1:0), Token(WHITESPACE, ' ', 1:3), Token(IDENTIFIER, 'x', 1:4), Token(WHITESPACE, ' ', 1:5), Token(ASSIGN, '=', 1:6), Token(WHITESPACE, ' ', 1:7), Token(NUMBER, '42', 1:8), Token(SEMICOLON, ';', 1:10), Token(EOF, '', 1:11)]
+Extracted text: int x
+ok
+test_extract_token_range_invalid (unit.test_tokenizer.TestUtilityFunctions.test_extract_token_range_invalid)
+Test extracting token range with invalid indices ... ok
+test_find_enum_values (unit.test_tokenizer.TestUtilityFunctions.test_find_enum_values)
+Test extracting enum values ... ok
+test_find_enum_values_complex (unit.test_tokenizer.TestUtilityFunctions.test_find_enum_values_complex)
+Test extracting complex enum values ... ok
+test_find_struct_fields (unit.test_tokenizer.TestUtilityFunctions.test_find_struct_fields)
+Test extracting struct fields ... ok
+test_additions_with_file_selection (unit.test_transformer.TestTransformer.test_additions_with_file_selection)
+Test additions with file selection ... ok
+test_apply_element_filters_enums (unit.test_transformer.TestTransformer.test_apply_element_filters_enums)
+Test element filtering for enums ... ok
+test_apply_element_filters_functions (unit.test_transformer.TestTransformer.test_apply_element_filters_functions)
+Test element filtering for functions ... ok
+test_apply_element_filters_globals (unit.test_transformer.TestTransformer.test_apply_element_filters_globals)
+Test element filtering for globals ... ok
+test_apply_element_filters_macros (unit.test_transformer.TestTransformer.test_apply_element_filters_macros)
+Test element filtering for macros ... ok
+test_apply_element_filters_structs (unit.test_transformer.TestTransformer.test_apply_element_filters_structs)
+Test element filtering for structs ... ok
+test_apply_element_filters_typedefs (unit.test_transformer.TestTransformer.test_apply_element_filters_typedefs)
+Test element filtering for typedefs ... ok
+test_apply_element_filters_unions (unit.test_transformer.TestTransformer.test_apply_element_filters_unions)
+Test element filtering for unions ... ok
+test_apply_file_filters_both_patterns (unit.test_transformer.TestTransformer.test_apply_file_filters_both_patterns)
+Test file filtering with both include and exclude patterns ... ok
+test_apply_file_filters_exclude_only (unit.test_transformer.TestTransformer.test_apply_file_filters_exclude_only)
+Test file filtering with exclude patterns only ... ok
+test_apply_file_filters_include_only (unit.test_transformer.TestTransformer.test_apply_file_filters_include_only)
+Test file filtering with include patterns only ... ok
+test_apply_file_filters_no_patterns (unit.test_transformer.TestTransformer.test_apply_file_filters_no_patterns)
+Test file filtering with no patterns (should return original model) ... ok
+test_apply_transformations_no_config (unit.test_transformer.TestTransformer.test_apply_transformations_no_config)
+Test applying transformations with empty config ... 2025-07-25 20:28:35,679 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,679 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 2 files
+ok
+test_apply_transformations_with_all_sections (unit.test_transformer.TestTransformer.test_apply_transformations_with_all_sections)
+Test applying transformations with all configuration sections ... 2025-07-25 20:28:35,679 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,680 - c_to_plantuml.transformer - INFO - Processing include relations with max depth: 2
+2025-07-25 20:28:35,680 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 1 files
+ok
+test_compile_patterns_invalid (unit.test_transformer.TestTransformer.test_compile_patterns_invalid)
+Test compiling invalid regex patterns ... 2025-07-25 20:28:35,680 - c_to_plantuml.transformer - WARNING - Invalid regex pattern '[invalid': unterminated character set at position 0
+ok
+test_compile_patterns_valid (unit.test_transformer.TestTransformer.test_compile_patterns_valid)
+Test compiling valid regex patterns ... ok
+test_dict_to_file_model (unit.test_transformer.TestTransformer.test_dict_to_file_model)
+Test converting dictionary back to FileModel ... ok
+test_file_selection_apply_to_all (unit.test_transformer.TestTransformer.test_file_selection_apply_to_all)
+Test file selection with empty selected_files (apply to all) ... ok
+test_file_selection_no_file_selection (unit.test_transformer.TestTransformer.test_file_selection_no_file_selection)
+Test file selection with no file_selection specified (apply to all) ... ok
+test_file_selection_no_matching_files (unit.test_transformer.TestTransformer.test_file_selection_no_matching_files)
+Test file selection with no matching files ... ok
+test_file_selection_selected_files (unit.test_transformer.TestTransformer.test_file_selection_selected_files)
+Test file selection with specific file patterns ... ok
+test_filter_dict_exclude_only (unit.test_transformer.TestTransformer.test_filter_dict_exclude_only)
+Test dictionary filtering with exclude patterns only ... ok
+test_filter_dict_include_only (unit.test_transformer.TestTransformer.test_filter_dict_include_only)
+Test dictionary filtering with include patterns only ... ok
+test_filter_list_include_only (unit.test_transformer.TestTransformer.test_filter_list_include_only)
+Test list filtering with include patterns only ... ok
+test_filter_list_with_key_function (unit.test_transformer.TestTransformer.test_filter_list_with_key_function)
+Test list filtering with a key function ... ok
+test_find_included_file (unit.test_transformer.TestTransformer.test_find_included_file)
+Test finding included file paths ... ok
+test_find_included_file_not_found (unit.test_transformer.TestTransformer.test_find_included_file_not_found)
+Test finding non-existent included file ... ok
+test_load_config_invalid_file (unit.test_transformer.TestTransformer.test_load_config_invalid_file)
+Test loading a non-existent configuration file ... ok
+test_load_config_valid_file (unit.test_transformer.TestTransformer.test_load_config_valid_file)
+Test loading a valid configuration file ... ok
+test_load_model_invalid_file (unit.test_transformer.TestTransformer.test_load_model_invalid_file)
+Test loading a non-existent model file ... ok
+test_load_model_invalid_json (unit.test_transformer.TestTransformer.test_load_model_invalid_json)
+Test loading a model file with invalid JSON ... ok
+test_load_model_valid_file (unit.test_transformer.TestTransformer.test_load_model_valid_file)
+Test loading a valid model file ... ok
+test_matches_pattern_invalid (unit.test_transformer.TestTransformer.test_matches_pattern_invalid)
+Test _matches_pattern method with invalid patterns ... 2025-07-25 20:28:35,682 - c_to_plantuml.transformer - WARNING - Invalid pattern '[invalid' for file matching
+ok
+test_matches_pattern_valid (unit.test_transformer.TestTransformer.test_matches_pattern_valid)
+Test _matches_pattern method with valid patterns ... ok
+test_process_include_relations (unit.test_transformer.TestTransformer.test_process_include_relations)
+Test processing include relations ... 2025-07-25 20:28:35,682 - c_to_plantuml.transformer - INFO - Processing include relations with max depth: 2
+ok
+test_removals_with_file_selection (unit.test_transformer.TestTransformer.test_removals_with_file_selection)
+Test removals with file selection ... ok
+test_renaming_with_file_selection (unit.test_transformer.TestTransformer.test_renaming_with_file_selection)
+Test renaming with file selection ... ok
+test_save_model (unit.test_transformer.TestTransformer.test_save_model)
+Test saving model to file ... ok
+test_should_include_file_both_patterns (unit.test_transformer.TestTransformer.test_should_include_file_both_patterns)
+Test file inclusion with both include and exclude patterns ... ok
+test_should_include_file_exclude_patterns (unit.test_transformer.TestTransformer.test_should_include_file_exclude_patterns)
+Test file inclusion with exclude patterns ... ok
+test_should_include_file_include_patterns (unit.test_transformer.TestTransformer.test_should_include_file_include_patterns)
+Test file inclusion with include patterns ... ok
+test_transform_main_method (unit.test_transformer.TestTransformer.test_transform_main_method)
+Test the main transform method ... 2025-07-25 20:28:35,684 - c_to_plantuml.transformer - INFO - Step 2: Transforming model: /tmp/tmp8lzyitk1.json
+2025-07-25 20:28:35,684 - c_to_plantuml.transformer - INFO - Applying transformations to model
+2025-07-25 20:28:35,684 - c_to_plantuml.transformer - INFO - Transformations complete. Model now has 1 files
+2025-07-25 20:28:35,684 - c_to_plantuml.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmp8lzyitk1.json
+ok
+test_comments_and_whitespace (unit.test_typedef_extraction.TestTypedefExtraction.test_comments_and_whitespace)
+Test extraction with comments and whitespace ... ok
+test_comprehensive_typedef_extraction (unit.test_typedef_extraction.TestTypedefExtraction.test_comprehensive_typedef_extraction)
+Test comprehensive typedef extraction with all types ... 
+Extracted 10 typedefs:
+1. typedef uint32_t MyLen;
+2. typedef int32_t MyInt;
+3. typedef char * MyString;
+4. typedef MyComplex * MyComplexPtr;
+5. typedef MyComplexPtr MyComplexArray[10];
+6. typedef int (*MyCallback)(MyBuffer * buffer);
+7. typedef struct MyBuffer_tag
+8. typedef struct MyComplexStruct_tag
+9. typedef enum Color_tag
+10. typedef union Number_tag
+
+Checking expected patterns:
+✅ typedef uint32_t MyLen
+✅ typedef int32_t MyInt
+✅ typedef char * MyString
+✅ typedef struct MyBuffer_tag
+✅ typedef int (*MyCallback)
+✅ typedef struct MyComplexStruct_tag
+✅ typedef MyComplex * MyComplexPtr
+✅ typedef MyComplexPtr MyComplexArray
+✅ typedef enum Color_tag
+✅ typedef union Number_tag
+ok
+test_empty_content (unit.test_typedef_extraction.TestTypedefExtraction.test_empty_content)
+Test extraction with empty content ... ok
+test_enum_typedefs (unit.test_typedef_extraction.TestTypedefExtraction.test_enum_typedefs)
+Test extraction of enum typedefs ... ok
+test_function_pointer_typedefs (unit.test_typedef_extraction.TestTypedefExtraction.test_function_pointer_typedefs)
+Test extraction of function pointer typedefs ... ok
+test_no_typedefs_content (unit.test_typedef_extraction.TestTypedefExtraction.test_no_typedefs_content)
+Test extraction with content that has no typedefs ... ok
+test_simple_typedefs (unit.test_typedef_extraction.TestTypedefExtraction.test_simple_typedefs)
+Test extraction of simple typedefs ... ok
+test_struct_typedefs (unit.test_typedef_extraction.TestTypedefExtraction.test_struct_typedefs)
+Test extraction of struct typedefs ... ok
+test_union_typedefs (unit.test_typedef_extraction.TestTypedefExtraction.test_union_typedefs)
+Test extraction of union typedefs ... ok
+test_detect_file_encoding_ascii (unit.test_utils.TestUtils.test_detect_file_encoding_ascii)
+Test encoding detection for ASCII files ... ok
+test_detect_file_encoding_utf8 (unit.test_utils.TestUtils.test_detect_file_encoding_utf8)
+Test encoding detection for UTF-8 files ... ok
+test_detect_file_encoding_with_bom (unit.test_utils.TestUtils.test_detect_file_encoding_with_bom)
+Test encoding detection for files with BOM ... ok
+test_get_acceptable_encodings (unit.test_utils.TestUtils.test_get_acceptable_encodings)
+Test getting acceptable encodings ... ok
+test_get_platform_default_encoding (unit.test_utils.TestUtils.test_get_platform_default_encoding)
+Test platform default encoding detection ... ok
+test_is_acceptable_encoding (unit.test_utils.TestUtils.test_is_acceptable_encoding)
+Test encoding acceptability check ... ok
+test_normalize_encoding (unit.test_utils.TestUtils.test_normalize_encoding)
+Test encoding normalization ... ok
+test_empty_names_detected (unit.test_verifier.TestModelVerifier.test_empty_names_detected)
+Test that empty names are detected ... 2025-07-25 20:28:35,686 - c_to_plantuml.verifier - WARNING - Model verification found 2 issues:
+2025-07-25 20:28:35,686 - c_to_plantuml.verifier - WARNING -   - Invalid struct name '' in file.c
+2025-07-25 20:28:35,686 - c_to_plantuml.verifier - WARNING -   - Struct name is empty in file.c
+ok
+test_invalid_global_name_detected (unit.test_verifier.TestModelVerifier.test_invalid_global_name_detected)
+Test that invalid global variable names are detected ... 2025-07-25 20:28:35,686 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,686 - c_to_plantuml.verifier - WARNING -   - Invalid field name ']' in global in file.c
+ok
+test_invalid_identifier_detected (unit.test_verifier.TestModelVerifier.test_invalid_identifier_detected)
+Test that invalid identifiers are detected ... 2025-07-25 20:28:35,686 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,686 - c_to_plantuml.verifier - WARNING -   - Invalid struct name '123invalid' in file.c
+ok
+test_invalid_identifiers_fail (unit.test_verifier.TestModelVerifier.test_invalid_identifiers_fail)
+Test that invalid identifiers fail verification ... 2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Invalid field name '123invalid' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Invalid field name 'invalid-name' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Invalid field name 'invalid.name' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Invalid field name 'invalid name' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Invalid field name ']' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Invalid field name '[' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Invalid field name '{' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Invalid field name '}' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Invalid field name '(' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Invalid field name ')' in global in file.c
+ok
+test_missing_opening_brackets_detected (unit.test_verifier.TestModelVerifier.test_missing_opening_brackets_detected)
+Test that missing opening brackets are detected ... 2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Suspicious field type ']int' for 'test' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Suspicious field type ')char*' for 'test' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Suspicious field type '}struct' for 'test' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int]' for 'test' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'char* ptr]' for 'test' in global in file.c
+ok
+test_missing_opening_brackets_in_values_detected (unit.test_verifier.TestModelVerifier.test_missing_opening_brackets_in_values_detected)
+Test that missing opening brackets in values are detected ... 2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Suspicious field value ']42' for 'test' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Suspicious field value ')hello' for 'test' in global in file.c
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,687 - c_to_plantuml.verifier - WARNING -   - Suspicious field value '}data' for 'test' in global in file.c
+ok
+test_project_level_validation (unit.test_verifier.TestModelVerifier.test_project_level_validation)
+Test project-level validation ... 2025-07-25 20:28:35,688 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,688 - c_to_plantuml.verifier - WARNING -   - Project name is empty or whitespace
+2025-07-25 20:28:35,688 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,688 - c_to_plantuml.verifier - WARNING -   - Project root is empty or whitespace
+2025-07-25 20:28:35,688 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,688 - c_to_plantuml.verifier - WARNING -   - No files found in project
+ok
+test_suspicious_type_detected (unit.test_verifier.TestModelVerifier.test_suspicious_type_detected)
+Test that suspicious types are detected ... 2025-07-25 20:28:35,688 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,688 - c_to_plantuml.verifier - WARNING -   - Suspicious field type '{ \ 
+ ( ptr_pau8 ) [ 3 U' for 'test_var' in global in file.c
+ok
+test_suspicious_value_detected (unit.test_verifier.TestModelVerifier.test_suspicious_value_detected)
+Test that suspicious values are detected ... 2025-07-25 20:28:35,688 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,688 - c_to_plantuml.verifier - WARNING -   - Suspicious field value '\ 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ #define CRYPTO_PRV_UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8) \ 
+ { \ 
+ ( ptr_pau8 ) [ 1 U' for 'test_var' in global in file.c
+ok
+test_unbalanced_brackets_detected (unit.test_verifier.TestModelVerifier.test_unbalanced_brackets_detected)
+Test that unbalanced brackets are detected ... 2025-07-25 20:28:35,688 - c_to_plantuml.verifier - WARNING - Model verification found 1 issues:
+2025-07-25 20:28:35,688 - c_to_plantuml.verifier - WARNING -   - Suspicious field type 'int[10' for 'test' in global in file.c
+ok
+test_valid_identifiers_pass (unit.test_verifier.TestModelVerifier.test_valid_identifiers_pass)
+Test that valid identifiers pass verification ... 2025-07-25 20:28:35,688 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,688 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,688 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,688 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,688 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+2025-07-25 20:28:35,688 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+ok
+test_valid_model_passes_verification (unit.test_verifier.TestModelVerifier.test_valid_model_passes_verification)
+Test that a valid model passes verification ... 2025-07-25 20:28:35,688 - c_to_plantuml.verifier - INFO - Model verification passed - all values look sane
+ok
+
+----------------------------------------------------------------------
+Ran 329 tests in 1.056s
+
+OK
+
+--------------------------------------------------
+                 unittest Summary                 
+--------------------------------------------------
+Tests run: 329
+Failures: 0
+Errors: 0
+
+======================================================================
+                       🎯 Test Execution Summary                       
+======================================================================
+Duration: 1.09 seconds
+✅ All tests passed!
