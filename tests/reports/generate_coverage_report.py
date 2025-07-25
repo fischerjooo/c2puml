@@ -151,6 +151,35 @@ def get_function_name_at_line(source_lines, line_number):
     return "unknown function"
 
 
+def find_functions(source_lines):
+    """Return a list of (func_name, start_line, end_line) for all functions in the file."""
+    functions = []
+    func_stack = []
+    for i, line in enumerate(source_lines):
+        # Detect function definition
+        match = re.match(r'^(\s*)def\s+(\w+)\s*\(', line)
+        if match:
+            indent = len(match.group(1))
+            func_name = match.group(2)
+            func_stack.append((func_name, i, indent))
+        # Detect end of function by dedent
+        if func_stack:
+            curr_func = func_stack[-1]
+            curr_indent = curr_func[2]
+            if (line.strip() == '' or line.lstrip().startswith('#')):
+                continue
+            line_indent = len(line) - len(line.lstrip())
+            if line_indent <= curr_indent and i > curr_func[1]:
+                # Function ends before this line
+                func_name, start, _ = func_stack.pop()
+                functions.append((func_name, start, i-1))
+    # Handle function that goes to EOF
+    while func_stack:
+        func_name, start, _ = func_stack.pop()
+        functions.append((func_name, start, len(source_lines)-1))
+    return sorted(functions, key=lambda x: x[1])
+
+
 def generate_detailed_coverage_report():
     """Generate a detailed coverage report with code context in HTML format."""
     
@@ -255,47 +284,22 @@ def generate_detailed_coverage_report():
             html_content.append('</div>')
             continue
         
-        # Group missing lines into ranges
-        missing_ranges = []
-        if missing:
-            missing_list = sorted(missing)
-            start = missing_list[0]
-            end = start
-            
-            for line_num in missing_list[1:]:
-                if line_num == end + 1:
-                    end = line_num
-                else:
-                    missing_ranges.append((start, end))
-                    start = end = line_num
-            missing_ranges.append((start, end))
-        
-        # Show context for each missing range
-        for start_line, end_line in missing_ranges:
-            # Get function name for the first missing line
-            function_name = get_function_name_at_line(source_lines, start_line)
-            
-            if start_line == end_line:
-                html_content.append(f'<h4>Function: {function_name} - Line {start_line}</h4>')
-            else:
-                html_content.append(f'<h4>Function: {function_name} - Lines {start_line}-{end_line}</h4>')
-            
+        # Group missing lines by function
+        functions = find_functions(source_lines)
+        for func_name, func_start, func_end in functions:
+            func_lines = set(range(func_start+1, func_end+2))  # 1-based
+            missed_in_func = sorted(set(missing) & func_lines)
+            if not missed_in_func:
+                continue
+            html_content.append(f'<h4>Function: {func_name} (lines {func_start+1}-{func_end+1})</h4>')
             html_content.append('<pre>')
-            
-            # Show context (5 lines before and after for more compact view)
-            context_start = max(1, start_line - 5)
-            context_end = min(len(source_lines), end_line + 5)
-            
-            for i in range(context_start, context_end + 1):
+            for i in range(func_start+1, func_end+2):
                 line_content = source_lines[i-1].rstrip()
                 escaped_content = html.escape(line_content)
-                if i < start_line or i > end_line:
-                    # This is context (covered or outside missing range)
-                    html_content.append(f'<span class="line-number">{i:3d}</span><span class="context">{escaped_content}</span>')
-                else:
-                    # This is a missing line
+                if i in missed_in_func:
                     html_content.append(f'<span class="line-number">{i:3d}</span><span class="uncovered">{escaped_content}</span>')
-            
+                else:
+                    html_content.append(f'<span class="line-number">{i:3d}</span>{escaped_content}')
             html_content.append('</pre>')
         
         html_content.append('</div>')
