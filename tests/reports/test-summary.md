@@ -2,10 +2,10 @@
 
 **Generated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 **Branch:** main
-**Commit:** ed668348899e50979831f40f796e85a4ce856cd0
+**Commit:** 3c86dddd1ddaa4be3e81e2e4fcb21f03f96fd4ae
 **Python Version:** 3.9
 **Workflow:** Test Suite with Coverage Reports
-**Trigger:** pull_request
+**Trigger:** push
 
 ## Test Results
 
@@ -52,7 +52,5 @@ TOTAL                                2962    466  84.27%
 
 ### Metadata
 - **Repository:** fischerjooo/generator_project
-- **Run ID:** 16517332119
+- **Run ID:** 16517340796
 - **Actor:** fischerjooo
-- **PR Number:** 101
-- **PR Title:** Update test coverage workflow for python 3.9 and actions
