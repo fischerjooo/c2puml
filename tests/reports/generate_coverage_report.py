@@ -54,7 +54,8 @@ def generate_html_header():
             color: #111;
         }
         .uncovered {
-            color: #f44336;
+            background-color: #ffeaea;
+            color: #111;
         }
         .context {
             background-color: #ffeaea;
