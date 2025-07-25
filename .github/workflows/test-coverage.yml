@@ -126,7 +126,6 @@ jobs:
         cat > tests/reports/test-summary.md << 'EOF'
         # Test Execution Summary
 
-        **Generated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
         **Branch:** ${{ github.ref_name }}
         **Commit:** ${{ github.sha }}
         **Python Version:** ${{ matrix.python-version }}
@@ -159,7 +158,6 @@ jobs:
         echo "" >> tests/reports/test-summary.md
         echo "### Metadata" >> tests/reports/test-summary.md
         echo "- **Repository:** ${{ github.repository }}" >> tests/reports/test-summary.md
-        echo "- **Run ID:** ${{ github.run_id }}" >> tests/reports/test-summary.md
         echo "- **Actor:** ${{ github.actor }}" >> tests/reports/test-summary.md
 
         if [ "${{ github.event_name }}" = "pull_request" ]; then
