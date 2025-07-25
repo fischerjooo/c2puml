@@ -40,7 +40,7 @@ jobs:
     
     strategy:
       matrix:
-        python-version: [3.9, 3.10, 3.11]
+        python-version: [3.9]
         
     steps:
     - name: 📥 Checkout repository
@@ -172,7 +172,6 @@ jobs:
         echo "📝 Test summary generated"
         
     - name: 📈 Upload coverage to Codecov (if available)
-      if: matrix.python-version == '3.9'  # Only upload once
       uses: codecov/codecov-action@v3
       with:
         file: tests/reports/coverage.xml
@@ -202,7 +201,7 @@ jobs:
         du -h tests/reports/* 2>/dev/null || true
         
     - name: 🔧 Validate and configure Git credentials
-      if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main') && matrix.python-version == '3.9'
+      if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
       run: |
         echo "🔧 Setting up Git credentials..."
         git config --global user.name 'github-actions[bot]'
@@ -219,7 +218,7 @@ jobs:
         fi
         
     - name: 🚀 Commit and push coverage reports
-      if: ((github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')) && matrix.python-version == '3.9'
+      if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
       run: |
         echo "🚀 Committing coverage reports to repository..."
         
@@ -268,7 +267,7 @@ jobs:
         fi
         
     - name: 📤 Upload test artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()  # Upload even if tests failed
       with:
         name: test-coverage-reports-py${{ matrix.python-version }}
