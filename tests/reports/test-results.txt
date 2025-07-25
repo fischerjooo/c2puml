@@ -1,0 +1,16 @@
+
+======================================================================
+                 🧪 C to PlantUML Converter Test Suite                 
+======================================================================
+Working directory: /workspace
+Python version: 3.13.3 (main, Apr  8 2025, 19:55:40) [GCC 14.2.0]
+Script directory: /workspace
+
+--------------------------------------------------
+              Test Suite Statistics               
+--------------------------------------------------
+Total test files: 27
+Unit tests: 17
+Feature tests: 9
+Integration tests: 1
+Total lines of test code: 12459
