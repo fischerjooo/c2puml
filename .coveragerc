@@ -1,0 +1,38 @@
+[run]
+source = c_to_plantuml
+omit = 
+    */tests/*
+    */test_*
+    setup.py
+    */venv/*
+    */env/*
+    */__pycache__/*
+    */site-packages/*
+    */.*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self.debug:
+    if settings.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+    class .*\bProtocol\):
+    @(abc\.)?abstractmethod
+
+show_missing = True
+skip_covered = False
+precision = 2
+
+[html]
+directory = tests/reports/coverage-html
+title = C to PlantUML Converter Coverage Report
+
+[xml]
+output = tests/reports/coverage.xml
+
+[json]
+output = tests/reports/coverage.json
