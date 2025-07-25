@@ -221,7 +221,15 @@ def generate_detailed_coverage_report():
         return False
     
     # Get coverage data
-    analysis = cov.analysis2()
+    analysis = {}
+    for filename in cov.get_data().measured_files():
+        try:
+            result = cov.analysis2(filename)
+            # analysis2 returns (filename, statements, excluded, missing, missing_branches)
+            analysis[filename] = result
+        except Exception as e:
+            print(f"Warning: Could not analyze {filename}: {e}")
+            continue
     
     # Start building HTML
     html_content = [generate_html_header()]
@@ -231,10 +239,10 @@ def generate_detailed_coverage_report():
     html_content.append('<p>This report shows all uncovered code lines with context, highlighting which lines are covered and which are not.</p>')
     
     # Overall stats
-    total_statements = sum(len(stmts) for stmts, _, _, _ in analysis.values())
-    total_missing = sum(len(missing) for _, _, missing, _ in analysis.values())
+    total_statements = sum(len(stmts) for _, stmts, _, missing, _ in analysis.values())
+    total_missing = sum(len(missing) for _, _, _, missing, _ in analysis.values())
     total_coverage = ((total_statements - total_missing) / total_statements * 100) if total_statements > 0 else 0
-    files_with_issues = len([f for f, (stmts, _, missing, _) in analysis.items() if missing])
+    files_with_issues = len([f for f, (_, _, _, missing, _) in analysis.items() if missing])
     
     html_content.append('<div class="stats-grid">')
     html_content.append(f'''
@@ -277,7 +285,7 @@ def generate_detailed_coverage_report():
     html_content.append('</div>')
     
     # Process each file
-    for filename, (statements, excluded, missing, missing_branches) in analysis.items():
+    for filename, (_, statements, excluded, missing, missing_branches) in analysis.items():
         if not missing:  # Skip files with 100% coverage
             continue
             
@@ -352,7 +360,7 @@ def generate_detailed_coverage_report():
     
     # Find files with lowest coverage
     file_coverage_data = []
-    for filename, (statements, excluded, missing, missing_branches) in analysis.items():
+    for filename, (_, statements, excluded, missing, missing_branches) in analysis.items():
         if statements:
             coverage_pct = ((len(statements) - len(missing)) / len(statements) * 100)
             file_coverage_data.append((filename, coverage_pct, len(missing)))
