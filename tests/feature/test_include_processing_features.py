@@ -462,7 +462,7 @@ extern ApiContext global_context;
         # Create config file
         config_data = {
             "source_folders": [str(project_dir)],
-            "output_folder": str(output_dir),
+            "output_dir": str(output_dir),
             "include_depth": 3,
             "file_extensions": [".c", ".h"]
         }
