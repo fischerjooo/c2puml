@@ -107,36 +107,102 @@ def generate_html_header():
             margin-left: 10px;
         }
         .code-block {
-            background-color: #2d3748;
-            color: #e2e8f0;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
             padding: 20px;
             border-radius: 8px;
             margin: 15px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.4;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
             overflow-x: auto;
             white-space: pre;
+            border: 1px solid #3c3c3c;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(180deg, #2d2d30 0%, #1e1e1e 100%);
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid #3c3c3c;
+        }
+        .code-block::after {
+            content: '● ● ●';
+            position: absolute;
+            top: 8px;
+            left: 15px;
+            color: #858585;
+            font-size: 12px;
+            letter-spacing: 2px;
         }
         .line-number {
             display: inline-block;
-            width: 50px;
-            color: #718096;
+            width: 60px;
+            color: #858585;
             text-align: right;
-            margin-right: 15px;
+            margin-right: 20px;
             user-select: none;
+            font-weight: normal;
+            border-right: 1px solid #3c3c3c;
+            padding-right: 15px;
         }
         .line-covered {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: rgba(46, 160, 67, 0.15);
+            color: #d4d4d4;
+            border-left: 3px solid #2ea043;
         }
         .line-uncovered {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: rgba(248, 81, 73, 0.15);
+            color: #d4d4d4;
+            border-left: 3px solid #f85149;
         }
         .line-context {
-            background-color: #f8f9fa;
-            color: #6c757d;
+            background-color: transparent;
+            color: #858585;
+            border-left: 3px solid transparent;
+        }
+        .line-covered:hover {
+            background-color: rgba(46, 160, 67, 0.25);
+        }
+        .line-uncovered:hover {
+            background-color: rgba(248, 81, 73, 0.25);
+        }
+        .line-context:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        /* VS Code-like syntax highlighting */
+        .code-block .keyword { color: #569cd6; }
+        .code-block .string { color: #ce9178; }
+        .code-block .comment { color: #6a9955; }
+        .code-block .function { color: #dcdcaa; }
+        .code-block .number { color: #b5cea8; }
+        .code-block .operator { color: #d4d4d4; }
+        .code-block .class { color: #4ec9b0; }
+        
+        /* VS Code-like scrollbar */
+        .code-block::-webkit-scrollbar {
+            width: 14px;
+            height: 14px;
+        }
+        .code-block::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+        .code-block::-webkit-scrollbar-thumb {
+            background: #424242;
+            border-radius: 7px;
+            border: 2px solid #1e1e1e;
+        }
+        .code-block::-webkit-scrollbar-thumb:hover {
+            background: #4f4f4f;
+        }
+        .code-block::-webkit-scrollbar-corner {
+            background: #1e1e1e;
         }
         .legend {
             background-color: #ecf0f1;
@@ -150,10 +216,11 @@ def generate_html_header():
             margin: 10px 0;
         }
         .legend-color {
-            width: 20px;
+            width: 30px;
             height: 20px;
-            margin-right: 10px;
-            border-radius: 3px;
+            margin-right: 15px;
+            border-radius: 2px;
+            display: inline-block;
         }
         .recommendations {
             background-color: #fff3cd;
@@ -195,6 +262,31 @@ def generate_html_header():
 </head>
 <body>
     <div class="container">"""
+
+
+def apply_syntax_highlighting(line_content):
+    """Apply basic syntax highlighting to code lines."""
+    import re
+    
+    # Keywords
+    keywords = ['def', 'class', 'import', 'from', 'if', 'else', 'elif', 'for', 'while', 'try', 'except', 'finally', 'with', 'as', 'return', 'yield', 'break', 'continue', 'pass', 'raise', 'assert', 'del', 'global', 'nonlocal', 'lambda', 'True', 'False', 'None', 'and', 'or', 'not', 'in', 'is']
+    for keyword in keywords:
+        line_content = re.sub(r'\b' + re.escape(keyword) + r'\b', f'<span class="keyword">{keyword}</span>', line_content)
+    
+    # Strings
+    line_content = re.sub(r'"[^"]*"', lambda m: f'<span class="string">{m.group(0)}</span>', line_content)
+    line_content = re.sub(r"'[^']*'", lambda m: f'<span class="string">{m.group(0)}</span>', line_content)
+    
+    # Comments
+    line_content = re.sub(r'#.*$', lambda m: f'<span class="comment">{m.group(0)}</span>', line_content)
+    
+    # Numbers
+    line_content = re.sub(r'\b\d+\b', lambda m: f'<span class="number">{m.group(0)}</span>', line_content)
+    
+    # Function calls
+    line_content = re.sub(r'\b([a-zA-Z_][a-zA-Z0-9_]*)\s*\(', r'<span class="function">\1</span>(', line_content)
+    
+    return line_content
 
 
 def generate_html_footer():
@@ -271,15 +363,15 @@ def generate_detailed_coverage_report():
     html_content.append('<div class="legend">')
     html_content.append('<h3>📋 Legend</h3>')
     html_content.append('<div class="legend-item">')
-    html_content.append('<div class="legend-color" style="background-color: #d4edda;"></div>')
+    html_content.append('<div class="legend-color" style="background-color: rgba(46, 160, 67, 0.15); border-left: 3px solid #2ea043;"></div>')
     html_content.append('<span>✅ Covered lines: Code that was executed during testing</span>')
     html_content.append('</div>')
     html_content.append('<div class="legend-item">')
-    html_content.append('<div class="legend-color" style="background-color: #f8d7da;"></div>')
+    html_content.append('<div class="legend-color" style="background-color: rgba(248, 81, 73, 0.15); border-left: 3px solid #f85149;"></div>')
     html_content.append('<span>❌ Uncovered lines: Code that was not executed during testing</span>')
     html_content.append('</div>')
     html_content.append('<div class="legend-item">')
-    html_content.append('<div class="legend-color" style="background-color: #f8f9fa;"></div>')
+    html_content.append('<div class="legend-color" style="background-color: transparent; border-left: 3px solid transparent;"></div>')
     html_content.append('<span>📝 Context lines: Code before and after uncovered lines for understanding</span>')
     html_content.append('</div>')
     html_content.append('</div>')
@@ -338,16 +430,17 @@ def generate_detailed_coverage_report():
             
             for i in range(context_start, context_end + 1):
                 line_content = source_lines[i-1].rstrip()
+                highlighted_content = apply_syntax_highlighting(line_content)
                 
                 if i < start_line or i > end_line:
                     # This is context (covered or outside missing range)
                     html_content.append(f'<div class="line-context">')
-                    html_content.append(f'<span class="line-number">{i:3d}</span>{line_content}')
+                    html_content.append(f'<span class="line-number">{i:3d}</span>{highlighted_content}')
                     html_content.append('</div>')
                 else:
                     # This is a missing line
                     html_content.append(f'<div class="line-uncovered">')
-                    html_content.append(f'<span class="line-number">{i:3d}</span>{line_content}')
+                    html_content.append(f'<span class="line-number">{i:3d}</span>{highlighted_content}')
                     html_content.append('</div>')
             
             html_content.append('</div>')
