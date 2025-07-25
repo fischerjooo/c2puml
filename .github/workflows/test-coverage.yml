@@ -116,6 +116,10 @@ jobs:
          # Generate detailed coverage data
          coverage report --show-missing > tests/reports/coverage-detailed.txt
 
+         # Generate detailed coverage report with code context
+         echo "📊 Generating detailed coverage report with code context..."
+         python3 tests/generate_coverage_report.py
+
         echo "📊 Coverage analysis complete"
 
     - name: 📊 Generate test execution summary
