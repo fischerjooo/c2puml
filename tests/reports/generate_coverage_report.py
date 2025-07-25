@@ -61,17 +61,17 @@ def generate_html_header():
         }
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
         }
         .stat-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 6px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .stat-value {
             font-size: 2em;
@@ -83,18 +83,18 @@ def generate_html_header():
             opacity: 0.9;
         }
         .file-section {
-            margin: 30px 0;
-            padding: 20px;
+            margin: 20px 0;
+            padding: 15px;
             border: 1px solid #ecf0f1;
-            border-radius: 8px;
+            border-radius: 6px;
             background-color: #fafafa;
         }
         .file-header {
             background: linear-gradient(135deg, #34495e, #2c3e50);
             color: white;
-            padding: 15px;
-            margin: -20px -20px 20px -20px;
-            border-radius: 8px 8px 0 0;
+            padding: 10px 15px;
+            margin: -15px -15px 15px -15px;
+            border-radius: 6px 6px 0 0;
             font-weight: bold;
         }
         .coverage-info {
@@ -109,16 +109,16 @@ def generate_html_header():
         .code-block {
             background-color: #1e1e1e;
             color: #d4d4d4;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 15px 0;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.5;
+            font-size: 12px;
+            line-height: 1.4;
             overflow-x: auto;
             white-space: pre;
             border: 1px solid #3c3c3c;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
             position: relative;
         }
         .code-block::before {
@@ -143,14 +143,14 @@ def generate_html_header():
         }
         .line-number {
             display: inline-block;
-            width: 60px;
+            width: 50px;
             color: #858585;
             text-align: right;
-            margin-right: 20px;
+            margin-right: 15px;
             user-select: none;
             font-weight: normal;
             border-right: 1px solid #3c3c3c;
-            padding-right: 15px;
+            padding-right: 10px;
         }
         .line-covered {
             background-color: rgba(46, 160, 67, 0.15);
@@ -206,9 +206,9 @@ def generate_html_header():
         }
         .legend {
             background-color: #ecf0f1;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
         }
         .legend-item {
             display: flex;
@@ -225,9 +225,9 @@ def generate_html_header():
         .recommendations {
             background-color: #fff3cd;
             border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
         }
         .recommendations h3 {
             color: #856404;
@@ -268,23 +268,33 @@ def apply_syntax_highlighting(line_content):
     """Apply basic syntax highlighting to code lines."""
     import re
     
-    # Keywords
+    # Only apply highlighting if line contains code (not just whitespace)
+    if not line_content.strip():
+        return line_content
+    
+    # Keywords (most common ones first for efficiency)
     keywords = ['def', 'class', 'import', 'from', 'if', 'else', 'elif', 'for', 'while', 'try', 'except', 'finally', 'with', 'as', 'return', 'yield', 'break', 'continue', 'pass', 'raise', 'assert', 'del', 'global', 'nonlocal', 'lambda', 'True', 'False', 'None', 'and', 'or', 'not', 'in', 'is']
     for keyword in keywords:
-        line_content = re.sub(r'\b' + re.escape(keyword) + r'\b', f'<span class="keyword">{keyword}</span>', line_content)
+        if keyword in line_content:
+            line_content = re.sub(r'\b' + re.escape(keyword) + r'\b', f'<span class="keyword">{keyword}</span>', line_content)
     
-    # Strings
-    line_content = re.sub(r'"[^"]*"', lambda m: f'<span class="string">{m.group(0)}</span>', line_content)
-    line_content = re.sub(r"'[^']*'", lambda m: f'<span class="string">{m.group(0)}</span>', line_content)
+    # Comments (check first to avoid highlighting keywords in comments)
+    if '#' in line_content:
+        line_content = re.sub(r'#.*$', lambda m: f'<span class="comment">{m.group(0)}</span>', line_content)
     
-    # Comments
-    line_content = re.sub(r'#.*$', lambda m: f'<span class="comment">{m.group(0)}</span>', line_content)
+    # Strings (only if not already in a comment)
+    if '"' in line_content and 'comment' not in line_content:
+        line_content = re.sub(r'"[^"]*"', lambda m: f'<span class="string">{m.group(0)}</span>', line_content)
+    if "'" in line_content and 'comment' not in line_content:
+        line_content = re.sub(r"'[^']*'", lambda m: f'<span class="string">{m.group(0)}</span>', line_content)
     
-    # Numbers
-    line_content = re.sub(r'\b\d+\b', lambda m: f'<span class="number">{m.group(0)}</span>', line_content)
+    # Numbers (only if not in strings or comments)
+    if any(c.isdigit() for c in line_content) and 'string' not in line_content and 'comment' not in line_content:
+        line_content = re.sub(r'\b\d+\b', lambda m: f'<span class="number">{m.group(0)}</span>', line_content)
     
-    # Function calls
-    line_content = re.sub(r'\b([a-zA-Z_][a-zA-Z0-9_]*)\s*\(', r'<span class="function">\1</span>(', line_content)
+    # Function calls (only if not in strings or comments)
+    if '(' in line_content and 'string' not in line_content and 'comment' not in line_content:
+        line_content = re.sub(r'\b([a-zA-Z_][a-zA-Z0-9_]*)\s*\(', r'<span class="function">\1</span>(', line_content)
     
     return line_content
 
@@ -381,6 +391,11 @@ def generate_detailed_coverage_report():
         if not missing:  # Skip files with 100% coverage
             continue
             
+        # Skip files with very high coverage (>95%) to make report more compact
+        coverage_pct = ((len(statements) - len(missing)) / len(statements) * 100) if statements else 0
+        if coverage_pct > 95:
+            continue
+            
         # Calculate file coverage
         file_coverage = ((len(statements) - len(missing)) / len(statements) * 100) if statements else 0
         covered_count = len(statements) - len(missing)
@@ -424,9 +439,9 @@ def generate_detailed_coverage_report():
             
             html_content.append('<div class="code-block">')
             
-            # Show context (10 lines before and after)
-            context_start = max(1, start_line - 10)
-            context_end = min(len(source_lines), end_line + 10)
+            # Show context (5 lines before and after for more compact view)
+            context_start = max(1, start_line - 5)
+            context_end = min(len(source_lines), end_line + 5)
             
             for i in range(context_start, context_end + 1):
                 line_content = source_lines[i-1].rstrip()
