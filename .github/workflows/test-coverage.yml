@@ -237,11 +237,13 @@ jobs:
         echo "## 🎯 Final Test Results Summary" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
 
-        if [ -f tests/reports/summary.md ]; then
-          cat tests/reports/summary.md >> $GITHUB_STEP_SUMMARY
+        if [ -f tests/reports/summary.html ]; then
+          echo "📊 HTML reports generated successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "- [Test Summary](tests/reports/summary.html)" >> $GITHUB_STEP_SUMMARY
+          echo "- [Detailed Coverage Report](tests/reports/coverage.html)" >> $GITHUB_STEP_SUMMARY
         fi
 
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### 📁 Available Artifacts" >> $GITHUB_STEP_SUMMARY
-        echo "- Test and coverage reports uploaded as workflow artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "- HTML test and coverage reports uploaded as workflow artifacts" >> $GITHUB_STEP_SUMMARY
         echo "- Coverage reports committed to repository (main branch only)" >> $GITHUB_STEP_SUMMARY
