@@ -83,6 +83,7 @@ coverage.xml
 *.cover
 *.py,cover
 .hypothesis/
+tests/reports/detailed-coverage/
 .pytest_cache/
 cover/
 test-results.xml
