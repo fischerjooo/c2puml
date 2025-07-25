@@ -34,6 +34,9 @@ on:
 jobs:
   test-coverage:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     
     strategy:
       matrix:
@@ -43,6 +46,7 @@ jobs:
     - name: 📥 Checkout repository
       uses: actions/checkout@v4
       with:
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN || github.token }}
         fetch-depth: 0  # Full history for better coverage analysis
         
     - name: 🐍 Set up Python ${{ matrix.python-version }}
@@ -81,32 +85,38 @@ jobs:
         echo "📊 Test verbosity: $VERBOSITY"
         echo "📈 Coverage format: $COVERAGE_FORMAT"
         
-        # Run tests with coverage using our run_all_tests.py script
-        python run_all_tests.py --verbosity $VERBOSITY --coverage --stats > tests/reports/test-results.txt 2>&1 || true
-        
-        # Generate coverage reports in multiple formats
-        echo "📈 Generating coverage reports..."
-        
-        if [ "$COVERAGE_FORMAT" = "all" ] || [ "$COVERAGE_FORMAT" = "html" ]; then
-          coverage html -d tests/reports/coverage-html
-          echo "✅ HTML coverage report generated"
-        fi
-        
-        if [ "$COVERAGE_FORMAT" = "all" ] || [ "$COVERAGE_FORMAT" = "xml" ]; then
-          coverage xml -o tests/reports/coverage.xml
-          echo "✅ XML coverage report generated"
-        fi
-        
-        if [ "$COVERAGE_FORMAT" = "all" ] || [ "$COVERAGE_FORMAT" = "json" ]; then
-          coverage json -o tests/reports/coverage.json
-          echo "✅ JSON coverage report generated"
-        fi
-        
-        # Generate text summary
-        coverage report --format=text > tests/reports/coverage-summary.txt
-        
-        # Generate detailed coverage data
-        coverage report --show-missing --format=text > tests/reports/coverage-detailed.txt
+                          # First, run tests with coverage using coverage directly for better control
+         echo "🧪 Running tests with coverage..."
+         coverage erase
+         coverage run -m unittest discover tests -v
+         
+         # Save test results separately (re-run without coverage for clean output)
+         echo "📋 Generating clean test output..."
+         python3 run_all_tests.py --verbosity $VERBOSITY --stats > tests/reports/test-results.txt 2>&1 || true
+         
+         # Generate coverage reports in multiple formats
+         echo "📈 Generating coverage reports..."
+         
+         if [ "$COVERAGE_FORMAT" = "all" ] || [ "$COVERAGE_FORMAT" = "html" ]; then
+           coverage html -d tests/reports/coverage-html
+           echo "✅ HTML coverage report generated"
+         fi
+         
+         if [ "$COVERAGE_FORMAT" = "all" ] || [ "$COVERAGE_FORMAT" = "xml" ]; then
+           coverage xml -o tests/reports/coverage.xml
+           echo "✅ XML coverage report generated"
+         fi
+         
+         if [ "$COVERAGE_FORMAT" = "all" ] || [ "$COVERAGE_FORMAT" = "json" ]; then
+           coverage json -o tests/reports/coverage.json
+           echo "✅ JSON coverage report generated"
+         fi
+         
+         # Generate text summary
+         coverage report > tests/reports/coverage-summary.txt
+         
+         # Generate detailed coverage data
+         coverage report --show-missing > tests/reports/coverage-detailed.txt
         
         echo "📊 Coverage analysis complete"
         
@@ -191,14 +201,27 @@ jobs:
         echo "---------------"
         du -h tests/reports/* 2>/dev/null || true
         
+    - name: 🔧 Validate and configure Git credentials
+      if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main') && matrix.python-version == '3.9'
+      run: |
+        echo "🔧 Setting up Git credentials..."
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        
+        # Check if PERSONAL_ACCESS_TOKEN is available for better authentication
+        if [ -n "${{ secrets.PERSONAL_ACCESS_TOKEN }}" ]; then
+          echo "✅ Using Personal Access Token for authentication"
+          git remote set-url origin https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ github.repository }}
+        else
+          echo "⚠️ Personal Access Token not configured, using GitHub token"
+          echo "💡 For more reliable authentication, add a Personal Access Token as PERSONAL_ACCESS_TOKEN secret"
+          git remote set-url origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}
+        fi
+        
     - name: 🚀 Commit and push coverage reports
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.python-version == '3.9'
+      if: ((github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')) && matrix.python-version == '3.9'
       run: |
         echo "🚀 Committing coverage reports to repository..."
-        
-        # Configure git
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
         
         # Add coverage reports
         git add tests/reports/
@@ -209,19 +232,33 @@ jobs:
         else
           # Create commit with timestamp
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          git commit -m "📊 Update test coverage reports
+          
+          # Create detailed commit message
+          cat > /tmp/commit_msg << EOF
+📊 Update test coverage reports
 
 Generated: $TIMESTAMP
 Commit: ${{ github.sha }}
 Python: ${{ matrix.python-version }}
 Workflow: ${{ github.workflow }} #${{ github.run_number }}
+Trigger: ${{ github.event_name }}
 
-- Updated coverage analysis
-- Refreshed test execution reports
-- Generated by GitHub Actions"
-
+Generated Reports:
+EOF
+          
+          # Add list of generated files
+          find tests/reports -type f -name "*" | sort | sed 's/^/- /' >> /tmp/commit_msg
+          
+          echo "" >> /tmp/commit_msg
+          echo "- Updated coverage analysis" >> /tmp/commit_msg
+          echo "- Refreshed test execution reports" >> /tmp/commit_msg
+          echo "- Generated by GitHub Actions" >> /tmp/commit_msg
+          
+          # Commit with detailed message
+          git commit -F /tmp/commit_msg
+          
           # Push changes
-          git push
+          git push origin ${{ github.ref }}
           echo "✅ Coverage reports committed and pushed"
         fi
         
