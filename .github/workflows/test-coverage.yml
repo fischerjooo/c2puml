@@ -69,16 +69,21 @@ jobs:
         # Ensure coverage tools are available
         pip install coverage[toml] pytest-cov pytest-html pytest-json-report
 
-    - name: 🧪 Run comprehensive test suite with coverage
+    - name: 🧪 Run tests with coverage
       run: |
-        # Set parameters from workflow inputs
-        COVERAGE_FORMAT="${{ github.event.inputs.coverage_format || 'all' }}"
+        # Set verbosity from workflow input
         VERBOSITY="${{ github.event.inputs.test_verbosity || '1' }}"
         
-        # Run coverage report generation script
-        ./generate_coverage_reports.sh "$COVERAGE_FORMAT" "$VERBOSITY"
+        # Run tests with coverage collection
+        ./run_tests_coverage.sh "$VERBOSITY"
 
-
+    - name: 📊 Generate coverage reports
+      run: |
+        # Set coverage format from workflow input
+        COVERAGE_FORMAT="${{ github.event.inputs.coverage_format || 'all' }}"
+        
+        # Generate coverage reports from collected data
+        ./generate_coverage_reports_only.sh "$COVERAGE_FORMAT"
 
     - name: 📈 Upload coverage to Codecov (if available)
       uses: codecov/codecov-action@v3

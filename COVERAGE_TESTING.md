@@ -21,6 +21,15 @@ For comprehensive coverage analysis with multiple formats:
 ./generate_coverage_reports.sh
 ```
 
+For two-step approach (run tests, then generate reports separately):
+```bash
+# Step 1: Run tests with coverage
+./run_tests_coverage.sh
+
+# Step 2: Generate reports from coverage data
+./generate_coverage_reports_only.sh
+```
+
 ### Script Options
 
 #### `./generate_coverage_reports.sh [format] [verbosity]`
@@ -39,6 +48,14 @@ For comprehensive coverage analysis with multiple formats:
 
 # Generate XML and JSON reports with minimal output
 ./generate_coverage_reports.sh xml 0
+
+# Two-step approach examples
+./run_tests_coverage.sh 2          # Run tests with high verbosity
+./generate_coverage_reports_only.sh html  # Generate only HTML reports
+
+# Or run with different parameters
+./run_tests_coverage.sh 0          # Run tests with minimal output
+./generate_coverage_reports_only.sh all   # Generate all report formats
 ```
 
 #### `./run_tests_with_coverage.sh`
@@ -48,6 +65,22 @@ Simple script that:
 - Generates HTML coverage reports
 - Creates a coverage dashboard
 - Displays summary information
+
+#### `./run_tests_coverage.sh [verbosity]`
+
+Test execution only script:
+- Runs tests with coverage collection
+- Saves test execution logs
+- Does NOT generate reports
+- verbosity: `0`, `1`, `2` (default: `1`)
+
+#### `./generate_coverage_reports_only.sh [format]`
+
+Report generation only script:
+- Generates reports from existing coverage data
+- Requires coverage data to exist (run tests first)
+- format: `all`, `html`, `xml`, `json` (default: `all`)
+- Creates comprehensive coverage dashboard
 
 ## 📊 Generated Reports
 
@@ -103,9 +136,13 @@ pip install -r requirements-dev.txt
 The project includes two GitHub Actions workflows:
 
 1. **`test.yml`** - Basic testing without coverage (runs on every push/PR)
-2. **`test-coverage.yml`** - Comprehensive coverage analysis with reports (manual trigger or PR merge)
+2. **`test-coverage.yml`** - Two-step coverage analysis: runs tests with coverage, then generates reports (manual trigger or PR merge)
 
-The coverage workflow uses the shell scripts for consistency with local development, while the basic test workflow runs tests directly for faster execution.
+The coverage workflow uses a two-step approach:
+- **Step 1**: `./run_tests_coverage.sh` - Executes tests and collects coverage data
+- **Step 2**: `./generate_coverage_reports_only.sh` - Generates comprehensive reports from coverage data
+
+This separation allows for better error handling and more granular control over the coverage process.
 
 ### Workflow Inputs
 
