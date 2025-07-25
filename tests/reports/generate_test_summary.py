@@ -422,7 +422,8 @@ def generate_test_summary_report():
     html_content.append('<div class="nav-description">')
     html_content.append('View comprehensive coverage analysis with code context, background coloring, and line-by-line breakdown')
     html_content.append('</div>')
-    html_content.append('<a href="coverage.html" class="nav-button">📊 View Detailed Coverage Report</a>')
+    html_content.append('<a href="coverage-index.html" class="nav-button">📊 View Coverage Reports Dashboard</a>')
+    html_content.append('<a href="coverage-html/index.html" class="nav-button">📈 Interactive HTML Coverage</a>')
     html_content.append('</div>')
     
     # Footer
