@@ -232,19 +232,24 @@ jobs:
         else
           # Create commit with timestamp
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          COMMIT_SHA="${{ github.sha }}"
+          PYTHON_VERSION="${{ matrix.python-version }}"
+          WORKFLOW_NAME="${{ github.workflow }}"
+          RUN_NUMBER="${{ github.run_number }}"
+          EVENT_NAME="${{ github.event_name }}"
           
           # Create detailed commit message
-          cat > /tmp/commit_msg << EOF
-📊 Update test coverage reports
-
-Generated: $TIMESTAMP
-Commit: ${{ github.sha }}
-Python: ${{ matrix.python-version }}
-Workflow: ${{ github.workflow }} #${{ github.run_number }}
-Trigger: ${{ github.event_name }}
-
-Generated Reports:
-EOF
+          {
+            echo "Update test coverage reports"
+            echo ""
+            echo "Generated: $TIMESTAMP"
+            echo "Commit: $COMMIT_SHA"
+            echo "Python: $PYTHON_VERSION"
+            echo "Workflow: $WORKFLOW_NAME #$RUN_NUMBER"
+            echo "Trigger: $EVENT_NAME"
+            echo ""
+            echo "Generated Reports:"
+          } > /tmp/commit_msg
           
           # Add list of generated files
           find tests/reports -type f -name "*" | sort | sed 's/^/- /' >> /tmp/commit_msg
@@ -258,7 +263,7 @@ EOF
           git commit -F /tmp/commit_msg
           
           # Push changes
-          git push origin ${{ github.ref }}
+          git push origin "${{ github.ref }}"
           echo "✅ Coverage reports committed and pushed"
         fi
         
