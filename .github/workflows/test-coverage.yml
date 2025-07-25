@@ -118,14 +118,14 @@ jobs:
 
          # Generate detailed coverage report with code context
          echo "📊 Generating detailed coverage report with code context..."
-         python3 tests/generate_coverage_report.py
+         python3 tests/reports/generate_coverage_report.py
 
         echo "📊 Coverage analysis complete"
 
     - name: 📊 Generate test execution summary
       run: |
         echo "📊 Generating test execution summary..."
-        python3 tests/generate_test_summary.py
+        python3 tests/reports/generate_test_summary.py
         echo "📝 Test summary generated"
 
     - name: 📈 Upload coverage to Codecov (if available)
