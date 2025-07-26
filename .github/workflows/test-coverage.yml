@@ -168,13 +168,38 @@ jobs:
               # Push changes to the target branch
               echo "🚀 Pushing changes to $TARGET_BRANCH..."
               
-              # If we're not on the target branch, we need to push to it specifically
+              # If we're not on the target branch, we need to handle the push carefully
               if [ "${{ github.ref }}" != "refs/heads/$TARGET_BRANCH" ]; then
-                echo "🔄 Pushing to $TARGET_BRANCH branch..."
-                git push origin "HEAD:$TARGET_BRANCH"
+                echo "🔄 Pushing to $TARGET_BRANCH branch from current branch..."
+                
+                # Fetch the latest main branch
+                echo "📥 Fetching latest $TARGET_BRANCH branch..."
+                git fetch origin "$TARGET_BRANCH:$TARGET_BRANCH"
+                
+                # Try to push to main branch
+                if git push origin "HEAD:$TARGET_BRANCH"; then
+                  echo "✅ Successfully pushed to $TARGET_BRANCH"
+                else
+                  echo "⚠️ Push failed, trying alternative approach..."
+                  
+                  # Create a new branch for the coverage reports
+                  COVERAGE_BRANCH="coverage-reports-$(date +%Y%m%d-%H%M%S)"
+                  echo "🔄 Creating coverage branch: $COVERAGE_BRANCH"
+                  
+                  # Push to a new branch instead
+                  if git push origin "HEAD:$COVERAGE_BRANCH"; then
+                    echo "✅ Successfully pushed to coverage branch: $COVERAGE_BRANCH"
+                    echo "💡 Coverage reports are available in branch: $COVERAGE_BRANCH"
+                    echo "💡 You can merge this branch to main manually if needed"
+                  else
+                    echo "❌ Failed to push to coverage branch"
+                    exit 1
+                  fi
+                fi
               else
                 echo "🔄 Pushing to current branch..."
                 git push origin "${{ github.ref }}"
+                echo "✅ Successfully pushed to current branch"
               fi
               
               echo "✅ Coverage reports committed and pushed"
