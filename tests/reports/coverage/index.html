@@ -176,7 +176,7 @@
                     item.style.display = 'none';
                 }
             });
-            
+
             // Update active button
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -188,8 +188,8 @@
 <body>
     <div class="container">
         <h1>Combined Coverage Report</h1>
-        <div class="timestamp">Generated: 2025-07-26 19:19:06</div>
-        
+        <div class="timestamp">Generated: 2025-07-26 20:16:08</div>
+
         <div class="summary-card">
             <h2 style="margin-top: 0;">Overall Project Coverage</h2>
             <div class="stats-grid">
@@ -214,17 +214,17 @@
                     <div class="stat-label">Missing Lines</div>
                 </div>
             </div>
-            
+
 
         </div>
-        
+
         <div class="filter-buttons">
             <button class="filter-btn active" onclick="filterFiles(0, 100)">All Files</button>
             <button class="filter-btn" onclick="filterFiles(0, 60)">Low Coverage (&lt;60%)</button>
             <button class="filter-btn" onclick="filterFiles(60, 80)">Medium Coverage (60-80%)</button>
             <button class="filter-btn" onclick="filterFiles(80, 100)">High Coverage (&gt;80%)</button>
         </div>
-        
+
         <div class="file-list">
             <div class="file-header">Detailed Per-File Coverage Reports</div>
             <div class="file-item" data-coverage="36.76470588235294">

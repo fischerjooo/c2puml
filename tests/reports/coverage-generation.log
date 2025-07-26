@@ -30,7 +30,7 @@ Wrote HTML report to tests/reports/coverage/htmlcov/index.html
 ℹ️  Generating coverage summary...
 ✅ Summary report generated: tests/reports/coverage/coverage_summary.txt
 ℹ️  Generating HTML test summary...
-✅ HTML test summary generated: tests/reports/coverage/test_summary.html
+✅ HTML test summary generated: tests/reports/test_summary.html
 
 ----------------------------------------
   Generating Detailed Reports for 11 Files
