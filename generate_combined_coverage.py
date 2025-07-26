@@ -661,6 +661,9 @@ def generate_html_file_report(
             # Check if line is a comment (starts with # or contains only whitespace + #)
             is_comment = stripped_line.lstrip().startswith('#')
             
+            # Check if line starts with """ (docstring start/end)
+            is_docstring_line = stripped_line.lstrip().startswith('"""') or stripped_line.lstrip().startswith("'''")
+            
             # Check for multiline comments (docstrings)
             if '"""' in stripped_line or "'''" in stripped_line:
                 # Count quotes to determine if we're entering/exiting a multiline comment
@@ -678,7 +681,7 @@ def generate_html_file_report(
             if i in missing_lines:
                 line_class = "missing"
                 status_symbol = "&#10008;"
-            elif not is_empty and not is_comment and not is_multiline_comment:
+            elif not is_empty and not is_comment and not is_multiline_comment and not is_docstring_line:
                 line_class = "covered"
                 status_symbol = "&#10004;"
             else:
