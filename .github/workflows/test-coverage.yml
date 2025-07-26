@@ -51,8 +51,30 @@ jobs:
           echo "🧪 Running comprehensive test suite with coverage analysis..."
           ./run_tests_with_coverage.sh
 
+      - name: 🔍 Debug workflow context
+        if: always()
+        run: |
+          echo "🔍 Debugging workflow context..."
+          echo "Event name: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Base ref: ${{ github.base_ref }}"
+          echo "Head ref: ${{ github.head_ref }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Run number: ${{ github.run_number }}"
+          
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "PR number: ${{ github.event.pull_request.number }}"
+            echo "PR merged: ${{ github.event.pull_request.merged }}"
+            echo "PR base ref: ${{ github.event.pull_request.base.ref }}"
+            echo "PR head ref: ${{ github.event.pull_request.head.ref }}"
+          fi
+          
+          echo "Personal Access Token available: ${{ secrets.PERSONAL_ACCESS_TOKEN != '' }}"
+
       - name: 🔧 Validate and configure Git credentials
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
+        if: always()
         run: |
           echo "🔧 Setting up Git credentials..."
           git config --global user.name 'github-actions[bot]'
@@ -69,52 +91,94 @@ jobs:
           fi
 
       - name: 🚀 Commit and push coverage reports
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
+        if: always()
         run: |
           echo "🚀 Committing coverage reports to repository..."
-
-          # Add coverage reports
-          git add tests/reports/
-
-          # Check if there are changes to commit
-          if git diff --staged --quiet; then
-            echo "ℹ️ No changes to commit"
+          
+          # Determine if we should commit and push
+          SHOULD_COMMIT=false
+          
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "✅ Manual trigger detected - will commit and push"
+            SHOULD_COMMIT=true
+            TARGET_BRANCH="main"
+          elif [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "✅ Direct push to main detected - will commit and push"
+            SHOULD_COMMIT=true
+            TARGET_BRANCH="main"
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            if [ "${{ github.event.pull_request.merged }}" = "true" ] && [ "${{ github.event.pull_request.base.ref }}" = "main" ]; then
+              echo "✅ Merged PR to main detected - will commit and push"
+              SHOULD_COMMIT=true
+              TARGET_BRANCH="main"
+            else
+              echo "ℹ️ PR not merged or not to main - skipping commit and push"
+              echo "PR merged: ${{ github.event.pull_request.merged }}"
+              echo "PR base ref: ${{ github.event.pull_request.base.ref }}"
+            fi
           else
-            # Create commit with timestamp
-            TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
-            COMMIT_SHA="${{ github.sha }}"
-            PYTHON_VERSION="${{ matrix.python-version }}"
-            WORKFLOW_NAME="${{ github.workflow }}"
-            RUN_NUMBER="${{ github.run_number }}"
-            EVENT_NAME="${{ github.event_name }}"
+            echo "ℹ️ Event not eligible for commit and push - skipping"
+            echo "Event: ${{ github.event_name }}"
+            echo "Ref: ${{ github.ref }}"
+          fi
+          
+          if [ "$SHOULD_COMMIT" = "true" ]; then
+            # Switch to main branch if we're not already on it
+            if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+              echo "🔄 Switching to main branch..."
+              git fetch origin main:main
+              git checkout main
+            fi
+            
+            # Add coverage reports
+            echo "📁 Adding coverage reports to git..."
+            git add tests/reports/
 
-            # Create detailed commit message
-            {
-              echo "Update test coverage reports"
-              echo ""
-              echo "Generated: $TIMESTAMP"
-              echo "Commit: $COMMIT_SHA"
-              echo "Python: $PYTHON_VERSION"
-              echo "Workflow: $WORKFLOW_NAME #$RUN_NUMBER"
-              echo "Trigger: $EVENT_NAME"
-              echo ""
-              echo "Generated Reports:"
-            } > /tmp/commit_msg
+            # Check if there are changes to commit
+            if git diff --staged --quiet; then
+              echo "ℹ️ No changes to commit"
+            else
+              echo "📝 Changes detected, creating commit..."
+              
+              # Create commit with timestamp
+              TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+              COMMIT_SHA="${{ github.sha }}"
+              PYTHON_VERSION="${{ matrix.python-version }}"
+              WORKFLOW_NAME="${{ github.workflow }}"
+              RUN_NUMBER="${{ github.run_number }}"
+              EVENT_NAME="${{ github.event_name }}"
 
-            # Add list of generated files
-            find tests/reports -type f -name "*" | sort | sed 's/^/- /' >> /tmp/commit_msg
+              # Create detailed commit message
+              {
+                echo "Update test coverage reports"
+                echo ""
+                echo "Generated: $TIMESTAMP"
+                echo "Commit: $COMMIT_SHA"
+                echo "Python: $PYTHON_VERSION"
+                echo "Workflow: $WORKFLOW_NAME #$RUN_NUMBER"
+                echo "Trigger: $EVENT_NAME"
+                echo ""
+                echo "Generated Reports:"
+              } > /tmp/commit_msg
 
-            echo "" >> /tmp/commit_msg
-            echo "- Updated coverage analysis" >> /tmp/commit_msg
-            echo "- Refreshed test execution reports" >> /tmp/commit_msg
-            echo "- Generated by GitHub Actions" >> /tmp/commit_msg
+              # Add list of generated files
+              find tests/reports -type f -name "*" | sort | sed 's/^/- /' >> /tmp/commit_msg
 
-            # Commit with detailed message
-            git commit -F /tmp/commit_msg
+              echo "" >> /tmp/commit_msg
+              echo "- Updated coverage analysis" >> /tmp/commit_msg
+              echo "- Refreshed test execution reports" >> /tmp/commit_msg
+              echo "- Generated by GitHub Actions" >> /tmp/commit_msg
 
-            # Push changes
-            git push origin "${{ github.ref }}"
-            echo "✅ Coverage reports committed and pushed"
+              # Commit with detailed message
+              git commit -F /tmp/commit_msg
+
+              # Push changes
+              echo "🚀 Pushing changes to $TARGET_BRANCH..."
+              git push origin "$TARGET_BRANCH"
+              echo "✅ Coverage reports committed and pushed"
+            fi
+          else
+            echo "ℹ️ Skipping commit and push based on workflow conditions"
           fi
 
       - name: 📤 Upload test artifacts
@@ -141,3 +205,10 @@ jobs:
           echo "### 📁 Available Artifacts" >> $GITHUB_STEP_SUMMARY
           echo "- HTML test and coverage reports uploaded as workflow artifacts" >> $GITHUB_STEP_SUMMARY
           echo "- Coverage reports committed to repository (main branch only)" >> $GITHUB_STEP_SUMMARY
+          
+          # Add debug information
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔍 Workflow Context" >> $GITHUB_STEP_SUMMARY
+          echo "- Event: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Ref: ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Workflow: ${{ github.workflow }} #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
