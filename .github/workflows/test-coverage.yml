@@ -54,7 +54,7 @@ jobs:
     - name: 📈 Upload coverage to Codecov (if available)
       uses: codecov/codecov-action@v3
       with:
-        file: tests/reports/coverage.xml
+        file: tests/reports/coverage/coverage.xml
         flags: unittests
         fail_ci_if_error: false  # Don't fail if codecov is not configured
         verbose: true
@@ -139,9 +139,9 @@ jobs:
         echo "## 🎯 Final Test Results Summary" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
 
-        if [ -f tests/reports/coverage-html/index.html ]; then
+        if [ -f tests/reports/coverage/index.html ]; then
           echo "📊 HTML reports generated successfully!" >> $GITHUB_STEP_SUMMARY
-          echo "- [Coverage Report](tests/reports/coverage-html/index.html)" >> $GITHUB_STEP_SUMMARY
+          echo "- [Coverage Report](tests/reports/coverage/index.html)" >> $GITHUB_STEP_SUMMARY
           echo "- [Test Summary](tests/reports/test-summary.txt)" >> $GITHUB_STEP_SUMMARY
         fi
 
