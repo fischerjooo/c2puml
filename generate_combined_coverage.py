@@ -4,16 +4,16 @@ Generate combined coverage reports: summary and detailed per-file analysis.
 This script creates comprehensive coverage reports including both overview and line-by-line details.
 """
 
-import os
-import sys
-import subprocess
-import json
-import html
-import re
-from pathlib import Path
-from typing import Dict, List, Tuple, Optional
 import argparse
+import html
+import json
+import os
+import re
+import subprocess
+import sys
 from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 
 def print_header(text: str) -> None:
@@ -48,127 +48,129 @@ def print_info(text: str) -> None:
 def run_coverage_analysis() -> Tuple[bool, Dict]:
     """Run coverage analysis on the project and capture test results."""
     print_header("Running Coverage Analysis")
-    
+
     # Ensure coverage is installed
     try:
         subprocess.run(["python3", "-m", "coverage", "--version"], check=True, capture_output=True)
     except (subprocess.CalledProcessError, FileNotFoundError):
         print_error("Coverage not installed. Install with: pip install coverage")
         return False, {}
-    
+
     # Clean previous coverage data
     print_info("Cleaning previous coverage data...")
     subprocess.run(["python3", "-m", "coverage", "erase"], check=True)
-    
+
     # Run tests with coverage and capture output
     print_info("Running tests with coverage...")
     result = subprocess.run(
-        ["python3", "-m", "coverage", "run", "-m", "pytest", "-v"],
-        capture_output=True,
-        text=True
+        ["python3", "-m", "coverage", "run", "-m", "pytest", "-v"], capture_output=True, text=True
     )
-    
+
     # Parse test results from output
     test_results = parse_test_results(result.stdout, result.stderr, result.returncode)
-    
+
     if result.returncode != 0:
         print_error("Tests failed. Coverage report may be incomplete.")
         print(result.stderr)
-    
+
     return True, test_results
 
 
 def parse_test_results(stdout: str, stderr: str, returncode: int) -> Dict:
     """Parse test results from pytest output."""
     test_results = {
-        'total_tests': 0,
-        'passed': 0,
-        'failed': 0,
-        'skipped': 0,
-        'errors': 0,
-        'duration': 0.0,
-        'status': 'PASSED' if returncode == 0 else 'FAILED',
-        'test_files': [],
-        'failed_tests': []
+        "total_tests": 0,
+        "passed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "duration": 0.0,
+        "status": "PASSED" if returncode == 0 else "FAILED",
+        "test_files": [],
+        "failed_tests": [],
     }
-    
+
     try:
         # Parse the test summary from stdout
-        lines = stdout.split('\n')
+        lines = stdout.split("\n")
         for line in lines:
             # Look for the pytest summary line: "======================== 329 passed, 1 warning in 1.28s ========================"
-            if line.startswith('========================') and 'passed' in line and 'in' in line:
+            if line.startswith("========================") and "passed" in line and "in" in line:
                 import re
+
                 # Extract passed count
-                passed_match = re.search(r'(\d+) passed', line)
+                passed_match = re.search(r"(\d+) passed", line)
                 if passed_match:
-                    test_results['passed'] = int(passed_match.group(1))
-                    test_results['total_tests'] = test_results['passed']  # Assume all tests passed if no failures
-                
+                    test_results["passed"] = int(passed_match.group(1))
+                    test_results["total_tests"] = test_results[
+                        "passed"
+                    ]  # Assume all tests passed if no failures
+
                 # Extract failed count
-                failed_match = re.search(r'(\d+) failed', line)
+                failed_match = re.search(r"(\d+) failed", line)
                 if failed_match:
-                    test_results['failed'] = int(failed_match.group(1))
-                    test_results['total_tests'] += test_results['failed']
-                
+                    test_results["failed"] = int(failed_match.group(1))
+                    test_results["total_tests"] += test_results["failed"]
+
                 # Extract skipped count
-                skipped_match = re.search(r'(\d+) skipped', line)
+                skipped_match = re.search(r"(\d+) skipped", line)
                 if skipped_match:
-                    test_results['skipped'] = int(skipped_match.group(1))
-                    test_results['total_tests'] += test_results['skipped']
-                
+                    test_results["skipped"] = int(skipped_match.group(1))
+                    test_results["total_tests"] += test_results["skipped"]
+
                 # Extract error count
-                error_match = re.search(r'(\d+) error', line)
+                error_match = re.search(r"(\d+) error", line)
                 if error_match:
-                    test_results['errors'] = int(error_match.group(1))
-                    test_results['total_tests'] += test_results['errors']
-                
+                    test_results["errors"] = int(error_match.group(1))
+                    test_results["total_tests"] += test_results["errors"]
+
                 # Extract duration
-                duration_match = re.search(r'in ([\d.]+)s', line)
+                duration_match = re.search(r"in ([\d.]+)s", line)
                 if duration_match:
-                    test_results['duration'] = float(duration_match.group(1))
-                
+                    test_results["duration"] = float(duration_match.group(1))
+
                 break  # Found the summary line, no need to continue
-            
+
             # Also look for the "collected X items" line as backup
-            elif 'collected' in line and 'items' in line:
+            elif "collected" in line and "items" in line:
                 import re
-                match = re.search(r'collected (\d+) items?', line)
+
+                match = re.search(r"collected (\d+) items?", line)
                 if match:
-                    test_results['total_tests'] = int(match.group(1))
-            
+                    test_results["total_tests"] = int(match.group(1))
+
             # Capture failed test details
-            elif line.startswith('FAILED') or line.startswith('ERROR'):
-                test_results['failed_tests'].append(line.strip())
-        
+            elif line.startswith("FAILED") or line.startswith("ERROR"):
+                test_results["failed_tests"].append(line.strip())
+
         # If we still don't have test counts, try to count from individual test results
-        if test_results['total_tests'] == 0:
-            test_lines = [line for line in lines if 'PASSED' in line or 'FAILED' in line or 'SKIPPED' in line]
-            test_results['total_tests'] = len(test_lines)
-            test_results['passed'] = len([line for line in lines if 'PASSED' in line])
-            test_results['failed'] = len([line for line in lines if 'FAILED' in line])
-            test_results['skipped'] = len([line for line in lines if 'SKIPPED' in line])
-    
+        if test_results["total_tests"] == 0:
+            test_lines = [
+                line for line in lines if "PASSED" in line or "FAILED" in line or "SKIPPED" in line
+            ]
+            test_results["total_tests"] = len(test_lines)
+            test_results["passed"] = len([line for line in lines if "PASSED" in line])
+            test_results["failed"] = len([line for line in lines if "FAILED" in line])
+            test_results["skipped"] = len([line for line in lines if "SKIPPED" in line])
+
     except Exception as e:
         print_error(f"Error parsing test results: {e}")
-    
+
     return test_results
 
 
 def get_coverage_data() -> Optional[Dict]:
     """Get coverage data in JSON format."""
     print_info("Generating coverage JSON data...")
-    
+
     result = subprocess.run(
-        ["python3", "-m", "coverage", "json", "-o", "-"],
-        capture_output=True,
-        text=True
+        ["python3", "-m", "coverage", "json", "-o", "-"], capture_output=True, text=True
     )
-    
+
     if result.returncode != 0:
         print_error("Failed to generate coverage JSON")
         return None
-    
+
     try:
         return json.loads(result.stdout)
     except json.JSONDecodeError:
@@ -179,70 +181,71 @@ def get_coverage_data() -> Optional[Dict]:
 def generate_coverage_summary(coverage_data: Dict, output_dir: Path) -> None:
     """Generate coverage summary report."""
     print_info("Generating coverage summary...")
-    
+
     summary_file = output_dir / "coverage_summary.txt"
-    
-    with open(summary_file, 'w', encoding='utf-8') as f:
+
+    with open(summary_file, "w", encoding="utf-8") as f:
         f.write("Coverage Summary Report\n")
         f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write("=" * 80 + "\n\n")
-        
+
         # Overall statistics
         summary = coverage_data.get("totals", {})
         total_lines = summary.get("num_statements", 0)
         covered_lines = summary.get("covered_lines", 0)
         missing_lines = summary.get("missing_lines", 0)
         coverage_percent = summary.get("percent_covered", 0)
-        
+
         f.write("Overall Statistics:\n")
         f.write(f"  Total statements: {total_lines:,}\n")
         f.write(f"  Covered lines: {covered_lines:,}\n")
         f.write(f"  Missing lines: {missing_lines:,}\n")
         f.write(f"  Coverage: {coverage_percent:.1f}%\n\n")
-        
+
         # Per-file summary
         f.write("Per-File Summary:\n")
         f.write("-" * 80 + "\n")
         f.write(f"{'File':<50} {'Stmts':>8} {'Miss':>8} {'Cover':>8}\n")
         f.write("-" * 80 + "\n")
-        
+
         files_data = coverage_data.get("files", {})
         for filename, file_data in sorted(files_data.items()):
             summary = file_data.get("summary", {})
             stmts = summary.get("num_statements", 0)
             miss = summary.get("missing_lines", 0)
             cover = summary.get("percent_covered", 0)
-            
+
             # Truncate filename if too long
             display_name = filename if len(filename) <= 50 else "..." + filename[-47:]
             f.write(f"{display_name:<50} {stmts:>8} {miss:>8} {cover:>7.1f}%\n")
-        
+
         f.write("-" * 80 + "\n")
-    
+
     print_success(f"Summary report generated: {summary_file}")
 
 
 def generate_test_summary_html(test_results: Dict, output_dir: Path) -> None:
     """Generate HTML test summary report showing actual test results."""
     print_info("Generating HTML test summary...")
-    
-    summary_file = output_dir / "test_summary.html"
-    
+
+    summary_file = output_dir.parent / "test_summary.html"
+
     # Get test statistics
-    total_tests = test_results.get('total_tests', 0)
-    passed = test_results.get('passed', 0)
-    failed = test_results.get('failed', 0)
-    skipped = test_results.get('skipped', 0)
-    errors = test_results.get('errors', 0)
-    duration = test_results.get('duration', 0.0)
-    status = test_results.get('status', 'UNKNOWN')
-    failed_tests = test_results.get('failed_tests', [])
-    
+    total_tests = test_results.get("total_tests", 0)
+    passed = test_results.get("passed", 0)
+    failed = test_results.get("failed", 0)
+    skipped = test_results.get("skipped", 0)
+    errors = test_results.get("errors", 0)
+    duration = test_results.get("duration", 0.0)
+    status = test_results.get("status", "UNKNOWN")
+    failed_tests = test_results.get("failed_tests", [])
+
     # Calculate success rate
     success_rate = (passed / total_tests * 100) if total_tests > 0 else 0
-    
-    with open(summary_file, 'w', encoding='utf-8') as f:
-        f.write(f"""<!DOCTYPE html>
+
+    with open(summary_file, "w", encoding="utf-8") as f:
+        f.write(
+            f"""<!DOCTYPE html>
 <html>
 <head>
     <title>Test Results Summary</title>
@@ -376,17 +379,17 @@ def generate_test_summary_html(test_results: Dict, output_dir: Path) -> None:
         <div class="back-link">
             <a href="index.html">← Back to Coverage Index</a>
         </div>
-        
+
         <h1>Test Results Summary</h1>
         <div class="timestamp">Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div>
-        
+
         <div class="summary-card">
             <h2 style="margin-top: 0;">Test Execution Results</h2>
             <div style="margin-bottom: 20px;">
                 <span class="status-badge">{status}</span>
                 <span style="margin-left: 10px; color: #666;">Execution completed in {duration:.2f} seconds</span>
             </div>
-            
+
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-value success-rate">{success_rate:.1f}%</div>
@@ -413,7 +416,7 @@ def generate_test_summary_html(test_results: Dict, output_dir: Path) -> None:
                     <div class="stat-label">Errors</div>
                 </div>
             </div>
-            
+
             <div class="test-details">
                 <h3>Test Execution Details</h3>
                 <p><strong>Total Tests:</strong> {total_tests:,}</p>
@@ -424,65 +427,74 @@ def generate_test_summary_html(test_results: Dict, output_dir: Path) -> None:
                 <p><strong>Execution Time:</strong> {duration:.2f} seconds</p>
                 <p><strong>Overall Status:</strong> {status}</p>
             </div>
-            
+
 
         </div>
-""")
-        
+"""
+        )
+
         # Show failed tests if any
         if failed_tests:
-            f.write(f"""        <div class="failed-tests">
+            f.write(
+                f"""        <div class="failed-tests">
             <div class="failed-header">Failed Tests ({len(failed_tests)})</div>
-""")
-            
+"""
+            )
+
             for failed_test in failed_tests:
-                f.write(f"""            <div class="failed-item">{html.escape(failed_test)}</div>
-""")
-            
-            f.write("""        </div>
-""")
-        
-        f.write("""    </div>
+                f.write(
+                    f"""            <div class="failed-item">{html.escape(failed_test)}</div>
+"""
+                )
+
+            f.write(
+                """        </div>
+"""
+            )
+
+        f.write(
+            """    </div>
 </body>
 </html>
-""")
-    
+"""
+        )
+
     print_success(f"HTML test summary generated: {summary_file}")
 
 
 def generate_html_file_report(
-    filename: str,
-    source_path: Path,
-    coverage_info: Dict,
-    output_dir: Path
+    filename: str, source_path: Path, coverage_info: Dict, output_dir: Path
 ) -> Tuple[str, float, Dict]:
     """Generate detailed HTML coverage report for a single file."""
     print_info(f"Generating HTML report for: {filename}")
-    
+
     # Read source file
     try:
-        with open(source_path, 'r', encoding='utf-8') as f:
+        with open(source_path, "r", encoding="utf-8") as f:
             source_lines = f.readlines()
     except Exception as e:
         print_error(f"Failed to read {filename}: {e}")
         return None, 0, {}
-    
+
     # Get coverage data
     covered_lines = coverage_info.get("executed_lines", [])
     missing_lines = coverage_info.get("missing_lines", [])
     excluded_lines = coverage_info.get("excluded_lines", [])
-    
+
     # Calculate statistics
     total_statements = len(covered_lines) + len(missing_lines)
-    coverage_percent = (len(covered_lines) / total_statements * 100) if total_statements > 0 else 100.0
-    
+    coverage_percent = (
+        (len(covered_lines) / total_statements * 100) if total_statements > 0 else 100.0
+    )
+
     # Create output filename
-    safe_filename = filename.replace('/', '_').replace('\\', '_')
+    safe_filename = filename.replace("/", "_").replace("\\", "_")
     output_file = output_dir / f"{safe_filename}.html"
-    
+
     # Generate HTML
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write(f"""<!DOCTYPE html>
+    with open(output_file, "w", encoding="utf-8") as f:
+        f.write(
+            f"""<!DOCTYPE html>
 <html>
 <head>
     <title>Coverage Report: {html.escape(filename)}</title>
@@ -652,11 +664,11 @@ def generate_html_file_report(
     <div class="back-link">
         <a href="index.html">← Back to Coverage Index</a>
     </div>
-    
+
     <div class="header">
         <h1>Coverage Report: {html.escape(filename)}</h1>
         <div class="timestamp">Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div>
-        
+
         <div class="stats">
             <div class="stat">
                 <span class="stat-label">Coverage</span>
@@ -683,62 +695,75 @@ def generate_html_file_report(
             </div>
         </div>
     </div>
-    
+
     <div class="code-container">
         <div class="code-header">Source Code</div>
         <div class="code-lines">
-""")
-        
+"""
+        )
+
         # Generate line-by-line HTML
         in_multiline_comment = False
         for i, line in enumerate(source_lines, 1):
             # Check if line is empty or contains only whitespace
-            stripped_line = line.rstrip('\n').rstrip()
+            stripped_line = line.rstrip("\n").rstrip()
             is_empty = not stripped_line
-            
+
             # Check if line is a comment (starts with # or contains only whitespace + #)
-            is_comment = stripped_line.lstrip().startswith('#')
-            
+            is_comment = stripped_line.lstrip().startswith("#")
+
             # Check if line starts with """ (docstring start/end)
-            is_docstring_line = stripped_line.lstrip().startswith('"""') or stripped_line.lstrip().startswith("'''")
-            
+            is_docstring_line = stripped_line.lstrip().startswith(
+                '"""'
+            ) or stripped_line.lstrip().startswith("'''")
+
             # Check for multiline comments (docstrings)
             if '"""' in stripped_line or "'''" in stripped_line:
                 # Count quotes to determine if we're entering/exiting a multiline comment
                 triple_double = stripped_line.count('"""')
                 triple_single = stripped_line.count("'''")
                 total_triple_quotes = triple_double + triple_single
-                
+
                 # If odd number of quotes, we're toggling the multiline comment state
                 if total_triple_quotes % 2 == 1:
                     in_multiline_comment = not in_multiline_comment
-            
+
             # Check if line is part of a multiline comment
-            is_multiline_comment = in_multiline_comment or (stripped_line.startswith('"""') or stripped_line.startswith("'''"))
-            
+            is_multiline_comment = in_multiline_comment or (
+                stripped_line.startswith('"""') or stripped_line.startswith("'''")
+            )
+
             if i in missing_lines:
                 line_class = "missing"
                 status_symbol = "&#10008;"
-            elif not is_empty and not is_comment and not is_multiline_comment and not is_docstring_line:
+            elif (
+                not is_empty
+                and not is_comment
+                and not is_multiline_comment
+                and not is_docstring_line
+            ):
                 line_class = "covered"
                 status_symbol = "&#10004;"
             else:
                 line_class = ""
                 status_symbol = ""
-            
+
             # Simple HTML escaping without syntax highlighting to avoid issues
-            highlighted_line = html.escape(line.rstrip('\n'))
-            
-            f.write(f"""            <div class="code-line {line_class}">
+            highlighted_line = html.escape(line.rstrip("\n"))
+
+            f.write(
+                f"""            <div class="code-line {line_class}">
                 <div class="line-number">{i}</div>
                 <div class="line-status">{status_symbol}</div>
                 <div class="line-content">{highlighted_line}</div>
             </div>
-""")
-        
-        f.write("""        </div>
+"""
+            )
+
+        f.write(
+            """        </div>
     </div>
-    
+
     <div class="legend">
         <h3 style="margin-top: 0;">Legend</h3>
         <div class="legend-item">
@@ -756,35 +781,39 @@ def generate_html_file_report(
     </div>
 </body>
 </html>
-""")
-    
+"""
+        )
+
     print_success(f"HTML report generated: {output_file}")
-    
+
     return (
         filename,
         coverage_percent,
-        {'covered': len(covered_lines), 'missing': len(missing_lines)}
+        {"covered": len(covered_lines), "missing": len(missing_lines)},
     )
 
 
-def generate_combined_index(output_dir: Path, file_reports: List[Tuple[str, float, Dict]], coverage_data: Dict) -> None:
+def generate_combined_index(
+    output_dir: Path, file_reports: List[Tuple[str, float, Dict]], coverage_data: Dict
+) -> None:
     """Generate a combined index HTML file with summary and links to detailed reports."""
     print_info("Generating combined index...")
-    
+
     index_file = output_dir / "index.html"
-    
+
     # Sort files by coverage percentage (ascending) so worst coverage is at top
     file_reports.sort(key=lambda x: x[1])
-    
+
     # Get overall statistics
     summary = coverage_data.get("totals", {})
     overall_coverage = summary.get("percent_covered", 0)
     total_statements = summary.get("num_statements", 0)
     covered_lines = summary.get("covered_lines", 0)
     missing_lines = summary.get("missing_lines", 0)
-    
-    with open(index_file, 'w', encoding='utf-8') as f:
-        f.write(f"""<!DOCTYPE html>
+
+    with open(index_file, "w", encoding="utf-8") as f:
+        f.write(
+            f"""<!DOCTYPE html>
 <html>
 <head>
     <title>Combined Coverage Report</title>
@@ -962,7 +991,7 @@ def generate_combined_index(output_dir: Path, file_reports: List[Tuple[str, floa
                     item.style.display = 'none';
                 }}
             }});
-            
+
             // Update active button
             document.querySelectorAll('.filter-btn').forEach(btn => {{
                 btn.classList.remove('active');
@@ -975,7 +1004,7 @@ def generate_combined_index(output_dir: Path, file_reports: List[Tuple[str, floa
     <div class="container">
         <h1>Combined Coverage Report</h1>
         <div class="timestamp">Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div>
-        
+
         <div class="summary-card">
             <h2 style="margin-top: 0;">Overall Project Coverage</h2>
             <div class="stats-grid">
@@ -1000,30 +1029,40 @@ def generate_combined_index(output_dir: Path, file_reports: List[Tuple[str, floa
                     <div class="stat-label">Missing Lines</div>
                 </div>
             </div>
-            
+
 
         </div>
-        
+
         <div class="filter-buttons">
             <button class="filter-btn active" onclick="filterFiles(0, 100)">All Files</button>
             <button class="filter-btn" onclick="filterFiles(0, 60)">Low Coverage (&lt;60%)</button>
             <button class="filter-btn" onclick="filterFiles(60, 80)">Medium Coverage (60-80%)</button>
             <button class="filter-btn" onclick="filterFiles(80, 100)">High Coverage (&gt;80%)</button>
         </div>
-        
+
         <div class="file-list">
             <div class="file-header">Detailed Per-File Coverage Reports</div>
-""")
-        
+"""
+        )
+
         for filename, coverage_percent, stats in file_reports:
-            safe_filename = filename.replace('/', '_').replace('\\', '_')
-            coverage_class = 'coverage-high' if coverage_percent >= 80 else 'coverage-medium' if coverage_percent >= 60 else 'coverage-low'
-            coverage_color = '#4caf50' if coverage_percent >= 80 else '#ff9800' if coverage_percent >= 60 else '#f44336'
-            
-            statements = stats.get('covered', 0) + stats.get('missing', 0)
-            missing = stats.get('missing', 0)
-            
-            f.write(f"""            <div class="file-item" data-coverage="{coverage_percent}">
+            safe_filename = filename.replace("/", "_").replace("\\", "_")
+            coverage_class = (
+                "coverage-high"
+                if coverage_percent >= 80
+                else "coverage-medium" if coverage_percent >= 60 else "coverage-low"
+            )
+            coverage_color = (
+                "#4caf50"
+                if coverage_percent >= 80
+                else "#ff9800" if coverage_percent >= 60 else "#f44336"
+            )
+
+            statements = stats.get("covered", 0) + stats.get("missing", 0)
+            missing = stats.get("missing", 0)
+
+            f.write(
+                f"""            <div class="file-item" data-coverage="{coverage_percent}">
                 <div class="file-name">
                     <a href="{safe_filename}.html">{html.escape(filename)}</a>
                 </div>
@@ -1045,14 +1084,17 @@ def generate_combined_index(output_dir: Path, file_reports: List[Tuple[str, floa
                     </div>
                 </div>
             </div>
-""")
-        
-        f.write("""        </div>
+"""
+            )
+
+        f.write(
+            """        </div>
     </div>
 </body>
 </html>
-""")
-    
+"""
+        )
+
     print_success(f"Combined index generated: {index_file}")
 
 
@@ -1064,95 +1106,92 @@ def main():
     parser.add_argument(
         "--output-dir",
         default="tests/reports/coverage",
-        help="Output directory for all coverage reports"
+        help="Output directory for all coverage reports",
     )
     parser.add_argument(
-        "--run-tests",
-        action="store_true",
-        help="Run tests with coverage before generating reports"
+        "--run-tests", action="store_true", help="Run tests with coverage before generating reports"
     )
-    parser.add_argument(
-        "--source-dir",
-        default="c_to_plantuml",
-        help="Source directory to analyze"
-    )
-    
+    parser.add_argument("--source-dir", default="c_to_plantuml", help="Source directory to analyze")
+
     args = parser.parse_args()
-    
+
     print_header("Combined Coverage Report Generator")
-    
+
     # Create output directory
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Run coverage analysis if requested
     test_results = {}
     if args.run_tests:
         success, test_results = run_coverage_analysis()
         if not success:
             return 1
-    
+
     # Get coverage data
     coverage_data = get_coverage_data()
     if not coverage_data:
-        print_error("No coverage data available. Run with --run-tests flag or ensure tests have been run with coverage.")
+        print_error(
+            "No coverage data available. Run with --run-tests flag or ensure tests have been run with coverage."
+        )
         return 1
-    
+
     # Generate standard coverage reports
     print_subheader("Generating Standard Coverage Reports")
-    
+
     # Terminal report
     subprocess.run(["python3", "-m", "coverage", "report", "-m"], check=False)
-    
+
     # XML report
-    subprocess.run(["python3", "-m", "coverage", "xml", "-o", str(output_dir / "coverage.xml")], check=False)
-    
+    subprocess.run(
+        ["python3", "-m", "coverage", "xml", "-o", str(output_dir / "coverage.xml")], check=False
+    )
+
     # JSON report (for reference)
-    subprocess.run(["python3", "-m", "coverage", "json", "-o", str(output_dir / "coverage.json")], check=False)
-    
+    subprocess.run(
+        ["python3", "-m", "coverage", "json", "-o", str(output_dir / "coverage.json")], check=False
+    )
+
     # HTML coverage report
-    subprocess.run(["python3", "-m", "coverage", "html", "-d", str(output_dir / "htmlcov")], check=False)
-    
+    subprocess.run(
+        ["python3", "-m", "coverage", "html", "-d", str(output_dir / "htmlcov")], check=False
+    )
+
     # Generate coverage summary
     generate_coverage_summary(coverage_data, output_dir)
-    
+
     # Generate HTML test summary
     generate_test_summary_html(test_results, output_dir)
-    
+
     # Process each file for detailed reports
     files_data = coverage_data.get("files", {})
     if not files_data:
         print_error("No files found in coverage data")
         return 1
-    
+
     print_subheader(f"Generating Detailed Reports for {len(files_data)} Files")
-    
+
     file_reports = []
-    
+
     for filename, file_coverage in files_data.items():
         # Skip non-source files
         if not filename.startswith(args.source_dir):
             continue
-        
+
         source_path = Path(filename)
         if not source_path.exists():
             print_error(f"Source file not found: {filename}")
             continue
-        
-        report_data = generate_html_file_report(
-            filename,
-            source_path,
-            file_coverage,
-            output_dir
-        )
-        
+
+        report_data = generate_html_file_report(filename, source_path, file_coverage, output_dir)
+
         if report_data[0]:  # Check if report was generated successfully
             file_reports.append(report_data)
-    
+
     # Generate combined index
     if file_reports:
         generate_combined_index(output_dir, file_reports, coverage_data)
-    
+
     print_header("Coverage Report Generation Complete!")
     print_info(f"All reports available in: {output_dir}")
     print_info(f"Open {output_dir}/index.html in your browser for the full report")
@@ -1165,7 +1204,7 @@ def main():
     print_info("\nCoverage includes:")
     print_info("  - Unit test coverage")
     print_info("  - Execution coverage from example generation (if run)")
-    
+
     return 0
 
 
