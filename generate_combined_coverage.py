@@ -383,15 +383,16 @@ def generate_html_file_report(
         
         # Generate line-by-line HTML
         for i, line in enumerate(source_lines, 1):
-            if i in covered_lines:
-                line_class = "covered"
-                status_symbol = "&#10004;"
-            elif i in missing_lines:
+            # Check if line is empty or contains only whitespace
+            stripped_line = line.rstrip('\n').rstrip()
+            is_empty = not stripped_line
+            
+            if i in missing_lines:
                 line_class = "missing"
                 status_symbol = "&#10008;"
-            elif i in excluded_lines:
-                line_class = "excluded"
-                status_symbol = "&#8212;"
+            elif not is_empty:
+                line_class = "covered"
+                status_symbol = "&#10004;"
             else:
                 line_class = ""
                 status_symbol = ""
