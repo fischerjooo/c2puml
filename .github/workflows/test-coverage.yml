@@ -81,7 +81,11 @@ jobs:
       run: |
         echo "🚀 Committing coverage reports to repository..."
 
-        # Add coverage reports
+        # Ensure we only add files from tests/reports directory
+        # Reset any other changes that might have been made
+        git reset HEAD
+        
+        # Add ONLY the tests/reports directory and all its contents
         git add tests/reports/
 
         # Check if there are changes to commit
@@ -96,6 +100,19 @@ jobs:
           RUN_NUMBER="${{ github.run_number }}"
           EVENT_NAME="${{ github.event_name }}"
 
+          # Verify only tests/reports files are staged
+          echo "📋 Verifying staged files..."
+          STAGED_FILES=$(git diff --staged --name-only)
+          NON_REPORT_FILES=$(echo "$STAGED_FILES" | grep -v "^tests/reports/" || true)
+          
+          if [ -n "$NON_REPORT_FILES" ]; then
+            echo "❌ Error: Non-report files are staged:"
+            echo "$NON_REPORT_FILES"
+            echo "Resetting and re-adding only tests/reports..."
+            git reset HEAD
+            git add tests/reports/
+          fi
+
           # Create detailed commit message
           {
             echo "Update test coverage reports"
@@ -109,8 +126,8 @@ jobs:
             echo "Generated Reports:"
           } > /tmp/commit_msg
 
-          # Add list of generated files
-          find tests/reports -type f -name "*" | sort | sed 's/^/- /' >> /tmp/commit_msg
+          # Add list of generated files (only from tests/reports)
+          git diff --staged --name-only | grep "^tests/reports/" | sort | sed 's/^/- /' >> /tmp/commit_msg
 
           echo "" >> /tmp/commit_msg
           echo "- Updated coverage analysis" >> /tmp/commit_msg
@@ -120,6 +137,21 @@ jobs:
           # Commit with detailed message
           git commit -F /tmp/commit_msg
 
+          # Final verification before push
+          echo "📋 Final verification of committed files..."
+          COMMITTED_FILES=$(git diff HEAD~1 --name-only)
+          NON_REPORT_COMMITTED=$(echo "$COMMITTED_FILES" | grep -v "^tests/reports/" || true)
+          
+          if [ -n "$NON_REPORT_COMMITTED" ]; then
+            echo "❌ Error: Non-report files were committed:"
+            echo "$NON_REPORT_COMMITTED"
+            echo "Aborting push to prevent unintended changes."
+            exit 1
+          fi
+          
+          echo "✅ All committed files are within tests/reports/"
+          echo "📤 Pushing changes..."
+          
           # Push changes
           git push origin "${{ github.ref }}"
           echo "✅ Coverage reports committed and pushed"
