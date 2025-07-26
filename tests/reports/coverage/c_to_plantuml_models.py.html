@@ -171,7 +171,7 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/models.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 18:15:48</div>
+        <div class="timestamp">Generated: 2025-07-26 18:19:54</div>
         
         <div class="stats">
             <div class="stat">
@@ -203,9 +203,9 @@
     <div class="code-container">
         <div class="code-header">Source Code</div>
         <div class="code-lines">
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">1</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">#!/usr/bin/env python3</div>
             </div>
             <div class="code-line covered">
@@ -213,14 +213,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">3</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">Data models for C to PlantUML converter</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">4</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -298,19 +298,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __repr__(self):</div>
             </div>
-            <div class="code-line excluded">
+            <div class="code-line covered">
                 <div class="line-number">20</div>
-                <div class="line-status">&#8212;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if self.value is not None:</div>
             </div>
-            <div class="code-line excluded">
+            <div class="code-line covered">
                 <div class="line-number">21</div>
-                <div class="line-status">&#8212;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return f&quot;Field(name={self.name}, type={self.type}, value={self.value})&quot;</div>
             </div>
-            <div class="code-line excluded">
+            <div class="code-line covered">
                 <div class="line-number">22</div>
-                <div class="line-status">&#8212;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return f&quot;Field(name={self.name}, type={self.type})&quot;</div>
             </div>
             <div class="code-line ">
@@ -323,9 +323,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">25</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Validate field data after initialization&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
@@ -338,14 +338,14 @@
                 <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">28</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                f&quot;Field name must be a string, got {type(self.name)}: {repr(self.name)}&quot;</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">29</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            )</div>
             </div>
             <div class="code-line covered">
@@ -358,14 +358,14 @@
                 <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">32</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                f&quot;Field type must be a non-empty string, got {type(self.type)}: {repr(self.type)}&quot;</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">33</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            )</div>
             </div>
             <div class="code-line ">
@@ -373,9 +373,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">35</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Additional validation: ensure name and type are not just whitespace</div>
             </div>
             <div class="code-line covered">
@@ -388,14 +388,14 @@
                 <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">38</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                f&quot;Field name cannot be empty or whitespace, got: {repr(self.name)}&quot;</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">39</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            )</div>
             </div>
             <div class="code-line covered">
@@ -408,14 +408,14 @@
                 <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">42</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                f&quot;Field type cannot be empty or whitespace, got: {repr(self.type)}&quot;</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">43</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            )</div>
             </div>
             <div class="code-line ">
@@ -428,9 +428,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">46</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content"># TypedefRelation class removed - tag names moved to struct/enum/union</div>
             </div>
             <div class="code-line ">
@@ -488,9 +488,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">58</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Validate include relation data after initialization&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
@@ -588,9 +588,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">78</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Validate function data after initialization&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
@@ -618,9 +618,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">84</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Convert parameters to Field objects if they&#x27;re dictionaries</div>
             </div>
             <div class="code-line covered">
@@ -648,9 +648,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                    converted_params.append(Field(**param))</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">90</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                else:</div>
             </div>
             <div class="code-line covered">
@@ -718,14 +718,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    uses: List[str] = field(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">104</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        default_factory=list</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">105</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    )  # Non-primitive types used by this struct</div>
             </div>
             <div class="code-line ">
@@ -738,9 +738,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">108</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Validate struct data after initialization&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
@@ -868,9 +868,9 @@
                 <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Enum name must be a non-empty string&quot;)</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">134</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Convert any string values to EnumValue</div>
             </div>
             <div class="code-line covered">
@@ -878,14 +878,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.values = [</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">136</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            v if isinstance(v, EnumValue) else EnumValue(v) for v in self.values</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">137</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        ]</div>
             </div>
             <div class="code-line ">
@@ -938,14 +938,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    uses: List[str] = field(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">148</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        default_factory=list</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">149</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    )  # Non-primitive types used by this union</div>
             </div>
             <div class="code-line ">
@@ -958,9 +958,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">152</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Validate union data after initialization&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
@@ -1018,14 +1018,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    uses: List[str] = field(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">164</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        default_factory=list</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">165</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    )  # Non-primitive types used by this alias</div>
             </div>
             <div class="code-line ">
@@ -1038,9 +1038,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">168</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Validate alias data after initialization&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
@@ -1168,9 +1168,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">194</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Validate file model data after initialization&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
@@ -1223,9 +1223,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def to_dict(self) -&gt; dict:</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">205</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Convert to dictionary for JSON serialization&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
@@ -1233,9 +1233,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        data = asdict(self)</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">207</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Convert set to list for JSON serialization and sort for consistency</div>
             </div>
             <div class="code-line covered">
@@ -1243,9 +1243,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;includes&quot;] = sorted(list(self.includes))</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">209</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Convert include_relations to list of dicts and sort for consistency</div>
             </div>
             <div class="code-line covered">
@@ -1253,24 +1253,24 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;include_relations&quot;] = sorted(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">211</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            [asdict(rel) for rel in self.include_relations],</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">212</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            key=lambda x: (x[&quot;source_file&quot;], x[&quot;included_file&quot;]),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">213</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        )</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">214</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Sort all dictionary fields for consistent ordering</div>
             </div>
             <div class="code-line covered">
@@ -1298,9 +1298,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;macros&quot;] = sorted(data[&quot;macros&quot;])</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">220</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Sort functions and globals by name (they are already objects, not dicts)</div>
             </div>
             <div class="code-line covered">
@@ -1313,9 +1313,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;globals&quot;] = sorted(self.globals, key=lambda x: x.name)</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">223</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Convert functions and globals to dicts after sorting</div>
             </div>
             <div class="code-line covered">
@@ -1333,9 +1333,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">227</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Sort &quot;uses&quot; arrays in structs, unions, and aliases for consistent ordering</div>
             </div>
             <div class="code-line covered">
@@ -1388,9 +1388,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">238</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # typedef_relations removed - tag names are now in struct/enum/union</div>
             </div>
             <div class="code-line covered">
@@ -1413,14 +1413,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def from_dict(cls, data: dict) -&gt; &quot;FileModel&quot;:</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">243</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Create from dictionary&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">244</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Convert list back to set</div>
             </div>
             <div class="code-line covered">
@@ -1433,9 +1433,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">247</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Convert globals back to Field objects</div>
             </div>
             <div class="code-line covered">
@@ -1453,9 +1453,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">251</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Convert functions back to Function objects</div>
             </div>
             <div class="code-line covered">
@@ -1468,14 +1468,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        functions = [</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">254</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            Function(**f) if isinstance(f, dict) else f for f in functions_data</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">255</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        ]</div>
             </div>
             <div class="code-line ">
@@ -1483,9 +1483,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">257</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Convert structs back to Struct objects</div>
             </div>
             <div class="code-line covered">
@@ -1513,19 +1513,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                fields = [</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">263</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    Field(**field) if isinstance(field, dict) else field</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">264</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    for field in struct_data.get(&quot;fields&quot;, [])</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">265</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                ]</div>
             </div>
             <div class="code-line covered">
@@ -1533,19 +1533,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                methods = [</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">267</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    Function(**method) if isinstance(method, dict) else method</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">268</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    for method in struct_data.get(&quot;methods&quot;, [])</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">269</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                ]</div>
             </div>
             <div class="code-line covered">
@@ -1553,39 +1553,39 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                structs[name] = Struct(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">271</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    name=struct_data.get(&quot;name&quot;, name),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">272</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    fields=fields,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">273</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    methods=methods,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">274</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    tag_name=struct_data.get(&quot;tag_name&quot;, &quot;&quot;),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">275</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    uses=struct_data.get(&quot;uses&quot;, []),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">276</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                )</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">277</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            else:</div>
             </div>
             <div class="code-line missing">
@@ -1598,9 +1598,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">280</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Convert enums back to Enum objects</div>
             </div>
             <div class="code-line covered">
@@ -1628,19 +1628,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                values = [</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">286</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    EnumValue(**val) if isinstance(val, dict) else EnumValue(val)</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">287</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    for val in enum_data.get(&quot;values&quot;, [])</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">288</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                ]</div>
             </div>
             <div class="code-line covered">
@@ -1648,9 +1648,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                enums[name] = Enum(name=enum_data.get(&quot;name&quot;, name), values=values)</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">290</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            else:</div>
             </div>
             <div class="code-line missing">
@@ -1663,9 +1663,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">293</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # typedef_relations removed - tag names are now in struct/enum/union</div>
             </div>
             <div class="code-line ">
@@ -1673,9 +1673,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">295</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Convert include_relations back to IncludeRelation objects</div>
             </div>
             <div class="code-line covered">
@@ -1688,19 +1688,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        include_relations = [</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">298</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            IncludeRelation(**rel) if isinstance(rel, dict) else rel</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">299</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for rel in include_relations_data</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">300</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        ]</div>
             </div>
             <div class="code-line ">
@@ -1708,9 +1708,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">302</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Convert unions back to Union objects</div>
             </div>
             <div class="code-line covered">
@@ -1738,19 +1738,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                fields = [</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">308</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    Field(**field) if isinstance(field, dict) else field</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">309</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    for field in union_data.get(&quot;fields&quot;, [])</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">310</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                ]</div>
             </div>
             <div class="code-line covered">
@@ -1758,34 +1758,34 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                unions[name] = Union(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">312</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    name=union_data.get(&quot;name&quot;, name),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">313</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    fields=fields,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">314</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    tag_name=union_data.get(&quot;tag_name&quot;, &quot;&quot;),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">315</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    uses=union_data.get(&quot;uses&quot;, []),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">316</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                )</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">317</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            else:</div>
             </div>
             <div class="code-line missing">
@@ -1798,9 +1798,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">320</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Convert aliases back to Alias objects</div>
             </div>
             <div class="code-line covered">
@@ -1828,34 +1828,34 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                aliases[name] = Alias(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">326</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    name=alias_data.get(&quot;name&quot;, name),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">327</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    original_type=alias_data.get(&quot;original_type&quot;, &quot;&quot;),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">328</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    uses=alias_data.get(&quot;uses&quot;, []),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">329</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                )</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">330</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            else:</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">331</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                # Handle legacy format where aliases was Dict[str, str]</div>
             </div>
             <div class="code-line missing">
@@ -1868,9 +1868,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">334</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Create new data dict with converted objects</div>
             </div>
             <div class="code-line covered">
@@ -1938,9 +1938,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def get_summary(self) -&gt; dict:</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">348</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Get a summary of the file contents&quot;&quot;&quot;</div>
             </div>
             <div class="code-line missing">
@@ -1948,49 +1948,49 @@
                 <div class="line-status">&#10008;</div>
                 <div class="line-content">        return {</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">350</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;file_path&quot;: self.file_path,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">351</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;structs_count&quot;: len(self.structs),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">352</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;enums_count&quot;: len(self.enums),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">353</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;functions_count&quot;: len(self.functions),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">354</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;globals_count&quot;: len(self.globals),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">355</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;includes_count&quot;: len(self.includes),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">356</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;macros_count&quot;: len(self.macros),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">357</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;aliases_count&quot;: len(self.aliases),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">358</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        }</div>
             </div>
             <div class="code-line ">
@@ -2048,9 +2048,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">370</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Validate project model data after initialization&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
@@ -2083,9 +2083,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def save(self, file_path: str) -&gt; None:</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">377</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Save model to JSON file&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
@@ -2093,39 +2093,39 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        data = {</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">379</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;project_name&quot;: self.project_name,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">380</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;project_root&quot;: self.project_root,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">381</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;files&quot;: {</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">382</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                path: file_model.to_dict()</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">383</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                for path, file_model in sorted(self.files.items())</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">384</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            },</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">385</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        }</div>
             </div>
             <div class="code-line ">
@@ -2173,9 +2173,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def from_dict(cls, data: dict) -&gt; &quot;ProjectModel&quot;:</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">395</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Create from dictionary&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
@@ -2183,19 +2183,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        files = {</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">397</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            path: FileModel.from_dict(file_data)</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">398</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for path, file_data in data.get(&quot;files&quot;, {}).items()</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">399</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        }</div>
             </div>
             <div class="code-line ">
@@ -2208,24 +2208,24 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        return cls(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">402</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            project_name=data.get(&quot;project_name&quot;, &quot;Unknown&quot;),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">403</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            project_root=data.get(&quot;project_root&quot;, &quot;&quot;),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">404</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            files=files,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">405</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        )</div>
             </div>
             <div class="code-line ">
@@ -2243,9 +2243,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def load(cls, file_path: str) -&gt; &quot;ProjectModel&quot;:</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">409</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Load model from JSON file&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
@@ -2288,9 +2288,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def get_summary(self) -&gt; dict:</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">418</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Get a summary of the project&quot;&quot;&quot;</div>
             </div>
             <div class="code-line missing">
@@ -2323,44 +2323,44 @@
                 <div class="line-status">&#10008;</div>
                 <div class="line-content">        return {</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">425</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;project_name&quot;: self.project_name,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">426</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;project_root&quot;: self.project_root,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">427</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;files_count&quot;: len(self.files),</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">428</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;total_structs&quot;: total_structs,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">429</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;total_enums&quot;: total_enums,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">430</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;total_functions&quot;: total_functions,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">431</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;total_globals&quot;: total_globals,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">432</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        }</div>
             </div>
             <div class="code-line ">
@@ -2373,14 +2373,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def update_uses_fields(self):</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">435</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Update all uses fields across the entire project model&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">436</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Collect all available type names from the entire project</div>
             </div>
             <div class="code-line covered">
@@ -2418,9 +2418,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">444</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Update uses fields for all structures in all files</div>
             </div>
             <div class="code-line covered">
@@ -2428,9 +2428,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        for file_model in self.files.values():</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">446</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            # Update struct uses</div>
             </div>
             <div class="code-line covered">
@@ -2453,14 +2453,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                    field_uses = self._extract_non_primitive_types(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">451</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        struct_field.type, available_types</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">452</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    )</div>
             </div>
             <div class="code-line covered">
@@ -2478,9 +2478,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">456</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            # Update union uses</div>
             </div>
             <div class="code-line covered">
@@ -2503,14 +2503,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                    field_uses = self._extract_non_primitive_types(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">461</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        union_field.type, available_types</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">462</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    )</div>
             </div>
             <div class="code-line covered">
@@ -2528,9 +2528,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">466</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            # Update alias uses</div>
             </div>
             <div class="code-line covered">
@@ -2543,19 +2543,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                alias.uses = self._extract_non_primitive_types(</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">469</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    alias.original_type, available_types</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">470</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                )</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">471</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                # Remove the alias name from its own uses list</div>
             </div>
             <div class="code-line covered">
@@ -2578,14 +2578,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _extract_non_primitive_types(self, type_str: str, available_types: set) -&gt; list:</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">476</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Extract non-primitive type names from a type string that exist in available_types&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">477</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Define primitive types</div>
             </div>
             <div class="code-line covered">
@@ -2593,179 +2593,179 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        primitive_types = {</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">479</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;void&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">480</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;char&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">481</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;short&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">482</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;int&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">483</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;long&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">484</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;float&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">485</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;double&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">486</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;signed&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">487</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;unsigned&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">488</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;const&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">489</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;volatile&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">490</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;static&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">491</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;extern&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">492</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;auto&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">493</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;register&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">494</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;inline&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">495</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;restrict&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">496</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;size_t&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">497</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;ptrdiff_t&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">498</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;int8_t&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">499</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;int16_t&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">500</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;int32_t&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">501</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;int64_t&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">502</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;uint8_t&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">503</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;uint16_t&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">504</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;uint32_t&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">505</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;uint64_t&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">506</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;intptr_t&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">507</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;uintptr_t&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">508</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;bool&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">509</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;true&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">510</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;false&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">511</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;NULL&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">512</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            &quot;nullptr&quot;,</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">513</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        }</div>
             </div>
             <div class="code-line ">
@@ -2773,9 +2773,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">515</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Remove common C keywords and operators</div>
             </div>
             <div class="code-line covered">
@@ -2788,9 +2788,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">518</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Split by common delimiters and operators</div>
             </div>
             <div class="code-line covered">
@@ -2803,9 +2803,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">521</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        # Extract potential type names that exist in available_types</div>
             </div>
             <div class="code-line covered">
@@ -2828,9 +2828,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">            if part and len(part) &gt; 1 and part not in primitive_types:</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">526</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                # Check if it looks like a type name (starts with letter, contains letters/numbers/underscores)</div>
             </div>
             <div class="code-line covered">
@@ -2838,9 +2838,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                if re.match(r&quot;^[a-zA-Z_][a-zA-Z0-9_]*$&quot;, part):</div>
             </div>
-            <div class="code-line ">
+            <div class="code-line covered">
                 <div class="line-number">528</div>
-                <div class="line-status"></div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    # Only include if it exists in available_types</div>
             </div>
             <div class="code-line covered">
