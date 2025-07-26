@@ -123,13 +123,6 @@ jobs:
           fi
           
           if [ "$SHOULD_COMMIT" = "true" ]; then
-            # Switch to main branch if we're not already on it
-            if [ "${{ github.ref }}" != "refs/heads/main" ]; then
-              echo "🔄 Switching to main branch..."
-              git fetch origin main:main
-              git checkout main
-            fi
-            
             # Add coverage reports
             echo "📁 Adding coverage reports to git..."
             git add tests/reports/
@@ -172,9 +165,18 @@ jobs:
               # Commit with detailed message
               git commit -F /tmp/commit_msg
 
-              # Push changes
+              # Push changes to the target branch
               echo "🚀 Pushing changes to $TARGET_BRANCH..."
-              git push origin "$TARGET_BRANCH"
+              
+              # If we're not on the target branch, we need to push to it specifically
+              if [ "${{ github.ref }}" != "refs/heads/$TARGET_BRANCH" ]; then
+                echo "🔄 Pushing to $TARGET_BRANCH branch..."
+                git push origin "HEAD:$TARGET_BRANCH"
+              else
+                echo "🔄 Pushing to current branch..."
+                git push origin "${{ github.ref }}"
+              fi
+              
               echo "✅ Coverage reports committed and pushed"
             fi
           else

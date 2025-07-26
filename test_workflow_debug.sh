@@ -97,6 +97,14 @@ if [ "$SHOULD_COMMIT" = "true" ]; then
     echo ""
     echo "📝 Files that would be committed:"
     find tests/reports -type f -name "*" | sort | sed 's/^/- /'
+    
+    echo ""
+    echo "🔄 Push strategy:"
+    if [ "$GITHUB_REF" != "refs/heads/$TARGET_BRANCH" ]; then
+        echo "Would push to $TARGET_BRANCH branch using: git push origin HEAD:$TARGET_BRANCH"
+    else
+        echo "Would push to current branch using: git push origin $GITHUB_REF"
+    fi
 else
     echo "ℹ️ Would skip commit based on conditions"
 fi

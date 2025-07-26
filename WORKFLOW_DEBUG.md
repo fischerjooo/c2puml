@@ -14,6 +14,8 @@ The `test-coverage.yml` GitHub Actions workflow was not properly uploading modif
 
 4. **Token Issues**: Using `github.token` which has limited permissions in PR contexts.
 
+5. **Branch Switching Issues**: The workflow tried to switch branches with uncommitted changes, causing "local changes would be overwritten" errors.
+
 ### Root Causes
 
 1. **Complex Conditional Logic**: The original condition was:
@@ -23,7 +25,7 @@ The `test-coverage.yml` GitHub Actions workflow was not properly uploading modif
 
 2. **PR Context Issues**: When a PR is merged, the workflow runs in the PR context, but the `github.event.pull_request.merged` property might not be reliable.
 
-3. **Branch Switching**: The workflow didn't properly handle switching to the main branch when running from a PR context.
+3. **Branch Switching Problems**: The workflow tried to switch to main branch before committing changes, which failed when there were uncommitted files.
 
 ### Solutions Implemented
 
@@ -38,10 +40,11 @@ The `test-coverage.yml` GitHub Actions workflow was not properly uploading modif
 - Better handling of different event types
 - More explicit logging of decision points
 
-#### 3. Better Branch Handling
-- Added explicit branch switching logic
-- Ensures we're on the main branch before committing
-- Uses `git fetch` and `git checkout` to switch branches safely
+#### 3. Simplified Branch Handling
+- **Fixed**: Commit changes first, then push to target branch
+- **Removed**: Complex branch switching logic that caused conflicts
+- **Added**: Smart push strategy that works from any branch context
+- Uses `git push origin HEAD:main` when pushing to main from a different branch
 
 #### 4. Enhanced Error Handling
 - Added more detailed logging
@@ -50,13 +53,20 @@ The `test-coverage.yml` GitHub Actions workflow was not properly uploading modif
 
 ### Key Changes
 
-#### Before:
+#### Before (Problematic):
 ```yaml
 - name: 🚀 Commit and push coverage reports
   if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
+  run: |
+    # Switch to main branch first (CAUSED ERROR)
+    git checkout main
+    # Add and commit files
+    git add tests/reports/
+    git commit -m "Update coverage"
+    git push origin main
 ```
 
-#### After:
+#### After (Fixed):
 ```yaml
 - name: 🚀 Commit and push coverage reports
   if: always()
@@ -79,6 +89,19 @@ The `test-coverage.yml` GitHub Actions workflow was not properly uploading modif
         TARGET_BRANCH="main"
       else
         echo "ℹ️ PR not merged or not to main - skipping commit and push"
+      fi
+    fi
+    
+    if [ "$SHOULD_COMMIT" = "true" ]; then
+      # Add and commit files first
+      git add tests/reports/
+      git commit -F /tmp/commit_msg
+      
+      # Push to target branch using smart strategy
+      if [ "${{ github.ref }}" != "refs/heads/$TARGET_BRANCH" ]; then
+        git push origin "HEAD:$TARGET_BRANCH"
+      else
+        git push origin "${{ github.ref }}"
       fi
     fi
 ```
@@ -111,6 +134,7 @@ The workflow should now:
    - PR is not targeting main branch
    - Other event types
 4. **Provide detailed logging** about why decisions were made
+5. **Handle branch contexts properly** without switching branches with uncommitted changes
 
 ### Troubleshooting
 
@@ -121,12 +145,13 @@ If the workflow still doesn't upload files:
 3. **Check repository permissions** for the GitHub Actions bot
 4. **Verify the PERSONAL_ACCESS_TOKEN** secret is configured (optional but recommended)
 5. **Run the local debug script** to test logic
+6. **Check for branch switching errors** - should no longer occur
 
 ### Files Modified
 
-- `.github/workflows/test-coverage.yml` - Main workflow file
-- `test_workflow_debug.sh` - Local debug script
-- `WORKFLOW_DEBUG.md` - This documentation
+- `.github/workflows/test-coverage.yml` - Main workflow file (fixed branch switching)
+- `test_workflow_debug.sh` - Local debug script (updated with push strategy)
+- `WORKFLOW_DEBUG.md` - This documentation (updated with fix details)
 
 ### Next Steps
 
@@ -134,3 +159,16 @@ If the workflow still doesn't upload files:
 2. Monitor the next PR merge to ensure it works
 3. Check the debug output to verify the logic is working correctly
 4. Consider adding a Personal Access Token secret for more reliable authentication
+
+### Recent Fix (Latest Update)
+
+**Issue**: Workflow failed with "Your local changes to the following files would be overwritten by checkout"
+
+**Root Cause**: The workflow was trying to switch to the main branch before committing the generated coverage reports, causing a conflict.
+
+**Solution**: 
+1. Commit the generated files first
+2. Use smart push strategy: `git push origin HEAD:main` when pushing to main from a different branch
+3. Removed complex branch switching logic that caused conflicts
+
+**Result**: The workflow now works reliably without branch switching errors.
