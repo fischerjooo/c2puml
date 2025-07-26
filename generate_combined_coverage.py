@@ -417,10 +417,10 @@ def generate_test_summary_html(test_results: Dict, output_dir: Path) -> None:
             <div class="test-details">
                 <h3>Test Execution Details</h3>
                 <p><strong>Total Tests:</strong> {total_tests:,}</p>
-                <p><strong>Passed:</strong> {passed:,} ({passed/total_tests*100:.1f}%)</p>
-                <p><strong>Failed:</strong> {failed:,} ({failed/total_tests*100:.1f}%)</p>
-                <p><strong>Skipped:</strong> {skipped:,} ({skipped/total_tests*100:.1f}%)</p>
-                <p><strong>Errors:</strong> {errors:,} ({errors/total_tests*100:.1f}%)</p>
+                <p><strong>Passed:</strong> {passed:,} ({(passed/total_tests*100) if total_tests > 0 else 0.0:.1f}%)</p>
+                <p><strong>Failed:</strong> {failed:,} ({(failed/total_tests*100) if total_tests > 0 else 0.0:.1f}%)</p>
+                <p><strong>Skipped:</strong> {skipped:,} ({(skipped/total_tests*100) if total_tests > 0 else 0.0:.1f}%)</p>
+                <p><strong>Errors:</strong> {errors:,} ({(errors/total_tests*100) if total_tests > 0 else 0.0:.1f}%)</p>
                 <p><strong>Execution Time:</strong> {duration:.2f} seconds</p>
                 <p><strong>Overall Status:</strong> {status}</p>
             </div>
