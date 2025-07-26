@@ -171,7 +171,7 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/transformer.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 16:09:34</div>
+        <div class="timestamp">Generated: 2025-07-26 18:01:01</div>
         
         <div class="stats">
             <div class="stat">
@@ -210,7 +210,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">2</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -230,27 +230,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">6</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import json</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">7</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import logging</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">8</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import re</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">9</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from pathlib import Path</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">10</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from typing import Any, Dict, List, Optional, Set</div>
             </div>
             <div class="code-line ">
@@ -260,7 +260,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">12</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from .models import (</div>
             </div>
             <div class="code-line ">
@@ -330,12 +330,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">26</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class Transformer:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">27</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Main transformer class for Step 2: Transform model based on configuration&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -345,12 +345,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">29</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __init__(self):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">30</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger = logging.getLogger(__name__)</div>
             </div>
             <div class="code-line ">
@@ -360,7 +360,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">32</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def transform(</div>
             </div>
             <div class="code-line ">
@@ -430,7 +430,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">46</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger.info(&quot;Step 2: Transforming model: %s&quot;, model_file)</div>
             </div>
             <div class="code-line ">
@@ -445,7 +445,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">49</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        model = self._load_model(model_file)</div>
             </div>
             <div class="code-line ">
@@ -460,7 +460,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">52</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        config = self._load_config(config_file)</div>
             </div>
             <div class="code-line ">
@@ -475,7 +475,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">55</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        transformed_model = self._apply_transformations(model, config)</div>
             </div>
             <div class="code-line ">
@@ -490,12 +490,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">58</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        output_path = output_file or model_file</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">59</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self._save_model(transformed_model, output_path)</div>
             </div>
             <div class="code-line ">
@@ -505,7 +505,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">61</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger.info(&quot;Step 2 complete! Transformed model saved to: %s&quot;, output_path)</div>
             </div>
             <div class="code-line ">
@@ -515,7 +515,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">63</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return output_path</div>
             </div>
             <div class="code-line ">
@@ -525,7 +525,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">65</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _load_model(self, model_file: str) -&gt; ProjectModel:</div>
             </div>
             <div class="code-line ">
@@ -535,12 +535,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">67</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not Path(model_file).exists():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">68</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            raise FileNotFoundError(f&quot;Model file not found: {model_file}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -550,17 +550,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">70</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">71</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            with open(model_file, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">72</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                data = json.load(f)</div>
             </div>
             <div class="code-line ">
@@ -575,7 +575,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">75</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            model = ProjectModel(</div>
             </div>
             <div class="code-line ">
@@ -610,12 +610,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">82</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for file_path, file_data in data[&quot;files&quot;].items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">83</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                model.files[file_path] = self._dict_to_file_model(file_data)</div>
             </div>
             <div class="code-line ">
@@ -625,12 +625,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">85</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.logger.debug(&quot;Loaded model with %d files&quot;, len(model.files))</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">86</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return model</div>
             </div>
             <div class="code-line ">
@@ -640,12 +640,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">88</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        except Exception as e:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">89</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            raise ValueError(f&quot;Failed to load model from {model_file}: {e}&quot;) from e</div>
             </div>
             <div class="code-line ">
@@ -655,7 +655,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">91</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _load_config(self, config_file: str) -&gt; Dict[str, Any]:</div>
             </div>
             <div class="code-line ">
@@ -665,12 +665,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">93</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not Path(config_file).exists():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">94</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            raise FileNotFoundError(f&quot;Configuration file not found: {config_file}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -680,17 +680,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">96</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">97</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            with open(config_file, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">98</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                config = json.load(f)</div>
             </div>
             <div class="code-line ">
@@ -700,12 +700,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">100</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.logger.debug(&quot;Loaded configuration from: %s&quot;, config_file)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">101</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return config</div>
             </div>
             <div class="code-line ">
@@ -715,12 +715,12 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">103</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        except Exception as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">104</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(</div>
             </div>
             <div class="code-line ">
@@ -740,7 +740,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">108</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _apply_transformations(</div>
             </div>
             <div class="code-line ">
@@ -760,7 +760,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">112</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger.info(&quot;Applying transformations to model&quot;)</div>
             </div>
             <div class="code-line ">
@@ -775,12 +775,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">115</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;file_filters&quot; in config:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">116</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            model = self._apply_file_filters(model, config[&quot;file_filters&quot;])</div>
             </div>
             <div class="code-line ">
@@ -795,12 +795,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">119</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;element_filters&quot; in config:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">120</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            model = self._apply_element_filters(model, config[&quot;element_filters&quot;])</div>
             </div>
             <div class="code-line ">
@@ -815,12 +815,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">123</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;transformations&quot; in config:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">124</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            model = self._apply_model_transformations(model, config[&quot;transformations&quot;])</div>
             </div>
             <div class="code-line ">
@@ -835,12 +835,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">127</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;include_depth&quot; in config and config[&quot;include_depth&quot;] &gt; 1:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">128</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            model = self._process_include_relations(model, config[&quot;include_depth&quot;])</div>
             </div>
             <div class="code-line ">
@@ -850,7 +850,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">130</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger.info(</div>
             </div>
             <div class="code-line ">
@@ -865,7 +865,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">133</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
@@ -875,7 +875,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">135</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _apply_file_filters(</div>
             </div>
             <div class="code-line ">
@@ -895,12 +895,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">139</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        include_patterns = self._compile_patterns(filters.get(&quot;include&quot;, []))</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">140</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        exclude_patterns = self._compile_patterns(filters.get(&quot;exclude&quot;, []))</div>
             </div>
             <div class="code-line ">
@@ -910,12 +910,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">142</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not include_patterns and not exclude_patterns:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">143</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return model</div>
             </div>
             <div class="code-line ">
@@ -925,22 +925,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">145</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        filtered_files = {}</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">146</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for file_path, file_model in model.files.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">147</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if self._should_include_file(file_path, include_patterns, exclude_patterns):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">148</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                filtered_files[file_path] = file_model</div>
             </div>
             <div class="code-line ">
@@ -950,12 +950,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">150</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        model.files = filtered_files</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">151</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger.debug(</div>
             </div>
             <div class="code-line ">
@@ -970,7 +970,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">154</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
@@ -980,7 +980,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">156</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _apply_element_filters(</div>
             </div>
             <div class="code-line ">
@@ -1000,12 +1000,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">160</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for file_path, file_model in model.files.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">161</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            model.files[file_path] = self._filter_file_elements(file_model, filters)</div>
             </div>
             <div class="code-line ">
@@ -1015,7 +1015,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">163</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
@@ -1025,7 +1025,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">165</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _filter_file_elements(</div>
             </div>
             <div class="code-line ">
@@ -1050,12 +1050,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">170</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;structs&quot; in filters:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">171</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            file_model.structs = self._filter_dict(</div>
             </div>
             <div class="code-line ">
@@ -1080,12 +1080,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">176</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;enums&quot; in filters:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">177</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            file_model.enums = self._filter_dict(file_model.enums, filters[&quot;enums&quot;])</div>
             </div>
             <div class="code-line ">
@@ -1100,12 +1100,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">180</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;unions&quot; in filters:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">181</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            file_model.unions = self._filter_dict(file_model.unions, filters[&quot;unions&quot;])</div>
             </div>
             <div class="code-line ">
@@ -1120,12 +1120,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">184</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;functions&quot; in filters:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">185</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            file_model.functions = self._filter_list(</div>
             </div>
             <div class="code-line ">
@@ -1150,12 +1150,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">190</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;globals&quot; in filters:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">191</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            file_model.globals = self._filter_list(</div>
             </div>
             <div class="code-line ">
@@ -1180,12 +1180,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">196</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;macros&quot; in filters:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">197</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            file_model.macros = self._filter_list(file_model.macros, filters[&quot;macros&quot;])</div>
             </div>
             <div class="code-line ">
@@ -1200,12 +1200,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">200</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;aliases&quot; in filters:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">201</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            file_model.aliases = self._filter_dict(</div>
             </div>
             <div class="code-line ">
@@ -1225,7 +1225,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">205</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return file_model</div>
             </div>
             <div class="code-line ">
@@ -1235,7 +1235,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">207</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _apply_model_transformations(</div>
             </div>
             <div class="code-line ">
@@ -1260,12 +1260,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">212</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        file_selection = transformations.get(&quot;file_selection&quot;, {})</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">213</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        selected_files = file_selection.get(&quot;selected_files&quot;, [])</div>
             </div>
             <div class="code-line ">
@@ -1285,12 +1285,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">217</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not selected_files:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">218</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            target_files = set(model.files.keys())</div>
             </div>
             <div class="code-line ">
@@ -1305,27 +1305,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">221</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            target_files = set()</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">222</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for pattern in selected_files:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">223</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                for file_path in model.files.keys():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">224</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    if self._matches_pattern(file_path, pattern):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">225</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        target_files.add(file_path)</div>
             </div>
             <div class="code-line ">
@@ -1335,7 +1335,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">227</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger.debug(</div>
             </div>
             <div class="code-line ">
@@ -1370,12 +1370,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">234</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;rename&quot; in transformations:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">235</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            model = self._apply_renaming(model, transformations[&quot;rename&quot;], target_files)</div>
             </div>
             <div class="code-line ">
@@ -1390,12 +1390,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">238</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;add&quot; in transformations:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">239</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            model = self._apply_additions(model, transformations[&quot;add&quot;], target_files)</div>
             </div>
             <div class="code-line ">
@@ -1410,12 +1410,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">242</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;remove&quot; in transformations:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">243</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            model = self._apply_removals(model, transformations[&quot;remove&quot;], target_files)</div>
             </div>
             <div class="code-line ">
@@ -1425,7 +1425,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">245</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
@@ -1435,7 +1435,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">247</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _apply_renaming(</div>
             </div>
             <div class="code-line ">
@@ -1455,7 +1455,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">251</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger.debug(</div>
             </div>
             <div class="code-line ">
@@ -1480,12 +1480,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">256</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for file_path in target_files:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">257</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if file_path in model.files:</div>
             </div>
             <div class="code-line ">
@@ -1500,7 +1500,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">260</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                self.logger.debug(&quot;Applying renaming to file: %s&quot;, file_path)</div>
             </div>
             <div class="code-line ">
@@ -1510,7 +1510,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">262</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
@@ -1520,7 +1520,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">264</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _apply_additions(</div>
             </div>
             <div class="code-line ">
@@ -1540,7 +1540,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">268</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger.debug(</div>
             </div>
             <div class="code-line ">
@@ -1565,12 +1565,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">273</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for file_path in target_files:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">274</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if file_path in model.files:</div>
             </div>
             <div class="code-line ">
@@ -1585,7 +1585,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">277</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                self.logger.debug(&quot;Applying additions to file: %s&quot;, file_path)</div>
             </div>
             <div class="code-line ">
@@ -1595,7 +1595,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">279</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
@@ -1605,7 +1605,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">281</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _apply_removals(</div>
             </div>
             <div class="code-line ">
@@ -1625,7 +1625,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">285</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger.debug(</div>
             </div>
             <div class="code-line ">
@@ -1650,12 +1650,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">290</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for file_path in target_files:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">291</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if file_path in model.files:</div>
             </div>
             <div class="code-line ">
@@ -1670,7 +1670,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">294</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                self.logger.debug(&quot;Applying removals to file: %s&quot;, file_path)</div>
             </div>
             <div class="code-line ">
@@ -1680,7 +1680,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">296</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
@@ -1690,7 +1690,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">298</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _process_include_relations(</div>
             </div>
             <div class="code-line ">
@@ -1710,7 +1710,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">302</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger.info(&quot;Processing include relations with max depth: %d&quot;, max_depth)</div>
             </div>
             <div class="code-line ">
@@ -1730,22 +1730,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">306</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        file_map = {}</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">307</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for file_model in model.files.values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">308</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            filename = Path(file_model.relative_path).name</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">309</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            file_map[filename] = file_model</div>
             </div>
             <div class="code-line ">
@@ -1760,12 +1760,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">312</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for file_path, file_model in model.files.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">313</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self._process_file_includes(file_model, file_map, max_depth, 1, set())</div>
             </div>
             <div class="code-line ">
@@ -1775,7 +1775,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">315</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
@@ -1785,7 +1785,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">317</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _process_file_includes(</div>
             </div>
             <div class="code-line ">
@@ -1830,12 +1830,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">326</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if current_depth &gt; max_depth or file_model.relative_path in visited:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">327</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return</div>
             </div>
             <div class="code-line ">
@@ -1845,7 +1845,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">329</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        visited.add(file_model.relative_path)</div>
             </div>
             <div class="code-line ">
@@ -1860,7 +1860,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">332</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for include_name in file_model.includes:</div>
             </div>
             <div class="code-line ">
@@ -1870,7 +1870,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">334</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            included_filename = self._find_included_file(</div>
             </div>
             <div class="code-line ">
@@ -1890,7 +1890,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">338</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if included_filename:</div>
             </div>
             <div class="code-line ">
@@ -1900,12 +1900,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">340</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                included_filename_key = Path(included_filename).name</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">341</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if included_filename_key in file_map:</div>
             </div>
             <div class="code-line ">
@@ -1915,12 +1915,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">343</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    if file_model.relative_path == included_filename_key:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">344</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                        self.logger.debug(</div>
             </div>
             <div class="code-line ">
@@ -1935,7 +1935,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">347</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                        continue</div>
             </div>
             <div class="code-line ">
@@ -1950,7 +1950,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">350</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                relation_exists = any(</div>
             </div>
             <div class="code-line ">
@@ -1980,12 +1980,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">356</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if relation_exists:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">357</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    self.logger.debug(</div>
             </div>
             <div class="code-line ">
@@ -2010,7 +2010,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">362</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    continue</div>
             </div>
             <div class="code-line ">
@@ -2030,12 +2030,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">366</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                source_file = file_model.file_path if &quot;tmp&quot; in file_model.file_path else file_model.relative_path</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">367</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                included_file = included_filename if &quot;tmp&quot; in included_filename else included_filename_key</div>
             </div>
             <div class="code-line ">
@@ -2045,7 +2045,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">369</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                include_relation = IncludeRelation(</div>
             </div>
             <div class="code-line ">
@@ -2070,7 +2070,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">374</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                file_model.include_relations.append(include_relation)</div>
             </div>
             <div class="code-line ">
@@ -2085,17 +2085,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">377</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if included_filename_key in file_map:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">378</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    included_file_model = file_map[included_filename_key]</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">379</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    self._process_file_includes(</div>
             </div>
             <div class="code-line ">
@@ -2135,7 +2135,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">387</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _find_included_file(</div>
             </div>
             <div class="code-line ">
@@ -2175,7 +2175,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">395</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        search_paths = [</div>
             </div>
             <div class="code-line ">
@@ -2220,7 +2220,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">404</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        extensions = [&quot;.h&quot;, &quot;.hpp&quot;, &quot;.hxx&quot;, &quot;&quot;]</div>
             </div>
             <div class="code-line ">
@@ -2230,17 +2230,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">406</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for search_path in search_paths:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">407</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if not search_path.exists():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">408</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                continue</div>
             </div>
             <div class="code-line ">
@@ -2250,17 +2250,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">410</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for ext in extensions:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">411</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                file_path = search_path / f&quot;{include_name}{ext}&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">412</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if file_path.exists():</div>
             </div>
             <div class="code-line ">
@@ -2275,12 +2275,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">415</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    if &quot;tmp&quot; in str(file_path):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">416</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        return str(file_path.resolve())</div>
             </div>
             <div class="code-line ">
@@ -2290,7 +2290,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">418</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                        return file_path.name</div>
             </div>
             <div class="code-line ">
@@ -2300,7 +2300,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">420</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return None</div>
             </div>
             <div class="code-line ">
@@ -2310,7 +2310,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">422</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _matches_pattern(self, file_path: str, pattern: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
@@ -2320,27 +2320,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">424</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">425</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return bool(re.search(pattern, file_path))</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">426</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        except re.error:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">427</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.logger.warning(&quot;Invalid pattern &#x27;%s&#x27; for file matching&quot;, pattern)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">428</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return False</div>
             </div>
             <div class="code-line ">
@@ -2350,7 +2350,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">430</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _compile_patterns(self, patterns: List[str]) -&gt; List[re.Pattern]:</div>
             </div>
             <div class="code-line ">
@@ -2360,7 +2360,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">432</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        compiled_patterns = []</div>
             </div>
             <div class="code-line ">
@@ -2370,27 +2370,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">434</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for pattern in patterns:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">435</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">436</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                compiled_patterns.append(re.compile(pattern))</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">437</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            except re.error as e:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">438</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                self.logger.warning(&quot;Invalid regex pattern &#x27;%s&#x27;: %s&quot;, pattern, e)</div>
             </div>
             <div class="code-line ">
@@ -2400,7 +2400,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">440</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return compiled_patterns</div>
             </div>
             <div class="code-line ">
@@ -2410,7 +2410,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">442</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _should_include_file(</div>
             </div>
             <div class="code-line ">
@@ -2450,17 +2450,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">450</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if include_patterns:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">451</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if not any(pattern.search(file_path) for pattern in include_patterns):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">452</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return False</div>
             </div>
             <div class="code-line ">
@@ -2475,17 +2475,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">455</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if exclude_patterns:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">456</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if any(pattern.search(file_path) for pattern in exclude_patterns):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">457</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return False</div>
             </div>
             <div class="code-line ">
@@ -2495,7 +2495,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">459</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return True</div>
             </div>
             <div class="code-line ">
@@ -2505,7 +2505,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">461</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _filter_dict(self, items: Dict, filters: Dict) -&gt; Dict:</div>
             </div>
             <div class="code-line ">
@@ -2515,12 +2515,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">463</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        include_patterns = self._compile_patterns(filters.get(&quot;include&quot;, []))</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">464</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        exclude_patterns = self._compile_patterns(filters.get(&quot;exclude&quot;, []))</div>
             </div>
             <div class="code-line ">
@@ -2530,12 +2530,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">466</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        filtered = {}</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">467</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for name, item in items.items():</div>
             </div>
             <div class="code-line ">
@@ -2545,17 +2545,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">469</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if include_patterns:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">470</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if not any(pattern.search(name) for pattern in include_patterns):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">471</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    continue</div>
             </div>
             <div class="code-line ">
@@ -2570,17 +2570,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">474</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if exclude_patterns:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">475</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if any(pattern.search(name) for pattern in exclude_patterns):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">476</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    continue</div>
             </div>
             <div class="code-line ">
@@ -2590,7 +2590,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">478</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            filtered[name] = item</div>
             </div>
             <div class="code-line ">
@@ -2600,7 +2600,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">480</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return filtered</div>
             </div>
             <div class="code-line ">
@@ -2610,7 +2610,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">482</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _filter_list(self, items: List, filters: Dict, key=None) -&gt; List:</div>
             </div>
             <div class="code-line ">
@@ -2620,12 +2620,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">484</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        include_patterns = self._compile_patterns(filters.get(&quot;include&quot;, []))</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">485</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        exclude_patterns = self._compile_patterns(filters.get(&quot;exclude&quot;, []))</div>
             </div>
             <div class="code-line ">
@@ -2635,17 +2635,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">487</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        filtered = []</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">488</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for item in items:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">489</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            item_name = key(item) if key else str(item)</div>
             </div>
             <div class="code-line ">
@@ -2660,17 +2660,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">492</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if include_patterns:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">493</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if not any(pattern.search(item_name) for pattern in include_patterns):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">494</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    continue</div>
             </div>
             <div class="code-line ">
@@ -2685,17 +2685,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">497</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if exclude_patterns:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">498</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if any(pattern.search(item_name) for pattern in exclude_patterns):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">499</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    continue</div>
             </div>
             <div class="code-line ">
@@ -2705,7 +2705,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">501</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            filtered.append(item)</div>
             </div>
             <div class="code-line ">
@@ -2715,7 +2715,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">503</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return filtered</div>
             </div>
             <div class="code-line ">
@@ -2725,7 +2725,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">505</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _dict_to_file_model(self, data: Dict) -&gt; FileModel:</div>
             </div>
             <div class="code-line ">
@@ -2745,17 +2745,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">509</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        structs = {}</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">510</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for name, struct_data in data.get(&quot;structs&quot;, {}).items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">511</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            fields = [</div>
             </div>
             <div class="code-line ">
@@ -2770,7 +2770,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">514</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            structs[name] = Struct(</div>
             </div>
             <div class="code-line ">
@@ -2815,32 +2815,32 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">523</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        enums = {}</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">524</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for name, enum_data in data.get(&quot;enums&quot;, {}).items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">525</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            values = []</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">526</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for value_data in enum_data.get(&quot;values&quot;, []):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">527</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if isinstance(value_data, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">528</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    values.append(</div>
             </div>
             <div class="code-line ">
@@ -2860,12 +2860,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">532</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    values.append(EnumValue(value_data))</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">533</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            enums[name] = Enum(name, values)</div>
             </div>
             <div class="code-line ">
@@ -2880,22 +2880,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">536</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        unions = {}</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">537</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for name, union_data in data.get(&quot;unions&quot;, {}).items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">538</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            fields = [Field(f[&quot;name&quot;], f[&quot;type&quot;]) for f in union_data.get(&quot;fields&quot;, [])]</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">539</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            unions[name] = Union(</div>
             </div>
             <div class="code-line ">
@@ -2920,22 +2920,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">544</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        aliases = {}</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">545</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for name, alias_data in data.get(&quot;aliases&quot;, {}).items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">546</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if isinstance(alias_data, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">547</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                aliases[name] = Alias(</div>
             </div>
             <div class="code-line ">
@@ -2970,7 +2970,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">554</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                aliases[name] = Alias(name, alias_data, [])</div>
             </div>
             <div class="code-line ">
@@ -2985,17 +2985,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">557</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        functions = []</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">558</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for func_data in data.get(&quot;functions&quot;, []):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">559</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            parameters = [</div>
             </div>
             <div class="code-line ">
@@ -3010,7 +3010,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">562</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            functions.append(</div>
             </div>
             <div class="code-line ">
@@ -3065,17 +3065,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">573</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        globals_list = []</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">574</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for global_data in data.get(&quot;globals&quot;, []):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">575</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            globals_list.append(Field(global_data[&quot;name&quot;], global_data[&quot;type&quot;]))</div>
             </div>
             <div class="code-line ">
@@ -3085,7 +3085,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">577</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return FileModel(</div>
             </div>
             <div class="code-line ">
@@ -3160,7 +3160,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">592</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _save_model(self, model: ProjectModel, output_file: str) -&gt; None:</div>
             </div>
             <div class="code-line ">
@@ -3170,27 +3170,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">594</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">595</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            model.save(output_file)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">596</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.logger.debug(&quot;Model saved to: %s&quot;, output_file)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">597</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        except Exception as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">598</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(f&quot;Failed to save model to {output_file}: {e}&quot;) from e</div>
             </div>
         </div>
@@ -3200,15 +3200,15 @@
         <h3 style="margin-top: 0;">Legend</h3>
         <div class="legend-item">
             <span class="legend-color" style="background: #e8f5e9;"></span>
-            <span>✓ Covered</span>
+            <span>&#10004; Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #ffebee;"></span>
-            <span>✗ Not Covered</span>
+            <span>&#10008; Not Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #f5f5f5;"></span>
-            <span>— Excluded</span>
+            <span>&#8212; Excluded</span>
         </div>
     </div>
 </body>

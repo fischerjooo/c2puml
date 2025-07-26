@@ -171,7 +171,7 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/utils.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 16:09:34</div>
+        <div class="timestamp">Generated: 2025-07-26 18:01:01</div>
         
         <div class="stats">
             <div class="stat">
@@ -210,7 +210,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">2</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -230,17 +230,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">6</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import logging</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">7</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from pathlib import Path</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">8</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from typing import Dict, Optional</div>
             </div>
             <div class="code-line ">
@@ -255,27 +255,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">11</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">12</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    import chardet</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">13</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">    CHARDET_AVAILABLE = True</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">14</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">except ImportError:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">15</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    CHARDET_AVAILABLE = False</div>
             </div>
             <div class="code-line ">
@@ -290,7 +290,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">18</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">def detect_file_encoding(file_path: Path) -&gt; str:</div>
             </div>
             <div class="code-line ">
@@ -300,12 +300,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">20</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">21</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if CHARDET_AVAILABLE:</div>
             </div>
             <div class="code-line ">
@@ -315,32 +315,32 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">23</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            with open(file_path, &quot;rb&quot;) as f:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">24</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                raw_data = f.read(1024)  # Read first 1KB for detection</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">25</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                if raw_data:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">26</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    result = chardet.detect(raw_data)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">27</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    if result and result[&quot;confidence&quot;] &gt; 0.7:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">28</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                        return result[&quot;encoding&quot;]</div>
             </div>
             <div class="code-line ">
@@ -355,7 +355,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">31</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        fallback_encodings = [&quot;utf-8&quot;, &quot;latin-1&quot;, &quot;cp1252&quot;, &quot;iso-8859-1&quot;]</div>
             </div>
             <div class="code-line ">
@@ -365,37 +365,37 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">33</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for encoding in fallback_encodings:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">34</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">35</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                with open(file_path, &quot;r&quot;, encoding=encoding) as f:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">36</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    f.read(1024)  # Test read</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">37</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return encoding</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">38</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            except (UnicodeDecodeError, UnicodeError):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">39</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                continue</div>
             </div>
             <div class="code-line ">
@@ -410,7 +410,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">42</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        return &quot;utf-8&quot;</div>
             </div>
             <div class="code-line ">
@@ -420,17 +420,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">44</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    except Exception as e:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">45</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        logging.warning(f&quot;Failed to detect encoding for {file_path}: {e}&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">46</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return &quot;utf-8&quot;</div>
             </div>
             <div class="code-line ">
@@ -445,7 +445,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">49</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">def get_filename_from_path(file_path: str) -&gt; str:</div>
             </div>
             <div class="code-line ">
@@ -455,7 +455,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">51</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">    return Path(file_path).name</div>
             </div>
             <div class="code-line ">
@@ -470,7 +470,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">54</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">def find_file_by_filename(filename: str, file_dict: Dict[str, any]) -&gt; Optional[str]:</div>
             </div>
             <div class="code-line ">
@@ -530,12 +530,12 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">66</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">    if filename in file_dict:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">67</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        return filename</div>
             </div>
             <div class="code-line ">
@@ -550,17 +550,17 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">70</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">    for file_path in file_dict.keys():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">71</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        if Path(file_path).name == filename:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">72</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return file_path</div>
             </div>
             <div class="code-line ">
@@ -570,7 +570,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">74</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">    return None</div>
             </div>
             <div class="code-line ">
@@ -585,7 +585,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">77</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">def normalize_file_path(file_path: str, project_root: str = None) -&gt; str:</div>
             </div>
             <div class="code-line ">
@@ -645,7 +645,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">89</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">    path_obj = Path(file_path)</div>
             </div>
             <div class="code-line ">
@@ -660,27 +660,27 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">92</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">    if project_root and path_obj.is_absolute():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">93</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        try:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">94</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            relative_path = path_obj.relative_to(Path(project_root))</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">95</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return str(relative_path)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">96</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        except ValueError:</div>
             </div>
             <div class="code-line ">
@@ -690,7 +690,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">98</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            pass</div>
             </div>
             <div class="code-line ">
@@ -700,7 +700,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">100</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">    return str(path_obj)</div>
             </div>
             <div class="code-line ">
@@ -715,7 +715,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">103</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">def create_file_key(file_path: str, project_root: str = None) -&gt; str:</div>
             </div>
             <div class="code-line ">
@@ -775,7 +775,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">115</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">    return get_filename_from_path(file_path)</div>
             </div>
             <div class="code-line ">
@@ -795,7 +795,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">119</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">def get_acceptable_encodings() -&gt; list:</div>
             </div>
             <div class="code-line ">
@@ -830,7 +830,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">126</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    return [</div>
             </div>
             <div class="code-line ">
@@ -910,7 +910,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">142</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">def is_acceptable_encoding(encoding: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
@@ -960,7 +960,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">152</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    return encoding.lower() in [enc.lower() for enc in get_acceptable_encodings()]</div>
             </div>
             <div class="code-line ">
@@ -975,7 +975,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">155</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">def normalize_encoding(encoding: str) -&gt; str:</div>
             </div>
             <div class="code-line ">
@@ -1025,7 +1025,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">165</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    encoding_lower = encoding.lower()</div>
             </div>
             <div class="code-line ">
@@ -1040,32 +1040,32 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">168</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    if encoding_lower in [&quot;windows-1252&quot;, &quot;cp1252&quot;]:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">169</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return &quot;windows-1252&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">170</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    elif encoding_lower in [&quot;windows-1254&quot;, &quot;cp1254&quot;]:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">171</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return &quot;windows-1254&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">172</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    elif encoding_lower in [&quot;iso-8859-1&quot;, &quot;latin-1&quot;]:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">173</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return &quot;iso-8859-1&quot;</div>
             </div>
             <div class="code-line ">
@@ -1075,7 +1075,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">175</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    return encoding_lower</div>
             </div>
             <div class="code-line ">
@@ -1090,7 +1090,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">178</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">def get_platform_default_encoding() -&gt; str:</div>
             </div>
             <div class="code-line ">
@@ -1125,17 +1125,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">185</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    import sys</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">186</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    if sys.platform.startswith(&quot;win&quot;):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">187</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        return &quot;windows-1252&quot;  # Common Windows default</div>
             </div>
             <div class="code-line ">
@@ -1145,7 +1145,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">189</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return &quot;utf-8&quot;  # Common Unix/Linux default</div>
             </div>
         </div>
@@ -1155,15 +1155,15 @@
         <h3 style="margin-top: 0;">Legend</h3>
         <div class="legend-item">
             <span class="legend-color" style="background: #e8f5e9;"></span>
-            <span>✓ Covered</span>
+            <span>&#10004; Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #ffebee;"></span>
-            <span>✗ Not Covered</span>
+            <span>&#10008; Not Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #f5f5f5;"></span>
-            <span>— Excluded</span>
+            <span>&#8212; Excluded</span>
         </div>
     </div>
 </body>

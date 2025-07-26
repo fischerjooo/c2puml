@@ -171,7 +171,7 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/main.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 16:09:34</div>
+        <div class="timestamp">Generated: 2025-07-26 18:01:01</div>
         
         <div class="stats">
             <div class="stat">
@@ -210,7 +210,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">2</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -255,32 +255,32 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">11</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import argparse</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">12</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import json</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">13</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import logging</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">14</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import os</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">15</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import sys</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">16</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from pathlib import Path</div>
             </div>
             <div class="code-line ">
@@ -290,22 +290,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">18</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from .config import Config</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">19</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from .generator import Generator</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">20</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from .parser import Parser</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">21</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from .transformer import Transformer</div>
             </div>
             <div class="code-line ">
@@ -320,17 +320,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">24</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">def setup_logging(verbose: bool = False) -&gt; None:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">25</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    level = logging.DEBUG if verbose else logging.INFO</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">26</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    logging.basicConfig(</div>
             </div>
             <div class="code-line ">
@@ -365,32 +365,32 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">33</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">def load_config_from_path(config_path: str) -&gt; dict:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">34</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    path = Path(config_path)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">35</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    if path.is_file():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">36</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        with open(path, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">37</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return json.load(f)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">38</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">    elif path.is_dir():</div>
             </div>
             <div class="code-line ">
@@ -400,32 +400,32 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">40</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        config = {}</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">41</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        for file in path.glob(&quot;*.json&quot;):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">42</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            with open(file, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">43</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                data = json.load(f)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">44</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                config.update(data)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">45</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        return config</div>
             </div>
             <div class="code-line ">
@@ -435,7 +435,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">47</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        raise FileNotFoundError(f&quot;Config path not found: {config_path}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -450,12 +450,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">50</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">def main() -&gt; int:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">51</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    parser = argparse.ArgumentParser(</div>
             </div>
             <div class="code-line ">
@@ -510,7 +510,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">62</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    parser.add_argument(</div>
             </div>
             <div class="code-line ">
@@ -545,7 +545,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">69</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    parser.add_argument(</div>
             </div>
             <div class="code-line ">
@@ -575,7 +575,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">75</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    parser.add_argument(</div>
             </div>
             <div class="code-line ">
@@ -590,7 +590,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">78</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    args = parser.parse_args()</div>
             </div>
             <div class="code-line ">
@@ -600,7 +600,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">80</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    setup_logging(args.verbose)</div>
             </div>
             <div class="code-line ">
@@ -615,17 +615,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">83</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    config_path = args.config</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">84</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    if config_path is None:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">85</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        config_path = os.getcwd()</div>
             </div>
             <div class="code-line ">
@@ -635,7 +635,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">87</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    logging.info(&quot;Using config: %s&quot;, config_path)</div>
             </div>
             <div class="code-line ">
@@ -650,32 +650,32 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">90</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">91</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        config_data = load_config_from_path(config_path)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">92</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        config = Config(**config_data)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">93</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">    except Exception as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">94</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        logging.error(&quot;Failed to load configuration: %s&quot;, e)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">95</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        return 1</div>
             </div>
             <div class="code-line ">
@@ -690,7 +690,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">98</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    output_folder = getattr(config, &quot;output_dir&quot;, None) or os.path.join(</div>
             </div>
             <div class="code-line ">
@@ -705,17 +705,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">101</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    output_folder = os.path.abspath(output_folder)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">102</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    os.makedirs(output_folder, exist_ok=True)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">103</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    logging.info(&quot;Output folder: %s&quot;, output_folder)</div>
             </div>
             <div class="code-line ">
@@ -725,12 +725,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">105</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    model_file = os.path.join(output_folder, &quot;model.json&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">106</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    transformed_model_file = os.path.join(output_folder, &quot;model_transformed.json&quot;)</div>
             </div>
             <div class="code-line ">
@@ -745,17 +745,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">109</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    if args.command == &quot;parse&quot;:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">110</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        try:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">111</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            parser_obj = Parser()</div>
             </div>
             <div class="code-line ">
@@ -765,7 +765,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">113</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            parser_obj.parse(</div>
             </div>
             <div class="code-line ">
@@ -795,27 +795,27 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">119</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            logging.info(&quot;Model saved to: %s&quot;, model_file)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">120</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return 0</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">121</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        except (OSError, ValueError, RuntimeError) as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">122</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            logging.error(&quot;Error during parsing: %s&quot;, e)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">123</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return 1</div>
             </div>
             <div class="code-line ">
@@ -830,22 +830,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">126</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    if args.command == &quot;transform&quot;:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">127</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        try:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">128</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            transformer = Transformer()</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">129</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            transformer.transform(</div>
             </div>
             <div class="code-line ">
@@ -890,27 +890,27 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">138</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            logging.info(&quot;Transformed model saved to: %s&quot;, transformed_model_file)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">139</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return 0</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">140</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        except (OSError, ValueError, RuntimeError) as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">141</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            logging.error(&quot;Error during transformation: %s&quot;, e)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">142</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return 1</div>
             </div>
             <div class="code-line ">
@@ -925,17 +925,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">145</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    if args.command == &quot;generate&quot;:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">146</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        try:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">147</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            generator = Generator()</div>
             </div>
             <div class="code-line ">
@@ -945,22 +945,22 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">149</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            if os.path.exists(transformed_model_file):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">150</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                model_to_use = transformed_model_file</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">151</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            elif os.path.exists(model_file):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">152</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                model_to_use = model_file</div>
             </div>
             <div class="code-line ">
@@ -970,17 +970,17 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">154</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                logging.error(&quot;No model file found for generation.&quot;)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">155</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                return 1</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">156</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            generator.generate(</div>
             </div>
             <div class="code-line ">
@@ -1005,27 +1005,27 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">161</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            logging.info(&quot;PlantUML generation complete! Output in: %s&quot;, output_folder)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">162</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return 0</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">163</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        except (OSError, ValueError, RuntimeError) as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">164</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            logging.error(&quot;Error generating PlantUML: %s&quot;, e)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">165</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return 1</div>
             </div>
             <div class="code-line ">
@@ -1040,7 +1040,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">168</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    try:</div>
             </div>
             <div class="code-line ">
@@ -1050,7 +1050,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">170</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        parser_obj = Parser()</div>
             </div>
             <div class="code-line ">
@@ -1060,7 +1060,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">172</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        parser_obj.parse(</div>
             </div>
             <div class="code-line ">
@@ -1090,7 +1090,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">178</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        logging.info(&quot;Model saved to: %s&quot;, model_file)</div>
             </div>
             <div class="code-line ">
@@ -1100,12 +1100,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">180</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        transformer = Transformer()</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">181</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        transformer.transform(</div>
             </div>
             <div class="code-line ">
@@ -1150,7 +1150,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">190</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        logging.info(&quot;Transformed model saved to: %s&quot;, transformed_model_file)</div>
             </div>
             <div class="code-line ">
@@ -1160,12 +1160,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">192</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        generator = Generator()</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">193</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        generator.generate(</div>
             </div>
             <div class="code-line ">
@@ -1190,32 +1190,32 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">198</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        logging.info(&quot;PlantUML generation complete! Output in: %s&quot;, output_folder)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">199</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        logging.info(&quot;Complete workflow finished successfully!&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">200</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return 0</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">201</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">    except (OSError, ValueError, RuntimeError) as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">202</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        logging.error(&quot;Error in workflow: %s&quot;, e)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">203</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        return 1</div>
             </div>
             <div class="code-line ">
@@ -1230,12 +1230,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">206</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">if __name__ == &quot;__main__&quot;:</div>
             </div>
             <div class="code-line excluded">
                 <div class="line-number">207</div>
-                <div class="line-status">—</div>
+                <div class="line-status">&#8212;</div>
                 <div class="line-content">    sys.exit(main())</div>
             </div>
         </div>
@@ -1245,15 +1245,15 @@
         <h3 style="margin-top: 0;">Legend</h3>
         <div class="legend-item">
             <span class="legend-color" style="background: #e8f5e9;"></span>
-            <span>✓ Covered</span>
+            <span>&#10004; Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #ffebee;"></span>
-            <span>✗ Not Covered</span>
+            <span>&#10008; Not Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #f5f5f5;"></span>
-            <span>— Excluded</span>
+            <span>&#8212; Excluded</span>
         </div>
     </div>
 </body>
