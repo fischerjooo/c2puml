@@ -50,7 +50,7 @@
         }
         .coverage-fill {
             height: 100%;
-            background: #ff9800;
+            background: #4caf50;
             transition: width 0.3s ease;
         }
         .code-container {
@@ -171,14 +171,14 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/verifier.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 16:01:44</div>
+        <div class="timestamp">Generated: 2025-07-26 16:09:34</div>
         
         <div class="stats">
             <div class="stat">
                 <span class="stat-label">Coverage</span>
-                <span class="stat-value">78.7%</span>
+                <span class="stat-value">84.4%</span>
                 <div class="coverage-bar">
-                    <div class="coverage-fill" style="width: 78.72340425531915%"></div>
+                    <div class="coverage-fill" style="width: 84.39716312056737%"></div>
                 </div>
             </div>
             <div class="stat">
@@ -187,11 +187,11 @@
             </div>
             <div class="stat">
                 <span class="stat-label">Covered</span>
-                <span class="stat-value" style="color: #4caf50">111</span>
+                <span class="stat-value" style="color: #4caf50">119</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Missing</span>
-                <span class="stat-value" style="color: #f44336">30</span>
+                <span class="stat-value" style="color: #f44336">22</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Excluded</span>
@@ -206,7 +206,7 @@
             <div class="code-line ">
                 <div class="line-number">1</div>
                 <div class="line-status"></div>
-                <div class="line-content"><span class="comment">#!/usr/bin/env python3</span></div>
+                <div class="line-content">#!/usr/bin/env python3</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">2</div>
@@ -216,7 +216,7 @@
             <div class="code-line ">
                 <div class="line-number">3</div>
                 <div class="line-status"></div>
-                <div class="line-content">Verification module <span class=<span class="string">"keyword"</span>>for</span> C to PlantUML converter</div>
+                <div class="line-content">Verification module for C to PlantUML converter</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">4</div>
@@ -226,7 +226,7 @@
             <div class="code-line ">
                 <div class="line-number">5</div>
                 <div class="line-status"></div>
-                <div class="line-content">Performs sanity checks on the parsed model to ensure values make sense <span class=<span class="string">"keyword"</span>>for</span> C code.</div>
+                <div class="line-content">Performs sanity checks on the parsed model to ensure values make sense for C code.</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">6</div>
@@ -241,17 +241,17 @@
             <div class="code-line covered">
                 <div class="line-number">8</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>import</span> logging</div>
+                <div class="line-content">import logging</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">9</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>import</span> re</div>
+                <div class="line-content">import re</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">10</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> typing <span class=<span class="string">"keyword"</span>>import</span> List, Tuple</div>
+                <div class="line-content">from typing import List, Tuple</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">11</div>
@@ -261,7 +261,7 @@
             <div class="code-line covered">
                 <div class="line-number">12</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> .models <span class=<span class="string">"keyword"</span>>import</span> Alias, Enum, Field, FileModel, Function, ProjectModel, Struct, Union</div>
+                <div class="line-content">from .models import Alias, Enum, Field, FileModel, Function, ProjectModel, Struct, Union</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">13</div>
@@ -276,7 +276,7 @@
             <div class="code-line covered">
                 <div class="line-number">15</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>class</span> ModelVerifier:</div>
+                <div class="line-content">class ModelVerifier:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">16</div>
@@ -291,7 +291,7 @@
             <div class="code-line covered">
                 <div class="line-number">18</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> __init__(self):</div>
+                <div class="line-content">    def __init__(self):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">19</div>
@@ -311,7 +311,7 @@
             <div class="code-line covered">
                 <div class="line-number">22</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> verify_model(self, model: ProjectModel) -&gt; Tuple[bool, List[str]]:</div>
+                <div class="line-content">    def verify_model(self, model: ProjectModel) -&gt; Tuple[bool, List[str]]:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">23</div>
@@ -371,7 +371,7 @@
             <div class="code-line ">
                 <div class="line-number">34</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Verify project-level data</span></div>
+                <div class="line-content">        # Verify project-level data</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">35</div>
@@ -386,12 +386,12 @@
             <div class="code-line ">
                 <div class="line-number">37</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Verify each file</span></div>
+                <div class="line-content">        # Verify each file</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">38</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> file_path, file_model <span class=<span class="string">"keyword"</span>>in</span> model.files.items():</div>
+                <div class="line-content">        for file_path, file_model in model.files.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">39</div>
@@ -416,7 +416,7 @@
             <div class="code-line covered">
                 <div class="line-number">43</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> self.issues:</div>
+                <div class="line-content">        if self.issues:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">44</div>
@@ -426,7 +426,7 @@
             <div class="code-line covered">
                 <div class="line-number">45</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>for</span> issue <span class=<span class="string">"keyword"</span>>in</span> self.issues:</div>
+                <div class="line-content">            for issue in self.issues:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">46</div>
@@ -436,11 +436,11 @@
             <div class="code-line ">
                 <div class="line-number">47</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>else</span>:</div>
+                <div class="line-content">        else:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">48</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            self.logger.info(&quot;Model verification passed - all values look sane&quot;)</div>
             </div>
             <div class="code-line ">
@@ -451,7 +451,7 @@
             <div class="code-line covered">
                 <div class="line-number">50</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> is_valid, self.issues</div>
+                <div class="line-content">        return is_valid, self.issues</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">51</div>
@@ -461,7 +461,7 @@
             <div class="code-line covered">
                 <div class="line-number">52</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _verify_project_data(self, model: ProjectModel) -&gt; <span class=<span class="string">"keyword"</span>>None</span>:</div>
+                <div class="line-content">    def _verify_project_data(self, model: ProjectModel) -&gt; None:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">53</div>
@@ -471,12 +471,12 @@
             <div class="code-line covered">
                 <div class="line-number">54</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> model.project_name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> model.project_name.strip():</div>
+                <div class="line-content">        if not model.project_name or not model.project_name.strip():</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">55</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(&quot;Project name <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>or</span> whitespace&quot;)</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            self.issues.append(&quot;Project name is empty or whitespace&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">56</div>
@@ -486,12 +486,12 @@
             <div class="code-line covered">
                 <div class="line-number">57</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> model.project_root <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> model.project_root.strip():</div>
+                <div class="line-content">        if not model.project_root or not model.project_root.strip():</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">58</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(&quot;Project root <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>or</span> whitespace&quot;)</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            self.issues.append(&quot;Project root is empty or whitespace&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">59</div>
@@ -501,12 +501,12 @@
             <div class="code-line covered">
                 <div class="line-number">60</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> model.files:</div>
+                <div class="line-content">        if not model.files:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">61</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(&quot;No files found <span class=<span class="string">"keyword"</span>>in</span> project&quot;)</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            self.issues.append(&quot;No files found in project&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">62</div>
@@ -516,7 +516,7 @@
             <div class="code-line covered">
                 <div class="line-number">63</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _verify_file(self, file_path: str, file_model: FileModel) -&gt; <span class=<span class="string">"keyword"</span>>None</span>:</div>
+                <div class="line-content">    def _verify_file(self, file_path: str, file_model: FileModel) -&gt; None:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">64</div>
@@ -526,17 +526,17 @@
             <div class="code-line ">
                 <div class="line-number">65</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Verify file-level data</span></div>
+                <div class="line-content">        # Verify file-level data</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">66</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> file_model.file_path <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> file_model.file_path.strip():</div>
+                <div class="line-content">        if not file_model.file_path or not file_model.file_path.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">67</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(f&quot;File path <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;)</div>
+                <div class="line-content">            self.issues.append(f&quot;File path is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">68</div>
@@ -546,12 +546,12 @@
             <div class="code-line covered">
                 <div class="line-number">69</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> file_model.relative_path <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> file_model.relative_path.strip():</div>
+                <div class="line-content">        if not file_model.relative_path or not file_model.relative_path.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">70</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(f&quot;Relative path <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;)</div>
+                <div class="line-content">            self.issues.append(f&quot;Relative path is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">71</div>
@@ -561,12 +561,12 @@
             <div class="code-line ">
                 <div class="line-number">72</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Verify structs</span></div>
+                <div class="line-content">        # Verify structs</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">73</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> struct_name, struct <span class=<span class="string">"keyword"</span>>in</span> file_model.structs.items():</div>
+                <div class="line-content">        for struct_name, struct in file_model.structs.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">74</div>
@@ -581,12 +581,12 @@
             <div class="code-line ">
                 <div class="line-number">76</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Verify enums</span></div>
+                <div class="line-content">        # Verify enums</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">77</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> enum_name, enum <span class=<span class="string">"keyword"</span>>in</span> file_model.enums.items():</div>
+                <div class="line-content">        for enum_name, enum in file_model.enums.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">78</div>
@@ -601,12 +601,12 @@
             <div class="code-line ">
                 <div class="line-number">80</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Verify unions</span></div>
+                <div class="line-content">        # Verify unions</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">81</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> union_name, union <span class=<span class="string">"keyword"</span>>in</span> file_model.unions.items():</div>
+                <div class="line-content">        for union_name, union in file_model.unions.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">82</div>
@@ -621,12 +621,12 @@
             <div class="code-line ">
                 <div class="line-number">84</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Verify functions</span></div>
+                <div class="line-content">        # Verify functions</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">85</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> function <span class=<span class="string">"keyword"</span>>in</span> file_model.functions:</div>
+                <div class="line-content">        for function in file_model.functions:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">86</div>
@@ -641,12 +641,12 @@
             <div class="code-line ">
                 <div class="line-number">88</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Verify globals</span></div>
+                <div class="line-content">        # Verify globals</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">89</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> global_var <span class=<span class="string">"keyword"</span>>in</span> file_model.globals:</div>
+                <div class="line-content">        for global_var in file_model.globals:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">90</div>
@@ -661,12 +661,12 @@
             <div class="code-line ">
                 <div class="line-number">92</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Verify aliases</span></div>
+                <div class="line-content">        # Verify aliases</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">93</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> alias_name, alias <span class=<span class="string">"keyword"</span>>in</span> file_model.aliases.items():</div>
+                <div class="line-content">        for alias_name, alias in file_model.aliases.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">94</div>
@@ -681,7 +681,7 @@
             <div class="code-line covered">
                 <div class="line-number">96</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _verify_struct(self, file_path: str, struct_name: str, struct: Struct) -&gt; <span class=<span class="string">"keyword"</span>>None</span>:</div>
+                <div class="line-content">    def _verify_struct(self, file_path: str, struct_name: str, struct: Struct) -&gt; None:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">97</div>
@@ -691,12 +691,12 @@
             <div class="code-line covered">
                 <div class="line-number">98</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self._is_valid_identifier(struct_name):</div>
+                <div class="line-content">        if not self._is_valid_identifier(struct_name):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">99</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(f&quot;Invalid struct name &<span class="comment">#x27;{struct_name}&#x27; <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;)</span></div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            self.issues.append(f&quot;Invalid struct name &#x27;{struct_name}&#x27; in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">100</div>
@@ -706,12 +706,12 @@
             <div class="code-line covered">
                 <div class="line-number">101</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> struct.name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> struct.name.strip():</div>
+                <div class="line-content">        if not struct.name or not struct.name.strip():</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">102</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(f&quot;Struct name <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;)</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            self.issues.append(f&quot;Struct name is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">103</div>
@@ -721,12 +721,12 @@
             <div class="code-line ">
                 <div class="line-number">104</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Verify fields</span></div>
+                <div class="line-content">        # Verify fields</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">105</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> field <span class=<span class="string">"keyword"</span>>in</span> struct.fields:</div>
+                <div class="line-content">        for field in struct.fields:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">106</div>
@@ -741,7 +741,7 @@
             <div class="code-line covered">
                 <div class="line-number">108</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _verify_enum(self, file_path: str, enum_name: str, enum: Enum) -&gt; <span class=<span class="string">"keyword"</span>>None</span>:</div>
+                <div class="line-content">    def _verify_enum(self, file_path: str, enum_name: str, enum: Enum) -&gt; None:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">109</div>
@@ -751,12 +751,12 @@
             <div class="code-line covered">
                 <div class="line-number">110</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self._is_valid_identifier(enum_name):</div>
+                <div class="line-content">        if not self._is_valid_identifier(enum_name):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">111</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(f&quot;Invalid enum name &<span class="comment">#x27;{enum_name}&#x27; <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;)</span></div>
+                <div class="line-content">            self.issues.append(f&quot;Invalid enum name &#x27;{enum_name}&#x27; in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">112</div>
@@ -766,12 +766,12 @@
             <div class="code-line covered">
                 <div class="line-number">113</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> enum.name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> enum.name.strip():</div>
+                <div class="line-content">        if not enum.name or not enum.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">114</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(f&quot;Enum name <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;)</div>
+                <div class="line-content">            self.issues.append(f&quot;Enum name is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">115</div>
@@ -781,17 +781,17 @@
             <div class="code-line ">
                 <div class="line-number">116</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Verify enum values</span></div>
+                <div class="line-content">        # Verify enum values</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">117</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> enum_value <span class=<span class="string">"keyword"</span>>in</span> enum.values:</div>
+                <div class="line-content">        for enum_value in enum.values:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">118</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> enum_value.name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> enum_value.name.strip():</div>
+                <div class="line-content">            if not enum_value.name or not enum_value.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">119</div>
@@ -801,7 +801,7 @@
             <div class="code-line ">
                 <div class="line-number">120</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    f&quot;Enum value name <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>in</span> enum {enum_name} <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;</div>
+                <div class="line-content">                    f&quot;Enum value name is empty in enum {enum_name} in {file_path}&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">121</div>
@@ -811,7 +811,7 @@
             <div class="code-line covered">
                 <div class="line-number">122</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            el<span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self._is_valid_identifier(enum_value.name):</div>
+                <div class="line-content">            elif not self._is_valid_identifier(enum_value.name):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">123</div>
@@ -821,7 +821,7 @@
             <div class="code-line ">
                 <div class="line-number">124</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    f&quot;Invalid enum value name &<span class="comment">#x27;{enum_value.name}&#x27; <span class=<span class="string">"keyword"</span>>in</span> enum {enum_name} <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;</span></div>
+                <div class="line-content">                    f&quot;Invalid enum value name &#x27;{enum_value.name}&#x27; in enum {enum_name} in {file_path}&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">125</div>
@@ -836,7 +836,7 @@
             <div class="code-line covered">
                 <div class="line-number">127</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _verify_union(self, file_path: str, union_name: str, union: Union) -&gt; <span class=<span class="string">"keyword"</span>>None</span>:</div>
+                <div class="line-content">    def _verify_union(self, file_path: str, union_name: str, union: Union) -&gt; None:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">128</div>
@@ -846,12 +846,12 @@
             <div class="code-line covered">
                 <div class="line-number">129</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self._is_valid_identifier(union_name):</div>
+                <div class="line-content">        if not self._is_valid_identifier(union_name):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">130</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(f&quot;Invalid union name &<span class="comment">#x27;{union_name}&#x27; <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;)</span></div>
+                <div class="line-content">            self.issues.append(f&quot;Invalid union name &#x27;{union_name}&#x27; in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">131</div>
@@ -861,12 +861,12 @@
             <div class="code-line covered">
                 <div class="line-number">132</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> union.name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> union.name.strip():</div>
+                <div class="line-content">        if not union.name or not union.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">133</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(f&quot;Union name <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;)</div>
+                <div class="line-content">            self.issues.append(f&quot;Union name is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">134</div>
@@ -876,12 +876,12 @@
             <div class="code-line ">
                 <div class="line-number">135</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Verify fields</span></div>
+                <div class="line-content">        # Verify fields</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">136</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> field <span class=<span class="string">"keyword"</span>>in</span> union.fields:</div>
+                <div class="line-content">        for field in union.fields:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">137</div>
@@ -896,7 +896,7 @@
             <div class="code-line covered">
                 <div class="line-number">139</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _verify_function(self, file_path: str, function: Function) -&gt; <span class=<span class="string">"keyword"</span>>None</span>:</div>
+                <div class="line-content">    def _verify_function(self, file_path: str, function: Function) -&gt; None:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">140</div>
@@ -906,17 +906,17 @@
             <div class="code-line covered">
                 <div class="line-number">141</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> function.name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> function.name.strip():</div>
+                <div class="line-content">        if not function.name or not function.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">142</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(f&quot;Function name <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;)</div>
+                <div class="line-content">            self.issues.append(f&quot;Function name is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">143</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        el<span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self._is_valid_identifier(function.name):</div>
+                <div class="line-content">        elif not self._is_valid_identifier(function.name):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">144</div>
@@ -926,7 +926,7 @@
             <div class="code-line ">
                 <div class="line-number">145</div>
                 <div class="line-status"></div>
-                <div class="line-content">                f&quot;Invalid function name &<span class="comment">#x27;{function.name}&#x27; <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;</span></div>
+                <div class="line-content">                f&quot;Invalid function name &#x27;{function.name}&#x27; in {file_path}&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">146</div>
@@ -941,7 +941,7 @@
             <div class="code-line covered">
                 <div class="line-number">148</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> function.return_type <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> function.return_type.strip():</div>
+                <div class="line-content">        if not function.return_type or not function.return_type.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">149</div>
@@ -951,7 +951,7 @@
             <div class="code-line ">
                 <div class="line-number">150</div>
                 <div class="line-status"></div>
-                <div class="line-content">                f&quot;Function <span class=<span class="string">"keyword"</span>>return</span> type <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>for</span> &<span class="comment">#x27;{function.name}&#x27; <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;</span></div>
+                <div class="line-content">                f&quot;Function return type is empty for &#x27;{function.name}&#x27; in {file_path}&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">151</div>
@@ -966,17 +966,17 @@
             <div class="code-line ">
                 <div class="line-number">153</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Verify parameters (skip variadic parameter &#x27;...&#x27;)</span></div>
+                <div class="line-content">        # Verify parameters (skip variadic parameter &#x27;...&#x27;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">154</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> param <span class=<span class="string">"keyword"</span>>in</span> function.parameters:</div>
+                <div class="line-content">        for param in function.parameters:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">155</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> param.name == &quot;...&quot;:  <span class="comment"># Skip variadic parameter</span></div>
+                <div class="line-content">            if param.name == &quot;...&quot;:  # Skip variadic parameter</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">156</div>
@@ -996,7 +996,7 @@
             <div class="code-line covered">
                 <div class="line-number">159</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _verify_global(self, file_path: str, global_var: Field) -&gt; <span class=<span class="string">"keyword"</span>>None</span>:</div>
+                <div class="line-content">    def _verify_global(self, file_path: str, global_var: Field) -&gt; None:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">160</div>
@@ -1016,7 +1016,7 @@
             <div class="code-line covered">
                 <div class="line-number">163</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _verify_alias(self, file_path: str, alias_name: str, alias: Alias) -&gt; <span class=<span class="string">"keyword"</span>>None</span>:</div>
+                <div class="line-content">    def _verify_alias(self, file_path: str, alias_name: str, alias: Alias) -&gt; None:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">164</div>
@@ -1026,12 +1026,12 @@
             <div class="code-line covered">
                 <div class="line-number">165</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self._is_valid_identifier(alias_name):</div>
+                <div class="line-content">        if not self._is_valid_identifier(alias_name):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">166</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(f&quot;Invalid alias name &<span class="comment">#x27;{alias_name}&#x27; <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;)</span></div>
+                <div class="line-content">            self.issues.append(f&quot;Invalid alias name &#x27;{alias_name}&#x27; in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">167</div>
@@ -1041,12 +1041,12 @@
             <div class="code-line covered">
                 <div class="line-number">168</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> alias.name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> alias.name.strip():</div>
+                <div class="line-content">        if not alias.name or not alias.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">169</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(f&quot;Alias name <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;)</div>
+                <div class="line-content">            self.issues.append(f&quot;Alias name is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">170</div>
@@ -1056,7 +1056,7 @@
             <div class="code-line covered">
                 <div class="line-number">171</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> alias.original_type <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> alias.original_type.strip():</div>
+                <div class="line-content">        if not alias.original_type or not alias.original_type.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">172</div>
@@ -1066,7 +1066,7 @@
             <div class="code-line ">
                 <div class="line-number">173</div>
                 <div class="line-status"></div>
-                <div class="line-content">                f&quot;Alias original type <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>for</span> &<span class="comment">#x27;{alias_name}&#x27; <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;</span></div>
+                <div class="line-content">                f&quot;Alias original type is empty for &#x27;{alias_name}&#x27; in {file_path}&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">174</div>
@@ -1081,7 +1081,7 @@
             <div class="code-line covered">
                 <div class="line-number">176</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _verify_field(self, file_path: str, context: str, field: Field) -&gt; <span class=<span class="string">"keyword"</span>>None</span>:</div>
+                <div class="line-content">    def _verify_field(self, file_path: str, context: str, field: Field) -&gt; None:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">177</div>
@@ -1091,22 +1091,22 @@
             <div class="code-line ">
                 <div class="line-number">178</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Check <span class=<span class="string">"keyword"</span>>for</span> invalid names</span></div>
+                <div class="line-content">        # Check for invalid names</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">179</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> field.name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> field.name.strip():</div>
+                <div class="line-content">        if not field.name or not field.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">180</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            self.issues.append(f&quot;Field name <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>in</span> {context} <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;)</div>
+                <div class="line-content">            self.issues.append(f&quot;Field name is empty in {context} in {file_path}&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">181</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        el<span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self._is_valid_identifier(field.name):</div>
+                <div class="line-content">        elif not self._is_valid_identifier(field.name):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">182</div>
@@ -1116,7 +1116,7 @@
             <div class="code-line ">
                 <div class="line-number">183</div>
                 <div class="line-status"></div>
-                <div class="line-content">                f&quot;Invalid field name &<span class="comment">#x27;{field.name}&#x27; <span class=<span class="string">"keyword"</span>>in</span> {context} <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;</span></div>
+                <div class="line-content">                f&quot;Invalid field name &#x27;{field.name}&#x27; in {context} in {file_path}&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">184</div>
@@ -1131,12 +1131,12 @@
             <div class="code-line ">
                 <div class="line-number">186</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Check <span class=<span class="string">"keyword"</span>>for</span> invalid types</span></div>
+                <div class="line-content">        # Check for invalid types</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">187</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> field.type <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> field.type.strip():</div>
+                <div class="line-content">        if not field.type or not field.type.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">188</div>
@@ -1146,7 +1146,7 @@
             <div class="code-line ">
                 <div class="line-number">189</div>
                 <div class="line-status"></div>
-                <div class="line-content">                f&quot;Field type <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>for</span> &<span class="comment">#x27;{field.name}&#x27; <span class=<span class="string">"keyword"</span>>in</span> {context} <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;</span></div>
+                <div class="line-content">                f&quot;Field type is empty for &#x27;{field.name}&#x27; in {context} in {file_path}&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">190</div>
@@ -1156,7 +1156,7 @@
             <div class="code-line covered">
                 <div class="line-number">191</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        el<span class=<span class="string">"keyword"</span>>if</span> self._is_suspicious_type(field.type):</div>
+                <div class="line-content">        elif self._is_suspicious_type(field.type):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">192</div>
@@ -1166,7 +1166,7 @@
             <div class="code-line ">
                 <div class="line-number">193</div>
                 <div class="line-status"></div>
-                <div class="line-content">                f&quot;Suspicious field type &<span class="comment">#x27;{field.type}&#x27; <span class=<span class="string">"keyword"</span>>for</span> &#x27;{field.name}&#x27; <span class=<span class="string">"keyword"</span>>in</span> {context} <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;</span></div>
+                <div class="line-content">                f&quot;Suspicious field type &#x27;{field.type}&#x27; for &#x27;{field.name}&#x27; in {context} in {file_path}&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">194</div>
@@ -1181,12 +1181,12 @@
             <div class="code-line ">
                 <div class="line-number">196</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Check <span class=<span class="string">"keyword"</span>>for</span> suspicious values</span></div>
+                <div class="line-content">        # Check for suspicious values</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">197</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> field.value <span class=<span class="string">"keyword"</span>>and</span> self._is_suspicious_value(field.value):</div>
+                <div class="line-content">        if field.value and self._is_suspicious_value(field.value):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">198</div>
@@ -1196,7 +1196,7 @@
             <div class="code-line ">
                 <div class="line-number">199</div>
                 <div class="line-status"></div>
-                <div class="line-content">                f&quot;Suspicious field value &<span class="comment">#x27;{field.value}&#x27; <span class=<span class="string">"keyword"</span>>for</span> &#x27;{field.name}&#x27; <span class=<span class="string">"keyword"</span>>in</span> {context} <span class=<span class="string">"keyword"</span>>in</span> {file_path}&quot;</span></div>
+                <div class="line-content">                f&quot;Suspicious field value &#x27;{field.value}&#x27; for &#x27;{field.name}&#x27; in {context} in {file_path}&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">200</div>
@@ -1211,22 +1211,22 @@
             <div class="code-line covered">
                 <div class="line-number">202</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _is_valid_identifier(self, name: str) -&gt; bool:</div>
+                <div class="line-content">    def _is_valid_identifier(self, name: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">203</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Check <span class=<span class="string">"keyword"</span>>if</span> a name <span class=<span class="string">"keyword"</span>>is</span> a valid C identifier&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Check if a name is a valid C identifier&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">204</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> name.strip():</div>
+                <div class="line-content">        if not name or not name.strip():</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">205</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> False</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            return False</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">206</div>
@@ -1236,12 +1236,12 @@
             <div class="code-line ">
                 <div class="line-number">207</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># C identifier rules: start <span class=<span class="string">"keyword"</span>>with</span> letter <span class=<span class="string">"keyword"</span>>or</span> underscore, then letters, digits, <span class=<span class="string">"keyword"</span>>or</span> underscores</span></div>
+                <div class="line-content">        # C identifier rules: start with letter or underscore, then letters, digits, or underscores</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">208</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> bool(re.match(r&quot;^[a-zA-Z_][a-zA-Z0-9_]*$&quot;, name.strip()))</div>
+                <div class="line-content">        return bool(re.match(r&quot;^[a-zA-Z_][a-zA-Z0-9_]*$&quot;, name.strip()))</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">209</div>
@@ -1251,22 +1251,22 @@
             <div class="code-line covered">
                 <div class="line-number">210</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _is_suspicious_type(self, type_str: str) -&gt; bool:</div>
+                <div class="line-content">    def _is_suspicious_type(self, type_str: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">211</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Check <span class=<span class="string">"keyword"</span>>if</span> a type string looks suspicious&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Check if a type string looks suspicious&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">212</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> type_str <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> type_str.strip():</div>
+                <div class="line-content">        if not type_str or not type_str.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">213</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> True</div>
+                <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">214</div>
@@ -1286,7 +1286,7 @@
             <div class="code-line ">
                 <div class="line-number">217</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Check <span class=<span class="string">"keyword"</span>>for</span> obvious parsing errors</span></div>
+                <div class="line-content">        # Check for obvious parsing errors</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">218</div>
@@ -1296,22 +1296,22 @@
             <div class="code-line ">
                 <div class="line-number">219</div>
                 <div class="line-status"></div>
-                <div class="line-content">            r&quot;^[\[\]\{\}\(\)\s\\\n]+$&quot;,  <span class="comment"># Only brackets, spaces, backslashes, newlines</span></div>
+                <div class="line-content">            r&quot;^[\[\]\{\}\(\)\s\\\n]+$&quot;,  # Only brackets, spaces, backslashes, newlines</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">220</div>
                 <div class="line-status"></div>
-                <div class="line-content">            r&quot;^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]+$&quot;,  <span class="comment"># Mostly brackets <span class=<span class="string">"keyword"</span>>and</span> whitespace</span></div>
+                <div class="line-content">            r&quot;^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]+$&quot;,  # Mostly brackets and whitespace</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">221</div>
                 <div class="line-status"></div>
-                <div class="line-content">            r&quot;^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]*$&quot;,  <span class="comment"># All brackets <span class=<span class="string">"keyword"</span>>and</span> whitespace</span></div>
+                <div class="line-content">            r&quot;^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]*$&quot;,  # All brackets and whitespace</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">222</div>
                 <div class="line-status"></div>
-                <div class="line-content">            r&quot;^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]*$&quot;,  <span class="comment"># Excessive brackets/whitespace</span></div>
+                <div class="line-content">            r&quot;^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]*$&quot;,  # Excessive brackets/whitespace</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">223</div>
@@ -1326,17 +1326,17 @@
             <div class="code-line covered">
                 <div class="line-number">225</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> pattern <span class=<span class="string">"keyword"</span>>in</span> suspicious_patterns:</div>
+                <div class="line-content">        for pattern in suspicious_patterns:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">226</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> re.match(pattern, type_str):</div>
+                <div class="line-content">            if re.match(pattern, type_str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">227</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>return</span> True</div>
+                <div class="line-content">                return True</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">228</div>
@@ -1346,17 +1346,17 @@
             <div class="code-line ">
                 <div class="line-number">229</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Check <span class=<span class="string">"keyword"</span>>for</span> unbalanced brackets</span></div>
+                <div class="line-content">        # Check for unbalanced brackets</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">230</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> self._has_unbalanced_brackets(type_str):</div>
+                <div class="line-content">        if self._has_unbalanced_brackets(type_str):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">231</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> True</div>
+                <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">232</div>
@@ -1366,17 +1366,17 @@
             <div class="code-line ">
                 <div class="line-number">233</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Check <span class=<span class="string">"keyword"</span>>for</span> excessive newlines <span class=<span class="string">"keyword"</span>>or</span> backslashes</span></div>
+                <div class="line-content">        # Check for excessive newlines or backslashes</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">234</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> type_str.count(&quot;\n&quot;) &gt; 5 <span class=<span class="string">"keyword"</span>>or</span> type_str.count(&quot;\\&quot;) &gt; 10:</div>
+                <div class="line-content">        if type_str.count(&quot;\n&quot;) &gt; 5 or type_str.count(&quot;\\&quot;) &gt; 10:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">235</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> True</div>
+                <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">236</div>
@@ -1386,7 +1386,7 @@
             <div class="code-line covered">
                 <div class="line-number">237</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> False</div>
+                <div class="line-content">        return False</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">238</div>
@@ -1396,22 +1396,22 @@
             <div class="code-line covered">
                 <div class="line-number">239</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _is_suspicious_value(self, value: str) -&gt; bool:</div>
+                <div class="line-content">    def _is_suspicious_value(self, value: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">240</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Check <span class=<span class="string">"keyword"</span>>if</span> a value string looks suspicious&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Check if a value string looks suspicious&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">241</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> value <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> value.strip():</div>
+                <div class="line-content">        if not value or not value.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">242</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> True</div>
+                <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">243</div>
@@ -1431,7 +1431,7 @@
             <div class="code-line ">
                 <div class="line-number">246</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Check <span class=<span class="string">"keyword"</span>>for</span> obvious parsing errors</span></div>
+                <div class="line-content">        # Check for obvious parsing errors</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">247</div>
@@ -1441,12 +1441,12 @@
             <div class="code-line ">
                 <div class="line-number">248</div>
                 <div class="line-status"></div>
-                <div class="line-content">            r&quot;^[\[\]\{\}\(\)\s\\\n]+$&quot;,  <span class="comment"># Only brackets, spaces, backslashes, newlines</span></div>
+                <div class="line-content">            r&quot;^[\[\]\{\}\(\)\s\\\n]+$&quot;,  # Only brackets, spaces, backslashes, newlines</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">249</div>
                 <div class="line-status"></div>
-                <div class="line-content">            r&quot;^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]+$&quot;,  <span class="comment"># Mostly brackets <span class=<span class="string">"keyword"</span>>and</span> whitespace</span></div>
+                <div class="line-content">            r&quot;^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]+$&quot;,  # Mostly brackets and whitespace</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">250</div>
@@ -1461,17 +1461,17 @@
             <div class="code-line covered">
                 <div class="line-number">252</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> pattern <span class=<span class="string">"keyword"</span>>in</span> suspicious_patterns:</div>
+                <div class="line-content">        for pattern in suspicious_patterns:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">253</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> re.match(pattern, value):</div>
+                <div class="line-content">            if re.match(pattern, value):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">254</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>return</span> True</div>
+                <div class="line-content">                return True</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">255</div>
@@ -1481,17 +1481,17 @@
             <div class="code-line ">
                 <div class="line-number">256</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Check <span class=<span class="string">"keyword"</span>>for</span> unbalanced brackets</span></div>
+                <div class="line-content">        # Check for unbalanced brackets</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">257</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> self._has_unbalanced_brackets(value):</div>
+                <div class="line-content">        if self._has_unbalanced_brackets(value):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">258</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> True</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">259</div>
@@ -1501,17 +1501,17 @@
             <div class="code-line ">
                 <div class="line-number">260</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Check <span class=<span class="string">"keyword"</span>>for</span> excessive newlines <span class=<span class="string">"keyword"</span>>or</span> backslashes</span></div>
+                <div class="line-content">        # Check for excessive newlines or backslashes</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">261</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> value.count(&quot;\n&quot;) &gt; 3 <span class=<span class="string">"keyword"</span>>or</span> value.count(&quot;\\&quot;) &gt; 5:</div>
+                <div class="line-content">        if value.count(&quot;\n&quot;) &gt; 3 or value.count(&quot;\\&quot;) &gt; 5:</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">262</div>
-                <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> True</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">263</div>
@@ -1521,7 +1521,7 @@
             <div class="code-line covered">
                 <div class="line-number">264</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> False</div>
+                <div class="line-content">        return False</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">265</div>
@@ -1531,12 +1531,12 @@
             <div class="code-line covered">
                 <div class="line-number">266</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _has_unbalanced_brackets(self, text: str) -&gt; bool:</div>
+                <div class="line-content">    def _has_unbalanced_brackets(self, text: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">267</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Check <span class=<span class="string">"keyword"</span>>if</span> text has unbalanced brackets&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Check if text has unbalanced brackets&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">268</div>
@@ -1556,12 +1556,12 @@
             <div class="code-line covered">
                 <div class="line-number">271</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> char <span class=<span class="string">"keyword"</span>>in</span> text:</div>
+                <div class="line-content">        for char in text:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">272</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> char <span class=<span class="string">"keyword"</span>>in</span> &quot;([{&quot;:</div>
+                <div class="line-content">            if char in &quot;([{&quot;:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">273</div>
@@ -1571,17 +1571,17 @@
             <div class="code-line covered">
                 <div class="line-number">274</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            el<span class=<span class="string">"keyword"</span>>if</span> char <span class=<span class="string">"keyword"</span>>in</span> &quot;)]}&quot;:</div>
+                <div class="line-content">            elif char in &quot;)]}&quot;:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">275</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> stack <span class=<span class="string">"keyword"</span>>or</span> stack.pop() != bracket_pairs[char]:</div>
+                <div class="line-content">                if not stack or stack.pop() != bracket_pairs[char]:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">276</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">                    <span class=<span class="string">"keyword"</span>>return</span> True</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                    return True</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">277</div>
@@ -1591,7 +1591,7 @@
             <div class="code-line covered">
                 <div class="line-number">278</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> len(stack) &gt; 0  <span class="comment"># Unclosed brackets</span></div>
+                <div class="line-content">        return len(stack) &gt; 0  # Unclosed brackets</div>
             </div>
         </div>
     </div>
