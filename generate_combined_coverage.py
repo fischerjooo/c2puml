@@ -163,7 +163,7 @@ def get_coverage_data() -> Optional[Dict]:
     """Get coverage data in JSON format."""
     print_info("Reading coverage JSON data...")
 
-    # First try to read from existing coverage.json file
+    # Read from existing coverage.json file
     coverage_file = Path("tests/reports/coverage/coverage.json")
     if coverage_file.exists():
         try:
@@ -171,21 +171,9 @@ def get_coverage_data() -> Optional[Dict]:
                 return json.load(f)
         except (json.JSONDecodeError, IOError) as e:
             print_error(f"Failed to read existing coverage.json: {e}")
-
-    # Fallback: try to generate from .coverage file
-    print_info("No existing coverage.json found, trying to generate from .coverage...")
-    result = subprocess.run(
-        ["python3", "-m", "coverage", "json", "-o", "-"], capture_output=True, text=True
-    )
-
-    if result.returncode != 0:
-        print_error("Failed to generate coverage JSON")
-        return None
-
-    try:
-        return json.loads(result.stdout)
-    except json.JSONDecodeError:
-        print_error("Failed to parse coverage JSON")
+            return None
+    else:
+        print_error("No coverage.json file found")
         return None
 
 
