@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Coverage Report: c_to_plantuml/__init__.py</title>
+    <style>
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 24px;
+        }
+        .stats {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .coverage-bar {
+            width: 200px;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .coverage-fill {
+            height: 100%;
+            background: #4caf50;
+            transition: width 0.3s ease;
+        }
+        .code-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .code-header {
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+        .code-lines {
+            display: table;
+            width: 100%;
+        }
+        .code-line {
+            display: table-row;
+            transition: background-color 0.2s;
+        }
+        .code-line:hover {
+            background-color: #f0f0f0;
+        }
+        .line-number {
+            display: table-cell;
+            width: 50px;
+            padding: 0 10px;
+            text-align: right;
+            background: #f8f8f8;
+            color: #999;
+            border-right: 1px solid #e0e0e0;
+            user-select: none;
+            font-size: 12px;
+            vertical-align: top;
+        }
+        .line-status {
+            display: table-cell;
+            width: 30px;
+            text-align: center;
+            font-size: 14px;
+            vertical-align: top;
+            padding: 0 5px;
+        }
+        .line-content {
+            display: table-cell;
+            padding: 0 20px;
+            white-space: pre;
+            font-size: 14px;
+            vertical-align: top;
+        }
+        .covered {
+            background-color: #e8f5e9;
+        }
+        .covered .line-status {
+            color: #4caf50;
+        }
+        .missing {
+            background-color: #ffebee;
+        }
+        .missing .line-status {
+            color: #f44336;
+        }
+        .excluded {
+            background-color: #f5f5f5;
+            color: #999;
+        }
+        .excluded .line-status {
+            color: #999;
+        }
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .legend-item {
+            display: inline-block;
+            margin-right: 20px;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 5px;
+            border-radius: 3px;
+        }
+        .timestamp {
+            color: #666;
+            font-size: 12px;
+        }
+        /* Syntax highlighting */
+        .keyword { color: #0000ff; font-weight: bold; }
+        .string { color: #008000; }
+        .comment { color: #808080; font-style: italic; }
+        .number { color: #098658; }
+        .function { color: #795E26; }
+        .class { color: #267F99; font-weight: bold; }
+        .back-link {
+            margin-bottom: 20px;
+        }
+        .back-link a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-link">
+        <a href="index.html">← Back to Coverage Index</a>
+    </div>
+    
+    <div class="header">
+        <h1>Coverage Report: c_to_plantuml/__init__.py</h1>
+        <div class="timestamp">Generated: 2025-07-26 11:27:32</div>
+        
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-label">Coverage</span>
+                <span class="stat-value">100.0%</span>
+                <div class="coverage-bar">
+                    <div class="coverage-fill" style="width: 100.0%"></div>
+                </div>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Statements</span>
+                <span class="stat-value">9</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Covered</span>
+                <span class="stat-value" style="color: #4caf50">9</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Missing</span>
+                <span class="stat-value" style="color: #f44336">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Excluded</span>
+                <span class="stat-value" style="color: #999">0</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="code-container">
+        <div class="code-header">Source Code</div>
+        <div class="code-lines">
+            <div class="code-line covered">
+                <div class="line-number">1</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">&quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">2</div>
+                <div class="line-status"></div>
+                <div class="line-content">C to PlantUML Converter</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">3</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">4</div>
+                <div class="line-status"></div>
+                <div class="line-content">A Python tool that analyzes C/C++ source code <span class=<span class="string">"keyword"</span>>and</span> generates PlantUML <span class=<span class="string">"keyword"</span>>class</span> diagrams.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">5</div>
+                <div class="line-status"></div>
+                <div class="line-content">&quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">6</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">7</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">__version__ = &quot;3.0.0&quot;</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">8</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">__author__ = &quot;C to PlantUML Team&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">9</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">10</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> .config <span class=<span class="string">"keyword"</span>>import</span> Config</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">11</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> .generat<span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>import</span> Generator, PlantUMLGenerator</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">12</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> .models <span class=<span class="string">"keyword"</span>>import</span> (</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">13</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Alias,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">14</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Enum,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">15</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Field,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">16</div>
+                <div class="line-status"></div>
+                <div class="line-content">    FileModel,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">17</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Function,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">18</div>
+                <div class="line-status"></div>
+                <div class="line-content">    IncludeRelation,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">19</div>
+                <div class="line-status"></div>
+                <div class="line-content">    ProjectModel,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">20</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Struct,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">21</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Union,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">22</div>
+                <div class="line-status"></div>
+                <div class="line-content">)</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">23</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> .parser <span class=<span class="string">"keyword"</span>>import</span> CParser, Parser</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">24</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> .transformer <span class=<span class="string">"keyword"</span>>import</span> Transformer</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">25</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">26</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">__all__ = [</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">27</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;Parser&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">28</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;CParser&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">29</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;Transformer&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">30</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;Generator&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">31</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;PlantUMLGenerator&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">32</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;Config&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">33</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;ProjectModel&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">34</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;FileModel&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">35</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;Struct&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">36</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;Enum&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">37</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;Union&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">38</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;Function&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">39</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;Field&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">40</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;IncludeRelation&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">41</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;Alias&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">42</div>
+                <div class="line-status"></div>
+                <div class="line-content">]</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="legend">
+        <h3 style="margin-top: 0;">Legend</h3>
+        <div class="legend-item">
+            <span class="legend-color" style="background: #e8f5e9;"></span>
+            <span>✓ Covered</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-color" style="background: #ffebee;"></span>
+            <span>✗ Not Covered</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-color" style="background: #f5f5f5;"></span>
+            <span>— Excluded</span>
+        </div>
+    </div>
+</body>
+</html>
