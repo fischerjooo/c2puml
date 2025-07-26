@@ -45,6 +45,11 @@ def print_info(text: str) -> None:
     print(f"ℹ️  {text}")
 
 
+def print_warning(text: str) -> None:
+    """Print warning message."""
+    print(f"⚠️  {text}")
+
+
 def run_coverage_analysis() -> Tuple[bool, Dict]:
     """Run coverage analysis on the project and capture test results."""
     print_header("Running Coverage Analysis")
@@ -55,6 +60,14 @@ def run_coverage_analysis() -> Tuple[bool, Dict]:
     except (subprocess.CalledProcessError, FileNotFoundError):
         print_error("Coverage not installed. Install with: pip install coverage")
         return False, {}
+    
+    # Check if coverage data already exists (from previous test run)
+    coverage_data_file = Path(".coverage")
+    if coverage_data_file.exists():
+        print_info("Using existing coverage data from previous test run")
+        # Parse test results from existing summary file
+        test_results = parse_test_results("", "", 0)  # Empty strings since we're reading from file
+        return True, test_results
     
     # Clean previous coverage data
     print_info("Cleaning previous coverage data...")
@@ -79,7 +92,7 @@ def run_coverage_analysis() -> Tuple[bool, Dict]:
 
 
 def parse_test_results(stdout: str, stderr: str, returncode: int) -> Dict:
-    """Parse test results from pytest output."""
+    """Parse test results from unittest or pytest output."""
     test_results = {
         'total_tests': 0,
         'passed': 0,
@@ -93,7 +106,55 @@ def parse_test_results(stdout: str, stderr: str, returncode: int) -> Dict:
     }
     
     try:
-        # Parse the test summary from stdout
+        # First, try to read from existing test summary file
+        test_summary_file = Path("tests/reports/test-summary.txt")
+        if test_summary_file.exists():
+            print_info("Reading test results from existing test-summary.txt")
+            with open(test_summary_file, 'r') as f:
+                summary_content = f.read()
+            
+            # Parse unittest summary format
+            import re
+            
+            # Look for "Ran X tests in Ys" line
+            ran_match = re.search(r'Ran (\d+) tests? in ([\d.]+)s', summary_content)
+            if ran_match:
+                test_results['total_tests'] = int(ran_match.group(1))
+                test_results['duration'] = float(ran_match.group(2))
+            
+            # Look for status line
+            if 'Status: OK - All tests passed' in summary_content:
+                test_results['status'] = 'PASSED'
+                test_results['passed'] = test_results['total_tests']
+            elif 'Status: FAILED' in summary_content:
+                test_results['status'] = 'FAILED'
+                # Look for failure details
+                failed_match = re.search(r'Total Tests Run: (\d+)', summary_content)
+                passed_match = re.search(r'Passed: (\d+)', summary_content)
+                failed_count_match = re.search(r'Failed: (\d+)', summary_content)
+                
+                if failed_match:
+                    test_results['total_tests'] = int(failed_match.group(1))
+                if passed_match:
+                    test_results['passed'] = int(passed_match.group(1))
+                if failed_count_match:
+                    test_results['failed'] = int(failed_count_match.group(1))
+            
+            # Look for detailed test count
+            total_match = re.search(r'Total Tests Run: (\d+)', summary_content)
+            passed_match = re.search(r'Passed: (\d+)', summary_content)
+            failed_match = re.search(r'Failed: (\d+)', summary_content)
+            
+            if total_match:
+                test_results['total_tests'] = int(total_match.group(1))
+            if passed_match:
+                test_results['passed'] = int(passed_match.group(1))
+            if failed_match:
+                test_results['failed'] = int(failed_match.group(1))
+            
+            return test_results
+        
+        # Fallback: Parse the test summary from stdout (pytest format)
         lines = stdout.split('\n')
         for line in lines:
             # Look for the pytest summary line: "======================== 329 passed, 1 warning in 1.28s ========================"
@@ -158,6 +219,36 @@ def parse_test_results(stdout: str, stderr: str, returncode: int) -> Dict:
 def get_coverage_data() -> Optional[Dict]:
     """Get coverage data in JSON format."""
     print_info("Generating coverage JSON data...")
+    
+    # Check if coverage module is available
+    try:
+        result = subprocess.run(
+            ["python3", "-m", "coverage", "--version"],
+            capture_output=True,
+            text=True
+        )
+        if result.returncode != 0:
+            print_warning("Coverage module not available, creating empty coverage data")
+            return {
+                "totals": {
+                    "num_statements": 0,
+                    "covered_lines": 0,
+                    "missing_lines": 0,
+                    "percent_covered": 0.0
+                },
+                "files": {}
+            }
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print_warning("Coverage module not available, creating empty coverage data")
+        return {
+            "totals": {
+                "num_statements": 0,
+                "covered_lines": 0,
+                "missing_lines": 0,
+                "percent_covered": 0.0
+            },
+            "files": {}
+        }
     
     result = subprocess.run(
         ["python3", "-m", "coverage", "json", "-o", "-"],
@@ -1091,6 +1182,9 @@ def main():
         success, test_results = run_coverage_analysis()
         if not success:
             return 1
+    else:
+        # Try to parse test results from existing summary file
+        test_results = parse_test_results("", "", 0)  # Empty strings since we're reading from file
     
     # Get coverage data
     coverage_data = get_coverage_data()

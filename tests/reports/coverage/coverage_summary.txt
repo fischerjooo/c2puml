@@ -1,26 +1,15 @@
 Coverage Summary Report
-Generated: 2025-07-26 19:19:06
+Generated: 2025-07-26 19:28:02
 ================================================================================
 
 Overall Statistics:
-  Total statements: 2,962
-  Covered lines: 2,252
-  Missing lines: 710
-  Coverage: 76.0%
+  Total statements: 0
+  Covered lines: 0
+  Missing lines: 0
+  Coverage: 0.0%
 
 Per-File Summary:
 --------------------------------------------------------------------------------
 File                                                  Stmts     Miss    Cover
 --------------------------------------------------------------------------------
-c_to_plantuml/__init__.py                                 8        0   100.0%
-c_to_plantuml/config.py                                 200      126    37.0%
-c_to_plantuml/generator.py                              291       14    95.2%
-c_to_plantuml/main.py                                    97       28    71.1%
-c_to_plantuml/models.py                                 260       35    86.5%
-c_to_plantuml/parser.py                                 706      108    84.7%
-c_to_plantuml/parser_tokenizer.py                       649      120    81.5%
-c_to_plantuml/preprocessor.py                           294       93    68.4%
-c_to_plantuml/transformer.py                            251      113    55.0%
-c_to_plantuml/utils.py                                   67       43    35.8%
-c_to_plantuml/verifier.py                               139       30    78.4%
 --------------------------------------------------------------------------------
