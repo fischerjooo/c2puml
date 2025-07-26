@@ -50,7 +50,7 @@
         }
         .coverage-fill {
             height: 100%;
-            background: #f44336;
+            background: #ff9800;
             transition: width 0.3s ease;
         }
         .code-container {
@@ -168,17 +168,17 @@
     <div class="back-link">
         <a href="index.html">← Back to Coverage Index</a>
     </div>
-    
+
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/utils.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 19:19:06</div>
-        
+        <div class="timestamp">Generated: 2025-07-26 19:56:31</div>
+
         <div class="stats">
             <div class="stat">
                 <span class="stat-label">Coverage</span>
-                <span class="stat-value">36.8%</span>
+                <span class="stat-value">61.8%</span>
                 <div class="coverage-bar">
-                    <div class="coverage-fill" style="width: 36.76470588235294%"></div>
+                    <div class="coverage-fill" style="width: 61.76470588235294%"></div>
                 </div>
             </div>
             <div class="stat">
@@ -187,11 +187,11 @@
             </div>
             <div class="stat">
                 <span class="stat-label">Covered</span>
-                <span class="stat-value" style="color: #4caf50">25</span>
+                <span class="stat-value" style="color: #4caf50">42</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Missing</span>
-                <span class="stat-value" style="color: #f44336">43</span>
+                <span class="stat-value" style="color: #f44336">26</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Excluded</span>
@@ -199,7 +199,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="code-container">
         <div class="code-header">Source Code</div>
         <div class="code-lines">
@@ -388,9 +388,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                return encoding</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">38</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            except (UnicodeDecodeError, UnicodeError):</div>
             </div>
             <div class="code-line missing">
@@ -418,19 +418,19 @@
                 <div class="line-status"></div>
                 <div class="line-content">        </div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">44</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    except Exception as e:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">45</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        logging.warning(f&quot;Failed to detect encoding for {file_path}: {e}&quot;)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">46</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return &quot;utf-8&quot;</div>
             </div>
             <div class="code-line ">
@@ -828,9 +828,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">    &quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">126</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    return [</div>
             </div>
             <div class="code-line covered">
@@ -958,9 +958,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">    &quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">152</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    return encoding.lower() in [enc.lower() for enc in get_acceptable_encodings()]</div>
             </div>
             <div class="code-line ">
@@ -1023,9 +1023,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">    &quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">165</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    encoding_lower = encoding.lower()</div>
             </div>
             <div class="code-line ">
@@ -1038,34 +1038,34 @@
                 <div class="line-status"></div>
                 <div class="line-content">    # Normalize common Windows encodings</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">168</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    if encoding_lower in [&quot;windows-1252&quot;, &quot;cp1252&quot;]:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">169</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return &quot;windows-1252&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">170</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    elif encoding_lower in [&quot;windows-1254&quot;, &quot;cp1254&quot;]:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">171</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return &quot;windows-1254&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">172</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    elif encoding_lower in [&quot;iso-8859-1&quot;, &quot;latin-1&quot;]:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">173</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return &quot;iso-8859-1&quot;</div>
             </div>
             <div class="code-line ">
@@ -1073,9 +1073,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">    </div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">175</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    return encoding_lower</div>
             </div>
             <div class="code-line ">
@@ -1123,14 +1123,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">    &quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">185</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    import sys</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">186</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    if sys.platform.startswith(&quot;win&quot;):</div>
             </div>
             <div class="code-line missing">
@@ -1143,14 +1143,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">    else:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">189</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return &quot;utf-8&quot;  # Common Unix/Linux default</div>
             </div>
         </div>
     </div>
-    
+
     <div class="legend">
         <h3 style="margin-top: 0;">Legend</h3>
         <div class="legend-item">

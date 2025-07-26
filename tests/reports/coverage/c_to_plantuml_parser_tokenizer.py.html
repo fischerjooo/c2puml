@@ -168,30 +168,30 @@
     <div class="back-link">
         <a href="index.html">← Back to Coverage Index</a>
     </div>
-    
+
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/parser_tokenizer.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 19:19:06</div>
-        
+        <div class="timestamp">Generated: 2025-07-26 19:56:31</div>
+
         <div class="stats">
             <div class="stat">
                 <span class="stat-label">Coverage</span>
-                <span class="stat-value">81.7%</span>
+                <span class="stat-value">88.9%</span>
                 <div class="coverage-bar">
-                    <div class="coverage-fill" style="width: 81.67938931297711%"></div>
+                    <div class="coverage-fill" style="width: 88.8719512195122%"></div>
                 </div>
             </div>
             <div class="stat">
                 <span class="stat-label">Statements</span>
-                <span class="stat-value">655</span>
+                <span class="stat-value">656</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Covered</span>
-                <span class="stat-value" style="color: #4caf50">535</span>
+                <span class="stat-value" style="color: #4caf50">583</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Missing</span>
-                <span class="stat-value" style="color: #f44336">120</span>
+                <span class="stat-value" style="color: #f44336">73</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Excluded</span>
@@ -199,7 +199,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="code-container">
         <div class="code-header">Source Code</div>
         <div class="code-lines">
@@ -993,14 +993,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">            if in_multiline_string:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">159</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                multiline_string_value += &quot;\n&quot; + line</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">160</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if &#x27;&quot;&#x27; in line:</div>
             </div>
             <div class="code-line ">
@@ -1008,14 +1008,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">                    # End of multiline string</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">162</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    in_multiline_string = False</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">163</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    tokens.append(</div>
             </div>
             <div class="code-line covered">
@@ -1183,29 +1183,29 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                ):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">197</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    in_multiline_string = True</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">198</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    multiline_string_value = line_tokens[-1].value</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">199</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    multiline_string_start_line = line_tokens[-1].line</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">200</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    multiline_string_start_col = line_tokens[-1].column</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">201</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    tokens.extend(line_tokens[:-1])</div>
             </div>
             <div class="code-line ">
@@ -1833,14 +1833,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                else:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">327</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    string_text = line[string_start:]</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">328</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    tokens.append(</div>
             </div>
             <div class="code-line covered">
@@ -1853,14 +1853,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                    )</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">331</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    pos = len(line)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">332</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                continue</div>
             </div>
             <div class="code-line ">
@@ -2263,14 +2263,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">                # Found a multi-line macro, merge with subsequent lines</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">413</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                macro_content = token.value</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">414</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                current_line = token.line</div>
             </div>
             <div class="code-line ">
@@ -2283,9 +2283,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">                # Continue merging lines until we find one that doesn&#x27;t end with backslash</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">417</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                while macro_content.rstrip().endswith(&quot;\\&quot;):</div>
             </div>
             <div class="code-line ">
@@ -2293,14 +2293,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">                    # Remove the backslash and add a newline</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">419</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    macro_content = macro_content.rstrip()[:-1] + &quot;\n&quot;</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">420</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    current_line += 1</div>
             </div>
             <div class="code-line ">
@@ -2313,19 +2313,19 @@
                 <div class="line-status"></div>
                 <div class="line-content">                    # Find the next line content</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">423</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    if current_line &lt;= len(lines):</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">424</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                        next_line = lines[current_line - 1]</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">425</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                        macro_content += next_line</div>
             </div>
             <div class="code-line covered">
@@ -2348,9 +2348,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">                # Create a new token with the merged content</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">430</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                merged_tokens.append(</div>
             </div>
             <div class="code-line covered">
@@ -2768,19 +2768,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">            if self._current_token_is(TokenType.UNION):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">514</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                union_info = self._parse_union()</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">515</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if union_info:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">516</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    unions.append(union_info)</div>
             </div>
             <div class="code-line covered">
@@ -3078,9 +3078,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        ):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">576</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.pos += 1</div>
             </div>
             <div class="code-line ">
@@ -3103,9 +3103,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if self._current_token_is(TokenType.IDENTIFIER):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">581</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            struct_tag = self._advance().value</div>
             </div>
             <div class="code-line ">
@@ -3133,9 +3133,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        ):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">587</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.pos += 1</div>
             </div>
             <div class="code-line ">
@@ -3148,9 +3148,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self._current_token_is(TokenType.LBRACE):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">590</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return None</div>
             </div>
             <div class="code-line ">
@@ -3323,9 +3323,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                elif self.tokens[name_pos].type == TokenType.SEMICOLON:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">625</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    break</div>
             </div>
             <div class="code-line covered">
@@ -3368,19 +3368,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                    break</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">634</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                elif self.tokens[name_pos].type == TokenType.SEMICOLON:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">635</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    break</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">636</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                name_pos += 1</div>
             </div>
             <div class="code-line ">
@@ -3633,14 +3633,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Not a struct definition, so skip it</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">687</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.pos = start_pos + 1</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">688</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return None</div>
             </div>
             <div class="code-line ">
@@ -3848,9 +3848,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        ):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">730</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.pos += 1</div>
             </div>
             <div class="code-line ">
@@ -4043,9 +4043,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">            ]:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">769</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                break</div>
             </div>
             <div class="code-line covered">
@@ -4093,19 +4093,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                elif self.tokens[name_pos].type == TokenType.SEMICOLON:</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">779</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    break</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">780</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                name_pos += 1</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">781</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif not enum_tag:</div>
             </div>
             <div class="code-line ">
@@ -4113,14 +4113,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Anonymous enum - check if there&#x27;s a variable name after the brace</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">783</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            while name_pos &lt; len(self.tokens):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">784</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if self.tokens[name_pos].type == TokenType.IDENTIFIER:</div>
             </div>
             <div class="code-line ">
@@ -4128,14 +4128,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">                    # This is a variable name, not an enum name</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">786</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    enum_name = &quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">787</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    break</div>
             </div>
             <div class="code-line missing">
@@ -4298,14 +4298,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not enum_info:</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">820</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.pos = start_pos + 1</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">821</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return None</div>
             </div>
             <div class="code-line ">
@@ -4508,9 +4508,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                        ]:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">862</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                            return_type_start -= 1</div>
             </div>
             <div class="code-line covered">
@@ -4518,9 +4518,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                        else:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">864</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                            break</div>
             </div>
             <div class="code-line ">
@@ -4743,9 +4743,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">                                # Skip whitespace and continue looking</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">909</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                                current_pos -= 1</div>
             </div>
             <div class="code-line covered">
@@ -4753,9 +4753,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                            else:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">911</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                                break</div>
             </div>
             <div class="code-line ">
@@ -5103,9 +5103,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if depth &gt; 0:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">981</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return None</div>
             </div>
             <div class="code-line ">
@@ -5153,9 +5153,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                return end_brace if end_brace else pos</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">991</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            pos += 1</div>
             </div>
             <div class="code-line ">
@@ -5183,9 +5183,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">        &quot;&quot;&quot;Parse union definition&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">997</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self._current_token_is(TokenType.UNION):</div>
             </div>
             <div class="code-line missing">
@@ -5198,14 +5198,14 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1000</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        start_pos = self.pos</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1001</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self._advance()  # Consumes &#x27;union&#x27;</div>
             </div>
             <div class="code-line ">
@@ -5218,9 +5218,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Skip whitespace</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1004</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        while self.pos &lt; len(self.tokens) and self._current_token_is(</div>
             </div>
             <div class="code-line covered">
@@ -5248,19 +5248,19 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Get union tag name (optional for anonymous unions)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1010</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        union_tag = &quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1011</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if self._current_token_is(TokenType.IDENTIFIER):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1012</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            union_tag = self._advance().value</div>
             </div>
             <div class="code-line ">
@@ -5273,9 +5273,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Find opening brace</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1015</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        while self.pos &lt; len(self.tokens) and not self._current_token_is(</div>
             </div>
             <div class="code-line covered">
@@ -5288,9 +5288,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        ):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1018</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.pos += 1</div>
             </div>
             <div class="code-line ">
@@ -5298,14 +5298,14 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1020</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if self.pos &gt;= len(self.tokens):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1021</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return None</div>
             </div>
             <div class="code-line ">
@@ -5318,14 +5318,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Find matching closing brace</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1024</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        end_pos = self._find_matching_brace(self.pos)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1025</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if end_pos is None:</div>
             </div>
             <div class="code-line missing">
@@ -5343,9 +5343,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Look for union name after closing brace (for typedefs or named unions)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1029</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        union_name = union_tag  # Default to tag name</div>
             </div>
             <div class="code-line ">
@@ -5358,14 +5358,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Skip to semicolon</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1032</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.pos = end_pos + 1</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1033</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        while self.pos &lt; len(self.tokens) and not self._current_token_is(</div>
             </div>
             <div class="code-line covered">
@@ -5403,9 +5403,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1041</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return (start_pos, end_pos, union_name)</div>
             </div>
             <div class="code-line ">
@@ -5558,9 +5558,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if self._current_token_is(TokenType.IDENTIFIER):</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">1072</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            union_tag = self._advance().value</div>
             </div>
             <div class="code-line ">
@@ -5718,19 +5718,19 @@
                 <div class="line-status"></div>
                 <div class="line-content">    &quot;&quot;&quot;Extract raw text from token range, excluding whitespace, comments, and newlines&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1104</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    if start &gt;= len(tokens) or end &gt;= len(tokens) or start &gt; end:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1105</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return &quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1106</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    return &quot; &quot;.join(</div>
             </div>
             <div class="code-line covered">
@@ -6555,7 +6555,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="legend">
         <h3 style="margin-top: 0;">Legend</h3>
         <div class="legend-item">

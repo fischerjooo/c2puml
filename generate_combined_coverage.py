@@ -161,8 +161,19 @@ def parse_test_results(stdout: str, stderr: str, returncode: int) -> Dict:
 
 def get_coverage_data() -> Optional[Dict]:
     """Get coverage data in JSON format."""
-    print_info("Generating coverage JSON data...")
+    print_info("Reading coverage JSON data...")
 
+    # First try to read from existing coverage.json file
+    coverage_file = Path("tests/reports/coverage/coverage.json")
+    if coverage_file.exists():
+        try:
+            with open(coverage_file, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, IOError) as e:
+            print_error(f"Failed to read existing coverage.json: {e}")
+
+    # Fallback: try to generate from .coverage file
+    print_info("No existing coverage.json found, trying to generate from .coverage...")
     result = subprocess.run(
         ["python3", "-m", "coverage", "json", "-o", "-"], capture_output=True, text=True
     )
