@@ -45,8 +45,8 @@ def print_info(text: str) -> None:
     print(f"ℹ️  {text}")
 
 
-def run_coverage_analysis() -> bool:
-    """Run coverage analysis on the project."""
+def run_coverage_analysis() -> Tuple[bool, Dict]:
+    """Run coverage analysis on the project and capture test results."""
     print_header("Running Coverage Analysis")
     
     # Ensure coverage is installed
@@ -54,13 +54,13 @@ def run_coverage_analysis() -> bool:
         subprocess.run(["python3", "-m", "coverage", "--version"], check=True, capture_output=True)
     except (subprocess.CalledProcessError, FileNotFoundError):
         print_error("Coverage not installed. Install with: pip install coverage")
-        return False
+        return False, {}
     
     # Clean previous coverage data
     print_info("Cleaning previous coverage data...")
     subprocess.run(["python3", "-m", "coverage", "erase"], check=True)
     
-    # Run tests with coverage
+    # Run tests with coverage and capture output
     print_info("Running tests with coverage...")
     result = subprocess.run(
         ["python3", "-m", "coverage", "run", "-m", "pytest", "-v"],
@@ -68,11 +68,81 @@ def run_coverage_analysis() -> bool:
         text=True
     )
     
+    # Parse test results from output
+    test_results = parse_test_results(result.stdout, result.stderr, result.returncode)
+    
     if result.returncode != 0:
         print_error("Tests failed. Coverage report may be incomplete.")
         print(result.stderr)
     
-    return True
+    return True, test_results
+
+
+def parse_test_results(stdout: str, stderr: str, returncode: int) -> Dict:
+    """Parse test results from pytest output."""
+    test_results = {
+        'total_tests': 0,
+        'passed': 0,
+        'failed': 0,
+        'skipped': 0,
+        'errors': 0,
+        'duration': 0.0,
+        'status': 'PASSED' if returncode == 0 else 'FAILED',
+        'test_files': [],
+        'failed_tests': []
+    }
+    
+    try:
+        # Parse the test summary from stdout
+        lines = stdout.split('\n')
+        for line in lines:
+            # Look for test summary patterns
+            if 'collected' in line and 'items' in line:
+                # Extract total tests from "collected X items"
+                import re
+                match = re.search(r'collected (\d+) items?', line)
+                if match:
+                    test_results['total_tests'] = int(match.group(1))
+            
+            elif 'passed' in line and 'failed' in line:
+                # Extract passed/failed counts
+                import re
+                passed_match = re.search(r'(\d+) passed', line)
+                failed_match = re.search(r'(\d+) failed', line)
+                skipped_match = re.search(r'(\d+) skipped', line)
+                error_match = re.search(r'(\d+) error', line)
+                
+                if passed_match:
+                    test_results['passed'] = int(passed_match.group(1))
+                if failed_match:
+                    test_results['failed'] = int(failed_match.group(1))
+                if skipped_match:
+                    test_results['skipped'] = int(skipped_match.group(1))
+                if error_match:
+                    test_results['errors'] = int(error_match.group(1))
+            
+            elif 'in ' in line and ('seconds' in line or 's' in line):
+                # Extract duration
+                import re
+                duration_match = re.search(r'in ([\d.]+)s?', line)
+                if duration_match:
+                    test_results['duration'] = float(duration_match.group(1))
+            
+            # Capture failed test details
+            elif line.startswith('FAILED') or line.startswith('ERROR'):
+                test_results['failed_tests'].append(line.strip())
+        
+        # If we couldn't parse the summary, try to count from individual test results
+        if test_results['total_tests'] == 0:
+            test_results['total_tests'] = len([line for line in lines if line.startswith('test_') and ('PASSED' in line or 'FAILED' in line or 'SKIPPED' in line)])
+            test_results['passed'] = len([line for line in lines if 'PASSED' in line])
+            test_results['failed'] = len([line for line in lines if 'FAILED' in line])
+            test_results['skipped'] = len([line for line in lines if 'SKIPPED' in line])
+    
+    except Exception as e:
+        print_error(f"Error parsing test results: {e}")
+    
+    return test_results
 
 
 def get_coverage_data() -> Optional[Dict]:
@@ -142,41 +212,30 @@ def generate_coverage_summary(coverage_data: Dict, output_dir: Path) -> None:
     print_success(f"Summary report generated: {summary_file}")
 
 
-def generate_test_summary_html(coverage_data: Dict, output_dir: Path) -> None:
-    """Generate HTML test summary report with same styling as coverage index."""
+def generate_test_summary_html(test_results: Dict, output_dir: Path) -> None:
+    """Generate HTML test summary report showing actual test results."""
     print_info("Generating HTML test summary...")
     
     summary_file = output_dir / "test_summary.html"
     
-    # Get overall statistics
-    summary = coverage_data.get("totals", {})
-    total_lines = summary.get("num_statements", 0)
-    covered_lines = summary.get("covered_lines", 0)
-    missing_lines = summary.get("missing_lines", 0)
-    coverage_percent = summary.get("percent_covered", 0)
+    # Get test statistics
+    total_tests = test_results.get('total_tests', 0)
+    passed = test_results.get('passed', 0)
+    failed = test_results.get('failed', 0)
+    skipped = test_results.get('skipped', 0)
+    errors = test_results.get('errors', 0)
+    duration = test_results.get('duration', 0.0)
+    status = test_results.get('status', 'UNKNOWN')
+    failed_tests = test_results.get('failed_tests', [])
     
-    # Get files data
-    files_data = coverage_data.get("files", {})
-    file_summaries = []
-    
-    for filename, file_data in sorted(files_data.items()):
-        file_summary = file_data.get("summary", {})
-        stmts = file_summary.get("num_statements", 0)
-        miss = file_summary.get("missing_lines", 0)
-        cover = file_summary.get("percent_covered", 0)
-        
-        file_summaries.append({
-            'filename': filename,
-            'statements': stmts,
-            'missing': miss,
-            'coverage': cover
-        })
+    # Calculate success rate
+    success_rate = (passed / total_tests * 100) if total_tests > 0 else 0
     
     with open(summary_file, 'w', encoding='utf-8') as f:
         f.write(f"""<!DOCTYPE html>
 <html>
 <head>
-    <title>Test Summary Report</title>
+    <title>Test Results Summary</title>
     <style>
         body {{
             font-family: Arial, sans-serif;
@@ -226,79 +285,42 @@ def generate_test_summary_html(coverage_data: Dict, output_dir: Path) -> None:
             color: #666;
             margin-top: 5px;
         }}
-        .overall-coverage {{
+        .success-rate {{
             font-size: 48px;
-            color: {'#4caf50' if coverage_percent >= 80 else '#ff9800' if coverage_percent >= 60 else '#f44336'};
+            color: {'#4caf50' if success_rate >= 90 else '#ff9800' if success_rate >= 70 else '#f44336'};
         }}
-        .file-list {{
+        .status-badge {{
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+            color: white;
+            background: {'#4caf50' if status == 'PASSED' else '#f44336'};
+        }}
+        .failed-tests {{
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             overflow: hidden;
+            margin-top: 20px;
         }}
-        .file-header {{
-            background: #333;
+        .failed-header {{
+            background: #f44336;
             color: white;
             padding: 15px 20px;
             font-weight: bold;
         }}
-        .file-item {{
-            display: flex;
-            align-items: center;
+        .failed-item {{
             padding: 15px 20px;
             border-bottom: 1px solid #e0e0e0;
-            transition: background-color 0.2s;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
         }}
-        .file-item:hover {{
-            background-color: #f8f9fa;
-        }}
-        .file-item:last-child {{
+        .failed-item:last-child {{
             border-bottom: none;
         }}
-        .file-name {{
-            flex: 1;
-            margin-right: 20px;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-        }}
-        .file-stats {{
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }}
-        .stat-item {{
-            text-align: center;
-            min-width: 80px;
-        }}
-        .stat-number {{
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-        }}
-        .stat-label-small {{
-            font-size: 12px;
-            color: #666;
-            text-transform: uppercase;
-        }}
-        .coverage-percent {{
-            font-size: 18px;
-            font-weight: bold;
-            color: {'#4caf50' if coverage_percent >= 80 else '#ff9800' if coverage_percent >= 60 else '#f44336'};
-        }}
-        .coverage-bar {{
-            width: 150px;
-            height: 20px;
-            background: #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-left: 20px;
-        }}
-        .coverage-fill {{
-            height: 100%;
-            transition: width 0.3s ease;
-        }}
-        .coverage-high {{ background: #4caf50; }}
-        .coverage-medium {{ background: #ff9800; }}
-        .coverage-low {{ background: #f44336; }}
         .download-links {{
             margin-top: 20px;
             padding: 15px;
@@ -323,6 +345,20 @@ def generate_test_summary_html(coverage_data: Dict, output_dir: Path) -> None:
         .back-link a:hover {{
             text-decoration: underline;
         }}
+        .test-details {{
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }}
+        .test-details h3 {{
+            margin-top: 0;
+            color: #333;
+        }}
+        .test-details p {{
+            margin: 5px 0;
+            color: #666;
+        }}
     </style>
 </head>
 <body>
@@ -331,80 +367,78 @@ def generate_test_summary_html(coverage_data: Dict, output_dir: Path) -> None:
             <a href="index.html">← Back to Coverage Index</a>
         </div>
         
-        <h1>Test Summary Report</h1>
+        <h1>Test Results Summary</h1>
         <div class="timestamp">Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div>
         
         <div class="summary-card">
-            <h2 style="margin-top: 0;">Overall Test Statistics</h2>
+            <h2 style="margin-top: 0;">Test Execution Results</h2>
+            <div style="margin-bottom: 20px;">
+                <span class="status-badge">{status}</span>
+                <span style="margin-left: 10px; color: #666;">Execution completed in {duration:.2f} seconds</span>
+            </div>
+            
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-value overall-coverage">{coverage_percent:.1f}%</div>
-                    <div class="stat-label">Overall Coverage</div>
+                    <div class="stat-value success-rate">{success_rate:.1f}%</div>
+                    <div class="stat-label">Success Rate</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">{len(file_summaries)}</div>
-                    <div class="stat-label">Files Tested</div>
+                    <div class="stat-value">{total_tests}</div>
+                    <div class="stat-label">Total Tests</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">{total_lines:,}</div>
-                    <div class="stat-label">Total Statements</div>
+                    <div class="stat-value" style="color: #4caf50">{passed}</div>
+                    <div class="stat-label">Passed</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" style="color: #4caf50">{covered_lines:,}</div>
-                    <div class="stat-label">Covered Lines</div>
+                    <div class="stat-value" style="color: #f44336">{failed}</div>
+                    <div class="stat-label">Failed</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" style="color: #f44336">{missing_lines:,}</div>
-                    <div class="stat-label">Missing Lines</div>
+                    <div class="stat-value" style="color: #ff9800">{skipped}</div>
+                    <div class="stat-label">Skipped</div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #9c27b0">{errors}</div>
+                    <div class="stat-label">Errors</div>
+                </div>
+            </div>
+            
+            <div class="test-details">
+                <h3>Test Execution Details</h3>
+                <p><strong>Total Tests:</strong> {total_tests:,}</p>
+                <p><strong>Passed:</strong> {passed:,} ({passed/total_tests*100:.1f}%)</p>
+                <p><strong>Failed:</strong> {failed:,} ({failed/total_tests*100:.1f}%)</p>
+                <p><strong>Skipped:</strong> {skipped:,} ({skipped/total_tests*100:.1f}%)</p>
+                <p><strong>Errors:</strong> {errors:,} ({errors/total_tests*100:.1f}%)</p>
+                <p><strong>Execution Time:</strong> {duration:.2f} seconds</p>
+                <p><strong>Overall Status:</strong> {status}</p>
             </div>
             
             <div class="download-links">
                 <strong>Download Reports:</strong>
-                <a href="coverage_summary.txt">📄 Text Summary</a>
-                <a href="coverage.xml">📊 XML Report</a>
-                <a href="coverage.json">📋 JSON Report</a>
+                <a href="coverage_summary.txt">📄 Coverage Summary</a>
+                <a href="coverage.xml">📊 Coverage XML</a>
+                <a href="coverage.json">📋 Coverage JSON</a>
                 <a href="index.html">📈 Detailed Coverage</a>
             </div>
         </div>
-        
-        <div class="file-list">
-            <div class="file-header">Per-File Test Summary</div>
 """)
         
-        for file_summary in file_summaries:
-            filename = file_summary['filename']
-            statements = file_summary['statements']
-            missing = file_summary['missing']
-            coverage = file_summary['coverage']
+        # Show failed tests if any
+        if failed_tests:
+            f.write(f"""        <div class="failed-tests">
+            <div class="failed-header">Failed Tests ({len(failed_tests)})</div>
+""")
             
-            coverage_class = 'coverage-high' if coverage >= 80 else 'coverage-medium' if coverage >= 60 else 'coverage-low'
-            coverage_color = '#4caf50' if coverage >= 80 else '#ff9800' if coverage >= 60 else '#f44336'
+            for failed_test in failed_tests:
+                f.write(f"""            <div class="failed-item">{html.escape(failed_test)}</div>
+""")
             
-            f.write(f"""            <div class="file-item">
-                <div class="file-name">{html.escape(filename)}</div>
-                <div class="file-stats">
-                    <div class="stat-item">
-                        <div class="stat-number">{statements}</div>
-                        <div class="stat-label-small">Statements</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" style="color: #f44336">{missing}</div>
-                        <div class="stat-label-small">Missing</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="coverage-percent" style="color: {coverage_color}">{coverage:.1f}%</div>
-                        <div class="stat-label-small">Coverage</div>
-                    </div>
-                    <div class="coverage-bar">
-                        <div class="coverage-fill {coverage_class}" style="width: {coverage}%"></div>
-                    </div>
-                </div>
-            </div>
+            f.write("""        </div>
 """)
         
-        f.write("""        </div>
-    </div>
+        f.write("""    </div>
 </body>
 </html>
 """)
@@ -839,10 +873,29 @@ def generate_combined_index(output_dir: Path, file_reports: List[Tuple[str, floa
         .file-name a:hover {{
             text-decoration: underline;
         }}
-        .file-coverage {{
-            width: 100px;
-            text-align: right;
+        .file-stats {{
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }}
+        .stat-item {{
+            text-align: center;
+            min-width: 80px;
+        }}
+        .stat-number {{
+            font-size: 18px;
             font-weight: bold;
+            color: #333;
+        }}
+        .stat-label-small {{
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }}
+        .coverage-percent {{
+            font-size: 18px;
+            font-weight: bold;
+            color: {'#4caf50' if overall_coverage >= 80 else '#ff9800' if overall_coverage >= 60 else '#f44336'};
         }}
         .coverage-bar {{
             width: 150px;
@@ -966,16 +1019,31 @@ def generate_combined_index(output_dir: Path, file_reports: List[Tuple[str, floa
         for filename, coverage_percent, stats in file_reports:
             safe_filename = filename.replace('/', '_').replace('\\', '_')
             coverage_class = 'coverage-high' if coverage_percent >= 80 else 'coverage-medium' if coverage_percent >= 60 else 'coverage-low'
+            coverage_color = '#4caf50' if coverage_percent >= 80 else '#ff9800' if coverage_percent >= 60 else '#f44336'
+            
+            statements = stats.get('covered', 0) + stats.get('missing', 0)
+            missing = stats.get('missing', 0)
             
             f.write(f"""            <div class="file-item" data-coverage="{coverage_percent}">
                 <div class="file-name">
                     <a href="{safe_filename}.html">{html.escape(filename)}</a>
                 </div>
-                <div class="file-coverage" style="color: {'#4caf50' if coverage_percent >= 80 else '#ff9800' if coverage_percent >= 60 else '#f44336'}">
-                    {coverage_percent:.1f}%
-                </div>
-                <div class="coverage-bar">
-                    <div class="coverage-fill {coverage_class}" style="width: {coverage_percent}%"></div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">{statements}</div>
+                        <div class="stat-label-small">Statements</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f44336">{missing}</div>
+                        <div class="stat-label-small">Missing</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="coverage-percent" style="color: {coverage_color}">{coverage_percent:.1f}%</div>
+                        <div class="stat-label-small">Coverage</div>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill {coverage_class}" style="width: {coverage_percent}%"></div>
+                    </div>
                 </div>
             </div>
 """)
@@ -1019,8 +1087,10 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
     
     # Run coverage analysis if requested
+    test_results = {}
     if args.run_tests:
-        if not run_coverage_analysis():
+        success, test_results = run_coverage_analysis()
+        if not success:
             return 1
     
     # Get coverage data
@@ -1048,7 +1118,7 @@ def main():
     generate_coverage_summary(coverage_data, output_dir)
     
     # Generate HTML test summary
-    generate_test_summary_html(coverage_data, output_dir)
+    generate_test_summary_html(test_results, output_dir)
     
     # Process each file for detailed reports
     files_data = coverage_data.get("files", {})
