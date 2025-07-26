@@ -171,14 +171,14 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/parser.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 18:45:05</div>
+        <div class="timestamp">Generated: 2025-07-26 18:52:44</div>
         
         <div class="stats">
             <div class="stat">
                 <span class="stat-label">Coverage</span>
-                <span class="stat-value">84.8%</span>
+                <span class="stat-value">87.4%</span>
                 <div class="coverage-bar">
-                    <div class="coverage-fill" style="width: 84.76727785613541%"></div>
+                    <div class="coverage-fill" style="width: 87.44710860366713%"></div>
                 </div>
             </div>
             <div class="stat">
@@ -187,11 +187,11 @@
             </div>
             <div class="stat">
                 <span class="stat-label">Covered</span>
-                <span class="stat-value" style="color: #4caf50">601</span>
+                <span class="stat-value" style="color: #4caf50">620</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Missing</span>
-                <span class="stat-value" style="color: #f44336">108</span>
+                <span class="stat-value" style="color: #f44336">89</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Excluded</span>
@@ -408,9 +408,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not project_root.exists():</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">42</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            raise ValueError(f&quot;Project root not found: {project_root}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -513,9 +513,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        else:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">63</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            c_files = self._find_c_files(project_root, recursive_search)</div>
             </div>
             <div class="code-line ">
@@ -1518,9 +1518,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                if not enum_name:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">264</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    enum_name = &quot;__anonymous_enum__&quot;</div>
             </div>
             <div class="code-line ">
@@ -3208,9 +3208,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">            i += 1</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">602</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return &quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -3848,9 +3848,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">            else:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">730</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                self.logger.debug(&quot;Excluded file after filtering: %s&quot;, relative_path)</div>
             </div>
             <div class="code-line ">
@@ -4613,9 +4613,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if filtered_pos &gt;= len(filtered_tokens):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">883</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return None</div>
             </div>
             <div class="code-line ">
@@ -4993,19 +4993,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">            ):</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">959</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                typedef_name = all_tokens[i - 1].value</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">960</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                original_type = &quot; &quot;.join(t.value for t in all_tokens)</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">961</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                return (typedef_name, original_type)</div>
             </div>
             <div class="code-line ">
@@ -5043,19 +5043,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">            ):</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">969</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                typedef_name = all_tokens[i + 1].value</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">970</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                original_type = &quot; &quot;.join(t.value for t in all_tokens)</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">971</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                return (typedef_name, original_type)</div>
             </div>
             <div class="code-line ">
@@ -5303,9 +5303,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1021</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return None</div>
             </div>
             <div class="code-line ">
@@ -5693,9 +5693,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1099</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return i</div>
             </div>
             <div class="code-line ">
@@ -6148,9 +6148,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1190</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return None</div>
             </div>
             <div class="code-line ">
@@ -6773,9 +6773,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">                # This is just a type without a name</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1315</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return Field(name=&quot;unnamed&quot;, type=param_type + &quot; &quot; + param_name)</div>
             </div>
             <div class="code-line ">
@@ -6813,9 +6813,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                return Field(name=&quot;unnamed&quot;, type=&quot;unknown&quot;)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1323</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif len(param_tokens) == 1:</div>
             </div>
             <div class="code-line ">
@@ -6823,14 +6823,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Single token - might be just type (like &quot;void&quot;) or name</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1325</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            token_value = param_tokens[0].value</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1326</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if token_value in [</div>
             </div>
             <div class="code-line covered">
@@ -6883,9 +6883,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">            ]:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1337</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return Field(name=&quot;unnamed&quot;, type=token_value)</div>
             </div>
             <div class="code-line covered">
@@ -7153,14 +7153,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Single source folder - backward compatibility</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1391</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            source_folders = [project_root]</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1392</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.logger.info(&quot;Step 1: Parsing C/C++ project: %s&quot;, project_root)</div>
             </div>
             <div class="code-line covered">
@@ -7183,9 +7183,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">            if not source_folders:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1397</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                raise ValueError(&quot;At least one source folder must be provided&quot;)</div>
             </div>
             <div class="code-line covered">
@@ -7343,14 +7343,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">                    # Multiple source folders - use source folder name as prefix to avoid conflicts</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1429</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    source_folder_prefix = f&quot;{Path(source_folder).name}_&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1430</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    for relative_path, file_model in model.files.items():</div>
             </div>
             <div class="code-line ">
@@ -7358,14 +7358,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">                        # Create a unique key for each file across all source folders</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1432</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        unique_key = f&quot;{source_folder_prefix}{relative_path}&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1433</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        all_files[unique_key] = file_model</div>
             </div>
             <div class="code-line ">
@@ -7418,14 +7418,14 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1444</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            except Exception as e:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1445</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                self.logger.error(</div>
             </div>
             <div class="code-line covered">
@@ -7438,9 +7438,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                )</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1448</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                raise</div>
             </div>
             <div class="code-line ">
@@ -7598,9 +7598,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        else:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">1480</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.logger.info(&quot;Model verification passed - all values look sane&quot;)</div>
             </div>
             <div class="code-line ">
