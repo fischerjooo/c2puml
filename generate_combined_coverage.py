@@ -1134,6 +1134,8 @@ def main():
         print_error(
             "No coverage data available. Run with --run-tests flag or ensure tests have been run with coverage."
         )
+        # Still try to generate test summary
+        generate_test_summary_html(test_results, output_dir)
         return 1
 
     # Generate standard coverage reports
