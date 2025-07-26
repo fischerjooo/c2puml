@@ -387,10 +387,13 @@ def generate_html_file_report(
             stripped_line = line.rstrip('\n').rstrip()
             is_empty = not stripped_line
             
+            # Check if line is a comment (starts with # or contains only whitespace + #)
+            is_comment = stripped_line.lstrip().startswith('#')
+            
             if i in missing_lines:
                 line_class = "missing"
                 status_symbol = "&#10008;"
-            elif not is_empty:
+            elif not is_empty and not is_comment:
                 line_class = "covered"
                 status_symbol = "&#10004;"
             else:
