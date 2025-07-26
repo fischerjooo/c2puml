@@ -9,6 +9,7 @@ import sys
 import subprocess
 import json
 import html
+import re
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 import argparse
@@ -50,19 +51,19 @@ def run_coverage_analysis() -> bool:
     
     # Ensure coverage is installed
     try:
-        subprocess.run(["coverage", "--version"], check=True, capture_output=True)
+        subprocess.run(["python3", "-m", "coverage", "--version"], check=True, capture_output=True)
     except (subprocess.CalledProcessError, FileNotFoundError):
         print_error("Coverage not installed. Install with: pip install coverage")
         return False
     
     # Clean previous coverage data
     print_info("Cleaning previous coverage data...")
-    subprocess.run(["coverage", "erase"], check=True)
+    subprocess.run(["python3", "-m", "coverage", "erase"], check=True)
     
     # Run tests with coverage
     print_info("Running tests with coverage...")
     result = subprocess.run(
-        ["coverage", "run", "-m", "pytest", "-v"],
+        ["python3", "-m", "coverage", "run", "-m", "pytest", "-v"],
         capture_output=True,
         text=True
     )
@@ -79,7 +80,7 @@ def get_coverage_data() -> Optional[Dict]:
     print_info("Generating coverage JSON data...")
     
     result = subprocess.run(
-        ["coverage", "json", "-o", "-"],
+        ["python3", "-m", "coverage", "json", "-o", "-"],
         capture_output=True,
         text=True
     )
@@ -395,37 +396,8 @@ def generate_html_file_report(
                 line_class = ""
                 status_symbol = ""
             
-            # Basic syntax highlighting for Python
+            # Simple HTML escaping without syntax highlighting to avoid issues
             highlighted_line = html.escape(line.rstrip('\n'))
-            
-            # Highlight Python keywords
-            python_keywords = ['def', 'class', 'import', 'from', 'if', 'else', 'elif', 
-                             'for', 'while', 'try', 'except', 'finally', 'with', 
-                             'return', 'yield', 'pass', 'break', 'continue', 'raise',
-                             'True', 'False', 'None', 'and', 'or', 'not', 'in', 'is']
-            
-            for keyword in python_keywords:
-                highlighted_line = highlighted_line.replace(
-                    f' {keyword} ', f' <span class="keyword">{keyword}</span> '
-                ).replace(
-                    f'{keyword} ', f'<span class="keyword">{keyword}</span> '
-                ).replace(
-                    f' {keyword}:', f' <span class="keyword">{keyword}</span>:'
-                )
-            
-            # Highlight strings
-            import re
-            highlighted_line = re.sub(
-                r'(["\'])([^"\']*)\1',
-                r'<span class="string">\1\2\1</span>',
-                highlighted_line
-            )
-            
-            # Highlight comments
-            if '#' in highlighted_line:
-                parts = highlighted_line.split('#', 1)
-                if len(parts) == 2:
-                    highlighted_line = parts[0] + '<span class="comment">#' + parts[1] + '</span>'
             
             f.write(f"""            <div class="code-line {line_class}">
                 <div class="line-number">{i}</div>
@@ -769,16 +741,16 @@ def main():
     print_subheader("Generating Standard Coverage Reports")
     
     # Terminal report
-    subprocess.run(["coverage", "report", "-m"], check=False)
+    subprocess.run(["python3", "-m", "coverage", "report", "-m"], check=False)
     
     # XML report
-    subprocess.run(["coverage", "xml", "-o", str(output_dir / "coverage.xml")], check=False)
+    subprocess.run(["python3", "-m", "coverage", "xml", "-o", str(output_dir / "coverage.xml")], check=False)
     
     # JSON report (for reference)
-    subprocess.run(["coverage", "json", "-o", str(output_dir / "coverage.json")], check=False)
+    subprocess.run(["python3", "-m", "coverage", "json", "-o", str(output_dir / "coverage.json")], check=False)
     
     # HTML coverage report
-    subprocess.run(["coverage", "html", "-d", str(output_dir / "htmlcov")], check=False)
+    subprocess.run(["python3", "-m", "coverage", "html", "-d", str(output_dir / "htmlcov")], check=False)
     
     # Generate coverage summary
     generate_coverage_summary(coverage_data, output_dir)

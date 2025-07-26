@@ -171,7 +171,7 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/models.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 16:01:44</div>
+        <div class="timestamp">Generated: 2025-07-26 16:09:34</div>
         
         <div class="stats">
             <div class="stat">
@@ -206,7 +206,7 @@
             <div class="code-line ">
                 <div class="line-number">1</div>
                 <div class="line-status"></div>
-                <div class="line-content"><span class="comment">#!/usr/bin/env python3</span></div>
+                <div class="line-content">#!/usr/bin/env python3</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">2</div>
@@ -216,7 +216,7 @@
             <div class="code-line ">
                 <div class="line-number">3</div>
                 <div class="line-status"></div>
-                <div class="line-content">Data models <span class=<span class="string">"keyword"</span>>for</span> C to PlantUML converter</div>
+                <div class="line-content">Data models for C to PlantUML converter</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">4</div>
@@ -231,17 +231,17 @@
             <div class="code-line covered">
                 <div class="line-number">6</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>import</span> json</div>
+                <div class="line-content">import json</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">7</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> dataclasses <span class=<span class="string">"keyword"</span>>import</span> asdict, dataclass, field</div>
+                <div class="line-content">from dataclasses import asdict, dataclass, field</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">8</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> typing <span class=<span class="string">"keyword"</span>>import</span> Dict, List, Optional, Set</div>
+                <div class="line-content">from typing import Dict, List, Optional, Set</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">9</div>
@@ -261,12 +261,12 @@
             <div class="code-line covered">
                 <div class="line-number">12</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>class</span> Field:</div>
+                <div class="line-content">class Field:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">13</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    &quot;&quot;&quot;Represents a field <span class=<span class="string">"keyword"</span>>in</span> a struct <span class=<span class="string">"keyword"</span>>or</span> global variable&quot;&quot;&quot;</div>
+                <div class="line-content">    &quot;&quot;&quot;Represents a field in a struct or global variable&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">14</div>
@@ -296,22 +296,22 @@
             <div class="code-line covered">
                 <div class="line-number">19</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> __repr__(self):</div>
+                <div class="line-content">    def __repr__(self):</div>
             </div>
             <div class="code-line excluded">
                 <div class="line-number">20</div>
                 <div class="line-status">—</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> self.value <span class=<span class="string">"keyword"</span>>is</span> <span class=<span class="string">"keyword"</span>>not</span> <span class=<span class="string">"keyword"</span>>None</span>:</div>
+                <div class="line-content">        if self.value is not None:</div>
             </div>
             <div class="code-line excluded">
                 <div class="line-number">21</div>
                 <div class="line-status">—</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> f&quot;Field(name={self.name}, type={self.type}, value={self.value})&quot;</div>
+                <div class="line-content">            return f&quot;Field(name={self.name}, type={self.type}, value={self.value})&quot;</div>
             </div>
             <div class="code-line excluded">
                 <div class="line-number">22</div>
                 <div class="line-status">—</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> f&quot;Field(name={self.name}, type={self.type})&quot;</div>
+                <div class="line-content">        return f&quot;Field(name={self.name}, type={self.type})&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">23</div>
@@ -321,7 +321,7 @@
             <div class="code-line covered">
                 <div class="line-number">24</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> __post_init__(self):</div>
+                <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">25</div>
@@ -331,12 +331,12 @@
             <div class="code-line covered">
                 <div class="line-number">26</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.name, str):</div>
+                <div class="line-content">        if not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">27</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(</div>
+                <div class="line-content">            raise ValueError(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">28</div>
@@ -351,12 +351,12 @@
             <div class="code-line covered">
                 <div class="line-number">30</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.type <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.type, str):</div>
+                <div class="line-content">        if not self.type or not isinstance(self.type, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">31</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(</div>
+                <div class="line-content">            raise ValueError(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">32</div>
@@ -376,22 +376,22 @@
             <div class="code-line ">
                 <div class="line-number">35</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Additional validation: ensure name <span class=<span class="string">"keyword"</span>>and</span> type are <span class=<span class="string">"keyword"</span>>not</span> just whitespace</span></div>
+                <div class="line-content">        # Additional validation: ensure name and type are not just whitespace</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">36</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.name.strip():</div>
+                <div class="line-content">        if not self.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">37</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(</div>
+                <div class="line-content">            raise ValueError(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">38</div>
                 <div class="line-status"></div>
-                <div class="line-content">                f&quot;Field name can<span class=<span class="string">"keyword"</span>>not</span> be empty <span class=<span class="string">"keyword"</span>>or</span> whitespace, got: {repr(self.name)}&quot;</div>
+                <div class="line-content">                f&quot;Field name cannot be empty or whitespace, got: {repr(self.name)}&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">39</div>
@@ -401,17 +401,17 @@
             <div class="code-line covered">
                 <div class="line-number">40</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.type.strip():</div>
+                <div class="line-content">        if not self.type.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">41</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(</div>
+                <div class="line-content">            raise ValueError(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">42</div>
                 <div class="line-status"></div>
-                <div class="line-content">                f&quot;Field type can<span class=<span class="string">"keyword"</span>>not</span> be empty <span class=<span class="string">"keyword"</span>>or</span> whitespace, got: {repr(self.type)}&quot;</div>
+                <div class="line-content">                f&quot;Field type cannot be empty or whitespace, got: {repr(self.type)}&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">43</div>
@@ -431,7 +431,7 @@
             <div class="code-line ">
                 <div class="line-number">46</div>
                 <div class="line-status"></div>
-                <div class="line-content"><span class="comment"># TypedefRelation <span class=<span class="string">"keyword"</span>>class</span> removed - tag names moved to struct/enum/union</span></div>
+                <div class="line-content"># TypedefRelation class removed - tag names moved to struct/enum/union</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">47</div>
@@ -451,7 +451,7 @@
             <div class="code-line covered">
                 <div class="line-number">50</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>class</span> IncludeRelation:</div>
+                <div class="line-content">class IncludeRelation:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">51</div>
@@ -486,7 +486,7 @@
             <div class="code-line covered">
                 <div class="line-number">57</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> __post_init__(self):</div>
+                <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">58</div>
@@ -496,32 +496,32 @@
             <div class="code-line covered">
                 <div class="line-number">59</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.source_file <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.source_file, str):</div>
+                <div class="line-content">        if not self.source_file or not isinstance(self.source_file, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">60</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Source file must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Source file must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">61</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.included_file <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.included_file, str):</div>
+                <div class="line-content">        if not self.included_file or not isinstance(self.included_file, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">62</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Included file must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Included file must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">63</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.depth, int) <span class=<span class="string">"keyword"</span>>or</span> self.depth &lt; 0:</div>
+                <div class="line-content">        if not isinstance(self.depth, int) or self.depth &lt; 0:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">64</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Depth must be a non-negative integer&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Depth must be a non-negative integer&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">65</div>
@@ -541,7 +541,7 @@
             <div class="code-line covered">
                 <div class="line-number">68</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>class</span> Function:</div>
+                <div class="line-content">class Function:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">69</div>
@@ -586,7 +586,7 @@
             <div class="code-line covered">
                 <div class="line-number">77</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> __post_init__(self):</div>
+                <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">78</div>
@@ -596,22 +596,22 @@
             <div class="code-line covered">
                 <div class="line-number">79</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.name, str):</div>
+                <div class="line-content">        if not self.name or not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">80</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Function name must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Function name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">81</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.return_type <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.return_type, str):</div>
+                <div class="line-content">        if not self.return_type or not isinstance(self.return_type, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">82</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Function <span class=<span class="string">"keyword"</span>>return</span> type must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Function return type must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">83</div>
@@ -621,12 +621,12 @@
             <div class="code-line ">
                 <div class="line-number">84</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert parameters to Field objects <span class=<span class="string">"keyword"</span>>if</span> they&#x27;re dictionaries</span></div>
+                <div class="line-content">        # Convert parameters to Field objects if they&#x27;re dictionaries</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">85</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> self.parameters:</div>
+                <div class="line-content">        if self.parameters:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">86</div>
@@ -636,12 +636,12 @@
             <div class="code-line covered">
                 <div class="line-number">87</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>for</span> param <span class=<span class="string">"keyword"</span>>in</span> self.parameters:</div>
+                <div class="line-content">            for param in self.parameters:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">88</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> isinstance(param, dict):</div>
+                <div class="line-content">                if isinstance(param, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">89</div>
@@ -651,7 +651,7 @@
             <div class="code-line ">
                 <div class="line-number">90</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>else</span>:</div>
+                <div class="line-content">                else:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">91</div>
@@ -681,7 +681,7 @@
             <div class="code-line covered">
                 <div class="line-number">96</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>class</span> Struct:</div>
+                <div class="line-content">class Struct:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">97</div>
@@ -711,7 +711,7 @@
             <div class="code-line covered">
                 <div class="line-number">102</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    tag_name: str = &quot;&quot;  <span class="comment"># Tag name <span class=<span class="string">"keyword"</span>>for</span> type<span class=<span class="string">"keyword"</span>>def</span> structs</span></div>
+                <div class="line-content">    tag_name: str = &quot;&quot;  # Tag name for typedef structs</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">103</div>
@@ -726,7 +726,7 @@
             <div class="code-line ">
                 <div class="line-number">105</div>
                 <div class="line-status"></div>
-                <div class="line-content">    )  <span class="comment"># Non-primitive types used by th<span class=<span class="string">"keyword"</span>>is</span> struct</span></div>
+                <div class="line-content">    )  # Non-primitive types used by this struct</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">106</div>
@@ -736,7 +736,7 @@
             <div class="code-line covered">
                 <div class="line-number">107</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> __post_init__(self):</div>
+                <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">108</div>
@@ -746,12 +746,12 @@
             <div class="code-line covered">
                 <div class="line-number">109</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.name, str):</div>
+                <div class="line-content">        if not self.name or not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">110</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Struct name must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Struct name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">111</div>
@@ -771,7 +771,7 @@
             <div class="code-line covered">
                 <div class="line-number">114</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>class</span> EnumValue:</div>
+                <div class="line-content">class EnumValue:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">115</div>
@@ -791,17 +791,17 @@
             <div class="code-line covered">
                 <div class="line-number">118</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> __post_init__(self):</div>
+                <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">119</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.name, str):</div>
+                <div class="line-content">        if not self.name or not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">120</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Enum value name must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Enum value name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">121</div>
@@ -821,7 +821,7 @@
             <div class="code-line covered">
                 <div class="line-number">124</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>class</span> Enum:</div>
+                <div class="line-content">class Enum:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">125</div>
@@ -846,7 +846,7 @@
             <div class="code-line covered">
                 <div class="line-number">129</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    tag_name: str = &quot;&quot;  <span class="comment"># Tag name <span class=<span class="string">"keyword"</span>>for</span> type<span class=<span class="string">"keyword"</span>>def</span> enums</span></div>
+                <div class="line-content">    tag_name: str = &quot;&quot;  # Tag name for typedef enums</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">130</div>
@@ -856,22 +856,22 @@
             <div class="code-line covered">
                 <div class="line-number">131</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> __post_init__(self):</div>
+                <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">132</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.name, str):</div>
+                <div class="line-content">        if not self.name or not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">133</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Enum name must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Enum name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">134</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert any string values to EnumValue</span></div>
+                <div class="line-content">        # Convert any string values to EnumValue</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">135</div>
@@ -881,7 +881,7 @@
             <div class="code-line ">
                 <div class="line-number">136</div>
                 <div class="line-status"></div>
-                <div class="line-content">            v <span class=<span class="string">"keyword"</span>>if</span> isinstance(v, EnumValue) <span class=<span class="string">"keyword"</span>>else</span> EnumValue(v) <span class=<span class="string">"keyword"</span>>for</span> v <span class=<span class="string">"keyword"</span>>in</span> self.values</div>
+                <div class="line-content">            v if isinstance(v, EnumValue) else EnumValue(v) for v in self.values</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">137</div>
@@ -906,7 +906,7 @@
             <div class="code-line covered">
                 <div class="line-number">141</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>class</span> Union:</div>
+                <div class="line-content">class Union:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">142</div>
@@ -931,7 +931,7 @@
             <div class="code-line covered">
                 <div class="line-number">146</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    tag_name: str = &quot;&quot;  <span class="comment"># Tag name <span class=<span class="string">"keyword"</span>>for</span> type<span class=<span class="string">"keyword"</span>>def</span> unions</span></div>
+                <div class="line-content">    tag_name: str = &quot;&quot;  # Tag name for typedef unions</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">147</div>
@@ -946,7 +946,7 @@
             <div class="code-line ">
                 <div class="line-number">149</div>
                 <div class="line-status"></div>
-                <div class="line-content">    )  <span class="comment"># Non-primitive types used by th<span class=<span class="string">"keyword"</span>>is</span> union</span></div>
+                <div class="line-content">    )  # Non-primitive types used by this union</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">150</div>
@@ -956,7 +956,7 @@
             <div class="code-line covered">
                 <div class="line-number">151</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> __post_init__(self):</div>
+                <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">152</div>
@@ -966,12 +966,12 @@
             <div class="code-line covered">
                 <div class="line-number">153</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.name, str):</div>
+                <div class="line-content">        if not self.name or not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">154</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Union name must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Union name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">155</div>
@@ -991,7 +991,7 @@
             <div class="code-line covered">
                 <div class="line-number">158</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>class</span> Alias:</div>
+                <div class="line-content">class Alias:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">159</div>
@@ -1026,7 +1026,7 @@
             <div class="code-line ">
                 <div class="line-number">165</div>
                 <div class="line-status"></div>
-                <div class="line-content">    )  <span class="comment"># Non-primitive types used by th<span class=<span class="string">"keyword"</span>>is</span> alias</span></div>
+                <div class="line-content">    )  # Non-primitive types used by this alias</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">166</div>
@@ -1036,7 +1036,7 @@
             <div class="code-line covered">
                 <div class="line-number">167</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> __post_init__(self):</div>
+                <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">168</div>
@@ -1046,22 +1046,22 @@
             <div class="code-line covered">
                 <div class="line-number">169</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.name, str):</div>
+                <div class="line-content">        if not self.name or not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">170</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Alias name must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Alias name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">171</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.original_type <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.original_type, str):</div>
+                <div class="line-content">        if not self.original_type or not isinstance(self.original_type, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">172</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Original type must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Original type must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">173</div>
@@ -1081,7 +1081,7 @@
             <div class="code-line covered">
                 <div class="line-number">176</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>class</span> FileModel:</div>
+                <div class="line-content">class FileModel:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">177</div>
@@ -1166,7 +1166,7 @@
             <div class="code-line covered">
                 <div class="line-number">193</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> __post_init__(self):</div>
+                <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">194</div>
@@ -1176,42 +1176,42 @@
             <div class="code-line covered">
                 <div class="line-number">195</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.file_path <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.file_path, str):</div>
+                <div class="line-content">        if not self.file_path or not isinstance(self.file_path, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">196</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;File path must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;File path must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">197</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.relative_path <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.relative_path, str):</div>
+                <div class="line-content">        if not self.relative_path or not isinstance(self.relative_path, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">198</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Relative path must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Relative path must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">199</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.project_root <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.project_root, str):</div>
+                <div class="line-content">        if not self.project_root or not isinstance(self.project_root, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">200</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Project root must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Project root must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">201</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.encoding_used <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.encoding_used, str):</div>
+                <div class="line-content">        if not self.encoding_used or not isinstance(self.encoding_used, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">202</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Encoding must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Encoding must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">203</div>
@@ -1221,12 +1221,12 @@
             <div class="code-line covered">
                 <div class="line-number">204</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> to_dict(self) -&gt; dict:</div>
+                <div class="line-content">    def to_dict(self) -&gt; dict:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">205</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Convert to dictionary <span class=<span class="string">"keyword"</span>>for</span> JSON serialization&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Convert to dictionary for JSON serialization&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">206</div>
@@ -1236,7 +1236,7 @@
             <div class="code-line ">
                 <div class="line-number">207</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert set to list <span class=<span class="string">"keyword"</span>>for</span> JSON serialization <span class=<span class="string">"keyword"</span>>and</span> sort <span class=<span class="string">"keyword"</span>>for</span> consistency</span></div>
+                <div class="line-content">        # Convert set to list for JSON serialization and sort for consistency</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">208</div>
@@ -1246,7 +1246,7 @@
             <div class="code-line ">
                 <div class="line-number">209</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert include_relations to list of dicts <span class=<span class="string">"keyword"</span>>and</span> sort <span class=<span class="string">"keyword"</span>>for</span> consistency</span></div>
+                <div class="line-content">        # Convert include_relations to list of dicts and sort for consistency</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">210</div>
@@ -1256,7 +1256,7 @@
             <div class="code-line ">
                 <div class="line-number">211</div>
                 <div class="line-status"></div>
-                <div class="line-content">            [asdict(rel) <span class=<span class="string">"keyword"</span>>for</span> rel <span class=<span class="string">"keyword"</span>>in</span> self.include_relations],</div>
+                <div class="line-content">            [asdict(rel) for rel in self.include_relations],</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">212</div>
@@ -1271,7 +1271,7 @@
             <div class="code-line ">
                 <div class="line-number">214</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Sort all dictionary fields <span class=<span class="string">"keyword"</span>>for</span> consistent ordering</span></div>
+                <div class="line-content">        # Sort all dictionary fields for consistent ordering</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">215</div>
@@ -1301,7 +1301,7 @@
             <div class="code-line ">
                 <div class="line-number">220</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Sort functions <span class=<span class="string">"keyword"</span>>and</span> globals by name (they are already objects, <span class=<span class="string">"keyword"</span>>not</span> dicts)</span></div>
+                <div class="line-content">        # Sort functions and globals by name (they are already objects, not dicts)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">221</div>
@@ -1316,17 +1316,17 @@
             <div class="code-line ">
                 <div class="line-number">223</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert functions <span class=<span class="string">"keyword"</span>>and</span> globals to dicts after sorting</span></div>
+                <div class="line-content">        # Convert functions and globals to dicts after sorting</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">224</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        data[&quot;functions&quot;] = [asdict(f) <span class=<span class="string">"keyword"</span>>for</span> f <span class=<span class="string">"keyword"</span>>in</span> data[&quot;functions&quot;]]</div>
+                <div class="line-content">        data[&quot;functions&quot;] = [asdict(f) for f in data[&quot;functions&quot;]]</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">225</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        data[&quot;globals&quot;] = [asdict(g) <span class=<span class="string">"keyword"</span>>for</span> g <span class=<span class="string">"keyword"</span>>in</span> data[&quot;globals&quot;]]</div>
+                <div class="line-content">        data[&quot;globals&quot;] = [asdict(g) for g in data[&quot;globals&quot;]]</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">226</div>
@@ -1336,17 +1336,17 @@
             <div class="code-line ">
                 <div class="line-number">227</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Sort &quot;uses&quot; arrays <span class=<span class="string">"keyword"</span>>in</span> structs, unions, <span class=<span class="string">"keyword"</span>>and</span> aliases <span class=<span class="string">"keyword"</span>>for</span> consistent ordering</span></div>
+                <div class="line-content">        # Sort &quot;uses&quot; arrays in structs, unions, and aliases for consistent ordering</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">228</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> struct_data <span class=<span class="string">"keyword"</span>>in</span> data[&quot;structs&quot;].values():</div>
+                <div class="line-content">        for struct_data in data[&quot;structs&quot;].values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">229</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> &quot;uses&quot; <span class=<span class="string">"keyword"</span>>in</span> struct_data:</div>
+                <div class="line-content">            if &quot;uses&quot; in struct_data:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">230</div>
@@ -1356,12 +1356,12 @@
             <div class="code-line covered">
                 <div class="line-number">231</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> union_data <span class=<span class="string">"keyword"</span>>in</span> data[&quot;unions&quot;].values():</div>
+                <div class="line-content">        for union_data in data[&quot;unions&quot;].values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">232</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> &quot;uses&quot; <span class=<span class="string">"keyword"</span>>in</span> union_data:</div>
+                <div class="line-content">            if &quot;uses&quot; in union_data:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">233</div>
@@ -1371,12 +1371,12 @@
             <div class="code-line covered">
                 <div class="line-number">234</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> alias_data <span class=<span class="string">"keyword"</span>>in</span> data[&quot;aliases&quot;].values():</div>
+                <div class="line-content">        for alias_data in data[&quot;aliases&quot;].values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">235</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> &quot;uses&quot; <span class=<span class="string">"keyword"</span>>in</span> alias_data:</div>
+                <div class="line-content">            if &quot;uses&quot; in alias_data:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">236</div>
@@ -1391,12 +1391,12 @@
             <div class="code-line ">
                 <div class="line-number">238</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># typedef_relations removed - tag names are now <span class=<span class="string">"keyword"</span>>in</span> struct/enum/union</span></div>
+                <div class="line-content">        # typedef_relations removed - tag names are now in struct/enum/union</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">239</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> data</div>
+                <div class="line-content">        return data</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">240</div>
@@ -1411,17 +1411,17 @@
             <div class="code-line covered">
                 <div class="line-number">242</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> from_dict(cls, data: dict) -&gt; &quot;FileModel&quot;:</div>
+                <div class="line-content">    def from_dict(cls, data: dict) -&gt; &quot;FileModel&quot;:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">243</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Create <span class=<span class="string">"keyword"</span>>from</span> dictionary&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Create from dictionary&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">244</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert list back to set</span></div>
+                <div class="line-content">        # Convert list back to set</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">245</div>
@@ -1436,7 +1436,7 @@
             <div class="code-line ">
                 <div class="line-number">247</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert globals back to Field objects</span></div>
+                <div class="line-content">        # Convert globals back to Field objects</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">248</div>
@@ -1446,7 +1446,7 @@
             <div class="code-line covered">
                 <div class="line-number">249</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        globals = [Field(**g) <span class=<span class="string">"keyword"</span>>if</span> isinstance(g, dict) <span class=<span class="string">"keyword"</span>>else</span> g <span class=<span class="string">"keyword"</span>>for</span> g <span class=<span class="string">"keyword"</span>>in</span> globals_data]</div>
+                <div class="line-content">        globals = [Field(**g) if isinstance(g, dict) else g for g in globals_data]</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">250</div>
@@ -1456,7 +1456,7 @@
             <div class="code-line ">
                 <div class="line-number">251</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert functions back to Function objects</span></div>
+                <div class="line-content">        # Convert functions back to Function objects</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">252</div>
@@ -1471,7 +1471,7 @@
             <div class="code-line ">
                 <div class="line-number">254</div>
                 <div class="line-status"></div>
-                <div class="line-content">            Function(**f) <span class=<span class="string">"keyword"</span>>if</span> isinstance(f, dict) <span class=<span class="string">"keyword"</span>>else</span> f <span class=<span class="string">"keyword"</span>>for</span> f <span class=<span class="string">"keyword"</span>>in</span> functions_data</div>
+                <div class="line-content">            Function(**f) if isinstance(f, dict) else f for f in functions_data</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">255</div>
@@ -1486,7 +1486,7 @@
             <div class="code-line ">
                 <div class="line-number">257</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert structs back to Struct objects</span></div>
+                <div class="line-content">        # Convert structs back to Struct objects</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">258</div>
@@ -1501,12 +1501,12 @@
             <div class="code-line covered">
                 <div class="line-number">260</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> name, struct_data <span class=<span class="string">"keyword"</span>>in</span> structs_data.items():</div>
+                <div class="line-content">        for name, struct_data in structs_data.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">261</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> isinstance(struct_data, dict):</div>
+                <div class="line-content">            if isinstance(struct_data, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">262</div>
@@ -1516,12 +1516,12 @@
             <div class="code-line ">
                 <div class="line-number">263</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    Field(**field) <span class=<span class="string">"keyword"</span>>if</span> isinstance(field, dict) <span class=<span class="string">"keyword"</span>>else</span> field</div>
+                <div class="line-content">                    Field(**field) if isinstance(field, dict) else field</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">264</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    <span class=<span class="string">"keyword"</span>>for</span> field <span class=<span class="string">"keyword"</span>>in</span> struct_data.get(&quot;fields&quot;, [])</div>
+                <div class="line-content">                    for field in struct_data.get(&quot;fields&quot;, [])</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">265</div>
@@ -1536,12 +1536,12 @@
             <div class="code-line ">
                 <div class="line-number">267</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    Function(**method) <span class=<span class="string">"keyword"</span>>if</span> isinstance(method, dict) <span class=<span class="string">"keyword"</span>>else</span> method</div>
+                <div class="line-content">                    Function(**method) if isinstance(method, dict) else method</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">268</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    <span class=<span class="string">"keyword"</span>>for</span> method <span class=<span class="string">"keyword"</span>>in</span> struct_data.get(&quot;methods&quot;, [])</div>
+                <div class="line-content">                    for method in struct_data.get(&quot;methods&quot;, [])</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">269</div>
@@ -1586,7 +1586,7 @@
             <div class="code-line ">
                 <div class="line-number">277</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>else</span>:</div>
+                <div class="line-content">            else:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">278</div>
@@ -1601,7 +1601,7 @@
             <div class="code-line ">
                 <div class="line-number">280</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert enums back to Enum objects</span></div>
+                <div class="line-content">        # Convert enums back to Enum objects</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">281</div>
@@ -1616,12 +1616,12 @@
             <div class="code-line covered">
                 <div class="line-number">283</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> name, enum_data <span class=<span class="string">"keyword"</span>>in</span> enums_data.items():</div>
+                <div class="line-content">        for name, enum_data in enums_data.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">284</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> isinstance(enum_data, dict):</div>
+                <div class="line-content">            if isinstance(enum_data, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">285</div>
@@ -1631,12 +1631,12 @@
             <div class="code-line ">
                 <div class="line-number">286</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    EnumValue(**val) <span class=<span class="string">"keyword"</span>>if</span> isinstance(val, dict) <span class=<span class="string">"keyword"</span>>else</span> EnumValue(val)</div>
+                <div class="line-content">                    EnumValue(**val) if isinstance(val, dict) else EnumValue(val)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">287</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    <span class=<span class="string">"keyword"</span>>for</span> val <span class=<span class="string">"keyword"</span>>in</span> enum_data.get(&quot;values&quot;, [])</div>
+                <div class="line-content">                    for val in enum_data.get(&quot;values&quot;, [])</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">288</div>
@@ -1651,7 +1651,7 @@
             <div class="code-line ">
                 <div class="line-number">290</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>else</span>:</div>
+                <div class="line-content">            else:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">291</div>
@@ -1666,7 +1666,7 @@
             <div class="code-line ">
                 <div class="line-number">293</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># typedef_relations removed - tag names are now <span class=<span class="string">"keyword"</span>>in</span> struct/enum/union</span></div>
+                <div class="line-content">        # typedef_relations removed - tag names are now in struct/enum/union</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">294</div>
@@ -1676,7 +1676,7 @@
             <div class="code-line ">
                 <div class="line-number">295</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert include_relations back to IncludeRelation objects</span></div>
+                <div class="line-content">        # Convert include_relations back to IncludeRelation objects</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">296</div>
@@ -1691,12 +1691,12 @@
             <div class="code-line ">
                 <div class="line-number">298</div>
                 <div class="line-status"></div>
-                <div class="line-content">            IncludeRelation(**rel) <span class=<span class="string">"keyword"</span>>if</span> isinstance(rel, dict) <span class=<span class="string">"keyword"</span>>else</span> rel</div>
+                <div class="line-content">            IncludeRelation(**rel) if isinstance(rel, dict) else rel</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">299</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>for</span> rel <span class=<span class="string">"keyword"</span>>in</span> include_relations_data</div>
+                <div class="line-content">            for rel in include_relations_data</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">300</div>
@@ -1711,7 +1711,7 @@
             <div class="code-line ">
                 <div class="line-number">302</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert unions back to Union objects</span></div>
+                <div class="line-content">        # Convert unions back to Union objects</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">303</div>
@@ -1726,12 +1726,12 @@
             <div class="code-line covered">
                 <div class="line-number">305</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> name, union_data <span class=<span class="string">"keyword"</span>>in</span> unions_data.items():</div>
+                <div class="line-content">        for name, union_data in unions_data.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">306</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> isinstance(union_data, dict):</div>
+                <div class="line-content">            if isinstance(union_data, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">307</div>
@@ -1741,12 +1741,12 @@
             <div class="code-line ">
                 <div class="line-number">308</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    Field(**field) <span class=<span class="string">"keyword"</span>>if</span> isinstance(field, dict) <span class=<span class="string">"keyword"</span>>else</span> field</div>
+                <div class="line-content">                    Field(**field) if isinstance(field, dict) else field</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">309</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    <span class=<span class="string">"keyword"</span>>for</span> field <span class=<span class="string">"keyword"</span>>in</span> union_data.get(&quot;fields&quot;, [])</div>
+                <div class="line-content">                    for field in union_data.get(&quot;fields&quot;, [])</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">310</div>
@@ -1786,7 +1786,7 @@
             <div class="code-line ">
                 <div class="line-number">317</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>else</span>:</div>
+                <div class="line-content">            else:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">318</div>
@@ -1801,7 +1801,7 @@
             <div class="code-line ">
                 <div class="line-number">320</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert aliases back to Alias objects</span></div>
+                <div class="line-content">        # Convert aliases back to Alias objects</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">321</div>
@@ -1816,12 +1816,12 @@
             <div class="code-line covered">
                 <div class="line-number">323</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> name, alias_data <span class=<span class="string">"keyword"</span>>in</span> aliases_data.items():</div>
+                <div class="line-content">        for name, alias_data in aliases_data.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">324</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> isinstance(alias_data, dict):</div>
+                <div class="line-content">            if isinstance(alias_data, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">325</div>
@@ -1851,12 +1851,12 @@
             <div class="code-line ">
                 <div class="line-number">330</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>else</span>:</div>
+                <div class="line-content">            else:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">331</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Handle legacy format where aliases was Dict[str, str]</span></div>
+                <div class="line-content">                # Handle legacy format where aliases was Dict[str, str]</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">332</div>
@@ -1871,7 +1871,7 @@
             <div class="code-line ">
                 <div class="line-number">334</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Create new data dict <span class=<span class="string">"keyword"</span>>with</span> converted objects</span></div>
+                <div class="line-content">        # Create new data dict with converted objects</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">335</div>
@@ -1926,7 +1926,7 @@
             <div class="code-line covered">
                 <div class="line-number">345</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> cls(**new_data)</div>
+                <div class="line-content">        return cls(**new_data)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">346</div>
@@ -1936,7 +1936,7 @@
             <div class="code-line covered">
                 <div class="line-number">347</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> get_summary(self) -&gt; dict:</div>
+                <div class="line-content">    def get_summary(self) -&gt; dict:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">348</div>
@@ -1946,7 +1946,7 @@
             <div class="code-line missing">
                 <div class="line-number">349</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> {</div>
+                <div class="line-content">        return {</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">350</div>
@@ -2011,7 +2011,7 @@
             <div class="code-line covered">
                 <div class="line-number">362</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>class</span> ProjectModel:</div>
+                <div class="line-content">class ProjectModel:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">363</div>
@@ -2046,7 +2046,7 @@
             <div class="code-line covered">
                 <div class="line-number">369</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> __post_init__(self):</div>
+                <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">370</div>
@@ -2056,22 +2056,22 @@
             <div class="code-line covered">
                 <div class="line-number">371</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.project_name <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.project_name, str):</div>
+                <div class="line-content">        if not self.project_name or not isinstance(self.project_name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">372</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Project name must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Project name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">373</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> self.project_root <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> isinstance(self.project_root, str):</div>
+                <div class="line-content">        if not self.project_root or not isinstance(self.project_root, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">374</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(&quot;Project root must be a non-empty string&quot;)</div>
+                <div class="line-content">            raise ValueError(&quot;Project root must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">375</div>
@@ -2081,7 +2081,7 @@
             <div class="code-line covered">
                 <div class="line-number">376</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> save(self, file_path: str) -&gt; <span class=<span class="string">"keyword"</span>>None</span>:</div>
+                <div class="line-content">    def save(self, file_path: str) -&gt; None:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">377</div>
@@ -2116,7 +2116,7 @@
             <div class="code-line ">
                 <div class="line-number">383</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>for</span> path, file_model <span class=<span class="string">"keyword"</span>>in</span> sorted(self.files.items())</div>
+                <div class="line-content">                for path, file_model in sorted(self.files.items())</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">384</div>
@@ -2136,12 +2136,12 @@
             <div class="code-line covered">
                 <div class="line-number">387</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>try</span>:</div>
+                <div class="line-content">        try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">388</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>with</span> open(file_path, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:</div>
+                <div class="line-content">            with open(file_path, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">389</div>
@@ -2151,12 +2151,12 @@
             <div class="code-line missing">
                 <div class="line-number">390</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>except</span> Exception as e:</div>
+                <div class="line-content">        except Exception as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">391</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(f&quot;Failed to save model to {file_path}: {e}&quot;) <span class=<span class="string">"keyword"</span>>from</span> e</div>
+                <div class="line-content">            raise ValueError(f&quot;Failed to save model to {file_path}: {e}&quot;) from e</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">392</div>
@@ -2171,12 +2171,12 @@
             <div class="code-line covered">
                 <div class="line-number">394</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> from_dict(cls, data: dict) -&gt; &quot;ProjectModel&quot;:</div>
+                <div class="line-content">    def from_dict(cls, data: dict) -&gt; &quot;ProjectModel&quot;:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">395</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Create <span class=<span class="string">"keyword"</span>>from</span> dictionary&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Create from dictionary&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">396</div>
@@ -2191,7 +2191,7 @@
             <div class="code-line ">
                 <div class="line-number">398</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>for</span> path, file_data <span class=<span class="string">"keyword"</span>>in</span> data.get(&quot;files&quot;, {}).items()</div>
+                <div class="line-content">            for path, file_data in data.get(&quot;files&quot;, {}).items()</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">399</div>
@@ -2206,7 +2206,7 @@
             <div class="code-line covered">
                 <div class="line-number">401</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> cls(</div>
+                <div class="line-content">        return cls(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">402</div>
@@ -2241,22 +2241,22 @@
             <div class="code-line covered">
                 <div class="line-number">408</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> load(cls, file_path: str) -&gt; &quot;ProjectModel&quot;:</div>
+                <div class="line-content">    def load(cls, file_path: str) -&gt; &quot;ProjectModel&quot;:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">409</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Load model <span class=<span class="string">"keyword"</span>>from</span> JSON file&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Load model from JSON file&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">410</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>try</span>:</div>
+                <div class="line-content">        try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">411</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>with</span> open(file_path, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</div>
+                <div class="line-content">            with open(file_path, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">412</div>
@@ -2266,17 +2266,17 @@
             <div class="code-line covered">
                 <div class="line-number">413</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> cls.from_dict(data)</div>
+                <div class="line-content">            return cls.from_dict(data)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">414</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>except</span> Exception as e:</div>
+                <div class="line-content">        except Exception as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">415</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(f&quot;Failed to load model <span class=<span class="string">"keyword"</span>>from</span> {file_path}: {e}&quot;) <span class=<span class="string">"keyword"</span>>from</span> e</div>
+                <div class="line-content">            raise ValueError(f&quot;Failed to load model from {file_path}: {e}&quot;) from e</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">416</div>
@@ -2286,7 +2286,7 @@
             <div class="code-line covered">
                 <div class="line-number">417</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> get_summary(self) -&gt; dict:</div>
+                <div class="line-content">    def get_summary(self) -&gt; dict:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">418</div>
@@ -2296,22 +2296,22 @@
             <div class="code-line missing">
                 <div class="line-number">419</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">        total_structs = sum(len(f.structs) <span class=<span class="string">"keyword"</span>>for</span> f <span class=<span class="string">"keyword"</span>>in</span> self.files.values())</div>
+                <div class="line-content">        total_structs = sum(len(f.structs) for f in self.files.values())</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">420</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">        total_enums = sum(len(f.enums) <span class=<span class="string">"keyword"</span>>for</span> f <span class=<span class="string">"keyword"</span>>in</span> self.files.values())</div>
+                <div class="line-content">        total_enums = sum(len(f.enums) for f in self.files.values())</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">421</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">        total_functions = sum(len(f.functions) <span class=<span class="string">"keyword"</span>>for</span> f <span class=<span class="string">"keyword"</span>>in</span> self.files.values())</div>
+                <div class="line-content">        total_functions = sum(len(f.functions) for f in self.files.values())</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">422</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">        total_globals = sum(len(f.globals) <span class=<span class="string">"keyword"</span>>for</span> f <span class=<span class="string">"keyword"</span>>in</span> self.files.values())</div>
+                <div class="line-content">        total_globals = sum(len(f.globals) for f in self.files.values())</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">423</div>
@@ -2321,7 +2321,7 @@
             <div class="code-line missing">
                 <div class="line-number">424</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> {</div>
+                <div class="line-content">        return {</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">425</div>
@@ -2371,7 +2371,7 @@
             <div class="code-line covered">
                 <div class="line-number">434</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> update_uses_fields(self):</div>
+                <div class="line-content">    def update_uses_fields(self):</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">435</div>
@@ -2381,7 +2381,7 @@
             <div class="code-line ">
                 <div class="line-number">436</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Collect all available type names <span class=<span class="string">"keyword"</span>>from</span> the entire project</span></div>
+                <div class="line-content">        # Collect all available type names from the entire project</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">437</div>
@@ -2391,7 +2391,7 @@
             <div class="code-line covered">
                 <div class="line-number">438</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> file_model <span class=<span class="string">"keyword"</span>>in</span> self.files.values():</div>
+                <div class="line-content">        for file_model in self.files.values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">439</div>
@@ -2421,22 +2421,22 @@
             <div class="code-line ">
                 <div class="line-number">444</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Update uses fields <span class=<span class="string">"keyword"</span>>for</span> all structures <span class=<span class="string">"keyword"</span>>in</span> all files</span></div>
+                <div class="line-content">        # Update uses fields for all structures in all files</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">445</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> file_model <span class=<span class="string">"keyword"</span>>in</span> self.files.values():</div>
+                <div class="line-content">        for file_model in self.files.values():</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">446</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class="comment"># Update struct uses</span></div>
+                <div class="line-content">            # Update struct uses</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">447</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>for</span> struct <span class=<span class="string">"keyword"</span>>in</span> file_model.structs.values():</div>
+                <div class="line-content">            for struct in file_model.structs.values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">448</div>
@@ -2446,7 +2446,7 @@
             <div class="code-line covered">
                 <div class="line-number">449</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>for</span> struct_field <span class=<span class="string">"keyword"</span>>in</span> struct.fields:</div>
+                <div class="line-content">                for struct_field in struct.fields:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">450</div>
@@ -2481,12 +2481,12 @@
             <div class="code-line ">
                 <div class="line-number">456</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class="comment"># Update union uses</span></div>
+                <div class="line-content">            # Update union uses</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">457</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>for</span> union <span class=<span class="string">"keyword"</span>>in</span> file_model.unions.values():</div>
+                <div class="line-content">            for union in file_model.unions.values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">458</div>
@@ -2496,7 +2496,7 @@
             <div class="code-line covered">
                 <div class="line-number">459</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>for</span> union_field <span class=<span class="string">"keyword"</span>>in</span> union.fields:</div>
+                <div class="line-content">                for union_field in union.fields:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">460</div>
@@ -2531,12 +2531,12 @@
             <div class="code-line ">
                 <div class="line-number">466</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class="comment"># Update alias uses</span></div>
+                <div class="line-content">            # Update alias uses</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">467</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>for</span> alias <span class=<span class="string">"keyword"</span>>in</span> file_model.aliases.values():</div>
+                <div class="line-content">            for alias in file_model.aliases.values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">468</div>
@@ -2556,12 +2556,12 @@
             <div class="code-line ">
                 <div class="line-number">471</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Remove the alias name <span class=<span class="string">"keyword"</span>>from</span> its own uses list</span></div>
+                <div class="line-content">                # Remove the alias name from its own uses list</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">472</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> alias.name <span class=<span class="string">"keyword"</span>>in</span> alias.uses:</div>
+                <div class="line-content">                if alias.name in alias.uses:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">473</div>
@@ -2576,17 +2576,17 @@
             <div class="code-line covered">
                 <div class="line-number">475</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _extract_non_primitive_types(self, type_str: str, available_types: set) -&gt; list:</div>
+                <div class="line-content">    def _extract_non_primitive_types(self, type_str: str, available_types: set) -&gt; list:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">476</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Extract non-primitive type names <span class=<span class="string">"keyword"</span>>from</span> a type string that exist <span class=<span class="string">"keyword"</span>>in</span> available_types&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Extract non-primitive type names from a type string that exist in available_types&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">477</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Define primitive types</span></div>
+                <div class="line-content">        # Define primitive types</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">478</div>
@@ -2776,12 +2776,12 @@
             <div class="code-line ">
                 <div class="line-number">515</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Remove common C keywords <span class=<span class="string">"keyword"</span>>and</span> operators</span></div>
+                <div class="line-content">        # Remove common C keywords and operators</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">516</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>import</span> re</div>
+                <div class="line-content">        import re</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">517</div>
@@ -2791,7 +2791,7 @@
             <div class="code-line ">
                 <div class="line-number">518</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Split by common delimiters <span class=<span class="string">"keyword"</span>>and</span> operators</span></div>
+                <div class="line-content">        # Split by common delimiters and operators</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">519</div>
@@ -2806,7 +2806,7 @@
             <div class="code-line ">
                 <div class="line-number">521</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Extract potential type names that exist <span class=<span class="string">"keyword"</span>>in</span> available_types</span></div>
+                <div class="line-content">        # Extract potential type names that exist in available_types</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">522</div>
@@ -2816,7 +2816,7 @@
             <div class="code-line covered">
                 <div class="line-number">523</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> part <span class=<span class="string">"keyword"</span>>in</span> parts:</div>
+                <div class="line-content">        for part in parts:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">524</div>
@@ -2826,27 +2826,27 @@
             <div class="code-line covered">
                 <div class="line-number">525</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> part <span class=<span class="string">"keyword"</span>>and</span> len(part) &gt; 1 <span class=<span class="string">"keyword"</span>>and</span> part <span class=<span class="string">"keyword"</span>>not</span> <span class=<span class="string">"keyword"</span>>in</span> primitive_types:</div>
+                <div class="line-content">            if part and len(part) &gt; 1 and part not in primitive_types:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">526</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Check <span class=<span class="string">"keyword"</span>>if</span> it looks like a type name (starts <span class=<span class="string">"keyword"</span>>with</span> letter, contains letters/numbers/underscores)</span></div>
+                <div class="line-content">                # Check if it looks like a type name (starts with letter, contains letters/numbers/underscores)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">527</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> re.match(r&quot;^[a-zA-Z_][a-zA-Z0-9_]*$&quot;, part):</div>
+                <div class="line-content">                if re.match(r&quot;^[a-zA-Z_][a-zA-Z0-9_]*$&quot;, part):</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">528</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    <span class="comment"># Only include <span class=<span class="string">"keyword"</span>>if</span> it exists <span class=<span class="string">"keyword"</span>>in</span> available_types</span></div>
+                <div class="line-content">                    # Only include if it exists in available_types</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">529</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                    <span class=<span class="string">"keyword"</span>>if</span> part <span class=<span class="string">"keyword"</span>>in</span> available_types:</div>
+                <div class="line-content">                    if part in available_types:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">530</div>
@@ -2861,7 +2861,7 @@
             <div class="code-line covered">
                 <div class="line-number">532</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> list(set(types))  <span class="comment"># Remove duplicates</span></div>
+                <div class="line-content">        return list(set(types))  # Remove duplicates</div>
             </div>
         </div>
     </div>
