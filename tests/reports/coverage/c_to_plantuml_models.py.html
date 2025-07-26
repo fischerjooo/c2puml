@@ -171,7 +171,7 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/models.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 16:09:34</div>
+        <div class="timestamp">Generated: 2025-07-26 18:01:01</div>
         
         <div class="stats">
             <div class="stat">
@@ -210,7 +210,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">2</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -230,17 +230,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">6</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import json</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">7</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from dataclasses import asdict, dataclass, field</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">8</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from typing import Dict, List, Optional, Set</div>
             </div>
             <div class="code-line ">
@@ -255,17 +255,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">11</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">@dataclass</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">12</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class Field:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">13</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Represents a field in a struct or global variable&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -275,17 +275,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">15</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    name: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">16</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    type: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">17</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    value: Optional[str] = None</div>
             </div>
             <div class="code-line ">
@@ -295,22 +295,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">19</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __repr__(self):</div>
             </div>
             <div class="code-line excluded">
                 <div class="line-number">20</div>
-                <div class="line-status">—</div>
+                <div class="line-status">&#8212;</div>
                 <div class="line-content">        if self.value is not None:</div>
             </div>
             <div class="code-line excluded">
                 <div class="line-number">21</div>
-                <div class="line-status">—</div>
+                <div class="line-status">&#8212;</div>
                 <div class="line-content">            return f&quot;Field(name={self.name}, type={self.type}, value={self.value})&quot;</div>
             </div>
             <div class="code-line excluded">
                 <div class="line-number">22</div>
-                <div class="line-status">—</div>
+                <div class="line-status">&#8212;</div>
                 <div class="line-content">        return f&quot;Field(name={self.name}, type={self.type})&quot;</div>
             </div>
             <div class="code-line ">
@@ -320,7 +320,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">24</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
@@ -330,12 +330,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">26</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">27</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(</div>
             </div>
             <div class="code-line ">
@@ -350,12 +350,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">30</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.type or not isinstance(self.type, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">31</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(</div>
             </div>
             <div class="code-line ">
@@ -380,12 +380,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">36</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">37</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(</div>
             </div>
             <div class="code-line ">
@@ -400,12 +400,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">40</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.type.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">41</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(</div>
             </div>
             <div class="code-line ">
@@ -445,17 +445,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">49</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">@dataclass</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">50</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class IncludeRelation:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">51</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Represents an include relationship&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -465,17 +465,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">53</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    source_file: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">54</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    included_file: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">55</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    depth: int</div>
             </div>
             <div class="code-line ">
@@ -485,7 +485,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">57</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
@@ -495,32 +495,32 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">59</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.source_file or not isinstance(self.source_file, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">60</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Source file must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">61</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.included_file or not isinstance(self.included_file, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">62</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Included file must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">63</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not isinstance(self.depth, int) or self.depth &lt; 0:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">64</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Depth must be a non-negative integer&quot;)</div>
             </div>
             <div class="code-line ">
@@ -535,17 +535,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">67</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">@dataclass</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">68</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class Function:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">69</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Represents a function&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -555,27 +555,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">71</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    name: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">72</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    return_type: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">73</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    parameters: List[Field] = field(default_factory=list)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">74</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    is_static: bool = False</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">75</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    is_declaration: bool = False</div>
             </div>
             <div class="code-line ">
@@ -585,7 +585,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">77</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
@@ -595,22 +595,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">79</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.name or not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">80</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Function name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">81</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.return_type or not isinstance(self.return_type, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">82</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Function return type must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
@@ -625,27 +625,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">85</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if self.parameters:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">86</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            converted_params = []</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">87</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for param in self.parameters:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">88</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if isinstance(param, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">89</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    converted_params.append(Field(**param))</div>
             </div>
             <div class="code-line ">
@@ -655,12 +655,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">91</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    converted_params.append(param)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">92</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.parameters = converted_params</div>
             </div>
             <div class="code-line ">
@@ -675,17 +675,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">95</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">@dataclass</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">96</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class Struct:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">97</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Represents a C struct&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -695,27 +695,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">99</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    name: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">100</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    fields: List[Field] = field(default_factory=list)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">101</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    methods: List[Function] = field(default_factory=list)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">102</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    tag_name: str = &quot;&quot;  # Tag name for typedef structs</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">103</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    uses: List[str] = field(</div>
             </div>
             <div class="code-line ">
@@ -735,7 +735,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">107</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
@@ -745,12 +745,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">109</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.name or not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">110</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Struct name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
@@ -765,22 +765,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">113</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">@dataclass</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">114</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class EnumValue:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">115</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    name: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">116</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    value: Optional[str] = None</div>
             </div>
             <div class="code-line ">
@@ -790,17 +790,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">118</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">119</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.name or not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">120</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Enum value name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
@@ -815,17 +815,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">123</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">@dataclass</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">124</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class Enum:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">125</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Represents a C enum&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -835,17 +835,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">127</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    name: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">128</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    values: List[EnumValue] = field(default_factory=list)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">129</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    tag_name: str = &quot;&quot;  # Tag name for typedef enums</div>
             </div>
             <div class="code-line ">
@@ -855,17 +855,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">131</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">132</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.name or not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">133</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Enum name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
@@ -875,7 +875,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">135</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.values = [</div>
             </div>
             <div class="code-line ">
@@ -900,17 +900,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">140</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">@dataclass</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">141</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class Union:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">142</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Represents a C union&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -920,22 +920,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">144</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    name: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">145</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    fields: List[Field] = field(default_factory=list)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">146</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    tag_name: str = &quot;&quot;  # Tag name for typedef unions</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">147</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    uses: List[str] = field(</div>
             </div>
             <div class="code-line ">
@@ -955,7 +955,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">151</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
@@ -965,12 +965,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">153</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.name or not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">154</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Union name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
@@ -985,17 +985,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">157</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">@dataclass</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">158</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class Alias:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">159</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Represents a type alias (typedef)&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -1005,17 +1005,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">161</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    name: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">162</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    original_type: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">163</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    uses: List[str] = field(</div>
             </div>
             <div class="code-line ">
@@ -1035,7 +1035,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">167</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
@@ -1045,22 +1045,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">169</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.name or not isinstance(self.name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">170</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Alias name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">171</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.original_type or not isinstance(self.original_type, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">172</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Original type must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
@@ -1075,17 +1075,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">175</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">@dataclass</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">176</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class FileModel:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">177</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Represents a parsed C/C++ file&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -1095,67 +1095,67 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">179</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    file_path: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">180</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    relative_path: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">181</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    project_root: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">182</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    encoding_used: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">183</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    structs: Dict[str, Struct] = field(default_factory=dict)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">184</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    enums: Dict[str, Enum] = field(default_factory=dict)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">185</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    functions: List[Function] = field(default_factory=list)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">186</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    globals: List[Field] = field(default_factory=list)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">187</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    includes: Set[str] = field(default_factory=set)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">188</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    macros: List[str] = field(default_factory=list)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">189</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    aliases: Dict[str, Alias] = field(default_factory=dict)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">190</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    unions: Dict[str, Union] = field(default_factory=dict)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">191</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    include_relations: List[IncludeRelation] = field(default_factory=list)</div>
             </div>
             <div class="code-line ">
@@ -1165,7 +1165,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">193</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
@@ -1175,42 +1175,42 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">195</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.file_path or not isinstance(self.file_path, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">196</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;File path must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">197</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.relative_path or not isinstance(self.relative_path, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">198</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Relative path must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">199</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.project_root or not isinstance(self.project_root, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">200</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Project root must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">201</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.encoding_used or not isinstance(self.encoding_used, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">202</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Encoding must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
@@ -1220,7 +1220,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">204</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def to_dict(self) -&gt; dict:</div>
             </div>
             <div class="code-line ">
@@ -1230,7 +1230,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">206</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data = asdict(self)</div>
             </div>
             <div class="code-line ">
@@ -1240,7 +1240,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">208</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;includes&quot;] = sorted(list(self.includes))</div>
             </div>
             <div class="code-line ">
@@ -1250,7 +1250,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">210</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;include_relations&quot;] = sorted(</div>
             </div>
             <div class="code-line ">
@@ -1275,27 +1275,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">215</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;structs&quot;] = dict(sorted(data[&quot;structs&quot;].items()))</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">216</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;enums&quot;] = dict(sorted(data[&quot;enums&quot;].items()))</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">217</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;unions&quot;] = dict(sorted(data[&quot;unions&quot;].items()))</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">218</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;aliases&quot;] = dict(sorted(data[&quot;aliases&quot;].items()))</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">219</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;macros&quot;] = sorted(data[&quot;macros&quot;])</div>
             </div>
             <div class="code-line ">
@@ -1305,12 +1305,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">221</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;functions&quot;] = sorted(self.functions, key=lambda x: x.name)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">222</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;globals&quot;] = sorted(self.globals, key=lambda x: x.name)</div>
             </div>
             <div class="code-line ">
@@ -1320,12 +1320,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">224</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;functions&quot;] = [asdict(f) for f in data[&quot;functions&quot;]]</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">225</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data[&quot;globals&quot;] = [asdict(g) for g in data[&quot;globals&quot;]]</div>
             </div>
             <div class="code-line ">
@@ -1340,47 +1340,47 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">228</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for struct_data in data[&quot;structs&quot;].values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">229</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;uses&quot; in struct_data:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">230</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                struct_data[&quot;uses&quot;] = sorted(struct_data[&quot;uses&quot;])</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">231</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for union_data in data[&quot;unions&quot;].values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">232</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;uses&quot; in union_data:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">233</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                union_data[&quot;uses&quot;] = sorted(union_data[&quot;uses&quot;])</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">234</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for alias_data in data[&quot;aliases&quot;].values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">235</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;uses&quot; in alias_data:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">236</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                alias_data[&quot;uses&quot;] = sorted(alias_data[&quot;uses&quot;])</div>
             </div>
             <div class="code-line ">
@@ -1395,7 +1395,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">239</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return data</div>
             </div>
             <div class="code-line ">
@@ -1405,12 +1405,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">241</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    @classmethod</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">242</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def from_dict(cls, data: dict) -&gt; &quot;FileModel&quot;:</div>
             </div>
             <div class="code-line ">
@@ -1425,7 +1425,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">245</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        includes = set(data.get(&quot;includes&quot;, []))</div>
             </div>
             <div class="code-line ">
@@ -1440,12 +1440,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">248</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        globals_data = data.get(&quot;globals&quot;, [])</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">249</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        globals = [Field(**g) if isinstance(g, dict) else g for g in globals_data]</div>
             </div>
             <div class="code-line ">
@@ -1460,12 +1460,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">252</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        functions_data = data.get(&quot;functions&quot;, [])</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">253</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        functions = [</div>
             </div>
             <div class="code-line ">
@@ -1490,27 +1490,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">258</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        structs_data = data.get(&quot;structs&quot;, {})</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">259</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        structs = {}</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">260</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for name, struct_data in structs_data.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">261</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if isinstance(struct_data, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">262</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                fields = [</div>
             </div>
             <div class="code-line ">
@@ -1530,7 +1530,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">266</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                methods = [</div>
             </div>
             <div class="code-line ">
@@ -1550,7 +1550,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">270</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                structs[name] = Struct(</div>
             </div>
             <div class="code-line ">
@@ -1590,7 +1590,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">278</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                structs[name] = struct_data</div>
             </div>
             <div class="code-line ">
@@ -1605,27 +1605,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">281</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        enums_data = data.get(&quot;enums&quot;, {})</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">282</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        enums = {}</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">283</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for name, enum_data in enums_data.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">284</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if isinstance(enum_data, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">285</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                values = [</div>
             </div>
             <div class="code-line ">
@@ -1645,7 +1645,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">289</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                enums[name] = Enum(name=enum_data.get(&quot;name&quot;, name), values=values)</div>
             </div>
             <div class="code-line ">
@@ -1655,7 +1655,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">291</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                enums[name] = enum_data</div>
             </div>
             <div class="code-line ">
@@ -1680,12 +1680,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">296</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        include_relations_data = data.get(&quot;include_relations&quot;, [])</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">297</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        include_relations = [</div>
             </div>
             <div class="code-line ">
@@ -1715,27 +1715,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">303</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        unions_data = data.get(&quot;unions&quot;, {})</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">304</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        unions = {}</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">305</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for name, union_data in unions_data.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">306</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if isinstance(union_data, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">307</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                fields = [</div>
             </div>
             <div class="code-line ">
@@ -1755,7 +1755,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">311</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                unions[name] = Union(</div>
             </div>
             <div class="code-line ">
@@ -1790,7 +1790,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">318</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                unions[name] = union_data</div>
             </div>
             <div class="code-line ">
@@ -1805,27 +1805,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">321</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        aliases_data = data.get(&quot;aliases&quot;, {})</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">322</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        aliases = {}</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">323</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for name, alias_data in aliases_data.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">324</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if isinstance(alias_data, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">325</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                aliases[name] = Alias(</div>
             </div>
             <div class="code-line ">
@@ -1860,7 +1860,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">332</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                aliases[name] = Alias(name=name, original_type=alias_data, uses=[])</div>
             </div>
             <div class="code-line ">
@@ -1875,47 +1875,47 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">335</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        new_data = data.copy()</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">336</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        new_data[&quot;includes&quot;] = includes</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">337</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        new_data[&quot;globals&quot;] = globals</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">338</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        new_data[&quot;functions&quot;] = functions</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">339</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        new_data[&quot;structs&quot;] = structs</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">340</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        new_data[&quot;enums&quot;] = enums</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">341</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        new_data[&quot;unions&quot;] = unions</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">342</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        new_data[&quot;aliases&quot;] = aliases</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">343</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        new_data[&quot;include_relations&quot;] = include_relations</div>
             </div>
             <div class="code-line ">
@@ -1925,7 +1925,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">345</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return cls(**new_data)</div>
             </div>
             <div class="code-line ">
@@ -1935,7 +1935,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">347</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def get_summary(self) -&gt; dict:</div>
             </div>
             <div class="code-line ">
@@ -1945,7 +1945,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">349</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        return {</div>
             </div>
             <div class="code-line ">
@@ -2005,17 +2005,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">361</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">@dataclass</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">362</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class ProjectModel:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">363</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Represents a complete C/C++ project&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -2025,17 +2025,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">365</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    project_name: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">366</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    project_root: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">367</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    files: Dict[str, FileModel] = field(default_factory=dict)</div>
             </div>
             <div class="code-line ">
@@ -2045,7 +2045,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">369</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __post_init__(self):</div>
             </div>
             <div class="code-line ">
@@ -2055,22 +2055,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">371</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.project_name or not isinstance(self.project_name, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">372</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Project name must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">373</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self.project_root or not isinstance(self.project_root, str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">374</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(&quot;Project root must be a non-empty string&quot;)</div>
             </div>
             <div class="code-line ">
@@ -2080,7 +2080,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">376</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def save(self, file_path: str) -&gt; None:</div>
             </div>
             <div class="code-line ">
@@ -2090,7 +2090,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">378</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data = {</div>
             </div>
             <div class="code-line ">
@@ -2135,27 +2135,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">387</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">388</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            with open(file_path, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">389</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                json.dump(data, f, indent=2, ensure_ascii=False, sort_keys=True)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">390</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        except Exception as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">391</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(f&quot;Failed to save model to {file_path}: {e}&quot;) from e</div>
             </div>
             <div class="code-line ">
@@ -2165,12 +2165,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">393</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    @classmethod</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">394</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def from_dict(cls, data: dict) -&gt; &quot;ProjectModel&quot;:</div>
             </div>
             <div class="code-line ">
@@ -2180,7 +2180,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">396</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        files = {</div>
             </div>
             <div class="code-line ">
@@ -2205,7 +2205,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">401</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return cls(</div>
             </div>
             <div class="code-line ">
@@ -2235,12 +2235,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">407</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    @classmethod</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">408</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def load(cls, file_path: str) -&gt; &quot;ProjectModel&quot;:</div>
             </div>
             <div class="code-line ">
@@ -2250,32 +2250,32 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">410</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">411</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            with open(file_path, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">412</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                data = json.load(f)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">413</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return cls.from_dict(data)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">414</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        except Exception as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">415</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            raise ValueError(f&quot;Failed to load model from {file_path}: {e}&quot;) from e</div>
             </div>
             <div class="code-line ">
@@ -2285,7 +2285,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">417</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def get_summary(self) -&gt; dict:</div>
             </div>
             <div class="code-line ">
@@ -2295,22 +2295,22 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">419</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        total_structs = sum(len(f.structs) for f in self.files.values())</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">420</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        total_enums = sum(len(f.enums) for f in self.files.values())</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">421</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        total_functions = sum(len(f.functions) for f in self.files.values())</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">422</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        total_globals = sum(len(f.globals) for f in self.files.values())</div>
             </div>
             <div class="code-line ">
@@ -2320,7 +2320,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">424</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        return {</div>
             </div>
             <div class="code-line ">
@@ -2370,7 +2370,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">434</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def update_uses_fields(self):</div>
             </div>
             <div class="code-line ">
@@ -2385,32 +2385,32 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">437</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        available_types = set()</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">438</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for file_model in self.files.values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">439</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            available_types.update(file_model.structs.keys())</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">440</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            available_types.update(file_model.enums.keys())</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">441</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            available_types.update(file_model.unions.keys())</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">442</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            available_types.update(file_model.aliases.keys())</div>
             </div>
             <div class="code-line ">
@@ -2425,7 +2425,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">445</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for file_model in self.files.values():</div>
             </div>
             <div class="code-line ">
@@ -2435,22 +2435,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">447</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for struct in file_model.structs.values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">448</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                filtered_uses = []</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">449</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                for struct_field in struct.fields:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">450</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    field_uses = self._extract_non_primitive_types(</div>
             </div>
             <div class="code-line ">
@@ -2465,12 +2465,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">453</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    filtered_uses.extend(field_uses)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">454</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                struct.uses = list(set(filtered_uses))</div>
             </div>
             <div class="code-line ">
@@ -2485,22 +2485,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">457</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for union in file_model.unions.values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">458</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                filtered_uses = []</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">459</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                for union_field in union.fields:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">460</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    field_uses = self._extract_non_primitive_types(</div>
             </div>
             <div class="code-line ">
@@ -2515,12 +2515,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">463</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    filtered_uses.extend(field_uses)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">464</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                union.uses = list(set(filtered_uses))</div>
             </div>
             <div class="code-line ">
@@ -2535,12 +2535,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">467</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for alias in file_model.aliases.values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">468</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                alias.uses = self._extract_non_primitive_types(</div>
             </div>
             <div class="code-line ">
@@ -2560,12 +2560,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">472</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if alias.name in alias.uses:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">473</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    alias.uses.remove(alias.name)</div>
             </div>
             <div class="code-line ">
@@ -2575,7 +2575,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">475</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _extract_non_primitive_types(self, type_str: str, available_types: set) -&gt; list:</div>
             </div>
             <div class="code-line ">
@@ -2590,7 +2590,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">478</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        primitive_types = {</div>
             </div>
             <div class="code-line ">
@@ -2780,7 +2780,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">516</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        import re</div>
             </div>
             <div class="code-line ">
@@ -2795,7 +2795,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">519</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        parts = re.split(r&quot;[\[\]\(\)\{\}\s\*&amp;,;]&quot;, type_str)</div>
             </div>
             <div class="code-line ">
@@ -2810,22 +2810,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">522</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        types = []</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">523</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for part in parts:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">524</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            part = part.strip()</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">525</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if part and len(part) &gt; 1 and part not in primitive_types:</div>
             </div>
             <div class="code-line ">
@@ -2835,7 +2835,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">527</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if re.match(r&quot;^[a-zA-Z_][a-zA-Z0-9_]*$&quot;, part):</div>
             </div>
             <div class="code-line ">
@@ -2845,12 +2845,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">529</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    if part in available_types:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">530</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        types.append(part)</div>
             </div>
             <div class="code-line ">
@@ -2860,7 +2860,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">532</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return list(set(types))  # Remove duplicates</div>
             </div>
         </div>
@@ -2870,15 +2870,15 @@
         <h3 style="margin-top: 0;">Legend</h3>
         <div class="legend-item">
             <span class="legend-color" style="background: #e8f5e9;"></span>
-            <span>✓ Covered</span>
+            <span>&#10004; Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #ffebee;"></span>
-            <span>✗ Not Covered</span>
+            <span>&#10008; Not Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #f5f5f5;"></span>
-            <span>— Excluded</span>
+            <span>&#8212; Excluded</span>
         </div>
     </div>
 </body>

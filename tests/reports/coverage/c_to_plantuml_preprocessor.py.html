@@ -171,7 +171,7 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/preprocessor.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 16:09:34</div>
+        <div class="timestamp">Generated: 2025-07-26 18:01:01</div>
         
         <div class="stats">
             <div class="stat">
@@ -210,7 +210,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">2</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -235,27 +235,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">7</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import logging</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">8</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import re</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">9</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from dataclasses import dataclass</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">10</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from enum import Enum</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">11</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from typing import Dict, List, Optional, Set, Tuple</div>
             </div>
             <div class="code-line ">
@@ -265,7 +265,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">13</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from c_to_plantuml.parser_tokenizer import Token, TokenType</div>
             </div>
             <div class="code-line ">
@@ -280,12 +280,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">16</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class PreprocessorDirective(Enum):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">17</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Types of preprocessor directives.&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -295,42 +295,42 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">19</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    IF = &quot;if&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">20</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    ELIF = &quot;elif&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">21</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    ELSE = &quot;else&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">22</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    ENDIF = &quot;endif&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">23</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    IFDEF = &quot;ifdef&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">24</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    IFNDEF = &quot;ifndef&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">25</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    DEFINE = &quot;define&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">26</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    UNDEF = &quot;undef&quot;</div>
             </div>
             <div class="code-line ">
@@ -345,17 +345,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">29</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">@dataclass</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">30</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class PreprocessorBlock:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">31</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Represents a preprocessor conditional block.&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -365,37 +365,37 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">33</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    directive: PreprocessorDirective</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">34</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    condition: str</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">35</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    start_token: int</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">36</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    end_token: int</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">37</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    is_active: bool</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">38</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    children: List[&quot;PreprocessorBlock&quot;]</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">39</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    parent: Optional[&quot;PreprocessorBlock&quot;] = None</div>
             </div>
             <div class="code-line ">
@@ -410,12 +410,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">42</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class PreprocessorEvaluator:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">43</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Evaluates preprocessor conditions and manages conditional compilation.&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -425,32 +425,32 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">45</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __init__(self):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">46</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger = logging.getLogger(__name__)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">47</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.defined_macros: Set[str] = set()</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">48</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.macro_values: Dict[str, str] = {}</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">49</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.blocks: List[PreprocessorBlock] = []</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">50</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.current_block_stack: List[PreprocessorBlock] = []</div>
             </div>
             <div class="code-line ">
@@ -460,7 +460,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">52</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def add_define(self, name: str, value: str = &quot;&quot;):</div>
             </div>
             <div class="code-line ">
@@ -470,17 +470,17 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">54</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        self.defined_macros.add(name)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">55</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        if value:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">56</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.macro_values[name] = value</div>
             </div>
             <div class="code-line ">
@@ -490,7 +490,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">58</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def add_undef(self, name: str):</div>
             </div>
             <div class="code-line ">
@@ -500,12 +500,12 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">60</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        self.defined_macros.discard(name)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">61</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        self.macro_values.pop(name, None)</div>
             </div>
             <div class="code-line ">
@@ -515,7 +515,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">63</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def is_defined(self, name: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
@@ -525,7 +525,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">65</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return name in self.defined_macros</div>
             </div>
             <div class="code-line ">
@@ -535,7 +535,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">67</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def get_macro_value(self, name: str) -&gt; str:</div>
             </div>
             <div class="code-line ">
@@ -545,7 +545,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">69</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        return self.macro_values.get(name, &quot;&quot;)</div>
             </div>
             <div class="code-line ">
@@ -555,7 +555,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">71</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def evaluate_condition(self, condition: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
@@ -565,12 +565,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">73</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not condition.strip():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">74</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
@@ -585,7 +585,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">77</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        condition = self._expand_defined_operator(condition)</div>
             </div>
             <div class="code-line ">
@@ -600,7 +600,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">80</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        condition = self._expand_macros(condition)</div>
             </div>
             <div class="code-line ">
@@ -615,7 +615,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">83</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return self._evaluate_simple_expression(condition)</div>
             </div>
             <div class="code-line ">
@@ -625,7 +625,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">85</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _expand_defined_operator(self, condition: str) -&gt; str:</div>
             </div>
             <div class="code-line ">
@@ -640,17 +640,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">88</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        def replace_defined(match):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">89</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            macro_name = match.group(1)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">90</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return &quot;1&quot; if self.is_defined(macro_name) else &quot;0&quot;</div>
             </div>
             <div class="code-line ">
@@ -665,7 +665,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">93</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        condition = re.sub(</div>
             </div>
             <div class="code-line ">
@@ -680,7 +680,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">96</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return condition</div>
             </div>
             <div class="code-line ">
@@ -690,7 +690,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">98</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _expand_macros(self, condition: str) -&gt; str:</div>
             </div>
             <div class="code-line ">
@@ -705,7 +705,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">101</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for macro_name, macro_value in self.macro_values.items():</div>
             </div>
             <div class="code-line ">
@@ -715,17 +715,17 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">103</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            pattern = r&quot;\b&quot; + re.escape(macro_name) + r&quot;\b&quot;</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">104</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            condition = re.sub(pattern, macro_value, condition)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">105</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return condition</div>
             </div>
             <div class="code-line ">
@@ -735,7 +735,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">107</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _evaluate_simple_expression(self, condition: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
@@ -745,7 +745,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">109</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        try:</div>
             </div>
             <div class="code-line ">
@@ -755,7 +755,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">111</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            condition = condition.strip()</div>
             </div>
             <div class="code-line ">
@@ -770,22 +770,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">114</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if condition.lower() in [&quot;1&quot;, &quot;true&quot;, &quot;yes&quot;]:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">115</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                return True</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">116</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if condition.lower() in [&quot;0&quot;, &quot;false&quot;, &quot;no&quot;]:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">117</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return False</div>
             </div>
             <div class="code-line ">
@@ -800,22 +800,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">120</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;==&quot; in condition:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">121</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                left, right = condition.split(&quot;==&quot;, 1)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">122</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                left_val = left.strip()</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">123</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                right_val = right.strip()</div>
             </div>
             <div class="code-line ">
@@ -830,12 +830,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">126</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if left_val in self.defined_macros and right_val in self.defined_macros:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">127</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return self.get_macro_value(left_val) == self.get_macro_value(</div>
             </div>
             <div class="code-line ">
@@ -855,22 +855,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">131</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                elif left_val in self.defined_macros:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">132</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return self.get_macro_value(left_val) == right_val</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">133</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                elif right_val in self.defined_macros:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">134</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return left_val == self.get_macro_value(right_val)</div>
             </div>
             <div class="code-line ">
@@ -885,7 +885,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">137</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    return True  # Both undefined macros are considered equal</div>
             </div>
             <div class="code-line ">
@@ -895,22 +895,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">139</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;!=&quot; in condition:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">140</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                left, right = condition.split(&quot;!=&quot;, 1)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">141</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                left_val = left.strip()</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">142</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                right_val = right.strip()</div>
             </div>
             <div class="code-line ">
@@ -925,12 +925,12 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">145</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                if left_val in self.defined_macros and right_val in self.defined_macros:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">146</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return self.get_macro_value(left_val) != self.get_macro_value(</div>
             </div>
             <div class="code-line ">
@@ -950,22 +950,22 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">150</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                elif left_val in self.defined_macros:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">151</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return self.get_macro_value(left_val) != right_val</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">152</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                elif right_val in self.defined_macros:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">153</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return left_val != self.get_macro_value(right_val)</div>
             </div>
             <div class="code-line ">
@@ -980,7 +980,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">156</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return left_val != right_val</div>
             </div>
             <div class="code-line ">
@@ -990,162 +990,162 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">158</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;&gt;&quot; in condition:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">159</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                left, right = condition.split(&quot;&gt;&quot;, 1)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">160</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">161</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    left_val = self._evaluate_operand(left.strip())</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">162</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    right_val = self._evaluate_operand(right.strip())</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">163</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    return float(left_val) &gt; float(right_val)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">164</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                except ValueError:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">165</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    return False</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">166</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            if &quot;&lt;&quot; in condition:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">167</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                left, right = condition.split(&quot;&lt;&quot;, 1)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">168</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                try:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">169</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    left_val = self._evaluate_operand(left.strip())</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">170</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    right_val = self._evaluate_operand(right.strip())</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">171</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return float(left_val) &lt; float(right_val)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">172</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                except ValueError:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">173</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return False</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">174</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            if &quot;&gt;=&quot; in condition:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">175</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                left, right = condition.split(&quot;&gt;=&quot;, 1)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">176</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                try:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">177</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    left_val = self._evaluate_operand(left.strip())</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">178</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    right_val = self._evaluate_operand(right.strip())</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">179</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return float(left_val) &gt;= float(right_val)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">180</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                except ValueError:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">181</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return False</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">182</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            if &quot;&lt;=&quot; in condition:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">183</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                left, right = condition.split(&quot;&lt;=&quot;, 1)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">184</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                try:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">185</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    left_val = self._evaluate_operand(left.strip())</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">186</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    right_val = self._evaluate_operand(right.strip())</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">187</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return float(left_val) &lt;= float(right_val)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">188</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                except ValueError:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">189</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return False</div>
             </div>
             <div class="code-line ">
@@ -1160,17 +1160,17 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">192</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            if &quot;&amp;&amp;&quot; in condition:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">193</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                parts = condition.split(&quot;&amp;&amp;&quot;)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">194</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                return all(</div>
             </div>
             <div class="code-line ">
@@ -1185,17 +1185,17 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">197</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            if &quot;||&quot; in condition:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">198</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                parts = condition.split(&quot;||&quot;)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">199</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                return any(</div>
             </div>
             <div class="code-line ">
@@ -1210,7 +1210,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">202</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            if &quot;!&quot; in condition:</div>
             </div>
             <div class="code-line ">
@@ -1220,12 +1220,12 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">204</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                negated = condition.replace(&quot;!&quot;, &quot;&quot;).strip()</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">205</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                return not self._evaluate_simple_expression(negated)</div>
             </div>
             <div class="code-line ">
@@ -1240,12 +1240,12 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">208</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            if condition in self.defined_macros:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">209</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                return True</div>
             </div>
             <div class="code-line ">
@@ -1260,22 +1260,22 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">212</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            try:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">213</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                return bool(int(condition))</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">214</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            except ValueError:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">215</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                pass</div>
             </div>
             <div class="code-line ">
@@ -1295,7 +1295,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">219</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
@@ -1305,12 +1305,12 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">221</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        except ValueError as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">222</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.logger.warning(</div>
             </div>
             <div class="code-line ">
@@ -1330,7 +1330,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">226</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
@@ -1340,7 +1340,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">228</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _evaluate_operand(self, operand: str) -&gt; str:</div>
             </div>
             <div class="code-line ">
@@ -1350,7 +1350,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">230</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        operand = operand.strip()</div>
             </div>
             <div class="code-line ">
@@ -1365,12 +1365,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">233</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if operand in self.defined_macros:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">234</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return self.get_macro_value(operand)</div>
             </div>
             <div class="code-line ">
@@ -1385,7 +1385,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">237</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return operand</div>
             </div>
             <div class="code-line ">
@@ -1395,7 +1395,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">239</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def parse_preprocessor_blocks(self, tokens: List[Token]) -&gt; List[PreprocessorBlock]:</div>
             </div>
             <div class="code-line ">
@@ -1405,12 +1405,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">241</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        blocks = []</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">242</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        stack = []</div>
             </div>
             <div class="code-line ">
@@ -1420,17 +1420,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">244</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        i = 0</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">245</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        while i &lt; len(tokens):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">246</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            token = tokens[i]</div>
             </div>
             <div class="code-line ">
@@ -1440,12 +1440,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">248</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if token.type == TokenType.PREPROCESSOR:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">249</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                directive = self._parse_directive(token.value)</div>
             </div>
             <div class="code-line ">
@@ -1455,7 +1455,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">251</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if (</div>
             </div>
             <div class="code-line ">
@@ -1485,12 +1485,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">257</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    condition = self._extract_condition(token.value, directive)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">258</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    block = PreprocessorBlock(</div>
             </div>
             <div class="code-line ">
@@ -1550,12 +1550,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">270</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    if stack:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">271</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        stack[-1].children.append(block)</div>
             </div>
             <div class="code-line ">
@@ -1565,7 +1565,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">273</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        blocks.append(block)</div>
             </div>
             <div class="code-line ">
@@ -1575,7 +1575,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">275</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    stack.append(block)</div>
             </div>
             <div class="code-line ">
@@ -1585,12 +1585,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">277</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                elif directive == PreprocessorDirective.ELIF:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">278</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    if stack:</div>
             </div>
             <div class="code-line ">
@@ -1600,17 +1600,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">280</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        current_block = stack[-1]</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">281</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        condition = self._extract_condition(token.value, directive)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">282</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        current_block.is_active = self._should_activate_block(</div>
             </div>
             <div class="code-line ">
@@ -1630,12 +1630,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">286</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                elif directive == PreprocessorDirective.ELSE:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">287</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    if stack:</div>
             </div>
             <div class="code-line ">
@@ -1645,12 +1645,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">289</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        current_block = stack[-1]</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">290</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        current_block.is_active = self._should_activate_block(</div>
             </div>
             <div class="code-line ">
@@ -1670,12 +1670,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">294</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                elif directive == PreprocessorDirective.ENDIF:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">295</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    if stack:</div>
             </div>
             <div class="code-line ">
@@ -1685,12 +1685,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">297</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        current_block = stack.pop()</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">298</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        current_block.end_token = i</div>
             </div>
             <div class="code-line ">
@@ -1700,7 +1700,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">300</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                elif directive == PreprocessorDirective.DEFINE:</div>
             </div>
             <div class="code-line ">
@@ -1710,12 +1710,12 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">302</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    macro_name, macro_value = self._parse_define(token.value)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">303</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    self.add_define(macro_name, macro_value)</div>
             </div>
             <div class="code-line ">
@@ -1725,7 +1725,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">305</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                elif directive == PreprocessorDirective.UNDEF:</div>
             </div>
             <div class="code-line ">
@@ -1735,12 +1735,12 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">307</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    macro_name = self._parse_undef(token.value)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">308</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    self.add_undef(macro_name)</div>
             </div>
             <div class="code-line ">
@@ -1750,7 +1750,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">310</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            i += 1</div>
             </div>
             <div class="code-line ">
@@ -1760,7 +1760,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">312</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return blocks</div>
             </div>
             <div class="code-line ">
@@ -1770,7 +1770,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">314</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _parse_directive(self, value: str) -&gt; PreprocessorDirective:</div>
             </div>
             <div class="code-line ">
@@ -1780,87 +1780,87 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">316</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        value = value.strip()</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">317</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if value.startswith(&quot;#ifdef&quot;):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">318</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return PreprocessorDirective.IFDEF</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">319</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif value.startswith(&quot;#ifndef&quot;):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">320</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return PreprocessorDirective.IFNDEF</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">321</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif value.startswith(&quot;#if&quot;):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">322</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return PreprocessorDirective.IF</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">323</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif value.startswith(&quot;#elif&quot;):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">324</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return PreprocessorDirective.ELIF</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">325</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif value.startswith(&quot;#else&quot;):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">326</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return PreprocessorDirective.ELSE</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">327</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif value.startswith(&quot;#endif&quot;):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">328</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return PreprocessorDirective.ENDIF</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">329</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        elif value.startswith(&quot;#define&quot;):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">330</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return PreprocessorDirective.DEFINE</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">331</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        elif value.startswith(&quot;#undef&quot;):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">332</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return PreprocessorDirective.UNDEF</div>
             </div>
             <div class="code-line ">
@@ -1870,7 +1870,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">334</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return PreprocessorDirective.IF  # Default</div>
             </div>
             <div class="code-line ">
@@ -1880,7 +1880,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">336</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _extract_condition(self, value: str, directive: PreprocessorDirective) -&gt; str:</div>
             </div>
             <div class="code-line ">
@@ -1890,7 +1890,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">338</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        value = value.strip()</div>
             </div>
             <div class="code-line ">
@@ -1900,62 +1900,62 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">340</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if directive == PreprocessorDirective.IFDEF:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">341</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            match = re.search(r&quot;#ifdef\s+([a-zA-Z_][a-zA-Z0-9_]*)&quot;, value)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">342</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return match.group(1) if match else &quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">343</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif directive == PreprocessorDirective.IFNDEF:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">344</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            match = re.search(r&quot;#ifndef\s+([a-zA-Z_][a-zA-Z0-9_]*)&quot;, value)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">345</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return match.group(1) if match else &quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">346</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif directive == PreprocessorDirective.IF:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">347</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            match = re.search(r&quot;#if\s+(.+)&quot;, value)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">348</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return match.group(1).strip() if match else &quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">349</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif directive == PreprocessorDirective.ELIF:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">350</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            match = re.search(r&quot;#elif\s+(.+)&quot;, value)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">351</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return match.group(1).strip() if match else &quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -1965,7 +1965,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">353</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return &quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -1975,7 +1975,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">355</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _parse_define(self, value: str) -&gt; Tuple[str, str]:</div>
             </div>
             <div class="code-line ">
@@ -1985,37 +1985,37 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">357</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        value = value.strip()</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">358</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        match = re.search(r&quot;#define\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(.+)&quot;, value)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">359</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        if match:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">360</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            name = match.group(1)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">361</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            macro_value = match.group(2).strip()</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">362</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return name, macro_value</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">363</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        return &quot;&quot;, &quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -2025,7 +2025,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">365</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _parse_undef(self, value: str) -&gt; str:</div>
             </div>
             <div class="code-line ">
@@ -2035,17 +2035,17 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">367</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        value = value.strip()</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">368</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        match = re.search(r&quot;#undef\s+([a-zA-Z_][a-zA-Z0-9_]*)&quot;, value)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">369</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">        return match.group(1) if match else &quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -2055,7 +2055,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">371</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _should_activate_block(</div>
             </div>
             <div class="code-line ">
@@ -2095,12 +2095,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">379</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if stack and not stack[-1].is_active:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">380</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return False</div>
             </div>
             <div class="code-line ">
@@ -2110,37 +2110,37 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">382</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if directive == PreprocessorDirective.IFDEF:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">383</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return self.is_defined(condition)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">384</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif directive == PreprocessorDirective.IFNDEF:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">385</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return not self.is_defined(condition)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">386</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif directive == PreprocessorDirective.IF:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">387</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return self.evaluate_condition(condition)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">388</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif directive == PreprocessorDirective.ELIF:</div>
             </div>
             <div class="code-line ">
@@ -2150,12 +2150,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">390</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if stack:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">391</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                parent = stack[-1]</div>
             </div>
             <div class="code-line ">
@@ -2165,32 +2165,32 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">393</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                for child in parent.children:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">394</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    if child.is_active:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">395</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                        return False</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">396</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return self.evaluate_condition(condition)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">397</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return False</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">398</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif directive == PreprocessorDirective.ELSE:</div>
             </div>
             <div class="code-line ">
@@ -2200,12 +2200,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">400</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if stack:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">401</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                parent = stack[-1]</div>
             </div>
             <div class="code-line ">
@@ -2215,27 +2215,27 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">403</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                for child in parent.children:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">404</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    if child.is_active:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">405</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                        return False</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">406</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return True</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">407</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return False</div>
             </div>
             <div class="code-line ">
@@ -2245,7 +2245,7 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">409</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return False</div>
             </div>
             <div class="code-line ">
@@ -2255,7 +2255,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">411</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def filter_tokens(self, tokens: List[Token]) -&gt; List[Token]:</div>
             </div>
             <div class="code-line ">
@@ -2265,12 +2265,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">413</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        blocks = self.parse_preprocessor_blocks(tokens)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">414</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        filtered_tokens = []</div>
             </div>
             <div class="code-line ">
@@ -2280,17 +2280,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">416</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        i = 0</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">417</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        while i &lt; len(tokens):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">418</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            token = tokens[i]</div>
             </div>
             <div class="code-line ">
@@ -2305,7 +2305,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">421</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            in_active_block = self._is_token_in_active_block(i, blocks)</div>
             </div>
             <div class="code-line ">
@@ -2315,7 +2315,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">423</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if in_active_block:</div>
             </div>
             <div class="code-line ">
@@ -2325,12 +2325,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">425</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if token.type != TokenType.PREPROCESSOR:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">426</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    filtered_tokens.append(token)</div>
             </div>
             <div class="code-line ">
@@ -2345,7 +2345,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">429</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                pass</div>
             </div>
             <div class="code-line ">
@@ -2355,7 +2355,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">431</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            i += 1</div>
             </div>
             <div class="code-line ">
@@ -2365,7 +2365,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">433</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return filtered_tokens</div>
             </div>
             <div class="code-line ">
@@ -2375,7 +2375,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">435</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _is_token_in_active_block(</div>
             </div>
             <div class="code-line ">
@@ -2400,12 +2400,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">440</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for block in blocks:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">441</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if self._is_token_in_block(token_index, block):</div>
             </div>
             <div class="code-line ">
@@ -2415,12 +2415,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">443</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return block.is_active</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">444</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return True  # Default to True if not in any block</div>
             </div>
             <div class="code-line ">
@@ -2430,7 +2430,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">446</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _is_token_in_block(self, token_index: int, block: PreprocessorBlock) -&gt; bool:</div>
             </div>
             <div class="code-line ">
@@ -2440,7 +2440,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">448</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if block.start_token &lt;= token_index &lt;= block.end_token:</div>
             </div>
             <div class="code-line ">
@@ -2450,12 +2450,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">450</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for child in block.children:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">451</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if self._is_token_in_block(token_index, child):</div>
             </div>
             <div class="code-line ">
@@ -2465,7 +2465,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">453</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    return child.is_active</div>
             </div>
             <div class="code-line ">
@@ -2475,12 +2475,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">455</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">456</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return False</div>
             </div>
             <div class="code-line ">
@@ -2495,12 +2495,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">459</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class PreprocessorManager:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">460</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;High-level interface for preprocessor management.&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -2510,17 +2510,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">462</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __init__(self):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">463</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.evaluator = PreprocessorEvaluator()</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">464</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger = logging.getLogger(__name__)</div>
             </div>
             <div class="code-line ">
@@ -2530,7 +2530,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">466</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def process_file(</div>
             </div>
             <div class="code-line ">
@@ -2550,17 +2550,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">470</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if defines:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">471</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            for name, value in defines.items():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">472</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                self.evaluator.add_define(name, value)</div>
             </div>
             <div class="code-line ">
@@ -2575,7 +2575,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">475</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        filtered_tokens = self.evaluator.filter_tokens(tokens)</div>
             </div>
             <div class="code-line ">
@@ -2585,7 +2585,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">477</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger.debug(</div>
             </div>
             <div class="code-line ">
@@ -2600,7 +2600,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">480</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return filtered_tokens</div>
             </div>
             <div class="code-line ">
@@ -2610,7 +2610,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">482</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def add_defines_from_content(self, tokens: List[Token]):</div>
             </div>
             <div class="code-line ">
@@ -2620,12 +2620,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">484</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for token in tokens:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">485</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if token.type == TokenType.PREPROCESSOR and token.value.startswith(</div>
             </div>
             <div class="code-line ">
@@ -2640,22 +2640,22 @@
             </div>
             <div class="code-line missing">
                 <div class="line-number">488</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                name, value = self.evaluator._parse_define(token.value)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">489</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                if name:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">490</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    self.evaluator.add_define(name, value)</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">491</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    self.logger.debug(&quot;Preprocessor: Added define %s = %s&quot;, name, value)</div>
             </div>
         </div>
@@ -2665,15 +2665,15 @@
         <h3 style="margin-top: 0;">Legend</h3>
         <div class="legend-item">
             <span class="legend-color" style="background: #e8f5e9;"></span>
-            <span>✓ Covered</span>
+            <span>&#10004; Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #ffebee;"></span>
-            <span>✗ Not Covered</span>
+            <span>&#10008; Not Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #f5f5f5;"></span>
-            <span>— Excluded</span>
+            <span>&#8212; Excluded</span>
         </div>
     </div>
 </body>
