@@ -3,8 +3,8 @@ name: Test Suite with Coverage Reports
 on:
   # Automatic triggers
   pull_request:
-    branches: [ main, master ]
-    types: [closed]  # Trigger when PR is closed (merged)
+    branches: [main, master]
+    types: [closed] # Trigger when PR is closed (merged)
 
   # Manual trigger
   workflow_dispatch:
@@ -21,131 +21,123 @@ jobs:
         python-version: [3.9]
 
     steps:
-    - name: 📥 Checkout repository
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.PERSONAL_ACCESS_TOKEN || github.token }}
-        fetch-depth: 0  # Full history for better coverage analysis
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN || github.token }}
+          fetch-depth: 0 # Full history for better coverage analysis
 
-    - name: 🐍 Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: 🐍 Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: 📋 Cache pip dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+      - name: 📋 Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
-    - name: 📦 Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -e .
-        pip install -r requirements-dev.txt
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install -r requirements-dev.txt
 
-    - name: 🧪 Run comprehensive test suite with coverage
-      run: |
-        echo "🧪 Running comprehensive test suite with coverage analysis..."
-        ./run_tests_with_coverage.sh
+      - name: 🧪 Run comprehensive test suite with coverage
+        run: |
+          echo "🧪 Running comprehensive test suite with coverage analysis..."
+          ./run_tests_with_coverage.sh
 
-    - name: 📈 Upload coverage to Codecov (if available)
-      uses: codecov/codecov-action@v3
-      with:
-        file: tests/reports/coverage/coverage.xml
-        flags: unittests
-        fail_ci_if_error: false  # Don't fail if codecov is not configured
-        verbose: true
+      - name: 🔧 Validate and configure Git credentials
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
+        run: |
+          echo "🔧 Setting up Git credentials..."
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-    - name: 🔧 Validate and configure Git credentials
-      if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
-      run: |
-        echo "🔧 Setting up Git credentials..."
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          # Check if PERSONAL_ACCESS_TOKEN is available for better authentication
+          if [ -n "${{ secrets.PERSONAL_ACCESS_TOKEN }}" ]; then
+            echo "✅ Using Personal Access Token for authentication"
+            git remote set-url origin https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ github.repository }}
+          else
+            echo "⚠️ Personal Access Token not configured, using GitHub token"
+            echo "💡 For more reliable authentication, add a Personal Access Token as PERSONAL_ACCESS_TOKEN secret"
+            git remote set-url origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}
+          fi
 
-        # Check if PERSONAL_ACCESS_TOKEN is available for better authentication
-        if [ -n "${{ secrets.PERSONAL_ACCESS_TOKEN }}" ]; then
-          echo "✅ Using Personal Access Token for authentication"
-          git remote set-url origin https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ github.repository }}
-        else
-          echo "⚠️ Personal Access Token not configured, using GitHub token"
-          echo "💡 For more reliable authentication, add a Personal Access Token as PERSONAL_ACCESS_TOKEN secret"
-          git remote set-url origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}
-        fi
+      - name: 🚀 Commit and push coverage reports
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
+        run: |
+          echo "🚀 Committing coverage reports to repository..."
 
-    - name: 🚀 Commit and push coverage reports
-      if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
-      run: |
-        echo "🚀 Committing coverage reports to repository..."
+          # Add coverage reports
+          git add tests/reports/
 
-        # Add coverage reports
-        git add tests/reports/
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "ℹ️ No changes to commit"
+          else
+            # Create commit with timestamp
+            TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            COMMIT_SHA="${{ github.sha }}"
+            PYTHON_VERSION="${{ matrix.python-version }}"
+            WORKFLOW_NAME="${{ github.workflow }}"
+            RUN_NUMBER="${{ github.run_number }}"
+            EVENT_NAME="${{ github.event_name }}"
 
-        # Check if there are changes to commit
-        if git diff --staged --quiet; then
-          echo "ℹ️ No changes to commit"
-        else
-          # Create commit with timestamp
-          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          COMMIT_SHA="${{ github.sha }}"
-          PYTHON_VERSION="${{ matrix.python-version }}"
-          WORKFLOW_NAME="${{ github.workflow }}"
-          RUN_NUMBER="${{ github.run_number }}"
-          EVENT_NAME="${{ github.event_name }}"
+            # Create detailed commit message
+            {
+              echo "Update test coverage reports"
+              echo ""
+              echo "Generated: $TIMESTAMP"
+              echo "Commit: $COMMIT_SHA"
+              echo "Python: $PYTHON_VERSION"
+              echo "Workflow: $WORKFLOW_NAME #$RUN_NUMBER"
+              echo "Trigger: $EVENT_NAME"
+              echo ""
+              echo "Generated Reports:"
+            } > /tmp/commit_msg
 
-          # Create detailed commit message
-          {
-            echo "Update test coverage reports"
-            echo ""
-            echo "Generated: $TIMESTAMP"
-            echo "Commit: $COMMIT_SHA"
-            echo "Python: $PYTHON_VERSION"
-            echo "Workflow: $WORKFLOW_NAME #$RUN_NUMBER"
-            echo "Trigger: $EVENT_NAME"
-            echo ""
-            echo "Generated Reports:"
-          } > /tmp/commit_msg
+            # Add list of generated files
+            find tests/reports -type f -name "*" | sort | sed 's/^/- /' >> /tmp/commit_msg
 
-          # Add list of generated files
-          find tests/reports -type f -name "*" | sort | sed 's/^/- /' >> /tmp/commit_msg
+            echo "" >> /tmp/commit_msg
+            echo "- Updated coverage analysis" >> /tmp/commit_msg
+            echo "- Refreshed test execution reports" >> /tmp/commit_msg
+            echo "- Generated by GitHub Actions" >> /tmp/commit_msg
 
-          echo "" >> /tmp/commit_msg
-          echo "- Updated coverage analysis" >> /tmp/commit_msg
-          echo "- Refreshed test execution reports" >> /tmp/commit_msg
-          echo "- Generated by GitHub Actions" >> /tmp/commit_msg
+            # Commit with detailed message
+            git commit -F /tmp/commit_msg
 
-          # Commit with detailed message
-          git commit -F /tmp/commit_msg
+            # Push changes
+            git push origin "${{ github.ref }}"
+            echo "✅ Coverage reports committed and pushed"
+          fi
 
-          # Push changes
-          git push origin "${{ github.ref }}"
-          echo "✅ Coverage reports committed and pushed"
-        fi
+      - name: 📤 Upload test artifacts
+        uses: actions/upload-artifact@v4
+        if: always() # Upload even if tests failed
+        with:
+          name: test-coverage-reports-py${{ matrix.python-version }}
+          path: tests/reports/
+          retention-days: 30
 
-    - name: 📤 Upload test artifacts
-      uses: actions/upload-artifact@v4
-      if: always()  # Upload even if tests failed
-      with:
-        name: test-coverage-reports-py${{ matrix.python-version }}
-        path: tests/reports/
-        retention-days: 30
+      - name: 🎯 Test Results Summary
+        if: always()
+        run: |
+          echo "## 🎯 Final Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
-    - name: 🎯 Test Results Summary
-      if: always()
-      run: |
-        echo "## 🎯 Final Test Results Summary" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f tests/reports/coverage/index.html ]; then
+            echo "📊 HTML reports generated successfully!" >> $GITHUB_STEP_SUMMARY
+            echo "- [Coverage Report](tests/reports/coverage/index.html)" >> $GITHUB_STEP_SUMMARY
+            echo "- [Test Summary](tests/reports/test-summary.txt)" >> $GITHUB_STEP_SUMMARY
+          fi
 
-        if [ -f tests/reports/coverage/index.html ]; then
-          echo "📊 HTML reports generated successfully!" >> $GITHUB_STEP_SUMMARY
-          echo "- [Coverage Report](tests/reports/coverage/index.html)" >> $GITHUB_STEP_SUMMARY
-          echo "- [Test Summary](tests/reports/test-summary.txt)" >> $GITHUB_STEP_SUMMARY
-        fi
-
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 📁 Available Artifacts" >> $GITHUB_STEP_SUMMARY
-        echo "- HTML test and coverage reports uploaded as workflow artifacts" >> $GITHUB_STEP_SUMMARY
-        echo "- Coverage reports committed to repository (main branch only)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📁 Available Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- HTML test and coverage reports uploaded as workflow artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- Coverage reports committed to repository (main branch only)" >> $GITHUB_STEP_SUMMARY
