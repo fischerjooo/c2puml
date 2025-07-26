@@ -16,6 +16,8 @@ The `test-coverage.yml` GitHub Actions workflow was not properly uploading modif
 
 5. **Branch Switching Issues**: The workflow tried to switch branches with uncommitted changes, causing "local changes would be overwritten" errors.
 
+6. **Non-Fast-Forward Push Errors**: The workflow failed to push to main when the main branch had been updated since the workflow started.
+
 ### Root Causes
 
 1. **Complex Conditional Logic**: The original condition was:
@@ -26,6 +28,8 @@ The `test-coverage.yml` GitHub Actions workflow was not properly uploading modif
 2. **PR Context Issues**: When a PR is merged, the workflow runs in the PR context, but the `github.event.pull_request.merged` property might not be reliable.
 
 3. **Branch Switching Problems**: The workflow tried to switch to main branch before committing changes, which failed when there were uncommitted files.
+
+4. **Push Conflicts**: When pushing from a feature branch to main, the main branch might have been updated, causing non-fast-forward errors.
 
 ### Solutions Implemented
 
@@ -50,6 +54,12 @@ The `test-coverage.yml` GitHub Actions workflow was not properly uploading modif
 - Added more detailed logging
 - Better error messages
 - Graceful handling of edge cases
+
+#### 5. Non-Fast-Forward Push Handling
+- **Added**: Fetch latest main branch before pushing
+- **Added**: Fallback to create coverage branch if push fails
+- **Added**: Timestamped branch names for coverage reports
+- **Added**: Clear messaging about alternative approaches
 
 ### Key Changes
 
@@ -99,7 +109,17 @@ The `test-coverage.yml` GitHub Actions workflow was not properly uploading modif
       
       # Push to target branch using smart strategy
       if [ "${{ github.ref }}" != "refs/heads/$TARGET_BRANCH" ]; then
-        git push origin "HEAD:$TARGET_BRANCH"
+        # Fetch latest main branch
+        git fetch origin "$TARGET_BRANCH:$TARGET_BRANCH"
+        
+        # Try to push to main branch
+        if git push origin "HEAD:$TARGET_BRANCH"; then
+          echo "✅ Successfully pushed to $TARGET_BRANCH"
+        else
+          # Create coverage branch as fallback
+          COVERAGE_BRANCH="coverage-reports-$(date +%Y%m%d-%H%M%S)"
+          git push origin "HEAD:$COVERAGE_BRANCH"
+        fi
       else
         git push origin "${{ github.ref }}"
       fi
@@ -135,6 +155,7 @@ The workflow should now:
    - Other event types
 4. **Provide detailed logging** about why decisions were made
 5. **Handle branch contexts properly** without switching branches with uncommitted changes
+6. **Handle push conflicts gracefully** by creating coverage branches when needed
 
 ### Troubleshooting
 
@@ -146,10 +167,11 @@ If the workflow still doesn't upload files:
 4. **Verify the PERSONAL_ACCESS_TOKEN** secret is configured (optional but recommended)
 5. **Run the local debug script** to test logic
 6. **Check for branch switching errors** - should no longer occur
+7. **Check for push conflicts** - workflow will create coverage branches as fallback
 
 ### Files Modified
 
-- `.github/workflows/test-coverage.yml` - Main workflow file (fixed branch switching)
+- `.github/workflows/test-coverage.yml` - Main workflow file (fixed branch switching and push conflicts)
 - `test_workflow_debug.sh` - Local debug script (updated with push strategy)
 - `WORKFLOW_DEBUG.md` - This documentation (updated with fix details)
 
@@ -160,8 +182,9 @@ If the workflow still doesn't upload files:
 3. Check the debug output to verify the logic is working correctly
 4. Consider adding a Personal Access Token secret for more reliable authentication
 
-### Recent Fix (Latest Update)
+### Recent Fixes (Latest Updates)
 
+#### Fix 1: Branch Switching Error
 **Issue**: Workflow failed with "Your local changes to the following files would be overwritten by checkout"
 
 **Root Cause**: The workflow was trying to switch to the main branch before committing the generated coverage reports, causing a conflict.
@@ -171,4 +194,15 @@ If the workflow still doesn't upload files:
 2. Use smart push strategy: `git push origin HEAD:main` when pushing to main from a different branch
 3. Removed complex branch switching logic that caused conflicts
 
-**Result**: The workflow now works reliably without branch switching errors.
+#### Fix 2: Non-Fast-Forward Push Error
+**Issue**: Workflow failed with "Updates were rejected because a pushed branch tip is behind its remote counterpart"
+
+**Root Cause**: The main branch was updated since the workflow started, causing a non-fast-forward error when trying to push.
+
+**Solution**:
+1. Fetch the latest main branch before pushing
+2. Try to push to main branch first
+3. If that fails, create a timestamped coverage branch as fallback
+4. Provide clear messaging about the alternative approach
+
+**Result**: The workflow now handles push conflicts gracefully and ensures coverage reports are always saved.
