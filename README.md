@@ -8,7 +8,6 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 - [📄 Coverage Summary](https://fischerjooo.github.io/generator_project/tests/reports/coverage/coverage_summary.txt) - Text-based coverage summary
 - [📈 Standard HTML Coverage](https://fischerjooo.github.io/generator_project/tests/reports/coverage/htmlcov/index.html) - Traditional HTML coverage report
 - [📝 Test Summary](https://fischerjooo.github.io/generator_project/tests/reports/test-summary.txt) - Test execution summary and statistics
-- [📖 Coverage Documentation](COVERAGE_DETAILS.md) - Learn about the detailed coverage reporting features
 
 ## Features
 
