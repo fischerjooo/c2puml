@@ -382,6 +382,7 @@ def generate_html_file_report(
 """)
         
         # Generate line-by-line HTML
+        in_multiline_comment = False
         for i, line in enumerate(source_lines, 1):
             # Check if line is empty or contains only whitespace
             stripped_line = line.rstrip('\n').rstrip()
@@ -390,10 +391,24 @@ def generate_html_file_report(
             # Check if line is a comment (starts with # or contains only whitespace + #)
             is_comment = stripped_line.lstrip().startswith('#')
             
+            # Check for multiline comments (docstrings)
+            if '"""' in stripped_line or "'''" in stripped_line:
+                # Count quotes to determine if we're entering/exiting a multiline comment
+                triple_double = stripped_line.count('"""')
+                triple_single = stripped_line.count("'''")
+                total_triple_quotes = triple_double + triple_single
+                
+                # If odd number of quotes, we're toggling the multiline comment state
+                if total_triple_quotes % 2 == 1:
+                    in_multiline_comment = not in_multiline_comment
+            
+            # Check if line is part of a multiline comment
+            is_multiline_comment = in_multiline_comment or (stripped_line.startswith('"""') or stripped_line.startswith("'''"))
+            
             if i in missing_lines:
                 line_class = "missing"
                 status_symbol = "&#10008;"
-            elif not is_empty and not is_comment:
+            elif not is_empty and not is_comment and not is_multiline_comment:
                 line_class = "covered"
                 status_symbol = "&#10004;"
             else:
