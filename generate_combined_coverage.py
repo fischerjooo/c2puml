@@ -385,13 +385,13 @@ def generate_html_file_report(
         for i, line in enumerate(source_lines, 1):
             if i in covered_lines:
                 line_class = "covered"
-                status_symbol = "✓"
+                status_symbol = "&#10004;"
             elif i in missing_lines:
                 line_class = "missing"
-                status_symbol = "✗"
+                status_symbol = "&#10008;"
             elif i in excluded_lines:
                 line_class = "excluded"
-                status_symbol = "—"
+                status_symbol = "&#8212;"
             else:
                 line_class = ""
                 status_symbol = ""
@@ -413,15 +413,15 @@ def generate_html_file_report(
         <h3 style="margin-top: 0;">Legend</h3>
         <div class="legend-item">
             <span class="legend-color" style="background: #e8f5e9;"></span>
-            <span>✓ Covered</span>
+            <span>&#10004; Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #ffebee;"></span>
-            <span>✗ Not Covered</span>
+            <span>&#10008; Not Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #f5f5f5;"></span>
-            <span>— Excluded</span>
+            <span>&#8212; Excluded</span>
         </div>
     </div>
 </body>
