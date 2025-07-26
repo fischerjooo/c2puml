@@ -50,7 +50,7 @@
         }
         .coverage-fill {
             height: 100%;
-            background: #f44336;
+            background: #4caf50;
             transition: width 0.3s ease;
         }
         .code-container {
@@ -171,27 +171,27 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/config.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 18:45:05</div>
+        <div class="timestamp">Generated: 2025-07-26 18:52:44</div>
         
         <div class="stats">
             <div class="stat">
                 <span class="stat-label">Coverage</span>
-                <span class="stat-value">37.9%</span>
+                <span class="stat-value">89.2%</span>
                 <div class="coverage-bar">
-                    <div class="coverage-fill" style="width: 37.93103448275862%"></div>
+                    <div class="coverage-fill" style="width: 89.2156862745098%"></div>
                 </div>
             </div>
             <div class="stat">
                 <span class="stat-label">Statements</span>
-                <span class="stat-value">203</span>
+                <span class="stat-value">204</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Covered</span>
-                <span class="stat-value" style="color: #4caf50">77</span>
+                <span class="stat-value" style="color: #4caf50">182</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Missing</span>
-                <span class="stat-value" style="color: #f44336">126</span>
+                <span class="stat-value" style="color: #f44336">22</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Excluded</span>
@@ -608,9 +608,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Handle case where a single dict is passed as positional argument</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">82</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            data = args[0]</div>
             </div>
             <div class="code-line ">
@@ -618,19 +618,19 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Set attributes manually</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">84</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for key, value in data.items():</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">85</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if hasattr(self, key):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">86</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    setattr(self, key, value)</div>
             </div>
             <div class="code-line covered">
@@ -753,24 +753,24 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        for pattern in self.file_filters.get(&quot;include&quot;, []):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">111</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            try:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">112</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                self.file_include_patterns.append(re.compile(pattern))</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">113</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            except re.error as e:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">114</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                self.logger.warning(&quot;Invalid include pattern &#x27;%s&#x27;: %s&quot;, pattern, e)</div>
             </div>
             <div class="code-line ">
@@ -793,24 +793,24 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        for pattern in self.file_filters.get(&quot;exclude&quot;, []):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">119</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            try:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">120</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                self.file_exclude_patterns.append(re.compile(pattern))</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">121</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            except re.error as e:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">122</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                self.logger.warning(&quot;Invalid exclude pattern &#x27;%s&#x27;: %s&quot;, pattern, e)</div>
             </div>
             <div class="code-line ">
@@ -848,24 +848,24 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        for element_type, filters in self.element_filters.items():</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">130</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.element_include_patterns[element_type] = []</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">131</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for pattern in filters.get(&quot;include&quot;, []):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">132</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                try:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">133</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    self.element_include_patterns[element_type].append(</div>
             </div>
             <div class="code-line covered">
@@ -878,14 +878,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                    )</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">136</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                except re.error as e:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">137</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    self.logger.warning(</div>
             </div>
             <div class="code-line covered">
@@ -908,24 +908,24 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">142</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.element_exclude_patterns[element_type] = []</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">143</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for pattern in filters.get(&quot;exclude&quot;, []):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">144</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                try:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">145</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    self.element_exclude_patterns[element_type].append(</div>
             </div>
             <div class="code-line covered">
@@ -983,9 +983,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Load configuration from JSON file&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">157</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not Path(config_file).exists():</div>
             </div>
             <div class="code-line missing">
@@ -998,19 +998,19 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">160</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        try:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">161</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            with open(config_file, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">162</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                data = json.load(f)</div>
             </div>
             <div class="code-line ">
@@ -1023,9 +1023,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Handle backward compatibility: project_roots -&gt; source_folders</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">165</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;project_roots&quot; in data and &quot;source_folders&quot; not in data:</div>
             </div>
             <div class="code-line missing">
@@ -1043,9 +1043,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Validate required fields</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">169</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;source_folders&quot; not in data:</div>
             </div>
             <div class="code-line missing">
@@ -1058,14 +1058,14 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">172</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if not isinstance(data[&quot;source_folders&quot;], list):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">173</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                raise ValueError(&quot;&#x27;source_folders&#x27; must be a list&quot;)</div>
             </div>
             <div class="code-line ">
@@ -1073,9 +1073,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">175</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return cls(**data)</div>
             </div>
             <div class="code-line ">
@@ -1083,14 +1083,14 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">177</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        except Exception as e:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">178</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            raise ValueError(</div>
             </div>
             <div class="code-line covered">
@@ -1118,9 +1118,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Save configuration to JSON file&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">184</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        data = {</div>
             </div>
             <div class="code-line covered">
@@ -1178,19 +1178,19 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">196</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        try:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">197</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            with open(config_file, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">198</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                json.dump(data, f, indent=2, ensure_ascii=False)</div>
             </div>
             <div class="code-line missing">
@@ -1228,9 +1228,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Check if configuration has any filters defined&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">206</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return bool(self.file_filters or self.element_filters)</div>
             </div>
             <div class="code-line ">
@@ -1258,14 +1258,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        for pattern in self.file_exclude_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">212</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if pattern.search(file_path):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">213</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return False</div>
             </div>
             <div class="code-line ">
@@ -1298,19 +1298,19 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Check include patterns - file must match at least one</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">220</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for pattern in self.file_include_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">221</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if pattern.search(file_path):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">222</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return True</div>
             </div>
             <div class="code-line ">
@@ -1318,9 +1318,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">224</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return False</div>
             </div>
             <div class="code-line ">
@@ -1348,9 +1348,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Create a copy of the file model to avoid modifying the original</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">230</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        filtered_model = FileModel(</div>
             </div>
             <div class="code-line covered">
@@ -1433,14 +1433,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Filter structs</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">247</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;structs&quot; in self.element_filters:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">248</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            filtered_model.structs = self._filter_dict(</div>
             </div>
             <div class="code-line covered">
@@ -1463,14 +1463,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Filter enums</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">253</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;enums&quot; in self.element_filters:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">254</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            filtered_model.enums = self._filter_dict(</div>
             </div>
             <div class="code-line covered">
@@ -1493,9 +1493,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Filter unions</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">259</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;unions&quot; in self.element_filters:</div>
             </div>
             <div class="code-line missing">
@@ -1523,14 +1523,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Filter functions</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">265</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;functions&quot; in self.element_filters:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">266</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            filtered_model.functions = self._filter_list(</div>
             </div>
             <div class="code-line covered">
@@ -1563,14 +1563,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Filter globals</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">273</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;globals&quot; in self.element_filters:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">274</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            filtered_model.globals = self._filter_list(</div>
             </div>
             <div class="code-line covered">
@@ -1603,14 +1603,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Filter macros</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">281</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;macros&quot; in self.element_filters:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">282</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            filtered_model.macros = self._filter_list(</div>
             </div>
             <div class="code-line covered">
@@ -1633,14 +1633,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">        # Filter aliases</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">287</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if &quot;aliases&quot; in self.element_filters:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">288</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            filtered_model.aliases = self._filter_dict(</div>
             </div>
             <div class="code-line covered">
@@ -1658,9 +1658,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">292</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return filtered_model</div>
             </div>
             <div class="code-line ">
@@ -1678,9 +1678,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Filter dictionary items based on include/exclude patterns&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">296</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        include_patterns = [</div>
             </div>
             <div class="code-line covered">
@@ -1693,9 +1693,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        ]</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">299</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        exclude_patterns = [</div>
             </div>
             <div class="code-line covered">
@@ -1713,9 +1713,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">303</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        filtered_items = {}</div>
             </div>
             <div class="code-line ">
@@ -1723,9 +1723,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">305</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for name, item in items.items():</div>
             </div>
             <div class="code-line ">
@@ -1733,44 +1733,44 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Check include patterns</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">307</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if include_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">308</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                should_include = False</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">309</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                for pattern in include_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">310</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    if pattern.search(name):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">311</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        should_include = True</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">312</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        break</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">313</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if not should_include:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">314</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    continue</div>
             </div>
             <div class="code-line ">
@@ -1783,39 +1783,39 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Check exclude patterns</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">317</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            should_exclude = False</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">318</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for pattern in exclude_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">319</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if pattern.search(name):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">320</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    should_exclude = True</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">321</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    break</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">322</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if should_exclude:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">323</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                continue</div>
             </div>
             <div class="code-line ">
@@ -1823,9 +1823,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">325</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            filtered_items[name] = item</div>
             </div>
             <div class="code-line ">
@@ -1833,9 +1833,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">327</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return filtered_items</div>
             </div>
             <div class="code-line ">
@@ -1853,9 +1853,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Filter list items based on include/exclude patterns&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">331</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        include_patterns = [</div>
             </div>
             <div class="code-line covered">
@@ -1868,9 +1868,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        ]</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">334</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        exclude_patterns = [</div>
             </div>
             <div class="code-line covered">
@@ -1888,9 +1888,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">338</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        filtered_items = []</div>
             </div>
             <div class="code-line ">
@@ -1898,9 +1898,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">340</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for item in items:</div>
             </div>
             <div class="code-line ">
@@ -1908,14 +1908,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Get the name to check against patterns</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">342</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if key:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">343</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                name = key(item)</div>
             </div>
             <div class="code-line covered">
@@ -1923,9 +1923,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">            else:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">345</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                name = str(item)</div>
             </div>
             <div class="code-line ">
@@ -1938,44 +1938,44 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Check include patterns</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">348</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if include_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">349</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                should_include = False</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">350</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                for pattern in include_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">351</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    if pattern.search(name):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">352</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        should_include = True</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">353</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        break</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">354</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if not should_include:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">355</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    continue</div>
             </div>
             <div class="code-line ">
@@ -1988,19 +1988,19 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Check exclude patterns</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">358</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            should_exclude = False</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">359</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for pattern in exclude_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">360</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if pattern.search(name):</div>
             </div>
             <div class="code-line missing">
@@ -2013,9 +2013,9 @@
                 <div class="line-status">&#10008;</div>
                 <div class="line-content">                    break</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">363</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if should_exclude:</div>
             </div>
             <div class="code-line missing">
@@ -2028,9 +2028,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">366</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            filtered_items.append(item)</div>
             </div>
             <div class="code-line ">
@@ -2038,9 +2038,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">368</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return filtered_items</div>
             </div>
             <div class="code-line ">
@@ -2058,9 +2058,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Get a summary of the configuration&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">372</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return {</div>
             </div>
             <div class="code-line covered">
@@ -2123,9 +2123,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        &quot;&quot;&quot;Check if two configurations are equal&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">385</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not isinstance(other, Config):</div>
             </div>
             <div class="code-line missing">
@@ -2138,9 +2138,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">388</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return (</div>
             </div>
             <div class="code-line covered">

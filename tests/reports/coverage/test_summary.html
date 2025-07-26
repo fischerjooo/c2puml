@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Summary Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .timestamp {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .overall-coverage {
+            font-size: 48px;
+            color: #4caf50;
+        }
+        .file-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .file-header {
+            background: #333;
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+        }
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.2s;
+        }
+        .file-item:hover {
+            background-color: #f8f9fa;
+        }
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        .file-name {
+            flex: 1;
+            margin-right: 20px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+        .file-stats {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .stat-item {
+            text-align: center;
+            min-width: 80px;
+        }
+        .stat-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .stat-label-small {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .coverage-percent {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4caf50;
+        }
+        .coverage-bar {
+            width: 150px;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-left: 20px;
+        }
+        .coverage-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .coverage-high { background: #4caf50; }
+        .coverage-medium { background: #ff9800; }
+        .coverage-low { background: #f44336; }
+        .download-links {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .download-links a {
+            color: #0066cc;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        .download-links a:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            margin-bottom: 20px;
+        }
+        .back-link a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="back-link">
+            <a href="index.html">← Back to Coverage Index</a>
+        </div>
+        
+        <h1>Test Summary Report</h1>
+        <div class="timestamp">Generated: 2025-07-26 18:52:44</div>
+        
+        <div class="summary-card">
+            <h2 style="margin-top: 0;">Overall Test Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value overall-coverage">84.3%</div>
+                    <div class="stat-label">Overall Coverage</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">11</div>
+                    <div class="stat-label">Files Tested</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2,963</div>
+                    <div class="stat-label">Total Statements</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #4caf50">2,499</div>
+                    <div class="stat-label">Covered Lines</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #f44336">464</div>
+                    <div class="stat-label">Missing Lines</div>
+                </div>
+            </div>
+            
+            <div class="download-links">
+                <strong>Download Reports:</strong>
+                <a href="coverage_summary.txt">📄 Text Summary</a>
+                <a href="coverage.xml">📊 XML Report</a>
+                <a href="coverage.json">📋 JSON Report</a>
+                <a href="index.html">📈 Detailed Coverage</a>
+            </div>
+        </div>
+        
+        <div class="file-list">
+            <div class="file-header">Per-File Test Summary</div>
+            <div class="file-item">
+                <div class="file-name">c_to_plantuml/__init__.py</div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">8</div>
+                        <div class="stat-label-small">Statements</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f44336">0</div>
+                        <div class="stat-label-small">Missing</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="coverage-percent" style="color: #4caf50">100.0%</div>
+                        <div class="stat-label-small">Coverage</div>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill coverage-high" style="width: 100.0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="file-item">
+                <div class="file-name">c_to_plantuml/config.py</div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">200</div>
+                        <div class="stat-label-small">Statements</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f44336">22</div>
+                        <div class="stat-label-small">Missing</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="coverage-percent" style="color: #4caf50">89.0%</div>
+                        <div class="stat-label-small">Coverage</div>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill coverage-high" style="width: 89.0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="file-item">
+                <div class="file-name">c_to_plantuml/generator.py</div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">291</div>
+                        <div class="stat-label-small">Statements</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f44336">41</div>
+                        <div class="stat-label-small">Missing</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="coverage-percent" style="color: #4caf50">85.9%</div>
+                        <div class="stat-label-small">Coverage</div>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill coverage-high" style="width: 85.91065292096219%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="file-item">
+                <div class="file-name">c_to_plantuml/main.py</div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">97</div>
+                        <div class="stat-label-small">Statements</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f44336">45</div>
+                        <div class="stat-label-small">Missing</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="coverage-percent" style="color: #f44336">53.6%</div>
+                        <div class="stat-label-small">Coverage</div>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill coverage-low" style="width: 53.608247422680414%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="file-item">
+                <div class="file-name">c_to_plantuml/models.py</div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">260</div>
+                        <div class="stat-label-small">Statements</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f44336">35</div>
+                        <div class="stat-label-small">Missing</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="coverage-percent" style="color: #4caf50">86.5%</div>
+                        <div class="stat-label-small">Coverage</div>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill coverage-high" style="width: 86.53846153846153%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="file-item">
+                <div class="file-name">c_to_plantuml/parser.py</div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">706</div>
+                        <div class="stat-label-small">Statements</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f44336">89</div>
+                        <div class="stat-label-small">Missing</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="coverage-percent" style="color: #4caf50">87.4%</div>
+                        <div class="stat-label-small">Coverage</div>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill coverage-high" style="width: 87.39376770538243%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="file-item">
+                <div class="file-name">c_to_plantuml/parser_tokenizer.py</div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">649</div>
+                        <div class="stat-label-small">Statements</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f44336">73</div>
+                        <div class="stat-label-small">Missing</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="coverage-percent" style="color: #4caf50">88.8%</div>
+                        <div class="stat-label-small">Coverage</div>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill coverage-high" style="width: 88.75192604006163%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="file-item">
+                <div class="file-name">c_to_plantuml/preprocessor.py</div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">295</div>
+                        <div class="stat-label-small">Statements</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f44336">101</div>
+                        <div class="stat-label-small">Missing</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="coverage-percent" style="color: #ff9800">65.8%</div>
+                        <div class="stat-label-small">Coverage</div>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill coverage-medium" style="width: 65.76271186440678%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="file-item">
+                <div class="file-name">c_to_plantuml/transformer.py</div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">251</div>
+                        <div class="stat-label-small">Statements</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f44336">10</div>
+                        <div class="stat-label-small">Missing</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="coverage-percent" style="color: #4caf50">96.0%</div>
+                        <div class="stat-label-small">Coverage</div>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill coverage-high" style="width: 96.01593625498008%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="file-item">
+                <div class="file-name">c_to_plantuml/utils.py</div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">67</div>
+                        <div class="stat-label-small">Statements</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f44336">26</div>
+                        <div class="stat-label-small">Missing</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="coverage-percent" style="color: #ff9800">61.2%</div>
+                        <div class="stat-label-small">Coverage</div>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill coverage-medium" style="width: 61.19402985074627%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="file-item">
+                <div class="file-name">c_to_plantuml/verifier.py</div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">139</div>
+                        <div class="stat-label-small">Statements</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f44336">22</div>
+                        <div class="stat-label-small">Missing</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="coverage-percent" style="color: #4caf50">84.2%</div>
+                        <div class="stat-label-small">Coverage</div>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill coverage-high" style="width: 84.1726618705036%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
