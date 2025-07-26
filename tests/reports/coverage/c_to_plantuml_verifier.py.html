@@ -50,7 +50,7 @@
         }
         .coverage-fill {
             height: 100%;
-            background: #4caf50;
+            background: #ff9800;
             transition: width 0.3s ease;
         }
         .code-container {
@@ -171,14 +171,14 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/verifier.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 18:32:46</div>
+        <div class="timestamp">Generated: 2025-07-26 18:45:05</div>
         
         <div class="stats">
             <div class="stat">
                 <span class="stat-label">Coverage</span>
-                <span class="stat-value">84.4%</span>
+                <span class="stat-value">78.7%</span>
                 <div class="coverage-bar">
-                    <div class="coverage-fill" style="width: 84.39716312056737%"></div>
+                    <div class="coverage-fill" style="width: 78.72340425531915%"></div>
                 </div>
             </div>
             <div class="stat">
@@ -187,11 +187,11 @@
             </div>
             <div class="stat">
                 <span class="stat-label">Covered</span>
-                <span class="stat-value" style="color: #4caf50">119</span>
+                <span class="stat-value" style="color: #4caf50">111</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Missing</span>
-                <span class="stat-value" style="color: #f44336">22</span>
+                <span class="stat-value" style="color: #f44336">30</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Excluded</span>
@@ -438,9 +438,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        else:</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">48</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.logger.info(&quot;Model verification passed - all values look sane&quot;)</div>
             </div>
             <div class="code-line ">
@@ -473,9 +473,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not model.project_name or not model.project_name.strip():</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">55</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(&quot;Project name is empty or whitespace&quot;)</div>
             </div>
             <div class="code-line ">
@@ -488,9 +488,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not model.project_root or not model.project_root.strip():</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">58</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(&quot;Project root is empty or whitespace&quot;)</div>
             </div>
             <div class="code-line ">
@@ -503,9 +503,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not model.files:</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">61</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(&quot;No files found in project&quot;)</div>
             </div>
             <div class="code-line ">
@@ -693,9 +693,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self._is_valid_identifier(struct_name):</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">99</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(f&quot;Invalid struct name &#x27;{struct_name}&#x27; in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -708,9 +708,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not struct.name or not struct.name.strip():</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">102</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(f&quot;Struct name is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -1223,9 +1223,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not name or not name.strip():</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">205</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return False</div>
             </div>
             <div class="code-line ">
@@ -1488,9 +1488,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if self._has_unbalanced_brackets(value):</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">258</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
@@ -1508,9 +1508,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if value.count(&quot;\n&quot;) &gt; 3 or value.count(&quot;\\&quot;) &gt; 5:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">262</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
@@ -1578,9 +1578,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                if not stack or stack.pop() != bracket_pairs[char]:</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">276</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return True</div>
             </div>
             <div class="code-line ">
