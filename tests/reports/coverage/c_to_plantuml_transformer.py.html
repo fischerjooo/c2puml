@@ -50,7 +50,7 @@
         }
         .coverage-fill {
             height: 100%;
-            background: #f44336;
+            background: #4caf50;
             transition: width 0.3s ease;
         }
         .code-container {
@@ -171,14 +171,14 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/transformer.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 16:01:44</div>
+        <div class="timestamp">Generated: 2025-07-26 16:09:34</div>
         
         <div class="stats">
             <div class="stat">
                 <span class="stat-label">Coverage</span>
-                <span class="stat-value">55.3%</span>
+                <span class="stat-value">96.0%</span>
                 <div class="coverage-bar">
-                    <div class="coverage-fill" style="width: 55.33596837944664%"></div>
+                    <div class="coverage-fill" style="width: 96.04743083003953%"></div>
                 </div>
             </div>
             <div class="stat">
@@ -187,11 +187,11 @@
             </div>
             <div class="stat">
                 <span class="stat-label">Covered</span>
-                <span class="stat-value" style="color: #4caf50">140</span>
+                <span class="stat-value" style="color: #4caf50">243</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Missing</span>
-                <span class="stat-value" style="color: #f44336">113</span>
+                <span class="stat-value" style="color: #f44336">10</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Excluded</span>
@@ -206,7 +206,7 @@
             <div class="code-line ">
                 <div class="line-number">1</div>
                 <div class="line-status"></div>
-                <div class="line-content"><span class="comment">#!/usr/bin/env python3</span></div>
+                <div class="line-content">#!/usr/bin/env python3</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">2</div>
@@ -216,7 +216,7 @@
             <div class="code-line ">
                 <div class="line-number">3</div>
                 <div class="line-status"></div>
-                <div class="line-content">Transformer module <span class=<span class="string">"keyword"</span>>for</span> C to PlantUML converter - Step 2: Transform model based on configuration</div>
+                <div class="line-content">Transformer module for C to PlantUML converter - Step 2: Transform model based on configuration</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">4</div>
@@ -231,27 +231,27 @@
             <div class="code-line covered">
                 <div class="line-number">6</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>import</span> json</div>
+                <div class="line-content">import json</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">7</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>import</span> logging</div>
+                <div class="line-content">import logging</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">8</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>import</span> re</div>
+                <div class="line-content">import re</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">9</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> pathlib <span class=<span class="string">"keyword"</span>>import</span> Path</div>
+                <div class="line-content">from pathlib import Path</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">10</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> typing <span class=<span class="string">"keyword"</span>>import</span> Any, Dict, List, Optional, Set</div>
+                <div class="line-content">from typing import Any, Dict, List, Optional, Set</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">11</div>
@@ -261,7 +261,7 @@
             <div class="code-line covered">
                 <div class="line-number">12</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> .models <span class=<span class="string">"keyword"</span>>import</span> (</div>
+                <div class="line-content">from .models import (</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">13</div>
@@ -331,12 +331,12 @@
             <div class="code-line covered">
                 <div class="line-number">26</div>
                 <div class="line-status">✓</div>
-                <div class="line-content"><span class=<span class="string">"keyword"</span>>class</span> Transformer:</div>
+                <div class="line-content">class Transformer:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">27</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    &quot;&quot;&quot;Ma<span class=<span class="string">"keyword"</span>>in</span> transformer <span class=<span class="string">"keyword"</span>>class</span> <span class=<span class="string">"keyword"</span>>for</span> Step 2: Transform model based on configuration&quot;&quot;&quot;</div>
+                <div class="line-content">    &quot;&quot;&quot;Main transformer class for Step 2: Transform model based on configuration&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">28</div>
@@ -346,7 +346,7 @@
             <div class="code-line covered">
                 <div class="line-number">29</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> __init__(self):</div>
+                <div class="line-content">    def __init__(self):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">30</div>
@@ -361,7 +361,7 @@
             <div class="code-line covered">
                 <div class="line-number">32</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> transform(</div>
+                <div class="line-content">    def transform(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">33</div>
@@ -441,7 +441,7 @@
             <div class="code-line ">
                 <div class="line-number">48</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Load the model</span></div>
+                <div class="line-content">        # Load the model</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">49</div>
@@ -456,7 +456,7 @@
             <div class="code-line ">
                 <div class="line-number">51</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Load configuration</span></div>
+                <div class="line-content">        # Load configuration</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">52</div>
@@ -471,7 +471,7 @@
             <div class="code-line ">
                 <div class="line-number">54</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Apply transformations</span></div>
+                <div class="line-content">        # Apply transformations</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">55</div>
@@ -486,12 +486,12 @@
             <div class="code-line ">
                 <div class="line-number">57</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Save transformed model</span></div>
+                <div class="line-content">        # Save transformed model</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">58</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        output_path = output_file <span class=<span class="string">"keyword"</span>>or</span> model_file</div>
+                <div class="line-content">        output_path = output_file or model_file</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">59</div>
@@ -516,7 +516,7 @@
             <div class="code-line covered">
                 <div class="line-number">63</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> output_path</div>
+                <div class="line-content">        return output_path</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">64</div>
@@ -526,22 +526,22 @@
             <div class="code-line covered">
                 <div class="line-number">65</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _load_model(self, model_file: str) -&gt; ProjectModel:</div>
+                <div class="line-content">    def _load_model(self, model_file: str) -&gt; ProjectModel:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">66</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Load model <span class=<span class="string">"keyword"</span>>from</span> JSON file&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Load model from JSON file&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">67</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> Path(model_file).exists():</div>
+                <div class="line-content">        if not Path(model_file).exists():</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">68</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> FileNotFoundError(f&quot;Model file <span class=<span class="string">"keyword"</span>>not</span> found: {model_file}&quot;)</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            raise FileNotFoundError(f&quot;Model file not found: {model_file}&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">69</div>
@@ -551,12 +551,12 @@
             <div class="code-line covered">
                 <div class="line-number">70</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>try</span>:</div>
+                <div class="line-content">        try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">71</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>with</span> open(model_file, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</div>
+                <div class="line-content">            with open(model_file, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">72</div>
@@ -571,7 +571,7 @@
             <div class="code-line ">
                 <div class="line-number">74</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class="comment"># Convert back to ProjectModel</span></div>
+                <div class="line-content">            # Convert back to ProjectModel</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">75</div>
@@ -606,12 +606,12 @@
             <div class="code-line ">
                 <div class="line-number">81</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class="comment"># Convert file data back to FileModel objects</span></div>
+                <div class="line-content">            # Convert file data back to FileModel objects</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">82</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>for</span> file_path, file_data <span class=<span class="string">"keyword"</span>>in</span> data[&quot;files&quot;].items():</div>
+                <div class="line-content">            for file_path, file_data in data[&quot;files&quot;].items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">83</div>
@@ -626,27 +626,27 @@
             <div class="code-line covered">
                 <div class="line-number">85</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            self.logger.debug(&quot;Loaded model <span class=<span class="string">"keyword"</span>>with</span> %d files&quot;, len(model.files))</div>
+                <div class="line-content">            self.logger.debug(&quot;Loaded model with %d files&quot;, len(model.files))</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">86</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> model</div>
+                <div class="line-content">            return model</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">87</div>
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">88</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>except</span> Exception as e:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        except Exception as e:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">89</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(f&quot;Failed to load model <span class=<span class="string">"keyword"</span>>from</span> {model_file}: {e}&quot;) <span class=<span class="string">"keyword"</span>>from</span> e</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            raise ValueError(f&quot;Failed to load model from {model_file}: {e}&quot;) from e</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">90</div>
@@ -656,22 +656,22 @@
             <div class="code-line covered">
                 <div class="line-number">91</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _load_config(self, config_file: str) -&gt; Dict[str, Any]:</div>
+                <div class="line-content">    def _load_config(self, config_file: str) -&gt; Dict[str, Any]:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">92</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Load configuration <span class=<span class="string">"keyword"</span>>from</span> JSON file&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Load configuration from JSON file&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">93</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> Path(config_file).exists():</div>
+                <div class="line-content">        if not Path(config_file).exists():</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">94</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> FileNotFoundError(f&quot;Configuration file <span class=<span class="string">"keyword"</span>>not</span> found: {config_file}&quot;)</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            raise FileNotFoundError(f&quot;Configuration file not found: {config_file}&quot;)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">95</div>
@@ -681,12 +681,12 @@
             <div class="code-line covered">
                 <div class="line-number">96</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>try</span>:</div>
+                <div class="line-content">        try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">97</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>with</span> open(config_file, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</div>
+                <div class="line-content">            with open(config_file, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">98</div>
@@ -701,12 +701,12 @@
             <div class="code-line covered">
                 <div class="line-number">100</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            self.logger.debug(&quot;Loaded configuration <span class=<span class="string">"keyword"</span>>from</span>: %s&quot;, config_file)</div>
+                <div class="line-content">            self.logger.debug(&quot;Loaded configuration from: %s&quot;, config_file)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">101</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> config</div>
+                <div class="line-content">            return config</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">102</div>
@@ -716,22 +716,22 @@
             <div class="code-line missing">
                 <div class="line-number">103</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>except</span> Exception as e:</div>
+                <div class="line-content">        except Exception as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">104</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(</div>
+                <div class="line-content">            raise ValueError(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">105</div>
                 <div class="line-status"></div>
-                <div class="line-content">                f&quot;Failed to load configuration <span class=<span class="string">"keyword"</span>>from</span> {config_file}: {e}&quot;</div>
+                <div class="line-content">                f&quot;Failed to load configuration from {config_file}: {e}&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">106</div>
                 <div class="line-status"></div>
-                <div class="line-content">            ) <span class=<span class="string">"keyword"</span>>from</span> e</div>
+                <div class="line-content">            ) from e</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">107</div>
@@ -741,7 +741,7 @@
             <div class="code-line covered">
                 <div class="line-number">108</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _apply_transformations(</div>
+                <div class="line-content">    def _apply_transformations(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">109</div>
@@ -771,12 +771,12 @@
             <div class="code-line ">
                 <div class="line-number">114</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Apply comprehensive file filtering (moved <span class=<span class="string">"keyword"</span>>from</span> parser)</span></div>
+                <div class="line-content">        # Apply comprehensive file filtering (moved from parser)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">115</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;file_filters&quot; <span class=<span class="string">"keyword"</span>>in</span> config:</div>
+                <div class="line-content">        if &quot;file_filters&quot; in config:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">116</div>
@@ -791,16 +791,16 @@
             <div class="code-line ">
                 <div class="line-number">118</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Apply element filters</span></div>
+                <div class="line-content">        # Apply element filters</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">119</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;element_filters&quot; <span class=<span class="string">"keyword"</span>>in</span> config:</div>
+                <div class="line-content">        if &quot;element_filters&quot; in config:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">120</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            model = self._apply_element_filters(model, config[&quot;element_filters&quot;])</div>
             </div>
             <div class="code-line ">
@@ -811,16 +811,16 @@
             <div class="code-line ">
                 <div class="line-number">122</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Apply transformations <span class=<span class="string">"keyword"</span>>with</span> file selection support</span></div>
+                <div class="line-content">        # Apply transformations with file selection support</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">123</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;transformations&quot; <span class=<span class="string">"keyword"</span>>in</span> config:</div>
+                <div class="line-content">        if &quot;transformations&quot; in config:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">124</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            model = self._apply_model_transformations(model, config[&quot;transformations&quot;])</div>
             </div>
             <div class="code-line ">
@@ -831,12 +831,12 @@
             <div class="code-line ">
                 <div class="line-number">126</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Apply include depth processing</span></div>
+                <div class="line-content">        # Apply include depth processing</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">127</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;include_depth&quot; <span class=<span class="string">"keyword"</span>>in</span> config <span class=<span class="string">"keyword"</span>>and</span> config[&quot;include_depth&quot;] &gt; 1:</div>
+                <div class="line-content">        if &quot;include_depth&quot; in config and config[&quot;include_depth&quot;] &gt; 1:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">128</div>
@@ -866,7 +866,7 @@
             <div class="code-line covered">
                 <div class="line-number">133</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> model</div>
+                <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">134</div>
@@ -876,7 +876,7 @@
             <div class="code-line covered">
                 <div class="line-number">135</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _apply_file_filters(</div>
+                <div class="line-content">    def _apply_file_filters(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">136</div>
@@ -891,7 +891,7 @@
             <div class="code-line ">
                 <div class="line-number">138</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Apply user-configured file-level filters (important filtering already done <span class=<span class="string">"keyword"</span>>in</span> parser)&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Apply user-configured file-level filters (important filtering already done in parser)&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">139</div>
@@ -911,36 +911,36 @@
             <div class="code-line covered">
                 <div class="line-number">142</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> include_patterns <span class=<span class="string">"keyword"</span>>and</span> <span class=<span class="string">"keyword"</span>>not</span> exclude_patterns:</div>
+                <div class="line-content">        if not include_patterns and not exclude_patterns:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">143</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> model</div>
+                <div class="line-content">            return model</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">144</div>
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">145</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        filtered_files = {}</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">146</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> file_path, file_model <span class=<span class="string">"keyword"</span>>in</span> model.files.items():</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        for file_path, file_model in model.files.items():</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">147</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> self._should_include_file(file_path, include_patterns, exclude_patterns):</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            if self._should_include_file(file_path, include_patterns, exclude_patterns):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">148</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">                filtered_files[file_path] = file_model</div>
             </div>
             <div class="code-line ">
@@ -948,14 +948,14 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">150</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        model.files = filtered_files</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">151</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        self.logger.debug(</div>
             </div>
             <div class="code-line ">
@@ -968,10 +968,10 @@
                 <div class="line-status"></div>
                 <div class="line-content">        )</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">154</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> model</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">155</div>
@@ -981,7 +981,7 @@
             <div class="code-line covered">
                 <div class="line-number">156</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _apply_element_filters(</div>
+                <div class="line-content">    def _apply_element_filters(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">157</div>
@@ -998,14 +998,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">        &quot;&quot;&quot;Apply element-level filters&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">160</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> file_path, file_model <span class=<span class="string">"keyword"</span>>in</span> model.files.items():</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        for file_path, file_model in model.files.items():</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">161</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            model.files[file_path] = self._filter_file_elements(file_model, filters)</div>
             </div>
             <div class="code-line ">
@@ -1013,10 +1013,10 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">163</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> model</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">164</div>
@@ -1026,7 +1026,7 @@
             <div class="code-line covered">
                 <div class="line-number">165</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _filter_file_elements(</div>
+                <div class="line-content">    def _filter_file_elements(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">166</div>
@@ -1041,21 +1041,21 @@
             <div class="code-line ">
                 <div class="line-number">168</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Filter elements with<span class=<span class="string">"keyword"</span>>in</span> a file&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Filter elements within a file&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">169</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Filter structs</span></div>
+                <div class="line-content">        # Filter structs</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">170</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;structs&quot; <span class=<span class="string">"keyword"</span>>in</span> filters:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        if &quot;structs&quot; in filters:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">171</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            file_model.structs = self._filter_dict(</div>
             </div>
             <div class="code-line ">
@@ -1076,16 +1076,16 @@
             <div class="code-line ">
                 <div class="line-number">175</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Filter enums</span></div>
+                <div class="line-content">        # Filter enums</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">176</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;enums&quot; <span class=<span class="string">"keyword"</span>>in</span> filters:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        if &quot;enums&quot; in filters:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">177</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            file_model.enums = self._filter_dict(file_model.enums, filters[&quot;enums&quot;])</div>
             </div>
             <div class="code-line ">
@@ -1096,16 +1096,16 @@
             <div class="code-line ">
                 <div class="line-number">179</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Filter unions</span></div>
+                <div class="line-content">        # Filter unions</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">180</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;unions&quot; <span class=<span class="string">"keyword"</span>>in</span> filters:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        if &quot;unions&quot; in filters:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">181</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            file_model.unions = self._filter_dict(file_model.unions, filters[&quot;unions&quot;])</div>
             </div>
             <div class="code-line ">
@@ -1116,16 +1116,16 @@
             <div class="code-line ">
                 <div class="line-number">183</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Filter functions</span></div>
+                <div class="line-content">        # Filter functions</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">184</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;functions&quot; <span class=<span class="string">"keyword"</span>>in</span> filters:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        if &quot;functions&quot; in filters:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">185</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            file_model.functions = self._filter_list(</div>
             </div>
             <div class="code-line ">
@@ -1146,16 +1146,16 @@
             <div class="code-line ">
                 <div class="line-number">189</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Filter globals</span></div>
+                <div class="line-content">        # Filter globals</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">190</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;globals&quot; <span class=<span class="string">"keyword"</span>>in</span> filters:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        if &quot;globals&quot; in filters:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">191</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            file_model.globals = self._filter_list(</div>
             </div>
             <div class="code-line ">
@@ -1176,16 +1176,16 @@
             <div class="code-line ">
                 <div class="line-number">195</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Filter macros</span></div>
+                <div class="line-content">        # Filter macros</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">196</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;macros&quot; <span class=<span class="string">"keyword"</span>>in</span> filters:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        if &quot;macros&quot; in filters:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">197</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            file_model.macros = self._filter_list(file_model.macros, filters[&quot;macros&quot;])</div>
             </div>
             <div class="code-line ">
@@ -1196,16 +1196,16 @@
             <div class="code-line ">
                 <div class="line-number">199</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Filter aliases (replaces typedefs)</span></div>
+                <div class="line-content">        # Filter aliases (replaces typedefs)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">200</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;aliases&quot; <span class=<span class="string">"keyword"</span>>in</span> filters:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        if &quot;aliases&quot; in filters:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">201</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            file_model.aliases = self._filter_dict(</div>
             </div>
             <div class="code-line ">
@@ -1223,10 +1223,10 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">205</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> file_model</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        return file_model</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">206</div>
@@ -1236,7 +1236,7 @@
             <div class="code-line covered">
                 <div class="line-number">207</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _apply_model_transformations(</div>
+                <div class="line-content">    def _apply_model_transformations(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">208</div>
@@ -1251,21 +1251,21 @@
             <div class="code-line ">
                 <div class="line-number">210</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Apply model-level transformations <span class=<span class="string">"keyword"</span>>with</span> file selection support&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Apply model-level transformations with file selection support&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">211</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Get file selection configuration</span></div>
+                <div class="line-content">        # Get file selection configuration</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">212</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        file_selection = transformations.get(&quot;file_selection&quot;, {})</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">213</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        selected_files = file_selection.get(&quot;selected_files&quot;, [])</div>
             </div>
             <div class="code-line ">
@@ -1276,56 +1276,56 @@
             <div class="code-line ">
                 <div class="line-number">215</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Determine which files to apply transformations to</span></div>
+                <div class="line-content">        # Determine which files to apply transformations to</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">216</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># If selected_files <span class=<span class="string">"keyword"</span>>is</span> empty <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>not</span> specified, apply to all files</span></div>
+                <div class="line-content">        # If selected_files is empty or not specified, apply to all files</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">217</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> selected_files:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        if not selected_files:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">218</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            target_files = set(model.files.keys())</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">219</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>else</span>:</div>
+                <div class="line-content">        else:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">220</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class="comment"># Apply only to selected files</span></div>
+                <div class="line-content">            # Apply only to selected files</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">221</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            target_files = set()</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">222</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>for</span> pattern <span class=<span class="string">"keyword"</span>>in</span> selected_files:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            for pattern in selected_files:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">223</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>for</span> file_path <span class=<span class="string">"keyword"</span>>in</span> model.files.keys():</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                for file_path in model.files.keys():</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">224</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">                    <span class=<span class="string">"keyword"</span>>if</span> self._matches_pattern(file_path, pattern):</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                    if self._matches_pattern(file_path, pattern):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">225</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">                        target_files.add(file_path)</div>
             </div>
             <div class="code-line ">
@@ -1333,9 +1333,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">227</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        self.logger.debug(</div>
             </div>
             <div class="code-line ">
@@ -1366,16 +1366,16 @@
             <div class="code-line ">
                 <div class="line-number">233</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Rename elements</span></div>
+                <div class="line-content">        # Rename elements</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">234</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;rename&quot; <span class=<span class="string">"keyword"</span>>in</span> transformations:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        if &quot;rename&quot; in transformations:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">235</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            model = self._apply_renaming(model, transformations[&quot;rename&quot;], target_files)</div>
             </div>
             <div class="code-line ">
@@ -1386,16 +1386,16 @@
             <div class="code-line ">
                 <div class="line-number">237</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Add elements</span></div>
+                <div class="line-content">        # Add elements</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">238</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;add&quot; <span class=<span class="string">"keyword"</span>>in</span> transformations:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        if &quot;add&quot; in transformations:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">239</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            model = self._apply_additions(model, transformations[&quot;add&quot;], target_files)</div>
             </div>
             <div class="code-line ">
@@ -1406,16 +1406,16 @@
             <div class="code-line ">
                 <div class="line-number">241</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Remove elements</span></div>
+                <div class="line-content">        # Remove elements</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">242</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> &quot;remove&quot; <span class=<span class="string">"keyword"</span>>in</span> transformations:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        if &quot;remove&quot; in transformations:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">243</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            model = self._apply_removals(model, transformations[&quot;remove&quot;], target_files)</div>
             </div>
             <div class="code-line ">
@@ -1423,10 +1423,10 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">245</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> model</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">246</div>
@@ -1436,7 +1436,7 @@
             <div class="code-line covered">
                 <div class="line-number">247</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _apply_renaming(</div>
+                <div class="line-content">    def _apply_renaming(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">248</div>
@@ -1453,9 +1453,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">        &quot;&quot;&quot;Apply renaming transformations to selected files&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">251</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        self.logger.debug(</div>
             </div>
             <div class="code-line ">
@@ -1476,31 +1476,31 @@
             <div class="code-line ">
                 <div class="line-number">255</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Apply renaming only to target files</span></div>
+                <div class="line-content">        # Apply renaming only to target files</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">256</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> file_path <span class=<span class="string">"keyword"</span>>in</span> target_files:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        for file_path in target_files:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">257</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> file_path <span class=<span class="string">"keyword"</span>>in</span> model.files:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            if file_path in model.files:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">258</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Apply renaming logic here</span></div>
+                <div class="line-content">                # Apply renaming logic here</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">259</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Th<span class=<span class="string">"keyword"</span>>is</span> would handle renaming structs, enums, functions, etc.</span></div>
+                <div class="line-content">                # This would handle renaming structs, enums, functions, etc.</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">260</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">                self.logger.debug(&quot;Applying renaming to file: %s&quot;, file_path)</div>
             </div>
             <div class="code-line ">
@@ -1508,10 +1508,10 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">262</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> model</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">263</div>
@@ -1521,7 +1521,7 @@
             <div class="code-line covered">
                 <div class="line-number">264</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _apply_additions(</div>
+                <div class="line-content">    def _apply_additions(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">265</div>
@@ -1538,9 +1538,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">        &quot;&quot;&quot;Apply addition transformations to selected files&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">268</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        self.logger.debug(</div>
             </div>
             <div class="code-line ">
@@ -1561,31 +1561,31 @@
             <div class="code-line ">
                 <div class="line-number">272</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Apply additions only to target files</span></div>
+                <div class="line-content">        # Apply additions only to target files</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">273</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> file_path <span class=<span class="string">"keyword"</span>>in</span> target_files:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        for file_path in target_files:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">274</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> file_path <span class=<span class="string">"keyword"</span>>in</span> model.files:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            if file_path in model.files:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">275</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Apply addition logic here</span></div>
+                <div class="line-content">                # Apply addition logic here</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">276</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Th<span class=<span class="string">"keyword"</span>>is</span> would handle adding new elements like structs, enums, functions, etc.</span></div>
+                <div class="line-content">                # This would handle adding new elements like structs, enums, functions, etc.</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">277</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">                self.logger.debug(&quot;Applying additions to file: %s&quot;, file_path)</div>
             </div>
             <div class="code-line ">
@@ -1593,10 +1593,10 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">279</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> model</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">280</div>
@@ -1606,7 +1606,7 @@
             <div class="code-line covered">
                 <div class="line-number">281</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _apply_removals(</div>
+                <div class="line-content">    def _apply_removals(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">282</div>
@@ -1623,9 +1623,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">        &quot;&quot;&quot;Apply removal transformations to selected files&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">285</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        self.logger.debug(</div>
             </div>
             <div class="code-line ">
@@ -1646,31 +1646,31 @@
             <div class="code-line ">
                 <div class="line-number">289</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Apply removals only to target files</span></div>
+                <div class="line-content">        # Apply removals only to target files</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">290</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> file_path <span class=<span class="string">"keyword"</span>>in</span> target_files:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        for file_path in target_files:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">291</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> file_path <span class=<span class="string">"keyword"</span>>in</span> model.files:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            if file_path in model.files:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">292</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Apply removal logic here</span></div>
+                <div class="line-content">                # Apply removal logic here</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">293</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Th<span class=<span class="string">"keyword"</span>>is</span> would handle removing elements like structs, enums, functions, etc.</span></div>
+                <div class="line-content">                # This would handle removing elements like structs, enums, functions, etc.</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">294</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">                self.logger.debug(&quot;Applying removals to file: %s&quot;, file_path)</div>
             </div>
             <div class="code-line ">
@@ -1678,10 +1678,10 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">296</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> model</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">297</div>
@@ -1691,7 +1691,7 @@
             <div class="code-line covered">
                 <div class="line-number">298</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _process_include_relations(</div>
+                <div class="line-content">    def _process_include_relations(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">299</div>
@@ -1711,7 +1711,7 @@
             <div class="code-line covered">
                 <div class="line-number">302</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        self.logger.info(&quot;Processing include relations <span class=<span class="string">"keyword"</span>>with</span> max depth: %d&quot;, max_depth)</div>
+                <div class="line-content">        self.logger.info(&quot;Processing include relations with max depth: %d&quot;, max_depth)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">303</div>
@@ -1721,12 +1721,12 @@
             <div class="code-line ">
                 <div class="line-number">304</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Create a mapping of filenames to their models <span class=<span class="string">"keyword"</span>>for</span> quick lookup</span></div>
+                <div class="line-content">        # Create a mapping of filenames to their models for quick lookup</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">305</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Since we now use relative paths as keys, we need to map by filename <span class=<span class="string">"keyword"</span>>for</span> include processing</span></div>
+                <div class="line-content">        # Since we now use relative paths as keys, we need to map by filename for include processing</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">306</div>
@@ -1736,7 +1736,7 @@
             <div class="code-line covered">
                 <div class="line-number">307</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> file_model <span class=<span class="string">"keyword"</span>>in</span> model.files.values():</div>
+                <div class="line-content">        for file_model in model.files.values():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">308</div>
@@ -1756,12 +1756,12 @@
             <div class="code-line ">
                 <div class="line-number">311</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Process each file&#x27;s includes</span></div>
+                <div class="line-content">        # Process each file&#x27;s includes</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">312</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> file_path, file_model <span class=<span class="string">"keyword"</span>>in</span> model.files.items():</div>
+                <div class="line-content">        for file_path, file_model in model.files.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">313</div>
@@ -1776,7 +1776,7 @@
             <div class="code-line covered">
                 <div class="line-number">315</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> model</div>
+                <div class="line-content">        return model</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">316</div>
@@ -1786,7 +1786,7 @@
             <div class="code-line covered">
                 <div class="line-number">317</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _process_file_includes(</div>
+                <div class="line-content">    def _process_file_includes(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">318</div>
@@ -1821,17 +1821,17 @@
             <div class="code-line ">
                 <div class="line-number">324</div>
                 <div class="line-status"></div>
-                <div class="line-content">    ) -&gt; <span class=<span class="string">"keyword"</span>>None</span>:</div>
+                <div class="line-content">    ) -&gt; None:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">325</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Recursively process includes <span class=<span class="string">"keyword"</span>>for</span> a file using filename-based matching&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Recursively process includes for a file using filename-based matching&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">326</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> current_depth &gt; max_depth <span class=<span class="string">"keyword"</span>>or</span> file_model.relative_path <span class=<span class="string">"keyword"</span>>in</span> visited:</div>
+                <div class="line-content">        if current_depth &gt; max_depth or file_model.relative_path in visited:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">327</div>
@@ -1856,17 +1856,17 @@
             <div class="code-line ">
                 <div class="line-number">331</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Process each include</span></div>
+                <div class="line-content">        # Process each include</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">332</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> include_name <span class=<span class="string">"keyword"</span>>in</span> file_model.includes:</div>
+                <div class="line-content">        for include_name in file_model.includes:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">333</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class="comment"># Try to find the included file</span></div>
+                <div class="line-content">            # Try to find the included file</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">334</div>
@@ -1891,12 +1891,12 @@
             <div class="code-line covered">
                 <div class="line-number">338</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> included_filename:</div>
+                <div class="line-content">            if included_filename:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">339</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Convert full path to filename <span class=<span class="string">"keyword"</span>>for</span> lookup</span></div>
+                <div class="line-content">                # Convert full path to filename for lookup</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">340</div>
@@ -1906,17 +1906,17 @@
             <div class="code-line covered">
                 <div class="line-number">341</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> included_filename_key <span class=<span class="string">"keyword"</span>>in</span> file_map:</div>
+                <div class="line-content">                if included_filename_key in file_map:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">342</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    <span class="comment"># Prevent self-referencing include relations</span></div>
+                <div class="line-content">                    # Prevent self-referencing include relations</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">343</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                    <span class=<span class="string">"keyword"</span>>if</span> file_model.relative_path == included_filename_key:</div>
+                <div class="line-content">                    if file_model.relative_path == included_filename_key:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">344</div>
@@ -1926,7 +1926,7 @@
             <div class="code-line ">
                 <div class="line-number">345</div>
                 <div class="line-status"></div>
-                <div class="line-content">                            &quot;Skipping self-include relation <span class=<span class="string">"keyword"</span>>for</span> %s&quot;, file_model.relative_path</div>
+                <div class="line-content">                            &quot;Skipping self-include relation for %s&quot;, file_model.relative_path</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">346</div>
@@ -1946,7 +1946,7 @@
             <div class="code-line ">
                 <div class="line-number">349</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Check <span class=<span class="string">"keyword"</span>>if</span> th<span class=<span class="string">"keyword"</span>>is</span> include relation already exists to prevent cycles</span></div>
+                <div class="line-content">                # Check if this include relation already exists to prevent cycles</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">350</div>
@@ -1961,12 +1961,12 @@
             <div class="code-line ">
                 <div class="line-number">352</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    <span class=<span class="string">"keyword"</span>>and</span> rel.included_file == included_filename_key</div>
+                <div class="line-content">                    and rel.included_file == included_filename_key</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">353</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    <span class=<span class="string">"keyword"</span>>for</span> rel <span class=<span class="string">"keyword"</span>>in</span> file_model.include_relations</div>
+                <div class="line-content">                    for rel in file_model.include_relations</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">354</div>
@@ -1981,17 +1981,17 @@
             <div class="code-line covered">
                 <div class="line-number">356</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> relation_exists:</div>
+                <div class="line-content">                if relation_exists:</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">357</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">✗</div>
                 <div class="line-content">                    self.logger.debug(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">358</div>
                 <div class="line-status"></div>
-                <div class="line-content">                        &quot;Cyclic include detected <span class=<span class="string">"keyword"</span>>and</span> skipped: %s -&gt; %s&quot;,</div>
+                <div class="line-content">                        &quot;Cyclic include detected and skipped: %s -&gt; %s&quot;,</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">359</div>
@@ -2008,9 +2008,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">                    )</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">362</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">✗</div>
                 <div class="line-content">                    continue</div>
             </div>
             <div class="code-line ">
@@ -2021,22 +2021,22 @@
             <div class="code-line ">
                 <div class="line-number">364</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Create include relation using appropriate paths</span></div>
+                <div class="line-content">                # Create include relation using appropriate paths</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">365</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># F<span class=<span class="string">"keyword"</span>>or</span> tests (tmp directories), use full paths; otherwise use filenames</span></div>
+                <div class="line-content">                # For tests (tmp directories), use full paths; otherwise use filenames</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">366</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                source_file = file_model.file_path <span class=<span class="string">"keyword"</span>>if</span> &quot;tmp&quot; <span class=<span class="string">"keyword"</span>>in</span> file_model.file_path <span class=<span class="string">"keyword"</span>>else</span> file_model.relative_path</div>
+                <div class="line-content">                source_file = file_model.file_path if &quot;tmp&quot; in file_model.file_path else file_model.relative_path</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">367</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                included_file = included_filename <span class=<span class="string">"keyword"</span>>if</span> &quot;tmp&quot; <span class=<span class="string">"keyword"</span>>in</span> included_filename <span class=<span class="string">"keyword"</span>>else</span> included_filename_key</div>
+                <div class="line-content">                included_file = included_filename if &quot;tmp&quot; in included_filename else included_filename_key</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">368</div>
@@ -2081,12 +2081,12 @@
             <div class="code-line ">
                 <div class="line-number">376</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Recursively process the included file</span></div>
+                <div class="line-content">                # Recursively process the included file</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">377</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> included_filename_key <span class=<span class="string">"keyword"</span>>in</span> file_map:</div>
+                <div class="line-content">                if included_filename_key in file_map:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">378</div>
@@ -2136,7 +2136,7 @@
             <div class="code-line covered">
                 <div class="line-number">387</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _find_included_file(</div>
+                <div class="line-content">    def _find_included_file(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">388</div>
@@ -2151,17 +2151,17 @@
             <div class="code-line ">
                 <div class="line-number">390</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Find the actual file path <span class=<span class="string">"keyword"</span>>for</span> an include using simplified filename matching&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Find the actual file path for an include using simplified filename matching&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">391</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Since we now use filenames as keys, we can simplify th<span class=<span class="string">"keyword"</span>>is</span> significantly</span></div>
+                <div class="line-content">        # Since we now use filenames as keys, we can simplify this significantly</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">392</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Just <span class=<span class="string">"keyword"</span>>return</span> the filename <span class=<span class="string">"keyword"</span>>if</span> it exists <span class=<span class="string">"keyword"</span>>in</span> the project files</span></div>
+                <div class="line-content">        # Just return the filename if it exists in the project files</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">393</div>
@@ -2171,7 +2171,7 @@
             <div class="code-line ">
                 <div class="line-number">394</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Common include paths to search</span></div>
+                <div class="line-content">        # Common include paths to search</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">395</div>
@@ -2216,7 +2216,7 @@
             <div class="code-line ">
                 <div class="line-number">403</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Try different extensions</span></div>
+                <div class="line-content">        # Try different extensions</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">404</div>
@@ -2231,12 +2231,12 @@
             <div class="code-line covered">
                 <div class="line-number">406</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> search_path <span class=<span class="string">"keyword"</span>>in</span> search_paths:</div>
+                <div class="line-content">        for search_path in search_paths:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">407</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> search_path.exists():</div>
+                <div class="line-content">            if not search_path.exists():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">408</div>
@@ -2251,7 +2251,7 @@
             <div class="code-line covered">
                 <div class="line-number">410</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>for</span> ext <span class=<span class="string">"keyword"</span>>in</span> extensions:</div>
+                <div class="line-content">            for ext in extensions:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">411</div>
@@ -2261,37 +2261,37 @@
             <div class="code-line covered">
                 <div class="line-number">412</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> file_path.exists():</div>
+                <div class="line-content">                if file_path.exists():</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">413</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    <span class="comment"># F<span class=<span class="string">"keyword"</span>>or</span> backward compatibility <span class=<span class="string">"keyword"</span>>with</span> tests, <span class=<span class="string">"keyword"</span>>return</span> full path <span class=<span class="string">"keyword"</span>>if</span> it&#x27;s a test</span></div>
+                <div class="line-content">                    # For backward compatibility with tests, return full path if it&#x27;s a test</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">414</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    <span class="comment"># Otherwise <span class=<span class="string">"keyword"</span>>return</span> filename <span class=<span class="string">"keyword"</span>>for</span> simplified tracking</span></div>
+                <div class="line-content">                    # Otherwise return filename for simplified tracking</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">415</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                    <span class=<span class="string">"keyword"</span>>if</span> &quot;tmp&quot; <span class=<span class="string">"keyword"</span>>in</span> str(file_path):</div>
+                <div class="line-content">                    if &quot;tmp&quot; in str(file_path):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">416</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">                        <span class=<span class="string">"keyword"</span>>return</span> str(file_path.resolve())</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                        return str(file_path.resolve())</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">417</div>
                 <div class="line-status"></div>
-                <div class="line-content">                    <span class=<span class="string">"keyword"</span>>else</span>:</div>
+                <div class="line-content">                    else:</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">418</div>
-                <div class="line-status">✓</div>
-                <div class="line-content">                        <span class=<span class="string">"keyword"</span>>return</span> file_path.name</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">                        return file_path.name</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">419</div>
@@ -2301,7 +2301,7 @@
             <div class="code-line covered">
                 <div class="line-number">420</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> None</div>
+                <div class="line-content">        return None</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">421</div>
@@ -2311,37 +2311,37 @@
             <div class="code-line covered">
                 <div class="line-number">422</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _matches_pattern(self, file_path: str, pattern: str) -&gt; bool:</div>
+                <div class="line-content">    def _matches_pattern(self, file_path: str, pattern: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">423</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Check <span class=<span class="string">"keyword"</span>>if</span> a file path matches a pattern&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Check if a file path matches a pattern&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">424</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>try</span>:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        try:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">425</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> bool(re.search(pattern, file_path))</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            return bool(re.search(pattern, file_path))</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">426</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>except</span> re.error:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        except re.error:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">427</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            self.logger.warning(&quot;Invalid pattern &<span class="comment">#x27;%s&#x27; <span class=<span class="string">"keyword"</span>>for</span> file matching&quot;, pattern)</span></div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            self.logger.warning(&quot;Invalid pattern &#x27;%s&#x27; for file matching&quot;, pattern)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">428</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> False</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            return False</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">429</div>
@@ -2351,12 +2351,12 @@
             <div class="code-line covered">
                 <div class="line-number">430</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _compile_patterns(self, patterns: List[str]) -&gt; List[re.Pattern]:</div>
+                <div class="line-content">    def _compile_patterns(self, patterns: List[str]) -&gt; List[re.Pattern]:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">431</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Compile regex patterns <span class=<span class="string">"keyword"</span>>with</span> err<span class=<span class="string">"keyword"</span>>or</span> handling&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Compile regex patterns with error handling&quot;&quot;&quot;</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">432</div>
@@ -2371,27 +2371,27 @@
             <div class="code-line covered">
                 <div class="line-number">434</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> pattern <span class=<span class="string">"keyword"</span>>in</span> patterns:</div>
+                <div class="line-content">        for pattern in patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">435</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>try</span>:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            try:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">436</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">                compiled_patterns.append(re.compile(pattern))</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">437</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>except</span> re.err<span class=<span class="string">"keyword"</span>>or</span> as e:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            except re.error as e:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">438</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">                self.logger.warning(&quot;Invalid regex pattern &<span class="comment">#x27;%s&#x27;: %s&quot;, pattern, e)</span></div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                self.logger.warning(&quot;Invalid regex pattern &#x27;%s&#x27;: %s&quot;, pattern, e)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">439</div>
@@ -2401,7 +2401,7 @@
             <div class="code-line covered">
                 <div class="line-number">440</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> compiled_patterns</div>
+                <div class="line-content">        return compiled_patterns</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">441</div>
@@ -2411,7 +2411,7 @@
             <div class="code-line covered">
                 <div class="line-number">442</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _should_include_file(</div>
+                <div class="line-content">    def _should_include_file(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">443</div>
@@ -2441,27 +2441,27 @@
             <div class="code-line ">
                 <div class="line-number">448</div>
                 <div class="line-status"></div>
-                <div class="line-content">        &quot;&quot;&quot;Check <span class=<span class="string">"keyword"</span>>if</span> a file should be included based on filters&quot;&quot;&quot;</div>
+                <div class="line-content">        &quot;&quot;&quot;Check if a file should be included based on filters&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">449</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Check include patterns</span></div>
+                <div class="line-content">        # Check include patterns</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">450</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> include_patterns:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        if include_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">451</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> any(pattern.search(file_path) <span class=<span class="string">"keyword"</span>>for</span> pattern <span class=<span class="string">"keyword"</span>>in</span> include_patterns):</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            if not any(pattern.search(file_path) for pattern in include_patterns):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">452</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>return</span> False</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                return False</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">453</div>
@@ -2471,32 +2471,32 @@
             <div class="code-line ">
                 <div class="line-number">454</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Check exclude patterns</span></div>
+                <div class="line-content">        # Check exclude patterns</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">455</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> exclude_patterns:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        if exclude_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">456</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> any(pattern.search(file_path) <span class=<span class="string">"keyword"</span>>for</span> pattern <span class=<span class="string">"keyword"</span>>in</span> exclude_patterns):</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            if any(pattern.search(file_path) for pattern in exclude_patterns):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">457</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>return</span> False</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                return False</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">458</div>
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">459</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> True</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        return True</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">460</div>
@@ -2506,21 +2506,21 @@
             <div class="code-line covered">
                 <div class="line-number">461</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _filter_dict(self, items: Dict, filters: Dict) -&gt; Dict:</div>
+                <div class="line-content">    def _filter_dict(self, items: Dict, filters: Dict) -&gt; Dict:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">462</div>
                 <div class="line-status"></div>
                 <div class="line-content">        &quot;&quot;&quot;Filter a dictionary based on include/exclude patterns&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">463</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        include_patterns = self._compile_patterns(filters.get(&quot;include&quot;, []))</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">464</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        exclude_patterns = self._compile_patterns(filters.get(&quot;exclude&quot;, []))</div>
             </div>
             <div class="code-line ">
@@ -2528,34 +2528,34 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">466</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        filtered = {}</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">467</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> name, item <span class=<span class="string">"keyword"</span>>in</span> items.items():</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        for name, item in items.items():</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">468</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class="comment"># Check include patterns</span></div>
+                <div class="line-content">            # Check include patterns</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">469</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> include_patterns:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            if include_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">470</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> any(pattern.search(name) <span class=<span class="string">"keyword"</span>>for</span> pattern <span class=<span class="string">"keyword"</span>>in</span> include_patterns):</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                if not any(pattern.search(name) for pattern in include_patterns):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">471</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">                    continue</div>
             </div>
             <div class="code-line ">
@@ -2566,21 +2566,21 @@
             <div class="code-line ">
                 <div class="line-number">473</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class="comment"># Check exclude patterns</span></div>
+                <div class="line-content">            # Check exclude patterns</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">474</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> exclude_patterns:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            if exclude_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">475</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> any(pattern.search(name) <span class=<span class="string">"keyword"</span>>for</span> pattern <span class=<span class="string">"keyword"</span>>in</span> exclude_patterns):</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                if any(pattern.search(name) for pattern in exclude_patterns):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">476</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">                    continue</div>
             </div>
             <div class="code-line ">
@@ -2588,9 +2588,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">478</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            filtered[name] = item</div>
             </div>
             <div class="code-line ">
@@ -2598,10 +2598,10 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">480</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> filtered</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        return filtered</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">481</div>
@@ -2611,21 +2611,21 @@
             <div class="code-line covered">
                 <div class="line-number">482</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _filter_list(self, items: List, filters: Dict, key=None) -&gt; List:</div>
+                <div class="line-content">    def _filter_list(self, items: List, filters: Dict, key=None) -&gt; List:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">483</div>
                 <div class="line-status"></div>
                 <div class="line-content">        &quot;&quot;&quot;Filter a list based on include/exclude patterns&quot;&quot;&quot;</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">484</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        include_patterns = self._compile_patterns(filters.get(&quot;include&quot;, []))</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">485</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        exclude_patterns = self._compile_patterns(filters.get(&quot;exclude&quot;, []))</div>
             </div>
             <div class="code-line ">
@@ -2633,20 +2633,20 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">487</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">        filtered = []</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">488</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> item <span class=<span class="string">"keyword"</span>>in</span> items:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        for item in items:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">489</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            item_name = key(item) <span class=<span class="string">"keyword"</span>>if</span> key <span class=<span class="string">"keyword"</span>>else</span> str(item)</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            item_name = key(item) if key else str(item)</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">490</div>
@@ -2656,21 +2656,21 @@
             <div class="code-line ">
                 <div class="line-number">491</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class="comment"># Check include patterns</span></div>
+                <div class="line-content">            # Check include patterns</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">492</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> include_patterns:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            if include_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">493</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> any(pattern.search(item_name) <span class=<span class="string">"keyword"</span>>for</span> pattern <span class=<span class="string">"keyword"</span>>in</span> include_patterns):</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                if not any(pattern.search(item_name) for pattern in include_patterns):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">494</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">                    continue</div>
             </div>
             <div class="code-line ">
@@ -2681,21 +2681,21 @@
             <div class="code-line ">
                 <div class="line-number">496</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class="comment"># Check exclude patterns</span></div>
+                <div class="line-content">            # Check exclude patterns</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">497</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> exclude_patterns:</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            if exclude_patterns:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">498</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> any(pattern.search(item_name) <span class=<span class="string">"keyword"</span>>for</span> pattern <span class=<span class="string">"keyword"</span>>in</span> exclude_patterns):</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                if any(pattern.search(item_name) for pattern in exclude_patterns):</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">499</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">                    continue</div>
             </div>
             <div class="code-line ">
@@ -2703,9 +2703,9 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">501</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">            filtered.append(item)</div>
             </div>
             <div class="code-line ">
@@ -2713,10 +2713,10 @@
                 <div class="line-status"></div>
                 <div class="line-content"></div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">503</div>
-                <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> filtered</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        return filtered</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">504</div>
@@ -2726,7 +2726,7 @@
             <div class="code-line covered">
                 <div class="line-number">505</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _dict_to_file_model(self, data: Dict) -&gt; FileModel:</div>
+                <div class="line-content">    def _dict_to_file_model(self, data: Dict) -&gt; FileModel:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">506</div>
@@ -2741,7 +2741,7 @@
             <div class="code-line ">
                 <div class="line-number">508</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert structs</span></div>
+                <div class="line-content">        # Convert structs</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">509</div>
@@ -2751,7 +2751,7 @@
             <div class="code-line covered">
                 <div class="line-number">510</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> name, struct_data <span class=<span class="string">"keyword"</span>>in</span> data.get(&quot;structs&quot;, {}).items():</div>
+                <div class="line-content">        for name, struct_data in data.get(&quot;structs&quot;, {}).items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">511</div>
@@ -2761,7 +2761,7 @@
             <div class="code-line ">
                 <div class="line-number">512</div>
                 <div class="line-status"></div>
-                <div class="line-content">                Field(f[&quot;name&quot;], f[&quot;type&quot;]) <span class=<span class="string">"keyword"</span>>for</span> f <span class=<span class="string">"keyword"</span>>in</span> struct_data.get(&quot;fields&quot;, [])</div>
+                <div class="line-content">                Field(f[&quot;name&quot;], f[&quot;type&quot;]) for f in struct_data.get(&quot;fields&quot;, [])</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">513</div>
@@ -2811,7 +2811,7 @@
             <div class="code-line ">
                 <div class="line-number">522</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert enums</span></div>
+                <div class="line-content">        # Convert enums</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">523</div>
@@ -2821,7 +2821,7 @@
             <div class="code-line covered">
                 <div class="line-number">524</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> name, enum_data <span class=<span class="string">"keyword"</span>>in</span> data.get(&quot;enums&quot;, {}).items():</div>
+                <div class="line-content">        for name, enum_data in data.get(&quot;enums&quot;, {}).items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">525</div>
@@ -2831,12 +2831,12 @@
             <div class="code-line covered">
                 <div class="line-number">526</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>for</span> value_data <span class=<span class="string">"keyword"</span>>in</span> enum_data.get(&quot;values&quot;, []):</div>
+                <div class="line-content">            for value_data in enum_data.get(&quot;values&quot;, []):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">527</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> isinstance(value_data, dict):</div>
+                <div class="line-content">                if isinstance(value_data, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">528</div>
@@ -2856,11 +2856,11 @@
             <div class="code-line ">
                 <div class="line-number">531</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class=<span class="string">"keyword"</span>>else</span>:</div>
+                <div class="line-content">                else:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">532</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">✓</div>
                 <div class="line-content">                    values.append(EnumValue(value_data))</div>
             </div>
             <div class="code-line covered">
@@ -2876,7 +2876,7 @@
             <div class="code-line ">
                 <div class="line-number">535</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert unions</span></div>
+                <div class="line-content">        # Convert unions</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">536</div>
@@ -2886,12 +2886,12 @@
             <div class="code-line covered">
                 <div class="line-number">537</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> name, union_data <span class=<span class="string">"keyword"</span>>in</span> data.get(&quot;unions&quot;, {}).items():</div>
+                <div class="line-content">        for name, union_data in data.get(&quot;unions&quot;, {}).items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">538</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            fields = [Field(f[&quot;name&quot;], f[&quot;type&quot;]) <span class=<span class="string">"keyword"</span>>for</span> f <span class=<span class="string">"keyword"</span>>in</span> union_data.get(&quot;fields&quot;, [])]</div>
+                <div class="line-content">            fields = [Field(f[&quot;name&quot;], f[&quot;type&quot;]) for f in union_data.get(&quot;fields&quot;, [])]</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">539</div>
@@ -2916,7 +2916,7 @@
             <div class="code-line ">
                 <div class="line-number">543</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert aliases</span></div>
+                <div class="line-content">        # Convert aliases</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">544</div>
@@ -2926,12 +2926,12 @@
             <div class="code-line covered">
                 <div class="line-number">545</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> name, alias_data <span class=<span class="string">"keyword"</span>>in</span> data.get(&quot;aliases&quot;, {}).items():</div>
+                <div class="line-content">        for name, alias_data in data.get(&quot;aliases&quot;, {}).items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">546</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>if</span> isinstance(alias_data, dict):</div>
+                <div class="line-content">            if isinstance(alias_data, dict):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">547</div>
@@ -2961,12 +2961,12 @@
             <div class="code-line ">
                 <div class="line-number">552</div>
                 <div class="line-status"></div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>else</span>:</div>
+                <div class="line-content">            else:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">553</div>
                 <div class="line-status"></div>
-                <div class="line-content">                <span class="comment"># Handle legacy format where aliases was Dict[str, str]</span></div>
+                <div class="line-content">                # Handle legacy format where aliases was Dict[str, str]</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">554</div>
@@ -2981,7 +2981,7 @@
             <div class="code-line ">
                 <div class="line-number">556</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert functions</span></div>
+                <div class="line-content">        # Convert functions</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">557</div>
@@ -2991,7 +2991,7 @@
             <div class="code-line covered">
                 <div class="line-number">558</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> func_data <span class=<span class="string">"keyword"</span>>in</span> data.get(&quot;functions&quot;, []):</div>
+                <div class="line-content">        for func_data in data.get(&quot;functions&quot;, []):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">559</div>
@@ -3001,7 +3001,7 @@
             <div class="code-line ">
                 <div class="line-number">560</div>
                 <div class="line-status"></div>
-                <div class="line-content">                Field(p[&quot;name&quot;], p[&quot;type&quot;]) <span class=<span class="string">"keyword"</span>>for</span> p <span class=<span class="string">"keyword"</span>>in</span> func_data.get(&quot;parameters&quot;, [])</div>
+                <div class="line-content">                Field(p[&quot;name&quot;], p[&quot;type&quot;]) for p in func_data.get(&quot;parameters&quot;, [])</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">561</div>
@@ -3061,7 +3061,7 @@
             <div class="code-line ">
                 <div class="line-number">572</div>
                 <div class="line-status"></div>
-                <div class="line-content">        <span class="comment"># Convert globals</span></div>
+                <div class="line-content">        # Convert globals</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">573</div>
@@ -3071,7 +3071,7 @@
             <div class="code-line covered">
                 <div class="line-number">574</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> global_data <span class=<span class="string">"keyword"</span>>in</span> data.get(&quot;globals&quot;, []):</div>
+                <div class="line-content">        for global_data in data.get(&quot;globals&quot;, []):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">575</div>
@@ -3086,7 +3086,7 @@
             <div class="code-line covered">
                 <div class="line-number">577</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> FileModel(</div>
+                <div class="line-content">        return FileModel(</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">578</div>
@@ -3161,7 +3161,7 @@
             <div class="code-line covered">
                 <div class="line-number">592</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">    <span class=<span class="string">"keyword"</span>>def</span> _save_model(self, model: ProjectModel, output_file: str) -&gt; <span class=<span class="string">"keyword"</span>>None</span>:</div>
+                <div class="line-content">    def _save_model(self, model: ProjectModel, output_file: str) -&gt; None:</div>
             </div>
             <div class="code-line ">
                 <div class="line-number">593</div>
@@ -3171,7 +3171,7 @@
             <div class="code-line covered">
                 <div class="line-number">594</div>
                 <div class="line-status">✓</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>try</span>:</div>
+                <div class="line-content">        try:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">595</div>
@@ -3186,12 +3186,12 @@
             <div class="code-line missing">
                 <div class="line-number">597</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">        <span class=<span class="string">"keyword"</span>>except</span> Exception as e:</div>
+                <div class="line-content">        except Exception as e:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">598</div>
                 <div class="line-status">✗</div>
-                <div class="line-content">            <span class=<span class="string">"keyword"</span>>raise</span> ValueError(f&quot;Failed to save model to {output_file}: {e}&quot;) <span class=<span class="string">"keyword"</span>>from</span> e</div>
+                <div class="line-content">            raise ValueError(f&quot;Failed to save model to {output_file}: {e}&quot;) from e</div>
             </div>
         </div>
     </div>
