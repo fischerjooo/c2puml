@@ -142,6 +142,276 @@ def generate_coverage_summary(coverage_data: Dict, output_dir: Path) -> None:
     print_success(f"Summary report generated: {summary_file}")
 
 
+def generate_test_summary_html(coverage_data: Dict, output_dir: Path) -> None:
+    """Generate HTML test summary report with same styling as coverage index."""
+    print_info("Generating HTML test summary...")
+    
+    summary_file = output_dir / "test_summary.html"
+    
+    # Get overall statistics
+    summary = coverage_data.get("totals", {})
+    total_lines = summary.get("num_statements", 0)
+    covered_lines = summary.get("covered_lines", 0)
+    missing_lines = summary.get("missing_lines", 0)
+    coverage_percent = summary.get("percent_covered", 0)
+    
+    # Get files data
+    files_data = coverage_data.get("files", {})
+    file_summaries = []
+    
+    for filename, file_data in sorted(files_data.items()):
+        file_summary = file_data.get("summary", {})
+        stmts = file_summary.get("num_statements", 0)
+        miss = file_summary.get("missing_lines", 0)
+        cover = file_summary.get("percent_covered", 0)
+        
+        file_summaries.append({
+            'filename': filename,
+            'statements': stmts,
+            'missing': miss,
+            'coverage': cover
+        })
+    
+    with open(summary_file, 'w', encoding='utf-8') as f:
+        f.write(f"""<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Summary Report</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }}
+        .container {{
+            max-width: 1200px;
+            margin: 0 auto;
+        }}
+        h1 {{
+            color: #333;
+            margin-bottom: 10px;
+        }}
+        .timestamp {{
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }}
+        .summary-card {{
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }}
+        .stats-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }}
+        .stat-card {{
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }}
+        .stat-value {{
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+        }}
+        .stat-label {{
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }}
+        .overall-coverage {{
+            font-size: 48px;
+            color: {'#4caf50' if coverage_percent >= 80 else '#ff9800' if coverage_percent >= 60 else '#f44336'};
+        }}
+        .file-list {{
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }}
+        .file-header {{
+            background: #333;
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+        }}
+        .file-item {{
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.2s;
+        }}
+        .file-item:hover {{
+            background-color: #f8f9fa;
+        }}
+        .file-item:last-child {{
+            border-bottom: none;
+        }}
+        .file-name {{
+            flex: 1;
+            margin-right: 20px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }}
+        .file-stats {{
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }}
+        .stat-item {{
+            text-align: center;
+            min-width: 80px;
+        }}
+        .stat-number {{
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }}
+        .stat-label-small {{
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }}
+        .coverage-percent {{
+            font-size: 18px;
+            font-weight: bold;
+            color: {'#4caf50' if coverage_percent >= 80 else '#ff9800' if coverage_percent >= 60 else '#f44336'};
+        }}
+        .coverage-bar {{
+            width: 150px;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-left: 20px;
+        }}
+        .coverage-fill {{
+            height: 100%;
+            transition: width 0.3s ease;
+        }}
+        .coverage-high {{ background: #4caf50; }}
+        .coverage-medium {{ background: #ff9800; }}
+        .coverage-low {{ background: #f44336; }}
+        .download-links {{
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }}
+        .download-links a {{
+            color: #0066cc;
+            text-decoration: none;
+            margin-right: 20px;
+        }}
+        .download-links a:hover {{
+            text-decoration: underline;
+        }}
+        .back-link {{
+            margin-bottom: 20px;
+        }}
+        .back-link a {{
+            color: #0066cc;
+            text-decoration: none;
+        }}
+        .back-link a:hover {{
+            text-decoration: underline;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="back-link">
+            <a href="index.html">← Back to Coverage Index</a>
+        </div>
+        
+        <h1>Test Summary Report</h1>
+        <div class="timestamp">Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div>
+        
+        <div class="summary-card">
+            <h2 style="margin-top: 0;">Overall Test Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value overall-coverage">{coverage_percent:.1f}%</div>
+                    <div class="stat-label">Overall Coverage</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{len(file_summaries)}</div>
+                    <div class="stat-label">Files Tested</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{total_lines:,}</div>
+                    <div class="stat-label">Total Statements</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #4caf50">{covered_lines:,}</div>
+                    <div class="stat-label">Covered Lines</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #f44336">{missing_lines:,}</div>
+                    <div class="stat-label">Missing Lines</div>
+                </div>
+            </div>
+            
+            <div class="download-links">
+                <strong>Download Reports:</strong>
+                <a href="coverage_summary.txt">📄 Text Summary</a>
+                <a href="coverage.xml">📊 XML Report</a>
+                <a href="coverage.json">📋 JSON Report</a>
+                <a href="index.html">📈 Detailed Coverage</a>
+            </div>
+        </div>
+        
+        <div class="file-list">
+            <div class="file-header">Per-File Test Summary</div>
+""")
+        
+        for file_summary in file_summaries:
+            filename = file_summary['filename']
+            statements = file_summary['statements']
+            missing = file_summary['missing']
+            coverage = file_summary['coverage']
+            
+            coverage_class = 'coverage-high' if coverage >= 80 else 'coverage-medium' if coverage >= 60 else 'coverage-low'
+            coverage_color = '#4caf50' if coverage >= 80 else '#ff9800' if coverage >= 60 else '#f44336'
+            
+            f.write(f"""            <div class="file-item">
+                <div class="file-name">{html.escape(filename)}</div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">{statements}</div>
+                        <div class="stat-label-small">Statements</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f44336">{missing}</div>
+                        <div class="stat-label-small">Missing</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="coverage-percent" style="color: {coverage_color}">{coverage:.1f}%</div>
+                        <div class="stat-label-small">Coverage</div>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill {coverage_class}" style="width: {coverage}%"></div>
+                    </div>
+                </div>
+            </div>
+""")
+        
+        f.write("""        </div>
+    </div>
+</body>
+</html>
+""")
+    
+    print_success(f"HTML test summary generated: {summary_file}")
+
+
 def generate_html_file_report(
     filename: str,
     source_path: Path,
@@ -773,6 +1043,9 @@ def main():
     
     # Generate coverage summary
     generate_coverage_summary(coverage_data, output_dir)
+    
+    # Generate HTML test summary
+    generate_test_summary_html(coverage_data, output_dir)
     
     # Process each file for detailed reports
     files_data = coverage_data.get("files", {})
