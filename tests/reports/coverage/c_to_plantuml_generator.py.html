@@ -171,14 +171,14 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/generator.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 19:17:08</div>
+        <div class="timestamp">Generated: 2025-07-26 19:19:06</div>
         
         <div class="stats">
             <div class="stat">
                 <span class="stat-label">Coverage</span>
-                <span class="stat-value">86.1%</span>
+                <span class="stat-value">95.2%</span>
                 <div class="coverage-bar">
-                    <div class="coverage-fill" style="width: 86.05442176870748%"></div>
+                    <div class="coverage-fill" style="width: 95.23809523809523%"></div>
                 </div>
             </div>
             <div class="stat">
@@ -187,11 +187,11 @@
             </div>
             <div class="stat">
                 <span class="stat-label">Covered</span>
-                <span class="stat-value" style="color: #4caf50">253</span>
+                <span class="stat-value" style="color: #4caf50">280</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Missing</span>
-                <span class="stat-value" style="color: #f44336">41</span>
+                <span class="stat-value" style="color: #f44336">14</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Excluded</span>
@@ -618,9 +618,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                if Path(key).name == filename:</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">84</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return key</div>
             </div>
             <div class="code-line ">
@@ -653,9 +653,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">            if depth &gt; include_depth or file_name in visited:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">91</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return</div>
             </div>
             <div class="code-line ">
@@ -1013,19 +1013,19 @@
                 <div class="line-status"></div>
                 <div class="line-content">                    # Function-like macro</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">163</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    macro_name = macro.split(&quot;(&quot;)[0].replace(&quot;#define &quot;, &quot;&quot;)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">164</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    params = macro.split(&quot;(&quot;)[1].split(&quot;)&quot;)[0]</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">165</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    lines.append(f&quot;    - #define {macro_name}({params})&quot;)</div>
             </div>
             <div class="code-line covered">
@@ -1123,9 +1123,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                        if p.name == &quot;...&quot; and p.type == &quot;...&quot;:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">185</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                            params.append(&quot;...&quot;)</div>
             </div>
             <div class="code-line covered">
@@ -1278,19 +1278,19 @@
                 <div class="line-status"></div>
                 <div class="line-content">                    # Function-like macro</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">216</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    macro_name = macro.split(&quot;(&quot;)[0].replace(&quot;#define &quot;, &quot;&quot;)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">217</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    params = macro.split(&quot;(&quot;)[1].split(&quot;)&quot;)[0]</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">218</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    lines.append(f&quot;    + #define {macro_name}({params})&quot;)</div>
             </div>
             <div class="code-line covered">
@@ -1568,9 +1568,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                    if value.value:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">274</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        lines.append(f&quot;    + {value.name} = {value.value}&quot;)</div>
             </div>
             <div class="code-line covered">
@@ -1688,9 +1688,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                        lines.append(f&quot;    + {line}&quot;)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">298</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    elif line.startswith(&quot;struct {&quot;):</div>
             </div>
             <div class="code-line ">
@@ -1698,19 +1698,19 @@
                 <div class="line-status"></div>
                 <div class="line-content">                        # Start collecting nested struct content</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">300</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        inside_struct = True</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">301</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        nested_content = []</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">302</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    elif line == &quot;}&quot;:</div>
             </div>
             <div class="code-line missing">
@@ -1768,19 +1768,19 @@
                 <div class="line-status">&#10008;</div>
                 <div class="line-content">                            lines.append(f&quot;    }}&quot;)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">314</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    elif line and line != &quot;}&quot;:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">315</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        if inside_struct:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">316</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                            nested_content.append(line)  # Collect nested content</div>
             </div>
             <div class="code-line covered">
@@ -1788,9 +1788,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                        else:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">318</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                            lines.append(f&quot;+ {line}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -1808,14 +1808,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                if inside_struct and nested_content:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">322</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    content_str = &quot;; &quot;.join(nested_content)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">323</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    lines.append(f&quot;    + struct {{ {content_str} }}&quot;)</div>
             </div>
             <div class="code-line covered">
@@ -1933,9 +1933,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Parse the nested struct content and flatten it</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">347</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            struct_parts = field.type.split(&#x27;\n&#x27;)</div>
             </div>
             <div class="code-line ">
@@ -1953,29 +1953,29 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Format as: + struct { field_type field_name }</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">351</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            nested_content = []</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">352</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for part in struct_parts[1:]:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">353</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                part = part.strip()</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">354</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if part and part != &quot;}&quot;:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">355</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    nested_content.append(part)</div>
             </div>
             <div class="code-line ">
@@ -1983,9 +1983,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">            </div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">357</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if nested_content:</div>
             </div>
             <div class="code-line ">
@@ -1993,14 +1993,14 @@
                 <div class="line-status"></div>
                 <div class="line-content">                # Create a flattened representation</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">359</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                content_str = &quot;; &quot;.join(nested_content)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">360</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                lines.append(f&quot;{base_indent}+ struct {{ {content_str} }} {field.name}&quot;)</div>
             </div>
             <div class="code-line covered">
