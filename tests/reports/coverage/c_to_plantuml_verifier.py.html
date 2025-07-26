@@ -171,7 +171,7 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/verifier.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 16:09:34</div>
+        <div class="timestamp">Generated: 2025-07-26 18:01:01</div>
         
         <div class="stats">
             <div class="stat">
@@ -210,7 +210,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">2</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -240,17 +240,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">8</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import logging</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">9</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">import re</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">10</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from typing import List, Tuple</div>
             </div>
             <div class="code-line ">
@@ -260,7 +260,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">12</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">from .models import Alias, Enum, Field, FileModel, Function, ProjectModel, Struct, Union</div>
             </div>
             <div class="code-line ">
@@ -275,12 +275,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">15</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">class ModelVerifier:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">16</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    &quot;&quot;&quot;Verifies the sanity of parsed C code model&quot;&quot;&quot;</div>
             </div>
             <div class="code-line ">
@@ -290,17 +290,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">18</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def __init__(self):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">19</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.logger = logging.getLogger(__name__)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">20</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.issues = []</div>
             </div>
             <div class="code-line ">
@@ -310,7 +310,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">22</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def verify_model(self, model: ProjectModel) -&gt; Tuple[bool, List[str]]:</div>
             </div>
             <div class="code-line ">
@@ -360,7 +360,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">32</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self.issues = []</div>
             </div>
             <div class="code-line ">
@@ -375,7 +375,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">35</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self._verify_project_data(model)</div>
             </div>
             <div class="code-line ">
@@ -390,12 +390,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">38</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for file_path, file_model in model.files.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">39</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self._verify_file(file_path, file_model)</div>
             </div>
             <div class="code-line ">
@@ -405,7 +405,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">41</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        is_valid = len(self.issues) == 0</div>
             </div>
             <div class="code-line ">
@@ -415,22 +415,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">43</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if self.issues:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">44</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.logger.warning(&quot;Model verification found %d issues:&quot;, len(self.issues))</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">45</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            for issue in self.issues:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">46</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                self.logger.warning(&quot;  - %s&quot;, issue)</div>
             </div>
             <div class="code-line ">
@@ -440,7 +440,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">48</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.logger.info(&quot;Model verification passed - all values look sane&quot;)</div>
             </div>
             <div class="code-line ">
@@ -450,7 +450,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">50</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return is_valid, self.issues</div>
             </div>
             <div class="code-line ">
@@ -460,7 +460,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">52</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _verify_project_data(self, model: ProjectModel) -&gt; None:</div>
             </div>
             <div class="code-line ">
@@ -470,12 +470,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">54</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not model.project_name or not model.project_name.strip():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">55</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.issues.append(&quot;Project name is empty or whitespace&quot;)</div>
             </div>
             <div class="code-line ">
@@ -485,12 +485,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">57</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not model.project_root or not model.project_root.strip():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">58</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.issues.append(&quot;Project root is empty or whitespace&quot;)</div>
             </div>
             <div class="code-line ">
@@ -500,12 +500,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">60</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not model.files:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">61</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.issues.append(&quot;No files found in project&quot;)</div>
             </div>
             <div class="code-line ">
@@ -515,7 +515,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">63</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _verify_file(self, file_path: str, file_model: FileModel) -&gt; None:</div>
             </div>
             <div class="code-line ">
@@ -530,12 +530,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">66</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not file_model.file_path or not file_model.file_path.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">67</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(f&quot;File path is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -545,12 +545,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">69</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not file_model.relative_path or not file_model.relative_path.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">70</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(f&quot;Relative path is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -565,12 +565,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">73</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for struct_name, struct in file_model.structs.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">74</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self._verify_struct(file_path, struct_name, struct)</div>
             </div>
             <div class="code-line ">
@@ -585,12 +585,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">77</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for enum_name, enum in file_model.enums.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">78</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self._verify_enum(file_path, enum_name, enum)</div>
             </div>
             <div class="code-line ">
@@ -605,12 +605,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">81</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for union_name, union in file_model.unions.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">82</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self._verify_union(file_path, union_name, union)</div>
             </div>
             <div class="code-line ">
@@ -625,12 +625,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">85</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for function in file_model.functions:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">86</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self._verify_function(file_path, function)</div>
             </div>
             <div class="code-line ">
@@ -645,12 +645,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">89</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for global_var in file_model.globals:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">90</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self._verify_global(file_path, global_var)</div>
             </div>
             <div class="code-line ">
@@ -665,12 +665,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">93</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for alias_name, alias in file_model.aliases.items():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">94</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self._verify_alias(file_path, alias_name, alias)</div>
             </div>
             <div class="code-line ">
@@ -680,7 +680,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">96</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _verify_struct(self, file_path: str, struct_name: str, struct: Struct) -&gt; None:</div>
             </div>
             <div class="code-line ">
@@ -690,12 +690,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">98</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self._is_valid_identifier(struct_name):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">99</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.issues.append(f&quot;Invalid struct name &#x27;{struct_name}&#x27; in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -705,12 +705,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">101</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not struct.name or not struct.name.strip():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">102</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.issues.append(f&quot;Struct name is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -725,12 +725,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">105</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for field in struct.fields:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">106</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self._verify_field(file_path, f&quot;struct {struct_name}&quot;, field)</div>
             </div>
             <div class="code-line ">
@@ -740,7 +740,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">108</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _verify_enum(self, file_path: str, enum_name: str, enum: Enum) -&gt; None:</div>
             </div>
             <div class="code-line ">
@@ -750,12 +750,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">110</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self._is_valid_identifier(enum_name):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">111</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(f&quot;Invalid enum name &#x27;{enum_name}&#x27; in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -765,12 +765,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">113</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not enum.name or not enum.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">114</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(f&quot;Enum name is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -785,17 +785,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">117</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for enum_value in enum.values:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">118</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if not enum_value.name or not enum_value.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">119</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                self.issues.append(</div>
             </div>
             <div class="code-line ">
@@ -810,12 +810,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">122</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            elif not self._is_valid_identifier(enum_value.name):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">123</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                self.issues.append(</div>
             </div>
             <div class="code-line ">
@@ -835,7 +835,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">127</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _verify_union(self, file_path: str, union_name: str, union: Union) -&gt; None:</div>
             </div>
             <div class="code-line ">
@@ -845,12 +845,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">129</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self._is_valid_identifier(union_name):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">130</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(f&quot;Invalid union name &#x27;{union_name}&#x27; in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -860,12 +860,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">132</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not union.name or not union.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">133</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(f&quot;Union name is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -880,12 +880,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">136</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for field in union.fields:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">137</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self._verify_field(file_path, f&quot;union {union_name}&quot;, field)</div>
             </div>
             <div class="code-line ">
@@ -895,7 +895,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">139</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _verify_function(self, file_path: str, function: Function) -&gt; None:</div>
             </div>
             <div class="code-line ">
@@ -905,22 +905,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">141</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not function.name or not function.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">142</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(f&quot;Function name is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">143</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif not self._is_valid_identifier(function.name):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">144</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(</div>
             </div>
             <div class="code-line ">
@@ -940,12 +940,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">148</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not function.return_type or not function.return_type.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">149</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(</div>
             </div>
             <div class="code-line ">
@@ -970,22 +970,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">154</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for param in function.parameters:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">155</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if param.name == &quot;...&quot;:  # Skip variadic parameter</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">156</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                continue</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">157</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self._verify_field(file_path, f&quot;function {function.name}&quot;, param)</div>
             </div>
             <div class="code-line ">
@@ -995,7 +995,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">159</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _verify_global(self, file_path: str, global_var: Field) -&gt; None:</div>
             </div>
             <div class="code-line ">
@@ -1005,7 +1005,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">161</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        self._verify_field(file_path, &quot;global&quot;, global_var)</div>
             </div>
             <div class="code-line ">
@@ -1015,7 +1015,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">163</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _verify_alias(self, file_path: str, alias_name: str, alias: Alias) -&gt; None:</div>
             </div>
             <div class="code-line ">
@@ -1025,12 +1025,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">165</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not self._is_valid_identifier(alias_name):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">166</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(f&quot;Invalid alias name &#x27;{alias_name}&#x27; in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -1040,12 +1040,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">168</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not alias.name or not alias.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">169</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(f&quot;Alias name is empty in {file_path}&quot;)</div>
             </div>
             <div class="code-line ">
@@ -1055,12 +1055,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">171</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not alias.original_type or not alias.original_type.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">172</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(</div>
             </div>
             <div class="code-line ">
@@ -1080,7 +1080,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">176</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _verify_field(self, file_path: str, context: str, field: Field) -&gt; None:</div>
             </div>
             <div class="code-line ">
@@ -1095,22 +1095,22 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">179</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not field.name or not field.name.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">180</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(f&quot;Field name is empty in {context} in {file_path}&quot;)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">181</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif not self._is_valid_identifier(field.name):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">182</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.issues.append(</div>
             </div>
             <div class="code-line ">
@@ -1135,12 +1135,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">187</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not field.type or not field.type.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">188</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            self.issues.append(</div>
             </div>
             <div class="code-line ">
@@ -1155,12 +1155,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">191</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        elif self._is_suspicious_type(field.type):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">192</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.issues.append(</div>
             </div>
             <div class="code-line ">
@@ -1185,12 +1185,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">197</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if field.value and self._is_suspicious_value(field.value):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">198</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            self.issues.append(</div>
             </div>
             <div class="code-line ">
@@ -1210,7 +1210,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">202</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _is_valid_identifier(self, name: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
@@ -1220,12 +1220,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">204</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not name or not name.strip():</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">205</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return False</div>
             </div>
             <div class="code-line ">
@@ -1240,7 +1240,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">208</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return bool(re.match(r&quot;^[a-zA-Z_][a-zA-Z0-9_]*$&quot;, name.strip()))</div>
             </div>
             <div class="code-line ">
@@ -1250,7 +1250,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">210</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _is_suspicious_type(self, type_str: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
@@ -1260,12 +1260,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">212</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not type_str or not type_str.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">213</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
@@ -1275,7 +1275,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">215</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        type_str = type_str.strip()</div>
             </div>
             <div class="code-line ">
@@ -1290,7 +1290,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">218</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        suspicious_patterns = [</div>
             </div>
             <div class="code-line ">
@@ -1325,17 +1325,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">225</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for pattern in suspicious_patterns:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">226</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if re.match(pattern, type_str):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">227</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                return True</div>
             </div>
             <div class="code-line ">
@@ -1350,12 +1350,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">230</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if self._has_unbalanced_brackets(type_str):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">231</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
@@ -1370,12 +1370,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">234</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if type_str.count(&quot;\n&quot;) &gt; 5 or type_str.count(&quot;\\&quot;) &gt; 10:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">235</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
@@ -1385,7 +1385,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">237</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return False</div>
             </div>
             <div class="code-line ">
@@ -1395,7 +1395,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">239</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _is_suspicious_value(self, value: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
@@ -1405,12 +1405,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">241</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not value or not value.strip():</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">242</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
@@ -1420,7 +1420,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">244</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        value = value.strip()</div>
             </div>
             <div class="code-line ">
@@ -1435,7 +1435,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">247</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        suspicious_patterns = [</div>
             </div>
             <div class="code-line ">
@@ -1460,17 +1460,17 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">252</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for pattern in suspicious_patterns:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">253</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if re.match(pattern, value):</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">254</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                return True</div>
             </div>
             <div class="code-line ">
@@ -1485,12 +1485,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">257</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if self._has_unbalanced_brackets(value):</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">258</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
@@ -1505,12 +1505,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">261</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        if value.count(&quot;\n&quot;) &gt; 3 or value.count(&quot;\\&quot;) &gt; 5:</div>
             </div>
             <div class="code-line missing">
                 <div class="line-number">262</div>
-                <div class="line-status">✗</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
@@ -1520,7 +1520,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">264</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return False</div>
             </div>
             <div class="code-line ">
@@ -1530,7 +1530,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">266</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">    def _has_unbalanced_brackets(self, text: str) -&gt; bool:</div>
             </div>
             <div class="code-line ">
@@ -1540,12 +1540,12 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">268</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        stack = []</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">269</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        bracket_pairs = {&quot;)&quot;: &quot;(&quot;, &quot;]&quot;: &quot;[&quot;, &quot;}&quot;: &quot;{&quot;}</div>
             </div>
             <div class="code-line ">
@@ -1555,32 +1555,32 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">271</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        for char in text:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">272</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if char in &quot;([{&quot;:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">273</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                stack.append(char)</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">274</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            elif char in &quot;)]}&quot;:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">275</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                if not stack or stack.pop() != bracket_pairs[char]:</div>
             </div>
             <div class="code-line covered">
                 <div class="line-number">276</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    return True</div>
             </div>
             <div class="code-line ">
@@ -1590,7 +1590,7 @@
             </div>
             <div class="code-line covered">
                 <div class="line-number">278</div>
-                <div class="line-status">✓</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">        return len(stack) &gt; 0  # Unclosed brackets</div>
             </div>
         </div>
@@ -1600,15 +1600,15 @@
         <h3 style="margin-top: 0;">Legend</h3>
         <div class="legend-item">
             <span class="legend-color" style="background: #e8f5e9;"></span>
-            <span>✓ Covered</span>
+            <span>&#10004; Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #ffebee;"></span>
-            <span>✗ Not Covered</span>
+            <span>&#10008; Not Covered</span>
         </div>
         <div class="legend-item">
             <span class="legend-color" style="background: #f5f5f5;"></span>
-            <span>— Excluded</span>
+            <span>&#8212; Excluded</span>
         </div>
     </div>
 </body>
