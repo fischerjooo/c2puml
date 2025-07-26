@@ -1,6 +1,6 @@
-# Detailed Coverage Reports
+# Combined Coverage Reports
 
-This project now includes enhanced coverage reporting capabilities that generate detailed per-file coverage reports showing exactly which lines are covered by tests and which are not.
+This project includes comprehensive coverage reporting that combines both summary statistics and detailed per-file coverage analysis in a single, unified report generation process.
 
 ## Features
 
@@ -9,54 +9,51 @@ This project now includes enhanced coverage reporting capabilities that generate
 - **Coverage statistics**: Get coverage percentage, total statements, covered lines, and missing lines for each file
 - **Missing lines summary**: Grouped ranges of missing lines for easy identification
 
-### 2. Two Report Formats
-
-#### HTML Reports (Recommended)
-Beautiful, interactive HTML reports with:
-- Syntax highlighting for Python code
-- Color-coded coverage indicators
-- Interactive filtering by coverage level
-- Overall project statistics dashboard
-- Responsive design for easy viewing
-
-#### Text Reports
-Plain text reports with:
-- Line-by-line coverage status
-- ASCII indicators for coverage status
-- Easy to read in terminal or text editors
-- Suitable for CI/CD pipelines
+### 2. Combined Report Generation
+All coverage reports are generated in a single step:
+- **Summary Statistics**: Overall project coverage metrics
+- **Detailed HTML Reports**: Beautiful, interactive reports with syntax highlighting
+- **Standard Coverage Reports**: Traditional Python coverage HTML output
+- **Export Formats**: XML and JSON for integration with other tools
+- **Text Summary**: Plain text summary for quick terminal viewing
 
 ## Usage
 
 ### Automatic Generation
-When you run the test suite with coverage using `./run_tests_with_coverage.sh`, detailed reports are automatically generated in the `tests/reports/detailed-coverage/` directory.
+When you run the test suite with coverage using `./run_tests_with_coverage.sh`, all coverage reports are automatically generated in the `tests/reports/coverage/` directory. This includes:
+- Combined index with overall statistics
+- Detailed per-file coverage reports
+- Standard HTML coverage report
+- Text summary
+- XML and JSON exports
 
 ### Manual Generation
 
-#### Generate HTML Reports
+#### Generate Combined Coverage Reports
 ```bash
-python3 generate_detailed_coverage_html.py --output-dir tests/reports/detailed-coverage
+python3 generate_combined_coverage.py --output-dir tests/reports/coverage
 ```
 
-#### Generate Text Reports
+#### Generate with Test Execution
 ```bash
-python3 generate_detailed_coverage.py --output-dir tests/reports/detailed-coverage-text
+python3 generate_combined_coverage.py --run-tests --output-dir tests/reports/coverage
 ```
 
 ### Options
-- `--output-dir`: Specify the output directory for reports (default: `tests/reports/detailed-coverage`)
+- `--output-dir`: Specify the output directory for reports (default: `tests/reports/coverage`)
 - `--source-dir`: Specify the source directory to analyze (default: `c_to_plantuml`)
-- `--run-tests`: Run tests with coverage before generating reports (text version only)
+- `--run-tests`: Run tests with coverage before generating reports
 
 ## Report Structure
 
-### HTML Reports
-- `index.html`: Main dashboard with overall statistics and links to all file reports
-- `<filename>.html`: Individual file coverage report with syntax highlighting
-
-### Text Reports
-- `index.html`: Simple HTML index listing all text reports
-- `<filename>.coverage.txt`: Individual file coverage report in plain text
+### Combined Coverage Directory (`tests/reports/coverage/`)
+- `index.html`: Main dashboard with overall statistics and links to all detailed file reports
+- `coverage_summary.txt`: Text-based summary of coverage statistics
+- `coverage.xml`: XML format coverage data (for CI/CD integration)
+- `coverage.json`: JSON format coverage data (for programmatic access)
+- `<filename>.html`: Individual file coverage reports with syntax highlighting and line-by-line analysis
+- `htmlcov/`: Standard Python coverage HTML report directory
+  - `index.html`: Traditional coverage report interface
 
 ## Example Output
 

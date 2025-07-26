@@ -180,28 +180,21 @@ fi
 
 print_success "Test summary generated at: tests/reports/test-summary.txt"
 
-# If coverage module is available and we ran with coverage, generate HTML report
+# If coverage module is available and we ran with coverage, generate combined coverage report
 if [ "$HAS_COVERAGE" = true ] && grep -q "coverage report" tests/reports/test-output.log; then
-    print_header "Generating HTML Coverage Report"
+    print_header "Generating Combined Coverage Report"
     
-    print_status "Generating HTML coverage report..."
-    python3 -m coverage html -d tests/reports/coverage-html 2>/dev/null || true
-    
-    if [ -d "tests/reports/coverage-html" ]; then
-        print_success "HTML coverage report generated at: tests/reports/coverage-html/index.html"
-    fi
-    
-    # Generate detailed per-file coverage reports
-    print_status "Generating detailed per-file coverage reports..."
-    # Try HTML version first, fall back to text version
-    if python3 generate_detailed_coverage_html.py --output-dir tests/reports/detailed-coverage 2>/dev/null; then
-        print_success "Generated HTML detailed coverage reports"
+    print_status "Generating comprehensive coverage reports (summary + detailed per-file)..."
+    if python3 generate_combined_coverage.py --output-dir tests/reports/coverage 2>&1 | tee tests/reports/coverage-generation.log; then
+        print_success "Combined coverage reports generated successfully!"
+        print_info "Reports include:"
+        print_info "  - Overall coverage summary"
+        print_info "  - Detailed per-file coverage with line-by-line analysis"
+        print_info "  - Standard HTML coverage report"
+        print_info "  - XML and JSON exports"
     else
-        python3 generate_detailed_coverage.py --output-dir tests/reports/detailed-coverage 2>/dev/null || true
-    fi
-    
-    if [ -d "tests/reports/detailed-coverage" ]; then
-        print_success "Detailed coverage reports generated at: tests/reports/detailed-coverage/"
+        print_error "Failed to generate combined coverage reports"
+        print_info "Check tests/reports/coverage-generation.log for details"
     fi
 fi
 
@@ -222,12 +215,11 @@ find tests/reports -type f -name "*.txt" -o -name "*.log" | sort | while read -r
     echo "- $file ($size)"
 done
 
-if [ -d "tests/reports/coverage-html" ]; then
-    echo "- tests/reports/coverage-html/ (HTML coverage report)"
-fi
-
-if [ -d "tests/reports/detailed-coverage" ]; then
-    echo "- tests/reports/detailed-coverage/ (Detailed per-file coverage reports)"
+if [ -d "tests/reports/coverage" ]; then
+    echo "- tests/reports/coverage/ (Combined coverage reports - summary + detailed)"
+    if [ -d "tests/reports/coverage/htmlcov" ]; then
+        echo "  - tests/reports/coverage/htmlcov/ (Standard HTML coverage)"
+    fi
 fi
 
 echo ""
@@ -235,12 +227,12 @@ echo "🔗 Report Links:"
 echo "----------------"
 echo "- Test Summary: tests/reports/test-summary.txt"
 echo "- Test Output: tests/reports/test-output.log"
-if [ -d "tests/reports/coverage-html" ]; then
-    echo "- HTML Coverage Report: tests/reports/coverage-html/index.html"
-fi
-
-if [ -d "tests/reports/detailed-coverage" ]; then
-    echo "- Detailed Coverage Reports: tests/reports/detailed-coverage/index.html"
+if [ -d "tests/reports/coverage" ]; then
+    echo "- Combined Coverage Report: tests/reports/coverage/index.html"
+    echo "- Coverage Summary: tests/reports/coverage/coverage_summary.txt"
+    if [ -d "tests/reports/coverage/htmlcov" ]; then
+        echo "- Standard HTML Coverage: tests/reports/coverage/htmlcov/index.html"
+    fi
 fi
 
 # Exit with test exit code

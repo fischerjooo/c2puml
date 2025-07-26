@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Generate detailed per-file coverage reports in HTML format with syntax highlighting.
-This script creates beautiful, interactive HTML reports showing line-by-line coverage.
+Generate combined coverage reports: summary and detailed per-file analysis.
+This script creates comprehensive coverage reports including both overview and line-by-line details.
 """
 
 import os
@@ -44,6 +44,36 @@ def print_info(text: str) -> None:
     print(f"ℹ️  {text}")
 
 
+def run_coverage_analysis() -> bool:
+    """Run coverage analysis on the project."""
+    print_header("Running Coverage Analysis")
+    
+    # Ensure coverage is installed
+    try:
+        subprocess.run(["coverage", "--version"], check=True, capture_output=True)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print_error("Coverage not installed. Install with: pip install coverage")
+        return False
+    
+    # Clean previous coverage data
+    print_info("Cleaning previous coverage data...")
+    subprocess.run(["coverage", "erase"], check=True)
+    
+    # Run tests with coverage
+    print_info("Running tests with coverage...")
+    result = subprocess.run(
+        ["coverage", "run", "-m", "pytest", "-v"],
+        capture_output=True,
+        text=True
+    )
+    
+    if result.returncode != 0:
+        print_error("Tests failed. Coverage report may be incomplete.")
+        print(result.stderr)
+    
+    return True
+
+
 def get_coverage_data() -> Optional[Dict]:
     """Get coverage data in JSON format."""
     print_info("Generating coverage JSON data...")
@@ -65,12 +95,58 @@ def get_coverage_data() -> Optional[Dict]:
         return None
 
 
+def generate_coverage_summary(coverage_data: Dict, output_dir: Path) -> None:
+    """Generate coverage summary report."""
+    print_info("Generating coverage summary...")
+    
+    summary_file = output_dir / "coverage_summary.txt"
+    
+    with open(summary_file, 'w', encoding='utf-8') as f:
+        f.write("Coverage Summary Report\n")
+        f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write("=" * 80 + "\n\n")
+        
+        # Overall statistics
+        summary = coverage_data.get("totals", {})
+        total_lines = summary.get("num_statements", 0)
+        covered_lines = summary.get("covered_lines", 0)
+        missing_lines = summary.get("missing_lines", 0)
+        coverage_percent = summary.get("percent_covered", 0)
+        
+        f.write("Overall Statistics:\n")
+        f.write(f"  Total statements: {total_lines:,}\n")
+        f.write(f"  Covered lines: {covered_lines:,}\n")
+        f.write(f"  Missing lines: {missing_lines:,}\n")
+        f.write(f"  Coverage: {coverage_percent:.1f}%\n\n")
+        
+        # Per-file summary
+        f.write("Per-File Summary:\n")
+        f.write("-" * 80 + "\n")
+        f.write(f"{'File':<50} {'Stmts':>8} {'Miss':>8} {'Cover':>8}\n")
+        f.write("-" * 80 + "\n")
+        
+        files_data = coverage_data.get("files", {})
+        for filename, file_data in sorted(files_data.items()):
+            summary = file_data.get("summary", {})
+            stmts = summary.get("num_statements", 0)
+            miss = summary.get("missing_lines", 0)
+            cover = summary.get("percent_covered", 0)
+            
+            # Truncate filename if too long
+            display_name = filename if len(filename) <= 50 else "..." + filename[-47:]
+            f.write(f"{display_name:<50} {stmts:>8} {miss:>8} {cover:>7.1f}%\n")
+        
+        f.write("-" * 80 + "\n")
+    
+    print_success(f"Summary report generated: {summary_file}")
+
+
 def generate_html_file_report(
     filename: str,
     source_path: Path,
     coverage_info: Dict,
     output_dir: Path
-) -> Optional[str]:
+) -> Tuple[str, float, Dict]:
     """Generate detailed HTML coverage report for a single file."""
     print_info(f"Generating HTML report for: {filename}")
     
@@ -80,7 +156,7 @@ def generate_html_file_report(
             source_lines = f.readlines()
     except Exception as e:
         print_error(f"Failed to read {filename}: {e}")
-        return None
+        return None, 0, {}
     
     # Get coverage data
     covered_lines = coverage_info.get("executed_lines", [])
@@ -251,9 +327,23 @@ def generate_html_file_report(
         .number {{ color: #098658; }}
         .function {{ color: #795E26; }}
         .class {{ color: #267F99; font-weight: bold; }}
+        .back-link {{
+            margin-bottom: 20px;
+        }}
+        .back-link a {{
+            color: #0066cc;
+            text-decoration: none;
+        }}
+        .back-link a:hover {{
+            text-decoration: underline;
+        }}
     </style>
 </head>
 <body>
+    <div class="back-link">
+        <a href="index.html">← Back to Coverage Index</a>
+    </div>
+    
     <div class="header">
         <h1>Coverage Report: {html.escape(filename)}</h1>
         <div class="timestamp">Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div>
@@ -367,132 +457,148 @@ def generate_html_file_report(
 """)
     
     print_success(f"HTML report generated: {output_file}")
-    return safe_filename
+    
+    return (
+        filename,
+        coverage_percent,
+        {'covered': len(covered_lines), 'missing': len(missing_lines)}
+    )
 
 
-def generate_index_html(output_dir: Path, file_reports: List[Tuple[str, float, Dict]]) -> None:
-    """Generate an index HTML file with links to all file reports."""
-    print_info("Generating HTML index...")
+def generate_combined_index(output_dir: Path, file_reports: List[Tuple[str, float, Dict]], coverage_data: Dict) -> None:
+    """Generate a combined index HTML file with summary and links to detailed reports."""
+    print_info("Generating combined index...")
     
     index_file = output_dir / "index.html"
     
     # Sort files by coverage percentage (ascending) so worst coverage is at top
     file_reports.sort(key=lambda x: x[1])
     
+    # Get overall statistics
+    summary = coverage_data.get("totals", {})
+    overall_coverage = summary.get("percent_covered", 0)
+    total_statements = summary.get("num_statements", 0)
+    covered_lines = summary.get("covered_lines", 0)
+    missing_lines = summary.get("missing_lines", 0)
+    
     with open(index_file, 'w', encoding='utf-8') as f:
-        f.write("""<!DOCTYPE html>
+        f.write(f"""<!DOCTYPE html>
 <html>
 <head>
-    <title>Detailed Coverage Reports</title>
+    <title>Combined Coverage Report</title>
     <style>
-        body {
+        body {{
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
             background: #f5f5f5;
-        }
-        .container {
+        }}
+        .container {{
             max-width: 1200px;
             margin: 0 auto;
-        }
-        h1 {
+        }}
+        h1 {{
             color: #333;
             margin-bottom: 10px;
-        }
-        .timestamp {
+        }}
+        .timestamp {{
             color: #666;
             font-size: 14px;
             margin-bottom: 30px;
-        }
-        .summary-card {
+        }}
+        .summary-card {{
             background: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 30px;
-        }
-        .stats-grid {
+        }}
+        .stats-grid {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-top: 20px;
-        }
-        .stat-card {
+        }}
+        .stat-card {{
             text-align: center;
             padding: 15px;
             background: #f8f9fa;
             border-radius: 8px;
-        }
-        .stat-value {
+        }}
+        .stat-value {{
             font-size: 32px;
             font-weight: bold;
             color: #333;
-        }
-        .stat-label {
+        }}
+        .stat-label {{
             font-size: 14px;
             color: #666;
             margin-top: 5px;
-        }
-        .file-list {
+        }}
+        .overall-coverage {{
+            font-size: 48px;
+            color: {'#4caf50' if overall_coverage >= 80 else '#ff9800' if overall_coverage >= 60 else '#f44336'};
+        }}
+        .file-list {{
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             overflow: hidden;
-        }
-        .file-header {
+        }}
+        .file-header {{
             background: #333;
             color: white;
             padding: 15px 20px;
             font-weight: bold;
-        }
-        .file-item {
+        }}
+        .file-item {{
             display: flex;
             align-items: center;
             padding: 15px 20px;
             border-bottom: 1px solid #e0e0e0;
             transition: background-color 0.2s;
-        }
-        .file-item:hover {
+        }}
+        .file-item:hover {{
             background-color: #f8f9fa;
-        }
-        .file-item:last-child {
+        }}
+        .file-item:last-child {{
             border-bottom: none;
-        }
-        .file-name {
+        }}
+        .file-name {{
             flex: 1;
             margin-right: 20px;
-        }
-        .file-name a {
+        }}
+        .file-name a {{
             color: #0066cc;
             text-decoration: none;
-        }
-        .file-name a:hover {
+        }}
+        .file-name a:hover {{
             text-decoration: underline;
-        }
-        .file-coverage {
+        }}
+        .file-coverage {{
             width: 100px;
             text-align: right;
             font-weight: bold;
-        }
-        .coverage-bar {
+        }}
+        .coverage-bar {{
             width: 150px;
             height: 20px;
             background: #e0e0e0;
             border-radius: 10px;
             overflow: hidden;
             margin-left: 20px;
-        }
-        .coverage-fill {
+        }}
+        .coverage-fill {{
             height: 100%;
             transition: width 0.3s ease;
-        }
-        .coverage-high { background: #4caf50; }
-        .coverage-medium { background: #ff9800; }
-        .coverage-low { background: #f44336; }
-        .filter-buttons {
+        }}
+        .coverage-high {{ background: #4caf50; }}
+        .coverage-medium {{ background: #ff9800; }}
+        .coverage-low {{ background: #f44336; }}
+        .filter-buttons {{
             margin-bottom: 20px;
-        }
-        .filter-btn {
+        }}
+        .filter-btn {{
             padding: 8px 16px;
             margin-right: 10px;
             background: white;
@@ -500,59 +606,64 @@ def generate_index_html(output_dir: Path, file_reports: List[Tuple[str, float, D
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.2s;
-        }
-        .filter-btn:hover {
+        }}
+        .filter-btn:hover {{
             background: #f0f0f0;
-        }
-        .filter-btn.active {
+        }}
+        .filter-btn.active {{
             background: #0066cc;
             color: white;
             border-color: #0066cc;
-        }
+        }}
+        .download-links {{
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }}
+        .download-links a {{
+            color: #0066cc;
+            text-decoration: none;
+            margin-right: 20px;
+        }}
+        .download-links a:hover {{
+            text-decoration: underline;
+        }}
     </style>
     <script>
-        function filterFiles(minCoverage, maxCoverage) {
+        function filterFiles(minCoverage, maxCoverage) {{
             const items = document.querySelectorAll('.file-item');
-            items.forEach(item => {
+            items.forEach(item => {{
                 const coverage = parseFloat(item.dataset.coverage);
-                if (coverage >= minCoverage && coverage <= maxCoverage) {
+                if (coverage >= minCoverage && coverage <= maxCoverage) {{
                     item.style.display = 'flex';
-                } else {
+                }} else {{
                     item.style.display = 'none';
-                }
-            });
+                }}
+            }});
             
             // Update active button
-            document.querySelectorAll('.filter-btn').forEach(btn => {
+            document.querySelectorAll('.filter-btn').forEach(btn => {{
                 btn.classList.remove('active');
-            });
+            }});
             event.target.classList.add('active');
-        }
+        }}
     </script>
 </head>
 <body>
     <div class="container">
-        <h1>Detailed Coverage Reports</h1>
-        <div class="timestamp">Generated: """ + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + """</div>
+        <h1>Combined Coverage Report</h1>
+        <div class="timestamp">Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div>
         
         <div class="summary-card">
-            <h2 style="margin-top: 0;">Overall Summary</h2>
+            <h2 style="margin-top: 0;">Overall Project Coverage</h2>
             <div class="stats-grid">
-""")
-        
-        # Calculate overall statistics
-        total_files = len(file_reports)
-        total_covered = sum(stats['covered'] for _, _, stats in file_reports)
-        total_missing = sum(stats['missing'] for _, _, stats in file_reports)
-        total_statements = total_covered + total_missing
-        overall_coverage = (total_covered / total_statements * 100) if total_statements > 0 else 100.0
-        
-        f.write(f"""                <div class="stat-card">
-                    <div class="stat-value">{overall_coverage:.1f}%</div>
+                <div class="stat-card">
+                    <div class="stat-value overall-coverage">{overall_coverage:.1f}%</div>
                     <div class="stat-label">Overall Coverage</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">{total_files}</div>
+                    <div class="stat-value">{len(file_reports)}</div>
                     <div class="stat-label">Files Analyzed</div>
                 </div>
                 <div class="stat-card">
@@ -560,13 +671,20 @@ def generate_index_html(output_dir: Path, file_reports: List[Tuple[str, float, D
                     <div class="stat-label">Total Statements</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" style="color: #4caf50">{total_covered:,}</div>
+                    <div class="stat-value" style="color: #4caf50">{covered_lines:,}</div>
                     <div class="stat-label">Covered Lines</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" style="color: #f44336">{total_missing:,}</div>
+                    <div class="stat-value" style="color: #f44336">{missing_lines:,}</div>
                     <div class="stat-label">Missing Lines</div>
                 </div>
+            </div>
+            
+            <div class="download-links">
+                <strong>Download Reports:</strong>
+                <a href="coverage_summary.txt">📄 Text Summary</a>
+                <a href="coverage.xml">📊 XML Report</a>
+                <a href="coverage.json">📋 JSON Report</a>
             </div>
         </div>
         
@@ -578,7 +696,7 @@ def generate_index_html(output_dir: Path, file_reports: List[Tuple[str, float, D
         </div>
         
         <div class="file-list">
-            <div class="file-header">File Coverage Reports</div>
+            <div class="file-header">Detailed Per-File Coverage Reports</div>
 """)
         
         for filename, coverage_percent, stats in file_reports:
@@ -604,18 +722,23 @@ def generate_index_html(output_dir: Path, file_reports: List[Tuple[str, float, D
 </html>
 """)
     
-    print_success(f"HTML index generated: {index_file}")
+    print_success(f"Combined index generated: {index_file}")
 
 
 def main():
     """Main function."""
     parser = argparse.ArgumentParser(
-        description="Generate detailed per-file coverage HTML reports"
+        description="Generate combined coverage reports with summary and detailed per-file analysis"
     )
     parser.add_argument(
         "--output-dir",
-        default="tests/reports/detailed-coverage",
-        help="Output directory for coverage reports"
+        default="tests/reports/coverage",
+        help="Output directory for all coverage reports"
+    )
+    parser.add_argument(
+        "--run-tests",
+        action="store_true",
+        help="Run tests with coverage before generating reports"
     )
     parser.add_argument(
         "--source-dir",
@@ -625,25 +748,48 @@ def main():
     
     args = parser.parse_args()
     
-    print_header("Detailed HTML Coverage Report Generator")
+    print_header("Combined Coverage Report Generator")
     
     # Create output directory
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     
+    # Run coverage analysis if requested
+    if args.run_tests:
+        if not run_coverage_analysis():
+            return 1
+    
     # Get coverage data
     coverage_data = get_coverage_data()
     if not coverage_data:
-        print_error("No coverage data available. Run tests with coverage first.")
+        print_error("No coverage data available. Run with --run-tests flag or ensure tests have been run with coverage.")
         return 1
     
-    # Process each file
+    # Generate standard coverage reports
+    print_subheader("Generating Standard Coverage Reports")
+    
+    # Terminal report
+    subprocess.run(["coverage", "report", "-m"], check=False)
+    
+    # XML report
+    subprocess.run(["coverage", "xml", "-o", str(output_dir / "coverage.xml")], check=False)
+    
+    # JSON report (for reference)
+    subprocess.run(["coverage", "json", "-o", str(output_dir / "coverage.json")], check=False)
+    
+    # HTML coverage report
+    subprocess.run(["coverage", "html", "-d", str(output_dir / "htmlcov")], check=False)
+    
+    # Generate coverage summary
+    generate_coverage_summary(coverage_data, output_dir)
+    
+    # Process each file for detailed reports
     files_data = coverage_data.get("files", {})
     if not files_data:
         print_error("No files found in coverage data")
         return 1
     
-    print_subheader(f"Processing {len(files_data)} files")
+    print_subheader(f"Generating Detailed Reports for {len(files_data)} Files")
     
     file_reports = []
     
@@ -657,33 +803,29 @@ def main():
             print_error(f"Source file not found: {filename}")
             continue
         
-        safe_filename = generate_html_file_report(
+        report_data = generate_html_file_report(
             filename,
             source_path,
             file_coverage,
             output_dir
         )
         
-        if safe_filename:
-            # Calculate coverage percentage for this file
-            covered = len(file_coverage.get("executed_lines", []))
-            missing = len(file_coverage.get("missing_lines", []))
-            total = covered + missing
-            coverage_percent = (covered / total * 100) if total > 0 else 100.0
-            
-            file_reports.append((
-                filename,
-                coverage_percent,
-                {'covered': covered, 'missing': missing}
-            ))
+        if report_data[0]:  # Check if report was generated successfully
+            file_reports.append(report_data)
     
-    # Generate index HTML
+    # Generate combined index
     if file_reports:
-        generate_index_html(output_dir, file_reports)
+        generate_combined_index(output_dir, file_reports, coverage_data)
     
-    print_header("HTML Coverage Report Generation Complete!")
-    print_info(f"Reports available in: {output_dir}")
-    print_info(f"Open {output_dir}/index.html in your browser")
+    print_header("Coverage Report Generation Complete!")
+    print_info(f"All reports available in: {output_dir}")
+    print_info(f"Open {output_dir}/index.html in your browser for the full report")
+    print_success("Reports include:")
+    print_success("  - Combined index with overall statistics")
+    print_success("  - Per-file detailed coverage reports")
+    print_success("  - Standard HTML coverage report in htmlcov/")
+    print_success("  - Text summary report")
+    print_success("  - XML and JSON exports")
     
     return 0
 
