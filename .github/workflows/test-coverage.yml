@@ -63,14 +63,14 @@ jobs:
           echo "Actor: ${{ github.actor }}"
           echo "Workflow: ${{ github.workflow }}"
           echo "Run number: ${{ github.run_number }}"
-          
+
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "PR number: ${{ github.event.pull_request.number }}"
             echo "PR merged: ${{ github.event.pull_request.merged }}"
             echo "PR base ref: ${{ github.event.pull_request.base.ref }}"
             echo "PR head ref: ${{ github.event.pull_request.head.ref }}"
           fi
-          
+
           echo "Personal Access Token available: ${{ secrets.PERSONAL_ACCESS_TOKEN != '' }}"
 
       - name: 🔧 Validate and configure Git credentials
@@ -94,10 +94,10 @@ jobs:
         if: always()
         run: |
           echo "🚀 Committing coverage reports to repository..."
-          
+
           # Determine if we should commit and push
           SHOULD_COMMIT=false
-          
+
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "✅ Manual trigger detected - will commit and push"
             SHOULD_COMMIT=true
@@ -121,7 +121,7 @@ jobs:
             echo "Event: ${{ github.event_name }}"
             echo "Ref: ${{ github.ref }}"
           fi
-          
+
           if [ "$SHOULD_COMMIT" = "true" ]; then
             # Add coverage reports
             echo "📁 Adding coverage reports to git..."
@@ -132,7 +132,7 @@ jobs:
               echo "ℹ️ No changes to commit"
             else
               echo "📝 Changes detected, creating commit..."
-              
+
               # Create commit with timestamp
               TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
               COMMIT_SHA="${{ github.sha }}"
@@ -167,25 +167,25 @@ jobs:
 
               # Push changes to the target branch
               echo "🚀 Pushing changes to $TARGET_BRANCH..."
-              
+
               # If we're not on the target branch, we need to handle the push carefully
               if [ "${{ github.ref }}" != "refs/heads/$TARGET_BRANCH" ]; then
                 echo "🔄 Pushing to $TARGET_BRANCH branch from current branch..."
-                
+
                 # Fetch the latest main branch
                 echo "📥 Fetching latest $TARGET_BRANCH branch..."
                 git fetch origin "$TARGET_BRANCH:$TARGET_BRANCH"
-                
+
                 # Try to push to main branch
                 if git push origin "HEAD:$TARGET_BRANCH"; then
                   echo "✅ Successfully pushed to $TARGET_BRANCH"
                 else
                   echo "⚠️ Push failed, trying alternative approach..."
-                  
+
                   # Create a new branch for the coverage reports
                   COVERAGE_BRANCH="coverage-reports-$(date +%Y%m%d-%H%M%S)"
                   echo "🔄 Creating coverage branch: $COVERAGE_BRANCH"
-                  
+
                   # Push to a new branch instead
                   if git push origin "HEAD:$COVERAGE_BRANCH"; then
                     echo "✅ Successfully pushed to coverage branch: $COVERAGE_BRANCH"
@@ -201,7 +201,7 @@ jobs:
                 git push origin "${{ github.ref }}"
                 echo "✅ Successfully pushed to current branch"
               fi
-              
+
               echo "✅ Coverage reports committed and pushed"
             fi
           else
@@ -233,30 +233,10 @@ jobs:
           echo "- HTML test and coverage reports uploaded as workflow artifacts" >> $GITHUB_STEP_SUMMARY
           echo "- Coverage reports committed to repository (main branch only)" >> $GITHUB_STEP_SUMMARY
           echo "- Coverage reports deployed to GitHub Pages" >> $GITHUB_STEP_SUMMARY
-          
+
           # Add debug information
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🔍 Workflow Context" >> $GITHUB_STEP_SUMMARY
           echo "- Event: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- Ref: ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
           echo "- Workflow: ${{ github.workflow }} #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
-
-  deploy-pages:
-    needs: test-coverage
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    if: success()
-    
-    steps:
-      - name: 📥 Download coverage reports artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: test-coverage-reports-py3.9
-          path: ./output
-
-      - name: 🚀 Deploy to GitHub Pages
-        uses: actions/deploy-pages@v2
-        with:
-          folder: output
