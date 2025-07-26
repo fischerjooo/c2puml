@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Coverage Report: c_to_plantuml/utils.py</title>
+    <style>
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 24px;
+        }
+        .stats {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .coverage-bar {
+            width: 200px;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .coverage-fill {
+            height: 100%;
+            background: #f44336;
+            transition: width 0.3s ease;
+        }
+        .code-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .code-header {
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+        .code-lines {
+            display: table;
+            width: 100%;
+        }
+        .code-line {
+            display: table-row;
+            transition: background-color 0.2s;
+        }
+        .code-line:hover {
+            background-color: #f0f0f0;
+        }
+        .line-number {
+            display: table-cell;
+            width: 50px;
+            padding: 0 10px;
+            text-align: right;
+            background: #f8f8f8;
+            color: #999;
+            border-right: 1px solid #e0e0e0;
+            user-select: none;
+            font-size: 12px;
+            vertical-align: top;
+        }
+        .line-status {
+            display: table-cell;
+            width: 30px;
+            text-align: center;
+            font-size: 14px;
+            vertical-align: top;
+            padding: 0 5px;
+        }
+        .line-content {
+            display: table-cell;
+            padding: 0 20px;
+            white-space: pre;
+            font-size: 14px;
+            vertical-align: top;
+        }
+        .covered {
+            background-color: #e8f5e9;
+        }
+        .covered .line-status {
+            color: #4caf50;
+        }
+        .missing {
+            background-color: #ffebee;
+        }
+        .missing .line-status {
+            color: #f44336;
+        }
+        .excluded {
+            background-color: #f5f5f5;
+            color: #999;
+        }
+        .excluded .line-status {
+            color: #999;
+        }
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .legend-item {
+            display: inline-block;
+            margin-right: 20px;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 5px;
+            border-radius: 3px;
+        }
+        .timestamp {
+            color: #666;
+            font-size: 12px;
+        }
+        /* Syntax highlighting */
+        .keyword { color: #0000ff; font-weight: bold; }
+        .string { color: #008000; }
+        .comment { color: #808080; font-style: italic; }
+        .number { color: #098658; }
+        .function { color: #795E26; }
+        .class { color: #267F99; font-weight: bold; }
+        .back-link {
+            margin-bottom: 20px;
+        }
+        .back-link a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-link">
+        <a href="index.html">← Back to Coverage Index</a>
+    </div>
+    
+    <div class="header">
+        <h1>Coverage Report: c_to_plantuml/utils.py</h1>
+        <div class="timestamp">Generated: 2025-07-26 11:27:33</div>
+        
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-label">Coverage</span>
+                <span class="stat-value">36.8%</span>
+                <div class="coverage-bar">
+                    <div class="coverage-fill" style="width: 36.76470588235294%"></div>
+                </div>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Statements</span>
+                <span class="stat-value">68</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Covered</span>
+                <span class="stat-value" style="color: #4caf50">25</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Missing</span>
+                <span class="stat-value" style="color: #f44336">43</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Excluded</span>
+                <span class="stat-value" style="color: #999">0</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="code-container">
+        <div class="code-header">Source Code</div>
+        <div class="code-lines">
+            <div class="code-line ">
+                <div class="line-number">1</div>
+                <div class="line-status"></div>
+                <div class="line-content"><span class="comment">#!/usr/bin/env python3</span></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">2</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">&quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">3</div>
+                <div class="line-status"></div>
+                <div class="line-content">Utility functions <span class=<span class="string">"keyword"</span>>for</span> C to PlantUML converter</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">4</div>
+                <div class="line-status"></div>
+                <div class="line-content">&quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">5</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">6</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>import</span> logging</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">7</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> pathlib <span class=<span class="string">"keyword"</span>>import</span> Path</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">8</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>from</span> typing <span class=<span class="string">"keyword"</span>>import</span> Dict, Optional</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">9</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">10</div>
+                <div class="line-status"></div>
+                <div class="line-content"><span class="comment"># Try to <span class=<span class="string">"keyword"</span>>import</span> chardet, fallback to basic encoding detection <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> available</span></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">11</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">try:</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">12</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>import</span> chardet</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">13</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    CHARDET_AVAILABLE = True</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">14</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>except</span> ImportError:</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">15</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">    CHARDET_AVAILABLE = False</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">16</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">17</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">18</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>def</span> detect_file_encoding(file_path: Path) -&gt; str:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">19</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;Detect file encoding <span class=<span class="string">"keyword"</span>>with</span> platform-aware fallbacks&quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">20</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>try</span>:</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">21</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> CHARDET_AVAILABLE:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">22</div>
+                <div class="line-status"></div>
+                <div class="line-content">            <span class="comment"># Try to detect encoding <span class=<span class="string">"keyword"</span>>with</span> chardet</span></div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">23</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">            <span class=<span class="string">"keyword"</span>>with</span> open(file_path, &quot;rb&quot;) as f:</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">24</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">                raw_data = f.read(1024)  <span class="comment"># Read first 1KB <span class=<span class="string">"keyword"</span>>for</span> detection</span></div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">25</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">                <span class=<span class="string">"keyword"</span>>if</span> raw_data:</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">26</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">                    result = chardet.detect(raw_data)</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">27</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">                    <span class=<span class="string">"keyword"</span>>if</span> result <span class=<span class="string">"keyword"</span>>and</span> result[&quot;confidence&quot;] &gt; 0.7:</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">28</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">                        <span class=<span class="string">"keyword"</span>>return</span> result[&quot;encoding&quot;]</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">29</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">30</div>
+                <div class="line-status"></div>
+                <div class="line-content">        <span class="comment"># Fallback encodings <span class=<span class="string">"keyword"</span>>in</span> order of preference</span></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">31</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        fallback_encodings = [&quot;utf-8&quot;, &quot;latin-1&quot;, &quot;cp1252&quot;, &quot;iso-8859-1&quot;]</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">32</div>
+                <div class="line-status"></div>
+                <div class="line-content">        </div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">33</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>for</span> encoding <span class=<span class="string">"keyword"</span>>in</span> fallback_encodings:</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">34</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">            <span class=<span class="string">"keyword"</span>>try</span>:</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">35</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                <span class=<span class="string">"keyword"</span>>with</span> open(file_path, &quot;r&quot;, encoding=encoding) as f:</div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">36</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                    f.read(1024)  <span class="comment"># Test read</span></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">37</div>
+                <div class="line-status">✓</div>
+                <div class="line-content">                <span class=<span class="string">"keyword"</span>>return</span> encoding</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">38</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">            <span class=<span class="string">"keyword"</span>>except</span> (UnicodeDecodeError, UnicodeError):</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">39</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">                continue</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">40</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">41</div>
+                <div class="line-status"></div>
+                <div class="line-content">        <span class="comment"># Final fallback</span></div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">42</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> &quot;utf-8&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">43</div>
+                <div class="line-status"></div>
+                <div class="line-content">        </div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">44</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>except</span> Exception as e:</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">45</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">        logging.warning(f&quot;Failed to detect encoding <span class=<span class="string">"keyword"</span>>for</span> {file_path}: {e}&quot;)</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">46</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> &quot;utf-8&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">47</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">48</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">49</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>def</span> get_filename_from_path(file_path: str) -&gt; str:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">50</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;Extract filename <span class=<span class="string">"keyword"</span>>from</span> a file path (handles both absolute <span class=<span class="string">"keyword"</span>>and</span> relative paths)&quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">51</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>return</span> Path(file_path).name</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">52</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">53</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">54</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>def</span> find_file_by_filename(filename: str, file_dict: Dict[str, any]) -&gt; Optional[str]:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">55</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">56</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Find a file <span class=<span class="string">"keyword"</span>>in</span> a dictionary by matching its filename.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">57</div>
+                <div class="line-status"></div>
+                <div class="line-content">    </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">58</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Args:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">59</div>
+                <div class="line-status"></div>
+                <div class="line-content">        filename: The filename to search <span class=<span class="string">"keyword"</span>>for</span> (e.g., &quot;header.h&quot;)</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">60</div>
+                <div class="line-status"></div>
+                <div class="line-content">        file_dict: Dictionary <span class=<span class="string">"keyword"</span>>with</span> file paths as keys</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">61</div>
+                <div class="line-status"></div>
+                <div class="line-content">        </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">62</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Returns:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">63</div>
+                <div class="line-status"></div>
+                <div class="line-content">        The matching file path key, <span class=<span class="string">"keyword"</span>>or</span> <span class=<span class="string">"keyword"</span>>None</span> <span class=<span class="string">"keyword"</span>>if</span> <span class=<span class="string">"keyword"</span>>not</span> found</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">64</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">65</div>
+                <div class="line-status"></div>
+                <div class="line-content">    <span class="comment"># First <span class=<span class="string">"keyword"</span>>try</span> exact match</span></div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">66</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>if</span> filename <span class=<span class="string">"keyword"</span>>in</span> file_dict:</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">67</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> filename</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">68</div>
+                <div class="line-status"></div>
+                <div class="line-content">    </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">69</div>
+                <div class="line-status"></div>
+                <div class="line-content">    <span class="comment"># Try matching by filename</span></div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">70</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>for</span> file_path <span class=<span class="string">"keyword"</span>>in</span> file_dict.keys():</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">71</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>if</span> Path(file_path).name == filename:</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">72</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> file_path</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">73</div>
+                <div class="line-status"></div>
+                <div class="line-content">    </div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">74</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>return</span> None</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">75</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">76</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">77</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>def</span> normalize_file_path(file_path: str, project_root: str = None) -&gt; str:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">78</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">79</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Normalize file path <span class=<span class="string">"keyword"</span>>for</span> consistent handling.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">80</div>
+                <div class="line-status"></div>
+                <div class="line-content">    F<span class=<span class="string">"keyword"</span>>or</span> tracking purposes, we prefer relative paths when possible.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">81</div>
+                <div class="line-status"></div>
+                <div class="line-content">    </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">82</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Args:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">83</div>
+                <div class="line-status"></div>
+                <div class="line-content">        file_path: The file path to normalize</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">84</div>
+                <div class="line-status"></div>
+                <div class="line-content">        project_root: Optional project root <span class=<span class="string">"keyword"</span>>for</span> relative path conversion</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">85</div>
+                <div class="line-status"></div>
+                <div class="line-content">        </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">86</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Returns:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">87</div>
+                <div class="line-status"></div>
+                <div class="line-content">        Normalized file path</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">88</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">89</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    path_obj = Path(file_path)</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">90</div>
+                <div class="line-status"></div>
+                <div class="line-content">    </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">91</div>
+                <div class="line-status"></div>
+                <div class="line-content">    <span class="comment"># If we have a project root <span class=<span class="string">"keyword"</span>>and</span> the path <span class=<span class="string">"keyword"</span>>is</span> absolute, <span class=<span class="string">"keyword"</span>>try</span> to make it relative</span></div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">92</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>if</span> project_root <span class=<span class="string">"keyword"</span>>and</span> path_obj.is_absolute():</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">93</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>try</span>:</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">94</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">            relative_path = path_obj.relative_to(Path(project_root))</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">95</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">            <span class=<span class="string">"keyword"</span>>return</span> str(relative_path)</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">96</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>except</span> ValueError:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">97</div>
+                <div class="line-status"></div>
+                <div class="line-content">            <span class="comment"># Path <span class=<span class="string">"keyword"</span>>is</span> <span class=<span class="string">"keyword"</span>>not</span> relative to project root, keep as is</span></div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">98</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">            pass</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">99</div>
+                <div class="line-status"></div>
+                <div class="line-content">    </div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">100</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>return</span> str(path_obj)</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">101</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">102</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">103</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>def</span> create_file_key(file_path: str, project_root: str = None) -&gt; str:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">104</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">105</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Create a consistent file key <span class=<span class="string">"keyword"</span>>for</span> tracking.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">106</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Uses filename <span class=<span class="string">"keyword"</span>>for</span> uniqueness since filenames are unique <span class=<span class="string">"keyword"</span>>in</span> the project.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">107</div>
+                <div class="line-status"></div>
+                <div class="line-content">    </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">108</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Args:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">109</div>
+                <div class="line-status"></div>
+                <div class="line-content">        file_path: The file path</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">110</div>
+                <div class="line-status"></div>
+                <div class="line-content">        project_root: Optional project root <span class=<span class="string">"keyword"</span>>for</span> normalization</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">111</div>
+                <div class="line-status"></div>
+                <div class="line-content">        </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">112</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Returns:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">113</div>
+                <div class="line-status"></div>
+                <div class="line-content">        A consistent file key (filename)</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">114</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">115</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>return</span> get_filename_from_path(file_path)</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">116</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">117</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">118</div>
+                <div class="line-status"></div>
+                <div class="line-content"><span class="comment"># Backward compatibility functions <span class=<span class="string">"keyword"</span>>for</span> existing tests</span></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">119</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>def</span> get_acceptable_encodings() -&gt; list:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">120</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">121</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Get a list of acceptable encodings <span class=<span class="string">"keyword"</span>>for</span> cross-platform compatibility.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">122</div>
+                <div class="line-status"></div>
+                <div class="line-content">    </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">123</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Returns:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">124</div>
+                <div class="line-status"></div>
+                <div class="line-content">        List of encoding names that are considered acceptable across platforms.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">125</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">126</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>return</span> [</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">127</div>
+                <div class="line-status"></div>
+                <div class="line-content">        &quot;utf-8&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">128</div>
+                <div class="line-status"></div>
+                <div class="line-content">        &quot;utf-8-sig&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">129</div>
+                <div class="line-status"></div>
+                <div class="line-content">        &quot;utf-16&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">130</div>
+                <div class="line-status"></div>
+                <div class="line-content">        &quot;utf-16le&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">131</div>
+                <div class="line-status"></div>
+                <div class="line-content">        &quot;utf-16be&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">132</div>
+                <div class="line-status"></div>
+                <div class="line-content">        &quot;windows-1252&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">133</div>
+                <div class="line-status"></div>
+                <div class="line-content">        &quot;windows-1254&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">134</div>
+                <div class="line-status"></div>
+                <div class="line-content">        &quot;cp1252&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">135</div>
+                <div class="line-status"></div>
+                <div class="line-content">        &quot;cp1254&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">136</div>
+                <div class="line-status"></div>
+                <div class="line-content">        &quot;iso-8859-1&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">137</div>
+                <div class="line-status"></div>
+                <div class="line-content">        &quot;latin-1&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">138</div>
+                <div class="line-status"></div>
+                <div class="line-content">        &quot;ascii&quot;,</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">139</div>
+                <div class="line-status"></div>
+                <div class="line-content">    ]</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">140</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">141</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">142</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>def</span> is_acceptable_encoding(encoding: str) -&gt; bool:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">143</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">144</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Check <span class=<span class="string">"keyword"</span>>if</span> an encoding <span class=<span class="string">"keyword"</span>>is</span> acceptable <span class=<span class="string">"keyword"</span>>for</span> cross-platform compatibility.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">145</div>
+                <div class="line-status"></div>
+                <div class="line-content">    </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">146</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Args:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">147</div>
+                <div class="line-status"></div>
+                <div class="line-content">        encoding: The encoding name to check.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">148</div>
+                <div class="line-status"></div>
+                <div class="line-content">        </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">149</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Returns:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">150</div>
+                <div class="line-status"></div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>True</span> <span class=<span class="string">"keyword"</span>>if</span> the encoding <span class=<span class="string">"keyword"</span>>is</span> acceptable, <span class=<span class="string">"keyword"</span>>False</span> otherwise.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">151</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">152</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>return</span> encoding.lower() <span class=<span class="string">"keyword"</span>>in</span> [enc.lower() <span class=<span class="string">"keyword"</span>>for</span> enc <span class=<span class="string">"keyword"</span>>in</span> get_acceptable_encodings()]</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">153</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">154</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">155</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>def</span> normalize_encoding(encoding: str) -&gt; str:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">156</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">157</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Normalize encoding name <span class=<span class="string">"keyword"</span>>for</span> consistency across platforms.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">158</div>
+                <div class="line-status"></div>
+                <div class="line-content">    </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">159</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Args:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">160</div>
+                <div class="line-status"></div>
+                <div class="line-content">        encoding: The encoding name to normalize.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">161</div>
+                <div class="line-status"></div>
+                <div class="line-content">        </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">162</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Returns:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">163</div>
+                <div class="line-status"></div>
+                <div class="line-content">        Normalized encoding name.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">164</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">165</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    encoding_lower = encoding.lower()</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">166</div>
+                <div class="line-status"></div>
+                <div class="line-content">    </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">167</div>
+                <div class="line-status"></div>
+                <div class="line-content">    <span class="comment"># Normalize common Windows encodings</span></div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">168</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>if</span> encoding_lower <span class=<span class="string">"keyword"</span>>in</span> [&quot;windows-1252&quot;, &quot;cp1252&quot;]:</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">169</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> &quot;windows-1252&quot;</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">170</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    el<span class=<span class="string">"keyword"</span>>if</span> encoding_lower <span class=<span class="string">"keyword"</span>>in</span> [&quot;windows-1254&quot;, &quot;cp1254&quot;]:</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">171</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> &quot;windows-1254&quot;</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">172</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    el<span class=<span class="string">"keyword"</span>>if</span> encoding_lower <span class=<span class="string">"keyword"</span>>in</span> [&quot;iso-8859-1&quot;, &quot;latin-1&quot;]:</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">173</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> &quot;iso-8859-1&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">174</div>
+                <div class="line-status"></div>
+                <div class="line-content">    </div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">175</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>return</span> encoding_lower</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">176</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">177</div>
+                <div class="line-status"></div>
+                <div class="line-content"></div>
+            </div>
+            <div class="code-line covered">
+                <div class="line-number">178</div>
+                <div class="line-status">✓</div>
+                <div class="line-content"><span class=<span class="string">"keyword"</span>>def</span> get_platform_default_encoding() -&gt; str:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">179</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">180</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Get the default encoding <span class=<span class="string">"keyword"</span>>for</span> the current platform.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">181</div>
+                <div class="line-status"></div>
+                <div class="line-content">    </div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">182</div>
+                <div class="line-status"></div>
+                <div class="line-content">    Returns:</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">183</div>
+                <div class="line-status"></div>
+                <div class="line-content">        The default encoding name <span class=<span class="string">"keyword"</span>>for</span> the current platform.</div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">184</div>
+                <div class="line-status"></div>
+                <div class="line-content">    &quot;&quot;&quot;</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">185</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>import</span> sys</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">186</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>if</span> sys.platform.startswith(&quot;win&quot;):</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">187</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> &quot;windows-1252&quot;  <span class="comment"># Common Windows default</span></div>
+            </div>
+            <div class="code-line ">
+                <div class="line-number">188</div>
+                <div class="line-status"></div>
+                <div class="line-content">    <span class=<span class="string">"keyword"</span>>else</span>:</div>
+            </div>
+            <div class="code-line missing">
+                <div class="line-number">189</div>
+                <div class="line-status">✗</div>
+                <div class="line-content">        <span class=<span class="string">"keyword"</span>>return</span> &quot;utf-8&quot;  <span class="comment"># Common Unix/Linux default</span></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="legend">
+        <h3 style="margin-top: 0;">Legend</h3>
+        <div class="legend-item">
+            <span class="legend-color" style="background: #e8f5e9;"></span>
+            <span>✓ Covered</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-color" style="background: #ffebee;"></span>
+            <span>✗ Not Covered</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-color" style="background: #f5f5f5;"></span>
+            <span>— Excluded</span>
+        </div>
+    </div>
+</body>
+</html>
