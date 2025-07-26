@@ -96,45 +96,55 @@ def parse_test_results(stdout: str, stderr: str, returncode: int) -> Dict:
         # Parse the test summary from stdout
         lines = stdout.split('\n')
         for line in lines:
-            # Look for test summary patterns
-            if 'collected' in line and 'items' in line:
-                # Extract total tests from "collected X items"
+            # Look for the pytest summary line: "======================== 329 passed, 1 warning in 1.28s ========================"
+            if line.startswith('========================') and 'passed' in line and 'in' in line:
+                import re
+                # Extract passed count
+                passed_match = re.search(r'(\d+) passed', line)
+                if passed_match:
+                    test_results['passed'] = int(passed_match.group(1))
+                    test_results['total_tests'] = test_results['passed']  # Assume all tests passed if no failures
+                
+                # Extract failed count
+                failed_match = re.search(r'(\d+) failed', line)
+                if failed_match:
+                    test_results['failed'] = int(failed_match.group(1))
+                    test_results['total_tests'] += test_results['failed']
+                
+                # Extract skipped count
+                skipped_match = re.search(r'(\d+) skipped', line)
+                if skipped_match:
+                    test_results['skipped'] = int(skipped_match.group(1))
+                    test_results['total_tests'] += test_results['skipped']
+                
+                # Extract error count
+                error_match = re.search(r'(\d+) error', line)
+                if error_match:
+                    test_results['errors'] = int(error_match.group(1))
+                    test_results['total_tests'] += test_results['errors']
+                
+                # Extract duration
+                duration_match = re.search(r'in ([\d.]+)s', line)
+                if duration_match:
+                    test_results['duration'] = float(duration_match.group(1))
+                
+                break  # Found the summary line, no need to continue
+            
+            # Also look for the "collected X items" line as backup
+            elif 'collected' in line and 'items' in line:
                 import re
                 match = re.search(r'collected (\d+) items?', line)
                 if match:
                     test_results['total_tests'] = int(match.group(1))
             
-            elif 'passed' in line and 'failed' in line:
-                # Extract passed/failed counts
-                import re
-                passed_match = re.search(r'(\d+) passed', line)
-                failed_match = re.search(r'(\d+) failed', line)
-                skipped_match = re.search(r'(\d+) skipped', line)
-                error_match = re.search(r'(\d+) error', line)
-                
-                if passed_match:
-                    test_results['passed'] = int(passed_match.group(1))
-                if failed_match:
-                    test_results['failed'] = int(failed_match.group(1))
-                if skipped_match:
-                    test_results['skipped'] = int(skipped_match.group(1))
-                if error_match:
-                    test_results['errors'] = int(error_match.group(1))
-            
-            elif 'in ' in line and ('seconds' in line or 's' in line):
-                # Extract duration
-                import re
-                duration_match = re.search(r'in ([\d.]+)s?', line)
-                if duration_match:
-                    test_results['duration'] = float(duration_match.group(1))
-            
             # Capture failed test details
             elif line.startswith('FAILED') or line.startswith('ERROR'):
                 test_results['failed_tests'].append(line.strip())
         
-        # If we couldn't parse the summary, try to count from individual test results
+        # If we still don't have test counts, try to count from individual test results
         if test_results['total_tests'] == 0:
-            test_results['total_tests'] = len([line for line in lines if line.startswith('test_') and ('PASSED' in line or 'FAILED' in line or 'SKIPPED' in line)])
+            test_lines = [line for line in lines if 'PASSED' in line or 'FAILED' in line or 'SKIPPED' in line]
+            test_results['total_tests'] = len(test_lines)
             test_results['passed'] = len([line for line in lines if 'PASSED' in line])
             test_results['failed'] = len([line for line in lines if 'FAILED' in line])
             test_results['skipped'] = len([line for line in lines if 'SKIPPED' in line])
