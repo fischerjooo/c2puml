@@ -29,6 +29,10 @@ print_warning() {
     echo -e "${YELLOW}⚠️  $1${NC}"
 }
 
+print_info() {
+    echo -e "${BLUE}ℹ️  $1${NC}"
+}
+
 # Function to print section headers
 print_header() {
     echo ""
