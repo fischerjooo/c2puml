@@ -4,7 +4,9 @@ This project includes comprehensive coverage reporting that combines both summar
 
 ## Features
 
-### 1. Per-File Coverage Reports
+### 1. Comprehensive Coverage Analysis
+- **Unit Test Coverage**: Coverage from all unit tests
+- **Execution Coverage**: Coverage from running the tool on example projects
 - **Line-by-line analysis**: See exactly which lines are covered (✓), missing (✗), or excluded (—)
 - **Coverage statistics**: Get coverage percentage, total statements, covered lines, and missing lines for each file
 - **Missing lines summary**: Grouped ranges of missing lines for easy identification
@@ -20,7 +22,12 @@ All coverage reports are generated in a single step:
 ## Usage
 
 ### Automatic Generation
-When you run the test suite with coverage using `./run_tests_with_coverage.sh`, all coverage reports are automatically generated in the `tests/reports/coverage/` directory. This includes:
+When you run the test suite with coverage using `./run_tests_with_coverage.sh`, the following happens:
+1. **Unit tests** are run with coverage tracking
+2. **Example generation** is executed with coverage tracking (exercises main code paths)
+3. **Combined coverage reports** are generated in `tests/reports/coverage/`
+
+The reports include:
 - Combined index with overall statistics
 - Detailed per-file coverage reports
 - Standard HTML coverage report

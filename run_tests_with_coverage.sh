@@ -77,6 +77,20 @@ else
     print_error "Some tests failed!"
 fi
 
+# Run example generation with coverage for execution coverage
+if [ "$HAS_COVERAGE" = true ] && [ $TEST_EXIT_CODE -eq 0 ]; then
+    print_header "Running Example Generation for Execution Coverage"
+    print_status "Executing C to PlantUML converter on example project..."
+    
+    if python3 run_example_with_coverage.py 2>&1 | tee -a tests/reports/test-output.log; then
+        print_success "Example generation completed successfully"
+        print_info "This improves coverage by exercising the main execution paths"
+    else
+        print_error "Example generation failed"
+        print_info "Coverage data was still collected for executed code paths"
+    fi
+fi
+
 # Run example tests if run_example.sh exists
 if [ -f "run_example.sh" ]; then
     print_status "Running example tests..."

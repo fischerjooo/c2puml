@@ -826,6 +826,9 @@ def main():
     print_success("  - Standard HTML coverage report in htmlcov/")
     print_success("  - Text summary report")
     print_success("  - XML and JSON exports")
+    print_info("\nCoverage includes:")
+    print_info("  - Unit test coverage")
+    print_info("  - Execution coverage from example generation (if run)")
     
     return 0
 
