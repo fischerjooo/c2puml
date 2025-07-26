@@ -232,6 +232,7 @@ jobs:
           echo "### 📁 Available Artifacts" >> $GITHUB_STEP_SUMMARY
           echo "- HTML test and coverage reports uploaded as workflow artifacts" >> $GITHUB_STEP_SUMMARY
           echo "- Coverage reports committed to repository (main branch only)" >> $GITHUB_STEP_SUMMARY
+          echo "- Coverage reports deployed to GitHub Pages" >> $GITHUB_STEP_SUMMARY
           
           # Add debug information
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -239,3 +240,186 @@ jobs:
           echo "- Event: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- Ref: ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
           echo "- Workflow: ${{ github.workflow }} #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+
+  deploy-pages:
+    needs: test-coverage
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    if: success() && (github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main') || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📥 Download coverage reports artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: test-coverage-reports-py3.9
+          path: ./coverage-reports
+
+      - name: 🏗️ Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: 📁 Prepare coverage reports for deployment
+        run: |
+          echo "📁 Preparing coverage reports for GitHub Pages deployment..."
+          
+          # Create the docs directory if it doesn't exist
+          mkdir -p docs
+          
+          # Copy coverage reports to docs directory
+          if [ -d "./coverage-reports" ]; then
+            echo "📋 Copying coverage reports to docs directory..."
+            cp -r ./coverage-reports/* ./docs/
+            
+            # Create an index.html file that redirects to the coverage report
+            cat > ./docs/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Test Coverage Reports</title>
+              <style>
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                      max-width: 800px;
+                      margin: 0 auto;
+                      padding: 2rem;
+                      line-height: 1.6;
+                      color: #333;
+                  }
+                  .header {
+                      text-align: center;
+                      margin-bottom: 2rem;
+                      padding: 2rem;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                      border-radius: 10px;
+                  }
+                  .nav {
+                      display: flex;
+                      gap: 1rem;
+                      margin-bottom: 2rem;
+                      flex-wrap: wrap;
+                  }
+                  .nav a {
+                      padding: 0.75rem 1.5rem;
+                      background: #007acc;
+                      color: white;
+                      text-decoration: none;
+                      border-radius: 5px;
+                      transition: background 0.3s;
+                  }
+                  .nav a:hover {
+                      background: #005a9e;
+                  }
+                  .info {
+                      background: #f8f9fa;
+                      padding: 1.5rem;
+                      border-radius: 8px;
+                      border-left: 4px solid #007acc;
+                      margin-bottom: 2rem;
+                  }
+                  .timestamp {
+                      font-size: 0.9rem;
+                      color: #666;
+                      text-align: center;
+                      margin-top: 2rem;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="header">
+                  <h1>🧪 Test Coverage Reports</h1>
+                  <p>Comprehensive test coverage analysis and reports</p>
+              </div>
+              
+              <div class="nav">
+                  <a href="coverage/index.html">📊 Coverage Report</a>
+                  <a href="test-summary.txt">📋 Test Summary</a>
+                  <a href="junit.xml">📈 JUnit Results</a>
+              </div>
+              
+              <div class="info">
+                  <h3>📁 Available Reports</h3>
+                  <ul>
+                      <li><strong>Coverage Report:</strong> Detailed HTML coverage analysis with line-by-line coverage information</li>
+                      <li><strong>Test Summary:</strong> Summary of test execution results and statistics</li>
+                      <li><strong>JUnit Results:</strong> XML format test results for CI/CD integration</li>
+                  </ul>
+              </div>
+              
+              <div class="timestamp">
+                  <p>Last updated: <span id="timestamp"></span></p>
+                  <script>
+                      document.getElementById('timestamp').textContent = new Date().toLocaleString();
+                  </script>
+              </div>
+          </body>
+          </html>
+          EOF
+          
+            echo "✅ Coverage reports prepared for deployment"
+          else
+            echo "⚠️ No coverage reports found in artifacts"
+            # Create a placeholder page
+            cat > ./docs/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Test Coverage Reports</title>
+              <style>
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                      max-width: 600px;
+                      margin: 0 auto;
+                      padding: 2rem;
+                      text-align: center;
+                      line-height: 1.6;
+                      color: #333;
+                  }
+                  .message {
+                      background: #fff3cd;
+                      border: 1px solid #ffeaa7;
+                      padding: 2rem;
+                      border-radius: 8px;
+                      margin: 2rem 0;
+                  }
+              </style>
+          </head>
+          <body>
+              <h1>🧪 Test Coverage Reports</h1>
+              <div class="message">
+                  <h2>No Reports Available</h2>
+                  <p>Coverage reports are generated when the test suite runs successfully.</p>
+                  <p>Please check the GitHub Actions workflow for more information.</p>
+              </div>
+          </body>
+          </html>
+          EOF
+          fi
+          
+          # List contents for debugging
+          echo "📋 Contents of docs directory:"
+          find ./docs -type f | head -20
+
+      - name: 🚀 Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './docs'
+
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
