@@ -171,27 +171,27 @@
     
     <div class="header">
         <h1>Coverage Report: c_to_plantuml/preprocessor.py</h1>
-        <div class="timestamp">Generated: 2025-07-26 18:32:46</div>
+        <div class="timestamp">Generated: 2025-07-26 18:45:05</div>
         
         <div class="stats">
             <div class="stat">
                 <span class="stat-label">Coverage</span>
-                <span class="stat-value">66.3%</span>
+                <span class="stat-value">68.9%</span>
                 <div class="coverage-bar">
-                    <div class="coverage-fill" style="width: 66.33333333333333%"></div>
+                    <div class="coverage-fill" style="width: 68.89632107023411%"></div>
                 </div>
             </div>
             <div class="stat">
                 <span class="stat-label">Statements</span>
-                <span class="stat-value">300</span>
+                <span class="stat-value">299</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Covered</span>
-                <span class="stat-value" style="color: #4caf50">199</span>
+                <span class="stat-value" style="color: #4caf50">206</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Missing</span>
-                <span class="stat-value" style="color: #f44336">101</span>
+                <span class="stat-value" style="color: #f44336">93</span>
             </div>
             <div class="stat">
                 <span class="stat-label">Excluded</span>
@@ -568,9 +568,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">        if not condition.strip():</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">74</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
@@ -803,19 +803,19 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;==&quot; in condition:</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">121</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                left, right = condition.split(&quot;==&quot;, 1)</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">122</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                left_val = left.strip()</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">123</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                right_val = right.strip()</div>
             </div>
             <div class="code-line ">
@@ -828,9 +828,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">                # If both sides are known macros, compare their values</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">126</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                if left_val in self.defined_macros and right_val in self.defined_macros:</div>
             </div>
             <div class="code-line missing">
@@ -853,9 +853,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">                # If one side is a known macro, compare with the other side</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">131</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                elif left_val in self.defined_macros:</div>
             </div>
             <div class="code-line missing">
@@ -863,9 +863,9 @@
                 <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return self.get_macro_value(left_val) == right_val</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">133</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                elif right_val in self.defined_macros:</div>
             </div>
             <div class="code-line missing">
@@ -883,9 +883,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                else:</div>
             </div>
-            <div class="code-line covered">
+            <div class="code-line missing">
                 <div class="line-number">137</div>
-                <div class="line-status">&#10004;</div>
+                <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return True  # Both undefined macros are considered equal</div>
             </div>
             <div class="code-line ">
@@ -1028,9 +1028,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                    return False</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">166</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;&lt;&quot; in condition:</div>
             </div>
             <div class="code-line missing">
@@ -1068,9 +1068,9 @@
                 <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return False</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">174</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;&gt;=&quot; in condition:</div>
             </div>
             <div class="code-line missing">
@@ -1108,9 +1108,9 @@
                 <div class="line-status">&#10008;</div>
                 <div class="line-content">                    return False</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">182</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;&lt;=&quot; in condition:</div>
             </div>
             <div class="code-line missing">
@@ -1158,19 +1158,19 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Handle logical operators</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">192</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;&amp;&amp;&quot; in condition:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">193</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                parts = condition.split(&quot;&amp;&amp;&quot;)</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">194</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return all(</div>
             </div>
             <div class="code-line covered">
@@ -1183,9 +1183,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                )</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">197</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;||&quot; in condition:</div>
             </div>
             <div class="code-line missing">
@@ -1208,9 +1208,9 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                )</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">202</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if &quot;!&quot; in condition:</div>
             </div>
             <div class="code-line ">
@@ -1238,9 +1238,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # If it&#x27;s just a macro name, check if it&#x27;s defined</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">208</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            if condition in self.defined_macros:</div>
             </div>
             <div class="code-line missing">
@@ -1258,24 +1258,24 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # Try to evaluate as a number</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">212</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            try:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">213</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                return bool(int(condition))</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">214</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            except ValueError:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">215</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                pass</div>
             </div>
             <div class="code-line ">
@@ -1293,9 +1293,9 @@
                 <div class="line-status"></div>
                 <div class="line-content">            # This ensures existing tests continue to work</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">219</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">            return True</div>
             </div>
             <div class="code-line ">
@@ -2218,14 +2218,14 @@
                 <div class="line-status">&#10004;</div>
                 <div class="line-content">                for child in parent.children:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">404</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                    if child.is_active:</div>
             </div>
-            <div class="code-line missing">
+            <div class="code-line covered">
                 <div class="line-number">405</div>
-                <div class="line-status">&#10008;</div>
+                <div class="line-status">&#10004;</div>
                 <div class="line-content">                        return False</div>
             </div>
             <div class="code-line covered">
