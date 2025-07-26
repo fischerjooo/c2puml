@@ -425,13 +425,7 @@ def generate_test_summary_html(test_results: Dict, output_dir: Path) -> None:
                 <p><strong>Overall Status:</strong> {status}</p>
             </div>
             
-            <div class="download-links">
-                <strong>Download Reports:</strong>
-                <a href="coverage_summary.txt">📄 Coverage Summary</a>
-                <a href="coverage.xml">📊 Coverage XML</a>
-                <a href="coverage.json">📋 Coverage JSON</a>
-                <a href="index.html">📈 Detailed Coverage</a>
-            </div>
+
         </div>
 """)
         
@@ -1007,12 +1001,7 @@ def generate_combined_index(output_dir: Path, file_reports: List[Tuple[str, floa
                 </div>
             </div>
             
-            <div class="download-links">
-                <strong>Download Reports:</strong>
-                <a href="coverage_summary.txt">📄 Text Summary</a>
-                <a href="coverage.xml">📊 XML Report</a>
-                <a href="coverage.json">📋 JSON Report</a>
-            </div>
+
         </div>
         
         <div class="filter-buttons">
