@@ -77,6 +77,20 @@ else
     print_error "Some tests failed!"
 fi
 
+# Run example generation with coverage for execution coverage
+if [ "$HAS_COVERAGE" = true ] && [ $TEST_EXIT_CODE -eq 0 ]; then
+    print_header "Running Example Generation for Execution Coverage"
+    print_status "Executing C to PlantUML converter on example project..."
+    
+    if python3 run_example_with_coverage.py 2>&1 | tee -a tests/reports/test-output.log; then
+        print_success "Example generation completed successfully"
+        print_info "This improves coverage by exercising the main execution paths"
+    else
+        print_error "Example generation failed"
+        print_info "Coverage data was still collected for executed code paths"
+    fi
+fi
+
 # Run example tests if run_example.sh exists
 if [ -f "run_example.sh" ]; then
     print_status "Running example tests..."
@@ -180,15 +194,21 @@ fi
 
 print_success "Test summary generated at: tests/reports/test-summary.txt"
 
-# If coverage module is available and we ran with coverage, generate HTML report
+# If coverage module is available and we ran with coverage, generate combined coverage report
 if [ "$HAS_COVERAGE" = true ] && grep -q "coverage report" tests/reports/test-output.log; then
-    print_header "Generating HTML Coverage Report"
+    print_header "Generating Combined Coverage Report"
     
-    print_status "Generating HTML coverage report..."
-    python3 -m coverage html -d tests/reports/coverage-html 2>/dev/null || true
-    
-    if [ -d "tests/reports/coverage-html" ]; then
-        print_success "HTML coverage report generated at: tests/reports/coverage-html/index.html"
+    print_status "Generating comprehensive coverage reports (summary + detailed per-file)..."
+    if python3 generate_combined_coverage.py --output-dir tests/reports/coverage 2>&1 | tee tests/reports/coverage-generation.log; then
+        print_success "Combined coverage reports generated successfully!"
+        print_info "Reports include:"
+        print_info "  - Overall coverage summary"
+        print_info "  - Detailed per-file coverage with line-by-line analysis"
+        print_info "  - Standard HTML coverage report"
+        print_info "  - XML and JSON exports"
+    else
+        print_error "Failed to generate combined coverage reports"
+        print_info "Check tests/reports/coverage-generation.log for details"
     fi
 fi
 
@@ -209,8 +229,11 @@ find tests/reports -type f -name "*.txt" -o -name "*.log" | sort | while read -r
     echo "- $file ($size)"
 done
 
-if [ -d "tests/reports/coverage-html" ]; then
-    echo "- tests/reports/coverage-html/ (HTML coverage report)"
+if [ -d "tests/reports/coverage" ]; then
+    echo "- tests/reports/coverage/ (Combined coverage reports - summary + detailed)"
+    if [ -d "tests/reports/coverage/htmlcov" ]; then
+        echo "  - tests/reports/coverage/htmlcov/ (Standard HTML coverage)"
+    fi
 fi
 
 echo ""
@@ -218,8 +241,12 @@ echo "🔗 Report Links:"
 echo "----------------"
 echo "- Test Summary: tests/reports/test-summary.txt"
 echo "- Test Output: tests/reports/test-output.log"
-if [ -d "tests/reports/coverage-html" ]; then
-    echo "- HTML Coverage Report: tests/reports/coverage-html/index.html"
+if [ -d "tests/reports/coverage" ]; then
+    echo "- Combined Coverage Report: tests/reports/coverage/index.html"
+    echo "- Coverage Summary: tests/reports/coverage/coverage_summary.txt"
+    if [ -d "tests/reports/coverage/htmlcov" ]; then
+        echo "- Standard HTML Coverage: tests/reports/coverage/htmlcov/index.html"
+    fi
 fi
 
 # Exit with test exit code
