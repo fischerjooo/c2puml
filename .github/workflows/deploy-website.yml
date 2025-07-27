@@ -61,12 +61,27 @@ jobs:
           cp README.md docs/
         fi
         
-        # Copy only a few small files from test reports if they exist
+        # Copy test reports and coverage files
         if [ -d "tests/reports" ]; then
           mkdir -p docs/tests/reports
-          # Copy only index.html files
-          find tests/reports -name "index.html" -type f | head -3 | xargs -I {} cp -L --parents {} docs/
+          # Copy all test report files
+          cp -r tests/reports/* docs/tests/reports/
+          echo "✅ Test reports copied to docs/tests/reports/"
         fi
+        
+        # Create .nojekyll file to disable Jekyll processing
+        touch docs/.nojekyll
+        echo "✅ Created .nojekyll file to disable Jekyll processing"
+        
+        # Debug: List all files that will be deployed
+        echo "🔍 Files to be deployed:"
+        find docs -type f | sort
+        echo ""
+        echo "📊 Test report files:"
+        find docs/tests/reports -type f | sort
+        echo ""
+        echo "📊 Coverage files:"
+        find docs/tests/reports/coverage -type f | sort
         
         # Skip output and example files for now to isolate the issue
         
