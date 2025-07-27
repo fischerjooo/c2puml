@@ -433,9 +433,6 @@ def generate_test_summary_html(test_results: Dict, output_dir: Path) -> None:
 </head>
 <body>
     <div class="container">
-        <div class="back-link">
-            <a href="index.html">← Back to Coverage Index</a>
-        </div>
 
         <h1>Test Results Summary</h1>
         <div class="timestamp">Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div>
