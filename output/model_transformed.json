@@ -85,7 +85,7 @@
             },
             {
               "name": "unnamed",
-              "type": "unknown",
+              "type": "void ( * free_func ) ( void * )",
               "value": null
             }
           ],
@@ -113,7 +113,7 @@
             },
             {
               "name": "unnamed",
-              "type": "unknown",
+              "type": "complex_callback_t callback",
               "value": null
             }
           ],
@@ -270,7 +270,7 @@
             },
             {
               "name": "unnamed",
-              "type": "unknown",
+              "type": "int )",
               "value": null
             }
           ],
@@ -456,14 +456,14 @@
       "aliases": {
         "Process_Cfg_Process_acpfct_t": {
           "name": "Process_Cfg_Process_acpfct_t",
-          "original_type": "Process_Cfg_Process_fct Process_Cfg_Process_acpfct_t [ PROCESSOR_CFG_MODULE_COUNT ]",
+          "original_type": "Process_Cfg_Process_fct Process_Cfg_Process_acpfct_t[PROCESSOR_CFG_MODULE_COUNT]",
           "uses": [
             "Process_Cfg_Process_fct"
           ]
         },
         "Process_Cfg_Process_fct": {
           "name": "Process_Cfg_Process_fct",
-          "original_type": "Std_ReturnType ( * Process_Cfg_Process_fct ) ( const Process_T * job_pst )",
+          "original_type": "Std_ReturnType(* Process_Cfg_Process_fct)(const Process_T * job_pst)",
           "uses": [
             "Process_T",
             "Std_ReturnType"
@@ -476,7 +476,7 @@
         },
         "complex_callback_t": {
           "name": "complex_callback_t",
-          "original_type": "int ( * complex_callback_t ) ( \n int param1 , \n char * param2 , \n void * param3 , \n struct { \n int nested1",
+          "original_type": "int(* complex_callback_t)(\n int param1 , \n char * param2 , \n void * param3 , \n struct { \n int nested1",
           "uses": []
         },
         "complex_func_ptr_t": {
@@ -493,38 +493,38 @@
         },
         "data_processor_t": {
           "name": "data_processor_t",
-          "original_type": "int ( * data_processor_t ) ( data_item_t * item , void * context )",
+          "original_type": "int(* data_processor_t)(data_item_t * item , void * context)",
           "uses": [
             "data_item_t"
           ]
         },
         "debug_callback_t": {
           "name": "debug_callback_t",
-          "original_type": "void ( * debug_callback_t ) ( const char * message , int level )",
+          "original_type": "void(* debug_callback_t)(const char * message , int level)",
           "uses": []
         },
         "handler_table_t": {
           "name": "handler_table_t",
-          "original_type": "handler_entry_t handler_table_t [ 8 ]",
+          "original_type": "handler_entry_t handler_table_t[8]",
           "uses": [
             "handler_entry_t"
           ]
         },
         "math_operation_t": {
           "name": "math_operation_t",
-          "original_type": "int ( * math_operation_t ) ( int , int )",
+          "original_type": "int(* math_operation_t)(int , int)",
           "uses": []
         },
         "math_ops_array_t": {
           "name": "math_ops_array_t",
-          "original_type": "math_operation_t math_ops_array_t [ 10 ]",
+          "original_type": "math_operation_t math_ops_array_t[10]",
           "uses": [
             "math_operation_t"
           ]
         },
         "release_callback_t": {
           "name": "release_callback_t",
-          "original_type": "void ( * release_callback_t ) ( const char * message )",
+          "original_type": "void(* release_callback_t)(const char * message)",
           "uses": []
         },
         "uint16": {
@@ -614,7 +614,7 @@
             },
             {
               "name": "unnamed",
-              "type": "unknown",
+              "type": "void ( * free_func ) ( void * )",
               "value": null
             }
           ],
@@ -642,7 +642,7 @@
             },
             {
               "name": "unnamed",
-              "type": "unknown",
+              "type": "complex_callback_t callback",
               "value": null
             }
           ],
@@ -665,7 +665,7 @@
             },
             {
               "name": "unnamed",
-              "type": "unknown",
+              "type": "int op_count",
               "value": null
             }
           ],
@@ -720,7 +720,7 @@
             },
             {
               "name": "unnamed",
-              "type": "unknown",
+              "type": "int )",
               "value": null
             }
           ],
@@ -831,7 +831,7 @@
             },
             {
               "name": "name",
-              "type": "struct { \n char[32]",
+              "type": "struct{\nchar[32]",
               "value": null
             },
             {
@@ -1397,7 +1397,7 @@
       "aliases": {
         "log_callback_t": {
           "name": "log_callback_t",
-          "original_type": "void ( * log_callback_t ) ( log_level_t level , const char * message )",
+          "original_type": "void(* log_callback_t)(log_level_t level , const char * message)",
           "uses": [
             "log_level_t"
           ]
@@ -1569,7 +1569,7 @@
       "aliases": {
         "math_op_t": {
           "name": "math_op_t",
-          "original_type": "int ( * math_op_t ) ( int , int )",
+          "original_type": "int(* math_op_t)(int , int)",
           "uses": []
         },
         "real_t": {
@@ -1722,24 +1722,24 @@
       "aliases": {
         "basic_callback_t": {
           "name": "basic_callback_t",
-          "original_type": "int ( * basic_callback_t ) ( void )",
+          "original_type": "int(* basic_callback_t)(void)",
           "uses": []
         },
         "feature_callback_t": {
           "name": "feature_callback_t",
-          "original_type": "int ( * feature_callback_t ) ( enabled_feature_t * feature )",
+          "original_type": "int(* feature_callback_t)(enabled_feature_t * feature)",
           "uses": [
             "enabled_feature_t"
           ]
         },
         "large_buffer_t": {
           "name": "large_buffer_t",
-          "original_type": "char large_buffer_t [ MAX_SIZE ]",
+          "original_type": "char large_buffer_t[MAX_SIZE]",
           "uses": []
         },
         "small_buffer_t": {
           "name": "small_buffer_t",
-          "original_type": "char small_buffer_t [ MIN_SIZE ]",
+          "original_type": "char small_buffer_t[MIN_SIZE]",
           "uses": []
         }
       },
@@ -2577,14 +2577,14 @@
       "aliases": {
         "MyCallback": {
           "name": "MyCallback",
-          "original_type": "int ( * MyCallback ) ( MyBuffer * buffer )",
+          "original_type": "int(* MyCallback)(MyBuffer * buffer)",
           "uses": [
             "MyBuffer"
           ]
         },
         "MyComplexArray": {
           "name": "MyComplexArray",
-          "original_type": "MyComplexPtr MyComplexArray [ 10 ]",
+          "original_type": "MyComplexPtr MyComplexArray[10]",
           "uses": [
             "MyComplexPtr"
           ]
