@@ -64,12 +64,79 @@ else
     print_status "Coverage module not available, running tests without coverage"
 fi
 
-# Run all tests using the existing test runner
+# Step 1: Always run all tests and examples to collect coverage data
 if [ "$HAS_COVERAGE" = true ]; then
-    print_status "Running all unit tests with coverage..."
-    python3 run_all_tests.py --coverage --verbosity 2 2>&1 | tee tests/reports/test-output.log
+    print_header "Step 1: Collecting Coverage Data from All Tests and Examples"
+    
+    # Clear any existing coverage data
+    print_status "Clearing any existing coverage data..."
+    python3 -m coverage erase
+    
+    # Run all tests with coverage
+    print_status "Running all tests with coverage..."
+    python3 -m coverage run -m pytest -v 2>&1 | tee tests/reports/test-output.log
+    
+    # Run examples if they exist
+    if [ -d "examples" ]; then
+        print_status "Running examples with coverage..."
+        for example in examples/*.py; do
+            if [ -f "$example" ]; then
+                print_status "Running example: $example"
+                python3 -m coverage run -a "$example"
+            fi
+        done
+    fi
+    
+    # Run the C to PlantUML example with coverage
+    if [ -f "run_example_with_coverage.py" ]; then
+        print_status "Running C to PlantUML example with coverage..."
+        python3 run_example_with_coverage.py
+    fi
+    
+    # Step 2: Generate comprehensive coverage reports
+    print_header "Step 2: Generating Comprehensive Coverage Reports"
+    
+    # Create coverage directory
+    mkdir -p tests/reports/coverage
+    
+    # Generate HTML coverage reports
+    print_status "Generating HTML coverage reports..."
+    python3 -m coverage html -d tests/reports/coverage/htmlcov
+    
+    # Generate XML and JSON reports
+    print_status "Generating XML and JSON reports..."
+    python3 -m coverage xml -o tests/reports/coverage/coverage.xml
+    python3 -m coverage json -o tests/reports/coverage/coverage.json
+    
+    # Generate terminal report
+    print_status "Generating terminal coverage report..."
+    python3 -m coverage report -m > tests/reports/coverage/coverage_report.txt
+    
+    # Step 3: Verify all reports were generated
+    print_header "Step 3: Verifying All Reports Were Generated"
+    
+    # Verify HTML reports exist
+    if [ -d "tests/reports/coverage/htmlcov" ]; then
+        print_success "HTML coverage reports generated successfully"
+        ls -la tests/reports/coverage/htmlcov/ | head -5
+    else
+        print_error "Failed to generate HTML coverage reports"
+        exit 1
+    fi
+    
+    # Verify other reports exist
+    if [ -f "tests/reports/coverage/coverage.xml" ]; then
+        print_success "XML coverage report generated"
+    fi
+    
+    if [ -f "tests/reports/coverage/coverage.json" ]; then
+        print_success "JSON coverage report generated"
+    fi
+    
+    print_success "All coverage reports generated successfully!"
 else
-    print_status "Running all unit tests..."
+    # Fallback: Run all tests using the existing test runner without coverage
+    print_status "Running all unit tests without coverage..."
     python3 run_all_tests.py --verbosity 2 2>&1 | tee tests/reports/test-output.log
 fi
 
@@ -81,19 +148,7 @@ else
     print_error "Some tests failed!"
 fi
 
-# Run example generation with coverage for execution coverage
-if [ "$HAS_COVERAGE" = true ] && [ $TEST_EXIT_CODE -eq 0 ]; then
-    print_header "Running Example Generation for Execution Coverage"
-    print_status "Executing C to PlantUML converter on example project..."
-    
-    if python3 run_example_with_coverage.py 2>&1 | tee -a tests/reports/test-output.log; then
-        print_success "Example generation completed successfully"
-        print_info "This improves coverage by exercising the main execution paths"
-    else
-        print_error "Example generation failed"
-        print_info "Coverage data was still collected for executed code paths"
-    fi
-fi
+
 
 # Run example tests if run_example.sh exists
 if [ -f "run_example.sh" ]; then
@@ -198,23 +253,7 @@ fi
 
 print_success "Test summary generated at: tests/reports/test-summary.txt"
 
-    # If coverage module is available and we ran with coverage, generate combined coverage report
-    if [ "$HAS_COVERAGE" = true ] && grep -q "coverage report" tests/reports/test-output.log; then
-        print_header "Generating Combined Coverage Report"
-        
-        print_status "Generating comprehensive coverage reports (summary + detailed per-file)..."
-        if python3 generate_combined_coverage.py --output-dir tests/reports/coverage --test-output-file tests/reports/test-output.log 2>&1 | tee tests/reports/coverage-generation.log; then
-            print_success "Combined coverage reports generated successfully!"
-            print_info "Reports include:"
-            print_info "  - Overall coverage summary"
-            print_info "  - Detailed per-file coverage with line-by-line analysis"
-            print_info "  - Standard HTML coverage report"
-            print_info "  - XML and JSON exports"
-        else
-            print_error "Failed to generate combined coverage reports"
-            print_info "Check tests/reports/coverage-generation.log for details"
-        fi
-    fi
+
 
 # Display summary
 print_header "Test Execution Complete!"
