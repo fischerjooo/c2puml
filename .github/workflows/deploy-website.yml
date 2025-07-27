@@ -69,6 +69,28 @@ jobs:
           echo "✅ Test reports copied to docs/tests/reports/"
         fi
         
+        # Copy output folder with PNG images and PlantUML files
+        if [ -d "output" ]; then
+          mkdir -p docs/output
+          # Copy all files from output directory
+          cp -r output/* docs/output/
+          echo "✅ Output folder copied to docs/output/"
+        else
+          echo "⚠️ Output folder not found, creating empty directory"
+          mkdir -p docs/output
+        fi
+        
+        # Copy example folder if it exists
+        if [ -d "example" ]; then
+          mkdir -p docs/example
+          # Copy all files from example directory
+          cp -r example/* docs/example/
+          echo "✅ Example folder copied to docs/example/"
+        else
+          echo "⚠️ Example folder not found, creating empty directory"
+          mkdir -p docs/example
+        fi
+        
         # Create .nojekyll file to disable Jekyll processing
         touch docs/.nojekyll
         echo "✅ Created .nojekyll file to disable Jekyll processing"
@@ -82,8 +104,12 @@ jobs:
         echo ""
         echo "📊 Coverage files:"
         find docs/tests/reports/coverage -type f | sort
-        
-        # Skip output and example files for now to isolate the issue
+        echo ""
+        echo "📊 Output files (PNG images and PlantUML):"
+        find docs/output -type f | sort
+        echo ""
+        echo "📋 Example files:"
+        find docs/example -type f | sort
         
         # Create a simple index.html
         cat > docs/index.html << 'EOF'
@@ -222,7 +248,10 @@ jobs:
         echo "Total files: $(find docs -type f | wc -l)"
         echo "HTML files: $(find docs -name "*.html" | wc -l)"
         echo "PNG files: $(find docs -name "*.png" | wc -l)"
+        echo "PlantUML files: $(find docs -name "*.puml" | wc -l)"
         echo "Markdown files: $(find docs -name "*.md" | wc -l)"
+        echo "Output folder files: $(find docs/output -type f | wc -l)"
+        echo "Example folder files: $(find docs/example -type f | wc -l)"
         echo "Total size: $(du -sh docs | cut -f1)"
         
     - name: 📤 Upload website files as artifact
@@ -285,8 +314,8 @@ jobs:
         echo "### 📁 Deployed Content" >> $GITHUB_STEP_SUMMARY
         echo "- 📊 Test coverage reports" >> $GITHUB_STEP_SUMMARY
         echo "- 📝 Test execution summaries" >> $GITHUB_STEP_SUMMARY
-        echo "- 📊 PlantUML diagrams and PNG images" >> $GITHUB_STEP_SUMMARY
-        echo "- 📋 Project examples" >> $GITHUB_STEP_SUMMARY
+        echo "- 📊 PlantUML diagrams and PNG images (from output folder)" >> $GITHUB_STEP_SUMMARY
+        echo "- 📋 Project examples (from example folder)" >> $GITHUB_STEP_SUMMARY
         echo "- 📖 Project documentation" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
