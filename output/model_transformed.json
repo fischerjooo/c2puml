@@ -1164,6 +1164,122 @@
       "structs": {},
       "unions": {}
     },
+    "filtered_header.h": {
+      "aliases": {},
+      "encoding_used": "utf-8",
+      "enums": {
+        "filtered_enum_t": {
+          "name": "filtered_enum_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "FILTERED_VALUE_1",
+              "value": "1"
+            },
+            {
+              "name": "FILTERED_VALUE_2",
+              "value": "2"
+            },
+            {
+              "name": "FILTERED_VALUE_3",
+              "value": "3"
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/example/source/filtered_header.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "filtered_function1",
+          "parameters": [
+            {
+              "name": "param",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "filtered_function2",
+          "parameters": [
+            {
+              "name": "message",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "filtered_function3",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "filtered_struct_t *",
+              "value": null
+            }
+          ],
+          "return_type": "double"
+        }
+      ],
+      "globals": [
+        {
+          "name": "filtered_global_string",
+          "type": "char",
+          "value": null
+        },
+        {
+          "name": "filtered_global_var",
+          "type": "int",
+          "value": null
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "stdio.h",
+        "stdlib.h"
+      ],
+      "macros": [
+        "FILTERED_CONSTANT",
+        "FILTERED_HEADER_H",
+        "FILTERED_MACRO(x)"
+      ],
+      "project_root": "/workspace/example/source",
+      "relative_path": "filtered_header.h",
+      "structs": {
+        "filtered_struct_t": {
+          "fields": [
+            {
+              "name": "filtered_field1",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "filtered_field2",
+              "type": "char[50]",
+              "value": null
+            },
+            {
+              "name": "filtered_field3",
+              "type": "double",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "filtered_struct_t",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {}
+    },
     "geometry.c": {
       "aliases": {},
       "encoding_used": "utf-8",
