@@ -18,7 +18,7 @@ from c_to_plantuml.generator import Generator
 from c_to_plantuml.transformer import Transformer
 
 
-class TestProjectBuilder:
+class ProjectBuilder:
     """Builder class for creating test project structures."""
     
     def __init__(self, base_dir: Union[str, Path]):
