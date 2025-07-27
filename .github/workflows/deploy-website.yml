@@ -57,31 +57,31 @@ jobs:
         if [ -d "tests/reports" ]; then
           mkdir -p docs/tests/reports
           
-          # Copy only HTML files from test reports
-          find tests/reports -name "*.html" -type f -exec cp --parents {} docs/ \;
+          # Copy only HTML files from test reports (follow symlinks)
+          find tests/reports -name "*.html" -type f -exec cp -L --parents {} docs/ \;
           
-          # Copy CSS and JS files for styling
-          find tests/reports -name "*.css" -o -name "*.js" -type f -exec cp --parents {} docs/ \;
+          # Copy CSS and JS files for styling (follow symlinks)
+          find tests/reports -name "*.css" -o -name "*.js" -type f -exec cp -L --parents {} docs/ \;
           
-          # Copy essential text files (but limit size)
-          find tests/reports -name "*.txt" -type f -size -100k -exec cp --parents {} docs/ \;
+          # Copy essential text files (but limit size, follow symlinks)
+          find tests/reports -name "*.txt" -type f -size -50k -exec cp -L --parents {} docs/ \;
         fi
         
         # Copy only a limited number of output files (PNG and PUML)
         if [ -d "output" ]; then
           mkdir -p docs/output
           
-          # Copy only small PNG files (under 1MB each)
-          find output -name "*.png" -type f -size -1M | head -50 | xargs -I {} cp --parents {} docs/
+          # Copy only very small PNG files (under 500KB each, follow symlinks)
+          find output -name "*.png" -type f -size -500k | head -20 | xargs -I {} cp -L --parents {} docs/
           
-          # Copy only small PUML files (under 100KB each)
-          find output -name "*.puml" -type f -size -100k | head -20 | xargs -I {} cp --parents {} docs/
+          # Copy only small PUML files (under 50KB each, follow symlinks)
+          find output -name "*.puml" -type f -size -50k | head -10 | xargs -I {} cp -L --parents {} docs/
         fi
         
-        # Copy only small example files
+        # Copy only very small example files (follow symlinks)
         if [ -d "example" ]; then
           mkdir -p docs/example
-          find example -type f -size -100k | head -10 | xargs -I {} cp --parents {} docs/
+          find example -type f -size -50k | head -5 | xargs -I {} cp -L --parents {} docs/
         fi
         
         # Copy specification if it exists
@@ -174,20 +174,40 @@ jobs:
         # Remove any symlinks that might have been created
         find docs -type l -delete
         
+        # Remove any files larger than 1MB (strict limit)
+        find docs -type f -size +1M -delete
+        
+        # Remove any hard links by converting them to regular files
+        find docs -type f -links +1 -exec cp {} {}.tmp \; -exec mv {}.tmp {} \;
+        
         # Check total size
         TOTAL_SIZE=$(du -sb docs | cut -f1)
         echo "📊 Total deployment size: $TOTAL_SIZE bytes ($(echo "scale=2; $TOTAL_SIZE/1024/1024" | bc) MB)"
         
-        # If size is still too large, remove more files
-        if [ "$TOTAL_SIZE" -gt 100000000 ]; then  # 100MB limit
+        # If size is still too large, remove more files aggressively
+        if [ "$TOTAL_SIZE" -gt 50000000 ]; then  # 50MB limit (much stricter)
           echo "⚠️ Deployment size too large, removing largest files..."
           
           # Remove largest files first
-          find docs -type f -exec ls -la {} \; | sort -k5 -nr | head -10 | awk '{print $9}' | xargs rm -f
+          find docs -type f -exec ls -la {} \; | sort -k5 -nr | head -20 | awk '{print $9}' | xargs rm -f
           
           # Recalculate size
           TOTAL_SIZE=$(du -sb docs | cut -f1)
           echo "📊 New deployment size: $TOTAL_SIZE bytes ($(echo "scale=2; $TOTAL_SIZE/1024/1024" | bc) MB)"
+        fi
+        
+        # Double-check for any remaining symlinks or large files
+        SYMLINKS=$(find docs -type l | wc -l)
+        LARGE_FILES=$(find docs -type f -size +1M | wc -l)
+        
+        if [ "$SYMLINKS" -gt 0 ]; then
+          echo "⚠️ Found $SYMLINKS symlinks, removing them..."
+          find docs -type l -delete
+        fi
+        
+        if [ "$LARGE_FILES" -gt 0 ]; then
+          echo "⚠️ Found $LARGE_FILES files larger than 1MB, removing them..."
+          find docs -type f -size +1M -delete
         fi
         
         # Ensure we have at least the essential files
@@ -197,6 +217,34 @@ jobs:
         fi
         
         echo "✅ Deployment files cleaned and validated"
+        
+        # If we still have too many files, create a minimal deployment
+        TOTAL_FILES=$(find docs -type f | wc -l)
+        if [ "$TOTAL_FILES" -gt 100 ]; then
+          echo "⚠️ Too many files, creating minimal deployment..."
+          
+          # Keep only essential files
+          mkdir -p docs_minimal
+          cp docs/index.html docs_minimal/
+          cp docs/index.md docs_minimal/ 2>/dev/null || true
+          
+          # Keep only a few small files from each directory
+          if [ -d "docs/tests/reports" ]; then
+            mkdir -p docs_minimal/tests/reports
+            find docs/tests/reports -name "*.html" -type f | head -5 | xargs -I {} cp {} docs_minimal/tests/reports/
+          fi
+          
+          if [ -d "docs/output" ]; then
+            mkdir -p docs_minimal/output
+            find docs/output -name "*.png" -type f -size -100k | head -3 | xargs -I {} cp {} docs_minimal/output/
+          fi
+          
+          # Replace docs with minimal version
+          rm -rf docs
+          mv docs_minimal docs
+          
+          echo "✅ Created minimal deployment with $(find docs -type f | wc -l) files"
+        fi
         
     - name: 📋 List deployment files
       run: |
