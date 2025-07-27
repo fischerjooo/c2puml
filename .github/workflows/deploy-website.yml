@@ -37,6 +37,12 @@ jobs:
       with:
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN || github.token }}
         
+    - name: 🔧 Install required tools
+      run: |
+        echo "🔧 Installing required tools..."
+        sudo apt-get update
+        sudo apt-get install -y bc
+        
     - name: 🏗️ Prepare website files
       run: |
         echo "🏗️ Preparing website files for deployment..."
@@ -47,22 +53,35 @@ jobs:
         # Copy README as index page
         cp README.md docs/index.md
         
-        # Copy existing test reports (if they exist)
+        # Copy only essential test report files (HTML reports only)
         if [ -d "tests/reports" ]; then
           mkdir -p docs/tests/reports
-          cp -r tests/reports/* docs/tests/reports/
+          
+          # Copy only HTML files from test reports
+          find tests/reports -name "*.html" -type f -exec cp --parents {} docs/ \;
+          
+          # Copy CSS and JS files for styling
+          find tests/reports -name "*.css" -o -name "*.js" -type f -exec cp --parents {} docs/ \;
+          
+          # Copy essential text files (but limit size)
+          find tests/reports -name "*.txt" -type f -size -100k -exec cp --parents {} docs/ \;
         fi
         
-        # Copy existing output (PlantUML diagrams, PNG images)
+        # Copy only a limited number of output files (PNG and PUML)
         if [ -d "output" ]; then
           mkdir -p docs/output
-          cp -r output/* docs/output/
+          
+          # Copy only small PNG files (under 1MB each)
+          find output -name "*.png" -type f -size -1M | head -50 | xargs -I {} cp --parents {} docs/
+          
+          # Copy only small PUML files (under 100KB each)
+          find output -name "*.puml" -type f -size -100k | head -20 | xargs -I {} cp --parents {} docs/
         fi
         
-        # Copy example files
+        # Copy only small example files
         if [ -d "example" ]; then
           mkdir -p docs/example
-          cp -r example/* docs/example/
+          find example -type f -size -100k | head -10 | xargs -I {} cp --parents {} docs/
         fi
         
         # Copy specification if it exists
@@ -148,6 +167,37 @@ jobs:
         
         echo "✅ Website files prepared for deployment"
         
+    - name: 🧹 Clean and validate deployment files
+      run: |
+        echo "🧹 Cleaning and validating deployment files..."
+        
+        # Remove any symlinks that might have been created
+        find docs -type l -delete
+        
+        # Check total size
+        TOTAL_SIZE=$(du -sb docs | cut -f1)
+        echo "📊 Total deployment size: $TOTAL_SIZE bytes ($(echo "scale=2; $TOTAL_SIZE/1024/1024" | bc) MB)"
+        
+        # If size is still too large, remove more files
+        if [ "$TOTAL_SIZE" -gt 100000000 ]; then  # 100MB limit
+          echo "⚠️ Deployment size too large, removing largest files..."
+          
+          # Remove largest files first
+          find docs -type f -exec ls -la {} \; | sort -k5 -nr | head -10 | awk '{print $9}' | xargs rm -f
+          
+          # Recalculate size
+          TOTAL_SIZE=$(du -sb docs | cut -f1)
+          echo "📊 New deployment size: $TOTAL_SIZE bytes ($(echo "scale=2; $TOTAL_SIZE/1024/1024" | bc) MB)"
+        fi
+        
+        # Ensure we have at least the essential files
+        if [ ! -f "docs/index.html" ]; then
+          echo "❌ Missing essential index.html file"
+          exit 1
+        fi
+        
+        echo "✅ Deployment files cleaned and validated"
+        
     - name: 📋 List deployment files
       run: |
         echo "📋 Files ready for deployment:"
@@ -158,6 +208,7 @@ jobs:
         echo "HTML files: $(find docs -name "*.html" | wc -l)"
         echo "PNG files: $(find docs -name "*.png" | wc -l)"
         echo "Markdown files: $(find docs -name "*.md" | wc -l)"
+        echo "Total size: $(du -sh docs | cut -f1)"
         
     - name: 📤 Upload website files as artifact
       uses: actions/upload-artifact@v4
