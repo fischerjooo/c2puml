@@ -2,6 +2,12 @@
 
 A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/C++ projects and generates comprehensive PlantUML class diagrams showing structs, enums, unions, functions, global variables, macros, typedefs, and include relationships.
 
+## Status
+[![Run Tests](https://github.com/fischerjooo/generator_project/actions/workflows/test.yml/badge.svg)](https://github.com/fischerjooo/generator_project/actions/workflows/test.yml)
+[![Convert PlantUML to PNG](https://github.com/fischerjooo/generator_project/actions/workflows/puml2png.yml/badge.svg)](https://github.com/fischerjooo/generator_project/actions/workflows/puml2png.yml)
+[![Coverage Reports](https://github.com/fischerjooo/generator_project/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/fischerjooo/generator_project/actions/workflows/test-coverage.yml)
+[![Deploy Website](https://github.com/fischerjooo/generator_project/actions/workflows/deploy-website.yml/badge.svg)](https://github.com/fischerjooo/generator_project/actions/workflows/deploy-website.yml)
+
 ## Reports
 
 - [📊 Combined Coverage Report](https://fischerjooo.github.io/generator_project/tests/reports/coverage/htmlcov/index.html) - Comprehensive coverage report with summary and detailed per-file analysis
