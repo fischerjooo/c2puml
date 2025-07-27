@@ -824,11 +824,6 @@
               "value": null
             },
             {
-              "name": "name",
-              "type": "struct { \n char[32]",
-              "value": null
-            },
-            {
               "name": ")",
               "type": "int ( * validate_func ) ( const char *",
               "value": null
@@ -908,8 +903,8 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * callbacks [ 3 ] ) ( int , char *",
+              "name": "callbacks",
+              "type": "void(* callbacks[3])(int , char *)",
               "value": null
             }
           ],

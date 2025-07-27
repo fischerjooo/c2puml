@@ -195,8 +195,8 @@ class CParser:
             )
 
             if original_start is not None and original_end is not None:
-                # Extract field information from original token range
-                field_tuples = find_struct_fields(tokens, original_start, original_end)
+                # Extract field information from filtered token range (not original tokens)
+                field_tuples = find_struct_fields(structure_finder.tokens, start_pos, end_pos)
 
                 # Convert to Field objects
                 fields = []
@@ -295,8 +295,8 @@ class CParser:
             )
 
             if original_start is not None and original_end is not None:
-                # Extract field information from original token range
-                field_tuples = find_struct_fields(tokens, original_start, original_end)
+                # Extract field information from filtered token range (not original tokens)
+                field_tuples = find_struct_fields(structure_finder.tokens, start_pos, end_pos)
 
                 # Convert to Field objects
                 fields = []

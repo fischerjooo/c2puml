@@ -1211,11 +1211,17 @@ def find_struct_fields(
                         if token.type in [TokenType.LPAREN, TokenType.RPAREN, TokenType.LBRACKET, TokenType.RBRACKET]:
                             # Don't add spaces around brackets/parentheses
                             formatted_tokens.append(token.value)
-                        elif j > 0 and field_tokens[j-1].type not in [TokenType.LPAREN, TokenType.RPAREN, TokenType.LBRACKET, TokenType.RBRACKET]:
-                            # Add space before token if previous token wasn't a bracket/parenthesis
-                            formatted_tokens.append(" " + token.value)
+                        elif j > 0:
+                            # Check if we should add a space before this token
+                            prev_token = field_tokens[j-1]
+                            if prev_token.type not in [TokenType.LPAREN, TokenType.RPAREN, TokenType.LBRACKET, TokenType.RBRACKET]:
+                                # Add space before token if previous token wasn't a bracket/parenthesis
+                                formatted_tokens.append(" " + token.value)
+                            else:
+                                # No space before token if previous was a bracket/parenthesis
+                                formatted_tokens.append(token.value)
                         else:
-                            # No space before token
+                            # No space before first token
                             formatted_tokens.append(token.value)
                     field_type = "".join(formatted_tokens)
                     
