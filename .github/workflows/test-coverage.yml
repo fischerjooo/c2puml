@@ -51,6 +51,31 @@ jobs:
         run: |
           echo "🧪 Running comprehensive test suite with coverage analysis..."
           ./run_tests_with_coverage.sh
+          
+          # Ensure HTML coverage reports are generated
+          echo "🔍 Checking if HTML coverage reports were generated..."
+          if [ ! -d "tests/reports/coverage/htmlcov" ]; then
+            echo "⚠️ HTML coverage reports not found, generating them manually..."
+            
+            # Check if coverage data exists
+            if [ -f ".coverage" ]; then
+              echo "✅ Coverage data found, generating HTML reports..."
+              python3 -m coverage html -d tests/reports/coverage/htmlcov
+            else
+              echo "⚠️ No coverage data found, running tests with coverage first..."
+              python3 -m coverage run -m pytest -v
+              python3 -m coverage html -d tests/reports/coverage/htmlcov
+            fi
+          fi
+          
+          # Verify HTML reports exist
+          if [ -d "tests/reports/coverage/htmlcov" ]; then
+            echo "✅ HTML coverage reports generated successfully"
+            ls -la tests/reports/coverage/htmlcov/
+          else
+            echo "❌ Failed to generate HTML coverage reports"
+            exit 1
+          fi
 
       - name: 🔍 Debug workflow context
         if: always()
@@ -127,6 +152,14 @@ jobs:
             # Add coverage reports
             echo "📁 Adding coverage reports to git..."
             git add tests/reports/
+            
+            # Ensure HTML coverage reports are included
+            if [ -d "tests/reports/coverage/htmlcov" ]; then
+              echo "📁 Adding HTML coverage reports..."
+              git add tests/reports/coverage/htmlcov/
+            else
+              echo "⚠️ HTML coverage reports directory not found"
+            fi
 
             # Check if there are changes to commit
             if git diff --staged --quiet; then
@@ -223,8 +256,12 @@ jobs:
           echo "## 🎯 Final Test Results Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ -f tests/reports/coverage/index.html ]; then
-            echo "📊 HTML reports generated successfully!" >> $GITHUB_STEP_SUMMARY
+          if [ -d tests/reports/coverage/htmlcov ]; then
+            echo "📊 HTML coverage reports generated successfully!" >> $GITHUB_STEP_SUMMARY
+            echo "- [HTML Coverage Report](tests/reports/coverage/htmlcov/index.html)" >> $GITHUB_STEP_SUMMARY
+            echo "- [Test Summary](tests/reports/test-summary.txt)" >> $GITHUB_STEP_SUMMARY
+          elif [ -f tests/reports/coverage/index.html ]; then
+            echo "📊 Coverage reports generated successfully!" >> $GITHUB_STEP_SUMMARY
             echo "- [Coverage Report](tests/reports/coverage/index.html)" >> $GITHUB_STEP_SUMMARY
             echo "- [Test Summary](tests/reports/test-summary.txt)" >> $GITHUB_STEP_SUMMARY
           fi
