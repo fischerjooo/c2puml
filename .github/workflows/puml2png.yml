@@ -7,9 +7,10 @@ name: Convert PlantUML to PNG
 # NOTE: This workflow is triggered by:
 # 1. Manual workflow_dispatch (for manual runs)
 # 2. workflow_call from test-coverage.yml (for automated runs after PR merge)
+# 3. push trigger on side branches (branches-ignore: [main, master]) when PlantUML files change
 #
-# The push trigger was removed to prevent duplicate execution when PRs are merged,
-# as the test-coverage workflow already handles triggering this workflow when needed.
+# The push trigger excludes main/master branches to prevent duplicate execution when PRs are merged,
+# as the test-coverage workflow already handles triggering this workflow when needed on main/master.
 
 on:
   workflow_dispatch:
@@ -34,6 +35,12 @@ on:
         description: 'Commit generated images to repository'
         required: false
         type: boolean
+  push:
+    paths:
+      - 'output/**/*.puml'
+      - 'picgen.sh'
+      - '.github/workflows/puml2png.yml'
+    branches-ignore: [ main, master ]
 
 jobs:
   convert-puml:
