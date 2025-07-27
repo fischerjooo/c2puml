@@ -758,3 +758,213 @@ static void internal_helper(void);
             "api", plantuml_content
         )  # Changed from "PublicStatus" to "api" - both structs and enums are in the api header
         self.assertNotIn("InternalData", plantuml_content)
+
+    def test_include_filters_with_filtered_header(self):
+        """Test that include_filters properly filters out unwanted headers"""
+        from c_to_plantuml.parser import Parser
+        from c_to_plantuml.transformer import Transformer
+        from c_to_plantuml.generator import Generator
+
+        # Create test files with a filtered header
+        main_c = """
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "main.h"
+#include "utils.h"
+#include "filtered_header.h"
+
+#define MAIN_CONSTANT 100
+
+struct MainStruct {
+    int main_field1;
+    char main_field2[50];
+};
+
+int main_function(void) {
+    return 0;
+}
+        """
+
+        main_h = """
+#ifndef MAIN_H
+#define MAIN_H
+
+struct MainStruct;
+int main_function(void);
+
+#endif
+        """
+
+        utils_h = """
+#ifndef UTILS_H
+#define UTILS_H
+
+struct UtilsStruct {
+    int utils_field;
+};
+
+int utils_function(void);
+
+#endif
+        """
+
+        filtered_header_h = """
+#ifndef FILTERED_HEADER_H
+#define FILTERED_HEADER_H
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define FILTERED_CONSTANT 42
+#define FILTERED_MACRO(x) ((x) * 2)
+
+typedef struct {
+    int filtered_field1;
+    char filtered_field2[50];
+    double filtered_field3;
+} filtered_struct_t;
+
+typedef enum {
+    FILTERED_VALUE_1 = 1,
+    FILTERED_VALUE_2 = 2,
+    FILTERED_VALUE_3 = 3
+} filtered_enum_t;
+
+int filtered_function1(int param);
+void filtered_function2(const char* message);
+double filtered_function3(filtered_struct_t* data);
+
+extern int filtered_global_var;
+extern char filtered_global_string[100];
+
+#endif
+        """
+
+        # Create test files
+        self.create_test_file("main.c", main_c)
+        self.create_test_file("main.h", main_h)
+        self.create_test_file("utils.h", utils_h)
+        self.create_test_file("filtered_header.h", filtered_header_h)
+
+        # Step 1: Parse the project
+        parser = Parser()
+        model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
+
+        # Save the parsed model
+        model_file = os.path.join(self.temp_dir, "parsed_model.json")
+        model.save(model_file)
+
+        # Step 2: Transform the model with include_filters
+        config = {
+            "file_filters": {"include": [r".*\.(c|h)$"]},
+            "include_depth": 2,  # Enable include relation processing
+            "include_filters": {
+                "main.c": [
+                    r"^stdio\.h$",
+                    r"^stdlib\.h$", 
+                    r"^string\.h$",
+                    r"^main\.h$",
+                    r"^utils\.h$"
+                ]
+                # Note: filtered_header.h is NOT included in the patterns
+            },
+        }
+
+        config_file = os.path.join(self.temp_dir, "transform_config.json")
+        with open(config_file, "w") as f:
+            json.dump(config, f, indent=2)
+
+        transformer = Transformer()
+        transformed_model_file = transformer.transform(model_file, config_file)
+
+        # Step 3: Generate PlantUML from transformed model
+        generator_config = {
+            "output_format": "plantuml",
+            "include_globals": True,
+            "include_functions": True,
+            "include_structs": True,
+            "include_enums": True,
+            "include_macros": True,
+        }
+
+        generator_config_file = os.path.join(self.temp_dir, "generator_config.json")
+        with open(generator_config_file, "w") as f:
+            json.dump(generator_config, f, indent=2)
+
+        generator = Generator()
+        output_dir = generator.generate(
+            transformed_model_file, os.path.join(self.temp_dir, "output")
+        )
+
+        # Verify the integration worked
+        self.assertTrue(os.path.exists(transformed_model_file))
+        self.assertTrue(os.path.exists(output_dir))
+
+        # Load and verify the transformed model
+        with open(transformed_model_file, "r") as f:
+            transformed_data = json.load(f)
+
+        files = transformed_data["files"]
+
+        # Should have all files
+        self.assertIn("main.c", files)
+        self.assertIn("main.h", files)
+        self.assertIn("utils.h", files)
+        self.assertIn("filtered_header.h", files)
+
+        main_file = files["main.c"]
+
+        # Check that includes were filtered correctly
+        includes = set(main_file["includes"])
+        
+        # Should include these headers
+        self.assertIn("stdio.h", includes)
+        self.assertIn("stdlib.h", includes)
+        self.assertIn("string.h", includes)
+        self.assertIn("main.h", includes)
+        self.assertIn("utils.h", includes)
+        
+        # Should NOT include filtered_header.h
+        self.assertNotIn("filtered_header.h", includes)
+
+        # Check include_relations were filtered correctly
+        include_relations = main_file["include_relations"]
+        included_files_in_relations = [rel["included_file"] for rel in include_relations]
+        
+        # Should include relations for allowed headers (using full paths)
+        self.assertTrue(any("main.h" in path for path in included_files_in_relations))
+        self.assertTrue(any("utils.h" in path for path in included_files_in_relations))
+        
+        # Should NOT include relations for filtered_header.h
+        self.assertFalse(any("filtered_header.h" in path for path in included_files_in_relations))
+
+        # Verify PlantUML output was generated
+        output_files = list(Path(output_dir).glob("*.puml"))
+        self.assertGreater(len(output_files), 0)
+
+        # Check the PlantUML content
+        with open(output_files[0], "r") as f:
+            plantuml_content = f.read()
+
+        self.assertIn("@startuml", plantuml_content)
+        
+        # Should contain elements from allowed headers
+        self.assertIn("MainStruct", plantuml_content)
+        self.assertIn("UtilsStruct", plantuml_content)
+        self.assertIn("main_function", plantuml_content)
+        self.assertIn("utils_function", plantuml_content)
+        
+        # Should NOT contain elements from filtered_header.h
+        self.assertNotIn("filtered_struct_t", plantuml_content)
+        self.assertNotIn("filtered_enum_t", plantuml_content)
+        self.assertNotIn("filtered_function1", plantuml_content)
+        self.assertNotIn("filtered_function2", plantuml_content)
+        self.assertNotIn("filtered_function3", plantuml_content)
+        self.assertNotIn("filtered_global_var", plantuml_content)
+        self.assertNotIn("filtered_global_string", plantuml_content)
+        self.assertNotIn("FILTERED_CONSTANT", plantuml_content)
+        self.assertNotIn("FILTERED_MACRO", plantuml_content)
+        self.assertNotIn("FILTERED_VALUE_1", plantuml_content)
+        self.assertNotIn("FILTERED_VALUE_2", plantuml_content)
+        self.assertNotIn("FILTERED_VALUE_3", plantuml_content)

@@ -5,6 +5,7 @@
 #include "math_utils.h"
 #include "logger.h"
 #include "geometry.h"
+#include "filtered_header.h"
 
 #define MAX_SIZE 100U
 #define DEBUG_MODE 1U

@@ -36,7 +36,7 @@
     }
   },
   "include_filters": {
-    "main.c": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
+    "sample.c": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$", "^sample\\.h$", "^math_utils\\.h$", "^logger\\.h$", "^geometry\\.h$"],
     "utils.c": ["^math\\.h$", "^time\\.h$"]
   },
   "transformations": {
