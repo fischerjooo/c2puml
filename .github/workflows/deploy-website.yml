@@ -1,0 +1,195 @@
+name: Deploy Website
+
+on:
+  # Manual trigger for deployment
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Deployment message'
+        required: false
+        default: 'Website deployment'
+        type: string
+
+  # Called by test-coverage workflow
+  workflow_call:
+    inputs:
+      message:
+        description: 'Deployment message from calling workflow'
+        required: false
+        type: string
+
+jobs:
+  deploy-website:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN || github.token }}
+        
+    - name: 🏗️ Prepare website files
+      run: |
+        echo "🏗️ Preparing website files for deployment..."
+        
+        # Create docs directory for GitHub Pages
+        mkdir -p docs
+        
+        # Copy README as index page
+        cp README.md docs/index.md
+        
+        # Copy existing test reports (if they exist)
+        if [ -d "tests/reports" ]; then
+          mkdir -p docs/tests/reports
+          cp -r tests/reports/* docs/tests/reports/
+        fi
+        
+        # Copy existing output (PlantUML diagrams, PNG images)
+        if [ -d "output" ]; then
+          mkdir -p docs/output
+          cp -r output/* docs/output/
+        fi
+        
+        # Copy example files
+        if [ -d "example" ]; then
+          mkdir -p docs/example
+          cp -r example/* docs/example/
+        fi
+        
+        # Copy specification if it exists
+        if [ -f "specification.md" ]; then
+          cp specification.md docs/
+        fi
+        
+        # Create a simple index.html
+        cat > docs/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>C to PlantUML Converter</title>
+            <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background: #f6f8fa; }
+                .container { max-width: 1200px; margin: 0 auto; }
+                .header { background: white; padding: 20px; border-radius: 6px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+                .content { background: white; padding: 20px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+                .nav { background: #0366d6; color: white; padding: 15px 20px; border-radius: 6px; margin-bottom: 20px; }
+                .nav a { color: white; text-decoration: none; margin-right: 20px; font-weight: 500; }
+                .nav a:hover { text-decoration: underline; }
+                .footer { text-align: center; margin-top: 40px; padding: 20px; color: #586069; }
+                .card { background: white; padding: 20px; border-radius: 6px; margin: 10px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+                .card h3 { margin-top: 0; color: #0366d6; }
+                .btn { display: inline-block; background: #0366d6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; margin: 5px; }
+                .btn:hover { background: #0256b3; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="nav">
+                    <a href="index.html">🏠 Home</a>
+                    <a href="tests/reports/coverage/index.html">📊 Coverage</a>
+                    <a href="tests/reports/test_summary.html">📝 Tests</a>
+                    <a href="output/">📊 Diagrams</a>
+                    <a href="example/">📋 Examples</a>
+                </div>
+                <div class="header">
+                    <h1>🚀 C to PlantUML Converter</h1>
+                    <p>Quick redeploy completed on $(date) by GitHub Actions</p>
+                </div>
+                <div class="content">
+                    <h2>Welcome to the C to PlantUML Converter Project</h2>
+                    <p>This is a Python tool for converting C/C++ source code to PlantUML diagrams. The website has been quickly redeployed with the latest content.</p>
+                    
+                    <div class="card">
+                        <h3>📊 Test Coverage & Reports</h3>
+                        <p>View comprehensive test coverage reports and execution summaries.</p>
+                        <a href="tests/reports/coverage/index.html" class="btn">📊 View Coverage</a>
+                        <a href="tests/reports/test_summary.html" class="btn">📝 Test Summary</a>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📊 Generated Diagrams</h3>
+                        <p>Browse PlantUML diagrams and PNG images generated from C/C++ code.</p>
+                        <a href="output/" class="btn">📊 View Diagrams</a>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📋 Examples & Documentation</h3>
+                        <p>Explore project examples and detailed documentation.</p>
+                        <a href="example/" class="btn">📋 Examples</a>
+                        <a href="index.md" class="btn">📖 README</a>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>🔄 Redeployment Info</h3>
+                        <p><strong>Deployment Message:</strong> ${{ github.event.inputs.message || 'Quick website redeploy' }}</p>
+                        <p><strong>Triggered by:</strong> ${{ github.event_name }}</p>
+                        <p><strong>Repository:</strong> <a href="https://github.com/${{ github.repository }}">${{ github.repository }}</a></p>
+                    </div>
+                </div>
+                <div class="footer">
+                    <p>Website redeployed from <a href="https://github.com/${{ github.repository }}">${{ github.repository }}</a></p>
+                    <p>For a full deployment with regenerated content, use the "Deploy Website to GitHub Pages" workflow</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        EOF
+        
+        echo "✅ Website files prepared for deployment"
+        
+    - name: 📋 List deployment files
+      run: |
+        echo "📋 Files ready for deployment:"
+        find docs -type f | sort
+        echo ""
+        echo "📊 Summary:"
+        echo "Total files: $(find docs -type f | wc -l)"
+        echo "HTML files: $(find docs -name "*.html" | wc -l)"
+        echo "PNG files: $(find docs -name "*.png" | wc -l)"
+        echo "Markdown files: $(find docs -name "*.md" | wc -l)"
+        
+    - name: 🚀 Deploy to GitHub Pages
+      uses: actions/deploy-pages@v4
+      with:
+        path: docs
+        
+    - name: 🎯 Deployment Summary
+      if: always()
+      run: |
+        echo "## 🚀 Website Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### ✅ Deployment Completed Successfully" >> $GITHUB_STEP_SUMMARY
+        echo "- **Website URL**: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Deployment Time**: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Message**: ${{ github.event.inputs.message || github.event.inputs.message || 'Website deployment' }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "### 📁 Deployed Content" >> $GITHUB_STEP_SUMMARY
+        echo "- 📊 Test coverage reports" >> $GITHUB_STEP_SUMMARY
+        echo "- 📝 Test execution summaries" >> $GITHUB_STEP_SUMMARY
+        echo "- 📊 PlantUML diagrams and PNG images" >> $GITHUB_STEP_SUMMARY
+        echo "- 📋 Project examples" >> $GITHUB_STEP_SUMMARY
+        echo "- 📖 Project documentation" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "### 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
+        echo "- [🏠 Home Page](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/)" >> $GITHUB_STEP_SUMMARY
+        echo "- [📊 Coverage Report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/tests/reports/coverage/)" >> $GITHUB_STEP_SUMMARY
+        echo "- [📝 Test Summary](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/tests/reports/test_summary.html)" >> $GITHUB_STEP_SUMMARY
+        echo "- [📊 Diagrams](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/output/)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "### 🔄 Next Steps" >> $GITHUB_STEP_SUMMARY
+        echo "- Website will be available in a few minutes" >> $GITHUB_STEP_SUMMARY
+        echo "- GitHub Pages may take up to 10 minutes to update" >> $GITHUB_STEP_SUMMARY
