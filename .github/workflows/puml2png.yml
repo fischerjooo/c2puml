@@ -102,6 +102,12 @@ jobs:
     - name: Check for changes
       id: check_changes
       run: |
+        echo "🔍 Checking for changes..."
+        echo "Untracked files:"
+        git ls-files --others --exclude-standard || echo "No untracked files"
+        echo "Modified files:"
+        git diff --name-only || echo "No modified files"
+        
         # Check if there are any PNG files that are untracked or modified
         if git ls-files --others --exclude-standard | grep -q "\.png$" || ! git diff --quiet; then
           echo "no_changes=false" >> $GITHUB_OUTPUT
@@ -127,7 +133,7 @@ jobs:
           echo "ℹ️ No staged changes to commit"
         else
           # Create commit message
-          COMMIT_MSG="🖼️ Auto-generate PlantUML PNG images"
+          echo "🖼️ Auto-generate PlantUML PNG images" > /tmp/commit_msg
           
           # Add details about which files were converted
           echo "" >> /tmp/commit_msg
