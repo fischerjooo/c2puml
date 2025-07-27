@@ -42,28 +42,57 @@ def parse_test_output(log_file: Path) -> Dict:
         'failed_tests': []
     }
     
-    # Extract test summary line
+    # Extract test summary line - handle both unittest and pytest formats
     test_summary_match = re.search(r'Ran (\d+) test', content)
     if test_summary_match:
+        # unittest format
         stats['total_tests'] = int(test_summary_match.group(1))
+        
+        # Check for OK or FAILED status (unittest)
+        if 'OK' in content:
+            stats['status'] = 'PASSED'
+            stats['passed'] = stats['total_tests']
+        elif 'FAILED' in content:
+            stats['status'] = 'FAILED'
+            # Extract failure details
+            failed_match = re.search(r'FAILED \(.*?failures=(\d+).*?errors=(\d+)\)', content)
+            if failed_match:
+                stats['failed'] = int(failed_match.group(1))
+                stats['errors'] = int(failed_match.group(2))
+                stats['passed'] = stats['total_tests'] - stats['failed'] - stats['errors']
+    else:
+        # pytest format - look for summary line like "329 passed in 2.66s"
+        pytest_summary_match = re.search(r'(\d+) passed in ([\d.]+)s', content)
+        if pytest_summary_match:
+            stats['total_tests'] = int(pytest_summary_match.group(1))
+            stats['passed'] = stats['total_tests']
+            stats['status'] = 'PASSED'
+            stats['execution_time'] = float(pytest_summary_match.group(2))
+        else:
+            # Look for pytest summary with failures/errors
+            pytest_failed_match = re.search(r'(\d+) passed.*?(\d+) failed.*?(\d+) error.*?in ([\d.]+)s', content)
+            if pytest_failed_match:
+                stats['total_tests'] = int(pytest_failed_match.group(1)) + int(pytest_failed_match.group(2)) + int(pytest_failed_match.group(3))
+                stats['passed'] = int(pytest_failed_match.group(1))
+                stats['failed'] = int(pytest_failed_match.group(2))
+                stats['errors'] = int(pytest_failed_match.group(3))
+                stats['status'] = 'FAILED'
+                stats['execution_time'] = float(pytest_failed_match.group(4))
+            else:
+                # Look for pytest summary with just failures
+                pytest_failed_only_match = re.search(r'(\d+) passed.*?(\d+) failed.*?in ([\d.]+)s', content)
+                if pytest_failed_only_match:
+                    stats['total_tests'] = int(pytest_failed_only_match.group(1)) + int(pytest_failed_only_match.group(2))
+                    stats['passed'] = int(pytest_failed_only_match.group(1))
+                    stats['failed'] = int(pytest_failed_only_match.group(2))
+                    stats['status'] = 'FAILED'
+                    stats['execution_time'] = float(pytest_failed_only_match.group(3))
     
-    # Check for OK or FAILED status
-    if 'OK' in content:
-        stats['status'] = 'PASSED'
-        stats['passed'] = stats['total_tests']
-    elif 'FAILED' in content:
-        stats['status'] = 'FAILED'
-        # Extract failure details
-        failed_match = re.search(r'FAILED \(.*?failures=(\d+).*?errors=(\d+)\)', content)
-        if failed_match:
-            stats['failed'] = int(failed_match.group(1))
-            stats['errors'] = int(failed_match.group(2))
-            stats['passed'] = stats['total_tests'] - stats['failed'] - stats['errors']
-    
-    # Extract execution time
-    time_match = re.search(r'in ([\d.]+)s', content)
-    if time_match:
-        stats['execution_time'] = float(time_match.group(1))
+    # Extract execution time (only if not already set by pytest parsing)
+    if stats['execution_time'] == 0:
+        time_match = re.search(r'in ([\d.]+)s', content)
+        if time_match:
+            stats['execution_time'] = float(time_match.group(1))
     
     # Extract failed test details
     failed_lines = []
