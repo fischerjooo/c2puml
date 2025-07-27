@@ -3,6 +3,13 @@ name: Convert PlantUML to PNG
 # This workflow converts PlantUML (.puml) files to PNG images and commits them to the repository.
 # It includes robust git conflict resolution to handle cases where the remote repository
 # has been updated while the workflow is running.
+#
+# NOTE: This workflow is triggered by:
+# 1. Manual workflow_dispatch (for manual runs)
+# 2. workflow_call from test-coverage.yml (for automated runs after PR merge)
+#
+# The push trigger was removed to prevent duplicate execution when PRs are merged,
+# as the test-coverage workflow already handles triggering this workflow when needed.
 
 on:
   workflow_dispatch:
@@ -27,16 +34,13 @@ on:
         description: 'Commit generated images to repository'
         required: false
         type: boolean
-  push:
-    paths:
-      - 'output/**/*.puml'
-      - 'picgen.sh'
-      - '.github/workflows/puml2png.yml'
-    branches: [ main, master ]
 
 jobs:
   convert-puml:
     runs-on: ubuntu-latest
+    concurrency:
+      group: "puml2png-conversion"
+      cancel-in-progress: true
     permissions:
       contents: write
       pull-requests: write
