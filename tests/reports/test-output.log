@@ -344,4 +344,4 @@ tests/utils.py:21
     class TestProjectBuilder:
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======================== 329 passed, 1 warning in 2.76s ========================
+======================== 329 passed, 1 warning in 2.68s ========================
