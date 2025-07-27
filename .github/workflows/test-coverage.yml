@@ -247,6 +247,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            // This step triggers the puml2png workflow after successful test completion
+            // This is the primary trigger for PlantUML conversion after PR merges
             const { data: runs } = await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
