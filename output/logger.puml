@@ -54,7 +54,7 @@ class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
 
 class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 {
-    + void ( * log_callback_t ) ( log_level_t level , const char * message )
+    + void(* log_callback_t)(log_level_t level , const char * message)
 }
 
 

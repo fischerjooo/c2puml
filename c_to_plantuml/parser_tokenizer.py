@@ -1185,6 +1185,51 @@ def find_struct_fields(
                         fields.append((stripped_name, field_type))
                         # Skip parsing the nested struct's fields as separate fields
                         continue
+            # Function pointer array field: type (*name[size])(params)
+            elif (
+                len(field_tokens) >= 8
+                and field_tokens[1].type == TokenType.LPAREN
+                and field_tokens[2].type == TokenType.ASTERISK
+                and any(t.type == TokenType.LBRACKET for t in field_tokens)
+                and any(t.type == TokenType.RBRACKET for t in field_tokens)
+            ):
+                # Find the function pointer name (between * and [)
+                # Look for the identifier between * and [
+                name_start = 3  # After the *
+                name_end = None
+                for i in range(name_start, len(field_tokens)):
+                    if field_tokens[i].type == TokenType.LBRACKET:
+                        name_end = i
+                        break
+                
+                if name_end is not None:
+                    field_name = " ".join(t.value for t in field_tokens[name_start:name_end])
+                    
+                    # Format the type properly - preserve spaces between tokens but not around brackets/parentheses
+                    formatted_tokens = []
+                    for j, token in enumerate(field_tokens):
+                        if token.type in [TokenType.LPAREN, TokenType.RPAREN, TokenType.LBRACKET, TokenType.RBRACKET]:
+                            # Don't add spaces around brackets/parentheses
+                            formatted_tokens.append(token.value)
+                        elif j > 0 and field_tokens[j-1].type not in [TokenType.LPAREN, TokenType.RPAREN, TokenType.LBRACKET, TokenType.RBRACKET]:
+                            # Add space before token if previous token wasn't a bracket/parenthesis
+                            formatted_tokens.append(" " + token.value)
+                        else:
+                            # No space before token
+                            formatted_tokens.append(token.value)
+                    field_type = "".join(formatted_tokens)
+                    
+                    # Validate and add the field
+                    if (
+                        field_name
+                        and field_name.strip()
+                        and field_type.strip()
+                        and field_name not in ["[", "]", ";", "}"]
+                    ):
+                        stripped_name = field_name.strip()
+                        stripped_type = field_type.strip()
+                        if stripped_name and stripped_type:
+                            fields.append((stripped_name, stripped_type))
             # Array field: type name [ size ]
             elif (
                 len(field_tokens) >= 4
@@ -1192,13 +1237,15 @@ def find_struct_fields(
                 and field_tokens[-1].type == TokenType.RBRACKET
             ):
                 field_name = field_tokens[-4].value
-                # Fix: Put the size inside the brackets, not before them
-                field_type = (
-                    " ".join(t.value for t in field_tokens[:-4])
-                    + "["
-                    + field_tokens[-2].value
-                    + "]"
-                )
+                # Fix: Properly format array type - preserve spaces between tokens but not around brackets
+                type_tokens = field_tokens[:-4]
+                formatted_type = []
+                for j, token in enumerate(type_tokens):
+                    if j > 0:
+                        formatted_type.append(" " + token.value)
+                    else:
+                        formatted_type.append(token.value)
+                field_type = "".join(formatted_type) + "[" + field_tokens[-2].value + "]"
                 if (
                     field_name
                     and field_name.strip()
