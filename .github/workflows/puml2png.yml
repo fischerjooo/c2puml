@@ -102,12 +102,13 @@ jobs:
     - name: Check for changes
       id: check_changes
       run: |
-        if git diff --quiet; then
+        # Check if there are any PNG files that are untracked or modified
+        if git ls-files --others --exclude-standard | grep -q "\.png$" || ! git diff --quiet; then
+          echo "no_changes=false" >> $GITHUB_OUTPUT
+          echo "📝 Changes detected (untracked PNG files or other changes), will commit if enabled"
+        else
           echo "no_changes=true" >> $GITHUB_OUTPUT
           echo "ℹ️ No changes to commit"
-        else
-          echo "no_changes=false" >> $GITHUB_OUTPUT
-          echo "📝 Changes detected, will commit if enabled"
         fi
         
     - name: Commit and push changes
@@ -115,8 +116,11 @@ jobs:
       run: |
         echo "📝 Committing generated images to repository..."
         
-        # Add all generated images
+        # Add all generated PNG images (both tracked and untracked)
         git add output/*.png 2>/dev/null || echo "No new images to add"
+        
+        # Also add any other changes that might exist
+        git add -A
         
         # Check if there are staged changes
         if git diff --cached --quiet; then
