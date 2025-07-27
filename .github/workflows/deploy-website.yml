@@ -53,11 +53,30 @@ jobs:
         # Copy README as index page
         cp README.md docs/index.md
         
-        # Create a minimal deployment with only essential files
-        echo "📝 Creating minimal deployment to avoid size/symlink issues..."
+        # Copy test reports (HTML files only)
+        if [ -d "tests/reports" ]; then
+          mkdir -p docs/tests/reports
+          find tests/reports -name "*.html" -type f -exec cp -L --parents {} docs/ \;
+          find tests/reports -name "*.css" -o -name "*.js" -type f -exec cp -L --parents {} docs/ \;
+        fi
         
-        # Only copy the index.html we create and README
-        # Skip all other files for now to ensure deployment works
+        # Copy output files (PNG and PUML)
+        if [ -d "output" ]; then
+          mkdir -p docs/output
+          find output -name "*.png" -type f -exec cp -L --parents {} docs/ \;
+          find output -name "*.puml" -type f -exec cp -L --parents {} docs/ \;
+        fi
+        
+        # Copy example files
+        if [ -d "example" ]; then
+          mkdir -p docs/example
+          find example -type f -exec cp -L --parents {} docs/ \;
+        fi
+        
+        # Copy specification if it exists
+        if [ -f "specification.md" ]; then
+          cp specification.md docs/
+        fi
         
         # Create a simple index.html
         cat > docs/index.html << 'EOF'
@@ -86,28 +105,37 @@ jobs:
             <div class="container">
                 <div class="nav">
                     <a href="index.html">🏠 Home</a>
-                    <a href="index.md">📖 README</a>
-                    <a href="https://github.com/${{ github.repository }}">🔗 Repository</a>
+                    <a href="tests/reports/coverage/index.html">📊 Coverage</a>
+                    <a href="tests/reports/test_summary.html">📝 Tests</a>
+                    <a href="output/">📊 Diagrams</a>
+                    <a href="example/">📋 Examples</a>
                 </div>
                 <div class="header">
                     <h1>🚀 C to PlantUML Converter</h1>
-                    <p>Minimal deployment completed on $(date) by GitHub Actions</p>
+                    <p>Website deployment completed on $(date) by GitHub Actions</p>
                 </div>
                 <div class="content">
                     <h2>Welcome to the C to PlantUML Converter Project</h2>
-                    <p>This is a Python tool for converting C/C++ source code to PlantUML diagrams. This is a minimal deployment to ensure successful GitHub Pages hosting.</p>
+                    <p>This is a Python tool for converting C/C++ source code to PlantUML diagrams. The website has been deployed with all available content.</p>
                     
                     <div class="card">
-                        <h3>📖 Project Documentation</h3>
-                        <p>View the project README and documentation.</p>
-                        <a href="index.md" class="btn">📖 README</a>
-                        <a href="https://github.com/${{ github.repository }}" class="btn">🔗 Repository</a>
+                        <h3>📊 Test Coverage & Reports</h3>
+                        <p>View comprehensive test coverage reports and execution summaries.</p>
+                        <a href="tests/reports/coverage/index.html" class="btn">📊 View Coverage</a>
+                        <a href="tests/reports/test_summary.html" class="btn">📝 Test Summary</a>
                     </div>
                     
                     <div class="card">
-                        <h3>⚠️ Minimal Deployment Notice</h3>
-                        <p>This is a minimal deployment to ensure successful GitHub Pages hosting. Full content including test reports, diagrams, and examples is available in the repository.</p>
-                        <a href="https://github.com/${{ github.repository }}" class="btn">📁 View Full Repository</a>
+                        <h3>📊 Generated Diagrams</h3>
+                        <p>Browse PlantUML diagrams and PNG images generated from C/C++ code.</p>
+                        <a href="output/" class="btn">📊 View Diagrams</a>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📋 Examples & Documentation</h3>
+                        <p>Explore project examples and detailed documentation.</p>
+                        <a href="example/" class="btn">📋 Examples</a>
+                        <a href="index.md" class="btn">📖 README</a>
                     </div>
                     
                     <div class="card">
@@ -132,18 +160,12 @@ jobs:
       run: |
         echo "🧹 Cleaning and validating deployment files..."
         
-        # Remove any symlinks that might have been created
+        # Remove any symlinks
         find docs -type l -delete
         
         # Check total size
         TOTAL_SIZE=$(du -sb docs | cut -f1)
         echo "📊 Total deployment size: $TOTAL_SIZE bytes ($(echo "scale=2; $TOTAL_SIZE/1024/1024" | bc) MB)"
-        
-        # Ensure we have at least the essential files
-        if [ ! -f "docs/index.html" ]; then
-          echo "❌ Missing essential index.html file"
-          exit 1
-        fi
         
         echo "✅ Deployment files cleaned and validated"
         
@@ -184,15 +206,18 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         
         echo "### 📁 Deployed Content" >> $GITHUB_STEP_SUMMARY
-        echo "- 🏠 Home page with project overview" >> $GITHUB_STEP_SUMMARY
-        echo "- 📖 Project README documentation" >> $GITHUB_STEP_SUMMARY
-        echo "- ⚠️ Minimal deployment (other content excluded due to size/symlink constraints)" >> $GITHUB_STEP_SUMMARY
+        echo "- 📊 Test coverage reports" >> $GITHUB_STEP_SUMMARY
+        echo "- 📝 Test execution summaries" >> $GITHUB_STEP_SUMMARY
+        echo "- 📊 PlantUML diagrams and PNG images" >> $GITHUB_STEP_SUMMARY
+        echo "- 📋 Project examples" >> $GITHUB_STEP_SUMMARY
+        echo "- 📖 Project documentation" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
         echo "### 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
         echo "- [🏠 Home Page](https://${{ github.repository_owner }}.github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/)" >> $GITHUB_STEP_SUMMARY
-        echo "- [📖 README](https://${{ github.repository_owner }}.github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/index.md)" >> $GITHUB_STEP_SUMMARY
-        echo "- [🔗 Repository](https://github.com/${{ github.repository }})" >> $GITHUB_STEP_SUMMARY
+        echo "- [📊 Coverage Report](https://${{ github.repository_owner }}.github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/tests/reports/coverage/)" >> $GITHUB_STEP_SUMMARY
+        echo "- [📝 Test Summary](https://${{ github.repository_owner }}.github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/tests/reports/test_summary.html)" >> $GITHUB_STEP_SUMMARY
+        echo "- [📊 Diagrams](https://${{ github.repository_owner }}.github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/output/)" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
         echo "### 🔄 Next Steps" >> $GITHUB_STEP_SUMMARY
