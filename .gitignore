@@ -86,6 +86,10 @@ cover/
 test-results.xml
 test_backups_*/
 
+# Allow htmlcov directory to be tracked in git
+!htmlcov/
+!htmlcov/**
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
