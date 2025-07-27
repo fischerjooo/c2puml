@@ -15,6 +15,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write
 
     strategy:
       matrix:
@@ -126,6 +127,14 @@ jobs:
             # Add coverage reports
             echo "📁 Adding coverage reports to git..."
             git add tests/reports/
+            
+            # Ensure HTML coverage reports are included
+            if [ -d "tests/reports/coverage/htmlcov" ]; then
+              echo "📁 Adding HTML coverage reports..."
+              git add tests/reports/coverage/htmlcov/
+            else
+              echo "⚠️ HTML coverage reports directory not found"
+            fi
 
             # Check if there are changes to commit
             if git diff --staged --quiet; then
@@ -222,8 +231,12 @@ jobs:
           echo "## 🎯 Final Test Results Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ -f tests/reports/coverage/index.html ]; then
-            echo "📊 HTML reports generated successfully!" >> $GITHUB_STEP_SUMMARY
+          if [ -d tests/reports/coverage/htmlcov ]; then
+            echo "📊 HTML coverage reports generated successfully!" >> $GITHUB_STEP_SUMMARY
+            echo "- [HTML Coverage Report](tests/reports/coverage/htmlcov/index.html)" >> $GITHUB_STEP_SUMMARY
+            echo "- [Test Summary](tests/reports/test-summary.txt)" >> $GITHUB_STEP_SUMMARY
+          elif [ -f tests/reports/coverage/index.html ]; then
+            echo "📊 Coverage reports generated successfully!" >> $GITHUB_STEP_SUMMARY
             echo "- [Coverage Report](tests/reports/coverage/index.html)" >> $GITHUB_STEP_SUMMARY
             echo "- [Test Summary](tests/reports/test-summary.txt)" >> $GITHUB_STEP_SUMMARY
           fi
@@ -240,3 +253,22 @@ jobs:
           echo "- Event: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- Ref: ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
           echo "- Workflow: ${{ github.workflow }} #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🖼️ Trigger PlantUML to PNG Conversion
+        if: success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // This step triggers the puml2png workflow after successful test completion
+            // This is the primary trigger for PlantUML conversion after PR merges
+            const { data: runs } = await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'puml2png.yml',
+              ref: context.ref,
+              inputs: {
+                output_folder: 'output',
+                commit_changes: true
+              }
+            });
+            console.log('✅ PlantUML to PNG conversion workflow triggered successfully');
