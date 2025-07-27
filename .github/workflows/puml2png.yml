@@ -138,6 +138,9 @@ jobs:
         # Add all generated PNG images (both tracked and untracked)
         git add output/*.png 2>/dev/null || echo "No new images to add"
         
+        # Add the generated diagram index HTML file
+        git add output/diagram_index.html 2>/dev/null || echo "No diagram index to add"
+        
         # Also add any other changes that might exist
         git add -A
         
@@ -146,7 +149,7 @@ jobs:
           echo "ℹ️ No staged changes to commit"
         else
           # Create commit message
-          echo "🖼️ Auto-generate PlantUML PNG images" > /tmp/commit_msg
+          echo "🖼️ Auto-generate PlantUML PNG images and diagram index" > /tmp/commit_msg
           
           # Add details about which files were converted
           echo "" >> /tmp/commit_msg
@@ -155,6 +158,9 @@ jobs:
           echo "" >> /tmp/commit_msg
           echo "Generated images:" >> /tmp/commit_msg
           find output -name "*.png" | sort | sed 's/^/- /' >> /tmp/commit_msg
+          echo "" >> /tmp/commit_msg
+          echo "Generated index:" >> /tmp/commit_msg
+          echo "- diagram_index.html (diagram gallery)" >> /tmp/commit_msg
           
           # Commit with detailed message
           git commit -F /tmp/commit_msg
@@ -171,11 +177,13 @@ jobs:
       run: |
         echo "⏭️ Skipping commit as requested by user"
         
-    - name: Upload generated images as artifacts
+    - name: Upload generated images and index as artifacts
       uses: actions/upload-artifact@v4
       with:
         name: plantuml-png-images
-        path: output/*.png
+        path: |
+          output/*.png
+          output/diagram_index.html
         retention-days: 30
 
     - name: 🚀 Trigger Website Deployment
