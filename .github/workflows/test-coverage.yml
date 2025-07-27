@@ -242,18 +242,19 @@ jobs:
           echo "- Ref: ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
           echo "- Workflow: ${{ github.workflow }} #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
 
-      - name: 🚀 Trigger Website Deployment
-        if: success() && github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      - name: 🖼️ Trigger PlantUML to PNG Conversion
+        if: success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         uses: actions/github-script@v7
         with:
           script: |
             const { data: runs } = await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              workflow_id: 'deploy-website.yml',
+              workflow_id: 'puml2png.yml',
               ref: context.ref,
               inputs: {
-                message: `Auto-deploy after test coverage run #${context.runNumber}`
+                output_folder: 'output',
+                commit_changes: true
               }
             });
-            console.log('✅ Website deployment workflow triggered successfully');
+            console.log('✅ PlantUML to PNG conversion workflow triggered successfully');
