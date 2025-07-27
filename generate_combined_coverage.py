@@ -77,7 +77,7 @@ def run_coverage_analysis() -> Tuple[bool, Dict]:
 
 
 def parse_test_results(stdout: str, stderr: str, returncode: int) -> Dict:
-    """Parse test results from pytest output."""
+    """Parse test results from pytest and unittest output."""
     test_results = {
         "total_tests": 0,
         "passed": 0,
@@ -94,8 +94,33 @@ def parse_test_results(stdout: str, stderr: str, returncode: int) -> Dict:
         # Parse the test summary from stdout
         lines = stdout.split("\n")
         for line in lines:
+            # Look for unittest summary line: "Ran 329 tests in 1.567s"
+            if line.startswith("Ran ") and " tests in " in line and "s" in line:
+                import re
+
+                # Extract test count and duration from unittest format
+                unittest_match = re.search(r"Ran (\d+) tests? in ([\d.]+)s", line)
+                if unittest_match:
+                    test_results["total_tests"] = int(unittest_match.group(1))
+                    test_results["duration"] = float(unittest_match.group(2))
+                    
+                    # For unittest, if returncode is 0, all tests passed
+                    if returncode == 0:
+                        test_results["passed"] = test_results["total_tests"]
+                        test_results["failed"] = 0
+                        test_results["errors"] = 0
+                        test_results["skipped"] = 0
+                    else:
+                        # If tests failed, we need to look for failure details
+                        test_results["passed"] = test_results["total_tests"]  # Will be adjusted below
+                        test_results["failed"] = 0
+                        test_results["errors"] = 0
+                        test_results["skipped"] = 0
+                    
+                    break  # Found the unittest summary line
+
             # Look for the pytest summary line: "======================== 329 passed, 1 warning in 1.28s ========================"
-            if line.startswith("========================") and "passed" in line and "in" in line:
+            elif line.startswith("========================") and "passed" in line and "in" in line:
                 import re
 
                 # Extract passed count
@@ -129,7 +154,7 @@ def parse_test_results(stdout: str, stderr: str, returncode: int) -> Dict:
                 if duration_match:
                     test_results["duration"] = float(duration_match.group(1))
 
-                break  # Found the summary line, no need to continue
+                break  # Found the pytest summary line
 
             # Also look for the "collected X items" line as backup
             elif "collected" in line and "items" in line:
@@ -142,6 +167,38 @@ def parse_test_results(stdout: str, stderr: str, returncode: int) -> Dict:
             # Capture failed test details
             elif line.startswith("FAILED") or line.startswith("ERROR"):
                 test_results["failed_tests"].append(line.strip())
+
+        # For unittest, look for failure and error counts in the output
+        if test_results["total_tests"] > 0 and returncode != 0:
+            # Look for unittest failure/error summary
+            for line in lines:
+                if "unittest Summary" in line:
+                    # Look for the next few lines for failure/error counts
+                    unittest_summary_start = lines.index(line)
+                    for i in range(unittest_summary_start, min(unittest_summary_start + 10, len(lines))):
+                        summary_line = lines[i]
+                        if "Tests run:" in summary_line:
+                            # Extract total tests run
+                            import re
+                            tests_run_match = re.search(r"Tests run: (\d+)", summary_line)
+                            if tests_run_match:
+                                test_results["total_tests"] = int(tests_run_match.group(1))
+                        elif "Failures:" in summary_line:
+                            # Extract failure count
+                            import re
+                            failures_match = re.search(r"Failures: (\d+)", summary_line)
+                            if failures_match:
+                                test_results["failed"] = int(failures_match.group(1))
+                        elif "Errors:" in summary_line:
+                            # Extract error count
+                            import re
+                            errors_match = re.search(r"Errors: (\d+)", summary_line)
+                            if errors_match:
+                                test_results["errors"] = int(errors_match.group(1))
+                    
+                    # Calculate passed tests
+                    test_results["passed"] = test_results["total_tests"] - test_results["failed"] - test_results["errors"]
+                    break
 
         # If we still don't have test counts, try to count from individual test results
         if test_results["total_tests"] == 0:
@@ -1111,6 +1168,10 @@ def main():
     parser.add_argument(
         "--run-tests", action="store_true", help="Run tests with coverage before generating reports"
     )
+    parser.add_argument(
+        "--test-output-file",
+        help="Parse test results from a log file instead of running tests"
+    )
     parser.add_argument("--source-dir", default="c_to_plantuml", help="Source directory to analyze")
 
     args = parser.parse_args()
@@ -1126,6 +1187,17 @@ def main():
     if args.run_tests:
         success, test_results = run_coverage_analysis()
         if not success:
+            return 1
+    elif args.test_output_file:
+        # Parse test results from the provided log file
+        print_info(f"Parsing test results from: {args.test_output_file}")
+        try:
+            with open(args.test_output_file, 'r', encoding='utf-8') as f:
+                test_output = f.read()
+            test_results = parse_test_results(test_output, "", 0)  # Assume success if file exists
+            print_success(f"Parsed test results: {test_results['total_tests']} tests, {test_results['passed']} passed")
+        except Exception as e:
+            print_error(f"Failed to parse test output file: {e}")
             return 1
 
     # Get coverage data

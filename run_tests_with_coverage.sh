@@ -198,23 +198,23 @@ fi
 
 print_success "Test summary generated at: tests/reports/test-summary.txt"
 
-# If coverage module is available and we ran with coverage, generate combined coverage report
-if [ "$HAS_COVERAGE" = true ] && grep -q "coverage report" tests/reports/test-output.log; then
-    print_header "Generating Combined Coverage Report"
-    
-    print_status "Generating comprehensive coverage reports (summary + detailed per-file)..."
-    if python3 generate_combined_coverage.py --output-dir tests/reports/coverage 2>&1 | tee tests/reports/coverage-generation.log; then
-        print_success "Combined coverage reports generated successfully!"
-        print_info "Reports include:"
-        print_info "  - Overall coverage summary"
-        print_info "  - Detailed per-file coverage with line-by-line analysis"
-        print_info "  - Standard HTML coverage report"
-        print_info "  - XML and JSON exports"
-    else
-        print_error "Failed to generate combined coverage reports"
-        print_info "Check tests/reports/coverage-generation.log for details"
+    # If coverage module is available and we ran with coverage, generate combined coverage report
+    if [ "$HAS_COVERAGE" = true ] && grep -q "coverage report" tests/reports/test-output.log; then
+        print_header "Generating Combined Coverage Report"
+        
+        print_status "Generating comprehensive coverage reports (summary + detailed per-file)..."
+        if python3 generate_combined_coverage.py --output-dir tests/reports/coverage --test-output-file tests/reports/test-output.log 2>&1 | tee tests/reports/coverage-generation.log; then
+            print_success "Combined coverage reports generated successfully!"
+            print_info "Reports include:"
+            print_info "  - Overall coverage summary"
+            print_info "  - Detailed per-file coverage with line-by-line analysis"
+            print_info "  - Standard HTML coverage report"
+            print_info "  - XML and JSON exports"
+        else
+            print_error "Failed to generate combined coverage reports"
+            print_info "Check tests/reports/coverage-generation.log for details"
+        fi
     fi
-fi
 
 # Display summary
 print_header "Test Execution Complete!"
