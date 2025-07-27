@@ -831,7 +831,7 @@
             },
             {
               "name": "name",
-              "type": "struct{\nchar[32]",
+              "type": "struct { \n char[32]",
               "value": null
             },
             {
