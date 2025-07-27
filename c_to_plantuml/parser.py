@@ -960,6 +960,46 @@ class CParser:
                         formatted_tokens.append(token.value)
                 original_type = "".join(formatted_tokens)
                 return (typedef_name, original_type)
+        
+        # Complex function pointer typedef: typedef ret (*name)(complex_params);
+        # This handles cases where the function pointer has complex parameters that span multiple tokens
+        if len(all_tokens) >= 6:
+            # Look for pattern: type ( * name ) ( ... )
+            for i in range(len(all_tokens) - 5):
+                if (
+                    all_tokens[i].type in [TokenType.IDENTIFIER, TokenType.INT, TokenType.VOID, TokenType.CHAR, TokenType.FLOAT, TokenType.DOUBLE, TokenType.LONG, TokenType.SHORT, TokenType.UNSIGNED, TokenType.SIGNED]
+                    and all_tokens[i + 1].type == TokenType.LPAREN
+                    and all_tokens[i + 2].type == TokenType.ASTERISK
+                    and all_tokens[i + 3].type == TokenType.IDENTIFIER
+                    and all_tokens[i + 4].type == TokenType.RPAREN
+                    and all_tokens[i + 5].type == TokenType.LPAREN
+                ):
+                    # Find the closing parenthesis for the parameter list
+                    paren_count = 1
+                    param_end = i + 6
+                    while param_end < len(all_tokens) and paren_count > 0:
+                        if all_tokens[param_end].type == TokenType.LPAREN:
+                            paren_count += 1
+                        elif all_tokens[param_end].type == TokenType.RPAREN:
+                            paren_count -= 1
+                        param_end += 1
+                    
+                    if paren_count == 0:
+                        typedef_name = all_tokens[i + 3].value
+                        # Format the complete typedef properly
+                        formatted_tokens = []
+                        for j, token in enumerate(all_tokens):
+                            if token.type in [TokenType.LPAREN, TokenType.RPAREN]:
+                                # Don't add spaces around parentheses
+                                formatted_tokens.append(token.value)
+                            elif j > 0 and all_tokens[j-1].type not in [TokenType.LPAREN, TokenType.RPAREN]:
+                                # Add space before token if previous token wasn't a parenthesis
+                                formatted_tokens.append(" " + token.value)
+                            else:
+                                # No space before token
+                                formatted_tokens.append(token.value)
+                        original_type = "".join(formatted_tokens)
+                        return (typedef_name, original_type)
 
         # Array typedef: typedef type name[size];
         for i in range(len(all_tokens)):
