@@ -119,6 +119,10 @@ class Transformer:
         if "element_filters" in config:
             model = self._apply_element_filters(model, config["element_filters"])
 
+        # Apply include filters for each root file
+        if "include_filters" in config:
+            model = self._apply_include_filters(model, config["include_filters"])
+
         # Apply transformations with file selection support
         if "transformations" in config:
             model = self._apply_model_transformations(model, config["transformations"])
@@ -161,6 +165,92 @@ class Transformer:
             model.files[file_path] = self._filter_file_elements(file_model, filters)
 
         return model
+
+    def _apply_include_filters(
+        self, model: ProjectModel, include_filters: Dict[str, List[str]]
+    ) -> ProjectModel:
+        """Apply include filters for each root file based on regex patterns"""
+        self.logger.info("Applying include filters for %d root files", len(include_filters))
+        
+        # Compile regex patterns for each root file
+        compiled_filters = {}
+        for root_file, patterns in include_filters.items():
+            try:
+                compiled_filters[root_file] = [re.compile(pattern) for pattern in patterns]
+                self.logger.debug("Compiled %d patterns for root file: %s", len(patterns), root_file)
+            except re.error as e:
+                self.logger.warning("Invalid regex pattern for root file %s: %s", root_file, e)
+                # Skip invalid patterns for this root file
+                continue
+        
+        if not compiled_filters:
+            self.logger.warning("No valid include filters found, skipping include filtering")
+            return model
+        
+        # Apply filters to each file in the model
+        for file_path, file_model in model.files.items():
+            # Find the root file for this file (the main C file that this file belongs to)
+            root_file = self._find_root_file(file_path, file_model)
+            
+            if root_file in compiled_filters:
+                # Apply the filters for this root file
+                self._filter_file_includes(file_model, compiled_filters[root_file], root_file)
+        
+        return model
+    
+    def _find_root_file(self, file_path: str, file_model: FileModel) -> str:
+        """Find the root C file for a given file"""
+        # For now, we'll use the filename as the root file identifier
+        # This can be enhanced later to support more sophisticated root file detection
+        filename = Path(file_path).name
+        
+        # If it's a .c file, it's its own root
+        if filename.endswith('.c'):
+            return filename
+        
+        # For header files, we'll use the filename as the root
+        # This can be enhanced to find the corresponding .c file
+        return filename
+    
+    def _filter_file_includes(
+        self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
+    ) -> None:
+        """Filter includes and include_relations for a file based on regex patterns"""
+        self.logger.debug("Filtering includes for file %s (root: %s)", file_model.relative_path, root_file)
+        
+        # Filter includes
+        original_includes_count = len(file_model.includes)
+        filtered_includes = set()
+        
+        for include_name in file_model.includes:
+            if self._matches_any_pattern(include_name, patterns):
+                filtered_includes.add(include_name)
+            else:
+                self.logger.debug("Filtered out include: %s (root: %s)", include_name, root_file)
+        
+        file_model.includes = filtered_includes
+        
+        # Filter include_relations
+        original_relations_count = len(file_model.include_relations)
+        filtered_relations = []
+        
+        for relation in file_model.include_relations:
+            # Check if the included file matches any pattern
+            if self._matches_any_pattern(relation.included_file, patterns):
+                filtered_relations.append(relation)
+            else:
+                self.logger.debug("Filtered out include relation: %s -> %s (root: %s)", 
+                                relation.source_file, relation.included_file, root_file)
+        
+        file_model.include_relations = filtered_relations
+        
+        self.logger.debug("Include filtering for %s: includes %d->%d, relations %d->%d", 
+                         file_model.relative_path, original_includes_count, len(file_model.includes),
+                         original_relations_count, len(file_model.include_relations))
+    
+    def _matches_any_pattern(self, text: str, patterns: List[re.Pattern]) -> bool:
+        """Check if text matches any of the given regex patterns"""
+        return any(pattern.search(text) for pattern in patterns)
 
     def _filter_file_elements(
         self, file_model: FileModel, filters: Dict[str, Any]

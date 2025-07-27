@@ -719,6 +719,356 @@ class TestTransformer(unittest.TestCase):
         # Should apply removals only to sample.c
         self.assertIn("sample.c", result.files)
 
+    def test_apply_include_filters_basic(self):
+        """Test basic include filtering functionality"""
+        # Create a project model with includes and include_relations
+        file_model_with_includes = FileModel(
+            file_path="/test/project/main.c",
+            relative_path="main.c",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            unions={},
+            functions=[],
+            globals=[],
+            includes={"stdio.h", "stdlib.h", "string.h", "math.h"},
+            macros=[],
+            aliases={},
+            include_relations=[
+                IncludeRelation("main.c", "stdio.h", 1),
+                IncludeRelation("main.c", "stdlib.h", 1),
+                IncludeRelation("main.c", "string.h", 1),
+                IncludeRelation("main.c", "math.h", 1),
+            ],
+        )
+
+        project_model = ProjectModel(
+            project_name="TestProject",
+            project_root="/test/project",
+            files={"main.c": file_model_with_includes},
+        )
+
+        # Configure include filters to only keep stdio.h and string.h
+        config = {
+            "include_filters": {
+                "main.c": [r"stdio\.h", r"string\.h"]
+            }
+        }
+
+        result = self.transformer._apply_include_filters(project_model, config["include_filters"])
+        
+        # Check that includes were filtered
+        self.assertEqual(len(result.files["main.c"].includes), 2)
+        self.assertIn("stdio.h", result.files["main.c"].includes)
+        self.assertIn("string.h", result.files["main.c"].includes)
+        self.assertNotIn("stdlib.h", result.files["main.c"].includes)
+        self.assertNotIn("math.h", result.files["main.c"].includes)
+        
+        # Check that include_relations were filtered
+        self.assertEqual(len(result.files["main.c"].include_relations), 2)
+        included_files = [rel.included_file for rel in result.files["main.c"].include_relations]
+        self.assertIn("stdio.h", included_files)
+        self.assertIn("string.h", included_files)
+        self.assertNotIn("stdlib.h", included_files)
+        self.assertNotIn("math.h", included_files)
+
+    def test_apply_include_filters_multiple_root_files(self):
+        """Test include filtering with multiple root files"""
+        # Create file models for different root files
+        main_c_model = FileModel(
+            file_path="/test/project/main.c",
+            relative_path="main.c",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            unions={},
+            functions=[],
+            globals=[],
+            includes={"stdio.h", "stdlib.h", "utils.h"},
+            macros=[],
+            aliases={},
+            include_relations=[
+                IncludeRelation("main.c", "stdio.h", 1),
+                IncludeRelation("main.c", "stdlib.h", 1),
+                IncludeRelation("main.c", "utils.h", 1),
+            ],
+        )
+
+        utils_c_model = FileModel(
+            file_path="/test/project/utils.c",
+            relative_path="utils.c",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            unions={},
+            functions=[],
+            globals=[],
+            includes={"string.h", "math.h", "utils.h"},
+            macros=[],
+            aliases={},
+            include_relations=[
+                IncludeRelation("utils.c", "string.h", 1),
+                IncludeRelation("utils.c", "math.h", 1),
+                IncludeRelation("utils.c", "utils.h", 1),
+            ],
+        )
+
+        project_model = ProjectModel(
+            project_name="TestProject",
+            project_root="/test/project",
+            files={
+                "main.c": main_c_model,
+                "utils.c": utils_c_model,
+            },
+        )
+
+        # Configure different include filters for each root file
+        config = {
+            "include_filters": {
+                "main.c": [r"stdio\.h", r"stdlib\.h"],
+                "utils.c": [r"string\.h"]
+            }
+        }
+
+        result = self.transformer._apply_include_filters(project_model, config["include_filters"])
+        
+        # Check main.c filtering
+        main_c = result.files["main.c"]
+        self.assertEqual(len(main_c.includes), 2)
+        self.assertIn("stdio.h", main_c.includes)
+        self.assertIn("stdlib.h", main_c.includes)
+        self.assertNotIn("utils.h", main_c.includes)
+        
+        # Check utils.c filtering
+        utils_c = result.files["utils.c"]
+        self.assertEqual(len(utils_c.includes), 1)
+        self.assertIn("string.h", utils_c.includes)
+        self.assertNotIn("math.h", utils_c.includes)
+        self.assertNotIn("utils.h", utils_c.includes)
+
+    def test_apply_include_filters_no_matching_root_file(self):
+        """Test include filtering when root file doesn't match any filters"""
+        file_model = FileModel(
+            file_path="/test/project/other.c",
+            relative_path="other.c",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            unions={},
+            functions=[],
+            globals=[],
+            includes={"stdio.h", "stdlib.h"},
+            macros=[],
+            aliases={},
+            include_relations=[
+                IncludeRelation("other.c", "stdio.h", 1),
+                IncludeRelation("other.c", "stdlib.h", 1),
+            ],
+        )
+
+        project_model = ProjectModel(
+            project_name="TestProject",
+            project_root="/test/project",
+            files={"other.c": file_model},
+        )
+
+        # Configure filters for a different root file
+        config = {
+            "include_filters": {
+                "main.c": [r"stdio\.h"]
+            }
+        }
+
+        result = self.transformer._apply_include_filters(project_model, config["include_filters"])
+        
+        # Should not affect files that don't match any root file filters
+        other_c = result.files["other.c"]
+        self.assertEqual(len(other_c.includes), 2)
+        self.assertIn("stdio.h", other_c.includes)
+        self.assertIn("stdlib.h", other_c.includes)
+
+    def test_apply_include_filters_invalid_regex(self):
+        """Test include filtering with invalid regex patterns"""
+        file_model = FileModel(
+            file_path="/test/project/main.c",
+            relative_path="main.c",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            unions={},
+            functions=[],
+            globals=[],
+            includes={"stdio.h", "stdlib.h"},
+            macros=[],
+            aliases={},
+            include_relations=[
+                IncludeRelation("main.c", "stdio.h", 1),
+                IncludeRelation("main.c", "stdlib.h", 1),
+            ],
+        )
+
+        project_model = ProjectModel(
+            project_name="TestProject",
+            project_root="/test/project",
+            files={"main.c": file_model},
+        )
+
+        # Configure filters with invalid regex
+        config = {
+            "include_filters": {
+                "main.c": [r"stdio\.h", "[invalid regex"]
+            }
+        }
+
+        result = self.transformer._apply_include_filters(project_model, config["include_filters"])
+        
+        # Should skip invalid patterns but still apply valid ones
+        main_c = result.files["main.c"]
+        self.assertEqual(len(main_c.includes), 2)  # Both includes should remain since invalid pattern was skipped
+        self.assertIn("stdio.h", main_c.includes)
+        self.assertIn("stdlib.h", main_c.includes)
+
+    def test_apply_include_filters_empty_config(self):
+        """Test include filtering with empty configuration"""
+        file_model = FileModel(
+            file_path="/test/project/main.c",
+            relative_path="main.c",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            unions={},
+            functions=[],
+            globals=[],
+            includes={"stdio.h", "stdlib.h"},
+            macros=[],
+            aliases={},
+            include_relations=[
+                IncludeRelation("main.c", "stdio.h", 1),
+                IncludeRelation("main.c", "stdlib.h", 1),
+            ],
+        )
+
+        project_model = ProjectModel(
+            project_name="TestProject",
+            project_root="/test/project",
+            files={"main.c": file_model},
+        )
+
+        # Empty include filters
+        config = {"include_filters": {}}
+
+        result = self.transformer._apply_include_filters(project_model, config["include_filters"])
+        
+        # Should not affect any files
+        main_c = result.files["main.c"]
+        self.assertEqual(len(main_c.includes), 2)
+        self.assertIn("stdio.h", main_c.includes)
+        self.assertIn("stdlib.h", main_c.includes)
+
+    def test_find_root_file_c_file(self):
+        """Test _find_root_file method for .c files"""
+        file_model = FileModel(
+            file_path="/test/project/main.c",
+            relative_path="main.c",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            unions={},
+            functions=[],
+            globals=[],
+            includes=set(),
+            macros=[],
+            aliases={},
+        )
+
+        root_file = self.transformer._find_root_file("/test/project/main.c", file_model)
+        self.assertEqual(root_file, "main.c")
+
+    def test_find_root_file_header_file(self):
+        """Test _find_root_file method for header files"""
+        file_model = FileModel(
+            file_path="/test/project/header.h",
+            relative_path="header.h",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            unions={},
+            functions=[],
+            globals=[],
+            includes=set(),
+            macros=[],
+            aliases={},
+        )
+
+        root_file = self.transformer._find_root_file("/test/project/header.h", file_model)
+        self.assertEqual(root_file, "header.h")
+
+    def test_matches_any_pattern(self):
+        """Test _matches_any_pattern method"""
+        patterns = [re.compile(r"stdio\.h"), re.compile(r"stdlib\.h")]
+        
+        # Should match first pattern
+        self.assertTrue(self.transformer._matches_any_pattern("stdio.h", patterns))
+        
+        # Should match second pattern
+        self.assertTrue(self.transformer._matches_any_pattern("stdlib.h", patterns))
+        
+        # Should not match any pattern
+        self.assertFalse(self.transformer._matches_any_pattern("string.h", patterns))
+
+    def test_apply_transformations_with_include_filters(self):
+        """Test that include_filters are applied in the main transformation pipeline"""
+        # Create a project model with includes
+        file_model = FileModel(
+            file_path="/test/project/main.c",
+            relative_path="main.c",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            unions={},
+            functions=[],
+            globals=[],
+            includes={"stdio.h", "stdlib.h", "string.h"},
+            macros=[],
+            aliases={},
+            include_relations=[
+                IncludeRelation("main.c", "stdio.h", 1),
+                IncludeRelation("main.c", "stdlib.h", 1),
+                IncludeRelation("main.c", "string.h", 1),
+            ],
+        )
+
+        project_model = ProjectModel(
+            project_name="TestProject",
+            project_root="/test/project",
+            files={"main.c": file_model},
+        )
+
+        # Configure transformations with include_filters
+        config = {
+            "include_filters": {
+                "main.c": [r"stdio\.h", r"string\.h"]
+            }
+        }
+
+        result = self.transformer._apply_transformations(project_model, config)
+        
+        # Check that include_filters were applied
+        main_c = result.files["main.c"]
+        self.assertEqual(len(main_c.includes), 2)
+        self.assertIn("stdio.h", main_c.includes)
+        self.assertIn("string.h", main_c.includes)
+        self.assertNotIn("stdlib.h", main_c.includes)
+
 
 if __name__ == "__main__":
     unittest.main()
