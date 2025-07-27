@@ -27,6 +27,7 @@ class Config:
     # Filters
     file_filters: Dict[str, List[str]] = field(default_factory=dict)
     element_filters: Dict[str, Dict[str, List[str]]] = field(default_factory=dict)
+    include_filters: Dict[str, List[str]] = field(default_factory=dict)
 
     # Transformations
     transformations: Dict[str, Any] = field(default_factory=dict)
@@ -66,6 +67,8 @@ class Config:
             self.file_filters = {}
         if not hasattr(self, "element_filters"):
             self.element_filters = {}
+        if not hasattr(self, "include_filters"):
+            self.include_filters = {}
         if not hasattr(self, "transformations"):
             self.transformations = {}
         if not hasattr(self, "file_include_patterns"):
@@ -190,6 +193,7 @@ class Config:
             "include_depth": self.include_depth,
             "file_filters": self.file_filters,
             "element_filters": self.element_filters,
+            "include_filters": self.include_filters,
             "transformations": self.transformations,
         }
 
@@ -203,7 +207,7 @@ class Config:
 
     def has_filters(self) -> bool:
         """Check if configuration has any filters defined"""
-        return bool(self.file_filters or self.element_filters)
+        return bool(self.file_filters or self.element_filters or self.include_filters)
 
     def _should_include_file(self, file_path: str) -> bool:
         """Check if a file should be included based on filters"""
@@ -377,6 +381,7 @@ class Config:
             "include_depth": self.include_depth,
             "has_file_filters": bool(self.file_filters),
             "has_element_filters": bool(self.element_filters),
+            "has_include_filters": bool(self.include_filters),
             "has_transformations": bool(self.transformations),
         }
 
@@ -394,6 +399,7 @@ class Config:
             and self.include_depth == other.include_depth
             and self.file_filters == other.file_filters
             and self.element_filters == other.element_filters
+            and self.include_filters == other.include_filters
             and self.transformations == other.transformations
         )
 
