@@ -74,17 +74,17 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * validate_func ) ( const char *",
+              "name": "validate_func",
+              "type": "int ( * validate_func ) ( const char * )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "void * ( * alloc_func ) ( size_t",
+              "name": "alloc_func",
+              "type": "void * ( * alloc_func ) ( size_t )",
               "value": null
             },
             {
-              "name": "unnamed",
+              "name": "free_func",
               "type": "void ( * free_func ) ( void * )",
               "value": null
             }
@@ -102,13 +102,13 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * init_func ) ( void *",
+              "name": "init_func",
+              "type": "int ( * init_func ) ( void * )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * cleanup_func ) ( void *",
+              "name": "cleanup_func",
+              "type": "void ( * cleanup_func ) ( void * )",
               "value": null
             },
             {
@@ -597,17 +597,17 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * validate_func ) ( const char *",
+              "name": "validate_func",
+              "type": "int ( * validate_func ) ( const char * )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "void * ( * alloc_func ) ( size_t",
+              "name": "alloc_func",
+              "type": "void * ( * alloc_func ) ( size_t )",
               "value": null
             },
             {
-              "name": "unnamed",
+              "name": "free_func",
               "type": "void ( * free_func ) ( void * )",
               "value": null
             }
@@ -625,13 +625,13 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * init_func ) ( void *",
+              "name": "init_func",
+              "type": "int ( * init_func ) ( void * )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * cleanup_func ) ( void *",
+              "name": "cleanup_func",
+              "type": "void ( * cleanup_func ) ( void * )",
               "value": null
             },
             {

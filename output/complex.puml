@@ -11,7 +11,7 @@ class "complex" as COMPLEX <<source>> #LightBlue
     static Std_ReturnType ProcessorService_Process(const Process_T * job_pst)
     static int add_operation(int a, int b)
     complex_handler_t * create_complex_handler(const char * name, ...)
-    void * create_handler(const char * name, int ( * init_func ) ( void * ), ...)
+    void * create_handler(const char * name, int ( * init_func ) ( void * ) init_func, ...)
     static int divide_operation(int a, int b)
     int execute_operations(int value, math_ops_array_t ops, int op_count)
     math_operation_t * get_math_operations()
@@ -52,7 +52,7 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
     + #define UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)
     -- Functions --
     + complex_handler_t * create_complex_handler(const char * name, ...)
-    + void * create_handler(const char * name, int ( * init_func ) ( void * ), ...)
+    + void * create_handler(const char * name, int ( * init_func ) ( void * ) init_func, ...)
     + int execute_operations(int value, math_ops_array_t ops, int op_count unnamed)
     + math_operation_t * get_math_operations()
     + int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], ...)
