@@ -389,11 +389,7 @@ generate_diagram_index() {
 <body>
     <div class="container">
         <div class="nav">
-            <a href="../index.html">🏠 Home</a>
-            <a href="../tests/reports/coverage/index.html">📊 Coverage</a>
-            <a href="../tests/reports/test_summary.html">📝 Tests</a>
-            <a href="diagram_index.html">📊 Diagrams</a>
-            <a href="../example/">📋 Examples</a>
+            <span>📊 Diagrams</span>
         </div>
         
         <div class="header">
