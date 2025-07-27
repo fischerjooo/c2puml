@@ -63,17 +63,63 @@ The scripts automatically:
 
 ## Configuration
 
-Create `config.json` for customization:
+Create `config.json` for customization. The configuration supports multiple filtering and transformation options:
+
+### Filtering Options
+
+- **file_filters**: Filter files by path patterns
+- **element_filters**: Filter specific elements (structs, functions, etc.) by name patterns
+- **include_filters**: Filter includes and include relations for each root C file using regex patterns
+
+### Include Filters
+
+The `include_filters` feature allows you to create focused PlantUML diagrams by filtering includes for different root files:
+
+```json
+"include_filters": {
+  "main.c": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
+  "network.c": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
+  "database.c": ["^sqlite3\\.h$", "^mysql\\.h$", "^postgresql/"]
+}
+```
+
+This enables separate filtering rules for each root file, creating cleaner, more focused diagrams.
 
 ```json
 {
   "source_folders": ["./src"],
   "project_name": "MyProject",
   "output_dir": "./output",
-  "recursive": true,
+  "recursive_search": true,
+  "include_depth": 2,
   "file_filters": {
     "include": [".*\\.c$", ".*\\.h$"],
     "exclude": [".*test.*"]
+  },
+  "element_filters": {
+    "structs": {
+      "include": ["^[A-Z][a-zA-Z0-9_]*$"],
+      "exclude": ["^test_"]
+    },
+    "functions": {
+      "include": ["^[a-z][a-zA-Z0-9_]*$"],
+      "exclude": ["^test_"]
+    }
+  },
+  "include_filters": {
+    "main.c": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
+    "network.c": ["^sys/socket\\.h$", "^netinet/", "^arpa/"]
+  },
+  "transformations": {
+    "remove": {
+      "structs": [],
+      "functions": [],
+      "macros": []
+    },
+    "rename": {
+      "structs": {},
+      "functions": {}
+    }
   }
 }
 ```
