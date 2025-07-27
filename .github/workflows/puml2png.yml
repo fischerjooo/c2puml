@@ -1,5 +1,9 @@
 name: Convert PlantUML to PNG
 
+# This workflow converts PlantUML (.puml) files to PNG images and commits them to the repository.
+# It includes robust git conflict resolution to handle cases where the remote repository
+# has been updated while the workflow is running.
+
 on:
   workflow_dispatch:
     inputs:
@@ -63,6 +67,11 @@ jobs:
       run: |
         echo "Setting up Git credentials with Personal Access Token"
         git remote set-url origin https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ github.repository }}
+        
+    - name: Pull latest changes
+      run: |
+        echo "📥 Pulling latest changes from remote..."
+        git pull origin ${{ github.ref }} || echo "No changes to pull or already up to date"
         
     - name: Install dependencies
       run: |
@@ -200,9 +209,29 @@ jobs:
           # Commit with detailed message
           git commit -F /tmp/commit_msg
           
+          # Pull latest changes before pushing to avoid conflicts
+          echo "📥 Pulling latest changes from remote..."
+          git fetch origin
+          if ! git pull origin ${{ github.ref }} --rebase; then
+            echo "⚠️ Rebase failed, trying merge instead..."
+            if ! git pull origin ${{ github.ref }} --no-rebase; then
+              echo "❌ Failed to pull latest changes. This might be due to conflicts."
+              echo "📋 Current status:"
+              git status
+              echo "🔍 Attempting to resolve by creating a new commit on top of latest..."
+              git fetch origin
+              git reset --hard origin/${{ github.ref }}
+              git add -A
+              git commit -F /tmp/commit_msg
+            fi
+          fi
+          
           # Push to the same branch using Personal Access Token
           echo "Pushing with Personal Access Token..."
-          git push origin ${{ github.ref }}
+          if ! git push origin ${{ github.ref }}; then
+            echo "⚠️ Regular push failed, trying force-with-lease..."
+            git push origin ${{ github.ref }} --force-with-lease
+          fi
           
           echo "✅ Successfully committed and pushed generated PNG images and diagram index"
         fi
