@@ -1,3 +1,0 @@
-usage: generate_combined_coverage.py [-h] [--output-dir OUTPUT_DIR]
-                                     [--run-tests]
-generate_combined_coverage.py: error: unrecognized arguments: --test-output-file tests/reports/test-output.log
