@@ -53,30 +53,22 @@ jobs:
         # Copy README as index page
         cp README.md docs/index.md
         
-        # Copy test reports (HTML files only)
+        # Create a minimal test deployment first
+        echo "🧪 Creating minimal test deployment to debug issues..."
+        
+        # Only copy essential files for now
+        if [ -f "README.md" ]; then
+          cp README.md docs/
+        fi
+        
+        # Copy only a few small files from test reports if they exist
         if [ -d "tests/reports" ]; then
           mkdir -p docs/tests/reports
-          find tests/reports -name "*.html" -type f -exec cp -L --parents {} docs/ \;
-          find tests/reports -name "*.css" -o -name "*.js" -type f -exec cp -L --parents {} docs/ \;
+          # Copy only index.html files
+          find tests/reports -name "index.html" -type f | head -3 | xargs -I {} cp -L --parents {} docs/
         fi
         
-        # Copy output files (PNG and PUML)
-        if [ -d "output" ]; then
-          mkdir -p docs/output
-          find output -name "*.png" -type f -exec cp -L --parents {} docs/ \;
-          find output -name "*.puml" -type f -exec cp -L --parents {} docs/ \;
-        fi
-        
-        # Copy example files
-        if [ -d "example" ]; then
-          mkdir -p docs/example
-          find example -type f -exec cp -L --parents {} docs/ \;
-        fi
-        
-        # Copy specification if it exists
-        if [ -f "specification.md" ]; then
-          cp specification.md docs/
-        fi
+        # Skip output and example files for now to isolate the issue
         
         # Create a simple index.html
         cat > docs/index.html << 'EOF'
@@ -160,12 +152,49 @@ jobs:
       run: |
         echo "🧹 Cleaning and validating deployment files..."
         
-        # Remove any symlinks
-        find docs -type l -delete
+        # Debug: Check what files exist before cleaning
+        echo "🔍 Files before cleaning:"
+        find docs -type f -exec ls -la {} \;
+        echo ""
+        
+        # Check for symlinks
+        SYMLINKS=$(find docs -type l)
+        if [ -n "$SYMLINKS" ]; then
+          echo "⚠️ Found symlinks:"
+          echo "$SYMLINKS"
+          find docs -type l -delete
+          echo "✅ Symlinks removed"
+        else
+          echo "✅ No symlinks found"
+        fi
+        
+        # Check for hard links
+        HARD_LINKS=$(find docs -type f -links +1)
+        if [ -n "$HARD_LINKS" ]; then
+          echo "⚠️ Found hard links:"
+          echo "$HARD_LINKS"
+          find docs -type f -links +1 -exec ls -la {} \;
+          echo "🔄 Converting hard links to regular files..."
+          find docs -type f -links +1 -exec cp {} {}.tmp \; -exec mv {}.tmp {} \;
+        else
+          echo "✅ No hard links found"
+        fi
+        
+        # Check file sizes
+        echo "📊 File sizes:"
+        find docs -type f -exec ls -la {} \; | sort -k5 -nr | head -10
         
         # Check total size
         TOTAL_SIZE=$(du -sb docs | cut -f1)
         echo "📊 Total deployment size: $TOTAL_SIZE bytes ($(echo "scale=2; $TOTAL_SIZE/1024/1024" | bc) MB)"
+        
+        # Check file count
+        FILE_COUNT=$(find docs -type f | wc -l)
+        echo "📊 Total files: $FILE_COUNT"
+        
+        # Check directory structure
+        echo "📁 Directory structure:"
+        find docs -type d | sort
         
         echo "✅ Deployment files cleaned and validated"
         
@@ -182,16 +211,49 @@ jobs:
         echo "Total size: $(du -sh docs | cut -f1)"
         
     - name: 📤 Upload website files as artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-pages-artifact@v3
       with:
-        name: github-pages
         path: docs/
-        retention-days: 1
+        
+    - name: 🔍 Debug artifact upload
+      run: |
+        echo "🔍 Debugging artifact upload..."
+        echo "📁 Contents of docs directory:"
+        ls -la docs/
+        echo ""
+        echo "📊 File count in docs: $(find docs -type f | wc -l)"
+        echo "📊 Directory count in docs: $(find docs -type d | wc -l)"
+        echo "📊 Total size: $(du -sh docs | cut -f1)"
+        echo ""
+        echo "🔍 Checking for any special files:"
+        find docs -type f -exec file {} \; | head -10
+        echo ""
+        echo "🔍 Checking file permissions:"
+        find docs -type f -exec ls -la {} \; | head -10
+        echo ""
+        echo "🔍 Checking for any hidden files:"
+        find docs -name ".*" -type f
 
     - name: 🚀 Deploy to GitHub Pages
       uses: actions/deploy-pages@v4
-      with:
-        artifact_name: github-pages
+        
+    - name: 🔍 Debug deployment failure
+      if: failure()
+      run: |
+        echo "🔍 Debugging deployment failure..."
+        echo "📊 Checking if artifact exists:"
+        ls -la $GITHUB_WORKSPACE/_actions/actions/deploy-pages/v4/
+        echo ""
+        echo "📊 Checking workflow context:"
+        echo "Repository: ${{ github.repository }}"
+        echo "Ref: ${{ github.ref }}"
+        echo "Event: ${{ github.event_name }}"
+        echo "Actor: ${{ github.actor }}"
+        echo ""
+        echo "📊 Checking permissions:"
+        echo "Contents write: ${{ github.permissions.contents }}"
+        echo "Pages write: ${{ github.permissions.pages }}"
+        echo "ID token write: ${{ github.permissions.id-token }}"
         
     - name: 🎯 Deployment Summary
       if: always()
