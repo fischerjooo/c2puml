@@ -1,7 +1,22 @@
 Test Execution Summary
 =====================
-Generated: 2025-07-27 14:39:49
+Generated: 2025-07-27 14:48:26
 
 Test Results
 ------------
-Execution Time: 10 seconds
+Ran 329 tests in 1.053s
+Status: OK - All tests passed
+
+Unittest Summary
+----------------
+--------------------------------------------------
+Tests run: 329
+Failures: 0
+
+Detailed Test Count
+-------------------
+Total Tests Run: 329
+Passed: 329
+Failed: 0
+
+Execution Time: 2 seconds

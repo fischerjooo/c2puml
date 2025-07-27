@@ -265,7 +265,13 @@ fi
 
 print_success "Test summary generated at: tests/reports/test-summary.txt"
 
-
+# Generate HTML test summary
+print_status "Generating HTML test summary..."
+if python3 generate_test_summary_html.py --log-file tests/reports/test-output.log --output-file tests/reports/test_summary.html; then
+    print_success "HTML test summary generated at: tests/reports/test_summary.html"
+else
+    print_warning "Failed to generate HTML test summary, continuing with text summary only"
+fi
 
 # Display summary
 print_header "Test Execution Complete!"
@@ -295,6 +301,7 @@ echo ""
 echo "🔗 Report Links:"
 echo "----------------"
 echo "- Test Summary: tests/reports/test-summary.txt"
+echo "- HTML Test Summary: tests/reports/test_summary.html"
 echo "- Test Output: tests/reports/test-output.log"
 if [ -d "tests/reports/coverage" ]; then
     echo "- Combined Coverage Report: tests/reports/coverage/index.html"
