@@ -185,8 +185,33 @@ EOF
 
 # Extract test results from log
 if [ -f "tests/reports/test-output.log" ]; then
-    # Look for unittest test results summary line
-    if grep -q "Ran [0-9]* test" tests/reports/test-output.log; then
+    # Look for pytest test results summary line (e.g., "329 passed in 2.64s")
+    if grep -q "passed in" tests/reports/test-output.log; then
+        TEST_SUMMARY=$(grep -E "[0-9]+ passed in" tests/reports/test-output.log | tail -1)
+        echo "$TEST_SUMMARY" >> tests/reports/test-summary.txt
+        
+        # Extract the actual test count from the summary
+        ACTUAL_TEST_COUNT=$(echo "$TEST_SUMMARY" | grep -oE "^[0-9]+" | head -1)
+        
+        # Check for passed/failed status
+        if echo "$TEST_SUMMARY" | grep -q "passed" && ! echo "$TEST_SUMMARY" | grep -q "failed\|error"; then
+            echo "Status: PASSED - All tests passed" >> tests/reports/test-summary.txt
+            FAILED_COUNT=0
+            PASSED_COUNT=$ACTUAL_TEST_COUNT
+        elif echo "$TEST_SUMMARY" | grep -q "failed\|error"; then
+            # Extract failure count from pytest output
+            FAILED_COUNT=$(echo "$TEST_SUMMARY" | grep -oE "[0-9]+ failed" | grep -oE "[0-9]+" || echo "0")
+            ERROR_COUNT=$(echo "$TEST_SUMMARY" | grep -oE "[0-9]+ error" | grep -oE "[0-9]+" || echo "0")
+            TOTAL_FAILED=$((FAILED_COUNT + ERROR_COUNT))
+            PASSED_COUNT=$((ACTUAL_TEST_COUNT - TOTAL_FAILED))
+            echo "Status: FAILED - $FAILED_COUNT failed, $ERROR_COUNT errors" >> tests/reports/test-summary.txt
+        else
+            FAILED_COUNT=0
+            PASSED_COUNT=$ACTUAL_TEST_COUNT
+        fi
+        echo "" >> tests/reports/test-summary.txt
+    # Fallback: Look for unittest test results summary line
+    elif grep -q "Ran [0-9]* test" tests/reports/test-output.log; then
         TEST_SUMMARY=$(grep -E "Ran [0-9]* test" tests/reports/test-output.log | tail -1)
         echo "$TEST_SUMMARY" >> tests/reports/test-summary.txt
         
@@ -210,6 +235,13 @@ if [ -f "tests/reports/test-output.log" ]; then
             FAILED_COUNT=0
             PASSED_COUNT=$ACTUAL_TEST_COUNT
         fi
+        echo "" >> tests/reports/test-summary.txt
+    fi
+    
+    # Look for pytest collection information
+    if grep -q "collected" tests/reports/test-output.log; then
+        COLLECTION_INFO=$(grep -E "collected [0-9]+ items" tests/reports/test-output.log | tail -1)
+        echo "Test Collection: $COLLECTION_INFO" >> tests/reports/test-summary.txt
         echo "" >> tests/reports/test-summary.txt
     fi
     
