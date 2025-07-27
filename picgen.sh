@@ -256,3 +256,217 @@ else
     echo "✅ All PlantUML files converted successfully!"
     echo "📁 Check the output directory for generated PNG images."
 fi
+
+# Generate diagram index HTML file
+echo "📄 Generating diagram index HTML file..."
+generate_diagram_index() {
+    local output_dir="$1"
+    local index_file="$output_dir/diagram_index.html"
+    
+    # Get current timestamp
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S UTC')
+    
+    # Find all PNG files
+    local png_files=$(find "$output_dir" -name "*.png" -type f | sort)
+    local png_count=$(echo "$png_files" | wc -l)
+    
+    # Find all PlantUML files
+    local puml_files=$(find "$output_dir" -name "*.puml" -type f | sort)
+    local puml_count=$(echo "$puml_files" | wc -l)
+    
+    # Create the HTML file
+    cat > "$index_file" << EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlantUML Diagrams - C to PlantUML Converter</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            line-height: 1.6; 
+            margin: 0; 
+            padding: 20px; 
+            background: #f6f8fa; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
+        .header { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 6px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+        }
+        .nav { 
+            background: #0366d6; 
+            color: white; 
+            padding: 15px 20px; 
+            border-radius: 6px; 
+            margin-bottom: 20px; 
+        }
+        .nav a { 
+            color: white; 
+            text-decoration: none; 
+            margin-right: 20px; 
+            font-weight: 500; 
+        }
+        .nav a:hover { 
+            text-decoration: underline; 
+        }
+        .stats { 
+            background: white; 
+            padding: 15px; 
+            border-radius: 6px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+        }
+        .diagram-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); 
+            gap: 20px; 
+            margin-top: 20px; 
+        }
+        .diagram-card { 
+            background: white; 
+            border-radius: 6px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+            overflow: hidden; 
+            transition: transform 0.2s; 
+        }
+        .diagram-card:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15); 
+        }
+        .diagram-card h3 { 
+            margin: 0; 
+            padding: 15px; 
+            background: #f1f3f4; 
+            border-bottom: 1px solid #e1e4e8; 
+            font-size: 16px; 
+            color: #24292e; 
+        }
+        .diagram-image { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+        }
+        .diagram-links { 
+            padding: 15px; 
+            background: #f8f9fa; 
+        }
+        .diagram-links a { 
+            display: inline-block; 
+            margin: 5px 10px 5px 0; 
+            padding: 5px 10px; 
+            background: #0366d6; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 4px; 
+            font-size: 12px; 
+        }
+        .diagram-links a:hover { 
+            background: #0256b3; 
+        }
+        .footer { 
+            text-align: center; 
+            margin-top: 40px; 
+            padding: 20px; 
+            color: #586069; 
+        }
+        .no-diagrams { 
+            background: white; 
+            padding: 40px; 
+            text-align: center; 
+            border-radius: 6px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="../index.html">🏠 Home</a>
+            <a href="../tests/reports/coverage/index.html">📊 Coverage</a>
+            <a href="../tests/reports/test_summary.html">📝 Tests</a>
+            <a href="diagram_index.html">📊 Diagrams</a>
+            <a href="../example/">📋 Examples</a>
+        </div>
+        
+        <div class="header">
+            <h1>📊 PlantUML Diagrams</h1>
+            <p>Generated diagrams from C/C++ source code analysis</p>
+            <p><strong>Generated:</strong> $timestamp</p>
+        </div>
+        
+        <div class="stats">
+            <h3>📈 Statistics</h3>
+            <p><strong>PNG Images:</strong> $png_count</p>
+            <p><strong>PlantUML Files:</strong> $puml_count</p>
+            <p><strong>Total Files:</strong> $((png_count + puml_count))</p>
+        </div>
+EOF
+
+    # Check if we have any PNG files
+    if [ -n "$png_files" ]; then
+        echo "        <div class=\"diagram-grid\">" >> "$index_file"
+        
+        # Process each PNG file
+        while IFS= read -r png_file; do
+            local filename=$(basename "$png_file")
+            local basename=$(basename "$png_file" .png)
+            local relative_path=$(echo "$png_file" | sed "s|^$output_dir/||")
+            
+            # Check if corresponding PlantUML file exists
+            local puml_file="$output_dir/${basename}.puml"
+            local puml_link=""
+            if [ -f "$puml_file" ]; then
+                local puml_relative=$(echo "$puml_file" | sed "s|^$output_dir/||")
+                puml_link="<a href=\"$puml_relative\">📄 Source</a>"
+            fi
+            
+            cat >> "$index_file" << EOF
+            
+            <div class="diagram-card">
+                <h3>$basename</h3>
+                <img src="$relative_path" alt="$basename diagram" class="diagram-image" loading="lazy">
+                <div class="diagram-links">
+                    <a href="$relative_path" target="_blank">🖼️ Full Size</a>
+                    $puml_link
+                </div>
+            </div>
+EOF
+        done <<< "$png_files"
+        
+        echo "        </div>" >> "$index_file"
+    else
+        cat >> "$index_file" << EOF
+        
+        <div class="no-diagrams">
+            <h3>📭 No Diagrams Found</h3>
+            <p>No PNG images were found in the output directory.</p>
+            <p>Run the conversion script to generate diagrams from PlantUML files.</p>
+        </div>
+EOF
+    fi
+    
+    cat >> "$index_file" << EOF
+        
+        <div class="footer">
+            <p>Generated by <a href="https://github.com/fischerjooo/generator_project">C to PlantUML Converter</a></p>
+            <p>Last updated: $timestamp</p>
+        </div>
+    </div>
+</body>
+</html>
+EOF
+    
+    echo "✅ Diagram index generated: $index_file"
+    echo "📊 Found $png_count PNG files and $puml_count PlantUML files"
+}
+
+# Generate the diagram index
+generate_diagram_index "."
