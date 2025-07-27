@@ -33,7 +33,7 @@ try:
         AssertionHelpers,
         MockObjectFactory,
         TestDataProviders,
-        TestProjectBuilder,
+        ProjectBuilder,
         create_temp_project,
         run_full_pipeline,
     )

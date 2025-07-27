@@ -13,10 +13,10 @@ from pathlib import Path
 
 # Import shared utilities for consistency
 try:
-    from tests.utils import TestProjectBuilder, TestDataProviders, create_temp_project
+    from tests.utils import ProjectBuilder, TestDataProviders, create_temp_project
 except ImportError:
     # Fallback if utils not available
-    TestProjectBuilder = None
+    ProjectBuilder = None
     TestDataProviders = None
     create_temp_project = None
 
@@ -30,8 +30,8 @@ class BaseFeatureTest(unittest.TestCase):
         self.test_files = []
         
         # Initialize project builder if available
-        if TestProjectBuilder:
-            self.project_builder = TestProjectBuilder(self.temp_dir)
+        if ProjectBuilder:
+            self.project_builder = ProjectBuilder(self.temp_dir)
 
     def tearDown(self):
         """Clean up test fixtures"""
