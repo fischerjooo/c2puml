@@ -21,6 +21,8 @@ Wrote HTML report to tests/reports/coverage/htmlcov/index.html
   Combined Coverage Report Generator
 ============================================================
 
+ℹ️  Parsing test results from: tests/reports/test-output.log
+✅ Parsed test results: 329 tests, 329 passed
 ℹ️  Generating coverage JSON data...
 
 ----------------------------------------
