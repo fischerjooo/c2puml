@@ -2,7 +2,7 @@
 
 A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/C++ projects and generates comprehensive PlantUML class diagrams showing structs, enums, unions, functions, global variables, macros, typedefs, and include relationships.
 
-## Test Coverage Reports
+## Reports
 
 - [📊 Combined Coverage Report](https://fischerjooo.github.io/generator_project/tests/reports/coverage/index.html) - Comprehensive coverage report with summary and detailed per-file analysis
 - [📝 Test Summary](https://fischerjooo.github.io/generator_project/tests/reports/test_summary.html) - Test execution summary and statistics
@@ -29,11 +29,11 @@ python3 -m pip install -e .
 
 ```bash
 # Parse C project and generate diagrams
-python3 -m c_to_plantuml.main --config example/config.json
+python3 -m main --config example/config.json
 
 # Or use individual steps
-python3 -m c_to_plantuml.main parse example/source
-python3 -m c_to_plantuml.main generate output/model.json
+python3 -m main parse example/source
+python3 -m main generate output/model.json
 ```
 
 ### Generate PNG Images
@@ -143,15 +143,8 @@ The project includes pre-configured VSCode settings for:
 # Run tests with coverage
 ./run_tests_with_coverage.sh
 
-# Format code
-black .
-isort .
-
-# Lint code
-flake8 .
-
-# Test PNG generation
-./test_picgen.sh
+# PNG generation
+./picgen.sh
 ```
 
 ### Git Hooks Setup
@@ -171,17 +164,6 @@ This installs a pre-commit hook that automatically runs:
 - **isort** import sorting check
 
 The hook will prevent commits if formatting issues are detected.
-
-## GitHub Workflow
-
-The repository includes an automated GitHub workflow that:
-- Triggers on pushes to main/master branch when .puml files change
-- Automatically installs Graphviz and PlantUML
-- Converts all .puml files to PNG images
-- Commits the generated images back to the repository
-- Uploads images as workflow artifacts
-
-The workflow is simplified and more reliable, removing complex Git operations and focusing on core functionality.
 
 ## License
 
