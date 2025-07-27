@@ -103,6 +103,12 @@ if [ "$HAS_COVERAGE" = true ]; then
     print_status "Generating HTML coverage reports..."
     python3 -m coverage html -d tests/reports/coverage/htmlcov
     
+    # Remove the .gitignore file created by coverage.py to allow HTML reports to be committed
+    if [ -f "tests/reports/coverage/htmlcov/.gitignore" ]; then
+        print_status "Removing .gitignore file to allow HTML coverage reports to be committed..."
+        rm tests/reports/coverage/htmlcov/.gitignore
+    fi
+    
     # Generate XML and JSON reports
     print_status "Generating XML and JSON reports..."
     python3 -m coverage xml -o tests/reports/coverage/coverage.xml
