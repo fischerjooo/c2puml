@@ -8,5 +8,46 @@
   "file_filters": {
     "include": [],
     "exclude": []
+  },
+  "element_filters": {
+    "structs": {
+      "include": [],
+      "exclude": []
+    },
+    "functions": {
+      "include": [],
+      "exclude": []
+    },
+    "enums": {
+      "include": [],
+      "exclude": []
+    },
+    "unions": {
+      "include": [],
+      "exclude": []
+    },
+    "macros": {
+      "include": [],
+      "exclude": []
+    },
+    "aliases": {
+      "include": [],
+      "exclude": []
+    }
+  },
+  "include_filters": {
+    "main.c": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
+    "utils.c": ["^math\\.h$", "^time\\.h$"]
+  },
+  "transformations": {
+    "remove": {
+      "structs": [],
+      "functions": [],
+      "macros": []
+    },
+    "rename": {
+      "structs": {},
+      "functions": {}
+    }
   }
 }

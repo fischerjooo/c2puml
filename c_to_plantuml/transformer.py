@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Transformer module for C to PlantUML converter - Step 2: Transform model based on configuration
+Transformer module for C to PlantUML converter - Step 2: Transform model based on 
+configuration
 """
 
 import json
@@ -38,7 +39,8 @@ class Transformer:
         Args:
             model_file: Input JSON model file path
             config_file: Configuration file path
-            output_file: Output transformed model file path (optional, defaults to model_file)
+            output_file: Output transformed model file path (optional, defaults to 
+                model_file)
 
         Returns:
             Path to the transformed model file
@@ -58,7 +60,9 @@ class Transformer:
         output_path = output_file or model_file
         self._save_model(transformed_model, output_path)
 
-        self.logger.info("Step 2 complete! Transformed model saved to: %s", output_path)
+        self.logger.info(
+            "Step 2 complete! Transformed model saved to: %s", output_path
+        )
 
         return output_path
 
@@ -132,14 +136,16 @@ class Transformer:
             model = self._process_include_relations(model, config["include_depth"])
 
         self.logger.info(
-            "Transformations complete. Model now has %d files", len(model.files)
+            "Transformations complete. Model now has %d files", 
+            len(model.files)
         )
         return model
 
     def _apply_file_filters(
         self, model: ProjectModel, filters: Dict[str, Any]
     ) -> ProjectModel:
-        """Apply user-configured file-level filters (important filtering already done in parser)"""
+        """Apply user-configured file-level filters (important filtering already 
+        done in parser)"""
         include_patterns = self._compile_patterns(filters.get("include", []))
         exclude_patterns = self._compile_patterns(filters.get("exclude", []))
 
@@ -153,7 +159,8 @@ class Transformer:
 
         model.files = filtered_files
         self.logger.debug(
-            "User file filtering: %d files after filtering", len(model.files)
+            "User file filtering: %d files after filtering", 
+            len(model.files)
         )
         return model
 
@@ -170,38 +177,53 @@ class Transformer:
         self, model: ProjectModel, include_filters: Dict[str, List[str]]
     ) -> ProjectModel:
         """Apply include filters for each root file based on regex patterns"""
-        self.logger.info("Applying include filters for %d root files", len(include_filters))
+        self.logger.info(
+            "Applying include filters for %d root files", len(include_filters)
+        )
         
         # Compile regex patterns for each root file
         compiled_filters = {}
         for root_file, patterns in include_filters.items():
             try:
-                compiled_filters[root_file] = [re.compile(pattern) for pattern in patterns]
-                self.logger.debug("Compiled %d patterns for root file: %s", len(patterns), root_file)
+                compiled_filters[root_file] = [
+                    re.compile(pattern) for pattern in patterns
+                ]
+                self.logger.debug(
+                    "Compiled %d patterns for root file: %s", 
+                    len(patterns), root_file
+                )
             except re.error as e:
-                self.logger.warning("Invalid regex pattern for root file %s: %s", root_file, e)
+                self.logger.warning(
+                    "Invalid regex pattern for root file %s: %s", root_file, e
+                )
                 # Skip invalid patterns for this root file
                 continue
         
         if not compiled_filters:
-            self.logger.warning("No valid include filters found, skipping include filtering")
+            self.logger.warning(
+                "No valid include filters found, skipping include filtering"
+            )
             return model
         
         # Apply filters to each file in the model
         for file_path, file_model in model.files.items():
-            # Find the root file for this file (the main C file that this file belongs to)
+            # Find the root file for this file (the main C file that this file 
+        # belongs to)
             root_file = self._find_root_file(file_path, file_model)
             
             if root_file in compiled_filters:
                 # Apply the filters for this root file
-                self._filter_file_includes(file_model, compiled_filters[root_file], root_file)
+                self._filter_file_includes(
+                    file_model, compiled_filters[root_file], root_file
+                )
         
         return model
     
     def _find_root_file(self, file_path: str, file_model: FileModel) -> str:
         """Find the root C file for a given file"""
         # For now, we'll use the filename as the root file identifier
-        # This can be enhanced later to support more sophisticated root file detection
+        # This can be enhanced later to support more sophisticated root file 
+        # detection
         filename = Path(file_path).name
         
         # If it's a .c file, it's its own root
@@ -215,8 +237,12 @@ class Transformer:
     def _filter_file_includes(
         self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
     ) -> None:
-        """Filter includes and include_relations for a file based on regex patterns"""
-        self.logger.debug("Filtering includes for file %s (root: %s)", file_model.relative_path, root_file)
+        """Filter includes and include_relations for a file based on regex 
+        patterns"""
+        self.logger.debug(
+            "Filtering includes for file %s (root: %s)", 
+            file_model.relative_path, root_file
+        )
         
         # Filter includes
         original_includes_count = len(file_model.includes)
@@ -226,7 +252,9 @@ class Transformer:
             if self._matches_any_pattern(include_name, patterns):
                 filtered_includes.add(include_name)
             else:
-                self.logger.debug("Filtered out include: %s (root: %s)", include_name, root_file)
+                self.logger.debug(
+                    "Filtered out include: %s (root: %s)", include_name, root_file
+                )
         
         file_model.includes = filtered_includes
         
@@ -239,14 +267,19 @@ class Transformer:
             if self._matches_any_pattern(relation.included_file, patterns):
                 filtered_relations.append(relation)
             else:
-                self.logger.debug("Filtered out include relation: %s -> %s (root: %s)", 
-                                relation.source_file, relation.included_file, root_file)
+                self.logger.debug(
+                    "Filtered out include relation: %s -> %s (root: %s)", 
+                    relation.source_file, relation.included_file, root_file
+                )
         
         file_model.include_relations = filtered_relations
         
-        self.logger.debug("Include filtering for %s: includes %d->%d, relations %d->%d", 
-                         file_model.relative_path, original_includes_count, len(file_model.includes),
-                         original_relations_count, len(file_model.include_relations))
+        self.logger.debug(
+            "Include filtering for %s: includes %d->%d, relations %d->%d", 
+            file_model.relative_path, original_includes_count, 
+            len(file_model.includes), original_relations_count, 
+            len(file_model.include_relations)
+        )
     
     def _matches_any_pattern(self, text: str, patterns: List[re.Pattern]) -> bool:
         """Check if text matches any of the given regex patterns"""
@@ -363,7 +396,8 @@ class Transformer:
         for file_path in target_files:
             if file_path in model.files:
                 # Apply addition logic here
-                # This would handle adding new elements like structs, enums, functions, etc.
+                # This would handle adding new elements like structs, enums, 
+                # functions, etc.
                 self.logger.debug("Applying additions to file: %s", file_path)
 
         return model
@@ -380,7 +414,8 @@ class Transformer:
         for file_path in target_files:
             if file_path in model.files:
                 # Apply removal logic here
-                # This would handle removing elements like structs, enums, functions, etc.
+                # This would handle removing elements like structs, enums, 
+                # functions, etc.
                 self.logger.debug("Applying removals to file: %s", file_path)
 
         return model
@@ -392,7 +427,8 @@ class Transformer:
         self.logger.info("Processing include relations with max depth: %d", max_depth)
 
         # Create a mapping of filenames to their models for quick lookup
-        # Since we now use relative paths as keys, we need to map by filename for include processing
+        # Since we now use relative paths as keys, we need to map by filename 
+        # for include processing
         file_map = {}
         for file_model in model.files.values():
             filename = Path(file_model.relative_path).name
@@ -432,7 +468,8 @@ class Transformer:
                     # Prevent self-referencing include relations
                     if file_model.relative_path == included_filename_key:
                         self.logger.debug(
-                            "Skipping self-include relation for %s", file_model.relative_path
+                            "Skipping self-include relation for %s", 
+                            file_model.relative_path
                         )
                         continue
 
@@ -452,9 +489,16 @@ class Transformer:
                     continue
 
                 # Create include relation using appropriate paths
-                # For tests (tmp directories), use full paths; otherwise use filenames
-                source_file = file_model.file_path if "tmp" in file_model.file_path else file_model.relative_path
-                included_file = included_filename if "tmp" in included_filename else included_filename_key
+                # For tests (tmp directories), use full paths; otherwise use 
+                # filenames
+                source_file = (
+                    file_model.file_path if "tmp" in file_model.file_path 
+                    else file_model.relative_path
+                )
+                included_file = (
+                    included_filename if "tmp" in included_filename 
+                    else included_filename_key
+                )
                 
                 include_relation = IncludeRelation(
                     source_file=source_file,
@@ -477,7 +521,8 @@ class Transformer:
     def _find_included_file(
         self, include_name: str, project_root: str
     ) -> Optional[str]:
-        """Find the actual file path for an include using simplified filename matching"""
+        """Find the actual file path for an include using simplified filename 
+        matching"""
         # Since we now use filenames as keys, we can simplify this significantly
         # Just return the filename if it exists in the project files
         
@@ -500,7 +545,8 @@ class Transformer:
             for ext in extensions:
                 file_path = search_path / f"{include_name}{ext}"
                 if file_path.exists():
-                    # For backward compatibility with tests, return full path if it's a test
+                    # For backward compatibility with tests, return full path if 
+                    # it's a test
                     # Otherwise return filename for simplified tracking
                     if "tmp" in str(file_path):
                         return str(file_path.resolve())
