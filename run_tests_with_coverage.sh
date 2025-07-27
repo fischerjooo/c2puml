@@ -99,6 +99,12 @@ if [ "$HAS_COVERAGE" = true ]; then
     # Create coverage directory
     mkdir -p tests/reports/coverage
     
+    # Clean htmlcov directory if it exists
+    if [ -d "tests/reports/coverage/htmlcov" ]; then
+        print_status "Cleaning existing htmlcov directory..."
+        rm -rf tests/reports/coverage/htmlcov/*
+    fi
+    
     # Generate HTML coverage reports
     print_status "Generating HTML coverage reports..."
     python3 -m coverage html -d tests/reports/coverage/htmlcov
