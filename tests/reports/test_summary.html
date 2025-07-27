@@ -63,7 +63,7 @@
             font-size: 14px;
             text-transform: uppercase;
             color: white;
-            background: #4caf50;
+            background: #f44336;
         }
         .failed-tests {
             background: white;
@@ -132,26 +132,26 @@
     <div class="container">
 
         <h1>Test Results Summary</h1>
-        <div class="timestamp">Generated: 2025-07-27 15:38:00</div>
+        <div class="timestamp">Generated: 2025-07-27 15:42:35</div>
 
         <div class="summary-card">
             <h2 style="margin-top: 0;">Test Execution Results</h2>
             <div style="margin-bottom: 20px;">
-                <span class="status-badge">PASSED</span>
-                <span style="margin-left: 10px; color: #666;">Execution completed in 1.09 seconds</span>
+                <span class="status-badge">UNKNOWN</span>
+                <span style="margin-left: 10px; color: #666;">Execution completed in 2.66 seconds</span>
             </div>
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-value success-rate">100.0%</div>
+                    <div class="stat-value success-rate">0.0%</div>
                     <div class="stat-label">Success Rate</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">329</div>
+                    <div class="stat-value">0</div>
                     <div class="stat-label">Total Tests</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" style="color: #4caf50">329</div>
+                    <div class="stat-value" style="color: #4caf50">0</div>
                     <div class="stat-label">Passed</div>
                 </div>
                 <div class="stat-card">
@@ -170,20 +170,15 @@
 
             <div class="test-details">
                 <h3>Test Execution Details</h3>
-                <p><strong>Total Tests:</strong> 329</p>
-                <p><strong>Passed:</strong> 329 (100.0%)</p>
+                <p><strong>Total Tests:</strong> 0</p>
+                <p><strong>Passed:</strong> 0 (0.0%)</p>
                 <p><strong>Failed:</strong> 0 (0.0%)</p>
                 <p><strong>Skipped:</strong> 0 (0.0%)</p>
                 <p><strong>Errors:</strong> 0 (0.0%)</p>
-                <p><strong>Execution Time:</strong> 1.09 seconds</p>
-                <p><strong>Overall Status:</strong> PASSED</p>
+                <p><strong>Execution Time:</strong> 2.66 seconds</p>
+                <p><strong>Overall Status:</strong> UNKNOWN</p>
             </div>
 
-            
-            <div class="failed-tests">
-                <div class="failed-header">Failed Tests Details</div>
-                <div class="failed-item">Test that generate command works when called independently without model files ... 2025-07-27 15:37:59,058 - root - INFO - Using config: /tmp/tmp67tdqo1h/config.json</div><div class="failed-item">2025-07-27 15:37:59,059 - root - INFO - Output folder: /tmp/tmp67tdqo1h/output</div><div class="failed-item">2025-07-27 15:37:59,059 - root - ERROR - No model file found for generation.</div><div class="failed-item"></div><div class="failed-item"></div><div class="failed-item">Test that generate mode works when called independently without model files ... 2025-07-27 15:37:59,631 - root - INFO - Using config: /tmp/tmpudf2f5iq/config.json</div><div class="failed-item">2025-07-27 15:37:59,631 - root - INFO - Output folder: /tmp/tmpudf2f5iq/output</div><div class="failed-item">2025-07-27 15:37:59,631 - root - ERROR - No model file found for generation.</div><div class="failed-item"></div><div class="failed-item"></div><div class="failed-item">Test that invalid source folder raises an error ... 2025-07-27 15:37:59,982 - c_to_plantuml.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders</div><div class="failed-item">2025-07-27 15:37:59,982 - c_to_plantuml.parser - INFO - Parsing source folder 1/1: /nonexistent/path</div><div class="failed-item">2025-07-27 15:37:59,982 - c_to_plantuml.parser - ERROR - Failed to parse source folder /nonexistent/path: Project root not found: /nonexistent/path</div><div class="failed-item">ok</div><div class="failed-item">test_multiple_source_folders_parsing (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_multiple_source_folders_parsing)</div>
-            </div>
             
 
         </div>
