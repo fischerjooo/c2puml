@@ -1,11 +1,11 @@
 ============================= test session starts ==============================
-platform linux -- Python 3.13.3, pytest-8.4.1, pluggy-1.6.0 -- /usr/bin/python3
+platform linux -- Python 3.9.23, pytest-8.4.1, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.9.23/x64/bin/python3
 cachedir: .pytest_cache
-metadata: {'Python': '3.13.3', 'Platform': 'Linux-6.12.8+-x86_64-with-glibc2.41', 'Packages': {'pytest': '8.4.1', 'pluggy': '1.6.0'}, 'Plugins': {'metadata': '3.1.1', 'benchmark': '5.1.0', 'cov': '6.2.1', 'xdist': '3.8.0', 'mock': '3.14.1', 'html': '4.1.1'}}
 benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
-rootdir: /workspace
+metadata: {'Python': '3.9.23', 'Platform': 'Linux-6.11.0-1018-azure-x86_64-with-glibc2.39', 'Packages': {'pytest': '8.4.1', 'pluggy': '1.6.0'}, 'Plugins': {'cov': '6.2.1', 'xdist': '3.8.0', 'html': '4.1.1', 'benchmark': '5.1.0', 'mock': '3.14.1', 'metadata': '3.1.1'}, 'CI': 'true', 'JAVA_HOME': '/usr/lib/jvm/temurin-17-jdk-amd64'}
+rootdir: /home/runner/work/generator_project/generator_project
 configfile: pytest.ini
-plugins: metadata-3.1.1, benchmark-5.1.0, cov-6.2.1, xdist-3.8.0, mock-3.14.1, html-4.1.1
+plugins: cov-6.2.1, xdist-3.8.0, html-4.1.1, benchmark-5.1.0, mock-3.14.1, metadata-3.1.1
 collecting ... collected 329 items
 
 tests/feature/test_cli_feature.py::TestCLIFeature::test_generate_command_isolation PASSED [  0%]
@@ -340,8 +340,8 @@ tests/unit/test_verifier.py::TestModelVerifier::test_valid_model_passes_verifica
 
 =============================== warnings summary ===============================
 tests/utils.py:21
-  /workspace/tests/utils.py:21: PytestCollectionWarning: cannot collect test class 'TestProjectBuilder' because it has a __init__ constructor (from: tests/unit/test_include_processing.py)
+  /home/runner/work/generator_project/generator_project/tests/utils.py:21: PytestCollectionWarning: cannot collect test class 'TestProjectBuilder' because it has a __init__ constructor (from: tests/unit/test_include_processing.py)
     class TestProjectBuilder:
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======================== 329 passed, 1 warning in 1.65s ========================
+======================== 329 passed, 1 warning in 2.76s ========================
