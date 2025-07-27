@@ -100,7 +100,7 @@ class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<typedef>> #LightYellow
 
 class "operation_set_t" as TYPEDEF_OPERATION_SET_T <<typedef>> #LightYellow
 {
-    + void(* callbacks[3])(int , char *) callbacks
+    + void(*[ 3])( int , char *) callbacks
     + int count
     + math_operation_t[5] operations
 }

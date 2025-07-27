@@ -910,7 +910,7 @@
             },
             {
               "name": "callbacks",
-              "type": "void(* callbacks[3])(int , char *)",
+              "type": "void(*[ 3])( int , char *)",
               "value": null
             }
           ],

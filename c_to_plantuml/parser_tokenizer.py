@@ -1205,9 +1205,13 @@ def find_struct_fields(
                 if name_end is not None:
                     field_name = " ".join(t.value for t in field_tokens[name_start:name_end])
                     
-                    # Format the type properly - preserve spaces between tokens but not around brackets/parentheses
+                    # Format the type properly - exclude the field name from the type
+                    # For void (*callbacks[3])(int, char*), we want type = void(*[3])(int, char*) and name = callbacks
                     formatted_tokens = []
-                    for j, token in enumerate(field_tokens):
+                    
+                    # Add tokens before the field name (e.g., "void ( *")
+                    for j in range(name_start):
+                        token = field_tokens[j]
                         if token.type in [TokenType.LPAREN, TokenType.RPAREN, TokenType.LBRACKET, TokenType.RBRACKET]:
                             # Don't add spaces around brackets/parentheses
                             formatted_tokens.append(token.value)
@@ -1223,6 +1227,17 @@ def find_struct_fields(
                         else:
                             # No space before first token
                             formatted_tokens.append(token.value)
+                    
+                    # Add the array brackets (e.g., "[3]")
+                    for j in range(name_end, len(field_tokens)):
+                        token = field_tokens[j]
+                        if token.type in [TokenType.LPAREN, TokenType.RPAREN, TokenType.LBRACKET, TokenType.RBRACKET]:
+                            # Don't add spaces around brackets/parentheses
+                            formatted_tokens.append(token.value)
+                        else:
+                            # Add space before token
+                            formatted_tokens.append(" " + token.value)
+                    
                     field_type = "".join(formatted_tokens)
                     
                     # Validate and add the field
