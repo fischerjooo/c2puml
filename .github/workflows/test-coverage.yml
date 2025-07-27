@@ -15,6 +15,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write
 
     strategy:
       matrix:
@@ -246,13 +247,31 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { data: runs } = await github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'deploy-website.yml',
-              ref: context.ref,
-              inputs: {
-                message: `Auto-deploy after test coverage run #${context.runNumber}`
-              }
-            });
-            console.log('✅ Website deployment workflow triggered successfully');
+            try {
+              console.log('🚀 Attempting to trigger website deployment workflow...');
+              console.log(`Repository: ${context.repo.owner}/${context.repo.repo}`);
+              console.log(`Workflow: deploy-website.yml`);
+              console.log(`Ref: ${context.ref}`);
+              console.log(`Run Number: ${context.runNumber}`);
+              
+              const { data: runs } = await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'deploy-website.yml',
+                ref: context.ref,
+                inputs: {
+                  message: `Auto-deploy after test coverage run #${context.runNumber}`
+                }
+              });
+              
+              console.log('✅ Website deployment workflow triggered successfully');
+              console.log('Response:', JSON.stringify(runs, null, 2));
+            } catch (error) {
+              console.error('❌ Failed to trigger website deployment workflow:');
+              console.error('Error:', error.message);
+              console.error('Status:', error.status);
+              console.error('Response:', error.response?.data);
+              
+              // Don't fail the entire workflow if deployment trigger fails
+              console.log('⚠️ Continuing workflow execution despite deployment trigger failure');
+            }
