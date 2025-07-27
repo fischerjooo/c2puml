@@ -64,12 +64,91 @@ else
     print_status "Coverage module not available, running tests without coverage"
 fi
 
-# Run all tests using the existing test runner
+# Step 1: Always run all tests and examples to collect coverage data
 if [ "$HAS_COVERAGE" = true ]; then
-    print_status "Running all unit tests with coverage..."
-    python3 run_all_tests.py --coverage --verbosity 2 2>&1 | tee tests/reports/test-output.log
+    print_header "Step 1: Collecting Coverage Data from All Tests and Examples"
+    
+    # Clear any existing coverage data
+    print_status "Clearing any existing coverage data..."
+    python3 -m coverage erase
+    
+    # Run all tests with coverage
+    print_status "Running all tests with coverage..."
+    python3 -m coverage run -m pytest -v 2>&1 | tee tests/reports/test-output.log
+    
+    # Run examples if they exist
+    if [ -d "examples" ]; then
+        print_status "Running examples with coverage..."
+        for example in examples/*.py; do
+            if [ -f "$example" ]; then
+                print_status "Running example: $example"
+                python3 -m coverage run -a "$example"
+            fi
+        done
+    fi
+    
+    # Run the C to PlantUML example with coverage
+    if [ -f "run_example_with_coverage.py" ]; then
+        print_status "Running C to PlantUML example with coverage..."
+        python3 run_example_with_coverage.py
+    fi
+    
+    # Step 2: Generate comprehensive coverage reports
+    print_header "Step 2: Generating Comprehensive Coverage Reports"
+    
+    # Create coverage directory
+    mkdir -p tests/reports/coverage
+    
+    # Clean htmlcov directory if it exists
+    if [ -d "tests/reports/coverage/htmlcov" ]; then
+        print_status "Cleaning existing htmlcov directory..."
+        rm -rf tests/reports/coverage/htmlcov/*
+    fi
+    
+    # Generate HTML coverage reports
+    print_status "Generating HTML coverage reports..."
+    python3 -m coverage html -d tests/reports/coverage/htmlcov
+    
+    # Remove the .gitignore file created by coverage.py to allow HTML reports to be committed
+    if [ -f "tests/reports/coverage/htmlcov/.gitignore" ]; then
+        print_status "Removing .gitignore file to allow HTML coverage reports to be committed..."
+        rm tests/reports/coverage/htmlcov/.gitignore
+    fi
+    
+    # Generate XML and JSON reports
+    print_status "Generating XML and JSON reports..."
+    python3 -m coverage xml -o tests/reports/coverage/coverage.xml
+    python3 -m coverage json -o tests/reports/coverage/coverage.json
+    
+    # Generate terminal report
+    print_status "Generating terminal coverage report..."
+    python3 -m coverage report -m > tests/reports/coverage/coverage_report.txt
+    
+    # Step 3: Verify all reports were generated
+    print_header "Step 3: Verifying All Reports Were Generated"
+    
+    # Verify HTML reports exist
+    if [ -d "tests/reports/coverage/htmlcov" ]; then
+        print_success "HTML coverage reports generated successfully"
+        ls -la tests/reports/coverage/htmlcov/ | head -5
+    else
+        print_error "Failed to generate HTML coverage reports"
+        exit 1
+    fi
+    
+    # Verify other reports exist
+    if [ -f "tests/reports/coverage/coverage.xml" ]; then
+        print_success "XML coverage report generated"
+    fi
+    
+    if [ -f "tests/reports/coverage/coverage.json" ]; then
+        print_success "JSON coverage report generated"
+    fi
+    
+    print_success "All coverage reports generated successfully!"
 else
-    print_status "Running all unit tests..."
+    # Fallback: Run all tests using the existing test runner without coverage
+    print_status "Running all unit tests without coverage..."
     python3 run_all_tests.py --verbosity 2 2>&1 | tee tests/reports/test-output.log
 fi
 
@@ -81,19 +160,7 @@ else
     print_error "Some tests failed!"
 fi
 
-# Run example generation with coverage for execution coverage
-if [ "$HAS_COVERAGE" = true ] && [ $TEST_EXIT_CODE -eq 0 ]; then
-    print_header "Running Example Generation for Execution Coverage"
-    print_status "Executing C to PlantUML converter on example project..."
-    
-    if python3 run_example_with_coverage.py 2>&1 | tee -a tests/reports/test-output.log; then
-        print_success "Example generation completed successfully"
-        print_info "This improves coverage by exercising the main execution paths"
-    else
-        print_error "Example generation failed"
-        print_info "Coverage data was still collected for executed code paths"
-    fi
-fi
+
 
 # Run example tests if run_example.sh exists
 if [ -f "run_example.sh" ]; then
@@ -118,8 +185,33 @@ EOF
 
 # Extract test results from log
 if [ -f "tests/reports/test-output.log" ]; then
-    # Look for unittest test results summary line
-    if grep -q "Ran [0-9]* test" tests/reports/test-output.log; then
+    # Look for pytest test results summary line (e.g., "329 passed in 2.64s")
+    if grep -q "passed in" tests/reports/test-output.log; then
+        TEST_SUMMARY=$(grep -E "[0-9]+ passed in" tests/reports/test-output.log | tail -1)
+        echo "$TEST_SUMMARY" >> tests/reports/test-summary.txt
+        
+        # Extract the actual test count from the summary
+        ACTUAL_TEST_COUNT=$(echo "$TEST_SUMMARY" | grep -oE "^[0-9]+" | head -1)
+        
+        # Check for passed/failed status
+        if echo "$TEST_SUMMARY" | grep -q "passed" && ! echo "$TEST_SUMMARY" | grep -q "failed\|error"; then
+            echo "Status: PASSED - All tests passed" >> tests/reports/test-summary.txt
+            FAILED_COUNT=0
+            PASSED_COUNT=$ACTUAL_TEST_COUNT
+        elif echo "$TEST_SUMMARY" | grep -q "failed\|error"; then
+            # Extract failure count from pytest output
+            FAILED_COUNT=$(echo "$TEST_SUMMARY" | grep -oE "[0-9]+ failed" | grep -oE "[0-9]+" || echo "0")
+            ERROR_COUNT=$(echo "$TEST_SUMMARY" | grep -oE "[0-9]+ error" | grep -oE "[0-9]+" || echo "0")
+            TOTAL_FAILED=$((FAILED_COUNT + ERROR_COUNT))
+            PASSED_COUNT=$((ACTUAL_TEST_COUNT - TOTAL_FAILED))
+            echo "Status: FAILED - $FAILED_COUNT failed, $ERROR_COUNT errors" >> tests/reports/test-summary.txt
+        else
+            FAILED_COUNT=0
+            PASSED_COUNT=$ACTUAL_TEST_COUNT
+        fi
+        echo "" >> tests/reports/test-summary.txt
+    # Fallback: Look for unittest test results summary line
+    elif grep -q "Ran [0-9]* test" tests/reports/test-output.log; then
         TEST_SUMMARY=$(grep -E "Ran [0-9]* test" tests/reports/test-output.log | tail -1)
         echo "$TEST_SUMMARY" >> tests/reports/test-summary.txt
         
@@ -143,6 +235,13 @@ if [ -f "tests/reports/test-output.log" ]; then
             FAILED_COUNT=0
             PASSED_COUNT=$ACTUAL_TEST_COUNT
         fi
+        echo "" >> tests/reports/test-summary.txt
+    fi
+    
+    # Look for pytest collection information
+    if grep -q "collected" tests/reports/test-output.log; then
+        COLLECTION_INFO=$(grep -E "collected [0-9]+ items" tests/reports/test-output.log | tail -1)
+        echo "Test Collection: $COLLECTION_INFO" >> tests/reports/test-summary.txt
         echo "" >> tests/reports/test-summary.txt
     fi
     
@@ -198,22 +297,12 @@ fi
 
 print_success "Test summary generated at: tests/reports/test-summary.txt"
 
-# If coverage module is available and we ran with coverage, generate combined coverage report
-if [ "$HAS_COVERAGE" = true ] && grep -q "coverage report" tests/reports/test-output.log; then
-    print_header "Generating Combined Coverage Report"
-    
-    print_status "Generating comprehensive coverage reports (summary + detailed per-file)..."
-    if python3 generate_combined_coverage.py --output-dir tests/reports/coverage 2>&1 | tee tests/reports/coverage-generation.log; then
-        print_success "Combined coverage reports generated successfully!"
-        print_info "Reports include:"
-        print_info "  - Overall coverage summary"
-        print_info "  - Detailed per-file coverage with line-by-line analysis"
-        print_info "  - Standard HTML coverage report"
-        print_info "  - XML and JSON exports"
-    else
-        print_error "Failed to generate combined coverage reports"
-        print_info "Check tests/reports/coverage-generation.log for details"
-    fi
+# Generate HTML test summary
+print_status "Generating HTML test summary..."
+if python3 generate_test_summary_html.py --log-file tests/reports/test-output.log --output-file tests/reports/test_summary.html; then
+    print_success "HTML test summary generated at: tests/reports/test_summary.html"
+else
+    print_warning "Failed to generate HTML test summary, continuing with text summary only"
 fi
 
 # Display summary
@@ -244,6 +333,7 @@ echo ""
 echo "🔗 Report Links:"
 echo "----------------"
 echo "- Test Summary: tests/reports/test-summary.txt"
+echo "- HTML Test Summary: tests/reports/test_summary.html"
 echo "- Test Output: tests/reports/test-output.log"
 if [ -d "tests/reports/coverage" ]; then
     echo "- Combined Coverage Report: tests/reports/coverage/index.html"
