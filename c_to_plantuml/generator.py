@@ -320,37 +320,51 @@ class PlantUMLGenerator:
                 inside_struct = False
                 nested_content = []
                 
-                for i, line in enumerate(alias_lines):
-                    line = line.strip()
-                    
-                    if i == 0:
-                        lines.append(f"    + {line}")
-                    elif line.startswith("struct {"):
-                        # Start collecting nested struct content
-                        inside_struct = True
-                        nested_content = []
-                    elif line == "}":
-                        if inside_struct:
-                            # Close nested struct with flattened content
-                            if nested_content:
-                                content_str = "; ".join(nested_content)
-                                lines.append(f"    + struct {{ {content_str} }}")
-                            else:
-                                lines.append(f"    + struct {{ }}")
-                            inside_struct = False
+                # Check if this is a truncated typedef (missing closing parenthesis or brace)
+                if (alias_data.original_type.strip().endswith('(') or 
+                    alias_data.original_type.strip().endswith('nested1') or
+                    alias_data.original_type.strip().endswith('{')) and len(alias_lines) > 1:
+                    # This is likely a truncated function pointer typedef
+                    # Try to reconstruct a more complete signature
+                    first_line = alias_lines[0].strip()
+                    if '(' in first_line and not first_line.endswith(')'):
+                        # Add ellipsis to indicate truncation
+                        lines.append(f"    + {first_line}...)")
+                    else:
+                        lines.append(f"    + {first_line}")
+                else:
+                    # Normal multi-line processing
+                    for i, line in enumerate(alias_lines):
+                        line = line.strip()
+                        
+                        if i == 0:
+                            lines.append(f"    + {line}")
+                        elif line.startswith("struct {"):
+                            # Start collecting nested struct content
+                            inside_struct = True
                             nested_content = []
-                        else:
-                            lines.append(f"    }}")
-                    elif line and line != "}":
-                        if inside_struct:
-                            nested_content.append(line)  # Collect nested content
-                        else:
-                            lines.append(f"+ {line}")
-                
-                # If we were inside a struct but didn't find a closing brace, add one
-                if inside_struct and nested_content:
-                    content_str = "; ".join(nested_content)
-                    lines.append(f"    + struct {{ {content_str} }}")
+                        elif line == "}":
+                            if inside_struct:
+                                # Close nested struct with flattened content
+                                if nested_content:
+                                    content_str = "; ".join(nested_content)
+                                    lines.append(f"    + struct {{ {content_str} }}")
+                                else:
+                                    lines.append(f"    + struct {{ }}")
+                                inside_struct = False
+                                nested_content = []
+                            else:
+                                lines.append(f"    }}")
+                        elif line and line != "}":
+                            if inside_struct:
+                                nested_content.append(line)  # Collect nested content
+                            else:
+                                lines.append(f"+ {line}")
+                    
+                    # If we were inside a struct but didn't find a closing brace, add one
+                    if inside_struct and nested_content:
+                        content_str = "; ".join(nested_content)
+                        lines.append(f"    + struct {{ {content_str} }}")
                 lines.append("}")
                 lines.append("")
 
