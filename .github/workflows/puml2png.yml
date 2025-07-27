@@ -13,6 +13,16 @@ on:
         required: false
         default: true
         type: boolean
+  workflow_call:
+    inputs:
+      output_folder:
+        description: 'Output folder containing .puml files'
+        required: false
+        type: string
+      commit_changes:
+        description: 'Commit generated images to repository'
+        required: false
+        type: boolean
   push:
     paths:
       - 'output/**/*.puml'
@@ -26,6 +36,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write
     
     steps:
     - name: Checkout code
@@ -80,8 +91,10 @@ jobs:
         
     - name: List .puml files
       run: |
-        echo "📁 Listing .puml files in ${{ github.event.inputs.output_folder || 'output' }} directory:"
-        find ${{ github.event.inputs.output_folder || 'output' }} -name "*.puml" -type f || echo "No .puml files found"
+        # Use input from workflow_call if available, otherwise use workflow_dispatch input or default
+        OUTPUT_FOLDER="${{ github.event.inputs.output_folder || 'output' }}"
+        echo "📁 Listing .puml files in $OUTPUT_FOLDER directory:"
+        find $OUTPUT_FOLDER -name "*.puml" -type f || echo "No .puml files found"
         
     - name: Run PNG generation
       run: |
@@ -118,7 +131,7 @@ jobs:
         fi
         
     - name: Commit and push changes
-      if: ${{ github.event.inputs.commit_changes != 'false' && steps.check_changes.outputs.no_changes != 'true' }}
+      if: ${{ (github.event.inputs.commit_changes != 'false' && steps.check_changes.outputs.no_changes != 'true') || (github.event_name == 'workflow_call' && github.event.inputs.commit_changes != 'false' && steps.check_changes.outputs.no_changes != 'true') }}
       run: |
         echo "📝 Committing generated images to repository..."
         
@@ -154,7 +167,7 @@ jobs:
         fi
         
     - name: Skip commit (disabled by user)
-      if: ${{ github.event.inputs.commit_changes == 'false' }}
+      if: ${{ (github.event.inputs.commit_changes == 'false') || (github.event_name == 'workflow_call' && github.event.inputs.commit_changes == 'false') }}
       run: |
         echo "⏭️ Skipping commit as requested by user"
         
@@ -164,3 +177,19 @@ jobs:
         name: plantuml-png-images
         path: output/*.png
         retention-days: 30
+
+    - name: 🚀 Trigger Website Deployment
+      if: success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: runs } = await github.rest.actions.createWorkflowDispatch({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            workflow_id: 'deploy-website.yml',
+            ref: context.ref,
+            inputs: {
+              message: `Auto-deploy after PlantUML conversion run #${context.runNumber}`
+            }
+          });
+          console.log('✅ Website deployment workflow triggered successfully after PlantUML conversion');
