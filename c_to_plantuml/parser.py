@@ -946,7 +946,19 @@ class CParser:
             ):
                 # typedef ret (*name)(...)
                 typedef_name = all_tokens[i + 3].value
-                original_type = " ".join(t.value for t in all_tokens)
+                # Fix: Properly format function pointer type - preserve spaces between tokens but not around parentheses
+                formatted_tokens = []
+                for j, token in enumerate(all_tokens):
+                    if token.type in [TokenType.LPAREN, TokenType.RPAREN]:
+                        # Don't add spaces around parentheses
+                        formatted_tokens.append(token.value)
+                    elif j > 0 and all_tokens[j-1].type not in [TokenType.LPAREN, TokenType.RPAREN]:
+                        # Add space before token if previous token wasn't a parenthesis
+                        formatted_tokens.append(" " + token.value)
+                    else:
+                        # No space before token
+                        formatted_tokens.append(token.value)
+                original_type = "".join(formatted_tokens)
                 return (typedef_name, original_type)
 
         # Array typedef: typedef type name[size];
@@ -957,7 +969,19 @@ class CParser:
                 and all_tokens[i - 1].type == TokenType.IDENTIFIER
             ):
                 typedef_name = all_tokens[i - 1].value
-                original_type = " ".join(t.value for t in all_tokens)
+                # Fix: Properly format array type - preserve spaces between tokens but not around brackets
+                formatted_tokens = []
+                for j, token in enumerate(all_tokens):
+                    if token.type in [TokenType.LBRACKET, TokenType.RBRACKET]:
+                        # Don't add spaces around brackets
+                        formatted_tokens.append(token.value)
+                    elif j > 0 and all_tokens[j-1].type not in [TokenType.LBRACKET, TokenType.RBRACKET]:
+                        # Add space before token if previous token wasn't a bracket
+                        formatted_tokens.append(" " + token.value)
+                    else:
+                        # No space before token
+                        formatted_tokens.append(token.value)
+                original_type = "".join(formatted_tokens)
                 return (typedef_name, original_type)
 
         # Pointer typedef: typedef type * name;
@@ -967,7 +991,16 @@ class CParser:
                 and all_tokens[i + 1].type == TokenType.IDENTIFIER
             ):
                 typedef_name = all_tokens[i + 1].value
-                original_type = " ".join(t.value for t in all_tokens)
+                # Fix: Properly format pointer type - preserve spaces between tokens
+                formatted_tokens = []
+                for j, token in enumerate(all_tokens):
+                    if j > 0:
+                        # Add space before token
+                        formatted_tokens.append(" " + token.value)
+                    else:
+                        # No space before first token
+                        formatted_tokens.append(token.value)
+                original_type = "".join(formatted_tokens)
                 return (typedef_name, original_type)
 
         # Simple typedef: the last token should be the typedef name, everything else is the type
@@ -1318,8 +1351,12 @@ class CParser:
             if param_name and param_name.strip() and param_type and param_type.strip():
                 return Field(name=param_name.strip(), type=param_type.strip())
             else:
-                # Fallback for invalid parameters
-                return Field(name="unnamed", type="unknown")
+                # Fallback for invalid parameters - try to reconstruct the full parameter
+                full_param = " ".join(t.value for t in param_tokens)
+                if full_param.strip():
+                    return Field(name="unnamed", type=full_param.strip())
+                else:
+                    return Field(name="unnamed", type="unknown")
         elif len(param_tokens) == 1:
             # Single token - might be just type (like "void") or name
             token_value = param_tokens[0].value
@@ -1336,9 +1373,9 @@ class CParser:
             ]:
                 return Field(name="unnamed", type=token_value)
             else:
-                # If we can't determine the type, use 'unknown' as a fallback
+                # If we can't determine the type, use the token value as type
                 if token_value and token_value.strip():
-                    return Field(name=token_value.strip(), type="unknown")
+                    return Field(name="unnamed", type=token_value.strip())
                 else:
                     return Field(name="unnamed", type="unknown")
 

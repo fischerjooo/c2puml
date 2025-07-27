@@ -118,22 +118,22 @@ class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 
 class "basic_callback_t" as TYPEDEF_BASIC_CALLBACK_T <<typedef>> #LightYellow
 {
-    + int ( * basic_callback_t ) ( void )
+    + int(* basic_callback_t)(void)
 }
 
 class "feature_callback_t" as TYPEDEF_FEATURE_CALLBACK_T <<typedef>> #LightYellow
 {
-    + int ( * feature_callback_t ) ( enabled_feature_t * feature )
+    + int(* feature_callback_t)(enabled_feature_t * feature)
 }
 
 class "large_buffer_t" as TYPEDEF_LARGE_BUFFER_T <<typedef>> #LightYellow
 {
-    + char large_buffer_t [ MAX_SIZE ]
+    + char large_buffer_t[MAX_SIZE]
 }
 
 class "small_buffer_t" as TYPEDEF_SMALL_BUFFER_T <<typedef>> #LightYellow
 {
-    + char small_buffer_t [ MIN_SIZE ]
+    + char small_buffer_t[MIN_SIZE]
 }
 
 class "basic_union_t" as TYPEDEF_BASIC_UNION_T <<typedef>> #LightYellow
