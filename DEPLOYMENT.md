@@ -1,92 +1,62 @@
 # Website Deployment Guide
 
-This repository includes comprehensive GitHub workflows for deploying the website to GitHub Pages. The deployment system provides both full and quick deployment options.
+This repository includes a streamlined GitHub workflow for deploying the website to GitHub Pages. The deployment system provides efficient website deployment with automatic triggering from test coverage runs.
 
-## 🚀 Available Deployment Workflows
+## 🚀 Deployment Workflow
 
-### 1. Full Website Deployment (`deploy-website.yml`)
+### Website Deployment (`deploy-website.yml`)
 
-**Purpose**: Complete website deployment with fresh content generation
+**Purpose**: Deploy website with existing content to GitHub Pages
 
 **Triggers**:
-- ✅ Automatic: On push to `main` or `master` branch
-- ✅ Manual: Via GitHub Actions UI with options
-- ✅ Scheduled: Daily at 2 AM UTC
+- ✅ Manual: Via GitHub Actions UI
+- ✅ Automatic: Called by test-coverage workflow after successful completion
 
 **Features**:
-- 🧪 Generates fresh test coverage reports
-- 📊 Creates new PlantUML diagrams and PNG images
-- 🏗️ Builds complete website from scratch
+- ⚡ Fast deployment using existing content
+- 📁 Deploys test coverage reports, PlantUML diagrams, and project files
+- 🎨 Modern, responsive website design
 - 📤 Deploys to GitHub Pages
 - 📋 Provides detailed deployment summary
 
 **Manual Trigger Options**:
-- `force_redeploy`: Force complete redeployment (default: true)
-- `clean_deploy`: Clean previous deployment before redeploying (default: true)
-
-### 2. Quick Website Redeploy (`quick-deploy.yml`)
-
-**Purpose**: Fast redeployment using existing content
-
-**Triggers**:
-- ✅ Manual: Via GitHub Actions UI
-- ✅ Scheduled: Daily at 6 AM UTC
-
-**Features**:
-- ⚡ Fast deployment (no content regeneration)
-- 📁 Uses existing reports and diagrams
-- 🎨 Modern, responsive website design
-- 📤 Deploys to GitHub Pages
-- 📋 Quick deployment summary
-
-**Manual Trigger Options**:
-- `message`: Custom deployment message (default: "Quick website redeploy")
+- `message`: Custom deployment message (default: "Website deployment")
 
 ## 🎯 How to Use
 
 ### Automatic Deployment
 
-The full deployment workflow runs automatically when you push to the main branch:
+The website deployment workflow is automatically triggered after successful test coverage runs:
 
-```bash
-git add .
-git commit -m "Update website content"
-git push origin main
-```
+1. **Run Test Coverage**: The test-coverage workflow runs (manually or on PR merge)
+2. **Auto-Deploy**: After successful completion, the deploy-website workflow is automatically called
+3. **Website Updated**: Your website is deployed with the latest test reports and content
 
 ### Manual Deployment
 
 1. **Go to GitHub Actions**: Navigate to your repository's "Actions" tab
-2. **Select Workflow**: Choose either "Deploy Website to GitHub Pages" or "Quick Website Redeploy"
+2. **Select Workflow**: Choose "Deploy Website"
 3. **Click "Run workflow"**: Use the dropdown button
-4. **Configure Options** (if available):
-   - For full deployment: Set force_redeploy and clean_deploy options
-   - For quick deploy: Add a custom message
+4. **Add Message** (optional): Custom deployment message
 5. **Click "Run workflow"**: Start the deployment
 
-### Scheduled Deployment
+### Workflow Integration
 
-Both workflows include scheduled deployments:
-- **Full deployment**: Daily at 2 AM UTC
-- **Quick deployment**: Daily at 6 AM UTC
+The deployment workflow is integrated with the test coverage workflow:
+- **Test Coverage Runs**: Generates reports and commits them to the repository
+- **Auto-Deploy**: Automatically triggers website deployment after successful test coverage
+- **Website Updated**: Fresh content is deployed to GitHub Pages
 
 ## 📁 What Gets Deployed
 
-### Full Deployment Includes:
+The deployment workflow includes:
 - 📖 README.md as main page
-- 📊 Fresh test coverage reports
-- 📝 Updated test summaries
-- 📊 New PlantUML diagrams and PNG images
-- 📋 Project examples
+- 📊 Test coverage reports (from tests/reports/)
+- 📝 Test execution summaries
+- 📊 PlantUML diagrams and PNG images (from output/)
+- 📋 Project examples (from example/)
 - 🎨 Modern HTML website with navigation
-
-### Quick Deployment Includes:
-- 📖 README.md as main page
-- 📊 Existing test coverage reports
-- 📝 Existing test summaries
-- 📊 Existing PlantUML diagrams and PNG images
-- 📋 Project examples
-- 🎨 Modern HTML website with navigation
+- 📚 Project documentation and specification
 
 ## 🌐 Website Structure
 
@@ -160,14 +130,20 @@ Both workflows provide detailed summaries in the Actions tab:
 - Quick deployment: 2-5 minutes after completion
 - GitHub Pages may take additional time to propagate
 
-## 🔄 Workflow Comparison
+## 🔄 Workflow Integration
 
-| Feature | Full Deployment | Quick Deployment |
-|---------|----------------|------------------|
-| **Speed** | ⏱️ Slower (regenerates content) | ⚡ Fast (uses existing) |
-| **Content** | 🆕 Fresh reports & diagrams | 📁 Existing content |
-| **Triggers** | Push, Manual, Scheduled | Manual, Scheduled |
-| **Use Case** | Major updates, fresh content | Quick fixes, content refresh |
+The deployment workflow is designed to work seamlessly with the test coverage workflow:
+
+| Workflow | Purpose | Trigger | Result |
+|----------|---------|---------|--------|
+| **Test Coverage** | Generate reports and diagrams | Manual, PR merge | Fresh content in repository |
+| **Deploy Website** | Deploy to GitHub Pages | Manual, Auto (after test coverage) | Website updated with latest content |
+
+### Benefits:
+- ✅ **Automated**: Website deploys automatically after test coverage runs
+- ✅ **Efficient**: Uses existing content, no regeneration needed
+- ✅ **Reliable**: Only deploys after successful test coverage completion
+- ✅ **Flexible**: Can also be triggered manually when needed
 
 ## 📞 Support
 
