@@ -1365,6 +1365,44 @@ class CParser:
         if len(param_tokens) == 1 and param_tokens[0].value == "...":
             return Field(name="...", type="...")
 
+        # Handle function pointer parameters: type (*name)(params)
+        if len(param_tokens) >= 5:
+            # Look for pattern: type ( * name ) ( params )
+            for i in range(len(param_tokens) - 4):
+                if (
+                    param_tokens[i].type == TokenType.LPAREN
+                    and param_tokens[i + 1].type == TokenType.ASTERISK
+                    and param_tokens[i + 2].type == TokenType.IDENTIFIER
+                    and param_tokens[i + 3].type == TokenType.RPAREN
+                    and param_tokens[i + 4].type == TokenType.LPAREN
+                ):
+                    # Found function pointer pattern
+                    func_name = param_tokens[i + 2].value
+                    
+                    # Find the closing parenthesis for the parameter list
+                    paren_count = 1
+                    param_end = i + 5
+                    while param_end < len(param_tokens) and paren_count > 0:
+                        if param_tokens[param_end].type == TokenType.LPAREN:
+                            paren_count += 1
+                        elif param_tokens[param_end].type == TokenType.RPAREN:
+                            paren_count -= 1
+                        param_end += 1
+                    
+                    if paren_count == 0:
+                        # Extract the type (everything before the function pointer)
+                        type_tokens = param_tokens[:i]
+                        param_type = " ".join(t.value for t in type_tokens)
+                        
+                        # Extract the function pointer part
+                        func_ptr_tokens = param_tokens[i:param_end]
+                        func_ptr_type = " ".join(t.value for t in func_ptr_tokens)
+                        
+                        # Combine type and function pointer
+                        full_type = (param_type + " " + func_ptr_type).strip()
+                        
+                        return Field(name=func_name, type=full_type)
+
         # For parameters like "int x" or "const char *name"
         if len(param_tokens) >= 2:
             # Last token is usually the parameter name
