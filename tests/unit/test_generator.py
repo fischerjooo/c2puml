@@ -443,6 +443,56 @@ void test_function() {
         self.assertIn("..>", diagram)  # Declaration relationship arrow
         self.assertIn("<<declares>>", diagram)  # Declaration relationship label
 
+    def test_global_variables_generation(self):
+        """Test that global variables are properly generated"""
+        # Use the test file model that includes global variables
+        file_model = self.create_test_file_model("test.c")
+        project_model = ProjectModel(
+            project_name="test_project",
+            project_root="/test",
+            files={"test.c": file_model},
+        )
+        
+        # Generate PlantUML diagram
+        diagram = self.generator.generate_diagram(file_model, project_model)
+        
+        # Check that global variables section exists
+        self.assertIn("-- Global Variables --", diagram)
+        
+        # Check that the specific global variables are included
+        self.assertIn("int global_var", diagram)
+        self.assertIn("char* global_string", diagram)
+        
+    def test_global_variables_with_real_parsing(self):
+        """Test global variables generation with real C code parsing"""
+        content = '''
+        int global_counter = 0;
+        char* global_message = "Hello";
+        static float internal_value = 3.14;
+        
+        void test_function() {
+            global_counter++;
+        }
+        '''
+        
+        test_file = self.create_test_file("globals_test.c", content)
+        
+        # Parse the file
+        project_model = self.parser.parse_project(str(self.temp_dir))
+        file_model = project_model.files["globals_test.c"]
+        
+        # Generate PlantUML diagram
+        diagram = self.generator.generate_diagram(file_model, project_model)
+        
+        # Check that global variables section exists
+        self.assertIn("-- Global Variables --", diagram)
+        
+        # Check that parsed global variables appear
+        # Note: The exact format may depend on how the parser handles initialization
+        self.assertIn("global_counter", diagram)
+        self.assertIn("global_message", diagram)
+        self.assertIn("internal_value", diagram)
+
     def test_output_directory_creation(self):
         """Test that output directory is created if it doesn't exist"""
         file_model = self.create_test_file_model("test.c")
