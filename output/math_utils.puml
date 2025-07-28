@@ -7,59 +7,51 @@ class "math_utils" as MATH_UTILS <<source>> #LightBlue
     real_t average(const int * arr, size_t len)
     int subtract(int a, int b)
 }
-
 class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
     -- Macros --
-    + #define CONFIG_H
-    + #define DEFAULT_BUFFER_SIZE
-    + #define MAX_LABEL_LEN
-    + #define PROJECT_NAME
+    - #define CONFIG_H
+    - #define DEFAULT_BUFFER_SIZE
+    - #define MAX_LABEL_LEN
+    - #define PROJECT_NAME
 }
-
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 {
     -- Macros --
-    + #define MATH_UTILS_H
+    - #define MATH_UTILS_H
     -- Functions --
-    + int add(int a, int b)
-    + real_t average(const int * arr, size_t len)
-    + int subtract(int a, int b)
+    int add(int a, int b)
+    real_t average(const int * arr, size_t len)
+    int subtract(int a, int b)
 }
-
-class "GlobalStatus" as TYPEDEF_GLOBALSTATUS <<typedef>> #LightYellow
-{
-    + GS_ERROR
-    + GS_OK
-    + GS_UNKNOWN
-}
-
 class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
 {
-    + uint32_t
+    uint32_t
 }
-
 class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 {
-    + int32_t
+    int32_t
 }
-
+class "GlobalStatus" as TYPEDEF_GLOBALSTATUS <<typedef>> #LightYellow
+{
+    GS_OK
+    GS_ERROR
+    GS_UNKNOWN
+}
 class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
 {
-    + int(* math_op_t)(int , int)
+    int(* math_op_t)(int , int)
 }
-
 class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 {
-    + double
+    double
 }
 
-
 ' Include relationships
-MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
-HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
+MATH_UTILS ..> HEADER_MATH_UTILS : <<includes>>
+HEADER_MATH_UTILS ..> HEADER_CONFIG : <<includes>>
 
-' Declaration relationships
+' Declares relationships
 HEADER_CONFIG ..> TYPEDEF_GLOBALSTATUS : <<declares>>
 HEADER_CONFIG ..> TYPEDEF_ID_T : <<declares>>
 HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>

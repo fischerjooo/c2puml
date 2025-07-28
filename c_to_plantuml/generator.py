@@ -236,9 +236,8 @@ class Generator:
         """Generate functions section"""
         lines = ["    -- Functions --"]
         for func in sorted(functions, key=lambda x: x.name):
-            if not func.is_declaration:
-                signature = self._format_function_signature(func)
-                lines.append(f"    {signature}")
+            signature = self._format_function_signature(func)
+            lines.append(f"    {signature}")
         return lines
 
     def _format_function_signature(self, func) -> str:
