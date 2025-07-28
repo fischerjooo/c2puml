@@ -363,8 +363,10 @@ void test_function() {
         self.assertIn("-- Functions --", diagram)
         self.assertIn("void test_function()", diagram)
 
-        # Remove assertions for struct/enum declarations in file/header classes
+        # Structs are not shown inside source file classes, but as separate typedef classes
         # self.assertIn("struct Test_Struct", content)  # no + prefix in source files - REMOVED
+        # Instead, verify struct appears as separate typedef class
+        self.assertIn('class "Test_Struct" as TYPEDEF_TEST_STRUCT <<typedef>> #LightYellow', diagram)
 
     def test_generate_error_handling(self):
         """Test error handling in diagram generation"""
@@ -401,11 +403,45 @@ void test_function() {
         # Check for proper class syntax
         self.assertIn('class "test" as TEST', diagram)
 
-        # Check for proper relationship syntax (not implemented in current version)
-        # self.assertIn("-->", diagram)
+        # Check for proper relationship syntax
+        # At minimum, we should have relationship sections even if empty
+        self.assertIn("' Include relationships", diagram)
+        self.assertIn("' Declaration relationships", diagram)
 
         # Check for proper section separators
         self.assertIn("--", diagram)
+
+    def test_relationship_generation(self):
+        """Test that relationships are properly generated when they exist"""
+        # Create content with includes and structs
+        content = '''
+        #include <stdio.h>
+        
+        struct my_struct {
+            int field1;
+        };
+        
+        void my_function() {
+            return;
+        }
+        '''
+        
+        test_file = self.create_test_file("test.c", content)
+        
+        # Parse the file
+        project_model = self.parser.parse_project(str(self.temp_dir))
+        file_model = project_model.files["test.c"]
+        
+        # Generate PlantUML diagram
+        diagram = self.generator.generate_diagram(file_model, project_model)
+        
+        # Check that relationship sections exist
+        self.assertIn("' Include relationships", diagram)
+        self.assertIn("' Declaration relationships", diagram)
+        
+        # Check that declaration relationships are generated for structs
+        self.assertIn("..>", diagram)  # Declaration relationship arrow
+        self.assertIn("<<declares>>", diagram)  # Declaration relationship label
 
     def test_output_directory_creation(self):
         """Test that output directory is created if it doesn't exist"""
