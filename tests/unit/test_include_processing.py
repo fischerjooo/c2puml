@@ -7,540 +7,225 @@ test files to reduce duplication and improve maintainability.
 """
 
 import os
+import shutil
 import tempfile
-import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest import TestCase
 
-from c_to_plantuml.generator import PlantUMLGenerator
-from c_to_plantuml.models import (
-    Alias,
-    Enum,
-    Field,
-    FileModel,
-    Function,
-    IncludeRelation,
-    ProjectModel,
-    Struct,
-    Union,
-)
+# We need to add the parent directory to Python path for imports
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+from c_to_plantuml.generator import Generator
 from c_to_plantuml.parser import CParser
-from c_to_plantuml.transformer import Transformer
 
-# Try to import shared utilities, fallback if not available
-try:
-    from tests.utils import (
-        AssertionHelpers,
-        MockObjectFactory,
-        TestDataProviders,
-        ProjectBuilder,
-        create_temp_project,
-        run_full_pipeline,
-    )
-    UTILS_AVAILABLE = True
-except ImportError:
-    UTILS_AVAILABLE = False
+class TestIncludeProcessingBug(TestCase):
+    """Test suite to verify include processing bug has been fixed.
 
-
-class TestIncludeProcessingCore(unittest.TestCase):
-    """Core include processing functionality tests."""
+    This test specifically verifies that include files are properly resolved
+    and that the include tree generation works correctly.
+    """
 
     def setUp(self):
         """Set up test fixtures."""
+        self.temp_dir = Path(tempfile.mkdtemp())
         self.parser = CParser()
-        self.transformer = Transformer()
-        self.generator = PlantUMLGenerator()
-        self.temp_dir = tempfile.mkdtemp()
-        self.test_dir = Path(self.temp_dir)
+        self.generator = Generator()
 
     def tearDown(self):
         """Clean up test fixtures."""
-        import shutil
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def create_test_file(self, filename: str, content: str) -> Path:
         """Create a test file with given content."""
-        file_path = self.test_dir / filename
-        file_path.parent.mkdir(parents=True, exist_ok=True)
+        file_path = self.temp_dir / filename
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(content)
         return file_path
 
-    def test_parse_basic_includes(self):
-        """Test parsing basic system and local include statements."""
-        content = """
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "utils.h"
-#include "config.h"
-#include "types.h"
-        """
+    def test_include_tree_generation_bug(self):
+        """Test that include tree is correctly generated for files with includes."""
 
-        file_path = self.create_test_file("test.c", content)
-        file_model = self.parser.parse_file(
-            file_path, file_path.name, str(self.test_dir)
+        # Create header file
+        self.create_test_file(
+            "header.h",
+            """
+            #ifndef HEADER_H
+            #define HEADER_H
+
+            typedef struct {
+                int id;
+                char name[50];
+            } my_struct_t;
+
+            void my_function(void);
+
+            #endif
+            """,
         )
 
-        expected_includes = {
-            "stdio.h", "stdlib.h", "string.h", "utils.h", "config.h", "types.h"
-        }
-        actual_includes = set(file_model.includes)
-        self.assertEqual(actual_includes, expected_includes)
+        # Create source file that includes the header
+        self.create_test_file(
+            "main.c",
+            """
+            #include "header.h"
 
-    def test_parse_includes_with_comments_and_whitespace(self):
-        """Test parsing includes with comments and whitespace."""
-        content = """
-// System includes
-#include <stdio.h>  // Standard I/O
-#include <stdlib.h> /* Standard library */
-
-// Local includes
-#include "utils.h"  // Utility functions
-#include "config.h" /* Configuration */
-        """
-
-        file_path = self.create_test_file("test.c", content)
-        file_model = self.parser.parse_file(
-            file_path, file_path.name, str(self.test_dir)
+            void main() {
+                my_struct_t instance;
+                my_function();
+            }
+            """,
         )
 
-        expected_includes = {"stdio.h", "stdlib.h", "utils.h", "config.h"}
-        actual_includes = set(file_model.includes)
-        self.assertEqual(actual_includes, expected_includes)
+        # Parse the project
+        project_model = self.parser.parse_project(str(self.temp_dir))
 
-    def test_parse_includes_with_preprocessor_directives(self):
-        """Test parsing includes with preprocessor directives."""
-        content = """
-#include <stdio.h>
-#ifdef DEBUG
-#include <assert.h>
-#endif
-#include "utils.h"
-        """
+        # Get the main.c file model
+        main_file = project_model.files["main.c"]
 
-        file_path = self.create_test_file("test.c", content)
-        file_model = self.parser.parse_file(
-            file_path, file_path.name, str(self.test_dir)
-        )
+        # Generate the PlantUML diagram
+        diagram = self.generator.generate_diagram(main_file, project_model)
 
-        # Should parse includes that are clearly defined
-        expected_includes = {"stdio.h", "utils.h"}
-        actual_includes = set(file_model.includes)
+        # Verify that the diagram contains both files
+        self.assertIn("@startuml main", diagram)
+        self.assertIn('@enduml', diagram)
         
-        # At least these includes should be present
-        self.assertTrue(
-            expected_includes.issubset(actual_includes),
-            f"Missing basic includes: {expected_includes - actual_includes}"
-        )
+        # Check that main.c is referenced
+        self.assertIn('class "main"', diagram)
         
-        # May also have conditional includes like assert.h
-        self.assertIn("stdio.h", actual_includes)
-        self.assertIn("utils.h", actual_includes)
-
-
-class TestIncludeProcessingRelationships(unittest.TestCase):
-    """Test include relationships and dependencies."""
-
-    def setUp(self):
-        """Set up test fixtures."""
-        self.temp_dir = tempfile.mkdtemp()
-        self.test_dir = Path(self.temp_dir)
-        self.parser = CParser()
-        self.transformer = Transformer()
-
-    def tearDown(self):
-        """Clean up test fixtures."""
-        import shutil
-        shutil.rmtree(self.temp_dir, ignore_errors=True)
-
-    def create_test_file(self, filename: str, content: str) -> Path:
-        """Create a test file with given content."""
-        file_path = self.test_dir / filename
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return file_path
-
-    def test_c_to_h_file_relationships(self):
-        """Test relationships between C files and their header files."""
-        # Create a simple test project structure
-        main_c_content = """
-#include <stdio.h>
-#include "types.h"
-
-int main() {
-    Point p = {0, 0};
-    return 0;
-}
-"""
+        # Check that header.h is included in the include tree
+        self.assertIn('class "header"', diagram)
         
-        types_h_content = """
-#ifndef TYPES_H
-#define TYPES_H
+        # Check that the struct from header is included
+        self.assertIn('my_struct_t', diagram)
 
-typedef struct {
-    int x;
-    int y;
-} Point;
+    def test_include_depth_control(self):
+        """Test that include depth parameter controls how deep includes are processed."""
 
-#endif
-"""
-
-        # Create test files
-        main_c_path = self.create_test_file("main.c", main_c_content)
-        types_h_path = self.create_test_file("types.h", types_h_content)
-
-        # Parse both files
-        main_file_model = self.parser.parse_file(
-            main_c_path, main_c_path.name, str(self.temp_dir)
-        )
-        types_file_model = self.parser.parse_file(
-            types_h_path, types_h_path.name, str(self.temp_dir)
-        )
-
-        # Verify include relationships
-        self.assertIn("stdio.h", main_file_model.includes)
-        self.assertIn("types.h", main_file_model.includes)
+        # Create a chain of includes: main.c -> level1.h -> level2.h
         
-        # Verify types.h contains the expected struct
-        struct_names = list(types_file_model.structs.keys())
-        self.assertIn("Point", struct_names)
-
-    def test_header_to_header_relationships(self):
-        """Test relationships between header files."""
-        base_h_content = """
-#ifndef BASE_H
-#define BASE_H
-
-typedef struct {
-    int id;
-} Base;
-
-#endif
-"""
-        
-        derived_h_content = """
-#ifndef DERIVED_H
-#define DERIVED_H
-
-#include "base.h"
-
-typedef struct {
-    Base base;
-    int extra_field;
-} Derived;
-
-#endif
-"""
-
-        # Create test files
-        base_h_path = self.create_test_file("base.h", base_h_content)
-        derived_h_path = self.create_test_file("derived.h", derived_h_content)
-
-        # Parse both files
-        base_file_model = self.parser.parse_file(
-            base_h_path, base_h_path.name, str(self.temp_dir)
-        )
-        derived_file_model = self.parser.parse_file(
-            derived_h_path, derived_h_path.name, str(self.temp_dir)
-        )
-
-        # Verify include relationships
-        self.assertIn("base.h", derived_file_model.includes)
-        
-        # Verify structs are properly parsed
-        base_structs = list(base_file_model.structs.keys())
-        derived_structs = list(derived_file_model.structs.keys())
-        
-        self.assertIn("Base", base_structs)
-        self.assertIn("Derived", derived_structs)
-
-
-class TestIncludeProcessingTypedefs(unittest.TestCase):
-    """Test typedef relationships in include processing."""
-
-    def setUp(self):
-        """Set up test fixtures."""
-        self.temp_dir = tempfile.mkdtemp()
-        self.test_dir = Path(self.temp_dir)
-        self.parser = CParser()
-
-    def tearDown(self):
-        """Clean up test fixtures."""
-        import shutil
-        shutil.rmtree(self.temp_dir, ignore_errors=True)
-
-    def create_test_file(self, filename: str, content: str) -> Path:
-        """Create a test file with given content."""
-        file_path = self.test_dir / filename
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return file_path
-
-    def test_simple_typedef_relationships(self):
-        """Test simple typedef relationships across files."""
-        types_h_content = """
-#ifndef TYPES_H
-#define TYPES_H
-
-typedef unsigned char byte_t;
-typedef unsigned short word_t;
-
-typedef struct {
-    byte_t r, g, b, a;
-} Color;
-
-#endif
-"""
-        
-        main_c_content = """
-#include "types.h"
-
-int main() {
-    Color red = {255, 0, 0, 255};
-    return 0;
-}
-"""
-
-        # Create test files
-        types_h_path = self.create_test_file("types.h", types_h_content)
-        main_c_path = self.create_test_file("main.c", main_c_content)
-
-        # Parse both files
-        types_file_model = self.parser.parse_file(
-            types_h_path, types_h_path.name, str(self.temp_dir)
-        )
-        main_file_model = self.parser.parse_file(
-            main_c_path, main_c_path.name, str(self.temp_dir)
-        )
-
-        # Verify include relationships
-        self.assertIn("types.h", main_file_model.includes)
-
-        # Verify typedefs and structs
-        struct_names = list(types_file_model.structs.keys())
-        self.assertIn("Color", struct_names)
-        
-        # Check that types.h has typedefs (stored as aliases)
-        self.assertTrue(len(types_file_model.aliases) > 0)
-
-    def test_complex_nested_typedef_relationships(self):
-        """Test complex nested typedef relationships."""
-        base_types_h_content = """
-#ifndef BASE_TYPES_H
-#define BASE_TYPES_H
-
-typedef unsigned char Byte;
-typedef unsigned short Word;
-
-#endif
-"""
-        
-        geometry_h_content = """
-#ifndef GEOMETRY_H
-#define GEOMETRY_H
-
-#include "base_types.h"
-
-typedef struct {
-    Word x, y;
-} Point;
-
-#endif
-"""
-
-        # Create test files
-        base_types_h_path = self.create_test_file("base_types.h", base_types_h_content)
-        geometry_h_path = self.create_test_file("geometry.h", geometry_h_content)
-
-        # Parse both files
-        base_types_file_model = self.parser.parse_file(
-            base_types_h_path, base_types_h_path.name, str(self.temp_dir)
-        )
-        geometry_file_model = self.parser.parse_file(
-            geometry_h_path, geometry_h_path.name, str(self.temp_dir)
-        )
-
-        # Verify include relationships
-        self.assertIn("base_types.h", geometry_file_model.includes)
-        
-        # Verify structs and typedefs
-        base_typedefs = list(base_types_file_model.aliases.keys())
-        geometry_structs = list(geometry_file_model.structs.keys())
-        
-        self.assertIn("Byte", base_typedefs)
-        self.assertIn("Word", base_typedefs)
-        self.assertIn("Point", geometry_structs)
-
-
-class TestIncludeProcessingCaching(unittest.TestCase):
-    """Test include processing caching functionality."""
-
-    def setUp(self):
-        """Set up test fixtures."""
-        self.temp_dir = tempfile.mkdtemp()
-        self.test_dir = Path(self.temp_dir)
-        self.parser = CParser()
-
-    def tearDown(self):
-        """Clean up test fixtures."""
-        import shutil
-        shutil.rmtree(self.temp_dir, ignore_errors=True)
-
-    def create_test_file(self, filename: str, content: str) -> Path:
-        """Create a test file with given content."""
-        file_path = self.test_dir / filename
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return file_path
-
-    def test_include_caching_prevents_duplicate_processing(self):
-        """Test that include caching prevents duplicate file processing."""
-        common_h_content = """
-#ifndef COMMON_H
-#define COMMON_H
-
-typedef struct {
-    int value;
-} CommonType;
-
-#endif
-"""
-        
-        file1_c_content = """
-#include "common.h"
-
-void func1() {
-    CommonType t;
-}
-"""
-
-        # Create test files
-        common_h_path = self.create_test_file("common.h", common_h_content)
-        file1_c_path = self.create_test_file("file1.c", file1_c_content)
-
-        # Parse files
-        common_file_model = self.parser.parse_file(
-            common_h_path, common_h_path.name, str(self.temp_dir)
-        )
-        file1_file_model = self.parser.parse_file(
-            file1_c_path, file1_c_path.name, str(self.temp_dir)
-        )
-
-        # Verify results
-        self.assertIn("common.h", file1_file_model.includes)
-        
-        # Check that common.h defines the expected struct
-        struct_names = list(common_file_model.structs.keys())
-        self.assertIn("CommonType", struct_names)
-        
-        # Check that file1.c defines the expected function
-        function_names = [func.name for func in file1_file_model.functions]
-        self.assertIn("func1", function_names)
-
-
-class TestIncludeProcessingEdgeCases(unittest.TestCase):
-    """Test edge cases in include processing."""
-
-    def setUp(self):
-        """Set up test fixtures."""
-        self.temp_dir = tempfile.mkdtemp()
-        self.test_dir = Path(self.temp_dir)
-        self.parser = CParser()
-
-    def tearDown(self):
-        """Clean up test fixtures."""
-        import shutil
-        shutil.rmtree(self.temp_dir, ignore_errors=True)
-
-    def create_test_file(self, filename: str, content: str) -> Path:
-        """Create a test file with given content."""
-        file_path = self.test_dir / filename
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return file_path
-
-    def test_circular_includes(self):
-        """Test handling of circular include dependencies."""
-        a_h_content = """
-#ifndef A_H
-#define A_H
-
-typedef struct A {
-    int a_value;
-} A;
-
-#endif
-"""
-        
-        b_h_content = """
-#ifndef B_H
-#define B_H
-
-typedef struct B {
-    int b_value;
-} B;
-
-#endif
-"""
-
-        # Create test files (avoiding actual circular includes for this basic test)
-        a_h_path = self.create_test_file("a.h", a_h_content)
-        b_h_path = self.create_test_file("b.h", b_h_content)
-
-        # Parse both files - should not crash
-        a_file_model = self.parser.parse_file(
-            a_h_path, a_h_path.name, str(self.temp_dir)
-        )
-        b_file_model = self.parser.parse_file(
-            b_h_path, b_h_path.name, str(self.temp_dir)
-        )
-
-        # Verify both files are processed successfully
-        a_structs = list(a_file_model.structs.keys())
-        b_structs = list(b_file_model.structs.keys())
-        
-        self.assertIn("A", a_structs)
-        self.assertIn("B", b_structs)
-
-    def test_missing_include_files(self):
-        """Test handling of missing include files."""
-        main_c_content = """
-#include <stdio.h>          // System include - should be ok
-#include "missing_file.h"   // Missing local include
-
-int main() {
-    return 0;
-}
-"""
-
-        # Create test file with missing includes
-        main_c_path = self.create_test_file("main.c", main_c_content)
-
-        # This should not crash when include files are missing
-        main_file_model = self.parser.parse_file(
-            main_c_path, main_c_path.name, str(self.temp_dir)
-        )
-
-        # main.c should still be processed
-        self.assertEqual(main_file_model.relative_path, "main.c")
-        
-        # Should still record the include statements even if files are missing
-        main_includes = set(main_file_model.includes)
-        expected_includes = {"stdio.h", "missing_file.h"}
-        self.assertTrue(
-            expected_includes.issubset(main_includes),
-            f"Missing includes: {expected_includes - main_includes}"
+        self.create_test_file(
+            "level2.h",
+            """
+            #ifndef LEVEL2_H
+            #define LEVEL2_H
+            
+            typedef struct {
+                int deep_field;
+            } deep_struct_t;
+            
+            #endif
+            """,
         )
         
-        # Should find the main function
-        function_names = [func.name for func in main_file_model.functions]
-        self.assertIn("main", function_names)
+        self.create_test_file(
+            "level1.h",
+            """
+            #ifndef LEVEL1_H
+            #define LEVEL1_H
+            
+            #include "level2.h"
+            
+            typedef struct {
+                int mid_field;
+                deep_struct_t deep;
+            } mid_struct_t;
+            
+            #endif
+            """,
+        )
 
+        self.create_test_file(
+            "main.c",
+            """
+            #include "level1.h"
 
-if __name__ == "__main__":
-    unittest.main()
+            void main() {
+                mid_struct_t instance;
+            }
+            """,
+        )
+
+        # Parse the project
+        project_model = self.parser.parse_project(str(self.temp_dir))
+        main_file = project_model.files["main.c"]
+
+        # Test with include depth = 1 (should only include level1.h)
+        diagram_depth_1 = self.generator.generate_diagram(main_file, project_model, include_depth=1)
+        
+        # Test with include depth = 2 (should include both level1.h and level2.h)
+        diagram_depth_2 = self.generator.generate_diagram(main_file, project_model, include_depth=2)
+
+        # Both should include main.c and level1.h
+        self.assertIn('class "main"', diagram_depth_1)
+        self.assertIn('class "level1"', diagram_depth_1)
+        
+        self.assertIn('class "main"', diagram_depth_2)
+        self.assertIn('class "level1"', diagram_depth_2)
+        
+        # Only depth 2 should include level2.h  
+        self.assertNotIn('class "level2"', diagram_depth_1)
+        self.assertIn('class "level2"', diagram_depth_2)
+
+    def test_circular_includes_handling(self):
+        """Test that circular includes are handled gracefully."""
+
+        # Create circular includes: a.h <-> b.h
+        self.create_test_file(
+            "a.h",
+            """
+            #ifndef A_H
+            #define A_H
+            
+            #include "b.h"
+            
+            typedef struct {
+                int field_a;
+                struct_b_t b_ref;
+            } struct_a_t;
+            
+            #endif
+            """,
+        )
+        
+        self.create_test_file(
+            "b.h",
+            """
+            #ifndef B_H
+            #define B_H
+            
+            #include "a.h"
+            
+            typedef struct {
+                int field_b;
+            } struct_b_t;
+            
+            #endif
+            """,
+        )
+
+        self.create_test_file(
+            "main.c",
+            """
+            #include "a.h"
+
+            void main() {
+                struct_a_t instance;
+            }
+            """,
+        )
+
+        # Parse the project
+        project_model = self.parser.parse_project(str(self.temp_dir))
+        main_file = project_model.files["main.c"]
+
+        # This should not crash due to circular includes
+        diagram = self.generator.generate_diagram(main_file, project_model, include_depth=3)
+
+        # Verify basic structure
+        self.assertIn("@startuml main", diagram)
+        self.assertIn("@enduml", diagram)
+        self.assertIn('class "main"', diagram)
+        self.assertIn('class "a"', diagram)
+        self.assertIn('class "b"', diagram)

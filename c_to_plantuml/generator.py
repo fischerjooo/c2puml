@@ -25,15 +25,50 @@ PREFIX_HEADER = "HEADER_"
 PREFIX_TYPEDEF = "TYPEDEF_"
 
 
-class PlantUMLGenerator:
-    """PlantUML generator that creates proper diagrams following the template format.
+class Generator:
+    """Generator that creates proper PlantUML files.
     
-    This class handles the core PlantUML generation logic, including:
+    This class handles the complete PlantUML generation process, including:
+    - Loading project models from JSON files
     - Building include trees for files
     - Generating UML IDs for all elements
     - Creating PlantUML classes for C files, headers, and typedefs
     - Generating relationships between elements
+    - Writing output files to disk
     """
+
+    def generate(
+        self, model_file: str, output_dir: str = "./output", include_depth: int = 1
+    ) -> str:
+        """Generate PlantUML files for all C files in the model"""
+        # Load the model
+        project_model = self._load_model(model_file)
+
+        # Create output directory
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Generate a PlantUML file for each C file
+        generated_files = []
+
+        for filename, file_model in sorted(project_model.files.items()):
+            # Only process C files (not headers) for diagram generation
+            if file_model.relative_path.endswith(".c"):
+                # Generate PlantUML content
+                puml_content = self.generate_diagram(
+                    file_model, project_model, include_depth
+                )
+
+                # Create output filename
+                basename = Path(filename).stem
+                output_file = os.path.join(output_dir, f"{basename}.puml")
+
+                # Write the file
+                with open(output_file, "w", encoding="utf-8") as f:
+                    f.write(puml_content)
+
+                generated_files.append(output_file)
+
+        return output_dir
 
     def generate_diagram(
         self, file_model: FileModel, project_model: ProjectModel, include_depth: int = 1
@@ -77,6 +112,10 @@ class PlantUMLGenerator:
         lines.append("@enduml")
 
         return "\n".join(lines)
+
+    def _load_model(self, model_file: str) -> ProjectModel:
+        """Load the project model from JSON file"""
+        return ProjectModel.load(model_file)
 
     def _build_include_tree(
         self, root_file: FileModel, project_model: ProjectModel, include_depth: int
@@ -529,52 +568,3 @@ class PlantUMLGenerator:
                     used_uml_id = uml_ids.get(f"typedef_{used_type}")
                     if used_uml_id:
                         lines.append(f"{typedef_uml_id} ..> {used_uml_id} : <<uses>>")
-
-
-class Generator:
-    """Generator that creates proper PlantUML files.
-    
-    This class provides a facade for the PlantUML generation process, handling:
-    - Loading project models from JSON files
-    - Creating output directories
-    - Orchestrating PlantUML content generation
-    - Writing output files to disk
-    """
-
-    def generate(
-        self, model_file: str, output_dir: str = "./output", include_depth: int = 1
-    ) -> str:
-        """Generate PlantUML files for all C files in the model"""
-        # Load the model
-        project_model = self._load_model(model_file)
-
-        # Create output directory
-        os.makedirs(output_dir, exist_ok=True)
-
-        # Generate a PlantUML file for each C file
-        generated_files = []
-        generator = PlantUMLGenerator()
-
-        for filename, file_model in sorted(project_model.files.items()):
-            # Only process C files (not headers) for diagram generation
-            if file_model.relative_path.endswith(".c"):
-                # Generate PlantUML content
-                puml_content = generator.generate_diagram(
-                    file_model, project_model, include_depth
-                )
-
-                # Create output filename
-                basename = Path(filename).stem
-                output_file = os.path.join(output_dir, f"{basename}.puml")
-
-                # Write the file
-                with open(output_file, "w", encoding="utf-8") as f:
-                    f.write(puml_content)
-
-                generated_files.append(output_file)
-
-        return output_dir
-
-    def _load_model(self, model_file: str) -> ProjectModel:
-        """Load the project model from JSON file"""
-        return ProjectModel.load(model_file)
