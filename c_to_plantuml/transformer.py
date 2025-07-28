@@ -529,13 +529,21 @@ class Transformer:
             filename = Path(file_model.relative_path).name
             file_map[filename] = file_model
 
-        # Process each file's includes, starting with .c files as root files
+        # Process each file's includes
+        # If include_filters are provided, only process .c files as root files
+        # If no include_filters, process all files (original behavior)
         for file_path, file_model in model.files.items():
-            if file_model.relative_path.endswith('.c'):
-                # For .c files, use them as root files
-                root_file = Path(file_model.relative_path).name
+            if include_filters:
+                # When include_filters are provided, only process .c files as root files
+                if file_model.relative_path.endswith('.c'):
+                    root_file = Path(file_model.relative_path).name
+                    self._process_file_includes(
+                        file_model, file_map, max_depth, 1, set(), compiled_filters, root_file
+                    )
+            else:
+                # When no include_filters, process all files (original behavior)
                 self._process_file_includes(
-                    file_model, file_map, max_depth, 1, set(), compiled_filters, root_file
+                    file_model, file_map, max_depth, 1, set(), compiled_filters, None
                 )
 
         return model
