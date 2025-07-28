@@ -10,7 +10,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock
 
-from c_to_plantuml.generator import PlantUMLGenerator
+from c_to_plantuml.generator import Generator
 from c_to_plantuml.models import (
     FileModel,
     ProjectModel,
@@ -27,7 +27,7 @@ class TestAbsolutePathBugDetection(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures"""
-        self.generator = PlantUMLGenerator()
+        self.generator = Generator()
         self.parser = CParser()
         self.temp_dir = tempfile.mkdtemp()
         self.test_dir = Path(self.temp_dir)
@@ -221,8 +221,8 @@ class TestAbsolutePathBugDetection(unittest.TestCase):
         )
 
         # Generate PlantUML diagram
-        diagram = self.generator.generate_diagram(
-            main_file_model, project_model, include_depth=1
+        diagram = self.generator._generate_diagram(
+            main_file_model, project_model, 1
         )
 
         # Verify that both source and header files are present in the diagram
@@ -295,8 +295,8 @@ typedef enum color_tag {
         )
 
         # Generate PlantUML diagram
-        diagram = self.generator.generate_diagram(
-            main_file_model, project_model, include_depth=1
+        diagram = self.generator._generate_diagram(
+            main_file_model, project_model, 1
         )
 
         # Verify that typedef classes are present in the diagram
@@ -357,12 +357,12 @@ typedef enum color_tag {
         )
 
         # Generate PlantUML diagram
-        diagram = self.generator.generate_diagram(
-            main_file_model, project_model, include_depth=1
+        diagram = self.generator._generate_diagram(
+            main_file_model, project_model, 1
         )
 
         # Verify that include relationships are present
-        self.assertIn("MAIN --> HEADER_UTILS : <<include>>", diagram, "Include relationship missing from diagram")
+        self.assertIn("MAIN ..> HEADER_UTILS : <<includes>>", diagram, "Include relationship missing from diagram")
 
     def test_deep_include_dependencies_with_absolute_paths(self):
         """Test deep include dependencies work correctly with absolute paths"""

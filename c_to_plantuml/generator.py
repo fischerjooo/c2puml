@@ -301,7 +301,7 @@ class Generator:
 
     def _generate_alias_definition(self, alias_data) -> List[str]:
         """Generate alias definition"""
-        return [f"    {alias_data.type}"]
+        return [f"    {alias_data.original_type}"]
 
     def _generate_relationships(self, include_tree: Dict[str, FileModel], project_model: ProjectModel) -> List[str]:
         """Generate all relationships"""

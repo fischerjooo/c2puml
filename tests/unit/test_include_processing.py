@@ -12,7 +12,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from c_to_plantuml.generator import PlantUMLGenerator
+from c_to_plantuml.generator import Generator
 from c_to_plantuml.models import (
     Alias,
     Enum,
@@ -49,7 +49,7 @@ class TestIncludeProcessingCore(unittest.TestCase):
         """Set up test fixtures."""
         self.parser = CParser()
         self.transformer = Transformer()
-        self.generator = PlantUMLGenerator()
+        self.generator = Generator()
         self.temp_dir = tempfile.mkdtemp()
         self.test_dir = Path(self.temp_dir)
 

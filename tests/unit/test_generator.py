@@ -11,7 +11,7 @@ import unittest
 from pathlib import Path
 
 from c_to_plantuml.config import Config
-from c_to_plantuml.generator import Generator, PlantUMLGenerator
+from c_to_plantuml.generator import Generator
 from c_to_plantuml.models import (
     Alias,
     Enum,
@@ -114,8 +114,8 @@ void process_data() {
         file_model = project_model.files["test.c"]
 
         # Generate PlantUML diagram
-        plantuml_generator = PlantUMLGenerator()
-        diagram = plantuml_generator.generate_diagram(file_model, project_model)
+        plantuml_generator = Generator()
+        diagram = plantuml_generator._generate_diagram(file_model, project_model, 1)
 
         # Check that PlantUML syntax is correct
         self.assertIn("@startuml test", diagram)
@@ -153,8 +153,8 @@ void process_data() {
             project_root="/test",
             files={"test.c": file_model},
         )
-        plantuml_generator = PlantUMLGenerator()
-        content = plantuml_generator.generate_diagram(file_model, project_model)
+        plantuml_generator = Generator()
+        content = plantuml_generator._generate_diagram(file_model, project_model, 1)
 
         # Write the content to file
         puml_file = output_dir / "test.puml"
@@ -296,8 +296,8 @@ void process_data() {
             project_root="/test",
             files={"empty.c": empty_file},
         )
-        plantuml_generator = PlantUMLGenerator()
-        content = plantuml_generator.generate_diagram(empty_file, project_model)
+        plantuml_generator = Generator()
+        content = plantuml_generator._generate_diagram(empty_file, project_model, 1)
 
         # Should still generate valid PlantUML
         self.assertIn("@startuml empty", content)
@@ -324,8 +324,8 @@ void test_function() {
         file_model = project_model.files["test_file.c"]
 
         # Generate PlantUML diagram
-        plantuml_generator = PlantUMLGenerator()
-        diagram = plantuml_generator.generate_diagram(file_model, project_model)
+        plantuml_generator = Generator()
+        diagram = plantuml_generator._generate_diagram(file_model, project_model, 1)
 
         # Check that PlantUML syntax is correct
         self.assertIn("@startuml test_file", diagram)
@@ -366,8 +366,8 @@ void test_function() {
             project_root="/test",
             files={"test.c": file_model},
         )
-        plantuml_generator = PlantUMLGenerator()
-        content = plantuml_generator.generate_diagram(file_model, project_model)
+        plantuml_generator = Generator()
+        content = plantuml_generator._generate_diagram(file_model, project_model, 1)
 
         # Check for required PlantUML elements
         self.assertIn("@startuml", content)

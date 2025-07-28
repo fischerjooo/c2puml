@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from c_to_plantuml.generator import PlantUMLGenerator
+from c_to_plantuml.generator import Generator
 from c_to_plantuml.models import ProjectModel
 from c_to_plantuml.parser import CParser
 
@@ -18,7 +18,7 @@ class TestFunctionParameters(unittest.TestCase):
 
     def setUp(self):
         self.parser = CParser()
-        self.generator = PlantUMLGenerator()
+        self.generator = Generator()
 
     def test_function_parameter_parsing(self):
         """Test that function parameters are correctly parsed"""
@@ -89,7 +89,7 @@ class TestFunctionParameters(unittest.TestCase):
         )
 
         # Generate PlantUML diagram
-        diagram = self.generator.generate_diagram(file_model, project_model)
+        diagram = self.generator._generate_diagram(file_model, project_model, 1)
 
         # Check that function signatures include parameters
         self.assertIn("int add(int a, int b)", diagram)
@@ -117,7 +117,7 @@ class TestFunctionParameters(unittest.TestCase):
             project_name="test", project_root="/test", files={"empty.c": file_model}
         )
 
-        diagram = self.generator.generate_diagram(file_model, project_model)
+        diagram = self.generator._generate_diagram(file_model, project_model, 1)
 
         # Check that functions with no parameters are displayed correctly
         self.assertIn("void init()", diagram)
@@ -151,7 +151,7 @@ class TestFunctionParameters(unittest.TestCase):
             project_name="test", project_root="/test", files={"complex.c": file_model}
         )
 
-        diagram = self.generator.generate_diagram(file_model, project_model)
+        diagram = self.generator._generate_diagram(file_model, project_model, 1)
 
         # Check that complex parameter types are displayed correctly
         self.assertIn("int callback(void * data, void * user_data)", diagram)
