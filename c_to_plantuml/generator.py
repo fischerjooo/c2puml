@@ -11,13 +11,13 @@ from typing import Dict, List, Optional
 from .models import FileModel, ProjectModel
 
 # PlantUML generation constants
-MAX_LINE_LENGTH = 120  # Maximum line length for PlantUML
-TRUNCATION_LENGTH = 100  # Length at which to start truncating function signatures
-INDENT = "    "  # Standard indentation for PlantUML content
+MAX_LINE_LENGTH = 120
+TRUNCATION_LENGTH = 100
+INDENT = "    "
 
 # PlantUML styling colors
 COLOR_SOURCE = "#LightBlue"
-COLOR_HEADER = "#LightGreen" 
+COLOR_HEADER = "#LightGreen"
 COLOR_TYPEDEF = "#LightYellow"
 
 # UML prefixes
@@ -75,43 +75,41 @@ class Generator:
     ) -> str:
         """Generate a PlantUML diagram for a file following the template format"""
         basename = Path(file_model.file_path).stem
-
-        # Build include tree for this file
-        include_tree = self._build_include_tree(
-            file_model, project_model, include_depth
-        )
-
-        # Get UML IDs for all elements in the include tree
+        include_tree = self._build_include_tree(file_model, project_model, include_depth)
         uml_ids = self._generate_uml_ids(include_tree, project_model)
 
-        # Generate PlantUML content
-        lines = []
-        lines.append(f"@startuml {basename}")
-        lines.append("")
+        lines = [f"@startuml {basename}", ""]
+        
+        self._generate_all_file_classes(lines, include_tree, uml_ids)
+        self._generate_relationships(lines, include_tree, uml_ids, project_model)
+        
+        lines.extend(["", "@enduml"])
+        return "\n".join(lines)
 
-        # Generate classes for C files in include tree
+    def _generate_all_file_classes(
+        self, lines: List[str], include_tree: Dict[str, FileModel], uml_ids: Dict[str, str]
+    ):
+        """Generate all file classes (C files, headers, and typedefs)"""
+        self._generate_file_classes_by_extension(lines, include_tree, uml_ids, ".c", self._generate_c_file_class)
+        self._generate_file_classes_by_extension(lines, include_tree, uml_ids, ".h", self._generate_header_class)
+        self._generate_typedef_classes_for_all_files(lines, include_tree, uml_ids)
+
+    def _generate_file_classes_by_extension(
+        self, lines: List[str], include_tree: Dict[str, FileModel], uml_ids: Dict[str, str],
+        extension: str, generator_method
+    ):
+        """Generate file classes for files with specific extension"""
         for file_path, file_data in sorted(include_tree.items()):
-            if file_path.endswith(".c"):
-                self._generate_c_file_class(lines, file_data, uml_ids)
+            if file_path.endswith(extension):
+                generator_method(lines, file_data, uml_ids)
 
-        # Generate classes for H files in include tree
-        for file_path, file_data in sorted(include_tree.items()):
-            if file_path.endswith(".h"):
-                self._generate_header_class(lines, file_data, uml_ids)
-
-        # Generate typedef classes
+    def _generate_typedef_classes_for_all_files(
+        self, lines: List[str], include_tree: Dict[str, FileModel], uml_ids: Dict[str, str]
+    ):
+        """Generate typedef classes for all files in include tree"""
         for file_path, file_data in sorted(include_tree.items()):
             self._generate_typedef_classes(lines, file_data, uml_ids)
-
         lines.append("")
-
-        # Generate relationships
-        self._generate_relationships(lines, include_tree, uml_ids, project_model)
-
-        lines.append("")
-        lines.append("@enduml")
-
-        return "\n".join(lines)
 
     def _load_model(self, model_file: str) -> ProjectModel:
         """Load the project model from JSON file"""
@@ -213,30 +211,36 @@ class Generator:
 
     def _format_function_signature(self, func, prefix: str = "") -> str:
         """Format a function signature with truncation if needed."""
+        params = self._format_function_parameters(func.parameters)
+        param_str = ", ".join(params)
+        
+        full_signature = f"{INDENT}{prefix}{func.return_type} {func.name}({param_str})"
+        if len(full_signature) > MAX_LINE_LENGTH:
+            param_str = self._truncate_parameters(params, func, prefix)
+            return f"{INDENT}{prefix}{func.return_type} {func.name}({param_str})"
+        return full_signature
+
+    def _format_function_parameters(self, parameters) -> List[str]:
+        """Format function parameters into string list."""
         params = []
-        for p in func.parameters:
+        for p in parameters:
             if p.name == "..." and p.type == "...":
                 params.append("...")
             else:
                 params.append(f"{p.type} {p.name}")
-        param_str = ", ".join(params)
-        
-        # Handle long function signatures by truncating if necessary
-        full_signature = f"{INDENT}{prefix}{func.return_type} {func.name}({param_str})"
-        if len(full_signature) > MAX_LINE_LENGTH:
-            # Truncate the signature but keep it readable
-            truncated_params = []
-            current_length = len(f"{INDENT}{prefix}{func.return_type} {func.name}(")
-            for param in params:
-                if current_length + len(param) + 2 > TRUNCATION_LENGTH:  # Leave room for closing paren
-                    truncated_params.append("...")
-                    break
-                truncated_params.append(param)
-                current_length += len(param) + 2
-            param_str = ", ".join(truncated_params)
-            return f"{INDENT}{prefix}{func.return_type} {func.name}({param_str})"
-        else:
-            return full_signature
+        return params
+
+    def _truncate_parameters(self, params: List[str], func, prefix: str) -> str:
+        """Truncate parameters list if signature is too long."""
+        truncated_params = []
+        current_length = len(f"{INDENT}{prefix}{func.return_type} {func.name}(")
+        for param in params:
+            if current_length + len(param) + 2 > TRUNCATION_LENGTH:
+                truncated_params.append("...")
+                break
+            truncated_params.append(param)
+            current_length += len(param) + 2
+        return ", ".join(truncated_params)
 
     def _add_macros_section(self, lines: List[str], file_model: FileModel, prefix: str = ""):
         """Add macros section to lines with given prefix."""
@@ -267,46 +271,43 @@ class Generator:
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
     ):
         """Generate class for C file using filename-based keys"""
-        basename = Path(file_model.relative_path).stem
-        
-        # Find the UML ID for this file using filename
-        filename = Path(file_model.relative_path).name
-        uml_id = uml_ids.get(filename)
-
-        if not uml_id:
-            return  # Skip if no UML ID found
-
-        lines.append(f'class "{basename}" as {uml_id} <<source>> {COLOR_SOURCE}')
-        lines.append("{")
-
-        # Add sections with source-specific formatting
-        self._add_macros_section(lines, file_model, "- ")
-        self._add_globals_section(lines, file_model, "")
-        self._add_functions_section(lines, file_model, "", is_declaration_only=False)
-
-        lines.append("}")
-        lines.append("")
+        self._generate_file_class(
+            lines, file_model, uml_ids, 
+            class_type="source", color=COLOR_SOURCE,
+            macro_prefix="- ", global_prefix="", function_prefix="",
+            is_declaration_only=False
+        )
 
     def _generate_header_class(
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
     ):
         """Generate class for header file using filename-based keys"""
+        self._generate_file_class(
+            lines, file_model, uml_ids,
+            class_type="header", color=COLOR_HEADER,
+            macro_prefix="+ ", global_prefix="+ ", function_prefix="+ ",
+            is_declaration_only=True
+        )
+
+    def _generate_file_class(
+        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str],
+        class_type: str, color: str, macro_prefix: str, global_prefix: str, 
+        function_prefix: str, is_declaration_only: bool
+    ):
+        """Generate class for a file with specified formatting"""
         basename = Path(file_model.relative_path).stem
-        
-        # Find the UML ID for this file using filename
         filename = Path(file_model.relative_path).name
         uml_id = uml_ids.get(filename)
 
         if not uml_id:
-            return  # Skip if no UML ID found
+            return
 
-        lines.append(f'class "{basename}" as {uml_id} <<header>> {COLOR_HEADER}')
+        lines.append(f'class "{basename}" as {uml_id} <<{class_type}>> {color}')
         lines.append("{")
 
-        # Add sections with header-specific formatting
-        self._add_macros_section(lines, file_model, "+ ")
-        self._add_globals_section(lines, file_model, "+ ")
-        self._add_functions_section(lines, file_model, "+ ", is_declaration_only=True)
+        self._add_macros_section(lines, file_model, macro_prefix)
+        self._add_globals_section(lines, file_model, global_prefix)
+        self._add_functions_section(lines, file_model, function_prefix, is_declaration_only)
 
         lines.append("}")
         lines.append("")
@@ -502,18 +503,12 @@ class Generator:
         """Generate include relationships between files"""
         lines.append("' Include relationships")
         for file_name, file_model in sorted(include_tree.items()):
-            file_key = Path(file_name).name
-            file_uml_id = uml_ids.get(file_key)
+            file_uml_id = self._get_file_uml_id(file_name, uml_ids)
             if file_uml_id:
                 for include in sorted(file_model.includes):
-                    # Clean the include name (remove quotes/angle brackets)
                     clean_include = include.strip('<>"')
-                    
-                    # Find the included file's UML ID using filename
                     include_filename = Path(clean_include).name
                     include_uml_id = uml_ids.get(include_filename)
-                    
-                    # If found, create the relationship
                     if include_uml_id:
                         lines.append(f"{file_uml_id} --> {include_uml_id} : <<include>>")
         lines.append("")
@@ -523,24 +518,23 @@ class Generator:
     ):
         """Generate declaration relationships between files and typedefs"""
         lines.append("' Declaration relationships")
+        typedef_collections_names = ["structs", "enums", "aliases", "unions"]
+        
         for file_name, file_model in sorted(include_tree.items()):
-            file_key = Path(file_name).name
-            file_uml_id = uml_ids.get(file_key)
+            file_uml_id = self._get_file_uml_id(file_name, uml_ids)
             if file_uml_id:
-                # Generate declarations for all typedef types
-                typedef_collections = [
-                    file_model.structs,
-                    file_model.enums,
-                    file_model.aliases,
-                    file_model.unions
-                ]
-                
-                for typedef_collection in typedef_collections:
+                for collection_name in typedef_collections_names:
+                    typedef_collection = getattr(file_model, collection_name)
                     for typedef_name in sorted(typedef_collection.keys()):
                         typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
                         if typedef_uml_id:
                             lines.append(f"{file_uml_id} ..> {typedef_uml_id} : <<declares>>")
         lines.append("")
+
+    def _get_file_uml_id(self, file_name: str, uml_ids: Dict[str, str]) -> Optional[str]:
+        """Get UML ID for a file"""
+        file_key = Path(file_name).name
+        return uml_ids.get(file_key)
 
     def _generate_uses_relationships(
         self, lines: List[str], include_tree: Dict[str, FileModel], uml_ids: Dict[str, str]
