@@ -66,7 +66,6 @@ class CParser:
         # Parse each file using filename as key for simplified tracking
         files = {}
         failed_files = []
-        filename_counts = {}  # Track how many times each filename appears
 
         for file_path in c_files:
             try:
@@ -76,19 +75,8 @@ class CParser:
                     file_path, relative_path
                 )
                 
-                # Handle filename conflicts by using filename + path hash if needed
-                filename = file_model.name
-                if filename in filename_counts:
-                    filename_counts[filename] += 1
-                    # Use filename + hash of relative path to ensure uniqueness
-                    import hashlib
-                    path_hash = hashlib.md5(relative_path.encode()).hexdigest()[:8]
-                    key = f"{filename}_{path_hash}"
-                else:
-                    filename_counts[filename] = 1
-                    key = filename
-                
-                files[key] = file_model
+                # Use filename as key (filenames are guaranteed to be unique)
+                files[file_model.name] = file_model
 
                 self.logger.debug("Successfully parsed: %s", relative_path)
 

@@ -123,25 +123,15 @@ class Generator:
         visited = set()
 
         def find_file_key(file_name: str) -> str:
-            """Find the correct key for a file in project_model.files using path matching"""
+            """Find the correct key for a file in project_model.files using filename matching"""
             # First try exact match
             if file_name in project_model.files:
                 return file_name
             
-            # Try matching by filename
+            # Try matching by filename (filenames are guaranteed to be unique)
             filename = Path(file_name).name
             if filename in project_model.files:
                 return filename
-            
-            # Try matching by filename with path hash (for duplicate filenames)
-            for key in project_model.files.keys():
-                if key.startswith(f"{filename}_") and len(key) > len(filename) + 9:  # filename_ + 8 char hash
-                    return key
-            
-            # Try matching by relative path
-            for key in project_model.files.keys():
-                if Path(key).name == filename:
-                    return key
             
             # If not found, return the filename (will be handled gracefully)
             return filename

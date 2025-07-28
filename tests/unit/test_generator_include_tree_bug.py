@@ -60,13 +60,13 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
             includes=set()
         )
 
-        # Create ProjectModel with absolute paths as keys
+        # Create ProjectModel with filenames as keys (consistent with parser behavior)
         project_model = ProjectModel(
             project_name="test_project",
             project_root=str(self.test_dir),
             files={
-                str(main_c_path): main_file_model,
-                str(utils_h_path): utils_file_model
+                "main.c": main_file_model,
+                "utils.h": utils_file_model
             }
         )
 
@@ -76,7 +76,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         )
 
         # The method should find both files using the correct keys from project_model.files
-        expected_files = {str(main_c_path), str(utils_h_path)}
+        expected_files = {"main.c", "utils.h"}
         actual_files = set(include_tree.keys())
         
         # This test should now pass with the fix
