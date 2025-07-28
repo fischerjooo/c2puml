@@ -1,0 +1,19 @@
+@startuml logger
+
+class "logger" as LOGGER <<source>> #LightBlue
+{
+    -- Global Variables --
+    log_callback_t current_cb
+    -- Functions --
+    void log_message(log_level_t level, const char * fmt, ...)
+    void set_log_callback(log_callback_t cb)
+}
+
+
+' Include relationships
+
+' Declaration relationships
+
+' Uses relationships
+
+@enduml

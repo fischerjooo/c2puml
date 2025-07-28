@@ -456,60 +456,42 @@ class Transformer:
         visited.add(file_model.relative_path)
 
         # Process each include
-        for include_name in file_model.includes:
+        for include_name in list(file_model.includes):  # Create a copy to avoid modification during iteration
             # Try to find the included file
             included_filename = self._find_included_file(
                 include_name, file_model.project_root
             )
 
             if included_filename:
-                # Convert full path to filename for lookup
-                included_filename_key = Path(included_filename).name
-                if included_filename_key in file_map:
-                    # Prevent self-referencing include relations
-                    if file_model.relative_path == included_filename_key:
-                        continue
-
-                # Check if this include relation already exists to prevent cycles
-                relation_exists = any(
-                    rel.source_file == file_model.relative_path
-                    and rel.included_file == included_filename_key
-                    for rel in file_model.include_relations
-                )
-
-                if relation_exists:
-                    continue
-
-                # Check include_filters before processing this include
+                # Check if this include should be filtered out
                 if compiled_filters and root_file:
-                    root_patterns = compiled_filters.get(root_file, [])
-                    if not any(pattern.search(include_name) for pattern in root_patterns):
-                        # Filter out this include from the file's includes list
-                        file_model.includes.discard(include_name)
-                        continue
+                    # Find the root file that this file belongs to
+                    file_root = self._find_root_file(file_model.relative_path, file_model)
+                    if file_root == root_file:
+                        # Check if this include matches any of the patterns for this root file
+                        should_include = False
+                        for pattern in compiled_filters.get(root_file, []):
+                            if pattern.search(include_name):
+                                should_include = True
+                                break
+                        
+                        if not should_include:
+                            # Remove this include from the list
+                            file_model.includes.remove(include_name)
+                            continue
 
-                # Create include relation
-                source_file = (
-                    file_model.file_path if "tmp" in file_model.file_path 
-                    else file_model.relative_path
-                )
-                included_file = (
-                    included_filename if "tmp" in included_filename 
-                    else included_filename_key
-                )
-                
+                # Add include relation
                 include_relation = IncludeRelation(
-                    source_file=source_file,
-                    included_file=included_file,
+                    source_file=file_model.relative_path,
+                    included_file=included_filename,
                     depth=current_depth,
                 )
                 file_model.include_relations.append(include_relation)
 
                 # Recursively process the included file
-                if included_filename_key in file_map:
-                    included_file_model = file_map[included_filename_key]
+                if included_filename in file_map:
                     self._process_file_includes(
-                        included_file_model,
+                        file_map[included_filename],
                         file_map,
                         max_depth,
                         current_depth + 1,
@@ -731,24 +713,17 @@ class Transformer:
         """Find the root C file for a given file"""
         filename = Path(file_path).name
         
-        # If it's a .c file, it's its own root
+        # If it's already a .c file, return it
         if filename.endswith('.c'):
             return filename
         
-        # For header files, we need to find the corresponding .c file
-        # This is a simplified approach - in a real scenario, we might need
-        # more sophisticated logic to determine which .c file includes this header
-        # For now, we'll look for a .c file with the same base name
-        base_name = Path(file_path).stem
+        # If it's a header file, try to find the corresponding .c file
+        if filename.endswith('.h'):
+            # Remove .h extension and add .c
+            c_filename = filename[:-2] + '.c'
+            return c_filename
         
-        # Check if there's a corresponding .c file in the same directory
-        # This is a heuristic and might need to be enhanced
-        if base_name and not filename.startswith('.'):
-            # For header files, we'll use the first .c file we find as the root
-            # This is a limitation of the current approach
-            return base_name + '.c'
-        
-        # Fallback: use the filename as root (original behavior)
+        # For other files, return the filename as is
         return filename
 
     def _matches_any_pattern(self, text: str, patterns: List[re.Pattern]) -> bool:

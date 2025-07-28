@@ -1,0 +1,20 @@
+@startuml preprocessed
+
+class "preprocessed" as PREPROCESSED <<source>> #LightBlue
+{
+    -- Functions --
+    void complex_function()
+    int main()
+    void test_function_pointers()
+    void test_preprocessing_edge_cases()
+    void test_typedef_preprocessing()
+}
+
+
+' Include relationships
+
+' Declaration relationships
+
+' Uses relationships
+
+@enduml

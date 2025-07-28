@@ -1,0 +1,17 @@
+@startuml geometry
+
+class "geometry" as GEOMETRY <<source>> #LightBlue
+{
+    -- Functions --
+    triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
+    int triangle_area(const triangle_t * tri)
+}
+
+
+' Include relationships
+
+' Declaration relationships
+
+' Uses relationships
+
+@enduml

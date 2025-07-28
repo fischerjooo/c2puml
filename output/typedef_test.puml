@@ -1,0 +1,24 @@
+@startuml typedef_test
+
+class "typedef_test" as TYPEDEF_TEST <<source>> #LightBlue
+{
+    -- Global Variables --
+    MyBuffer global_buffer
+    MyComplexPtr global_complex
+    MyLen global_length
+    -- Functions --
+    MyComplex * create_complex(MyLen id, MyString name)
+    void log_buffer(const MyBuffer * buffer)
+    int main()
+    int my_callback(MyBuffer * buffer)
+    MyInt process_buffer(MyBuffer * buffer)
+}
+
+
+' Include relationships
+
+' Declaration relationships
+
+' Uses relationships
+
+@enduml
