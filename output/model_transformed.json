@@ -447,6 +447,7 @@
         "string.h"
       ],
       "macros": [],
+      "name": "complex.c",
       "project_root": "/workspace/example/source",
       "relative_path": "complex.c",
       "structs": {},
@@ -763,6 +764,7 @@
         "UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)",
         "UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)"
       ],
+      "name": "complex.h",
       "project_root": "/workspace/example/source",
       "relative_path": "complex.h",
       "structs": {
@@ -1053,6 +1055,7 @@
       "macros": [
         "COMPLEX_EXAMPLE_H"
       ],
+      "name": "complex_example.h",
       "project_root": "/workspace/example/source",
       "relative_path": "complex_example.h",
       "structs": {
@@ -1159,6 +1162,7 @@
         "MAX_LABEL_LEN",
         "PROJECT_NAME"
       ],
+      "name": "config.h",
       "project_root": "/workspace/example/source",
       "relative_path": "config.h",
       "structs": {},
@@ -1251,6 +1255,7 @@
         "FILTERED_HEADER_H",
         "FILTERED_MACRO(x)"
       ],
+      "name": "filtered_header.h",
       "project_root": "/workspace/example/source",
       "relative_path": "filtered_header.h",
       "structs": {
@@ -1342,6 +1347,7 @@
         "string.h"
       ],
       "macros": [],
+      "name": "geometry.c",
       "project_root": "/workspace/example/source",
       "relative_path": "geometry.c",
       "structs": {},
@@ -1415,6 +1421,7 @@
       "macros": [
         "GEOMETRY_H"
       ],
+      "name": "geometry.h",
       "project_root": "/workspace/example/source",
       "relative_path": "geometry.h",
       "structs": {
@@ -1504,6 +1511,7 @@
         "string.h"
       ],
       "macros": [],
+      "name": "logger.c",
       "project_root": "/workspace/example/source",
       "relative_path": "logger.c",
       "structs": {},
@@ -1598,6 +1606,7 @@
       "macros": [
         "LOGGER_H"
       ],
+      "name": "logger.h",
       "project_root": "/workspace/example/source",
       "relative_path": "logger.h",
       "structs": {},
@@ -1676,6 +1685,7 @@
         "math_utils.h"
       ],
       "macros": [],
+      "name": "math_utils.c",
       "project_root": "/workspace/example/source",
       "relative_path": "math_utils.c",
       "structs": {},
@@ -1767,6 +1777,7 @@
       "macros": [
         "MATH_UTILS_H"
       ],
+      "name": "math_utils.h",
       "project_root": "/workspace/example/source",
       "relative_path": "math_utils.h",
       "structs": {},
@@ -1829,6 +1840,7 @@
         "string.h"
       ],
       "macros": [],
+      "name": "preprocessed.c",
       "project_root": "/workspace/example/source",
       "relative_path": "preprocessed.c",
       "structs": {},
@@ -1949,6 +1961,7 @@
         "MIN_SIZE",
         "PREPROCESSED_H"
       ],
+      "name": "preprocessed.h",
       "project_root": "/workspace/example/source",
       "relative_path": "preprocessed.h",
       "structs": {
@@ -2410,6 +2423,7 @@
         "DEBUG_MODE",
         "MAX_SIZE"
       ],
+      "name": "sample.c",
       "project_root": "/workspace/example/source",
       "relative_path": "sample.c",
       "structs": {},
@@ -2537,6 +2551,7 @@
         "SAMPLE_H",
         "VERSION"
       ],
+      "name": "sample.h",
       "project_root": "/workspace/example/source",
       "relative_path": "sample.h",
       "structs": {
@@ -2684,6 +2699,7 @@
         "typedef_test.h"
       ],
       "macros": [],
+      "name": "typedef_test.c",
       "project_root": "/workspace/example/source",
       "relative_path": "typedef_test.c",
       "structs": {},
@@ -2792,6 +2808,7 @@
       "macros": [
         "TYPEDEF_TEST_H"
       ],
+      "name": "typedef_test.h",
       "project_root": "/workspace/example/source",
       "relative_path": "typedef_test.h",
       "structs": {

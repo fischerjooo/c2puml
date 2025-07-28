@@ -178,8 +178,8 @@ class FileModel:
 
     file_path: str
     relative_path: str
-    project_root: str
     encoding_used: str
+    name: str = ""  # Filename extracted from file_path
     structs: Dict[str, Struct] = field(default_factory=dict)
     enums: Dict[str, Enum] = field(default_factory=dict)
     functions: List[Function] = field(default_factory=list)
@@ -191,15 +191,10 @@ class FileModel:
     include_relations: List[IncludeRelation] = field(default_factory=list)
 
     def __post_init__(self):
-        """Validate file model data after initialization"""
-        if not self.file_path or not isinstance(self.file_path, str):
-            raise ValueError("File path must be a non-empty string")
-        if not self.relative_path or not isinstance(self.relative_path, str):
-            raise ValueError("Relative path must be a non-empty string")
-        if not self.project_root or not isinstance(self.project_root, str):
-            raise ValueError("Project root must be a non-empty string")
-        if not self.encoding_used or not isinstance(self.encoding_used, str):
-            raise ValueError("Encoding must be a non-empty string")
+        """Extract filename from file_path if not provided"""
+        if not self.name:
+            from pathlib import Path
+            self.name = Path(self.file_path).name
 
     def to_dict(self) -> dict:
         """Convert to dictionary for JSON serialization"""

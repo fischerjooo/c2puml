@@ -54,7 +54,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/project/main.c",
             relative_path="main.c",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={
                 "PublicStruct": Struct("PublicStruct", [Field("id", "int")]),
@@ -93,7 +93,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         # Create project model
         model = ProjectModel(
             project_name="TestProject",
-            project_root="/test/project",
+            
             files={"main.c": file_model},
         )
 

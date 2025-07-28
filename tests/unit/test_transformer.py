@@ -35,7 +35,7 @@ class TestTransformer(unittest.TestCase):
         self.sample_file_model = FileModel(
             file_path="/test/project/sample.c",
             relative_path="sample.c",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={
                 "Person": Struct(
@@ -67,13 +67,13 @@ class TestTransformer(unittest.TestCase):
 
         self.sample_project_model = ProjectModel(
             project_name="TestProject",
-            project_root="/test/project",
+            
             files={
                 "sample.c": self.sample_file_model,
                 "header.h": FileModel(
                     file_path="/test/project/header.h",
                     relative_path="header.h",
-                    project_root="/test/project",
+                    
                     encoding_used="utf-8",
                     structs={},
                     enums={},
@@ -508,7 +508,7 @@ class TestTransformer(unittest.TestCase):
         file1 = FileModel(
             file_path="/test/file1.c",
             relative_path="file1.c",
-            project_root="/test",
+            
             encoding_used="utf-8",
             includes={"file2.h"},
             structs={},
@@ -524,7 +524,7 @@ class TestTransformer(unittest.TestCase):
         file2 = FileModel(
             file_path="/test/file2.h",
             relative_path="file2.h",
-            project_root="/test",
+            
             encoding_used="utf-8",
             includes=set(),
             structs={},
@@ -539,7 +539,7 @@ class TestTransformer(unittest.TestCase):
 
         model = ProjectModel(
             project_name="TestProject",
-            project_root="/test",
+            
             files={"file1.c": file1, "file2.h": file2},
         )
 
@@ -725,7 +725,7 @@ class TestTransformer(unittest.TestCase):
         file_model_with_includes = FileModel(
             file_path="/test/project/main.c",
             relative_path="main.c",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -745,7 +745,7 @@ class TestTransformer(unittest.TestCase):
 
         project_model = ProjectModel(
             project_name="TestProject",
-            project_root="/test/project",
+            
             files={"main.c": file_model_with_includes},
         )
 
@@ -779,7 +779,7 @@ class TestTransformer(unittest.TestCase):
         main_c_model = FileModel(
             file_path="/test/project/main.c",
             relative_path="main.c",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -799,7 +799,7 @@ class TestTransformer(unittest.TestCase):
         utils_c_model = FileModel(
             file_path="/test/project/utils.c",
             relative_path="utils.c",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -818,7 +818,7 @@ class TestTransformer(unittest.TestCase):
 
         project_model = ProjectModel(
             project_name="TestProject",
-            project_root="/test/project",
+            
             files={
                 "main.c": main_c_model,
                 "utils.c": utils_c_model,
@@ -854,7 +854,7 @@ class TestTransformer(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/project/other.c",
             relative_path="other.c",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -872,7 +872,7 @@ class TestTransformer(unittest.TestCase):
 
         project_model = ProjectModel(
             project_name="TestProject",
-            project_root="/test/project",
+            
             files={"other.c": file_model},
         )
 
@@ -896,7 +896,7 @@ class TestTransformer(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/project/main.c",
             relative_path="main.c",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -914,7 +914,7 @@ class TestTransformer(unittest.TestCase):
 
         project_model = ProjectModel(
             project_name="TestProject",
-            project_root="/test/project",
+            
             files={"main.c": file_model},
         )
 
@@ -938,7 +938,7 @@ class TestTransformer(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/project/main.c",
             relative_path="main.c",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -956,7 +956,7 @@ class TestTransformer(unittest.TestCase):
 
         project_model = ProjectModel(
             project_name="TestProject",
-            project_root="/test/project",
+            
             files={"main.c": file_model},
         )
 
@@ -976,7 +976,7 @@ class TestTransformer(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/project/main.c",
             relative_path="main.c",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -996,7 +996,7 @@ class TestTransformer(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/project/header.h",
             relative_path="header.h",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -1030,7 +1030,7 @@ class TestTransformer(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/project/main.c",
             relative_path="main.c",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -1049,7 +1049,7 @@ class TestTransformer(unittest.TestCase):
 
         project_model = ProjectModel(
             project_name="TestProject",
-            project_root="/test/project",
+            
             files={"main.c": file_model},
         )
 
@@ -1075,7 +1075,7 @@ class TestTransformer(unittest.TestCase):
         main_c_model = FileModel(
             file_path="/test/project/main.c",
             relative_path="main.c",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -1091,7 +1091,7 @@ class TestTransformer(unittest.TestCase):
         header1_model = FileModel(
             file_path="/test/project/header1.h",
             relative_path="header1.h",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -1107,7 +1107,7 @@ class TestTransformer(unittest.TestCase):
         header2_model = FileModel(
             file_path="/test/project/header2.h",
             relative_path="header2.h",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -1123,7 +1123,7 @@ class TestTransformer(unittest.TestCase):
         header3_model = FileModel(
             file_path="/test/project/header3.h",
             relative_path="header3.h",
-            project_root="/test/project",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -1138,7 +1138,7 @@ class TestTransformer(unittest.TestCase):
 
         project_model = ProjectModel(
             project_name="TestProject",
-            project_root="/test/project",
+            
             files={
                 "main.c": main_c_model,
                 "header1.h": header1_model,

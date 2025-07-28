@@ -38,7 +38,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("Point", file_model.structs)
@@ -69,7 +69,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("point_t", file_model.structs)
@@ -94,7 +94,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Anonymous structs should be handled appropriately
@@ -121,7 +121,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("Rectangle", file_model.structs)
@@ -147,7 +147,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("Status", file_model.enums)
@@ -179,7 +179,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("color_t", file_model.enums)
@@ -205,7 +205,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("Number", file_model.unions)
@@ -229,7 +229,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertEqual(len(file_model.functions), 3)
@@ -261,7 +261,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertEqual(len(file_model.functions), 2)
@@ -289,7 +289,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertEqual(len(file_model.functions), 4)
@@ -319,7 +319,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertGreaterEqual(len(file_model.globals), 1)
@@ -346,7 +346,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertGreaterEqual(len(file_model.includes), 2)
@@ -374,7 +374,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertGreaterEqual(len(file_model.macros), 2)
@@ -397,7 +397,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertGreaterEqual(len(file_model.aliases), 2)
@@ -474,7 +474,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Check that all constructs were parsed
@@ -515,7 +515,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should still parse correctly despite comments
@@ -550,7 +550,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse the struct correctly
@@ -582,7 +582,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("Rectangle", file_model.structs)
@@ -610,7 +610,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("Handler", file_model.structs)
@@ -639,7 +639,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("Buffer", file_model.structs)
@@ -668,7 +668,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("Config", file_model.structs)
@@ -695,7 +695,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("Flags", file_model.structs)
@@ -726,7 +726,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("Point", file_model.structs)
@@ -752,7 +752,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("process_data", [f.name for f in file_model.functions])
@@ -774,7 +774,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("printf", [f.name for f in file_model.functions])
@@ -805,7 +805,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("Node", file_model.structs)
@@ -872,7 +872,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Check all expected constructs
@@ -958,7 +958,7 @@ class TestCParserComprehensive(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
             self.assertIn("Point", file_model.structs)
         finally:
@@ -980,7 +980,7 @@ class TestCParserComprehensive(unittest.TestCase):
         try:
             # Should still attempt to parse but might fail gracefully
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
             # Should not crash, even if parsing fails
         finally:
@@ -1007,7 +1007,7 @@ class TestCParserComprehensive(unittest.TestCase):
         try:
             # Should handle malformed code gracefully
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
             # Should not crash, even if some parsing fails
         finally:

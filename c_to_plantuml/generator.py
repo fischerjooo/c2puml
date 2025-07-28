@@ -133,6 +133,11 @@ class Generator:
             if filename in project_model.files:
                 return filename
             
+            # Try matching by filename with path hash (for duplicate filenames)
+            for key in project_model.files.keys():
+                if key.startswith(f"{filename}_") and len(key) > len(filename) + 9:  # filename_ + 8 char hash
+                    return key
+            
             # Try matching by relative path
             for key in project_model.files.keys():
                 if Path(key).name == filename:

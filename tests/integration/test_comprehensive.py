@@ -494,7 +494,7 @@ typedef struct ComplexStruct {
 '''
         
         file_path = self.create_test_file("complex.h", content)
-        file_model = self.parser.parse_file(file_path, "complex.h", str(self.project_root))
+        file_model = self.parser.parse_file(file_path, "complex.h")
         
         # Verify struct was parsed correctly
         self.assertTrue(len(file_model.structs) > 0)
@@ -527,7 +527,7 @@ extern void* variadic_function(int count, ...);
 '''
         
         file_path = self.create_test_file("functions.h", content)
-        file_model = self.parser.parse_file(file_path, "functions.h", str(self.project_root))
+        file_model = self.parser.parse_file(file_path, "functions.h")
         
         # Verify functions were parsed correctly
         self.assertTrue(len(file_model.functions) > 0)
@@ -575,7 +575,7 @@ typedef struct {
 '''
         
         file_path = self.create_test_file("preprocessor.h", content)
-        file_model = self.parser.parse_file(file_path, "preprocessor.h", str(self.project_root))
+        file_model = self.parser.parse_file(file_path, "preprocessor.h")
         
         # Verify that structs are still parsed despite preprocessor directives
         self.assertTrue(len(file_model.structs) > 0)
@@ -632,7 +632,7 @@ typedef union {
 '''
         
         file_path = self.create_test_file("complex.h", content)
-        file_model = self.parser.parse_file(file_path, "complex.h", str(self.project_root))
+        file_model = self.parser.parse_file(file_path, "complex.h")
         
         # Verify complex structures were parsed
         self.assertTrue(len(file_model.structs) > 0)
@@ -676,7 +676,7 @@ typedef struct {
         file_path = self.create_test_file("errors.h", content)
         
         # Should not crash despite syntax errors
-        file_model = self.parser.parse_file(file_path, "errors.h", str(self.project_root))
+        file_model = self.parser.parse_file(file_path, "complex.h")
         
         # Should still parse some valid structures
         self.assertIsNotNone(file_model)
