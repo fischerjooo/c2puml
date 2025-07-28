@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock
 
-from c_to_plantuml.generator import PlantUMLGenerator
+from c_to_plantuml.generator import Generator
 from c_to_plantuml.models import (
     FileModel,
     ProjectModel,
@@ -21,7 +21,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures"""
-        self.generator = PlantUMLGenerator()
+        self.generator = Generator()
         self.temp_dir = tempfile.mkdtemp()
         self.test_dir = Path(self.temp_dir)
 
