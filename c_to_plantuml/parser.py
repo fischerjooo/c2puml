@@ -29,8 +29,6 @@ class CParser:
         self.logger = logging.getLogger(__name__)
         self.tokenizer = CTokenizer()
         self.preprocessor = PreprocessorManager()
-        # Cache for failed include searches to avoid repeated lookups
-        self._failed_includes_cache = set()
 
     def parse_project(
         self, project_root: str, recursive_search: bool = True, config: "Config" = None
@@ -44,27 +42,28 @@ class CParser:
         if not project_root.is_dir():
             raise ValueError(f"Project root must be a directory: {project_root}")
 
-        # Clear the failed includes cache for this new project
-        cache_size_before = len(self._failed_includes_cache)
-        self._failed_includes_cache.clear()
-        if cache_size_before > 0:
-            self.logger.debug(
-                "Cleared failed includes cache (%d entries)", cache_size_before
-            )
-
         self.logger.info("Parsing project: %s", project_root)
 
-        # Find C/C++ files based on configuration and include dependencies
+        # Find all C/C++ files in the project
+        all_c_files = self._find_c_files(project_root, recursive_search)
+        self.logger.info("Found %d C/C++ files", len(all_c_files))
+
+        # Apply file filtering based on configuration
+        c_files = []
         if config:
-            c_files = self._find_files_with_include_dependencies(
-                project_root, recursive_search, config
-            )
+            for file_path in all_c_files:
+                relative_path = str(file_path.relative_to(project_root))
+                if config._should_include_file(relative_path):
+                    c_files.append(file_path)
+                    self.logger.debug("Included file after filtering: %s", relative_path)
+                else:
+                    self.logger.debug("Excluded file after filtering: %s", relative_path)
         else:
-            c_files = self._find_c_files(project_root, recursive_search)
+            c_files = all_c_files
 
-        self.logger.info("Found %d C/C++ files", len(c_files))
+        self.logger.info("After filtering: %d C/C++ files", len(c_files))
 
-        # Parse each file using filename as key for simplified tracking
+        # Parse each file using relative path as key for simplified tracking
         files = {}
         failed_files = []
 
@@ -99,18 +98,6 @@ class CParser:
 
         # Update all uses fields across the entire project
         model.update_uses_fields()
-
-        # Log cache statistics
-        if self._failed_includes_cache:
-            self.logger.info(
-                "Failed includes cache contains %d entries",
-                len(self._failed_includes_cache),
-            )
-            self.logger.debug(
-                "Failed includes: %s%s",
-                list(self._failed_includes_cache)[:10],
-                "..." if len(self._failed_includes_cache) > 10 else "",
-            )
 
         self.logger.info("Parsing complete. Parsed %d files successfully.", len(files))
         return model
@@ -694,184 +681,13 @@ class CParser:
         self.logger.debug("Found %d C/C++ files after filtering", len(filtered_files))
         return sorted(filtered_files)
 
-    def _find_files_with_include_dependencies(
-        self, project_root: Path, recursive_search: bool, config: "Config"
-    ) -> List[Path]:
-        """Find C/C++ files based on configuration and include dependencies"""
 
-        # If no config provided, fall back to old behavior
-        if config is None:
-            return self._find_c_files(project_root, recursive_search)
 
-        # Get include depth from config
-        include_depth = getattr(config, "include_depth", 1)
-        self.logger.info("Using include depth: %d", include_depth)
 
-        # Step 1: Find all C/C++ files in the project
-        all_c_files = self._find_c_files(project_root, recursive_search)
-        self.logger.debug("All C files found: %s", [f.name for f in all_c_files])
 
-        # Step 2: Apply initial file filtering (include/exclude patterns) and separate .c and .h files
-        initial_c_files = []  # Only .c files as starting files
-        all_header_files = []  # All .h files for later include processing
 
-        for file_path in all_c_files:
-            relative_path = str(file_path.relative_to(project_root))
-            if self._should_include_file(relative_path, config):
-                if file_path.suffix in [".c", ".cpp", ".cc", ".cxx"]:
-                    initial_c_files.append(file_path)
-                    self.logger.debug(
-                        f"Included C file after filtering: {relative_path}"
-                    )
-                else:
-                    all_header_files.append(file_path)
-                    self.logger.debug("Found header file: %s", relative_path)
-            else:
-                self.logger.debug("Excluded file after filtering: %s", relative_path)
 
-        self.logger.info(
-            f"Initial C files after filtering: {len(initial_c_files)} files"
-        )
-        self.logger.debug("Initial C files: %s", [f.name for f in initial_c_files])
 
-        # Step 3: If include_depth is 0, return only the initially filtered C files
-        if include_depth == 0:
-            return initial_c_files
-
-        # Step 4: Process include dependencies for N iterations
-        files_to_parse = set(initial_c_files)
-
-        for iteration in range(include_depth):
-            self.logger.info("Processing include iteration %d", iteration + 1)
-
-            # Get the files that were in the list at the start of this iteration
-            files_at_start_of_iteration = list(files_to_parse)
-            self.logger.debug(
-                f"Files at start of iteration {iteration + 1}: {[f.name for f in files_at_start_of_iteration]}"
-            )
-
-            # Find all includes from files that were in the list at the start of this iteration
-            new_includes = set()
-            for file_path in files_at_start_of_iteration:
-                # Extract includes from this file
-                includes = self._extract_includes_from_file(file_path)
-                self.logger.debug("Found includes in %s: %s", file_path.name, includes)
-
-                # Find the actual header files
-                for include_name in includes:
-                    included_file = self._find_included_file(
-                        include_name, file_path, project_root
-                    )
-                    if included_file and included_file not in files_to_parse:
-                        # Check if the included file should be included based on config
-                        relative_included_path = str(
-                            included_file.relative_to(project_root)
-                        )
-                        if self._should_include_file(relative_included_path, config):
-                            new_includes.add(included_file)
-                            self.logger.debug(
-                                f"Added included file in iteration {iteration + 1}: {relative_included_path}"
-                            )
-                        else:
-                            self.logger.debug(
-                                f"Excluded included file due to config: {relative_included_path}"
-                            )
-                    elif included_file:
-                        self.logger.debug(
-                            f"Included file already in list: {included_file.name}"
-                        )
-                    else:
-                        self.logger.debug(
-                            f"Could not find included file: {include_name}"
-                        )
-
-            # Add new includes to the parsing list
-            files_to_parse.update(new_includes)
-            self.logger.info(
-                f"Iteration {iteration + 1}: Added {len(new_includes)} new files"
-            )
-
-            # If no new files were found, we can stop early
-            if not new_includes:
-                self.logger.info(
-                    f"No new files found in iteration {iteration + 1}, stopping early"
-                )
-                break
-
-        result = list(files_to_parse)
-        self.logger.info("Final file list: %d files", len(result))
-        self.logger.debug("Final files: %s", [f.name for f in result])
-        return result
-
-    def _should_include_file(self, relative_path: str, config: "Config") -> bool:
-        """Check if a file should be included based on configuration filters"""
-        # Use the Config class's _should_include_file method which properly handles regex patterns
-        return config._should_include_file(relative_path)
-
-    def _find_included_file(
-        self, include_name: str, source_file: Path, project_root: Path
-    ) -> Optional[Path]:
-        """Find the actual file path for an include statement"""
-        # Remove quotes and angle brackets
-        include_name = include_name.strip('"<>')
-
-        # Check if this include has already been searched and failed
-        cache_key = f"{include_name}:{project_root}"
-        if cache_key in self._failed_includes_cache:
-            self.logger.debug(
-                f"Include '{include_name}' already known to be not found (cached)"
-            )
-            return None
-
-        # Try to find the file relative to the source file's directory
-        source_dir = source_file.parent
-        possible_paths = [
-            source_dir / include_name,
-            source_dir / f"{include_name}.h",
-            source_dir / f"{include_name}.hpp",
-        ]
-
-        for path in possible_paths:
-            if path.exists() and path.is_file():
-                return path
-
-        # Try to find the file in subdirectories of the project root
-        if project_root:
-            for ext in [".h", ".hpp", ".c", ".cpp"]:
-                full_name = (
-                    include_name
-                    if include_name.endswith(ext)
-                    else f"{include_name}{ext}"
-                )
-                # Search recursively in project root
-                for found_file in project_root.rglob(full_name):
-                    if found_file.is_file():
-                        # For backward compatibility with tests, return full path if it's a test
-                        # Otherwise return filename for simplified tracking
-                        if "tmp" in str(found_file):
-                            return found_file
-                        else:
-                            return found_file
-
-        # If we get here, the file was not found - cache this result
-        self._failed_includes_cache.add(cache_key)
-        self.logger.debug("Cached failed include search for '%s'", include_name)
-        return None
-
-    def _extract_includes_from_file(self, file_path: Path) -> List[str]:
-        """Extract include statements from a file without full parsing"""
-        try:
-            encoding = self._detect_encoding(file_path)
-            with open(file_path, "r", encoding=encoding) as f:
-                content = f.read()
-
-            # Tokenize and extract includes
-            tokens = self.tokenizer.tokenize(content)
-            return self._parse_includes_with_tokenizer(tokens)
-
-        except Exception as e:
-            self.logger.warning("Failed to extract includes from %s: %s", file_path, e)
-            return []
 
     def _detect_encoding(self, file_path: Path) -> str:
         """Detect file encoding with platform-aware fallbacks"""
@@ -1465,12 +1281,7 @@ class CParser:
 
         return datetime.now().isoformat()
 
-    def get_failed_includes_cache_stats(self) -> dict:
-        """Get statistics about the failed includes cache"""
-        return {
-            "cache_size": len(self._failed_includes_cache),
-            "cached_includes": list(self._failed_includes_cache),
-        }
+
 
 
 class Parser:
