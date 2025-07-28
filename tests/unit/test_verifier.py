@@ -45,14 +45,14 @@ class TestModelVerifier(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
-            project_root="/test",
+            
             encoding_used="utf-8",
             structs={"valid_struct": valid_struct},
         )
 
-        model = ProjectModel(
+        model = ProjectModel(project_root="/test", 
             project_name="TestProject",
-            project_root="/test",
+            
             files={"file.c": file_model},
         )
 
@@ -69,14 +69,14 @@ class TestModelVerifier(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
-            project_root="/test",
+            
             encoding_used="utf-8",
             globals=[invalid_global],
         )
 
-        model = ProjectModel(
+        model = ProjectModel(project_root="/test", 
             project_name="TestProject",
-            project_root="/test",
+            
             files={"file.c": file_model},
         )
 
@@ -98,14 +98,14 @@ class TestModelVerifier(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
-            project_root="/test",
+            
             encoding_used="utf-8",
             globals=[suspicious_global],
         )
 
-        model = ProjectModel(
+        model = ProjectModel(project_root="/test", 
             project_name="TestProject",
-            project_root="/test",
+            
             files={"file.c": file_model},
         )
 
@@ -127,14 +127,14 @@ class TestModelVerifier(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
-            project_root="/test",
+            
             encoding_used="utf-8",
             globals=[suspicious_global],
         )
 
-        model = ProjectModel(
+        model = ProjectModel(project_root="/test", 
             project_name="TestProject",
-            project_root="/test",
+            
             files={"file.c": file_model},
         )
 
@@ -153,14 +153,14 @@ class TestModelVerifier(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
-            project_root="/test",
+            
             encoding_used="utf-8",
             structs={"": empty_struct},
         )
 
-        model = ProjectModel(
+        model = ProjectModel(project_root="/test", 
             project_name="TestProject",
-            project_root="/test",
+            
             files={"file.c": file_model},
         )
 
@@ -178,14 +178,14 @@ class TestModelVerifier(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
-            project_root="/test",
+            
             encoding_used="utf-8",
             structs={"123invalid": invalid_struct},
         )
 
-        model = ProjectModel(
+        model = ProjectModel(project_root="/test", 
             project_name="TestProject",
-            project_root="/test",
+            
             files={"file.c": file_model},
         )
 
@@ -205,14 +205,14 @@ class TestModelVerifier(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
-            project_root="/test",
+            
             encoding_used="utf-8",
             globals=[unbalanced_field],
         )
 
-        model = ProjectModel(
+        model = ProjectModel(project_root="/test", 
             project_name="TestProject",
-            project_root="/test",
+            
             files={"file.c": file_model},
         )
 
@@ -240,14 +240,14 @@ class TestModelVerifier(unittest.TestCase):
                 file_model = FileModel(
                     file_path="/test/file.c",
                     relative_path="file.c",
-                    project_root="/test",
+                    
                     encoding_used="utf-8",
                     globals=[field],
                 )
 
-                model = ProjectModel(
+                model = ProjectModel(project_root="/test", 
                     project_name="TestProject",
-                    project_root="/test",
+                    
                     files={"file.c": file_model},
                 )
 
@@ -278,14 +278,14 @@ class TestModelVerifier(unittest.TestCase):
                 file_model = FileModel(
                     file_path="/test/file.c",
                     relative_path="file.c",
-                    project_root="/test",
+                    
                     encoding_used="utf-8",
                     globals=[field],
                 )
 
-                model = ProjectModel(
+                model = ProjectModel(project_root="/test", 
                     project_name="TestProject",
-                    project_root="/test",
+                    
                     files={"file.c": file_model},
                 )
 
@@ -318,14 +318,14 @@ class TestModelVerifier(unittest.TestCase):
                 file_model = FileModel(
                     file_path="/test/file.c",
                     relative_path="file.c",
-                    project_root="/test",
+                    
                     encoding_used="utf-8",
                     globals=[valid_field],
                 )
 
-                model = ProjectModel(
+                model = ProjectModel(project_root="/test", 
                     project_name="TestProject",
-                    project_root="/test",
+                    
                     files={"file.c": file_model},
                 )
 
@@ -358,14 +358,14 @@ class TestModelVerifier(unittest.TestCase):
                 file_model = FileModel(
                     file_path="/test/file.c",
                     relative_path="file.c",
-                    project_root="/test",
+                    
                     encoding_used="utf-8",
                     globals=[invalid_field],
                 )
 
-                model = ProjectModel(
+                model = ProjectModel(project_root="/test", 
                     project_name="TestProject",
-                    project_root="/test",
+                    
                     files={"file.c": file_model},
                 )
 
@@ -381,13 +381,13 @@ class TestModelVerifier(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
-            project_root="/test",
+            
             encoding_used="utf-8",
         )
 
-        model = ProjectModel(
+        model = ProjectModel(project_root="/test", 
             project_name="TestProject",
-            project_root="/test",
+            
             files={"file.c": file_model},
         )
         model.project_name = ""  # Override the validation
@@ -397,9 +397,9 @@ class TestModelVerifier(unittest.TestCase):
         self.assertTrue(any("Project name is empty" in issue for issue in issues))
 
         # Test empty project root
-        model = ProjectModel(
+        model = ProjectModel(project_root="/test", 
             project_name="TestProject",
-            project_root="/test",
+            
             files={"file.c": file_model},
         )
         model.project_root = ""  # Override the validation
@@ -409,7 +409,7 @@ class TestModelVerifier(unittest.TestCase):
         self.assertTrue(any("Project root is empty" in issue for issue in issues))
 
         # Test no files
-        model = ProjectModel(project_name="TestProject", project_root="/test", files={})
+        model = ProjectModel(project_root="/test", project_name="TestProject",  files={})
 
         is_valid, issues = self.verifier.verify_model(model)
         self.assertFalse(is_valid)

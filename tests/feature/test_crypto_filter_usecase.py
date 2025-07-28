@@ -311,7 +311,9 @@ class TestCryptoFilterUseCase(BaseFeatureTest):
             assert (
                 actual_filename == expected_filename
             ), f"Filename mismatch: {actual_filename} != {expected_filename}"
-            assert file_model.project_root == self.temp_dir
+            # project_root field has been removed from FileModel
+            # The project root is now stored in the ProjectModel
+            assert project_model.project_root == self.temp_dir
             # Check that encoding is one of the acceptable encodings
             acceptable_encodings = [
                 "utf-8",

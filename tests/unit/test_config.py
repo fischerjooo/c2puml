@@ -157,7 +157,7 @@ class TestConfig(unittest.TestCase):
         file_model = FileModel(
             file_path="test.c",
             relative_path="test.c",
-            project_root="/test",
+            
             encoding_used="utf-8",
             structs={
                 "Person": Struct("Person", []),
@@ -203,7 +203,7 @@ class TestConfig(unittest.TestCase):
         file1 = FileModel(
             file_path="main.c",
             relative_path="main.c",
-            project_root="/test",
+            
             encoding_used="utf-8",
             structs={"Person": Struct("Person", []), "Config": Struct("Config", [])},
             enums={},
@@ -217,7 +217,7 @@ class TestConfig(unittest.TestCase):
         file2 = FileModel(
             file_path="test_helper.c",
             relative_path="test_helper.c",
-            project_root="/test",
+            
             encoding_used="utf-8",
             structs={},
             enums={},
@@ -228,9 +228,9 @@ class TestConfig(unittest.TestCase):
             aliases={},
         )
 
-        model = ProjectModel(
+        model = ProjectModel(project_root="/test", 
             project_name="test_project",
-            project_root="/test",
+            
             files={"main.c": file1, "test_helper.c": file2},
         )
 

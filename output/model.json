@@ -441,7 +441,7 @@
         "string.h"
       ],
       "macros": [],
-      "project_root": "/workspace/example/source",
+      "name": "complex.c",
       "relative_path": "complex.c",
       "structs": {},
       "unions": {}
@@ -757,7 +757,7 @@
         "UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)",
         "UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)"
       ],
-      "project_root": "/workspace/example/source",
+      "name": "complex.h",
       "relative_path": "complex.h",
       "structs": {
         "Process_T": {
@@ -1036,7 +1036,7 @@
       "macros": [
         "COMPLEX_EXAMPLE_H"
       ],
-      "project_root": "/workspace/example/source",
+      "name": "complex_example.h",
       "relative_path": "complex_example.h",
       "structs": {
         "ComplexExample_t": {
@@ -1142,7 +1142,7 @@
         "MAX_LABEL_LEN",
         "PROJECT_NAME"
       ],
-      "project_root": "/workspace/example/source",
+      "name": "config.h",
       "relative_path": "config.h",
       "structs": {},
       "unions": {}
@@ -1234,7 +1234,7 @@
         "FILTERED_HEADER_H",
         "FILTERED_MACRO(x)"
       ],
-      "project_root": "/workspace/example/source",
+      "name": "filtered_header.h",
       "relative_path": "filtered_header.h",
       "structs": {
         "filtered_struct_t": {
@@ -1319,7 +1319,7 @@
         "string.h"
       ],
       "macros": [],
-      "project_root": "/workspace/example/source",
+      "name": "geometry.c",
       "relative_path": "geometry.c",
       "structs": {},
       "unions": {}
@@ -1381,7 +1381,7 @@
       "macros": [
         "GEOMETRY_H"
       ],
-      "project_root": "/workspace/example/source",
+      "name": "geometry.h",
       "relative_path": "geometry.h",
       "structs": {
         "triangle_t": {
@@ -1464,7 +1464,7 @@
         "string.h"
       ],
       "macros": [],
-      "project_root": "/workspace/example/source",
+      "name": "logger.c",
       "relative_path": "logger.c",
       "structs": {},
       "unions": {}
@@ -1552,7 +1552,7 @@
       "macros": [
         "LOGGER_H"
       ],
-      "project_root": "/workspace/example/source",
+      "name": "logger.h",
       "relative_path": "logger.h",
       "structs": {},
       "unions": {}
@@ -1624,7 +1624,7 @@
         "math_utils.h"
       ],
       "macros": [],
-      "project_root": "/workspace/example/source",
+      "name": "math_utils.c",
       "relative_path": "math_utils.c",
       "structs": {},
       "unions": {}
@@ -1709,7 +1709,7 @@
       "macros": [
         "MATH_UTILS_H"
       ],
-      "project_root": "/workspace/example/source",
+      "name": "math_utils.h",
       "relative_path": "math_utils.h",
       "structs": {},
       "unions": {}
@@ -1765,7 +1765,7 @@
         "string.h"
       ],
       "macros": [],
-      "project_root": "/workspace/example/source",
+      "name": "preprocessed.c",
       "relative_path": "preprocessed.c",
       "structs": {},
       "unions": {}
@@ -1885,7 +1885,7 @@
         "MIN_SIZE",
         "PREPROCESSED_H"
       ],
-      "project_root": "/workspace/example/source",
+      "name": "preprocessed.h",
       "relative_path": "preprocessed.h",
       "structs": {
         "basic_struct_t": {
@@ -2326,7 +2326,7 @@
         "DEBUG_MODE",
         "MAX_SIZE"
       ],
-      "project_root": "/workspace/example/source",
+      "name": "sample.c",
       "relative_path": "sample.c",
       "structs": {},
       "unions": {}
@@ -2437,7 +2437,7 @@
         "SAMPLE_H",
         "VERSION"
       ],
-      "project_root": "/workspace/example/source",
+      "name": "sample.h",
       "relative_path": "sample.h",
       "structs": {
         "point_t": {
@@ -2563,7 +2563,7 @@
         "typedef_test.h"
       ],
       "macros": [],
-      "project_root": "/workspace/example/source",
+      "name": "typedef_test.c",
       "relative_path": "typedef_test.c",
       "structs": {},
       "unions": {}
@@ -2655,7 +2655,7 @@
       "macros": [
         "TYPEDEF_TEST_H"
       ],
-      "project_root": "/workspace/example/source",
+      "name": "typedef_test.h",
       "relative_path": "typedef_test.h",
       "structs": {
         "MyBuffer": {

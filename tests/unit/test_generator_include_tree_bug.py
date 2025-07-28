@@ -47,7 +47,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         main_file_model = FileModel(
             file_path=str(main_c_path),
             relative_path="main.c",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes={"utils.h"}
         )
@@ -55,18 +55,18 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         utils_file_model = FileModel(
             file_path=str(utils_h_path),
             relative_path="utils.h",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes=set()
         )
 
-        # Create ProjectModel with absolute paths as keys
+        # Create ProjectModel with filenames as keys (consistent with parser behavior)
         project_model = ProjectModel(
             project_name="test_project",
             project_root=str(self.test_dir),
             files={
-                str(main_c_path): main_file_model,
-                str(utils_h_path): utils_file_model
+                "main.c": main_file_model,
+                "utils.h": utils_file_model
             }
         )
 
@@ -76,7 +76,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         )
 
         # The method should find both files using the correct keys from project_model.files
-        expected_files = {str(main_c_path), str(utils_h_path)}
+        expected_files = {"main.c", "utils.h"}
         actual_files = set(include_tree.keys())
         
         # This test should now pass with the fix
@@ -100,7 +100,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         main_file_model = FileModel(
             file_path="main.c",
             relative_path="main.c",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes={"utils.h"}
         )
@@ -108,12 +108,12 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         utils_file_model = FileModel(
             file_path="utils.h",
             relative_path="utils.h",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes=set()
         )
 
-        # Create ProjectModel with relative paths as keys
+        # Create ProjectModel with filenames as keys (new behavior)
         project_model = ProjectModel(
             project_name="test_project",
             project_root=str(self.test_dir),
@@ -128,10 +128,11 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
             main_file_model, project_model, include_depth=1
         )
 
-        # This should work correctly with relative paths
+        # The method should find both files using the correct keys from project_model.files
         expected_files = {"main.c", "utils.h"}
         actual_files = set(include_tree.keys())
         
+        # This test should now pass with the fix
         self.assertEqual(actual_files, expected_files, 
                         f"Expected to find {expected_files}, but found {actual_files}")
 
@@ -152,7 +153,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         main_file_model = FileModel(
             file_path=str(main_c_path),
             relative_path="main.c",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes={"utils.h"}
         )
@@ -160,18 +161,18 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         utils_file_model = FileModel(
             file_path="utils.h",
             relative_path="utils.h",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes=set()
         )
 
-        # Create ProjectModel with mixed path keys
+        # Create ProjectModel with filenames as keys (new behavior)
         project_model = ProjectModel(
             project_name="test_project",
             project_root=str(self.test_dir),
             files={
-                str(main_c_path): main_file_model,  # Absolute path
-                "utils.h": utils_file_model         # Relative path
+                "main.c": main_file_model,
+                "utils.h": utils_file_model
             }
         )
 
@@ -181,7 +182,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         )
 
         # This should now work correctly with the fix
-        expected_files = {str(main_c_path), "utils.h"}
+        expected_files = {"main.c", "utils.h"}
         actual_files = set(include_tree.keys())
         
         self.assertEqual(actual_files, expected_files, 
@@ -204,7 +205,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         main_file_model = FileModel(
             file_path=str(main_c_path),
             relative_path="main.c",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes={"utils.h"}
         )
@@ -212,18 +213,18 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         utils_file_model = FileModel(
             file_path=str(utils_h_path),
             relative_path="utils.h",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes=set()
         )
 
-        # Create ProjectModel with absolute paths as keys
+        # Create ProjectModel with filenames as keys (new behavior)
         project_model = ProjectModel(
             project_name="test_project",
             project_root=str(self.test_dir),
             files={
-                str(main_c_path): main_file_model,
-                str(utils_h_path): utils_file_model
+                "main.c": main_file_model,
+                "utils.h": utils_file_model
             }
         )
 
@@ -239,10 +240,10 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         )
 
         print(f"Include tree keys: {list(include_tree.keys())}")
-        print(f"Expected keys: {[str(main_c_path), str(utils_h_path)]}")
+        print(f"Expected keys: {['main.c', 'utils.h']}")
 
         # This test should now pass with the fix
-        expected_files = {str(main_c_path), str(utils_h_path)}
+        expected_files = {"main.c", "utils.h"}
         actual_files = set(include_tree.keys())
         
         self.assertEqual(actual_files, expected_files, 
