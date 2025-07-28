@@ -49,7 +49,7 @@ int global_var;
         try:
             # Parse the file
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Check results
@@ -84,7 +84,7 @@ struct Rectangle {
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("Point", file_model.structs)
@@ -119,7 +119,7 @@ enum Status {
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertIn("Color", file_model.enums)
@@ -157,7 +157,7 @@ float get_average(float* values, int count) {
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertEqual(len(file_model.functions), 3)
@@ -184,7 +184,7 @@ float get_average(float* values, int count) {
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertEqual(len(file_model.macros), 4)
@@ -215,7 +215,7 @@ float get_average(float* values, int count) {
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertEqual(len(file_model.includes), 4)
@@ -242,7 +242,7 @@ static int static_var = 10;
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertGreaterEqual(len(file_model.globals), 3)
@@ -272,7 +272,7 @@ typedef struct {
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             self.assertGreaterEqual(len(file_model.aliases), 3)
@@ -293,7 +293,7 @@ typedef struct {
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Accept both UTF-8 and common Windows encodings for cross-platform compatibility
@@ -362,7 +362,7 @@ float calculate(float a, float b) {
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Verify all elements are parsed

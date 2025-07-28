@@ -63,18 +63,20 @@ class CParser:
 
         self.logger.info("After filtering: %d C/C++ files", len(c_files))
 
-        # Parse each file using relative path as key for simplified tracking
+        # Parse each file using filename as key for simplified tracking
         files = {}
         failed_files = []
 
         for file_path in c_files:
             try:
-                # Use relative path as key for better tracking of subdirectories
+                # Use relative path for tracking and filename as key
                 relative_path = str(file_path.relative_to(project_root))
                 file_model = self.parse_file(
-                    file_path, relative_path, str(project_root)
+                    file_path, relative_path
                 )
-                files[relative_path] = file_model
+                
+                # Use filename as key (filenames are guaranteed to be unique)
+                files[file_model.name] = file_model
 
                 self.logger.debug("Successfully parsed: %s", relative_path)
 
@@ -103,7 +105,7 @@ class CParser:
         return model
 
     def parse_file(
-        self, file_path: Path, relative_path: str, project_root: str
+        self, file_path: Path, relative_path: str
     ) -> FileModel:
         """Parse a single C/C++ file and return a file model using tokenization"""
         self.logger.debug("Parsing file: %s", file_path)
@@ -150,7 +152,6 @@ class CParser:
         return FileModel(
             file_path=str(file_path),
             relative_path=relative_path,  # Use relative path for better tracking
-            project_root=project_root,
             encoding_used=encoding,
             structs=structs,
             enums=enums,

@@ -42,7 +42,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse the struct correctly
@@ -81,7 +81,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse the struct correctly
@@ -123,7 +123,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse the struct correctly
@@ -157,7 +157,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse the struct correctly
@@ -193,7 +193,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse the struct correctly
@@ -237,7 +237,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse the struct correctly
@@ -277,7 +277,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse all structs
@@ -310,7 +310,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse the struct correctly
@@ -353,7 +353,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse the struct correctly
@@ -406,7 +406,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse the struct correctly
@@ -465,7 +465,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse the struct correctly
@@ -544,7 +544,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse all three variables from preprocessor blocks
@@ -574,7 +574,7 @@ class TestPreprocessorHandling(unittest.TestCase):
 
         try:
             file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name, str(Path(temp_file).parent)
+                Path(temp_file), Path(temp_file).name
             )
 
             # Should parse the struct correctly

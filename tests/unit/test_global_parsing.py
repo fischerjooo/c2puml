@@ -52,7 +52,7 @@ class TestGlobalParsing(unittest.TestCase):
         try:
             # Parse the file
             file_model = self.parser.parse_file(
-                Path(temp_file), os.path.basename(temp_file), os.path.dirname(temp_file)
+                Path(temp_file), os.path.basename(temp_file)
             )
 
             # Check that only actual globals are found
@@ -131,7 +131,7 @@ class TestGlobalParsing(unittest.TestCase):
         try:
             # Parse the file
             file_model = self.parser.parse_file(
-                Path(temp_file), os.path.basename(temp_file), os.path.dirname(temp_file)
+                Path(temp_file), os.path.basename(temp_file)
             )
 
             # Check globals
@@ -186,7 +186,7 @@ class TestGlobalParsing(unittest.TestCase):
         try:
             # Parse the file
             file_model = self.parser.parse_file(
-                Path(temp_file), os.path.basename(temp_file), os.path.dirname(temp_file)
+                Path(temp_file), os.path.basename(temp_file)
             )
 
             # Check globals

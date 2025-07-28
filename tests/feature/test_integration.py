@@ -144,7 +144,7 @@ void init_config(void);
         # This should not crash and should handle the error gracefully
         try:
             result = parser.c_parser.parse_file(
-                Path("/non/existent/file.c"), "file.c", "/non/existent"
+                Path("/non/existent/file.c"), "file.c"
             )
             # If it doesn't raise an exception, that's fine too
         except Exception as e:
