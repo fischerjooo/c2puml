@@ -1036,12 +1036,12 @@
       "globals": [],
       "include_relations": [
         {
-          "depth": 1,
+          "depth": 2,
           "included_file": "config.h",
           "source_file": "complex_example.h"
         },
         {
-          "depth": 1,
+          "depth": 2,
           "included_file": "logger.h",
           "source_file": "complex_example.h"
         }
@@ -1586,7 +1586,7 @@
       "globals": [],
       "include_relations": [
         {
-          "depth": 2,
+          "depth": 4,
           "included_file": "config.h",
           "source_file": "logger.h"
         }

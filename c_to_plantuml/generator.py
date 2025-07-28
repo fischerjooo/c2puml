@@ -6,16 +6,34 @@ Follows the template format with strict separation of typedefs and clear relatio
 
 import os
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from .models import FileModel, ProjectModel
 
+# PlantUML generation constants
+MAX_LINE_LENGTH = 120  # Maximum line length for PlantUML
+TRUNCATION_LENGTH = 100  # Length at which to start truncating function signatures
+INDENT = "    "  # Standard indentation for PlantUML content
+
+# PlantUML styling colors
+COLOR_SOURCE = "#LightBlue"
+COLOR_HEADER = "#LightGreen" 
+COLOR_TYPEDEF = "#LightYellow"
+
+# UML prefixes
+PREFIX_HEADER = "HEADER_"
+PREFIX_TYPEDEF = "TYPEDEF_"
+
 
 class PlantUMLGenerator:
-    """PlantUML generator that creates proper diagrams following the template format"""
-
-    def __init__(self):
-        pass
+    """PlantUML generator that creates proper diagrams following the template format.
+    
+    This class handles the core PlantUML generation logic, including:
+    - Building include trees for files
+    - Generating UML IDs for all elements
+    - Creating PlantUML classes for C files, headers, and typedefs
+    - Generating relationships between elements
+    """
 
     def generate_diagram(
         self, file_model: FileModel, project_model: ProjectModel, include_depth: int = 1
@@ -124,19 +142,87 @@ class PlantUMLGenerator:
                 uml_ids[file_key] = basename
             elif filename.endswith(".h"):
                 # H files: HEADER_ prefix
-                uml_ids[file_key] = f"HEADER_{basename}"
+                uml_ids[file_key] = f"{PREFIX_HEADER}{basename}"
 
             # Generate typedef UML IDs
             for typedef_name in file_model.structs:
-                uml_ids[f"typedef_{typedef_name}"] = f"TYPEDEF_{typedef_name.upper()}"
+                uml_ids[f"typedef_{typedef_name}"] = f"{PREFIX_TYPEDEF}{typedef_name.upper()}"
             for typedef_name in file_model.enums:
-                uml_ids[f"typedef_{typedef_name}"] = f"TYPEDEF_{typedef_name.upper()}"
+                uml_ids[f"typedef_{typedef_name}"] = f"{PREFIX_TYPEDEF}{typedef_name.upper()}"
             for typedef_name in file_model.aliases:
-                uml_ids[f"typedef_{typedef_name}"] = f"TYPEDEF_{typedef_name.upper()}"
+                uml_ids[f"typedef_{typedef_name}"] = f"{PREFIX_TYPEDEF}{typedef_name.upper()}"
             for typedef_name in file_model.unions:
-                uml_ids[f"typedef_{typedef_name}"] = f"TYPEDEF_{typedef_name.upper()}"
+                uml_ids[f"typedef_{typedef_name}"] = f"{PREFIX_TYPEDEF}{typedef_name.upper()}"
 
         return uml_ids
+
+    def _format_macro(self, macro: str, prefix: str = "") -> str:
+        """Format a macro with the given prefix (+ for headers, - for source)."""
+        if "(" in macro and ")" in macro:
+            # Function-like macro
+            macro_name = macro.split("(")[0].replace("#define ", "")
+            params = macro.split("(")[1].split(")")[0]
+            return f"{INDENT}{prefix}#define {macro_name}({params})"
+        else:
+            # Simple macro
+            macro_name = macro.replace("#define ", "")
+            return f"{INDENT}{prefix}#define {macro_name}"
+
+    def _format_global_variable(self, global_var, prefix: str = "") -> str:
+        """Format a global variable with the given prefix."""
+        return f"{INDENT}{prefix}{global_var.type} {global_var.name}"
+
+    def _format_function_signature(self, func, prefix: str = "") -> str:
+        """Format a function signature with truncation if needed."""
+        params = []
+        for p in func.parameters:
+            if p.name == "..." and p.type == "...":
+                params.append("...")
+            else:
+                params.append(f"{p.type} {p.name}")
+        param_str = ", ".join(params)
+        
+        # Handle long function signatures by truncating if necessary
+        full_signature = f"{INDENT}{prefix}{func.return_type} {func.name}({param_str})"
+        if len(full_signature) > MAX_LINE_LENGTH:
+            # Truncate the signature but keep it readable
+            truncated_params = []
+            current_length = len(f"{INDENT}{prefix}{func.return_type} {func.name}(")
+            for param in params:
+                if current_length + len(param) + 2 > TRUNCATION_LENGTH:  # Leave room for closing paren
+                    truncated_params.append("...")
+                    break
+                truncated_params.append(param)
+                current_length += len(param) + 2
+            param_str = ", ".join(truncated_params)
+            return f"{INDENT}{prefix}{func.return_type} {func.name}({param_str})"
+        else:
+            return full_signature
+
+    def _add_macros_section(self, lines: List[str], file_model: FileModel, prefix: str = ""):
+        """Add macros section to lines with given prefix."""
+        if file_model.macros:
+            lines.append(f"{INDENT}-- Macros --")
+            for macro in sorted(file_model.macros):
+                lines.append(self._format_macro(macro, prefix))
+
+    def _add_globals_section(self, lines: List[str], file_model: FileModel, prefix: str = ""):
+        """Add global variables section to lines with given prefix."""
+        if file_model.globals:
+            lines.append(f"{INDENT}-- Global Variables --")
+            for global_var in sorted(file_model.globals, key=lambda x: x.name):
+                lines.append(self._format_global_variable(global_var, prefix))
+
+    def _add_functions_section(self, lines: List[str], file_model: FileModel, 
+                              prefix: str = "", is_declaration_only: bool = False):
+        """Add functions section to lines with given prefix and filter."""
+        if file_model.functions:
+            lines.append(f"{INDENT}-- Functions --")
+            for func in sorted(file_model.functions, key=lambda x: x.name):
+                if is_declaration_only and func.is_declaration:
+                    lines.append(self._format_function_signature(func, prefix))
+                elif not is_declaration_only and not func.is_declaration:
+                    lines.append(self._format_function_signature(func, prefix))
 
     def _generate_c_file_class(
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
@@ -151,57 +237,13 @@ class PlantUMLGenerator:
         if not uml_id:
             return  # Skip if no UML ID found
 
-        lines.append(f'class "{basename}" as {uml_id} <<source>> #LightBlue')
+        lines.append(f'class "{basename}" as {uml_id} <<source>> {COLOR_SOURCE}')
         lines.append("{")
 
-        # Add macros
-        if file_model.macros:
-            lines.append("    -- Macros --")
-            for macro in sorted(file_model.macros):
-                if "(" in macro and ")" in macro:
-                    # Function-like macro
-                    macro_name = macro.split("(")[0].replace("#define ", "")
-                    params = macro.split("(")[1].split(")")[0]
-                    lines.append(f"    - #define {macro_name}({params})")
-                else:
-                    # Simple macro
-                    macro_name = macro.replace("#define ", "")
-                    lines.append(f"    - #define {macro_name}")
-
-        # Add global variables
-        if file_model.globals:
-            lines.append("    -- Global Variables --")
-            for global_var in sorted(file_model.globals, key=lambda x: x.name):
-                lines.append(f"    {global_var.type} {global_var.name}")
-
-        # Add functions
-        if file_model.functions:
-            lines.append("    -- Functions --")
-            for func in sorted(file_model.functions, key=lambda x: x.name):
-                if not func.is_declaration:  # Only implementation, not declarations
-                    params = []
-                    for p in func.parameters:
-                        if p.name == "..." and p.type == "...":
-                            params.append("...")
-                        else:
-                            params.append(f"{p.type} {p.name}")
-                    param_str = ", ".join(params)
-                    # Handle long function signatures by truncating if necessary
-                    full_signature = f"    {func.return_type} {func.name}({param_str})"
-                    if len(full_signature) > 120:  # PlantUML line length limit
-                        # Truncate the signature but keep it readable
-                        truncated_params = []
-                        current_length = len(f"    {func.return_type} {func.name}(")
-                        for param in params:
-                            if current_length + len(param) + 2 > 100:  # Leave room for closing paren
-                                truncated_params.append("...")
-                                break
-                            truncated_params.append(param)
-                            current_length += len(param) + 2
-                        param_str = ", ".join(truncated_params)
-                        lines.append(f"    {func.return_type} {func.name}({param_str})")
-                    else:
-                        lines.append(full_signature)
+        # Add sections with source-specific formatting
+        self._add_macros_section(lines, file_model, "- ")
+        self._add_globals_section(lines, file_model, "")
+        self._add_functions_section(lines, file_model, "", is_declaration_only=False)
 
         lines.append("}")
         lines.append("")
@@ -219,57 +261,13 @@ class PlantUMLGenerator:
         if not uml_id:
             return  # Skip if no UML ID found
 
-        lines.append(f'class "{basename}" as {uml_id} <<header>> #LightGreen')
+        lines.append(f'class "{basename}" as {uml_id} <<header>> {COLOR_HEADER}')
         lines.append("{")
 
-        # Add macros
-        if file_model.macros:
-            lines.append("    -- Macros --")
-            for macro in sorted(file_model.macros):
-                if "(" in macro and ")" in macro:
-                    # Function-like macro
-                    macro_name = macro.split("(")[0].replace("#define ", "")
-                    params = macro.split("(")[1].split(")")[0]
-                    lines.append(f"    + #define {macro_name}({params})")
-                else:
-                    # Simple macro
-                    macro_name = macro.replace("#define ", "")
-                    lines.append(f"    + #define {macro_name}")
-
-        # Add global variables
-        if file_model.globals:
-            lines.append("    -- Global Variables --")
-            for global_var in sorted(file_model.globals, key=lambda x: x.name):
-                lines.append(f"    + {global_var.type} {global_var.name}")
-
-        # Add functions (only declarations)
-        if file_model.functions:
-            lines.append("    -- Functions --")
-            for func in sorted(file_model.functions, key=lambda x: x.name):
-                if func.is_declaration:  # Only declarations
-                    params = []
-                    for p in func.parameters:
-                        if p.name == "..." and p.type == "...":
-                            params.append("...")
-                        else:
-                            params.append(f"{p.type} {p.name}")
-                    param_str = ", ".join(params)
-                    # Handle long function signatures by truncating if necessary
-                    full_signature = f"    + {func.return_type} {func.name}({param_str})"
-                    if len(full_signature) > 120:  # PlantUML line length limit
-                        # Truncate the signature but keep it readable
-                        truncated_params = []
-                        current_length = len(f"    + {func.return_type} {func.name}(")
-                        for param in params:
-                            if current_length + len(param) + 2 > 100:  # Leave room for closing paren
-                                truncated_params.append("...")
-                                break
-                            truncated_params.append(param)
-                            current_length += len(param) + 2
-                        param_str = ", ".join(truncated_params)
-                        lines.append(f"    + {func.return_type} {func.name}({param_str})")
-                    else:
-                        lines.append(full_signature)
+        # Add sections with header-specific formatting
+        self._add_macros_section(lines, file_model, "+ ")
+        self._add_globals_section(lines, file_model, "+ ")
+        self._add_functions_section(lines, file_model, "+ ", is_declaration_only=True)
 
         lines.append("}")
         lines.append("")
@@ -278,12 +276,20 @@ class PlantUMLGenerator:
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
     ):
         """Generate classes for typedefs"""
-        # Structs
+        self._generate_struct_classes(lines, file_model, uml_ids)
+        self._generate_enum_classes(lines, file_model, uml_ids)
+        self._generate_alias_classes(lines, file_model, uml_ids)
+        self._generate_union_classes(lines, file_model, uml_ids)
+
+    def _generate_struct_classes(
+        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
+    ):
+        """Generate classes for struct typedefs"""
         for struct_name, struct_data in sorted(file_model.structs.items()):
             uml_id = uml_ids.get(f"typedef_{struct_name}")
             if uml_id:
                 lines.append(
-                    f'class "{struct_name}" as {uml_id} <<typedef>> #LightYellow'
+                    f'class "{struct_name}" as {uml_id} <<typedef>> {COLOR_TYPEDEF}'
                 )
                 lines.append("{")
                 for field in sorted(struct_data.fields, key=lambda x: x.name):
@@ -291,12 +297,15 @@ class PlantUMLGenerator:
                 lines.append("}")
                 lines.append("")
 
-        # Enums
+    def _generate_enum_classes(
+        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
+    ):
+        """Generate classes for enum typedefs"""
         for enum_name, enum_data in sorted(file_model.enums.items()):
             uml_id = uml_ids.get(f"typedef_{enum_name}")
             if uml_id:
                 lines.append(
-                    f'class "{enum_name}" as {uml_id} <<typedef>> #LightYellow'
+                    f'class "{enum_name}" as {uml_id} <<typedef>> {COLOR_TYPEDEF}'
                 )
                 lines.append("{")
                 for value in sorted(enum_data.values, key=lambda x: x.name):
@@ -307,79 +316,102 @@ class PlantUMLGenerator:
                 lines.append("}")
                 lines.append("")
 
-        # Aliases (simple typedefs)
+    def _generate_alias_classes(
+        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
+    ):
+        """Generate classes for alias typedefs (simple typedefs)"""
         for alias_name, alias_data in sorted(file_model.aliases.items()):
             uml_id = uml_ids.get(f"typedef_{alias_name}")
             if uml_id:
                 lines.append(
-                    f'class "{alias_name}" as {uml_id} <<typedef>> #LightYellow'
+                    f'class "{alias_name}" as {uml_id} <<typedef>> {COLOR_TYPEDEF}'
                 )
                 lines.append("{")
-                # Handle multi-line alias types with proper nested struct indentation
-                alias_lines = alias_data.original_type.split('\n')
-                inside_struct = False
-                nested_content = []
-                
-                # Check if this is a truncated typedef (missing closing parenthesis or brace)
-                if (alias_data.original_type.strip().endswith('(') or 
-                    alias_data.original_type.strip().endswith('nested1') or
-                    alias_data.original_type.strip().endswith('{')) and len(alias_lines) > 1:
-                    # This is likely a truncated function pointer typedef
-                    # Try to reconstruct a more complete signature
-                    first_line = alias_lines[0].strip()
-                    if '(' in first_line and not first_line.endswith(')'):
-                        # Add ellipsis to indicate truncation
-                        lines.append(f"    + {first_line}...)")
-                    else:
-                        lines.append(f"    + {first_line}")
-                else:
-                    # Normal multi-line processing
-                    for i, line in enumerate(alias_lines):
-                        line = line.strip()
-                        
-                        if i == 0:
-                            lines.append(f"    + {line}")
-                        elif line.startswith("struct {"):
-                            # Start collecting nested struct content
-                            inside_struct = True
-                            nested_content = []
-                        elif line == "}":
-                            if inside_struct:
-                                # Close nested struct with flattened content
-                                if nested_content:
-                                    content_str = "; ".join(nested_content)
-                                    lines.append(f"    + struct {{ {content_str} }}")
-                                else:
-                                    lines.append(f"    + struct {{ }}")
-                                inside_struct = False
-                                nested_content = []
-                            else:
-                                lines.append(f"    }}")
-                        elif line and line != "}":
-                            if inside_struct:
-                                nested_content.append(line)  # Collect nested content
-                            else:
-                                lines.append(f"+ {line}")
-                    
-                    # If we were inside a struct but didn't find a closing brace, add one
-                    if inside_struct and nested_content:
-                        content_str = "; ".join(nested_content)
-                        lines.append(f"    + struct {{ {content_str} }}")
+                self._process_alias_content(lines, alias_data)
                 lines.append("}")
                 lines.append("")
 
-        # Unions
+    def _generate_union_classes(
+        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
+    ):
+        """Generate classes for union typedefs"""
         for union_name, union_data in sorted(file_model.unions.items()):
             uml_id = uml_ids.get(f"typedef_{union_name}")
             if uml_id:
                 lines.append(
-                    f'class "{union_name}" as {uml_id} <<typedef>> #LightYellow'
+                    f'class "{union_name}" as {uml_id} <<typedef>> {COLOR_TYPEDEF}'
                 )
                 lines.append("{")
                 for field in sorted(union_data.fields, key=lambda x: x.name):
                     self._generate_field_with_nested_structs(lines, field, "    ")
                 lines.append("}")
                 lines.append("")
+
+    def _process_alias_content(self, lines: List[str], alias_data):
+        """Process the content of an alias typedef with proper formatting"""
+        # Handle multi-line alias types with proper nested struct indentation
+        alias_lines = alias_data.original_type.split('\n')
+        inside_struct = False
+        nested_content = []
+        
+        # Check if this is a truncated typedef (missing closing parenthesis or brace)
+        if self._is_truncated_typedef(alias_data, alias_lines):
+            self._handle_truncated_typedef(lines, alias_lines)
+        else:
+            self._handle_normal_alias(lines, alias_lines, inside_struct, nested_content)
+
+    def _is_truncated_typedef(self, alias_data, alias_lines: List[str]) -> bool:
+        """Check if this is a truncated typedef"""
+        return (
+            (alias_data.original_type.strip().endswith('(') or 
+             alias_data.original_type.strip().endswith('nested1') or
+             alias_data.original_type.strip().endswith('{')) and 
+            len(alias_lines) > 1
+        )
+
+    def _handle_truncated_typedef(self, lines: List[str], alias_lines: List[str]):
+        """Handle truncated function pointer typedef"""
+        first_line = alias_lines[0].strip()
+        if '(' in first_line and not first_line.endswith(')'):
+            # Add ellipsis to indicate truncation
+            lines.append(f"    + {first_line}...)")
+        else:
+            lines.append(f"    + {first_line}")
+
+    def _handle_normal_alias(self, lines: List[str], alias_lines: List[str], 
+                           inside_struct: bool, nested_content: List[str]):
+        """Handle normal multi-line alias processing"""
+        for i, line in enumerate(alias_lines):
+            line = line.strip()
+            
+            if i == 0:
+                lines.append(f"    + {line}")
+            elif line.startswith("struct {"):
+                # Start collecting nested struct content
+                inside_struct = True
+                nested_content = []
+            elif line == "}":
+                if inside_struct:
+                    # Close nested struct with flattened content
+                    if nested_content:
+                        content_str = "; ".join(nested_content)
+                        lines.append(f"    + struct {{ {content_str} }}")
+                    else:
+                        lines.append(f"    + struct {{ }}")
+                    inside_struct = False
+                    nested_content = []
+                else:
+                    lines.append(f"    }}")
+            elif line and line != "}":
+                if inside_struct:
+                    nested_content.append(line)  # Collect nested content
+                else:
+                    lines.append(f"+ {line}")
+        
+        # If we were inside a struct but didn't find a closing brace, add one
+        if inside_struct and nested_content:
+            content_str = "; ".join(nested_content)
+            lines.append(f"    + struct {{ {content_str} }}")
 
     def _generate_field_with_nested_structs(self, lines: List[str], field, base_indent: str):
         """Generate field with proper handling of nested structures"""
@@ -421,10 +453,16 @@ class PlantUMLGenerator:
         project_model: ProjectModel,
     ):
         """Generate relationships between elements"""
-        # 1. Include relationships
+        self._generate_include_relationships(lines, include_tree, uml_ids)
+        self._generate_declaration_relationships(lines, include_tree, uml_ids)
+        self._generate_uses_relationships(lines, include_tree, uml_ids)
+
+    def _generate_include_relationships(
+        self, lines: List[str], include_tree: Dict[str, FileModel], uml_ids: Dict[str, str]
+    ):
+        """Generate include relationships between files"""
         lines.append("' Include relationships")
         for file_name, file_model in sorted(include_tree.items()):
-            # Use filename for file UML ID lookup
             file_key = Path(file_name).name
             file_uml_id = uml_ids.get(file_key)
             if file_uml_id:
@@ -438,80 +476,70 @@ class PlantUMLGenerator:
                     
                     # If found, create the relationship
                     if include_uml_id:
-                        lines.append(
-                            f"{file_uml_id} --> {include_uml_id} : <<include>>"
-                        )
-
+                        lines.append(f"{file_uml_id} --> {include_uml_id} : <<include>>")
         lines.append("")
 
-        # 2. Declaration relationships
+    def _generate_declaration_relationships(
+        self, lines: List[str], include_tree: Dict[str, FileModel], uml_ids: Dict[str, str]
+    ):
+        """Generate declaration relationships between files and typedefs"""
         lines.append("' Declaration relationships")
         for file_name, file_model in sorted(include_tree.items()):
-            # Use filename for file UML ID lookup
             file_key = Path(file_name).name
             file_uml_id = uml_ids.get(file_key)
             if file_uml_id:
-                # Find all typedefs declared in this file
-                for typedef_name in sorted(file_model.structs.keys()):
-                    typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
-                    if typedef_uml_id:
-                        lines.append(
-                            f"{file_uml_id} ..> {typedef_uml_id} : <<declares>>"
-                        )
-
-                for typedef_name in sorted(file_model.enums.keys()):
-                    typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
-                    if typedef_uml_id:
-                        lines.append(
-                            f"{file_uml_id} ..> {typedef_uml_id} : <<declares>>"
-                        )
-
-                for typedef_name in sorted(file_model.aliases.keys()):
-                    typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
-                    if typedef_uml_id:
-                        lines.append(
-                            f"{file_uml_id} ..> {typedef_uml_id} : <<declares>>"
-                        )
-
-                for typedef_name in sorted(file_model.unions.keys()):
-                    typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
-                    if typedef_uml_id:
-                        lines.append(
-                            f"{file_uml_id} ..> {typedef_uml_id} : <<declares>>"
-                        )
-
+                # Generate declarations for all typedef types
+                typedef_collections = [
+                    file_model.structs,
+                    file_model.enums,
+                    file_model.aliases,
+                    file_model.unions
+                ]
+                
+                for typedef_collection in typedef_collections:
+                    for typedef_name in sorted(typedef_collection.keys()):
+                        typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
+                        if typedef_uml_id:
+                            lines.append(f"{file_uml_id} ..> {typedef_uml_id} : <<declares>>")
         lines.append("")
 
-        # 3. Uses relationships
+    def _generate_uses_relationships(
+        self, lines: List[str], include_tree: Dict[str, FileModel], uml_ids: Dict[str, str]
+    ):
+        """Generate uses relationships between typedefs"""
         lines.append("' Uses relationships")
         for file_name, file_model in sorted(include_tree.items()):
-            # Note: file_uml_id not needed for uses relationships, only typedef UML IDs are used
             # Struct uses relationships
-            for struct_name, struct_data in sorted(file_model.structs.items()):
-                struct_uml_id = uml_ids.get(f"typedef_{struct_name}")
-                if struct_uml_id and hasattr(struct_data, "uses"):
-                    for used_type in sorted(struct_data.uses):
-                        used_uml_id = uml_ids.get(f"typedef_{used_type}")
-                        if used_uml_id:
-                            lines.append(
-                                f"{struct_uml_id} ..> {used_uml_id} : <<uses>>"
-                            )
+            self._add_typedef_uses_relationships(
+                lines, file_model.structs, uml_ids, "struct"
+            )
+            # Alias uses relationships  
+            self._add_typedef_uses_relationships(
+                lines, file_model.aliases, uml_ids, "alias"
+            )
 
-            # Alias uses relationships
-            for alias_name, alias_data in sorted(file_model.aliases.items()):
-                alias_uml_id = uml_ids.get(f"typedef_{alias_name}")
-                if alias_uml_id and hasattr(alias_data, "uses"):
-                    for used_type in sorted(alias_data.uses):
-                        used_uml_id = uml_ids.get(f"typedef_{used_type}")
-                        if used_uml_id:
-                            lines.append(f"{alias_uml_id} ..> {used_uml_id} : <<uses>>")
+    def _add_typedef_uses_relationships(
+        self, lines: List[str], typedef_collection: Dict, uml_ids: Dict[str, str], typedef_type: str
+    ):
+        """Add uses relationships for a specific typedef collection"""
+        for typedef_name, typedef_data in sorted(typedef_collection.items()):
+            typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
+            if typedef_uml_id and hasattr(typedef_data, "uses"):
+                for used_type in sorted(typedef_data.uses):
+                    used_uml_id = uml_ids.get(f"typedef_{used_type}")
+                    if used_uml_id:
+                        lines.append(f"{typedef_uml_id} ..> {used_uml_id} : <<uses>>")
 
 
 class Generator:
-    """Generator that creates proper PlantUML files"""
-
-    def __init__(self):
-        pass
+    """Generator that creates proper PlantUML files.
+    
+    This class provides a facade for the PlantUML generation process, handling:
+    - Loading project models from JSON files
+    - Creating output directories
+    - Orchestrating PlantUML content generation
+    - Writing output files to disk
+    """
 
     def generate(
         self, model_file: str, output_dir: str = "./output", include_depth: int = 1
