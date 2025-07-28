@@ -47,10 +47,8 @@ class Transformer:
         """
         self.logger.info("Step 2: Transforming model: %s", model_file)
 
-        # Load the model
+        # Load the model and configuration
         model = self._load_model(model_file)
-
-        # Load configuration
         config = self._load_config(config_file)
 
         # Apply transformations
@@ -115,7 +113,7 @@ class Transformer:
         """Apply all configured transformations to the model"""
         self.logger.info("Applying transformations to model")
 
-        # Apply comprehensive file filtering (moved from parser)
+        # Apply file filtering
         if "file_filters" in config:
             model = self._apply_file_filters(model, config["file_filters"])
 
@@ -123,16 +121,16 @@ class Transformer:
         if "element_filters" in config:
             model = self._apply_element_filters(model, config["element_filters"])
 
-        # Apply include filters for each root file
+        # Apply include filters
         include_filters = config.get("include_filters", {})
         if include_filters:
             model = self._apply_include_filters(model, include_filters)
 
-        # Apply transformations with file selection support
+        # Apply model transformations
         if "transformations" in config:
             model = self._apply_model_transformations(model, config["transformations"])
 
-        # Apply include depth processing with include_filters support
+        # Process include relations
         if "include_depth" in config and config["include_depth"] > 1:
             model = self._process_include_relations(
                 model, config["include_depth"], include_filters
@@ -147,8 +145,7 @@ class Transformer:
     def _apply_file_filters(
         self, model: ProjectModel, filters: Dict[str, Any]
     ) -> ProjectModel:
-        """Apply user-configured file-level filters (important filtering already 
-        done in parser)"""
+        """Apply file-level filters"""
         include_patterns = self._compile_patterns(filters.get("include", []))
         exclude_patterns = self._compile_patterns(filters.get("exclude", []))
 
@@ -162,7 +159,7 @@ class Transformer:
 
         model.files = filtered_files
         self.logger.debug(
-            "User file filtering: %d files after filtering", 
+            "File filtering: %d files after filtering", 
             len(model.files)
         )
         return model
@@ -179,7 +176,7 @@ class Transformer:
     def _apply_include_filters(
         self, model: ProjectModel, include_filters: Dict[str, List[str]]
     ) -> ProjectModel:
-        """Apply include filters for each root file based on regex patterns"""
+        """Apply include filters for each root file"""
         self.logger.info(
             "Applying include filters for %d root files", len(include_filters)
         )
@@ -191,176 +188,86 @@ class Transformer:
                 compiled_filters[root_file] = [
                     re.compile(pattern) for pattern in patterns
                 ]
-                self.logger.debug(
-                    "Compiled %d patterns for root file: %s", 
-                    len(patterns), root_file
-                )
             except re.error as e:
                 self.logger.warning(
                     "Invalid regex pattern for root file %s: %s", root_file, e
                 )
-                # Skip invalid patterns for this root file
                 continue
         
         if not compiled_filters:
-            self.logger.warning(
-                "No valid include filters found, skipping include filtering"
-            )
+            self.logger.warning("No valid include filters found, skipping include filtering")
             return model
         
-        # Create a mapping from header files to their root C files
-        header_to_root = self._create_header_to_root_mapping(model)
+        # Find all files that are part of the include chain starting from root files
+        affected_files = set()
+        for root_file in compiled_filters.keys():
+            if root_file in model.files:
+                self._find_affected_files(model, root_file, affected_files)
         
-        # Apply filters to each file in the model
+        # Apply filters only to affected files
         for file_path, file_model in model.files.items():
-            # Find the root file for this file
-            root_file = self._find_root_file_with_mapping(
-                file_path, file_model, header_to_root
-            )
-            
-            if root_file in compiled_filters:
-                # Apply the filters for this root file
-                self._filter_file_includes(
-                    file_model, compiled_filters[root_file], root_file
-                )
+            if file_path in affected_files:
+                # Find the root file for this file
+                root_file = self._get_root_file(file_model)
+                
+                # Apply filters from the root file's configuration if it exists
+                if root_file in compiled_filters:
+                    self._filter_file_includes(file_model, compiled_filters[root_file])
+                else:
+                    # If no specific root file configuration, apply filters from the first root file
+                    first_root_file = list(compiled_filters.keys())[0]
+                    self._filter_file_includes(file_model, compiled_filters[first_root_file])
         
         return model
     
-    def _create_header_to_root_mapping(self, model: ProjectModel) -> Dict[str, str]:
-        """Create a mapping from header files to their root C files"""
-        header_to_root = {}
+    def _find_affected_files(self, model: ProjectModel, root_file: str, affected_files: set) -> None:
+        """Recursively find all files that are part of the include chain starting from root_file"""
+        if root_file in affected_files:
+            return
         
-        # For now, use a simple approach: all header files are associated with the first C file
-        # This is a limitation of the current implementation
-        c_files = [f for f in model.files.keys() if f.endswith('.c')]
-        if c_files:
-            root_c_file = c_files[0]  # Use the first C file as root
-            for file_path, file_model in model.files.items():
-                if file_model.relative_path.endswith('.c'):
-                    header_to_root[file_model.relative_path] = file_model.relative_path
-                else:
-                    # Associate all header files with the root C file
-                    header_to_root[file_model.relative_path] = root_c_file
+        affected_files.add(root_file)
         
-        return header_to_root
+        if root_file in model.files:
+            file_model = model.files[root_file]
+            for include in file_model.includes:
+                # Find the included file in the model
+                for file_path, other_file_model in model.files.items():
+                    if other_file_model.relative_path == include:
+                        self._find_affected_files(model, file_path, affected_files)
+                        break
     
-    def _find_root_file_with_mapping(
-        self, file_path: str, file_model: FileModel, header_to_root: Dict[str, str]
-    ) -> str:
-        """Find the root C file for a given file using the header mapping"""
+    def _get_root_file(self, file_model: FileModel) -> str:
+        """Get the root file for a given file model"""
         if file_model.relative_path.endswith('.c'):
             return file_model.relative_path
-        
-        # For header files, use the mapping
-        return header_to_root.get(file_model.relative_path, file_model.relative_path)
-    
-    def _find_root_file(self, file_path: str, file_model: FileModel) -> str:
-        """Find the root C file for a given file"""
-        filename = Path(file_path).name
-        
-        # If it's a .c file, it's its own root
-        if filename.endswith('.c'):
-            return filename
-        
-        # For header files, we need to find the corresponding .c file
-        # This is a simplified approach - in a real scenario, we might need
-        # more sophisticated logic to determine which .c file includes this header
-        # For now, we'll look for a .c file with the same base name
-        base_name = Path(file_path).stem
-        
-        # Check if there's a corresponding .c file in the same directory
-        # This is a heuristic and might need to be enhanced
-        if base_name and not filename.startswith('.'):
-            # For header files, we'll use the first .c file we find as the root
-            # This is a limitation of the current approach
-            return base_name + '.c'
-        
-        # Fallback: use the filename as root (original behavior)
-        return filename
+        # For header files, use the first C file as root (simplified approach)
+        return Path(file_model.relative_path).stem + '.c'
     
     def _filter_file_includes(
-        self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
+        self, file_model: FileModel, patterns: List[re.Pattern]
     ) -> None:
-        """Filter includes and include_relations for a file based on regex 
-        patterns"""
-        self.logger.debug(
-            "Filtering includes for file %s (root: %s)", 
-            file_model.relative_path, root_file
-        )
-        
+        """Filter includes and include_relations for a file"""
         # Filter includes
-        original_includes_count = len(file_model.includes)
+        original_includes = len(file_model.includes)
         filtered_includes = set()
-        
-        for include_name in file_model.includes:
-            if self._matches_any_pattern(include_name, patterns):
-                filtered_includes.add(include_name)
-            else:
-                self.logger.debug(
-                    "Filtered out include: %s (root: %s)", include_name, root_file
-                )
-        
+        for include in file_model.includes:
+            if any(pattern.search(include) for pattern in patterns):
+                filtered_includes.add(include)
         file_model.includes = filtered_includes
         
         # Filter include_relations
-        original_relations_count = len(file_model.include_relations)
-        filtered_relations = []
-        
-        for relation in file_model.include_relations:
-            # Check if the included file matches any pattern
-            if self._matches_any_pattern(relation.included_file, patterns):
-                filtered_relations.append(relation)
-            else:
-                self.logger.debug(
-                    "Filtered out include relation: %s -> %s (root: %s)", 
-                    relation.source_file, relation.included_file, root_file
-                )
-        
-        file_model.include_relations = filtered_relations
+        original_relations = len(file_model.include_relations)
+        file_model.include_relations = [
+            relation for relation in file_model.include_relations
+            if any(pattern.search(relation.included_file) for pattern in patterns)
+        ]
         
         self.logger.debug(
             "Include filtering for %s: includes %d->%d, relations %d->%d", 
-            file_model.relative_path, original_includes_count, 
-            len(file_model.includes), original_relations_count, 
+            file_model.relative_path, original_includes, 
+            len(file_model.includes), original_relations, 
             len(file_model.include_relations)
         )
-    
-    def _matches_any_pattern(self, text: str, patterns: List[re.Pattern]) -> bool:
-        """Check if text matches any of the given regex patterns"""
-        return any(pattern.search(text) for pattern in patterns)
-
-    def _should_process_include(
-        self, 
-        file_model: FileModel, 
-        include_name: str, 
-        compiled_filters: Dict[str, List[re.Pattern]]
-    ) -> bool:
-        """Check if an include should be processed based on include_filters"""
-        # Find the root file for this file
-        root_file = self._find_root_file(file_model.relative_path, file_model)
-        
-        # If no filters for this root file, allow all includes
-        if root_file not in compiled_filters:
-            return True
-        
-        # Check if the include name matches any pattern for this root file
-        patterns = compiled_filters[root_file]
-        return self._matches_any_pattern(include_name, patterns)
-
-    def _should_process_include_with_root(
-        self, 
-        include_name: str, 
-        compiled_filters: Dict[str, List[re.Pattern]],
-        root_file: str
-    ) -> bool:
-        """Check if an include should be processed based on include_filters with explicit root file"""
-        # If no filters for this root file, allow all includes
-        if root_file not in compiled_filters:
-            return True
-        
-        # Check if the include name matches any pattern for this root file
-        patterns = compiled_filters[root_file]
-        return self._matches_any_pattern(include_name, patterns)
 
     def _filter_file_elements(
         self, file_model: FileModel, filters: Dict[str, Any]
@@ -396,7 +303,7 @@ class Transformer:
         if "macros" in filters:
             file_model.macros = self._filter_list(file_model.macros, filters["macros"])
 
-        # Filter aliases (replaces typedefs)
+        # Filter aliases
         if "aliases" in filters:
             file_model.aliases = self._filter_dict(
                 file_model.aliases, filters["aliases"]
@@ -413,11 +320,9 @@ class Transformer:
         selected_files = file_selection.get("selected_files", [])
 
         # Determine which files to apply transformations to
-        # If selected_files is empty or not specified, apply to all files
         if not selected_files:
             target_files = set(model.files.keys())
         else:
-            # Apply only to selected files
             target_files = set()
             for pattern in selected_files:
                 for file_path in model.files.keys():
@@ -425,20 +330,14 @@ class Transformer:
                         target_files.add(file_path)
 
         self.logger.debug(
-            "Applying transformations to %d files: %s",
-            len(target_files),
-            list(target_files),
+            "Applying transformations to %d files", len(target_files)
         )
 
-        # Rename elements
+        # Apply transformations (placeholder for future implementation)
         if "rename" in transformations:
             model = self._apply_renaming(model, transformations["rename"], target_files)
-
-        # Add elements
         if "add" in transformations:
             model = self._apply_additions(model, transformations["add"], target_files)
-
-        # Remove elements
         if "remove" in transformations:
             model = self._apply_removals(model, transformations["remove"], target_files)
 
@@ -500,7 +399,7 @@ class Transformer:
     def _process_include_relations(
         self, model: ProjectModel, max_depth: int, include_filters: Dict[str, List[str]] = None
     ) -> ProjectModel:
-        """Process include relationships up to specified depth with include_filters support"""
+        """Process include relationships up to specified depth"""
         self.logger.info("Processing include relations with max depth: %d", max_depth)
 
         # Compile include_filters patterns if provided
@@ -511,10 +410,6 @@ class Transformer:
                     compiled_filters[root_file] = [
                         re.compile(pattern) for pattern in patterns
                     ]
-                    self.logger.debug(
-                        "Compiled %d patterns for root file: %s", 
-                        len(patterns), root_file
-                    )
                 except re.error as e:
                     self.logger.warning(
                         "Invalid regex pattern for root file %s: %s", root_file, e
@@ -522,16 +417,12 @@ class Transformer:
                     continue
 
         # Create a mapping of filenames to their models for quick lookup
-        # Since we now use relative paths as keys, we need to map by filename 
-        # for include processing
         file_map = {}
         for file_model in model.files.values():
             filename = Path(file_model.relative_path).name
             file_map[filename] = file_model
 
         # Process each file's includes
-        # If include_filters are provided, only process .c files as root files
-        # If no include_filters, process all files (original behavior)
         for file_path, file_model in model.files.items():
             if include_filters:
                 # When include_filters are provided, only process .c files as root files
@@ -541,7 +432,7 @@ class Transformer:
                         file_model, file_map, max_depth, 1, set(), compiled_filters, root_file
                     )
             else:
-                # When no include_filters, process all files (original behavior)
+                # When no include_filters, process all files
                 self._process_file_includes(
                     file_model, file_map, max_depth, 1, set(), compiled_filters, None
                 )
@@ -558,7 +449,7 @@ class Transformer:
         compiled_filters: Dict[str, List[re.Pattern]] = None,
         root_file: str = None,
     ) -> None:
-        """Recursively process includes for a file using filename-based matching with include_filters support"""
+        """Recursively process includes for a file"""
         if current_depth > max_depth or file_model.relative_path in visited:
             return
 
@@ -577,10 +468,6 @@ class Transformer:
                 if included_filename_key in file_map:
                     # Prevent self-referencing include relations
                     if file_model.relative_path == included_filename_key:
-                        self.logger.debug(
-                            "Skipping self-include relation for %s", 
-                            file_model.relative_path
-                        )
                         continue
 
                 # Check if this include relation already exists to prevent cycles
@@ -591,26 +478,17 @@ class Transformer:
                 )
 
                 if relation_exists:
-                    self.logger.debug(
-                        "Cyclic include detected and skipped: %s -> %s",
-                        file_model.relative_path,
-                        included_filename_key,
-                    )
                     continue
 
                 # Check include_filters before processing this include
-                if compiled_filters and root_file and not self._should_process_include_with_root(
-                    include_name, compiled_filters, root_file
-                ):
-                    self.logger.debug(
-                        "Skipping filtered include: %s -> %s (root: %s)", 
-                        file_model.relative_path, include_name, root_file
-                    )
-                    continue
+                if compiled_filters and root_file:
+                    root_patterns = compiled_filters.get(root_file, [])
+                    if not any(pattern.search(include_name) for pattern in root_patterns):
+                        # Filter out this include from the file's includes list
+                        file_model.includes.discard(include_name)
+                        continue
 
-                # Create include relation using appropriate paths
-                # For tests (tmp directories), use full paths; otherwise use 
-                # filenames
+                # Create include relation
                 source_file = (
                     file_model.file_path if "tmp" in file_model.file_path 
                     else file_model.relative_path
@@ -637,17 +515,13 @@ class Transformer:
                         current_depth + 1,
                         visited,
                         compiled_filters,
-                        root_file,  # Pass the same root_file to maintain context
+                        root_file,
                     )
 
     def _find_included_file(
         self, include_name: str, project_root: str
     ) -> Optional[str]:
-        """Find the actual file path for an include using simplified filename 
-        matching"""
-        # Since we now use filenames as keys, we can simplify this significantly
-        # Just return the filename if it exists in the project files
-        
+        """Find the actual file path for an include"""
         # Common include paths to search
         search_paths = [
             Path(project_root),
@@ -667,9 +541,7 @@ class Transformer:
             for ext in extensions:
                 file_path = search_path / f"{include_name}{ext}"
                 if file_path.exists():
-                    # For backward compatibility with tests, return full path if 
-                    # it's a test
-                    # Otherwise return filename for simplified tracking
+                    # For backward compatibility with tests, return full path if it's a test
                     if "tmp" in str(file_path):
                         return str(file_path.resolve())
                     else:
@@ -854,3 +726,31 @@ class Transformer:
             self.logger.debug("Model saved to: %s", output_file)
         except Exception as e:
             raise ValueError(f"Failed to save model to {output_file}: {e}") from e
+
+    def _find_root_file(self, file_path: str, file_model: FileModel) -> str:
+        """Find the root C file for a given file"""
+        filename = Path(file_path).name
+        
+        # If it's a .c file, it's its own root
+        if filename.endswith('.c'):
+            return filename
+        
+        # For header files, we need to find the corresponding .c file
+        # This is a simplified approach - in a real scenario, we might need
+        # more sophisticated logic to determine which .c file includes this header
+        # For now, we'll look for a .c file with the same base name
+        base_name = Path(file_path).stem
+        
+        # Check if there's a corresponding .c file in the same directory
+        # This is a heuristic and might need to be enhanced
+        if base_name and not filename.startswith('.'):
+            # For header files, we'll use the first .c file we find as the root
+            # This is a limitation of the current approach
+            return base_name + '.c'
+        
+        # Fallback: use the filename as root (original behavior)
+        return filename
+
+    def _matches_any_pattern(self, text: str, patterns: List[re.Pattern]) -> bool:
+        """Check if text matches any of the given regex patterns"""
+        return any(pattern.search(text) for pattern in patterns)

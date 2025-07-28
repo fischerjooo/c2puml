@@ -29,7 +29,7 @@ class PlantUMLGenerator:
         )
 
         # Get UML IDs for all elements in the include tree
-        uml_ids = self._generate_uml_ids(include_tree, project_model)
+        uml_ids = self._generate_uml_ids(include_tree)
 
         # Generate PlantUML content
         lines = []
@@ -110,7 +110,7 @@ class PlantUMLGenerator:
         return include_tree
 
     def _generate_uml_ids(
-        self, include_tree: Dict[str, FileModel], project_model: ProjectModel
+        self, include_tree: Dict[str, FileModel]
     ) -> Dict[str, str]:
         """Generate UML IDs for all elements in the include tree using filename-based keys"""
         uml_ids = {}
@@ -179,29 +179,7 @@ class PlantUMLGenerator:
             lines.append("    -- Functions --")
             for func in sorted(file_model.functions, key=lambda x: x.name):
                 if not func.is_declaration:  # Only implementation, not declarations
-                    params = []
-                    for p in func.parameters:
-                        if p.name == "..." and p.type == "...":
-                            params.append("...")
-                        else:
-                            params.append(f"{p.type} {p.name}")
-                    param_str = ", ".join(params)
-                    # Handle long function signatures by truncating if necessary
-                    full_signature = f"    {func.return_type} {func.name}({param_str})"
-                    if len(full_signature) > 120:  # PlantUML line length limit
-                        # Truncate the signature but keep it readable
-                        truncated_params = []
-                        current_length = len(f"    {func.return_type} {func.name}(")
-                        for param in params:
-                            if current_length + len(param) + 2 > 100:  # Leave room for closing paren
-                                truncated_params.append("...")
-                                break
-                            truncated_params.append(param)
-                            current_length += len(param) + 2
-                        param_str = ", ".join(truncated_params)
-                        lines.append(f"    {func.return_type} {func.name}({param_str})")
-                    else:
-                        lines.append(full_signature)
+                    self._add_function_signature(lines, func, "    ")
 
         lines.append("}")
         lines.append("")
@@ -247,32 +225,37 @@ class PlantUMLGenerator:
             lines.append("    -- Functions --")
             for func in sorted(file_model.functions, key=lambda x: x.name):
                 if func.is_declaration:  # Only declarations
-                    params = []
-                    for p in func.parameters:
-                        if p.name == "..." and p.type == "...":
-                            params.append("...")
-                        else:
-                            params.append(f"{p.type} {p.name}")
-                    param_str = ", ".join(params)
-                    # Handle long function signatures by truncating if necessary
-                    full_signature = f"    + {func.return_type} {func.name}({param_str})"
-                    if len(full_signature) > 120:  # PlantUML line length limit
-                        # Truncate the signature but keep it readable
-                        truncated_params = []
-                        current_length = len(f"    + {func.return_type} {func.name}(")
-                        for param in params:
-                            if current_length + len(param) + 2 > 100:  # Leave room for closing paren
-                                truncated_params.append("...")
-                                break
-                            truncated_params.append(param)
-                            current_length += len(param) + 2
-                        param_str = ", ".join(truncated_params)
-                        lines.append(f"    + {func.return_type} {func.name}({param_str})")
-                    else:
-                        lines.append(full_signature)
+                    self._add_function_signature(lines, func, "    + ")
 
         lines.append("}")
         lines.append("")
+
+    def _add_function_signature(self, lines: List[str], func, prefix: str):
+        """Add a function signature with proper truncation for long signatures"""
+        params = []
+        for p in func.parameters:
+            if p.name == "..." and p.type == "...":
+                params.append("...")
+            else:
+                params.append(f"{p.type} {p.name}")
+        param_str = ", ".join(params)
+        
+        # Handle long function signatures by truncating if necessary
+        full_signature = f"{prefix}{func.return_type} {func.name}({param_str})"
+        if len(full_signature) > 120:  # PlantUML line length limit
+            # Truncate the signature but keep it readable
+            truncated_params = []
+            current_length = len(f"{prefix}{func.return_type} {func.name}(")
+            for param in params:
+                if current_length + len(param) + 2 > 100:  # Leave room for closing paren
+                    truncated_params.append("...")
+                    break
+                truncated_params.append(param)
+                current_length += len(param) + 2
+            param_str = ", ".join(truncated_params)
+            lines.append(f"{prefix}{func.return_type} {func.name}({param_str})")
+        else:
+            lines.append(full_signature)
 
     def _generate_typedef_classes(
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
@@ -315,56 +298,7 @@ class PlantUMLGenerator:
                     f'class "{alias_name}" as {uml_id} <<typedef>> #LightYellow'
                 )
                 lines.append("{")
-                # Handle multi-line alias types with proper nested struct indentation
-                alias_lines = alias_data.original_type.split('\n')
-                inside_struct = False
-                nested_content = []
-                
-                # Check if this is a truncated typedef (missing closing parenthesis or brace)
-                if (alias_data.original_type.strip().endswith('(') or 
-                    alias_data.original_type.strip().endswith('nested1') or
-                    alias_data.original_type.strip().endswith('{')) and len(alias_lines) > 1:
-                    # This is likely a truncated function pointer typedef
-                    # Try to reconstruct a more complete signature
-                    first_line = alias_lines[0].strip()
-                    if '(' in first_line and not first_line.endswith(')'):
-                        # Add ellipsis to indicate truncation
-                        lines.append(f"    + {first_line}...)")
-                    else:
-                        lines.append(f"    + {first_line}")
-                else:
-                    # Normal multi-line processing
-                    for i, line in enumerate(alias_lines):
-                        line = line.strip()
-                        
-                        if i == 0:
-                            lines.append(f"    + {line}")
-                        elif line.startswith("struct {"):
-                            # Start collecting nested struct content
-                            inside_struct = True
-                            nested_content = []
-                        elif line == "}":
-                            if inside_struct:
-                                # Close nested struct with flattened content
-                                if nested_content:
-                                    content_str = "; ".join(nested_content)
-                                    lines.append(f"    + struct {{ {content_str} }}")
-                                else:
-                                    lines.append(f"    + struct {{ }}")
-                                inside_struct = False
-                                nested_content = []
-                            else:
-                                lines.append(f"    }}")
-                        elif line and line != "}":
-                            if inside_struct:
-                                nested_content.append(line)  # Collect nested content
-                            else:
-                                lines.append(f"+ {line}")
-                    
-                    # If we were inside a struct but didn't find a closing brace, add one
-                    if inside_struct and nested_content:
-                        content_str = "; ".join(nested_content)
-                        lines.append(f"    + struct {{ {content_str} }}")
+                self._add_alias_content(lines, alias_data)
                 lines.append("}")
                 lines.append("")
 
@@ -381,6 +315,54 @@ class PlantUMLGenerator:
                 lines.append("}")
                 lines.append("")
 
+    def _add_alias_content(self, lines: List[str], alias_data):
+        """Add alias content with proper handling of multi-line types"""
+        alias_lines = alias_data.original_type.split('\n')
+        inside_struct = False
+        nested_content = []
+        
+        # Check if this is a truncated typedef
+        if (alias_data.original_type.strip().endswith('(') or 
+            alias_data.original_type.strip().endswith('nested1') or
+            alias_data.original_type.strip().endswith('{')) and len(alias_lines) > 1:
+            # This is likely a truncated function pointer typedef
+            first_line = alias_lines[0].strip()
+            if '(' in first_line and not first_line.endswith(')'):
+                lines.append(f"    + {first_line}...)")
+            else:
+                lines.append(f"    + {first_line}")
+        else:
+            # Normal multi-line processing
+            for i, line in enumerate(alias_lines):
+                line = line.strip()
+                
+                if i == 0:
+                    lines.append(f"    + {line}")
+                elif line.startswith("struct {"):
+                    inside_struct = True
+                    nested_content = []
+                elif line == "}":
+                    if inside_struct:
+                        if nested_content:
+                            content_str = "; ".join(nested_content)
+                            lines.append(f"    + struct {{ {content_str} }}")
+                        else:
+                            lines.append(f"    + struct {{ }}")
+                        inside_struct = False
+                        nested_content = []
+                    else:
+                        lines.append(f"    }}")
+                elif line and line != "}":
+                    if inside_struct:
+                        nested_content.append(line)
+                    else:
+                        lines.append(f"+ {line}")
+            
+            # If we were inside a struct but didn't find a closing brace, add one
+            if inside_struct and nested_content:
+                content_str = "; ".join(nested_content)
+                lines.append(f"    + struct {{ {content_str} }}")
+
     def _generate_field_with_nested_structs(self, lines: List[str], field, base_indent: str):
         """Generate field with proper handling of nested structures"""
         field_text = f"{field.type} {field.name}"
@@ -391,7 +373,6 @@ class PlantUMLGenerator:
             struct_parts = field.type.split('\n')
             
             # For nested structs, flatten them to avoid PlantUML parsing issues
-            # Format as: + struct { field_type field_name }
             nested_content = []
             for part in struct_parts[1:]:
                 part = part.strip()
@@ -485,7 +466,6 @@ class PlantUMLGenerator:
         # 3. Uses relationships
         lines.append("' Uses relationships")
         for file_name, file_model in sorted(include_tree.items()):
-            # Note: file_uml_id not needed for uses relationships, only typedef UML IDs are used
             # Struct uses relationships
             for struct_name, struct_data in sorted(file_model.structs.items()):
                 struct_uml_id = uml_ids.get(f"typedef_{struct_name}")
