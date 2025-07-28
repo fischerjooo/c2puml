@@ -1009,7 +1009,7 @@ class TestTransformer(unittest.TestCase):
         )
 
         root_file = self.transformer._find_root_file("/test/project/header.h", file_model)
-        self.assertEqual(root_file, "header.h")
+        self.assertEqual(root_file, "header.c")  # Now returns the corresponding .c file
 
     def test_matches_any_pattern(self):
         """Test _matches_any_pattern method"""
@@ -1068,6 +1068,130 @@ class TestTransformer(unittest.TestCase):
         self.assertIn("stdio.h", main_c.includes)
         self.assertIn("string.h", main_c.includes)
         self.assertNotIn("stdlib.h", main_c.includes)
+
+    def test_include_filters_transitive_includes_bug(self):
+        """Test that include_filters properly filter transitive includes (includes of includes)"""
+        # Create a project model with transitive includes
+        main_c_model = FileModel(
+            file_path="/test/project/main.c",
+            relative_path="main.c",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            unions={},
+            functions=[],
+            globals=[],
+            includes={"header1.h"},  # main.c includes header1.h
+            macros=[],
+            aliases={},
+            include_relations=[],
+        )
+
+        header1_model = FileModel(
+            file_path="/test/project/header1.h",
+            relative_path="header1.h",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            unions={},
+            functions=[],
+            globals=[],
+            includes={"header2.h"},  # header1.h includes header2.h
+            macros=[],
+            aliases={},
+            include_relations=[],
+        )
+
+        header2_model = FileModel(
+            file_path="/test/project/header2.h",
+            relative_path="header2.h",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            unions={},
+            functions=[],
+            globals=[],
+            includes={"header3.h"},  # header2.h includes header3.h
+            macros=[],
+            aliases={},
+            include_relations=[],
+        )
+
+        header3_model = FileModel(
+            file_path="/test/project/header3.h",
+            relative_path="header3.h",
+            project_root="/test/project",
+            encoding_used="utf-8",
+            structs={},
+            enums={},
+            unions={},
+            functions=[],
+            globals=[],
+            includes=set(),  # header3.h has no includes
+            macros=[],
+            aliases={},
+            include_relations=[],
+        )
+
+        project_model = ProjectModel(
+            project_name="TestProject",
+            project_root="/test/project",
+            files={
+                "main.c": main_c_model,
+                "header1.h": header1_model,
+                "header2.h": header2_model,
+                "header3.h": header3_model,
+            },
+        )
+
+        # Configure include_filters to only allow header1.h for main.c
+        # This should prevent header2.h and header3.h from being processed
+        config = {
+            "include_filters": {
+                "main.c": [r"^header1\.h$"]  # Only allow header1.h
+            },
+            "include_depth": 3,  # Enable transitive include processing
+        }
+
+        result = self.transformer._apply_transformations(project_model, config)
+        
+        # Check that main.c includes were filtered correctly
+        main_c = result.files["main.c"]
+        self.assertEqual(len(main_c.includes), 1)
+        self.assertIn("header1.h", main_c.includes)
+        self.assertNotIn("header2.h", main_c.includes)
+        self.assertNotIn("header3.h", main_c.includes)
+        
+        # BUG: The following assertions will FAIL because include_filters don't work on transitive includes
+        # header1.h should NOT have header2.h in its includes (should be filtered out)
+        header1 = result.files["header1.h"]
+        self.assertEqual(len(header1.includes), 0, 
+                        "header1.h should not include header2.h due to include_filters")
+        self.assertNotIn("header2.h", header1.includes,
+                        "header1.h should not include header2.h due to include_filters")
+        
+        # header2.h should NOT have header3.h in its includes (should be filtered out)
+        header2 = result.files["header2.h"]
+        self.assertEqual(len(header2.includes), 0,
+                        "header2.h should not include header3.h due to include_filters")
+        self.assertNotIn("header3.h", header2.includes,
+                        "header2.h should not include header3.h due to include_filters")
+        
+        # Check that include_relations don't contain filtered headers
+        main_relations = [rel.included_file for rel in main_c.include_relations]
+        self.assertNotIn("header2.h", main_relations,
+                        "main.c should not have include relation to header2.h")
+        self.assertNotIn("header3.h", main_relations,
+                        "main.c should not have include relation to header3.h")
+        
+        header1_relations = [rel.included_file for rel in header1.include_relations]
+        self.assertNotIn("header2.h", header1_relations,
+                        "header1.h should not have include relation to header2.h")
+        self.assertNotIn("header3.h", header1_relations,
+                        "header1.h should not have include relation to header3.h")
 
 
 if __name__ == "__main__":
