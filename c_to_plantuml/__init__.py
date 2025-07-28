@@ -8,7 +8,7 @@ __version__ = "3.0.0"
 __author__ = "C to PlantUML Team"
 
 from .config import Config
-from .generator import Generator, PlantUMLGenerator
+from .generator import Generator
 from .models import (
     Alias,
     Enum,
@@ -28,7 +28,6 @@ __all__ = [
     "CParser",
     "Transformer",
     "Generator",
-    "PlantUMLGenerator",
     "Config",
     "ProjectModel",
     "FileModel",

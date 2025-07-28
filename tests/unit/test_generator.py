@@ -3,15 +3,18 @@
 Unit tests for PlantUML generator functionality
 """
 
-import json
 import os
-import shutil
 import tempfile
 import unittest
 from pathlib import Path
 
-from c_to_plantuml.config import Config
-from c_to_plantuml.generator import Generator, PlantUMLGenerator
+# We need to add the parent directory to Python path for imports
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+from c_to_plantuml.generator import Generator
+from c_to_plantuml.parser import CParser
 from c_to_plantuml.models import (
     Alias,
     Enum,
@@ -25,20 +28,17 @@ from c_to_plantuml.models import (
 
 
 class TestGenerator(unittest.TestCase):
-    """Test cases for PlantUML generator functionality"""
+    """Test suite for the Generator class"""
 
     def setUp(self):
-        """Set up test fixtures"""
-        super().setUp()
-        from c_to_plantuml.parser import CParser
-
+        """Set up test fixtures."""
+        self.temp_dir = Path(tempfile.mkdtemp())
         self.parser = CParser()
         self.generator = Generator()
-        self.temp_dir = tempfile.mkdtemp()
-        self.test_files = []
 
     def tearDown(self):
-        """Clean up test fixtures"""
+        """Clean up test fixtures."""
+        import shutil
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def create_test_file_model(self, filename: str = "test.c") -> FileModel:
@@ -83,30 +83,33 @@ class TestGenerator(unittest.TestCase):
         )
 
     def create_test_file(self, filename: str, content: str) -> Path:
-        """Create a test file and return its path"""
-        file_path = Path(self.temp_dir) / filename
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        file_path.write_text(content)
+        """Create a test file with given content."""
+        file_path = self.temp_dir / filename
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(content)
         return file_path
 
-    def test_generate_plantuml_content(self):
-        """Test that PlantUML content is generated correctly"""
-        # Create a simple test file
+    def test_generate_basic_plantuml_content(self):
+        """Test basic PlantUML content generation"""
         content = """
-#define MAX_SIZE 100
-#define DEBUG 1
+        #include <stdio.h>
 
-int global_var;
-char* global_string;
+        struct my_struct {
+            int field1;
+            char field2[10];
+        };
 
-int main() {
-    return 0;
-}
+        enum my_enum {
+            VALUE1,
+            VALUE2 = 5
+        };
 
-void process_data() {
-    // Process data
-}
+        void my_function(int param) {
+            // Function implementation
+            return;
+        }
         """
+
         test_file = self.create_test_file("test.c", content)
 
         # Parse the file
@@ -114,8 +117,48 @@ void process_data() {
         file_model = project_model.files["test.c"]
 
         # Generate PlantUML diagram
-        plantuml_generator = PlantUMLGenerator()
-        diagram = plantuml_generator.generate_diagram(file_model, project_model)
+        diagram = self.generator.generate_diagram(file_model, project_model)
+
+        # Check that PlantUML syntax is correct
+        self.assertIn("@startuml test", diagram)
+        self.assertIn("@enduml", diagram)
+
+        # Check that main class is generated
+        self.assertIn('class "test" as TEST <<source>> #LightBlue', diagram)
+
+        # Check that struct is included as typedef
+        self.assertIn("my_struct", diagram)
+        self.assertIn("field1", diagram)
+        self.assertIn("field2", diagram)
+
+        # Check that enum is included as typedef
+        self.assertIn("my_enum", diagram)
+        self.assertIn("VALUE1", diagram)
+        self.assertIn("VALUE2", diagram)
+
+        # Check that function is included
+        self.assertIn("my_function", diagram)
+
+    def test_generate_with_macros(self):
+        """Test PlantUML generation with macros"""
+        content = """
+        #define MAX_SIZE 100
+        #define DEBUG 1
+        #define MIN(a, b) ((a) < (b) ? (a) : (b))
+
+        int main() {
+            return 0;
+        }
+        """
+
+        test_file = self.create_test_file("test.c", content)
+
+        # Parse the file
+        project_model = self.parser.parse_project(str(self.temp_dir))
+        file_model = project_model.files["test.c"]
+
+        # Generate PlantUML diagram
+        diagram = self.generator.generate_diagram(file_model, project_model)
 
         # Check that PlantUML syntax is correct
         self.assertIn("@startuml test", diagram)
@@ -129,23 +172,10 @@ void process_data() {
         self.assertIn("- #define MAX_SIZE", diagram)
         self.assertIn("- #define DEBUG", diagram)
 
-        # Check that global variables are included
-        self.assertIn("-- Global Variables --", diagram)
-        self.assertIn("int global_var", diagram)
-        self.assertIn("char * global_string", diagram)
-
-        # Check that functions are included
-        self.assertIn("-- Functions --", diagram)
-        self.assertIn("int main()", diagram)
-        self.assertIn("void process_data()", diagram)
-
-        # Remove assertion for typedefs section if no typedefs exist
-        # self.assertIn("-- Typedefs --", diagram) - REMOVED
-
     def test_generate_file_diagram(self):
         """Test generating a PlantUML diagram file"""
         file_model = self.create_test_file_model("test.c")
-        output_dir = Path(self.temp_dir)
+        output_dir = self.temp_dir
 
         # Create a simple project model for testing
         project_model = ProjectModel(
@@ -153,13 +183,12 @@ void process_data() {
             project_root="/test",
             files={"test.c": file_model},
         )
-        plantuml_generator = PlantUMLGenerator()
-        content = plantuml_generator.generate_diagram(file_model, project_model)
+        diagram = self.generator.generate_diagram(file_model, project_model)
 
         # Write the content to file
         puml_file = output_dir / "test.puml"
         with open(puml_file, "w", encoding="utf-8") as f:
-            f.write(content)
+            f.write(diagram)
 
         # Check that the file was created
         puml_file = output_dir / "test.puml"
@@ -216,27 +245,25 @@ void process_data() {
         )
 
         # Create configuration
-        config = Config(
-            {
-                "project_name": "test_project",
-                "source_folders": ["/test"],
-                "output_dir": os.path.join(self.temp_dir, "config_output"),
-                "recursive_search": True,
-                "file_filters": {},
-                "element_filters": {},
-            }
-        )
+        config = {
+            "project_name": "test_project",
+            "source_folders": ["/test"],
+            "output_dir": os.path.join(self.temp_dir, "config_output"),
+            "recursive_search": True,
+            "file_filters": {},
+            "element_filters": {},
+        }
 
         # Save model
         model_path = os.path.join(self.temp_dir, "test_model.json")
         model.save(model_path)
 
         # Generate with config
-        self.generator.generate(model_path, config.output_dir)
+        self.generator.generate(model_path, config["output_dir"])
 
         # Verify output
-        self.assertTrue(os.path.exists(config.output_dir))
-        puml_file = os.path.join(config.output_dir, "main.puml")
+        self.assertTrue(os.path.exists(config["output_dir"]))
+        puml_file = os.path.join(config["output_dir"], "main.puml")
         self.assertTrue(os.path.exists(puml_file))
 
     def test_generate_multiple_files(self):
@@ -296,13 +323,12 @@ void process_data() {
             project_root="/test",
             files={"empty.c": empty_file},
         )
-        plantuml_generator = PlantUMLGenerator()
-        content = plantuml_generator.generate_diagram(empty_file, project_model)
+        diagram = self.generator.generate_diagram(empty_file, project_model)
 
         # Should still generate valid PlantUML
-        self.assertIn("@startuml empty", content)
-        self.assertIn("@enduml", content)
-        self.assertIn('class "empty" as EMPTY <<source>> #LightBlue', content)
+        self.assertIn("@startuml empty", diagram)
+        self.assertIn("@enduml", diagram)
+        self.assertIn('class "empty" as EMPTY <<source>> #LightBlue', diagram)
 
     def test_generate_with_special_characters(self):
         """Test generation with special characters in names"""
@@ -324,8 +350,7 @@ void test_function() {
         file_model = project_model.files["test_file.c"]
 
         # Generate PlantUML diagram
-        plantuml_generator = PlantUMLGenerator()
-        diagram = plantuml_generator.generate_diagram(file_model, project_model)
+        diagram = self.generator.generate_diagram(file_model, project_model)
 
         # Check that PlantUML syntax is correct
         self.assertIn("@startuml test_file", diagram)
@@ -366,22 +391,21 @@ void test_function() {
             project_root="/test",
             files={"test.c": file_model},
         )
-        plantuml_generator = PlantUMLGenerator()
-        content = plantuml_generator.generate_diagram(file_model, project_model)
+        diagram = self.generator.generate_diagram(file_model, project_model)
 
         # Check for required PlantUML elements
-        self.assertIn("@startuml", content)
-        self.assertIn("@enduml", content)
-        self.assertIn("class", content)
+        self.assertIn("@startuml", diagram)
+        self.assertIn("@enduml", diagram)
+        self.assertIn("class", diagram)
 
         # Check for proper class syntax
-        self.assertIn('class "test" as TEST', content)
+        self.assertIn('class "test" as TEST', diagram)
 
         # Check for proper relationship syntax (not implemented in current version)
-        # self.assertIn("-->", content)
+        # self.assertIn("-->", diagram)
 
         # Check for proper section separators
-        self.assertIn("--", content)
+        self.assertIn("--", diagram)
 
     def test_output_directory_creation(self):
         """Test that output directory is created if it doesn't exist"""

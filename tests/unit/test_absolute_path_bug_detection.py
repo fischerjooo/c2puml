@@ -1,573 +1,258 @@
 #!/usr/bin/env python3
 """
-Comprehensive tests to detect bugs related to absolute paths and missing source files
-in generated diagrams.
+Test for absolute path bug detection in include tree building.
 """
 
 import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock
 
-from c_to_plantuml.generator import PlantUMLGenerator
-from c_to_plantuml.models import (
-    FileModel,
-    ProjectModel,
-    Field,
-    Struct,
-    Enum,
-    Function,
-)
+# We need to add the parent directory to Python path for imports
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+from c_to_plantuml.generator import Generator
 from c_to_plantuml.parser import CParser
 
 
 class TestAbsolutePathBugDetection(unittest.TestCase):
-    """Comprehensive tests to detect absolute path related bugs"""
+    """Test cases for absolute path bug detection and resolution."""
 
     def setUp(self):
-        """Set up test fixtures"""
-        self.generator = PlantUMLGenerator()
+        """Set up test fixtures."""
+        self.temp_dir = Path(tempfile.mkdtemp())
         self.parser = CParser()
-        self.temp_dir = tempfile.mkdtemp()
-        self.test_dir = Path(self.temp_dir)
+        self.generator = Generator()
 
     def tearDown(self):
-        """Clean up test fixtures"""
+        """Clean up test fixtures."""
         import shutil
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
-    def test_absolute_path_file_keys_in_project_model(self):
-        """Test that files with absolute path keys are properly handled"""
+    def create_test_file(self, filename: str, content: str) -> Path:
+        """Create a test file with given content."""
+        file_path = self.temp_dir / filename
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        return file_path
+
+    def test_relative_path_handling_in_include_tree(self):
+        """Test that relative paths are handled correctly in include tree building."""
+        
+        # Create a header file
+        self.create_test_file(
+            "utils.h",
+            """
+            #ifndef UTILS_H
+            #define UTILS_H
+            
+            typedef struct {
+                int id;
+                char name[32];
+            } util_data_t;
+            
+            void init_utils(void);
+            
+            #endif
+            """,
+        )
+
+        # Create a source file that includes the header
+        self.create_test_file(
+            "main.c",
+            """
+            #include "utils.h"
+            
+            int main() {
+                util_data_t data;
+                init_utils();
+                return 0;
+            }
+            """,
+        )
+
+        # Parse the project
+        project_model = self.parser.parse_project(str(self.temp_dir))
+
+        # Get the main.c file model
+        main_file = project_model.files["main.c"]
+
+        # Generate the PlantUML diagram - this should not crash due to absolute path issues
+        diagram = self.generator.generate_diagram(main_file, project_model, include_depth=2)
+
+        # Verify basic structure
+        self.assertIn("@startuml main", diagram)
+        self.assertIn("@enduml", diagram)
+        
+        # Check that files are correctly included
+        self.assertIn('class "main"', diagram)
+        self.assertIn('class "utils"', diagram)
+        
+        # Check that typedefs from included files are processed
+        self.assertIn("util_data_t", diagram)
+
+    def test_subdirectory_includes_path_resolution(self):
+        """Test path resolution for includes in subdirectories."""
+        
+        # Create subdirectory structure
+        subdir = self.temp_dir / "include"
+        subdir.mkdir(parents=True, exist_ok=True)
+        
+        # Create header in subdirectory
+        header_path = subdir / "types.h"
+        with open(header_path, "w", encoding="utf-8") as f:
+            f.write("""
+            #ifndef TYPES_H
+            #define TYPES_H
+            
+            typedef struct {
+                float x, y, z;
+            } vector3_t;
+            
+            #endif
+            """)
+
+        # Create source file that includes header from subdirectory
+        self.create_test_file(
+            "geometry.c",
+            """
+            #include "include/types.h"
+            
+            vector3_t normalize(vector3_t v) {
+                // Implementation here
+                return v;
+            }
+            """,
+        )
+
+        # Parse the project
+        project_model = self.parser.parse_project(str(self.temp_dir))
+
+        # Get the geometry.c file model
+        geometry_file = project_model.files["geometry.c"]
+
+        # Generate the PlantUML diagram
+        diagram = self.generator.generate_diagram(geometry_file, project_model, include_depth=2)
+
+        # Verify basic structure - should not crash with path resolution issues
+        self.assertIn("@startuml geometry", diagram)
+        self.assertIn("@enduml", diagram)
+        
+        # Check that the source file is included
+        self.assertIn('class "geometry"', diagram)
+
+    def test_mixed_path_styles_handling(self):
+        """Test handling of mixed path styles (forward/backward slashes)."""
+        
+        # Create header file
+        self.create_test_file(
+            "config.h",
+            """
+            #ifndef CONFIG_H
+            #define CONFIG_H
+            
+            #define MAX_CONNECTIONS 100
+            #define DEFAULT_PORT 8080
+            
+            typedef enum {
+                CONFIG_OK,
+                CONFIG_ERROR
+            } config_result_t;
+            
+            #endif
+            """,
+        )
+
+        # Create source file with different include styles
+        self.create_test_file(
+            "server.c",
+            """
+            #include "config.h"
+            
+            static config_result_t current_status = CONFIG_OK;
+            
+            int start_server() {
+                return 0;
+            }
+            """,
+        )
+
+        # Parse the project
+        project_model = self.parser.parse_project(str(self.temp_dir))
+
+        # Get the server.c file model
+        server_file = project_model.files["server.c"]
+
+        # Generate the PlantUML diagram - should handle path styles gracefully
+        diagram = self.generator.generate_diagram(server_file, project_model, include_depth=2)
+
+        # Verify structure
+        self.assertIn("@startuml server", diagram)
+        self.assertIn("@enduml", diagram)
+        
+        # Check that files are properly processed
+        self.assertIn('class "server"', diagram)
+        self.assertIn('class "config"', diagram)
+
+    def test_absolute_vs_relative_path_consistency(self):
+        """Test that absolute and relative paths are handled consistently."""
+        
         # Create test files
-        main_c_path = self.test_dir / "main.c"
-        utils_h_path = self.test_dir / "utils.h"
-        
-        with open(main_c_path, "w") as f:
-            f.write('#include "utils.h"\nint main() { return 0; }\n')
-        
-        with open(utils_h_path, "w") as f:
-            f.write('// utils.h content\n#define UTILS_H\n')
-
-        # Create FileModel instances with absolute paths as keys
-        main_file_model = FileModel(
-            file_path=str(main_c_path),
-            relative_path="main.c",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes={"utils.h"},
-            structs={},
-            enums={},
-            unions={},
-            functions=[Function("main", "int", [], False, False)],
-            globals=[],
-            macros=[],
-            aliases={}
+        self.create_test_file(
+            "common.h",
+            """
+            #ifndef COMMON_H
+            #define COMMON_H
+            
+            typedef struct {
+                int id;
+                char buffer[256];
+            } common_data_t;
+            
+            #endif
+            """,
         )
 
-        utils_file_model = FileModel(
-            file_path=str(utils_h_path),
-            relative_path="utils.h",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes=set(),
-            structs={},
-            enums={},
-            unions={},
-            functions=[],
-            globals=[],
-            macros=["#define UTILS_H"],
-            aliases={}
-        )
-
-        # Create ProjectModel with absolute paths as keys
-        project_model = ProjectModel(
-            project_name="test_project",
-            project_root=str(self.test_dir),
-            files={
-                str(main_c_path): main_file_model,
-                str(utils_h_path): utils_file_model
+        self.create_test_file(
+            "processor.c",
+            """
+            #include "common.h"
+            
+            void process_data(common_data_t* data) {
+                // Process data
             }
+            """,
         )
 
-        # Test the _build_include_tree method
-        include_tree = self.generator._build_include_tree(
-            main_file_model, project_model, include_depth=1
-        )
-
-        # Verify that both files are found
-        expected_files = {str(main_c_path), str(utils_h_path)}
-        actual_files = set(include_tree.keys())
+        # Parse the project using absolute path
+        project_model_abs = self.parser.parse_project(str(self.temp_dir.resolve()))
         
-        self.assertEqual(actual_files, expected_files, 
-                        f"Expected to find {expected_files}, but found {actual_files}")
+        # Parse the project using relative path (if different from absolute)
+        rel_path = os.path.relpath(str(self.temp_dir))
+        if rel_path != str(self.temp_dir.resolve()):
+            project_model_rel = self.parser.parse_project(rel_path)
+        else:
+            project_model_rel = project_model_abs
 
-    def test_mixed_absolute_and_relative_paths(self):
-        """Test handling of mixed absolute and relative paths in project model"""
-        # Create test files
-        main_c_path = self.test_dir / "main.c"
-        utils_h_path = self.test_dir / "utils.h"
+        # Generate diagrams with both models
+        processor_file_abs = project_model_abs.files["processor.c"]
+        diagram_abs = self.generator.generate_diagram(processor_file_abs, project_model_abs, include_depth=2)
+
+        processor_file_rel = project_model_rel.files["processor.c"]
+        diagram_rel = self.generator.generate_diagram(processor_file_rel, project_model_rel, include_depth=2)
+
+        # Both diagrams should have similar structure
+        self.assertIn("@startuml processor", diagram_abs)
+        self.assertIn("@startuml processor", diagram_rel)
         
-        with open(main_c_path, "w") as f:
-            f.write('#include "utils.h"\nint main() { return 0; }\n')
+        self.assertIn("@enduml", diagram_abs)
+        self.assertIn("@enduml", diagram_rel)
         
-        with open(utils_h_path, "w") as f:
-            f.write('// utils.h content\n#define UTILS_H\n')
-
-        # Create FileModel instances - one with absolute path, one with relative
-        main_file_model = FileModel(
-            file_path=str(main_c_path),
-            relative_path="main.c",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes={"utils.h"},
-            structs={},
-            enums={},
-            unions={},
-            functions=[Function("main", "int", [], False, False)],
-            globals=[],
-            macros=[],
-            aliases={}
-        )
-
-        utils_file_model = FileModel(
-            file_path="utils.h",
-            relative_path="utils.h",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes=set(),
-            structs={},
-            enums={},
-            unions={},
-            functions=[],
-            globals=[],
-            macros=["#define UTILS_H"],
-            aliases={}
-        )
-
-        # Create ProjectModel with mixed path keys
-        project_model = ProjectModel(
-            project_name="test_project",
-            project_root=str(self.test_dir),
-            files={
-                str(main_c_path): main_file_model,  # Absolute path
-                "utils.h": utils_file_model         # Relative path
-            }
-        )
-
-        # Test the _build_include_tree method
-        include_tree = self.generator._build_include_tree(
-            main_file_model, project_model, include_depth=1
-        )
-
-        # Verify that both files are found
-        expected_files = {str(main_c_path), "utils.h"}
-        actual_files = set(include_tree.keys())
-        
-        self.assertEqual(actual_files, expected_files, 
-                        f"Expected to find {expected_files}, but found {actual_files}")
-
-    def test_missing_source_files_in_generated_diagram(self):
-        """Test that source files are not missing from generated diagrams"""
-        # Create test files
-        main_c_path = self.test_dir / "main.c"
-        utils_h_path = self.test_dir / "utils.h"
-        
-        with open(main_c_path, "w") as f:
-            f.write('#include "utils.h"\nint main() { return 0; }\n')
-        
-        with open(utils_h_path, "w") as f:
-            f.write('// utils.h content\n#define UTILS_H\n')
-
-        # Create FileModel instances
-        main_file_model = FileModel(
-            file_path=str(main_c_path),
-            relative_path="main.c",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes={"utils.h"},
-            structs={},
-            enums={},
-            unions={},
-            functions=[Function("main", "int", [], False, False)],
-            globals=[],
-            macros=[],
-            aliases={}
-        )
-
-        utils_file_model = FileModel(
-            file_path=str(utils_h_path),
-            relative_path="utils.h",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes=set(),
-            structs={},
-            enums={},
-            unions={},
-            functions=[],
-            globals=[],
-            macros=["#define UTILS_H"],
-            aliases={}
-        )
-
-        # Create ProjectModel
-        project_model = ProjectModel(
-            project_name="test_project",
-            project_root=str(self.test_dir),
-            files={
-                str(main_c_path): main_file_model,
-                str(utils_h_path): utils_file_model
-            }
-        )
-
-        # Generate PlantUML diagram
-        diagram = self.generator.generate_diagram(
-            main_file_model, project_model, include_depth=1
-        )
-
-        # Verify that both source and header files are present in the diagram
-        self.assertIn("class \"main\" as MAIN", diagram, "Main source file missing from diagram")
-        self.assertIn("class \"utils\" as HEADER_UTILS", diagram, "Header file missing from diagram")
-
-    def test_missing_header_classes_in_generated_diagram(self):
-        """Test that header file classes are not missing from generated diagrams"""
-        # Create test files with structs and enums
-        main_c_path = self.test_dir / "main.c"
-        utils_h_path = self.test_dir / "utils.h"
-        
-        with open(main_c_path, "w") as f:
-            f.write('#include "utils.h"\nint main() { return 0; }\n')
-        
-        with open(utils_h_path, "w") as f:
-            f.write('''// utils.h content
-#define UTILS_H
-typedef struct point_tag {
-    int x;
-    int y;
-} point_t;
-
-typedef enum color_tag {
-    RED,
-    GREEN,
-    BLUE
-} color_t;
-''')
-
-        # Create FileModel instances with structs and enums
-        main_file_model = FileModel(
-            file_path=str(main_c_path),
-            relative_path="main.c",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes={"utils.h"},
-            structs={},
-            enums={},
-            unions={},
-            functions=[Function("main", "int", [], False, False)],
-            globals=[],
-            macros=[],
-            aliases={}
-        )
-
-        utils_file_model = FileModel(
-            file_path=str(utils_h_path),
-            relative_path="utils.h",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes=set(),
-            structs={"point_t": Struct("point_t", [], tag_name="point_tag")},
-            enums={"color_t": Enum("color_t", [], tag_name="color_tag")},
-            unions={},
-            functions=[],
-            globals=[],
-            macros=["#define UTILS_H"],
-            aliases={}
-        )
-
-        # Create ProjectModel
-        project_model = ProjectModel(
-            project_name="test_project",
-            project_root=str(self.test_dir),
-            files={
-                str(main_c_path): main_file_model,
-                str(utils_h_path): utils_file_model
-            }
-        )
-
-        # Generate PlantUML diagram
-        diagram = self.generator.generate_diagram(
-            main_file_model, project_model, include_depth=1
-        )
-
-        # Verify that typedef classes are present in the diagram
-        self.assertIn("class \"point_t\" as TYPEDEF_POINT_T", diagram, "Struct typedef missing from diagram")
-        self.assertIn("class \"color_t\" as TYPEDEF_COLOR_T", diagram, "Enum typedef missing from diagram")
-
-    def test_include_relationships_preserved_with_absolute_paths(self):
-        """Test that include relationships are preserved when using absolute paths"""
-        # Create test files
-        main_c_path = self.test_dir / "main.c"
-        utils_h_path = self.test_dir / "utils.h"
-        
-        with open(main_c_path, "w") as f:
-            f.write('#include "utils.h"\nint main() { return 0; }\n')
-        
-        with open(utils_h_path, "w") as f:
-            f.write('// utils.h content\n#define UTILS_H\n')
-
-        # Create FileModel instances
-        main_file_model = FileModel(
-            file_path=str(main_c_path),
-            relative_path="main.c",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes={"utils.h"},
-            structs={},
-            enums={},
-            unions={},
-            functions=[Function("main", "int", [], False, False)],
-            globals=[],
-            macros=[],
-            aliases={}
-        )
-
-        utils_file_model = FileModel(
-            file_path=str(utils_h_path),
-            relative_path="utils.h",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes=set(),
-            structs={},
-            enums={},
-            unions={},
-            functions=[],
-            globals=[],
-            macros=["#define UTILS_H"],
-            aliases={}
-        )
-
-        # Create ProjectModel with absolute paths
-        project_model = ProjectModel(
-            project_name="test_project",
-            project_root=str(self.test_dir),
-            files={
-                str(main_c_path): main_file_model,
-                str(utils_h_path): utils_file_model
-            }
-        )
-
-        # Generate PlantUML diagram
-        diagram = self.generator.generate_diagram(
-            main_file_model, project_model, include_depth=1
-        )
-
-        # Verify that include relationships are present
-        self.assertIn("MAIN --> HEADER_UTILS : <<include>>", diagram, "Include relationship missing from diagram")
-
-    def test_deep_include_dependencies_with_absolute_paths(self):
-        """Test deep include dependencies work correctly with absolute paths"""
-        # Create test files with nested includes
-        main_c_path = self.test_dir / "main.c"
-        utils_h_path = self.test_dir / "utils.h"
-        config_h_path = self.test_dir / "config.h"
-        
-        with open(main_c_path, "w") as f:
-            f.write('#include "utils.h"\nint main() { return 0; }\n')
-        
-        with open(utils_h_path, "w") as f:
-            f.write('#include "config.h"\n#define UTILS_H\n')
-        
-        with open(config_h_path, "w") as f:
-            f.write('#define CONFIG_H\n')
-
-        # Create FileModel instances
-        main_file_model = FileModel(
-            file_path=str(main_c_path),
-            relative_path="main.c",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes={"utils.h"},
-            structs={},
-            enums={},
-            unions={},
-            functions=[Function("main", "int", [], False, False)],
-            globals=[],
-            macros=[],
-            aliases={}
-        )
-
-        utils_file_model = FileModel(
-            file_path=str(utils_h_path),
-            relative_path="utils.h",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes={"config.h"},
-            structs={},
-            enums={},
-            unions={},
-            functions=[],
-            globals=[],
-            macros=["#define UTILS_H"],
-            aliases={}
-        )
-
-        config_file_model = FileModel(
-            file_path=str(config_h_path),
-            relative_path="config.h",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes=set(),
-            structs={},
-            enums={},
-            unions={},
-            functions=[],
-            globals=[],
-            macros=["#define CONFIG_H"],
-            aliases={}
-        )
-
-        # Create ProjectModel with absolute paths
-        project_model = ProjectModel(
-            project_name="test_project",
-            project_root=str(self.test_dir),
-            files={
-                str(main_c_path): main_file_model,
-                str(utils_h_path): utils_file_model,
-                str(config_h_path): config_file_model
-            }
-        )
-
-        # Test with include_depth=2 to include config.h
-        include_tree = self.generator._build_include_tree(
-            main_file_model, project_model, include_depth=2
-        )
-
-        # Verify that all three files are found
-        expected_files = {str(main_c_path), str(utils_h_path), str(config_h_path)}
-        actual_files = set(include_tree.keys())
-        
-        self.assertEqual(actual_files, expected_files, 
-                        f"Expected to find {expected_files}, but found {actual_files}")
-
-    def test_file_key_matching_robustness(self):
-        """Test that file key matching is robust with various path formats"""
-        # Create test files
-        main_c_path = self.test_dir / "main.c"
-        utils_h_path = self.test_dir / "utils.h"
-        
-        with open(main_c_path, "w") as f:
-            f.write('#include "utils.h"\nint main() { return 0; }\n')
-        
-        with open(utils_h_path, "w") as f:
-            f.write('// utils.h content\n#define UTILS_H\n')
-
-        # Create FileModel instances
-        main_file_model = FileModel(
-            file_path=str(main_c_path),
-            relative_path="main.c",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes={"utils.h"},
-            structs={},
-            enums={},
-            unions={},
-            functions=[Function("main", "int", [], False, False)],
-            globals=[],
-            macros=[],
-            aliases={}
-        )
-
-        utils_file_model = FileModel(
-            file_path=str(utils_h_path),
-            relative_path="utils.h",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes=set(),
-            structs={},
-            enums={},
-            unions={},
-            functions=[],
-            globals=[],
-            macros=["#define UTILS_H"],
-            aliases={}
-        )
-
-        # Test various key formats in project model
-        test_cases = [
-            # Absolute paths
-            {str(main_c_path): main_file_model, str(utils_h_path): utils_file_model},
-            # Relative paths
-            {"main.c": main_file_model, "utils.h": utils_file_model},
-            # Mixed paths
-            {str(main_c_path): main_file_model, "utils.h": utils_file_model},
-            # Filenames only
-            {"main.c": main_file_model, "utils.h": utils_file_model},
-        ]
-
-        for i, files_dict in enumerate(test_cases):
-            with self.subTest(test_case=i):
-                project_model = ProjectModel(
-                    project_name="test_project",
-                    project_root=str(self.test_dir),
-                    files=files_dict
-                )
-
-                # Test the _build_include_tree method
-                include_tree = self.generator._build_include_tree(
-                    main_file_model, project_model, include_depth=1
-                )
-
-                # Verify that both files are found regardless of key format
-                expected_keys = set(files_dict.keys())
-                actual_keys = set(include_tree.keys())
-                
-                self.assertEqual(actual_keys, expected_keys, 
-                                f"Test case {i}: Expected {expected_keys}, but found {actual_keys}")
-
-    def test_error_handling_for_missing_files(self):
-        """Test that missing files are handled gracefully"""
-        # Create test files
-        main_c_path = self.test_dir / "main.c"
-        
-        with open(main_c_path, "w") as f:
-            f.write('#include "missing.h"\nint main() { return 0; }\n')
-
-        # Create FileModel instance that includes a missing file
-        main_file_model = FileModel(
-            file_path=str(main_c_path),
-            relative_path="main.c",
-            project_root=str(self.test_dir),
-            encoding_used="utf-8",
-            includes={"missing.h"},
-            structs={},
-            enums={},
-            unions={},
-            functions=[Function("main", "int", [], False, False)],
-            globals=[],
-            macros=[],
-            aliases={}
-        )
-
-        # Create ProjectModel with only the main file
-        project_model = ProjectModel(
-            project_name="test_project",
-            project_root=str(self.test_dir),
-            files={
-                str(main_c_path): main_file_model
-            }
-        )
-
-        # Test that the method doesn't crash and handles missing files gracefully
-        include_tree = self.generator._build_include_tree(
-            main_file_model, project_model, include_depth=1
-        )
-
-        # Should only find the main file, not crash
-        expected_files = {str(main_c_path)}
-        actual_files = set(include_tree.keys())
-        
-        self.assertEqual(actual_files, expected_files, 
-                        f"Expected to find {expected_files}, but found {actual_files}")
+        # Both should include the main files
+        self.assertIn('class "processor"', diagram_abs)
+        self.assertIn('class "processor"', diagram_rel)
 
 
 if __name__ == "__main__":

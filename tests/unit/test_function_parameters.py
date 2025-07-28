@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from c_to_plantuml.generator import PlantUMLGenerator
+from c_to_plantuml.generator import Generator
 from c_to_plantuml.models import ProjectModel
 from c_to_plantuml.parser import CParser
 
@@ -18,7 +18,7 @@ class TestFunctionParameters(unittest.TestCase):
 
     def setUp(self):
         self.parser = CParser()
-        self.generator = PlantUMLGenerator()
+        self.generator = Generator()
 
     def test_function_parameter_parsing(self):
         """Test that function parameters are correctly parsed"""
