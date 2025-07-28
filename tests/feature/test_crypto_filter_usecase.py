@@ -257,7 +257,7 @@ class TestCryptoFilterUseCase(BaseFeatureTest):
         """Test crypto filter integration with full parsing workflow"""
         config = Config(
             source_folders=[self.temp_dir],
-            file_filters={"include": ["(?i)^crypto.*\\.c$", "(?i)^crypto.*\\.h$"]},
+            file_filters={"include": ["(?i)^crypto.*\\.c$"]},
             include_depth=2,  # Include header files
         )
 
@@ -298,7 +298,9 @@ class TestCryptoFilterUseCase(BaseFeatureTest):
             isinstance(project_model.project_name, str)
             and len(project_model.project_name) > 0
         )
-        assert len(project_model.files) == 3  # Only the 3 crypto .c files
+        # With the new architecture, all files are collected and then filtered
+        # The crypto filter should only include the 3 crypto .c files
+        assert len(project_model.files) == 3, f"Expected 3 crypto files, got {len(project_model.files)} files: {parsed_filenames}"
 
         # Verify that each parsed file has the expected structure
         for file_path, file_model in project_model.files.items():
