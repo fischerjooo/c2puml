@@ -234,7 +234,6 @@ class Config:
         filtered_model = FileModel(
             file_path=file_model.file_path,
             relative_path=file_model.relative_path,
-            project_root=file_model.project_root,
             encoding_used=file_model.encoding_used,
             structs=file_model.structs.copy(),
             enums=file_model.enums.copy(),

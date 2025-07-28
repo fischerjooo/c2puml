@@ -38,7 +38,7 @@ class TestFunctionParameters(unittest.TestCase):
         try:
             # Parse the file
             file_model = self.parser.parse_file(
-                Path(temp_file), os.path.basename(temp_file), os.path.dirname(temp_file)
+                Path(temp_file), os.path.basename(temp_file)
             )
 
             # Check that functions have parameters
@@ -84,7 +84,7 @@ class TestFunctionParameters(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(
+        project_model = ProjectModel(project_root="/test", 
             project_name="test",  files={"sample.c": file_model}
         )
 
@@ -113,7 +113,7 @@ class TestFunctionParameters(unittest.TestCase):
             functions=[Function("init", "void", []), Function("cleanup", "void", [])],
         )
 
-        project_model = ProjectModel(
+        project_model = ProjectModel(project_root="/test", 
             project_name="test",  files={"empty.c": file_model}
         )
 
@@ -147,7 +147,7 @@ class TestFunctionParameters(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(
+        project_model = ProjectModel(project_root="/test", 
             project_name="test",  files={"complex.c": file_model}
         )
 

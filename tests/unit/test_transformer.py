@@ -65,7 +65,7 @@ class TestTransformer(unittest.TestCase):
             },
         )
 
-        self.sample_project_model = ProjectModel(
+        self.sample_project_model = ProjectModel(project_root="/test", 
             project_name="TestProject",
             
             files={
@@ -537,7 +537,7 @@ class TestTransformer(unittest.TestCase):
             include_relations=[],
         )
 
-        model = ProjectModel(
+        model = ProjectModel(project_root="/test", 
             project_name="TestProject",
             
             files={"file1.c": file1, "file2.h": file2},
@@ -743,7 +743,7 @@ class TestTransformer(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(
+        project_model = ProjectModel(project_root="/test", 
             project_name="TestProject",
             
             files={"main.c": file_model_with_includes},
@@ -816,7 +816,7 @@ class TestTransformer(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(
+        project_model = ProjectModel(project_root="/test", 
             project_name="TestProject",
             
             files={
@@ -870,7 +870,7 @@ class TestTransformer(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(
+        project_model = ProjectModel(project_root="/test", 
             project_name="TestProject",
             
             files={"other.c": file_model},
@@ -912,7 +912,7 @@ class TestTransformer(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(
+        project_model = ProjectModel(project_root="/test", 
             project_name="TestProject",
             
             files={"main.c": file_model},
@@ -954,7 +954,7 @@ class TestTransformer(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(
+        project_model = ProjectModel(project_root="/test", 
             project_name="TestProject",
             
             files={"main.c": file_model},
@@ -1047,7 +1047,7 @@ class TestTransformer(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(
+        project_model = ProjectModel(project_root="/test", 
             project_name="TestProject",
             
             files={"main.c": file_model},
@@ -1136,7 +1136,7 @@ class TestTransformer(unittest.TestCase):
             include_relations=[],
         )
 
-        project_model = ProjectModel(
+        project_model = ProjectModel(project_root="/test", 
             project_name="TestProject",
             
             files={

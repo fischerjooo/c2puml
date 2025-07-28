@@ -969,7 +969,7 @@ class TestCParserComprehensive(unittest.TestCase):
         # Test with non-existent file
         with self.assertRaises(FileNotFoundError):
             self.parser.parse_file(
-                Path("/nonexistent/file.c"), "file.c", "/nonexistent"
+                Path("/nonexistent/file.c"), "file.c"
             )
 
         # Test with non-C file

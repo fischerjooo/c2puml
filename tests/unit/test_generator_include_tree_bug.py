@@ -47,7 +47,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         main_file_model = FileModel(
             file_path=str(main_c_path),
             relative_path="main.c",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes={"utils.h"}
         )
@@ -55,7 +55,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         utils_file_model = FileModel(
             file_path=str(utils_h_path),
             relative_path="utils.h",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes=set()
         )
@@ -100,7 +100,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         main_file_model = FileModel(
             file_path="main.c",
             relative_path="main.c",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes={"utils.h"}
         )
@@ -108,7 +108,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         utils_file_model = FileModel(
             file_path="utils.h",
             relative_path="utils.h",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes=set()
         )
@@ -153,7 +153,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         main_file_model = FileModel(
             file_path=str(main_c_path),
             relative_path="main.c",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes={"utils.h"}
         )
@@ -161,7 +161,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         utils_file_model = FileModel(
             file_path="utils.h",
             relative_path="utils.h",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes=set()
         )
@@ -205,7 +205,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         main_file_model = FileModel(
             file_path=str(main_c_path),
             relative_path="main.c",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes={"utils.h"}
         )
@@ -213,7 +213,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         utils_file_model = FileModel(
             file_path=str(utils_h_path),
             relative_path="utils.h",
-            project_root=str(self.test_dir),
+            
             encoding_used="utf-8",
             includes=set()
         )

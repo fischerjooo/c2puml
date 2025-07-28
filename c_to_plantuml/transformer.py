@@ -538,12 +538,12 @@ class Transformer:
                 if file_model.relative_path.endswith('.c'):
                     root_file = Path(file_model.relative_path).name
                     self._process_file_includes(
-                        file_model, file_map, max_depth, 1, set(), compiled_filters, root_file
+                        file_model, file_map, max_depth, 1, set(), compiled_filters, root_file, model.project_root
                     )
             else:
                 # When no include_filters, process all files (original behavior)
                 self._process_file_includes(
-                    file_model, file_map, max_depth, 1, set(), compiled_filters, None
+                    file_model, file_map, max_depth, 1, set(), compiled_filters, None, model.project_root
                 )
 
         return model
@@ -557,6 +557,7 @@ class Transformer:
         visited: Set[str],
         compiled_filters: Dict[str, List[re.Pattern]] = None,
         root_file: str = None,
+        project_root: str = None,
     ) -> None:
         """Recursively process includes for a file using filename-based matching with include_filters support"""
         if current_depth > max_depth or file_model.relative_path in visited:
@@ -567,8 +568,10 @@ class Transformer:
         # Process each include
         for include_name in file_model.includes:
             # Try to find the included file
+            # Get project root from the model context instead of file_model
+            # Since file_model no longer has project_root, we need to pass it from the caller
             included_filename = self._find_included_file(
-                include_name, file_model.project_root
+                include_name, project_root
             )
 
             if included_filename:
@@ -638,6 +641,7 @@ class Transformer:
                         visited,
                         compiled_filters,
                         root_file,  # Pass the same root_file to maintain context
+                        project_root,  # Pass the project_root parameter
                     )
 
     def _find_included_file(
