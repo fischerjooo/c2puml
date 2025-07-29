@@ -66,7 +66,7 @@ class ModelVerifier:
         if not file_model.file_path or not file_model.file_path.strip():
             self.issues.append(f"File path is empty in {file_path}")
 
-        if not file_model.relative_path or not file_model.relative_path.strip():
+        if not file_model.name or not file_model.name.strip():
             self.issues.append(f"Relative path is empty in {file_path}")
 
         # Verify structs

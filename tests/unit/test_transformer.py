@@ -34,7 +34,6 @@ class TestTransformer(unittest.TestCase):
         # Create sample data for testing
         self.sample_file_model = FileModel(
             file_path="/test/project/sample.c",
-            # relative_path is now computed automatically as a property
             
             structs={
                 "Person": Struct(
@@ -71,7 +70,6 @@ class TestTransformer(unittest.TestCase):
                 "sample.c": self.sample_file_model,
                 "header.h": FileModel(
                     file_path="/test/project/header.h",
-                    # relative_path is now computed automatically as a property
                     
                     structs={},
                     enums={},
@@ -445,7 +443,7 @@ class TestTransformer(unittest.TestCase):
         """Test converting dictionary back to FileModel"""
         data = {
             "file_path": "/test/file.c",
-            # relative_path field removed - now computed as property
+
             "project_root": "/test",
             "encoding_used": "utf-8",
             "structs": {
@@ -505,7 +503,6 @@ class TestTransformer(unittest.TestCase):
         # Create a model with include relations
         file1 = FileModel(
             file_path="/test/file1.c",
-            # relative_path is now computed automatically as a property
             
             includes={"file2.h"},
             structs={},
@@ -520,7 +517,6 @@ class TestTransformer(unittest.TestCase):
 
         file2 = FileModel(
             file_path="/test/file2.h",
-            # relative_path is now computed automatically as a property
             
             includes=set(),
             structs={},
@@ -720,7 +716,6 @@ class TestTransformer(unittest.TestCase):
         # Create a project model with includes and include_relations
         file_model_with_includes = FileModel(
             file_path="/test/project/main.c",
-            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},
@@ -773,7 +768,6 @@ class TestTransformer(unittest.TestCase):
         # Create file models for different root files
         main_c_model = FileModel(
             file_path="/test/project/main.c",
-            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},
@@ -792,7 +786,6 @@ class TestTransformer(unittest.TestCase):
 
         utils_c_model = FileModel(
             file_path="/test/project/utils.c",
-            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},
@@ -846,7 +839,6 @@ class TestTransformer(unittest.TestCase):
         """Test include filtering when root file doesn't match any filters"""
         file_model = FileModel(
             file_path="/test/project/other.c",
-            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},
@@ -887,7 +879,6 @@ class TestTransformer(unittest.TestCase):
         """Test include filtering with invalid regex patterns"""
         file_model = FileModel(
             file_path="/test/project/main.c",
-            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},
@@ -928,7 +919,6 @@ class TestTransformer(unittest.TestCase):
         """Test include filtering with empty configuration"""
         file_model = FileModel(
             file_path="/test/project/main.c",
-            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},
@@ -965,7 +955,6 @@ class TestTransformer(unittest.TestCase):
         """Test _find_root_file method for .c files"""
         file_model = FileModel(
             file_path="/test/project/main.c",
-            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},
@@ -984,7 +973,6 @@ class TestTransformer(unittest.TestCase):
         """Test _find_root_file method for header files"""
         file_model = FileModel(
             file_path="/test/project/header.h",
-            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},
@@ -1017,7 +1005,6 @@ class TestTransformer(unittest.TestCase):
         # Create a project model with includes
         file_model = FileModel(
             file_path="/test/project/main.c",
-            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},
@@ -1061,7 +1048,6 @@ class TestTransformer(unittest.TestCase):
         # Create a project model with transitive includes
         main_c_model = FileModel(
             file_path="/test/project/main.c",
-            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},
@@ -1076,7 +1062,6 @@ class TestTransformer(unittest.TestCase):
 
         header1_model = FileModel(
             file_path="/test/project/header1.h",
-            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},
@@ -1091,7 +1076,6 @@ class TestTransformer(unittest.TestCase):
 
         header2_model = FileModel(
             file_path="/test/project/header2.h",
-            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},
@@ -1106,7 +1090,6 @@ class TestTransformer(unittest.TestCase):
 
         header3_model = FileModel(
             file_path="/test/project/header3.h",
-            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},

@@ -236,11 +236,11 @@ class Transformer:
         if c_files:
             root_c_file = c_files[0]  # Use the first C file as root
             for file_path, file_model in model.files.items():
-                if file_model.relative_path.endswith('.c'):
-                    header_to_root[file_model.relative_path] = file_model.relative_path
+                if file_model.name.endswith('.c'):
+                    header_to_root[file_model.name] = file_model.name
                 else:
                     # Associate all header files with the root C file
-                    header_to_root[file_model.relative_path] = root_c_file
+                    header_to_root[file_model.name] = root_c_file
         
         return header_to_root
     
@@ -248,11 +248,11 @@ class Transformer:
         self, file_path: str, file_model: FileModel, header_to_root: Dict[str, str]
     ) -> str:
         """Find the root C file for a given file using the header mapping"""
-        if file_model.relative_path.endswith('.c'):
-            return file_model.relative_path
+        if file_model.name.endswith('.c'):
+            return file_model.name
         
         # For header files, use the mapping
-        return header_to_root.get(file_model.relative_path, file_model.relative_path)
+        return header_to_root.get(file_model.name, file_model.name)
     
     def _find_root_file(self, file_path: str, file_model: FileModel) -> str:
         """Find the root C file for a given file"""
@@ -285,7 +285,7 @@ class Transformer:
         patterns"""
         self.logger.debug(
             "Filtering includes for file %s (root: %s)", 
-            file_model.relative_path, root_file
+            file_model.name, root_file
         )
         
         # Filter includes
@@ -320,7 +320,7 @@ class Transformer:
         
         self.logger.debug(
             "Include filtering for %s: includes %d->%d, relations %d->%d", 
-            file_model.relative_path, original_includes_count, 
+            file_model.name, original_includes_count, 
             len(file_model.includes), original_relations_count, 
             len(file_model.include_relations)
         )
@@ -337,7 +337,7 @@ class Transformer:
     ) -> bool:
         """Check if an include should be processed based on include_filters"""
         # Find the root file for this file
-        root_file = self._find_root_file(file_model.relative_path, file_model)
+        root_file = self._find_root_file(file_model.name, file_model)
         
         # If no filters for this root file, allow all includes
         if root_file not in compiled_filters:
@@ -526,7 +526,7 @@ class Transformer:
         # for include processing
         file_map = {}
         for file_model in model.files.values():
-            filename = Path(file_model.relative_path).name
+            filename = Path(file_model.name).name
             file_map[filename] = file_model
 
         # Process each file's includes
@@ -535,8 +535,8 @@ class Transformer:
         for file_path, file_model in model.files.items():
             if include_filters:
                 # When include_filters are provided, only process .c files as root files
-                if file_model.relative_path.endswith('.c'):
-                    root_file = Path(file_model.relative_path).name
+                if file_model.name.endswith('.c'):
+                    root_file = Path(file_model.name).name
                     self._process_file_includes(
                         file_model, file_map, max_depth, 1, set(), compiled_filters, root_file, model.source_folder
                     )
@@ -560,10 +560,10 @@ class Transformer:
         source_folder: str = None,
     ) -> None:
         """Recursively process includes for a file using filename-based matching with include_filters support"""
-        if current_depth > max_depth or file_model.relative_path in visited:
+        if current_depth > max_depth or file_model.name in visited:
             return
 
-        visited.add(file_model.relative_path)
+        visited.add(file_model.name)
 
         # Process each include
         for include_name in file_model.includes:
@@ -572,16 +572,16 @@ class Transformer:
             # have all project files mapped by filename
             if include_name in file_map:
                 # Prevent self-referencing include relations
-                if file_model.relative_path == include_name:
+                if file_model.name == include_name:
                     self.logger.debug(
                         "Skipping self-include relation for %s", 
-                        file_model.relative_path
+                        file_model.name
                     )
                     continue
 
                 # Check if this include relation already exists to prevent cycles
                 relation_exists = any(
-                    rel.source_file == file_model.relative_path
+                    rel.source_file == file_model.name
                     and rel.included_file == include_name
                     for rel in file_model.include_relations
                 )
@@ -589,7 +589,7 @@ class Transformer:
                 if relation_exists:
                     self.logger.debug(
                         "Cyclic include detected and skipped: %s -> %s",
-                        file_model.relative_path,
+                        file_model.name,
                         include_name,
                     )
                     continue
@@ -600,7 +600,7 @@ class Transformer:
                 ):
                     self.logger.debug(
                         "Skipping filtered include: %s -> %s (root: %s)", 
-                        file_model.relative_path, include_name, root_file
+                        file_model.name, include_name, root_file
                     )
                     continue
 
@@ -609,7 +609,7 @@ class Transformer:
                 # filenames/relative paths
                 source_file = (
                     file_model.file_path if "tmp" in file_model.file_path 
-                    else file_model.relative_path
+                    else file_model.name
                 )
                 included_file = (
                     file_map[include_name].file_path if "tmp" in file_map[include_name].file_path 
@@ -830,7 +830,6 @@ class Transformer:
 
         return FileModel(
             file_path=data["file_path"],
-            # relative_path is now computed automatically as a property
             structs=structs,
             enums=enums,
             unions=unions,

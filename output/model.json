@@ -441,7 +441,6 @@
       ],
       "macros": [],
       "name": "complex.c",
-      "relative_path": "complex.c",
       "structs": {},
       "unions": {}
     },
@@ -756,7 +755,6 @@
         "UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)"
       ],
       "name": "complex.h",
-      "relative_path": "complex.h",
       "structs": {
         "Process_T": {
           "fields": [
@@ -1034,7 +1032,6 @@
         "COMPLEX_EXAMPLE_H"
       ],
       "name": "complex_example.h",
-      "relative_path": "complex_example.h",
       "structs": {
         "ComplexExample_t": {
           "fields": [
@@ -1139,7 +1136,6 @@
         "PROJECT_NAME"
       ],
       "name": "config.h",
-      "relative_path": "config.h",
       "structs": {},
       "unions": {}
     },
@@ -1230,7 +1226,6 @@
         "FILTERED_MACRO(x)"
       ],
       "name": "filtered_header.h",
-      "relative_path": "filtered_header.h",
       "structs": {
         "filtered_struct_t": {
           "fields": [
@@ -1272,7 +1267,6 @@
         "FIRST_LEVEL_H"
       ],
       "name": "first_level.h",
-      "relative_path": "first_level.h",
       "structs": {},
       "unions": {}
     },
@@ -1332,7 +1326,6 @@
       ],
       "macros": [],
       "name": "geometry.c",
-      "relative_path": "geometry.c",
       "structs": {},
       "unions": {}
     },
@@ -1393,7 +1386,6 @@
         "GEOMETRY_H"
       ],
       "name": "geometry.h",
-      "relative_path": "geometry.h",
       "structs": {
         "triangle_t": {
           "fields": [
@@ -1475,7 +1467,6 @@
       ],
       "macros": [],
       "name": "logger.c",
-      "relative_path": "logger.c",
       "structs": {},
       "unions": {}
     },
@@ -1562,7 +1553,6 @@
         "LOGGER_H"
       ],
       "name": "logger.h",
-      "relative_path": "logger.h",
       "structs": {},
       "unions": {}
     },
@@ -1633,7 +1623,6 @@
       ],
       "macros": [],
       "name": "math_utils.c",
-      "relative_path": "math_utils.c",
       "structs": {},
       "unions": {}
     },
@@ -1717,7 +1706,6 @@
         "MATH_UTILS_H"
       ],
       "name": "math_utils.h",
-      "relative_path": "math_utils.h",
       "structs": {},
       "unions": {}
     },
@@ -1772,7 +1760,6 @@
       ],
       "macros": [],
       "name": "preprocessed.c",
-      "relative_path": "preprocessed.c",
       "structs": {},
       "unions": {}
     },
@@ -1891,7 +1878,6 @@
         "PREPROCESSED_H"
       ],
       "name": "preprocessed.h",
-      "relative_path": "preprocessed.h",
       "structs": {
         "basic_struct_t": {
           "fields": [
@@ -2332,7 +2318,6 @@
         "MAX_SIZE"
       ],
       "name": "sample.c",
-      "relative_path": "sample.c",
       "structs": {},
       "unions": {}
     },
@@ -2442,7 +2427,6 @@
         "VERSION"
       ],
       "name": "sample.h",
-      "relative_path": "sample.h",
       "structs": {
         "point_t": {
           "fields": [
@@ -2634,7 +2618,6 @@
         "MAX_SIZE"
       ],
       "name": "sample2.c",
-      "relative_path": "sample2.c",
       "structs": {},
       "unions": {}
     },
@@ -2735,7 +2718,6 @@
       ],
       "macros": [],
       "name": "typedef_test.c",
-      "relative_path": "typedef_test.c",
       "structs": {},
       "unions": {}
     },
@@ -2826,7 +2808,6 @@
         "TYPEDEF_TEST_H"
       ],
       "name": "typedef_test.h",
-      "relative_path": "typedef_test.h",
       "structs": {
         "MyBuffer": {
           "fields": [

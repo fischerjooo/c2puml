@@ -151,7 +151,6 @@ class CParser:
 
         return FileModel(
             file_path=str(file_path),
-            # relative_path is now computed automatically as a property
             structs=structs,
             enums=enums,
             unions=unions,

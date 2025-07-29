@@ -198,9 +198,9 @@ void log_error(const char* message);
         window_file = None
 
         for file_data in model_data["files"].values():
-            if "engine.h" in file_data["relative_path"]:
+            if "engine.h" in file_data["name"]:
                 engine_file = file_data
-            elif "window.h" in file_data["relative_path"]:
+            elif "window.h" in file_data["name"]:
                 window_file = file_data
 
         self.assertIsNotNone(engine_file)
@@ -295,16 +295,16 @@ int main() {
             model_data = json.load(f)
 
         # Verify all files were processed
-        file_names = [file_data["relative_path"] for file_data in model_data["files"].values()]
-        # Normalize file paths for cross-platform compatibility
+        file_names = [file_data["name"] for file_data in model_data["files"].values()]
+        # Since name field now contains just filenames, not paths, we expect just the basenames
         expected_files = {
-            os.path.normpath("main.c"),
-            os.path.normpath("math/vector.h"),
-            os.path.normpath("math/matrix.h"),
-            os.path.normpath("graphics/transform.h"),
-            os.path.normpath("graphics/camera.h"),
+            "main.c",
+            "vector.h",
+            "matrix.h", 
+            "transform.h",
+            "camera.h",
         }
-        actual_files = set(os.path.normpath(f) for f in file_names)
+        actual_files = set(file_names)
 
         self.assertTrue(expected_files.issubset(actual_files))
 
@@ -314,11 +314,11 @@ int main() {
         matrix_file = None
 
         for file_data in model_data["files"].values():
-            if "camera.h" in file_data["relative_path"]:
+            if "camera.h" in file_data["name"]:
                 camera_file = file_data
-            elif "transform.h" in file_data["relative_path"]:
+            elif "transform.h" in file_data["name"]:
                 transform_file = file_data
-            elif "matrix.h" in file_data["relative_path"]:
+            elif "matrix.h" in file_data["name"]:
                 matrix_file = file_data
 
         self.assertIsNotNone(camera_file)
@@ -434,11 +434,11 @@ Order create_order(void* user, void* product);
         relationships_file = None
 
         for file_data in model_data["files"].values():
-            if "models.h" in file_data["relative_path"]:
+            if "models.h" in file_data["name"]:
                 models_file = file_data
-            elif "types.h" in file_data["relative_path"]:
+            elif "types.h" in file_data["name"]:
                 types_file = file_data
-            elif "relationships.h" in file_data["relative_path"]:
+            elif "relationships.h" in file_data["name"]:
                 relationships_file = file_data
 
         self.assertIsNotNone(models_file)
@@ -910,7 +910,7 @@ typedef struct {
         # Verify include relationships are preserved across deep hierarchy
         game_file = None
         for file_data in model_data["files"].values():
-            if "game.h" in file_data["relative_path"]:
+            if "game.h" in file_data["name"]:
                 game_file = file_data
                 break
 

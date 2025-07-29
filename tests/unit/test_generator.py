@@ -45,7 +45,6 @@ class TestGenerator(unittest.TestCase):
         """Create a test file model with sample data"""
         return FileModel(
             file_path=filename,
-            relative_path=filename,
             structs={
                 "Person": Struct(
                     "Person",
@@ -270,7 +269,6 @@ class TestGenerator(unittest.TestCase):
         file1 = self.create_test_file_model("main.c")
         file2 = FileModel(
             file_path="utils.c",
-            # relative_path is now computed automatically as a property
             structs={},
             enums={},
             functions=[Function("helper", "void", [])],
@@ -301,7 +299,6 @@ class TestGenerator(unittest.TestCase):
         """Test generating diagram for empty file model"""
         empty_file = FileModel(
             file_path="empty.c",
-            # relative_path is now computed automatically as a property
             structs={},
             enums={},
             functions=[],
