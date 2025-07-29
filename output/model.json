@@ -2426,6 +2426,7 @@
       "include_relations": [],
       "includes": [
         "config.h",
+        "filtered_header.h",
         "geometry.h",
         "logger.h",
         "stddef.h"
