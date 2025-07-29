@@ -7,20 +7,20 @@
   "include_depth": 10,
   "file_filters": {
     "include": [],
-    "exclude": []
+    "exclude": ["^.*filtered_header\\.h$"]
   },
   "element_filters": {
     "structs": {
       "include": [],
-      "exclude": []
+      "exclude": ["^filtered_"]
     },
     "functions": {
       "include": [],
-      "exclude": []
+      "exclude": ["^filtered_"]
     },
     "enums": {
       "include": [],
-      "exclude": []
+      "exclude": ["^filtered_"]
     },
     "unions": {
       "include": [],
@@ -28,11 +28,15 @@
     },
     "macros": {
       "include": [],
-      "exclude": []
+      "exclude": ["^FILTERED_"]
     },
     "aliases": {
       "include": [],
-      "exclude": []
+      "exclude": ["^filtered_"]
+    },
+    "globals": {
+      "include": [],
+      "exclude": ["^filtered_"]
     }
   },
   "include_filters": {

@@ -16,21 +16,6 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
     + #define PROJECT_NAME
 }
 
-class "filtered_header" as HEADER_FILTERED_HEADER <<header>> #LightGreen
-{
-    -- Macros --
-    + #define FILTERED_CONSTANT
-    + #define FILTERED_HEADER_H
-    + #define FILTERED_MACRO(x)
-    -- Global Variables --
-    + char filtered_global_string
-    + int filtered_global_var
-    -- Functions --
-    + int filtered_function1(int param)
-    + void filtered_function2(const char * message)
-    + double filtered_function3(filtered_struct_t * data)
-}
-
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
     -- Macros --
@@ -93,20 +78,6 @@ class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
     + int32_t
 }
 
-class "filtered_struct_t" as TYPEDEF_FILTERED_STRUCT_T <<typedef>> #LightYellow
-{
-    + int filtered_field1
-    + char[50] filtered_field2
-    + double filtered_field3
-}
-
-class "filtered_enum_t" as TYPEDEF_FILTERED_ENUM_T <<typedef>> #LightYellow
-{
-    + FILTERED_VALUE_1 = 1
-    + FILTERED_VALUE_2 = 2
-    + FILTERED_VALUE_3 = 3
-}
-
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
 {
     + char[MAX_LABEL_LEN] label
@@ -158,7 +129,6 @@ HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
-HEADER_SAMPLE --> HEADER_FILTERED_HEADER : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
 
@@ -166,8 +136,6 @@ HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
 HEADER_CONFIG ..> TYPEDEF_GLOBALSTATUS : <<declares>>
 HEADER_CONFIG ..> TYPEDEF_ID_T : <<declares>>
 HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>
-HEADER_FILTERED_HEADER ..> TYPEDEF_FILTERED_STRUCT_T : <<declares>>
-HEADER_FILTERED_HEADER ..> TYPEDEF_FILTERED_ENUM_T : <<declares>>
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_LOG_CALLBACK_T : <<declares>>
