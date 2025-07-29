@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_d562b8392ec3213b_models_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.1">coverage.py v7.10.1</a>,
-            created at 2025-07-29 11:30 +0000
+            created at 2025-07-29 13:39 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -191,9 +191,9 @@
     <p class="run"><span class="n"><a id="t109" href="#t109">109</a></span><span class="t">    <span class="key">if</span> <span class="nam">args</span><span class="op">.</span><span class="nam">command</span> <span class="op">==</span> <span class="str">"parse"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t110" href="#t110">110</a></span><span class="t">        <span class="key">try</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t111" href="#t111">111</a></span><span class="t">            <span class="nam">parser_obj</span> <span class="op">=</span> <span class="nam">Parser</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t">            <span class="com"># Use the refactored parse function that handles both single and multiple source folders</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t">            <span class="com"># Use the parse function with multiple source folders</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">            <span class="nam">parser_obj</span><span class="op">.</span><span class="nam">parse</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t114" href="#t114">114</a></span><span class="t">                <span class="nam">project_root</span><span class="op">=</span><span class="nam">config</span><span class="op">.</span><span class="nam">source_folders</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t114" href="#t114">114</a></span><span class="t">                <span class="nam">source_folders</span><span class="op">=</span><span class="nam">config</span><span class="op">.</span><span class="nam">source_folders</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">                <span class="nam">output_file</span><span class="op">=</span><span class="nam">model_file</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t116" href="#t116">116</a></span><span class="t">                <span class="nam">recursive_search</span><span class="op">=</span><span class="nam">getattr</span><span class="op">(</span><span class="nam">config</span><span class="op">,</span> <span class="str">"recursive_search"</span><span class="op">,</span> <span class="key">True</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t117" href="#t117">117</a></span><span class="t">                <span class="nam">config</span><span class="op">=</span><span class="nam">config</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -250,9 +250,9 @@
     <p class="run"><span class="n"><a id="t168" href="#t168">168</a></span><span class="t">    <span class="key">try</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t169" href="#t169">169</a></span><span class="t">        <span class="com"># Step 1: Parse</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t170" href="#t170">170</a></span><span class="t">        <span class="nam">parser_obj</span> <span class="op">=</span> <span class="nam">Parser</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t171" href="#t171">171</a></span><span class="t">        <span class="com"># Use the refactored parse function that handles both single and multiple source folders</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t171" href="#t171">171</a></span><span class="t">        <span class="com"># Use the parse function with multiple source folders</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t172" href="#t172">172</a></span><span class="t">        <span class="nam">parser_obj</span><span class="op">.</span><span class="nam">parse</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t173" href="#t173">173</a></span><span class="t">            <span class="nam">project_root</span><span class="op">=</span><span class="nam">config</span><span class="op">.</span><span class="nam">source_folders</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t173" href="#t173">173</a></span><span class="t">            <span class="nam">source_folders</span><span class="op">=</span><span class="nam">config</span><span class="op">.</span><span class="nam">source_folders</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t174" href="#t174">174</a></span><span class="t">            <span class="nam">output_file</span><span class="op">=</span><span class="nam">model_file</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t175" href="#t175">175</a></span><span class="t">            <span class="nam">recursive_search</span><span class="op">=</span><span class="nam">getattr</span><span class="op">(</span><span class="nam">config</span><span class="op">,</span> <span class="str">"recursive_search"</span><span class="op">,</span> <span class="key">True</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t176" href="#t176">176</a></span><span class="t">            <span class="nam">config</span><span class="op">=</span><span class="nam">config</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -296,7 +296,7 @@
             <a class="nav" href="z_d562b8392ec3213b_models_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.1">coverage.py v7.10.1</a>,
-            created at 2025-07-29 11:30 +0000
+            created at 2025-07-29 13:39 +0000
         </p>
     </div>
 </footer>
