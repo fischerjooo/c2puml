@@ -5,6 +5,7 @@ Follows the template format with strict separation of typedefs and clear relatio
 """
 
 import os
+import glob
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -37,6 +38,27 @@ class Generator:
     - Writing output files to disk
     """
 
+    def _clear_output_folder(self, output_dir: str) -> None:
+        """Clear existing .puml and .png files from the output directory"""
+        if not os.path.exists(output_dir):
+            return
+            
+        # Find and remove all .puml files
+        puml_files = glob.glob(os.path.join(output_dir, "*.puml"))
+        for file_path in puml_files:
+            try:
+                os.remove(file_path)
+            except OSError:
+                pass  # Ignore errors if file can't be removed
+                
+        # Find and remove all .png files
+        png_files = glob.glob(os.path.join(output_dir, "*.png"))
+        for file_path in png_files:
+            try:
+                os.remove(file_path)
+            except OSError:
+                pass  # Ignore errors if file can't be removed
+
     def generate(
         self, model_file: str, output_dir: str = "./output", include_depth: int = 1
     ) -> str:
@@ -46,6 +68,9 @@ class Generator:
 
         # Create output directory
         os.makedirs(output_dir, exist_ok=True)
+        
+        # Clear existing .puml and .png files from output directory
+        self._clear_output_folder(output_dir)
 
         # Generate a PlantUML file for each C file
         generated_files = []
