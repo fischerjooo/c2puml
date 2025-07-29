@@ -43,6 +43,12 @@ class "filtered_header" as HEADER_FILTERED_HEADER <<header>> #LightGreen
     + double filtered_function3(filtered_struct_t * data)
 }
 
+class "first_level" as HEADER_FIRST_LEVEL <<header>> #LightGreen
+{
+    -- Macros --
+    + #define FIRST_LEVEL_H
+}
+
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
     -- Macros --
@@ -164,6 +170,7 @@ class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
 
 
 ' Include relationships
+HEADER_FIRST_LEVEL --> HEADER_FILTERED_HEADER : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
@@ -172,6 +179,7 @@ HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
 SAMPLE2 --> HEADER_FILTERED_HEADER : <<include>>
+SAMPLE2 --> HEADER_FIRST_LEVEL : <<include>>
 SAMPLE2 --> HEADER_GEOMETRY : <<include>>
 SAMPLE2 --> HEADER_LOGGER : <<include>>
 SAMPLE2 --> HEADER_MATH_UTILS : <<include>>
