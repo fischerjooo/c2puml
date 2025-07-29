@@ -152,7 +152,6 @@ class CParser:
         return FileModel(
             file_path=str(file_path),
             relative_path=relative_path,  # Use relative path for better tracking
-            encoding_used=encoding,
             structs=structs,
             enums=enums,
             unions=unions,

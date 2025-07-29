@@ -178,7 +178,6 @@ class FileModel:
 
     file_path: str
     relative_path: str
-    encoding_used: str
     name: str = ""  # Filename extracted from file_path
     structs: Dict[str, Struct] = field(default_factory=dict)
     enums: Dict[str, Enum] = field(default_factory=dict)

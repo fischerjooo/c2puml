@@ -2,7 +2,6 @@
   "files": {
     "complex.c": {
       "aliases": {},
-      "encoding_used": "utf-8",
       "enums": {},
       "file_path": "/workspace/example/source/complex.c",
       "functions": [
@@ -537,7 +536,6 @@
           "uses": []
         }
       },
-      "encoding_used": "utf-8",
       "enums": {
         "operation_type_t": {
           "name": "operation_type_t",
@@ -1004,7 +1002,6 @@
     },
     "complex_example.h": {
       "aliases": {},
-      "encoding_used": "utf-8",
       "enums": {
         "CE_Status_t": {
           "name": "CE_Status_t",
@@ -1107,7 +1104,6 @@
           "uses": []
         }
       },
-      "encoding_used": "utf-8",
       "enums": {
         "GlobalStatus": {
           "name": "GlobalStatus",
@@ -1149,7 +1145,6 @@
     },
     "filtered_header.h": {
       "aliases": {},
-      "encoding_used": "utf-8",
       "enums": {
         "filtered_enum_t": {
           "name": "filtered_enum_t",
@@ -1265,7 +1260,6 @@
     },
     "first_level.h": {
       "aliases": {},
-      "encoding_used": "utf-8",
       "enums": {},
       "file_path": "/workspace/example/source/first_level.h",
       "functions": [],
@@ -1284,7 +1278,6 @@
     },
     "geometry.c": {
       "aliases": {},
-      "encoding_used": "utf-8",
       "enums": {},
       "file_path": "/workspace/example/source/geometry.c",
       "functions": [
@@ -1345,7 +1338,6 @@
     },
     "geometry.h": {
       "aliases": {},
-      "encoding_used": "utf-8",
       "enums": {},
       "file_path": "/workspace/example/source/geometry.h",
       "functions": [
@@ -1428,7 +1420,6 @@
     },
     "logger.c": {
       "aliases": {},
-      "encoding_used": "utf-8",
       "enums": {},
       "file_path": "/workspace/example/source/logger.c",
       "functions": [
@@ -1498,7 +1489,6 @@
           ]
         }
       },
-      "encoding_used": "utf-8",
       "enums": {
         "log_level_t": {
           "name": "log_level_t",
@@ -1578,7 +1568,6 @@
     },
     "math_utils.c": {
       "aliases": {},
-      "encoding_used": "utf-8",
       "enums": {},
       "file_path": "/workspace/example/source/math_utils.c",
       "functions": [
@@ -1661,7 +1650,6 @@
           "uses": []
         }
       },
-      "encoding_used": "utf-8",
       "enums": {},
       "file_path": "/workspace/example/source/math_utils.h",
       "functions": [
@@ -1735,7 +1723,6 @@
     },
     "preprocessed.c": {
       "aliases": {},
-      "encoding_used": "utf-8",
       "enums": {},
       "file_path": "/workspace/example/source/preprocessed.c",
       "functions": [
@@ -1814,7 +1801,6 @@
           "uses": []
         }
       },
-      "encoding_used": "utf-8",
       "enums": {
         "status_t": {
           "name": "status_t",
@@ -2184,7 +2170,6 @@
     },
     "sample.c": {
       "aliases": {},
-      "encoding_used": "utf-8",
       "enums": {},
       "file_path": "/workspace/example/source/sample.c",
       "functions": [
@@ -2353,7 +2338,6 @@
     },
     "sample.h": {
       "aliases": {},
-      "encoding_used": "utf-8",
       "enums": {
         "system_state_t": {
           "name": "system_state_t",
@@ -2488,7 +2472,6 @@
     },
     "sample2.c": {
       "aliases": {},
-      "encoding_used": "utf-8",
       "enums": {},
       "file_path": "/workspace/example/source/sample2.c",
       "functions": [
@@ -2657,7 +2640,6 @@
     },
     "typedef_test.c": {
       "aliases": {},
-      "encoding_used": "utf-8",
       "enums": {},
       "file_path": "/workspace/example/source/typedef_test.c",
       "functions": [
@@ -2796,7 +2778,6 @@
           "uses": []
         }
       },
-      "encoding_used": "utf-8",
       "enums": {
         "Color_t": {
           "name": "Color_t",
