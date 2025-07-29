@@ -1167,18 +1167,135 @@
     "filtered_header.h": {
       "aliases": {},
       "encoding_used": "utf-8",
-      "enums": {},
+      "enums": {
+        "filtered_enum_t": {
+          "name": "filtered_enum_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "FILTERED_VALUE_1",
+              "value": "1"
+            },
+            {
+              "name": "FILTERED_VALUE_2",
+              "value": "2"
+            },
+            {
+              "name": "FILTERED_VALUE_3",
+              "value": "3"
+            }
+          ]
+        }
+      },
       "file_path": "/workspace/example/source/filtered_header.h",
-      "functions": [],
-      "globals": [],
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "filtered_function1",
+          "parameters": [
+            {
+              "name": "param",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "filtered_function2",
+          "parameters": [
+            {
+              "name": "message",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "filtered_function3",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "filtered_struct_t *",
+              "value": null
+            }
+          ],
+          "return_type": "double"
+        }
+      ],
+      "globals": [
+        {
+          "name": "filtered_global_string",
+          "type": "char",
+          "value": null
+        },
+        {
+          "name": "filtered_global_var",
+          "type": "int",
+          "value": null
+        }
+      ],
       "include_relations": [],
       "includes": [
         "stdio.h",
         "stdlib.h"
       ],
-      "macros": [],
+      "macros": [
+        "FILTERED_CONSTANT",
+        "FILTERED_HEADER_H",
+        "FILTERED_MACRO(x)"
+      ],
       "name": "filtered_header.h",
       "relative_path": "filtered_header.h",
+      "structs": {
+        "filtered_struct_t": {
+          "fields": [
+            {
+              "name": "filtered_field1",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "filtered_field2",
+              "type": "char[50]",
+              "value": null
+            },
+            {
+              "name": "filtered_field3",
+              "type": "double",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "filtered_struct_t",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {}
+    },
+    "first_level.h": {
+      "aliases": {},
+      "encoding_used": "utf-8",
+      "enums": {},
+      "file_path": "/workspace/example/source/first_level.h",
+      "functions": [],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "filtered_header.h"
+      ],
+      "macros": [
+        "FIRST_LEVEL_H"
+      ],
+      "name": "first_level.h",
+      "relative_path": "first_level.h",
       "structs": {},
       "unions": {}
     },
@@ -2412,6 +2529,11 @@
       "include_relations": [
         {
           "depth": 3,
+          "included_file": "config.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 3,
           "included_file": "geometry.h",
           "source_file": "sample.h"
         },
@@ -2422,8 +2544,10 @@
         }
       ],
       "includes": [
+        "config.h",
         "geometry.h",
-        "logger.h"
+        "logger.h",
+        "stddef.h"
       ],
       "macros": [
         "MAX(a, b)",
@@ -2459,6 +2583,200 @@
           "uses": []
         }
       },
+      "unions": {}
+    },
+    "sample2.c": {
+      "aliases": {},
+      "encoding_used": "utf-8",
+      "enums": {},
+      "file_path": "/workspace/example/source/sample2.c",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "calculate_sum",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "calculate_sum",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "create_point",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "point_t *"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "create_point",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "point_t *"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "demo_triangle_usage",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "internal_helper",
+          "parameters": [],
+          "return_type": "static void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "internal_helper",
+          "parameters": [],
+          "return_type": "static void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "process_point",
+          "parameters": [
+            {
+              "name": "p",
+              "type": "point_t *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "buffer",
+          "type": "char",
+          "value": null
+        },
+        {
+          "name": "global_counter",
+          "type": "int",
+          "value": null
+        },
+        {
+          "name": "global_ptr",
+          "type": "double *",
+          "value": null
+        }
+      ],
+      "include_relations": [
+        {
+          "depth": 1,
+          "included_file": "filtered_header.h",
+          "source_file": "sample2.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "geometry.h",
+          "source_file": "sample2.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "logger.h",
+          "source_file": "sample2.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "math_utils.h",
+          "source_file": "sample2.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "sample.h",
+          "source_file": "sample2.c"
+        }
+      ],
+      "includes": [
+        "filtered_header.h",
+        "geometry.h",
+        "logger.h",
+        "math_utils.h",
+        "sample.h",
+        "stdio.h",
+        "stdlib.h",
+        "string.h"
+      ],
+      "macros": [
+        "CALC(x, y)",
+        "DEBUG_MODE",
+        "MAX_SIZE"
+      ],
+      "name": "sample2.c",
+      "relative_path": "sample2.c",
+      "structs": {},
       "unions": {}
     },
     "typedef_test.c": {
