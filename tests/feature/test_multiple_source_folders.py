@@ -219,9 +219,9 @@ typedef struct {
         parser = Parser()
         output_file = os.path.join(self.temp_dir, "single_model.json")
 
-        # Test with single source folder (string parameter for backward compatibility)
+        # Test with single source folder (list with one element)
         result = parser.parse(
-            source_folders=self.source_folder1,
+            source_folders=[self.source_folder1],
             output_file=output_file,
             recursive_search=True,
         )

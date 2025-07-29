@@ -1294,7 +1294,7 @@ class Parser:
 
     def parse(
         self,
-        source_folders: "Union[str, List[str]]",
+        source_folders: "List[str]",
         output_file: str = "model.json",
         recursive_search: bool = True,
         config: "Config" = None,
@@ -1303,8 +1303,7 @@ class Parser:
         Step 1: Parse C code files and generate model.json
 
         Args:
-            source_folders: Either a single root directory of C/C++ project (for backward compatibility)
-                           or a list of source folder directories within the project
+            source_folders: A list of source folder directories within the project
             output_file: Output JSON model file path
             recursive_search: Whether to search subdirectories recursively
             config: Configuration object for filtering, include depth, and project name
@@ -1312,19 +1311,21 @@ class Parser:
         Returns:
             Path to the generated model.json file
         """
-        # Handle both single source folder (backward compatibility) and list of source_folders
-        if isinstance(source_folders, str):
-            # Single source folder - backward compatibility
-            source_folders_list = [source_folders]
-            self.logger.info("Step 1: Parsing C/C++ project: %s", source_folders)
-        else:
-            # Multiple source folders
-            source_folders_list = source_folders
-            if not source_folders_list:
-                raise ValueError("At least one source folder must be provided")
-            self.logger.info(
-                f"Step 1: Parsing C/C++ project with {len(source_folders_list)} source folders"
-            )
+        # Validate source_folders is a list
+        if not isinstance(source_folders, list):
+            raise TypeError("source_folders must be a list of strings")
+        
+        if not source_folders:
+            raise ValueError("At least one source folder must be provided")
+        
+        # Validate all items are strings
+        for folder in source_folders:
+            if not isinstance(folder, str):
+                raise TypeError("All source folders must be strings")
+        
+        self.logger.info(
+            f"Step 1: Parsing C/C++ project with {len(source_folders)} source folders"
+        )
 
         # Get project name from config or use default
         project_name = (
@@ -1337,9 +1338,9 @@ class Parser:
         total_enums = 0
         total_functions = 0
 
-        for i, source_folder in enumerate(source_folders_list):
+        for i, source_folder in enumerate(source_folders):
             self.logger.info(
-                f"Parsing source folder {i+1}/{len(source_folders_list)}: {source_folder}"
+                f"Parsing source folder {i+1}/{len(source_folders)}: {source_folder}"
             )
 
             try:
@@ -1369,9 +1370,9 @@ class Parser:
         combined_model = ProjectModel(
             project_name=project_name,
             source_folder=(
-                ",".join(source_folders_list)
-                if len(source_folders_list) > 1
-                else source_folders_list[0]
+                ",".join(source_folders)
+                if len(source_folders) > 1
+                else source_folders[0]
             ),
             files=all_files,
         )

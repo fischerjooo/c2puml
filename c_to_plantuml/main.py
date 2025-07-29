@@ -109,7 +109,7 @@ Usage:
     if args.command == "parse":
         try:
             parser_obj = Parser()
-            # Use the refactored parse function that handles both single and multiple source folders
+            # Use the parse function with multiple source folders
             parser_obj.parse(
                 source_folders=config.source_folders,
                 output_file=model_file,
@@ -168,7 +168,7 @@ Usage:
     try:
         # Step 1: Parse
         parser_obj = Parser()
-        # Use the refactored parse function that handles both single and multiple source folders
+        # Use the parse function with multiple source folders
         parser_obj.parse(
             source_folders=config.source_folders,
             output_file=model_file,
