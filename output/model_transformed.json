@@ -2515,6 +2515,11 @@
         },
         {
           "depth": 3,
+          "included_file": "filtered_header.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 3,
           "included_file": "geometry.h",
           "source_file": "sample.h"
         },
@@ -2526,6 +2531,7 @@
       ],
       "includes": [
         "config.h",
+        "filtered_header.h",
         "geometry.h",
         "logger.h",
         "stddef.h"
