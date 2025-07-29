@@ -28,7 +28,7 @@ PREFIX_TYPEDEF = "TYPEDEF_"
 
 class Generator:
     """Generator that creates proper PlantUML files.
-    
+
     This class handles the complete PlantUML generation process, including:
     - Loading project models from JSON files
     - Building include trees for files
@@ -42,22 +42,14 @@ class Generator:
         """Clear existing .puml and .png files from the output directory"""
         if not os.path.exists(output_dir):
             return
-            
-        # Find and remove all .puml files
-        puml_files = glob.glob(os.path.join(output_dir, "*.puml"))
-        for file_path in puml_files:
-            try:
-                os.remove(file_path)
-            except OSError:
-                pass  # Ignore errors if file can't be removed
-                
-        # Find and remove all .png files
-        png_files = glob.glob(os.path.join(output_dir, "*.png"))
-        for file_path in png_files:
-            try:
-                os.remove(file_path)
-            except OSError:
-                pass  # Ignore errors if file can't be removed
+
+        # Remove files with specified extensions in the output directory
+        for ext in ("*.puml", "*.png", "*.html"):
+            for file_path in glob.glob(os.path.join(output_dir, ext)):
+                try:
+                    os.remove(file_path)
+                except OSError:
+                    pass  # Ignore errors if file can't be removed
 
     def generate(
         self, model_file: str, output_dir: str = "./output", include_depth: int = 1
@@ -68,7 +60,7 @@ class Generator:
 
         # Create output directory
         os.makedirs(output_dir, exist_ok=True)
-        
+
         # Clear existing .puml and .png files from output directory
         self._clear_output_folder(output_dir)
 
@@ -104,10 +96,10 @@ class Generator:
         uml_ids = self._generate_uml_ids(include_tree, project_model)
 
         lines = [f"@startuml {basename}", ""]
-        
+
         self._generate_all_file_classes(lines, include_tree, uml_ids)
         self._generate_relationships(lines, include_tree, uml_ids, project_model)
-        
+
         lines.extend(["", "@enduml"])
         return "\n".join(lines)
 
@@ -152,12 +144,12 @@ class Generator:
             # First try exact match
             if file_name in project_model.files:
                 return file_name
-            
+
             # Try matching by filename (filenames are guaranteed to be unique)
             filename = Path(file_name).name
             if filename in project_model.files:
                 return filename
-            
+
             # If not found, return the filename (will be handled gracefully)
             return filename
 
@@ -167,7 +159,7 @@ class Generator:
 
             visited.add(file_name)
             file_key = find_file_key(file_name)
-            
+
             if file_key in project_model.files:
                 include_tree[file_key] = project_model.files[file_key]
 
@@ -233,7 +225,7 @@ class Generator:
         """Format a function signature with truncation if needed."""
         params = self._format_function_parameters(func.parameters)
         param_str = ", ".join(params)
-        
+
         full_signature = f"{INDENT}{prefix}{func.return_type} {func.name}({param_str})"
         if len(full_signature) > MAX_LINE_LENGTH:
             param_str = self._truncate_parameters(params, func, prefix)
@@ -276,7 +268,7 @@ class Generator:
             for global_var in sorted(file_model.globals, key=lambda x: x.name):
                 lines.append(self._format_global_variable(global_var, prefix))
 
-    def _add_functions_section(self, lines: List[str], file_model: FileModel, 
+    def _add_functions_section(self, lines: List[str], file_model: FileModel,
                               prefix: str = "", is_declaration_only: bool = False):
         """Add functions section to lines with given prefix and filter."""
         if file_model.functions:
@@ -292,7 +284,7 @@ class Generator:
     ):
         """Generate class for C file using filename-based keys"""
         self._generate_file_class(
-            lines, file_model, uml_ids, 
+            lines, file_model, uml_ids,
             class_type="source", color=COLOR_SOURCE,
             macro_prefix="- ", global_prefix="", function_prefix="",
             is_declaration_only=False
@@ -311,7 +303,7 @@ class Generator:
 
     def _generate_file_class(
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str],
-        class_type: str, color: str, macro_prefix: str, global_prefix: str, 
+        class_type: str, color: str, macro_prefix: str, global_prefix: str,
         function_prefix: str, is_declaration_only: bool
     ):
         """Generate class for a file with specified formatting"""
@@ -413,7 +405,7 @@ class Generator:
         alias_lines = alias_data.original_type.split('\n')
         inside_struct = False
         nested_content = []
-        
+
         # Check if this is a truncated typedef (missing closing parenthesis or brace)
         if self._is_truncated_typedef(alias_data, alias_lines):
             self._handle_truncated_typedef(lines, alias_lines)
@@ -423,9 +415,9 @@ class Generator:
     def _is_truncated_typedef(self, alias_data, alias_lines: List[str]) -> bool:
         """Check if this is a truncated typedef"""
         return (
-            (alias_data.original_type.strip().endswith('(') or 
+            (alias_data.original_type.strip().endswith('(') or
              alias_data.original_type.strip().endswith('nested1') or
-             alias_data.original_type.strip().endswith('{')) and 
+             alias_data.original_type.strip().endswith('{')) and
             len(alias_lines) > 1
         )
 
@@ -438,12 +430,12 @@ class Generator:
         else:
             lines.append(f"    + {first_line}")
 
-    def _handle_normal_alias(self, lines: List[str], alias_lines: List[str], 
+    def _handle_normal_alias(self, lines: List[str], alias_lines: List[str],
                            inside_struct: bool, nested_content: List[str]):
         """Handle normal multi-line alias processing"""
         for i, line in enumerate(alias_lines):
             line = line.strip()
-            
+
             if i == 0:
                 lines.append(f"    + {line}")
             elif line.startswith("struct {"):
@@ -467,7 +459,7 @@ class Generator:
                     nested_content.append(line)  # Collect nested content
                 else:
                     lines.append(f"+ {line}")
-        
+
         # If we were inside a struct but didn't find a closing brace, add one
         if inside_struct and nested_content:
             content_str = "; ".join(nested_content)
@@ -476,12 +468,12 @@ class Generator:
     def _generate_field_with_nested_structs(self, lines: List[str], field, base_indent: str):
         """Generate field with proper handling of nested structures"""
         field_text = f"{field.type} {field.name}"
-        
+
         # Check if this is a nested struct field
         if field.type.startswith("struct {") and '\n' in field.type:
             # Parse the nested struct content and flatten it
             struct_parts = field.type.split('\n')
-            
+
             # For nested structs, flatten them to avoid PlantUML parsing issues
             # Format as: + struct { field_type field_name }
             nested_content = []
@@ -489,7 +481,7 @@ class Generator:
                 part = part.strip()
                 if part and part != "}":
                     nested_content.append(part)
-            
+
             if nested_content:
                 # Create a flattened representation
                 content_str = "; ".join(nested_content)
@@ -539,7 +531,7 @@ class Generator:
         """Generate declaration relationships between files and typedefs"""
         lines.append("' Declaration relationships")
         typedef_collections_names = ["structs", "enums", "aliases", "unions"]
-        
+
         for file_name, file_model in sorted(include_tree.items()):
             file_uml_id = self._get_file_uml_id(file_name, uml_ids)
             if file_uml_id:
@@ -566,7 +558,7 @@ class Generator:
             self._add_typedef_uses_relationships(
                 lines, file_model.structs, uml_ids, "struct"
             )
-            # Alias uses relationships  
+            # Alias uses relationships
             self._add_typedef_uses_relationships(
                 lines, file_model.aliases, uml_ids, "alias"
             )
