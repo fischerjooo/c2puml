@@ -91,7 +91,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         )
 
         # Create project model
-        model = ProjectModel(project_root="/test", 
+        model = ProjectModel(source_folder="/test", 
             project_name="TestProject",
             
             files={"main.c": file_model},

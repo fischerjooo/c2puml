@@ -153,7 +153,7 @@ typedef struct {
             generator = Generator()
             
             # Parse
-            parser.parse(str(project_dir), str(model_file))
+            parser.parse(source_folders=[str(project_dir)], output_file=str(model_file))
             
             # Transform
             transformer.transform(str(model_file), str(config_file), str(transformed_model_file))

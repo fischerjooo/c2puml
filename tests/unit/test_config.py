@@ -228,7 +228,7 @@ class TestConfig(unittest.TestCase):
             aliases={},
         )
 
-        model = ProjectModel(project_root="/test", 
+        model = ProjectModel(source_folder="/test", 
             project_name="test_project",
             
             files={"main.c": file1, "test_helper.c": file2},

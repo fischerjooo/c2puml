@@ -54,8 +54,8 @@ class ModelVerifier:
         if not model.project_name or not model.project_name.strip():
             self.issues.append("Project name is empty or whitespace")
 
-        if not model.project_root or not model.project_root.strip():
-            self.issues.append("Project root is empty or whitespace")
+        if not model.source_folder or not model.source_folder.strip():
+            self.issues.append("Source folder is empty or whitespace")
 
         if not model.files:
             self.issues.append("No files found in project")
