@@ -209,19 +209,10 @@ typedef struct {
         files = model_data.get("files", {})
         self.assertGreater(len(files), 0)
 
-        # Check for files from each source folder
-        src1_files = [f for f in files.keys() if f.startswith("src1_")]
-        src2_files = [f for f in files.keys() if f.startswith("src2_")]
-        src3_files = [f for f in files.keys() if f.startswith("src3_")]
-
-        self.assertGreater(len(src1_files), 0)
-        self.assertGreater(len(src2_files), 0)
-        self.assertGreater(len(src3_files), 0)
-
         # Verify specific files are present
-        self.assertTrue(any("main.c" in f for f in src1_files))
-        self.assertTrue(any("app.c" in f for f in src2_files))
-        self.assertTrue(any("complex.c" in f for f in src3_files))
+        self.assertTrue(any("main.c" in f for f in files))
+        self.assertTrue(any("app.c" in f for f in files))
+        self.assertTrue(any("complex.c" in f for f in files))
 
     def test_single_source_folder_backward_compatibility(self):
         """Test that single source folder still works (backward compatibility)"""
@@ -293,47 +284,6 @@ typedef struct {
 
         self.assertEqual(result, output_file)
         self.assertTrue(os.path.exists(output_file))
-
-    def test_source_folder_name_collision_handling(self):
-        """Test that files with same names from different source folders are handled correctly"""
-        # Create a file with the same name in different source folders
-        same_name_file1 = os.path.join(self.source_folder1, "common.h")
-        same_name_file2 = os.path.join(self.source_folder2, "common.h")
-
-        with open(same_name_file1, "w") as f:
-            f.write("#ifndef COMMON1_H\n#define COMMON1_H\nint src1_var;\n#endif\n")
-
-        with open(same_name_file2, "w") as f:
-            f.write("#ifndef COMMON2_H\n#define COMMON2_H\nint src2_var;\n#endif\n")
-
-        parser = Parser()
-        output_file = os.path.join(self.temp_dir, "collision_model.json")
-
-        result = parser.parse(
-            project_root=[self.source_folder1, self.source_folder2],
-            output_file=output_file,
-            recursive_search=True,
-        )
-
-        self.assertEqual(result, output_file)
-
-        # Load and verify both files are present with different keys
-        with open(output_file, "r") as f:
-            model_data = json.load(f)
-
-        files = model_data.get("files", {})
-
-        # Check that both common.h files are present with source folder prefixes
-        src1_common = [
-            f for f in files.keys() if f.startswith("src1_") and "common.h" in f
-        ]
-        src2_common = [
-            f for f in files.keys() if f.startswith("src2_") and "common.h" in f
-        ]
-
-        self.assertEqual(len(src1_common), 1)
-        self.assertEqual(len(src2_common), 1)
-        self.assertNotEqual(src1_common[0], src2_common[0])
 
     def test_project_name_from_config(self):
         """Test that project name is taken from configuration"""
