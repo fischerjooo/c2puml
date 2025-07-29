@@ -74,7 +74,7 @@ class CParser:
                 file_model = self.parse_file(
                     file_path, relative_path
                 )
-                
+
                 # Use filename as key (filenames are guaranteed to be unique)
                 files[file_model.name] = file_model
 
@@ -777,7 +777,7 @@ class CParser:
                         formatted_tokens.append(token.value)
                 original_type = "".join(formatted_tokens)
                 return (typedef_name, original_type)
-        
+
         # Complex function pointer typedef: typedef ret (*name)(complex_params);
         # This handles cases where the function pointer has complex parameters that span multiple tokens
         if len(all_tokens) >= 6:
@@ -800,7 +800,7 @@ class CParser:
                         elif all_tokens[param_end].type == TokenType.RPAREN:
                             paren_count -= 1
                         param_end += 1
-                    
+
                     if paren_count == 0:
                         typedef_name = all_tokens[i + 3].value
                         # Format the complete typedef properly
@@ -1195,7 +1195,7 @@ class CParser:
                 ):
                     # Found function pointer pattern
                     func_name = param_tokens[i + 2].value
-                    
+
                     # Find the closing parenthesis for the parameter list
                     paren_count = 1
                     param_end = i + 5
@@ -1205,19 +1205,19 @@ class CParser:
                         elif param_tokens[param_end].type == TokenType.RPAREN:
                             paren_count -= 1
                         param_end += 1
-                    
+
                     if paren_count == 0:
                         # Extract the type (everything before the function pointer)
                         type_tokens = param_tokens[:i]
                         param_type = " ".join(t.value for t in type_tokens)
-                        
+
                         # Extract the function pointer part
                         func_ptr_tokens = param_tokens[i:param_end]
                         func_ptr_type = " ".join(t.value for t in func_ptr_tokens)
-                        
+
                         # Combine type and function pointer
                         full_type = (param_type + " " + func_ptr_type).strip()
-                        
+
                         return Field(name=func_name, type=full_type)
 
         # For parameters like "int x" or "const char *name"
@@ -1348,16 +1348,7 @@ class Parser:
                     source_folder, recursive_search, config
                 )
 
-                if len(source_folders) == 1:
-                    # Single source folder - use original behavior (no prefix)
-                    all_files.update(model.files)
-                else:
-                    # Multiple source folders - use source folder name as prefix to avoid conflicts
-                    source_folder_prefix = f"{Path(source_folder).name}_"
-                    for relative_path, file_model in model.files.items():
-                        # Create a unique key for each file across all source folders
-                        unique_key = f"{source_folder_prefix}{relative_path}"
-                        all_files[unique_key] = file_model
+                all_files.update(model.files)
 
                 # Update totals
                 total_structs += sum(len(f.structs) for f in model.files.values())

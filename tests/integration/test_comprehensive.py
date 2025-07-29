@@ -47,14 +47,14 @@ class TestIncludeProcessingIntegrationComprehensive(BaseFeatureTest):
 int main() {
     Engine* engine = engine_init();
     Window* window = window_create(800, 600, "App");
-    
+
     log_info("Application started");
-    
+
     while (engine_is_running(engine)) {
         window_update(window);
         engine_update(engine);
     }
-    
+
     window_destroy(window);
     engine_cleanup(engine);
     return 0;
@@ -182,30 +182,30 @@ void log_error(const char* message);
             "recursive_search": True,
             "file_extensions": [".c", ".h"]
         }
-        
+
         results = self.run_full_pipeline(project_dir, config_data)
-        
+
         # Verify comprehensive processing
         with open(results["model_file"], "r") as f:
             model_data = json.load(f)
-        
+
         # Should process all files in the complex hierarchy
         file_count = len(model_data["files"])
         self.assertGreaterEqual(file_count, 9)  # All the files we created
-        
+
         # Verify specific include relationships
         engine_file = None
         window_file = None
-        
+
         for file_data in model_data["files"].values():
             if "engine.h" in file_data["relative_path"]:
                 engine_file = file_data
             elif "window.h" in file_data["relative_path"]:
                 window_file = file_data
-        
+
         self.assertIsNotNone(engine_file)
         self.assertIsNotNone(window_file)
-        
+
         # Check include relationships
         self.assertTrue(any("renderer.h" in inc for inc in engine_file["includes"]))
         self.assertTrue(any("sound.h" in inc for inc in engine_file["includes"]))
@@ -288,27 +288,31 @@ int main() {
             "include_depth": 4,
             "recursive_search": True
         }
-        
+
         results = self.run_full_pipeline(project_dir, config_data)
-        
+
         with open(results["model_file"], "r") as f:
             model_data = json.load(f)
-        
+
         # Verify all files were processed
         file_names = [file_data["relative_path"] for file_data in model_data["files"].values()]
+        # Normalize file paths for cross-platform compatibility
         expected_files = {
-            "main.c", "math/vector.h", "math/matrix.h", 
-            "graphics/transform.h", "graphics/camera.h"
+            os.path.normpath("main.c"),
+            os.path.normpath("math/vector.h"),
+            os.path.normpath("math/matrix.h"),
+            os.path.normpath("graphics/transform.h"),
+            os.path.normpath("graphics/camera.h"),
         }
-        actual_files = set(file_names)
-        
+        actual_files = set(os.path.normpath(f) for f in file_names)
+
         self.assertTrue(expected_files.issubset(actual_files))
-        
+
         # Verify include chain: camera.h -> transform.h -> matrix.h -> vector.h
         camera_file = None
         transform_file = None
         matrix_file = None
-        
+
         for file_data in model_data["files"].values():
             if "camera.h" in file_data["relative_path"]:
                 camera_file = file_data
@@ -316,11 +320,11 @@ int main() {
                 transform_file = file_data
             elif "matrix.h" in file_data["relative_path"]:
                 matrix_file = file_data
-        
+
         self.assertIsNotNone(camera_file)
         self.assertIsNotNone(transform_file)
         self.assertIsNotNone(matrix_file)
-        
+
         # Verify include relationships
         self.assertIn("transform.h", camera_file["includes"])
         self.assertTrue(any("matrix.h" in inc for inc in transform_file["includes"]))
@@ -418,17 +422,17 @@ Order create_order(void* user, void* product);
             "source_folders": [str(project_dir)],
             "include_depth": 3
         }
-        
+
         results = self.run_full_pipeline(project_dir, config_data)
-        
+
         with open(results["model_file"], "r") as f:
             model_data = json.load(f)
-        
+
         # Verify typedef relationships are preserved
         models_file = None
         types_file = None
         relationships_file = None
-        
+
         for file_data in model_data["files"].values():
             if "models.h" in file_data["relative_path"]:
                 models_file = file_data
@@ -436,16 +440,16 @@ Order create_order(void* user, void* product);
                 types_file = file_data
             elif "relationships.h" in file_data["relative_path"]:
                 relationships_file = file_data
-        
+
         self.assertIsNotNone(models_file)
         self.assertIsNotNone(types_file)
         self.assertIsNotNone(relationships_file)
-        
+
         # Verify include relationships
         self.assertIn("types.h", models_file["includes"])
         self.assertIn("relationships.h", models_file["includes"])
         self.assertIn("types.h", relationships_file["includes"])
-        
+
         # Verify that structs were parsed
         self.assertTrue(len(models_file["structs"]) > 0)
         self.assertTrue(len(types_file["structs"]) > 0)
@@ -492,17 +496,17 @@ typedef struct ComplexStruct {
     } options;
 } ComplexStruct;
 '''
-        
+
         file_path = self.create_test_file("complex.h", content)
         file_model = self.parser.parse_file(file_path, "complex.h")
-        
+
         # Verify struct was parsed correctly
         self.assertTrue(len(file_model.structs) > 0)
-        
+
         # Check that complex struct was parsed
         struct_names = list(file_model.structs.keys())
         self.assertIn("ComplexStruct", struct_names)
-        
+
         complex_struct = file_model.structs["ComplexStruct"]
         self.assertTrue(len(complex_struct.fields) > 0)
 
@@ -525,25 +529,25 @@ static inline double complex_function(
 
 extern void* variadic_function(int count, ...);
 '''
-        
+
         file_path = self.create_test_file("functions.h", content)
         file_model = self.parser.parse_file(file_path, "functions.h")
-        
+
         # Verify functions were parsed correctly
         self.assertTrue(len(file_model.functions) > 0)
-        
+
         function_names = [func.name for func in file_model.functions]
         self.assertIn("simple_function", function_names)
         self.assertIn("complex_function", function_names)
         self.assertIn("variadic_function", function_names)
-        
+
         # Check complex function parameters
         complex_func = None
         for func in file_model.functions:
             if func.name == "complex_function":
                 complex_func = func
                 break
-        
+
         self.assertIsNotNone(complex_func)
         self.assertTrue(len(complex_func.parameters) > 0)
 
@@ -573,15 +577,15 @@ typedef struct {
     typedef void* Handle;
 #endif
 '''
-        
+
         file_path = self.create_test_file("preprocessor.h", content)
         file_model = self.parser.parse_file(file_path, "preprocessor.h")
-        
+
         # Verify that structs are still parsed despite preprocessor directives
         self.assertTrue(len(file_model.structs) > 0)
         struct_names = list(file_model.structs.keys())
         self.assertIn("Buffer", struct_names)
-        
+
         # Verify macros were captured
         self.assertTrue(len(file_model.macros) > 0)
 
@@ -630,24 +634,24 @@ typedef union {
     uint32_t value;
 } NodeStatus;
 '''
-        
+
         file_path = self.create_test_file("complex.h", content)
         file_model = self.parser.parse_file(file_path, "complex.h")
-        
+
         # Verify complex structures were parsed
         self.assertTrue(len(file_model.structs) > 0)
         self.assertTrue(len(file_model.functions) > 0)
         self.assertTrue(len(file_model.enums) > 0)
         self.assertTrue(len(file_model.unions) > 0)
-        
+
         # Check specific structures
         struct_names = list(file_model.structs.keys())
         self.assertIn("VTable", struct_names)
         self.assertIn("Node", struct_names)
-        
+
         enum_names = list(file_model.enums.keys())
         self.assertIn("NodeState", enum_names)
-        
+
         union_names = list(file_model.unions.keys())
         self.assertIn("NodeStatus", union_names)
 
@@ -672,12 +676,12 @@ typedef struct {
     float recovery_field;
 } RecoveryStruct;
 '''
-        
+
         file_path = self.create_test_file("errors.h", content)
-        
+
         # Should not crash despite syntax errors
         file_model = self.parser.parse_file(file_path, "complex.h")
-        
+
         # Should still parse some valid structures
         self.assertIsNotNone(file_model)
         # May have parsed some structs despite errors
@@ -701,25 +705,25 @@ class TestEndToEndSystemIntegration(BaseFeatureTest):
 int main(int argc, char** argv) {
     Platform platform;
     Game game;
-    
+
     if (!platform_init(&platform)) {
         return -1;
     }
-    
+
     if (!game_init(&game, &platform)) {
         platform_shutdown(&platform);
         return -1;
     }
-    
+
     while (platform_is_running(&platform)) {
         platform_update(&platform);
         game_update(&game, platform_get_delta_time(&platform));
         game_render(&game);
     }
-    
+
     game_shutdown(&game);
     platform_shutdown(&platform);
-    
+
     return 0;
 }
 ''',
@@ -887,53 +891,53 @@ typedef struct {
             "file_extensions": [".c", ".h"],
             "generate_images": False
         }
-        
+
         # Run complete pipeline
         results = self.run_full_pipeline(project_dir, config_data)
-        
+
         # Verify all stages completed
         self.assertTrue(results["model_file"].exists())
         self.assertTrue(results["transformed_model_file"].exists())
-        
+
         # Load and verify model
         with open(results["model_file"], "r") as f:
             model_data = json.load(f)
-        
+
         # Should process all files
         file_count = len(model_data["files"])
         self.assertGreaterEqual(file_count, 11)  # All files created
-        
+
         # Verify include relationships are preserved across deep hierarchy
         game_file = None
         for file_data in model_data["files"].values():
             if "game.h" in file_data["relative_path"]:
                 game_file = file_data
                 break
-        
+
         self.assertIsNotNone(game_file)
-        
+
         # game.h should include its dependencies
         includes = game_file["includes"]
         self.assertTrue(any("platform.h" in inc for inc in includes))
         self.assertTrue(any("player.h" in inc for inc in includes))
         self.assertTrue(any("level.h" in inc for inc in includes))
         self.assertTrue(any("renderer.h" in inc for inc in includes))
-        
+
         # Verify PlantUML output was generated
         output_dir = results["output_dir"]
         plantuml_files = list(output_dir.glob("*.puml"))
         self.assertGreater(len(plantuml_files), 0)
-        
+
         # Verify PlantUML content
         if plantuml_files:
             with open(plantuml_files[0], "r") as f:
                 content = f.read()
-            
+
             self.assertIn("@startuml", content)
             self.assertIn("@enduml", content)
             # Should contain some of our defined structures
             self.assertTrue(
-                any(struct_name in content for struct_name in 
+                any(struct_name in content for struct_name in
                     ["Game", "Player", "Platform", "Vector3"])
             )
 
