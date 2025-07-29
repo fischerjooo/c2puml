@@ -53,7 +53,7 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         # Create a file model with different types of elements
         file_model = FileModel(
             file_path="/test/project/main.c",
-            relative_path="main.c",
+            # relative_path is now computed automatically as a property
             
             structs={
                 "PublicStruct": Struct("PublicStruct", [Field("id", "int")]),

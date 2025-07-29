@@ -44,7 +44,7 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
+            # relative_path is now computed automatically as a property
             structs={"valid_struct": valid_struct},
         )
 
@@ -66,7 +66,7 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
+            # relative_path is now computed automatically as a property
             globals=[invalid_global],
         )
 
@@ -93,7 +93,7 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
+            # relative_path is now computed automatically as a property
             
             globals=[suspicious_global],
         )
@@ -121,7 +121,7 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
+            # relative_path is now computed automatically as a property
             
             globals=[suspicious_global],
         )
@@ -146,7 +146,7 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
+            # relative_path is now computed automatically as a property
             
             structs={"": empty_struct},
         )
@@ -170,7 +170,7 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
+            # relative_path is now computed automatically as a property
             
             structs={"123invalid": invalid_struct},
         )
@@ -196,7 +196,7 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
+            # relative_path is now computed automatically as a property
             
             globals=[unbalanced_field],
         )
@@ -230,7 +230,7 @@ class TestModelVerifier(unittest.TestCase):
 
                 file_model = FileModel(
                     file_path="/test/file.c",
-                    relative_path="file.c",
+                    # relative_path is now computed automatically as a property
                     
                     globals=[field],
                 )
@@ -267,7 +267,7 @@ class TestModelVerifier(unittest.TestCase):
 
                 file_model = FileModel(
                     file_path="/test/file.c",
-                    relative_path="file.c",
+                    # relative_path is now computed automatically as a property
                     
                     globals=[field],
                 )
@@ -306,7 +306,7 @@ class TestModelVerifier(unittest.TestCase):
                 valid_field = Field(name=identifier, type="int")
                 file_model = FileModel(
                     file_path="/test/file.c",
-                    relative_path="file.c",
+                    # relative_path is now computed automatically as a property
                     
                     globals=[valid_field],
                 )
@@ -345,7 +345,7 @@ class TestModelVerifier(unittest.TestCase):
 
                 file_model = FileModel(
                     file_path="/test/file.c",
-                    relative_path="file.c",
+                    # relative_path is now computed automatically as a property
                     
                     globals=[invalid_field],
                 )
@@ -367,7 +367,7 @@ class TestModelVerifier(unittest.TestCase):
         # Test empty project name
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
+            # relative_path is now computed automatically as a property
             
         )
 

@@ -177,7 +177,7 @@ class FileModel:
     """Represents a parsed C/C++ file"""
 
     file_path: str
-    relative_path: str
+    # relative_path: str  # REMOVED: Now computed from file_path
     name: str = ""  # Filename extracted from file_path
     structs: Dict[str, Struct] = field(default_factory=dict)
     enums: Dict[str, Enum] = field(default_factory=dict)
@@ -195,9 +195,23 @@ class FileModel:
             from pathlib import Path
             self.name = Path(self.file_path).name
 
+    @property
+    def relative_path(self) -> str:
+        """
+        Compute relative path on demand from file_path.
+        This replaces the old relative_path field to avoid data duplication.
+        
+        For now, this returns just the filename to maintain compatibility
+        with existing logic that expects relative_path = filename.
+        """
+        from pathlib import Path
+        return Path(self.file_path).name
+
     def to_dict(self) -> dict:
         """Convert to dictionary for JSON serialization"""
         data = asdict(self)
+        # Add computed relative_path to the serialized data
+        data["relative_path"] = self.relative_path
         # Convert set to list for JSON serialization and sort for consistency
         data["includes"] = sorted(list(self.includes))
         # Convert include_relations to list of dicts and sort for consistency
@@ -335,6 +349,10 @@ class FileModel:
         new_data["unions"] = unions
         new_data["aliases"] = aliases
         new_data["include_relations"] = include_relations
+        
+        # Remove relative_path field if it exists (legacy compatibility)
+        # It's now computed automatically as a property
+        new_data.pop("relative_path", None)
 
         return cls(**new_data)
 

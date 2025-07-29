@@ -70,7 +70,7 @@ class TestFunctionParameters(unittest.TestCase):
         # Create a file model with functions that have parameters
         file_model = FileModel(
             file_path="/test/sample.c",
-            relative_path="sample.c",
+            # relative_path is now computed automatically as a property
             
             functions=[
                 Function("add", "int", [Field("a", "int"), Field("b", "int")]),
@@ -106,7 +106,7 @@ class TestFunctionParameters(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/empty.c",
-            relative_path="empty.c",
+            # relative_path is now computed automatically as a property
             
             functions=[Function("init", "void", []), Function("cleanup", "void", [])],
         )
@@ -127,7 +127,7 @@ class TestFunctionParameters(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/complex.c",
-            relative_path="complex.c",
+            # relative_path is now computed automatically as a property
             
             functions=[
                 Function(

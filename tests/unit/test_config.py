@@ -156,7 +156,7 @@ class TestConfig(unittest.TestCase):
         # Create test file model
         file_model = FileModel(
             file_path="test.c",
-            relative_path="test.c",
+            # relative_path is now computed automatically as a property
             
             structs={
                 "Person": Struct("Person", []),
@@ -201,7 +201,7 @@ class TestConfig(unittest.TestCase):
         # Create test model with multiple files
         file1 = FileModel(
             file_path="main.c",
-            relative_path="main.c",
+            # relative_path is now computed automatically as a property
             
             structs={"Person": Struct("Person", []), "Config": Struct("Config", [])},
             enums={},
@@ -214,7 +214,7 @@ class TestConfig(unittest.TestCase):
 
         file2 = FileModel(
             file_path="test_helper.c",
-            relative_path="test_helper.c",
+            # relative_path is now computed automatically as a property
             
             structs={},
             enums={},
