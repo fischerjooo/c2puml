@@ -51,7 +51,7 @@ All steps can be executed individually or can be chained together.
 - **R10**: Enable model transformation with renaming and element addition capabilities
 - **R11**: Support multi-configuration file loading and merging
 - **R12**: Generate structured output with customizable packaging
-- **R13**: Handle encoding issues and provide robust error handling
+- **R13**: Provide robust error handling
 - **R14**: Parse and visualize unions with their fields
 - **R15**: Handle typedefs for struct/enum/union (named and anonymous) with content display
 - **R16**: Show relationships between typedefs and their underlying types
@@ -110,7 +110,7 @@ tests/
   - File discovery and essential filtering (hidden files, common exclude patterns)
   - C/C++ source code parsing with configurable recursive search
   - Model assembly and serialization
-  - Encoding detection and handling
+  - Cross-platform file handling
   - Robust typedef parsing for struct/enum/union (named and anonymous)
   - Include dependency processing with configurable depth
   - **Note**: Does NOT perform model element filtering - preserves all elements for transformer
@@ -165,7 +165,6 @@ class FileModel:
     file_path: str
     relative_path: str
     project_root: str
-    encoding_used: str
     structs: Dict[str, Struct]
     enums: Dict[str, Enum]
     unions: Dict[str, Union]

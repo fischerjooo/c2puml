@@ -45,8 +45,6 @@ class TestModelVerifier(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
-            
-            encoding_used="utf-8",
             structs={"valid_struct": valid_struct},
         )
 
@@ -69,8 +67,6 @@ class TestModelVerifier(unittest.TestCase):
         file_model = FileModel(
             file_path="/test/file.c",
             relative_path="file.c",
-            
-            encoding_used="utf-8",
             globals=[invalid_global],
         )
 
@@ -99,7 +95,6 @@ class TestModelVerifier(unittest.TestCase):
             file_path="/test/file.c",
             relative_path="file.c",
             
-            encoding_used="utf-8",
             globals=[suspicious_global],
         )
 
@@ -128,7 +123,6 @@ class TestModelVerifier(unittest.TestCase):
             file_path="/test/file.c",
             relative_path="file.c",
             
-            encoding_used="utf-8",
             globals=[suspicious_global],
         )
 
@@ -154,7 +148,6 @@ class TestModelVerifier(unittest.TestCase):
             file_path="/test/file.c",
             relative_path="file.c",
             
-            encoding_used="utf-8",
             structs={"": empty_struct},
         )
 
@@ -179,7 +172,6 @@ class TestModelVerifier(unittest.TestCase):
             file_path="/test/file.c",
             relative_path="file.c",
             
-            encoding_used="utf-8",
             structs={"123invalid": invalid_struct},
         )
 
@@ -206,7 +198,6 @@ class TestModelVerifier(unittest.TestCase):
             file_path="/test/file.c",
             relative_path="file.c",
             
-            encoding_used="utf-8",
             globals=[unbalanced_field],
         )
 
@@ -241,7 +232,6 @@ class TestModelVerifier(unittest.TestCase):
                     file_path="/test/file.c",
                     relative_path="file.c",
                     
-                    encoding_used="utf-8",
                     globals=[field],
                 )
 
@@ -279,7 +269,6 @@ class TestModelVerifier(unittest.TestCase):
                     file_path="/test/file.c",
                     relative_path="file.c",
                     
-                    encoding_used="utf-8",
                     globals=[field],
                 )
 
@@ -319,7 +308,6 @@ class TestModelVerifier(unittest.TestCase):
                     file_path="/test/file.c",
                     relative_path="file.c",
                     
-                    encoding_used="utf-8",
                     globals=[valid_field],
                 )
 
@@ -359,7 +347,6 @@ class TestModelVerifier(unittest.TestCase):
                     file_path="/test/file.c",
                     relative_path="file.c",
                     
-                    encoding_used="utf-8",
                     globals=[invalid_field],
                 )
 
@@ -382,7 +369,6 @@ class TestModelVerifier(unittest.TestCase):
             file_path="/test/file.c",
             relative_path="file.c",
             
-            encoding_used="utf-8",
         )
 
         model = ProjectModel(source_folder="/test", 
