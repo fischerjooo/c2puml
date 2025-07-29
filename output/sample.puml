@@ -143,7 +143,6 @@ SAMPLE --> HEADER_GEOMETRY : <<include>>
 SAMPLE --> HEADER_LOGGER : <<include>>
 SAMPLE --> HEADER_MATH_UTILS : <<include>>
 SAMPLE --> HEADER_SAMPLE : <<include>>
-HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
 
