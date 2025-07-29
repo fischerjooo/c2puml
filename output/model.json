@@ -1263,6 +1263,25 @@
       },
       "unions": {}
     },
+    "first_level.h": {
+      "aliases": {},
+      "encoding_used": "utf-8",
+      "enums": {},
+      "file_path": "/workspace/example/source/first_level.h",
+      "functions": [],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "filtered_header.h"
+      ],
+      "macros": [
+        "FIRST_LEVEL_H"
+      ],
+      "name": "first_level.h",
+      "relative_path": "first_level.h",
+      "structs": {},
+      "unions": {}
+    },
     "geometry.c": {
       "aliases": {},
       "encoding_used": "utf-8",
@@ -2313,6 +2332,7 @@
       "include_relations": [],
       "includes": [
         "filtered_header.h",
+        "first_level.h",
         "geometry.h",
         "logger.h",
         "math_utils.h",
@@ -2426,7 +2446,6 @@
       "include_relations": [],
       "includes": [
         "config.h",
-        "filtered_header.h",
         "geometry.h",
         "logger.h",
         "stddef.h"
@@ -2465,6 +2484,175 @@
           "uses": []
         }
       },
+      "unions": {}
+    },
+    "sample2.c": {
+      "aliases": {},
+      "encoding_used": "utf-8",
+      "enums": {},
+      "file_path": "/workspace/example/source/sample2.c",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "calculate_sum",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "calculate_sum",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "create_point",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "point_t *"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "create_point",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "point_t *"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "demo_triangle_usage",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "internal_helper",
+          "parameters": [],
+          "return_type": "static void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "internal_helper",
+          "parameters": [],
+          "return_type": "static void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "process_point",
+          "parameters": [
+            {
+              "name": "p",
+              "type": "point_t *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "buffer",
+          "type": "char",
+          "value": null
+        },
+        {
+          "name": "global_counter",
+          "type": "int",
+          "value": "0"
+        },
+        {
+          "name": "global_ptr",
+          "type": "double *",
+          "value": "NULL"
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "filtered_header.h",
+        "first_level.h",
+        "geometry.h",
+        "logger.h",
+        "math_utils.h",
+        "sample.h",
+        "stdio.h",
+        "stdlib.h",
+        "string.h"
+      ],
+      "macros": [
+        "CALC(x, y)",
+        "DEBUG_MODE",
+        "MAX_SIZE"
+      ],
+      "name": "sample2.c",
+      "relative_path": "sample2.c",
+      "structs": {},
       "unions": {}
     },
     "typedef_test.c": {

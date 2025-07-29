@@ -537,6 +537,8 @@ class PUMLValidator:
             self._validate_math_utils_content(content, classes, filename)
         elif base_name == "preprocessed":
             self._validate_preprocessed_content(content, classes, filename)
+        elif base_name == "sample2":
+            self._validate_sample2_file_content(content, classes, filename)
 
     def _validate_complex_file_content(self, content: str, classes: Dict[str, PUMLClass], filename: str):
         """Validate complex.puml specific content."""
@@ -625,6 +627,43 @@ class PUMLValidator:
                 self._add_result(ValidationLevel.ERROR,
                                f"Filtered content '{indicator}' from filtered_header.h should not appear in PUML file",
                                filename)
+
+    def _validate_sample2_file_content(self, content: str, classes: Dict[str, PUMLClass], filename: str):
+        """Validate sample2.puml specific content."""
+        essential_functions = ["calculate_sum", "create_point", "process_point", "main"]
+        for func in essential_functions:
+            if func not in content:
+                self._add_result(ValidationLevel.WARNING, 
+                               f"Missing expected function: {func}", 
+                               filename)
+        
+        # Check that filtered_header.h content IS present in the PUML file (opposite of sample.puml)
+        filtered_content_indicators = [
+            "filtered_header",
+            "FILTERED_CONSTANT",
+            "FILTERED_MACRO",
+            "filtered_struct_t",
+            "filtered_enum_t",
+            "filtered_function1",
+            "filtered_function2",
+            "filtered_function3",
+            "filtered_global_var",
+            "filtered_global_string"
+        ]
+        
+        found_indicators = []
+        for indicator in filtered_content_indicators:
+            if indicator in content:
+                found_indicators.append(indicator)
+        
+        if not found_indicators:
+            self._add_result(ValidationLevel.ERROR,
+                           f"Filtered content from filtered_header.h should appear in sample2.puml but none found. Expected: {filtered_content_indicators}",
+                           filename)
+        else:
+            self._add_result(ValidationLevel.INFO,
+                           f"Found filtered_header.h content in sample2.puml: {found_indicators}",
+                           filename)
 
     def _validate_geometry_file_content(self, content: str, classes: Dict[str, PUMLClass], filename: str):
         """Validate geometry.puml specific content."""
