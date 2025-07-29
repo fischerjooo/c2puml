@@ -3150,5 +3150,5 @@
     }
   },
   "project_name": "example_project",
-  "project_root": "example/source,example/source"
+  "source_folder": "example/source,example/source"
 }

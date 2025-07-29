@@ -179,7 +179,7 @@ class TestGenerator(unittest.TestCase):
         # Create a simple project model for testing
         project_model = ProjectModel(
             project_name="test_project",
-            project_root="/test",
+            source_folder="/test",
             files={"test.c": file_model},
         )
         diagram = self.generator.generate_diagram(file_model, project_model)
@@ -207,7 +207,7 @@ class TestGenerator(unittest.TestCase):
         file_model = self.create_test_file_model("main.c")
         model = ProjectModel(
             project_name="test_project",
-            project_root="/test",
+            source_folder="/test",
             files={"main.c": file_model},
         )
 
@@ -239,7 +239,7 @@ class TestGenerator(unittest.TestCase):
         file_model = self.create_test_file_model("main.c")
         model = ProjectModel(
             project_name="test_project",
-            project_root="/test",
+            source_folder="/test",
             files={"main.c": file_model},
         )
 
@@ -284,7 +284,7 @@ class TestGenerator(unittest.TestCase):
 
         model = ProjectModel(
             project_name="test_project",
-            project_root="/test",
+            source_folder="/test",
             files={"main.c": file1, "utils.c": file2},
         )
 
@@ -317,7 +317,7 @@ class TestGenerator(unittest.TestCase):
         # Create a simple project model for testing
         project_model = ProjectModel(
             project_name="test_project",
-            project_root="/test",
+            source_folder="/test",
             files={"empty.c": empty_file},
         )
         diagram = self.generator.generate_diagram(empty_file, project_model)
@@ -387,7 +387,7 @@ void test_function() {
         # Create a simple project model for testing
         project_model = ProjectModel(
             project_name="test_project",
-            project_root="/test",
+            source_folder="/test",
             files={"test.c": file_model},
         )
         diagram = self.generator.generate_diagram(file_model, project_model)
@@ -446,7 +446,7 @@ void test_function() {
         file_model = self.create_test_file_model("test.c")
         project_model = ProjectModel(
             project_name="test_project",
-            project_root="/test",
+            source_folder="/test",
             files={"test.c": file_model},
         )
         
@@ -496,7 +496,7 @@ void test_function() {
         file_model = self.create_test_file_model("test.c")
         project_model = ProjectModel(
             project_name="test_project",
-            project_root="/test",
+            source_folder="/test",
             files={"test.c": file_model},
         )
         
@@ -720,7 +720,7 @@ void test_function() {
         file_model = self.create_test_file_model("test.c")
         model = ProjectModel(
             project_name="test_project",
-            project_root="/test",
+            source_folder="/test",
             files={"test.c": file_model},
         )
 

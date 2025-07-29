@@ -31,28 +31,28 @@ class CParser:
         self.preprocessor = PreprocessorManager()
 
     def parse_project(
-        self, project_root: str, recursive_search: bool = True, config: "Config" = None
+        self, source_folder: str, recursive_search: bool = True, config: "Config" = None
     ) -> ProjectModel:
         """Parse a C/C++ project and return a model"""
-        project_root = Path(project_root).resolve()
+        source_folder_path = Path(source_folder).resolve()
 
-        if not project_root.exists():
-            raise ValueError(f"Project root not found: {project_root}")
+        if not source_folder_path.exists():
+            raise ValueError(f"Source folder not found: {source_folder_path}")
 
-        if not project_root.is_dir():
-            raise ValueError(f"Project root must be a directory: {project_root}")
+        if not source_folder_path.is_dir():
+            raise ValueError(f"Source folder must be a directory: {source_folder_path}")
 
-        self.logger.info("Parsing project: %s", project_root)
+        self.logger.info("Parsing project: %s", source_folder_path)
 
         # Find all C/C++ files in the project
-        all_c_files = self._find_c_files(project_root, recursive_search)
+        all_c_files = self._find_c_files(source_folder_path, recursive_search)
         self.logger.info("Found %d C/C++ files", len(all_c_files))
 
         # Apply file filtering based on configuration
         c_files = []
         if config:
             for file_path in all_c_files:
-                relative_path = str(file_path.relative_to(project_root))
+                relative_path = str(file_path.relative_to(source_folder_path))
                 if config._should_include_file(relative_path):
                     c_files.append(file_path)
                     self.logger.debug("Included file after filtering: %s", relative_path)
@@ -70,7 +70,7 @@ class CParser:
         for file_path in c_files:
             try:
                 # Use relative path for tracking and filename as key
-                relative_path = str(file_path.relative_to(project_root))
+                relative_path = str(file_path.relative_to(source_folder_path))
                 file_model = self.parse_file(
                     file_path, relative_path
                 )
@@ -93,8 +93,8 @@ class CParser:
             raise RuntimeError(error_msg)
 
         model = ProjectModel(
-            project_name=project_root.name,
-            project_root=str(project_root),
+            project_name=source_folder_path.name,
+            source_folder=str(source_folder_path),
             files=files,
         )
 
@@ -650,8 +650,8 @@ class CParser:
 
         return list(set(types))  # Remove duplicates
 
-    def _find_c_files(self, project_root: Path, recursive_search: bool) -> List[Path]:
-        """Find all C/C++ files in the project"""
+    def _find_c_files(self, source_folder_path: Path, recursive_search: bool) -> List[Path]:
+        """Find all C/C++ files in the source folder"""
         c_extensions = {".c", ".h", ".cpp", ".cc", ".cxx", ".hpp", ".hxx"}
         files = []
 
@@ -659,10 +659,10 @@ class CParser:
 
         if recursive_search:
             for ext in c_extensions:
-                files.extend(project_root.rglob(f"*{ext}"))
+                files.extend(source_folder_path.rglob(f"*{ext}"))
         else:
             for ext in c_extensions:
-                files.extend(project_root.glob(f"*{ext}"))
+                files.extend(source_folder_path.glob(f"*{ext}"))
 
         # Filter out hidden files and common exclude patterns
         filtered_files = []
@@ -1294,7 +1294,7 @@ class Parser:
 
     def parse(
         self,
-        project_root: "Union[str, List[str]]",
+        source_folders: "List[str]",
         output_file: str = "model.json",
         recursive_search: bool = True,
         config: "Config" = None,
@@ -1303,8 +1303,7 @@ class Parser:
         Step 1: Parse C code files and generate model.json
 
         Args:
-            project_root: Either a single root directory of C/C++ project (for backward compatibility)
-                         or a list of source folder directories within the project
+            source_folders: A list of source folder directories within the project
             output_file: Output JSON model file path
             recursive_search: Whether to search subdirectories recursively
             config: Configuration object for filtering, include depth, and project name
@@ -1312,19 +1311,21 @@ class Parser:
         Returns:
             Path to the generated model.json file
         """
-        # Handle both single project_root (backward compatibility) and list of source_folders
-        if isinstance(project_root, str):
-            # Single source folder - backward compatibility
-            source_folders = [project_root]
-            self.logger.info("Step 1: Parsing C/C++ project: %s", project_root)
-        else:
-            # Multiple source folders
-            source_folders = project_root
-            if not source_folders:
-                raise ValueError("At least one source folder must be provided")
-            self.logger.info(
-                f"Step 1: Parsing C/C++ project with {len(source_folders)} source folders"
-            )
+        # Validate source_folders is a list
+        if not isinstance(source_folders, list):
+            raise TypeError("source_folders must be a list of strings")
+        
+        if not source_folders:
+            raise ValueError("At least one source folder must be provided")
+        
+        # Validate all items are strings
+        for folder in source_folders:
+            if not isinstance(folder, str):
+                raise TypeError("All source folders must be strings")
+        
+        self.logger.info(
+            f"Step 1: Parsing C/C++ project with {len(source_folders)} source folders"
+        )
 
         # Get project name from config or use default
         project_name = (
@@ -1368,7 +1369,7 @@ class Parser:
         # Create combined project model
         combined_model = ProjectModel(
             project_name=project_name,
-            project_root=(
+            source_folder=(
                 ",".join(source_folders)
                 if len(source_folders) > 1
                 else source_folders[0]
