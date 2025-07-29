@@ -111,7 +111,7 @@ Usage:
             parser_obj = Parser()
             # Use the refactored parse function that handles both single and multiple source folders
             parser_obj.parse(
-                project_root=config.source_folders,
+                source_folders=config.source_folders,
                 output_file=model_file,
                 recursive_search=getattr(config, "recursive_search", True),
                 config=config,
@@ -170,7 +170,7 @@ Usage:
         parser_obj = Parser()
         # Use the refactored parse function that handles both single and multiple source folders
         parser_obj.parse(
-            project_root=config.source_folders,
+            source_folders=config.source_folders,
             output_file=model_file,
             recursive_search=getattr(config, "recursive_search", True),
             config=config,

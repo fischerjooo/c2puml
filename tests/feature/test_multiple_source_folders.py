@@ -189,7 +189,7 @@ typedef struct {
 
         # Test with multiple source folders
         result = parser.parse(
-            project_root=[
+            source_folders=[
                 self.source_folder1,
                 self.source_folder2,
                 self.source_folder3,
@@ -221,7 +221,7 @@ typedef struct {
 
         # Test with single source folder (string parameter for backward compatibility)
         result = parser.parse(
-            project_root=self.source_folder1,
+            source_folders=self.source_folder1,
             output_file=output_file,
             recursive_search=True,
         )
@@ -246,7 +246,7 @@ typedef struct {
 
         with self.assertRaises(ValueError):
             parser.parse(
-                project_root=[], output_file=output_file, recursive_search=True
+                source_folders=[], output_file=output_file, recursive_search=True
             )
 
     def test_invalid_source_folder_error(self):
@@ -256,7 +256,7 @@ typedef struct {
 
         with self.assertRaises(Exception):  # Should raise some kind of error
             parser.parse(
-                project_root=["/nonexistent/path"],
+                source_folders=["/nonexistent/path"],
                 output_file=output_file,
                 recursive_search=True,
             )
@@ -276,7 +276,7 @@ typedef struct {
         output_file = os.path.join(self.temp_dir, "filtered_model.json")
 
         result = parser.parse(
-            project_root=config.source_folders,
+            source_folders=config.source_folders,
             output_file=output_file,
             recursive_search=config.recursive_search,
             config=config,
@@ -298,7 +298,7 @@ typedef struct {
         output_file = os.path.join(self.temp_dir, "named_model.json")
 
         result = parser.parse(
-            project_root=config.source_folders,
+            source_folders=config.source_folders,
             output_file=output_file,
             recursive_search=True,
             config=config,

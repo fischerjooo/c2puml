@@ -63,7 +63,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         # Create ProjectModel with filenames as keys (consistent with parser behavior)
         project_model = ProjectModel(
             project_name="test_project",
-            project_root=str(self.test_dir),
+            source_folder=str(self.test_dir),
             files={
                 "main.c": main_file_model,
                 "utils.h": utils_file_model
@@ -116,7 +116,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         # Create ProjectModel with filenames as keys (new behavior)
         project_model = ProjectModel(
             project_name="test_project",
-            project_root=str(self.test_dir),
+            source_folder=str(self.test_dir),
             files={
                 "main.c": main_file_model,
                 "utils.h": utils_file_model
@@ -169,7 +169,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         # Create ProjectModel with filenames as keys (new behavior)
         project_model = ProjectModel(
             project_name="test_project",
-            project_root=str(self.test_dir),
+            source_folder=str(self.test_dir),
             files={
                 "main.c": main_file_model,
                 "utils.h": utils_file_model
@@ -221,7 +221,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         # Create ProjectModel with filenames as keys (new behavior)
         project_model = ProjectModel(
             project_name="test_project",
-            project_root=str(self.test_dir),
+            source_folder=str(self.test_dir),
             files={
                 "main.c": main_file_model,
                 "utils.h": utils_file_model

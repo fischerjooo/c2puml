@@ -313,7 +313,7 @@ class TestCryptoFilterUseCase(BaseFeatureTest):
             ), f"Filename mismatch: {actual_filename} != {expected_filename}"
             # project_root field has been removed from FileModel
             # The project root is now stored in the ProjectModel
-            assert project_model.project_root == self.temp_dir
+            assert project_model.source_folder == self.temp_dir
             # Check that encoding is one of the acceptable encodings
             acceptable_encodings = [
                 "utf-8",

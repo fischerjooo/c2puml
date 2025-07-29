@@ -84,7 +84,7 @@ class TestFunctionParameters(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(project_root="/test", 
+        project_model = ProjectModel(source_folder="/test", 
             project_name="test",  files={"sample.c": file_model}
         )
 
@@ -113,7 +113,7 @@ class TestFunctionParameters(unittest.TestCase):
             functions=[Function("init", "void", []), Function("cleanup", "void", [])],
         )
 
-        project_model = ProjectModel(project_root="/test", 
+        project_model = ProjectModel(source_folder="/test", 
             project_name="test",  files={"empty.c": file_model}
         )
 
@@ -147,7 +147,7 @@ class TestFunctionParameters(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(project_root="/test", 
+        project_model = ProjectModel(source_folder="/test", 
             project_name="test",  files={"complex.c": file_model}
         )
 

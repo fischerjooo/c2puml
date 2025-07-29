@@ -74,40 +74,40 @@ def find_file_by_filename(filename: str, file_dict: Dict[str, any]) -> Optional[
     return None
 
 
-def normalize_file_path(file_path: str, project_root: str = None) -> str:
+def normalize_file_path(file_path: str, source_folder: str = None) -> str:
     """
     Normalize file path for consistent handling.
     For tracking purposes, we prefer relative paths when possible.
     
     Args:
         file_path: The file path to normalize
-        project_root: Optional project root for relative path conversion
+        source_folder: Optional source folder for relative path conversion
         
     Returns:
         Normalized file path
     """
     path_obj = Path(file_path)
     
-    # If we have a project root and the path is absolute, try to make it relative
-    if project_root and path_obj.is_absolute():
+    # If we have a source folder and the path is absolute, try to make it relative
+    if source_folder and path_obj.is_absolute():
         try:
-            relative_path = path_obj.relative_to(Path(project_root))
+            relative_path = path_obj.relative_to(Path(source_folder))
             return str(relative_path)
         except ValueError:
-            # Path is not relative to project root, keep as is
+            # Path is not relative to source folder, keep as is
             pass
     
     return str(path_obj)
 
 
-def create_file_key(file_path: str, project_root: str = None) -> str:
+def create_file_key(file_path: str, source_folder: str = None) -> str:
     """
     Create a consistent file key for tracking.
     Uses filename for uniqueness since filenames are unique in the project.
     
     Args:
         file_path: The file path
-        project_root: Optional project root for normalization
+        source_folder: Optional source folder for normalization
         
     Returns:
         A consistent file key (filename)

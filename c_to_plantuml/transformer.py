@@ -78,7 +78,7 @@ class Transformer:
             # Convert back to ProjectModel
             model = ProjectModel(
                 project_name=data["project_name"],
-                project_root=data["project_root"],
+                source_folder=data.get("source_folder", data.get("project_root", "")),
                 files={},
             )
 
@@ -538,12 +538,12 @@ class Transformer:
                 if file_model.relative_path.endswith('.c'):
                     root_file = Path(file_model.relative_path).name
                     self._process_file_includes(
-                        file_model, file_map, max_depth, 1, set(), compiled_filters, root_file, model.project_root
+                        file_model, file_map, max_depth, 1, set(), compiled_filters, root_file, model.source_folder
                     )
             else:
                 # When no include_filters, process all files (original behavior)
                 self._process_file_includes(
-                    file_model, file_map, max_depth, 1, set(), compiled_filters, None, model.project_root
+                    file_model, file_map, max_depth, 1, set(), compiled_filters, None, model.source_folder
                 )
 
         return model
@@ -557,7 +557,7 @@ class Transformer:
         visited: Set[str],
         compiled_filters: Dict[str, List[re.Pattern]] = None,
         root_file: str = None,
-        project_root: str = None,
+        source_folder: str = None,
     ) -> None:
         """Recursively process includes for a file using filename-based matching with include_filters support"""
         if current_depth > max_depth or file_model.relative_path in visited:
@@ -633,11 +633,11 @@ class Transformer:
                     visited,
                     compiled_filters,
                     root_file,  # Pass the same root_file to maintain context
-                    project_root,  # Pass the project_root parameter
+                    source_folder,  # Pass the source_folder parameter
                 )
 
     def _find_included_file(
-        self, include_name: str, project_root: str
+        self, include_name: str, source_folder: str
     ) -> Optional[str]:
         """Find the actual file path for an include using simplified filename 
         matching"""
@@ -646,11 +646,11 @@ class Transformer:
         
         # Common include paths to search
         search_paths = [
-            Path(project_root),
-            Path(project_root) / "include",
-            Path(project_root) / "src",
-            Path(project_root) / "lib",
-            Path(project_root) / "headers",
+            Path(source_folder),
+            Path(source_folder) / "include",
+            Path(source_folder) / "src",
+            Path(source_folder) / "lib",
+            Path(source_folder) / "headers",
         ]
 
         # Try different extensions

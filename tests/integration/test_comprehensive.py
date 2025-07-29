@@ -462,7 +462,7 @@ class TestParserTokenizerIntegration(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
         self.temp_dir = tempfile.mkdtemp()
-        self.project_root = Path(self.temp_dir)
+        self.source_folder = Path(self.temp_dir)
         self.parser = CParser()
         self.tokenizer = CTokenizer()
 
@@ -473,7 +473,7 @@ class TestParserTokenizerIntegration(unittest.TestCase):
 
     def create_test_file(self, filename: str, content: str) -> Path:
         """Create a test file with given content."""
-        file_path = self.project_root / filename
+        file_path = self.source_folder / filename
         file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(content)

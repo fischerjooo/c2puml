@@ -358,21 +358,21 @@ class ProjectModel:
     """Represents a complete C/C++ project"""
 
     project_name: str
-    project_root: str
+    source_folder: str
     files: Dict[str, FileModel] = field(default_factory=dict)
 
     def __post_init__(self):
         """Validate project model data after initialization"""
         if not self.project_name or not isinstance(self.project_name, str):
             raise ValueError("Project name must be a non-empty string")
-        if not self.project_root or not isinstance(self.project_root, str):
-            raise ValueError("Project root must be a non-empty string")
+        if not self.source_folder or not isinstance(self.source_folder, str):
+            raise ValueError("Source folder must be a non-empty string")
 
     def save(self, file_path: str) -> None:
         """Save model to JSON file"""
         data = {
             "project_name": self.project_name,
-            "project_root": self.project_root,
+            "source_folder": self.source_folder,
             "files": {
                 path: file_model.to_dict()
                 for path, file_model in sorted(self.files.items())
@@ -395,7 +395,7 @@ class ProjectModel:
 
         return cls(
             project_name=data.get("project_name", "Unknown"),
-            project_root=data.get("project_root", ""),
+            source_folder=data.get("source_folder", data.get("project_root", "")),
             files=files,
         )
 
@@ -418,7 +418,7 @@ class ProjectModel:
 
         return {
             "project_name": self.project_name,
-            "project_root": self.project_root,
+            "source_folder": self.source_folder,
             "files_count": len(self.files),
             "total_structs": total_structs,
             "total_enums": total_enums,

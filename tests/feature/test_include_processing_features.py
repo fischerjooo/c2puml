@@ -550,7 +550,7 @@ class TestIncludeProcessingDependencies(unittest.TestCase):
     def setUp(self):
         """Set up test environment."""
         self.temp_dir = tempfile.mkdtemp()
-        self.project_root = Path(self.temp_dir)
+        self.source_folder = Path(self.temp_dir)
         self.parser = CParser()
 
     def tearDown(self):
@@ -560,7 +560,7 @@ class TestIncludeProcessingDependencies(unittest.TestCase):
 
     def create_test_file(self, filename: str, content: str) -> Path:
         """Create a test file with given content."""
-        file_path = self.project_root / filename
+        file_path = self.source_folder / filename
         file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(content)
@@ -602,11 +602,11 @@ typedef int Level3Type;
         # Note: include_depth must be > 1 for the transformer to process include relations
         for depth in [2, 3, 4]:
             config = Config()
-            config.source_folders = [str(self.project_root)]
+            config.source_folders = [str(self.source_folder)]
             config.include_depth = depth
             
             # First parse the project (collects all files)
-            project_model = self.parser.parse_project(str(self.project_root), config=config)
+            project_model = self.parser.parse_project(str(self.source_folder), config=config)
             
             # Then apply transformations including include depth processing
             from c_to_plantuml.transformer import Transformer
@@ -671,11 +671,11 @@ typedef struct B { struct A* a_ptr; } B;
 ''')
 
         config = Config()
-        config.source_folders = [str(self.project_root)]
+        config.source_folders = [str(self.source_folder)]
         config.include_depth = 5  # Deep enough to detect cycles
         
         # Should not hang or crash due to circular includes
-        project_model = self.parser.parse_project(str(self.project_root), config=config)
+        project_model = self.parser.parse_project(str(self.source_folder), config=config)
         
         # Should include all files despite circular references
         file_names = [f.relative_path for f in project_model.files.values()]
@@ -703,11 +703,11 @@ typedef int ExistingType;
         # Note: missing.h is intentionally not created
 
         config = Config()
-        config.source_folders = [str(self.project_root)]
+        config.source_folders = [str(self.source_folder)]
         config.include_depth = 2
         
         # Should not crash when include file is missing
-        project_model = self.parser.parse_project(str(self.project_root), config=config)
+        project_model = self.parser.parse_project(str(self.source_folder), config=config)
         
         # Should still process existing files
         file_names = [f.relative_path for f in project_model.files.values()]

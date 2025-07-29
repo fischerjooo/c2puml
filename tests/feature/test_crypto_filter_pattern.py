@@ -28,7 +28,7 @@ class TestCryptoFilterPattern(BaseFeatureTest):
     def setUp(self):
         """Set up test environment"""
         super().setUp()
-        self.project_root = Path(self.temp_dir)
+        self.source_folder = Path(self.temp_dir)
 
         # Create test files
         self.create_test_files()
@@ -54,7 +54,7 @@ class TestCryptoFilterPattern(BaseFeatureTest):
 
         # Create all files
         for filename in crypto_files + other_files:
-            file_path = self.project_root / filename
+            file_path = self.source_folder / filename
             with open(file_path, "w") as f:
                 f.write(f"// Test file: {filename}\n")
                 f.write("#include <stdio.h>\n")
@@ -64,7 +64,7 @@ class TestCryptoFilterPattern(BaseFeatureTest):
         """Test the broken filter pattern that doesn't work"""
         # This is the problematic pattern from the user's question
         config = Config(
-            source_folders=[str(self.project_root)],
+            source_folders=[str(self.source_folder)],
             file_filters={"include": ["^crypto.*//.c$", "^crypto.*//.h$"]},
         )
 
@@ -92,7 +92,7 @@ class TestCryptoFilterPattern(BaseFeatureTest):
         """Test the corrected filter pattern that should work"""
         # This is the corrected pattern using proper regex
         config = Config(
-            source_folders=[str(self.project_root)],
+            source_folders=[str(self.source_folder)],
             file_filters={"include": ["(?i)^crypto.*\\.c$", "(?i)^crypto.*\\.h$"]},
         )
 
@@ -126,7 +126,7 @@ class TestCryptoFilterPattern(BaseFeatureTest):
     def test_case_insensitive_crypto_filter_pattern(self):
         """Test case-insensitive crypto filter pattern"""
         config = Config(
-            source_folders=[str(self.project_root)],
+            source_folders=[str(self.source_folder)],
             file_filters={"include": ["(?i)^crypto.*\\.c$", "(?i)^crypto.*\\.h$"]},
         )
 
@@ -162,7 +162,7 @@ class TestCryptoFilterPattern(BaseFeatureTest):
         for i, patterns in enumerate(patterns_to_test):
             print(f"\nTesting pattern set {i+1}: {patterns}")
             config = Config(
-                source_folders=[str(self.project_root)],
+                source_folders=[str(self.source_folder)],
                 file_filters={"include": patterns},
             )
 
@@ -180,7 +180,7 @@ class TestCryptoFilterPattern(BaseFeatureTest):
     def test_parser_integration_with_crypto_filter(self):
         """Test that the parser correctly applies crypto filters"""
         config = Config(
-            source_folders=[str(self.project_root)],
+            source_folders=[str(self.source_folder)],
             file_filters={"include": ["(?i)^crypto.*\\.c$", "(?i)^crypto.*\\.h$"]},
         )
 
@@ -188,7 +188,7 @@ class TestCryptoFilterPattern(BaseFeatureTest):
 
         # Parse the project with crypto filter
         project_model = parser.parse_project(
-            str(self.project_root), recursive_search=True, config=config
+            str(self.source_folder), recursive_search=True, config=config
         )
 
         # Get the file paths that were actually parsed
