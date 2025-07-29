@@ -567,29 +567,22 @@ class Transformer:
 
         # Process each include
         for include_name in file_model.includes:
-            # Try to find the included file
-            # Get project root from the model context instead of file_model
-            # Since file_model no longer has project_root, we need to pass it from the caller
-            included_filename = self._find_included_file(
-                include_name, project_root
-            )
-
-            if included_filename:
-                # Convert full path to filename for lookup
-                included_filename_key = Path(included_filename).name
-                if included_filename_key in file_map:
-                    # Prevent self-referencing include relations
-                    if file_model.relative_path == included_filename_key:
-                        self.logger.debug(
-                            "Skipping self-include relation for %s", 
-                            file_model.relative_path
-                        )
-                        continue
+            # Directly check if the included file exists in our file_map
+            # This is more reliable than file path resolution since we already
+            # have all project files mapped by filename
+            if include_name in file_map:
+                # Prevent self-referencing include relations
+                if file_model.relative_path == include_name:
+                    self.logger.debug(
+                        "Skipping self-include relation for %s", 
+                        file_model.relative_path
+                    )
+                    continue
 
                 # Check if this include relation already exists to prevent cycles
                 relation_exists = any(
                     rel.source_file == file_model.relative_path
-                    and rel.included_file == included_filename_key
+                    and rel.included_file == include_name
                     for rel in file_model.include_relations
                 )
 
@@ -597,7 +590,7 @@ class Transformer:
                     self.logger.debug(
                         "Cyclic include detected and skipped: %s -> %s",
                         file_model.relative_path,
-                        included_filename_key,
+                        include_name,
                     )
                     continue
 
@@ -613,14 +606,14 @@ class Transformer:
 
                 # Create include relation using appropriate paths
                 # For tests (tmp directories), use full paths; otherwise use 
-                # filenames
+                # filenames/relative paths
                 source_file = (
                     file_model.file_path if "tmp" in file_model.file_path 
                     else file_model.relative_path
                 )
                 included_file = (
-                    included_filename if "tmp" in included_filename 
-                    else included_filename_key
+                    file_map[include_name].file_path if "tmp" in file_map[include_name].file_path 
+                    else include_name
                 )
                 
                 include_relation = IncludeRelation(
@@ -631,18 +624,17 @@ class Transformer:
                 file_model.include_relations.append(include_relation)
 
                 # Recursively process the included file
-                if included_filename_key in file_map:
-                    included_file_model = file_map[included_filename_key]
-                    self._process_file_includes(
-                        included_file_model,
-                        file_map,
-                        max_depth,
-                        current_depth + 1,
-                        visited,
-                        compiled_filters,
-                        root_file,  # Pass the same root_file to maintain context
-                        project_root,  # Pass the project_root parameter
-                    )
+                included_file_model = file_map[include_name]
+                self._process_file_includes(
+                    included_file_model,
+                    file_map,
+                    max_depth,
+                    current_depth + 1,
+                    visited,
+                    compiled_filters,
+                    root_file,  # Pass the same root_file to maintain context
+                    project_root,  # Pass the project_root parameter
+                )
 
     def _find_included_file(
         self, include_name: str, project_root: str
