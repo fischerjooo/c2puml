@@ -12,15 +12,15 @@
   "element_filters": {
     "structs": {
       "include": [],
-      "exclude": ["^filtered_"]
+      "exclude": []
     },
     "functions": {
       "include": [],
-      "exclude": ["^filtered_"]
+      "exclude": []
     },
     "enums": {
       "include": [],
-      "exclude": ["^filtered_"]
+      "exclude": []
     },
     "unions": {
       "include": [],
@@ -28,20 +28,15 @@
     },
     "macros": {
       "include": [],
-      "exclude": ["^FILTERED_"]
+      "exclude": []
     },
     "aliases": {
       "include": [],
-      "exclude": ["^filtered_"]
-    },
-    "globals": {
-      "include": [],
-      "exclude": ["^filtered_"]
+      "exclude": []
     }
   },
   "include_filters": {
     "sample.c": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$", "^sample\\.h$", "^math_utils\\.h$", "^logger\\.h$", "^geometry\\.h$"],
-    "sample.h": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$", "^math_utils\\.h$", "^logger\\.h$", "^geometry\\.h$"],
     "utils.c": ["^math\\.h$", "^time\\.h$"]
   },
   "transformations": {
