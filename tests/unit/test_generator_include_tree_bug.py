@@ -46,14 +46,12 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         # Create FileModel instances with absolute paths
         main_file_model = FileModel(
             file_path=str(main_c_path),
-            relative_path="main.c",
             
             includes={"utils.h"}
         )
 
         utils_file_model = FileModel(
             file_path=str(utils_h_path),
-            relative_path="utils.h",
             
             includes=set()
         )
@@ -97,14 +95,12 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         # Create FileModel instances with relative paths
         main_file_model = FileModel(
             file_path="main.c",
-            relative_path="main.c",
             
             includes={"utils.h"}
         )
 
         utils_file_model = FileModel(
             file_path="utils.h",
-            relative_path="utils.h",
             
             includes=set()
         )
@@ -148,14 +144,12 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         # Create FileModel instances - main.c with absolute path, utils.h with relative
         main_file_model = FileModel(
             file_path=str(main_c_path),
-            relative_path="main.c",
             
             includes={"utils.h"}
         )
 
         utils_file_model = FileModel(
             file_path="utils.h",
-            relative_path="utils.h",
             
             includes=set()
         )
@@ -198,14 +192,12 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         # Create FileModel instances with absolute paths
         main_file_model = FileModel(
             file_path=str(main_c_path),
-            relative_path="main.c",
             
             includes={"utils.h"}
         )
 
         utils_file_model = FileModel(
             file_path=str(utils_h_path),
-            relative_path="utils.h",
             
             includes=set()
         )

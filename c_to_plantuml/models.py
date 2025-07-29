@@ -177,7 +177,7 @@ class FileModel:
     """Represents a parsed C/C++ file"""
 
     file_path: str
-    relative_path: str
+
     name: str = ""  # Filename extracted from file_path
     structs: Dict[str, Struct] = field(default_factory=dict)
     enums: Dict[str, Enum] = field(default_factory=dict)
@@ -195,9 +195,12 @@ class FileModel:
             from pathlib import Path
             self.name = Path(self.file_path).name
 
+
+
     def to_dict(self) -> dict:
         """Convert to dictionary for JSON serialization"""
         data = asdict(self)
+
         # Convert set to list for JSON serialization and sort for consistency
         data["includes"] = sorted(list(self.includes))
         # Convert include_relations to list of dicts and sort for consistency

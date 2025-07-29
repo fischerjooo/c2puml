@@ -148,7 +148,7 @@ typedef struct {
             model_data = json.load(f)
         
         # Check that all files were processed
-        file_names = [file_data["relative_path"] for file_data in model_data["files"].values()]
+        file_names = [file_data["name"] for file_data in model_data["files"].values()]
         expected_files = {"app.c", "types.h", "config.h"}
         actual_files = set(file_names)
         
@@ -217,7 +217,7 @@ typedef struct {
         # Find graphics.h and verify its includes
         graphics_file = None
         for file_data in model_data["files"].values():
-            if file_data["relative_path"] == "graphics.h":
+            if file_data["name"] == "graphics.h":
                 graphics_file = file_data
                 break
         
@@ -319,7 +319,7 @@ void* safe_malloc(size_t size);
             model_data = json.load(f)
         
         # Verify all files were processed despite nested structure
-        file_names = [file_data["relative_path"] for file_data in model_data["files"].values()]
+        file_names = [file_data["name"] for file_data in model_data["files"].values()]
         
         # Should include files from multiple subdirectories
         self.assertTrue(any("main.c" in name for name in file_names))
@@ -403,7 +403,7 @@ typedef struct {
         # Verify typedef relationships were preserved
         data_structures_file = None
         for file_data in model_data["files"].values():
-            if file_data["relative_path"] == "data_structures.h":
+            if file_data["name"] == "data_structures.h":
                 data_structures_file = file_data
                 break
         
@@ -678,7 +678,7 @@ typedef struct B { struct A* a_ptr; } B;
         project_model = self.parser.parse_project(str(self.source_folder), config=config)
         
         # Should include all files despite circular references
-        file_names = [f.relative_path for f in project_model.files.values()]
+        file_names = [f.name for f in project_model.files.values()]
         expected_files = {"main.c", "a.h", "b.h"}
         actual_files = set(file_names)
         
@@ -710,7 +710,7 @@ typedef int ExistingType;
         project_model = self.parser.parse_project(str(self.source_folder), config=config)
         
         # Should still process existing files
-        file_names = [f.relative_path for f in project_model.files.values()]
+        file_names = [f.name for f in project_model.files.values()]
         self.assertIn("main.c", file_names)
         self.assertIn("existing.h", file_names)
 
@@ -881,7 +881,7 @@ void* memory_pool_alloc(MemoryPool* pool, size_t size);
         # Verify include relationships are preserved
         main_file = None
         for file_data in model_data["files"].values():
-            if "main.c" in file_data["relative_path"]:
+            if "main.c" in file_data["name"]:
                 main_file = file_data
                 break
         
@@ -980,7 +980,7 @@ typedef enum {
         # Check that data_model.h includes its dependencies
         data_model_file = None
         for file_data in model_data["files"].values():
-            if file_data["relative_path"] == "data_model.h":
+            if file_data["name"] == "data_model.h":
                 data_model_file = file_data
                 break
         
