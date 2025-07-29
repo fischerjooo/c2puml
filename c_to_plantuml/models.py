@@ -338,9 +338,6 @@ class FileModel:
         new_data["unions"] = unions
         new_data["aliases"] = aliases
         new_data["include_relations"] = include_relations
-        
-        # Remove relative_path field if it exists (legacy compatibility)
-        new_data.pop("relative_path", None)
 
         return cls(**new_data)
 
