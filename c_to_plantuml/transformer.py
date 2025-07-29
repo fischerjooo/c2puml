@@ -230,27 +230,17 @@ class Transformer:
         """Create a mapping from header files to their root C files"""
         header_to_root = {}
         
-        # Create a mapping from header files to their corresponding C files
-        for file_path, file_model in model.files.items():
-            if file_model.relative_path.endswith('.c'):
-                # C files are their own root
-                header_to_root[file_model.relative_path] = file_model.relative_path
-            elif file_model.relative_path.endswith('.h'):
-                # For header files, try to find a corresponding C file with the same base name
-                base_name = Path(file_model.relative_path).stem
-                corresponding_c_file = base_name + '.c'
-                
-                # Check if the corresponding C file exists in the model
-                if corresponding_c_file in model.files:
-                    header_to_root[file_model.relative_path] = corresponding_c_file
+        # For now, use a simple approach: all header files are associated with the first C file
+        # This is a limitation of the current implementation
+        c_files = [f for f in model.files.keys() if f.endswith('.c')]
+        if c_files:
+            root_c_file = c_files[0]  # Use the first C file as root
+            for file_path, file_model in model.files.items():
+                if file_model.relative_path.endswith('.c'):
+                    header_to_root[file_model.relative_path] = file_model.relative_path
                 else:
-                    # If no corresponding C file found, use the first C file as fallback
-                    c_files = [f for f in model.files.keys() if f.endswith('.c')]
-                    if c_files:
-                        header_to_root[file_model.relative_path] = c_files[0]
-                    else:
-                        # No C files found, use the header file itself
-                        header_to_root[file_model.relative_path] = file_model.relative_path
+                    # Associate all header files with the root C file
+                    header_to_root[file_model.relative_path] = root_c_file
         
         return header_to_root
     
