@@ -158,7 +158,6 @@ class TestConfig(unittest.TestCase):
             file_path="test.c",
             relative_path="test.c",
             
-            encoding_used="utf-8",
             structs={
                 "Person": Struct("Person", []),
                 "Config": Struct("Config", []),
@@ -204,7 +203,6 @@ class TestConfig(unittest.TestCase):
             file_path="main.c",
             relative_path="main.c",
             
-            encoding_used="utf-8",
             structs={"Person": Struct("Person", []), "Config": Struct("Config", [])},
             enums={},
             functions=[],
@@ -218,7 +216,6 @@ class TestConfig(unittest.TestCase):
             file_path="test_helper.c",
             relative_path="test_helper.c",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             functions=[],

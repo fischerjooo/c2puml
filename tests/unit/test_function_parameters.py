@@ -72,7 +72,6 @@ class TestFunctionParameters(unittest.TestCase):
             file_path="/test/sample.c",
             relative_path="sample.c",
             
-            encoding_used="utf-8",
             functions=[
                 Function("add", "int", [Field("a", "int"), Field("b", "int")]),
                 Function("process_point", "void", [Field("p", "point_t *")]),
@@ -109,7 +108,6 @@ class TestFunctionParameters(unittest.TestCase):
             file_path="/test/empty.c",
             relative_path="empty.c",
             
-            encoding_used="utf-8",
             functions=[Function("init", "void", []), Function("cleanup", "void", [])],
         )
 
@@ -131,7 +129,6 @@ class TestFunctionParameters(unittest.TestCase):
             file_path="/test/complex.c",
             relative_path="complex.c",
             
-            encoding_used="utf-8",
             functions=[
                 Function(
                     "callback",

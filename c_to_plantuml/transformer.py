@@ -831,7 +831,6 @@ class Transformer:
         return FileModel(
             file_path=data["file_path"],
             relative_path=data["relative_path"],
-            encoding_used=data["encoding_used"],
             structs=structs,
             enums=enums,
             unions=unions,

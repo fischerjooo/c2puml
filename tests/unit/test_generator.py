@@ -46,7 +46,6 @@ class TestGenerator(unittest.TestCase):
         return FileModel(
             file_path=filename,
             relative_path=filename,
-            encoding_used="utf-8",
             structs={
                 "Person": Struct(
                     "Person",
@@ -272,7 +271,6 @@ class TestGenerator(unittest.TestCase):
         file2 = FileModel(
             file_path="utils.c",
             relative_path="utils.c",
-            encoding_used="utf-8",
             structs={},
             enums={},
             functions=[Function("helper", "void", [])],
@@ -304,7 +302,6 @@ class TestGenerator(unittest.TestCase):
         empty_file = FileModel(
             file_path="empty.c",
             relative_path="empty.c",
-            encoding_used="utf-8",
             structs={},
             enums={},
             functions=[],

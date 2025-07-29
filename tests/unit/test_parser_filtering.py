@@ -55,7 +55,6 @@ class TestUserConfigurableFiltering(unittest.TestCase):
             file_path="/test/project/main.c",
             relative_path="main.c",
             
-            encoding_used="utf-8",
             structs={
                 "PublicStruct": Struct("PublicStruct", [Field("id", "int")]),
                 "InternalStruct": Struct("InternalStruct", [Field("data", "char*")]),

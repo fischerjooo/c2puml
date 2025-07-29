@@ -36,7 +36,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/sample.c",
             relative_path="sample.c",
             
-            encoding_used="utf-8",
             structs={
                 "Person": Struct(
                     "Person", [Field("name", "char[50]"), Field("age", "int")]
@@ -74,7 +73,6 @@ class TestTransformer(unittest.TestCase):
                     file_path="/test/project/header.h",
                     relative_path="header.h",
                     
-                    encoding_used="utf-8",
                     structs={},
                     enums={},
                     unions={},
@@ -509,7 +507,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/file1.c",
             relative_path="file1.c",
             
-            encoding_used="utf-8",
             includes={"file2.h"},
             structs={},
             enums={},
@@ -525,7 +522,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/file2.h",
             relative_path="file2.h",
             
-            encoding_used="utf-8",
             includes=set(),
             structs={},
             enums={},
@@ -726,7 +722,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/main.c",
             relative_path="main.c",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             unions={},
@@ -780,7 +775,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/main.c",
             relative_path="main.c",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             unions={},
@@ -800,7 +794,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/utils.c",
             relative_path="utils.c",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             unions={},
@@ -855,7 +848,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/other.c",
             relative_path="other.c",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             unions={},
@@ -897,7 +889,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/main.c",
             relative_path="main.c",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             unions={},
@@ -939,7 +930,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/main.c",
             relative_path="main.c",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             unions={},
@@ -977,7 +967,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/main.c",
             relative_path="main.c",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             unions={},
@@ -997,7 +986,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/header.h",
             relative_path="header.h",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             unions={},
@@ -1031,7 +1019,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/main.c",
             relative_path="main.c",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             unions={},
@@ -1076,7 +1063,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/main.c",
             relative_path="main.c",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             unions={},
@@ -1092,7 +1078,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/header1.h",
             relative_path="header1.h",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             unions={},
@@ -1108,7 +1093,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/header2.h",
             relative_path="header2.h",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             unions={},
@@ -1124,7 +1108,6 @@ class TestTransformer(unittest.TestCase):
             file_path="/test/project/header3.h",
             relative_path="header3.h",
             
-            encoding_used="utf-8",
             structs={},
             enums={},
             unions={},
