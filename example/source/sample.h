@@ -8,14 +8,16 @@
 #define VERSION "1.0.0"
 
 /* Full definition of point_t struct */
-typedef struct point_tag {
+typedef struct point_tag
+{
     int x;
     int y;
     char label[32];
 } point_t;
 
 /* Full definition of system_state_t enum */
-typedef enum system_state_tag {
+typedef enum system_state_tag
+{
     STATE_IDLE = 0,
     STATE_RUNNING,
     STATE_ERROR
@@ -23,17 +25,16 @@ typedef enum system_state_tag {
 
 /* Function prototypes */
 extern int calculate_sum(int a, int b);
-extern point_t * create_point(int x, int y, const char * label);
-extern void process_point(point_t * p);
+extern point_t *create_point(int x, int y, const char *label);
+extern void process_point(point_t *p);
 
 #include "geometry.h"
 #include "logger.h"
-#include "filtered_header.h"
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 extern const int MAX_POINTS;
-extern const char * DEFAULT_LABEL;
+extern const char *DEFAULT_LABEL;
 
 #endif /* SAMPLE_H */
