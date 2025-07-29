@@ -1,6 +1,8 @@
 {
   "project_name": "example_project",
-  "source_folders": ["example/source"],
+  "source_folders": [
+    "example/source"
+  ],
   "output_dir": "./output",
   "model_output_path": "model.json",
   "recursive_search": true,
@@ -36,9 +38,19 @@
     }
   },
   "include_filters": {
-    "sample.c": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$", "^sample\\.h$", "^math_utils\\.h$", "^logger\\.h$", "^geometry\\.h$"],
-    "sample2.c": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$", "^sample\\.h$", "^math_utils\\.h$", "^logger\\.h$", "^geometry\\.h$", "^filtered_header\\.h$"],
-    "utils.c": ["^math\\.h$", "^time\\.h$"]
+    "sample.c": [
+      "^stdio\\.h$",
+      "^stdlib\\.h$",
+      "^string\\.h$",
+      "^sample\\.h$",
+      "^math_utils\\.h$",
+      "^logger\\.h$",
+      "^geometry\\.h$"
+    ],
+    "utils.c": [
+      "^math\\.h$",
+      "^time\\.h$"
+    ]
   },
   "transformations": {
     "remove": {
