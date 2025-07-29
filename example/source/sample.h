@@ -28,6 +28,7 @@ extern void process_point(point_t * p);
 
 #include "geometry.h"
 #include "logger.h"
+#include "filtered_header.h"
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
