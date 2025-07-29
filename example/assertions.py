@@ -605,6 +605,26 @@ class PUMLValidator:
                 self._add_result(ValidationLevel.WARNING, 
                                f"Missing expected function: {func}", 
                                filename)
+        
+        # Check that filtered_header.h content is not present in the PUML file
+        filtered_content_indicators = [
+            "filtered_header",
+            "FILTERED_CONSTANT",
+            "FILTERED_MACRO",
+            "filtered_struct_t",
+            "filtered_enum_t",
+            "filtered_function1",
+            "filtered_function2",
+            "filtered_function3",
+            "filtered_global_var",
+            "filtered_global_string"
+        ]
+        
+        for indicator in filtered_content_indicators:
+            if indicator in content:
+                self._add_result(ValidationLevel.ERROR,
+                               f"Filtered content '{indicator}' from filtered_header.h should not appear in PUML file",
+                               filename)
 
     def _validate_geometry_file_content(self, content: str, classes: Dict[str, PUMLClass], filename: str):
         """Validate geometry.puml specific content."""
