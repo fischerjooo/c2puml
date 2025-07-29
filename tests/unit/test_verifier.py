@@ -44,7 +44,6 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
             structs={"valid_struct": valid_struct},
         )
 
@@ -66,7 +65,6 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
             globals=[invalid_global],
         )
 
@@ -93,7 +91,6 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
             
             globals=[suspicious_global],
         )
@@ -121,7 +118,6 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
             
             globals=[suspicious_global],
         )
@@ -146,7 +142,6 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
             
             structs={"": empty_struct},
         )
@@ -170,7 +165,6 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
             
             structs={"123invalid": invalid_struct},
         )
@@ -196,7 +190,6 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
             
             globals=[unbalanced_field],
         )
@@ -230,7 +223,6 @@ class TestModelVerifier(unittest.TestCase):
 
                 file_model = FileModel(
                     file_path="/test/file.c",
-                    relative_path="file.c",
                     
                     globals=[field],
                 )
@@ -267,7 +259,6 @@ class TestModelVerifier(unittest.TestCase):
 
                 file_model = FileModel(
                     file_path="/test/file.c",
-                    relative_path="file.c",
                     
                     globals=[field],
                 )
@@ -306,7 +297,6 @@ class TestModelVerifier(unittest.TestCase):
                 valid_field = Field(name=identifier, type="int")
                 file_model = FileModel(
                     file_path="/test/file.c",
-                    relative_path="file.c",
                     
                     globals=[valid_field],
                 )
@@ -345,7 +335,6 @@ class TestModelVerifier(unittest.TestCase):
 
                 file_model = FileModel(
                     file_path="/test/file.c",
-                    relative_path="file.c",
                     
                     globals=[invalid_field],
                 )
@@ -367,7 +356,6 @@ class TestModelVerifier(unittest.TestCase):
         # Test empty project name
         file_model = FileModel(
             file_path="/test/file.c",
-            relative_path="file.c",
             
         )
 

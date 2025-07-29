@@ -69,7 +69,7 @@ class Generator:
 
         for filename, file_model in sorted(project_model.files.items()):
             # Only process C files (not headers) for diagram generation
-            if file_model.relative_path.endswith(".c"):
+            if file_model.name.endswith(".c"):
                 # Generate PlantUML content
                 puml_content = self.generate_diagram(
                     file_model, project_model, include_depth
@@ -171,7 +171,7 @@ class Generator:
                         add_file_to_tree(clean_include, depth + 1)
 
         # Start with the root file - find the correct key
-        root_key = find_file_key(root_file.relative_path)
+        root_key = find_file_key(root_file.name)
         add_file_to_tree(root_key, 0)
 
         return include_tree
@@ -307,8 +307,8 @@ class Generator:
         function_prefix: str, is_declaration_only: bool
     ):
         """Generate class for a file with specified formatting"""
-        basename = Path(file_model.relative_path).stem
-        filename = Path(file_model.relative_path).name
+        basename = Path(file_model.name).stem
+        filename = Path(file_model.name).name
         uml_id = uml_ids.get(filename)
 
         if not uml_id:
