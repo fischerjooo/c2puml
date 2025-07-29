@@ -7,7 +7,7 @@
   "include_depth": 10,
   "file_filters": {
     "include": [],
-    "exclude": ["^.*filtered_header\\.h$"]
+    "exclude": []
   },
   "element_filters": {
     "structs": {
@@ -41,6 +41,7 @@
   },
   "include_filters": {
     "sample.c": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$", "^sample\\.h$", "^math_utils\\.h$", "^logger\\.h$", "^geometry\\.h$"],
+    "sample.h": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$", "^math_utils\\.h$", "^logger\\.h$", "^geometry\\.h$"],
     "utils.c": ["^math\\.h$", "^time\\.h$"]
   },
   "transformations": {

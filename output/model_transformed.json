@@ -1164,6 +1164,24 @@
       "structs": {},
       "unions": {}
     },
+    "filtered_header.h": {
+      "aliases": {},
+      "encoding_used": "utf-8",
+      "enums": {},
+      "file_path": "/workspace/example/source/filtered_header.h",
+      "functions": [],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "stdio.h",
+        "stdlib.h"
+      ],
+      "macros": [],
+      "name": "filtered_header.h",
+      "relative_path": "filtered_header.h",
+      "structs": {},
+      "unions": {}
+    },
     "geometry.c": {
       "aliases": {},
       "encoding_used": "utf-8",
@@ -2394,16 +2412,6 @@
       "include_relations": [
         {
           "depth": 3,
-          "included_file": "config.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "filtered_header.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 3,
           "included_file": "geometry.h",
           "source_file": "sample.h"
         },
@@ -2414,11 +2422,8 @@
         }
       ],
       "includes": [
-        "config.h",
-        "filtered_header.h",
         "geometry.h",
-        "logger.h",
-        "stddef.h"
+        "logger.h"
       ],
       "macros": [
         "MAX(a, b)",
