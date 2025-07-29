@@ -1,6 +1,7 @@
 {
   "project_name": "example_project",
   "source_folders": [
+    "example/source",
     "example/source"
   ],
   "output_dir": "./output",
