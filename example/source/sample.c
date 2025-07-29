@@ -6,6 +6,7 @@
 #include "logger.h"
 #include "geometry.h"
 #include "filtered_header.h"
+#include "first_level.h"
 
 #define MAX_SIZE 100U
 #define DEBUG_MODE 1U
@@ -14,12 +15,12 @@
 /* Global variables */
 static int global_counter = 0;
 static char buffer[MAX_SIZE];
-double * global_ptr = NULL;
+double *global_ptr = NULL;
 
 /* Function prototypes */
 static void internal_helper(void);
 int calculate_sum(int a, int b);
-point_t * create_point(int x, int y, const char * label);
+point_t *create_point(int x, int y, const char *label);
 
 /* Static function implementation */
 static void internal_helper(void)
@@ -34,9 +35,9 @@ int calculate_sum(int a, int b)
     return CALC(a, b);
 }
 
-point_t * create_point(int x, int y, const char * label)
+point_t *create_point(int x, int y, const char *label)
 {
-    point_t * p = (point_t *)malloc(sizeof(point_t));
+    point_t *p = (point_t *)malloc(sizeof(point_t));
     if (p != NULL)
     {
         p->x = x;
@@ -47,7 +48,7 @@ point_t * create_point(int x, int y, const char * label)
     return p;
 }
 
-void process_point(point_t * p)
+void process_point(point_t *p)
 {
     if (p == NULL)
     {
@@ -70,8 +71,8 @@ void demo_triangle_usage(void)
 
 int main(void)
 {
-    point_t * p1 = create_point(10, 20, "First Point");
-    point_t * p2 = create_point(30, 40, "Second Point");
+    point_t *p1 = create_point(10, 20, "First Point");
+    point_t *p2 = create_point(30, 40, "Second Point");
 
     process_point(p1);
     process_point(p2);
