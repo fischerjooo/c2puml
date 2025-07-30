@@ -859,15 +859,17 @@ extern char filtered_global_string[100];
         config = {
             "file_filters": {"include": [r".*\.(c|h)$"]},
             "include_depth": 2,  # Enable include relation processing
-            "include_filters": {
-                "main.c": [
-                    r"^stdio\.h$",
-                    r"^stdlib\.h$",
-                    r"^string\.h$",
-                    r"^main\.h$",
-                    r"^utils\.h$",
-                ]
-                # Note: filtered_header.h is NOT included in the patterns
+            "file_specific": {
+                "main.c": {
+                    "include_filter": [
+                        r"^stdio\.h$",
+                        r"^stdlib\.h$",
+                        r"^string\.h$",
+                        r"^main\.h$",
+                        r"^utils\.h$",
+                    ]
+                    # Note: filtered_header.h is NOT included in the patterns
+                }
             },
         }
 

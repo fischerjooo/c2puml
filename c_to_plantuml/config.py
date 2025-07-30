@@ -28,7 +28,7 @@ class Config:
     # Filters
     file_filters: Dict[str, List[str]] = field(default_factory=dict)
     element_filters: Dict[str, Dict[str, List[str]]] = field(default_factory=dict)
-    include_filters: Dict[str, List[str]] = field(default_factory=dict)
+    file_specific: Dict[str, Dict[str, Any]] = field(default_factory=dict)
 
     # Transformations
     transformations: Dict[str, Any] = field(default_factory=dict)
@@ -68,8 +68,8 @@ class Config:
             self.file_filters = {}
         if not hasattr(self, "element_filters"):
             self.element_filters = {}
-        if not hasattr(self, "include_filters"):
-            self.include_filters = {}
+        if not hasattr(self, "file_specific"):
+            self.file_specific = {}
         if not hasattr(self, "transformations"):
             self.transformations = {}
         if not hasattr(self, "file_include_patterns"):
@@ -194,7 +194,7 @@ class Config:
             "include_depth": self.include_depth,
             "file_filters": self.file_filters,
             "element_filters": self.element_filters,
-            "include_filters": self.include_filters,
+            "file_specific": self.file_specific,
             "transformations": self.transformations,
         }
 
@@ -208,7 +208,20 @@ class Config:
 
     def has_filters(self) -> bool:
         """Check if configuration has any filters defined"""
-        return bool(self.file_filters or self.element_filters or self.include_filters)
+        # Check if any file has include_filter defined in file_specific
+        has_include_filters = any(
+            file_config.get("include_filter") 
+            for file_config in self.file_specific.values()
+        )
+        return bool(self.file_filters or self.element_filters or has_include_filters)
+
+    def get_include_filters(self) -> Dict[str, List[str]]:
+        """Extract include_filters from file_specific configuration for backward compatibility"""
+        include_filters = {}
+        for file_name, file_config in self.file_specific.items():
+            if "include_filter" in file_config:
+                include_filters[file_name] = file_config["include_filter"]
+        return include_filters
 
     def _should_include_file(self, file_path: str) -> bool:
         """Check if a file should be included based on filters"""
@@ -385,7 +398,7 @@ class Config:
             and self.include_depth == other.include_depth
             and self.file_filters == other.file_filters
             and self.element_filters == other.element_filters
-            and self.include_filters == other.include_filters
+            and self.file_specific == other.file_specific
             and self.transformations == other.transformations
         )
 

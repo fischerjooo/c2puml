@@ -128,7 +128,7 @@ class Transformer:
         # Apply include depth processing with include_filters support
         # NOTE: include_filters are used ONLY for generating include_relations, 
         # not for modifying the original includes arrays
-        include_filters = config.get("include_filters", {})
+        include_filters = self._extract_include_filters_from_config(config)
         if "include_depth" in config and config["include_depth"] > 1:
             model = self._process_include_relations(
                 model, config["include_depth"], include_filters
@@ -138,6 +138,23 @@ class Transformer:
             "Transformations complete. Model now has %d files", len(model.files)
         )
         return model
+
+    def _extract_include_filters_from_config(self, config: Dict[str, Any]) -> Dict[str, List[str]]:
+        """Extract include_filters from file_specific configuration structure"""
+        # Support both old and new configuration formats for backward compatibility
+        if "include_filters" in config:
+            # Old format - direct include_filters
+            return config["include_filters"]
+        
+        if "file_specific" in config:
+            # New format - extract from file_specific
+            include_filters = {}
+            for file_name, file_config in config["file_specific"].items():
+                if "include_filter" in file_config:
+                    include_filters[file_name] = file_config["include_filter"]
+            return include_filters
+        
+        return {}
 
     def _apply_file_filters(
         self, model: ProjectModel, filters: Dict[str, Any]

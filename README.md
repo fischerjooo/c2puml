@@ -69,21 +69,27 @@ Create `config.json` for customization. The configuration supports multiple filt
 
 - **file_filters**: Filter files by path patterns
 - **element_filters**: Filter specific elements (structs, functions, etc.) by name patterns
-- **include_filters**: Filter includes and include relations for each root C file using regex patterns
+- **file_specific**: Configure file-specific settings including include filters for each root C file
 
-### Include Filters
+### File-Specific Configuration
 
-The `include_filters` feature allows you to create focused PlantUML diagrams by filtering includes for different root files:
+The `file_specific` feature allows you to configure file-specific settings, such as include filters, for different root files:
 
 ```json
-"include_filters": {
-  "main.c": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
-  "network.c": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
-  "database.c": ["^sqlite3\\.h$", "^mysql\\.h$", "^postgresql/"]
+"file_specific": {
+  "main.c": {
+    "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"]
+  },
+  "network.c": {
+    "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"]
+  },
+  "database.c": {
+    "include_filter": ["^sqlite3\\.h$", "^mysql\\.h$", "^postgresql/"]
+  }
 }
 ```
 
-This enables separate filtering rules for each root file, creating cleaner, more focused diagrams.
+This enables separate configuration for each file, creating cleaner, more focused diagrams. Currently, the main setting is `include_filter` which filters includes and include relations for the specified root file using regex patterns.
 
 ```json
 {
@@ -106,9 +112,13 @@ This enables separate filtering rules for each root file, creating cleaner, more
       "exclude": ["^test_"]
     }
   },
-  "include_filters": {
-    "main.c": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
-    "network.c": ["^sys/socket\\.h$", "^netinet/", "^arpa/"]
+  "file_specific": {
+    "main.c": {
+      "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"]
+    },
+    "network.c": {
+      "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"]
+    }
   },
   "transformations": {
     "remove": {

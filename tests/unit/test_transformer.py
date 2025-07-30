@@ -734,10 +734,10 @@ class TestTransformer(unittest.TestCase):
         )
 
         # Configure include filters to only keep stdio.h and string.h
-        config = {"include_filters": {"main.c": [r"stdio\.h", r"string\.h"]}}
+        config = {"file_specific": {"main.c": {"include_filter": [r"stdio\.h", r"string\.h"]}}}
 
         result = self.transformer._apply_include_filters(
-            project_model, config["include_filters"]
+            project_model, self.transformer._extract_include_filters_from_config(config)
         )
 
         # Check that includes were filtered
@@ -805,14 +805,14 @@ class TestTransformer(unittest.TestCase):
 
         # Configure different include filters for each root file
         config = {
-            "include_filters": {
-                "main.c": [r"stdio\.h", r"stdlib\.h"],
-                "utils.c": [r"string\.h"],
+            "file_specific": {
+                "main.c": {"include_filter": [r"stdio\.h", r"stdlib\.h"]},
+                "utils.c": {"include_filter": [r"string\.h"]},
             }
         }
 
         result = self.transformer._apply_include_filters(
-            project_model, config["include_filters"]
+            project_model, self.transformer._extract_include_filters_from_config(config)
         )
 
         # Check main.c filtering
@@ -854,10 +854,10 @@ class TestTransformer(unittest.TestCase):
         )
 
         # Configure filters for a different root file
-        config = {"include_filters": {"main.c": [r"stdio\.h"]}}
+        config = {"file_specific": {"main.c": {"include_filter": [r"stdio\.h"]}}}
 
         result = self.transformer._apply_include_filters(
-            project_model, config["include_filters"]
+            project_model, self.transformer._extract_include_filters_from_config(config)
         )
 
         # Should not affect files that don't match any root file filters
@@ -891,10 +891,10 @@ class TestTransformer(unittest.TestCase):
         )
 
         # Configure filters with invalid regex
-        config = {"include_filters": {"main.c": [r"stdio\.h", "[invalid regex"]}}
+        config = {"file_specific": {"main.c": {"include_filter": [r"stdio\.h", "[invalid regex"]}}}
 
         result = self.transformer._apply_include_filters(
-            project_model, config["include_filters"]
+            project_model, self.transformer._extract_include_filters_from_config(config)
         )
 
         # Should skip invalid patterns but still apply valid ones
@@ -930,10 +930,10 @@ class TestTransformer(unittest.TestCase):
         )
 
         # Empty include filters
-        config = {"include_filters": {}}
+        config = {"file_specific": {}}
 
         result = self.transformer._apply_include_filters(
-            project_model, config["include_filters"]
+            project_model, self.transformer._extract_include_filters_from_config(config)
         )
 
         # Should not affect any files
@@ -1015,7 +1015,7 @@ class TestTransformer(unittest.TestCase):
 
         # Configure transformations with include_filters and include_depth
         config = {
-            "include_filters": {"main.c": [r"stdio\.h", r"string\.h"]},
+            "file_specific": {"main.c": {"include_filter": [r"stdio\.h", r"string\.h"]}},
             "include_depth": 2  # Enable include_relations processing
         }
 
@@ -1101,7 +1101,7 @@ class TestTransformer(unittest.TestCase):
         # Configure include_filters to only allow header1.h for main.c
         # This should only affect include_relations generation, NOT the includes arrays
         config = {
-            "include_filters": {"main.c": [r"^header1\.h$"]},  # Only allow header1.h
+            "file_specific": {"main.c": {"include_filter": [r"^header1\.h$"]}},  # Only allow header1.h
             "include_depth": 3,  # Enable transitive include processing
         }
 
