@@ -154,6 +154,9 @@ class Generator:
         """Build include tree starting from root file"""
         include_tree = {}
         visited = set()
+        
+        # Check if root file has include_relations - if so, use flat processing only
+        root_has_include_relations = bool(root_file.include_relations)
 
         def find_file_key(file_name: str) -> str:
             """Find the correct key for a file in project_model.files using filename matching"""
@@ -179,20 +182,28 @@ class Generator:
             if file_key in project_model.files:
                 include_tree[file_key] = project_model.files[file_key]
 
-                # Add included files - prefer include_relations if available
+                # Add included files
                 if depth < include_depth:
                     file_model = project_model.files[file_key]
                     
-                    # Use include_relations if available (from transformation)
-                    if file_model.include_relations:
+                    if depth == 0 and file_model.include_relations:
+                        # Use include_relations only from root file - include ALL files mentioned
+                        # but don't traverse further (flat processing)
+                        included_files = set()
                         for relation in file_model.include_relations:
-                            add_file_to_tree(relation.included_file, depth + 1)
-                    else:
-                        # Fall back to includes field (backward compatibility)
+                            included_files.add(relation.included_file)
+                        
+                        # Add all unique included files from include_relations
+                        for included_file in included_files:
+                            add_file_to_tree(included_file, depth + 1)
+                    elif not root_has_include_relations:
+                        # Only traverse recursively if root file doesn't have include_relations
+                        # Fall back to includes field for backward compatibility
                         for include in file_model.includes:
                             # Clean the include name (remove quotes/angle brackets)
                             clean_include = include.strip('<>"')
                             add_file_to_tree(clean_include, depth + 1)
+                    # If root has include_relations, don't traverse beyond depth 1
 
         # Start with the root file - find the correct key
         root_key = find_file_key(root_file.name)
