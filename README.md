@@ -73,23 +73,33 @@ Create `config.json` for customization. The configuration supports multiple filt
 
 ### File-Specific Configuration
 
-The `file_specific` feature allows you to configure file-specific settings, such as include filters, for different root files:
+The `file_specific` feature allows you to configure file-specific settings for different root files. Each file can have its own `include_filter` and `include_depth` settings:
 
 ```json
 "file_specific": {
   "main.c": {
-    "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"]
+    "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
+    "include_depth": 3
   },
   "network.c": {
-    "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"]
+    "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
+    "include_depth": 2
   },
   "database.c": {
-    "include_filter": ["^sqlite3\\.h$", "^mysql\\.h$", "^postgresql/"]
+    "include_filter": ["^sqlite3\\.h$", "^mysql\\.h$", "^postgresql/"],
+    "include_depth": 4
+  },
+  "simple.c": {
+    "include_depth": 1
   }
 }
 ```
 
-This enables separate configuration for each file, creating cleaner, more focused diagrams. Currently, the main setting is `include_filter` which filters includes and include relations for the specified root file using regex patterns.
+**Available file-specific settings:**
+- **include_filter** (optional): Array of regex patterns to filter includes for this specific file
+- **include_depth** (optional): Override the global include_depth setting for this specific file
+
+Files without file-specific configuration will use the global settings. This enables fine-grained control over include processing for each root file, creating cleaner, more focused diagrams.
 
 ```json
 {
@@ -114,10 +124,12 @@ This enables separate configuration for each file, creating cleaner, more focuse
   },
   "file_specific": {
     "main.c": {
-      "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"]
+      "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
+      "include_depth": 3
     },
     "network.c": {
-      "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"]
+      "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
+      "include_depth": 2
     }
   },
   "transformations": {

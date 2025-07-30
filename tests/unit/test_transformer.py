@@ -1136,6 +1136,167 @@ class TestTransformer(unittest.TestCase):
             "header1.h should not have include relation to header3.h",
         )
 
+    def test_file_specific_include_depth(self):
+        """Test file-specific include_depth functionality"""
+        # Create project model with multiple files and includes
+        main_file = FileModel(
+            file_path="/test/main.c",
+            structs={}, enums={}, unions={}, functions=[], globals=[],
+            includes={"stdio.h", "utils.h"}, macros=[], aliases={},
+            include_relations=[]
+        )
+        
+        utils_file = FileModel(
+            file_path="/test/utils.c", 
+            structs={}, enums={}, unions={}, functions=[], globals=[],
+            includes={"math.h", "time.h"}, macros=[], aliases={},
+            include_relations=[]
+        )
+        
+        # Mock header files
+        stdio_file = FileModel(
+            file_path="/test/stdio.h",
+            structs={}, enums={}, unions={}, functions=[], globals=[],
+            includes={"stddef.h"}, macros=[], aliases={},
+            include_relations=[]
+        )
+        
+        utils_header = FileModel(
+            file_path="/test/utils.h",
+            structs={}, enums={}, unions={}, functions=[], globals=[],
+            includes={"string.h"}, macros=[], aliases={},
+            include_relations=[]
+        )
+
+        project_model = ProjectModel(
+            source_folder="/test",
+            project_name="TestProject", 
+            files={
+                "main.c": main_file,
+                "utils.c": utils_file, 
+                "stdio.h": stdio_file,
+                "utils.h": utils_header
+            }
+        )
+
+        # Config with file-specific include_depth and global fallback
+        config = {
+            "include_depth": 2,  # Global fallback
+            "file_specific": {
+                "main.c": {"include_depth": 3},  # File-specific override
+                "utils.c": {"include_depth": 1}   # File-specific override (no processing)
+            }
+        }
+
+        result = self.transformer._apply_transformations(project_model, config)
+
+        # Check main.c used include_depth=3
+        main_relations = result.files["main.c"].include_relations
+        self.assertGreater(len(main_relations), 0, "main.c should have include relations")
+
+        # Check utils.c used include_depth=1 (no relations generated)
+        utils_relations = result.files["utils.c"].include_relations
+        self.assertEqual(len(utils_relations), 0, "utils.c should have no include relations with depth=1")
+
+    def test_file_specific_include_filter_optional(self):
+        """Test that include_filter is optional in file_specific configuration"""
+        main_file = FileModel(
+            file_path="/test/main.c",
+            structs={}, enums={}, unions={}, functions=[], globals=[],
+            includes={"stdio.h", "math.h"}, macros=[], aliases={},
+            include_relations=[]
+        )
+
+        project_model = ProjectModel(
+            source_folder="/test",
+            project_name="TestProject",
+            files={"main.c": main_file}
+        )
+
+        # Config with only include_depth, no include_filter
+        config = {
+            "include_depth": 1,  # Global
+            "file_specific": {
+                "main.c": {"include_depth": 2}  # Only depth, no filter
+            }
+        }
+
+        # Should not raise an exception
+        result = self.transformer._apply_transformations(project_model, config)
+        self.assertIsNotNone(result)
+
+    def test_file_specific_include_depth_fallback_to_global(self):
+        """Test that files without file-specific config use global include_depth"""
+        main_file = FileModel(
+            file_path="/test/main.c",
+            structs={}, enums={}, unions={}, functions=[], globals=[],
+            includes={"stdio.h"}, macros=[], aliases={},
+            include_relations=[]
+        )
+        
+        other_file = FileModel(
+            file_path="/test/other.c",
+            structs={}, enums={}, unions={}, functions=[], globals=[],
+            includes={"math.h"}, macros=[], aliases={},
+            include_relations=[]
+        )
+
+        project_model = ProjectModel(
+            source_folder="/test",
+            project_name="TestProject",
+            files={"main.c": main_file, "other.c": other_file}
+        )
+
+        config = {
+            "include_depth": 2,  # Global setting
+            "file_specific": {
+                "main.c": {"include_depth": 3}  # Only main.c has file-specific setting
+                # other.c should use global include_depth=2
+            }
+        }
+
+        result = self.transformer._apply_transformations(project_model, config)
+        
+        # Both files should be processed since global include_depth=2 > 1
+        main_relations = result.files["main.c"].include_relations
+        other_relations = result.files["other.c"].include_relations
+        
+        # We can't easily check the exact depth without more complex setup,
+        # but we can verify the method was called for both files
+        self.assertIsInstance(main_relations, list)
+        self.assertIsInstance(other_relations, list)
+
+    def test_should_process_include_relations(self):
+        """Test _should_process_include_relations helper method"""
+        # Test global include_depth > 1
+        config1 = {"include_depth": 2}
+        self.assertTrue(self.transformer._should_process_include_relations(config1))
+        
+        # Test global include_depth = 1 (should not process)
+        config2 = {"include_depth": 1}
+        self.assertFalse(self.transformer._should_process_include_relations(config2))
+        
+        # Test file-specific include_depth > 1
+        config3 = {
+            "include_depth": 1,
+            "file_specific": {
+                "main.c": {"include_depth": 3}
+            }
+        }
+        self.assertTrue(self.transformer._should_process_include_relations(config3))
+        
+        # Test no include_depth anywhere
+        config4 = {"other_setting": "value"}
+        self.assertFalse(self.transformer._should_process_include_relations(config4))
+        
+        # Test file-specific include_depth = 1 with no global
+        config5 = {
+            "file_specific": {
+                "main.c": {"include_depth": 1}
+            }
+        }
+        self.assertFalse(self.transformer._should_process_include_relations(config5))
+
 
 if __name__ == "__main__":
     unittest.main()

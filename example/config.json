@@ -49,13 +49,18 @@
         "^logger\\.h$",
         "^geometry\\.h$",
         "^config\\.h$"
-      ]
+      ],
+      "include_depth": 3
     },
     "utils.c": {
       "include_filter": [
         "^math\\.h$",
         "^time\\.h$"
-      ]
+      ],
+      "include_depth": 2
+    },
+    "complex.c": {
+      "include_depth": 5
     }
   },
   "transformations": {
