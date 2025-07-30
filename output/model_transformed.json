@@ -2392,7 +2392,7 @@
           "source_file": "logger.h"
         },
         {
-          "depth": 2,
+          "depth": 3,
           "included_file": "config.h",
           "source_file": "math_utils.h"
         },
@@ -2433,6 +2433,8 @@
         }
       ],
       "includes": [
+        "filtered_header.h",
+        "first_level.h",
         "geometry.h",
         "logger.h",
         "math_utils.h",

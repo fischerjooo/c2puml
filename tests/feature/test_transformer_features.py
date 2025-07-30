@@ -760,7 +760,7 @@ static void internal_helper(void);
         self.assertNotIn("InternalData", plantuml_content)
 
     def test_include_filters_with_filtered_header(self):
-        """Test that include_filters properly filters out unwanted headers"""
+        """Test that include_filters preserve includes arrays and only affect include_relations generation"""
         from c_to_plantuml.generator import Generator
         from c_to_plantuml.parser import Parser
         from c_to_plantuml.transformer import Transformer
@@ -915,18 +915,19 @@ extern char filtered_global_string[100];
 
         main_file = files["main.c"]
 
-        # Check that includes were filtered correctly
+        # Check that includes arrays are preserved (NOT filtered by include_filters)
         includes = set(main_file["includes"])
 
-        # Should include these headers
+        # ALL original headers should be preserved, including filtered_header.h
+        # include_filters should NOT modify the includes arrays
         self.assertIn("stdio.h", includes)
         self.assertIn("stdlib.h", includes)
         self.assertIn("string.h", includes)
         self.assertIn("main.h", includes)
         self.assertIn("utils.h", includes)
-
-        # Should NOT include filtered_header.h
-        self.assertNotIn("filtered_header.h", includes)
+        
+        # filtered_header.h should still be in includes (preserved from original)
+        self.assertIn("filtered_header.h", includes)
 
         # Check include_relations were filtered correctly
         include_relations = main_file["include_relations"]
