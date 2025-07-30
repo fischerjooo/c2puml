@@ -10,7 +10,7 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
 
 import pytest
 
@@ -34,11 +34,15 @@ def test_project_dir(temp_dir):
 @pytest.fixture
 def config_factory(temp_dir):
     """Factory for creating test configuration files."""
-    def _create_config(config_data: Dict[str, Any], filename: str = "config.json") -> str:
+
+    def _create_config(
+        config_data: Dict[str, Any], filename: str = "config.json"
+    ) -> str:
         config_path = os.path.join(temp_dir, filename)
         with open(config_path, "w", encoding="utf-8") as f:
             json.dump(config_data, f, indent=2)
         return config_path
+
     return _create_config
 
 
@@ -46,7 +50,7 @@ def config_factory(temp_dir):
 def file_factory(temp_dir):
     """Factory for creating test files."""
     created_files = []
-    
+
     def _create_file(filename: str, content: str, subdir: str = "") -> str:
         if subdir:
             file_dir = os.path.join(temp_dir, subdir)
@@ -54,13 +58,13 @@ def file_factory(temp_dir):
             file_path = os.path.join(file_dir, filename)
         else:
             file_path = os.path.join(temp_dir, filename)
-        
+
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(content)
-        
+
         created_files.append(file_path)
         return file_path
-    
+
     yield _create_file
     # Cleanup is handled by temp_dir fixture
 
@@ -105,7 +109,7 @@ typedef struct {
 } Color;
 
 #endif
-"""
+""",
     }
 
 
@@ -120,5 +124,5 @@ def sample_config():
         "recursive_search": True,
         "file_extensions": [".c", ".h"],
         "exclude_patterns": ["*test*", "*example*"],
-        "include_depth": 3
+        "include_depth": 3,
     }

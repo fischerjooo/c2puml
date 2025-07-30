@@ -13,7 +13,6 @@ from c_to_plantuml.models import Enum, Field, Function, Struct
 from c_to_plantuml.parser import CParser
 
 
-
 class TestCParser(unittest.TestCase):
     """Test the C parser functionality"""
 
@@ -48,9 +47,7 @@ int global_var;
 
         try:
             # Parse the file
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Check results
             self.assertIn("Person", file_model.structs)
@@ -83,9 +80,7 @@ struct Rectangle {
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             self.assertIn("Point", file_model.structs)
             self.assertIn("Rectangle", file_model.structs)
@@ -118,9 +113,7 @@ enum Status {
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             self.assertIn("Color", file_model.enums)
             self.assertIn("Status", file_model.enums)
@@ -156,9 +149,7 @@ float get_average(float* values, int count) {
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             self.assertEqual(len(file_model.functions), 3)
             function_names = [f.name for f in file_model.functions]
@@ -183,9 +174,7 @@ float get_average(float* values, int count) {
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             self.assertEqual(len(file_model.macros), 4)
             self.assertIn("MAX_SIZE", file_model.macros)
@@ -214,9 +203,7 @@ float get_average(float* values, int count) {
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             self.assertEqual(len(file_model.includes), 4)
             self.assertIn("stdio.h", file_model.includes)
@@ -241,9 +228,7 @@ static int static_var = 10;
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             self.assertGreaterEqual(len(file_model.globals), 3)
             global_names = [g.name for g in file_model.globals]
@@ -271,9 +256,7 @@ typedef struct {
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             self.assertGreaterEqual(len(file_model.aliases), 3)
             self.assertIn("Integer", file_model.aliases)
@@ -292,9 +275,7 @@ typedef struct {
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Verify the file was parsed successfully
             self.assertEqual(len(file_model.functions), 1)
@@ -356,9 +337,7 @@ float calculate(float a, float b) {
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Verify all elements are parsed
             self.assertEqual(len(file_model.includes), 3)

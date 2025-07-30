@@ -41,9 +41,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
@@ -80,9 +78,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
@@ -122,9 +118,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
@@ -156,9 +150,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
@@ -192,9 +184,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
@@ -236,9 +226,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
@@ -276,9 +264,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Should parse all structs
             struct_names = list(file_model.structs.keys())
@@ -309,9 +295,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
@@ -352,9 +336,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
@@ -405,9 +387,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
@@ -464,9 +444,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)
@@ -543,9 +521,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Should parse all three variables from preprocessor blocks
             global_names = [g.name for g in file_model.globals]
@@ -573,9 +549,7 @@ class TestPreprocessorHandling(unittest.TestCase):
             temp_file = f.name
 
         try:
-            file_model = self.parser.parse_file(
-                Path(temp_file), Path(temp_file).name
-            )
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
 
             # Should parse the struct correctly
             self.assertIn("TestStruct", file_model.structs)

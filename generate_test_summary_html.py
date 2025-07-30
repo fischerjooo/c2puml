@@ -16,110 +16,124 @@ def parse_test_output(log_file: Path) -> Dict:
     """Parse test output log and extract statistics."""
     if not log_file.exists():
         return {
-            'total_tests': 0,
-            'passed': 0,
-            'failed': 0,
-            'errors': 0,
-            'skipped': 0,
-            'execution_time': 0,
-            'status': 'UNKNOWN',
-            'test_summary': '',
-            'failed_tests': []
+            "total_tests": 0,
+            "passed": 0,
+            "failed": 0,
+            "errors": 0,
+            "skipped": 0,
+            "execution_time": 0,
+            "status": "UNKNOWN",
+            "test_summary": "",
+            "failed_tests": [],
         }
-    
+
     content = log_file.read_text()
-    
+
     # Initialize default values
     stats = {
-        'total_tests': 0,
-        'passed': 0,
-        'failed': 0,
-        'errors': 0,
-        'skipped': 0,
-        'execution_time': 0,
-        'status': 'UNKNOWN',
-        'test_summary': '',
-        'failed_tests': []
+        "total_tests": 0,
+        "passed": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "execution_time": 0,
+        "status": "UNKNOWN",
+        "test_summary": "",
+        "failed_tests": [],
     }
-    
+
     # Extract test summary line - handle both unittest and pytest formats
-    test_summary_match = re.search(r'Ran (\d+) test', content)
+    test_summary_match = re.search(r"Ran (\d+) test", content)
     if test_summary_match:
         # unittest format
-        stats['total_tests'] = int(test_summary_match.group(1))
-        
+        stats["total_tests"] = int(test_summary_match.group(1))
+
         # Check for OK or FAILED status (unittest)
-        if 'OK' in content:
-            stats['status'] = 'PASSED'
-            stats['passed'] = stats['total_tests']
-        elif 'FAILED' in content:
-            stats['status'] = 'FAILED'
+        if "OK" in content:
+            stats["status"] = "PASSED"
+            stats["passed"] = stats["total_tests"]
+        elif "FAILED" in content:
+            stats["status"] = "FAILED"
             # Extract failure details
-            failed_match = re.search(r'FAILED \(.*?failures=(\d+).*?errors=(\d+)\)', content)
+            failed_match = re.search(
+                r"FAILED \(.*?failures=(\d+).*?errors=(\d+)\)", content
+            )
             if failed_match:
-                stats['failed'] = int(failed_match.group(1))
-                stats['errors'] = int(failed_match.group(2))
-                stats['passed'] = stats['total_tests'] - stats['failed'] - stats['errors']
+                stats["failed"] = int(failed_match.group(1))
+                stats["errors"] = int(failed_match.group(2))
+                stats["passed"] = (
+                    stats["total_tests"] - stats["failed"] - stats["errors"]
+                )
     else:
         # pytest format - look for summary line like "329 passed in 2.66s"
-        pytest_summary_match = re.search(r'(\d+) passed in ([\d.]+)s', content)
+        pytest_summary_match = re.search(r"(\d+) passed in ([\d.]+)s", content)
         if pytest_summary_match:
-            stats['total_tests'] = int(pytest_summary_match.group(1))
-            stats['passed'] = stats['total_tests']
-            stats['status'] = 'PASSED'
-            stats['execution_time'] = float(pytest_summary_match.group(2))
+            stats["total_tests"] = int(pytest_summary_match.group(1))
+            stats["passed"] = stats["total_tests"]
+            stats["status"] = "PASSED"
+            stats["execution_time"] = float(pytest_summary_match.group(2))
         else:
             # Look for pytest summary with failures/errors
-            pytest_failed_match = re.search(r'(\d+) passed.*?(\d+) failed.*?(\d+) error.*?in ([\d.]+)s', content)
+            pytest_failed_match = re.search(
+                r"(\d+) passed.*?(\d+) failed.*?(\d+) error.*?in ([\d.]+)s", content
+            )
             if pytest_failed_match:
-                stats['total_tests'] = int(pytest_failed_match.group(1)) + int(pytest_failed_match.group(2)) + int(pytest_failed_match.group(3))
-                stats['passed'] = int(pytest_failed_match.group(1))
-                stats['failed'] = int(pytest_failed_match.group(2))
-                stats['errors'] = int(pytest_failed_match.group(3))
-                stats['status'] = 'FAILED'
-                stats['execution_time'] = float(pytest_failed_match.group(4))
+                stats["total_tests"] = (
+                    int(pytest_failed_match.group(1))
+                    + int(pytest_failed_match.group(2))
+                    + int(pytest_failed_match.group(3))
+                )
+                stats["passed"] = int(pytest_failed_match.group(1))
+                stats["failed"] = int(pytest_failed_match.group(2))
+                stats["errors"] = int(pytest_failed_match.group(3))
+                stats["status"] = "FAILED"
+                stats["execution_time"] = float(pytest_failed_match.group(4))
             else:
                 # Look for pytest summary with just failures
-                pytest_failed_only_match = re.search(r'(\d+) passed.*?(\d+) failed.*?in ([\d.]+)s', content)
+                pytest_failed_only_match = re.search(
+                    r"(\d+) passed.*?(\d+) failed.*?in ([\d.]+)s", content
+                )
                 if pytest_failed_only_match:
-                    stats['total_tests'] = int(pytest_failed_only_match.group(1)) + int(pytest_failed_only_match.group(2))
-                    stats['passed'] = int(pytest_failed_only_match.group(1))
-                    stats['failed'] = int(pytest_failed_only_match.group(2))
-                    stats['status'] = 'FAILED'
-                    stats['execution_time'] = float(pytest_failed_only_match.group(3))
-    
+                    stats["total_tests"] = int(pytest_failed_only_match.group(1)) + int(
+                        pytest_failed_only_match.group(2)
+                    )
+                    stats["passed"] = int(pytest_failed_only_match.group(1))
+                    stats["failed"] = int(pytest_failed_only_match.group(2))
+                    stats["status"] = "FAILED"
+                    stats["execution_time"] = float(pytest_failed_only_match.group(3))
+
     # Extract execution time (only if not already set by pytest parsing)
-    if stats['execution_time'] == 0:
-        time_match = re.search(r'in ([\d.]+)s', content)
+    if stats["execution_time"] == 0:
+        time_match = re.search(r"in ([\d.]+)s", content)
         if time_match:
-            stats['execution_time'] = float(time_match.group(1))
-    
+            stats["execution_time"] = float(time_match.group(1))
+
     # Extract failed test details
     failed_lines = []
-    lines = content.split('\n')
+    lines = content.split("\n")
     for i, line in enumerate(lines):
-        if 'FAILED' in line or 'ERROR' in line:
+        if "FAILED" in line or "ERROR" in line:
             # Get context around the failure
             start = max(0, i - 2)
             end = min(len(lines), i + 3)
             failed_lines.extend(lines[start:end])
-    
-    stats['failed_tests'] = failed_lines[:20]  # Limit to first 20 lines
-    
+
+    stats["failed_tests"] = failed_lines[:20]  # Limit to first 20 lines
+
     return stats
 
 
 def generate_html_summary(stats: Dict, output_file: Path) -> None:
     """Generate HTML test summary."""
-    
+
     # Calculate success rate
-    total = stats['total_tests']
-    passed = stats['passed']
+    total = stats["total_tests"]
+    passed = stats["passed"]
     success_rate = (passed / total * 100) if total > 0 else 0
-    
+
     # Determine status color
-    status_color = '#4caf50' if stats['status'] == 'PASSED' else '#f44336'
-    
+    status_color = "#4caf50" if stats["status"] == "PASSED" else "#f44336"
+
     html_content = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -312,38 +326,40 @@ def generate_html_summary(stats: Dict, output_file: Path) -> None:
     </div>
 </body>
 </html>"""
-    
+
     output_file.write_text(html_content)
 
 
 def main():
     """Main function."""
-    parser = argparse.ArgumentParser(description="Generate HTML test summary from test results")
+    parser = argparse.ArgumentParser(
+        description="Generate HTML test summary from test results"
+    )
     parser.add_argument(
         "--log-file",
         default="tests/reports/test-output.log",
-        help="Path to test output log file (default: tests/reports/test-output.log)"
+        help="Path to test output log file (default: tests/reports/test-output.log)",
     )
     parser.add_argument(
         "--output-file",
         default="tests/reports/test_summary.html",
-        help="Path to output HTML file (default: tests/reports/test_summary.html)"
+        help="Path to output HTML file (default: tests/reports/test_summary.html)",
     )
-    
+
     args = parser.parse_args()
-    
+
     log_file = Path(args.log_file)
     output_file = Path(args.output_file)
-    
+
     print(f"📊 Generating HTML test summary...")
     print(f"📁 Reading test results from: {log_file}")
-    
+
     # Parse test output
     stats = parse_test_output(log_file)
-    
+
     # Generate HTML summary
     generate_html_summary(stats, output_file)
-    
+
     print(f"✅ HTML test summary generated: {output_file}")
     print(f"📈 Test Statistics:")
     print(f"   - Total Tests: {stats['total_tests']}")
@@ -351,7 +367,7 @@ def main():
     print(f"   - Failed: {stats['failed']}")
     print(f"   - Errors: {stats['errors']}")
     print(f"   - Status: {stats['status']}")
-    
+
     return 0
 
 

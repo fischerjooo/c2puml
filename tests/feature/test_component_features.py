@@ -7,7 +7,7 @@ individual component features including parser, generator, and project analysis.
 
 This file consolidates tests from:
 - test_parser_features.py
-- test_generator_features.py  
+- test_generator_features.py
 - test_project_analysis_features.py
 """
 
@@ -105,7 +105,7 @@ int sort_with_callback(int *arr, size_t len, compare_func_t comp);
         model = parser.c_parser.parse_project(self.temp_dir, recursive_search=True)
 
         file_model = model.files["function_ptr_test.c"]
-        
+
         # Should have parsed the typedefs and struct
         self.assertIn("compare_func_t", file_model.aliases)
         self.assertIn("callback_t", file_model.aliases)
@@ -236,10 +236,12 @@ struct Database {
 
         # Check that the generated PlantUML contains our structures
         if puml_files:
-            with open(puml_files[0], 'r') as f:
+            with open(puml_files[0], "r") as f:
                 content = f.read()
                 # Should contain some reference to our defined structures
-                self.assertTrue(any(name in content for name in ["Node", "LinkedList", "Database"]))
+                self.assertTrue(
+                    any(name in content for name in ["Node", "LinkedList", "Database"])
+                )
 
 
 class TestProjectAnalysisComponentFeatures(BaseFeatureTest):
@@ -251,7 +253,7 @@ class TestProjectAnalysisComponentFeatures(BaseFeatureTest):
 
         # Create a realistic project structure
         project_files = {
-            "main.c": '''
+            "main.c": """
 #include "app.h"
 #include "utils.h"
 
@@ -259,8 +261,8 @@ int main() {
     App app = app_create();
     return app_run(&app);
 }
-''',
-            "app.h": '''
+""",
+            "app.h": """
 #ifndef APP_H
 #define APP_H
 
@@ -275,8 +277,8 @@ App app_create(void);
 int app_run(App* app);
 
 #endif
-''',
-            "utils.h": '''
+""",
+            "utils.h": """
 #ifndef UTILS_H
 #define UTILS_H
 
@@ -288,8 +290,8 @@ typedef struct {
 void utils_init(void);
 
 #endif
-''',
-            "config.h": '''
+""",
+            "config.h": """
 #ifndef CONFIG_H
 #define CONFIG_H
 
@@ -299,7 +301,7 @@ typedef struct {
 } Config;
 
 #endif
-'''
+""",
         }
 
         for filename, content in project_files.items():
@@ -310,7 +312,7 @@ typedef struct {
 
         # Verify project structure was analyzed correctly
         self.assertGreaterEqual(len(model.files), 4)
-        
+
         # Check that include relationships were detected
         main_file = model.files.get("main.c")
         self.assertIsNotNone(main_file)
@@ -323,7 +325,7 @@ typedef struct {
 
         # Create files with cross-dependencies
         project_files = {
-            "types.h": '''
+            "types.h": """
 #ifndef TYPES_H
 #define TYPES_H
 
@@ -331,8 +333,8 @@ typedef unsigned int EntityId;
 typedef char* EntityName;
 
 #endif
-''',
-            "entity.h": '''
+""",
+            "entity.h": """
 #ifndef ENTITY_H
 #define ENTITY_H
 
@@ -345,8 +347,8 @@ typedef struct {
 } Entity;
 
 #endif
-''',
-            "world.h": '''
+""",
+            "world.h": """
 #ifndef WORLD_H
 #define WORLD_H
 
@@ -359,15 +361,15 @@ typedef struct {
 } World;
 
 #endif
-''',
-            "game.c": '''
+""",
+            "game.c": """
 #include "world.h"
 
 World* create_world(size_t max_entities) {
     // Implementation would go here
     return NULL;
 }
-'''
+""",
         }
 
         for filename, content in project_files.items():
@@ -379,10 +381,10 @@ World* create_world(size_t max_entities) {
         # Verify cross-file dependencies were detected
         entity_file = model.files.get("entity.h")
         world_file = model.files.get("world.h")
-        
+
         self.assertIsNotNone(entity_file)
         self.assertIsNotNone(world_file)
-        
+
         # Check include chains
         self.assertIn("types.h", entity_file.includes)
         self.assertIn("entity.h", world_file.includes)
@@ -393,7 +395,7 @@ World* create_world(size_t max_entities) {
 
         # Create files with potential circular includes
         project_files = {
-            "module_a.h": '''
+            "module_a.h": """
 #ifndef MODULE_A_H
 #define MODULE_A_H
 
@@ -406,8 +408,8 @@ typedef struct {
 } ModuleA;
 
 #endif
-''',
-            "module_b.h": '''
+""",
+            "module_b.h": """
 #ifndef MODULE_B_H
 #define MODULE_B_H
 
@@ -419,8 +421,8 @@ typedef struct ModuleB {
 } ModuleB;
 
 #endif
-''',
-            "main.c": '''
+""",
+            "main.c": """
 #include "module_a.h"
 #include "module_b.h"
 
@@ -429,7 +431,7 @@ int main() {
     ModuleB b = {0};
     return 0;
 }
-'''
+""",
         }
 
         for filename, content in project_files.items():
@@ -441,7 +443,7 @@ int main() {
 
         # Verify all files were processed
         self.assertGreaterEqual(len(model.files), 3)
-        
+
         # Should have both structures
         main_file = model.files.get("main.c")
         self.assertIsNotNone(main_file)
@@ -449,4 +451,5 @@ int main() {
 
 if __name__ == "__main__":
     import unittest
+
     unittest.main()

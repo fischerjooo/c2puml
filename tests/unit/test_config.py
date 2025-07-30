@@ -156,7 +156,6 @@ class TestConfig(unittest.TestCase):
         # Create test file model
         file_model = FileModel(
             file_path="test.c",
-            
             structs={
                 "Person": Struct("Person", []),
                 "Config": Struct("Config", []),
@@ -200,7 +199,6 @@ class TestConfig(unittest.TestCase):
         # Create test model with multiple files
         file1 = FileModel(
             file_path="main.c",
-            
             structs={"Person": Struct("Person", []), "Config": Struct("Config", [])},
             enums={},
             functions=[],
@@ -212,7 +210,6 @@ class TestConfig(unittest.TestCase):
 
         file2 = FileModel(
             file_path="test_helper.c",
-            
             structs={},
             enums={},
             functions=[],
@@ -222,9 +219,9 @@ class TestConfig(unittest.TestCase):
             aliases={},
         )
 
-        model = ProjectModel(source_folder="/test", 
+        model = ProjectModel(
+            source_folder="/test",
             project_name="test_project",
-            
             files={"main.c": file1, "test_helper.c": file2},
         )
 

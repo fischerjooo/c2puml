@@ -39,7 +39,9 @@ def run_coverage_analysis() -> bool:
 
     # Ensure coverage is installed
     try:
-        subprocess.run(["python3", "-m", "coverage", "--version"], check=True, capture_output=True)
+        subprocess.run(
+            ["python3", "-m", "coverage", "--version"], check=True, capture_output=True
+        )
     except (subprocess.CalledProcessError, FileNotFoundError):
         print_error("Coverage not installed. Install with: pip install coverage")
         return False
@@ -51,7 +53,9 @@ def run_coverage_analysis() -> bool:
     # Run tests with coverage
     print_info("Running tests with coverage...")
     result = subprocess.run(
-        ["python3", "-m", "coverage", "run", "-m", "pytest", "-v"], capture_output=True, text=True
+        ["python3", "-m", "coverage", "run", "-m", "pytest", "-v"],
+        capture_output=True,
+        text=True,
     )
 
     if result.returncode != 0:
@@ -77,19 +81,22 @@ def generate_coverage_reports(output_dir: Path) -> None:
     # XML report
     print_info("Generating XML report...")
     subprocess.run(
-        ["python3", "-m", "coverage", "xml", "-o", str(output_dir / "coverage.xml")], check=False
+        ["python3", "-m", "coverage", "xml", "-o", str(output_dir / "coverage.xml")],
+        check=False,
     )
 
     # JSON report
     print_info("Generating JSON report...")
     subprocess.run(
-        ["python3", "-m", "coverage", "json", "-o", str(output_dir / "coverage.json")], check=False
+        ["python3", "-m", "coverage", "json", "-o", str(output_dir / "coverage.json")],
+        check=False,
     )
 
     # HTML coverage report (this creates the htmlcov directory)
     print_info("Generating HTML report...")
     subprocess.run(
-        ["python3", "-m", "coverage", "html", "-d", str(output_dir / "htmlcov")], check=False
+        ["python3", "-m", "coverage", "html", "-d", str(output_dir / "htmlcov")],
+        check=False,
     )
 
     print_success("All coverage reports generated successfully")
@@ -106,7 +113,9 @@ def main():
         help="Output directory for coverage reports (default: tests/reports/coverage)",
     )
     parser.add_argument(
-        "--run-tests", action="store_true", help="Run tests with coverage before generating reports"
+        "--run-tests",
+        action="store_true",
+        help="Run tests with coverage before generating reports",
     )
 
     args = parser.parse_args()
@@ -124,7 +133,9 @@ def main():
 
     print_header("Coverage Report Generation Complete!")
     print_info(f"All reports available in: {output_dir}")
-    print_info(f"Open {output_dir}/htmlcov/index.html in your browser for the HTML report")
+    print_info(
+        f"Open {output_dir}/htmlcov/index.html in your browser for the HTML report"
+    )
     print_success("Reports include:")
     print_success("  - Standard HTML coverage report in htmlcov/")
     print_success("  - XML report (coverage.xml)")
