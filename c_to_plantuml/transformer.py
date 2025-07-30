@@ -11,14 +11,14 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
 from .models import (
-    FileModel,
-    ProjectModel,
-    IncludeRelation,
     Alias,
     Enum,
     EnumValue,
     Field,
+    FileModel,
     Function,
+    IncludeRelation,
+    ProjectModel,
     Struct,
     Union,
 )

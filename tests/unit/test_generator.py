@@ -4,17 +4,16 @@ Unit tests for PlantUML generator functionality
 """
 
 import os
+
+# We need to add the parent directory to Python path for imports
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
-# We need to add the parent directory to Python path for imports
-import sys
-
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from c_to_plantuml.generator import Generator
-from c_to_plantuml.parser import CParser
 from c_to_plantuml.models import (
     Alias,
     Enum,
@@ -25,6 +24,7 @@ from c_to_plantuml.models import (
     Struct,
     Union,
 )
+from c_to_plantuml.parser import CParser
 
 
 class TestGenerator(unittest.TestCase):
@@ -39,6 +39,7 @@ class TestGenerator(unittest.TestCase):
     def tearDown(self):
         """Clean up test fixtures."""
         import shutil
+
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def create_test_file_model(self, filename: str = "test.c") -> FileModel:
@@ -357,7 +358,10 @@ void test_function() {
         # Structs are not shown inside source file classes, but as separate typedef classes
         # self.assertIn("struct Test_Struct", content)  # no + prefix in source files - REMOVED
         # Instead, verify struct appears as separate typedef class
-        self.assertIn('class "Test_Struct" as TYPEDEF_TEST_STRUCT <<typedef>> #LightYellow', diagram)
+        self.assertIn(
+            'class "Test_Struct" as TYPEDEF_TEST_STRUCT <<typedef>> #LightYellow',
+            diagram,
+        )
 
     def test_generate_error_handling(self):
         """Test error handling in diagram generation"""
@@ -405,7 +409,7 @@ void test_function() {
     def test_relationship_generation(self):
         """Test that relationships are properly generated when they exist"""
         # Create content with includes and structs
-        content = '''
+        content = """
         #include <stdio.h>
         
         struct my_struct {
@@ -415,21 +419,21 @@ void test_function() {
         void my_function() {
             return;
         }
-        '''
-        
+        """
+
         test_file = self.create_test_file("test.c", content)
-        
+
         # Parse the file
         project_model = self.parser.parse_project(str(self.temp_dir))
         file_model = project_model.files["test.c"]
-        
+
         # Generate PlantUML diagram
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Check that relationship sections exist
         self.assertIn("' Include relationships", diagram)
         self.assertIn("' Declaration relationships", diagram)
-        
+
         # Check that declaration relationships are generated for structs
         self.assertIn("..>", diagram)  # Declaration relationship arrow
         self.assertIn("<<declares>>", diagram)  # Declaration relationship label
@@ -443,20 +447,20 @@ void test_function() {
             source_folder="/test",
             files={"test.c": file_model},
         )
-        
+
         # Generate PlantUML diagram
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Check that global variables section exists
         self.assertIn("-- Global Variables --", diagram)
-        
+
         # Check that the specific global variables are included
         self.assertIn("int global_var", diagram)
         self.assertIn("char* global_string", diagram)
-        
+
     def test_global_variables_with_real_parsing(self):
         """Test global variables generation with real C code parsing"""
-        content = '''
+        content = """
         int global_counter = 0;
         char* global_message = "Hello";
         static float internal_value = 3.14;
@@ -464,20 +468,20 @@ void test_function() {
         void test_function() {
             global_counter++;
         }
-        '''
-        
+        """
+
         test_file = self.create_test_file("globals_test.c", content)
-        
+
         # Parse the file
         project_model = self.parser.parse_project(str(self.temp_dir))
         file_model = project_model.files["globals_test.c"]
-        
+
         # Generate PlantUML diagram
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Check that global variables section exists
         self.assertIn("-- Global Variables --", diagram)
-        
+
         # Check that parsed global variables appear
         # Note: The exact format may depend on how the parser handles initialization
         self.assertIn("global_counter", diagram)
@@ -493,26 +497,40 @@ void test_function() {
             source_folder="/test",
             files={"test.c": file_model},
         )
-        
+
         # Generate PlantUML diagram
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Check that struct typedef classes are generated
-        self.assertIn('class "Person" as TYPEDEF_PERSON <<typedef>> #LightYellow', diagram)
-        self.assertIn('class "Config" as TYPEDEF_CONFIG <<typedef>> #LightYellow', diagram)
-        
+        self.assertIn(
+            'class "Person" as TYPEDEF_PERSON <<typedef>> #LightYellow', diagram
+        )
+        self.assertIn(
+            'class "Config" as TYPEDEF_CONFIG <<typedef>> #LightYellow', diagram
+        )
+
         # Check that enum typedef classes are generated
-        self.assertIn('class "Status" as TYPEDEF_STATUS <<typedef>> #LightYellow', diagram)
-        self.assertIn('class "Color" as TYPEDEF_COLOR <<typedef>> #LightYellow', diagram)
-        
+        self.assertIn(
+            'class "Status" as TYPEDEF_STATUS <<typedef>> #LightYellow', diagram
+        )
+        self.assertIn(
+            'class "Color" as TYPEDEF_COLOR <<typedef>> #LightYellow', diagram
+        )
+
         # Check that alias typedef classes are generated
-        self.assertIn('class "Integer" as TYPEDEF_INTEGER <<typedef>> #LightYellow', diagram)
-        self.assertIn('class "String" as TYPEDEF_STRING <<typedef>> #LightYellow', diagram)
-        self.assertIn('class "Callback" as TYPEDEF_CALLBACK <<typedef>> #LightYellow', diagram)
+        self.assertIn(
+            'class "Integer" as TYPEDEF_INTEGER <<typedef>> #LightYellow', diagram
+        )
+        self.assertIn(
+            'class "String" as TYPEDEF_STRING <<typedef>> #LightYellow', diagram
+        )
+        self.assertIn(
+            'class "Callback" as TYPEDEF_CALLBACK <<typedef>> #LightYellow', diagram
+        )
 
     def test_union_generation(self):
         """Test union generation with real C code parsing"""
-        content = '''
+        content = """
         union data_union {
             int int_value;
             float float_value;
@@ -527,17 +545,17 @@ void test_function() {
         void test_function() {
             union data_union my_union;
         }
-        '''
-        
+        """
+
         test_file = self.create_test_file("union_test.c", content)
-        
+
         # Parse the file
         project_model = self.parser.parse_project(str(self.temp_dir))
         file_model = project_model.files["union_test.c"]
-        
+
         # Generate PlantUML diagram
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Check that union typedef classes are generated
         self.assertIn("data_union", diagram)
         self.assertIn("int_value", diagram)
@@ -546,7 +564,7 @@ void test_function() {
 
     def test_function_parameter_truncation(self):
         """Test that long function signatures are properly truncated"""
-        content = '''
+        content = """
         // This should create a very long function signature
         int very_long_function_name_that_exceeds_limits(
             int very_long_parameter_name_one,
@@ -558,25 +576,29 @@ void test_function() {
         ) {
             return 0;
         }
-        '''
-        
+        """
+
         test_file = self.create_test_file("truncation_test.c", content)
-        
+
         # Parse the file
         project_model = self.parser.parse_project(str(self.temp_dir))
         file_model = project_model.files["truncation_test.c"]
-        
+
         # Generate PlantUML diagram
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Check that function is included
         self.assertIn("very_long_function_name_that_exceeds_limits", diagram)
-        
+
         # Check for truncation indicator when signature is too long
         # The function should appear but potentially with "..." if truncated
-        function_lines = [line for line in diagram.split('\n') if 'very_long_function_name_that_exceeds_limits' in line]
+        function_lines = [
+            line
+            for line in diagram.split("\n")
+            if "very_long_function_name_that_exceeds_limits" in line
+        ]
         self.assertTrue(len(function_lines) > 0, "Function should appear in diagram")
-        
+
         # If truncated, should contain "..."
         function_line = function_lines[0]
         # Function is likely truncated due to length, but we just verify it exists
@@ -584,7 +606,7 @@ void test_function() {
 
     def test_enum_generation_with_values(self):
         """Test enum generation with specific values"""
-        content = '''
+        content = """
         enum http_status {
             HTTP_OK = 200,
             HTTP_NOT_FOUND = 404,
@@ -600,21 +622,21 @@ void test_function() {
         void process_status(enum http_status status) {
             // Process status
         }
-        '''
-        
+        """
+
         test_file = self.create_test_file("enum_test.c", content)
-        
+
         # Parse the file
         project_model = self.parser.parse_project(str(self.temp_dir))
         file_model = project_model.files["enum_test.c"]
-        
+
         # Generate PlantUML diagram
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Check that enum typedef classes are generated
         self.assertIn("http_status", diagram)
         self.assertIn("simple_enum", diagram)
-        
+
         # Check that enum values are included
         self.assertIn("HTTP_OK", diagram)
         self.assertIn("HTTP_NOT_FOUND", diagram)
@@ -624,7 +646,7 @@ void test_function() {
     def test_header_vs_source_prefixes(self):
         """Test that headers use + prefix and sources use - prefix for macros"""
         # Create a header file and a source file
-        header_content = '''
+        header_content = """
         #ifndef TEST_H
         #define TEST_H
         #define HEADER_MACRO 42
@@ -633,9 +655,9 @@ void test_function() {
         void header_function(void);
         
         #endif
-        '''
-        
-        source_content = '''
+        """
+
+        source_content = """
         #include "test.h"
         #define SOURCE_MACRO 100
         
@@ -644,32 +666,34 @@ void test_function() {
         void source_function(void) {
             // Implementation
         }
-        '''
-        
+        """
+
         # Create both files
         header_file = self.create_test_file("test.h", header_content)
         source_file = self.create_test_file("test.c", source_content)
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.temp_dir))
         file_model = project_model.files["test.c"]
-        
+
         # Generate PlantUML diagram
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Check that source file uses no prefix for globals, - prefix for macros
         self.assertIn('class "test" as TEST <<source>> #LightBlue', diagram)
         self.assertIn("- #define SOURCE_MACRO", diagram)  # Source macros with - prefix
-        
+
         # Check that header file uses + prefix for macros and globals
         self.assertIn('class "test" as HEADER_TEST <<header>> #LightGreen', diagram)
         self.assertIn("+ #define HEADER_MACRO", diagram)  # Header macros with + prefix
-        self.assertIn("+ int global_header_var", diagram)  # Header globals with + prefix
+        self.assertIn(
+            "+ int global_header_var", diagram
+        )  # Header globals with + prefix
 
     def test_include_relationships_generation(self):
         """Test that include relationships are properly generated"""
         # Create a header file
-        header_content = '''
+        header_content = """
         #ifndef MYHEADER_H
         #define MYHEADER_H
         
@@ -678,34 +702,34 @@ void test_function() {
         } my_type_t;
         
         #endif
-        '''
-        
+        """
+
         # Create a source file that includes the header
-        source_content = '''
+        source_content = """
         #include "myheader.h"
         #include <stdio.h>
         
         void test_function(my_type_t* param) {
             printf("Value: %d\\n", param->value);
         }
-        '''
-        
+        """
+
         # Create both files
         header_file = self.create_test_file("myheader.h", header_content)
         source_file = self.create_test_file("main.c", source_content)
-        
+
         # Parse the project
         project_model = self.parser.parse_project(str(self.temp_dir))
         file_model = project_model.files["main.c"]
-        
+
         # Generate PlantUML diagram
         diagram = self.generator.generate_diagram(file_model, project_model)
-        
+
         # Check that include relationships are generated
         self.assertIn("' Include relationships", diagram)
         self.assertIn("-->", diagram)  # Include relationship arrow
         self.assertIn("<<include>>", diagram)  # Include relationship label
-        
+
         # Should have relationship from main.c to myheader.h
         self.assertIn("MAIN --> HEADER_MYHEADER : <<include>>", diagram)
 

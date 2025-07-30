@@ -28,6 +28,7 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
     def tearDown(self):
         """Clean up test fixtures"""
         import shutil
+
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def test_build_include_tree_with_absolute_paths(self):
@@ -35,35 +36,24 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         # Create test files with absolute paths
         main_c_path = self.test_dir / "main.c"
         utils_h_path = self.test_dir / "utils.h"
-        
+
         # Create the actual files
         with open(main_c_path, "w") as f:
             f.write('#include "utils.h"\n')
-        
+
         with open(utils_h_path, "w") as f:
-            f.write('// utils.h content\n')
+            f.write("// utils.h content\n")
 
         # Create FileModel instances with absolute paths
-        main_file_model = FileModel(
-            file_path=str(main_c_path),
-            
-            includes={"utils.h"}
-        )
+        main_file_model = FileModel(file_path=str(main_c_path), includes={"utils.h"})
 
-        utils_file_model = FileModel(
-            file_path=str(utils_h_path),
-            
-            includes=set()
-        )
+        utils_file_model = FileModel(file_path=str(utils_h_path), includes=set())
 
         # Create ProjectModel with filenames as keys (consistent with parser behavior)
         project_model = ProjectModel(
             project_name="test_project",
             source_folder=str(self.test_dir),
-            files={
-                "main.c": main_file_model,
-                "utils.h": utils_file_model
-            }
+            files={"main.c": main_file_model, "utils.h": utils_file_model},
         )
 
         # Test the _build_include_tree method
@@ -74,45 +64,37 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         # The method should find both files using the correct keys from project_model.files
         expected_files = {"main.c", "utils.h"}
         actual_files = set(include_tree.keys())
-        
+
         # This test should now pass with the fix
-        self.assertEqual(actual_files, expected_files, 
-                        f"Expected to find {expected_files}, but found {actual_files}")
+        self.assertEqual(
+            actual_files,
+            expected_files,
+            f"Expected to find {expected_files}, but found {actual_files}",
+        )
 
     def test_build_include_tree_with_relative_paths(self):
         """Test that _build_include_tree works correctly with relative paths (control test)"""
         # Create test files with relative paths
         main_c_path = self.test_dir / "main.c"
         utils_h_path = self.test_dir / "utils.h"
-        
+
         # Create the actual files
         with open(main_c_path, "w") as f:
             f.write('#include "utils.h"\n')
-        
+
         with open(utils_h_path, "w") as f:
-            f.write('// utils.h content\n')
+            f.write("// utils.h content\n")
 
         # Create FileModel instances with relative paths
-        main_file_model = FileModel(
-            file_path="main.c",
-            
-            includes={"utils.h"}
-        )
+        main_file_model = FileModel(file_path="main.c", includes={"utils.h"})
 
-        utils_file_model = FileModel(
-            file_path="utils.h",
-            
-            includes=set()
-        )
+        utils_file_model = FileModel(file_path="utils.h", includes=set())
 
         # Create ProjectModel with filenames as keys (new behavior)
         project_model = ProjectModel(
             project_name="test_project",
             source_folder=str(self.test_dir),
-            files={
-                "main.c": main_file_model,
-                "utils.h": utils_file_model
-            }
+            files={"main.c": main_file_model, "utils.h": utils_file_model},
         )
 
         # Test the _build_include_tree method
@@ -123,45 +105,37 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         # The method should find both files using the correct keys from project_model.files
         expected_files = {"main.c", "utils.h"}
         actual_files = set(include_tree.keys())
-        
+
         # This test should now pass with the fix
-        self.assertEqual(actual_files, expected_files, 
-                        f"Expected to find {expected_files}, but found {actual_files}")
+        self.assertEqual(
+            actual_files,
+            expected_files,
+            f"Expected to find {expected_files}, but found {actual_files}",
+        )
 
     def test_build_include_tree_mixed_paths(self):
         """Test the bug with mixed absolute and relative paths"""
         # Create test files
         main_c_path = self.test_dir / "main.c"
         utils_h_path = self.test_dir / "utils.h"
-        
+
         # Create the actual files
         with open(main_c_path, "w") as f:
             f.write('#include "utils.h"\n')
-        
+
         with open(utils_h_path, "w") as f:
-            f.write('// utils.h content\n')
+            f.write("// utils.h content\n")
 
         # Create FileModel instances - main.c with absolute path, utils.h with relative
-        main_file_model = FileModel(
-            file_path=str(main_c_path),
-            
-            includes={"utils.h"}
-        )
+        main_file_model = FileModel(file_path=str(main_c_path), includes={"utils.h"})
 
-        utils_file_model = FileModel(
-            file_path="utils.h",
-            
-            includes=set()
-        )
+        utils_file_model = FileModel(file_path="utils.h", includes=set())
 
         # Create ProjectModel with filenames as keys (new behavior)
         project_model = ProjectModel(
             project_name="test_project",
             source_folder=str(self.test_dir),
-            files={
-                "main.c": main_file_model,
-                "utils.h": utils_file_model
-            }
+            files={"main.c": main_file_model, "utils.h": utils_file_model},
         )
 
         # Test the _build_include_tree method
@@ -172,44 +146,36 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         # This should now work correctly with the fix
         expected_files = {"main.c", "utils.h"}
         actual_files = set(include_tree.keys())
-        
-        self.assertEqual(actual_files, expected_files, 
-                        f"Expected to find {expected_files}, but found {actual_files}")
+
+        self.assertEqual(
+            actual_files,
+            expected_files,
+            f"Expected to find {expected_files}, but found {actual_files}",
+        )
 
     def test_build_include_tree_debug_info(self):
         """Test to provide debug information about the bug"""
         # Create test files
         main_c_path = self.test_dir / "main.c"
         utils_h_path = self.test_dir / "utils.h"
-        
+
         # Create the actual files
         with open(main_c_path, "w") as f:
             f.write('#include "utils.h"\n')
-        
+
         with open(utils_h_path, "w") as f:
-            f.write('// utils.h content\n')
+            f.write("// utils.h content\n")
 
         # Create FileModel instances with absolute paths
-        main_file_model = FileModel(
-            file_path=str(main_c_path),
-            
-            includes={"utils.h"}
-        )
+        main_file_model = FileModel(file_path=str(main_c_path), includes={"utils.h"})
 
-        utils_file_model = FileModel(
-            file_path=str(utils_h_path),
-            
-            includes=set()
-        )
+        utils_file_model = FileModel(file_path=str(utils_h_path), includes=set())
 
         # Create ProjectModel with filenames as keys (new behavior)
         project_model = ProjectModel(
             project_name="test_project",
             source_folder=str(self.test_dir),
-            files={
-                "main.c": main_file_model,
-                "utils.h": utils_file_model
-            }
+            files={"main.c": main_file_model, "utils.h": utils_file_model},
         )
 
         # Debug: Print the keys in project_model.files
@@ -229,9 +195,12 @@ class TestGeneratorIncludeTreeBug(unittest.TestCase):
         # This test should now pass with the fix
         expected_files = {"main.c", "utils.h"}
         actual_files = set(include_tree.keys())
-        
-        self.assertEqual(actual_files, expected_files, 
-                        f"Expected to find {expected_files}, but found {actual_files}")
+
+        self.assertEqual(
+            actual_files,
+            expected_files,
+            f"Expected to find {expected_files}, but found {actual_files}",
+        )
 
 
 if __name__ == "__main__":

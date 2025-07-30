@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Set
 
-from .models import FileModel, ProjectModel, Field, Struct, Enum, EnumValue
+from .models import Enum, EnumValue, Field, FileModel, ProjectModel, Struct
 from .parser_tokenizer import (
     CTokenizer,
     StructureFinder,
@@ -18,8 +18,8 @@ from .preprocessor import PreprocessorManager
 from .utils import detect_file_encoding
 
 if TYPE_CHECKING:
-    from .models import Struct, Enum, Union, Function, Field, Alias
     from .config import Config
+    from .models import Alias, Enum, Field, Function, Struct, Union
 
 
 class CParser:
@@ -54,9 +54,13 @@ class CParser:
             for file_path in all_c_files:
                 if config._should_include_file(file_path.name):
                     c_files.append(file_path)
-                    self.logger.debug("Included file after filtering: %s", file_path.name)
+                    self.logger.debug(
+                        "Included file after filtering: %s", file_path.name
+                    )
                 else:
-                    self.logger.debug("Excluded file after filtering: %s", file_path.name)
+                    self.logger.debug(
+                        "Excluded file after filtering: %s", file_path.name
+                    )
         else:
             c_files = all_c_files
 
@@ -70,9 +74,7 @@ class CParser:
             try:
                 # Use relative path for tracking and filename as key
                 relative_path = str(file_path.relative_to(source_folder_path))
-                file_model = self.parse_file(
-                    file_path, relative_path
-                )
+                file_model = self.parse_file(file_path, relative_path)
 
                 # Use filename as key (filenames are guaranteed to be unique)
                 files[file_model.name] = file_model
@@ -103,9 +105,7 @@ class CParser:
         self.logger.info("Parsing complete. Parsed %d files successfully.", len(files))
         return model
 
-    def parse_file(
-        self, file_path: Path, relative_path: str
-    ) -> FileModel:
+    def parse_file(self, file_path: Path, relative_path: str) -> FileModel:
         """Parse a single C/C++ file and return a file model using tokenization"""
         self.logger.debug("Parsing file: %s", file_path)
 
@@ -647,7 +647,9 @@ class CParser:
 
         return list(set(types))  # Remove duplicates
 
-    def _find_c_files(self, source_folder_path: Path, recursive_search: bool) -> List[Path]:
+    def _find_c_files(
+        self, source_folder_path: Path, recursive_search: bool
+    ) -> List[Path]:
         """Find all C/C++ files in the source folder"""
         c_extensions = {".c", ".h", ".cpp", ".cc", ".cxx", ".hpp", ".hxx"}
         files = []
@@ -678,14 +680,6 @@ class CParser:
 
         self.logger.debug("Found %d C/C++ files after filtering", len(filtered_files))
         return sorted(filtered_files)
-
-
-
-
-
-
-
-
 
     def _detect_encoding(self, file_path: Path) -> str:
         """Detect file encoding with platform-aware fallbacks"""
@@ -766,7 +760,10 @@ class CParser:
                     if token.type in [TokenType.LPAREN, TokenType.RPAREN]:
                         # Don't add spaces around parentheses
                         formatted_tokens.append(token.value)
-                    elif j > 0 and all_tokens[j-1].type not in [TokenType.LPAREN, TokenType.RPAREN]:
+                    elif j > 0 and all_tokens[j - 1].type not in [
+                        TokenType.LPAREN,
+                        TokenType.RPAREN,
+                    ]:
                         # Add space before token if previous token wasn't a parenthesis
                         formatted_tokens.append(" " + token.value)
                     else:
@@ -781,7 +778,19 @@ class CParser:
             # Look for pattern: type ( * name ) ( ... )
             for i in range(len(all_tokens) - 5):
                 if (
-                    all_tokens[i].type in [TokenType.IDENTIFIER, TokenType.INT, TokenType.VOID, TokenType.CHAR, TokenType.FLOAT, TokenType.DOUBLE, TokenType.LONG, TokenType.SHORT, TokenType.UNSIGNED, TokenType.SIGNED]
+                    all_tokens[i].type
+                    in [
+                        TokenType.IDENTIFIER,
+                        TokenType.INT,
+                        TokenType.VOID,
+                        TokenType.CHAR,
+                        TokenType.FLOAT,
+                        TokenType.DOUBLE,
+                        TokenType.LONG,
+                        TokenType.SHORT,
+                        TokenType.UNSIGNED,
+                        TokenType.SIGNED,
+                    ]
                     and all_tokens[i + 1].type == TokenType.LPAREN
                     and all_tokens[i + 2].type == TokenType.ASTERISK
                     and all_tokens[i + 3].type == TokenType.IDENTIFIER
@@ -806,7 +815,10 @@ class CParser:
                             if token.type in [TokenType.LPAREN, TokenType.RPAREN]:
                                 # Don't add spaces around parentheses
                                 formatted_tokens.append(token.value)
-                            elif j > 0 and all_tokens[j-1].type not in [TokenType.LPAREN, TokenType.RPAREN]:
+                            elif j > 0 and all_tokens[j - 1].type not in [
+                                TokenType.LPAREN,
+                                TokenType.RPAREN,
+                            ]:
                                 # Add space before token if previous token wasn't a parenthesis
                                 formatted_tokens.append(" " + token.value)
                             else:
@@ -829,7 +841,10 @@ class CParser:
                     if token.type in [TokenType.LBRACKET, TokenType.RBRACKET]:
                         # Don't add spaces around brackets
                         formatted_tokens.append(token.value)
-                    elif j > 0 and all_tokens[j-1].type not in [TokenType.LBRACKET, TokenType.RBRACKET]:
+                    elif j > 0 and all_tokens[j - 1].type not in [
+                        TokenType.LBRACKET,
+                        TokenType.RBRACKET,
+                    ]:
                         # Add space before token if previous token wasn't a bracket
                         formatted_tokens.append(" " + token.value)
                     else:
@@ -1278,8 +1293,6 @@ class CParser:
         from datetime import datetime
 
         return datetime.now().isoformat()
-
-
 
 
 class Parser:

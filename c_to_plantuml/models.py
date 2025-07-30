@@ -193,9 +193,8 @@ class FileModel:
         """Extract filename from file_path if not provided"""
         if not self.name:
             from pathlib import Path
+
             self.name = Path(self.file_path).name
-
-
 
     def to_dict(self) -> dict:
         """Convert to dictionary for JSON serialization"""

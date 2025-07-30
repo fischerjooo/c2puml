@@ -300,7 +300,9 @@ class TestCryptoFilterUseCase(BaseFeatureTest):
         )
         # With the new architecture, all files are collected and then filtered
         # The crypto filter should only include the 3 crypto .c files
-        assert len(project_model.files) == 3, f"Expected 3 crypto files, got {len(project_model.files)} files: {parsed_filenames}"
+        assert (
+            len(project_model.files) == 3
+        ), f"Expected 3 crypto files, got {len(project_model.files)} files: {parsed_filenames}"
 
         # Verify that each parsed file has the expected structure
         for file_path, file_model in project_model.files.items():

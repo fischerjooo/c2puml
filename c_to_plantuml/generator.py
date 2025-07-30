@@ -4,8 +4,8 @@ PlantUML Generator that creates proper PlantUML diagrams from C source and heade
 Follows the template format with strict separation of typedefs and clear relationship groupings.
 """
 
-import os
 import glob
+import os
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -568,26 +568,36 @@ class Generator:
         self._generate_uses_relationships(lines, include_tree, uml_ids)
 
     def _generate_include_relationships(
-        self, lines: List[str], include_tree: Dict[str, FileModel], uml_ids: Dict[str, str]
+        self,
+        lines: List[str],
+        include_tree: Dict[str, FileModel],
+        uml_ids: Dict[str, str],
     ):
         """Generate include relationships between files using include_relations from .c files"""
         lines.append("' Include relationships")
-        
+
         # Process all files for include relationships
         for file_name, file_model in sorted(include_tree.items()):
             file_uml_id = self._get_file_uml_id(file_name, uml_ids)
             if not file_uml_id:
                 continue
-                
+
             # For .c files, prefer include_relations if available (from transformation)
-            if file_name.endswith('.c') and file_model.include_relations:
+            if file_name.endswith(".c") and file_model.include_relations:
                 # Use include_relations for precise control based on include_depth and include_filters
-                for relation in sorted(file_model.include_relations, key=lambda r: (r.source_file, r.included_file)):
+                for relation in sorted(
+                    file_model.include_relations,
+                    key=lambda r: (r.source_file, r.included_file),
+                ):
                     source_uml_id = self._get_file_uml_id(relation.source_file, uml_ids)
-                    included_uml_id = self._get_file_uml_id(relation.included_file, uml_ids)
-                    
+                    included_uml_id = self._get_file_uml_id(
+                        relation.included_file, uml_ids
+                    )
+
                     if source_uml_id and included_uml_id:
-                        lines.append(f"{source_uml_id} --> {included_uml_id} : <<include>>")
+                        lines.append(
+                            f"{source_uml_id} --> {included_uml_id} : <<include>>"
+                        )
             else:
                 # Fall back to using includes field for backward compatibility
                 # or when include_relations is not populated (e.g., after parsing only)
@@ -596,8 +606,10 @@ class Generator:
                     include_filename = Path(clean_include).name
                     include_uml_id = uml_ids.get(include_filename)
                     if include_uml_id:
-                        lines.append(f"{file_uml_id} --> {include_uml_id} : <<include>>")
-        
+                        lines.append(
+                            f"{file_uml_id} --> {include_uml_id} : <<include>>"
+                        )
+
         lines.append("")
 
     def _generate_declaration_relationships(

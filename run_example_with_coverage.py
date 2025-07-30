@@ -6,8 +6,8 @@ to ensure execution coverage of the main code paths.
 """
 
 import os
-import sys
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -36,31 +36,73 @@ def print_error(text: str) -> None:
 def run_example_generation():
     """Run the example generation with coverage."""
     print_header("Running Example Generation with Coverage")
-    
+
     # Ensure we're in the workspace directory
     workspace_dir = Path(__file__).parent
     os.chdir(workspace_dir)
-    
+
     # Create output directory if it doesn't exist
     output_dir = workspace_dir / "output"
     output_dir.mkdir(exist_ok=True)
-    
+
     # Run the full workflow (parse, transform, generate)
     print_info("Running full C to PlantUML workflow on example project...")
-    
+
     commands = [
         # Full workflow
-        ["coverage", "run", "-a", "-m", "c_to_plantuml.main", "--config", "example/config.json"],
-        
+        [
+            "coverage",
+            "run",
+            "-a",
+            "-m",
+            "c_to_plantuml.main",
+            "--config",
+            "example/config.json",
+        ],
         # Individual steps for better coverage
-        ["coverage", "run", "-a", "-m", "c_to_plantuml.main", "--config", "example/config.json", "parse"],
-        ["coverage", "run", "-a", "-m", "c_to_plantuml.main", "--config", "example/config.json", "transform"],
-        ["coverage", "run", "-a", "-m", "c_to_plantuml.main", "--config", "example/config.json", "generate"],
-        
+        [
+            "coverage",
+            "run",
+            "-a",
+            "-m",
+            "c_to_plantuml.main",
+            "--config",
+            "example/config.json",
+            "parse",
+        ],
+        [
+            "coverage",
+            "run",
+            "-a",
+            "-m",
+            "c_to_plantuml.main",
+            "--config",
+            "example/config.json",
+            "transform",
+        ],
+        [
+            "coverage",
+            "run",
+            "-a",
+            "-m",
+            "c_to_plantuml.main",
+            "--config",
+            "example/config.json",
+            "generate",
+        ],
         # Try with verbose flag
-        ["coverage", "run", "-a", "-m", "c_to_plantuml.main", "--config", "example/config.json", "--verbose"],
+        [
+            "coverage",
+            "run",
+            "-a",
+            "-m",
+            "c_to_plantuml.main",
+            "--config",
+            "example/config.json",
+            "--verbose",
+        ],
     ]
-    
+
     success = True
     for cmd in commands:
         print_info(f"Running: {' '.join(cmd[3:])}")  # Print without coverage command
@@ -78,20 +120,20 @@ def run_example_generation():
         except Exception as e:
             print_error(f"Error running command: {e}")
             success = False
-    
+
     # Check if output files were generated
     expected_outputs = [
         "output/model.json",
         "output/model_transformed.json",
     ]
-    
+
     print_info("\nChecking generated outputs...")
     for output_file in expected_outputs:
         if Path(output_file).exists():
             print_success(f"Generated: {output_file}")
         else:
             print_error(f"Missing: {output_file}")
-    
+
     # Check for PlantUML files
     puml_files = list(Path("output").glob("*.puml"))
     if puml_files:
@@ -100,24 +142,24 @@ def run_example_generation():
             print(f"  - {puml.name}")
     else:
         print_error("No PlantUML files generated")
-    
+
     return success
 
 
 def main():
     """Main function."""
     print_header("Example Generation Coverage Runner")
-    
+
     # Check if coverage is available
     try:
         subprocess.run(["coverage", "--version"], check=True, capture_output=True)
     except (subprocess.CalledProcessError, FileNotFoundError):
         print_error("Coverage not installed. Install with: pip install coverage")
         return 1
-    
+
     # Run example generation
     success = run_example_generation()
-    
+
     if success:
         print_header("Example Generation Complete!")
         print_success("All example generation commands executed")
@@ -126,7 +168,7 @@ def main():
     else:
         print_error("Some example generation commands failed")
         return 1
-    
+
     return 0
 
 

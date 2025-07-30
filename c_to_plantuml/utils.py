@@ -10,6 +10,7 @@ from typing import Dict, Optional
 # Try to import chardet, fallback to basic encoding detection if not available
 try:
     import chardet
+
     CHARDET_AVAILABLE = True
 except ImportError:
     CHARDET_AVAILABLE = False
@@ -29,7 +30,7 @@ def detect_file_encoding(file_path: Path) -> str:
 
         # Fallback encodings in order of preference
         fallback_encodings = ["utf-8", "latin-1", "cp1252", "iso-8859-1"]
-        
+
         for encoding in fallback_encodings:
             try:
                 with open(file_path, "r", encoding=encoding) as f:
@@ -40,7 +41,7 @@ def detect_file_encoding(file_path: Path) -> str:
 
         # Final fallback
         return "utf-8"
-        
+
     except Exception as e:
         logging.warning(f"Failed to detect encoding for {file_path}: {e}")
         return "utf-8"
@@ -54,23 +55,23 @@ def get_filename_from_path(file_path: str) -> str:
 def find_file_by_filename(filename: str, file_dict: Dict[str, any]) -> Optional[str]:
     """
     Find a file in a dictionary by matching its filename.
-    
+
     Args:
         filename: The filename to search for (e.g., "header.h")
         file_dict: Dictionary with file paths as keys
-        
+
     Returns:
         The matching file path key, or None if not found
     """
     # First try exact match
     if filename in file_dict:
         return filename
-    
+
     # Try matching by filename
     for file_path in file_dict.keys():
         if Path(file_path).name == filename:
             return file_path
-    
+
     return None
 
 
@@ -78,16 +79,16 @@ def normalize_file_path(file_path: str, source_folder: str = None) -> str:
     """
     Normalize file path for consistent handling.
     For tracking purposes, we prefer relative paths when possible.
-    
+
     Args:
         file_path: The file path to normalize
         source_folder: Optional source folder for relative path conversion
-        
+
     Returns:
         Normalized file path
     """
     path_obj = Path(file_path)
-    
+
     # If we have a source folder and the path is absolute, try to make it relative
     if source_folder and path_obj.is_absolute():
         try:
@@ -96,7 +97,7 @@ def normalize_file_path(file_path: str, source_folder: str = None) -> str:
         except ValueError:
             # Path is not relative to source folder, keep as is
             pass
-    
+
     return str(path_obj)
 
 
@@ -104,11 +105,11 @@ def create_file_key(file_path: str, source_folder: str = None) -> str:
     """
     Create a consistent file key for tracking.
     Uses filename for uniqueness since filenames are unique in the project.
-    
+
     Args:
         file_path: The file path
         source_folder: Optional source folder for normalization
-        
+
     Returns:
         A consistent file key (filename)
     """
@@ -119,7 +120,7 @@ def create_file_key(file_path: str, source_folder: str = None) -> str:
 def get_acceptable_encodings() -> list:
     """
     Get a list of acceptable encodings for cross-platform compatibility.
-    
+
     Returns:
         List of encoding names that are considered acceptable across platforms.
     """
@@ -142,10 +143,10 @@ def get_acceptable_encodings() -> list:
 def is_acceptable_encoding(encoding: str) -> bool:
     """
     Check if an encoding is acceptable for cross-platform compatibility.
-    
+
     Args:
         encoding: The encoding name to check.
-        
+
     Returns:
         True if the encoding is acceptable, False otherwise.
     """
@@ -155,15 +156,15 @@ def is_acceptable_encoding(encoding: str) -> bool:
 def normalize_encoding(encoding: str) -> str:
     """
     Normalize encoding name for consistency across platforms.
-    
+
     Args:
         encoding: The encoding name to normalize.
-        
+
     Returns:
         Normalized encoding name.
     """
     encoding_lower = encoding.lower()
-    
+
     # Normalize common Windows encodings
     if encoding_lower in ["windows-1252", "cp1252"]:
         return "windows-1252"
@@ -171,18 +172,19 @@ def normalize_encoding(encoding: str) -> str:
         return "windows-1254"
     elif encoding_lower in ["iso-8859-1", "latin-1"]:
         return "iso-8859-1"
-    
+
     return encoding_lower
 
 
 def get_platform_default_encoding() -> str:
     """
     Get the default encoding for the current platform.
-    
+
     Returns:
         The default encoding name for the current platform.
     """
     import sys
+
     if sys.platform.startswith("win"):
         return "windows-1252"  # Common Windows default
     else:
