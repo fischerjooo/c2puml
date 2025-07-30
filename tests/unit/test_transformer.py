@@ -485,7 +485,7 @@ class TestTransformer(unittest.TestCase):
                 "structs": {"include": ["^[A-Z].*"], "exclude": [".*_internal.*"]}
             },
             "transformations": {
-                "file_selection": {"selected_files": []},
+                "file_selection": [],
                 "rename": {"structs": {"old_name": "new_name"}},
             },
             "include_depth": 2,
@@ -498,10 +498,10 @@ class TestTransformer(unittest.TestCase):
         self.assertEqual(len(result.files), 1)  # Only .c files after filtering
 
     def test_file_selection_apply_to_all(self):
-        """Test file selection with empty selected_files (apply to all)"""
+        """Test file selection with empty file_selection array (apply to all)"""
         config = {
             "transformations": {
-                "file_selection": {"selected_files": []},
+                "file_selection": [],
                 "rename": {"structs": {"old_name": "new_name"}},
             }
         }
@@ -528,7 +528,7 @@ class TestTransformer(unittest.TestCase):
         """Test file selection with specific file patterns"""
         config = {
             "transformations": {
-                "file_selection": {"selected_files": [".*sample\\.c$"]},
+                "file_selection": [".*sample\\.c$"],
                 "rename": {"structs": {"old_name": "new_name"}},
             }
         }
@@ -546,7 +546,7 @@ class TestTransformer(unittest.TestCase):
         """Test file selection with no matching files"""
         config = {
             "transformations": {
-                "file_selection": {"selected_files": [".*nonexistent\\.c$"]},
+                "file_selection": [".*nonexistent\\.c$"],
                 "rename": {"structs": {"old_name": "new_name"}},
             }
         }
@@ -589,32 +589,6 @@ class TestTransformer(unittest.TestCase):
         self.assertIsInstance(result, ProjectModel)
         # Should apply to all files
         self.assertEqual(len(result.files), 2)
-
-    def test_file_selection_backward_compatibility(self):
-        """Test that old object format still works"""
-        old_config = {
-            "transformations": {
-                "file_selection": {"selected_files": [".*sample\\.c$"]},
-                "rename": {"structs": {"old_name": "new_name"}},
-            }
-        }
-
-        new_config = {
-            "transformations": {
-                "file_selection": [".*sample\\.c$"],
-                "rename": {"structs": {"old_name": "new_name"}},
-            }
-        }
-
-        old_result = self.transformer._apply_model_transformations(
-            self.sample_project_model, old_config["transformations"]
-        )
-        new_result = self.transformer._apply_model_transformations(
-            self.sample_project_model, new_config["transformations"]
-        )
-
-        # Both should produce the same result
-        self.assertEqual(len(old_result.files), len(new_result.files))
 
     def test_file_selection_invalid_format(self):
         """Test file selection with invalid format"""

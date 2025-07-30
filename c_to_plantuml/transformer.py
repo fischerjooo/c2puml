@@ -248,21 +248,12 @@ class Transformer:
         self.logger.debug("Processing transformation container: %s", container_name)
         
         # Get file selection configuration for this container
-        file_selection_config = transformation_config.get("file_selection", [])
+        selected_files = transformation_config.get("file_selection", [])
         
-        # Handle backward compatibility: support both array and object formats
-        if isinstance(file_selection_config, dict):
-            # Old format: {"selected_files": [...]}
-            selected_files = file_selection_config.get("selected_files", [])
-            self.logger.debug("Using legacy file_selection object format")
-        elif isinstance(file_selection_config, list):
-            # New format: [...]
-            selected_files = file_selection_config
-            self.logger.debug("Using new file_selection array format")
-        else:
-            # Invalid format, default to empty list
+        # Validate that file_selection is a list
+        if not isinstance(selected_files, list):
             selected_files = []
-            self.logger.warning("Invalid file_selection format, defaulting to empty list")
+            self.logger.warning("Invalid file_selection format, must be a list, defaulting to empty list")
         
         # Determine which files to apply transformations to
         if not selected_files:
@@ -586,22 +577,13 @@ class Transformer:
         self, model: ProjectModel, transformations: Dict[str, Any]
     ) -> ProjectModel:
         """Apply model-level transformations with file selection support"""
-        # Get file selection configuration with backward compatibility
-        file_selection_config = transformations.get("file_selection", [])
+        # Get file selection configuration
+        selected_files = transformations.get("file_selection", [])
         
-        # Handle backward compatibility: support both array and object formats
-        if isinstance(file_selection_config, dict):
-            # Old format: {"selected_files": [...]}
-            selected_files = file_selection_config.get("selected_files", [])
-            self.logger.debug("Using legacy file_selection object format")
-        elif isinstance(file_selection_config, list):
-            # New format: [...]
-            selected_files = file_selection_config
-            self.logger.debug("Using new file_selection array format")
-        else:
-            # Invalid format, default to empty list
+        # Validate that file_selection is a list
+        if not isinstance(selected_files, list):
             selected_files = []
-            self.logger.warning("Invalid file_selection format, defaulting to empty list")
+            self.logger.warning("Invalid file_selection format, must be a list, defaulting to empty list")
 
         # Determine which files to apply transformations to
         # If selected_files is empty or not specified, apply to all files
