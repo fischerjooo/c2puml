@@ -761,9 +761,9 @@ static void internal_helper(void);
 
     def test_include_filters_with_filtered_header(self):
         """Test that include_filters properly filters out unwanted headers"""
+        from c_to_plantuml.generator import Generator
         from c_to_plantuml.parser import Parser
         from c_to_plantuml.transformer import Transformer
-        from c_to_plantuml.generator import Generator
 
         # Create test files with a filtered header
         main_c = """
@@ -862,10 +862,10 @@ extern char filtered_global_string[100];
             "include_filters": {
                 "main.c": [
                     r"^stdio\.h$",
-                    r"^stdlib\.h$", 
+                    r"^stdlib\.h$",
                     r"^string\.h$",
                     r"^main\.h$",
-                    r"^utils\.h$"
+                    r"^utils\.h$",
                 ]
                 # Note: filtered_header.h is NOT included in the patterns
             },
@@ -917,27 +917,31 @@ extern char filtered_global_string[100];
 
         # Check that includes were filtered correctly
         includes = set(main_file["includes"])
-        
+
         # Should include these headers
         self.assertIn("stdio.h", includes)
         self.assertIn("stdlib.h", includes)
         self.assertIn("string.h", includes)
         self.assertIn("main.h", includes)
         self.assertIn("utils.h", includes)
-        
+
         # Should NOT include filtered_header.h
         self.assertNotIn("filtered_header.h", includes)
 
         # Check include_relations were filtered correctly
         include_relations = main_file["include_relations"]
-        included_files_in_relations = [rel["included_file"] for rel in include_relations]
-        
+        included_files_in_relations = [
+            rel["included_file"] for rel in include_relations
+        ]
+
         # Should include relations for allowed headers (using full paths)
         self.assertTrue(any("main.h" in path for path in included_files_in_relations))
         self.assertTrue(any("utils.h" in path for path in included_files_in_relations))
-        
+
         # Should NOT include relations for filtered_header.h
-        self.assertFalse(any("filtered_header.h" in path for path in included_files_in_relations))
+        self.assertFalse(
+            any("filtered_header.h" in path for path in included_files_in_relations)
+        )
 
         # Verify PlantUML output was generated
         output_files = list(Path(output_dir).glob("*.puml"))
@@ -948,13 +952,13 @@ extern char filtered_global_string[100];
             plantuml_content = f.read()
 
         self.assertIn("@startuml", plantuml_content)
-        
+
         # Should contain elements from allowed headers
         self.assertIn("MainStruct", plantuml_content)
         self.assertIn("UtilsStruct", plantuml_content)
         self.assertIn("main_function", plantuml_content)
         self.assertIn("utils_function", plantuml_content)
-        
+
         # Should NOT contain elements from filtered_header.h
         self.assertNotIn("filtered_struct_t", plantuml_content)
         self.assertNotIn("filtered_enum_t", plantuml_content)

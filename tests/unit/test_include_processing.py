@@ -8,17 +8,18 @@ test files to reduce duplication and improve maintainability.
 
 import os
 import shutil
-import tempfile
-from pathlib import Path
-from unittest import TestCase
 
 # We need to add the parent directory to Python path for imports
 import sys
+import tempfile
+from pathlib import Path
+from unittest import TestCase
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from c_to_plantuml.generator import Generator
 from c_to_plantuml.parser import CParser
+
 
 class TestIncludeProcessingBug(TestCase):
     """Test suite to verify include processing bug has been fixed.
@@ -89,22 +90,22 @@ class TestIncludeProcessingBug(TestCase):
 
         # Verify that the diagram contains both files
         self.assertIn("@startuml main", diagram)
-        self.assertIn('@enduml', diagram)
-        
+        self.assertIn("@enduml", diagram)
+
         # Check that main.c is referenced
         self.assertIn('class "main"', diagram)
-        
+
         # Check that header.h is included in the include tree
         self.assertIn('class "header"', diagram)
-        
+
         # Check that the struct from header is included
-        self.assertIn('my_struct_t', diagram)
+        self.assertIn("my_struct_t", diagram)
 
     def test_include_depth_control(self):
         """Test that include depth parameter controls how deep includes are processed."""
 
         # Create a chain of includes: main.c -> level1.h -> level2.h
-        
+
         self.create_test_file(
             "level2.h",
             """
@@ -118,7 +119,7 @@ class TestIncludeProcessingBug(TestCase):
             #endif
             """,
         )
-        
+
         self.create_test_file(
             "level1.h",
             """
@@ -152,19 +153,23 @@ class TestIncludeProcessingBug(TestCase):
         main_file = project_model.files["main.c"]
 
         # Test with include depth = 1 (should only include level1.h)
-        diagram_depth_1 = self.generator.generate_diagram(main_file, project_model, include_depth=1)
-        
+        diagram_depth_1 = self.generator.generate_diagram(
+            main_file, project_model, include_depth=1
+        )
+
         # Test with include depth = 2 (should include both level1.h and level2.h)
-        diagram_depth_2 = self.generator.generate_diagram(main_file, project_model, include_depth=2)
+        diagram_depth_2 = self.generator.generate_diagram(
+            main_file, project_model, include_depth=2
+        )
 
         # Both should include main.c and level1.h
         self.assertIn('class "main"', diagram_depth_1)
         self.assertIn('class "level1"', diagram_depth_1)
-        
+
         self.assertIn('class "main"', diagram_depth_2)
         self.assertIn('class "level1"', diagram_depth_2)
-        
-        # Only depth 2 should include level2.h  
+
+        # Only depth 2 should include level2.h
         self.assertNotIn('class "level2"', diagram_depth_1)
         self.assertIn('class "level2"', diagram_depth_2)
 
@@ -188,7 +193,7 @@ class TestIncludeProcessingBug(TestCase):
             #endif
             """,
         )
-        
+
         self.create_test_file(
             "b.h",
             """
@@ -221,7 +226,9 @@ class TestIncludeProcessingBug(TestCase):
         main_file = project_model.files["main.c"]
 
         # This should not crash due to circular includes
-        diagram = self.generator.generate_diagram(main_file, project_model, include_depth=3)
+        diagram = self.generator.generate_diagram(
+            main_file, project_model, include_depth=3
+        )
 
         # Verify basic structure
         self.assertIn("@startuml main", diagram)

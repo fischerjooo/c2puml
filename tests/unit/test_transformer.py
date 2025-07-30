@@ -34,7 +34,6 @@ class TestTransformer(unittest.TestCase):
         # Create sample data for testing
         self.sample_file_model = FileModel(
             file_path="/test/project/sample.c",
-            
             structs={
                 "Person": Struct(
                     "Person", [Field("name", "char[50]"), Field("age", "int")]
@@ -63,14 +62,13 @@ class TestTransformer(unittest.TestCase):
             },
         )
 
-        self.sample_project_model = ProjectModel(source_folder="/test", 
+        self.sample_project_model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={
                 "sample.c": self.sample_file_model,
                 "header.h": FileModel(
                     file_path="/test/project/header.h",
-                    
                     structs={},
                     enums={},
                     unions={},
@@ -443,7 +441,6 @@ class TestTransformer(unittest.TestCase):
         """Test converting dictionary back to FileModel"""
         data = {
             "file_path": "/test/file.c",
-
             "project_root": "/test",
             "encoding_used": "utf-8",
             "structs": {
@@ -503,7 +500,6 @@ class TestTransformer(unittest.TestCase):
         # Create a model with include relations
         file1 = FileModel(
             file_path="/test/file1.c",
-            
             includes={"file2.h"},
             structs={},
             enums={},
@@ -517,7 +513,6 @@ class TestTransformer(unittest.TestCase):
 
         file2 = FileModel(
             file_path="/test/file2.h",
-            
             includes=set(),
             structs={},
             enums={},
@@ -529,9 +524,9 @@ class TestTransformer(unittest.TestCase):
             include_relations=[],
         )
 
-        model = ProjectModel(source_folder="/test", 
+        model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"file1.c": file1, "file2.h": file2},
         )
 
@@ -716,7 +711,6 @@ class TestTransformer(unittest.TestCase):
         # Create a project model with includes and include_relations
         file_model_with_includes = FileModel(
             file_path="/test/project/main.c",
-            
             structs={},
             enums={},
             unions={},
@@ -733,31 +727,31 @@ class TestTransformer(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(source_folder="/test", 
+        project_model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"main.c": file_model_with_includes},
         )
 
         # Configure include filters to only keep stdio.h and string.h
-        config = {
-            "include_filters": {
-                "main.c": [r"stdio\.h", r"string\.h"]
-            }
-        }
+        config = {"include_filters": {"main.c": [r"stdio\.h", r"string\.h"]}}
 
-        result = self.transformer._apply_include_filters(project_model, config["include_filters"])
-        
+        result = self.transformer._apply_include_filters(
+            project_model, config["include_filters"]
+        )
+
         # Check that includes were filtered
         self.assertEqual(len(result.files["main.c"].includes), 2)
         self.assertIn("stdio.h", result.files["main.c"].includes)
         self.assertIn("string.h", result.files["main.c"].includes)
         self.assertNotIn("stdlib.h", result.files["main.c"].includes)
         self.assertNotIn("math.h", result.files["main.c"].includes)
-        
+
         # Check that include_relations were filtered
         self.assertEqual(len(result.files["main.c"].include_relations), 2)
-        included_files = [rel.included_file for rel in result.files["main.c"].include_relations]
+        included_files = [
+            rel.included_file for rel in result.files["main.c"].include_relations
+        ]
         self.assertIn("stdio.h", included_files)
         self.assertIn("string.h", included_files)
         self.assertNotIn("stdlib.h", included_files)
@@ -768,7 +762,6 @@ class TestTransformer(unittest.TestCase):
         # Create file models for different root files
         main_c_model = FileModel(
             file_path="/test/project/main.c",
-            
             structs={},
             enums={},
             unions={},
@@ -786,7 +779,6 @@ class TestTransformer(unittest.TestCase):
 
         utils_c_model = FileModel(
             file_path="/test/project/utils.c",
-            
             structs={},
             enums={},
             unions={},
@@ -802,9 +794,9 @@ class TestTransformer(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(source_folder="/test", 
+        project_model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={
                 "main.c": main_c_model,
                 "utils.c": utils_c_model,
@@ -815,19 +807,21 @@ class TestTransformer(unittest.TestCase):
         config = {
             "include_filters": {
                 "main.c": [r"stdio\.h", r"stdlib\.h"],
-                "utils.c": [r"string\.h"]
+                "utils.c": [r"string\.h"],
             }
         }
 
-        result = self.transformer._apply_include_filters(project_model, config["include_filters"])
-        
+        result = self.transformer._apply_include_filters(
+            project_model, config["include_filters"]
+        )
+
         # Check main.c filtering
         main_c = result.files["main.c"]
         self.assertEqual(len(main_c.includes), 2)
         self.assertIn("stdio.h", main_c.includes)
         self.assertIn("stdlib.h", main_c.includes)
         self.assertNotIn("utils.h", main_c.includes)
-        
+
         # Check utils.c filtering
         utils_c = result.files["utils.c"]
         self.assertEqual(len(utils_c.includes), 1)
@@ -839,7 +833,6 @@ class TestTransformer(unittest.TestCase):
         """Test include filtering when root file doesn't match any filters"""
         file_model = FileModel(
             file_path="/test/project/other.c",
-            
             structs={},
             enums={},
             unions={},
@@ -854,21 +847,19 @@ class TestTransformer(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(source_folder="/test", 
+        project_model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"other.c": file_model},
         )
 
         # Configure filters for a different root file
-        config = {
-            "include_filters": {
-                "main.c": [r"stdio\.h"]
-            }
-        }
+        config = {"include_filters": {"main.c": [r"stdio\.h"]}}
 
-        result = self.transformer._apply_include_filters(project_model, config["include_filters"])
-        
+        result = self.transformer._apply_include_filters(
+            project_model, config["include_filters"]
+        )
+
         # Should not affect files that don't match any root file filters
         other_c = result.files["other.c"]
         self.assertEqual(len(other_c.includes), 2)
@@ -879,7 +870,6 @@ class TestTransformer(unittest.TestCase):
         """Test include filtering with invalid regex patterns"""
         file_model = FileModel(
             file_path="/test/project/main.c",
-            
             structs={},
             enums={},
             unions={},
@@ -894,24 +884,24 @@ class TestTransformer(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(source_folder="/test", 
+        project_model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"main.c": file_model},
         )
 
         # Configure filters with invalid regex
-        config = {
-            "include_filters": {
-                "main.c": [r"stdio\.h", "[invalid regex"]
-            }
-        }
+        config = {"include_filters": {"main.c": [r"stdio\.h", "[invalid regex"]}}
 
-        result = self.transformer._apply_include_filters(project_model, config["include_filters"])
-        
+        result = self.transformer._apply_include_filters(
+            project_model, config["include_filters"]
+        )
+
         # Should skip invalid patterns but still apply valid ones
         main_c = result.files["main.c"]
-        self.assertEqual(len(main_c.includes), 2)  # Both includes should remain since invalid pattern was skipped
+        self.assertEqual(
+            len(main_c.includes), 2
+        )  # Both includes should remain since invalid pattern was skipped
         self.assertIn("stdio.h", main_c.includes)
         self.assertIn("stdlib.h", main_c.includes)
 
@@ -919,7 +909,6 @@ class TestTransformer(unittest.TestCase):
         """Test include filtering with empty configuration"""
         file_model = FileModel(
             file_path="/test/project/main.c",
-            
             structs={},
             enums={},
             unions={},
@@ -934,17 +923,19 @@ class TestTransformer(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(source_folder="/test", 
+        project_model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"main.c": file_model},
         )
 
         # Empty include filters
         config = {"include_filters": {}}
 
-        result = self.transformer._apply_include_filters(project_model, config["include_filters"])
-        
+        result = self.transformer._apply_include_filters(
+            project_model, config["include_filters"]
+        )
+
         # Should not affect any files
         main_c = result.files["main.c"]
         self.assertEqual(len(main_c.includes), 2)
@@ -955,7 +946,6 @@ class TestTransformer(unittest.TestCase):
         """Test _find_root_file method for .c files"""
         file_model = FileModel(
             file_path="/test/project/main.c",
-            
             structs={},
             enums={},
             unions={},
@@ -973,7 +963,6 @@ class TestTransformer(unittest.TestCase):
         """Test _find_root_file method for header files"""
         file_model = FileModel(
             file_path="/test/project/header.h",
-            
             structs={},
             enums={},
             unions={},
@@ -984,19 +973,21 @@ class TestTransformer(unittest.TestCase):
             aliases={},
         )
 
-        root_file = self.transformer._find_root_file("/test/project/header.h", file_model)
+        root_file = self.transformer._find_root_file(
+            "/test/project/header.h", file_model
+        )
         self.assertEqual(root_file, "header.c")  # Now returns the corresponding .c file
 
     def test_matches_any_pattern(self):
         """Test _matches_any_pattern method"""
         patterns = [re.compile(r"stdio\.h"), re.compile(r"stdlib\.h")]
-        
+
         # Should match first pattern
         self.assertTrue(self.transformer._matches_any_pattern("stdio.h", patterns))
-        
+
         # Should match second pattern
         self.assertTrue(self.transformer._matches_any_pattern("stdlib.h", patterns))
-        
+
         # Should not match any pattern
         self.assertFalse(self.transformer._matches_any_pattern("string.h", patterns))
 
@@ -1005,7 +996,6 @@ class TestTransformer(unittest.TestCase):
         # Create a project model with includes
         file_model = FileModel(
             file_path="/test/project/main.c",
-            
             structs={},
             enums={},
             unions={},
@@ -1021,21 +1011,17 @@ class TestTransformer(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(source_folder="/test", 
+        project_model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"main.c": file_model},
         )
 
         # Configure transformations with include_filters
-        config = {
-            "include_filters": {
-                "main.c": [r"stdio\.h", r"string\.h"]
-            }
-        }
+        config = {"include_filters": {"main.c": [r"stdio\.h", r"string\.h"]}}
 
         result = self.transformer._apply_transformations(project_model, config)
-        
+
         # Check that include_filters were applied
         main_c = result.files["main.c"]
         self.assertEqual(len(main_c.includes), 2)
@@ -1048,7 +1034,6 @@ class TestTransformer(unittest.TestCase):
         # Create a project model with transitive includes
         main_c_model = FileModel(
             file_path="/test/project/main.c",
-            
             structs={},
             enums={},
             unions={},
@@ -1062,7 +1047,6 @@ class TestTransformer(unittest.TestCase):
 
         header1_model = FileModel(
             file_path="/test/project/header1.h",
-            
             structs={},
             enums={},
             unions={},
@@ -1076,7 +1060,6 @@ class TestTransformer(unittest.TestCase):
 
         header2_model = FileModel(
             file_path="/test/project/header2.h",
-            
             structs={},
             enums={},
             unions={},
@@ -1090,7 +1073,6 @@ class TestTransformer(unittest.TestCase):
 
         header3_model = FileModel(
             file_path="/test/project/header3.h",
-            
             structs={},
             enums={},
             unions={},
@@ -1102,9 +1084,9 @@ class TestTransformer(unittest.TestCase):
             include_relations=[],
         )
 
-        project_model = ProjectModel(source_folder="/test", 
+        project_model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={
                 "main.c": main_c_model,
                 "header1.h": header1_model,
@@ -1116,48 +1098,70 @@ class TestTransformer(unittest.TestCase):
         # Configure include_filters to only allow header1.h for main.c
         # This should prevent header2.h and header3.h from being processed
         config = {
-            "include_filters": {
-                "main.c": [r"^header1\.h$"]  # Only allow header1.h
-            },
+            "include_filters": {"main.c": [r"^header1\.h$"]},  # Only allow header1.h
             "include_depth": 3,  # Enable transitive include processing
         }
 
         result = self.transformer._apply_transformations(project_model, config)
-        
+
         # Check that main.c includes were filtered correctly
         main_c = result.files["main.c"]
         self.assertEqual(len(main_c.includes), 1)
         self.assertIn("header1.h", main_c.includes)
         self.assertNotIn("header2.h", main_c.includes)
         self.assertNotIn("header3.h", main_c.includes)
-        
+
         # BUG: The following assertions will FAIL because include_filters don't work on transitive includes
         # header1.h should NOT have header2.h in its includes (should be filtered out)
         header1 = result.files["header1.h"]
-        self.assertEqual(len(header1.includes), 0, 
-                        "header1.h should not include header2.h due to include_filters")
-        self.assertNotIn("header2.h", header1.includes,
-                        "header1.h should not include header2.h due to include_filters")
-        
+        self.assertEqual(
+            len(header1.includes),
+            0,
+            "header1.h should not include header2.h due to include_filters",
+        )
+        self.assertNotIn(
+            "header2.h",
+            header1.includes,
+            "header1.h should not include header2.h due to include_filters",
+        )
+
         # header2.h should NOT have header3.h in its includes (should be filtered out)
         header2 = result.files["header2.h"]
-        self.assertEqual(len(header2.includes), 0,
-                        "header2.h should not include header3.h due to include_filters")
-        self.assertNotIn("header3.h", header2.includes,
-                        "header2.h should not include header3.h due to include_filters")
-        
+        self.assertEqual(
+            len(header2.includes),
+            0,
+            "header2.h should not include header3.h due to include_filters",
+        )
+        self.assertNotIn(
+            "header3.h",
+            header2.includes,
+            "header2.h should not include header3.h due to include_filters",
+        )
+
         # Check that include_relations don't contain filtered headers
         main_relations = [rel.included_file for rel in main_c.include_relations]
-        self.assertNotIn("header2.h", main_relations,
-                        "main.c should not have include relation to header2.h")
-        self.assertNotIn("header3.h", main_relations,
-                        "main.c should not have include relation to header3.h")
-        
+        self.assertNotIn(
+            "header2.h",
+            main_relations,
+            "main.c should not have include relation to header2.h",
+        )
+        self.assertNotIn(
+            "header3.h",
+            main_relations,
+            "main.c should not have include relation to header3.h",
+        )
+
         header1_relations = [rel.included_file for rel in header1.include_relations]
-        self.assertNotIn("header2.h", header1_relations,
-                        "header1.h should not have include relation to header2.h")
-        self.assertNotIn("header3.h", header1_relations,
-                        "header1.h should not have include relation to header3.h")
+        self.assertNotIn(
+            "header2.h",
+            header1_relations,
+            "header1.h should not have include relation to header2.h",
+        )
+        self.assertNotIn(
+            "header3.h",
+            header1_relations,
+            "header1.h should not have include relation to header3.h",
+        )
 
 
 if __name__ == "__main__":

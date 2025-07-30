@@ -4,12 +4,12 @@ Test for absolute path bug detection in include tree building.
 """
 
 import os
-import tempfile
-import unittest
-from pathlib import Path
 
 # We need to add the parent directory to Python path for imports
 import sys
+import tempfile
+import unittest
+from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
@@ -29,6 +29,7 @@ class TestAbsolutePathBugDetection(unittest.TestCase):
     def tearDown(self):
         """Clean up test fixtures."""
         import shutil
+
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def create_test_file(self, filename: str, content: str) -> Path:
@@ -40,7 +41,7 @@ class TestAbsolutePathBugDetection(unittest.TestCase):
 
     def test_relative_path_handling_in_include_tree(self):
         """Test that relative paths are handled correctly in include tree building."""
-        
+
         # Create a header file
         self.create_test_file(
             "utils.h",
@@ -80,30 +81,33 @@ class TestAbsolutePathBugDetection(unittest.TestCase):
         main_file = project_model.files["main.c"]
 
         # Generate the PlantUML diagram - this should not crash due to absolute path issues
-        diagram = self.generator.generate_diagram(main_file, project_model, include_depth=2)
+        diagram = self.generator.generate_diagram(
+            main_file, project_model, include_depth=2
+        )
 
         # Verify basic structure
         self.assertIn("@startuml main", diagram)
         self.assertIn("@enduml", diagram)
-        
+
         # Check that files are correctly included
         self.assertIn('class "main"', diagram)
         self.assertIn('class "utils"', diagram)
-        
+
         # Check that typedefs from included files are processed
         self.assertIn("util_data_t", diagram)
 
     def test_subdirectory_includes_path_resolution(self):
         """Test path resolution for includes in subdirectories."""
-        
+
         # Create subdirectory structure
         subdir = self.temp_dir / "include"
         subdir.mkdir(parents=True, exist_ok=True)
-        
+
         # Create header in subdirectory
         header_path = subdir / "types.h"
         with open(header_path, "w", encoding="utf-8") as f:
-            f.write("""
+            f.write(
+                """
             #ifndef TYPES_H
             #define TYPES_H
             
@@ -112,7 +116,8 @@ class TestAbsolutePathBugDetection(unittest.TestCase):
             } vector3_t;
             
             #endif
-            """)
+            """
+            )
 
         # Create source file that includes header from subdirectory
         self.create_test_file(
@@ -134,18 +139,20 @@ class TestAbsolutePathBugDetection(unittest.TestCase):
         geometry_file = project_model.files["geometry.c"]
 
         # Generate the PlantUML diagram
-        diagram = self.generator.generate_diagram(geometry_file, project_model, include_depth=2)
+        diagram = self.generator.generate_diagram(
+            geometry_file, project_model, include_depth=2
+        )
 
         # Verify basic structure - should not crash with path resolution issues
         self.assertIn("@startuml geometry", diagram)
         self.assertIn("@enduml", diagram)
-        
+
         # Check that the source file is included
         self.assertIn('class "geometry"', diagram)
 
     def test_mixed_path_styles_handling(self):
         """Test handling of mixed path styles (forward/backward slashes)."""
-        
+
         # Create header file
         self.create_test_file(
             "config.h",
@@ -186,19 +193,21 @@ class TestAbsolutePathBugDetection(unittest.TestCase):
         server_file = project_model.files["server.c"]
 
         # Generate the PlantUML diagram - should handle path styles gracefully
-        diagram = self.generator.generate_diagram(server_file, project_model, include_depth=2)
+        diagram = self.generator.generate_diagram(
+            server_file, project_model, include_depth=2
+        )
 
         # Verify structure
         self.assertIn("@startuml server", diagram)
         self.assertIn("@enduml", diagram)
-        
+
         # Check that files are properly processed
         self.assertIn('class "server"', diagram)
         self.assertIn('class "config"', diagram)
 
     def test_absolute_vs_relative_path_consistency(self):
         """Test that absolute and relative paths are handled consistently."""
-        
+
         # Create test files
         self.create_test_file(
             "common.h",
@@ -228,7 +237,7 @@ class TestAbsolutePathBugDetection(unittest.TestCase):
 
         # Parse the project using absolute path
         project_model_abs = self.parser.parse_project(str(self.temp_dir.resolve()))
-        
+
         # Parse the project using relative path (if different from absolute)
         rel_path = os.path.relpath(str(self.temp_dir))
         if rel_path != str(self.temp_dir.resolve()):
@@ -238,18 +247,22 @@ class TestAbsolutePathBugDetection(unittest.TestCase):
 
         # Generate diagrams with both models
         processor_file_abs = project_model_abs.files["processor.c"]
-        diagram_abs = self.generator.generate_diagram(processor_file_abs, project_model_abs, include_depth=2)
+        diagram_abs = self.generator.generate_diagram(
+            processor_file_abs, project_model_abs, include_depth=2
+        )
 
         processor_file_rel = project_model_rel.files["processor.c"]
-        diagram_rel = self.generator.generate_diagram(processor_file_rel, project_model_rel, include_depth=2)
+        diagram_rel = self.generator.generate_diagram(
+            processor_file_rel, project_model_rel, include_depth=2
+        )
 
         # Both diagrams should have similar structure
         self.assertIn("@startuml processor", diagram_abs)
         self.assertIn("@startuml processor", diagram_rel)
-        
+
         self.assertIn("@enduml", diagram_abs)
         self.assertIn("@enduml", diagram_rel)
-        
+
         # Both should include the main files
         self.assertIn('class "processor"', diagram_abs)
         self.assertIn('class "processor"', diagram_rel)

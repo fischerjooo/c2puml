@@ -70,7 +70,6 @@ class TestFunctionParameters(unittest.TestCase):
         # Create a file model with functions that have parameters
         file_model = FileModel(
             file_path="/test/sample.c",
-            
             functions=[
                 Function("add", "int", [Field("a", "int"), Field("b", "int")]),
                 Function("process_point", "void", [Field("p", "point_t *")]),
@@ -82,8 +81,8 @@ class TestFunctionParameters(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(source_folder="/test", 
-            project_name="test",  files={"sample.c": file_model}
+        project_model = ProjectModel(
+            source_folder="/test", project_name="test", files={"sample.c": file_model}
         )
 
         # Generate PlantUML diagram
@@ -105,12 +104,11 @@ class TestFunctionParameters(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/empty.c",
-            
             functions=[Function("init", "void", []), Function("cleanup", "void", [])],
         )
 
-        project_model = ProjectModel(source_folder="/test", 
-            project_name="test",  files={"empty.c": file_model}
+        project_model = ProjectModel(
+            source_folder="/test", project_name="test", files={"empty.c": file_model}
         )
 
         diagram = self.generator.generate_diagram(file_model, project_model)
@@ -125,7 +123,6 @@ class TestFunctionParameters(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/complex.c",
-            
             functions=[
                 Function(
                     "callback",
@@ -141,8 +138,8 @@ class TestFunctionParameters(unittest.TestCase):
             ],
         )
 
-        project_model = ProjectModel(source_folder="/test", 
-            project_name="test",  files={"complex.c": file_model}
+        project_model = ProjectModel(
+            source_folder="/test", project_name="test", files={"complex.c": file_model}
         )
 
         diagram = self.generator.generate_diagram(file_model, project_model)

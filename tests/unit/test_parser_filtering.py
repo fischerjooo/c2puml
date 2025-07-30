@@ -53,7 +53,6 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         # Create a file model with different types of elements
         file_model = FileModel(
             file_path="/test/project/main.c",
-            
             structs={
                 "PublicStruct": Struct("PublicStruct", [Field("id", "int")]),
                 "InternalStruct": Struct("InternalStruct", [Field("data", "char*")]),
@@ -89,9 +88,9 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         )
 
         # Create project model
-        model = ProjectModel(source_folder="/test", 
+        model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"main.c": file_model},
         )
 

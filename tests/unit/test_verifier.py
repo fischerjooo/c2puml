@@ -47,9 +47,9 @@ class TestModelVerifier(unittest.TestCase):
             structs={"valid_struct": valid_struct},
         )
 
-        model = ProjectModel(source_folder="/test", 
+        model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"file.c": file_model},
         )
 
@@ -68,9 +68,9 @@ class TestModelVerifier(unittest.TestCase):
             globals=[invalid_global],
         )
 
-        model = ProjectModel(source_folder="/test", 
+        model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"file.c": file_model},
         )
 
@@ -91,13 +91,12 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            
             globals=[suspicious_global],
         )
 
-        model = ProjectModel(source_folder="/test", 
+        model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"file.c": file_model},
         )
 
@@ -118,13 +117,12 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            
             globals=[suspicious_global],
         )
 
-        model = ProjectModel(source_folder="/test", 
+        model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"file.c": file_model},
         )
 
@@ -142,13 +140,12 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            
             structs={"": empty_struct},
         )
 
-        model = ProjectModel(source_folder="/test", 
+        model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"file.c": file_model},
         )
 
@@ -165,13 +162,12 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            
             structs={"123invalid": invalid_struct},
         )
 
-        model = ProjectModel(source_folder="/test", 
+        model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"file.c": file_model},
         )
 
@@ -190,13 +186,12 @@ class TestModelVerifier(unittest.TestCase):
 
         file_model = FileModel(
             file_path="/test/file.c",
-            
             globals=[unbalanced_field],
         )
 
-        model = ProjectModel(source_folder="/test", 
+        model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"file.c": file_model},
         )
 
@@ -223,13 +218,12 @@ class TestModelVerifier(unittest.TestCase):
 
                 file_model = FileModel(
                     file_path="/test/file.c",
-                    
                     globals=[field],
                 )
 
-                model = ProjectModel(source_folder="/test", 
+                model = ProjectModel(
+                    source_folder="/test",
                     project_name="TestProject",
-                    
                     files={"file.c": file_model},
                 )
 
@@ -259,13 +253,12 @@ class TestModelVerifier(unittest.TestCase):
 
                 file_model = FileModel(
                     file_path="/test/file.c",
-                    
                     globals=[field],
                 )
 
-                model = ProjectModel(source_folder="/test", 
+                model = ProjectModel(
+                    source_folder="/test",
                     project_name="TestProject",
-                    
                     files={"file.c": file_model},
                 )
 
@@ -297,13 +290,12 @@ class TestModelVerifier(unittest.TestCase):
                 valid_field = Field(name=identifier, type="int")
                 file_model = FileModel(
                     file_path="/test/file.c",
-                    
                     globals=[valid_field],
                 )
 
-                model = ProjectModel(source_folder="/test", 
+                model = ProjectModel(
+                    source_folder="/test",
                     project_name="TestProject",
-                    
                     files={"file.c": file_model},
                 )
 
@@ -335,13 +327,12 @@ class TestModelVerifier(unittest.TestCase):
 
                 file_model = FileModel(
                     file_path="/test/file.c",
-                    
                     globals=[invalid_field],
                 )
 
-                model = ProjectModel(source_folder="/test", 
+                model = ProjectModel(
+                    source_folder="/test",
                     project_name="TestProject",
-                    
                     files={"file.c": file_model},
                 )
 
@@ -356,12 +347,11 @@ class TestModelVerifier(unittest.TestCase):
         # Test empty project name
         file_model = FileModel(
             file_path="/test/file.c",
-            
         )
 
-        model = ProjectModel(source_folder="/test", 
+        model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"file.c": file_model},
         )
         model.project_name = ""  # Override the validation
@@ -371,9 +361,9 @@ class TestModelVerifier(unittest.TestCase):
         self.assertTrue(any("Project name is empty" in issue for issue in issues))
 
         # Test empty project root
-        model = ProjectModel(source_folder="/test", 
+        model = ProjectModel(
+            source_folder="/test",
             project_name="TestProject",
-            
             files={"file.c": file_model},
         )
         model.source_folder = ""  # Override the validation
@@ -383,7 +373,9 @@ class TestModelVerifier(unittest.TestCase):
         self.assertTrue(any("Source folder is empty" in issue for issue in issues))
 
         # Test no files
-        model = ProjectModel(source_folder="/test", project_name="TestProject",  files={})
+        model = ProjectModel(
+            source_folder="/test", project_name="TestProject", files={}
+        )
 
         is_valid, issues = self.verifier.verify_model(model)
         self.assertFalse(is_valid)

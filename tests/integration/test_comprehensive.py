@@ -39,7 +39,7 @@ class TestIncludeProcessingIntegrationComprehensive(BaseFeatureTest):
     def test_comprehensive_c_to_h_relationships_integration(self):
         """Test comprehensive C to H file relationships with full integration."""
         project_data = {
-            "src/app.c": '''
+            "src/app.c": """
 #include "core/engine.h"
 #include "ui/window.h"
 #include "utils/logger.h"
@@ -59,8 +59,8 @@ int main() {
     engine_cleanup(engine);
     return 0;
 }
-''',
-            "src/core/engine.h": '''
+""",
+            "src/core/engine.h": """
 #ifndef ENGINE_H
 #define ENGINE_H
 
@@ -80,8 +80,8 @@ int engine_is_running(Engine* engine);
 void engine_cleanup(Engine* engine);
 
 #endif
-''',
-            "src/ui/window.h": '''
+""",
+            "src/ui/window.h": """
 #ifndef WINDOW_H
 #define WINDOW_H
 
@@ -100,8 +100,8 @@ void window_update(Window* window);
 void window_destroy(Window* window);
 
 #endif
-''',
-            "src/graphics/renderer.h": '''
+""",
+            "src/graphics/renderer.h": """
 #ifndef RENDERER_H
 #define RENDERER_H
 
@@ -115,8 +115,8 @@ typedef struct {
 } Renderer;
 
 #endif
-''',
-            "src/graphics/context.h": '''
+""",
+            "src/graphics/context.h": """
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
@@ -127,8 +127,8 @@ typedef struct {
 } GraphicsContext;
 
 #endif
-''',
-            "src/graphics/shader.h": '''
+""",
+            "src/graphics/shader.h": """
 #ifndef SHADER_H
 #define SHADER_H
 
@@ -139,8 +139,8 @@ typedef struct {
 } Shader;
 
 #endif
-''',
-            "src/audio/sound.h": '''
+""",
+            "src/audio/sound.h": """
 #ifndef SOUND_H
 #define SOUND_H
 
@@ -150,8 +150,8 @@ typedef struct {
 } SoundSystem;
 
 #endif
-''',
-            "src/input/keyboard.h": '''
+""",
+            "src/input/keyboard.h": """
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
@@ -161,8 +161,8 @@ typedef struct {
 } KeyboardState;
 
 #endif
-''',
-            "src/utils/logger.h": '''
+""",
+            "src/utils/logger.h": """
 #ifndef LOGGER_H
 #define LOGGER_H
 
@@ -172,7 +172,7 @@ void log_info(const char* message);
 void log_error(const char* message);
 
 #endif
-'''
+""",
         }
 
         project_dir = self.create_temp_project(project_data)
@@ -180,7 +180,7 @@ void log_error(const char* message);
             "source_folders": [str(project_dir / "src")],
             "include_depth": 4,
             "recursive_search": True,
-            "file_extensions": [".c", ".h"]
+            "file_extensions": [".c", ".h"],
         }
 
         results = self.run_full_pipeline(project_dir, config_data)
@@ -215,7 +215,7 @@ void log_error(const char* message);
     def test_comprehensive_header_to_header_relationships_integration(self):
         """Test comprehensive header to header relationships integration."""
         project_data = {
-            "math/vector.h": '''
+            "math/vector.h": """
 #ifndef VECTOR_H
 #define VECTOR_H
 
@@ -226,8 +226,8 @@ typedef struct {
 Vector3 vector_add(Vector3 a, Vector3 b);
 
 #endif
-''',
-            "math/matrix.h": '''
+""",
+            "math/matrix.h": """
 #ifndef MATRIX_H
 #define MATRIX_H
 
@@ -240,8 +240,8 @@ typedef struct {
 Matrix4 matrix_translate(Vector3 translation);
 
 #endif
-''',
-            "graphics/transform.h": '''
+""",
+            "graphics/transform.h": """
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
@@ -256,8 +256,8 @@ typedef struct {
 } Transform;
 
 #endif
-''',
-            "graphics/camera.h": '''
+""",
+            "graphics/camera.h": """
 #ifndef CAMERA_H
 #define CAMERA_H
 
@@ -271,22 +271,22 @@ typedef struct {
 } Camera;
 
 #endif
-''',
-            "main.c": '''
+""",
+            "main.c": """
 #include "graphics/camera.h"
 
 int main() {
     Camera camera;
     return 0;
 }
-'''
+""",
         }
 
         project_dir = self.create_temp_project(project_data)
         config_data = {
             "source_folders": [str(project_dir)],
             "include_depth": 4,
-            "recursive_search": True
+            "recursive_search": True,
         }
 
         results = self.run_full_pipeline(project_dir, config_data)
@@ -300,7 +300,7 @@ int main() {
         expected_files = {
             "main.c",
             "vector.h",
-            "matrix.h", 
+            "matrix.h",
             "transform.h",
             "camera.h",
         }
@@ -334,7 +334,7 @@ int main() {
     def test_comprehensive_typedef_relationships_integration(self):
         """Test comprehensive typedef relationships across files integration."""
         project_data = {
-            "main.c": '''
+            "main.c": """
 #include "database/models.h"
 
 int main() {
@@ -343,8 +343,8 @@ int main() {
     Order order = create_order(&user, &product);
     return 0;
 }
-''',
-            "database/models.h": '''
+""",
+            "database/models.h": """
 #ifndef MODELS_H
 #define MODELS_H
 
@@ -369,8 +369,8 @@ User create_user(const char* name, int age);
 Product create_product(const char* name, double price);
 
 #endif
-''',
-            "database/types.h": '''
+""",
+            "database/types.h": """
 #ifndef TYPES_H
 #define TYPES_H
 
@@ -396,8 +396,8 @@ typedef struct {
 } Address;
 
 #endif
-''',
-            "database/relationships.h": '''
+""",
+            "database/relationships.h": """
 #ifndef RELATIONSHIPS_H
 #define RELATIONSHIPS_H
 
@@ -414,14 +414,11 @@ typedef struct {
 Order create_order(void* user, void* product);
 
 #endif
-'''
+""",
         }
 
         project_dir = self.create_temp_project(project_data)
-        config_data = {
-            "source_folders": [str(project_dir)],
-            "include_depth": 3
-        }
+        config_data = {"source_folders": [str(project_dir)], "include_depth": 3}
 
         results = self.run_full_pipeline(project_dir, config_data)
 
@@ -469,6 +466,7 @@ class TestParserTokenizerIntegration(unittest.TestCase):
     def tearDown(self):
         """Clean up test fixtures."""
         import shutil
+
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def create_test_file(self, filename: str, content: str) -> Path:
@@ -481,7 +479,7 @@ class TestParserTokenizerIntegration(unittest.TestCase):
 
     def test_parser_tokenizer_struct_parsing_integration(self):
         """Test that parser correctly uses tokenizer for struct parsing."""
-        content = '''
+        content = """
 typedef struct ComplexStruct {
     int field1;
     char* field2;
@@ -495,7 +493,7 @@ typedef struct ComplexStruct {
         OPTION_C
     } options;
 } ComplexStruct;
-'''
+"""
 
         file_path = self.create_test_file("complex.h", content)
         file_model = self.parser.parse_file(file_path, "complex.h")
@@ -512,7 +510,7 @@ typedef struct ComplexStruct {
 
     def test_parser_tokenizer_function_parsing_integration(self):
         """Test that parser correctly uses tokenizer for function parsing."""
-        content = '''
+        content = """
 int simple_function(void);
 
 static inline double complex_function(
@@ -528,7 +526,7 @@ static inline double complex_function(
 }
 
 extern void* variadic_function(int count, ...);
-'''
+"""
 
         file_path = self.create_test_file("functions.h", content)
         file_model = self.parser.parse_file(file_path, "functions.h")
@@ -553,7 +551,7 @@ extern void* variadic_function(int count, ...);
 
     def test_parser_tokenizer_preprocessor_integration(self):
         """Test that parser handles preprocessor directives through tokenizer."""
-        content = '''
+        content = """
 #define MAX_SIZE 1024
 #define STRINGIFY(x) #x
 #define CONCAT(a, b) a ## b
@@ -576,7 +574,7 @@ typedef struct {
 #else
     typedef void* Handle;
 #endif
-'''
+"""
 
         file_path = self.create_test_file("preprocessor.h", content)
         file_model = self.parser.parse_file(file_path, "preprocessor.h")
@@ -591,7 +589,7 @@ typedef struct {
 
     def test_parser_tokenizer_complex_syntax_integration(self):
         """Test parser-tokenizer integration with complex C syntax."""
-        content = '''
+        content = """
 // Complex typedef with function pointers and arrays
 typedef struct {
     int (*compare_func)(const void* a, const void* b);
@@ -633,7 +631,7 @@ typedef union {
     } bits;
     uint32_t value;
 } NodeStatus;
-'''
+"""
 
         file_path = self.create_test_file("complex.h", content)
         file_model = self.parser.parse_file(file_path, "complex.h")
@@ -658,7 +656,7 @@ typedef union {
     def test_parser_tokenizer_error_handling_integration(self):
         """Test that parser gracefully handles tokenizer errors."""
         # Content with syntax errors that tokenizer should handle
-        content = '''
+        content = """
 // Valid content
 typedef struct {
     int valid_field;
@@ -675,7 +673,7 @@ typedef struct {
 typedef struct {
     float recovery_field;
 } RecoveryStruct;
-'''
+"""
 
         file_path = self.create_test_file("errors.h", content)
 
@@ -698,7 +696,7 @@ class TestEndToEndSystemIntegration(BaseFeatureTest):
     def test_complete_system_integration_real_world_project(self):
         """Test complete system integration with realistic project."""
         project_data = {
-            "src/main.c": '''
+            "src/main.c": """
 #include "game/game.h"
 #include "platform/platform.h"
 
@@ -726,8 +724,8 @@ int main(int argc, char** argv) {
 
     return 0;
 }
-''',
-            "src/game/game.h": '''
+""",
+            "src/game/game.h": """
 #ifndef GAME_H
 #define GAME_H
 
@@ -750,8 +748,8 @@ void game_render(Game* game);
 void game_shutdown(Game* game);
 
 #endif
-''',
-            "src/game/entities/player.h": '''
+""",
+            "src/game/entities/player.h": """
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -767,8 +765,8 @@ typedef struct {
 } Player;
 
 #endif
-''',
-            "src/game/world/level.h": '''
+""",
+            "src/game/world/level.h": """
 #ifndef LEVEL_H
 #define LEVEL_H
 
@@ -783,8 +781,8 @@ typedef struct {
 } Level;
 
 #endif
-''',
-            "src/game/rendering/renderer.h": '''
+""",
+            "src/game/rendering/renderer.h": """
 #ifndef RENDERER_H
 #define RENDERER_H
 
@@ -798,8 +796,8 @@ typedef struct {
 } Renderer;
 
 #endif
-''',
-            "src/platform/platform.h": '''
+""",
+            "src/platform/platform.h": """
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
@@ -817,8 +815,8 @@ double platform_get_delta_time(Platform* platform);
 void platform_shutdown(Platform* platform);
 
 #endif
-''',
-            "src/math/vector.h": '''
+""",
+            "src/math/vector.h": """
 #ifndef VECTOR_H
 #define VECTOR_H
 
@@ -830,8 +828,8 @@ Vector3 vector_add(Vector3 a, Vector3 b);
 Vector3 vector_scale(Vector3 v, float scalar);
 
 #endif
-''',
-            "src/physics/rigidbody.h": '''
+""",
+            "src/physics/rigidbody.h": """
 #ifndef RIGIDBODY_H
 #define RIGIDBODY_H
 
@@ -845,8 +843,8 @@ typedef struct {
 } RigidBody;
 
 #endif
-''',
-            "src/graphics/context.h": '''
+""",
+            "src/graphics/context.h": """
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
@@ -856,8 +854,8 @@ typedef struct {
 } GraphicsContext;
 
 #endif
-''',
-            "src/graphics/shader.h": '''
+""",
+            "src/graphics/shader.h": """
 #ifndef SHADER_H
 #define SHADER_H
 
@@ -867,8 +865,8 @@ typedef struct {
 } Shader;
 
 #endif
-''',
-            "src/graphics/mesh.h": '''
+""",
+            "src/graphics/mesh.h": """
 #ifndef MESH_H
 #define MESH_H
 
@@ -880,7 +878,7 @@ typedef struct {
 } Mesh;
 
 #endif
-'''
+""",
         }
 
         project_dir = self.create_temp_project(project_data)
@@ -889,7 +887,7 @@ typedef struct {
             "include_depth": 5,
             "recursive_search": True,
             "file_extensions": [".c", ".h"],
-            "generate_images": False
+            "generate_images": False,
         }
 
         # Run complete pipeline
@@ -937,8 +935,10 @@ typedef struct {
             self.assertIn("@enduml", content)
             # Should contain some of our defined structures
             self.assertTrue(
-                any(struct_name in content for struct_name in
-                    ["Game", "Player", "Platform", "Vector3"])
+                any(
+                    struct_name in content
+                    for struct_name in ["Game", "Player", "Platform", "Vector3"]
+                )
             )
 
 

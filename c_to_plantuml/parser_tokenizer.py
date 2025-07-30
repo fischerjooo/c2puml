@@ -1201,24 +1201,36 @@ def find_struct_fields(
                     if field_tokens[i].type == TokenType.LBRACKET:
                         name_end = i
                         break
-                
+
                 if name_end is not None:
-                    field_name = " ".join(t.value for t in field_tokens[name_start:name_end])
-                    
+                    field_name = " ".join(
+                        t.value for t in field_tokens[name_start:name_end]
+                    )
+
                     # Format the type properly - preserve spaces between tokens but not around brackets/parentheses
                     formatted_tokens = []
                     for j, token in enumerate(field_tokens):
-                        if token.type in [TokenType.LPAREN, TokenType.RPAREN, TokenType.LBRACKET, TokenType.RBRACKET]:
+                        if token.type in [
+                            TokenType.LPAREN,
+                            TokenType.RPAREN,
+                            TokenType.LBRACKET,
+                            TokenType.RBRACKET,
+                        ]:
                             # Don't add spaces around brackets/parentheses
                             formatted_tokens.append(token.value)
-                        elif j > 0 and field_tokens[j-1].type not in [TokenType.LPAREN, TokenType.RPAREN, TokenType.LBRACKET, TokenType.RBRACKET]:
+                        elif j > 0 and field_tokens[j - 1].type not in [
+                            TokenType.LPAREN,
+                            TokenType.RPAREN,
+                            TokenType.LBRACKET,
+                            TokenType.RBRACKET,
+                        ]:
                             # Add space before token if previous token wasn't a bracket/parenthesis
                             formatted_tokens.append(" " + token.value)
                         else:
                             # No space before token
                             formatted_tokens.append(token.value)
                     field_type = "".join(formatted_tokens)
-                    
+
                     # Validate and add the field
                     if (
                         field_name
@@ -1245,7 +1257,9 @@ def find_struct_fields(
                         formatted_type.append(" " + token.value)
                     else:
                         formatted_type.append(token.value)
-                field_type = "".join(formatted_type) + "[" + field_tokens[-2].value + "]"
+                field_type = (
+                    "".join(formatted_type) + "[" + field_tokens[-2].value + "]"
+                )
                 if (
                     field_name
                     and field_name.strip()
