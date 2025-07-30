@@ -1029,18 +1029,7 @@
       "file_path": "/workspace/example/source/complex_example.h",
       "functions": [],
       "globals": [],
-      "include_relations": [
-        {
-          "depth": 2,
-          "included_file": "config.h",
-          "source_file": "complex_example.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "logger.h",
-          "source_file": "complex_example.h"
-        }
-      ],
+      "include_relations": [],
       "includes": [
         "config.h",
         "logger.h"
@@ -1276,13 +1265,7 @@
       "file_path": "/workspace/example/source/first_level.h",
       "functions": [],
       "globals": [],
-      "include_relations": [
-        {
-          "depth": 2,
-          "included_file": "filtered_header.h",
-          "source_file": "first_level.h"
-        }
-      ],
+      "include_relations": [],
       "includes": [
         "filtered_header.h"
       ],
@@ -1346,6 +1329,41 @@
           "depth": 1,
           "included_file": "geometry.h",
           "source_file": "geometry.c"
+        },
+        {
+          "depth": 2,
+          "included_file": "math_utils.h",
+          "source_file": "geometry.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "sample.h",
+          "source_file": "geometry.h"
+        },
+        {
+          "depth": 4,
+          "included_file": "config.h",
+          "source_file": "logger.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "config.h",
+          "source_file": "math_utils.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "config.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "geometry.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "logger.h",
+          "source_file": "sample.h"
         }
       ],
       "includes": [
@@ -1406,18 +1424,7 @@
         }
       ],
       "globals": [],
-      "include_relations": [
-        {
-          "depth": 2,
-          "included_file": "math_utils.h",
-          "source_file": "geometry.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "sample.h",
-          "source_file": "geometry.h"
-        }
-      ],
+      "include_relations": [],
       "includes": [
         "math_utils.h",
         "sample.h"
@@ -1504,6 +1511,11 @@
           "depth": 1,
           "included_file": "logger.h",
           "source_file": "logger.c"
+        },
+        {
+          "depth": 2,
+          "included_file": "config.h",
+          "source_file": "logger.h"
         }
       ],
       "includes": [
@@ -1590,13 +1602,7 @@
         }
       ],
       "globals": [],
-      "include_relations": [
-        {
-          "depth": 4,
-          "included_file": "config.h",
-          "source_file": "logger.h"
-        }
-      ],
+      "include_relations": [],
       "includes": [
         "config.h",
         "stdio.h"
@@ -1674,6 +1680,11 @@
           "depth": 1,
           "included_file": "math_utils.h",
           "source_file": "math_utils.c"
+        },
+        {
+          "depth": 2,
+          "included_file": "config.h",
+          "source_file": "math_utils.h"
         }
       ],
       "includes": [
@@ -1756,13 +1767,7 @@
         }
       ],
       "globals": [],
-      "include_relations": [
-        {
-          "depth": 3,
-          "included_file": "config.h",
-          "source_file": "math_utils.h"
-        }
-      ],
+      "include_relations": [],
       "includes": [
         "config.h"
       ],
@@ -2372,6 +2377,16 @@
       ],
       "include_relations": [
         {
+          "depth": 2,
+          "included_file": "math_utils.h",
+          "source_file": "geometry.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "sample.h",
+          "source_file": "geometry.h"
+        },
+        {
           "depth": 1,
           "included_file": "geometry.h",
           "source_file": "sample.c"
@@ -2390,6 +2405,16 @@
           "depth": 1,
           "included_file": "sample.h",
           "source_file": "sample.c"
+        },
+        {
+          "depth": 3,
+          "included_file": "geometry.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "logger.h",
+          "source_file": "sample.h"
         }
       ],
       "includes": [
@@ -2501,23 +2526,7 @@
           "value": null
         }
       ],
-      "include_relations": [
-        {
-          "depth": 3,
-          "included_file": "config.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "geometry.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "logger.h",
-          "source_file": "sample.h"
-        }
-      ],
+      "include_relations": [],
       "includes": [
         "config.h",
         "geometry.h",
@@ -2707,6 +2716,46 @@
       ],
       "include_relations": [
         {
+          "depth": 2,
+          "included_file": "filtered_header.h",
+          "source_file": "first_level.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "math_utils.h",
+          "source_file": "geometry.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "sample.h",
+          "source_file": "geometry.h"
+        },
+        {
+          "depth": 4,
+          "included_file": "config.h",
+          "source_file": "logger.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "config.h",
+          "source_file": "math_utils.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "config.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "geometry.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "logger.h",
+          "source_file": "sample.h"
+        },
+        {
           "depth": 1,
           "included_file": "filtered_header.h",
           "source_file": "sample2.c"
@@ -2846,6 +2895,51 @@
       ],
       "include_relations": [
         {
+          "depth": 2,
+          "included_file": "config.h",
+          "source_file": "complex_example.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "logger.h",
+          "source_file": "complex_example.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "math_utils.h",
+          "source_file": "geometry.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "sample.h",
+          "source_file": "geometry.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "config.h",
+          "source_file": "logger.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "config.h",
+          "source_file": "math_utils.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "config.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "geometry.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "logger.h",
+          "source_file": "sample.h"
+        },
+        {
           "depth": 1,
           "included_file": "complex_example.h",
           "source_file": "typedef_test.c"
@@ -2864,6 +2958,21 @@
           "depth": 1,
           "included_file": "typedef_test.h",
           "source_file": "typedef_test.c"
+        },
+        {
+          "depth": 2,
+          "included_file": "config.h",
+          "source_file": "typedef_test.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "logger.h",
+          "source_file": "typedef_test.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "sample.h",
+          "source_file": "typedef_test.h"
         }
       ],
       "includes": [
@@ -2954,23 +3063,7 @@
       "file_path": "/workspace/example/source/typedef_test.h",
       "functions": [],
       "globals": [],
-      "include_relations": [
-        {
-          "depth": 2,
-          "included_file": "config.h",
-          "source_file": "typedef_test.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "logger.h",
-          "source_file": "typedef_test.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "sample.h",
-          "source_file": "typedef_test.h"
-        }
-      ],
+      "include_relations": [],
       "includes": [
         "config.h",
         "logger.h",

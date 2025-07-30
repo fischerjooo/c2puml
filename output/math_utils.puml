@@ -58,6 +58,7 @@ class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 ' Include relationships
 MATH_UTILS --> HEADER_MATH_UTILS : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
+HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 
 ' Declaration relationships
 HEADER_CONFIG ..> TYPEDEF_GLOBALSTATUS : <<declares>>

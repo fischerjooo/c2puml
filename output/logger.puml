@@ -61,6 +61,7 @@ class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 ' Include relationships
 LOGGER --> HEADER_LOGGER : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
+HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 
 ' Declaration relationships
 HEADER_CONFIG ..> TYPEDEF_GLOBALSTATUS : <<declares>>
