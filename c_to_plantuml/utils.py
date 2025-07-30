@@ -47,73 +47,7 @@ def detect_file_encoding(file_path: Path) -> str:
         return "utf-8"
 
 
-def get_filename_from_path(file_path: str) -> str:
-    """Extract filename from a file path (handles both absolute and relative paths)"""
-    return Path(file_path).name
 
-
-def find_file_by_filename(filename: str, file_dict: Dict[str, any]) -> Optional[str]:
-    """
-    Find a file in a dictionary by matching its filename.
-
-    Args:
-        filename: The filename to search for (e.g., "header.h")
-        file_dict: Dictionary with file paths as keys
-
-    Returns:
-        The matching file path key, or None if not found
-    """
-    # First try exact match
-    if filename in file_dict:
-        return filename
-
-    # Try matching by filename
-    for file_path in file_dict.keys():
-        if Path(file_path).name == filename:
-            return file_path
-
-    return None
-
-
-def normalize_file_path(file_path: str, source_folder: str = None) -> str:
-    """
-    Normalize file path for consistent handling.
-    For tracking purposes, we prefer relative paths when possible.
-
-    Args:
-        file_path: The file path to normalize
-        source_folder: Optional source folder for relative path conversion
-
-    Returns:
-        Normalized file path
-    """
-    path_obj = Path(file_path)
-
-    # If we have a source folder and the path is absolute, try to make it relative
-    if source_folder and path_obj.is_absolute():
-        try:
-            relative_path = path_obj.relative_to(Path(source_folder))
-            return str(relative_path)
-        except ValueError:
-            # Path is not relative to source folder, keep as is
-            pass
-
-    return str(path_obj)
-
-
-def create_file_key(file_path: str, source_folder: str = None) -> str:
-    """
-    Create a consistent file key for tracking.
-    Uses filename for uniqueness since filenames are unique in the project.
-
-    Args:
-        file_path: The file path
-        source_folder: Optional source folder for normalization
-
-    Returns:
-        A consistent file key (filename)
-    """
-    return get_filename_from_path(file_path)
 
 
 # Backward compatibility functions for existing tests
