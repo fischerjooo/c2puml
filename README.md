@@ -101,6 +101,37 @@ The `file_specific` feature allows you to configure file-specific settings for d
 
 Files without file-specific configuration will use the global settings. This enables fine-grained control over include processing for each root file, creating cleaner, more focused diagrams.
 
+### Model Transformations
+
+The transformer supports modifying the parsed model before generating diagrams:
+
+```json
+{
+  "transformations": {
+    "remove": {
+      "typedef": ["legacy_type", "temp_struct"],
+      "functions": ["debug_func", "internal_*"],
+      "macros": ["DEBUG_*", "TEMP_MACRO"],
+      "globals": ["old_global"],
+      "includes": ["deprecated.h"]
+    },
+    "rename": {
+      "typedef": {"old_name": "new_name"},
+      "functions": {"calculate": "compute"},
+      "macros": {"OLD_MACRO": "NEW_MACRO"},
+      "globals": {"old_var": "new_var"},
+      "includes": {"old.h": "new.h"},
+      "files": {"legacy.c": "modern.c"}
+    },
+    "file_selection": {
+      "selected_files": [".*main\\.c$"]
+    }
+  }
+}
+```
+
+**Note:** Transformation functionality provides configuration structure with stub implementations for future development.
+
 ```json
 {
   "source_folders": ["./src"],
@@ -124,13 +155,19 @@ Files without file-specific configuration will use the global settings. This ena
   },
   "transformations": {
     "remove": {
-      "structs": [],
+      "typedef": [],
       "functions": [],
-      "macros": []
+      "macros": [],
+      "globals": [],
+      "includes": []
     },
     "rename": {
-      "structs": {},
-      "functions": {}
+      "typedef": {},
+      "functions": {},
+      "macros": {},
+      "globals": {},
+      "includes": {},
+      "files": {}
     }
   }
 }

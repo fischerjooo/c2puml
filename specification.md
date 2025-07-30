@@ -221,9 +221,22 @@ The system uses a JSON-based configuration file with the following parameters:
     "exclude": []
   },
   "transformations": {
-    "rename": {},
+    "remove": {
+      "typedef": [],
+      "functions": [],
+      "macros": [],
+      "globals": [],
+      "includes": []
+    },
+    "rename": {
+      "typedef": {},
+      "functions": {},
+      "macros": {},
+      "globals": {},
+      "includes": {},
+      "files": {}
+    },
     "add": {},
-    "remove": {},
     "file_selection": {
       "selected_files": []
     }
@@ -416,27 +429,80 @@ The output can be customized through JSON configuration:
 - Recursive search configuration
 - File selection for transformer actions
 
-#### 5.7.1 File Selection for Transformer Actions
-The transformer supports applying actions to all model files or only selected ones:
+#### 5.7.1 Transformations Configuration
+
+The transformer supports comprehensive model transformations:
+
+##### Remove Operations
+Remove specific elements from the model:
 
 ```json
 {
   "transformations": {
-    "file_selection": {
-      "selected_files": [".*main\\.c$", ".*utils\\.c$"]
-    },
+    "remove": {
+      "typedef": ["unwanted_type", "legacy_type"],
+      "functions": ["deprecated_func", "internal_helper"],
+      "macros": ["DEBUG_MACRO", "TEMP_*"],
+      "globals": ["old_global_var"],
+      "includes": ["obsolete_header.h"]
+    }
+  }
+}
+```
+
+##### Rename Operations  
+Rename elements in the model:
+
+```json
+{
+  "transformations": {
     "rename": {
-      "structs": {
-        "old_name": "new_name"
+      "typedef": {
+        "old_struct_name": "new_struct_name",
+        "legacy_type": "modern_type"
+      },
+      "functions": {
+        "old_func": "new_func",
+        "calculate": "compute"
+      },
+      "macros": {
+        "OLD_MACRO": "NEW_MACRO"
+      },
+      "globals": {
+        "old_var": "new_var"
+      },
+      "includes": {
+        "old_header.h": "new_header.h"
+      },
+      "files": {
+        "legacy.c": "modern.c"
       }
     }
   }
 }
 ```
 
-- **`selected_files`**: List of regex patterns for files to apply transformations to
-- **Empty list or missing field**: Applies transformations to all files
-- **Non-empty list**: Applies transformations only to files matching the patterns
+##### File Selection
+Apply transformations to specific files only:
+
+```json
+{
+  "transformations": {
+    "file_selection": {
+      "selected_files": [".*main\\.c$", ".*utils\\.c$"]
+    }
+  }
+}
+```
+
+**Configuration Details:**
+- **`remove`**: Arrays of element names/patterns to remove
+- **`rename`**: Objects mapping old names to new names
+- **`file_selection.selected_files`**: Regex patterns for target files
+  - **Empty list or missing**: Applies to all files
+  - **Non-empty list**: Applies only to matching files
+
+**Note:** Current implementation provides configuration structure with stub methods for future development.
 
 #### 5.7.2 Filtering Separation
 - **Parser Step**: Essential file filtering (hidden files, common exclude patterns)

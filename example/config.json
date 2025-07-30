@@ -40,13 +40,19 @@
   },
   "transformations": {
     "remove": {
-      "structs": [],
+      "typedef": [],
       "functions": [],
-      "macros": []
+      "macros": [],
+      "globals": [],
+      "includes": []
     },
     "rename": {
-      "structs": {},
-      "functions": {}
+      "typedef": {},
+      "functions": {},
+      "macros": {},
+      "globals": {},
+      "includes": {},
+      "files": {}
     }
   }
 }
