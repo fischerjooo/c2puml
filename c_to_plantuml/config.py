@@ -27,7 +27,6 @@ class Config:
 
     # Filters
     file_filters: Dict[str, List[str]] = field(default_factory=dict)
-    element_filters: Dict[str, Dict[str, List[str]]] = field(default_factory=dict)
     file_specific: Dict[str, Dict[str, Any]] = field(default_factory=dict)
 
     # Transformations
@@ -36,12 +35,6 @@ class Config:
     # Compiled patterns for performance
     file_include_patterns: List[re.Pattern] = field(default_factory=list)
     file_exclude_patterns: List[re.Pattern] = field(default_factory=list)
-    element_include_patterns: Dict[str, Dict[str, List[re.Pattern]]] = field(
-        default_factory=dict
-    )
-    element_exclude_patterns: Dict[str, Dict[str, List[re.Pattern]]] = field(
-        default_factory=dict
-    )
 
     def __init__(self, *args, **kwargs):
         """Initialize configuration with keyword arguments or a single dict"""
@@ -66,8 +59,6 @@ class Config:
             self.include_depth = 1
         if not hasattr(self, "file_filters"):
             self.file_filters = {}
-        if not hasattr(self, "element_filters"):
-            self.element_filters = {}
         if not hasattr(self, "file_specific"):
             self.file_specific = {}
         if not hasattr(self, "transformations"):
@@ -126,34 +117,7 @@ class Config:
                 self.logger.warning("Invalid exclude pattern '%s': %s", pattern, e)
                 # Skip invalid patterns
 
-        # Compile element filter patterns with error handling
-        self.element_include_patterns = {}
-        self.element_exclude_patterns = {}
 
-        for element_type, filters in self.element_filters.items():
-            self.element_include_patterns[element_type] = []
-            for pattern in filters.get("include", []):
-                try:
-                    self.element_include_patterns[element_type].append(
-                        re.compile(pattern)
-                    )
-                except re.error as e:
-                    self.logger.warning(
-                        "Invalid %s include pattern '%s': %s", element_type, pattern, e
-                    )
-                    # Skip invalid patterns
-
-            self.element_exclude_patterns[element_type] = []
-            for pattern in filters.get("exclude", []):
-                try:
-                    self.element_exclude_patterns[element_type].append(
-                        re.compile(pattern)
-                    )
-                except re.error as e:
-                    self.logger.warning(
-                        "Invalid %s exclude pattern '%s': %s", element_type, pattern, e
-                    )
-                    # Skip invalid patterns
 
     @classmethod
     def load(cls, config_file: str) -> "Config":
@@ -193,7 +157,6 @@ class Config:
             "recursive_search": self.recursive_search,
             "include_depth": self.include_depth,
             "file_filters": self.file_filters,
-            "element_filters": self.element_filters,
             "file_specific": self.file_specific,
             "transformations": self.transformations,
         }
@@ -213,7 +176,7 @@ class Config:
             file_config.get("include_filter") 
             for file_config in self.file_specific.values()
         )
-        return bool(self.file_filters or self.element_filters or has_include_filters)
+        return bool(self.file_filters or has_include_filters)
 
     def _should_include_file(self, file_path: str) -> bool:
         """Check if a file should be included based on filters"""
@@ -233,146 +196,7 @@ class Config:
 
         return False
 
-    def _apply_element_filters(self, file_model) -> Any:
-        """Apply element filters to a file model"""
 
-        # Create a copy of the file model to avoid modifying the original
-        filtered_model = FileModel(
-            file_path=file_model.file_path,
-            structs=file_model.structs.copy(),
-            enums=file_model.enums.copy(),
-            unions=file_model.unions.copy(),
-            functions=file_model.functions.copy(),
-            globals=file_model.globals.copy(),
-            includes=file_model.includes.copy(),
-            macros=file_model.macros.copy(),
-            aliases=file_model.aliases.copy(),
-            # typedef_relations removed - tag names are now in struct/enum/union
-        )
-
-        # Filter structs
-        if "structs" in self.element_filters:
-            filtered_model.structs = self._filter_dict(
-                filtered_model.structs, self.element_filters["structs"]
-            )
-
-        # Filter enums
-        if "enums" in self.element_filters:
-            filtered_model.enums = self._filter_dict(
-                filtered_model.enums, self.element_filters["enums"]
-            )
-
-        # Filter unions
-        if "unions" in self.element_filters:
-            filtered_model.unions = self._filter_dict(
-                filtered_model.unions, self.element_filters["unions"]
-            )
-
-        # Filter functions
-        if "functions" in self.element_filters:
-            filtered_model.functions = self._filter_list(
-                filtered_model.functions,
-                self.element_filters["functions"],
-                key=lambda f: f.name,
-            )
-
-        # Filter globals
-        if "globals" in self.element_filters:
-            filtered_model.globals = self._filter_list(
-                filtered_model.globals,
-                self.element_filters["globals"],
-                key=lambda g: g.name,
-            )
-
-        # Filter macros
-        if "macros" in self.element_filters:
-            filtered_model.macros = self._filter_list(
-                filtered_model.macros, self.element_filters["macros"]
-            )
-
-        # Filter aliases
-        if "aliases" in self.element_filters:
-            filtered_model.aliases = self._filter_dict(
-                filtered_model.aliases, self.element_filters["aliases"]
-            )
-
-        return filtered_model
-
-    def _filter_dict(self, items: dict, filters: dict) -> dict:
-        """Filter dictionary items based on include/exclude patterns"""
-        include_patterns = [
-            re.compile(pattern) for pattern in filters.get("include", [])
-        ]
-        exclude_patterns = [
-            re.compile(pattern) for pattern in filters.get("exclude", [])
-        ]
-
-        filtered_items = {}
-
-        for name, item in items.items():
-            # Check include patterns
-            if include_patterns:
-                should_include = False
-                for pattern in include_patterns:
-                    if pattern.search(name):
-                        should_include = True
-                        break
-                if not should_include:
-                    continue
-
-            # Check exclude patterns
-            should_exclude = False
-            for pattern in exclude_patterns:
-                if pattern.search(name):
-                    should_exclude = True
-                    break
-            if should_exclude:
-                continue
-
-            filtered_items[name] = item
-
-        return filtered_items
-
-    def _filter_list(self, items: list, filters: dict, key=None) -> list:
-        """Filter list items based on include/exclude patterns"""
-        include_patterns = [
-            re.compile(pattern) for pattern in filters.get("include", [])
-        ]
-        exclude_patterns = [
-            re.compile(pattern) for pattern in filters.get("exclude", [])
-        ]
-
-        filtered_items = []
-
-        for item in items:
-            # Get the name to check against patterns
-            if key:
-                name = key(item)
-            else:
-                name = str(item)
-
-            # Check include patterns
-            if include_patterns:
-                should_include = False
-                for pattern in include_patterns:
-                    if pattern.search(name):
-                        should_include = True
-                        break
-                if not should_include:
-                    continue
-
-            # Check exclude patterns
-            should_exclude = False
-            for pattern in exclude_patterns:
-                if pattern.search(name):
-                    should_exclude = True
-                    break
-            if should_exclude:
-                continue
-
-            filtered_items.append(item)
-
-        return filtered_items
 
 
 
@@ -389,7 +213,6 @@ class Config:
             and self.recursive_search == other.recursive_search
             and self.include_depth == other.include_depth
             and self.file_filters == other.file_filters
-            and self.element_filters == other.element_filters
             and self.file_specific == other.file_specific
             and self.transformations == other.transformations
         )

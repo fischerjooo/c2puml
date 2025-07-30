@@ -117,9 +117,7 @@ class Transformer:
         if "file_filters" in config:
             model = self._apply_file_filters(model, config["file_filters"])
 
-        # Apply element filters
-        if "element_filters" in config:
-            model = self._apply_element_filters(model, config["element_filters"])
+
 
         # Apply transformations with file selection support
         if "transformations" in config:
@@ -284,14 +282,7 @@ class Transformer:
         )
         return model
 
-    def _apply_element_filters(
-        self, model: ProjectModel, filters: Dict[str, Any]
-    ) -> ProjectModel:
-        """Apply element-level filters"""
-        for file_path, file_model in model.files.items():
-            model.files[file_path] = self._filter_file_elements(file_model, filters)
 
-        return model
 
     def _apply_include_filters(
         self, model: ProjectModel, include_filters: Dict[str, List[str]]
@@ -450,47 +441,7 @@ class Transformer:
 
 
 
-    def _filter_file_elements(
-        self, file_model: FileModel, filters: Dict[str, Any]
-    ) -> FileModel:
-        """Filter elements within a file"""
-        # Filter structs
-        if "structs" in filters:
-            file_model.structs = self._filter_dict(
-                file_model.structs, filters["structs"]
-            )
 
-        # Filter enums
-        if "enums" in filters:
-            file_model.enums = self._filter_dict(file_model.enums, filters["enums"])
-
-        # Filter unions
-        if "unions" in filters:
-            file_model.unions = self._filter_dict(file_model.unions, filters["unions"])
-
-        # Filter functions
-        if "functions" in filters:
-            file_model.functions = self._filter_list(
-                file_model.functions, filters["functions"], key=lambda f: f.name
-            )
-
-        # Filter globals
-        if "globals" in filters:
-            file_model.globals = self._filter_list(
-                file_model.globals, filters["globals"], key=lambda g: g.name
-            )
-
-        # Filter macros
-        if "macros" in filters:
-            file_model.macros = self._filter_list(file_model.macros, filters["macros"])
-
-        # Filter aliases (replaces typedefs)
-        if "aliases" in filters:
-            file_model.aliases = self._filter_dict(
-                file_model.aliases, filters["aliases"]
-            )
-
-        return file_model
 
     def _apply_model_transformations(
         self, model: ProjectModel, transformations: Dict[str, Any]

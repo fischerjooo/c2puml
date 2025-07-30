@@ -68,7 +68,7 @@ Create `config.json` for customization. The configuration supports multiple filt
 ### Filtering Options
 
 - **file_filters**: Filter files by path patterns
-- **element_filters**: Filter specific elements (structs, functions, etc.) by name patterns
+
 - **file_specific**: Configure file-specific settings including include filters for each root C file
 
 ### File-Specific Configuration
@@ -111,16 +111,6 @@ Files without file-specific configuration will use the global settings. This ena
   "file_filters": {
     "include": [".*\\.c$", ".*\\.h$"],
     "exclude": [".*test.*"]
-  },
-  "element_filters": {
-    "structs": {
-      "include": ["^[A-Z][a-zA-Z0-9_]*$"],
-      "exclude": ["^test_"]
-    },
-    "functions": {
-      "include": ["^[a-z][a-zA-Z0-9_]*$"],
-      "exclude": ["^test_"]
-    }
   },
   "file_specific": {
     "main.c": {

@@ -12,32 +12,7 @@
     "include": [],
     "exclude": []
   },
-  "element_filters": {
-    "structs": {
-      "include": [],
-      "exclude": []
-    },
-    "functions": {
-      "include": [],
-      "exclude": []
-    },
-    "enums": {
-      "include": [],
-      "exclude": []
-    },
-    "unions": {
-      "include": [],
-      "exclude": []
-    },
-    "macros": {
-      "include": [],
-      "exclude": []
-    },
-    "aliases": {
-      "include": [],
-      "exclude": []
-    }
-  },
+
   "file_specific": {
     "sample.c": {
       "include_filter": [

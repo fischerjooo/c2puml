@@ -61,7 +61,6 @@ class TestConfig(unittest.TestCase):
                 "include": [".*\\.c$", ".*\\.h$"],
                 "exclude": ["test_.*\\.c$"],
             },
-            "element_filters": {
                 "structs": {"include": ["Person", "Config"], "exclude": ["Internal.*"]}
             },
         }
@@ -94,7 +93,6 @@ class TestConfig(unittest.TestCase):
                 "output_dir": "./output",
                 "recursive_search": False,
                 "file_filters": {"include": [".*\\.c$"]},
-                "element_filters": {},
             }
         )
 
@@ -122,7 +120,6 @@ class TestConfig(unittest.TestCase):
                     "include": [".*\\.c$", ".*\\.h$"],
                     "exclude": ["test_.*\\.c$", ".*\\.tmp$"],
                 },
-                "element_filters": {},
             }
         )
 
@@ -139,7 +136,6 @@ class TestConfig(unittest.TestCase):
         """Test element filtering functionality"""
         config = Config(
             {
-                "element_filters": {
                     "structs": {
                         "include": ["Person", "Config"],
                         "exclude": ["Internal.*"],
@@ -174,7 +170,6 @@ class TestConfig(unittest.TestCase):
         )
 
         # Apply filters
-        filtered_model = config._apply_element_filters(file_model)
 
         # Check struct filtering
         self.assertIn("Person", filtered_model.structs)
@@ -192,7 +187,6 @@ class TestConfig(unittest.TestCase):
         config = Config(
             {
                 "file_filters": {"include": [".*\\.c$"], "exclude": ["test_.*\\.c$"]},
-                "element_filters": {"structs": {"include": ["Person"]}},
             }
         )
 
@@ -246,7 +240,6 @@ class TestConfig(unittest.TestCase):
                     "include": ["[invalid_regex"],
                     "exclude": ["[invalid_regex"],
                 },
-                "element_filters": {},
             }
         )
 
@@ -264,7 +257,6 @@ class TestConfig(unittest.TestCase):
                 "project_name": "test_project",
                 "source_folders": ["/path/to/project"],
                 "file_filters": {},
-                "element_filters": {},
             }
         )
 
@@ -282,7 +274,6 @@ class TestConfig(unittest.TestCase):
                 "source_folders": ["/path/to/project"],
                 "output_dir": "./output",
                 "file_filters": {},
-                "element_filters": {},
             }
         )
 
@@ -292,7 +283,6 @@ class TestConfig(unittest.TestCase):
                 "source_folders": ["/path/to/project"],
                 "output_dir": "./output",
                 "file_filters": {},
-                "element_filters": {},
             }
         )
 
@@ -302,7 +292,6 @@ class TestConfig(unittest.TestCase):
                 "source_folders": ["/path/to/project"],
                 "output_dir": "./output",
                 "file_filters": {},
-                "element_filters": {},
             }
         )
 
@@ -319,7 +308,6 @@ class TestConfig(unittest.TestCase):
                 "project_name": "test_project",
                 "source_folders": ["/path/to/project"],
                 "file_filters": {},
-                "element_filters": {},
             }
         )
 

@@ -220,11 +220,6 @@ The system uses a JSON-based configuration file with the following parameters:
     "include": [],
     "exclude": []
   },
-  "element_filters": {
-    "structs": {"include": [], "exclude": []},
-    "enums": {"include": [], "exclude": []},
-    "functions": {"include": [], "exclude": []}
-  },
   "transformations": {
     "rename": {},
     "add": {},
@@ -244,7 +239,7 @@ The system uses a JSON-based configuration file with the following parameters:
 - **`recursive_search`**: Whether to search subdirectories recursively (default: true)
 - **`include_depth`**: Depth for processing include relationships (default: 1)
 - **`file_filters`**: Regex patterns for including/excluding files
-- **`element_filters`**: Regex patterns for filtering code elements
+
 - **`transformations`**: Rules for model transformation and file selection
 
 **Note**: The `recursive_search` parameter was renamed from `recursive` in a recent update for better clarity. The system maintains backward compatibility for configuration loading.
