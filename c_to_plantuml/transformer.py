@@ -605,15 +605,8 @@ class Transformer:
                     continue
 
                 # Create include relation using FileModel names for consistency
-                # For tests (tmp directories), use full paths only if needed; otherwise use names
-                source_file = (
-                    file_model.file_path if "tmp" in file_model.file_path 
-                    else file_model.name
-                )
-                included_file = (
-                    file_map[include_name].file_path if "tmp" in file_map[include_name].file_path 
-                    else file_map[include_name].name
-                )
+                source_file = file_model.name
+                included_file = file_map[include_name].name
                 
                 include_relation = IncludeRelation(
                     source_file=source_file,
@@ -662,13 +655,8 @@ class Transformer:
             for ext in extensions:
                 file_path = search_path / f"{include_name}{ext}"
                 if file_path.exists():
-                    # For backward compatibility with tests, return full path if 
-                    # it's a test
-                    # Otherwise return filename for simplified tracking
-                    if "tmp" in str(file_path):
-                        return str(file_path.resolve())
-                    else:
-                        return file_path.name
+                    # Always return filename for simplified tracking using FileModel.name
+                    return file_path.name
 
         return None
 

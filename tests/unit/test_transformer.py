@@ -553,9 +553,9 @@ class TestTransformer(unittest.TestCase):
             header_file = include_dir / "test.h"
             header_file.touch()
 
-            # Test finding the file
+            # Test finding the file - now returns filename instead of full path
             result = self.transformer._find_included_file("test.h", temp_dir)
-            self.assertEqual(result, str(header_file.resolve()))
+            self.assertEqual(result, header_file.name)
 
     def test_find_included_file_not_found(self):
         """Test finding non-existent included file"""
