@@ -46,7 +46,8 @@
       "^sample\\.h$",
       "^math_utils\\.h$",
       "^logger\\.h$",
-      "^geometry\\.h$"
+      "^geometry\\.h$",
+      "^config\\.h$"
     ],
     "utils.c": [
       "^math\\.h$",
