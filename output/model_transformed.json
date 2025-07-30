@@ -3008,6 +3008,300 @@
       "structs": {},
       "unions": {}
     },
+    "transformed.c": {
+      "aliases": {},
+      "enums": {},
+      "file_path": "/workspace/example/source/transformed.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "keep_this_function",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "legacy_calculate",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "legacy_print_info",
+          "parameters": [
+            {
+              "name": "message",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "old_create_point",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "void *"
+        }
+      ],
+      "globals": [],
+      "include_relations": [
+        {
+          "depth": 1,
+          "included_file": "stdio.h",
+          "source_file": "transformed.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "stdlib.h",
+          "source_file": "transformed.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "string.h",
+          "source_file": "transformed.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "transformed.h",
+          "source_file": "transformed.c"
+        },
+        {
+          "depth": 2,
+          "included_file": "stdio.h",
+          "source_file": "transformed.h"
+        }
+      ],
+      "includes": [
+        "stdio.h",
+        "stdlib.h",
+        "string.h",
+        "transformed.h"
+      ],
+      "macros": [
+        "LEGACY_VERSION"
+      ],
+      "name": "transformed.c",
+      "structs": {
+        "old_point": {
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "old_point",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {}
+    },
+    "transformed.h": {
+      "aliases": {},
+      "enums": {
+        "status_t": {
+          "name": "status_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "STATUS_OK",
+              "value": null
+            },
+            {
+              "name": "STATUS_ERROR",
+              "value": null
+            },
+            {
+              "name": "STATUS_PENDING",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/example/source/transformed.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "cleanup_resources",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "initialize_system",
+          "parameters": [],
+          "return_type": "status_t"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "keep_this_function",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "legacy_cleanup",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "legacy_init",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "void *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "old_create_config",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "void *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "process_data",
+          "parameters": [
+            {
+              "name": "point",
+              "type": "const point3d_t *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "system_path",
+          "type": "char *",
+          "value": null
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "stdio.h"
+      ],
+      "macros": [
+        "LEGACY_API_VERSION",
+        "TRANSFORMED_H"
+      ],
+      "name": "transformed.h",
+      "structs": {
+        "modern_config": {
+          "fields": [
+            {
+              "name": "version",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "char[64]",
+              "value": null
+            },
+            {
+              "name": "flags",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "modern_config",
+          "tag_name": "",
+          "uses": []
+        },
+        "point3d_t": {
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "z",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "point3d_t",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {}
+    },
     "typedef_test.c": {
       "aliases": {},
       "enums": {},

@@ -2621,6 +2621,539 @@
       "structs": {},
       "unions": {}
     },
+    "transformed.c": {
+      "aliases": {
+        "legacy_int_t": {
+          "name": "legacy_int_t",
+          "original_type": "int",
+          "uses": []
+        },
+        "legacy_string_t": {
+          "name": "legacy_string_t",
+          "original_type": "char *",
+          "uses": []
+        }
+      },
+      "enums": {
+        "legacy_color": {
+          "name": "legacy_color",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "LEGACY_RED",
+              "value": null
+            },
+            {
+              "name": "LEGACY_GREEN",
+              "value": null
+            },
+            {
+              "name": "LEGACY_BLUE",
+              "value": null
+            }
+          ]
+        },
+        "old_status": {
+          "name": "old_status",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "OLD_STATUS_PENDING",
+              "value": null
+            },
+            {
+              "name": "OLD_STATUS_ACTIVE",
+              "value": null
+            },
+            {
+              "name": "OLD_STATUS_INACTIVE",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/example/source/transformed.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "debug_log",
+          "parameters": [
+            {
+              "name": "msg",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "deprecated_print_info",
+          "parameters": [
+            {
+              "name": "message",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "keep_this_function",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "legacy_calculate",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "old_create_point",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "old_point_t *"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "test_function_one",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "test_function_two",
+          "parameters": [],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "deprecated_message",
+          "type": "legacy_string_t",
+          "value": "\"old version\""
+        },
+        {
+          "name": "old_global_counter",
+          "type": "int",
+          "value": "0"
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "stdio.h",
+        "stdlib.h",
+        "string.h",
+        "transformed.h"
+      ],
+      "macros": [
+        "DEPRECATED_MAX_SIZE",
+        "LEGACY_DEBUG",
+        "OLD_VERSION"
+      ],
+      "name": "transformed.c",
+      "structs": {
+        "legacy_data": {
+          "fields": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "char[32]",
+              "value": null
+            },
+            {
+              "name": "position",
+              "type": "old_point_t",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "legacy_data",
+          "tag_name": "",
+          "uses": [
+            "old_point_t"
+          ]
+        },
+        "old_point": {
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "old_point",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {
+        "old_value": {
+          "fields": [
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "f",
+              "type": "float",
+              "value": null
+            },
+            {
+              "name": "c",
+              "type": "char",
+              "value": null
+            }
+          ],
+          "name": "old_value",
+          "tag_name": "",
+          "uses": []
+        }
+      }
+    },
+    "transformed.h": {
+      "aliases": {
+        "legacy_handle_t": {
+          "name": "legacy_handle_t",
+          "original_type": "void *",
+          "uses": []
+        },
+        "legacy_uint_t": {
+          "name": "legacy_uint_t",
+          "original_type": "unsigned int",
+          "uses": []
+        },
+        "old_config_t": {
+          "name": "old_config_t",
+          "original_type": "void *",
+          "uses": []
+        },
+        "old_point_t": {
+          "name": "old_point_t",
+          "original_type": "void *",
+          "uses": []
+        }
+      },
+      "enums": {
+        "legacy_mode": {
+          "name": "legacy_mode",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "LEGACY_MODE_READ",
+              "value": null
+            },
+            {
+              "name": "LEGACY_MODE_WRITE",
+              "value": null
+            },
+            {
+              "name": "LEGACY_MODE_APPEND",
+              "value": null
+            }
+          ]
+        },
+        "old_error_type": {
+          "name": "old_error_type",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "OLD_ERROR_NONE",
+              "value": null
+            },
+            {
+              "name": "OLD_ERROR_INVALID",
+              "value": null
+            },
+            {
+              "name": "OLD_ERROR_MEMORY",
+              "value": null
+            }
+          ]
+        },
+        "status_t": {
+          "name": "status_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "STATUS_OK",
+              "value": null
+            },
+            {
+              "name": "STATUS_ERROR",
+              "value": null
+            },
+            {
+              "name": "STATUS_PENDING",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/example/source/transformed.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "cleanup_resources",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "debug_validate_config",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "old_config_t *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "deprecated_cleanup",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "initialize_system",
+          "parameters": [],
+          "return_type": "status_t"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "keep_this_function",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "legacy_init",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "old_config_t *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "old_create_config",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "old_config_t *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "process_data",
+          "parameters": [
+            {
+              "name": "point",
+              "type": "const point3d_t *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "test_helper_function",
+          "parameters": [],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "legacy_path",
+          "type": "char *",
+          "value": null
+        },
+        {
+          "name": "old_error_code",
+          "type": "int",
+          "value": null
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "stdio.h",
+        "time.h",
+        "unistd.h"
+      ],
+      "macros": [
+        "DEPRECATED_FLAG",
+        "LEGACY_BUFFER_SIZE",
+        "OLD_API_VERSION",
+        "TRANSFORMED_H"
+      ],
+      "name": "transformed.h",
+      "structs": {
+        "legacy_node": {
+          "fields": [
+            {
+              "name": "data",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "next",
+              "type": "struct legacy_node *",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "legacy_node",
+          "tag_name": "",
+          "uses": [
+            "legacy_node"
+          ]
+        },
+        "old_config": {
+          "fields": [
+            {
+              "name": "version",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "char[64]",
+              "value": null
+            },
+            {
+              "name": "flags",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "old_config",
+          "tag_name": "",
+          "uses": []
+        },
+        "point3d_t": {
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "z",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "point3d_t",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {
+        "old_variant": {
+          "fields": [
+            {
+              "name": "int_val",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "double_val",
+              "type": "double",
+              "value": null
+            },
+            {
+              "name": "string_val",
+              "type": "char *",
+              "value": null
+            }
+          ],
+          "name": "old_variant",
+          "tag_name": "",
+          "uses": []
+        }
+      }
+    },
     "typedef_test.c": {
       "aliases": {},
       "enums": {},

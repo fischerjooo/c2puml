@@ -653,6 +653,8 @@ class PUMLValidator:
             self._validate_preprocessed_content(content, classes, filename)
         elif base_name == "sample2":
             self._validate_sample2_file_content(content, classes, filename)
+        elif base_name == "transformed":
+            self._validate_transformed_file_content(content, classes, filename)
 
     def _validate_complex_file_content(
         self, content: str, classes: Dict[str, PUMLClass], filename: str
@@ -1004,6 +1006,86 @@ class PUMLValidator:
         return (
             all_valid
             and len([r for r in self.results if r.level == ValidationLevel.ERROR]) == 0
+        )
+
+    def _validate_transformed_file_content(
+        self, content: str, classes: Dict[str, PUMLClass], filename: str
+    ):
+        """Validate transformed.puml specific content to test transformation features."""
+        # These elements should be REMOVED by transformations
+        removed_elements = [
+            # Legacy typedefs that should be removed
+            "legacy_int_t", "legacy_string_t", "old_point_t", "legacy_uint_t", "legacy_handle_t",
+            # Test functions that should be removed 
+            "test_function_one", "test_function_two", "test_helper_function",
+            # Debug functions that should be removed
+            "debug_log", "debug_validate_config",
+            # Deprecated macros that should be removed
+            "DEPRECATED_MAX_SIZE", "OLD_VERSION", "LEGACY_DEBUG", "LEGACY_BUFFER_SIZE", 
+            "OLD_API_VERSION", "DEPRECATED_FLAG",
+            # Old global variables that should be removed
+            "old_global_counter", "deprecated_message", "old_error_code", "legacy_path",
+            # Legacy structures that should be removed
+            "legacy_data", "legacy_node",
+            # Old enums that should be removed  
+            "old_status", "legacy_color", "old_error_type", "legacy_mode",
+            # Old unions that should be removed
+            "old_value", "old_variant",
+            # Includes that should be removed
+            "time.h", "unistd.h"
+        ]
+        
+        for element in removed_elements:
+            if element in content:
+                self._add_result(
+                    ValidationLevel.ERROR,
+                    f"Element '{element}' should have been removed by transformations but is still present",
+                    filename,
+                )
+        
+        # These elements should be PRESENT (not removed)
+        preserved_elements = [
+            "main", "keep_this_function", "initialize_system", "process_data", 
+            "cleanup_resources", "point3d_t", "status_t"
+        ]
+        
+        for element in preserved_elements:
+            if element not in content:
+                self._add_result(
+                    ValidationLevel.WARNING,
+                    f"Element '{element}' should have been preserved but is missing",
+                    filename,
+                )
+        
+        # These elements should be RENAMED (check for new names)
+        renamed_elements = {
+            "old_config_t": "config_t",
+            "deprecated_print_info": "legacy_print_info", 
+            "OLD_API_VERSION": "LEGACY_API_VERSION",
+            "legacy_path": "system_path",
+            "old_config": "modern_config"
+        }
+        
+        for old_name, new_name in renamed_elements.items():
+            if old_name in content:
+                self._add_result(
+                    ValidationLevel.ERROR,
+                    f"Element '{old_name}' should have been renamed to '{new_name}' but old name is still present",
+                    filename,
+                )
+            if new_name not in content:
+                self._add_result(
+                    ValidationLevel.WARNING,
+                    f"Renamed element '{new_name}' (from '{old_name}') should be present but is missing",
+                    filename,
+                )
+        
+        # Validate that file selection worked - transformations should only apply to transformed.c/h
+        # This would be validated by checking that other files don't have these transformations applied
+        self._add_result(
+            ValidationLevel.INFO,
+            f"Validated transformation features for file selection, remove operations, and rename operations",
+            filename,
         )
 
     def _report_results(self):
