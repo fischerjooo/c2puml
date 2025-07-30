@@ -38,6 +38,39 @@
       "include_depth": 5
     }
   },
+  "transformations_01_cleanup": {
+    "file_selection": [".*transformed\\.(c|h)$"],
+    "remove": {
+      "typedef": ["^legacy_.*", "^old_.*"],
+      "functions": ["^test_.*", "^debug_.*"],
+      "macros": ["^DEPRECATED_.*", "^LEGACY_.*"],
+      "globals": ["^old_.*", "^deprecated_.*"],
+      "includes": ["^time\\.h$", "^unistd\\.h$"],
+      "structs": ["^legacy_.*"],
+      "enums": ["^old_.*", "^legacy_.*"],
+      "unions": ["^old_.*"]
+    }
+  },
+  "transformations_02_rename": {
+    "file_selection": [".*transformed\\.(c|h)$"],
+    "rename": {
+      "typedef": {
+        "^old_config_t$": "config_t"
+      },
+      "functions": {
+        "^deprecated_(.*)": "legacy_\\1"
+      },
+      "macros": {
+        "^OLD_(.*)": "LEGACY_\\1"
+      },
+      "globals": {
+        "^legacy_path$": "system_path"
+      },
+      "structs": {
+        "^old_config$": "modern_config"
+      }
+    }
+  },
   "transformations": {
     "remove": {
       "typedef": [],
