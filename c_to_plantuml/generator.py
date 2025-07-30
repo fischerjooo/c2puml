@@ -573,17 +573,20 @@ class Generator:
         include_tree: Dict[str, FileModel],
         uml_ids: Dict[str, str],
     ):
-        """Generate include relationships between files using include_relations from .c files"""
+        """Generate include relationships using include_relations from .c files, with fallback to includes"""
         lines.append("' Include relationships")
 
-        # Process all files for include relationships
+        # Only process .c files - never use .h files for include relationships
         for file_name, file_model in sorted(include_tree.items()):
+            if not file_name.endswith(".c"):
+                continue  # Skip .h files - they should not contribute include relationships
+
             file_uml_id = self._get_file_uml_id(file_name, uml_ids)
             if not file_uml_id:
                 continue
 
-            # For .c files, prefer include_relations if available (from transformation)
-            if file_name.endswith(".c") and file_model.include_relations:
+            # Prefer include_relations if available (from transformation)
+            if file_model.include_relations:
                 # Use include_relations for precise control based on include_depth and include_filters
                 for relation in sorted(
                     file_model.include_relations,
@@ -599,8 +602,8 @@ class Generator:
                             f"{source_uml_id} --> {included_uml_id} : <<include>>"
                         )
             else:
-                # Fall back to using includes field for backward compatibility
-                # or when include_relations is not populated (e.g., after parsing only)
+                # Fall back to using includes field for .c files only (backward compatibility)
+                # This happens when no transformation was applied (parsing only)
                 for include in sorted(file_model.includes):
                     clean_include = include.strip('<>"')
                     include_filename = Path(clean_include).name
