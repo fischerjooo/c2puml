@@ -121,16 +121,14 @@ class Transformer:
         if "element_filters" in config:
             model = self._apply_element_filters(model, config["element_filters"])
 
-        # Apply include filters for each root file
-        include_filters = config.get("include_filters", {})
-        if include_filters:
-            model = self._apply_include_filters(model, include_filters)
-
         # Apply transformations with file selection support
         if "transformations" in config:
             model = self._apply_model_transformations(model, config["transformations"])
 
         # Apply include depth processing with include_filters support
+        # NOTE: include_filters are used ONLY for generating include_relations, 
+        # not for modifying the original includes arrays
+        include_filters = config.get("include_filters", {})
         if "include_depth" in config and config["include_depth"] > 1:
             model = self._process_include_relations(
                 model, config["include_depth"], include_filters

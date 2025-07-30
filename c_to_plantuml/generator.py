@@ -179,12 +179,20 @@ class Generator:
             if file_key in project_model.files:
                 include_tree[file_key] = project_model.files[file_key]
 
-                # Add included files
+                # Add included files - prefer include_relations if available
                 if depth < include_depth:
-                    for include in project_model.files[file_key].includes:
-                        # Clean the include name (remove quotes/angle brackets)
-                        clean_include = include.strip('<>"')
-                        add_file_to_tree(clean_include, depth + 1)
+                    file_model = project_model.files[file_key]
+                    
+                    # Use include_relations if available (from transformation)
+                    if file_model.include_relations:
+                        for relation in file_model.include_relations:
+                            add_file_to_tree(relation.included_file, depth + 1)
+                    else:
+                        # Fall back to includes field (backward compatibility)
+                        for include in file_model.includes:
+                            # Clean the include name (remove quotes/angle brackets)
+                            clean_include = include.strip('<>"')
+                            add_file_to_tree(clean_include, depth + 1)
 
         # Start with the root file - find the correct key
         root_key = find_file_key(root_file.name)
