@@ -558,6 +558,80 @@ class TestTransformer(unittest.TestCase):
         # Should not apply to any files
         self.assertEqual(len(result.files), 2)
 
+    def test_file_selection_array_format(self):
+        """Test file selection with new array format"""
+        config = {
+            "transformations": {
+                "file_selection": [".*sample\\.c$"],
+                "rename": {"structs": {"old_name": "new_name"}},
+            }
+        }
+
+        result = self.transformer._apply_model_transformations(
+            self.sample_project_model, config["transformations"]
+        )
+        self.assertIsInstance(result, ProjectModel)
+        # Should apply only to sample.c
+        self.assertEqual(len(result.files), 2)
+
+    def test_file_selection_empty_array(self):
+        """Test file selection with empty array (apply to all)"""
+        config = {
+            "transformations": {
+                "file_selection": [],
+                "rename": {"structs": {"old_name": "new_name"}},
+            }
+        }
+
+        result = self.transformer._apply_model_transformations(
+            self.sample_project_model, config["transformations"]
+        )
+        self.assertIsInstance(result, ProjectModel)
+        # Should apply to all files
+        self.assertEqual(len(result.files), 2)
+
+    def test_file_selection_backward_compatibility(self):
+        """Test that old object format still works"""
+        old_config = {
+            "transformations": {
+                "file_selection": {"selected_files": [".*sample\\.c$"]},
+                "rename": {"structs": {"old_name": "new_name"}},
+            }
+        }
+
+        new_config = {
+            "transformations": {
+                "file_selection": [".*sample\\.c$"],
+                "rename": {"structs": {"old_name": "new_name"}},
+            }
+        }
+
+        old_result = self.transformer._apply_model_transformations(
+            self.sample_project_model, old_config["transformations"]
+        )
+        new_result = self.transformer._apply_model_transformations(
+            self.sample_project_model, new_config["transformations"]
+        )
+
+        # Both should produce the same result
+        self.assertEqual(len(old_result.files), len(new_result.files))
+
+    def test_file_selection_invalid_format(self):
+        """Test file selection with invalid format"""
+        config = {
+            "transformations": {
+                "file_selection": "invalid_string",
+                "rename": {"structs": {"old_name": "new_name"}},
+            }
+        }
+
+        result = self.transformer._apply_model_transformations(
+            self.sample_project_model, config["transformations"]
+        )
+        self.assertIsInstance(result, ProjectModel)
+        # Should default to all files when format is invalid
+        self.assertEqual(len(result.files), 2)
+
     def test_matches_pattern_valid(self):
         """Test _matches_pattern method with valid patterns"""
         self.assertTrue(self.transformer._matches_pattern("main.c", ".*main\\.c$"))
@@ -614,6 +688,629 @@ class TestTransformer(unittest.TestCase):
         self.assertIsInstance(result, ProjectModel)
         # Should apply removals only to sample.c
         self.assertIn("sample.c", result.files)
+
+    def test_remove_typedefs_regex_patterns(self):
+        """Test removing typedefs with regex patterns"""
+        # Create a file model with typedefs
+        file_model = FileModel("test.c")
+        file_model.aliases = {
+            "old_type1": Alias("old_type1", "int", []),
+            "new_type": Alias("new_type", "float", []),
+            "temp_type": Alias("temp_type", "char", []),
+            "old_type2": Alias("old_type2", "double", [])
+        }
+        
+        # Remove typedefs starting with "old_" or containing "temp"
+        patterns = ["^old_.*", ".*temp.*"]
+        self.transformer._remove_typedefs(file_model, patterns)
+        
+        # Should only have new_type left
+        self.assertEqual(len(file_model.aliases), 1)
+        self.assertIn("new_type", file_model.aliases)
+        self.assertNotIn("old_type1", file_model.aliases)
+        self.assertNotIn("old_type2", file_model.aliases)
+        self.assertNotIn("temp_type", file_model.aliases)
+
+    def test_remove_functions_regex_patterns(self):
+        """Test removing functions with regex patterns"""
+        file_model = FileModel("test.c")
+        file_model.functions = [
+            Function("debug_init", "void", []),
+            Function("main", "int", []),
+            Function("debug_cleanup", "void", []),
+            Function("calculate", "int", [])
+        ]
+        
+        # Remove functions starting with "debug_"
+        patterns = ["^debug_.*"]
+        self.transformer._remove_functions(file_model, patterns)
+        
+        # Should have main and calculate left
+        self.assertEqual(len(file_model.functions), 2)
+        function_names = [f.name for f in file_model.functions]
+        self.assertIn("main", function_names)
+        self.assertIn("calculate", function_names)
+        self.assertNotIn("debug_init", function_names)
+        self.assertNotIn("debug_cleanup", function_names)
+
+    def test_remove_macros_regex_patterns(self):
+        """Test removing macros with regex patterns"""
+        file_model = FileModel("test.c")
+        file_model.macros = [
+            "DEBUG_LEVEL",
+            "TEMP_BUFFER_SIZE",
+            "VERSION",
+            "DEBUG_MODE"
+        ]
+        
+        # Remove macros starting with "DEBUG_" or containing "TEMP"
+        patterns = ["^DEBUG_.*", ".*TEMP.*"]
+        self.transformer._remove_macros(file_model, patterns)
+        
+        # Should only have VERSION left
+        self.assertEqual(len(file_model.macros), 1)
+        self.assertIn("VERSION", file_model.macros)
+        self.assertNotIn("DEBUG_LEVEL", file_model.macros)
+        self.assertNotIn("DEBUG_MODE", file_model.macros)
+        self.assertNotIn("TEMP_BUFFER_SIZE", file_model.macros)
+
+    def test_remove_globals_regex_patterns(self):
+        """Test removing global variables with regex patterns"""
+        file_model = FileModel("test.c")
+        file_model.globals = [
+            Field("debug_flag", "int"),
+            Field("version", "char*"),
+            Field("debug_level", "int"),
+            Field("config", "Config*")
+        ]
+        
+        # Remove globals starting with "debug_"
+        patterns = ["^debug_.*"]
+        self.transformer._remove_globals(file_model, patterns)
+        
+        # Should have version and config left
+        self.assertEqual(len(file_model.globals), 2)
+        global_names = [g.name for g in file_model.globals]
+        self.assertIn("version", global_names)
+        self.assertIn("config", global_names)
+        self.assertNotIn("debug_flag", global_names)
+        self.assertNotIn("debug_level", global_names)
+
+    def test_remove_includes_regex_patterns(self):
+        """Test removing includes with regex patterns"""
+        file_model = FileModel("test.c")
+        file_model.includes = {"stdio.h", "debug.h", "config.h", "test_utils.h"}
+        file_model.include_relations = [
+            IncludeRelation("test.c", "stdio.h", 1),
+            IncludeRelation("test.c", "debug.h", 1),
+            IncludeRelation("test.c", "config.h", 1),
+            IncludeRelation("test.c", "test_utils.h", 1)
+        ]
+        
+        # Remove includes containing "debug" or starting with "test_"
+        patterns = [".*debug.*", "^test_.*"]
+        self.transformer._remove_includes(file_model, patterns)
+        
+        # Should have stdio.h and config.h left
+        self.assertEqual(len(file_model.includes), 2)
+        self.assertIn("stdio.h", file_model.includes)
+        self.assertIn("config.h", file_model.includes)
+        self.assertNotIn("debug.h", file_model.includes)
+        self.assertNotIn("test_utils.h", file_model.includes)
+        
+        # Should also remove corresponding include relations
+        self.assertEqual(len(file_model.include_relations), 2)
+        relation_files = [r.included_file for r in file_model.include_relations]
+        self.assertIn("stdio.h", relation_files)
+        self.assertIn("config.h", relation_files)
+        self.assertNotIn("debug.h", relation_files)
+        self.assertNotIn("test_utils.h", relation_files)
+
+    def test_remove_structs_regex_patterns(self):
+        """Test removing structs with regex patterns"""
+        file_model = FileModel("test.c")
+        file_model.structs = {
+            "Point": Struct("Point", []),
+            "debug_info": Struct("debug_info", []),
+            "Config": Struct("Config", []),
+            "temp_data": Struct("temp_data", [])
+        }
+        
+        # Remove structs containing "debug" or "temp"
+        patterns = [".*debug.*", ".*temp.*"]
+        self.transformer._remove_structs(file_model, patterns)
+        
+        # Should have Point and Config left
+        self.assertEqual(len(file_model.structs), 2)
+        self.assertIn("Point", file_model.structs)
+        self.assertIn("Config", file_model.structs)
+        self.assertNotIn("debug_info", file_model.structs)
+        self.assertNotIn("temp_data", file_model.structs)
+
+    def test_remove_enums_regex_patterns(self):
+        """Test removing enums with regex patterns"""
+        file_model = FileModel("test.c")
+        file_model.enums = {
+            "Color": Enum("Color", []),
+            "LogLevel": Enum("LogLevel", []),
+            "debug_state": Enum("debug_state", []),
+            "Status": Enum("Status", [])
+        }
+        
+        # Remove enums starting with lowercase or containing "debug"
+        patterns = ["^[a-z].*", ".*debug.*"]
+        self.transformer._remove_enums(file_model, patterns)
+        
+        # Should have Color, LogLevel, and Status left (debug_state matches both patterns)
+        self.assertEqual(len(file_model.enums), 3)
+        self.assertIn("Color", file_model.enums)
+        self.assertIn("LogLevel", file_model.enums)
+        self.assertIn("Status", file_model.enums)
+        self.assertNotIn("debug_state", file_model.enums)
+
+    def test_remove_unions_regex_patterns(self):
+        """Test removing unions with regex patterns"""
+        file_model = FileModel("test.c")
+        file_model.unions = {
+            "Value": Union("Value", []),
+            "temp_union": Union("temp_union", []),
+            "Data": Union("Data", []),
+            "debug_union": Union("debug_union", [])
+        }
+        
+        # Remove unions starting with lowercase
+        patterns = ["^[a-z].*"]
+        self.transformer._remove_unions(file_model, patterns)
+        
+        # Should have Value and Data left
+        self.assertEqual(len(file_model.unions), 2)
+        self.assertIn("Value", file_model.unions)
+        self.assertIn("Data", file_model.unions)
+        self.assertNotIn("temp_union", file_model.unions)
+        self.assertNotIn("debug_union", file_model.unions)
+
+    def test_remove_operations_empty_patterns(self):
+        """Test that remove operations handle empty pattern lists correctly"""
+        file_model = FileModel("test.c")
+        file_model.functions = [Function("test", "void", [])]
+        file_model.macros = ["TEST_MACRO"]
+        
+        # Empty patterns should not remove anything
+        self.transformer._remove_functions(file_model, [])
+        self.transformer._remove_macros(file_model, [])
+        
+        self.assertEqual(len(file_model.functions), 1)
+        self.assertEqual(len(file_model.macros), 1)
+
+    def test_remove_operations_no_matches(self):
+        """Test remove operations when no patterns match"""
+        file_model = FileModel("test.c")
+        file_model.functions = [Function("main", "int", []), Function("helper", "void", [])]
+        
+        # Pattern that matches nothing
+        patterns = ["^nonexistent_.*"]
+        self.transformer._remove_functions(file_model, patterns)
+        
+        # Should still have all functions
+        self.assertEqual(len(file_model.functions), 2)
+
+    def test_rename_functions_with_deduplication(self):
+        """Test renaming functions with deduplication when patterns create duplicates"""
+        file_model = FileModel("test.c")
+        file_model.functions = [
+            Function("old_calculate", "int", []),
+            Function("legacy_calculate", "float", []),  # This will create duplicate after rename
+            Function("old_process", "void", []),
+            Function("legacy_process", "char*", [])  # This will create duplicate after rename
+        ]
+        
+        # Both patterns rename to the same result
+        patterns_map = {
+            "^old_(.*)": "new_\\1",
+            "^legacy_(.*)": "new_\\1"
+        }
+        self.transformer._rename_functions(file_model, patterns_map)
+        
+        # Should have 2 functions: new_calculate (from old_calculate, first match) and new_process
+        self.assertEqual(len(file_model.functions), 2)
+        function_names = [f.name for f in file_model.functions]
+        self.assertIn("new_calculate", function_names)
+        self.assertIn("new_process", function_names)
+        
+        # The kept new_calculate should have return_type "int" (from old_calculate, the first match)
+        new_calc = next(f for f in file_model.functions if f.name == "new_calculate")
+        self.assertEqual(new_calc.return_type, "int")
+
+    def test_rename_typedefs_with_deduplication(self):
+        """Test renaming typedefs with deduplication"""
+        file_model = FileModel("test.c")
+        file_model.aliases = {
+            "old_type1": Alias("old_type1", "int", []),
+            "legacy_type1": Alias("legacy_type1", "float", []),  # Will create duplicate
+            "old_type2": Alias("old_type2", "char", [])
+        }
+        
+        patterns_map = {
+            "^old_(.*)": "new_\\1",
+            "^legacy_(.*)": "new_\\1"
+        }
+        self.transformer._rename_typedefs(file_model, patterns_map)
+        
+        # Should have 2 typedefs: new_type1 and new_type2
+        self.assertEqual(len(file_model.aliases), 2)
+        self.assertIn("new_type1", file_model.aliases)
+        self.assertIn("new_type2", file_model.aliases)
+        
+        # First match wins - should have "int" original_type
+        self.assertEqual(file_model.aliases["new_type1"].original_type, "int")
+
+    def test_rename_macros_with_deduplication(self):
+        """Test renaming macros with deduplication"""
+        file_model = FileModel("test.c")
+        file_model.macros = [
+            "OLD_CONSTANT",
+            "LEGACY_CONSTANT",  # Will create duplicate after rename
+            "OLD_MAX_SIZE",
+            "UNIQUE_MACRO"
+        ]
+        
+        patterns_map = {
+            "^OLD_(.*)": "NEW_\\1",
+            "^LEGACY_(.*)": "NEW_\\1"
+        }
+        self.transformer._rename_macros(file_model, patterns_map)
+        
+        # Should have 3 macros: NEW_CONSTANT, NEW_MAX_SIZE, UNIQUE_MACRO
+        self.assertEqual(len(file_model.macros), 3)
+        self.assertIn("NEW_CONSTANT", file_model.macros)
+        self.assertIn("NEW_MAX_SIZE", file_model.macros)
+        self.assertIn("UNIQUE_MACRO", file_model.macros)
+
+    def test_rename_globals_with_deduplication(self):
+        """Test renaming global variables with deduplication"""
+        file_model = FileModel("test.c")
+        file_model.globals = [
+            Field("old_counter", "int"),
+            Field("legacy_counter", "long"),  # Will create duplicate
+            Field("old_buffer", "char*"),
+            Field("normal_var", "float")
+        ]
+        
+        patterns_map = {
+            "^old_(.*)": "new_\\1",
+            "^legacy_(.*)": "new_\\1"
+        }
+        self.transformer._rename_globals(file_model, patterns_map)
+        
+        # Should have 3 globals: new_counter, new_buffer, normal_var
+        self.assertEqual(len(file_model.globals), 3)
+        global_names = [g.name for g in file_model.globals]
+        self.assertIn("new_counter", global_names)
+        self.assertIn("new_buffer", global_names)
+        self.assertIn("normal_var", global_names)
+        
+        # First match wins - should have "int" type
+        new_counter = next(g for g in file_model.globals if g.name == "new_counter")
+        self.assertEqual(new_counter.type, "int")
+
+    def test_rename_includes_with_deduplication(self):
+        """Test renaming includes with deduplication"""
+        file_model = FileModel("test.c")
+        file_model.includes = {"old_header.h", "legacy_header.h", "normal.h"}
+        file_model.include_relations = [
+            IncludeRelation("test.c", "old_header.h", 1),
+            IncludeRelation("test.c", "legacy_header.h", 1),
+            IncludeRelation("test.c", "normal.h", 1)
+        ]
+        
+        patterns_map = {
+            "^old_(.*)": "new_\\1",
+            "^legacy_(.*)": "new_\\1"
+        }
+        self.transformer._rename_includes(file_model, patterns_map)
+        
+        # Should have 2 includes: new_header.h, normal.h
+        self.assertEqual(len(file_model.includes), 2)
+        self.assertIn("new_header.h", file_model.includes)
+        self.assertIn("normal.h", file_model.includes)
+        
+        # Include relations should also be updated
+        relation_files = [r.included_file for r in file_model.include_relations]
+        # Note: We expect to see 3 relations but only 2 unique includes due to deduplication
+        self.assertEqual(len(file_model.include_relations), 3)
+        self.assertIn("new_header.h", relation_files)
+        self.assertIn("normal.h", relation_files)
+
+    def test_rename_structs_with_deduplication(self):
+        """Test renaming structs with deduplication"""
+        file_model = FileModel("test.c")
+        file_model.structs = {
+            "old_point": Struct("old_point", []),
+            "legacy_point": Struct("legacy_point", []),  # Will create duplicate
+            "old_rect": Struct("old_rect", [])
+        }
+        
+        patterns_map = {
+            "^old_(.*)": "new_\\1",
+            "^legacy_(.*)": "new_\\1"
+        }
+        self.transformer._rename_structs(file_model, patterns_map)
+        
+        # Should have 2 structs: new_point and new_rect
+        self.assertEqual(len(file_model.structs), 2)
+        self.assertIn("new_point", file_model.structs)
+        self.assertIn("new_rect", file_model.structs)
+
+    def test_rename_enums_with_deduplication(self):
+        """Test renaming enums with deduplication"""
+        file_model = FileModel("test.c")
+        file_model.enums = {
+            "old_color": Enum("old_color", []),
+            "legacy_color": Enum("legacy_color", []),  # Will create duplicate
+            "old_state": Enum("old_state", [])
+        }
+        
+        patterns_map = {
+            "^old_(.*)": "new_\\1",
+            "^legacy_(.*)": "new_\\1"
+        }
+        self.transformer._rename_enums(file_model, patterns_map)
+        
+        # Should have 2 enums: new_color and new_state
+        self.assertEqual(len(file_model.enums), 2)
+        self.assertIn("new_color", file_model.enums)
+        self.assertIn("new_state", file_model.enums)
+
+    def test_rename_unions_with_deduplication(self):
+        """Test renaming unions with deduplication"""
+        file_model = FileModel("test.c")
+        file_model.unions = {
+            "old_data": Union("old_data", []),
+            "legacy_data": Union("legacy_data", []),  # Will create duplicate
+            "old_value": Union("old_value", [])
+        }
+        
+        patterns_map = {
+            "^old_(.*)": "new_\\1",
+            "^legacy_(.*)": "new_\\1"
+        }
+        self.transformer._rename_unions(file_model, patterns_map)
+        
+        # Should have 2 unions: new_data and new_value
+        self.assertEqual(len(file_model.unions), 2)
+        self.assertIn("new_data", file_model.unions)
+        self.assertIn("new_value", file_model.unions)
+
+    def test_rename_files(self):
+        """Test renaming files"""
+        model = ProjectModel("test_project", ".")
+        model.files = {
+            "old_main.c": FileModel("old_main.c"),
+            "legacy_utils.c": FileModel("legacy_utils.c"),
+            "normal.c": FileModel("normal.c")
+        }
+        
+        target_files = {"old_main.c", "legacy_utils.c"}
+        patterns_map = {
+            "^old_(.*)": "new_\\1",
+            "^legacy_(.*)": "modern_\\1"
+        }
+        
+        result = self.transformer._rename_files(model, patterns_map, target_files)
+        
+        # Should have new file names
+        self.assertIn("new_main.c", result.files)
+        self.assertIn("modern_utils.c", result.files)
+        self.assertIn("normal.c", result.files)  # Unchanged
+        self.assertNotIn("old_main.c", result.files)
+        self.assertNotIn("legacy_utils.c", result.files)
+        
+        # File models should have updated names
+        self.assertEqual(result.files["new_main.c"].name, "new_main.c")
+        self.assertEqual(result.files["modern_utils.c"].name, "modern_utils.c")
+
+    def test_apply_rename_patterns_no_match(self):
+        """Test apply_rename_patterns when no patterns match"""
+        original_name = "unchanged_name"
+        patterns_map = {"^old_(.*)": "new_\\1"}
+        
+        result = self.transformer._apply_rename_patterns(original_name, patterns_map)
+        self.assertEqual(result, original_name)
+
+    def test_apply_rename_patterns_invalid_regex(self):
+        """Test apply_rename_patterns with invalid regex"""
+        original_name = "test_name"
+        patterns_map = {"[invalid": "replacement"}
+        
+        result = self.transformer._apply_rename_patterns(original_name, patterns_map)
+        self.assertEqual(result, original_name)  # Should return original on error
+
+    def test_rename_operations_empty_patterns(self):
+        """Test that rename operations handle empty pattern maps correctly"""
+        file_model = FileModel("test.c")
+        file_model.functions = [Function("test", "void", [])]
+        file_model.macros = ["TEST_MACRO"]
+        
+        # Empty patterns should not rename anything
+        self.transformer._rename_functions(file_model, {})
+        self.transformer._rename_macros(file_model, {})
+        
+        self.assertEqual(file_model.functions[0].name, "test")
+        self.assertEqual(file_model.macros[0], "TEST_MACRO")
+
+    def test_multiple_transformation_containers(self):
+        """Test multiple transformation containers applied in alphabetical order"""
+        config = {
+            "transformations_z_last": {
+                "file_selection": [],
+                "add": {"macros": ["FINAL_MACRO"]}
+            },
+            "transformations_a_first": {
+                "file_selection": [],
+                "remove": {"functions": ["debug_.*"]}
+            },
+            "transformations_m_middle": {
+                "file_selection": [],
+                "rename": {"functions": {"old_(.*)": "new_\\1"}}
+            }
+        }
+        
+        # Create model with functions that will be affected
+        model = ProjectModel("test_project", ".")
+        model.files = {
+            "test.c": FileModel("test.c")
+        }
+        model.files["test.c"].functions = [
+            Function("debug_func", "void", []),
+            Function("old_calculate", "int", []),
+            Function("normal_func", "char*", [])
+        ]
+        model.files["test.c"].macros = []
+        
+        # Should execute in order: a_first, m_middle, z_last
+        result = self.transformer._apply_transformations(model, config)
+        
+        # Verify transformations were applied in correct order
+        self.assertIsInstance(result, ProjectModel)
+        # After a_first: debug_func should be removed
+        # After m_middle: old_calculate should be renamed to new_calculate
+        # After z_last: FINAL_MACRO should be added
+        function_names = [f.name for f in result.files["test.c"].functions]
+        self.assertNotIn("debug_func", function_names)  # Removed in a_first
+        self.assertIn("new_calculate", function_names)  # Renamed in m_middle
+        self.assertIn("normal_func", function_names)  # Unchanged
+        # Note: We can't test macro addition without implementing _apply_additions
+
+    def test_backward_compatibility_single_transformations(self):
+        """Test that old single 'transformations' format still works"""
+        config = {
+            "transformations": {
+                "file_selection": [],
+                "remove": {"functions": ["test_.*"]}
+            }
+        }
+        
+        model = ProjectModel("test_project", ".")
+        model.files = {
+            "test.c": FileModel("test.c")
+        }
+        model.files["test.c"].functions = [
+            Function("test_func", "void", []),
+            Function("normal_func", "int", [])
+        ]
+        
+        result = self.transformer._apply_transformations(model, config)
+        
+        # Should work the same as before
+        self.assertIsInstance(result, ProjectModel)
+        function_names = [f.name for f in result.files["test.c"].functions]
+        self.assertNotIn("test_func", function_names)
+        self.assertIn("normal_func", function_names)
+
+    def test_discover_transformation_containers(self):
+        """Test discovery and sorting of transformation containers"""
+        config = {
+            "project_name": "test",
+            "transformations_z_last": {"remove": {}},
+            "transformations_a_first": {"rename": {}},
+            "transformations_m_middle": {"add": {}},
+            "not_transformation": {"some": "value"},
+            "transformations_invalid": "not_a_dict"  # Should be ignored
+        }
+        
+        containers = self.transformer._discover_transformation_containers(config)
+        
+        # Should find 3 valid containers in alphabetical order
+        self.assertEqual(len(containers), 3)
+        names = [name for name, _ in containers]
+        self.assertEqual(names, ["transformations_a_first", "transformations_m_middle", "transformations_z_last"])
+
+    def test_ensure_backward_compatibility(self):
+        """Test backward compatibility conversion"""
+        # Test old format conversion
+        old_config = {
+            "transformations": {
+                "remove": {"functions": ["test"]}
+            }
+        }
+        
+        converted = self.transformer._ensure_backward_compatibility(old_config)
+        
+        # Should convert to new format
+        self.assertNotIn("transformations", converted)
+        self.assertIn("transformations_00_default", converted)
+        self.assertEqual(converted["transformations_00_default"]["remove"]["functions"], ["test"])
+        
+        # Test new format (should not change)
+        new_config = {
+            "transformations_01_first": {
+                "remove": {"functions": ["test"]}
+            }
+        }
+        
+        unchanged = self.transformer._ensure_backward_compatibility(new_config)
+        self.assertEqual(unchanged, new_config)
+
+    def test_apply_single_transformation_container(self):
+        """Test applying a single transformation container"""
+        model = ProjectModel("test_project", ".")
+        model.files = {
+            "test.c": FileModel("test.c"),
+            "other.c": FileModel("other.c")
+        }
+        model.files["test.c"].functions = [Function("old_func", "void", [])]
+        model.files["other.c"].functions = [Function("old_func", "void", [])]
+        
+        # Container with file selection
+        container_config = {
+            "file_selection": [".*test\\.c$"],
+            "rename": {
+                "functions": {"old_(.*)": "new_\\1"}
+            }
+        }
+        
+        result = self.transformer._apply_single_transformation_container(
+            model, container_config, "test_container"
+        )
+        
+        # Should only affect test.c
+        self.assertEqual(result.files["test.c"].functions[0].name, "new_func")
+        self.assertEqual(result.files["other.c"].functions[0].name, "old_func")  # Unchanged
+
+    def test_transformation_container_order_execution(self):
+        """Test that containers are executed in alphabetical order with correct transformations"""
+        config = {
+            "transformations_02_rename": {
+                "file_selection": [],
+                "rename": {
+                    "functions": {"prefix_(.*)": "renamed_\\1"}
+                }
+            },
+            "transformations_01_remove": {
+                "file_selection": [],
+                "remove": {
+                    "functions": ["debug_.*"]
+                }
+            }
+        }
+        
+        model = ProjectModel("test_project", ".")
+        model.files = {
+            "test.c": FileModel("test.c")
+        }
+        model.files["test.c"].functions = [
+            Function("debug_func", "void", []),
+            Function("prefix_calculate", "int", []),
+            Function("normal_func", "char*", [])
+        ]
+        
+        result = self.transformer._apply_transformations(model, config)
+        
+        # Should execute 01_remove first, then 02_rename
+        function_names = [f.name for f in result.files["test.c"].functions]
+        self.assertNotIn("debug_func", function_names)  # Removed in step 1
+        self.assertIn("renamed_calculate", function_names)  # Renamed in step 2
+        self.assertIn("normal_func", function_names)  # Unchanged
 
     def test_apply_include_filters_basic(self):
         """Test basic include filtering functionality"""
