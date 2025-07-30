@@ -7,10 +7,11 @@ name: Convert PlantUML to PNG
 # NOTE: This workflow is triggered by:
 # 1. Manual workflow_dispatch (for manual runs)
 # 2. workflow_call from test-coverage.yml (for automated runs after PR merge)
-# 3. push trigger on side branches (branches-ignore: [main, master]) when PlantUML files change
+# 3. push trigger on main/master branches when PlantUML files change (for direct commits)
+# 4. push trigger on feature branches when PlantUML files change (for testing)
 #
-# The push trigger excludes main/master branches to prevent duplicate execution when PRs are merged,
-# as the test-coverage workflow already handles triggering this workflow when needed on main/master.
+# The workflow uses concurrency control to prevent multiple simultaneous executions
+# that could conflict when committing generated images.
 
 on:
   workflow_dispatch:
@@ -40,7 +41,12 @@ on:
       - 'output/**/*.puml'
       - 'picgen.sh'
       - '.github/workflows/puml2png.yml'
-    branches-ignore: [ main, master ]
+    branches: 
+      # Include main/master for direct commits
+      - main
+      - master
+      # Include feature branches for testing PUML changes
+      - '**'
 
 jobs:
   convert-puml:
@@ -54,18 +60,57 @@ jobs:
       actions: write
     
     steps:
+    - name: Check if this is a duplicate trigger
+      id: check_duplicate
+      run: |
+        echo "🔍 Checking if this execution should be skipped to avoid duplication..."
+        
+        # Skip if this is a push trigger on main/master from a recent merge
+        # and the test-coverage workflow has run recently (within last 5 minutes)
+        if [ "${{ github.event_name }}" = "push" ] && ( [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.ref }}" = "refs/heads/master" ] ); then
+          echo "📋 This is a push to main/master branch"
+          
+          # Check if there are recent test-coverage workflow runs
+          echo "🔍 Checking for recent test-coverage workflow runs..."
+          
+          # Get the commit author to see if it's a merge commit
+          COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+          echo "Commit message: $COMMIT_MESSAGE"
+          
+          # Check if this looks like a merge commit
+          if echo "$COMMIT_MESSAGE" | grep -q "Merge pull request\|Merge branch"; then
+            echo "🔀 This appears to be a merge commit"
+            echo "⏭️ Skipping execution to avoid duplication with test-coverage workflow"
+            echo "skip_execution=true" >> $GITHUB_OUTPUT
+          else
+            echo "📝 This appears to be a direct commit, proceeding with execution"
+            echo "skip_execution=false" >> $GITHUB_OUTPUT
+          fi
+        else
+          echo "✅ Not a push to main/master or different trigger type, proceeding"
+          echo "skip_execution=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Skip execution (duplicate prevention)
+      if: steps.check_duplicate.outputs.skip_execution == 'true'
+      run: |
+        echo "⏭️ Skipping PlantUML conversion - likely already handled by test-coverage workflow"
+        echo "This prevents duplicate PNG generation when PRs are merged"
     - name: Checkout code
+      if: steps.check_duplicate.outputs.skip_execution != 'true'
       uses: actions/checkout@v4
       with:
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         fetch-depth: 0
         
     - name: Configure Git
+      if: steps.check_duplicate.outputs.skip_execution != 'true'
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         
     - name: Validate Personal Access Token
+      if: steps.check_duplicate.outputs.skip_execution != 'true'
       run: |
         if [ -z "${{ secrets.PERSONAL_ACCESS_TOKEN }}" ]; then
           echo "❌ Error: PERSONAL_ACCESS_TOKEN secret is not configured"
@@ -75,28 +120,33 @@ jobs:
         echo "✅ Personal Access Token is configured"
         
     - name: Setup Git credentials
+      if: steps.check_duplicate.outputs.skip_execution != 'true'
       run: |
         echo "Setting up Git credentials with Personal Access Token"
         git remote set-url origin https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ github.repository }}
         
     - name: Pull latest changes
+      if: steps.check_duplicate.outputs.skip_execution != 'true'
       run: |
         echo "📥 Pulling latest changes from remote..."
         git pull origin ${{ github.ref }} || echo "No changes to pull or already up to date"
         
     - name: Install dependencies
+      if: steps.check_duplicate.outputs.skip_execution != 'true'
       run: |
         echo "📦 Installing system dependencies..."
         sudo apt-get update
         sudo apt-get install -y graphviz default-jre
         
     - name: Verify Graphviz installation
+      if: steps.check_duplicate.outputs.skip_execution != 'true'
       run: |
         echo "🔍 Verifying Graphviz installation..."
         dot -V
         which dot
         
     - name: Setup PlantUML
+      if: steps.check_duplicate.outputs.skip_execution != 'true'
       run: |
         echo "📦 Setting up PlantUML..."
         # Use the JAR file if it exists, otherwise download it
@@ -110,6 +160,7 @@ jobs:
         java -jar plantuml.jar -testdot
         
     - name: List .puml files
+      if: steps.check_duplicate.outputs.skip_execution != 'true'
       run: |
         # Use input from workflow_call if available, otherwise use workflow_dispatch input or default
         OUTPUT_FOLDER="${{ github.event.inputs.output_folder || 'output' }}"
@@ -117,6 +168,7 @@ jobs:
         find $OUTPUT_FOLDER -name "*.puml" -type f || echo "No .puml files found"
         
     - name: Run PNG generation
+      if: steps.check_duplicate.outputs.skip_execution != 'true'
       run: |
         echo "🚀 Running PlantUML to PNG conversion..."
         chmod +x ./picgen.sh
@@ -134,6 +186,7 @@ jobs:
         fi
         
     - name: List generated images
+      if: steps.check_duplicate.outputs.skip_execution != 'true'
       run: |
         echo "📁 Generated images in output directory:"
         find output -name "*.png" | sort || echo "No images found"
@@ -152,6 +205,7 @@ jobs:
         fi
         
     - name: Check for changes
+      if: steps.check_duplicate.outputs.skip_execution != 'true'
       id: check_changes
       run: |
         echo "🔍 Checking for changes..."
@@ -170,7 +224,7 @@ jobs:
         fi
         
     - name: Commit and push changes
-      if: ${{ (github.event.inputs.commit_changes != 'false' && steps.check_changes.outputs.no_changes != 'true') || (github.event_name == 'workflow_call' && github.event.inputs.commit_changes != 'false' && steps.check_changes.outputs.no_changes != 'true') }}
+      if: ${{ steps.check_duplicate.outputs.skip_execution != 'true' && ((github.event.inputs.commit_changes != 'false' && steps.check_changes.outputs.no_changes != 'true') || (github.event_name == 'workflow_call' && github.event.inputs.commit_changes != 'false' && steps.check_changes.outputs.no_changes != 'true')) }}
       run: |
         echo "📝 Committing generated images to repository..."
         
@@ -248,11 +302,12 @@ jobs:
         fi
         
     - name: Skip commit (disabled by user)
-      if: ${{ (github.event.inputs.commit_changes == 'false') || (github.event_name == 'workflow_call' && github.event.inputs.commit_changes == 'false') }}
+      if: ${{ steps.check_duplicate.outputs.skip_execution != 'true' && ((github.event.inputs.commit_changes == 'false') || (github.event_name == 'workflow_call' && github.event.inputs.commit_changes == 'false')) }}
       run: |
         echo "⏭️ Skipping commit as requested by user"
         
     - name: Upload generated images and index as artifacts
+      if: steps.check_duplicate.outputs.skip_execution != 'true'
       uses: actions/upload-artifact@v4
       with:
         name: plantuml-png-images
@@ -262,7 +317,7 @@ jobs:
         retention-days: 30
 
     - name: 🚀 Trigger Website Deployment
-      if: success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      if: steps.check_duplicate.outputs.skip_execution != 'true' && success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       uses: actions/github-script@v7
       with:
         script: |
