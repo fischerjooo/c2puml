@@ -303,7 +303,7 @@ tests/unit/test_transformer.py::TestTransformer::test_find_included_file PASSED 
 tests/unit/test_transformer.py::TestTransformer::test_find_included_file_not_found PASSED [ 86%]
 tests/unit/test_transformer.py::TestTransformer::test_find_root_file_c_file PASSED [ 86%]
 tests/unit/test_transformer.py::TestTransformer::test_find_root_file_header_file PASSED [ 86%]
-tests/unit/test_transformer.py::TestTransformer::test_include_filters_transitive_includes_bug PASSED [ 87%]
+tests/unit/test_transformer.py::TestTransformer::test_include_filters_preserve_includes_arrays PASSED [ 87%]
 tests/unit/test_transformer.py::TestTransformer::test_load_config_invalid_file PASSED [ 87%]
 tests/unit/test_transformer.py::TestTransformer::test_load_config_valid_file PASSED [ 87%]
 tests/unit/test_transformer.py::TestTransformer::test_load_model_invalid_file PASSED [ 87%]
@@ -349,4 +349,4 @@ tests/unit/test_verifier.py::TestModelVerifier::test_unbalanced_brackets_detecte
 tests/unit/test_verifier.py::TestModelVerifier::test_valid_identifiers_pass PASSED [ 99%]
 tests/unit/test_verifier.py::TestModelVerifier::test_valid_model_passes_verification PASSED [100%]
 
-============================= 340 passed in 2.74s ==============================
+============================= 340 passed in 2.69s ==============================
