@@ -153,7 +153,6 @@ class Generator:
     ) -> Dict[str, FileModel]:
         """Build include tree starting from root file"""
         include_tree = {}
-        visited = set()
 
         def find_file_key(file_name: str) -> str:
             """Find the correct key for a file in project_model.files using filename matching"""
@@ -169,34 +168,51 @@ class Generator:
             # If not found, return the filename (will be handled gracefully)
             return filename
 
-        def add_file_to_tree(file_name: str, depth: int):
-            if depth > include_depth or file_name in visited:
-                return
+        # Start with the root file
+        root_key = find_file_key(root_file.name)
+        if root_key in project_model.files:
+            include_tree[root_key] = project_model.files[root_key]
 
-            visited.add(file_name)
-            file_key = find_file_key(file_name)
+        # If root file has include_relations, use only those files (flat processing)
+        if root_file.include_relations:
+            # include_relations is already a flattened list of all headers needed
+            included_files = set()
+            for relation in root_file.include_relations:
+                included_files.add(relation.included_file)
+            
+            # Add all files mentioned in include_relations
+            for included_file in included_files:
+                file_key = find_file_key(included_file)
+                if file_key in project_model.files:
+                    include_tree[file_key] = project_model.files[file_key]
+        else:
+            # Fall back to recursive traversal using includes field (backward compatibility)
+            visited = set()
 
-            if file_key in project_model.files:
-                include_tree[file_key] = project_model.files[file_key]
+            def add_file_to_tree(file_name: str, depth: int):
+                if depth > include_depth or file_name in visited:
+                    return
 
-                # Add included files - prefer include_relations if available
-                if depth < include_depth:
-                    file_model = project_model.files[file_key]
-                    
-                    # Use include_relations if available (from transformation)
-                    if file_model.include_relations:
-                        for relation in file_model.include_relations:
-                            add_file_to_tree(relation.included_file, depth + 1)
-                    else:
-                        # Fall back to includes field (backward compatibility)
+                visited.add(file_name)
+                file_key = find_file_key(file_name)
+
+                if file_key in project_model.files:
+                    include_tree[file_key] = project_model.files[file_key]
+
+                    # Add included files recursively
+                    if depth < include_depth:
+                        file_model = project_model.files[file_key]
                         for include in file_model.includes:
                             # Clean the include name (remove quotes/angle brackets)
                             clean_include = include.strip('<>"')
                             add_file_to_tree(clean_include, depth + 1)
 
-        # Start with the root file - find the correct key
-        root_key = find_file_key(root_file.name)
-        add_file_to_tree(root_key, 0)
+            # Start recursive traversal from root (already added above)
+            if root_key in project_model.files:
+                root_file_model = project_model.files[root_key]
+                for include in root_file_model.includes:
+                    clean_include = include.strip('<>"')
+                    add_file_to_tree(clean_include, 1)
 
         return include_tree
 
