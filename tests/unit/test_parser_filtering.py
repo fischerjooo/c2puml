@@ -251,21 +251,21 @@ class TestUserConfigurableFiltering(unittest.TestCase):
         config2.file_filters = {"include": [r".*\.c$"]}
         self.assertTrue(config2.has_filters())
 
-        # Config with element filters only
+        # Config with file_specific filters only  
         config3 = Config()
-        config3.element_filters = {"structs": {"include": [r"^[A-Z].*"]}}
+        config3.file_specific = {"main.c": {"include_filter": [r"^stdio\\.h$"]}}
         self.assertTrue(config3.has_filters())
 
-        # Config with both filters
+        # Config with both file and file_specific filters
         config4 = Config()
         config4.file_filters = {"include": [r".*\.c$"]}
-        config4.element_filters = {"structs": {"include": [r"^[A-Z].*"]}}
+        config4.file_specific = {"main.c": {"include_filter": [r"^stdio\\.h$"]}}
         self.assertTrue(config4.has_filters())
 
         # Config with empty filter dictionaries
         config5 = Config()
         config5.file_filters = {}
-        config5.element_filters = {}
+        config5.file_specific = {}
         self.assertFalse(config5.has_filters())
 
 

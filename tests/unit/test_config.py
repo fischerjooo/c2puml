@@ -61,8 +61,6 @@ class TestConfig(unittest.TestCase):
                 "include": [".*\\.c$", ".*\\.h$"],
                 "exclude": ["test_.*\\.c$"],
             },
-                "structs": {"include": ["Person", "Config"], "exclude": ["Internal.*"]}
-            },
         }
 
         config_path = self.create_test_config(config_data)
@@ -132,55 +130,7 @@ class TestConfig(unittest.TestCase):
         self.assertFalse(config._should_include_file("test_main.c"))
         self.assertFalse(config._should_include_file("file.tmp"))
 
-    def test_element_filtering(self):
-        """Test element filtering functionality"""
-        config = Config(
-            {
-                    "structs": {
-                        "include": ["Person", "Config"],
-                        "exclude": ["Internal.*"],
-                    },
-                    "functions": {
-                        "include": ["main", "process"],
-                        "exclude": ["debug_.*"],
-                    },
-                },
-                "file_filters": {},
-            }
-        )
 
-        # Create test file model
-        file_model = FileModel(
-            file_path="test.c",
-            structs={
-                "Person": Struct("Person", []),
-                "Config": Struct("Config", []),
-                "InternalData": Struct("InternalData", []),
-            },
-            enums={},
-            functions=[
-                Function("main", "int", []),
-                Function("process", "void", []),
-                Function("debug_log", "void", []),
-            ],
-            globals=[],
-            includes=[],
-            macros=[],
-            aliases={},
-        )
-
-        # Apply filters
-
-        # Check struct filtering
-        self.assertIn("Person", filtered_model.structs)
-        self.assertIn("Config", filtered_model.structs)
-        self.assertNotIn("InternalData", filtered_model.structs)
-
-        # Check function filtering
-        function_names = [f.name for f in filtered_model.functions]
-        self.assertIn("main", function_names)
-        self.assertIn("process", function_names)
-        self.assertNotIn("debug_log", function_names)
 
     def test_model_filtering(self):
         """Test applying filters to a complete model"""
