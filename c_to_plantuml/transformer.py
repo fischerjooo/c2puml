@@ -117,27 +117,148 @@ class Transformer:
         if "file_filters" in config:
             model = self._apply_file_filters(model, config["file_filters"])
 
-        # Apply element filters
-        if "element_filters" in config:
-            model = self._apply_element_filters(model, config["element_filters"])
+
 
         # Apply transformations with file selection support
         if "transformations" in config:
             model = self._apply_model_transformations(model, config["transformations"])
 
-        # Apply include depth processing with include_filters support
+        # Apply include depth processing with file-specific support
         # NOTE: include_filters are used ONLY for generating include_relations, 
         # not for modifying the original includes arrays
-        include_filters = config.get("include_filters", {})
-        if "include_depth" in config and config["include_depth"] > 1:
-            model = self._process_include_relations(
-                model, config["include_depth"], include_filters
-            )
+        if self._should_process_include_relations(config):
+            model = self._process_include_relations_with_file_specific_settings(model, config)
 
         self.logger.info(
             "Transformations complete. Model now has %d files", len(model.files)
         )
         return model
+
+    def _extract_include_filters_from_config(self, config: Dict[str, Any]) -> Dict[str, List[str]]:
+        """Extract include_filters from file_specific configuration structure"""
+        if "file_specific" not in config:
+            return {}
+        
+        include_filters = {}
+        for file_name, file_config in config["file_specific"].items():
+            if "include_filter" in file_config:
+                include_filters[file_name] = file_config["include_filter"]
+        return include_filters
+
+    def _should_process_include_relations(self, config: Dict[str, Any]) -> bool:
+        """Check if include relations should be processed based on global or file-specific settings"""
+        # Check global include_depth
+        if "include_depth" in config and config["include_depth"] > 1:
+            return True
+        
+        # Check file-specific include_depth settings
+        if "file_specific" in config:
+            for file_config in config["file_specific"].values():
+                if "include_depth" in file_config and file_config["include_depth"] > 1:
+                    return True
+        
+        return False
+
+    def _process_include_relations_with_file_specific_settings(
+        self, model: ProjectModel, config: Dict[str, Any]
+    ) -> ProjectModel:
+        """Process include relations with support for file-specific include_depth and include_filter"""
+        global_include_depth = config.get("include_depth", 1)
+        file_specific_config = config.get("file_specific", {})
+        
+        # Clear all include_relations first
+        for file_model in model.files.values():
+            file_model.include_relations = []
+
+        # Process each .c file individually with its specific settings
+        for file_path, file_model in model.files.items():
+            if file_model.name.endswith(".c"):
+                root_filename = Path(file_model.name).name
+                
+                # Get file-specific settings or fall back to global
+                if root_filename in file_specific_config:
+                    file_config = file_specific_config[root_filename]
+                    include_depth = file_config.get("include_depth", global_include_depth)
+                    include_filter_patterns = file_config.get("include_filter", [])
+                else:
+                    include_depth = global_include_depth
+                    include_filter_patterns = []
+                
+                # Only process if include_depth > 1
+                if include_depth > 1:
+                    # Compile include filter patterns
+                    compiled_filters = []
+                    if include_filter_patterns:
+                        try:
+                            compiled_filters = [re.compile(pattern) for pattern in include_filter_patterns]
+                            self.logger.debug(
+                                "Using %d include filter patterns for %s with depth %d", 
+                                len(compiled_filters), root_filename, include_depth
+                            )
+                        except re.error as e:
+                            self.logger.warning(
+                                "Invalid regex pattern for file %s: %s", root_filename, e
+                            )
+                            compiled_filters = []
+                    
+                    # Process this specific file's include relations
+                    self._process_single_file_include_relations(
+                        model, file_model, include_depth, compiled_filters
+                    )
+
+        return model
+
+    def _process_single_file_include_relations(
+        self, 
+        model: ProjectModel, 
+        root_file_model: "FileModel",
+        max_depth: int,
+        compiled_filters: List[Any]
+    ) -> None:
+        """Process include relations for a single root file with specific depth and filters"""
+        from collections import deque
+        
+        # Create a mapping of filenames to their models for quick lookup
+        file_map = {}
+        for file_model in model.files.values():
+            filename = Path(file_model.name).name
+            file_map[filename] = file_model
+
+        # BFS to process includes up to max_depth
+        queue = deque([(root_file_model, 0)])  # (file_model, current_depth)
+        processed = set()
+        
+        while queue:
+            current_file, depth = queue.popleft()
+            
+            if depth >= max_depth:
+                continue
+                
+            current_filename = Path(current_file.name).name
+            if current_filename in processed:
+                continue
+            processed.add(current_filename)
+            
+            # Process includes for this file
+            for include_name in current_file.includes:
+                # Apply include filters if they exist
+                if compiled_filters:
+                    if not any(pattern.search(include_name) for pattern in compiled_filters):
+                        continue
+                
+                # Create include relation
+                relation = IncludeRelation(
+                    source_file=current_filename,
+                    included_file=include_name,
+                    depth=depth + 1
+                )
+                
+                # Add to the root file's include_relations
+                root_file_model.include_relations.append(relation)
+                
+                # Continue processing if we haven't reached max depth and the included file exists
+                if depth + 1 < max_depth and include_name in file_map:
+                    queue.append((file_map[include_name], depth + 1))
 
     def _apply_file_filters(
         self, model: ProjectModel, filters: Dict[str, Any]
@@ -161,14 +282,7 @@ class Transformer:
         )
         return model
 
-    def _apply_element_filters(
-        self, model: ProjectModel, filters: Dict[str, Any]
-    ) -> ProjectModel:
-        """Apply element-level filters"""
-        for file_path, file_model in model.files.items():
-            model.files[file_path] = self._filter_file_elements(file_model, filters)
 
-        return model
 
     def _apply_include_filters(
         self, model: ProjectModel, include_filters: Dict[str, List[str]]
@@ -327,47 +441,7 @@ class Transformer:
 
 
 
-    def _filter_file_elements(
-        self, file_model: FileModel, filters: Dict[str, Any]
-    ) -> FileModel:
-        """Filter elements within a file"""
-        # Filter structs
-        if "structs" in filters:
-            file_model.structs = self._filter_dict(
-                file_model.structs, filters["structs"]
-            )
 
-        # Filter enums
-        if "enums" in filters:
-            file_model.enums = self._filter_dict(file_model.enums, filters["enums"])
-
-        # Filter unions
-        if "unions" in filters:
-            file_model.unions = self._filter_dict(file_model.unions, filters["unions"])
-
-        # Filter functions
-        if "functions" in filters:
-            file_model.functions = self._filter_list(
-                file_model.functions, filters["functions"], key=lambda f: f.name
-            )
-
-        # Filter globals
-        if "globals" in filters:
-            file_model.globals = self._filter_list(
-                file_model.globals, filters["globals"], key=lambda g: g.name
-            )
-
-        # Filter macros
-        if "macros" in filters:
-            file_model.macros = self._filter_list(file_model.macros, filters["macros"])
-
-        # Filter aliases (replaces typedefs)
-        if "aliases" in filters:
-            file_model.aliases = self._filter_dict(
-                file_model.aliases, filters["aliases"]
-            )
-
-        return file_model
 
     def _apply_model_transformations(
         self, model: ProjectModel, transformations: Dict[str, Any]

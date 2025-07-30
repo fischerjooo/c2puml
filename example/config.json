@@ -12,57 +12,47 @@
     "include": [],
     "exclude": []
   },
-  "element_filters": {
-    "structs": {
-      "include": [],
-      "exclude": []
+
+  "file_specific": {
+    "sample.c": {
+      "include_filter": [
+        "^stdio\\.h$",
+        "^stdlib\\.h$",
+        "^string\\.h$",
+        "^sample\\.h$",
+        "^math_utils\\.h$",
+        "^logger\\.h$",
+        "^geometry\\.h$",
+        "^config\\.h$"
+      ],
+      "include_depth": 3
     },
-    "functions": {
-      "include": [],
-      "exclude": []
+    "utils.c": {
+      "include_filter": [
+        "^math\\.h$",
+        "^time\\.h$"
+      ],
+      "include_depth": 2
     },
-    "enums": {
-      "include": [],
-      "exclude": []
-    },
-    "unions": {
-      "include": [],
-      "exclude": []
-    },
-    "macros": {
-      "include": [],
-      "exclude": []
-    },
-    "aliases": {
-      "include": [],
-      "exclude": []
+    "complex.c": {
+      "include_depth": 5
     }
-  },
-  "include_filters": {
-    "sample.c": [
-      "^stdio\\.h$",
-      "^stdlib\\.h$",
-      "^string\\.h$",
-      "^sample\\.h$",
-      "^math_utils\\.h$",
-      "^logger\\.h$",
-      "^geometry\\.h$",
-      "^config\\.h$"
-    ],
-    "utils.c": [
-      "^math\\.h$",
-      "^time\\.h$"
-    ]
   },
   "transformations": {
     "remove": {
-      "structs": [],
+      "typedef": [],
       "functions": [],
-      "macros": []
+      "macros": [],
+      "globals": [],
+      "includes": []
     },
     "rename": {
-      "structs": {},
-      "functions": {}
+      "typedef": {},
+      "functions": {},
+      "macros": {},
+      "globals": {},
+      "includes": {},
+      "files": {}
     }
   }
 }

@@ -61,9 +61,6 @@ class TestConfig(unittest.TestCase):
                 "include": [".*\\.c$", ".*\\.h$"],
                 "exclude": ["test_.*\\.c$"],
             },
-            "element_filters": {
-                "structs": {"include": ["Person", "Config"], "exclude": ["Internal.*"]}
-            },
         }
 
         config_path = self.create_test_config(config_data)
@@ -94,7 +91,6 @@ class TestConfig(unittest.TestCase):
                 "output_dir": "./output",
                 "recursive_search": False,
                 "file_filters": {"include": [".*\\.c$"]},
-                "element_filters": {},
             }
         )
 
@@ -122,7 +118,6 @@ class TestConfig(unittest.TestCase):
                     "include": [".*\\.c$", ".*\\.h$"],
                     "exclude": ["test_.*\\.c$", ".*\\.tmp$"],
                 },
-                "element_filters": {},
             }
         )
 
@@ -135,64 +130,13 @@ class TestConfig(unittest.TestCase):
         self.assertFalse(config._should_include_file("test_main.c"))
         self.assertFalse(config._should_include_file("file.tmp"))
 
-    def test_element_filtering(self):
-        """Test element filtering functionality"""
-        config = Config(
-            {
-                "element_filters": {
-                    "structs": {
-                        "include": ["Person", "Config"],
-                        "exclude": ["Internal.*"],
-                    },
-                    "functions": {
-                        "include": ["main", "process"],
-                        "exclude": ["debug_.*"],
-                    },
-                },
-                "file_filters": {},
-            }
-        )
 
-        # Create test file model
-        file_model = FileModel(
-            file_path="test.c",
-            structs={
-                "Person": Struct("Person", []),
-                "Config": Struct("Config", []),
-                "InternalData": Struct("InternalData", []),
-            },
-            enums={},
-            functions=[
-                Function("main", "int", []),
-                Function("process", "void", []),
-                Function("debug_log", "void", []),
-            ],
-            globals=[],
-            includes=[],
-            macros=[],
-            aliases={},
-        )
-
-        # Apply filters
-        filtered_model = config._apply_element_filters(file_model)
-
-        # Check struct filtering
-        self.assertIn("Person", filtered_model.structs)
-        self.assertIn("Config", filtered_model.structs)
-        self.assertNotIn("InternalData", filtered_model.structs)
-
-        # Check function filtering
-        function_names = [f.name for f in filtered_model.functions]
-        self.assertIn("main", function_names)
-        self.assertIn("process", function_names)
-        self.assertNotIn("debug_log", function_names)
 
     def test_model_filtering(self):
         """Test applying filters to a complete model"""
         config = Config(
             {
                 "file_filters": {"include": [".*\\.c$"], "exclude": ["test_.*\\.c$"]},
-                "element_filters": {"structs": {"include": ["Person"]}},
             }
         )
 
@@ -246,7 +190,6 @@ class TestConfig(unittest.TestCase):
                     "include": ["[invalid_regex"],
                     "exclude": ["[invalid_regex"],
                 },
-                "element_filters": {},
             }
         )
 
@@ -264,7 +207,6 @@ class TestConfig(unittest.TestCase):
                 "project_name": "test_project",
                 "source_folders": ["/path/to/project"],
                 "file_filters": {},
-                "element_filters": {},
             }
         )
 
@@ -282,7 +224,6 @@ class TestConfig(unittest.TestCase):
                 "source_folders": ["/path/to/project"],
                 "output_dir": "./output",
                 "file_filters": {},
-                "element_filters": {},
             }
         )
 
@@ -292,7 +233,6 @@ class TestConfig(unittest.TestCase):
                 "source_folders": ["/path/to/project"],
                 "output_dir": "./output",
                 "file_filters": {},
-                "element_filters": {},
             }
         )
 
@@ -302,7 +242,6 @@ class TestConfig(unittest.TestCase):
                 "source_folders": ["/path/to/project"],
                 "output_dir": "./output",
                 "file_filters": {},
-                "element_filters": {},
             }
         )
 
@@ -319,7 +258,6 @@ class TestConfig(unittest.TestCase):
                 "project_name": "test_project",
                 "source_folders": ["/path/to/project"],
                 "file_filters": {},
-                "element_filters": {},
             }
         )
 
