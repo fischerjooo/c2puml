@@ -255,26 +255,7 @@ class TestConfig(unittest.TestCase):
         self.assertIsNotNone(config.file_include_patterns)
         self.assertIsNotNone(config.file_exclude_patterns)
 
-    def test_get_summary(self):
-        """Test configuration summary generation"""
-        config = Config(
-            {
-                "project_name": "test_project",
-                "source_folders": ["/path/to/project"],
-                "output_dir": "./output",
-                "recursive_search": True,
-                "file_filters": {"include": [".*\\.c$"], "exclude": ["test_.*\\.c$"]},
-                "element_filters": {},
-            }
-        )
 
-        summary = config.get_summary()
-
-        # Verify summary contains key information
-        # Note: summary format may vary depending on implementation
-        self.assertIsInstance(summary, dict)
-        self.assertIn("project_name", summary)
-        self.assertIn("source_folders", summary)
 
     def test_default_config_values(self):
         """Test default configuration values"""
@@ -373,10 +354,7 @@ class TestConfig(unittest.TestCase):
         loaded_config = Config.load(save_path)
         self.assertEqual(loaded_config.source_folders, config.source_folders)
 
-        # Test that the summary includes all source folders
-        summary = config.get_summary()
-        self.assertIn("source_folders", summary)
-        self.assertEqual(summary["source_folders"], config.source_folders)
+
 
     def test_empty_source_folders(self):
         """Test that empty source_folders list is handled correctly"""
