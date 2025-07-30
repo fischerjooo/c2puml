@@ -64,10 +64,10 @@ class ModelVerifier:
         """Verify a single file model"""
         # Verify file-level data
         if not file_model.file_path or not file_model.file_path.strip():
-            self.issues.append(f"File path is empty in {file_path}")
+            self.issues.append(f"File path is empty in {file_model.name}")
 
         if not file_model.name or not file_model.name.strip():
-            self.issues.append(f"Relative path is empty in {file_path}")
+            self.issues.append(f"File name is empty in {file_path}")
 
         # Verify structs
         for struct_name, struct in file_model.structs.items():
