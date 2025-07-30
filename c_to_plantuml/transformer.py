@@ -604,16 +604,15 @@ class Transformer:
                     )
                     continue
 
-                # Create include relation using appropriate paths
-                # For tests (tmp directories), use full paths; otherwise use 
-                # filenames/relative paths
+                # Create include relation using FileModel names for consistency
+                # For tests (tmp directories), use full paths only if needed; otherwise use names
                 source_file = (
                     file_model.file_path if "tmp" in file_model.file_path 
                     else file_model.name
                 )
                 included_file = (
                     file_map[include_name].file_path if "tmp" in file_map[include_name].file_path 
-                    else include_name
+                    else file_map[include_name].name
                 )
                 
                 include_relation = IncludeRelation(

@@ -76,7 +76,7 @@ class Generator:
                 )
 
                 # Create output filename
-                basename = Path(filename).stem
+                basename = Path(file_model.name).stem
                 output_file = os.path.join(output_dir, f"{basename}.puml")
 
                 # Write the file
@@ -91,7 +91,7 @@ class Generator:
         self, file_model: FileModel, project_model: ProjectModel, include_depth: int = 1
     ) -> str:
         """Generate a PlantUML diagram for a file following the template format"""
-        basename = Path(file_model.file_path).stem
+        basename = Path(file_model.name).stem
         include_tree = self._build_include_tree(file_model, project_model, include_depth)
         uml_ids = self._generate_uml_ids(include_tree, project_model)
 
