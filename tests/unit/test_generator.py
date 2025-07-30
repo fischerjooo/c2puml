@@ -249,7 +249,7 @@ class TestGenerator(unittest.TestCase):
             "output_dir": os.path.join(self.temp_dir, "config_output"),
             "recursive_search": True,
             "file_filters": {},
-            "element_filters": {},
+
         }
 
         # Save model

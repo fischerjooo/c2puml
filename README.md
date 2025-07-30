@@ -68,22 +68,69 @@ Create `config.json` for customization. The configuration supports multiple filt
 ### Filtering Options
 
 - **file_filters**: Filter files by path patterns
-- **element_filters**: Filter specific elements (structs, functions, etc.) by name patterns
-- **include_filters**: Filter includes and include relations for each root C file using regex patterns
 
-### Include Filters
+- **file_specific**: Configure file-specific settings including include filters for each root C file
 
-The `include_filters` feature allows you to create focused PlantUML diagrams by filtering includes for different root files:
+### File-Specific Configuration
+
+The `file_specific` feature allows you to configure file-specific settings for different root files. Each file can have its own `include_filter` and `include_depth` settings:
 
 ```json
-"include_filters": {
-  "main.c": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
-  "network.c": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
-  "database.c": ["^sqlite3\\.h$", "^mysql\\.h$", "^postgresql/"]
+"file_specific": {
+  "main.c": {
+    "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
+    "include_depth": 3
+  },
+  "network.c": {
+    "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
+    "include_depth": 2
+  },
+  "database.c": {
+    "include_filter": ["^sqlite3\\.h$", "^mysql\\.h$", "^postgresql/"],
+    "include_depth": 4
+  },
+  "simple.c": {
+    "include_depth": 1
+  }
 }
 ```
 
-This enables separate filtering rules for each root file, creating cleaner, more focused diagrams.
+**Available file-specific settings:**
+- **include_filter** (optional): Array of regex patterns to filter includes for this specific file
+- **include_depth** (optional): Override the global include_depth setting for this specific file
+
+Files without file-specific configuration will use the global settings. This enables fine-grained control over include processing for each root file, creating cleaner, more focused diagrams.
+
+### Model Transformations
+
+The transformer supports modifying the parsed model before generating diagrams:
+
+```json
+{
+  "transformations": {
+    "remove": {
+      "typedef": ["legacy_type", "temp_struct"],
+      "functions": ["debug_func", "internal_*"],
+      "macros": ["DEBUG_*", "TEMP_MACRO"],
+      "globals": ["old_global"],
+      "includes": ["deprecated.h"]
+    },
+    "rename": {
+      "typedef": {"old_name": "new_name"},
+      "functions": {"calculate": "compute"},
+      "macros": {"OLD_MACRO": "NEW_MACRO"},
+      "globals": {"old_var": "new_var"},
+      "includes": {"old.h": "new.h"},
+      "files": {"legacy.c": "modern.c"}
+    },
+    "file_selection": {
+      "selected_files": [".*main\\.c$"]
+    }
+  }
+}
+```
+
+**Note:** Transformation functionality provides configuration structure with stub implementations for future development.
 
 ```json
 {
@@ -96,29 +143,31 @@ This enables separate filtering rules for each root file, creating cleaner, more
     "include": [".*\\.c$", ".*\\.h$"],
     "exclude": [".*test.*"]
   },
-  "element_filters": {
-    "structs": {
-      "include": ["^[A-Z][a-zA-Z0-9_]*$"],
-      "exclude": ["^test_"]
+  "file_specific": {
+    "main.c": {
+      "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
+      "include_depth": 3
     },
-    "functions": {
-      "include": ["^[a-z][a-zA-Z0-9_]*$"],
-      "exclude": ["^test_"]
+    "network.c": {
+      "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
+      "include_depth": 2
     }
-  },
-  "include_filters": {
-    "main.c": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
-    "network.c": ["^sys/socket\\.h$", "^netinet/", "^arpa/"]
   },
   "transformations": {
     "remove": {
-      "structs": [],
+      "typedef": [],
       "functions": [],
-      "macros": []
+      "macros": [],
+      "globals": [],
+      "includes": []
     },
     "rename": {
-      "structs": {},
-      "functions": {}
+      "typedef": {},
+      "functions": {},
+      "macros": {},
+      "globals": {},
+      "includes": {},
+      "files": {}
     }
   }
 }
