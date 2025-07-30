@@ -3,19 +3,19 @@
 class "transformed" as TRANSFORMED <<source>> #LightBlue
 {
     -- Macros --
-    - #define LEGACY_$1
+    - #define LEGACY_VERSION
     -- Functions --
     void keep_this_function()
-    void legacy_$1(const char * message)
     int legacy_calculate(int a, int b)
+    void legacy_print_info(const char * message)
     int main()
-    old_point_t * old_create_point(int x, int y)
+    void * old_create_point(int x, int y)
 }
 
 class "transformed" as HEADER_TRANSFORMED <<header>> #LightGreen
 {
     -- Macros --
-    + #define LEGACY_$1
+    + #define LEGACY_API_VERSION
     + #define TRANSFORMED_H
     -- Global Variables --
     + char * system_path
@@ -23,10 +23,10 @@ class "transformed" as HEADER_TRANSFORMED <<header>> #LightGreen
     + void cleanup_resources()
     + status_t initialize_system()
     + void keep_this_function()
-    + void legacy_$1()
-    + int legacy_init(old_config_t * config)
+    + void legacy_cleanup()
+    + int legacy_init(void * config)
     + int main()
-    + old_config_t * old_create_config(const char * name)
+    + void * old_create_config(const char * name)
     + void process_data(const point3d_t * point)
 }
 

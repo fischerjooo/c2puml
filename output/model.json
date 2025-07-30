@@ -2812,7 +2812,9 @@
           "methods": [],
           "name": "legacy_data",
           "tag_name": "",
-          "uses": []
+          "uses": [
+            "old_point_t"
+          ]
         },
         "old_point": {
           "fields": [
@@ -2868,6 +2870,16 @@
         "legacy_uint_t": {
           "name": "legacy_uint_t",
           "original_type": "unsigned int",
+          "uses": []
+        },
+        "old_config_t": {
+          "name": "old_config_t",
+          "original_type": "void *",
+          "uses": []
+        },
+        "old_point_t": {
+          "name": "old_point_t",
+          "original_type": "void *",
           "uses": []
         }
       },

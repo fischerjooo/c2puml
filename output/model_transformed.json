@@ -3023,19 +3023,6 @@
         {
           "is_declaration": false,
           "is_static": false,
-          "name": "legacy_$1",
-          "parameters": [
-            {
-              "name": "message",
-              "type": "const char *",
-              "value": null
-            }
-          ],
-          "return_type": "void"
-        },
-        {
-          "is_declaration": false,
-          "is_static": false,
           "name": "legacy_calculate",
           "parameters": [
             {
@@ -3050,6 +3037,19 @@
             }
           ],
           "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "legacy_print_info",
+          "parameters": [
+            {
+              "name": "message",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
         },
         {
           "is_declaration": false,
@@ -3074,7 +3074,7 @@
               "value": null
             }
           ],
-          "return_type": "old_point_t *"
+          "return_type": "void *"
         }
       ],
       "globals": [],
@@ -3112,7 +3112,7 @@
         "transformed.h"
       ],
       "macros": [
-        "LEGACY_$1"
+        "LEGACY_VERSION"
       ],
       "name": "transformed.c",
       "structs": {
@@ -3185,7 +3185,7 @@
         {
           "is_declaration": true,
           "is_static": false,
-          "name": "legacy_$1",
+          "name": "legacy_cleanup",
           "parameters": [],
           "return_type": "void"
         },
@@ -3196,7 +3196,7 @@
           "parameters": [
             {
               "name": "config",
-              "type": "old_config_t *",
+              "type": "void *",
               "value": null
             }
           ],
@@ -3220,7 +3220,7 @@
               "value": null
             }
           ],
-          "return_type": "old_config_t *"
+          "return_type": "void *"
         },
         {
           "is_declaration": true,
@@ -3248,7 +3248,7 @@
         "stdio.h"
       ],
       "macros": [
-        "LEGACY_$1",
+        "LEGACY_API_VERSION",
         "TRANSFORMED_H"
       ],
       "name": "transformed.h",

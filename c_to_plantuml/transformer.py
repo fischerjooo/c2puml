@@ -277,7 +277,27 @@ class Transformer:
         
         if "remove" in transformation_config:
             self.logger.debug("Applying remove operations for container: %s", container_name)
+            
+            # Collect typedef names BEFORE removing them for type reference cleanup
+            removed_typedef_names = set()
+            if "typedef" in transformation_config["remove"]:
+                typedef_patterns = transformation_config["remove"]["typedef"]
+                compiled_patterns = self._compile_patterns(typedef_patterns)
+                if compiled_patterns:
+                    for file_path in target_files:
+                        if file_path in model.files:
+                            file_model = model.files[file_path]
+                            for alias_name in file_model.aliases.keys():
+                                if self._matches_any_pattern(alias_name, compiled_patterns):
+                                    removed_typedef_names.add(alias_name)
+                    self.logger.debug("Pre-identified typedefs for removal: %s", list(removed_typedef_names))
+            
             model = self._apply_removals(model, transformation_config["remove"], target_files)
+            
+            # Clean up type references after typedef removal using pre-collected names
+            if removed_typedef_names:
+                self.logger.debug("Calling type reference cleanup for container: %s", container_name)
+                self._cleanup_type_references_by_names(model, removed_typedef_names)
         
         if "rename" in transformation_config:
             self.logger.debug("Applying rename operations for container: %s", container_name)
@@ -620,6 +640,10 @@ class Transformer:
         # Remove elements
         if "remove" in transformations:
             model = self._apply_removals(model, transformations["remove"], target_files)
+            
+            # Clean up type references after typedef removal
+            if "typedef" in transformations["remove"]:
+                self._cleanup_type_references(model, transformations["remove"]["typedef"], target_files)
 
         return model
 
@@ -667,6 +691,222 @@ class Transformer:
             model = self._rename_files(model, rename_config["files"], target_files)
 
         return model
+    
+    def _cleanup_type_references(
+        self, model: ProjectModel, removed_typedef_patterns: List[str], target_files: Set[str]
+    ) -> None:
+        """
+        Clean up type references after typedef removal
+        
+        This method removes type references that point to removed typedefs from:
+        - Function parameters and return types
+        - Global variable types  
+        - Struct field types
+        """
+        self.logger.debug("Starting type reference cleanup with patterns: %s, target_files: %s", 
+                         removed_typedef_patterns, list(target_files))
+        
+        if not removed_typedef_patterns:
+            self.logger.debug("No typedef patterns to clean up")
+            return
+            
+        compiled_patterns = self._compile_patterns(removed_typedef_patterns)
+        if not compiled_patterns:
+            self.logger.debug("No valid compiled patterns")
+            return
+            
+        # Track removed type names for cleanup
+        removed_types = set()
+        
+        # First, collect all removed typedef names from all target files
+        for file_path in target_files:
+            if file_path in model.files:
+                file_model = model.files[file_path]
+                
+                # Check what typedefs would be removed from this file
+                for alias_name in list(file_model.aliases.keys()):
+                    if self._matches_any_pattern(alias_name, compiled_patterns):
+                        removed_types.add(alias_name)
+                        self.logger.debug("Found removed typedef: %s in file %s", alias_name, file_path)
+        
+        self.logger.debug("Total removed types identified: %s", list(removed_types))
+        
+        # Now clean up type references across all files (not just target files)
+        # because type references can appear in any file that uses the typedef
+        cleaned_count = 0
+        for file_path, file_model in model.files.items():
+            file_cleaned = 0
+            
+            # Clean function parameter and return types
+            for func in file_model.functions:
+                # Clean return type
+                if func.return_type and self._contains_removed_type(func.return_type, removed_types):
+                    old_type = func.return_type
+                    func.return_type = self._remove_type_references(func.return_type, removed_types)
+                    if func.return_type != old_type:
+                        file_cleaned += 1
+                        self.logger.debug(
+                            "Cleaned return type '%s' -> '%s' in function %s", 
+                            old_type, func.return_type, func.name
+                        )
+                
+                # Clean parameter types
+                for param in func.parameters:
+                    if param.type and self._contains_removed_type(param.type, removed_types):
+                        old_type = param.type
+                        param.type = self._remove_type_references(param.type, removed_types)
+                        if param.type != old_type:
+                            file_cleaned += 1
+                            self.logger.debug(
+                                "Cleaned parameter type '%s' -> '%s' for parameter %s", 
+                                old_type, param.type, param.name
+                            )
+            
+            # Clean global variable types
+            for global_var in file_model.globals:
+                if global_var.type and self._contains_removed_type(global_var.type, removed_types):
+                    old_type = global_var.type
+                    global_var.type = self._remove_type_references(global_var.type, removed_types)
+                    if global_var.type != old_type:
+                        file_cleaned += 1
+                        self.logger.debug(
+                            "Cleaned global variable type '%s' -> '%s' for %s", 
+                            old_type, global_var.type, global_var.name
+                        )
+            
+            # Clean struct field types
+            for struct in file_model.structs.values():
+                for field in struct.fields:
+                    if field.type and self._contains_removed_type(field.type, removed_types):
+                        old_type = field.type
+                        field.type = self._remove_type_references(field.type, removed_types)
+                        if field.type != old_type:
+                            file_cleaned += 1
+                            self.logger.debug(
+                                "Cleaned struct field type '%s' -> '%s' for %s.%s", 
+                                old_type, field.type, struct.name, field.name
+                            )
+            
+            cleaned_count += file_cleaned
+        
+        if cleaned_count > 0:
+            self.logger.info(
+                "Cleaned %d type references to removed typedefs: %s", 
+                cleaned_count, list(removed_types)
+            )
+    
+    def _contains_removed_type(self, type_str: str, removed_types: Set[str]) -> bool:
+        """Check if a type string contains any of the removed types"""
+        if not type_str or not removed_types:
+            return False
+            
+        # Simple check - look for removed type names in the type string
+        # This handles cases like "old_point_t *", "const old_config_t", etc.
+        for removed_type in removed_types:
+            if removed_type in type_str:
+                return True
+        return False
+    
+    def _remove_type_references(self, type_str: str, removed_types: Set[str]) -> str:
+        """Remove references to removed types from a type string"""
+        if not type_str or not removed_types:
+            return type_str
+            
+        cleaned_type = type_str
+        for removed_type in removed_types:
+            if removed_type in cleaned_type:
+                # Replace the removed type with "void" to maintain some type safety
+                # This is a simple approach - more sophisticated would be to have replacement rules
+                cleaned_type = cleaned_type.replace(removed_type, "void")
+                
+        # Clean up any double spaces or other artifacts
+        cleaned_type = " ".join(cleaned_type.split())
+        return cleaned_type
+    
+    def _cleanup_type_references_by_names(
+        self, model: ProjectModel, removed_typedef_names: Set[str]
+    ) -> None:
+        """
+        Clean up type references using pre-collected typedef names
+        
+        This method removes type references that point to removed typedefs from:
+        - Function parameters and return types
+        - Global variable types  
+        - Struct field types
+        """
+        if not removed_typedef_names:
+            self.logger.debug("No removed typedef names provided")
+            return
+            
+        self.logger.debug("Cleaning type references for removed typedefs: %s", list(removed_typedef_names))
+        
+        # Clean up type references across all files (not just target files)
+        # because type references can appear in any file that uses the typedef
+        cleaned_count = 0
+        for file_path, file_model in model.files.items():
+            file_cleaned = 0
+            
+            # Clean function parameter and return types
+            for func in file_model.functions:
+                # Clean return type
+                if func.return_type and self._contains_removed_type(func.return_type, removed_typedef_names):
+                    old_type = func.return_type
+                    func.return_type = self._remove_type_references(func.return_type, removed_typedef_names)
+                    if func.return_type != old_type:
+                        file_cleaned += 1
+                        self.logger.debug(
+                            "Cleaned return type '%s' -> '%s' in function %s", 
+                            old_type, func.return_type, func.name
+                        )
+                
+                # Clean parameter types
+                for param in func.parameters:
+                    if param.type and self._contains_removed_type(param.type, removed_typedef_names):
+                        old_type = param.type
+                        param.type = self._remove_type_references(param.type, removed_typedef_names)
+                        if param.type != old_type:
+                            file_cleaned += 1
+                            self.logger.debug(
+                                "Cleaned parameter type '%s' -> '%s' for parameter %s", 
+                                old_type, param.type, param.name
+                            )
+            
+            # Clean global variable types
+            for global_var in file_model.globals:
+                if global_var.type and self._contains_removed_type(global_var.type, removed_typedef_names):
+                    old_type = global_var.type
+                    global_var.type = self._remove_type_references(global_var.type, removed_typedef_names)
+                    if global_var.type != old_type:
+                        file_cleaned += 1
+                        self.logger.debug(
+                            "Cleaned global variable type '%s' -> '%s' for %s", 
+                            old_type, global_var.type, global_var.name
+                        )
+            
+            # Clean struct field types
+            for struct in file_model.structs.values():
+                for field in struct.fields:
+                    if field.type and self._contains_removed_type(field.type, removed_typedef_names):
+                        old_type = field.type
+                        field.type = self._remove_type_references(field.type, removed_typedef_names)
+                        if field.type != old_type:
+                            file_cleaned += 1
+                            self.logger.debug(
+                                "Cleaned struct field type '%s' -> '%s' for %s.%s", 
+                                old_type, field.type, struct.name, field.name
+                            )
+            
+            cleaned_count += file_cleaned
+            if file_cleaned > 0:
+                self.logger.debug("Cleaned %d type references in file %s", file_cleaned, file_path)
+        
+        if cleaned_count > 0:
+            self.logger.info(
+                "Cleaned %d type references to removed typedefs: %s", 
+                cleaned_count, list(removed_typedef_names)
+            )
+        else:
+            self.logger.debug("No type references found to clean up")
 
     def _apply_rename_patterns(self, original_name: str, patterns_map: Dict[str, str]) -> str:
         """

@@ -58,10 +58,10 @@
         "^old_config_t$": "config_t"
       },
       "functions": {
-        "^deprecated_(.*)": "legacy_$1"
+        "^deprecated_(.*)": "legacy_\\1"
       },
       "macros": {
-        "^OLD_(.*)": "LEGACY_$1"
+        "^OLD_(.*)": "LEGACY_\\1"
       },
       "globals": {
         "^legacy_path$": "system_path"

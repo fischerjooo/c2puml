@@ -10,7 +10,8 @@
 // Legacy typedefs that can be removed/renamed
 typedef unsigned int legacy_uint_t;
 typedef void* legacy_handle_t;
-typedef struct old_config old_config_t;
+typedef void* old_config_t;
+typedef void* old_point_t;
 
 // Deprecated macros that can be removed
 #define LEGACY_BUFFER_SIZE 512
