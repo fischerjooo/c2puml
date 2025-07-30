@@ -52,12 +52,11 @@ class CParser:
         c_files = []
         if config:
             for file_path in all_c_files:
-                relative_path = str(file_path.relative_to(source_folder_path))
-                if config._should_include_file(relative_path):
+                if config._should_include_file(file_path.name):
                     c_files.append(file_path)
-                    self.logger.debug("Included file after filtering: %s", relative_path)
+                    self.logger.debug("Included file after filtering: %s", file_path.name)
                 else:
-                    self.logger.debug("Excluded file after filtering: %s", relative_path)
+                    self.logger.debug("Excluded file after filtering: %s", file_path.name)
         else:
             c_files = all_c_files
 
@@ -1312,15 +1311,15 @@ class Parser:
         # Validate source_folders is a list
         if not isinstance(source_folders, list):
             raise TypeError("source_folders must be a list of strings")
-        
+
         if not source_folders:
             raise ValueError("At least one source folder must be provided")
-        
+
         # Validate all items are strings
         for folder in source_folders:
             if not isinstance(folder, str):
                 raise TypeError("All source folders must be strings")
-        
+
         self.logger.info(
             f"Step 1: Parsing C/C++ project with {len(source_folders)} source folders"
         )
