@@ -215,14 +215,6 @@ class Config:
         )
         return bool(self.file_filters or self.element_filters or has_include_filters)
 
-    def get_include_filters(self) -> Dict[str, List[str]]:
-        """Extract include_filters from file_specific configuration for backward compatibility"""
-        include_filters = {}
-        for file_name, file_config in self.file_specific.items():
-            if "include_filter" in file_config:
-                include_filters[file_name] = file_config["include_filter"]
-        return include_filters
-
     def _should_include_file(self, file_path: str) -> bool:
         """Check if a file should be included based on filters"""
         # Check exclude patterns first

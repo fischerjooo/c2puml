@@ -141,20 +141,14 @@ class Transformer:
 
     def _extract_include_filters_from_config(self, config: Dict[str, Any]) -> Dict[str, List[str]]:
         """Extract include_filters from file_specific configuration structure"""
-        # Support both old and new configuration formats for backward compatibility
-        if "include_filters" in config:
-            # Old format - direct include_filters
-            return config["include_filters"]
+        if "file_specific" not in config:
+            return {}
         
-        if "file_specific" in config:
-            # New format - extract from file_specific
-            include_filters = {}
-            for file_name, file_config in config["file_specific"].items():
-                if "include_filter" in file_config:
-                    include_filters[file_name] = file_config["include_filter"]
-            return include_filters
-        
-        return {}
+        include_filters = {}
+        for file_name, file_config in config["file_specific"].items():
+            if "include_filter" in file_config:
+                include_filters[file_name] = file_config["include_filter"]
+        return include_filters
 
     def _apply_file_filters(
         self, model: ProjectModel, filters: Dict[str, Any]
