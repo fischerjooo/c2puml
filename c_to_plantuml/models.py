@@ -340,18 +340,7 @@ class FileModel:
 
         return cls(**new_data)
 
-    def get_summary(self) -> dict:
-        """Get a summary of the file contents"""
-        return {
-            "file_path": self.file_path,
-            "structs_count": len(self.structs),
-            "enums_count": len(self.enums),
-            "functions_count": len(self.functions),
-            "globals_count": len(self.globals),
-            "includes_count": len(self.includes),
-            "macros_count": len(self.macros),
-            "aliases_count": len(self.aliases),
-        }
+
 
 
 @dataclass
@@ -410,22 +399,7 @@ class ProjectModel:
         except Exception as e:
             raise ValueError(f"Failed to load model from {file_path}: {e}") from e
 
-    def get_summary(self) -> dict:
-        """Get a summary of the project"""
-        total_structs = sum(len(f.structs) for f in self.files.values())
-        total_enums = sum(len(f.enums) for f in self.files.values())
-        total_functions = sum(len(f.functions) for f in self.files.values())
-        total_globals = sum(len(f.globals) for f in self.files.values())
 
-        return {
-            "project_name": self.project_name,
-            "source_folder": self.source_folder,
-            "files_count": len(self.files),
-            "total_structs": total_structs,
-            "total_enums": total_enums,
-            "total_functions": total_functions,
-            "total_globals": total_globals,
-        }
 
     def update_uses_fields(self):
         """Update all uses fields across the entire project model"""

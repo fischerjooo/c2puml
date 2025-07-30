@@ -369,19 +369,7 @@ class Config:
 
         return filtered_items
 
-    def get_summary(self) -> Dict[str, Any]:
-        """Get a summary of the configuration"""
-        return {
-            "project_name": self.project_name,
-            "source_folders": self.source_folders,
-            "output_dir": self.output_dir,
-            "recursive_search": self.recursive_search,
-            "include_depth": self.include_depth,
-            "has_file_filters": bool(self.file_filters),
-            "has_element_filters": bool(self.element_filters),
-            "has_include_filters": bool(self.include_filters),
-            "has_transformations": bool(self.transformations),
-        }
+
 
     def __eq__(self, other: Any) -> bool:
         """Check if two configurations are equal"""

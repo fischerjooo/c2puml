@@ -325,38 +325,7 @@ class Transformer:
         """Check if text matches any of the given regex patterns"""
         return any(pattern.search(text) for pattern in patterns)
 
-    def _should_process_include(
-        self,
-        file_model: FileModel,
-        include_name: str,
-        compiled_filters: Dict[str, List[re.Pattern]],
-    ) -> bool:
-        """Check if an include should be processed based on include_filters"""
-        # Find the root file for this file
-        root_file = self._find_root_file(file_model.name, file_model)
 
-        # If no filters for this root file, allow all includes
-        if root_file not in compiled_filters:
-            return True
-
-        # Check if the include name matches any pattern for this root file
-        patterns = compiled_filters[root_file]
-        return self._matches_any_pattern(include_name, patterns)
-
-    def _should_process_include_with_root(
-        self,
-        include_name: str,
-        compiled_filters: Dict[str, List[re.Pattern]],
-        root_file: str,
-    ) -> bool:
-        """Check if an include should be processed based on include_filters with explicit root file"""
-        # If no filters for this root file, allow all includes
-        if root_file not in compiled_filters:
-            return True
-
-        # Check if the include name matches any pattern for this root file
-        patterns = compiled_filters[root_file]
-        return self._matches_any_pattern(include_name, patterns)
 
     def _filter_file_elements(
         self, file_model: FileModel, filters: Dict[str, Any]
