@@ -11,11 +11,21 @@ from tests.feature.base import BaseFeatureTest
 
 # Add src directory to path for new package structure
 import sys
-test_dir = os.path.dirname(__file__)
-src_path = os.path.join(test_dir, "..", "..", "src")
-if os.path.exists(src_path):
-    sys.path.insert(0, src_path)
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+import os
+from pathlib import Path
+
+# Get the absolute path to the src directory 
+current_file = Path(__file__).resolve()
+test_dir = current_file.parent
+project_root = test_dir.parent.parent
+src_path = project_root / "src"
+
+if src_path.exists():
+    sys.path.insert(0, str(src_path))
+# Also add tests directory for test utilities
+tests_path = project_root / "tests"
+if tests_path.exists():
+    sys.path.insert(0, str(tests_path))
 
 
 class TestIntegration(BaseFeatureTest):

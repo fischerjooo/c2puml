@@ -34,6 +34,19 @@ from .core.generator import Generator
 from .core.preprocessor import PreprocessorManager
 from .core.verifier import ModelVerifier
 
+# Create module aliases for backward compatibility with existing imports
+from . import core
+# Make c2puml.parser available (points to core.parser)
+import sys
+parser = core.parser
+sys.modules[__name__ + '.parser'] = parser
+# Make c2puml.generator available (points to core.generator) 
+generator = core.generator
+sys.modules[__name__ + '.generator'] = generator
+# Make c2puml.transformer available (points to core.transformer)
+transformer = core.transformer  
+sys.modules[__name__ + '.transformer'] = transformer
+
 __all__ = [
     "main",
     "Config",
