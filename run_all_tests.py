@@ -149,7 +149,7 @@ def run_pytest_tests(
     if with_coverage:
         cmd.extend(
             [
-                "--cov=c_to_plantuml",
+                "--cov=c2puml",
                 "--cov-report=term-missing",
                 "--cov-report=html:htmlcov",
                 "--cov-fail-under=80",

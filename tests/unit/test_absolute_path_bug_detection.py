@@ -13,8 +13,8 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from c_to_plantuml.generator import Generator
-from c_to_plantuml.parser import CParser
+from c2puml.generator import Generator
+from c2puml.parser import CParser
 
 
 class TestAbsolutePathBugDetection(unittest.TestCase):

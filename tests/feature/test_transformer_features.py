@@ -17,8 +17,8 @@ class TestTransformerFeatures(BaseFeatureTest):
 
     def test_transform_complex_project_with_filters(self):
         """Test transforming a complex project with various filters"""
-        from c_to_plantuml.parser import Parser
-        from c_to_plantuml.transformer import Transformer
+        from c2puml.parser import Parser
+        from c2puml.transformer import Transformer
 
         # Create a complex test project
         main_c = """
@@ -183,8 +183,8 @@ struct Config {
 
     def test_transform_with_include_relations(self):
         """Test transforming with include relation processing"""
-        from c_to_plantuml.parser import Parser
-        from c_to_plantuml.transformer import Transformer
+        from c2puml.parser import Parser
+        from c2puml.transformer import Transformer
 
         # Create a project with include relationships
         main_c = """
@@ -264,8 +264,8 @@ struct Struct2 {
 
     def test_transform_with_renaming(self):
         """Test transforming with element renaming"""
-        from c_to_plantuml.parser import Parser
-        from c_to_plantuml.transformer import Transformer
+        from c2puml.parser import Parser
+        from c2puml.transformer import Transformer
 
         # Create a simple test file
         test_c = """
@@ -323,8 +323,8 @@ int old_function(int param) {
 
     def test_transform_with_additions(self):
         """Test transforming with element additions"""
-        from c_to_plantuml.parser import Parser
-        from c_to_plantuml.transformer import Transformer
+        from c2puml.parser import Parser
+        from c2puml.transformer import Transformer
 
         # Create a simple test file
         test_c = """
@@ -376,8 +376,8 @@ struct ExistingStruct {
 
     def test_transform_with_removals(self):
         """Test transforming with element removals"""
-        from c_to_plantuml.parser import Parser
-        from c_to_plantuml.transformer import Transformer
+        from c2puml.parser import Parser
+        from c2puml.transformer import Transformer
 
         # Create a simple test file
         test_c = """
@@ -436,8 +436,8 @@ enum RemoveEnum {
 
     def test_transform_complex_regex_patterns(self):
         """Test transforming with complex regex patterns"""
-        from c_to_plantuml.parser import Parser
-        from c_to_plantuml.transformer import Transformer
+        from c2puml.parser import Parser
+        from c2puml.transformer import Transformer
 
         # Create a test file with various naming patterns
         test_c = """
@@ -524,8 +524,8 @@ static void helper_function(void) { }
 
     def test_transform_error_handling(self):
         """Test transformer error handling with invalid configurations"""
-        from c_to_plantuml.parser import Parser
-        from c_to_plantuml.transformer import Transformer
+        from c2puml.parser import Parser
+        from c2puml.transformer import Transformer
 
         # Create a simple test file
         test_c = """
@@ -575,9 +575,9 @@ struct TestStruct {
 
     def test_transform_integration_with_parser_and_generator(self):
         """Test full integration: parse -> transform -> generate"""
-        from c_to_plantuml.generator import Generator
-        from c_to_plantuml.parser import Parser
-        from c_to_plantuml.transformer import Transformer
+        from c2puml.generator import Generator
+        from c2puml.parser import Parser
+        from c2puml.transformer import Transformer
 
         # Create a comprehensive test project
         main_c = """
@@ -738,9 +738,9 @@ static void internal_helper(void);
 
     def test_include_filters_with_filtered_header(self):
         """Test that include_filters preserve includes arrays and only affect include_relations generation"""
-        from c_to_plantuml.generator import Generator
-        from c_to_plantuml.parser import Parser
-        from c_to_plantuml.transformer import Transformer
+        from c2puml.generator import Generator
+        from c2puml.parser import Parser
+        from c2puml.transformer import Transformer
 
         # Create test files with a filtered header
         main_c = """

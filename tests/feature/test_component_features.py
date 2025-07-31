@@ -22,7 +22,7 @@ class TestParserComponentFeatures(BaseFeatureTest):
 
     def test_parse_complex_typedefs(self):
         """Test parsing complex typedef relationships."""
-        from c_to_plantuml.parser import Parser
+        from c2puml.parser import Parser
 
         content = """
 #include <stdio.h>
@@ -57,7 +57,7 @@ struct ComplexStruct {
 
     def test_parse_unions(self):
         """Test parsing union definitions."""
-        from c_to_plantuml.parser import Parser
+        from c2puml.parser import Parser
 
         content = """
 union Data {
@@ -84,7 +84,7 @@ typedef union {
 
     def test_parse_function_pointers(self):
         """Test parsing function pointer definitions."""
-        from c_to_plantuml.parser import Parser
+        from c2puml.parser import Parser
 
         content = """
 typedef int (*compare_func_t)(const void *a, const void *b);
@@ -117,8 +117,8 @@ class TestGeneratorComponentFeatures(BaseFeatureTest):
 
     def test_generate_with_typedefs(self):
         """Test PlantUML generation with typedef relationships."""
-        from c_to_plantuml.generator import Generator
-        from c_to_plantuml.parser import Parser
+        from c2puml.generator import Generator
+        from c2puml.parser import Parser
 
         content = """
 #include <stdio.h>
@@ -155,8 +155,8 @@ struct Container {
 
     def test_generate_with_unions(self):
         """Test PlantUML generation with union definitions."""
-        from c_to_plantuml.generator import Generator
-        from c_to_plantuml.parser import Parser
+        from c2puml.generator import Generator
+        from c2puml.parser import Parser
 
         content = """
 union Data {
@@ -190,8 +190,8 @@ struct Container {
 
     def test_generate_with_complex_relationships(self):
         """Test PlantUML generation with complex type relationships."""
-        from c_to_plantuml.generator import Generator
-        from c_to_plantuml.parser import Parser
+        from c2puml.generator import Generator
+        from c2puml.parser import Parser
 
         content = """
 typedef struct Node Node;
@@ -249,7 +249,7 @@ class TestProjectAnalysisComponentFeatures(BaseFeatureTest):
 
     def test_project_structure_analysis(self):
         """Test analysis of project structure and dependencies."""
-        from c_to_plantuml.parser import Parser
+        from c2puml.parser import Parser
 
         # Create a realistic project structure
         project_files = {
@@ -321,7 +321,7 @@ typedef struct {
 
     def test_cross_file_type_dependencies(self):
         """Test analysis of type dependencies across files."""
-        from c_to_plantuml.parser import Parser
+        from c2puml.parser import Parser
 
         # Create files with cross-dependencies
         project_files = {
@@ -391,7 +391,7 @@ World* create_world(size_t max_entities) {
 
     def test_recursive_include_handling(self):
         """Test handling of recursive include relationships."""
-        from c_to_plantuml.parser import Parser
+        from c2puml.parser import Parser
 
         # Create files with potential circular includes
         project_files = {

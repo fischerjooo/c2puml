@@ -12,8 +12,8 @@ import os
 import tempfile
 from pathlib import Path
 
-from c_to_plantuml.config import Config
-from c_to_plantuml.parser import CParser
+from c2puml.config import Config
+from c2puml.parser import CParser
 from tests.feature.base import BaseFeatureTest
 
 

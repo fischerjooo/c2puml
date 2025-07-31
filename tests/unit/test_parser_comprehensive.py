@@ -10,9 +10,9 @@ import unittest
 from pathlib import Path
 from typing import Dict, List
 
-from c_to_plantuml.models import Alias, Enum, Field, Function, Struct, Union
-from c_to_plantuml.parser import CParser
-from c_to_plantuml.parser_tokenizer import CTokenizer, TokenType
+from c2puml.models import Alias, Enum, Field, Function, Struct, Union
+from c2puml.parser import CParser
+from c2puml.parser_tokenizer import CTokenizer, TokenType
 
 
 class TestCParserComprehensive(unittest.TestCase):

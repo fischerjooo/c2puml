@@ -24,11 +24,11 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from c_to_plantuml.config import Config
-from c_to_plantuml.generator import Generator
-from c_to_plantuml.main import main as c_to_plantuml_main
-from c_to_plantuml.parser import CParser, Parser
-from c_to_plantuml.transformer import Transformer
+from c2puml.config import Config
+from c2puml.generator import Generator
+from c2puml.main import main as c2puml_main
+from c2puml.parser import CParser, Parser
+from c2puml.transformer import Transformer
 from tests.feature.base import BaseFeatureTest
 
 
@@ -462,9 +462,9 @@ extern ApiContext global_context;
             json.dump(config_data, f, indent=2)
 
         # Run through CLI
-        with patch("sys.argv", ["c_to_plantuml", "--config", str(config_file)]):
+        with patch("sys.argv", ["c2puml", "--config", str(config_file)]):
             try:
-                c_to_plantuml_main()
+                c2puml_main()
             except SystemExit:
                 pass  # CLI exits after completion
 
@@ -618,7 +618,7 @@ typedef int Level3Type;
             )
 
             # Then apply transformations including include depth processing
-            from c_to_plantuml.transformer import Transformer
+            from c2puml.transformer import Transformer
 
             transformer = Transformer()
 

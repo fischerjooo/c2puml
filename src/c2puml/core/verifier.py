@@ -9,7 +9,7 @@ import logging
 import re
 from typing import List, Tuple
 
-from .models import Alias, Enum, Field, FileModel, Function, ProjectModel, Struct, Union
+from ..models import Alias, Enum, Field, FileModel, Function, ProjectModel, Struct, Union
 
 
 class ModelVerifier:

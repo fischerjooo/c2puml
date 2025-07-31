@@ -10,8 +10,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from c_to_plantuml.config import Config
-from c_to_plantuml.models import Enum, Field, FileModel, Function, ProjectModel, Struct
+from c2puml.config import Config
+from c2puml.models import Enum, Field, FileModel, Function, ProjectModel, Struct
 
 
 class TestConfig(unittest.TestCase):

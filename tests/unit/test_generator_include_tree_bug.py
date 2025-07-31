@@ -9,8 +9,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock
 
-from c_to_plantuml.generator import Generator
-from c_to_plantuml.models import (
+from c2puml.generator import Generator
+from c2puml.models import (
     FileModel,
     ProjectModel,
 )

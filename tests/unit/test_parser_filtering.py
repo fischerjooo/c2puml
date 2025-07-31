@@ -10,8 +10,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from c_to_plantuml.config import Config
-from c_to_plantuml.models import (
+from c2puml.config import Config
+from c2puml.models import (
     Alias,
     Enum,
     Field,
@@ -21,7 +21,7 @@ from c_to_plantuml.models import (
     Struct,
     Union,
 )
-from c_to_plantuml.transformer import Transformer
+from c2puml.transformer import Transformer
 
 
 class TestUserConfigurableFiltering(unittest.TestCase):

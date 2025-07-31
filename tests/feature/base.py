@@ -129,9 +129,9 @@ typedef struct {
             # Fallback implementation
             import json
 
-            from c_to_plantuml.generator import Generator
-            from c_to_plantuml.parser import Parser
-            from c_to_plantuml.transformer import Transformer
+            from c2puml.generator import Generator
+            from c2puml.parser import Parser
+            from c2puml.transformer import Transformer
 
             project_dir = Path(project_dir)
 

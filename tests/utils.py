@@ -12,10 +12,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 from unittest.mock import MagicMock, Mock
 
-from c_to_plantuml.generator import Generator
-from c_to_plantuml.models import Enum, FileModel, Function, ProjectModel, Struct
-from c_to_plantuml.parser import Parser
-from c_to_plantuml.transformer import Transformer
+from c2puml.generator import Generator
+from c2puml.models import Enum, FileModel, Function, ProjectModel, Struct
+from c2puml.parser import Parser
+from c2puml.transformer import Transformer
 
 
 class ProjectBuilder:

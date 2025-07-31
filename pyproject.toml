@@ -3,7 +3,7 @@ requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "c-to-plantuml"
+name = "c2puml"
 version = "2.0.0"
 description = "Convert C/C++ code to PlantUML diagrams with advanced filtering and transformation capabilities"
 readme = "README.md"
@@ -34,10 +34,10 @@ dependencies = []
 keywords = ["c", "cpp", "plantuml", "uml", "diagram", "code-generation", "documentation"]
 
 [project.scripts]
-c2plantuml = "c_to_plantuml.main:main"
+c2puml = "c2puml.main:main"
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["src"]
 
 [tool.black]
 line-length = 88
@@ -53,14 +53,14 @@ extend-exclude = '''
   | \.venv
   | build
   | dist
-  | c_to_plantuml\.egg-info
+  | c2puml\.egg-info
 )/
 '''
 
 [tool.isort]
 profile = "black"
 line_length = 88
-known_first_party = ["c_to_plantuml"]
+known_first_party = ["c2puml"]
 skip_glob = [
     "build/*",
     "dist/*",

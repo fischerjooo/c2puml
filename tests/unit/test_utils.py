@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from c_to_plantuml.utils import (
+from c2puml.utils import (
     detect_file_encoding,
     get_acceptable_encodings,
     get_platform_default_encoding,
