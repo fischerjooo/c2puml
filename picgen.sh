@@ -81,16 +81,35 @@ test_plantuml_setup() {
     fi
 }
 
+# Function to validate JAR file
+validate_jar_file() {
+    local jar_path="$1"
+    if [ ! -f "$jar_path" ]; then
+        return 1
+    fi
+    # Check if file size is greater than 0
+    if [ ! -s "$jar_path" ]; then
+        echo "⚠️  JAR file is empty or corrupted: $jar_path"
+        return 1
+    fi
+    # Test if the JAR file is valid
+    if ! java -jar "$jar_path" -version &> /dev/null; then
+        echo "⚠️  JAR file appears to be corrupted: $jar_path"
+        return 1
+    fi
+    return 0
+}
+
 # Check if plantuml is installed or if we have the JAR file
 if ! command -v plantuml &> /dev/null; then
     # Check custom PlantUML JAR path first
-    if [ -n "$CUSTOM_PLANTUML_JAR" ] && [ -f "$CUSTOM_PLANTUML_JAR" ]; then
+    if [ -n "$CUSTOM_PLANTUML_JAR" ] && validate_jar_file "$CUSTOM_PLANTUML_JAR"; then
         PLANTUML_CMD="java -jar \"$CUSTOM_PLANTUML_JAR\""
         echo "📦 Using custom PlantUML JAR file: $CUSTOM_PLANTUML_JAR"
-    elif [ -f "../plantuml.jar" ]; then
+    elif validate_jar_file "../plantuml.jar"; then
         PLANTUML_CMD="java -jar ../plantuml.jar"
         echo "📦 Using PlantUML JAR file from parent directory"
-    elif [ -f "plantuml.jar" ]; then
+    elif validate_jar_file "plantuml.jar"; then
         PLANTUML_CMD="java -jar plantuml.jar"
         echo "📦 Using PlantUML JAR file from current directory"
     else
@@ -107,6 +126,12 @@ if ! command -v plantuml &> /dev/null; then
             exit 1
         fi
         
+        # Remove corrupted JAR file if it exists
+        if [ -f "plantuml.jar" ]; then
+            echo "🗑️  Removing corrupted/empty plantuml.jar file"
+            rm -f plantuml.jar
+        fi
+        
         # Download PlantUML JAR file
         PLANTUML_VERSION="1.2024.0"
         PLANTUML_URL="https://github.com/plantuml/plantuml/releases/download/v${PLANTUML_VERSION}/plantuml-${PLANTUML_VERSION}.jar"
@@ -119,12 +144,14 @@ if ! command -v plantuml &> /dev/null; then
             curl -L -o plantuml.jar "$PLANTUML_URL"
         fi
         
-        if [ $? -eq 0 ] && [ -f "plantuml.jar" ]; then
-            echo "✅ PlantUML JAR file downloaded successfully"
+        if [ $? -eq 0 ] && validate_jar_file "plantuml.jar"; then
+            echo "✅ PlantUML JAR file downloaded and validated successfully"
             PLANTUML_CMD="java -jar plantuml.jar"
         else
-            echo "❌ Failed to download PlantUML JAR file"
+            echo "❌ Failed to download or validate PlantUML JAR file"
             echo "   Please download it manually from: $PLANTUML_URL"
+            echo "   Make sure the downloaded file is not corrupted"
+            rm -f plantuml.jar  # Remove potentially corrupted download
             exit 1
         fi
     fi
