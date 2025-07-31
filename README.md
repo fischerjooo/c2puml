@@ -20,12 +20,12 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 - **Project Analysis**: Analyzes entire C/C++ projects with recursive directory scanning
 - **PlantUML Generation**: Creates organized PlantUML diagrams with proper UML notation
 - **Configuration System**: Flexible filtering and transformation capabilities
-- **Cross-Platform**: Works on Linux, macOS, and Windows
+- **Cross-Platform**: Works on Linux, macOS, and Windows with platform-specific batch/shell scripts
 
 ## Installation
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/fischerjooo/c2puml.git
 cd c2puml
 python3 -m pip install -e .
 ```
@@ -58,7 +58,7 @@ The scripts automatically:
 - Test the setup before conversion
 - Convert all .puml files to PNG images
 
-**Note**: The script now automatically handles Graphviz installation and testing to resolve the "Dot executable does not exist" error.
+**Note**: The script automatically handles Graphviz installation and testing to resolve the "Dot executable does not exist" error.
 
 ## Configuration
 
@@ -190,23 +190,6 @@ The tool creates PlantUML diagrams showing:
 
 ## Development Setup
 
-### Quick Setup (Linux/macOS)
-
-For a complete development environment setup:
-
-```bash
-# Run the comprehensive setup script
-./setup-linux.sh
-```
-
-This script will:
-- Install system dependencies
-- Create a Python virtual environment
-- Install all development dependencies
-- Set up git hooks
-- Configure VSCode settings
-- Test the setup
-
 ### Manual Setup
 
 ```bash
@@ -223,11 +206,6 @@ pip install -r requirements-dev.txt
 
 # Install package in development mode
 pip install -e .
-
-# Set up git hooks
-./setup-hooks.sh  # Linux/macOS
-# or
-setup-hooks.bat   # Windows
 ```
 
 ### VSCode Configuration
@@ -238,33 +216,45 @@ The project includes pre-configured VSCode settings for:
 - Linting with flake8
 - Auto-save and formatting on save
 
+**VSCode Tasks**: The project includes pre-configured tasks accessible via `Ctrl+Shift+P` → "Tasks: Run Task":
+- **Run Full Workflow** - Complete analysis and diagram generation
+- **Run Example** - Quick test with example files
+- **Generate Pictures** - Convert PlantUML to PNG images
+- **Run Tests** - Execute test suite
+- **Install Dependencies** - Set up development environment
+- **Format & Lint** - Code quality checks
+
 ### Development Commands
 
 ```bash
+# Run all tests
+./run_all_tests.sh        # Linux/macOS
+run_all_tests.bat         # Windows
+
 # Run tests with coverage
-./run_tests_with_coverage.sh
+run_tests_with_coverage.sh # Linux/macOS
 
-# PNG generation
-./picgen.sh
+# Format and lint code
+format_lint.bat           # Windows
+
+# Generate PNG images
+./picgen.sh               # Linux/macOS
+picgen.bat                # Windows
+
+# Run full workflow
+./run_all.sh              # Linux/macOS
+run_all.bat               # Windows
+
+# Install dependencies
+install_dependencies.bat  # Windows
+
+# Run example
+run_example.bat           # Windows
+
+# Git management utilities
+git_manage.bat            # Windows - Interactive git operations
+git_reset_pull.bat        # Windows - Reset and pull from remote
 ```
-
-### Git Hooks Setup
-
-The project includes pre-commit hooks for code quality:
-
-```bash
-# Linux/macOS
-./setup-hooks.sh
-
-# Windows
-setup-hooks.bat
-```
-
-This installs a pre-commit hook that automatically runs:
-- **Black** formatting check
-- **isort** import sorting check
-
-The hook will prevent commits if formatting issues are detected.
 
 ## License
 
