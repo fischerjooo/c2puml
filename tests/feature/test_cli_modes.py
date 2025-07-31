@@ -29,11 +29,11 @@ class TestCLIModes(BaseFeatureTest):
         )
         self.cli = [
             sys.executable,
-            os.path.abspath(os.path.join(os.path.dirname(__file__), "../../main.py")),
+            "-m", "c2puml.main"
         ]
         self.env = os.environ.copy()
         self.env["PYTHONPATH"] = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../../")
+            os.path.join(os.path.dirname(__file__), "../../src")
         )
         self.output_dir = os.path.join(self.temp_dir, "output")
 

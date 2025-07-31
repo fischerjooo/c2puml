@@ -8,22 +8,22 @@ mkdir output
 REM Try multiple Python commands
 echo Trying to run Python...
 
-REM Option 1: Try py launcher
-py -3.12 main.py --config example/config.json --verbose
+REM Option 1: Try py launcher with PYTHONPATH
+set "PYTHONPATH=src" && py -3.12 -m c2puml.main --config example/config.json --verbose
 if %errorlevel% equ 0 goto :success
 
 REM Option 2: Try python3
-python3 -m c2puml.main --config example/config.json --verbose
+set "PYTHONPATH=src" && python3 -m c2puml.main --config example/config.json --verbose
 if %errorlevel% equ 0 goto :success
 
 REM Option 3: Try python with full path
-"C:\toolbase\python\3.12.5.0-2\python.exe" -m c2puml.main --config example/config.json --verbose
+set "PYTHONPATH=src" && "C:\toolbase\python\3.12.5.0-2\python.exe" -m c2puml.main --config example/config.json --verbose
 if %errorlevel% equ 0 goto :success
 
 REM Option 4: Try virtual environment
 if exist venv\Scripts\activate.bat (
     call venv\Scripts\activate.bat
-    python -m c2puml.main --config example/config.json --verbose
+    set "PYTHONPATH=src" && python -m c2puml.main --config example/config.json --verbose
     if %errorlevel% equ 0 goto :success
 )
 
