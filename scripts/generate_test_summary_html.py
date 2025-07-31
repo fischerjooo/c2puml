@@ -287,7 +287,7 @@ def generate_html_summary(stats: Dict, output_file: Path) -> None:
             <a href="coverage/htmlcov/index.html">📊 Coverage</a>
             <span style="background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 4px;">📝 Tests</span>
             <a href="../../output/diagram_index.html">📊 Diagrams</a>
-            <a href="https://github.com/fischerjooo/c2puml/tree/main/tests/example">📋 Examples</a>
+            <a href="https://github.com/fischerjooo/c2puml/tree/main/tests/example">📋 Example</a>
         </div>
 
         <h1>Test Results Summary</h1>
