@@ -13,6 +13,7 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 - [📊 Combined Coverage Report](https://fischerjooo.github.io/c2puml/tests/reports/coverage/htmlcov/index.html) - Comprehensive coverage report with summary and detailed per-file analysis
 - [📝 Test Summary](https://fischerjooo.github.io/c2puml/tests/reports/test_summary.html) - Test execution summary and statistics
 - [📊 Example Diagrams](https://fischerjooo.github.io/c2puml/output/diagram_index.html) - Quick view of all generated PlantUML diagrams and PNG images
+- [📋 Example Source Code](https://github.com/fischerjooo/c2puml/tree/main/tests/example) - Browse the example C/C++ source files used for testing and demonstration
 
 ## Features
 
