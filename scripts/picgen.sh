@@ -106,6 +106,9 @@ if ! command -v plantuml &> /dev/null; then
     if [ -n "$CUSTOM_PLANTUML_JAR" ] && validate_jar_file "$CUSTOM_PLANTUML_JAR"; then
         PLANTUML_CMD="java -jar \"$CUSTOM_PLANTUML_JAR\""
         echo "📦 Using custom PlantUML JAR file: $CUSTOM_PLANTUML_JAR"
+    elif validate_jar_file "scripts/plantuml.jar"; then
+        PLANTUML_CMD="java -jar scripts/plantuml.jar"
+        echo "📦 Using PlantUML JAR file from scripts directory"
     elif validate_jar_file "../plantuml.jar"; then
         PLANTUML_CMD="java -jar ../plantuml.jar"
         echo "📦 Using PlantUML JAR file from parent directory"
@@ -138,21 +141,41 @@ if ! command -v plantuml &> /dev/null; then
         
         echo "🔄 Downloading PlantUML v${PLANTUML_VERSION}..."
         
+        # Try downloading to scripts directory first (better for CI environments)
+        DOWNLOAD_PATH="scripts/plantuml.jar"
+        DOWNLOAD_DIR="scripts"
+        
+        # Create scripts directory if it doesn't exist
+        mkdir -p "$DOWNLOAD_DIR"
+        
         if [ "$DOWNLOAD_CMD" = "wget" ]; then
-            wget "$PLANTUML_URL" -O plantuml.jar
+            wget "$PLANTUML_URL" -O "$DOWNLOAD_PATH"
         else
-            curl -L -o plantuml.jar "$PLANTUML_URL"
+            curl -L -o "$DOWNLOAD_PATH" "$PLANTUML_URL"
         fi
         
-        if [ $? -eq 0 ] && validate_jar_file "plantuml.jar"; then
-            echo "✅ PlantUML JAR file downloaded and validated successfully"
-            PLANTUML_CMD="java -jar plantuml.jar"
+        if [ $? -eq 0 ] && validate_jar_file "$DOWNLOAD_PATH"; then
+            echo "✅ PlantUML JAR file downloaded and validated successfully to scripts directory"
+            PLANTUML_CMD="java -jar scripts/plantuml.jar"
         else
-            echo "❌ Failed to download or validate PlantUML JAR file"
-            echo "   Please download it manually from: $PLANTUML_URL"
-            echo "   Make sure the downloaded file is not corrupted"
-            rm -f plantuml.jar  # Remove potentially corrupted download
-            exit 1
+            echo "⚠️ Failed to download to scripts directory, trying current directory..."
+            # Fallback: try downloading to current directory
+            if [ "$DOWNLOAD_CMD" = "wget" ]; then
+                wget "$PLANTUML_URL" -O plantuml.jar
+            else
+                curl -L -o plantuml.jar "$PLANTUML_URL"
+            fi
+            
+            if [ $? -eq 0 ] && validate_jar_file "plantuml.jar"; then
+                echo "✅ PlantUML JAR file downloaded and validated successfully to current directory"
+                PLANTUML_CMD="java -jar plantuml.jar"
+            else
+                echo "❌ Failed to download or validate PlantUML JAR file"
+                echo "   Please download it manually from: $PLANTUML_URL"
+                echo "   Make sure the downloaded file is not corrupted"
+                rm -f plantuml.jar "$DOWNLOAD_PATH"  # Remove potentially corrupted downloads
+                exit 1
+            fi
         fi
     fi
 else
@@ -161,18 +184,22 @@ fi
 
 # Store the current directory to reference the JAR file correctly
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CURRENT_DIR="$(pwd)"
+
+# Update PLANTUML_CMD to use absolute path if it's a JAR file before changing directory
+if [[ "$PLANTUML_CMD" == *"plantuml.jar"* ]]; then
+    if [[ "$PLANTUML_CMD" == *"scripts/plantuml.jar"* ]]; then
+        PLANTUML_CMD="java -jar ${CURRENT_DIR}/scripts/plantuml.jar"
+    elif [[ "$PLANTUML_CMD" == *"../plantuml.jar"* ]]; then
+        PLANTUML_CMD="java -jar ${CURRENT_DIR}/../plantuml.jar"
+    elif [[ "$PLANTUML_CMD" == *"plantuml.jar"* ]] && [[ "$PLANTUML_CMD" != *"/"* ]]; then
+        # It's just "java -jar plantuml.jar" so it's in current directory
+        PLANTUML_CMD="java -jar ${CURRENT_DIR}/plantuml.jar"
+    fi
+fi
 
 # Change to output directory
 cd output
-
-# Update PLANTUML_CMD to use absolute path if it's a JAR file
-if [[ "$PLANTUML_CMD" == *"plantuml.jar"* ]]; then
-    if [[ "$PLANTUML_CMD" == *"../plantuml.jar"* ]]; then
-        PLANTUML_CMD="java -jar ${SCRIPT_DIR}/plantuml.jar"
-    elif [[ "$PLANTUML_CMD" == *"plantuml.jar"* ]]; then
-        PLANTUML_CMD="java -jar ${SCRIPT_DIR}/plantuml.jar"
-    fi
-fi
 
 # Test PlantUML setup before proceeding
 if ! test_plantuml_setup "$PLANTUML_CMD"; then

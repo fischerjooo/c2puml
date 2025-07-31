@@ -162,3 +162,4 @@ plantuml.jar
 # Allow all files in tests/reports/
 !tests/reports/
 !tests/reports/**
+scripts/plantuml.jar
