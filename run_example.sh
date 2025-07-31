@@ -6,7 +6,7 @@ rm -rf output example/output
 
 # Run the full workflow using the new CLI interface
 echo "Running example workflow with config.json..."
-python3 -m c2puml.main --config example/config.json
+PYTHONPATH=src python3 -m c2puml.main --config example/config.json
 
 echo "PlantUML diagrams generated in: ./output (see config.json)"
 
