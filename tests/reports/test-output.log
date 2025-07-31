@@ -369,4 +369,4 @@ tests/unit/test_verifier.py::TestModelVerifier::test_unbalanced_brackets_detecte
 tests/unit/test_verifier.py::TestModelVerifier::test_valid_identifiers_pass PASSED [ 99%]
 tests/unit/test_verifier.py::TestModelVerifier::test_valid_model_passes_verification PASSED [100%]
 
-============================= 358 passed in 2.80s ==============================
+============================= 358 passed in 2.72s ==============================
