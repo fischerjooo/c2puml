@@ -4,10 +4,18 @@ Unit tests for generator include tree bug detection
 """
 
 import os
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock
+
+# Add src directory to path for new package structure
+test_dir = os.path.dirname(__file__)
+src_path = os.path.join(test_dir, "..", "..", "src")
+if os.path.exists(src_path):
+    sys.path.insert(0, src_path)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from c2puml.generator import Generator
 from c2puml.models import (
