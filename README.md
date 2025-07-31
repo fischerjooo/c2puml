@@ -36,10 +36,10 @@ python3 -m pip install -e .
 
 ```bash
 # Parse C project and generate diagrams
-c2puml --config example/config.json
+c2puml --config tests/example/config.json
 
 # Or using module syntax
-python3 -m c2puml.main --config example/config.json
+python3 -m c2puml.main --config tests/example/config.json
 ```
 
 ### Generate PNG Images

@@ -420,7 +420,7 @@ generate_diagram_index() {
             <a href="../tests/reports/coverage/htmlcov/index.html">📊 Coverage</a>
             <a href="../tests/reports/test_summary.html">📝 Tests</a>
             <span style="background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 4px;">📊 Diagrams</span>
-            <a href="../example/">📋 Examples</a>
+            <a href="../tests/example/">📋 Examples</a>
         </div>
         
         <div class="header">
