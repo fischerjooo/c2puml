@@ -37,8 +37,8 @@ def run_example_generation():
     """Run the example generation with coverage."""
     print_header("Running Example Generation with Coverage")
 
-    # Ensure we're in the workspace directory
-    workspace_dir = Path(__file__).parent
+    # Ensure we're in the workspace directory (project root, not scripts/)
+    workspace_dir = Path(__file__).parent.parent
     os.chdir(workspace_dir)
 
     # Create output directory if it doesn't exist
