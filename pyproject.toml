@@ -8,7 +8,7 @@ version = "2.0.0"
 description = "Convert C/C++ code to PlantUML diagrams with advanced filtering and transformation capabilities"
 readme = "README.md"
 authors = [
-    {name = "C to PlantUML Team", email = "team@c-to-plantuml.com"}
+    {name = "C to PlantUML Team", email = "team@c2puml.com"}
 ]
 license = {text = "MIT"}
 classifiers = [
@@ -94,7 +94,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["c_to_plantuml"]
+source = ["c2puml"]
 omit = [
     "*/tests/*",
     "*/test_*",

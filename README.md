@@ -3,16 +3,16 @@
 A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/C++ projects and generates comprehensive PlantUML class diagrams showing structs, enums, unions, functions, global variables, macros, typedefs, and include relationships.
 
 ## Status
-[![Run Tests](https://github.com/fischerjooo/generator_project/actions/workflows/test.yml/badge.svg)](https://github.com/fischerjooo/generator_project/actions/workflows/test.yml)
-[![Convert PlantUML to PNG](https://github.com/fischerjooo/generator_project/actions/workflows/puml2png.yml/badge.svg)](https://github.com/fischerjooo/generator_project/actions/workflows/puml2png.yml)
-[![Coverage Reports](https://github.com/fischerjooo/generator_project/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/fischerjooo/generator_project/actions/workflows/test-coverage.yml)
-[![Deploy Website](https://github.com/fischerjooo/generator_project/actions/workflows/deploy-website.yml/badge.svg)](https://github.com/fischerjooo/generator_project/actions/workflows/deploy-website.yml)
+[![Run Tests](https://github.com/fischerjooo/c2puml/actions/workflows/test.yml/badge.svg)](https://github.com/fischerjooo/c2puml/actions/workflows/test.yml)
+[![Convert PlantUML to PNG](https://github.com/fischerjooo/c2puml/actions/workflows/puml2png.yml/badge.svg)](https://github.com/fischerjooo/c2puml/actions/workflows/puml2png.yml)
+[![Coverage Reports](https://github.com/fischerjooo/c2puml/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/fischerjooo/c2puml/actions/workflows/test-coverage.yml)
+[![Deploy Website](https://github.com/fischerjooo/c2puml/actions/workflows/deploy-website.yml/badge.svg)](https://github.com/fischerjooo/c2puml/actions/workflows/deploy-website.yml)
 
 ## Reports
 
-- [📊 Combined Coverage Report](https://fischerjooo.github.io/generator_project/tests/reports/coverage/htmlcov/index.html) - Comprehensive coverage report with summary and detailed per-file analysis
-- [📝 Test Summary](https://fischerjooo.github.io/generator_project/tests/reports/test_summary.html) - Test execution summary and statistics
-- [📊 Example Diagrams](https://fischerjooo.github.io/generator_project/output/diagram_index.html) - Quick view of all generated PlantUML diagrams and PNG images
+- [📊 Combined Coverage Report](https://fischerjooo.github.io/c2puml/tests/reports/coverage/htmlcov/index.html) - Comprehensive coverage report with summary and detailed per-file analysis
+- [📝 Test Summary](https://fischerjooo.github.io/c2puml/tests/reports/test_summary.html) - Test execution summary and statistics
+- [📊 Example Diagrams](https://fischerjooo.github.io/c2puml/output/diagram_index.html) - Quick view of all generated PlantUML diagrams and PNG images
 
 ## Features
 
@@ -26,7 +26,7 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 
 ```bash
 git clone <repository-url>
-cd c-to-plantuml
+cd c2puml
 python3 -m pip install -e .
 ```
 
