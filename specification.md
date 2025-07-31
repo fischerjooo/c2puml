@@ -211,7 +211,7 @@ The system uses a JSON-based configuration file with the following parameters:
 ```json
 {
   "project_name": "example_project",
-  "source_folders": ["example/source"],
+  "source_folders": ["tests/example/source"],
   "output_dir": "./output",
   "model_output_path": "model.json",
   "recursive_search": true,

@@ -96,8 +96,8 @@ jobs:
         if [ -d "example" ]; then
           mkdir -p docs/example
           # Copy all files from example directory
-          cp -r example/* docs/example/
-          echo "✅ Example folder copied to docs/example/"
+          cp -r tests/example/* docs/example/
+echo "✅ Example folder copied to docs/example/"
         else
           echo "⚠️ Example folder not found, creating empty directory"
           mkdir -p docs/example
