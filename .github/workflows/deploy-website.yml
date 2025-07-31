@@ -163,7 +163,7 @@ jobs:
                     <a href="tests/reports/coverage/htmlcov/index.html">📊 Coverage</a>
                     <a href="tests/reports/test_summary.html">📝 Tests</a>
                     <a href="output/diagram_index.html">📊 Diagrams</a>
-                    <a href="https://github.com/fischerjooo/c2puml/tree/main/tests/example">📋 Examples</a>
+                    <a href="https://github.com/fischerjooo/c2puml/tree/main/tests/example">📋 Example</a>
                 </div>
                 <div class="header">
                     <h1>🚀 C to PlantUML Converter</h1>
@@ -187,9 +187,9 @@ jobs:
                     </div>
                     
                     <div class="card">
-                        <h3>📋 Examples & Documentation</h3>
+                        <h3>📋 Example & Documentation</h3>
                         <p>Explore project examples and detailed documentation.</p>
-                        <a href="https://github.com/fischerjooo/c2puml/tree/main/tests/example" class="btn">📋 Examples</a>
+                        <a href="https://github.com/fischerjooo/c2puml/tree/main/tests/example" class="btn">📋 Example</a>
                         <a href="index.md" class="btn">📖 README</a>
                     </div>
                     
