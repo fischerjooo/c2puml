@@ -1,115 +1,115 @@
 Cleaning previous output...
 Running example workflow with config.json...
 <frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-2025-07-31 10:44:25,550 - root - INFO - Using config: example/config.json
-2025-07-31 10:44:25,550 - root - INFO - Output folder: /workspace/output
-2025-07-31 10:44:25,551 - c2puml.core.parser - INFO - Step 1: Parsing C/C++ project with 2 source folders
-2025-07-31 10:44:25,551 - c2puml.core.parser - INFO - Parsing source folder 1/2: example/source
-2025-07-31 10:44:25,551 - c2puml.core.parser - INFO - Parsing project: /workspace/example/source
-2025-07-31 10:44:25,552 - c2puml.core.parser - INFO - Found 21 C/C++ files
-2025-07-31 10:44:25,552 - c2puml.core.parser - INFO - After filtering: 21 C/C++ files
-2025-07-31 10:44:25,598 - c2puml.core.parser - INFO - Parsing complete. Parsed 21 files successfully.
-2025-07-31 10:44:25,598 - c2puml.core.parser - INFO - Successfully parsed source folder example/source: 21 files
-2025-07-31 10:44:25,598 - c2puml.core.parser - INFO - Parsing source folder 2/2: example/source
-2025-07-31 10:44:25,598 - c2puml.core.parser - INFO - Parsing project: /workspace/example/source
-2025-07-31 10:44:25,598 - c2puml.core.parser - INFO - Found 21 C/C++ files
-2025-07-31 10:44:25,598 - c2puml.core.parser - INFO - After filtering: 21 C/C++ files
-2025-07-31 10:44:25,641 - c2puml.core.parser - INFO - Parsing complete. Parsed 21 files successfully.
-2025-07-31 10:44:25,641 - c2puml.core.parser - INFO - Successfully parsed source folder example/source: 21 files
-2025-07-31 10:44:25,644 - c2puml.core.parser - INFO - Step 1.5: Verifying model sanity...
-2025-07-31 10:44:25,645 - c2puml.core.verifier - WARNING - Model verification found 52 issues:
-2025-07-31 10:44:25,645 - c2puml.core.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.c
-2025-07-31 10:44:25,645 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int data [' for ']' in function process_with_callbacks in complex.c
-2025-07-31 10:44:25,645 - c2puml.core.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.c
-2025-07-31 10:44:25,645 - c2puml.core.verifier - WARNING -   - Suspicious field type 'math_operation_t operations [' for ']' in function process_with_callbacks in complex.c
-2025-07-31 10:44:25,645 - c2puml.core.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.c
-2025-07-31 10:44:25,645 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * pre_process ) ( int' for '*' in function process_with_callbacks in complex.c
-2025-07-31 10:44:25,645 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in function process_with_callbacks in complex.c
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.c
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * post_process ) ( int' for '*' in function process_with_callbacks in complex.c
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int )' for 'unnamed' in function process_with_callbacks in complex.c
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ']' in global in complex.c
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'math_operation_t global_math_ops [ 10' for ']' in global in complex.c
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field value '{ 
+2025-07-31 10:52:42,824 - root - INFO - Using config: example/config.json
+2025-07-31 10:52:42,825 - root - INFO - Output folder: /workspace/output
+2025-07-31 10:52:42,825 - c2puml.core.parser - INFO - Step 1: Parsing C/C++ project with 2 source folders
+2025-07-31 10:52:42,825 - c2puml.core.parser - INFO - Parsing source folder 1/2: example/source
+2025-07-31 10:52:42,825 - c2puml.core.parser - INFO - Parsing project: /workspace/example/source
+2025-07-31 10:52:42,826 - c2puml.core.parser - INFO - Found 21 C/C++ files
+2025-07-31 10:52:42,826 - c2puml.core.parser - INFO - After filtering: 21 C/C++ files
+2025-07-31 10:52:42,872 - c2puml.core.parser - INFO - Parsing complete. Parsed 21 files successfully.
+2025-07-31 10:52:42,872 - c2puml.core.parser - INFO - Successfully parsed source folder example/source: 21 files
+2025-07-31 10:52:42,872 - c2puml.core.parser - INFO - Parsing source folder 2/2: example/source
+2025-07-31 10:52:42,872 - c2puml.core.parser - INFO - Parsing project: /workspace/example/source
+2025-07-31 10:52:42,872 - c2puml.core.parser - INFO - Found 21 C/C++ files
+2025-07-31 10:52:42,872 - c2puml.core.parser - INFO - After filtering: 21 C/C++ files
+2025-07-31 10:52:42,915 - c2puml.core.parser - INFO - Parsing complete. Parsed 21 files successfully.
+2025-07-31 10:52:42,915 - c2puml.core.parser - INFO - Successfully parsed source folder example/source: 21 files
+2025-07-31 10:52:42,918 - c2puml.core.parser - INFO - Step 1.5: Verifying model sanity...
+2025-07-31 10:52:42,919 - c2puml.core.verifier - WARNING - Model verification found 52 issues:
+2025-07-31 10:52:42,919 - c2puml.core.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.c
+2025-07-31 10:52:42,919 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int data [' for ']' in function process_with_callbacks in complex.c
+2025-07-31 10:52:42,919 - c2puml.core.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.c
+2025-07-31 10:52:42,919 - c2puml.core.verifier - WARNING -   - Suspicious field type 'math_operation_t operations [' for ']' in function process_with_callbacks in complex.c
+2025-07-31 10:52:42,919 - c2puml.core.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.c
+2025-07-31 10:52:42,919 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * pre_process ) ( int' for '*' in function process_with_callbacks in complex.c
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in function process_with_callbacks in complex.c
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.c
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * post_process ) ( int' for '*' in function process_with_callbacks in complex.c
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int )' for 'unnamed' in function process_with_callbacks in complex.c
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ']' in global in complex.c
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'math_operation_t global_math_ops [ 10' for ']' in global in complex.c
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field value '{ 
  & ProcessorAdapter_Process , 
  & ProcessorService_Process , 
  & ProcessorHardware_Process , 
  }' for 'Process_Cfg_Process_acpfct' in global in complex.c
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct processor_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int ( * process_func ) ( int , char *' for ')' in struct processor_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct processor_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * cleanup_func ) ( void *' for ')' in struct processor_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct operation_set_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * callbacks [ 3 ] ) ( int , char *' for ')' in struct operation_set_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'struct { 
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct processor_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int ( * process_func ) ( int , char *' for ')' in struct processor_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct processor_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * cleanup_func ) ( void *' for ')' in struct processor_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct operation_set_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * callbacks [ 3 ] ) ( int , char *' for ')' in struct operation_set_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'struct { 
  char[32]' for 'name' in struct complex_handler_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct complex_handler_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int ( * validate_func ) ( const char *' for ')' in struct complex_handler_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct complex_handler_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * format_func ) ( char * , int' for ')' in struct complex_handler_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct __anonymous_struct__ in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void * ( * alloc_func ) ( size_t' for ')' in struct __anonymous_struct__ in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct __anonymous_struct__ in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * free_func ) ( void *' for ')' in struct __anonymous_struct__ in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct __anonymous_struct__ in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int ( * resize_func ) ( void * * , size_t' for ')' in struct __anonymous_struct__ in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct param4 in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * nested_func ) ( int' for ')' in struct param4 in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct handler_entry_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * init_func ) ( void' for ')' in struct handler_entry_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct handler_entry_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int ( * process_func ) ( int , int' for ')' in struct handler_entry_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct handler_entry_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * cleanup_func ) ( void' for ')' in struct handler_entry_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in union mixed_union_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * void_func ) ( void' for ')' in union mixed_union_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in union mixed_union_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int ( * int_func ) ( int' for ')' in union mixed_union_t in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int data [' for ']' in function process_with_callbacks in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'math_operation_t operations [' for ']' in function process_with_callbacks in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * pre_process ) ( int' for '*' in function process_with_callbacks in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in function process_with_callbacks in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * post_process ) ( int' for '*' in function process_with_callbacks in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int )' for 'unnamed' in function process_with_callbacks in complex.h
-2025-07-31 10:44:25,646 - c2puml.core.parser - WARNING - Model verification found 52 issues - model may contain parsing errors
-2025-07-31 10:44:25,646 - c2puml.core.parser - INFO - Step 1 complete! Model saved to: /workspace/output/model.json
-2025-07-31 10:44:25,646 - c2puml.core.parser - INFO - Found 21 total files across 2 source folder(s)
-2025-07-31 10:44:25,646 - c2puml.core.parser - INFO - Summary: 72 structs, 30 enums, 204 functions
-2025-07-31 10:44:25,646 - root - INFO - Model saved to: /workspace/output/model.json
-2025-07-31 10:44:25,646 - c2puml.core.transformer - INFO - Step 2: Transforming model: /workspace/output/model.json
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Applying transformations to model
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Discovered 3 transformation containers: ['transformations', 'transformations_01_cleanup', 'transformations_02_rename']
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Applying transformation container: transformations
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - After transformations: model contains 21 files with 268 total elements
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Applying transformation container: transformations_01_cleanup
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 2 typedefs from transformed.c
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 3 functions from transformed.c
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 2 macros from transformed.c
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 2 global variables from transformed.c
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 1 structs from transformed.c
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 2 enums from transformed.c
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 1 unions from transformed.c
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 4 typedefs from transformed.h
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 2 functions from transformed.h
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 2 macros from transformed.h
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 1 global variables from transformed.h
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 2 includes and 0 include relations from transformed.h
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 1 structs from transformed.h
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 2 enums from transformed.h
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Removed 1 unions from transformed.h
-2025-07-31 10:44:25,647 - c2puml.core.transformer - INFO - Cleaned 3 type references to removed typedefs: ['legacy_handle_t', 'old_point_t', 'legacy_int_t', 'legacy_string_t', 'old_config_t', 'legacy_uint_t']
-2025-07-31 10:44:25,648 - c2puml.core.transformer - INFO - After transformations_01_cleanup: model contains 21 files with 242 total elements
-2025-07-31 10:44:25,648 - c2puml.core.transformer - INFO - Applying transformation container: transformations_02_rename
-2025-07-31 10:44:25,648 - c2puml.core.transformer - INFO - After transformations_02_rename: model contains 21 files with 242 total elements
-2025-07-31 10:44:25,649 - c2puml.core.transformer - INFO - Transformations complete. Model now has 21 files
-2025-07-31 10:44:25,652 - c2puml.core.transformer - INFO - Step 2 complete! Transformed model saved to: /workspace/output/model_transformed.json
-2025-07-31 10:44:25,652 - root - INFO - Transformed model saved to: /workspace/output/model_transformed.json
-2025-07-31 10:44:25,655 - root - INFO - PlantUML generation complete! Output in: /workspace/output
-2025-07-31 10:44:25,655 - root - INFO - Complete workflow finished successfully!
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct complex_handler_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int ( * validate_func ) ( const char *' for ')' in struct complex_handler_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct complex_handler_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * format_func ) ( char * , int' for ')' in struct complex_handler_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct __anonymous_struct__ in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void * ( * alloc_func ) ( size_t' for ')' in struct __anonymous_struct__ in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct __anonymous_struct__ in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * free_func ) ( void *' for ')' in struct __anonymous_struct__ in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct __anonymous_struct__ in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int ( * resize_func ) ( void * * , size_t' for ')' in struct __anonymous_struct__ in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct param4 in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * nested_func ) ( int' for ')' in struct param4 in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct handler_entry_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * init_func ) ( void' for ')' in struct handler_entry_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct handler_entry_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int ( * process_func ) ( int , int' for ')' in struct handler_entry_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in struct handler_entry_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * cleanup_func ) ( void' for ')' in struct handler_entry_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in union mixed_union_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * void_func ) ( void' for ')' in union mixed_union_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in union mixed_union_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int ( * int_func ) ( int' for ')' in union mixed_union_t in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int data [' for ']' in function process_with_callbacks in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ']' in function process_with_callbacks in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'math_operation_t operations [' for ']' in function process_with_callbacks in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * pre_process ) ( int' for '*' in function process_with_callbacks in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name ')' in function process_with_callbacks in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Invalid field name '*' in function process_with_callbacks in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'void ( * post_process ) ( int' for '*' in function process_with_callbacks in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.verifier - WARNING -   - Suspicious field type 'int )' for 'unnamed' in function process_with_callbacks in complex.h
+2025-07-31 10:52:42,920 - c2puml.core.parser - WARNING - Model verification found 52 issues - model may contain parsing errors
+2025-07-31 10:52:42,920 - c2puml.core.parser - INFO - Step 1 complete! Model saved to: /workspace/output/model.json
+2025-07-31 10:52:42,920 - c2puml.core.parser - INFO - Found 21 total files across 2 source folder(s)
+2025-07-31 10:52:42,920 - c2puml.core.parser - INFO - Summary: 72 structs, 30 enums, 204 functions
+2025-07-31 10:52:42,920 - root - INFO - Model saved to: /workspace/output/model.json
+2025-07-31 10:52:42,920 - c2puml.core.transformer - INFO - Step 2: Transforming model: /workspace/output/model.json
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Applying transformations to model
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Discovered 3 transformation containers: ['transformations', 'transformations_01_cleanup', 'transformations_02_rename']
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Applying transformation container: transformations
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - After transformations: model contains 21 files with 268 total elements
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Applying transformation container: transformations_01_cleanup
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 4 typedefs from transformed.h
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 2 functions from transformed.h
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 2 macros from transformed.h
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 1 global variables from transformed.h
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 2 includes and 0 include relations from transformed.h
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 1 structs from transformed.h
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 2 enums from transformed.h
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 1 unions from transformed.h
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 2 typedefs from transformed.c
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 3 functions from transformed.c
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 2 macros from transformed.c
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 2 global variables from transformed.c
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 1 structs from transformed.c
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 2 enums from transformed.c
+2025-07-31 10:52:42,921 - c2puml.core.transformer - INFO - Removed 1 unions from transformed.c
+2025-07-31 10:52:42,922 - c2puml.core.transformer - INFO - Cleaned 3 type references to removed typedefs: ['old_config_t', 'old_point_t', 'legacy_string_t', 'legacy_int_t', 'legacy_handle_t', 'legacy_uint_t']
+2025-07-31 10:52:42,922 - c2puml.core.transformer - INFO - After transformations_01_cleanup: model contains 21 files with 242 total elements
+2025-07-31 10:52:42,922 - c2puml.core.transformer - INFO - Applying transformation container: transformations_02_rename
+2025-07-31 10:52:42,922 - c2puml.core.transformer - INFO - After transformations_02_rename: model contains 21 files with 242 total elements
+2025-07-31 10:52:42,923 - c2puml.core.transformer - INFO - Transformations complete. Model now has 21 files
+2025-07-31 10:52:42,926 - c2puml.core.transformer - INFO - Step 2 complete! Transformed model saved to: /workspace/output/model_transformed.json
+2025-07-31 10:52:42,926 - root - INFO - Transformed model saved to: /workspace/output/model_transformed.json
+2025-07-31 10:52:42,929 - root - INFO - PlantUML generation complete! Output in: /workspace/output
+2025-07-31 10:52:42,929 - root - INFO - Complete workflow finished successfully!
 PlantUML diagrams generated in: ./output (see config.json)
 Running assertions to validate generated PUML files...
 Starting comprehensive PUML validation...
