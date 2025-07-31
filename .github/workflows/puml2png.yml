@@ -171,8 +171,8 @@ jobs:
       if: steps.check_duplicate.outputs.skip_execution != 'true'
       run: |
         echo "🚀 Running PlantUML to PNG conversion..."
-        chmod +x ./picgen.sh
-        ./picgen.sh
+        chmod +x ./scripts/picgen.sh
+        ./scripts/picgen.sh
         
         # Verify that the script completed successfully and generated the diagram index
         echo "🔍 Verifying script completion..."

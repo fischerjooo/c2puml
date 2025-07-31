@@ -1,6 +1,6 @@
 @echo off
 set SCRIPT_DIR=%~dp0
-cd /d %SCRIPT_DIR%
+cd /d %SCRIPT_DIR%..
 
 if exist output rmdir /s /q output
 mkdir output

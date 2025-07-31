@@ -11,7 +11,7 @@ echo "=================================="
 # Step 1: Run all tests
 echo "📋 Step 1: Running all tests..."
 echo "----------------------------------------"
-./run_all_tests.sh
+$(dirname "$0")/run_all_tests.sh
 echo "✅ All tests passed!"
 
 echo ""
@@ -19,7 +19,7 @@ echo ""
 # Step 2: Run example
 echo "📋 Step 2: Running example..."
 echo "----------------------------------------"
-./run_example.sh
+$(dirname "$0")/run_example.sh
 echo "✅ Example completed successfully!"
 
 echo ""
@@ -27,7 +27,7 @@ echo ""
 # Step 3: Generate PNG images
 echo "📋 Step 3: Generating PNG images..."
 echo "----------------------------------------"
-./picgen.sh
+$(dirname "$0")/picgen.sh
 echo "✅ PNG generation completed successfully!"
 
 echo ""

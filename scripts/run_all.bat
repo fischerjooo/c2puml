@@ -10,7 +10,7 @@ echo ==================================
 REM Step 1: Run all tests
 echo 📋 Step 1: Running all tests...
 echo ----------------------------------------
-call run_all_tests.bat
+call "%~dp0run_all_tests.bat"
 echo ✅ All tests passed!
 
 echo.
@@ -18,13 +18,10 @@ echo.
 REM Step 2: Run example
 echo 📋 Step 2: Running example...
 echo ----------------------------------------
-call run_example.bat
+call "%~dp0run_example.bat"
 echo ✅ Example completed successfully!
 
 echo.
-
-REM Return to workspace root directory for picgen.bat
-cd /d "%~dp0"
 
 REM Step 3: Generate PNG images
 echo 📋 Step 3: Generating PNG images...
@@ -33,10 +30,10 @@ REM Use PlantUML JAR path from VS Code configuration (optional)
 if not "%~1"=="" (
     set "PLANTUML_JAR=%~1"
     echo 📦 Using PlantUML JAR from VS Code config: !PLANTUML_JAR!
-    call picgen.bat "!PLANTUML_JAR!"
+    call "%~dp0picgen.bat" "!PLANTUML_JAR!"
 ) else (
     echo 📦 No PlantUML JAR path provided, using picgen.bat default behavior
-    call picgen.bat
+    call "%~dp0picgen.bat"
 )
 echo ✅ PNG generation completed successfully!
 

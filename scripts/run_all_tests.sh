@@ -8,8 +8,8 @@ echo "🧪 Running C to PlantUML Converter Tests"
 echo "========================================"
 echo "Script directory: $SCRIPT_DIR"
 
-# Change to the script directory
-cd "$SCRIPT_DIR"
+# Change to the project root directory (parent of scripts)
+cd "$SCRIPT_DIR/.."
 
 # Detect Python version
 if command -v python3 &> /dev/null; then
@@ -26,7 +26,7 @@ echo "📁 Working directory: $(pwd)"
 
 # Run all tests
 echo "🎯 Running all tests..."
-$PYTHON_CMD run_all_tests.py
+$PYTHON_CMD scripts/run_all_tests.py
 
 # Check exit code and provide feedback
 if [ $? -eq 0 ]; then

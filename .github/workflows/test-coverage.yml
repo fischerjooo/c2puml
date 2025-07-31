@@ -65,7 +65,7 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/src
         run: |
           echo "🧪 Running comprehensive test suite with coverage analysis..."
-          ./run_tests_with_coverage.sh
+          ./scripts/run_tests_with_coverage.sh
 
       - name: 🔍 Debug workflow context
         if: always()

@@ -4,9 +4,9 @@ REM Simple test runner script
 REM Get the directory where this script is located
 set SCRIPT_DIR=%~dp0
 
-cd /d %SCRIPT_DIR%
+cd /d %SCRIPT_DIR%..
 
-python run_all_tests.py
+python scripts/run_all_tests.py
 
 if %errorlevel%==0 (
     echo.
