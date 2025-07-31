@@ -13,10 +13,21 @@ import tempfile
 import unittest
 from pathlib import Path
 
+
+
+# Add src directory to path for new package structure
+import sys
+test_dir = os.path.dirname(__file__)
+src_path = os.path.join(test_dir, "..", "..", "src")
+if os.path.exists(src_path):
+    sys.path.insert(0, src_path)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
 from c2puml.config import Config
 from c2puml.main import main
 from c2puml.parser import Parser
 from tests.feature.base import BaseFeatureTest
+
 
 
 class TestMultipleSourceFolders(BaseFeatureTest):

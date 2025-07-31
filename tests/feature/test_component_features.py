@@ -12,7 +12,15 @@ This file consolidates tests from:
 """
 
 import os
+import sys
 from pathlib import Path
+
+# Add src directory to path for new package structure
+test_dir = os.path.dirname(__file__)
+src_path = os.path.join(test_dir, "..", "..", "src")
+if os.path.exists(src_path):
+    sys.path.insert(0, src_path)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from tests.feature.base import BaseFeatureTest
 

@@ -9,13 +9,22 @@ from pathlib import Path
 
 from tests.feature.base import BaseFeatureTest
 
+# Add src directory to path for new package structure
+import sys
+test_dir = os.path.dirname(__file__)
+src_path = os.path.join(test_dir, "..", "..", "src")
+if os.path.exists(src_path):
+    sys.path.insert(0, src_path)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
 
 class TestIntegration(BaseFeatureTest):
     """Test complete end-to-end workflows and integrations"""
 
     def test_complete_workflow(self):
         """Test complete end-to-end workflow from parsing to PlantUML generation"""
-        from c2puml.generator import Generator
+        
+from c2puml.generator import Generator
         from c2puml.parser import Parser
 
         # Create test project
