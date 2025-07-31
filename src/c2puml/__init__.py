@@ -46,6 +46,12 @@ sys.modules[__name__ + '.generator'] = generator
 # Make c2puml.transformer available (points to core.transformer)
 transformer = core.transformer  
 sys.modules[__name__ + '.transformer'] = transformer
+# Make c2puml.parser_tokenizer available (points to core.parser_tokenizer)
+parser_tokenizer = core.parser_tokenizer
+sys.modules[__name__ + '.parser_tokenizer'] = parser_tokenizer
+# Make c2puml.verifier available (points to core.verifier)
+verifier = core.verifier
+sys.modules[__name__ + '.verifier'] = verifier
 
 __all__ = [
     "main",

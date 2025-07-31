@@ -27,15 +27,15 @@ tests_path = project_root / "tests"
 if tests_path.exists():
     sys.path.insert(0, str(tests_path))
 
+from c2puml.generator import Generator
+from c2puml.parser import Parser
+
 
 class TestIntegration(BaseFeatureTest):
     """Test complete end-to-end workflows and integrations"""
 
     def test_complete_workflow(self):
         """Test complete end-to-end workflow from parsing to PlantUML generation"""
-        
-from c2puml.generator import Generator
-        from c2puml.parser import Parser
 
         # Create test project
         project_content = """

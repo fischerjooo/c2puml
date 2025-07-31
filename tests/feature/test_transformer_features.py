@@ -29,15 +29,15 @@ tests_path = project_root / "tests"
 if tests_path.exists():
     sys.path.insert(0, str(tests_path))
 
+from c2puml.parser import Parser
+from c2puml.transformer import Transformer
+
 
 class TestTransformerFeatures(BaseFeatureTest):
     """Test advanced transformer features"""
 
     def test_transform_complex_project_with_filters(self):
         """Test transforming a complex project with various filters"""
-        
-from c2puml.parser import Parser
-        from c2puml.transformer import Transformer
 
         # Create a complex test project
         main_c = """
