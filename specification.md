@@ -69,7 +69,7 @@ All steps can be executed individually or can be chained together.
 The system follows a modular architecture with clear separation of concerns and 3 distinct processing steps:
 
 ```
-c_to_plantuml/
+c2puml/
 ├── main.py                 # CLI entry point and command routing
 ├── parser.py               # Step 1: Parse C/C++ files and generate model.json
 ├── transformer.py          # Step 2: Transform model based on configuration
