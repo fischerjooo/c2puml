@@ -1,6 +1,0 @@
-Defaulting to user installation because normal site-packages is not writeable
-Collecting coverage
-  Using cached coverage-7.10.1-cp313-cp313-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (8.9 kB)
-Using cached coverage-7.10.1-cp313-cp313-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (248 kB)
-Installing collected packages: coverage
-Successfully installed coverage-7.10.1
