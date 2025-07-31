@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from .models import FileModel, ProjectModel
+from ..models import FileModel, ProjectModel
 
 # PlantUML generation constants
 MAX_LINE_LENGTH = 120

@@ -19,10 +19,10 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from c_to_plantuml.generator import Generator
-from c_to_plantuml.parser import CParser, Parser
-from c_to_plantuml.parser_tokenizer import CTokenizer
-from c_to_plantuml.transformer import Transformer
+from c2puml.generator import Generator
+from c2puml.parser import CParser, Parser
+from c2puml.parser_tokenizer import CTokenizer
+from c2puml.transformer import Transformer
 from tests.feature.base import BaseFeatureTest
 
 

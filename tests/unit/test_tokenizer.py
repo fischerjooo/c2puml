@@ -6,7 +6,7 @@ Comprehensive unit tests for the C tokenizer and structure finder
 import unittest
 from typing import List
 
-from c_to_plantuml.parser_tokenizer import (
+from c2puml.parser_tokenizer import (
     CTokenizer,
     StructureFinder,
     Token,

@@ -11,7 +11,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, mock_open, patch
 
-from c_to_plantuml.models import (
+from c2puml.models import (
     Alias,
     Enum,
     Field,
@@ -22,7 +22,7 @@ from c_to_plantuml.models import (
     Struct,
     Union,
 )
-from c_to_plantuml.transformer import Transformer
+from c2puml.transformer import Transformer
 
 
 class TestTransformer(unittest.TestCase):

@@ -16,9 +16,9 @@ import sys
 from pathlib import Path
 
 from .config import Config
-from .generator import Generator
-from .parser import Parser
-from .transformer import Transformer
+from .core.generator import Generator
+from .core.parser import Parser
+from .core.transformer import Transformer
 
 
 def setup_logging(verbose: bool = False) -> None:

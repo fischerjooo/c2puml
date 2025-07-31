@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from c_to_plantuml.models import (
+from c2puml.models import (
     Alias,
     Enum,
     EnumValue,
@@ -19,7 +19,7 @@ from c_to_plantuml.models import (
     Struct,
     Union,
 )
-from c_to_plantuml.verifier import ModelVerifier
+from c2puml.verifier import ModelVerifier
 
 
 class TestModelVerifier(unittest.TestCase):

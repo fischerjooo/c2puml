@@ -26,7 +26,7 @@ from pathlib import Path
 # Add the project root to Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from c_to_plantuml.main import main as main_function
+from c2puml.main import main as main_function
 
 # =============================================================================
 # DEBUG CONFIGURATION - Modify these constants as needed

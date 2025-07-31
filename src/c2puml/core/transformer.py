@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Pattern, Set, Tuple, Union as TypingUnion
 from collections import deque
 
-from .models import (
+from ..models import (
     Alias,
     Enum,
     EnumValue,

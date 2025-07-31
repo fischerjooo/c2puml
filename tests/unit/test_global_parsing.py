@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from c_to_plantuml.parser import CParser
+from c2puml.parser import CParser
 
 
 class TestGlobalParsing(unittest.TestCase):

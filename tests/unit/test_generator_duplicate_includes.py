@@ -2,8 +2,8 @@
 
 import unittest
 
-from c_to_plantuml.generator import Generator
-from c_to_plantuml.models import FileModel, IncludeRelation, ProjectModel
+from c2puml.generator import Generator
+from c2puml.models import FileModel, IncludeRelation, ProjectModel
 
 
 class TestGeneratorDuplicateIncludes(unittest.TestCase):

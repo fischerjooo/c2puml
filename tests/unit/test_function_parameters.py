@@ -8,9 +8,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from c_to_plantuml.generator import Generator
-from c_to_plantuml.models import ProjectModel
-from c_to_plantuml.parser import CParser
+from c2puml.generator import Generator
+from c2puml.models import ProjectModel
+from c2puml.parser import CParser
 
 
 class TestFunctionParameters(unittest.TestCase):
@@ -65,7 +65,7 @@ class TestFunctionParameters(unittest.TestCase):
     def test_function_parameter_display(self):
         """Test that function parameters are correctly displayed in PlantUML"""
         # Create a simple project model with functions that have parameters
-        from c_to_plantuml.models import Field, FileModel, Function
+        from c2puml.models import Field, FileModel, Function
 
         # Create a file model with functions that have parameters
         file_model = FileModel(
@@ -100,7 +100,7 @@ class TestFunctionParameters(unittest.TestCase):
 
     def test_empty_parameter_list(self):
         """Test functions with no parameters (void)"""
-        from c_to_plantuml.models import FileModel, Function
+        from c2puml.models import FileModel, Function
 
         file_model = FileModel(
             file_path="/test/empty.c",
@@ -119,7 +119,7 @@ class TestFunctionParameters(unittest.TestCase):
 
     def test_complex_parameter_types(self):
         """Test functions with complex parameter types"""
-        from c_to_plantuml.models import Field, FileModel, Function
+        from c2puml.models import Field, FileModel, Function
 
         file_model = FileModel(
             file_path="/test/complex.c",

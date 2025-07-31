@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Set
 
-from .models import Enum, EnumValue, Field, FileModel, ProjectModel, Struct
+from ..models import Enum, EnumValue, Field, FileModel, ProjectModel, Struct
 from .parser_tokenizer import (
     CTokenizer,
     StructureFinder,
@@ -15,11 +15,11 @@ from .parser_tokenizer import (
     find_struct_fields,
 )
 from .preprocessor import PreprocessorManager
-from .utils import detect_file_encoding
+from ..utils import detect_file_encoding
 
 if TYPE_CHECKING:
-    from .config import Config
-    from .models import Alias, Enum, Field, Function, Struct, Union
+    from ..config import Config
+    from ..models import Alias, Enum, Field, Function, Struct, Union
 
 
 class CParser:
@@ -265,7 +265,7 @@ class CParser:
         self, tokens, structure_finder
     ) -> Dict[str, "Union"]:
         """Parse union definitions using tokenizer"""
-        from .models import Field, Union
+        from ..models import Field, Union
 
         unions = {}
         union_infos = structure_finder.find_unions()
@@ -316,7 +316,7 @@ class CParser:
         self, tokens, structure_finder
     ) -> List["Function"]:
         """Parse function declarations/definitions using tokenizer"""
-        from .models import Function
+        from ..models import Function
 
         functions = []
         function_infos = structure_finder.find_functions()
@@ -359,7 +359,7 @@ class CParser:
 
     def _parse_globals_with_tokenizer(self, tokens) -> List["Field"]:
         """Parse global variables using tokenizer"""
-        from .models import Field
+        from ..models import Field
 
         globals_list = []
 
@@ -520,7 +520,7 @@ class CParser:
 
     def _parse_aliases_with_tokenizer(self, tokens) -> Dict[str, "Alias"]:
         """Parse type aliases (primitive or derived typedefs) using tokenizer"""
-        from .models import Alias
+        from ..models import Alias
 
         aliases = {}
 
@@ -1181,7 +1181,7 @@ class CParser:
 
     def _parse_single_parameter(self, param_tokens):
         """Parse a single function parameter from tokens"""
-        from .models import Field
+        from ..models import Field
 
         if not param_tokens:
             return None

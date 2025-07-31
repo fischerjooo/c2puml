@@ -9,8 +9,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from c_to_plantuml.models import Enum, Field, Function, Struct
-from c_to_plantuml.parser import CParser
+from c2puml.models import Enum, Field, Function, Struct
+from c2puml.parser import CParser
 
 
 class TestCParser(unittest.TestCase):

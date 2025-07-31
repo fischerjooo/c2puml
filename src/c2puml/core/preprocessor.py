@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional, Set, Tuple
 
-from c_to_plantuml.parser_tokenizer import Token, TokenType
+from .parser_tokenizer import Token, TokenType
 
 
 class PreprocessorDirective(Enum):

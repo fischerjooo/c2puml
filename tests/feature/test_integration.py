@@ -15,8 +15,8 @@ class TestIntegration(BaseFeatureTest):
 
     def test_complete_workflow(self):
         """Test complete end-to-end workflow from parsing to PlantUML generation"""
-        from c_to_plantuml.generator import Generator
-        from c_to_plantuml.parser import Parser
+        from c2puml.generator import Generator
+        from c2puml.parser import Parser
 
         # Create test project
         project_content = """
@@ -108,7 +108,7 @@ void init_config(void);
         # Create test configuration
         import json
 
-        from c_to_plantuml.config import Config
+        from c2puml.config import Config
 
         config_content = {
             "source_folders": [self.temp_dir],
@@ -136,7 +136,7 @@ void init_config(void);
 
     def test_error_handling(self):
         """Test error handling for various scenarios"""
-        from c_to_plantuml.parser import Parser
+        from c2puml.parser import Parser
 
         # Test parsing non-existent file
         parser = Parser()
@@ -151,7 +151,7 @@ void init_config(void);
 
     def test_performance_features(self):
         """Test performance with larger files"""
-        from c_to_plantuml.parser import Parser
+        from c2puml.parser import Parser
 
         # Create a larger test file
         large_content = """
