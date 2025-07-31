@@ -10,6 +10,15 @@ import unittest
 from pathlib import Path
 from typing import Dict, List
 
+
+# Add src directory to path for new package structure
+import sys
+test_dir = os.path.dirname(__file__)
+src_path = os.path.join(test_dir, "..", "..", "src")
+if os.path.exists(src_path):
+    sys.path.insert(0, src_path)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
 from c2puml.models import Alias, Enum, Field, Function, Struct, Union
 from c2puml.parser import CParser
 from c2puml.parser_tokenizer import CTokenizer, TokenType
