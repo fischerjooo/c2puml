@@ -262,10 +262,33 @@ def generate_html_summary(stats: Dict, output_file: Path) -> None:
             margin: 5px 0;
             color: #666;
         }}
+        .nav {{ 
+            background: #0366d6; 
+            color: white; 
+            padding: 15px 20px; 
+            border-radius: 6px; 
+            margin-bottom: 20px; 
+        }}
+        .nav a {{ 
+            color: white; 
+            text-decoration: none; 
+            margin-right: 20px; 
+            font-weight: 500; 
+        }}
+        .nav a:hover {{ 
+            text-decoration: underline; 
+        }}
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="nav">
+            <a href="../../index.html">🏠 Home</a>
+            <a href="coverage/htmlcov/index.html">📊 Coverage</a>
+            <span style="background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 4px;">📝 Tests</span>
+            <a href="../../output/diagram_index.html">📊 Diagrams</a>
+            <a href="../../example/">📋 Examples</a>
+        </div>
 
         <h1>Test Results Summary</h1>
         <div class="timestamp">Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div>
