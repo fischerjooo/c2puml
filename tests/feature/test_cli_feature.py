@@ -32,11 +32,11 @@ class TestCLIFeature(BaseFeatureTest):
         )
         self.cli = [
             sys.executable,
-            os.path.abspath(os.path.join(os.path.dirname(__file__), "../../main.py")),
+            "-m", "c2puml.main"
         ]
         self.env = os.environ.copy()
         self.env["PYTHONPATH"] = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../../")
+            os.path.join(os.path.dirname(__file__), "../../src")
         )
 
     def run_cli(self, args, cwd=None):
