@@ -22,14 +22,16 @@ from typing import List, Optional
 def setup_environment():
     """Set up the testing environment."""
     script_dir = os.path.dirname(os.path.abspath(__file__))
+    # Go up one level to project root since script is now in scripts/
+    project_root = os.path.dirname(script_dir)
     # Add src directory to path for new package structure
-    src_folder = os.path.join(script_dir, "src")
+    src_folder = os.path.join(project_root, "src")
     if os.path.exists(src_folder) and src_folder not in sys.path:
         sys.path.insert(0, src_folder)
-    # Also add script_dir as fallback
-    if script_dir not in sys.path:
-        sys.path.insert(0, script_dir)
-    return script_dir
+    # Also add project_root as fallback
+    if project_root not in sys.path:
+        sys.path.insert(0, project_root)
+    return project_root
 
 
 def print_header(title: str, char: str = "=", width: int = 70):
@@ -317,12 +319,15 @@ Examples:
     args = parser.parse_args()
 
     # Set up environment
-    script_dir = setup_environment()
+    project_root = setup_environment()
+    
+    # Change working directory to project root
+    os.chdir(project_root)
 
     print_header("🧪 C to PlantUML Converter Test Suite")
     print(f"Working directory: {os.getcwd()}")
     print(f"Python version: {sys.version}")
-    print(f"Script directory: {script_dir}")
+    print(f"Project root: {project_root}")
 
     # Show statistics if requested
     if args.stats:
