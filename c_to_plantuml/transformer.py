@@ -8,7 +8,8 @@ import json
 import logging
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Callable, Dict, List, Optional, Pattern, Set, Tuple, Union as TypingUnion
+from collections import deque
 
 from .models import (
     Alias,
@@ -27,11 +28,11 @@ from .models import (
 class Transformer:
     """Main transformer class for Step 2: Transform model based on configuration"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = logging.getLogger(__name__)
 
     def transform(
-        self, model_file: str, config_file: str, output_file: str = None
+        self, model_file: str, config_file: str, output_file: Optional[str] = None
     ) -> str:
         """
         Step 2: Transform model based on configuration
@@ -47,10 +48,8 @@ class Transformer:
         """
         self.logger.info("Step 2: Transforming model: %s", model_file)
 
-        # Load the model
+        # Load the model and configuration
         model = self._load_model(model_file)
-
-        # Load configuration
         config = self._load_config(config_file)
 
         # Apply transformations
@@ -61,12 +60,12 @@ class Transformer:
         self._save_model(transformed_model, output_path)
 
         self.logger.info("Step 2 complete! Transformed model saved to: %s", output_path)
-
         return output_path
 
     def _load_model(self, model_file: str) -> ProjectModel:
         """Load model from JSON file"""
-        if not Path(model_file).exists():
+        model_path = Path(model_file)
+        if not model_path.exists():
             raise FileNotFoundError(f"Model file not found: {model_file}")
 
         try:
@@ -92,7 +91,8 @@ class Transformer:
 
     def _load_config(self, config_file: str) -> Dict[str, Any]:
         """Load configuration from JSON file"""
-        if not Path(config_file).exists():
+        config_path = Path(config_file)
+        if not config_path.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_file}")
 
         try:
@@ -120,29 +120,10 @@ class Transformer:
         # Support backward compatibility - convert single 'transformations' to container format
         config = self._ensure_backward_compatibility(config)
 
-        # Discover and apply transformation containers in alphabetical order
-        transformation_containers = self._discover_transformation_containers(config)
-        
-        if transformation_containers:
-            for container_name, transformation_config in transformation_containers:
-                self.logger.info("Applying transformation container: %s", container_name)
-                model = self._apply_single_transformation_container(model, transformation_config, container_name)
-                
-                # Log model state after each container
-                total_elements = sum(
-                    len(file_model.structs) + len(file_model.enums) + len(file_model.unions) +
-                    len(file_model.functions) + len(file_model.globals) + len(file_model.macros) +
-                    len(file_model.aliases)
-                    for file_model in model.files.values()
-                )
-                self.logger.info(
-                    "After %s: model contains %d files with %d total elements",
-                    container_name, len(model.files), total_elements
-                )
+        # Discover and apply transformation containers
+        model = self._apply_transformation_containers(model, config)
 
         # Apply include depth processing with file-specific support
-        # NOTE: include_filters are used ONLY for generating include_relations, 
-        # not for modifying the original includes arrays
         if self._should_process_include_relations(config):
             model = self._process_include_relations_with_file_specific_settings(model, config)
 
@@ -151,27 +132,49 @@ class Transformer:
         )
         return model
 
-    def _extract_include_filters_from_config(self, config: Dict[str, Any]) -> Dict[str, List[str]]:
-        """Extract include_filters from file_specific configuration structure"""
-        if "file_specific" not in config:
-            return {}
+    def _apply_transformation_containers(
+        self, model: ProjectModel, config: Dict[str, Any]
+    ) -> ProjectModel:
+        """Discover and apply transformation containers in alphabetical order"""
+        transformation_containers = self._discover_transformation_containers(config)
         
-        include_filters = {}
-        for file_name, file_config in config["file_specific"].items():
-            if "include_filter" in file_config:
-                include_filters[file_name] = file_config["include_filter"]
-        return include_filters
+        if not transformation_containers:
+            return model
+            
+        for container_name, transformation_config in transformation_containers:
+            self.logger.info("Applying transformation container: %s", container_name)
+            model = self._apply_single_transformation_container(
+                model, transformation_config, container_name
+            )
+            self._log_model_state_after_container(model, container_name)
+                
+        return model
+
+    def _log_model_state_after_container(
+        self, model: ProjectModel, container_name: str
+    ) -> None:
+        """Log model state after applying a transformation container"""
+        total_elements = sum(
+            len(file_model.structs) + len(file_model.enums) + len(file_model.unions) +
+            len(file_model.functions) + len(file_model.globals) + len(file_model.macros) +
+            len(file_model.aliases)
+            for file_model in model.files.values()
+        )
+        self.logger.info(
+            "After %s: model contains %d files with %d total elements",
+            container_name, len(model.files), total_elements
+        )
 
     def _should_process_include_relations(self, config: Dict[str, Any]) -> bool:
         """Check if include relations should be processed based on global or file-specific settings"""
         # Check global include_depth
-        if "include_depth" in config and config["include_depth"] > 1:
+        if config.get("include_depth", 1) > 1:
             return True
         
         # Check file-specific include_depth settings
         if "file_specific" in config:
             for file_config in config["file_specific"].values():
-                if "include_depth" in file_config and file_config["include_depth"] > 1:
+                if file_config.get("include_depth", 1) > 1:
                     return True
         
         return False
@@ -183,11 +186,11 @@ class Transformer:
         Returns:
             List of (container_name, transformation_config) tuples sorted by name
         """
-        transformation_containers = []
-        
-        for key, value in config.items():
-            if key.startswith("transformations") and isinstance(value, dict):
-                transformation_containers.append((key, value))
+        transformation_containers = [
+            (key, value)
+            for key, value in config.items()
+            if key.startswith("transformations") and isinstance(value, dict)
+        ]
         
         # Sort alphabetically by container name
         transformation_containers.sort(key=lambda x: x[0])
@@ -204,20 +207,12 @@ class Transformer:
         """
         Ensure backward compatibility by converting old single 'transformations' 
         to new container format
-        
-        Args:
-            config: Original configuration
-            
-        Returns:
-            Updated configuration with container format
         """
         # Make a copy to avoid modifying the original
         config = config.copy()
         
         # Check if old format is used (single 'transformations' key)
-        if "transformations" in config and not any(
-            key.startswith("transformations_") for key in config.keys()
-        ):
+        if self._is_legacy_transformation_format(config):
             self.logger.info("Converting legacy 'transformations' format to container format")
             
             # Move old transformations to a default container
@@ -227,6 +222,13 @@ class Transformer:
             self.logger.debug("Converted to container: transformations_00_default")
         
         return config
+
+    def _is_legacy_transformation_format(self, config: Dict[str, Any]) -> bool:
+        """Check if configuration uses legacy transformation format"""
+        return (
+            "transformations" in config and 
+            not any(key.startswith("transformations_") for key in config.keys())
+        )
 
     def _apply_single_transformation_container(
         self, 
@@ -247,7 +249,22 @@ class Transformer:
         """
         self.logger.debug("Processing transformation container: %s", container_name)
         
-        # Get file selection configuration for this container
+        # Determine target files for this container
+        target_files = self._get_target_files(model, transformation_config)
+        
+        # Apply transformations in specific order: remove -> rename -> add
+        # This order ensures that removals happen first, then renaming with deduplication,
+        # then additions to the cleaned model
+        model = self._apply_remove_operations(model, transformation_config, target_files, container_name)
+        model = self._apply_rename_operations(model, transformation_config, target_files, container_name)
+        model = self._apply_add_operations(model, transformation_config, target_files, container_name)
+        
+        return model
+
+    def _get_target_files(
+        self, model: ProjectModel, transformation_config: Dict[str, Any]
+    ) -> Set[str]:
+        """Determine which files to apply transformations to based on file_selection"""
         selected_files = transformation_config.get("file_selection", [])
         
         # Validate that file_selection is a list
@@ -260,54 +277,107 @@ class Transformer:
             target_files = set(model.files.keys())
             self.logger.debug("No file selection specified, applying to all %d files", len(target_files))
         else:
-            target_files = set()
-            for pattern in selected_files:
-                for file_path in model.files.keys():
-                    if self._matches_pattern(file_path, pattern):
-                        target_files.add(file_path)
-            
+            target_files = self._match_files_by_patterns(model, selected_files)
             self.logger.debug(
                 "File selection patterns %s matched %d files: %s",
                 selected_files, len(target_files), list(target_files)
             )
         
-        # Apply transformations in specific order: remove -> rename -> add
-        # This order ensures that removals happen first, then renaming with deduplication,
-        # then additions to the cleaned model
-        
-        if "remove" in transformation_config:
-            self.logger.debug("Applying remove operations for container: %s", container_name)
+        return target_files
+
+    def _match_files_by_patterns(
+        self, model: ProjectModel, patterns: List[str]
+    ) -> Set[str]:
+        """Match files based on selection patterns"""
+        target_files = set()
+        for pattern in patterns:
+            for file_path in model.files.keys():
+                if self._matches_pattern(file_path, pattern):
+                    target_files.add(file_path)
+        return target_files
+
+    def _apply_remove_operations(
+        self, 
+        model: ProjectModel, 
+        transformation_config: Dict[str, Any], 
+        target_files: Set[str],
+        container_name: str
+    ) -> ProjectModel:
+        """Apply remove operations for a transformation container"""
+        if "remove" not in transformation_config:
+            return model
             
-            # Collect typedef names BEFORE removing them for type reference cleanup
-            removed_typedef_names = set()
-            if "typedef" in transformation_config["remove"]:
-                typedef_patterns = transformation_config["remove"]["typedef"]
-                compiled_patterns = self._compile_patterns(typedef_patterns)
-                if compiled_patterns:
-                    for file_path in target_files:
-                        if file_path in model.files:
-                            file_model = model.files[file_path]
-                            for alias_name in file_model.aliases.keys():
-                                if self._matches_any_pattern(alias_name, compiled_patterns):
-                                    removed_typedef_names.add(alias_name)
-                    self.logger.debug("Pre-identified typedefs for removal: %s", list(removed_typedef_names))
+        self.logger.debug("Applying remove operations for container: %s", container_name)
+        
+        # Collect typedef names BEFORE removing them for type reference cleanup
+        removed_typedef_names = self._collect_typedef_names_for_removal(
+            model, transformation_config["remove"], target_files
+        )
+        
+        model = self._apply_removals(model, transformation_config["remove"], target_files)
+        
+        # Clean up type references after typedef removal using pre-collected names
+        if removed_typedef_names:
+            self.logger.debug("Calling type reference cleanup for container: %s", container_name)
+            self._cleanup_type_references_by_names(model, removed_typedef_names)
             
-            model = self._apply_removals(model, transformation_config["remove"], target_files)
-            
-            # Clean up type references after typedef removal using pre-collected names
-            if removed_typedef_names:
-                self.logger.debug("Calling type reference cleanup for container: %s", container_name)
-                self._cleanup_type_references_by_names(model, removed_typedef_names)
-        
-        if "rename" in transformation_config:
-            self.logger.debug("Applying rename operations for container: %s", container_name)
-            model = self._apply_renaming(model, transformation_config["rename"], target_files)
-        
-        if "add" in transformation_config:
-            self.logger.debug("Applying add operations for container: %s", container_name)
-            model = self._apply_additions(model, transformation_config["add"], target_files)
-        
         return model
+
+    def _apply_rename_operations(
+        self, 
+        model: ProjectModel, 
+        transformation_config: Dict[str, Any], 
+        target_files: Set[str],
+        container_name: str
+    ) -> ProjectModel:
+        """Apply rename operations for a transformation container"""
+        if "rename" not in transformation_config:
+            return model
+            
+        self.logger.debug("Applying rename operations for container: %s", container_name)
+        return self._apply_renaming(model, transformation_config["rename"], target_files)
+
+    def _apply_add_operations(
+        self, 
+        model: ProjectModel, 
+        transformation_config: Dict[str, Any], 
+        target_files: Set[str],
+        container_name: str
+    ) -> ProjectModel:
+        """Apply add operations for a transformation container"""
+        if "add" not in transformation_config:
+            return model
+            
+        self.logger.debug("Applying add operations for container: %s", container_name)
+        return self._apply_additions(model, transformation_config["add"], target_files)
+
+    def _collect_typedef_names_for_removal(
+        self, 
+        model: ProjectModel, 
+        remove_config: Dict[str, Any], 
+        target_files: Set[str]
+    ) -> Set[str]:
+        """Collect typedef names that will be removed for type reference cleanup"""
+        removed_typedef_names = set()
+        
+        if "typedef" not in remove_config:
+            return removed_typedef_names
+            
+        typedef_patterns = remove_config["typedef"]
+        compiled_patterns = self._compile_patterns(typedef_patterns)
+        
+        if not compiled_patterns:
+            return removed_typedef_names
+            
+        for file_path in target_files:
+            if file_path in model.files:
+                file_model = model.files[file_path]
+                for alias_name in file_model.aliases.keys():
+                    if self._matches_any_pattern(alias_name, compiled_patterns):
+                        removed_typedef_names.add(alias_name)
+                        
+        self.logger.debug("Pre-identified typedefs for removal: %s", list(removed_typedef_names))
+        return removed_typedef_names
 
     def _process_include_relations_with_file_specific_settings(
         self, model: ProjectModel, config: Dict[str, Any]
@@ -317,46 +387,105 @@ class Transformer:
         file_specific_config = config.get("file_specific", {})
         
         # Clear all include_relations first
+        self._clear_include_relations(model)
+
+        # Process each .c file individually with its specific settings
+        c_files = self._get_c_files(model)
+        for file_model in c_files:
+            self._process_c_file_include_relations(
+                model, file_model, global_include_depth, file_specific_config
+            )
+
+        return model
+
+    def _extract_include_filters_from_config(self, config: Dict[str, Any]) -> Dict[str, List[str]]:
+        """Extract include_filters from file_specific configuration structure"""
+        if "file_specific" not in config:
+            return {}
+        
+        include_filters = {}
+        for file_name, file_config in config["file_specific"].items():
+            if "include_filter" in file_config:
+                include_filters[file_name] = file_config["include_filter"]
+        return include_filters
+
+    def _clear_include_relations(self, model: ProjectModel) -> None:
+        """Clear all include relations in the model"""
         for file_model in model.files.values():
             file_model.include_relations = []
 
-        # Process each .c file individually with its specific settings
-        for file_path, file_model in model.files.items():
-            if file_model.name.endswith(".c"):
-                root_filename = Path(file_model.name).name
-                
-                # Get file-specific settings or fall back to global
-                if root_filename in file_specific_config:
-                    file_config = file_specific_config[root_filename]
-                    include_depth = file_config.get("include_depth", global_include_depth)
-                    include_filter_patterns = file_config.get("include_filter", [])
-                else:
-                    include_depth = global_include_depth
-                    include_filter_patterns = []
-                
-                # Only process if include_depth > 1
-                if include_depth > 1:
-                    # Compile include filter patterns
-                    compiled_filters = []
-                    if include_filter_patterns:
-                        try:
-                            compiled_filters = [re.compile(pattern) for pattern in include_filter_patterns]
-                            self.logger.debug(
-                                "Using %d include filter patterns for %s with depth %d", 
-                                len(compiled_filters), root_filename, include_depth
-                            )
-                        except re.error as e:
-                            self.logger.warning(
-                                "Invalid regex pattern for file %s: %s", root_filename, e
-                            )
-                            compiled_filters = []
-                    
-                    # Process this specific file's include relations
-                    self._process_single_file_include_relations(
-                        model, file_model, include_depth, compiled_filters
-                    )
+    def _get_c_files(self, model: ProjectModel) -> List[FileModel]:
+        """Get all .c files from the model"""
+        return [
+            file_model for file_model in model.files.values()
+            if file_model.name.endswith(".c")
+        ]
 
-        return model
+    def _process_c_file_include_relations(
+        self, 
+        model: ProjectModel, 
+        file_model: FileModel, 
+        global_include_depth: int,
+        file_specific_config: Dict[str, Any]
+    ) -> None:
+        """Process include relations for a single .c file"""
+        root_filename = Path(file_model.name).name
+        
+        # Get file-specific settings
+        include_depth, include_filter_patterns = self._get_file_include_settings(
+            root_filename, file_specific_config, global_include_depth
+        )
+        
+        # Only process if include_depth > 1
+        if include_depth <= 1:
+            return
+            
+        # Compile include filter patterns
+        compiled_filters = self._compile_include_filter_patterns(
+            include_filter_patterns, root_filename, include_depth
+        )
+        
+        # Process this specific file's include relations
+        self._process_single_file_include_relations(
+            model, file_model, include_depth, compiled_filters
+        )
+
+    def _get_file_include_settings(
+        self, 
+        root_filename: str, 
+        file_specific_config: Dict[str, Any], 
+        global_include_depth: int
+    ) -> Tuple[int, List[str]]:
+        """Get include depth and filter patterns for a specific file"""
+        if root_filename in file_specific_config:
+            file_config = file_specific_config[root_filename]
+            include_depth = file_config.get("include_depth", global_include_depth)
+            include_filter_patterns = file_config.get("include_filter", [])
+        else:
+            include_depth = global_include_depth
+            include_filter_patterns = []
+            
+        return include_depth, include_filter_patterns
+
+    def _compile_include_filter_patterns(
+        self, patterns: List[str], root_filename: str, include_depth: int
+    ) -> List[Pattern[str]]:
+        """Compile include filter patterns with error handling"""
+        if not patterns:
+            return []
+            
+        try:
+            compiled_filters = [re.compile(pattern) for pattern in patterns]
+            self.logger.debug(
+                "Using %d include filter patterns for %s with depth %d", 
+                len(compiled_filters), root_filename, include_depth
+            )
+            return compiled_filters
+        except re.error as e:
+            self.logger.warning(
+                "Invalid regex pattern for file %s: %s", root_filename, e
+            )
+            return []
 
     def _process_single_file_include_relations(
         self, 
@@ -366,7 +495,6 @@ class Transformer:
         compiled_filters: List[Any]
     ) -> None:
         """Process include relations for a single root file with specific depth and filters"""
-        from collections import deque
         
         # Create a mapping of filenames to their models for quick lookup
         file_map = {}
@@ -409,6 +537,55 @@ class Transformer:
                 # Continue processing if we haven't reached max depth and the included file exists
                 if depth + 1 < max_depth and include_name in file_map:
                     queue.append((file_map[include_name], depth + 1))
+
+    def _apply_include_filters(
+        self, model: ProjectModel, include_filters: Dict[str, List[str]]
+    ) -> ProjectModel:
+        """Apply include filters for each root file based on regex patterns"""
+        self.logger.info(
+            "Applying include filters for %d root files", len(include_filters)
+        )
+
+        # Compile regex patterns for each root file
+        compiled_filters = {}
+        for root_file, patterns in include_filters.items():
+            try:
+                compiled_filters[root_file] = [
+                    re.compile(pattern) for pattern in patterns
+                ]
+                self.logger.debug(
+                    "Compiled %d patterns for root file: %s", len(patterns), root_file
+                )
+            except re.error as e:
+                self.logger.warning(
+                    "Invalid regex pattern for root file %s: %s", root_file, e
+                )
+                # Skip invalid patterns for this root file
+                continue
+
+        if not compiled_filters:
+            self.logger.warning(
+                "No valid include filters found, skipping include filtering"
+            )
+            return model
+
+        # Create a mapping from header files to their root C files
+        header_to_root = self._create_header_to_root_mapping(model)
+
+        # Apply filters to each file in the model
+        for file_path, file_model in model.files.items():
+            # Find the root file for this file
+            root_file = self._find_root_file_with_mapping(
+                file_path, file_model, header_to_root
+            )
+
+            if root_file in compiled_filters:
+                # Apply the filters for this root file
+                self._filter_file_includes(
+                    file_model, compiled_filters[root_file], root_file
+                )
+
+        return model
 
     def _apply_file_filters(
         self, model: ProjectModel, filters: Dict[str, Any]
@@ -585,7 +762,7 @@ class Transformer:
             len(file_model.include_relations),
         )
 
-    def _matches_any_pattern(self, text: str, patterns: List[re.Pattern]) -> bool:
+    def _matches_any_pattern(self, text: str, patterns: List[Pattern[str]]) -> bool:
         """Check if text matches any of the given regex patterns"""
         return any(pattern.search(text) for pattern in patterns)
 
@@ -660,37 +837,32 @@ class Transformer:
             if file_path in model.files:
                 file_model = model.files[file_path]
                 self.logger.debug("Applying renaming to file: %s", file_path)
-                
-                # Apply each type of renaming
-                if "typedef" in rename_config:
-                    self._rename_typedefs(file_model, rename_config["typedef"])
-                
-                if "functions" in rename_config:
-                    self._rename_functions(file_model, rename_config["functions"])
-                
-                if "macros" in rename_config:
-                    self._rename_macros(file_model, rename_config["macros"])
-                
-                if "globals" in rename_config:
-                    self._rename_globals(file_model, rename_config["globals"])
-                
-                if "includes" in rename_config:
-                    self._rename_includes(file_model, rename_config["includes"])
-                
-                if "structs" in rename_config:
-                    self._rename_structs(file_model, rename_config["structs"])
-                
-                if "enums" in rename_config:
-                    self._rename_enums(file_model, rename_config["enums"])
-                
-                if "unions" in rename_config:
-                    self._rename_unions(file_model, rename_config["unions"])
+                self._apply_file_level_renaming(file_model, rename_config)
         
         # Apply file renaming (affects model.files keys)
         if "files" in rename_config:
             model = self._rename_files(model, rename_config["files"], target_files)
 
         return model
+
+    def _apply_file_level_renaming(
+        self, file_model: FileModel, rename_config: Dict[str, Any]
+    ) -> None:
+        """Apply all renaming operations to a single file"""
+        rename_operations = [
+            ("typedef", self._rename_typedefs),
+            ("functions", self._rename_functions),
+            ("macros", self._rename_macros),
+            ("globals", self._rename_globals),
+            ("includes", self._rename_includes),
+            ("structs", self._rename_structs),
+            ("enums", self._rename_enums),
+            ("unions", self._rename_unions),
+        ]
+        
+        for config_key, rename_method in rename_operations:
+            if config_key in rename_config:
+                rename_method(file_model, rename_config[config_key])
     
     def _cleanup_type_references(
         self, model: ProjectModel, removed_typedef_patterns: List[str], target_files: Set[str]
@@ -908,6 +1080,86 @@ class Transformer:
         else:
             self.logger.debug("No type references found to clean up")
 
+    def _rename_dict_elements(
+        self, 
+        elements_dict: Dict[str, Any], 
+        patterns_map: Dict[str, str], 
+        create_renamed_element: Callable[[str, Any], Any],
+        element_type: str,
+        file_name: str
+    ) -> Dict[str, Any]:
+        """Generic method to rename dictionary elements with deduplication"""
+        original_count = len(elements_dict)
+        seen_names = set()
+        deduplicated_elements = {}
+        
+        for name, element in elements_dict.items():
+            # Apply rename patterns
+            new_name = self._apply_rename_patterns(name, patterns_map)
+            
+            # Check for duplicates
+            if new_name in seen_names:
+                self.logger.debug(
+                    "Deduplicating %s: removing duplicate '%s' (renamed from '%s')", 
+                    element_type, new_name, name
+                )
+                continue
+                
+            seen_names.add(new_name)
+            
+            # Create updated element with new name
+            updated_element = create_renamed_element(new_name, element)
+            deduplicated_elements[new_name] = updated_element
+        
+        removed_count = original_count - len(deduplicated_elements)
+        if removed_count > 0:
+            self.logger.info(
+                "Renamed %ss in %s, removed %d duplicates", element_type, file_name, removed_count
+            )
+            
+        return deduplicated_elements
+
+    def _rename_list_elements(
+        self, 
+        elements_list: List[Any], 
+        patterns_map: Dict[str, str], 
+        get_element_name: Callable[[Any], str],
+        create_renamed_element: Callable[[str, Any], Any],
+        element_type: str,
+        file_name: str
+    ) -> List[Any]:
+        """Generic method to rename list elements with deduplication"""
+        original_count = len(elements_list)
+        seen_names = set()
+        deduplicated_elements = []
+        
+        for element in elements_list:
+            name = get_element_name(element)
+            # Apply rename patterns
+            new_name = self._apply_rename_patterns(name, patterns_map)
+            
+            # Check for duplicates
+            if new_name in seen_names:
+                self.logger.debug(
+                    "Deduplicating %s: removing duplicate '%s' (renamed from '%s')", 
+                    element_type, new_name, name
+                )
+                continue
+                
+            seen_names.add(new_name)
+            
+            # Create updated element with new name
+            updated_element = create_renamed_element(new_name, element)
+            deduplicated_elements.append(updated_element)
+        
+        removed_count = original_count - len(deduplicated_elements)
+        if removed_count > 0:
+            self.logger.info(
+                "Renamed %ss in %s, removed %d duplicates", element_type, file_name, removed_count
+            )
+            
+        return deduplicated_elements
+
     def _apply_rename_patterns(self, original_name: str, patterns_map: Dict[str, str]) -> str:
         """
         Apply rename patterns to an element name
@@ -942,174 +1194,119 @@ class Transformer:
         if not patterns_map:
             return
         
-        original_count = len(file_model.aliases)
-        seen_names = set()
-        deduplicated_aliases = {}
+        def create_renamed_alias(name: str, alias: Alias) -> Alias:
+            return Alias(name, alias.original_type, alias.uses)
         
-        for name, alias in file_model.aliases.items():
-            # Apply rename patterns
-            new_name = self._apply_rename_patterns(name, patterns_map)
-            
-            # Check for duplicates
-            if new_name in seen_names:
-                self.logger.debug(
-                    "Deduplicating typedef: removing duplicate '%s' (renamed from '%s')", 
-                    new_name, name
-                )
-                continue
-                
-            seen_names.add(new_name)
-            
-            # Update alias with new name
-            updated_alias = Alias(new_name, alias.original_type, alias.uses)
-            deduplicated_aliases[new_name] = updated_alias
-        
-        file_model.aliases = deduplicated_aliases
-        removed_count = original_count - len(file_model.aliases)
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Renamed typedefs in %s, removed %d duplicates", file_model.name, removed_count
-            )
+        file_model.aliases = self._rename_dict_elements(
+            file_model.aliases, patterns_map, create_renamed_alias, "typedef", file_model.name
+        )
 
     def _rename_functions(self, file_model: FileModel, patterns_map: Dict[str, str]) -> None:
         """Rename functions with deduplication"""
         if not patterns_map:
             return
         
-        original_count = len(file_model.functions)
-        seen_names = set()
-        deduplicated_functions = []
+        def get_function_name(func: Function) -> str:
+            return func.name
         
-        for function in file_model.functions:
-            # Apply rename patterns
-            new_name = self._apply_rename_patterns(function.name, patterns_map)
-            
-            # Check for duplicates
-            if new_name in seen_names:
-                self.logger.debug(
-                    "Deduplicating function: removing duplicate '%s' (renamed from '%s')", 
-                    new_name, function.name
-                )
-                continue
-                
-            seen_names.add(new_name)
-            
-            # Update function with new name
-            updated_function = Function(
-                new_name,
-                function.return_type,
-                function.parameters,
-                function.is_static,
-                function.is_declaration
+        def create_renamed_function(name: str, func: Function) -> Function:
+            return Function(
+                name, func.return_type, func.parameters, func.is_static, func.is_declaration
             )
-            deduplicated_functions.append(updated_function)
         
-        file_model.functions = deduplicated_functions
-        removed_count = original_count - len(file_model.functions)
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Renamed functions in %s, removed %d duplicates", file_model.name, removed_count
-            )
+        file_model.functions = self._rename_list_elements(
+            file_model.functions, patterns_map, get_function_name, 
+            create_renamed_function, "function", file_model.name
+        )
 
     def _rename_macros(self, file_model: FileModel, patterns_map: Dict[str, str]) -> None:
         """Rename macros with deduplication"""
         if not patterns_map:
             return
         
-        original_count = len(file_model.macros)
-        seen_names = set()
-        deduplicated_macros = []
+        def get_macro_name(macro: str) -> str:
+            return macro
         
-        for macro in file_model.macros:
-            # Apply rename patterns
-            new_name = self._apply_rename_patterns(macro, patterns_map)
-            
-            # Check for duplicates
-            if new_name in seen_names:
-                self.logger.debug(
-                    "Deduplicating macro: removing duplicate '%s' (renamed from '%s')", 
-                    new_name, macro
-                )
-                continue
-                
-            seen_names.add(new_name)
-            deduplicated_macros.append(new_name)
+        def create_renamed_macro(name: str, macro: str) -> str:
+            return name
         
-        file_model.macros = deduplicated_macros
-        removed_count = original_count - len(file_model.macros)
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Renamed macros in %s, removed %d duplicates", file_model.name, removed_count
-            )
+        file_model.macros = self._rename_list_elements(
+            file_model.macros, patterns_map, get_macro_name, 
+            create_renamed_macro, "macro", file_model.name
+        )
 
     def _rename_globals(self, file_model: FileModel, patterns_map: Dict[str, str]) -> None:
         """Rename global variables with deduplication"""
         if not patterns_map:
             return
         
-        original_count = len(file_model.globals)
-        seen_names = set()
-        deduplicated_globals = []
+        def get_global_name(global_var: Field) -> str:
+            return global_var.name
         
-        for global_var in file_model.globals:
-            # Apply rename patterns
-            new_name = self._apply_rename_patterns(global_var.name, patterns_map)
-            
-            # Check for duplicates
-            if new_name in seen_names:
-                self.logger.debug(
-                    "Deduplicating global: removing duplicate '%s' (renamed from '%s')", 
-                    new_name, global_var.name
-                )
-                continue
-                
-            seen_names.add(new_name)
-            
-            # Update global with new name
-            updated_global = Field(new_name, global_var.type)
-            deduplicated_globals.append(updated_global)
+        def create_renamed_global(name: str, global_var: Field) -> Field:
+            return Field(name, global_var.type)
         
-        file_model.globals = deduplicated_globals
-        removed_count = original_count - len(file_model.globals)
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Renamed globals in %s, removed %d duplicates", file_model.name, removed_count
-            )
+        file_model.globals = self._rename_list_elements(
+            file_model.globals, patterns_map, get_global_name, 
+            create_renamed_global, "global", file_model.name
+        )
 
     def _rename_includes(self, file_model: FileModel, patterns_map: Dict[str, str]) -> None:
         """Rename includes with deduplication"""
         if not patterns_map:
             return
         
-        original_count = len(file_model.includes)
-        seen_names = set()
-        deduplicated_includes = set()
+        # Rename includes using set-based deduplication
+        file_model.includes = self._rename_set_elements(
+            file_model.includes, patterns_map, "include", file_model.name
+        )
         
-        for include in file_model.includes:
+        # Also update include_relations with new names
+        file_model.include_relations = self._rename_include_relations(
+            file_model.include_relations, patterns_map
+        )
+
+    def _rename_set_elements(
+        self, 
+        elements_set: Set[str], 
+        patterns_map: Dict[str, str], 
+        element_type: str,
+        file_name: str
+    ) -> Set[str]:
+        """Generic method to rename set elements with deduplication"""
+        original_count = len(elements_set)
+        seen_names = set()
+        deduplicated_elements = set()
+        
+        for element in elements_set:
             # Apply rename patterns
-            new_name = self._apply_rename_patterns(include, patterns_map)
+            new_name = self._apply_rename_patterns(element, patterns_map)
             
             # Check for duplicates
             if new_name in seen_names:
                 self.logger.debug(
-                    "Deduplicating include: removing duplicate '%s' (renamed from '%s')", 
-                    new_name, include
+                    "Deduplicating %s: removing duplicate '%s' (renamed from '%s')", 
+                    element_type, new_name, element
                 )
                 continue
                 
             seen_names.add(new_name)
-            deduplicated_includes.add(new_name)
+            deduplicated_elements.add(new_name)
         
-        file_model.includes = deduplicated_includes
-        removed_count = original_count - len(file_model.includes)
-        
-        # Also update include_relations with new names
+        removed_count = original_count - len(deduplicated_elements)
+        if removed_count > 0:
+            self.logger.info(
+                "Renamed %ss in %s, removed %d duplicates", element_type, file_name, removed_count
+            )
+            
+        return deduplicated_elements
+
+    def _rename_include_relations(
+        self, relations: List[IncludeRelation], patterns_map: Dict[str, str]
+    ) -> List[IncludeRelation]:
+        """Rename include relations with pattern mapping"""
         updated_relations = []
-        for relation in file_model.include_relations:
+        for relation in relations:
             new_included_file = self._apply_rename_patterns(relation.included_file, patterns_map)
             updated_relation = IncludeRelation(
                 relation.source_file,
@@ -1117,118 +1314,43 @@ class Transformer:
                 relation.depth
             )
             updated_relations.append(updated_relation)
-        
-        file_model.include_relations = updated_relations
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Renamed includes in %s, removed %d duplicates", file_model.name, removed_count
-            )
+        return updated_relations
 
     def _rename_structs(self, file_model: FileModel, patterns_map: Dict[str, str]) -> None:
         """Rename structs with deduplication"""
         if not patterns_map:
             return
         
-        original_count = len(file_model.structs)
-        seen_names = set()
-        deduplicated_structs = {}
+        def create_renamed_struct(name: str, struct: Struct) -> Struct:
+            return Struct(name, struct.fields)
         
-        for name, struct in file_model.structs.items():
-            # Apply rename patterns
-            new_name = self._apply_rename_patterns(name, patterns_map)
-            
-            # Check for duplicates
-            if new_name in seen_names:
-                self.logger.debug(
-                    "Deduplicating struct: removing duplicate '%s' (renamed from '%s')", 
-                    new_name, name
-                )
-                continue
-                
-            seen_names.add(new_name)
-            
-            # Update struct with new name
-            updated_struct = Struct(new_name, struct.fields)
-            deduplicated_structs[new_name] = updated_struct
-        
-        file_model.structs = deduplicated_structs
-        removed_count = original_count - len(file_model.structs)
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Renamed structs in %s, removed %d duplicates", file_model.name, removed_count
-            )
+        file_model.structs = self._rename_dict_elements(
+            file_model.structs, patterns_map, create_renamed_struct, "struct", file_model.name
+        )
 
     def _rename_enums(self, file_model: FileModel, patterns_map: Dict[str, str]) -> None:
         """Rename enums with deduplication"""
         if not patterns_map:
             return
         
-        original_count = len(file_model.enums)
-        seen_names = set()
-        deduplicated_enums = {}
+        def create_renamed_enum(name: str, enum: Enum) -> Enum:
+            return Enum(name, enum.values)
         
-        for name, enum in file_model.enums.items():
-            # Apply rename patterns
-            new_name = self._apply_rename_patterns(name, patterns_map)
-            
-            # Check for duplicates
-            if new_name in seen_names:
-                self.logger.debug(
-                    "Deduplicating enum: removing duplicate '%s' (renamed from '%s')", 
-                    new_name, name
-                )
-                continue
-                
-            seen_names.add(new_name)
-            
-            # Update enum with new name
-            updated_enum = Enum(new_name, enum.values)
-            deduplicated_enums[new_name] = updated_enum
-        
-        file_model.enums = deduplicated_enums
-        removed_count = original_count - len(file_model.enums)
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Renamed enums in %s, removed %d duplicates", file_model.name, removed_count
-            )
+        file_model.enums = self._rename_dict_elements(
+            file_model.enums, patterns_map, create_renamed_enum, "enum", file_model.name
+        )
 
     def _rename_unions(self, file_model: FileModel, patterns_map: Dict[str, str]) -> None:
         """Rename unions with deduplication"""
         if not patterns_map:
             return
         
-        original_count = len(file_model.unions)
-        seen_names = set()
-        deduplicated_unions = {}
+        def create_renamed_union(name: str, union: Union) -> Union:
+            return Union(name, union.fields)
         
-        for name, union in file_model.unions.items():
-            # Apply rename patterns
-            new_name = self._apply_rename_patterns(name, patterns_map)
-            
-            # Check for duplicates
-            if new_name in seen_names:
-                self.logger.debug(
-                    "Deduplicating union: removing duplicate '%s' (renamed from '%s')", 
-                    new_name, name
-                )
-                continue
-                
-            seen_names.add(new_name)
-            
-            # Update union with new name
-            updated_union = Union(new_name, union.fields)
-            deduplicated_unions[new_name] = updated_union
-        
-        file_model.unions = deduplicated_unions
-        removed_count = original_count - len(file_model.unions)
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Renamed unions in %s, removed %d duplicates", file_model.name, removed_count
-            )
+        file_model.unions = self._rename_dict_elements(
+            file_model.unions, patterns_map, create_renamed_union, "union", file_model.name
+        )
 
     def _rename_files(self, model: ProjectModel, patterns_map: Dict[str, str], target_files: Set[str]) -> ProjectModel:
         """Rename files and update model.files keys"""
@@ -1286,129 +1408,123 @@ class Transformer:
             if file_path in model.files:
                 file_model = model.files[file_path]
                 self.logger.debug("Applying removals to file: %s", file_path)
-                
-                # Apply each type of removal
-                if "typedef" in remove_config:
-                    self._remove_typedefs(file_model, remove_config["typedef"])
-                
-                if "functions" in remove_config:
-                    self._remove_functions(file_model, remove_config["functions"])
-                
-                if "macros" in remove_config:
-                    self._remove_macros(file_model, remove_config["macros"])
-                
-                if "globals" in remove_config:
-                    self._remove_globals(file_model, remove_config["globals"])
-                
-                if "includes" in remove_config:
-                    self._remove_includes(file_model, remove_config["includes"])
-                
-                if "structs" in remove_config:
-                    self._remove_structs(file_model, remove_config["structs"])
-                
-                if "enums" in remove_config:
-                    self._remove_enums(file_model, remove_config["enums"])
-                
-                if "unions" in remove_config:
-                    self._remove_unions(file_model, remove_config["unions"])
+                self._apply_file_level_removals(file_model, remove_config)
 
         return model
 
-    def _remove_typedefs(self, file_model: FileModel, patterns: List[str]) -> None:
-        """Remove typedefs matching regex patterns"""
-        if not patterns:
-            return
+    def _apply_file_level_removals(
+        self, file_model: FileModel, remove_config: Dict[str, Any]
+    ) -> None:
+        """Apply all removal operations to a single file"""
+        removal_operations = [
+            ("typedef", self._remove_typedefs),
+            ("functions", self._remove_functions),
+            ("macros", self._remove_macros),
+            ("globals", self._remove_globals),
+            ("includes", self._remove_includes),
+            ("structs", self._remove_structs),
+            ("enums", self._remove_enums),
+            ("unions", self._remove_unions),
+        ]
         
-        original_count = len(file_model.aliases)
+        for config_key, removal_method in removal_operations:
+            if config_key in remove_config:
+                removal_method(file_model, remove_config[config_key])
+
+    def _remove_dict_elements(
+        self, 
+        elements_dict: Dict[str, Any], 
+        patterns: List[str], 
+        element_type: str,
+        file_name: str
+    ) -> Dict[str, Any]:
+        """Generic method to remove dictionary elements matching patterns"""
+        if not patterns:
+            return elements_dict
+            
+        original_count = len(elements_dict)
         compiled_patterns = self._compile_patterns(patterns)
         
-        # Filter out typedefs that match any pattern
-        filtered_aliases = {}
-        for name, alias in file_model.aliases.items():
+        # Filter out elements that match any pattern
+        filtered_elements = {}
+        for name, element in elements_dict.items():
             if not self._matches_any_pattern(name, compiled_patterns):
-                filtered_aliases[name] = alias
+                filtered_elements[name] = element
             else:
-                self.logger.debug("Removed typedef: %s", name)
+                self.logger.debug("Removed %s: %s", element_type, name)
         
-        file_model.aliases = filtered_aliases
-        removed_count = original_count - len(file_model.aliases)
-        
+        removed_count = original_count - len(filtered_elements)
         if removed_count > 0:
             self.logger.info(
-                "Removed %d typedefs from %s", removed_count, file_model.name
+                "Removed %d %ss from %s", removed_count, element_type, file_name
             )
+            
+        return filtered_elements
+
+    def _remove_list_elements(
+        self, 
+        elements_list: List[Any], 
+        patterns: List[str], 
+        get_element_name: Callable[[Any], str],
+        element_type: str,
+        file_name: str
+    ) -> List[Any]:
+        """Generic method to remove list elements matching patterns"""
+        if not patterns:
+            return elements_list
+            
+        original_count = len(elements_list)
+        compiled_patterns = self._compile_patterns(patterns)
+        
+        # Filter out elements that match any pattern
+        filtered_elements = []
+        for element in elements_list:
+            name = get_element_name(element)
+            if not self._matches_any_pattern(name, compiled_patterns):
+                filtered_elements.append(element)
+            else:
+                self.logger.debug("Removed %s: %s", element_type, name)
+        
+        removed_count = original_count - len(filtered_elements)
+        if removed_count > 0:
+            self.logger.info(
+                "Removed %d %ss from %s", removed_count, element_type, file_name
+            )
+            
+        return filtered_elements
+
+    def _remove_typedefs(self, file_model: FileModel, patterns: List[str]) -> None:
+        """Remove typedefs matching regex patterns"""
+        file_model.aliases = self._remove_dict_elements(
+            file_model.aliases, patterns, "typedef", file_model.name
+        )
 
     def _remove_functions(self, file_model: FileModel, patterns: List[str]) -> None:
         """Remove functions matching regex patterns"""
-        if not patterns:
-            return
-        
-        original_count = len(file_model.functions)
-        compiled_patterns = self._compile_patterns(patterns)
-        
-        # Filter out functions that match any pattern
-        filtered_functions = []
-        for function in file_model.functions:
-            if not self._matches_any_pattern(function.name, compiled_patterns):
-                filtered_functions.append(function)
-            else:
-                self.logger.debug("Removed function: %s", function.name)
-        
-        file_model.functions = filtered_functions
-        removed_count = original_count - len(file_model.functions)
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Removed %d functions from %s", removed_count, file_model.name
-            )
+        def get_function_name(func: Function) -> str:
+            return func.name
+            
+        file_model.functions = self._remove_list_elements(
+            file_model.functions, patterns, get_function_name, "function", file_model.name
+        )
 
     def _remove_macros(self, file_model: FileModel, patterns: List[str]) -> None:
         """Remove macros matching regex patterns"""
-        if not patterns:
-            return
-        
-        original_count = len(file_model.macros)
-        compiled_patterns = self._compile_patterns(patterns)
-        
-        # Filter out macros that match any pattern
-        filtered_macros = []
-        for macro in file_model.macros:
-            if not self._matches_any_pattern(macro, compiled_patterns):
-                filtered_macros.append(macro)
-            else:
-                self.logger.debug("Removed macro: %s", macro)
-        
-        file_model.macros = filtered_macros
-        removed_count = original_count - len(file_model.macros)
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Removed %d macros from %s", removed_count, file_model.name
-            )
+        def get_macro_name(macro: str) -> str:
+            return macro
+            
+        file_model.macros = self._remove_list_elements(
+            file_model.macros, patterns, get_macro_name, "macro", file_model.name
+        )
 
     def _remove_globals(self, file_model: FileModel, patterns: List[str]) -> None:
         """Remove global variables matching regex patterns"""
-        if not patterns:
-            return
-        
-        original_count = len(file_model.globals)
-        compiled_patterns = self._compile_patterns(patterns)
-        
-        # Filter out globals that match any pattern
-        filtered_globals = []
-        for global_var in file_model.globals:
-            if not self._matches_any_pattern(global_var.name, compiled_patterns):
-                filtered_globals.append(global_var)
-            else:
-                self.logger.debug("Removed global variable: %s", global_var.name)
-        
-        file_model.globals = filtered_globals
-        removed_count = original_count - len(file_model.globals)
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Removed %d global variables from %s", removed_count, file_model.name
-            )
+        def get_global_name(global_var: Field) -> str:
+            return global_var.name
+            
+        file_model.globals = self._remove_list_elements(
+            file_model.globals, patterns, get_global_name, "global variable", file_model.name
+        )
 
     def _remove_includes(self, file_model: FileModel, patterns: List[str]) -> None:
         """Remove includes matching regex patterns"""
@@ -1431,94 +1547,47 @@ class Transformer:
         
         # Also remove matching include_relations
         if removed_count > 0:
-            original_relations_count = len(file_model.include_relations)
-            filtered_relations = []
-            for relation in file_model.include_relations:
-                if not self._matches_any_pattern(relation.included_file, compiled_patterns):
-                    filtered_relations.append(relation)
-                else:
-                    self.logger.debug("Removed include relation: %s -> %s", 
-                                    relation.source_file, relation.included_file)
-            
-            file_model.include_relations = filtered_relations
-            removed_relations_count = original_relations_count - len(file_model.include_relations)
-            
-            self.logger.info(
-                "Removed %d includes and %d include relations from %s", 
-                removed_count, removed_relations_count, file_model.name
-            )
+            self._remove_matching_include_relations(file_model, compiled_patterns, removed_count)
+
+    def _remove_matching_include_relations(
+        self, file_model: FileModel, compiled_patterns: List[Pattern[str]], removed_includes_count: int
+    ) -> None:
+        """Remove include relations that match the removed includes"""
+        original_relations_count = len(file_model.include_relations)
+        filtered_relations = []
+        
+        for relation in file_model.include_relations:
+            if not self._matches_any_pattern(relation.included_file, compiled_patterns):
+                filtered_relations.append(relation)
+            else:
+                self.logger.debug("Removed include relation: %s -> %s", 
+                                relation.source_file, relation.included_file)
+        
+        file_model.include_relations = filtered_relations
+        removed_relations_count = original_relations_count - len(file_model.include_relations)
+        
+        self.logger.info(
+            "Removed %d includes and %d include relations from %s", 
+            removed_includes_count, removed_relations_count, file_model.name
+        )
 
     def _remove_structs(self, file_model: FileModel, patterns: List[str]) -> None:
         """Remove structs matching regex patterns"""
-        if not patterns:
-            return
-        
-        original_count = len(file_model.structs)
-        compiled_patterns = self._compile_patterns(patterns)
-        
-        # Filter out structs that match any pattern
-        filtered_structs = {}
-        for name, struct in file_model.structs.items():
-            if not self._matches_any_pattern(name, compiled_patterns):
-                filtered_structs[name] = struct
-            else:
-                self.logger.debug("Removed struct: %s", name)
-        
-        file_model.structs = filtered_structs
-        removed_count = original_count - len(file_model.structs)
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Removed %d structs from %s", removed_count, file_model.name
-            )
+        file_model.structs = self._remove_dict_elements(
+            file_model.structs, patterns, "struct", file_model.name
+        )
 
     def _remove_enums(self, file_model: FileModel, patterns: List[str]) -> None:
         """Remove enums matching regex patterns"""
-        if not patterns:
-            return
-        
-        original_count = len(file_model.enums)
-        compiled_patterns = self._compile_patterns(patterns)
-        
-        # Filter out enums that match any pattern
-        filtered_enums = {}
-        for name, enum in file_model.enums.items():
-            if not self._matches_any_pattern(name, compiled_patterns):
-                filtered_enums[name] = enum
-            else:
-                self.logger.debug("Removed enum: %s", name)
-        
-        file_model.enums = filtered_enums
-        removed_count = original_count - len(file_model.enums)
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Removed %d enums from %s", removed_count, file_model.name
-            )
+        file_model.enums = self._remove_dict_elements(
+            file_model.enums, patterns, "enum", file_model.name
+        )
 
     def _remove_unions(self, file_model: FileModel, patterns: List[str]) -> None:
         """Remove unions matching regex patterns"""
-        if not patterns:
-            return
-        
-        original_count = len(file_model.unions)
-        compiled_patterns = self._compile_patterns(patterns)
-        
-        # Filter out unions that match any pattern
-        filtered_unions = {}
-        for name, union in file_model.unions.items():
-            if not self._matches_any_pattern(name, compiled_patterns):
-                filtered_unions[name] = union
-            else:
-                self.logger.debug("Removed union: %s", name)
-        
-        file_model.unions = filtered_unions
-        removed_count = original_count - len(file_model.unions)
-        
-        if removed_count > 0:
-            self.logger.info(
-                "Removed %d unions from %s", removed_count, file_model.name
-            )
+        file_model.unions = self._remove_dict_elements(
+            file_model.unions, patterns, "union", file_model.name
+        )
 
     def _process_include_relations(
         self,
@@ -1709,7 +1778,7 @@ class Transformer:
             self.logger.warning("Invalid pattern '%s' for file matching", pattern)
             return False
 
-    def _compile_patterns(self, patterns: List[str]) -> List[re.Pattern]:
+    def _compile_patterns(self, patterns: List[str]) -> List[Pattern[str]]:
         """Compile regex patterns with error handling"""
         compiled_patterns = []
 
@@ -1724,8 +1793,8 @@ class Transformer:
     def _should_include_file(
         self,
         file_path: str,
-        include_patterns: List[re.Pattern],
-        exclude_patterns: List[re.Pattern],
+        include_patterns: List[Pattern[str]],
+        exclude_patterns: List[Pattern[str]],
     ) -> bool:
         """Check if a file should be included based on filters"""
         # Check include patterns
@@ -1740,7 +1809,7 @@ class Transformer:
 
         return True
 
-    def _filter_dict(self, items: Dict, filters: Dict) -> Dict:
+    def _filter_dict(self, items: Dict[str, Any], filters: Dict[str, Any]) -> Dict[str, Any]:
         """Filter a dictionary based on include/exclude patterns"""
         include_patterns = self._compile_patterns(filters.get("include", []))
         exclude_patterns = self._compile_patterns(filters.get("exclude", []))
@@ -1761,7 +1830,7 @@ class Transformer:
 
         return filtered
 
-    def _filter_list(self, items: List, filters: Dict, key=None) -> List:
+    def _filter_list(self, items: List[Any], filters: Dict[str, Any], key: Optional[Callable[[Any], str]] = None) -> List[Any]:
         """Filter a list based on include/exclude patterns"""
         include_patterns = self._compile_patterns(filters.get("include", []))
         exclude_patterns = self._compile_patterns(filters.get("exclude", []))
@@ -1784,7 +1853,7 @@ class Transformer:
 
         return filtered
 
-    def _dict_to_file_model(self, data: Dict) -> FileModel:
+    def _dict_to_file_model(self, data: Dict[str, Any]) -> FileModel:
         """Convert dictionary back to FileModel"""
 
         # Convert structs
