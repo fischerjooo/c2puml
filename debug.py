@@ -24,6 +24,10 @@ import sys
 from pathlib import Path
 
 # Add the project root to Python path
+# Add src directory to path for new package structure
+src_path = Path(__file__).parent / "src"
+if src_path.exists():
+    sys.path.insert(0, str(src_path))
 sys.path.insert(0, str(Path(__file__).parent))
 
 from c2puml.main import main as main_function

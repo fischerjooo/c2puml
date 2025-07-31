@@ -22,9 +22,13 @@ from typing import List, Optional
 def setup_environment():
     """Set up the testing environment."""
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    source_folder = script_dir
-    if source_folder not in sys.path:
-        sys.path.insert(0, source_folder)
+    # Add src directory to path for new package structure
+    src_folder = os.path.join(script_dir, "src")
+    if os.path.exists(src_folder) and src_folder not in sys.path:
+        sys.path.insert(0, src_folder)
+    # Also add script_dir as fallback
+    if script_dir not in sys.path:
+        sys.path.insert(0, script_dir)
     return script_dir
 
 
