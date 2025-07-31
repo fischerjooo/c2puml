@@ -5,7 +5,7 @@ platform linux -- Python 3.9.23, pytest-8.4.1, pluggy-1.6.0 -- /opt/hostedtoolca
 cachedir: .pytest_cache
 benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
 metadata: {'Python': '3.9.23', 'Platform': 'Linux-6.11.0-1018-azure-x86_64-with-glibc2.39', 'Packages': {'pytest': '8.4.1', 'pluggy': '1.6.0'}, 'Plugins': {'cov': '6.2.1', 'xdist': '3.8.0', 'html': '4.1.1', 'benchmark': '5.1.0', 'mock': '3.14.1', 'metadata': '3.1.1'}, 'CI': 'true', 'JAVA_HOME': '/usr/lib/jvm/temurin-17-jdk-amd64'}
-rootdir: /home/runner/work/generator_project/generator_project
+rootdir: /home/runner/work/c2puml/c2puml
 configfile: pytest.ini
 plugins: cov-6.2.1, xdist-3.8.0, html-4.1.1, benchmark-5.1.0, mock-3.14.1, metadata-3.1.1
 collecting ... collected 358 items
@@ -369,4 +369,4 @@ tests/unit/test_verifier.py::TestModelVerifier::test_unbalanced_brackets_detecte
 tests/unit/test_verifier.py::TestModelVerifier::test_valid_identifiers_pass PASSED [ 99%]
 tests/unit/test_verifier.py::TestModelVerifier::test_valid_model_passes_verification PASSED [100%]
 
-============================= 358 passed in 2.81s ==============================
+============================= 358 passed in 2.89s ==============================
