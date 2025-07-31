@@ -26,7 +26,7 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 
 ```bash
 git clone <repository-url>
-cd c-to-plantuml
+cd c2puml
 python3 -m pip install -e .
 ```
 
