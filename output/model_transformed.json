@@ -3,7 +3,7 @@
     "complex.c": {
       "aliases": {},
       "enums": {},
-      "file_path": "/workspace/example/source/complex.c",
+      "file_path": "/workspace/tests/example/source/complex.c",
       "functions": [
         {
           "is_declaration": false,
@@ -617,7 +617,7 @@
           ]
         }
       },
-      "file_path": "/workspace/example/source/complex.h",
+      "file_path": "/workspace/tests/example/source/complex.h",
       "functions": [
         {
           "is_declaration": true,
@@ -1056,7 +1056,7 @@
           ]
         }
       },
-      "file_path": "/workspace/example/source/complex_example.h",
+      "file_path": "/workspace/tests/example/source/complex_example.h",
       "functions": [],
       "globals": [],
       "include_relations": [],
@@ -1157,7 +1157,7 @@
           ]
         }
       },
-      "file_path": "/workspace/example/source/config.h",
+      "file_path": "/workspace/tests/example/source/config.h",
       "functions": [],
       "globals": [],
       "include_relations": [],
@@ -1197,7 +1197,7 @@
           ]
         }
       },
-      "file_path": "/workspace/example/source/filtered_header.h",
+      "file_path": "/workspace/tests/example/source/filtered_header.h",
       "functions": [
         {
           "is_declaration": true,
@@ -1292,7 +1292,7 @@
     "first_level.h": {
       "aliases": {},
       "enums": {},
-      "file_path": "/workspace/example/source/first_level.h",
+      "file_path": "/workspace/tests/example/source/first_level.h",
       "functions": [],
       "globals": [],
       "include_relations": [],
@@ -1309,7 +1309,7 @@
     "geometry.c": {
       "aliases": {},
       "enums": {},
-      "file_path": "/workspace/example/source/geometry.c",
+      "file_path": "/workspace/tests/example/source/geometry.c",
       "functions": [
         {
           "is_declaration": false,
@@ -1439,7 +1439,7 @@
     "geometry.h": {
       "aliases": {},
       "enums": {},
-      "file_path": "/workspace/example/source/geometry.h",
+      "file_path": "/workspace/tests/example/source/geometry.h",
       "functions": [
         {
           "is_declaration": true,
@@ -1520,7 +1520,7 @@
     "logger.c": {
       "aliases": {},
       "enums": {},
-      "file_path": "/workspace/example/source/logger.c",
+      "file_path": "/workspace/tests/example/source/logger.c",
       "functions": [
         {
           "is_declaration": false,
@@ -1647,7 +1647,7 @@
           ]
         }
       },
-      "file_path": "/workspace/example/source/logger.h",
+      "file_path": "/workspace/tests/example/source/logger.h",
       "functions": [
         {
           "is_declaration": true,
@@ -1702,7 +1702,7 @@
     "math_utils.c": {
       "aliases": {},
       "enums": {},
-      "file_path": "/workspace/example/source/math_utils.c",
+      "file_path": "/workspace/tests/example/source/math_utils.c",
       "functions": [
         {
           "is_declaration": false,
@@ -1804,7 +1804,7 @@
         }
       },
       "enums": {},
-      "file_path": "/workspace/example/source/math_utils.h",
+      "file_path": "/workspace/tests/example/source/math_utils.h",
       "functions": [
         {
           "is_declaration": true,
@@ -1876,7 +1876,7 @@
     "preprocessed.c": {
       "aliases": {},
       "enums": {},
-      "file_path": "/workspace/example/source/preprocessed.c",
+      "file_path": "/workspace/tests/example/source/preprocessed.c",
       "functions": [
         {
           "is_declaration": false,
@@ -2007,7 +2007,7 @@
           ]
         }
       },
-      "file_path": "/workspace/example/source/preprocessed.h",
+      "file_path": "/workspace/tests/example/source/preprocessed.h",
       "functions": [
         {
           "is_declaration": true,
@@ -2352,7 +2352,7 @@
     "sample.c": {
       "aliases": {},
       "enums": {},
-      "file_path": "/workspace/example/source/sample.c",
+      "file_path": "/workspace/tests/example/source/sample.c",
       "functions": [
         {
           "is_declaration": true,
@@ -2614,7 +2614,7 @@
           ]
         }
       },
-      "file_path": "/workspace/example/source/sample.h",
+      "file_path": "/workspace/tests/example/source/sample.h",
       "functions": [
         {
           "is_declaration": true,
@@ -2728,7 +2728,7 @@
     "sample2.c": {
       "aliases": {},
       "enums": {},
-      "file_path": "/workspace/example/source/sample2.c",
+      "file_path": "/workspace/tests/example/source/sample2.c",
       "functions": [
         {
           "is_declaration": true,
@@ -3011,7 +3011,7 @@
     "transformed.c": {
       "aliases": {},
       "enums": {},
-      "file_path": "/workspace/example/source/transformed.c",
+      "file_path": "/workspace/tests/example/source/transformed.c",
       "functions": [
         {
           "is_declaration": false,
@@ -3159,7 +3159,7 @@
           ]
         }
       },
-      "file_path": "/workspace/example/source/transformed.h",
+      "file_path": "/workspace/tests/example/source/transformed.h",
       "functions": [
         {
           "is_declaration": true,
@@ -3305,7 +3305,7 @@
     "typedef_test.c": {
       "aliases": {},
       "enums": {},
-      "file_path": "/workspace/example/source/typedef_test.c",
+      "file_path": "/workspace/tests/example/source/typedef_test.c",
       "functions": [
         {
           "is_declaration": false,
@@ -3586,7 +3586,7 @@
           ]
         }
       },
-      "file_path": "/workspace/example/source/typedef_test.h",
+      "file_path": "/workspace/tests/example/source/typedef_test.h",
       "functions": [],
       "globals": [],
       "include_relations": [],
@@ -3731,5 +3731,5 @@
     }
   },
   "project_name": "example_project",
-  "source_folder": "example/source,example/source"
+  "source_folder": "tests/example/source,tests/example/source"
 }

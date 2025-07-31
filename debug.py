@@ -40,7 +40,7 @@ from c2puml.main import main as main_function
 WORKFLOW: str = "full"
 
 # Configuration file path (relative to project root)
-CONFIG_PATH: str = "./example/config.json"
+CONFIG_PATH: str = "./tests/example/config.json"
 
 # Verbose output
 VERBOSE: bool = True

@@ -65,7 +65,7 @@ Thumbs.db
 *.json
 !simple_config.json
 !test_model.json
-!example/config.json
+!tests/example/config.json
 !output/*.json
 test_*.json
 final_*.json
