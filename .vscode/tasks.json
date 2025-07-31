@@ -23,7 +23,7 @@
         {
             "label": "# Run Example",
             "type": "shell",
-            "command": "${workspaceFolder}/run_example_fixed.bat",
+            "command": "${workspaceFolder}/run_example.bat",
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -133,24 +133,6 @@
             "label": "# 🔧 Git Management",
             "type": "shell",
             "command": "${workspaceFolder}/git_manage.bat",
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            }
-        },
-        {
-            "label": "Setup Git Hooks",
-            "type": "shell",
-            "command": "${workspaceFolder}/setup-hooks.bat",
             "group": "build",
             "presentation": {
                 "echo": true,
