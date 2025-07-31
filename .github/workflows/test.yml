@@ -47,11 +47,11 @@ jobs:
         PYTHONPATH: ${{ github.workspace }}/src
       run: |
         echo "🧪 Running comprehensive test suite (Shell)..."
-        bash run_all_tests.sh
+        bash scripts/run_all_tests.sh
 
     - name: Run example (Shell)
       env:
         PYTHONPATH: ${{ github.workspace }}/src
       run: |
         echo "🚀 Running example script..."
-        bash run_example.sh
+        bash scripts/run_example.sh

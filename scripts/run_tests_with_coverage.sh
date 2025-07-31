@@ -5,6 +5,14 @@
 
 set -e  # Exit on error
 
+# Get script directory and change to project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR/.."
+
+# Get script directory and change to project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR/.."
+
 # Colors for output
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -93,9 +101,9 @@ if [ "$HAS_COVERAGE" = true ]; then
     fi
     
     # Run the C to PlantUML example with coverage
-    if [ -f "run_example_with_coverage.py" ]; then
+    if [ -f "scripts/run_example_with_coverage.py" ]; then
         print_status "Running C to PlantUML example with coverage..."
-        PYTHONPATH=src python3 -m coverage run -a run_example_with_coverage.py
+        PYTHONPATH=src python3 -m coverage run -a scripts/run_example_with_coverage.py
     fi
     
     # Step 2: Generate comprehensive coverage reports
@@ -326,7 +334,7 @@ print_success "Test summary generated at: tests/reports/test-summary.txt"
 
 # Generate HTML test summary
 print_status "Generating HTML test summary..."
-if python3 generate_test_summary_html.py --log-file tests/reports/test-output.log --output-file tests/reports/test_summary.html; then
+if python3 scripts/generate_test_summary_html.py --log-file tests/reports/test-output.log --output-file tests/reports/test_summary.html; then
     print_success "HTML test summary generated at: tests/reports/test_summary.html"
 else
     print_warning "Failed to generate HTML test summary, continuing with text summary only"

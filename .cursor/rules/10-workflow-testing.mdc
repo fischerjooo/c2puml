@@ -5,7 +5,7 @@
 ### Regression Testing (Full System Test)
 ```bash
 # Run complete regression testing - validates entire system
-./run_all.sh
+./scripts/run_all.sh
 ```
 **Purpose**: Full system validation including tests, examples, and image generation. Use for:
 - Final validation before releases
@@ -15,7 +15,7 @@
 ### Debugging and Development Testing
 ```bash
 # Run debugging-focused tests with detailed output
-./run_all_tests.sh
+./scripts/run_all_tests.sh
 ```
 **Purpose**: Focused testing for debugging and development. Use for:
 - Debugging specific issues
@@ -26,7 +26,7 @@
 ### Spiking and Integration Testing
 ```bash
 # Run example workflow for spiking and integration testing
-./run_example.sh
+./scripts/run_example.sh
 ```
 **Purpose**: Spiking new features and integration testing. Use for:
 - Integration testing with new source files
@@ -36,16 +36,16 @@
 ## Standard Workflow (Manual Steps)
 ```bash
 # 0. For debugging: Run focused tests
-./run_all_tests.sh
+./scripts/run_all_tests.sh
 
 # 1. For spiking: Run example workflow (includes cleaning and generation)
-./run_example.sh
+./scripts/run_example.sh
 
 # 2. For regression: Run complete system test
-./run_all.sh
+./scripts/run_all.sh
 
 # 3. Generate images from PlantUML files (optional)
-./picgen.sh
+./scripts/picgen.sh
 
 # 4. Review generated output (optional)
 # Examine the generated PlantUML diagrams and images
@@ -79,7 +79,7 @@
 - **Logs**: Processing logs and error reports
 
 ## Image Generation
-The `picgen.sh` script converts all `.puml` files in the output directory to PNG images:
+The `scripts/picgen.sh` script converts all `.puml` files in the output directory to PNG images:
 - Requires PlantUML to be installed (`sudo apt-get install plantuml`)
 - Generates high-quality PNG images for documentation and sharing
 

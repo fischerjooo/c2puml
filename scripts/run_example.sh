@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Get script directory and change to project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR/.."
+
 # Clean previous output
 echo "Cleaning previous output..."
 rm -rf output tests/example/output
