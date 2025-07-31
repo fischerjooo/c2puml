@@ -57,7 +57,7 @@ def run_example_generation():
             "-m",
             "c2puml.main",
             "--config",
-            "example/config.json",
+            "tests/example/config.json",
         ],
         # Individual steps for better coverage
         [
@@ -67,7 +67,7 @@ def run_example_generation():
             "-m",
             "c2puml.main",
             "--config",
-            "example/config.json",
+            "tests/example/config.json",
             "parse",
         ],
         [
@@ -77,7 +77,7 @@ def run_example_generation():
             "-m",
             "c2puml.main",
             "--config",
-            "example/config.json",
+            "tests/example/config.json",
             "transform",
         ],
         [
@@ -87,7 +87,7 @@ def run_example_generation():
             "-m",
             "c2puml.main",
             "--config",
-            "example/config.json",
+            "tests/example/config.json",
             "generate",
         ],
         # Try with verbose flag
@@ -98,7 +98,7 @@ def run_example_generation():
             "-m",
             "c2puml.main",
             "--config",
-            "example/config.json",
+            "tests/example/config.json",
             "--verbose",
         ],
     ]

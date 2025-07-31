@@ -15,7 +15,7 @@ Validation Categories:
 6. Enum/Struct Validation - proper formatting of typedef content
 
 Usage:
-    python3 assertions.py
+    python3 test-example.py
 
 Returns:
     0 if all validations pass
@@ -96,7 +96,7 @@ class PUMLValidator:
     def _find_output_directory(self) -> Path:
         """Find the output directory path."""
         if Path.cwd().name == "example":
-            return Path("../output")
+            return Path("../../output")
         return Path("output")
 
     def _add_result(
