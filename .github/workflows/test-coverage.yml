@@ -189,44 +189,149 @@ jobs:
               # Commit with detailed message
               git commit -F /tmp/commit_msg
 
-              # Push changes to the target branch
+              # Robust push strategy with retry logic and conflict resolution
               echo "🚀 Pushing changes to $TARGET_BRANCH..."
 
-              # If we're not on the target branch, we need to handle the push carefully
-              if [ "${{ github.ref }}" != "refs/heads/$TARGET_BRANCH" ]; then
-                echo "🔄 Pushing to $TARGET_BRANCH branch from current branch..."
-
-                # Fetch the latest main branch
-                echo "📥 Fetching latest $TARGET_BRANCH branch..."
-                git fetch origin "$TARGET_BRANCH:$TARGET_BRANCH"
-
-                # Try to push to main branch
-                if git push origin "HEAD:$TARGET_BRANCH"; then
-                  echo "✅ Successfully pushed to $TARGET_BRANCH"
-                else
-                  echo "⚠️ Push failed, trying alternative approach..."
-
-                  # Create a new branch for the coverage reports
-                  COVERAGE_BRANCH="coverage-reports-$(date +%Y%m%d-%H%M%S)"
-                  echo "🔄 Creating coverage branch: $COVERAGE_BRANCH"
-
-                  # Push to a new branch instead
-                  if git push origin "HEAD:$COVERAGE_BRANCH"; then
-                    echo "✅ Successfully pushed to coverage branch: $COVERAGE_BRANCH"
-                    echo "💡 Coverage reports are available in branch: $COVERAGE_BRANCH"
-                    echo "💡 You can merge this branch to main manually if needed"
-                  else
-                    echo "❌ Failed to push to coverage branch"
-                    exit 1
+              # Function to attempt push with retry logic
+              push_with_retry() {
+                local max_attempts=5
+                local attempt=1
+                local push_success=false
+                
+                while [ $attempt -le $max_attempts ] && [ "$push_success" = "false" ]; do
+                  echo "🔄 Push attempt $attempt of $max_attempts..."
+                  
+                  # Fetch latest changes before each attempt
+                  echo "📥 Fetching latest changes from origin..."
+                  if ! git fetch origin "$TARGET_BRANCH"; then
+                    echo "⚠️ Failed to fetch from origin, retrying in 10 seconds..."
+                    sleep 10
+                    attempt=$((attempt + 1))
+                    continue
                   fi
+                  
+                  # Check if we're on the target branch
+                  CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+                  if [ "$CURRENT_BRANCH" != "$TARGET_BRANCH" ]; then
+                    echo "🔄 Switching to $TARGET_BRANCH branch..."
+                    
+                    # Try to checkout the target branch
+                    if git checkout "$TARGET_BRANCH" 2>/dev/null; then
+                      echo "✅ Switched to $TARGET_BRANCH branch"
+                    else
+                      echo "🔄 Creating and switching to $TARGET_BRANCH branch..."
+                      git checkout -b "$TARGET_BRANCH" "origin/$TARGET_BRANCH" || {
+                        echo "❌ Failed to create/switch to $TARGET_BRANCH branch"
+                        attempt=$((attempt + 1))
+                        continue
+                      }
+                    fi
+                    
+                    # Cherry-pick the commit to the target branch
+                    echo "🍒 Cherry-picking commit to $TARGET_BRANCH..."
+                    COMMIT_HASH=$(git rev-parse HEAD~1)  # Get the commit we just made
+                    git reset --hard "origin/$TARGET_BRANCH"  # Reset to origin state
+                    
+                    if ! git cherry-pick "$COMMIT_HASH"; then
+                      echo "🔄 Cherry-pick conflict detected, attempting automatic resolution..."
+                      
+                      # For coverage reports, prefer our changes
+                      git add tests/reports/ || true
+                      if ! git cherry-pick --continue; then
+                        echo "⚠️ Manual resolution required, using force strategy..."
+                        git cherry-pick --abort
+                        
+                        # Copy our changes manually
+                        git checkout "$COMMIT_HASH" -- tests/reports/ || true
+                        git add tests/reports/ || true
+                        
+                        if git diff --staged --quiet; then
+                          echo "ℹ️ No changes to commit after conflict resolution"
+                          push_success=true
+                          break
+                        else
+                          git commit --no-edit -m "Update test coverage reports (auto-resolved conflicts)" || true
+                        fi
+                      fi
+                    fi
+                  else
+                    # We're already on the target branch, try to rebase
+                    echo "🔄 Rebasing with latest changes..."
+                    if ! git rebase "origin/$TARGET_BRANCH"; then
+                      echo "🔄 Rebase conflict detected, attempting resolution..."
+                      
+                      # For coverage reports, prefer our changes
+                      git add tests/reports/ || true
+                      if ! git rebase --continue; then
+                        echo "⚠️ Rebase failed, trying merge strategy..."
+                        git rebase --abort
+                        
+                        # Try merge instead
+                        git merge "origin/$TARGET_BRANCH" --no-edit --strategy-option=ours || {
+                          echo "⚠️ Merge failed, using reset and force strategy..."
+                          git merge --abort || true
+                          git reset --hard "origin/$TARGET_BRANCH"
+                          git add tests/reports/
+                          git commit -F /tmp/commit_msg || true
+                        }
+                      fi
+                    fi
+                  fi
+                  
+                  # Attempt the push
+                  if git push origin "$TARGET_BRANCH"; then
+                    echo "✅ Successfully pushed to $TARGET_BRANCH on attempt $attempt"
+                    push_success=true
+                    break
+                  else
+                    echo "⚠️ Push failed on attempt $attempt"
+                    if [ $attempt -lt $max_attempts ]; then
+                      echo "⏳ Waiting 15 seconds before retry..."
+                      sleep 15
+                    fi
+                    attempt=$((attempt + 1))
+                  fi
+                done
+                
+                if [ "$push_success" = "false" ]; then
+                  echo "❌ All push attempts failed, trying fallback strategy..."
+                  return 1
+                else
+                  return 0
                 fi
+              }
+              
+              # Try the robust push strategy
+              if push_with_retry; then
+                echo "✅ Coverage reports successfully committed and pushed"
               else
-                echo "🔄 Pushing to current branch..."
-                git push origin "${{ github.ref }}"
-                echo "✅ Successfully pushed to current branch"
+                echo "🔄 Primary push strategy failed, trying fallback..."
+                
+                # Fallback strategy: create a timestamped branch
+                COVERAGE_BRANCH="coverage-reports-$(date +%Y%m%d-%H%M%S)-${{ github.run_number }}"
+                echo "🔄 Creating fallback coverage branch: $COVERAGE_BRANCH"
+                
+                # Ensure we're on our commit
+                git checkout "${{ github.sha }}" || git checkout HEAD
+                git checkout -b "$COVERAGE_BRANCH"
+                
+                # Force push to the new branch
+                if git push origin "$COVERAGE_BRANCH"; then
+                  echo "✅ Successfully pushed to fallback branch: $COVERAGE_BRANCH"
+                  echo "💡 Coverage reports are available in branch: $COVERAGE_BRANCH"
+                  echo "💡 Create a PR to merge these changes to main if needed"
+                  
+                  # Add comment to original PR if applicable
+                  if [ "${{ github.event_name }}" = "pull_request" ]; then
+                    echo "📝 Coverage reports available in branch $COVERAGE_BRANCH" >> $GITHUB_STEP_SUMMARY
+                  fi
+                else
+                  echo "❌ Fallback push also failed"
+                  echo "⚠️ Coverage reports could not be committed to repository"
+                  echo "💡 Reports are still available as workflow artifacts"
+                  # Don't fail the workflow - artifacts are still available
+                fi
               fi
-
-              echo "✅ Coverage reports committed and pushed"
             fi
           else
             echo "ℹ️ Skipping commit and push based on workflow conditions"
@@ -276,14 +381,20 @@ jobs:
           script: |
             // This step triggers the puml2png workflow after successful test completion
             // This is the primary trigger for PlantUML conversion after PR merges
-            const { data: runs } = await github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'puml2png.yml',
-              ref: context.ref,
-              inputs: {
-                output_folder: 'output',
-                commit_changes: true
-              }
-            });
-            console.log('✅ PlantUML to PNG conversion workflow triggered successfully');
+            try {
+              const { data: runs } = await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'puml2png.yml',
+                ref: context.ref,
+                inputs: {
+                  output_folder: 'output',
+                  commit_changes: 'true'
+                }
+              });
+              console.log('✅ PlantUML to PNG conversion workflow triggered successfully');
+            } catch (error) {
+              console.log('⚠️ Failed to trigger PlantUML workflow:', error.message);
+              console.log('💡 PlantUML conversion can be triggered manually if needed');
+              // Don't fail the workflow if PlantUML trigger fails
+            }
