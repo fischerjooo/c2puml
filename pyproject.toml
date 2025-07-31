@@ -38,6 +38,10 @@ c2puml = "c2puml.main:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+include = ["c2puml*"]
+
+[tool.setuptools.package-dir]
+"" = "src"
 
 [tool.black]
 line-length = 88
