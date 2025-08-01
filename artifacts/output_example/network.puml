@@ -34,24 +34,12 @@ class "network" as HEADER_NETWORK <<header>> #LightGreen
     + const char * network_status_string(NetworkStatus status)
 }
 
-class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<typedef>> #LightYellow
-{
-    + close ( config - > socket_fd )
-    + config - > socket_fd = - 1
-    + return - 1
-}
-
 class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<typedef>> #LightYellow
 {
     + struct sockaddr_in address
     + char * hostname
     + int port
     + int socket_fd
-}
-
-class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<typedef>> #LightYellow
-{
-    + NET_STATUS_DISCONNECTED , NET_STATUS_CONNECTING , NET_STATUS_CONNECTED , NET_STATUS_ERROR
 }
 
 class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<typedef>> #LightYellow
@@ -67,9 +55,7 @@ class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<typedef>> #LightYellow
 NETWORK --> HEADER_NETWORK : <<include>>
 
 ' Declaration relationships
-NETWORK ..> TYPEDEF___ANONYMOUS_STRUCT__ : <<declares>>
 HEADER_NETWORK ..> TYPEDEF_NETWORKCONFIG : <<declares>>
-HEADER_NETWORK ..> TYPEDEF___ANONYMOUS_STRUCT__ : <<declares>>
 HEADER_NETWORK ..> TYPEDEF_NETWORKSTATUS : <<declares>>
 
 ' Uses relationships

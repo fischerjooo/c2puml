@@ -46,6 +46,7 @@ class TokenType(Enum):
     ASSIGN = "ASSIGN"  # =
     ASTERISK = "ASTERISK"  # *
     AMPERSAND = "AMPERSAND"  # &
+    ARROW = "ARROW"  # ->
 
     # Literals and identifiers
     IDENTIFIER = "IDENTIFIER"
@@ -116,6 +117,11 @@ class CTokenizer:
         "=": TokenType.ASSIGN,
         "*": TokenType.ASTERISK,
         "&": TokenType.AMPERSAND,
+    }
+
+    # Two character tokens
+    TWO_CHAR_TOKENS = {
+        "->": TokenType.ARROW,
     }
 
     def __init__(self):
@@ -352,21 +358,24 @@ class CTokenizer:
                 pos += 1
                 continue
 
-            # Multi-character operators (<<, >>)
-            if line[pos : pos + 2] in ["<<", ">>"]:
+            # Multi-character operators (<<, >>, ->)
+            if line[pos : pos + 2] in ["<<", ">>", "->"]:
                 op = line[pos : pos + 2]
-                tokens.append(
-                    Token(
-                        (
-                            TokenType.OPERATOR
-                            if hasattr(TokenType, "OPERATOR")
-                            else TokenType.UNKNOWN
-                        ),
-                        op,
-                        line_num,
-                        pos,
+                if op == "->":
+                    tokens.append(Token(TokenType.ARROW, op, line_num, pos))
+                else:
+                    tokens.append(
+                        Token(
+                            (
+                                TokenType.OPERATOR
+                                if hasattr(TokenType, "OPERATOR")
+                                else TokenType.UNKNOWN
+                            ),
+                            op,
+                            line_num,
+                            pos,
+                        )
                     )
-                )
                 pos += 2
                 continue
 
@@ -569,24 +578,59 @@ class StructureFinder:
             return None
         self._advance()
 
+        # Check if this struct is inside a cast expression by looking backwards
+        check_pos = start_pos - 1
+        while check_pos >= 0:
+            if self.tokens[check_pos].type == TokenType.LPAREN:
+                # Found opening parenthesis before struct - this is likely a cast expression
+                return None
+            elif self.tokens[check_pos].type in [TokenType.STRUCT, TokenType.TYPEDEF]:
+                # Found another struct or typedef - this is not a cast expression
+                break
+            elif self.tokens[check_pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                # Found some other token - this is not a cast expression
+                break
+            check_pos -= 1
+
         # Skip whitespace
         while self.pos < len(self.tokens) and self._current_token_is(
             TokenType.WHITESPACE
         ):
             self.pos += 1
 
+        # Check if this is a cast expression: (struct type*)
+        if self._current_token_is(TokenType.LPAREN):
+            # Look ahead to see if this is a cast expression
+            check_pos = self.pos + 1
+            while check_pos < len(self.tokens):
+                if self.tokens[check_pos].type == TokenType.RPAREN:
+                    # Found closing parenthesis - this is likely a cast expression
+                    return None
+                elif self.tokens[check_pos].type == TokenType.LBRACE:
+                    # Found opening brace - this is a struct definition
+                    break
+                elif self.tokens[check_pos].type == TokenType.SEMICOLON:
+                    # Found semicolon - this is a variable declaration
+                    return None
+                check_pos += 1
+
         # Get struct tag name (optional for anonymous structs)
         struct_tag = ""
         if self._current_token_is(TokenType.IDENTIFIER):
             struct_tag = self._advance().value
 
-        # Find opening brace
-        while self.pos < len(self.tokens) and not self._current_token_is(
-            TokenType.LBRACE
-        ):
+        # Look for opening brace or semicolon
+        while self.pos < len(self.tokens):
+            if self._current_token_is(TokenType.LBRACE):
+                # Found opening brace - this is a struct definition
+                break
+            elif self._current_token_is(TokenType.SEMICOLON):
+                # Found semicolon before opening brace - this is a variable declaration
+                return None
             self.pos += 1
 
         if not self._current_token_is(TokenType.LBRACE):
+            # This is a variable declaration, not a struct definition
             return None
 
         # Find matching closing brace
