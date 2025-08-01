@@ -7,7 +7,7 @@ class "sample" as SAMPLE <<source>> #LightBlue
     - #define DEBUG_MODE
     - #define MAX_SIZE
     -- Global Variables --
-    char buffer
+    char[MAX_SIZE] buffer
     int global_counter
     double * global_ptr
     -- Functions --

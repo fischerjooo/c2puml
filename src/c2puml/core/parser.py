@@ -1079,7 +1079,16 @@ class CParser:
                                 if collected_tokens[k].type == TokenType.IDENTIFIER:
                                     var_name = collected_tokens[k].value
                                     type_tokens = collected_tokens[start_idx:k]
-                                    var_type = " ".join(t.value for t in type_tokens)
+                                    # Format array type properly - preserve spaces between tokens but not around brackets
+                                    formatted_type = []
+                                    for idx, token in enumerate(type_tokens):
+                                        if idx > 0:
+                                            formatted_type.append(" " + token.value)
+                                        else:
+                                            formatted_type.append(token.value)
+                                    # Add array brackets without spaces
+                                    array_size = collected_tokens[j + 1].value if j + 1 < bracket_idx else ""
+                                    var_type = "".join(formatted_type) + "[" + array_size + "]"
                                     return (var_name, var_type, None)
                             break
                 else:

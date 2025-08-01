@@ -51,6 +51,7 @@ class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<typedef>> #LightYellow
 
 class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<typedef>> #LightYellow
 {
+    + NET_STATUS_DISCONNECTED , NET_STATUS_CONNECTING , NET_STATUS_CONNECTED , NET_STATUS_ERROR
 }
 
 class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<typedef>> #LightYellow
