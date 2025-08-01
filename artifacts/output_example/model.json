@@ -16,8 +16,8 @@
               "value": null
             },
             {
-              "name": "]",
-              "type": "char * argv [",
+              "name": "argv",
+              "type": "char *[]",
               "value": null
             }
           ],
@@ -293,8 +293,8 @@
           "name": "process_with_callbacks",
           "parameters": [
             {
-              "name": "]",
-              "type": "int data [",
+              "name": "data",
+              "type": "\n int[]",
               "value": null
             },
             {
@@ -303,8 +303,8 @@
               "value": null
             },
             {
-              "name": "]",
-              "type": "math_operation_t operations [",
+              "name": "operations",
+              "type": "\n math_operation_t[]",
               "value": null
             },
             {
@@ -487,8 +487,8 @@
           "value": "{ \n & ProcessorAdapter_Process , \n & ProcessorService_Process , \n & ProcessorHardware_Process , \n }"
         },
         {
-          "name": "]",
-          "type": "math_operation_t global_math_ops [ 10",
+          "name": "global_math_ops",
+          "type": "math_operation_t[10]",
           "value": "{ NULL }"
         }
       ],
@@ -735,8 +735,8 @@
           "name": "process_with_callbacks",
           "parameters": [
             {
-              "name": "]",
-              "type": "int data [",
+              "name": "data",
+              "type": "\n int[]",
               "value": null
             },
             {
@@ -745,8 +745,8 @@
               "value": null
             },
             {
-              "name": "]",
-              "type": "math_operation_t operations [",
+              "name": "operations",
+              "type": "\n math_operation_t[]",
               "value": null
             },
             {
