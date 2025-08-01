@@ -4,7 +4,6 @@ Unit tests for include filtering bugs and edge cases.
 These tests are designed to expose issues with the current include filtering implementation.
 """
 
-import pytest
 import unittest
 from unittest.mock import Mock, patch
 from typing import Dict, Any, List
@@ -13,10 +12,10 @@ from src.c2puml.core.transformer import Transformer
 from src.c2puml.models import FileModel, ProjectModel, IncludeRelation
 
 
-class TestIncludeFilteringBugs:
+class TestIncludeFilteringBugs(unittest.TestCase):
     """Test class to expose bugs in include filtering functionality"""
 
-    def setup_method(self):
+    def setUp(self):
         """Setup for each test method"""
         self.transformer = Transformer()
 
@@ -32,7 +31,7 @@ class TestIncludeFilteringBugs:
         
         # Check for duplicate method names
         unique_methods = set(method_names)
-        assert len(method_names) == len(unique_methods), f"Duplicate methods found: {[name for name in method_names if method_names.count(name) > 1]}"
+        self.assertEqual(len(method_names), len(unique_methods), f"Duplicate methods found: {[name for name in method_names if method_names.count(name) > 1]}")
         
         # Specifically check that _apply_include_filters is not duplicated in source
         source_lines = inspect.getsource(transformer_module).split('\n')
@@ -41,7 +40,7 @@ class TestIncludeFilteringBugs:
             if line.strip().startswith('def _apply_include_filters(')
         ]
         
-        assert len(apply_include_filters_definitions) <= 1, f"Found {len(apply_include_filters_definitions)} definitions of _apply_include_filters method"
+        self.assertLessEqual(len(apply_include_filters_definitions), 1, f"Found {len(apply_include_filters_definitions)} definitions of _apply_include_filters method")
 
     def test_header_mapping_with_multiple_c_files_bug(self):
         """Test that header mapping is incorrect when multiple C files exist"""
@@ -93,8 +92,8 @@ class TestIncludeFilteringBugs:
         
         # After the fix: headers should map to their corresponding C files
         # This test now passes with the correct behavior
-        assert header_to_root["utils.h"] == "utils.c", "utils.h should map to utils.c (FIXED)"
-        assert header_to_root["math.h"] == "math.c", "math.h should map to math.c (FIXED)"
+        self.assertEqual(header_to_root["utils.h"], "utils.c", "utils.h should map to utils.c (FIXED)")
+        self.assertEqual(header_to_root["math.h"], "math.c", "math.h should map to math.c (FIXED)")
         
         # This demonstrates the bug is now fixed - headers map to appropriate C files
         # instead of all mapping to the first C file
@@ -167,9 +166,9 @@ class TestIncludeFilteringBugs:
                 
                 # Verify the filtering worked as expected
                 if i == 0:  # sys/.* pattern
-                    assert "sys/socket.h" in main_file.includes, "sys/socket.h should be included"
+                    self.assertIn("sys/socket.h", main_file.includes, "sys/socket.h should be included")
                 elif i == 1:  # stdio\.h$ pattern  
-                    assert "stdio.h" in main_file.includes, "stdio.h should be included"
+                    self.assertIn("stdio.h", main_file.includes, "stdio.h should be included")
                 elif i == 2:  # empty pattern
                     # With empty patterns, behavior might be undefined
                     pass
@@ -215,11 +214,11 @@ class TestIncludeFilteringBugs:
         relations_has_header2 = any(rel.included_file == "header2.h" for rel in main_file.include_relations)
         
         # COMPREHENSIVE FILTERING: both includes and include_relations are filtered the same way
-        assert includes_has_header1, "header1.h should be in includes array (matches filter)"
-        assert not includes_has_header2, "header2.h should NOT be in includes array (doesn't match filter)"
+        self.assertTrue(includes_has_header1, "header1.h should be in includes array (matches filter)")
+        self.assertFalse(includes_has_header2, "header2.h should NOT be in includes array (doesn't match filter)")
         
-        assert relations_has_header1, "header1.h should be in include_relations (matches filter)"
-        assert not relations_has_header2, "header2.h should NOT be in include_relations (doesn't match filter)"
+        self.assertTrue(relations_has_header1, "header1.h should be in include_relations (matches filter)")
+        self.assertFalse(relations_has_header2, "header2.h should NOT be in include_relations (doesn't match filter)")
 
     def test_newer_vs_direct_include_processing_methods(self):
         """Test consistency between transformation pipeline and direct _apply_include_filters method"""
@@ -267,9 +266,9 @@ class TestIncludeFilteringBugs:
         main_file_direct = result_direct.files["main.c"]
         
         # Pipeline should preserve includes arrays, direct method should filter them
-        assert len(main_file_pipeline.includes) == 2, "Pipeline should preserve all includes"
-        assert len(main_file_direct.includes) == 1, "Direct method should filter includes"
-        assert "stdio.h" in main_file_direct.includes, "Direct method should keep matching includes"
+        self.assertEqual(len(main_file_pipeline.includes), 2, "Pipeline should preserve all includes")
+        self.assertEqual(len(main_file_direct.includes), 1, "Direct method should filter includes")
+        self.assertIn("stdio.h", main_file_direct.includes, "Direct method should keep matching includes")
 
     def test_include_filter_with_no_matching_files(self):
         """Test include filtering when no files match the specified root file names"""
@@ -292,9 +291,9 @@ class TestIncludeFilteringBugs:
         
         # The actual file should be unchanged since filters don't apply to it
         actual_file = result.files["actual_file.c"]
-        assert len(actual_file.includes) == 2, "File should be unchanged when no filters apply"
-        assert "stdio.h" in actual_file.includes
-        assert "stdlib.h" in actual_file.includes
+        self.assertEqual(len(actual_file.includes), 2, "File should be unchanged when no filters apply")
+        self.assertIn("stdio.h", actual_file.includes)
+        self.assertIn("stdlib.h", actual_file.includes)
 
     def test_improved_header_mapping_logic(self):
         """Test that the improved header mapping correctly maps headers to appropriate C files"""
@@ -354,18 +353,18 @@ class TestIncludeFilteringBugs:
         header_to_root = self.transformer._create_header_to_root_mapping(project_model)
         
         # C files should map to themselves
-        assert header_to_root["main.c"] == "main.c"
-        assert header_to_root["utils.c"] == "utils.c"
-        assert header_to_root["math.c"] == "math.c"
+        self.assertEqual(header_to_root["main.c"], "main.c")
+        self.assertEqual(header_to_root["utils.c"], "utils.c")
+        self.assertEqual(header_to_root["math.c"], "math.c")
         
         # Headers should map to their corresponding C files by name
-        assert header_to_root["utils.h"] == "utils.c", "utils.h should map to utils.c"
-        assert header_to_root["math.h"] == "math.c", "math.h should map to math.c"
+        self.assertEqual(header_to_root["utils.h"], "utils.c", "utils.h should map to utils.c")
+        self.assertEqual(header_to_root["math.h"], "math.c", "math.h should map to math.c")
         
         # Common header should map to the first C file that includes it
         # (could be any of them, but should be consistent)
         common_root = header_to_root["common.h"]
-        assert common_root in ["main.c", "utils.c", "math.c"], "common.h should map to one of the C files that includes it"
+        self.assertIn(common_root, ["main.c", "utils.c", "math.c"], "common.h should map to one of the C files that includes it")
 
     def test_include_filters_should_not_modify_includes_arrays(self):
         """Test that include_filters should preserve includes arrays and only affect include_relations generation"""
@@ -401,7 +400,7 @@ class TestIncludeFilteringBugs:
         
         # This assertion will FAIL because the current implementation incorrectly filters includes
         try:
-            assert main_file.includes == original_includes, "includes array should not be modified by include_filters"
+            self.assertEqual(main_file.includes, original_includes, "includes array should not be modified by include_filters")
             print("✓ includes array correctly preserved")
         except AssertionError:
             print("✗ BUG: includes array was modified by include_filters (it shouldn't be)")
