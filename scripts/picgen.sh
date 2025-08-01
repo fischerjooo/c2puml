@@ -444,8 +444,8 @@ generate_diagram_index() {
     <div class="container">
         <div class="nav">
             <a href="../index.html">🏠 Home</a>
-            <a href="../artifacts/coverage/htmlcov/index.html">📊 Coverage</a>
-            <a href="../artifacts/test_reports/test_summary.html">📝 Tests</a>
+            <a href="../coverage/htmlcov/index.html">📊 Coverage</a>
+            <a href="../test_reports/test_summary.html">📝 Tests</a>
             <span style="background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 4px;">📊 Diagrams</span>
             <a href="https://github.com/fischerjooo/c2puml/tree/main/tests/example">📋 Example</a>
         </div>
