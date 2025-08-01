@@ -1,2 +1,0 @@
-# This file ensures the tests/reports directory is tracked by git
-# Coverage reports and test results will be generated here by GitHub Actions
