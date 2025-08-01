@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for src/c2puml/core/generator.py: 92%</title>
+    <title>Coverage for src/c2puml/core/generator.py: 90%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>src/c2puml/core/generator.py</b>:
-            <span class="pc_cov">92%</span>
+            <span class="pc_cov">90%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">342 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">316<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">26<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">307<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">35<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_a8b3cb5ca554c7b7_parser_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.1">coverage.py v7.10.1</a>,
-            created at 2025-08-01 16:10 +0000
+            created at 2025-08-01 19:24 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -636,20 +636,20 @@
     <p class="pln"><span class="n"><a id="t554" href="#t554">554</a></span><span class="t">        <span class="com"># Check if this is a nested struct field</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t555" href="#t555">555</a></span><span class="t">        <span class="key">if</span> <span class="nam">field</span><span class="op">.</span><span class="nam">type</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"struct {"</span><span class="op">)</span> <span class="key">and</span> <span class="str">"\n"</span> <span class="key">in</span> <span class="nam">field</span><span class="op">.</span><span class="nam">type</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t556" href="#t556">556</a></span><span class="t">            <span class="com"># Parse the nested struct content and flatten it</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t557" href="#t557">557</a></span><span class="t">            <span class="nam">struct_parts</span> <span class="op">=</span> <span class="nam">field</span><span class="op">.</span><span class="nam">type</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">"\n"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t557" href="#t557">557</a></span><span class="t">            <span class="nam">struct_parts</span> <span class="op">=</span> <span class="nam">field</span><span class="op">.</span><span class="nam">type</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">"\n"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t558" href="#t558">558</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t559" href="#t559">559</a></span><span class="t">            <span class="com"># For nested structs, flatten them to avoid PlantUML parsing issues</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t560" href="#t560">560</a></span><span class="t">            <span class="com"># Format as: + struct { field_type field_name }</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t561" href="#t561">561</a></span><span class="t">            <span class="nam">nested_content</span> <span class="op">=</span> <span class="op">[</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t562" href="#t562">562</a></span><span class="t">            <span class="key">for</span> <span class="nam">part</span> <span class="key">in</span> <span class="nam">struct_parts</span><span class="op">[</span><span class="num">1</span><span class="op">:</span><span class="op">]</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t563" href="#t563">563</a></span><span class="t">                <span class="nam">part</span> <span class="op">=</span> <span class="nam">part</span><span class="op">.</span><span class="nam">strip</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t564" href="#t564">564</a></span><span class="t">                <span class="key">if</span> <span class="nam">part</span> <span class="key">and</span> <span class="nam">part</span> <span class="op">!=</span> <span class="str">"}"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t565" href="#t565">565</a></span><span class="t">                    <span class="nam">nested_content</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">part</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t561" href="#t561">561</a></span><span class="t">            <span class="nam">nested_content</span> <span class="op">=</span> <span class="op">[</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t562" href="#t562">562</a></span><span class="t">            <span class="key">for</span> <span class="nam">part</span> <span class="key">in</span> <span class="nam">struct_parts</span><span class="op">[</span><span class="num">1</span><span class="op">:</span><span class="op">]</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t563" href="#t563">563</a></span><span class="t">                <span class="nam">part</span> <span class="op">=</span> <span class="nam">part</span><span class="op">.</span><span class="nam">strip</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t564" href="#t564">564</a></span><span class="t">                <span class="key">if</span> <span class="nam">part</span> <span class="key">and</span> <span class="nam">part</span> <span class="op">!=</span> <span class="str">"}"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t565" href="#t565">565</a></span><span class="t">                    <span class="nam">nested_content</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">part</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t566" href="#t566">566</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t567" href="#t567">567</a></span><span class="t">            <span class="key">if</span> <span class="nam">nested_content</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t567" href="#t567">567</a></span><span class="t">            <span class="key">if</span> <span class="nam">nested_content</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t568" href="#t568">568</a></span><span class="t">                <span class="com"># Create a flattened representation</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t569" href="#t569">569</a></span><span class="t">                <span class="nam">content_str</span> <span class="op">=</span> <span class="str">"; "</span><span class="op">.</span><span class="nam">join</span><span class="op">(</span><span class="nam">nested_content</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t570" href="#t570">570</a></span><span class="t">                <span class="nam">lines</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="str">f"{base_indent}+ struct {{ {content_str} }} {field.name}"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t569" href="#t569">569</a></span><span class="t">                <span class="nam">content_str</span> <span class="op">=</span> <span class="str">"; "</span><span class="op">.</span><span class="nam">join</span><span class="op">(</span><span class="nam">nested_content</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t570" href="#t570">570</a></span><span class="t">                <span class="nam">lines</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="str">f"{base_indent}+ struct {{ {content_str} }} {field.name}"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t571" href="#t571">571</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t572" href="#t572">572</a></span><span class="t">                <span class="nam">lines</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="str">f"{base_indent}+ struct {{ }} {field.name}"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t573" href="#t573">573</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -793,7 +793,7 @@
             <a class="nav" href="z_a8b3cb5ca554c7b7_parser_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.1">coverage.py v7.10.1</a>,
-            created at 2025-08-01 16:10 +0000
+            created at 2025-08-01 19:24 +0000
         </p>
     </div>
 </footer>
