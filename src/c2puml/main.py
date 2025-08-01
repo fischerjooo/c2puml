@@ -156,7 +156,6 @@ Usage:
             generator.generate(
                 model_file=model_to_use,
                 output_dir=output_folder,
-                include_depth=getattr(config, "include_depth", 1),
             )
             logging.info("PlantUML generation complete! Output in: %s", output_folder)
             return 0
@@ -193,7 +192,6 @@ Usage:
         generator.generate(
             model_file=transformed_model_file,
             output_dir=output_folder,
-            include_depth=getattr(config, "include_depth", 1),
         )
         logging.info("PlantUML generation complete! Output in: %s", output_folder)
         logging.info("Complete workflow finished successfully!")
