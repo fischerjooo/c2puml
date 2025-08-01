@@ -970,6 +970,236 @@ class TestCParserComprehensive(unittest.TestCase):
         finally:
             os.unlink(temp_file)
 
+    def test_parse_arrow_operator(self):
+        """Test parsing code with arrow operator (->)"""
+        content = """
+        struct NetworkConfig {
+            int socket_fd;
+            char* host;
+        };
+        
+        void network_cleanup(NetworkConfig* config) {
+            if (config->socket_fd >= 0) {
+                close(config->socket_fd);
+                config->socket_fd = -1;
+            }
+        }
+        """
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
+            f.write(content)
+            temp_file = f.name
+
+        try:
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
+            
+            # Should parse the struct correctly
+            self.assertIn("NetworkConfig", file_model.structs)
+            network_struct = file_model.structs["NetworkConfig"]
+            self.assertEqual(len(network_struct.fields), 2)
+            
+            # Should parse the function correctly
+            function_names = [f.name for f in file_model.functions]
+            self.assertIn("network_cleanup", function_names)
+            
+            # Should not create any malformed structs from the arrow operator usage
+            for struct_name, struct_data in file_model.structs.items():
+                for field in struct_data.fields:
+                    self.assertNotEqual(field.name, ")", "Should not have malformed field names")
+                    self.assertNotIn("->", field.type, "Should not have arrow operator in field types")
+                    
+        finally:
+            os.unlink(temp_file)
+
+    def test_parse_struct_cast_expressions(self):
+        """Test parsing code with struct cast expressions"""
+        content = """
+        #include <sys/socket.h>
+        #include <netinet/in.h>
+        
+        int network_connect(NetworkConfig* config, const char* host, int port) {
+            struct sockaddr_in server_addr;
+            memset(&server_addr, 0, sizeof(server_addr));
+            server_addr.sin_family = AF_INET;
+            server_addr.sin_port = htons(port);
+            
+            if (connect(config->socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+                return -1;
+            }
+            return 0;
+        }
+        """
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
+            f.write(content)
+            temp_file = f.name
+
+        try:
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
+            
+            # Should parse the function correctly
+            function_names = [f.name for f in file_model.functions]
+            self.assertIn("network_connect", function_names)
+            
+            # Should not create any structs from cast expressions
+            for struct_name, struct_data in file_model.structs.items():
+                # Should not have anonymous structs created from cast expressions
+                self.assertNotEqual(struct_name, "__anonymous_struct__", 
+                                  "Should not create anonymous structs from cast expressions")
+                
+                # Should not have malformed fields
+                for field in struct_data.fields:
+                    self.assertNotEqual(field.name, ")", "Should not have malformed field names")
+                    self.assertNotIn("close(", field.type, "Should not have function calls in field types")
+                    
+        finally:
+            os.unlink(temp_file)
+
+    def test_parse_struct_variable_declarations(self):
+        """Test parsing struct variable declarations vs struct definitions"""
+        content = """
+        struct Point {
+            int x;
+            int y;
+        };
+        
+        int main() {
+            struct Point p1;  // Variable declaration
+            struct sockaddr_in server_addr;  // Variable declaration
+            
+            p1.x = 10;
+            p1.y = 20;
+            
+            return 0;
+        }
+        """
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
+            f.write(content)
+            temp_file = f.name
+
+        try:
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
+            
+            # Should only parse the actual struct definition
+            self.assertIn("Point", file_model.structs)
+            self.assertEqual(len(file_model.structs), 1, "Should only have one struct definition")
+            
+            # Should not create structs from variable declarations
+            self.assertNotIn("sockaddr_in", file_model.structs, 
+                           "Should not create struct from variable declaration")
+            
+        finally:
+            os.unlink(temp_file)
+
+    def test_parse_complex_global_initializers(self):
+        """Test parsing global variables with complex initializers"""
+        content = """
+        typedef int (*func_ptr_t)(int);
+        
+        // Simple global
+        int simple_global = 42;
+        
+        // Complex global with function pointer array initializer
+        func_ptr_t complex_global[] = {
+            &function1,
+            &function2,
+            &function3,
+        };
+        
+        // Another complex case
+        typedef struct {
+            func_ptr_t adapter;
+            func_ptr_t service;
+            func_ptr_t hardware;
+        } Process_Cfg_Process_acpfct_t;
+        
+        Process_Cfg_Process_acpfct_t Process_Cfg_Process_acpfct = {
+            &ProcessorAdapter_Process,
+            &ProcessorService_Process,
+            &ProcessorHardware_Process,
+        };
+        """
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
+            f.write(content)
+            temp_file = f.name
+
+        try:
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
+            
+            # Should parse the typedef struct
+            self.assertIn("Process_Cfg_Process_acpfct_t", file_model.structs)
+            
+            # Should parse the global variables
+            global_names = [g.name for g in file_model.globals]
+            self.assertIn("simple_global", global_names)
+            self.assertIn("complex_global", global_names)
+            self.assertIn("Process_Cfg_Process_acpfct", global_names)
+            
+            # Should parse global variables correctly
+            for global_var in file_model.globals:
+                if global_var.name == "simple_global":
+                    self.assertEqual(global_var.value, "42")
+                elif global_var.name in ["complex_global", "Process_Cfg_Process_acpfct"]:
+                    # Complex initializers should have values
+                    self.assertIsNotNone(global_var.value)
+                    self.assertNotEqual(global_var.value, "")
+                    
+        finally:
+            os.unlink(temp_file)
+
+    def test_parse_mixed_struct_constructs(self):
+        """Test parsing mixed struct constructs (definitions, declarations, casts)"""
+        content = """
+        struct Point {
+            int x;
+            int y;
+        };
+        
+        int main() {
+            struct Point p1;  // Variable declaration
+            struct sockaddr_in server_addr;  // Variable declaration
+            
+            // Function call with struct cast
+            if (connect(socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+                return -1;
+            }
+            
+            // Struct definition inside function (should be ignored)
+            struct {
+                int temp;
+            } temp_struct;
+            
+            return 0;
+        }
+        """
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
+            f.write(content)
+            temp_file = f.name
+
+        try:
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
+            
+            # Should parse the top-level struct definition
+            self.assertIn("Point", file_model.structs)
+            
+            # Should not create structs from variable declarations or casts
+            self.assertNotIn("sockaddr_in", file_model.structs)
+            self.assertNotIn("sockaddr", file_model.structs)
+            
+            # Check that any anonymous structs are not from cast expressions
+            for struct_name, struct_data in file_model.structs.items():
+                if struct_name == "__anonymous_struct__":
+                    # Should not have malformed fields from cast expressions
+                    for field in struct_data.fields:
+                        self.assertNotEqual(field.name, ")", "Should not have malformed field names")
+                        self.assertNotIn("connect(", field.type, "Should not have function calls in field types")
+            
+        finally:
+            os.unlink(temp_file)
+
 
 if __name__ == "__main__":
     unittest.main()
