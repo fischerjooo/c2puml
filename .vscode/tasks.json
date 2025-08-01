@@ -4,8 +4,10 @@
         {
             "label": "# Run Full Workflow",
             "type": "shell",
-            "command": "${workspaceFolder}/run_all.bat",
-            "args": ["${config:plantumlPath}"],
+            "command": "${workspaceFolder}/scripts/run_all.bat",
+            "args": [
+                "${config:plantumlPath}"
+            ],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -23,7 +25,7 @@
         {
             "label": "# Run Example",
             "type": "shell",
-            "command": "${workspaceFolder}/run_example.bat",
+            "command": "${workspaceFolder}/scripts/run_example.bat",
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -41,8 +43,10 @@
         {
             "label": "# Generate Pictures",
             "type": "shell",
-            "command": "${workspaceFolder}/picgen.bat",
-            "args": ["${config:plantumlPath}"],
+            "command": "${workspaceFolder}/scripts/picgen.bat",
+            "args": [
+                "${config:plantumlPath}"
+            ],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -60,7 +64,7 @@
         {
             "label": "# Run Tests",
             "type": "shell",
-            "command": "${workspaceFolder}/run_all_tests.bat",
+            "command": "${workspaceFolder}/scripts/run_all_tests.bat",
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -78,7 +82,7 @@
         {
             "label": "Install Dependencies",
             "type": "shell",
-            "command": "${workspaceFolder}/install_dependencies.bat",
+            "command": "${workspaceFolder}/scripts/install_dependencies.bat",
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -96,7 +100,7 @@
         {
             "label": "Format & Lint",
             "type": "shell",
-            "command": "${workspaceFolder}/format_lint.bat",
+            "command": "${workspaceFolder}/scripts/format_lint.bat",
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -114,7 +118,7 @@
         {
             "label": "# ⚠️ Git Reset & Pull",
             "type": "shell",
-            "command": "${workspaceFolder}/git_reset_pull.bat",
+            "command": "${workspaceFolder}/scripts/git_reset_pull.bat",
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -132,7 +136,7 @@
         {
             "label": "# 🔧 Git Management",
             "type": "shell",
-            "command": "${workspaceFolder}/git_manage.bat",
+            "command": "${workspaceFolder}/scripts/git_manage.bat",
             "group": "build",
             "presentation": {
                 "echo": true,
