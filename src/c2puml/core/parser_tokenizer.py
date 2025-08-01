@@ -1138,7 +1138,7 @@ def find_struct_fields(
     while pos < closing_brace_pos and tokens[pos].type != TokenType.RBRACE:
         field_tokens = []
         while pos < closing_brace_pos and tokens[pos].type != TokenType.SEMICOLON:
-            if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
+            if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
                 field_tokens.append(tokens[pos])
             pos += 1
 

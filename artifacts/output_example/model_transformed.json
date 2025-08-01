@@ -897,11 +897,6 @@
               "value": null
             },
             {
-              "name": "name",
-              "type": "struct { \n char[32]",
-              "value": null
-            },
-            {
               "name": ")",
               "type": "int ( * validate_func ) ( const char *",
               "value": null
@@ -981,8 +976,8 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * callbacks [ 3 ] ) ( int , char *",
+              "name": "callbacks",
+              "type": "void(* callbacks[3])(int , char *)",
               "value": null
             }
           ],
@@ -1733,7 +1728,7 @@
       "globals": [
         {
           "name": "filtered_global_string",
-          "type": "char",
+          "type": "char[100]",
           "value": null
         },
         {
@@ -2745,7 +2740,13 @@
           "uses": []
         },
         "__anonymous_struct__": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "NET_STATUS_ERROR",
+              "type": "NET_STATUS_DISCONNECTED , NET_STATUS_CONNECTING , NET_STATUS_CONNECTED ,",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "__anonymous_struct__",
           "tag_name": "",
@@ -3337,7 +3338,7 @@
       "globals": [
         {
           "name": "buffer",
-          "type": "char",
+          "type": "char[MAX_SIZE]",
           "value": null
         },
         {
@@ -3683,7 +3684,7 @@
       "globals": [
         {
           "name": "buffer",
-          "type": "char",
+          "type": "char[MAX_SIZE]",
           "value": null
         },
         {
