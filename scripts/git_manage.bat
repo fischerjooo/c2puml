@@ -60,7 +60,7 @@ if %errorlevel% equ 0 (
 ) else (
     echo ⚠️  Branch has no upstream tracking
     echo Attempting to set up tracking automatically...
-    
+
     REM Try to set upstream to origin with same branch name
     git branch --set-upstream-to=origin/%CURRENT_BRANCH% %CURRENT_BRANCH% >nul 2>&1
     if %errorlevel% equ 0 (
@@ -167,5 +167,3 @@ goto :exit
 
 :exit
 echo.
-echo Press any key to exit...
-pause >nul
