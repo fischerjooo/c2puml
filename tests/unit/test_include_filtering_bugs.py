@@ -181,7 +181,7 @@ class TestIncludeFilteringBugs:
                 print(f"Test case {i} failed with error: {e}")
 
     def test_include_relations_vs_includes_array_consistency(self):
-        """Test that the legacy _apply_include_filters method filters both includes and include_relations consistently"""
+        """Test that the direct _apply_include_filters method filters both includes and include_relations consistently"""
         # Create files with both includes arrays and include_relations
         main_c = FileModel(
             file_path="/test/main.c",
@@ -206,54 +206,69 @@ class TestIncludeFilteringBugs:
         result = self.transformer._apply_include_filters(project_model, include_filters)
         main_file = result.files["main.c"]
         
-        # Check LEGACY behavior: both includes arrays and include_relations are filtered consistently
+        # Check comprehensive filtering behavior: both includes arrays and include_relations are filtered consistently
         includes_has_header1 = "header1.h" in main_file.includes
         includes_has_header2 = "header2.h" in main_file.includes
         
         relations_has_header1 = any(rel.included_file == "header1.h" for rel in main_file.include_relations)
         relations_has_header2 = any(rel.included_file == "header2.h" for rel in main_file.include_relations)
         
-        # LEGACY BEHAVIOR: both includes and include_relations are filtered the same way
+        # COMPREHENSIVE FILTERING: both includes and include_relations are filtered the same way
         assert includes_has_header1, "header1.h should be in includes array (matches filter)"
         assert not includes_has_header2, "header2.h should NOT be in includes array (doesn't match filter)"
         
         assert relations_has_header1, "header1.h should be in include_relations (matches filter)"
         assert not relations_has_header2, "header2.h should NOT be in include_relations (doesn't match filter)"
 
-    def test_newer_vs_legacy_include_processing_methods(self):
-        """Test that newer include processing doesn't conflict with legacy _apply_include_filters"""
-        # Create a simple project model
-        file_model = FileModel(
+    def test_newer_vs_direct_include_processing_methods(self):
+        """Test consistency between transformation pipeline and direct _apply_include_filters method"""
+        # Create a simple project model for pipeline test
+        file_model_pipeline = FileModel(
             file_path="/test/main.c",
             structs={}, enums={}, unions={}, functions=[], globals=[],
             includes={"stdio.h", "stdlib.h"}, macros=[], aliases={}, include_relations=[]
         )
         
-        project_model = ProjectModel(
+        project_model_pipeline = ProjectModel(
             source_folder="/test",
             project_name="TestProject",
-            files={"main.c": file_model}
+            files={"main.c": file_model_pipeline}
         )
 
-        # Test both the legacy and new methods
+        # Create a separate project model for direct test
+        file_model_direct = FileModel(
+            file_path="/test/main.c",
+            structs={}, enums={}, unions={}, functions=[], globals=[],
+            includes={"stdio.h", "stdlib.h"}, macros=[], aliases={}, include_relations=[]
+        )
+        
+        project_model_direct = ProjectModel(
+            source_folder="/test",
+            project_name="TestProject",
+            files={"main.c": file_model_direct}
+        )
+
+        # Test configuration
         config = {
             "file_specific": {"main.c": {"include_filter": [r"stdio\.h"]}},
             "include_depth": 2
         }
         
-        # Apply transformations using the newer method
-        result_new = self.transformer._apply_transformations(project_model, config)
+        # Apply transformations using the main pipeline (preserves includes)
+        result_pipeline = self.transformer._apply_transformations(project_model_pipeline, config)
         
-        # Apply legacy include filters directly
+        # Apply include filters directly (comprehensive filtering)
         include_filters = self.transformer._extract_include_filters_from_config(config)
-        result_legacy = self.transformer._apply_include_filters(project_model, include_filters)
+        result_direct = self.transformer._apply_include_filters(project_model_direct, include_filters)
         
-        # Results should be consistent between methods
-        main_file_new = result_new.files["main.c"]
-        main_file_legacy = result_legacy.files["main.c"]
+        # Results should be different but predictable
+        main_file_pipeline = result_pipeline.files["main.c"]
+        main_file_direct = result_direct.files["main.c"]
         
-        # Compare the includes arrays - they should be the same
-        assert main_file_new.includes == main_file_legacy.includes, "Inconsistent results between new and legacy include filtering methods"
+        # Pipeline should preserve includes arrays, direct method should filter them
+        assert len(main_file_pipeline.includes) == 2, "Pipeline should preserve all includes"
+        assert len(main_file_direct.includes) == 1, "Direct method should filter includes"
+        assert "stdio.h" in main_file_direct.includes, "Direct method should keep matching includes"
 
     def test_include_filter_with_no_matching_files(self):
         """Test include filtering when no files match the specified root file names"""

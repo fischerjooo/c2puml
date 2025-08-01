@@ -604,8 +604,8 @@ class Transformer:
             )
 
             if root_file in compiled_filters:
-                # Apply the filters for this root file using legacy behavior
-                self._filter_file_includes_legacy(
+                # Apply comprehensive filtering for this root file
+                self._filter_file_includes_comprehensive(
                     file_model, compiled_filters[root_file], root_file
                 )
 
@@ -686,23 +686,20 @@ class Transformer:
     def _filter_file_includes(
         self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
     ) -> None:
-        """Filter include_relations for a file based on regex patterns.
-        Note: This method preserves the original includes array and only filters include_relations
-        as per the intended design."""
+        """Filter include_relations while preserving original includes arrays.
+        This is used by the main transformation pipeline to maintain source information."""
         self.logger.debug(
             "Filtering include_relations for file %s (root: %s)", file_model.name, root_file
         )
 
-        # DO NOT filter includes array - preserve it as per design intent
-        # The includes array should always be preserved and only include_relations should be filtered
+        # Preserve includes arrays - they contain important source information
         original_includes_count = len(file_model.includes)
 
-        # Filter include_relations only
+        # Filter include_relations based on patterns
         original_relations_count = len(file_model.include_relations)
         filtered_relations = []
 
         for relation in file_model.include_relations:
-            # Check if the included file matches any pattern
             if self._matches_any_pattern(relation.included_file, patterns):
                 filtered_relations.append(relation)
             else:
@@ -723,16 +720,16 @@ class Transformer:
             len(file_model.include_relations),
         )
 
-    def _filter_file_includes_legacy(
+    def _filter_file_includes_comprehensive(
         self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
     ) -> None:
-        """Legacy method that filters both includes and include_relations for backward compatibility.
-        This is used by the legacy _apply_include_filters method to maintain test compatibility."""
+        """Comprehensive filtering that affects both includes arrays and include_relations.
+        This is used by the direct _apply_include_filters method for complete filtering."""
         self.logger.debug(
-            "Legacy filtering includes and include_relations for file %s (root: %s)", file_model.name, root_file
+            "Comprehensive filtering for file %s (root: %s)", file_model.name, root_file
         )
 
-        # Filter includes (legacy behavior)
+        # Filter includes arrays
         original_includes_count = len(file_model.includes)
         filtered_includes = set()
 
@@ -751,7 +748,6 @@ class Transformer:
         filtered_relations = []
 
         for relation in file_model.include_relations:
-            # Check if the included file matches any pattern
             if self._matches_any_pattern(relation.included_file, patterns):
                 filtered_relations.append(relation)
             else:
@@ -765,7 +761,7 @@ class Transformer:
         file_model.include_relations = filtered_relations
 
         self.logger.debug(
-            "Legacy include filtering for %s: includes %d->%d, relations %d->%d",
+            "Comprehensive filtering for %s: includes %d->%d, relations %d->%d",
             file_model.name,
             original_includes_count,
             len(file_model.includes),

@@ -4,7 +4,7 @@ Comprehensive PUML Validation Suite
 
 This module provides detailed validation of generated PlantUML files against C source code.
 It validates the structural integrity, content accuracy, and relationship correctness
-of generated PUML diagrams.
+of generated PUML diagrams, including include filtering functionality.
 
 Validation Categories:
 1. Structural Validation - @startuml/@enduml, class definitions, syntax
@@ -13,9 +13,13 @@ Validation Categories:
 4. Pattern Validation - function signatures, typedefs, macros
 5. File-specific Validation - expected content for each file type
 6. Enum/Struct Validation - proper formatting of typedef content
+7. Include Filtering Validation - validate include filter behavior and configurations
 
 Usage:
-    python3 test-example.py
+    python3 test-example.py [--test-include-filtering]
+
+Arguments:
+    --test-include-filtering  Run include filtering validation tests with example configurations
 
 Returns:
     0 if all validations pass
@@ -25,6 +29,9 @@ Returns:
 import os
 import re
 import sys
+import json
+import subprocess
+import argparse
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -1127,13 +1134,300 @@ class PUMLValidator:
             print("✅ All validations passed!")
 
 
+class IncludeFilteringValidator:
+    """Validator for include filtering functionality using example configurations."""
+    
+    def __init__(self):
+        """Initialize the include filtering validator."""
+        self.results: List[ValidationResult] = []
+        self.example_dir = Path("tests/example")
+        if not self.example_dir.exists():
+            self.example_dir = Path(".")
+            
+    def _add_result(self, level: ValidationLevel, message: str, context: str = ""):
+        """Add a validation result for include filtering."""
+        self.results.append(ValidationResult(level, message, "include_filtering", context=context))
+    
+    def _run_c2puml_with_config(self, config_file: str, output_suffix: str = "") -> bool:
+        """Run c2puml with a specific configuration file."""
+        try:
+            config_path = self.example_dir / config_file
+            if not config_path.exists():
+                self._add_result(ValidationLevel.ERROR, f"Configuration file not found: {config_file}")
+                return False
+                
+            output_dir = Path("output") / f"include_filtering{output_suffix}"
+            output_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Run c2puml with the configuration
+            cmd = [
+                "python", "-m", "c2puml.main",
+                "--config", str(config_path),
+                "--output", str(output_dir)
+            ]
+            
+            print(f"Running: {' '.join(cmd)}")
+            result = subprocess.run(cmd, capture_output=True, text=True, cwd=Path.cwd())
+            
+            if result.returncode != 0:
+                self._add_result(
+                    ValidationLevel.ERROR, 
+                    f"c2puml failed with config {config_file}: {result.stderr}",
+                    result.stdout
+                )
+                return False
+                
+            self._add_result(ValidationLevel.INFO, f"Successfully generated output with {config_file}")
+            return True
+            
+        except Exception as e:
+            self._add_result(ValidationLevel.ERROR, f"Failed to run c2puml with {config_file}: {e}")
+            return False
+    
+    def _validate_include_filtering_output(self, output_dir: str, expected_includes: Dict[str, List[str]], 
+                                         filtered_includes: Dict[str, List[str]]) -> bool:
+        """Validate that include filtering worked as expected."""
+        output_path = Path(output_dir)
+        success = True
+        
+        for file_pattern, expected_list in expected_includes.items():
+            puml_files = list(output_path.glob(f"*{file_pattern}*.puml"))
+            if not puml_files:
+                self._add_result(ValidationLevel.ERROR, f"No PUML files found matching {file_pattern}")
+                success = False
+                continue
+                
+            for puml_file in puml_files:
+                with open(puml_file, 'r') as f:
+                    content = f.read()
+                    
+                # Check that expected includes are present
+                for expected_include in expected_list:
+                    if expected_include not in content:
+                        self._add_result(
+                            ValidationLevel.ERROR,
+                            f"Expected include '{expected_include}' not found in {puml_file.name}"
+                        )
+                        success = False
+                        
+                # Check that filtered includes are NOT present
+                filtered_list = filtered_includes.get(file_pattern, [])
+                for filtered_include in filtered_list:
+                    if filtered_include in content:
+                        self._add_result(
+                            ValidationLevel.ERROR,
+                            f"Filtered include '{filtered_include}' should not be present in {puml_file.name}"
+                        )
+                        success = False
+                        
+        return success
+    
+    def test_network_filtering(self) -> bool:
+        """Test network-specific include filtering."""
+        print("Testing network-specific include filtering...")
+        
+        if not self._run_c2puml_with_config("config_network_filtering.json", "_network"):
+            return False
+            
+        # Define expected and filtered includes for network configuration
+        expected_includes = {
+            "network": ["sys/socket.h", "netinet/in.h", "arpa/inet.h", "common.h"],
+            "application": ["network.h", "common.h", "stdio.h", "signal.h"]
+        }
+        
+        filtered_includes = {
+            "network": ["sqlite3.h", "mysql/mysql.h", "postgresql/libpq-fe.h"],
+            "application": ["database.h", "unistd.h"]
+        }
+        
+        return self._validate_include_filtering_output(
+            "output/include_filtering_network", expected_includes, filtered_includes
+        )
+    
+    def test_database_filtering(self) -> bool:
+        """Test database-specific include filtering."""
+        print("Testing database-specific include filtering...")
+        
+        if not self._run_c2puml_with_config("config_database_filtering.json", "_database"):
+            return False
+            
+        expected_includes = {
+            "database": ["sqlite3.h", "mysql/mysql.h", "postgresql/libpq-fe.h", "string.h"],
+            "application": ["database.h", "common.h", "stdio.h"]
+        }
+        
+        filtered_includes = {
+            "database": ["sys/socket.h", "netinet/in.h", "arpa/inet.h"],
+            "application": ["network.h", "signal.h", "unistd.h"]
+        }
+        
+        return self._validate_include_filtering_output(
+            "output/include_filtering_database", expected_includes, filtered_includes
+        )
+    
+    def test_comprehensive_filtering(self) -> bool:
+        """Test comprehensive include filtering with complex patterns."""
+        print("Testing comprehensive include filtering...")
+        
+        if not self._run_c2puml_with_config("config_comprehensive_filtering.json", "_comprehensive"):
+            return False
+            
+        expected_includes = {
+            "network": ["sys/socket.h", "netinet/in.h", "arpa/inet.h"],
+            "database": ["sqlite3.h", "mysql/mysql.h", "postgresql/libpq-fe.h"],
+            "application": ["network.h", "database.h", "stdio.h", "stdlib.h"]
+        }
+        
+        # In comprehensive mode, fewer items should be filtered
+        filtered_includes = {
+            "network": [],  # Most network includes should be allowed
+            "database": [],  # Most database includes should be allowed
+            "application": []  # Most application includes should be allowed
+        }
+        
+        return self._validate_include_filtering_output(
+            "output/include_filtering_comprehensive", expected_includes, filtered_includes
+        )
+    
+    def validate_include_filter_patterns(self) -> bool:
+        """Validate various include filter regex patterns."""
+        print("Validating include filter regex patterns...")
+        
+        test_patterns = [
+            (r"^sys/.*", ["sys/socket.h", "sys/types.h"], ["stdio.h", "stdlib.h"]),
+            (r"^std.*\.h$", ["stdio.h", "stdlib.h", "string.h"], ["sys/socket.h", "unistd.h"]),
+            (r"^.*sql.*\.h$", ["mysql.h", "postgresql.h"], ["stdio.h", "network.h"]),
+            (r"^(stdio|stdlib|string)\.h$", ["stdio.h", "stdlib.h", "string.h"], ["math.h", "unistd.h"])
+        ]
+        
+        success = True
+        for pattern, should_match, should_not_match in test_patterns:
+            try:
+                import re
+                compiled_pattern = re.compile(pattern)
+                
+                # Test positive matches
+                for item in should_match:
+                    if not compiled_pattern.search(item):
+                        self._add_result(
+                            ValidationLevel.ERROR,
+                            f"Pattern '{pattern}' should match '{item}' but doesn't"
+                        )
+                        success = False
+                        
+                # Test negative matches
+                for item in should_not_match:
+                    if compiled_pattern.search(item):
+                        self._add_result(
+                            ValidationLevel.ERROR,
+                            f"Pattern '{pattern}' should not match '{item}' but does"
+                        )
+                        success = False
+                        
+            except re.error as e:
+                self._add_result(ValidationLevel.ERROR, f"Invalid regex pattern '{pattern}': {e}")
+                success = False
+                
+        return success
+    
+    def run_include_filtering_tests(self) -> bool:
+        """Run all include filtering validation tests."""
+        print("🔍 Starting Include Filtering Validation Tests...")
+        
+        # Check if example source files exist
+        source_dir = self.example_dir / "source"
+        if not source_dir.exists():
+            self._add_result(ValidationLevel.ERROR, "Example source directory not found")
+            return False
+            
+        # Check if configuration files exist
+        required_configs = [
+            "config_network_filtering.json",
+            "config_database_filtering.json", 
+            "config_comprehensive_filtering.json"
+        ]
+        
+        for config in required_configs:
+            if not (self.example_dir / config).exists():
+                self._add_result(ValidationLevel.ERROR, f"Required config file missing: {config}")
+                return False
+        
+        # Run individual tests
+        tests = [
+            ("Pattern Validation", self.validate_include_filter_patterns),
+            ("Network Filtering", self.test_network_filtering),
+            ("Database Filtering", self.test_database_filtering),
+            ("Comprehensive Filtering", self.test_comprehensive_filtering),
+        ]
+        
+        all_passed = True
+        for test_name, test_func in tests:
+            print(f"\n🧪 Running {test_name} test...")
+            try:
+                if not test_func():
+                    all_passed = False
+                    print(f"❌ {test_name} test failed")
+                else:
+                    print(f"✅ {test_name} test passed")
+            except Exception as e:
+                self._add_result(ValidationLevel.ERROR, f"{test_name} test crashed: {e}")
+                all_passed = False
+                print(f"💥 {test_name} test crashed: {e}")
+        
+        # Report results
+        self._report_include_filtering_results()
+        
+        return all_passed and len([r for r in self.results if r.level == ValidationLevel.ERROR]) == 0
+    
+    def _report_include_filtering_results(self):
+        """Report include filtering validation results."""
+        errors = [r for r in self.results if r.level == ValidationLevel.ERROR]
+        warnings = [r for r in self.results if r.level == ValidationLevel.WARNING]
+        infos = [r for r in self.results if r.level == ValidationLevel.INFO]
+        
+        print(f"\n📊 Include Filtering Validation Summary:")
+        print(f"   Errors: {len(errors)}")
+        print(f"   Warnings: {len(warnings)}")  
+        print(f"   Info: {len(infos)}")
+        
+        if errors:
+            print(f"\n❌ Include Filtering Errors:")
+            for error in errors:
+                print(f"   {error.message}")
+                if error.context:
+                    print(f"      Context: {error.context}")
+                    
+        if warnings:
+            print(f"\n⚠️  Include Filtering Warnings:")
+            for warning in warnings:
+                print(f"   {warning.message}")
+                
+        if not errors and not warnings:
+            print("✅ All include filtering validations passed!")
+
+
 def main():
     """Main function to run the validation."""
+    parser = argparse.ArgumentParser(description="Comprehensive PUML validation suite")
+    parser.add_argument("--test-include-filtering", action="store_true", 
+                       help="Run include filtering validation tests")
+    args = parser.parse_args()
+    
     try:
-        validator = PUMLValidator()
-        success = validator.run_all_validations()
+        overall_success = True
+        
+        if args.test_include_filtering:
+            print("🔍 Running Include Filtering Tests...")
+            include_validator = IncludeFilteringValidator()
+            include_success = include_validator.run_include_filtering_tests()
+            overall_success = overall_success and include_success
+        else:
+            print("📋 Running Standard PUML Validation...")
+            validator = PUMLValidator()
+            standard_success = validator.run_all_validations()
+            overall_success = overall_success and standard_success
 
-        if not success:
+        if not overall_success:
             print("\n❌ Validation failed")
             sys.exit(1)
         else:
