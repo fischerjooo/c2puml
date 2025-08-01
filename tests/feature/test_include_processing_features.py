@@ -491,7 +491,7 @@ extern ApiContext global_context;
 
         # Verify output was generated (check both possible locations)
         model_file = output_dir / "model.json"
-        workspace_model_file = Path("/workspace/output/model.json")
+        workspace_model_file = Path("/workspace/artifacts/output_example/model.json")
 
         # The CLI might use workspace output or project output
         model_exists = model_file.exists() or workspace_model_file.exists()

@@ -6,13 +6,13 @@ cd "$SCRIPT_DIR/.."
 
 # Clean previous output
 echo "Cleaning previous output..."
-rm -rf output tests/example/output
+rm -rf artifacts/output_example tests/example/artifacts/output_example
 
 # Run the full workflow using the new CLI interface
 echo "Running example workflow with config.json..."
 PYTHONPATH=src python3 -m c2puml.main --config tests/example/config.json
 
-echo "PlantUML diagrams generated in: ./output (see config.json)"
+echo "PlantUML diagrams generated in: ./artifacts/output_example (see config.json)"
 
 # Run assertions to validate the generated PUML files
 echo "Running assertions to validate generated PUML files..."

@@ -7,15 +7,15 @@ cli_output/
 test_plantuml_output/
 *.puml
 
-# Allow output directory to be tracked
-!output/
-!output/*.puml
-!output/*.json
-!output/*.png
+# Allow artifacts/output_example directory to be tracked
+!artifacts/output_example/
+!artifacts/output_example/*.puml
+!artifacts/output_example/*.json
+!artifacts/output_example/*.png
 
 # Ignore JPG files (we only want PNG)
-output/*.jpg
-output/*.jpeg
+artifacts/output_example/*.jpg
+artifacts/output_example/*.jpeg
 
 # Python cache and compiled files
 __pycache__/
@@ -66,7 +66,7 @@ Thumbs.db
 !simple_config.json
 !test_model.json
 !tests/example/config.json
-!output/*.json
+!artifacts/output_example/*.json
 test_*.json
 final_*.json
 cleanup_*.json
@@ -159,7 +159,7 @@ Thumbs.db
 # PlantUML JAR file
 plantuml.jar
 
-# Allow all files in tests/reports/
-!tests/reports/
-!tests/reports/**
+# Allow all files in artifacts/
+!artifacts/
+!artifacts/**
 scripts/plantuml.jar

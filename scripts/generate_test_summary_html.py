@@ -284,9 +284,9 @@ def generate_html_summary(stats: Dict, output_file: Path) -> None:
     <div class="container">
         <div class="nav">
             <a href="../../index.html">🏠 Home</a>
-            <a href="coverage/htmlcov/index.html">📊 Coverage</a>
+                          <a href="../../artifacts/coverage/htmlcov/index.html">📊 Coverage</a>
             <span style="background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 4px;">📝 Tests</span>
-            <a href="../../output/diagram_index.html">📊 Diagrams</a>
+                            <a href="../../artifacts/output_example/diagram_index.html">📊 Diagrams</a>
             <a href="https://github.com/fischerjooo/c2puml/tree/main/tests/example">📋 Example</a>
         </div>
 
@@ -360,13 +360,13 @@ def main():
     )
     parser.add_argument(
         "--log-file",
-        default="tests/reports/test-output.log",
-        help="Path to test output log file (default: tests/reports/test-output.log)",
+        default="artifacts/test_reports/test-output.log",
+        help="Path to test output log file (default: artifacts/test_reports/test-output.log)",
     )
     parser.add_argument(
         "--output-file",
-        default="tests/reports/test_summary.html",
-        help="Path to output HTML file (default: tests/reports/test_summary.html)",
+        default="artifacts/test_reports/test_summary.html",
+        help="Path to output HTML file (default: artifacts/test_reports/test_summary.html)",
     )
 
     args = parser.parse_args()

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # PlantUML to PNG converter script
-# This script converts all .puml files in the output folder to PNG images
+# This script converts all .puml files in the artifacts/output_example folder to PNG images
 # Usage: ./picgen.sh [plantuml_jar_path]
 # Example: ./picgen.sh "/home/username/.vscode/extensions/jebbs.plantuml-2.18.1/plantuml.jar"
 
@@ -16,9 +16,9 @@ fi
 
 echo "🔄 Starting PlantUML to PNG conversion..."
 
-# Check if output directory exists
-if [ ! -d "output" ]; then
-    echo "❌ Error: output directory not found"
+# Check if artifacts/output_example directory exists
+if [ ! -d "artifacts/output_example" ]; then
+    echo "❌ Error: artifacts/output_example directory not found"
     exit 1
 fi
 
@@ -198,8 +198,8 @@ if [[ "$PLANTUML_CMD" == *"plantuml.jar"* ]]; then
     fi
 fi
 
-# Change to output directory
-cd output
+# Change to artifacts/output_example directory
+cd artifacts/output_example
 
 # Test PlantUML setup before proceeding
 if ! test_plantuml_setup "$PLANTUML_CMD"; then
@@ -212,11 +212,11 @@ if ! test_plantuml_setup "$PLANTUML_CMD"; then
 fi
 
 # Find all .puml files and convert them to PNG
-echo "📁 Scanning for .puml files in output directory..."
+echo "📁 Scanning for .puml files in artifacts/output_example directory..."
 puml_files=$(find . -name "*.puml" -type f)
 
 if [ -z "$puml_files" ]; then
-    echo "ℹ️  No .puml files found in output directory"
+    echo "ℹ️  No .puml files found in artifacts/output_example directory"
     exit 0
 fi
 
@@ -308,7 +308,7 @@ if [ $failure_count -gt 0 ]; then
 else
     echo ""
     echo "✅ All PlantUML files converted successfully!"
-    echo "📁 Check the output directory for generated PNG images."
+    echo "📁 Check the artifacts/output_example directory for generated PNG images."
 fi
 
 # Generate diagram index HTML file
