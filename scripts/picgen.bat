@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 REM PlantUML to PNG converter script for Windows
-REM This script converts all .puml files in the output folder to PNG images
+REM This script converts all .puml files in the artifacts/output_example folder to PNG images
 REM Usage: picgen.bat [plantuml_jar_path]
 REM Example: picgen.bat "C:\Users\username\.vscode\extensions\jebbs.plantuml-2.18.1\plantuml.jar"
 
@@ -15,9 +15,9 @@ if not "%~1"=="" (
 
 echo 🔄 Starting PlantUML to PNG conversion...
 
-REM Check if output directory exists
-if not exist "output" (
-    echo ❌ Error: output directory not found
+REM Check if artifacts/output_example directory exists
+if not exist "artifacts\output_example" (
+    echo ❌ Error: artifacts/output_example directory not found
     exit /b 1
 )
 
@@ -124,11 +124,11 @@ if %errorlevel% equ 0 (
     exit /b 1
 )
 
-REM Change to output directory
-cd output
+REM Change to artifacts/output_example directory
+cd artifacts\output_example
 
 REM Find all .puml files and convert them to PNG
-echo 📁 Scanning for .puml files in output directory...
+echo 📁 Scanning for .puml files in artifacts/output_example directory...
 
 set "puml_count=0"
 for %%f in (*.puml) do (
@@ -136,7 +136,7 @@ for %%f in (*.puml) do (
 )
 
 if %puml_count% equ 0 (
-    echo ℹ️  No .puml files found in output directory
+    echo ℹ️  No .puml files found in artifacts/output_example directory
     exit /b 0
 )
 
@@ -174,4 +174,4 @@ if %fail_count% equ 0 (
     echo ⚠️  Some conversions failed. Check the output above for details.
 )
 
-echo 📁 Check the output directory for generated PNG images.
+echo 📁 Check the artifacts/output_example directory for generated PNG images.
