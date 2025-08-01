@@ -5,7 +5,7 @@ class "application" as APPLICATION <<source>> #LightBlue
     -- Global Variables --
     volatile int running
     -- Functions --
-    int main(int argc, char * argv [ ])
+    int main(int argc, char *[] argv)
     void signal_handler(int sig)
 }
 
@@ -85,6 +85,7 @@ class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<typedef>> #LightYellow
 
 class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<typedef>> #LightYellow
 {
+    + NET_STATUS_DISCONNECTED , NET_STATUS_CONNECTING , NET_STATUS_CONNECTED , NET_STATUS_ERROR
 }
 
 class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<typedef>> #LightYellow

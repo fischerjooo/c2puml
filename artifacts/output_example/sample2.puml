@@ -7,7 +7,7 @@ class "sample2" as SAMPLE2 <<source>> #LightBlue
     - #define DEBUG_MODE
     - #define MAX_SIZE
     -- Global Variables --
-    char buffer
+    char[MAX_SIZE] buffer
     int global_counter
     double * global_ptr
     -- Functions --
@@ -35,7 +35,7 @@ class "filtered_header" as HEADER_FILTERED_HEADER <<header>> #LightGreen
     + #define FILTERED_HEADER_H
     + #define FILTERED_MACRO(x)
     -- Global Variables --
-    + char filtered_global_string
+    + char[100] filtered_global_string
     + int filtered_global_var
     -- Functions --
     + int filtered_function1(int param)
