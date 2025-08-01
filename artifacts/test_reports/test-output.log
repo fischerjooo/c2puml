@@ -136,13 +136,13 @@ tests/unit/test_global_parsing.py::TestGlobalParsing::test_global_variables_only
 tests/unit/test_global_parsing.py::TestGlobalParsing::test_static_variables PASSED [ 33%]
 tests/unit/test_include_filtering_bugs.py::TestIncludeFilteringBugs::test_duplicate_method_definition_bug PASSED [ 33%]
 tests/unit/test_include_filtering_bugs.py::TestIncludeFilteringBugs::test_header_mapping_with_multiple_c_files_bug PASSED [ 33%]
+tests/unit/test_include_filtering_bugs.py::TestIncludeFilteringBugs::test_improved_header_mapping_logic PASSED [ 34%]
 tests/unit/test_include_filtering_bugs.py::TestIncludeFilteringBugs::test_include_filter_file_path_vs_filename_bug PASSED [ 34%]
 tests/unit/test_include_filtering_bugs.py::TestIncludeFilteringBugs::test_include_filter_regex_pattern_edge_cases PASSED [ 34%]
-tests/unit/test_include_filtering_bugs.py::TestIncludeFilteringBugs::test_include_relations_vs_includes_array_consistency PASSED [ 34%]
-tests/unit/test_include_filtering_bugs.py::TestIncludeFilteringBugs::test_newer_vs_direct_include_processing_methods PASSED [ 35%]
 tests/unit/test_include_filtering_bugs.py::TestIncludeFilteringBugs::test_include_filter_with_no_matching_files PASSED [ 35%]
-tests/unit/test_include_filtering_bugs.py::TestIncludeFilteringBugs::test_improved_header_mapping_logic PASSED [ 35%]
 tests/unit/test_include_filtering_bugs.py::TestIncludeFilteringBugs::test_include_filters_should_not_modify_includes_arrays PASSED [ 35%]
+tests/unit/test_include_filtering_bugs.py::TestIncludeFilteringBugs::test_include_relations_vs_includes_array_consistency PASSED [ 35%]
+tests/unit/test_include_filtering_bugs.py::TestIncludeFilteringBugs::test_newer_vs_direct_include_processing_methods PASSED [ 35%]
 tests/unit/test_include_filtering_bugs.py::TestSimplifiedIncludeProcessing::test_simplified_cycle_prevention PASSED [ 36%]
 tests/unit/test_include_filtering_bugs.py::TestSimplifiedIncludeProcessing::test_simplified_depth_based_processing PASSED [ 36%]
 tests/unit/test_include_filtering_bugs.py::TestSimplifiedIncludeProcessing::test_simplified_single_root_per_c_file PASSED [ 36%]
@@ -382,4 +382,4 @@ tests/unit/test_verifier.py::TestModelVerifier::test_unbalanced_brackets_detecte
 tests/unit/test_verifier.py::TestModelVerifier::test_valid_identifiers_pass PASSED [ 99%]
 tests/unit/test_verifier.py::TestModelVerifier::test_valid_model_passes_verification PASSED [100%]
 
-============================= 371 passed in 2.80s ==============================
+============================= 371 passed in 2.87s ==============================
