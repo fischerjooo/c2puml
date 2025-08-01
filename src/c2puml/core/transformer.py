@@ -1087,6 +1087,98 @@ class Transformer:
         else:
             self.logger.debug("No type references found to clean up")
 
+    def _update_type_references_for_renames(self, file_model: FileModel, typedef_renames: Dict[str, str]) -> None:
+        """Update all type references when typedefs are renamed"""
+        updated_count = 0
+        
+        # Update function return types and parameter types
+        for func in file_model.functions:
+            # Update return type
+            if func.return_type:
+                old_type = func.return_type
+                new_type = self._update_type_string_for_renames(func.return_type, typedef_renames)
+                if new_type != old_type:
+                    func.return_type = new_type
+                    updated_count += 1
+                    self.logger.debug(
+                        "Updated return type '%s' -> '%s' in function %s", 
+                        old_type, new_type, func.name
+                    )
+            
+            # Update parameter types
+            for param in func.parameters:
+                if param.type:
+                    old_type = param.type
+                    new_type = self._update_type_string_for_renames(param.type, typedef_renames)
+                    if new_type != old_type:
+                        param.type = new_type
+                        updated_count += 1
+                        self.logger.debug(
+                            "Updated parameter type '%s' -> '%s' for parameter %s in function %s", 
+                            old_type, new_type, param.name, func.name
+                        )
+        
+        # Update global variable types
+        for global_var in file_model.globals:
+            if global_var.type:
+                old_type = global_var.type
+                new_type = self._update_type_string_for_renames(global_var.type, typedef_renames)
+                if new_type != old_type:
+                    global_var.type = new_type
+                    updated_count += 1
+                    self.logger.debug(
+                        "Updated global variable type '%s' -> '%s' for %s", 
+                        old_type, new_type, global_var.name
+                    )
+        
+        # Update struct field types
+        for struct in file_model.structs.values():
+            for field in struct.fields:
+                if field.type:
+                    old_type = field.type
+                    new_type = self._update_type_string_for_renames(field.type, typedef_renames)
+                    if new_type != old_type:
+                        field.type = new_type
+                        updated_count += 1
+                        self.logger.debug(
+                            "Updated struct field type '%s' -> '%s' for %s.%s", 
+                            old_type, new_type, struct.name, field.name
+                        )
+        
+        # Update union field types
+        for union in file_model.unions.values():
+            for field in union.fields:
+                if field.type:
+                    old_type = field.type
+                    new_type = self._update_type_string_for_renames(field.type, typedef_renames)
+                    if new_type != old_type:
+                        field.type = new_type
+                        updated_count += 1
+                        self.logger.debug(
+                            "Updated union field type '%s' -> '%s' for %s.%s", 
+                            old_type, new_type, union.name, field.name
+                        )
+        
+        if updated_count > 0:
+            self.logger.info(
+                "Updated %d type references for renamed typedefs in %s: %s", 
+                updated_count, file_model.name, typedef_renames
+            )
+
+    def _update_type_string_for_renames(self, type_str: str, typedef_renames: Dict[str, str]) -> str:
+        """Update a type string by replacing old typedef names with new ones"""
+        if not type_str or not typedef_renames:
+            return type_str
+        
+        updated_type = type_str
+        for old_name, new_name in typedef_renames.items():
+            # Use word boundaries to avoid partial matches
+            # This handles cases like "old_config_t *", "const old_config_t", etc.
+            pattern = r'\b' + re.escape(old_name) + r'\b'
+            updated_type = re.sub(pattern, new_name, updated_type)
+        
+        return updated_type
+
     def _rename_dict_elements(
         self, 
         elements_dict: Dict[str, Any], 
@@ -1201,12 +1293,25 @@ class Transformer:
         if not patterns_map:
             return
         
+        # Track old to new name mappings for type reference updates
+        typedef_renames = {}
+        
         def create_renamed_alias(name: str, alias: Alias) -> Alias:
             return Alias(name, alias.original_type, alias.uses)
+        
+        # Capture renames before applying them
+        for old_name in file_model.aliases:
+            new_name = self._apply_rename_patterns(old_name, patterns_map)
+            if new_name != old_name:
+                typedef_renames[old_name] = new_name
         
         file_model.aliases = self._rename_dict_elements(
             file_model.aliases, patterns_map, create_renamed_alias, "typedef", file_model.name
         )
+        
+        # Update type references throughout the file
+        if typedef_renames:
+            self._update_type_references_for_renames(file_model, typedef_renames)
 
     def _rename_functions(self, file_model: FileModel, patterns_map: Dict[str, str]) -> None:
         """Rename functions with deduplication"""

@@ -38,20 +38,7 @@
       "include_depth": 5
     }
   },
-  "transformations_01_cleanup": {
-    "file_selection": [".*transformed\\.(c|h)$"],
-    "remove": {
-      "typedef": ["^legacy_.*", "^old_.*"],
-      "functions": ["^test_.*", "^debug_.*"],
-      "macros": ["^DEPRECATED_.*", "^LEGACY_.*"],
-      "globals": ["^old_.*", "^deprecated_.*"],
-      "includes": ["^time\\.h$", "^unistd\\.h$"],
-      "structs": ["^legacy_.*"],
-      "enums": ["^old_.*", "^legacy_.*"],
-      "unions": ["^old_.*"]
-    }
-  },
-  "transformations_02_rename": {
+  "transformations_01_rename": {
     "file_selection": [".*transformed\\.(c|h)$"],
     "rename": {
       "typedef": {
@@ -69,6 +56,19 @@
       "structs": {
         "^old_config$": "modern_config"
       }
+    }
+  },
+  "transformations_02_cleanup": {
+    "file_selection": [".*transformed\\.(c|h)$"],
+    "remove": {
+      "typedef": ["^legacy_.*", "^old_.*"],
+      "functions": ["^test_.*", "^debug_.*"],
+      "macros": ["^DEPRECATED_.*", "^LEGACY_(?!API_VERSION$).*"],
+      "globals": ["^old_.*", "^deprecated_.*"],
+      "includes": ["^time\\.h$", "^unistd\\.h$"],
+      "structs": ["^legacy_.*"],
+      "enums": ["^old_.*", "^legacy_.*"],
+      "unions": ["^old_.*"]
     }
   },
   "transformations": {

@@ -1,7 +1,8 @@
-# Final Enforcement
+# Pre-Merge Checklist
 
-## Pre-Merge Requirements
-Before merging:
-- Run Black, isort, Flake8, Pylint, and Mypy.
-- Run the full pytest suite.
-- Ensure all public APIs are documented and tested.
+Before merging any changes:
+- [ ] All tests pass (`./scripts/run_all_tests.sh`)
+- [ ] Code formatted (Black, isort)  
+- [ ] Static analysis clean (Flake8, Pylint, Mypy)
+- [ ] Public APIs documented and tested
+- [ ] Integration tests pass (`./scripts/run_example.sh`)

@@ -38,7 +38,7 @@ class ModelVerifier:
         for file_path, file_model in model.files.items():
             self._verify_file(file_path, file_model)
 
-        is_valid = len(self.issues) == 0
+        is_valid = not self.issues
 
         if self.issues:
             self.logger.warning("Model verification found %d issues:", len(self.issues))
@@ -275,4 +275,4 @@ class ModelVerifier:
                 if not stack or stack.pop() != bracket_pairs[char]:
                     return True
 
-        return len(stack) > 0  # Unclosed brackets
+        return bool(stack)  # Unclosed brackets

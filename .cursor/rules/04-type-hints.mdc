@@ -1,7 +1,0 @@
-# Type Hints
-
-## Type Annotation Requirements
-- All function signatures must include type hints.
-- Use `Optional`, `Union`, and `Literal` types to clarify intent.
-- Don't use `Any` unless absolutely necessary.
-- Use Mypy to enforce strict type checking.
