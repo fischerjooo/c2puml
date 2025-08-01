@@ -1280,8 +1280,11 @@ def find_struct_fields(
                         param_tokens = field_tokens[name_end + 1:]
                         param_type = " ".join(t.value for t in param_tokens)
                         
-                        # Combine type and parameter list
-                        full_type = field_type + " " + " ".join(t.value for t in field_tokens[func_ptr_start:name_end + 1]) + " " + param_type
+                        # Combine type and parameter list (without the function name in the type)
+                        # The function name is already extracted as field_name, so we don't include it in the type
+                        func_ptr_start_tokens = field_tokens[func_ptr_start:func_ptr_start + 2]  # ( *
+                        func_ptr_end_tokens = field_tokens[name_end:name_end + 1]  # )
+                        full_type = field_type + " " + " ".join(t.value for t in func_ptr_start_tokens) + " " + " ".join(t.value for t in func_ptr_end_tokens) + " " + param_type
                         
                         if (
                             field_name
