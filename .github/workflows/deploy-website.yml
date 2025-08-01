@@ -61,23 +61,32 @@ jobs:
           cp README.md docs/
         fi
         
-        # Copy test reports and coverage files
-        if [ -d "tests/reports" ]; then
-          mkdir -p docs/tests/reports
+        # Copy test reports and coverage files from artifacts directory
+        if [ -d "artifacts/test_reports" ]; then
+          mkdir -p docs/artifacts/test_reports
           # Copy all test report files
-          cp -r tests/reports/* docs/tests/reports/
-          echo "✅ Test reports copied to docs/tests/reports/"
+          cp -r artifacts/test_reports/* docs/artifacts/test_reports/
+          echo "✅ Test reports copied to docs/artifacts/test_reports/"
+        fi
+        
+        if [ -d "artifacts/coverage" ]; then
+          mkdir -p docs/artifacts/coverage
+          # Copy all coverage files
+          cp -r artifacts/coverage/* docs/artifacts/coverage/
+          echo "✅ Coverage reports copied to docs/artifacts/coverage/"
           
           # Verify htmlcov folder is properly copied
-          if [ -d "docs/tests/reports/coverage/htmlcov" ]; then
+          if [ -d "docs/artifacts/coverage/htmlcov" ]; then
             echo "✅ htmlcov folder found in deployment"
             echo "📊 htmlcov contents:"
-            ls -la docs/tests/reports/coverage/htmlcov/
-            echo "📊 htmlcov file count: $(find docs/tests/reports/coverage/htmlcov -type f | wc -l)"
+            ls -la docs/artifacts/coverage/htmlcov/
+            echo "📊 htmlcov file count: $(find docs/artifacts/coverage/htmlcov -type f | wc -l)"
           else
             echo "⚠️ htmlcov folder not found in deployment"
             echo "🔍 Checking coverage directory contents:"
-            ls -la docs/tests/reports/coverage/
+            if [ -d "docs/artifacts/coverage" ]; then
+              ls -la docs/artifacts/coverage/
+            fi
           fi
         fi
         
@@ -112,17 +121,17 @@ jobs:
         find docs -type f | sort
         echo ""
         echo "📊 Test report files:"
-        find docs/tests/reports -type f | sort
+        find docs/artifacts/test_reports -type f | sort 2>/dev/null || echo "No test report files found"
         echo ""
         echo "📊 Coverage files:"
-        find docs/tests/reports/coverage -type f | sort
+        find docs/artifacts/coverage -type f | sort 2>/dev/null || echo "No coverage files found"
         echo ""
         echo "📊 htmlcov folder verification:"
-        if [ -d "docs/tests/reports/coverage/htmlcov" ]; then
+        if [ -d "docs/artifacts/coverage/htmlcov" ]; then
           echo "✅ htmlcov folder exists"
           echo "📊 htmlcov files:"
-          find docs/tests/reports/coverage/htmlcov -type f | sort
-          echo "📊 htmlcov index.html exists: $(test -f docs/tests/reports/coverage/htmlcov/index.html && echo 'YES' || echo 'NO')"
+          find docs/artifacts/coverage/htmlcov -type f | sort
+          echo "📊 htmlcov index.html exists: $(test -f docs/artifacts/coverage/htmlcov/index.html && echo 'YES' || echo 'NO')"
         else
           echo "❌ htmlcov folder missing"
         fi
@@ -160,8 +169,8 @@ jobs:
             <div class="container">
                 <div class="nav">
                     <a href="index.html">🏠 Home</a>
-                    <a href="tests/reports/coverage/htmlcov/index.html">📊 Coverage</a>
-                    <a href="tests/reports/test_summary.html">📝 Tests</a>
+                    <a href="artifacts/coverage/htmlcov/index.html">📊 Coverage</a>
+                    <a href="artifacts/test_reports/test_summary.html">📝 Tests</a>
                     <a href="artifacts/output_example/diagram_index.html">📊 Diagrams</a>
                     <a href="https://github.com/fischerjooo/c2puml/tree/main/tests/example">📋 Example</a>
                 </div>
@@ -176,8 +185,8 @@ jobs:
                     <div class="card">
                         <h3>📊 Test Coverage & Reports</h3>
                         <p>View comprehensive test coverage reports and execution summaries.</p>
-                        <a href="tests/reports/coverage/htmlcov/index.html" class="btn">📊 View Coverage</a>
-                        <a href="tests/reports/test_summary.html" class="btn">📝 Test Summary</a>
+                        <a href="artifacts/coverage/htmlcov/index.html" class="btn">📊 View Coverage</a>
+                        <a href="artifacts/test_reports/test_summary.html" class="btn">📝 Test Summary</a>
                     </div>
                     
                     <div class="card">
@@ -343,8 +352,8 @@ jobs:
         
         echo "### 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
         echo "- [🏠 Home Page](https://${{ github.repository_owner }}.github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/)" >> $GITHUB_STEP_SUMMARY
-        echo "- [📊 Coverage Report](https://${{ github.repository_owner }}.github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/tests/reports/coverage/htmlcov/)" >> $GITHUB_STEP_SUMMARY
-        echo "- [📝 Test Summary](https://${{ github.repository_owner }}.github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/tests/reports/test_summary.html)" >> $GITHUB_STEP_SUMMARY
+        echo "- [📊 Coverage Report](https://${{ github.repository_owner }}.github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/artifacts/coverage/htmlcov/)" >> $GITHUB_STEP_SUMMARY
+        echo "- [📝 Test Summary](https://${{ github.repository_owner }}.github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/artifacts/test_reports/test_summary.html)" >> $GITHUB_STEP_SUMMARY
         echo "- [📊 Diagrams](https://${{ github.repository_owner }}.github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/artifacts/output_example/diagram_index.html)" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
