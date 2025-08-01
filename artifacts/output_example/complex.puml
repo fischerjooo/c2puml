@@ -4,7 +4,7 @@ class "complex" as COMPLEX <<source>> #LightBlue
 {
     -- Global Variables --
     Process_Cfg_Process_acpfct_t Process_Cfg_Process_acpfct
-    math_operation_t global_math_ops [ 10 ]
+    math_operation_t[10] global_math_ops
     -- Functions --
     static Std_ReturnType ProcessorAdapter_Process(const Process_T * job_pst)
     static Std_ReturnType ProcessorHardware_Process(const Process_T * job_pst)
@@ -19,7 +19,7 @@ class "complex" as COMPLEX <<source>> #LightBlue
     static int modulo_operation(int a, int b)
     static int multiply_operation(int a, int b)
     static void print_result(int * data, int size)
-    int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], ...)
+    int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, ...)
     void run_complex_tests()
     static int subtract_operation(int a, int b)
     static int test_callback(int * item)
@@ -55,7 +55,7 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
     + void * create_handler(const char * name, int ( * init_func ) ( void * ) init_func, ...)
     + int execute_operations(int value, math_ops_array_t ops, int op_count unnamed)
     + math_operation_t * get_math_operations()
-    + int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], ...)
+    + int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, ...)
     + void test_processor_job_processing()
     + void test_processor_utility_macros()
 }
@@ -70,18 +70,17 @@ class "Process_T" as TYPEDEF_PROCESS_T <<typedef>> #LightYellow
 
 class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<typedef>> #LightYellow
 {
-    + void * ( * alloc_func ) ( size_t )
-    + void ( * free_func ) ( void * )
-    + int ( * resize_func ) ( void * * , size_t )
+    + void * ( * ) ( size_t ) alloc_func
+    + void ( * ) ( void * ) free_func
     + int max_size
+    + int ( * ) ( void * * , size_t ) resize_func
 }
 
 class "complex_handler_t" as TYPEDEF_COMPLEX_HANDLER_T <<typedef>> #LightYellow
 {
-    + int ( * validate_func ) ( const char * )
-    + void ( * format_func ) ( char * , int )
+    + void ( * ) ( char * , int ) format_func
     + int id
-    + struct { char[32] } name
+    + int ( * ) ( const char * ) validate_func
 }
 
 class "data_item_t" as TYPEDEF_DATA_ITEM_T <<typedef>> #LightYellow
@@ -92,33 +91,33 @@ class "data_item_t" as TYPEDEF_DATA_ITEM_T <<typedef>> #LightYellow
 
 class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<typedef>> #LightYellow
 {
-    + void ( * init_func ) ( void )
-    + int ( * process_func ) ( int , int )
-    + void ( * cleanup_func ) ( void )
+    + void ( * ) ( void ) cleanup_func
     + int id
+    + void ( * ) ( void ) init_func
     + char[16] name
+    + int ( * ) ( int , int ) process_func
 }
 
 class "operation_set_t" as TYPEDEF_OPERATION_SET_T <<typedef>> #LightYellow
 {
-    + void ( * callbacks [ 3 ] ) ( int , char * )
+    + void(* callbacks[3])(int , char *) callbacks
     + int count
     + math_operation_t[5] operations
 }
 
 class "param4" as TYPEDEF_PARAM4 <<typedef>> #LightYellow
 {
-    + void ( * nested_func ) ( int )
     + int nested1
     + char * nested2
+    + void ( * ) ( int ) nested_func
 }
 
 class "processor_t" as TYPEDEF_PROCESSOR_T <<typedef>> #LightYellow
 {
-    + int ( * process_func ) ( int , char * )
-    + void ( * cleanup_func ) ( void * )
+    + void ( * ) ( void * ) cleanup_func
     + int id
     + char[64] name
+    + int ( * ) ( int , char * ) process_func
 }
 
 class "operation_type_t" as TYPEDEF_OPERATION_TYPE_T <<typedef>> #LightYellow
@@ -214,10 +213,10 @@ class "uint8" as TYPEDEF_UINT8 <<typedef>> #LightYellow
 
 class "mixed_union_t" as TYPEDEF_MIXED_UNION_T <<typedef>> #LightYellow
 {
-    + void ( * void_func ) ( void )
-    + int ( * int_func ) ( int )
+    + int ( * ) ( int ) int_func
     + int int_val
     + char * str_val
+    + void ( * ) ( void ) void_func
 }
 
 

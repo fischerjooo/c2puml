@@ -16,8 +16,8 @@
               "value": null
             },
             {
-              "name": "]",
-              "type": "char * argv [",
+              "name": "argv",
+              "type": "char *[]",
               "value": null
             }
           ],
@@ -304,8 +304,8 @@
           "name": "process_with_callbacks",
           "parameters": [
             {
-              "name": "]",
-              "type": "int data [",
+              "name": "data",
+              "type": "int[]",
               "value": null
             },
             {
@@ -314,8 +314,8 @@
               "value": null
             },
             {
-              "name": "]",
-              "type": "math_operation_t operations [",
+              "name": "operations",
+              "type": "math_operation_t[]",
               "value": null
             },
             {
@@ -324,23 +324,13 @@
               "value": null
             },
             {
-              "name": "*",
-              "type": "void ( * pre_process ) ( int",
+              "name": "pre_process",
+              "type": "void ( * pre_process ) ( int * , int )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "*",
-              "type": "void ( * post_process ) ( int",
-              "value": null
-            },
-            {
-              "name": "unnamed",
-              "type": "int )",
+              "name": "post_process",
+              "type": "void ( * post_process ) ( int * , int )",
               "value": null
             }
           ],
@@ -498,8 +488,8 @@
           "value": null
         },
         {
-          "name": "]",
-          "type": "math_operation_t global_math_ops [ 10",
+          "name": "global_math_ops",
+          "type": "math_operation_t[10]",
           "value": null
         }
       ],
@@ -752,8 +742,8 @@
           "name": "process_with_callbacks",
           "parameters": [
             {
-              "name": "]",
-              "type": "int data [",
+              "name": "data",
+              "type": "int[]",
               "value": null
             },
             {
@@ -762,8 +752,8 @@
               "value": null
             },
             {
-              "name": "]",
-              "type": "math_operation_t operations [",
+              "name": "operations",
+              "type": "math_operation_t[]",
               "value": null
             },
             {
@@ -772,23 +762,13 @@
               "value": null
             },
             {
-              "name": "*",
-              "type": "void ( * pre_process ) ( int",
+              "name": "pre_process",
+              "type": "void ( * pre_process ) ( int * , int )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "*",
-              "type": "void ( * post_process ) ( int",
-              "value": null
-            },
-            {
-              "name": "unnamed",
-              "type": "int )",
+              "name": "post_process",
+              "type": "void ( * post_process ) ( int * , int )",
               "value": null
             }
           ],
@@ -869,18 +849,18 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "void * ( * alloc_func ) ( size_t",
+              "name": "alloc_func",
+              "type": "void * ( * ) ( size_t )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * free_func ) ( void *",
+              "name": "free_func",
+              "type": "void ( * ) ( void * )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * resize_func ) ( void * * , size_t",
+              "name": "resize_func",
+              "type": "int ( * ) ( void * * , size_t )",
               "value": null
             }
           ],
@@ -897,18 +877,13 @@
               "value": null
             },
             {
-              "name": "name",
-              "type": "struct { \n char[32]",
+              "name": "validate_func",
+              "type": "int ( * ) ( const char * )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * validate_func ) ( const char *",
-              "value": null
-            },
-            {
-              "name": ")",
-              "type": "void ( * format_func ) ( char * , int",
+              "name": "format_func",
+              "type": "void ( * ) ( char * , int )",
               "value": null
             }
           ],
@@ -948,18 +923,18 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * init_func ) ( void",
+              "name": "init_func",
+              "type": "void ( * ) ( void )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * process_func ) ( int , int",
+              "name": "process_func",
+              "type": "int ( * ) ( int , int )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * cleanup_func ) ( void",
+              "name": "cleanup_func",
+              "type": "void ( * ) ( void )",
               "value": null
             }
           ],
@@ -981,8 +956,8 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * callbacks [ 3 ] ) ( int , char *",
+              "name": "callbacks",
+              "type": "void(* callbacks[3])(int , char *)",
               "value": null
             }
           ],
@@ -1006,8 +981,8 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * nested_func ) ( int",
+              "name": "nested_func",
+              "type": "void ( * ) ( int )",
               "value": null
             }
           ],
@@ -1029,13 +1004,13 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * process_func ) ( int , char *",
+              "name": "process_func",
+              "type": "int ( * ) ( int , char * )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * cleanup_func ) ( void *",
+              "name": "cleanup_func",
+              "type": "void ( * ) ( void * )",
               "value": null
             }
           ],
@@ -1059,13 +1034,13 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * void_func ) ( void",
+              "name": "void_func",
+              "type": "void ( * ) ( void )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * int_func ) ( int",
+              "name": "int_func",
+              "type": "int ( * ) ( int )",
               "value": null
             }
           ],
@@ -1733,7 +1708,7 @@
       "globals": [
         {
           "name": "filtered_global_string",
-          "type": "char",
+          "type": "char[100]",
           "value": null
         },
         {
@@ -2745,7 +2720,13 @@
           "uses": []
         },
         "__anonymous_struct__": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "NET_STATUS_ERROR",
+              "type": "NET_STATUS_DISCONNECTED , NET_STATUS_CONNECTING , NET_STATUS_CONNECTED ,",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "__anonymous_struct__",
           "tag_name": "",
@@ -3337,7 +3318,7 @@
       "globals": [
         {
           "name": "buffer",
-          "type": "char",
+          "type": "char[MAX_SIZE]",
           "value": null
         },
         {
@@ -3683,7 +3664,7 @@
       "globals": [
         {
           "name": "buffer",
-          "type": "char",
+          "type": "char[MAX_SIZE]",
           "value": null
         },
         {

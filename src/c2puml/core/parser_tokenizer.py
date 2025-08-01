@@ -1138,7 +1138,7 @@ def find_struct_fields(
     while pos < closing_brace_pos and tokens[pos].type != TokenType.RBRACE:
         field_tokens = []
         while pos < closing_brace_pos and tokens[pos].type != TokenType.SEMICOLON:
-            if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
+            if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
                 field_tokens.append(tokens[pos])
             pos += 1
 
@@ -1242,6 +1242,60 @@ def find_struct_fields(
                         stripped_type = field_type.strip()
                         if stripped_name and stripped_type:
                             fields.append((stripped_name, stripped_type))
+            # Function pointer field: type (*name)(params) or type (*name[size])(params)
+            elif (
+                len(field_tokens) >= 5
+                and any(field_tokens[i].type == TokenType.LPAREN and field_tokens[i + 1].type == TokenType.ASTERISK for i in range(len(field_tokens) - 1))
+            ):
+                # Find the opening parenthesis and asterisk pattern
+                func_ptr_start = None
+                for i in range(len(field_tokens) - 1):
+                    if field_tokens[i].type == TokenType.LPAREN and field_tokens[i + 1].type == TokenType.ASTERISK:
+                        func_ptr_start = i
+                        break
+                
+                if func_ptr_start is not None:
+                    # Extract the type (everything before the opening parenthesis)
+                    type_tokens = field_tokens[:func_ptr_start]
+                    field_type = " ".join(t.value for t in type_tokens)
+                    
+                    # Find the closing parenthesis after the function name
+                    paren_count = 0
+                    name_end = None
+                    for i in range(func_ptr_start, len(field_tokens)):
+                        if field_tokens[i].type == TokenType.LPAREN:
+                            paren_count += 1
+                        elif field_tokens[i].type == TokenType.RPAREN:
+                            paren_count -= 1
+                            if paren_count == 0 and i > func_ptr_start + 1:
+                                name_end = i
+                                break
+                    
+                    if name_end is not None:
+                        # Extract function name (between * and closing parenthesis)
+                        name_tokens = field_tokens[func_ptr_start + 2:name_end]
+                        field_name = " ".join(t.value for t in name_tokens)
+                        
+                        # Extract the parameter list as part of the type
+                        param_tokens = field_tokens[name_end + 1:]
+                        param_type = " ".join(t.value for t in param_tokens)
+                        
+                        # Combine type and parameter list (without the function name in the type)
+                        # The function name is already extracted as field_name, so we don't include it in the type
+                        func_ptr_start_tokens = field_tokens[func_ptr_start:func_ptr_start + 2]  # ( *
+                        func_ptr_end_tokens = field_tokens[name_end:name_end + 1]  # )
+                        full_type = field_type + " " + " ".join(t.value for t in func_ptr_start_tokens) + " " + " ".join(t.value for t in func_ptr_end_tokens) + " " + param_type
+                        
+                        if (
+                            field_name
+                            and field_name.strip()
+                            and full_type.strip()
+                            and field_name not in ["[", "]", ";", "}"]
+                        ):
+                            stripped_name = field_name.strip()
+                            stripped_type = full_type.strip()
+                            if stripped_name and stripped_type:
+                                fields.append((stripped_name, stripped_type))
             # Array field: type name [ size ]
             elif (
                 len(field_tokens) >= 4
@@ -1249,17 +1303,9 @@ def find_struct_fields(
                 and field_tokens[-1].type == TokenType.RBRACKET
             ):
                 field_name = field_tokens[-4].value
-                # Fix: Properly format array type - preserve spaces between tokens but not around brackets
+                # Fix: Properly format array type - preserve spaces between tokens
                 type_tokens = field_tokens[:-4]
-                formatted_type = []
-                for j, token in enumerate(type_tokens):
-                    if j > 0:
-                        formatted_type.append(" " + token.value)
-                    else:
-                        formatted_type.append(token.value)
-                field_type = (
-                    "".join(formatted_type) + "[" + field_tokens[-2].value + "]"
-                )
+                field_type = " ".join(t.value for t in type_tokens) + "[" + field_tokens[-2].value + "]"
                 if (
                     field_name
                     and field_name.strip()
