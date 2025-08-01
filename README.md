@@ -17,10 +17,11 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 
 ## Features
 
-- **Comprehensive Parsing**: Parses structs, enums, unions, functions, globals, macros, typedefs, and includes
-- **Project Analysis**: Analyzes entire C/C++ projects with recursive directory scanning
-- **PlantUML Generation**: Creates organized PlantUML diagrams with proper UML notation
-- **Configuration System**: Flexible filtering and transformation capabilities
+- **Advanced C/C++ Parsing**: Comprehensive tokenization-based parsing with robust preprocessor handling and conditional compilation support
+- **Project Analysis**: Analyzes entire C/C++ projects with recursive directory scanning and configurable include depth processing
+- **PlantUML Generation**: Creates organized PlantUML diagrams with proper UML notation and relationship visualization
+- **Configuration System**: Flexible filtering and transformation capabilities with file-specific settings
+- **Model Verification**: Built-in sanity checking and validation of parsed models to ensure accuracy
 - **Cross-Platform**: Works on Linux, macOS, and Windows with platform-specific batch/shell scripts
 
 ## Installation
@@ -36,10 +37,21 @@ python3 -m pip install -e .
 ### Basic Usage
 
 ```bash
-# Parse C project and generate diagrams
+# Full workflow: Parse → Transform → Generate diagrams
 c2puml --config tests/example/config.json
 
-# Or using module syntax
+# Using current directory configuration (merges all .json files)
+c2puml
+
+# Individual steps
+c2puml --config tests/example/config.json parse      # Step 1: Parse only
+c2puml --config tests/example/config.json transform  # Step 2: Transform only
+c2puml --config tests/example/config.json generate   # Step 3: Generate only
+
+# With verbose output for debugging
+c2puml --config tests/example/config.json --verbose
+
+# Alternative module syntax
 python3 -m c2puml.main --config tests/example/config.json
 ```
 
@@ -184,10 +196,20 @@ The tool creates PlantUML diagrams showing:
 
 ## Architecture
 
-3-step processing pipeline:
-1. **Parse** - Analyzes C/C++ files → `model.json`
-2. **Transform** - Modifies model based on config (optional)
-3. **Generate** - Creates PlantUML diagrams
+**3-step processing pipeline with modular core components:**
+
+1. **Parse** - Advanced C/C++ parsing with tokenization → `model.json`
+2. **Transform** - Model transformation based on configuration → `model_transformed.json`  
+3. **Generate** - PlantUML diagram generation with proper UML notation
+
+### Core Components
+
+- **Parser (`core/parser.py`)** - Main parsing orchestration with CParser implementation
+- **Tokenizer (`core/parser_tokenizer.py`)** - Advanced C/C++ tokenization and lexical analysis
+- **Preprocessor (`core/preprocessor.py`)** - Handles conditional compilation and preprocessor directives
+- **Transformer (`core/transformer.py`)** - Model transformation and filtering engine
+- **Generator (`core/generator.py`)** - PlantUML diagram generation with proper formatting
+- **Verifier (`core/verifier.py`)** - Model validation and sanity checking
 
 ## Development Setup
 
@@ -218,45 +240,57 @@ The project includes pre-configured VSCode settings for:
 - Auto-save and formatting on save
 
 **VSCode Tasks**: The project includes pre-configured tasks accessible via `Ctrl+Shift+P` → "Tasks: Run Task":
-- **Run Full Workflow** - Complete analysis and diagram generation
-- **Run Example** - Quick test with example files
-- **Generate Pictures** - Convert PlantUML to PNG images
-- **Run Tests** - Execute test suite
-- **Install Dependencies** - Set up development environment
-- **Format & Lint** - Code quality checks
+- **Run Full Workflow** - Complete analysis and diagram generation (parse → transform → generate)
+- **Run Example** - Quick test with example files and comprehensive verification
+- **Generate Pictures** - Convert PlantUML to PNG images with PlantUML toolchain
+- **Run Tests** - Execute comprehensive test suite with coverage reporting
+- **Install Dependencies** - Set up development environment with all required packages
+- **Format & Lint** - Code quality checks with Black, isort, and flake8
+
+**Current Status**: The project is actively developed with 700+ commits and comprehensive CI/CD pipeline including automated testing, coverage reporting, and artifact generation.
 
 ### Development Commands
 
 ```bash
 # Run all tests
-./run_all_tests.sh        # Linux/macOS
-run_all_tests.bat         # Windows
+./scripts/run_all_tests.sh     # Linux/macOS
+scripts/run_all_tests.bat      # Windows
+python scripts/run_all_tests.py # Cross-platform
 
 # Run tests with coverage
-run_tests_with_coverage.sh # Linux/macOS
+./scripts/run_tests_with_coverage.sh # Linux/macOS (comprehensive coverage)
 
 # Format and lint code
-format_lint.bat           # Windows
+scripts/format_lint.bat        # Windows
 
-# Generate PNG images
-./picgen.sh               # Linux/macOS
-picgen.bat                # Windows
+# Generate PNG images from PlantUML
+./scripts/picgen.sh            # Linux/macOS (comprehensive PlantUML toolchain)
+scripts/picgen.bat             # Windows
 
-# Run full workflow
-./run_all.sh              # Linux/macOS
-run_all.bat               # Windows
+# Run full workflow (parse → transform → generate)
+./scripts/run_all.sh           # Linux/macOS
+scripts/run_all.bat            # Windows
+
+# Run example workflow
+./scripts/run_example.sh       # Linux/macOS
+scripts/run_example.bat        # Windows
 
 # Install dependencies
-install_dependencies.bat  # Windows
-
-# Run example
-run_example.bat           # Windows
+scripts/install_dependencies.bat # Windows
 
 # Git management utilities
-git_manage.bat            # Windows - Interactive git operations
-git_reset_pull.bat        # Windows - Reset and pull from remote
+scripts/git_manage.bat         # Windows - Interactive git operations
+scripts/git_reset_pull.bat     # Windows - Reset and pull from remote
+
+# Debug and development utilities
+python scripts/debug.py        # Development debugging script
+python scripts/run_example_with_coverage.py # Example with coverage
 ```
 
 ## License
 
 MIT License
+
+---
+
+**Documentation Status**: This README and accompanying specification.md have been comprehensively updated as of December 2024 to reflect the current v3.0.0 implementation, including the new modular core architecture, advanced tokenization capabilities, preprocessor support, and model verification features. All documentation now accurately represents the mature, production-ready codebase with over 700 commits of active development.
