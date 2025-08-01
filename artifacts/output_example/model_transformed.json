@@ -2440,31 +2440,7 @@
       ],
       "macros": [],
       "name": "network.c",
-      "structs": {
-        "__anonymous_struct__": {
-          "fields": [
-            {
-              "name": ")",
-              "type": "close ( config - > socket_fd",
-              "value": null
-            },
-            {
-              "name": "1",
-              "type": "config - > socket_fd = -",
-              "value": null
-            },
-            {
-              "name": "1",
-              "type": "return -",
-              "value": null
-            }
-          ],
-          "methods": [],
-          "name": "__anonymous_struct__",
-          "tag_name": "",
-          "uses": []
-        }
-      },
+      "structs": {},
       "unions": {}
     },
     "network.h": {
@@ -2716,19 +2692,6 @@
           ],
           "methods": [],
           "name": "NetworkConfig",
-          "tag_name": "",
-          "uses": []
-        },
-        "__anonymous_struct__": {
-          "fields": [
-            {
-              "name": "NET_STATUS_ERROR",
-              "type": "NET_STATUS_DISCONNECTED , NET_STATUS_CONNECTING , NET_STATUS_CONNECTED ,",
-              "value": null
-            }
-          ],
-          "methods": [],
-          "name": "__anonymous_struct__",
           "tag_name": "",
           "uses": []
         }
