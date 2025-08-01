@@ -1089,11 +1089,6 @@ class PUMLValidator:
         
         # Validate that file selection worked - transformations should only apply to transformed.c/h
         # This would be validated by checking that other files don't have these transformations applied
-        self._add_result(
-            ValidationLevel.INFO,
-            f"Validated transformation features for file selection, remove operations, and rename operations",
-            filename,
-        )
 
     def _report_results(self):
         """Report validation results."""
