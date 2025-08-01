@@ -109,8 +109,8 @@ def main():
     )
     parser.add_argument(
         "--output-dir",
-        default="tests/reports/coverage",
-        help="Output directory for coverage reports (default: tests/reports/coverage)",
+        default="artifacts/coverage",
+        help="Output directory for coverage reports (default: artifacts/coverage)",
     )
     parser.add_argument(
         "--run-tests",
