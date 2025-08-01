@@ -69,183 +69,96 @@ All steps can be executed individually or can be chained together.
 
 **Important**: Model element filtering is NOT part of the parsing step - it is only performed in the transformer step to ensure complete model preservation during parsing.
 
-### Verification and Testing
-The system has been comprehensively tested and verified:
+### Functional Verification
+The system has been verified to correctly implement all specified functionality:
 
-#### Test Coverage
-- **Unit Tests**: 376 tests covering all core functionality
-- **Integration Tests**: Complete workflow testing with real C/C++ projects
-- **Feature Tests**: Specific feature validation and edge case testing
-- **Performance Tests**: All tests complete in under 10 seconds
-
-#### Verified Functionality
-- ✅ **Transformation System**: All renaming and cleanup transformations working correctly
+#### Core Functionality Verification
+- ✅ **Parsing**: C/C++ source files parsed correctly with all elements extracted
+- ✅ **Transformation**: Renaming and cleanup transformations applied correctly
 - ✅ **Include Processing**: File-specific include depth and filtering working properly
-- ✅ **Model Consistency**: Transformations properly applied and reflected in PlantUML output
-- ✅ **Configuration System**: File-specific configurations load and apply correctly
-- ✅ **Error Handling**: Graceful handling of missing files and transformation failures
-- ✅ **Performance**: Efficient processing with no memory leaks or bottlenecks
+- ✅ **Model Generation**: JSON models generated with complete structure information
+- ✅ **PlantUML Generation**: Diagrams generated with proper UML notation and relationships
 
-#### Example Verification Results
+#### Transformation Verification
 - **Function Renaming**: `deprecated_print_info` → `legacy_print_info` ✅
 - **Typedef Renaming**: `old_config_t` → `config_t` ✅
 - **Element Cleanup**: Test functions, debug functions, deprecated macros removed ✅
 - **Include Filtering**: File-specific include filters applied correctly ✅
 - **Include Depth**: Depth limits respected for all configured files ✅
 
-### Error Handling and Edge Cases
-The system provides comprehensive error handling for various scenarios:
+### Error Handling
+The system provides functional error handling for core operations:
 
-#### File Processing Errors
-- **Missing Files**: Graceful handling when included files don't exist (e.g., `common.h`)
-- **Permission Errors**: Proper error reporting for inaccessible files
-- **Encoding Issues**: Automatic detection and handling of various file encodings (UTF-8, ASCII, BOM)
+#### File Processing
+- **Missing Files**: Graceful handling when included files don't exist
+- **Encoding Issues**: Automatic detection and handling of UTF-8, ASCII, and BOM encodings
 - **Malformed C Code**: Robust parsing that continues processing despite syntax errors
 
-#### Configuration Errors
-- **Invalid JSON**: Clear error messages for malformed configuration files
-- **Invalid Regex Patterns**: Warning messages for invalid regex patterns with fallback behavior
-- **Missing Configuration**: Sensible defaults when configuration parameters are missing
-- **File Selection Errors**: Graceful handling of invalid file selection patterns
+#### Configuration
+- **Invalid JSON**: Error messages for malformed configuration files
+- **Invalid Regex Patterns**: Warning messages with fallback behavior
+- **Missing Configuration**: Sensible defaults when parameters are missing
 
-#### Transformation Errors
-- **Pattern Matching Failures**: Non-blocking errors when transformation patterns don't match
+#### Transformations
+- **Pattern Matching Failures**: Non-blocking errors when patterns don't match
 - **Circular Dependencies**: Detection and handling of circular include relationships
 - **Type Reference Issues**: Automatic cleanup of broken type references after transformations
-- **Validation Failures**: Comprehensive model verification with detailed issue reporting
-
-#### Performance and Resource Management
-- **Memory Usage**: Efficient memory management for large projects
-- **Processing Time**: Optimized algorithms for parsing and transformation
-- **File Size Limits**: Handles large C/C++ files without memory issues
-- **Recursive Depth**: Configurable limits to prevent infinite recursion
 
 ### File Format Support
-The system supports various C/C++ file formats and coding styles:
+The system supports C/C++ file formats and language features:
 
-#### Supported File Extensions
+#### File Extensions
 - **Source Files**: `.c`, `.cpp`, `.cc`, `.cxx`
 - **Header Files**: `.h`, `.hpp`, `.hh`, `.hxx`
-- **Mixed Projects**: Projects with both C and C++ files
 
-#### Encoding Support
-- **UTF-8**: Primary encoding with BOM detection
-- **ASCII**: Fallback encoding for legacy files
-- **Auto-detection**: Automatic encoding detection with fallback mechanisms
-
-#### C/C++ Standards Support
-- **C89/C90**: Full support for legacy C code
-- **C99**: Support for modern C features
-- **C11**: Support for recent C standard features
-- **C++98/C++03**: Basic C++ support
-- **C++11/14/17**: Modern C++ features (limited)
+#### Language Standards
+- **C**: C89/C90, C99, C11
+- **C++**: C++98/03, C++11/14/17 (limited)
 
 #### Preprocessor Support
 - **Conditional Compilation**: `#if`, `#ifdef`, `#ifndef`, `#elif`, `#else`, `#endif`
 - **Macro Definitions**: `#define`, `#undef`
 - **Include Directives**: `#include` with angle brackets and quotes
-- **Pragma Directives**: Basic `#pragma` support
-- **Line Directives**: `#line` directive handling
 
-### Advanced Configuration Examples
-Complex configuration scenarios and best practices:
+### Configuration Examples
+Functional configuration examples for common use cases:
 
-#### Multi-Project Analysis
+#### File-Specific Configuration
 ```json
 {
-  "project_name": "multi_project_analysis",
-  "source_folders": [
-    "core/src",
-    "utils/src", 
-    "tests/src"
-  ],
-  "output_dir": "./diagrams",
-  "include_depth": 5,
   "file_specific": {
-    "core/.*\\.c": {
-      "include_depth": 3,
-      "include_filter": ["^core/.*\\.h$", "^utils/.*\\.h$"]
+    "sample.c": {
+      "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^sample\\.h$"],
+      "include_depth": 3
     },
-    "tests/.*\\.c": {
-      "include_depth": 2,
-      "include_filter": ["^tests/.*\\.h$"]
-    }
-  },
-  "transformations_01_cleanup": {
-    "file_selection": [".*test.*\\.c$"],
-    "remove": {
-      "functions": ["^test_.*", "^debug_.*"],
-      "macros": ["^TEST_.*", "^DEBUG_.*"]
-    }
-  },
-  "transformations_02_rename": {
-    "file_selection": [".*legacy.*\\.c$"],
-    "rename": {
-      "functions": {
-        "^old_(.*)": "new_\\1"
-      },
-      "typedef": {
-        "^legacy_(.*)": "modern_\\1"
-      }
+    "utils.c": {
+      "include_filter": ["^math\\.h$", "^time\\.h$"],
+      "include_depth": 2
     }
   }
 }
 ```
 
-#### Large Project Optimization
+#### Transformation Configuration
 ```json
 {
-  "project_name": "large_project",
-  "source_folders": ["src"],
-  "recursive_search": true,
-  "include_depth": 2,
-  "file_filters": {
-    "exclude": [
-      ".*/vendor/.*",
-      ".*/third_party/.*",
-      ".*\\.test\\.c$",
-      ".*_test\\.c$"
-    ]
-  },
-  "transformations_01_filter": {
-    "remove": {
-      "functions": ["^internal_.*", "^debug_.*"],
-      "macros": ["^DEBUG_.*", "^TRACE_.*"],
-      "globals": ["^temp_.*", "^debug_.*"]
-    }
-  }
-}
-```
-
-#### Legacy Code Modernization
-```json
-{
-  "project_name": "legacy_modernization",
-  "source_folders": ["legacy"],
   "transformations_01_rename": {
-    "file_selection": [".*legacy.*\\.c$"],
+    "file_selection": [".*transformed\\.(c|h)$"],
     "rename": {
       "typedef": {
-        "^old_config_t$": "config_t",
-        "^legacy_string_t$": "string_t"
+        "^old_config_t$": "config_t"
       },
       "functions": {
-        "^deprecated_(.*)": "legacy_\\1",
-        "^old_(.*)": "new_\\1"
-      },
-      "macros": {
-        "^OLD_(.*)": "NEW_\\1",
-        "^LEGACY_(.*)": "MODERN_\\1"
+        "^deprecated_(.*)": "legacy_\\1"
       }
     }
   },
   "transformations_02_cleanup": {
-    "file_selection": [".*legacy.*\\.c$"],
+    "file_selection": [".*transformed\\.(c|h)$"],
     "remove": {
       "typedef": ["^legacy_.*", "^old_.*"],
       "functions": ["^test_.*", "^debug_.*"],
-      "macros": ["^DEPRECATED_.*", "^OLD_.*"],
-      "globals": ["^old_.*", "^deprecated_.*"]
+      "macros": ["^DEPRECATED_.*", "^LEGACY_.*"]
     }
   }
 }
@@ -813,173 +726,3 @@ Apply transformations to specific files only:
 - **Union support**: Unions are parsed and displayed with their fields
 - **Include depth processing**: Configurable depth for processing include relationships
 
-## 6. Deployment and Installation
-
-### 6.1 System Requirements
-- **Python**: 3.8 or higher
-- **Operating System**: Linux, macOS, Windows
-- **Memory**: Minimum 512MB RAM (2GB recommended for large projects)
-- **Disk Space**: 100MB for installation, additional space for output files
-- **Dependencies**: Standard Python libraries (no external dependencies)
-
-### 6.2 Installation Methods
-
-#### Method 1: Direct Installation
-```bash
-# Clone the repository
-git clone https://github.com/fischerjooo/c2puml.git
-cd c2puml
-
-# Install in development mode
-pip install -e .
-
-# Or install directly
-python setup.py install
-```
-
-#### Method 2: Using pip
-```bash
-# Install from PyPI (when available)
-pip install c2puml
-
-# Or install from GitHub
-pip install git+https://github.com/fischerjooo/c2puml.git
-```
-
-#### Method 3: Docker Installation
-```dockerfile
-# Dockerfile example
-FROM python:3.9-slim
-WORKDIR /app
-COPY . .
-RUN pip install -e .
-ENTRYPOINT ["c2puml"]
-```
-
-### 6.3 Development Setup
-```bash
-# Clone and setup development environment
-git clone https://github.com/fischerjooo/c2puml.git
-cd c2puml
-
-# Install development dependencies
-pip install -r requirements-dev.txt
-
-# Run tests to verify installation
-./scripts/run_all_tests.sh
-
-# Run example workflow
-./scripts/run_example.sh
-```
-
-### 6.4 Configuration Management
-The system supports multiple configuration management approaches:
-
-#### Single Configuration File
-```bash
-# Use a single config.json file
-c2puml --config config.json
-```
-
-#### Configuration Directory
-```bash
-# Use a directory with multiple .json files (merged)
-c2puml config_folder/
-```
-
-#### Environment Variables
-```bash
-# Override configuration with environment variables
-export C2PUML_OUTPUT_DIR="./custom_output"
-export C2PUML_INCLUDE_DEPTH=5
-c2puml --config config.json
-```
-
-### 6.5 Integration with CI/CD
-The system can be integrated into continuous integration pipelines:
-
-#### GitHub Actions Example
-```yaml
-name: Generate PlantUML Diagrams
-on: [push, pull_request]
-jobs:
-  generate-diagrams:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-    - name: Install c2puml
-      run: |
-        pip install -e .
-    - name: Generate diagrams
-      run: |
-        c2puml --config ci-config.json
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: plantuml-diagrams
-        path: artifacts/output/
-```
-
-#### Jenkins Pipeline Example
-```groovy
-pipeline {
-    agent any
-    stages {
-        stage('Generate Diagrams') {
-            steps {
-                sh 'pip install -e .'
-                sh 'c2puml --config jenkins-config.json'
-                archiveArtifacts artifacts: 'artifacts/output/**/*'
-            }
-        }
-    }
-}
-```
-
-### 6.6 Performance Optimization
-For large projects, consider these optimization strategies:
-
-#### Memory Optimization
-- Use `include_depth: 1` for large projects
-- Enable file filtering to exclude unnecessary files
-- Use `recursive_search: false` when possible
-
-#### Processing Optimization
-- Run transformations in parallel for multiple projects
-- Use file-specific configurations to limit processing scope
-- Cache generated models for incremental updates
-
-#### Output Optimization
-- Use selective file generation for specific components
-- Implement custom output templates for specific use cases
-- Use transformation rules to reduce diagram complexity
-
-### 6.7 Troubleshooting
-
-#### Common Issues
-1. **Memory Errors**: Reduce include_depth or enable file filtering
-2. **Encoding Errors**: Check file encodings, use UTF-8 when possible
-3. **Permission Errors**: Ensure read access to source files
-4. **Configuration Errors**: Validate JSON syntax and regex patterns
-
-#### Debug Mode
-```bash
-# Enable verbose logging
-c2puml --config config.json --verbose
-
-# Run individual steps for debugging
-c2puml --config config.json parse --verbose
-c2puml --config config.json transform --verbose
-c2puml --config config.json generate --verbose
-```
-
-#### Log Analysis
-The system provides detailed logging for troubleshooting:
-- **Parser logs**: File discovery and parsing issues
-- **Transformer logs**: Configuration and transformation issues
-- **Generator logs**: PlantUML generation and output issues
-- **Verifier logs**: Model validation and quality issues
