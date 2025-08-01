@@ -295,3 +295,142 @@ This report analyzes the consistency between C source files and their generated 
 3. Need to verify that transformed model is being used for PlantUML generation
 
 The PlantUML generation is working well for most files, with the main issue being related to transformation handling in the transformed.c file.
+
+## TODO List
+
+### 🔴 **Critical Issues (Must Fix)**
+
+#### 1. **Fix Transformation Issues in transformed.c**
+- [ ] **Investigate why PlantUML doesn't reflect applied transformations**
+  - Check if PlantUML generator uses `model_transformed.json` instead of `model.json`
+  - Verify transformation containers are applied in correct order
+  - Add logging to show which transformations are applied to which files
+- [ ] **Verify function renaming in transformed.c**
+  - `deprecated_print_info` should appear as `legacy_print_info` in PlantUML
+  - Check if rename patterns are working correctly
+- [ ] **Verify function removal in transformed.c**
+  - `test_function_one`, `test_function_two`, `debug_log` should be removed
+  - Check if cleanup transformation patterns are working
+- [ ] **Verify typedef renaming in transformed.c**
+  - `old_config_t` should appear as `config_t` in PlantUML
+  - Check if typedef rename patterns are working
+- [ ] **Verify macro cleanup in transformed.c**
+  - Deprecated macros should be removed from PlantUML
+  - Check if macro removal patterns are working
+
+#### 2. **Fix Include Depth Filtering**
+- [ ] **Verify include_depth: 3 for sample.c**
+  - Current PlantUML shows complex include tree that may exceed depth limit
+  - Add validation to ensure include trees respect depth limits
+  - Test with different depth values to confirm functionality
+- [ ] **Verify include_depth: 5 for complex.c**
+  - Check if include tree is properly limited to 5 levels
+  - Add logging to show actual include depth vs configured depth
+- [ ] **Verify include_depth: 2 for utils.c**
+  - Check if include tree is properly limited to 2 levels
+  - Test include depth functionality
+
+#### 3. **Fix Include Filter Application**
+- [ ] **Verify include_filter for sample.c**
+  - Should only show: stdio.h, stdlib.h, string.h, sample.h, math_utils.h, logger.h, geometry.h, config.h
+  - Check if other includes are being filtered out correctly
+  - Add validation to ensure only specified includes are shown
+- [ ] **Verify include_filter for utils.c**
+  - Should only show: math.h, time.h
+  - Check if other includes are being filtered out correctly
+  - Test include filter functionality
+
+### 🟡 **Investigation Required (Needs Further Analysis)**
+
+#### 4. **Investigate Include Relationship Generation**
+- [ ] **Analyze why system includes are not shown**
+  - This may be by design, but verify if it's intentional
+  - Check if system includes should be shown for debugging purposes
+  - Investigate if this affects include depth calculations
+- [ ] **Investigate include_relations vs includes field usage**
+  - Check why `include_relations` arrays are empty in model.json
+  - Verify if this affects PlantUML generation
+  - Investigate if transformer should populate include_relations
+- [ ] **Analyze Uses Relationships**
+  - Most PlantUML files show empty "Uses relationships" sections
+  - Investigate if this is expected behavior
+  - Check if system type dependencies should be shown
+
+#### 5. **Investigate Configuration Application**
+- [ ] **Verify file-specific configuration loading**
+  - Check if file-specific settings are properly loaded from config.json
+  - Add logging to show which configuration is applied to which file
+  - Investigate if configuration inheritance is working correctly
+- [ ] **Analyze transformation container discovery**
+  - Check if transformation containers are discovered in correct order
+  - Verify if file selection patterns are working correctly
+  - Investigate if transformation application order is correct
+
+#### 6. **Investigate Model Consistency**
+- [ ] **Compare model.json vs model_transformed.json**
+  - Check if transformations are properly applied to the model
+  - Verify if PlantUML generator uses the correct model file
+  - Investigate if there are discrepancies between models
+- [ ] **Analyze global variable parsing**
+  - Check if all global variables are correctly parsed
+  - Investigate if static globals are handled correctly
+  - Verify if complex global initializers are parsed properly
+
+### 🟢 **Enhancement Tasks (Nice to Have)**
+
+#### 7. **Add Validation and Logging**
+- [ ] **Add configuration validation**
+  - Validate that file-specific configurations are properly applied
+  - Add warnings for invalid configuration patterns
+  - Add validation for transformation patterns
+- [ ] **Add detailed logging**
+  - Log which transformations are applied to which files
+  - Log include depth calculations
+  - Log include filter applications
+- [ ] **Add PlantUML generation validation**
+  - Validate that PlantUML reflects the correct model
+  - Add checks for missing elements
+  - Add validation for relationship consistency
+
+#### 8. **Improve Error Handling**
+- [ ] **Add error handling for missing files**
+  - Handle cases where included files don't exist (like common.h)
+  - Add warnings for broken includes
+  - Improve error messages for configuration issues
+- [ ] **Add error handling for transformation failures**
+  - Handle cases where transformations fail to apply
+  - Add fallback behavior for failed transformations
+  - Improve error reporting for transformation issues
+
+#### 9. **Documentation and Testing**
+- [ ] **Add unit tests for transformation logic**
+  - Test rename transformations
+  - Test cleanup transformations
+  - Test include filtering
+- [ ] **Add integration tests for PlantUML generation**
+  - Test complete workflow from source to PlantUML
+  - Test with different configuration scenarios
+  - Test edge cases and error conditions
+- [ ] **Update documentation**
+  - Document configuration options and their effects
+  - Document transformation patterns and syntax
+  - Add troubleshooting guide for common issues
+
+### 📋 **Priority Order**
+
+1. **High Priority**: Fix transformation issues in transformed.c (Critical for functionality)
+2. **High Priority**: Fix include depth filtering (Affects multiple files)
+3. **Medium Priority**: Fix include filter application (Affects configured files)
+4. **Medium Priority**: Investigate include relationship generation (Needs analysis)
+5. **Low Priority**: Add validation and logging (Improves debugging)
+6. **Low Priority**: Enhancement tasks (Improves user experience)
+
+### 🔍 **Investigation Checklist**
+
+For each investigation task, verify:
+- [ ] Current behavior vs expected behavior
+- [ ] Configuration impact on behavior
+- [ ] Whether behavior is by design or a bug
+- [ ] Impact on other functionality
+- [ ] Required changes to fix issues
+- [ ] Testing needed to validate fixes
