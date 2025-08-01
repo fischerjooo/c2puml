@@ -300,23 +300,29 @@ The PlantUML generation is working well for most files, with the main issue bein
 
 ### 🔴 **Critical Issues (Must Fix)**
 
-#### 1. **Fix Transformation Issues in transformed.c**
-- [ ] **Investigate why PlantUML doesn't reflect applied transformations**
-  - Check if PlantUML generator uses `model_transformed.json` instead of `model.json`
-  - Verify transformation containers are applied in correct order
-  - Add logging to show which transformations are applied to which files
-- [ ] **Verify function renaming in transformed.c**
-  - `deprecated_print_info` should appear as `legacy_print_info` in PlantUML
-  - Check if rename patterns are working correctly
-- [ ] **Verify function removal in transformed.c**
-  - `test_function_one`, `test_function_two`, `debug_log` should be removed
-  - Check if cleanup transformation patterns are working
-- [ ] **Verify typedef renaming in transformed.c**
-  - `old_config_t` should appear as `config_t` in PlantUML
-  - Check if typedef rename patterns are working
-- [ ] **Verify macro cleanup in transformed.c**
-  - Deprecated macros should be removed from PlantUML
-  - Check if macro removal patterns are working
+#### 1. **Fix Transformation Issues in transformed.c** ✅ **RESOLVED**
+- [x] **Investigate why PlantUML doesn't reflect applied transformations**
+  - ✅ Check if PlantUML generator uses `model_transformed.json` instead of `model.json`
+  - ✅ Verify transformation containers are applied in correct order
+  - ✅ Add logging to show which transformations are applied to which files
+- [x] **Verify function renaming in transformed.c**
+  - ✅ `deprecated_print_info` should appear as `legacy_print_info` in PlantUML
+  - ✅ Check if rename patterns are working correctly
+- [x] **Verify function removal in transformed.c**
+  - ✅ `test_function_one`, `test_function_two`, `debug_log` should be removed
+  - ✅ Check if cleanup transformation patterns are working
+- [x] **Verify typedef renaming in transformed.c**
+  - ✅ `old_config_t` should appear as `config_t` in PlantUML
+  - ✅ Check if typedef rename patterns are working
+- [x] **Verify macro cleanup in transformed.c**
+  - ✅ Deprecated macros should be removed from PlantUML
+  - ✅ Check if macro removal patterns are working
+
+**Resolution**: The PlantUML generator is correctly using the transformed model (`model_transformed.json`) and the transformations are working properly. The generated PlantUML shows:
+- ✅ `deprecated_print_info` renamed to `legacy_print_info`
+- ✅ `test_function_one`, `test_function_two`, `debug_log` removed
+- ✅ `old_config_t` renamed to `config_t`
+- ✅ Deprecated macros removed
 
 #### 2. **Fix Include Depth Filtering**
 - [ ] **Verify include_depth: 3 for sample.c**
