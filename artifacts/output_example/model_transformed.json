@@ -305,7 +305,7 @@
           "parameters": [
             {
               "name": "data",
-              "type": "\n int[]",
+              "type": "int[]",
               "value": null
             },
             {
@@ -315,7 +315,7 @@
             },
             {
               "name": "operations",
-              "type": "\n math_operation_t[]",
+              "type": "math_operation_t[]",
               "value": null
             },
             {
@@ -743,7 +743,7 @@
           "parameters": [
             {
               "name": "data",
-              "type": "\n int[]",
+              "type": "int[]",
               "value": null
             },
             {
@@ -753,7 +753,7 @@
             },
             {
               "name": "operations",
-              "type": "\n math_operation_t[]",
+              "type": "math_operation_t[]",
               "value": null
             },
             {

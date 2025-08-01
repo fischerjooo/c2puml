@@ -876,6 +876,8 @@ class CParser:
         typedef_name = all_tokens[-1].value
         type_tokens = all_tokens[:-1]
         original_type = " ".join(t.value for t in type_tokens)
+        original_type = self._clean_type_string(original_type)
+        original_type = self._fix_array_bracket_spacing(original_type)
         return (typedef_name, original_type)
 
     def _parse_complex_typedef(self, tokens, start_pos):
@@ -1080,6 +1082,7 @@ class CParser:
                                     # Add array brackets without spaces
                                     array_size = collected_tokens[j + 1].value if j + 1 < bracket_idx else ""
                                     var_type = "".join(formatted_type) + "[" + array_size + "]"
+                                    var_type = self._clean_type_string(var_type)
                                     value_tokens = collected_tokens[assign_idx + 1 :]
                                     var_value = " ".join(t.value for t in value_tokens)
                                     return (var_name, var_type, var_value)
@@ -1090,6 +1093,8 @@ class CParser:
                     type_tokens = collected_tokens[start_idx : assign_idx - 1]
                     value_tokens = collected_tokens[assign_idx + 1 :]
                     var_type = " ".join(t.value for t in type_tokens)
+                    var_type = self._clean_type_string(var_type)
+                    var_type = self._fix_array_bracket_spacing(var_type)
                     var_value = " ".join(t.value for t in value_tokens)
                     return (var_name, var_type, var_value)
         else:
@@ -1121,6 +1126,7 @@ class CParser:
                                     # Add array brackets without spaces
                                     array_size = collected_tokens[j + 1].value if j + 1 < bracket_idx else ""
                                     var_type = "".join(formatted_type) + "[" + array_size + "]"
+                                    var_type = self._clean_type_string(var_type)
                                     return (var_name, var_type, None)
                             break
                 else:
@@ -1128,7 +1134,7 @@ class CParser:
                     var_name = collected_tokens[-1].value
                     type_tokens = collected_tokens[start_idx:-1]
                     var_type = " ".join(t.value for t in type_tokens)
-                    # Fix array bracket spacing
+                    var_type = self._clean_type_string(var_type)
                     var_type = self._fix_array_bracket_spacing(var_type)
                     return (var_name, var_type, None)
 
@@ -1439,31 +1445,28 @@ class CParser:
         return None
 
     def _fix_array_bracket_spacing(self, type_str: str) -> str:
-        """Fix array bracket spacing by removing spaces around brackets"""
+        """Fix spacing around array brackets in type strings"""
+        # First clean the type string to remove newlines
+        type_str = self._clean_type_string(type_str)
+        # Replace patterns like "type[ size ]" with "type[size]"
         import re
-        
-        # Fix spaces around array brackets: [ ] -> []
-        # Pattern: space + [ + optional content + ] + space
-        type_str = re.sub(r'\s+\[\s*([^\]]*)\s*\]\s*', r'[\1]', type_str)
-        
-        # Fix spaces around empty array brackets: [ ] -> []
-        type_str = re.sub(r'\s+\[\s*\]\s*', r'[]', type_str)
-        
-        # Fix spaces around array brackets at the end of type: type [ ] -> type[]
-        type_str = re.sub(r'(\w+)\s+\[\s*([^\]]*)\s*\]\s*$', r'\1[\2]', type_str)
-        
-        # Additional fix for cases like "type name [ 10 ]" -> "type name[10]"
-        type_str = re.sub(r'(\w+)\s+\[\s*([^\]]*)\s*\]\s*', r'\1[\2]', type_str)
-        
-        # More comprehensive fix for all array bracket spacing issues
-        # Replace any space + [ + content + ] + space with [content]
-        type_str = re.sub(r'\s+\[\s*([^\]]*)\s*\]\s*', r'[\1]', type_str)
-        
-        # Fix remaining cases where brackets have spaces
-        type_str = re.sub(r'\[\s+', r'[', type_str)
-        type_str = re.sub(r'\s+\]', r']', type_str)
-        
+        # Remove spaces around array brackets
+        type_str = re.sub(r'\s*\[\s*', '[', type_str)
+        type_str = re.sub(r'\s*\]\s*', ']', type_str)
         return type_str
+
+    def _clean_type_string(self, type_str: str) -> str:
+        """Clean type string by removing newlines and normalizing whitespace"""
+        if not type_str:
+            return type_str
+        # Replace newlines with spaces and normalize whitespace
+        cleaned = type_str.replace('\n', ' ')
+        # Normalize multiple spaces to single space
+        import re
+        cleaned = re.sub(r'\s+', ' ', cleaned)
+        # Strip leading/trailing whitespace
+        cleaned = cleaned.strip()
+        return cleaned
 
     def _get_timestamp(self) -> str:
         """Get current timestamp string"""
