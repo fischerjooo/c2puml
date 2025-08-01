@@ -385,6 +385,10 @@ jobs:
         with:
           script: |
             // This step triggers the deploy-website workflow after successful test completion
+            // Adding a delay to allow puml2png workflow to potentially complete first
+            console.log('⏳ Waiting 2 minutes before triggering deployment to allow other workflows to finish...');
+            await new Promise(resolve => setTimeout(resolve, 120000)); // 2 minute delay
+            
             try {
               const { data: runs } = await github.rest.actions.createWorkflowDispatch({
                 owner: context.repo.owner,

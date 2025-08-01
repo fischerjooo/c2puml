@@ -28,10 +28,72 @@ jobs:
       actions: write
     
     concurrency:
-      group: "pages"
+      group: "deploy-website"
       cancel-in-progress: false
     
     steps:
+    - name: ⏳ Wait for other workflows to complete
+      uses: actions/github-script@v7
+      with:
+        script: |
+          console.log('🔍 Checking for ongoing workflow runs...');
+          
+          const maxWaitTime = 30 * 60 * 1000; // 30 minutes max wait
+          const checkInterval = 30 * 1000; // Check every 30 seconds
+          const startTime = Date.now();
+          
+          const workflowsToWaitFor = [
+            'test-coverage.yml',
+            'puml2png.yml',
+            'test.yml'
+          ];
+          
+          while (Date.now() - startTime < maxWaitTime) {
+            let hasRunningWorkflows = false;
+            
+            for (const workflowFile of workflowsToWaitFor) {
+              try {
+                const { data: runs } = await github.rest.actions.listWorkflowRuns({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  workflow_id: workflowFile,
+                  status: 'in_progress',
+                  per_page: 10
+                });
+                
+                // Filter out the current run (this deployment workflow)
+                const otherRuns = runs.workflow_runs.filter(run => 
+                  run.id !== context.runId && 
+                  ['in_progress', 'queued'].includes(run.status)
+                );
+                
+                if (otherRuns.length > 0) {
+                  console.log(`⏳ Found ${otherRuns.length} running workflow(s) for ${workflowFile}:`);
+                  for (const run of otherRuns) {
+                    console.log(`  - Run #${run.run_number} (${run.status}) - ${run.html_url}`);
+                  }
+                  hasRunningWorkflows = true;
+                }
+              } catch (error) {
+                console.log(`⚠️ Could not check workflow ${workflowFile}: ${error.message}`);
+              }
+            }
+            
+            if (!hasRunningWorkflows) {
+              console.log('✅ No other workflows are currently running. Proceeding with deployment.');
+              break;
+            }
+            
+            console.log('⏳ Waiting for other workflows to complete...');
+            await new Promise(resolve => setTimeout(resolve, checkInterval));
+          }
+          
+          if (Date.now() - startTime >= maxWaitTime) {
+            console.log('⚠️ Maximum wait time reached. Proceeding with deployment anyway.');
+          }
+          
+          console.log('🚀 Starting website deployment...');
+
     - name: 📥 Checkout repository
       uses: actions/checkout@v4
       with:
@@ -340,6 +402,7 @@ jobs:
         echo "- **Deployment Time**: $(date)" >> $GITHUB_STEP_SUMMARY
         echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Message**: ${{ github.event.inputs.message || github.event.inputs.message || 'Website deployment' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Note**: This deployment waited for other ongoing workflows to complete before starting" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
         echo "### 📁 Deployed Content" >> $GITHUB_STEP_SUMMARY
