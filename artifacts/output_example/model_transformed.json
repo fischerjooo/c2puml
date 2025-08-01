@@ -1,5 +1,166 @@
 {
   "files": {
+    "application.c": {
+      "aliases": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/application.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [
+            {
+              "name": "argc",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "]",
+              "type": "char * argv [",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "signal_handler",
+          "parameters": [
+            {
+              "name": "sig",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "running",
+          "type": "volatile int",
+          "value": null
+        }
+      ],
+      "include_relations": [
+        {
+          "depth": 1,
+          "included_file": "common.h",
+          "source_file": "application.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "database.h",
+          "source_file": "application.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "network.h",
+          "source_file": "application.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "signal.h",
+          "source_file": "application.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "stdio.h",
+          "source_file": "application.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "stdlib.h",
+          "source_file": "application.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "string.h",
+          "source_file": "application.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "unistd.h",
+          "source_file": "application.c"
+        },
+        {
+          "depth": 2,
+          "included_file": "common.h",
+          "source_file": "database.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "mysql/mysql.h",
+          "source_file": "database.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "postgresql/libpq-fe.h",
+          "source_file": "database.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "sqlite3.h",
+          "source_file": "database.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "stdio.h",
+          "source_file": "database.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "stdlib.h",
+          "source_file": "database.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "arpa/inet.h",
+          "source_file": "network.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "common.h",
+          "source_file": "network.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "netdb.h",
+          "source_file": "network.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "netinet/in.h",
+          "source_file": "network.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "sys/socket.h",
+          "source_file": "network.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "unistd.h",
+          "source_file": "network.h"
+        }
+      ],
+      "includes": [
+        "common.h",
+        "database.h",
+        "network.h",
+        "signal.h",
+        "stdio.h",
+        "stdlib.h",
+        "string.h",
+        "unistd.h"
+      ],
+      "macros": [],
+      "name": "application.c",
+      "structs": {},
+      "unions": {}
+    },
     "complex.c": {
       "aliases": {},
       "enums": {},
@@ -1175,6 +1336,496 @@
       "structs": {},
       "unions": {}
     },
+    "database.c": {
+      "aliases": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/database.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "database_begin_transaction",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "database_commit_transaction",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "database_connect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "database_disconnect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "database_execute_query",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            },
+            {
+              "name": "query",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "QueryResult *"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "database_execute_update",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            },
+            {
+              "name": "query",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "database_free_result",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "QueryResult *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "database_get_error",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "database_is_connected",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "database_rollback_transaction",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [],
+      "include_relations": [
+        {
+          "depth": 1,
+          "included_file": "database.h",
+          "source_file": "database.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "errno.h",
+          "source_file": "database.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "string.h",
+          "source_file": "database.c"
+        },
+        {
+          "depth": 2,
+          "included_file": "common.h",
+          "source_file": "database.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "mysql/mysql.h",
+          "source_file": "database.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "postgresql/libpq-fe.h",
+          "source_file": "database.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "sqlite3.h",
+          "source_file": "database.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "stdio.h",
+          "source_file": "database.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "stdlib.h",
+          "source_file": "database.h"
+        }
+      ],
+      "includes": [
+        "database.h",
+        "errno.h",
+        "string.h"
+      ],
+      "macros": [],
+      "name": "database.c",
+      "structs": {},
+      "unions": {}
+    },
+    "database.h": {
+      "aliases": {},
+      "enums": {
+        "DatabaseType": {
+          "name": "DatabaseType",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "DB_TYPE_SQLITE",
+              "value": null
+            },
+            {
+              "name": "DB_TYPE_MYSQL",
+              "value": null
+            },
+            {
+              "name": "DB_TYPE_POSTGRESQL",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/database.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "database_begin_transaction",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "database_commit_transaction",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "database_connect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "database_disconnect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "database_escape_string",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const DatabaseConfig *",
+              "value": null
+            },
+            {
+              "name": "input",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "output",
+              "type": "char *",
+              "value": null
+            },
+            {
+              "name": "max_output_size",
+              "type": "size_t",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "database_execute_query",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            },
+            {
+              "name": "query",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "QueryResult *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "database_execute_update",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            },
+            {
+              "name": "query",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "database_free_result",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "QueryResult *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "database_get_error",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "database_is_connected",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "database_rollback_transaction",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "common.h",
+        "mysql/mysql.h",
+        "postgresql/libpq-fe.h",
+        "sqlite3.h",
+        "stdio.h",
+        "stdlib.h"
+      ],
+      "macros": [
+        "DATABASE_H",
+        "MAX_DB_NAME_LENGTH",
+        "MAX_QUERY_LENGTH"
+      ],
+      "name": "database.h",
+      "structs": {
+        "DatabaseConfig": {
+          "fields": [
+            {
+              "name": "type",
+              "type": "DatabaseType",
+              "value": null
+            },
+            {
+              "name": "db_name",
+              "type": "char[MAX_DB_NAME_LENGTH]",
+              "value": null
+            },
+            {
+              "name": "host",
+              "type": "char[256]",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "username",
+              "type": "char[128]",
+              "value": null
+            },
+            {
+              "name": "password",
+              "type": "char[128]",
+              "value": null
+            },
+            {
+              "name": "connection",
+              "type": "void *",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "DatabaseConfig",
+          "tag_name": "",
+          "uses": [
+            "DatabaseType"
+          ]
+        },
+        "QueryResult": {
+          "fields": [
+            {
+              "name": "row_count",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "column_count",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "data",
+              "type": "char * *",
+              "value": null
+            },
+            {
+              "name": "column_names",
+              "type": "char * *",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "QueryResult",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {}
+    },
     "filtered_header.h": {
       "aliases": {},
       "enums": {
@@ -1871,6 +2522,526 @@
       ],
       "name": "math_utils.h",
       "structs": {},
+      "unions": {}
+    },
+    "network.c": {
+      "aliases": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/network.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "network_cleanup",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "network_connect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            },
+            {
+              "name": "host",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "network_get_status",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "NetworkStatus"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "network_init",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "network_listen",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "network_receive",
+          "parameters": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "buffer",
+              "type": "void *",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "size_t",
+              "value": null
+            }
+          ],
+          "return_type": "ssize_t"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "network_send",
+          "parameters": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "data",
+              "type": "const void *",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "size_t",
+              "value": null
+            }
+          ],
+          "return_type": "ssize_t"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "network_set_nonblocking",
+          "parameters": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "network_status_string",
+          "parameters": [
+            {
+              "name": "status",
+              "type": "NetworkStatus",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        }
+      ],
+      "globals": [],
+      "include_relations": [
+        {
+          "depth": 1,
+          "included_file": "errno.h",
+          "source_file": "network.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "fcntl.h",
+          "source_file": "network.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "network.h",
+          "source_file": "network.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "stdio.h",
+          "source_file": "network.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "stdlib.h",
+          "source_file": "network.c"
+        },
+        {
+          "depth": 1,
+          "included_file": "string.h",
+          "source_file": "network.c"
+        },
+        {
+          "depth": 2,
+          "included_file": "arpa/inet.h",
+          "source_file": "network.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "common.h",
+          "source_file": "network.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "netdb.h",
+          "source_file": "network.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "netinet/in.h",
+          "source_file": "network.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "sys/socket.h",
+          "source_file": "network.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "unistd.h",
+          "source_file": "network.h"
+        }
+      ],
+      "includes": [
+        "errno.h",
+        "fcntl.h",
+        "network.h",
+        "stdio.h",
+        "stdlib.h",
+        "string.h"
+      ],
+      "macros": [],
+      "name": "network.c",
+      "structs": {
+        "__anonymous_struct__": {
+          "fields": [
+            {
+              "name": ")",
+              "type": "close ( config - > socket_fd",
+              "value": null
+            },
+            {
+              "name": "1",
+              "type": "config - > socket_fd = -",
+              "value": null
+            },
+            {
+              "name": "1",
+              "type": "return -",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "__anonymous_struct__",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {}
+    },
+    "network.h": {
+      "aliases": {},
+      "enums": {
+        "NetworkStatus": {
+          "name": "NetworkStatus",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "NET_STATUS_DISCONNECTED",
+              "value": null
+            },
+            {
+              "name": "NET_STATUS_CONNECTING",
+              "value": null
+            },
+            {
+              "name": "NET_STATUS_CONNECTED",
+              "value": null
+            },
+            {
+              "name": "NET_STATUS_ERROR",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/network.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "network_accept",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "network_cleanup",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "network_connect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            },
+            {
+              "name": "host",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "network_disconnect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "network_get_status",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "NetworkStatus"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "network_init",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "network_listen",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "network_receive",
+          "parameters": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "buffer",
+              "type": "void *",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "size_t",
+              "value": null
+            }
+          ],
+          "return_type": "ssize_t"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "network_send",
+          "parameters": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "data",
+              "type": "const void *",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "size_t",
+              "value": null
+            }
+          ],
+          "return_type": "ssize_t"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "network_set_nonblocking",
+          "parameters": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "network_status_string",
+          "parameters": [
+            {
+              "name": "status",
+              "type": "NetworkStatus",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "arpa/inet.h",
+        "common.h",
+        "netdb.h",
+        "netinet/in.h",
+        "sys/socket.h",
+        "unistd.h"
+      ],
+      "macros": [
+        "DEFAULT_PORT",
+        "MAX_CONNECTIONS",
+        "NETWORK_H"
+      ],
+      "name": "network.h",
+      "structs": {
+        "NetworkConfig": {
+          "fields": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "address",
+              "type": "struct sockaddr_in",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "hostname",
+              "type": "char *",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "NetworkConfig",
+          "tag_name": "",
+          "uses": []
+        },
+        "__anonymous_struct__": {
+          "fields": [],
+          "methods": [],
+          "name": "__anonymous_struct__",
+          "tag_name": "",
+          "uses": []
+        }
+      },
       "unions": {}
     },
     "preprocessed.c": {

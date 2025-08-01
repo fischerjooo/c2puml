@@ -1,0 +1,76 @@
+@startuml network
+
+class "network" as NETWORK <<source>> #LightBlue
+{
+    -- Functions --
+    void network_cleanup(NetworkConfig * config)
+    int network_connect(NetworkConfig * config, const char * host, int port)
+    NetworkStatus network_get_status(const NetworkConfig * config)
+    int network_init(NetworkConfig * config)
+    int network_listen(NetworkConfig * config, int port)
+    ssize_t network_receive(int socket_fd, void * buffer, size_t size)
+    ssize_t network_send(int socket_fd, const void * data, size_t size)
+    int network_set_nonblocking(int socket_fd)
+    const char * network_status_string(NetworkStatus status)
+}
+
+class "network" as HEADER_NETWORK <<header>> #LightGreen
+{
+    -- Macros --
+    + #define DEFAULT_PORT
+    + #define MAX_CONNECTIONS
+    + #define NETWORK_H
+    -- Functions --
+    + int network_accept(NetworkConfig * config)
+    + void network_cleanup(NetworkConfig * config)
+    + int network_connect(NetworkConfig * config, const char * host, int port)
+    + void network_disconnect(NetworkConfig * config)
+    + NetworkStatus network_get_status(const NetworkConfig * config)
+    + int network_init(NetworkConfig * config)
+    + int network_listen(NetworkConfig * config, int port)
+    + ssize_t network_receive(int socket_fd, void * buffer, size_t size)
+    + ssize_t network_send(int socket_fd, const void * data, size_t size)
+    + int network_set_nonblocking(int socket_fd)
+    + const char * network_status_string(NetworkStatus status)
+}
+
+class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<typedef>> #LightYellow
+{
+    + close ( config - > socket_fd )
+    + config - > socket_fd = - 1
+    + return - 1
+}
+
+class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<typedef>> #LightYellow
+{
+    + struct sockaddr_in address
+    + char * hostname
+    + int port
+    + int socket_fd
+}
+
+class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<typedef>> #LightYellow
+{
+}
+
+class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<typedef>> #LightYellow
+{
+    + NET_STATUS_CONNECTED
+    + NET_STATUS_CONNECTING
+    + NET_STATUS_DISCONNECTED
+    + NET_STATUS_ERROR
+}
+
+
+' Include relationships
+NETWORK --> HEADER_NETWORK : <<include>>
+
+' Declaration relationships
+NETWORK ..> TYPEDEF___ANONYMOUS_STRUCT__ : <<declares>>
+HEADER_NETWORK ..> TYPEDEF_NETWORKCONFIG : <<declares>>
+HEADER_NETWORK ..> TYPEDEF___ANONYMOUS_STRUCT__ : <<declares>>
+HEADER_NETWORK ..> TYPEDEF_NETWORKSTATUS : <<declares>>
+
+' Uses relationships
+
+@enduml
