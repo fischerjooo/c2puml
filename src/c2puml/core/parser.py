@@ -1202,17 +1202,24 @@ class CParser:
         ):
             return parameters
 
-        # Split parameters by commas
+        # Split parameters by commas, but handle function pointers correctly
         current_param = []
+        paren_depth = 0
         for token in param_tokens:
-            if token.type == TokenType.COMMA:
+            if token.type == TokenType.LPAREN:
+                paren_depth += 1
+            elif token.type == TokenType.RPAREN:
+                paren_depth -= 1
+            elif token.type == TokenType.COMMA and paren_depth == 0:
+                # Only split on commas that are not inside parentheses
                 if current_param:
                     param = self._parse_single_parameter(current_param)
                     if param:
                         parameters.append(param)
                     current_param = []
-            else:
-                current_param.append(token)
+                continue
+            
+            current_param.append(token)
 
         # Handle last parameter
         if current_param:
@@ -1276,6 +1283,63 @@ class CParser:
                         # Fix array bracket spacing
                         full_type = self._fix_array_bracket_spacing(full_type)
 
+                        return Field(name=func_name, type=full_type)
+                    else:
+                        # Incomplete function pointer - try to reconstruct
+                        type_tokens = param_tokens[:i]
+                        param_type = " ".join(t.value for t in type_tokens)
+                        func_ptr_tokens = param_tokens[i:]
+                        func_ptr_type = " ".join(t.value for t in func_ptr_tokens)
+                        full_type = (param_type + " " + func_ptr_type).strip()
+                        full_type = self._fix_array_bracket_spacing(full_type)
+                        return Field(name=func_name, type=full_type)
+            
+            # Also look for pattern: type ( * name ) ( params ) with spaces
+            for i in range(len(param_tokens) - 4):
+                if (
+                    param_tokens[i].type == TokenType.LPAREN
+                    and param_tokens[i + 1].type == TokenType.ASTERISK
+                    and param_tokens[i + 2].type == TokenType.IDENTIFIER
+                    and param_tokens[i + 3].type == TokenType.RPAREN
+                    and param_tokens[i + 4].type == TokenType.LPAREN
+                ):
+                    # Found function pointer pattern
+                    func_name = param_tokens[i + 2].value
+
+                    # Find the closing parenthesis for the parameter list
+                    paren_count = 1
+                    param_end = i + 5
+                    while param_end < len(param_tokens) and paren_count > 0:
+                        if param_tokens[param_end].type == TokenType.LPAREN:
+                            paren_count += 1
+                        elif param_tokens[param_end].type == TokenType.RPAREN:
+                            paren_count -= 1
+                        param_end += 1
+
+                    if paren_count == 0:
+                        # Extract the type (everything before the function pointer)
+                        type_tokens = param_tokens[:i]
+                        param_type = " ".join(t.value for t in type_tokens)
+
+                        # Extract the function pointer part
+                        func_ptr_tokens = param_tokens[i:param_end]
+                        func_ptr_type = " ".join(t.value for t in func_ptr_tokens)
+
+                        # Combine type and function pointer
+                        full_type = (param_type + " " + func_ptr_type).strip()
+                        
+                        # Fix array bracket spacing
+                        full_type = self._fix_array_bracket_spacing(full_type)
+
+                        return Field(name=func_name, type=full_type)
+                    else:
+                        # Incomplete function pointer - try to reconstruct
+                        type_tokens = param_tokens[:i]
+                        param_type = " ".join(t.value for t in type_tokens)
+                        func_ptr_tokens = param_tokens[i:]
+                        func_ptr_type = " ".join(t.value for t in func_ptr_tokens)
+                        full_type = (param_type + " " + func_ptr_type).strip()
+                        full_type = self._fix_array_bracket_spacing(full_type)
                         return Field(name=func_name, type=full_type)
 
                     # For parameters like "int x" or "const char *name" or "char* argv[]"

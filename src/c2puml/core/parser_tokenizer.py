@@ -1249,17 +1249,9 @@ def find_struct_fields(
                 and field_tokens[-1].type == TokenType.RBRACKET
             ):
                 field_name = field_tokens[-4].value
-                # Fix: Properly format array type - preserve spaces between tokens but not around brackets
+                # Fix: Properly format array type - preserve spaces between tokens
                 type_tokens = field_tokens[:-4]
-                formatted_type = []
-                for j, token in enumerate(type_tokens):
-                    if j > 0:
-                        formatted_type.append(" " + token.value)
-                    else:
-                        formatted_type.append(token.value)
-                field_type = (
-                    "".join(formatted_type) + "[" + field_tokens[-2].value + "]"
-                )
+                field_type = " ".join(t.value for t in type_tokens) + "[" + field_tokens[-2].value + "]"
                 if (
                     field_name
                     and field_name.strip()

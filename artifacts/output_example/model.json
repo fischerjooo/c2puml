@@ -313,23 +313,13 @@
               "value": null
             },
             {
-              "name": "*",
-              "type": "void ( * pre_process ) ( int",
+              "name": "pre_process",
+              "type": "void ( * pre_process ) ( int * , int )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "*",
-              "type": "void ( * post_process ) ( int",
-              "value": null
-            },
-            {
-              "name": "unnamed",
-              "type": "int )",
+              "name": "post_process",
+              "type": "void ( * post_process ) ( int * , int )",
               "value": null
             }
           ],
@@ -755,23 +745,13 @@
               "value": null
             },
             {
-              "name": "*",
-              "type": "void ( * pre_process ) ( int",
+              "name": "pre_process",
+              "type": "void ( * pre_process ) ( int * , int )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "*",
-              "type": "void ( * post_process ) ( int",
-              "value": null
-            },
-            {
-              "name": "unnamed",
-              "type": "int )",
+              "name": "post_process",
+              "type": "void ( * post_process ) ( int * , int )",
               "value": null
             }
           ],
