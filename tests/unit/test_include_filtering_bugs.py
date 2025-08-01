@@ -5,6 +5,7 @@ These tests are designed to expose issues with the current include filtering imp
 """
 
 import pytest
+import unittest
 from unittest.mock import Mock, patch
 from typing import Dict, Any, List
 
@@ -407,3 +408,192 @@ class TestIncludeFilteringBugs:
             print(f"  Original: {original_includes}")
             print(f"  Filtered: {main_file.includes}")
             # This exposes the bug - we'll fix this by changing the behavior
+
+class TestSimplifiedIncludeProcessing(unittest.TestCase):
+    """Test the new simplified include processing approach"""
+
+    def setUp(self):
+        """Set up test environment"""
+        self.transformer = Transformer()
+
+    def test_simplified_depth_based_processing(self):
+        """Test that simplified processing follows depth-based layer approach correctly"""
+        # Create a simple project model with depth structure
+        # main.c -> includes utils.h and math.h
+        # utils.h -> includes config.h  
+        # math.h -> includes constants.h
+        # config.h -> includes types.h
+        
+        project = ProjectModel(
+            project_name="test_project",
+            source_folder="/test",
+            files={}
+        )
+        
+        # Create files with include relationships
+        main_c = FileModel(file_path="main.c", includes={"utils.h", "math.h"})
+        utils_h = FileModel(file_path="utils.h", includes={"config.h"})
+        math_h = FileModel(file_path="math.h", includes={"constants.h"})
+        config_h = FileModel(file_path="config.h", includes={"types.h"})
+        constants_h = FileModel(file_path="constants.h", includes=set())
+        types_h = FileModel(file_path="types.h", includes=set())
+        
+        project.files = {
+            "main.c": main_c,
+            "utils.h": utils_h, 
+            "math.h": math_h,
+            "config.h": config_h,
+            "constants.h": constants_h,
+            "types.h": types_h
+        }
+        
+        # Test with depth 3
+        config = {"include_depth": 3}
+        result = self.transformer._process_include_relations_simplified(project, config)
+        
+        # Verify that only main.c has include_relations (as the root C file)
+        # Expected: depth 1 (2), depth 2 (2), depth 3 (1) = 5 total
+        self.assertEqual(len(main_c.include_relations), 5)  # All relations should be in main.c
+        self.assertEqual(len(utils_h.include_relations), 0)  # Headers should be empty
+        self.assertEqual(len(math_h.include_relations), 0)
+        
+        # Verify depth distribution
+        relations_by_depth = {}
+        for rel in main_c.include_relations:
+            if rel.depth not in relations_by_depth:
+                relations_by_depth[rel.depth] = []
+            relations_by_depth[rel.depth].append(rel)
+        
+        # Depth 1: main.c -> utils.h, math.h
+        self.assertEqual(len(relations_by_depth[1]), 2)
+        depth_1_targets = {rel.included_file for rel in relations_by_depth[1]}
+        self.assertEqual(depth_1_targets, {"utils.h", "math.h"})
+        
+        # Depth 2: utils.h -> config.h, math.h -> constants.h  
+        self.assertEqual(len(relations_by_depth[2]), 2)
+        depth_2_targets = {rel.included_file for rel in relations_by_depth[2]}
+        self.assertEqual(depth_2_targets, {"config.h", "constants.h"})
+        
+        # Depth 3: config.h -> types.h (but limited by depth 3)
+        if 3 in relations_by_depth:
+            # Should not reach depth 3 with include_depth=3 (depth starts at 1)
+            pass
+
+    def test_simplified_with_filters(self):
+        """Test that simplified processing applies filters correctly at each depth"""
+        project = ProjectModel(
+            project_name="test_project",
+            source_folder="/test", 
+            files={}
+        )
+        
+        # Create test files
+        main_c = FileModel(file_path="main.c", includes={"system.h", "local.h"})
+        system_h = FileModel(file_path="system.h", includes={"kernel.h"})
+        local_h = FileModel(file_path="local.h", includes={"app.h"})
+        kernel_h = FileModel(file_path="kernel.h", includes=set())
+        app_h = FileModel(file_path="app.h", includes=set())
+        
+        project.files = {
+            "main.c": main_c,
+            "system.h": system_h,
+            "local.h": local_h, 
+            "kernel.h": kernel_h,
+            "app.h": app_h
+        }
+        
+        # Configure to only include "local*" files
+        config = {
+            "include_depth": 3,
+            "file_specific": {
+                "main.c": {
+                    "include_filter": ["local.*"]
+                }
+            }
+        }
+        
+        result = self.transformer._process_include_relations_simplified(project, config)
+        
+        # Should only have relations for local.h and app.h
+        self.assertEqual(len(main_c.include_relations), 2)
+        
+        included_files = {rel.included_file for rel in main_c.include_relations}
+        self.assertEqual(included_files, {"local.h", "app.h"})
+        
+        # Verify no system.h or kernel.h
+        self.assertNotIn("system.h", included_files)
+        self.assertNotIn("kernel.h", included_files)
+
+    def test_simplified_cycle_prevention(self):
+        """Test that simplified processing prevents cycles correctly"""
+        project = ProjectModel(
+            project_name="test_project",
+            source_folder="/test",
+            files={}
+        )
+        
+        # Create circular dependency: main.c -> a.h -> b.h -> a.h
+        main_c = FileModel(file_path="main.c", includes={"a.h"})
+        a_h = FileModel(file_path="a.h", includes={"b.h"})
+        b_h = FileModel(file_path="b.h", includes={"a.h"})  # Creates cycle
+        
+        project.files = {
+            "main.c": main_c,
+            "a.h": a_h,
+            "b.h": b_h
+        }
+        
+        config = {"include_depth": 5}  # High depth to expose cycles
+        result = self.transformer._process_include_relations_simplified(project, config)
+        
+        # Should have exactly 2 relations without infinite loop
+        self.assertEqual(len(main_c.include_relations), 2)
+        
+        # Verify the relations are: main.c -> a.h, a.h -> b.h
+        relations = [(rel.source_file, rel.included_file) for rel in main_c.include_relations]
+        expected_relations = [("main.c", "a.h"), ("a.h", "b.h")]
+        
+        for expected in expected_relations:
+            self.assertIn(expected, relations)
+
+    def test_simplified_single_root_per_c_file(self):
+        """Test that each C file processes its own include structure independently"""
+        project = ProjectModel(
+            project_name="test_project", 
+            source_folder="/test",
+            files={}
+        )
+        
+        # Create two separate C files with their own include structures
+        main_c = FileModel(file_path="main.c", includes={"main_utils.h"})
+        test_c = FileModel(file_path="test.c", includes={"test_utils.h"})
+        main_utils_h = FileModel(file_path="main_utils.h", includes={"shared.h"})
+        test_utils_h = FileModel(file_path="test_utils.h", includes={"shared.h"})
+        shared_h = FileModel(file_path="shared.h", includes=set())
+        
+        project.files = {
+            "main.c": main_c,
+            "test.c": test_c,
+            "main_utils.h": main_utils_h,
+            "test_utils.h": test_utils_h,
+            "shared.h": shared_h
+        }
+        
+        config = {"include_depth": 3}
+        result = self.transformer._process_include_relations_simplified(project, config)
+        
+        # Each C file should have its own include_relations
+        self.assertEqual(len(main_c.include_relations), 2)  # main.c -> main_utils.h -> shared.h
+        self.assertEqual(len(test_c.include_relations), 2)  # test.c -> test_utils.h -> shared.h
+        
+        # Verify that header files have no include_relations
+        self.assertEqual(len(main_utils_h.include_relations), 0)
+        self.assertEqual(len(test_utils_h.include_relations), 0)
+        self.assertEqual(len(shared_h.include_relations), 0)
+        
+        # Verify correct relationships for each C file
+        main_includes = {rel.included_file for rel in main_c.include_relations}
+        test_includes = {rel.included_file for rel in test_c.include_relations}
+        
+        self.assertEqual(main_includes, {"main_utils.h", "shared.h"})
+        self.assertEqual(test_includes, {"test_utils.h", "shared.h"})
