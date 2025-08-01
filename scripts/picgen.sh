@@ -443,7 +443,7 @@ generate_diagram_index() {
 <body>
     <div class="container">
         <div class="nav">
-            <a href="../index.html">🏠 Home</a>
+            <a href="../../index.html">🏠 Home</a>
             <a href="../coverage/htmlcov/index.html">📊 Coverage</a>
             <a href="../test_reports/test_summary.html">📝 Tests</a>
             <span style="background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 4px;">📊 Diagrams</span>
