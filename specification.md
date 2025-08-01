@@ -1,27 +1,30 @@
 # C to PlantUML Converter - Component Specification
 
 **Current Implementation Status**: ✅ **FULLY IMPLEMENTED**  
-**Last Updated**: July 2024  
-**Version**: 1.0 (Production Ready)
+**Last Updated**: December 2024  
+**Version**: 3.0.0 (Production Ready with Advanced Tokenization)
 
-This specification reflects the current implementation with all features fully functional and tested.
+This specification reflects the current implementation with all features fully functional and tested, including advanced tokenization, preprocessor handling, and model verification capabilities.
 
 ## 1. High-Level Functional Specification
 
-The C to PlantUML Converter is a Python-based tool that analyzes C/C++ source code projects and generates comprehensive PlantUML class diagrams. The system provides a complete workflow from source code parsing to structured diagram generation with advanced filtering and transformation capabilities.
+The C to PlantUML Converter is a Python-based tool that analyzes C/C++ source code projects and generates comprehensive PlantUML class diagrams. The system provides a complete workflow from source code parsing to structured diagram generation with advanced filtering and transformation capabilities, powered by robust tokenization and preprocessor handling.
 
 ### Core Functionality
-- **Source Code Analysis**: Deep parsing of C/C++ files including structs, enums, unions, functions, macros, typedefs, and global variables
-- **Recursive Search**: Configurable recursive directory search for comprehensive project analysis
+- **Advanced Source Code Analysis**: Deep parsing of C/C++ files using comprehensive tokenization, including structs, enums, unions, functions, macros, typedefs, and global variables
+- **Preprocessor Support**: Full handling of conditional compilation directives (#if, #ifdef, #ifndef, #elif, #else, #endif) with macro expansion
+- **Robust Tokenization**: Advanced lexical analysis with comprehensive C/C++ token recognition and classification
+- **Recursive Search**: Configurable recursive directory search for comprehensive project analysis with encoding detection
 - **Typedef Relationship Analysis**: Comprehensive parsing of typedef relationships with proper UML stereotypes («defines», «alias»)
 - **Union Support**: Full parsing and visualization of union definitions with fields
 - **Include Depth Processing**: Configurable depth for processing include relationships and their content
-- **Model Generation**: Creates comprehensive JSON-based abstract models of parsed code structures
-- **Diagram Generation**: Converts models into PlantUML class diagrams with proper UML notation
-- **Advanced Filtering**: Regex-based filtering of files and code elements
-- **Model Transformation**: Renaming, filtering, and addition of elements using configuration-driven rules
-- **File Selection for Transformations**: Apply transformations to all files or selected ones
-- **Structured Output**: Organized packaging of generated diagrams with customizable structure
+- **Model Generation**: Creates comprehensive JSON-based abstract models of parsed code structures with validation
+- **Model Verification**: Built-in sanity checking and validation of parsed models to ensure accuracy and detect issues
+- **Diagram Generation**: Converts models into PlantUML class diagrams with proper UML notation and formatting standards
+- **Advanced Filtering**: Regex-based filtering of files and code elements with pattern matching
+- **Model Transformation**: Multi-stage renaming, filtering, and addition of elements using configuration-driven rules
+- **File Selection for Transformations**: Apply transformations to all files or selected ones with regex patterns
+- **Structured Output**: Organized packaging of generated diagrams with customizable structure and artifact management
 
 ### Processing Flow
 The application follows a clear 3-step processing flow:
@@ -66,33 +69,45 @@ All steps can be executed individually or can be chained together.
 ## 3. Software Architecture and Structure
 
 ### 3.1 Overall Architecture
-The system follows a modular architecture with clear separation of concerns and 3 distinct processing steps:
+The system follows a modular architecture with clear separation of concerns and 3 distinct processing steps, now organized into specialized core components:
 
 ```
 c2puml/
 ├── main.py                 # CLI entry point and command routing
-├── parser.py               # Step 1: Parse C/C++ files and generate model.json
-├── transformer.py          # Step 2: Transform model based on configuration
-├── generator.py            # Step 3: Generate puml files based on model.json
-├── models.py               # Data models and serialization
 ├── config.py               # Configuration management and input file filtering
-└── __init__.py             # Package initialization
+├── models.py               # Data models and serialization
+├── utils.py                # Utility functions and helpers
+├── __init__.py             # Package initialization with backward compatibility
+└── core/                   # Core processing modules
+    ├── parser.py           # Step 1: Parse C/C++ files and generate model.json
+    ├── parser_tokenizer.py # Advanced C/C++ tokenization and lexical analysis
+    ├── preprocessor.py     # Preprocessor directive handling and conditional compilation
+    ├── transformer.py      # Step 2: Transform model based on configuration
+    ├── generator.py        # Step 3: Generate puml files based on model.json
+    ├── verifier.py         # Model validation and sanity checking
+    └── __init__.py         # Core module exports
 
 tests/
-├── unit/                   # Unit tests
+├── unit/                   # Unit tests (18 test files)
 │   ├── test_parser.py      # Parser functionality tests
+│   ├── test_parser_comprehensive.py # Comprehensive parser tests
+│   ├── test_parser_filtering.py # User configurable filtering tests
+│   ├── test_tokenizer.py   # Tokenizer functionality tests
+│   ├── test_preprocessor_*.py # Preprocessor tests
 │   ├── test_transformer.py # Transformer functionality tests
 │   ├── test_generator.py   # PlantUML generation tests
-│   ├── test_config.py      # Configuration tests
-│   └── test_parser_filtering.py # User configurable filtering tests
-├── feature/                # Feature tests
+│   ├── test_verifier.py    # Model verification tests
+│   └── test_config.py      # Configuration tests
+├── feature/                # Feature tests (10 test files)
 │   ├── test_integration.py # Complete workflow tests
-│   ├── test_parser_features.py # Parser feature tests
-│   ├── test_generator_features.py # Generator feature tests
-│   ├── test_transformer_features.py # Transformer feature tests
-│   └── test_project_analysis_features.py # Project analysis tests
-├── test_files/             # Test input files
-└── run_all_tests.py        # Test runner script
+│   ├── test_component_features.py # Component feature tests
+│   ├── test_cli_*.py       # CLI feature tests
+│   └── test_*_features.py  # Various feature test suites
+├── integration/            # Integration tests
+└── example/                # Example test data and configuration
+    ├── config.json         # Example configuration
+    ├── source/             # Example C/C++ source files
+    └── test-example.py     # Comprehensive example test suite
 ```
 
 ### 3.2 Core Components
@@ -104,47 +119,85 @@ tests/
   - Workflow orchestration (Steps 1-3)
   - Error handling and logging setup
 
-#### 3.2.2 Parser (`parser.py`)
+#### 3.2.2 Parser (`core/parser.py`)
 - **Purpose**: Step 1 - Parse C code files and generate model.json
 - **Responsibilities**: 
   - File discovery and essential filtering (hidden files, common exclude patterns)
-  - C/C++ source code parsing with configurable recursive search
-  - Model assembly and serialization
-  - Cross-platform file handling
+  - C/C++ source code parsing orchestration with configurable recursive search
+  - Model assembly and serialization using advanced tokenization
+  - Cross-platform file handling with encoding detection
   - Robust typedef parsing for struct/enum/union (named and anonymous)
   - Include dependency processing with configurable depth
+  - Integration with tokenizer, preprocessor, and verifier components
   - **Note**: Does NOT perform model element filtering - preserves all elements for transformer
 
-#### 3.2.3 Transformer (`transformer.py`)
+#### 3.2.3 Tokenizer (`core/parser_tokenizer.py`)
+- **Purpose**: Advanced C/C++ lexical analysis and tokenization
+- **Responsibilities**:
+  - Comprehensive C/C++ token recognition and classification
+  - Struct, enum, union, and function parsing with field extraction
+  - Complex typedef relationship analysis and resolution
+  - String literal and comment handling
+  - Operator and punctuation recognition
+  - Preprocessor directive tokenization
+  - Token stream management and navigation
+
+#### 3.2.4 Preprocessor (`core/preprocessor.py`)
+- **Purpose**: Handle preprocessor directives and conditional compilation
+- **Responsibilities**:
+  - #if, #elif, #else, #endif directive processing
+  - #ifdef, #ifndef conditional compilation
+  - #define and #undef macro management
+  - Macro expansion and substitution
+  - Conditional block evaluation and code filtering
+  - Nested preprocessor block handling
+  - Integration with tokenizer for directive detection
+
+#### 3.2.5 Verifier (`core/verifier.py`)
+- **Purpose**: Model validation and sanity checking
+- **Responsibilities**:
+  - Project model structure validation
+  - Field and function parameter validation
+  - Type name and identifier validation
+  - Include relationship verification
+  - Enum value and struct field consistency checking
+  - Comprehensive error reporting and issue tracking
+  - Post-parsing model quality assurance
+
+#### 3.2.6 Transformer (`core/transformer.py`)
 - **Purpose**: Step 2 - Transform model based on configuration
 - **Responsibilities**:
   - Configuration loading and validation
   - User-configured file filtering (essential filtering already done in parser)
   - Model element filtering (structs, enums, unions, functions, etc.)
-  - Model transformation and filtering
-  - Include depth processing
-  - Element renaming and addition
+  - Model transformation and filtering with pattern matching
+  - Include depth processing and relationship management
+  - Element renaming and addition with regex support
   - File selection for transformer actions (apply to all files or selected ones)
+  - Multi-stage transformation pipeline support
 
-#### 3.2.4 Configuration (`config.py`)
-- **Purpose**: Configuration management and input filtering
-- **Responsibilities**:
-  - Configuration loading and validation
-  - Regex pattern compilation and validation
-  - File and element filtering logic
-  - Configuration serialization and deserialization
-  - Backward compatibility handling
-  - Recursive search configuration management
-
-#### 3.2.5 Generator (`generator.py`)
+#### 3.2.7 Generator (`core/generator.py`)
 - **Purpose**: Step 3 - Generate puml files based on model.json
 - **Responsibilities**:
-  - PlantUML diagram generation
+  - PlantUML diagram generation with proper formatting and styling
   - Typedef relationship visualization with stereotypes («defines», «alias»)
-  - Header content display in diagrams
-  - Header-to-header relationship arrows
-  - Union field display
+  - Header content display in diagrams with proper UML notation
+  - Header-to-header relationship arrows and include tree management
+  - Union field display and complex type visualization
   - Enhanced typedef content and relationship display
+  - Output file organization and directory structure management
+  - PlantUML template compliance and formatting standards
+
+#### 3.2.8 Configuration (`config.py`)
+- **Purpose**: Configuration management and input filtering
+- **Responsibilities**:
+  - Configuration loading and validation with backward compatibility
+  - Regex pattern compilation and validation
+  - File and element filtering logic with advanced pattern matching
+  - Configuration serialization and deserialization
+  - File-specific configuration management
+  - Recursive search configuration management
+  - Multi-stage transformation configuration support
 
 ### 3.3 Data Models
 
@@ -258,11 +311,30 @@ The system uses a JSON-based configuration file with the following parameters:
 **Note**: The `recursive_search` parameter was renamed from `recursive` in a recent update for better clarity. The system maintains backward compatibility for configuration loading.
 
 ### 3.5 Command Interface
-The system provides multiple CLI commands for the 3-step workflow:
-- `parse`: Step 1 - Parse C projects and generate JSON models
-- `transform`: Step 2 - Transform JSON models based on configuration
-- `generate`: Step 3 - Convert JSON models to PlantUML diagrams
-- `workflow`: Complete workflow (Steps 1-3) using configuration files
+The system provides a simplified CLI with optional step specification:
+
+```bash
+# Full workflow (default) - all three steps
+c2puml --config config.json
+c2puml  # Uses current directory for configuration
+
+# Individual steps
+c2puml --config config.json parse      # Step 1: Parse only
+c2puml --config config.json transform  # Step 2: Transform only  
+c2puml --config config.json generate   # Step 3: Generate only
+
+# With verbose output
+c2puml --config config.json --verbose
+
+# Using config folder (merges all .json files)
+c2puml config_folder/
+```
+
+**CLI Commands:**
+- `parse`: Step 1 - Parse C projects and generate JSON models with advanced tokenization
+- `transform`: Step 2 - Transform JSON models based on configuration with filtering and renaming
+- `generate`: Step 3 - Convert JSON models to PlantUML diagrams with proper formatting
+- **Default (no command)**: Complete workflow (Steps 1-3) using configuration files
 
 ## 4. Testing Architecture
 
@@ -296,16 +368,25 @@ All tests are organized under the `tests/` directory with comprehensive coverage
 
 ### 4.3 Test Execution
 ```bash
-# Run all tests (recommended)
-python run_all_tests.py
+# Run all tests (recommended) - Main test runners
+python scripts/run_all_tests.py
+./scripts/run_all_tests.sh        # Linux/macOS
+scripts/run_all_tests.bat         # Windows
 
-# Run with shell script
-./test.sh
+# Run with coverage
+./scripts/run_tests_with_coverage.sh  # Linux/macOS (comprehensive coverage)
 
-# Run specific test categories
-python -m unittest tests.unit.test_parser
-python -m unittest tests.unit.test_generator
-python -m unittest tests.feature.test_integration
+# Run example workflow
+./scripts/run_example.sh          # Linux/macOS
+scripts/run_example.bat           # Windows
+
+# Run specific test categories using pytest
+pytest tests/unit/test_parser.py
+pytest tests/unit/test_tokenizer.py
+pytest tests/unit/test_preprocessor_handling.py
+pytest tests/unit/test_verifier.py
+pytest tests/feature/test_integration.py
+pytest tests/feature/test_component_features.py
 ```
 
 ## 5. PlantUML Output Specification
