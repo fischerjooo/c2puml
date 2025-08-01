@@ -1,4 +1,4 @@
 @echo off
 echo Formatting code with Black...
-python -m black c2puml/ tests/
+python -m black src/ tests/
 echo Code formatting completed!
