@@ -1,8 +1,15 @@
 @echo off
 setlocal enabledelayedexpansion
 
-set SCRIPT_DIR=%~dp0
-cd /d %SCRIPT_DIR%..
+echo Windows c2puml Example Runner
+echo =============================
+
+REM Check if we're in the right directory
+if not exist "pyproject.toml" (
+    echo Error: pyproject.toml not found. Please run this script from the project root directory.
+    pause
+    exit /b 1
+)
 
 REM Check if c2puml is installed
 python -c "import c2puml" >nul 2>&1
@@ -14,7 +21,7 @@ if errorlevel 1 (
         python -m pip install -e . --break-system-packages
         if errorlevel 1 (
             echo Error: Could not install c2puml package
-            echo Please run scripts\setup.bat first
+            echo Please check your Python installation and try again.
             pause
             exit /b 1
         )
@@ -27,29 +34,34 @@ echo Cleaning previous output...
 if exist "artifacts\output_example" rmdir /s /q "artifacts\output_example"
 if exist "tests\example\artifacts\output_example" rmdir /s /q "tests\example\artifacts\output_example"
 
-REM Run the full workflow using the new CLI interface
+REM Run the full workflow
 echo Running example workflow with config.json...
 set PYTHONPATH=src
 python -m c2puml.main --config tests/example/config.json --verbose
 
 if errorlevel 1 (
-    echo Error: Failed to run c2puml
-    echo This might be a PATH issue. Trying alternative approach...
     echo.
-    echo Alternative commands to try:
-    echo   python -m c2puml.main --config tests/example/config.json --verbose
-    echo   c2puml --config tests/example/config.json --verbose
+    echo Error: Failed to run c2puml
+    echo.
+    echo Troubleshooting steps:
+    echo 1. Make sure Python is installed and in PATH
+    echo 2. Try running: python -m pip install -e . --break-system-packages
+    echo 3. Check the WINDOWS_SETUP.md file for more help
+    echo.
     pause
     exit /b 1
 )
 
-echo PlantUML diagrams generated in: ./artifacts/output_example (see config.json)
+echo.
+echo PlantUML diagrams generated in: ./artifacts/output_example
+echo.
 
-REM Run assertions to validate the generated PUML files
+REM Run assertions
 echo Running assertions to validate generated PUML files...
 cd tests/example
 python test-example.py
 
 echo.
 echo Example completed successfully!
+echo Check the generated diagrams in: ..\..\artifacts\output_example
 pause
