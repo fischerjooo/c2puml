@@ -29,7 +29,7 @@ jobs:
     
     concurrency:
       group: "deploy-website"
-      cancel-in-progress: false
+      cancel-in-progress: true
     
     steps:
     - name: ⏳ Wait for other workflows to complete
