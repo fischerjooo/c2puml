@@ -74,17 +74,17 @@ class "Process_T" as TYPEDEF_PROCESS_T <<typedef>> #LightYellow
 
 class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<typedef>> #LightYellow
 {
-    + void * ( * alloc_func ) ( size_t )
-    + void ( * free_func ) ( void * )
-    + int ( * resize_func ) ( void * * , size_t )
+    + void * ( * alloc_func ) ( size_t ) alloc_func
+    + void ( * free_func ) ( void * ) free_func
     + int max_size
+    + int ( * resize_func ) ( void * * , size_t ) resize_func
 }
 
 class "complex_handler_t" as TYPEDEF_COMPLEX_HANDLER_T <<typedef>> #LightYellow
 {
-    + int ( * validate_func ) ( const char * )
-    + void ( * format_func ) ( char * , int )
+    + void ( * format_func ) ( char * , int ) format_func
     + int id
+    + int ( * validate_func ) ( const char * ) validate_func
 }
 
 class "data_item_t" as TYPEDEF_DATA_ITEM_T <<typedef>> #LightYellow
@@ -95,11 +95,11 @@ class "data_item_t" as TYPEDEF_DATA_ITEM_T <<typedef>> #LightYellow
 
 class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<typedef>> #LightYellow
 {
-    + void ( * init_func ) ( void )
-    + int ( * process_func ) ( int , int )
-    + void ( * cleanup_func ) ( void )
+    + void ( * cleanup_func ) ( void ) cleanup_func
     + int id
+    + void ( * init_func ) ( void ) init_func
     + char[16] name
+    + int ( * process_func ) ( int , int ) process_func
 }
 
 class "operation_set_t" as TYPEDEF_OPERATION_SET_T <<typedef>> #LightYellow
@@ -111,17 +111,17 @@ class "operation_set_t" as TYPEDEF_OPERATION_SET_T <<typedef>> #LightYellow
 
 class "param4" as TYPEDEF_PARAM4 <<typedef>> #LightYellow
 {
-    + void ( * nested_func ) ( int )
     + int nested1
     + char * nested2
+    + void ( * nested_func ) ( int ) nested_func
 }
 
 class "processor_t" as TYPEDEF_PROCESSOR_T <<typedef>> #LightYellow
 {
-    + int ( * process_func ) ( int , char * )
-    + void ( * cleanup_func ) ( void * )
+    + void ( * cleanup_func ) ( void * ) cleanup_func
     + int id
     + char[64] name
+    + int ( * process_func ) ( int , char * ) process_func
 }
 
 class "operation_type_t" as TYPEDEF_OPERATION_TYPE_T <<typedef>> #LightYellow
@@ -217,10 +217,10 @@ class "uint8" as TYPEDEF_UINT8 <<typedef>> #LightYellow
 
 class "mixed_union_t" as TYPEDEF_MIXED_UNION_T <<typedef>> #LightYellow
 {
-    + void ( * void_func ) ( void )
-    + int ( * int_func ) ( int )
+    + int ( * int_func ) ( int ) int_func
     + int int_val
     + char * str_val
+    + void ( * void_func ) ( void ) void_func
 }
 
 

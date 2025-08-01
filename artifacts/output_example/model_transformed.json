@@ -849,18 +849,18 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "void * ( * alloc_func ) ( size_t",
+              "name": "alloc_func",
+              "type": "void * ( * alloc_func ) ( size_t )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * free_func ) ( void *",
+              "name": "free_func",
+              "type": "void ( * free_func ) ( void * )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * resize_func ) ( void * * , size_t",
+              "name": "resize_func",
+              "type": "int ( * resize_func ) ( void * * , size_t )",
               "value": null
             }
           ],
@@ -877,13 +877,13 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * validate_func ) ( const char *",
+              "name": "validate_func",
+              "type": "int ( * validate_func ) ( const char * )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * format_func ) ( char * , int",
+              "name": "format_func",
+              "type": "void ( * format_func ) ( char * , int )",
               "value": null
             }
           ],
@@ -923,18 +923,18 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * init_func ) ( void",
+              "name": "init_func",
+              "type": "void ( * init_func ) ( void )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * process_func ) ( int , int",
+              "name": "process_func",
+              "type": "int ( * process_func ) ( int , int )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * cleanup_func ) ( void",
+              "name": "cleanup_func",
+              "type": "void ( * cleanup_func ) ( void )",
               "value": null
             }
           ],
@@ -981,8 +981,8 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * nested_func ) ( int",
+              "name": "nested_func",
+              "type": "void ( * nested_func ) ( int )",
               "value": null
             }
           ],
@@ -1004,13 +1004,13 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * process_func ) ( int , char *",
+              "name": "process_func",
+              "type": "int ( * process_func ) ( int , char * )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * cleanup_func ) ( void *",
+              "name": "cleanup_func",
+              "type": "void ( * cleanup_func ) ( void * )",
               "value": null
             }
           ],
@@ -1034,13 +1034,13 @@
               "value": null
             },
             {
-              "name": ")",
-              "type": "void ( * void_func ) ( void",
+              "name": "void_func",
+              "type": "void ( * void_func ) ( void )",
               "value": null
             },
             {
-              "name": ")",
-              "type": "int ( * int_func ) ( int",
+              "name": "int_func",
+              "type": "int ( * int_func ) ( int )",
               "value": null
             }
           ],
