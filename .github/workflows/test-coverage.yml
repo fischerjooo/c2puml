@@ -141,12 +141,12 @@ jobs:
           if [ "$SHOULD_COMMIT" = "true" ]; then
             # Add coverage reports
             echo "📁 Adding coverage reports to git..."
-            git add tests/reports/
+            git add artifacts/test_reports/
             
             # Ensure HTML coverage reports are included
-            if [ -d "tests/reports/coverage/htmlcov" ]; then
+            if [ -d "artifacts/coverage/htmlcov" ]; then
               echo "📁 Adding HTML coverage reports..."
-              git add tests/reports/coverage/htmlcov/
+              git add artifacts/coverage/htmlcov/
             else
               echo "⚠️ HTML coverage reports directory not found"
             fi
@@ -179,7 +179,7 @@ jobs:
               } > /tmp/commit_msg
 
               # Add list of generated files
-              find tests/reports -type f -name "*" | sort | sed 's/^/- /' >> /tmp/commit_msg
+              find artifacts/test_reports -type f -name "*" | sort | sed 's/^/- /' >> /tmp/commit_msg
 
               echo "" >> /tmp/commit_msg
               echo "- Updated coverage analysis" >> /tmp/commit_msg
@@ -236,14 +236,14 @@ jobs:
                       echo "🔄 Cherry-pick conflict detected, attempting automatic resolution..."
                       
                       # For coverage reports, prefer our changes
-                      git add tests/reports/ || true
+                      git add artifacts/test_reports/ || true
                       if ! git cherry-pick --continue; then
                         echo "⚠️ Manual resolution required, using force strategy..."
                         git cherry-pick --abort
                         
                         # Copy our changes manually
-                        git checkout "$COMMIT_HASH" -- tests/reports/ || true
-                        git add tests/reports/ || true
+                        git checkout "$COMMIT_HASH" -- artifacts/test_reports/ || true
+                        git add artifacts/test_reports/ || true
                         
                         if git diff --staged --quiet; then
                           echo "ℹ️ No changes to commit after conflict resolution"
@@ -261,7 +261,7 @@ jobs:
                       echo "🔄 Rebase conflict detected, attempting resolution..."
                       
                       # For coverage reports, prefer our changes
-                      git add tests/reports/ || true
+                      git add artifacts/test_reports/ || true
                       if ! git rebase --continue; then
                         echo "⚠️ Rebase failed, trying merge strategy..."
                         git rebase --abort
@@ -271,7 +271,7 @@ jobs:
                           echo "⚠️ Merge failed, using reset and force strategy..."
                           git merge --abort || true
                           git reset --hard "origin/$TARGET_BRANCH"
-                          git add tests/reports/
+                          git add artifacts/test_reports/
                           git commit -F /tmp/commit_msg || true
                         }
                       fi
@@ -342,7 +342,7 @@ jobs:
         if: always() # Upload even if tests failed
         with:
           name: test-coverage-reports-py${{ matrix.python-version }}
-          path: tests/reports/
+          path: artifacts/test_reports/
           retention-days: 30
 
       - name: 🎯 Test Results Summary
@@ -351,14 +351,14 @@ jobs:
           echo "## 🎯 Final Test Results Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ -d tests/reports/coverage/htmlcov ]; then
+          if [ -d artifacts/coverage/htmlcov ]; then
             echo "📊 HTML coverage reports generated successfully!" >> $GITHUB_STEP_SUMMARY
-            echo "- [HTML Coverage Report](tests/reports/coverage/htmlcov/index.html)" >> $GITHUB_STEP_SUMMARY
-            echo "- [Test Summary](tests/reports/test-summary.txt)" >> $GITHUB_STEP_SUMMARY
-          elif [ -f tests/reports/coverage/index.html ]; then
+            echo "- [HTML Coverage Report](artifacts/coverage/htmlcov/index.html)" >> $GITHUB_STEP_SUMMARY
+            echo "- [Test Summary](artifacts/test_reports/test-summary.txt)" >> $GITHUB_STEP_SUMMARY
+          elif [ -f artifacts/coverage/index.html ]; then
             echo "📊 Coverage reports generated successfully!" >> $GITHUB_STEP_SUMMARY
-            echo "- [Coverage Report](tests/reports/coverage/index.html)" >> $GITHUB_STEP_SUMMARY
-            echo "- [Test Summary](tests/reports/test-summary.txt)" >> $GITHUB_STEP_SUMMARY
+            echo "- [Coverage Report](artifacts/coverage/index.html)" >> $GITHUB_STEP_SUMMARY
+            echo "- [Test Summary](artifacts/test_reports/test-summary.txt)" >> $GITHUB_STEP_SUMMARY
           fi
 
           echo "" >> $GITHUB_STEP_SUMMARY

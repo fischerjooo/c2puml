@@ -4,7 +4,7 @@
     "tests/example/source",
     "tests/example/source"
   ],
-  "output_dir": "./output",
+  "output_dir": "./artifacts/output_example",
   "model_output_path": "model.json",
   "recursive_search": true,
   "include_depth": 10,

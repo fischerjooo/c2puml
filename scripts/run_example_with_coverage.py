@@ -123,8 +123,8 @@ def run_example_generation():
 
     # Check if output files were generated
     expected_outputs = [
-        "output/model.json",
-        "output/model_transformed.json",
+                    "artifacts/output_example/model.json",
+            "artifacts/output_example/model_transformed.json",
     ]
 
     print_info("\nChecking generated outputs...")

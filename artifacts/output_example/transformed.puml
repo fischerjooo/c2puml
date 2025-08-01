@@ -1,0 +1,72 @@
+@startuml transformed
+
+class "transformed" as TRANSFORMED <<source>> #LightBlue
+{
+    -- Macros --
+    - #define LEGACY_VERSION
+    -- Functions --
+    void keep_this_function()
+    int legacy_calculate(int a, int b)
+    void legacy_print_info(const char * message)
+    int main()
+    void * old_create_point(int x, int y)
+}
+
+class "transformed" as HEADER_TRANSFORMED <<header>> #LightGreen
+{
+    -- Macros --
+    + #define LEGACY_API_VERSION
+    + #define TRANSFORMED_H
+    -- Global Variables --
+    + char * system_path
+    -- Functions --
+    + void cleanup_resources()
+    + status_t initialize_system()
+    + void keep_this_function()
+    + void legacy_cleanup()
+    + int legacy_init(void * config)
+    + int main()
+    + void * old_create_config(const char * name)
+    + void process_data(const point3d_t * point)
+}
+
+class "old_point" as TYPEDEF_OLD_POINT <<typedef>> #LightYellow
+{
+    + int x
+    + int y
+}
+
+class "modern_config" as TYPEDEF_MODERN_CONFIG <<typedef>> #LightYellow
+{
+    + int flags
+    + char[64] name
+    + int version
+}
+
+class "point3d_t" as TYPEDEF_POINT3D_T <<typedef>> #LightYellow
+{
+    + int x
+    + int y
+    + int z
+}
+
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+{
+    + STATUS_ERROR
+    + STATUS_OK
+    + STATUS_PENDING
+}
+
+
+' Include relationships
+TRANSFORMED --> HEADER_TRANSFORMED : <<include>>
+
+' Declaration relationships
+TRANSFORMED ..> TYPEDEF_OLD_POINT : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_MODERN_CONFIG : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_POINT3D_T : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_STATUS_T : <<declares>>
+
+' Uses relationships
+
+@enduml

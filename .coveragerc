@@ -41,12 +41,12 @@ fail_under = 50
 
 [html]
 # Directory for HTML output
-directory = tests/reports/coverage/htmlcov
+directory = artifacts/coverage/htmlcov
 
 [xml]
 # File for XML output
-output = tests/reports/coverage/coverage.xml
+output = artifacts/coverage/coverage.xml
 
 [json]
 # File for JSON output
-output = tests/reports/coverage/coverage.json
+output = artifacts/coverage/coverage.json
