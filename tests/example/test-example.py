@@ -96,8 +96,8 @@ class PUMLValidator:
     def _find_output_directory(self) -> Path:
         """Find the output directory path."""
         if Path.cwd().name == "example":
-            return Path("../../output")
-        return Path("output")
+            return Path("../../artifacts/output_example")
+        return Path("artifacts/output_example")
 
     def _add_result(
         self,
