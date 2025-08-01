@@ -8,7 +8,6 @@ name: Convert PlantUML to PNG
 # 1. Manual workflow_dispatch (for manual runs)
 # 2. workflow_call from test-coverage.yml (for automated runs after PR merge)
 # 3. push trigger on main/master branches when PlantUML files change (for direct commits)
-# 4. push trigger on feature branches when PlantUML files change (for testing)
 #
 # The workflow uses concurrency control to prevent multiple simultaneous executions
 # that could conflict when committing generated images.
@@ -42,11 +41,9 @@ on:
       - 'picgen.sh'
       - '.github/workflows/puml2png.yml'
     branches: 
-      # Include main/master for direct commits
+      # Only run on main/master branches for push triggers
       - main
       - master
-      # Include feature branches for testing PUML changes
-      - '**'
 
 jobs:
   convert-puml:
@@ -65,15 +62,8 @@ jobs:
       run: |
         echo "🔍 Checking if this execution should be skipped to avoid duplication..."
         
-        # Skip if this is a push trigger on main/master from a recent merge
-        # and the test-coverage workflow has run recently (within last 5 minutes)
-        if [ "${{ github.event_name }}" = "push" ] && ( [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.ref }}" = "refs/heads/master" ] ); then
-          echo "📋 This is a push to main/master branch"
-          
-          # Check if there are recent test-coverage workflow runs
-          echo "🔍 Checking for recent test-coverage workflow runs..."
-          
-          # Get the commit author to see if it's a merge commit
+        # Skip if this is a push trigger from a merge commit (likely handled by test-coverage workflow)
+        if [ "${{ github.event_name }}" = "push" ]; then
           COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
           echo "Commit message: $COMMIT_MESSAGE"
           
@@ -87,7 +77,7 @@ jobs:
             echo "skip_execution=false" >> $GITHUB_OUTPUT
           fi
         else
-          echo "✅ Not a push to main/master or different trigger type, proceeding"
+          echo "✅ Manual trigger or workflow_call, proceeding"
           echo "skip_execution=false" >> $GITHUB_OUTPUT
         fi
         
