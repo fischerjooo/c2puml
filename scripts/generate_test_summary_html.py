@@ -284,9 +284,9 @@ def generate_html_summary(stats: Dict, output_file: Path) -> None:
     <div class="container">
         <div class="nav">
             <a href="../../index.html">🏠 Home</a>
-                          <a href="../../artifacts/coverage/htmlcov/index.html">📊 Coverage</a>
+            <a href="../../artifacts/coverage/htmlcov/index.html">📊 Coverage</a>
             <span style="background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 4px;">📝 Tests</span>
-                            <a href="../../artifacts/output_example/diagram_index.html">📊 Diagrams</a>
+            <a href="../../artifacts/output_example/diagram_index.html">📊 Diagrams</a>
             <a href="https://github.com/fischerjooo/c2puml/tree/main/tests/example">📋 Example</a>
         </div>
 
