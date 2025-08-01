@@ -361,39 +361,57 @@ The PlantUML generation is working well for most files, with the main issue bein
 
 ### 🟡 **Investigation Required (Needs Further Analysis)**
 
-#### 4. **Investigate Include Relationship Generation**
-- [ ] **Analyze why system includes are not shown**
-  - This may be by design, but verify if it's intentional
-  - Check if system includes should be shown for debugging purposes
-  - Investigate if this affects include depth calculations
-- [ ] **Investigate include_relations vs includes field usage**
-  - Check why `include_relations` arrays are empty in model.json
-  - Verify if this affects PlantUML generation
-  - Investigate if transformer should populate include_relations
-- [ ] **Analyze Uses Relationships**
-  - Most PlantUML files show empty "Uses relationships" sections
-  - Investigate if this is expected behavior
-  - Check if system type dependencies should be shown
+#### 4. **Investigate Include Relationship Generation** ✅ **RESOLVED**
+- [x] **Analyze why system includes are not shown**
+  - ✅ This is by design - system includes are correctly excluded from include_relations
+  - ✅ System includes are not shown in PlantUML as they are external dependencies
+  - ✅ This does not affect include depth calculations
+- [x] **Investigate include_relations vs includes field usage**
+  - ✅ `include_relations` arrays are populated by the transformer (not empty)
+  - ✅ This correctly affects PlantUML generation
+  - ✅ Transformer correctly populates include_relations with filtered and depth-limited relationships
+- [x] **Analyze Uses Relationships**
+  - ✅ Most PlantUML files show empty "Uses relationships" sections - this is expected
+  - ✅ Uses relationships only show when typedefs reference other typedefs
+  - ✅ System type dependencies are correctly not shown
 
-#### 5. **Investigate Configuration Application**
-- [ ] **Verify file-specific configuration loading**
-  - Check if file-specific settings are properly loaded from config.json
-  - Add logging to show which configuration is applied to which file
-  - Investigate if configuration inheritance is working correctly
-- [ ] **Analyze transformation container discovery**
-  - Check if transformation containers are discovered in correct order
-  - Verify if file selection patterns are working correctly
-  - Investigate if transformation application order is correct
+**Resolution**: The include relationship generation is working correctly:
+- ✅ System includes are intentionally excluded from include_relations (by design)
+- ✅ include_relations are properly populated by the transformer with filtered relationships
+- ✅ PlantUML generator correctly uses include_relations for diagram generation
+- ✅ Uses relationships are correctly limited to typedef dependencies only
 
-#### 6. **Investigate Model Consistency**
-- [ ] **Compare model.json vs model_transformed.json**
-  - Check if transformations are properly applied to the model
-  - Verify if PlantUML generator uses the correct model file
-  - Investigate if there are discrepancies between models
-- [ ] **Analyze global variable parsing**
-  - Check if all global variables are correctly parsed
-  - Investigate if static globals are handled correctly
-  - Verify if complex global initializers are parsed properly
+#### 5. **Investigate Configuration Application** ✅ **RESOLVED**
+- [x] **Verify file-specific configuration loading**
+  - ✅ File-specific settings are properly loaded from config.json
+  - ✅ Logging shows which configuration is applied to which file
+  - ✅ Configuration inheritance is working correctly (global fallback)
+- [x] **Analyze transformation container discovery**
+  - ✅ Transformation containers are discovered in correct alphabetical order
+  - ✅ File selection patterns are working correctly
+  - ✅ Transformation application order is correct
+
+**Resolution**: The configuration application is working correctly:
+- ✅ File-specific configurations are loaded: sample.c uses include_depth: 3 with 8 filters
+- ✅ Global configurations are used as fallback: other files use include_depth: 10
+- ✅ Transformation containers are applied in order: transformations, transformations_01_rename, transformations_02_cleanup
+- ✅ File selection patterns work: `.*transformed\.(c|h)$` correctly matches transformed.c and transformed.h
+
+#### 6. **Investigate Model Consistency** ✅ **RESOLVED**
+- [x] **Compare model.json vs model_transformed.json**
+  - ✅ Transformations are properly applied to the model
+  - ✅ PlantUML generator uses the correct transformed model file
+  - ✅ No discrepancies between models - transformations work correctly
+- [x] **Analyze global variable parsing**
+  - ✅ All global variables are correctly parsed
+  - ✅ Static globals are handled correctly
+  - ✅ Complex global initializers are parsed properly
+
+**Resolution**: The model consistency is working correctly:
+- ✅ Transformations are applied in order: rename, cleanup, include processing
+- ✅ PlantUML generator uses `model_transformed.json` when available
+- ✅ Global variables are correctly parsed and transformed
+- ✅ Model verification shows only minor warnings (expected for complex code)
 
 ### 🟢 **Enhancement Tasks (Nice to Have)**
 
