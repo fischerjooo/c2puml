@@ -1,0 +1,76 @@
+@startuml database
+
+class "database" as DATABASE <<source>> #LightBlue
+{
+    -- Functions --
+    int database_begin_transaction(DatabaseConfig * config)
+    int database_commit_transaction(DatabaseConfig * config)
+    int database_connect(DatabaseConfig * config)
+    void database_disconnect(DatabaseConfig * config)
+    QueryResult * database_execute_query(DatabaseConfig * config, const char * query)
+    int database_execute_update(DatabaseConfig * config, const char * query)
+    void database_free_result(QueryResult * result)
+    const char * database_get_error(const DatabaseConfig * config)
+    int database_is_connected(const DatabaseConfig * config)
+    int database_rollback_transaction(DatabaseConfig * config)
+}
+
+class "database" as HEADER_DATABASE <<header>> #LightGreen
+{
+    -- Macros --
+    + #define DATABASE_H
+    + #define MAX_DB_NAME_LENGTH
+    + #define MAX_QUERY_LENGTH
+    -- Functions --
+    + int database_begin_transaction(DatabaseConfig * config)
+    + int database_commit_transaction(DatabaseConfig * config)
+    + int database_connect(DatabaseConfig * config)
+    + void database_disconnect(DatabaseConfig * config)
+    + int database_escape_string(const DatabaseConfig * config, const char * input, char * output, ...)
+    + QueryResult * database_execute_query(DatabaseConfig * config, const char * query)
+    + int database_execute_update(DatabaseConfig * config, const char * query)
+    + void database_free_result(QueryResult * result)
+    + const char * database_get_error(const DatabaseConfig * config)
+    + int database_is_connected(const DatabaseConfig * config)
+    + int database_rollback_transaction(DatabaseConfig * config)
+}
+
+class "DatabaseConfig" as TYPEDEF_DATABASECONFIG <<typedef>> #LightYellow
+{
+    + void * connection
+    + char[MAX_DB_NAME_LENGTH] db_name
+    + char[256] host
+    + char[128] password
+    + int port
+    + DatabaseType type
+    + char[128] username
+}
+
+class "QueryResult" as TYPEDEF_QUERYRESULT <<typedef>> #LightYellow
+{
+    + int column_count
+    + char * * column_names
+    + char * * data
+    + int row_count
+}
+
+class "DatabaseType" as TYPEDEF_DATABASETYPE <<typedef>> #LightYellow
+{
+    + DB_TYPE_MYSQL
+    + DB_TYPE_POSTGRESQL
+    + DB_TYPE_SQLITE
+}
+
+
+' Include relationships
+DATABASE --> HEADER_DATABASE : <<include>>
+
+' Declaration relationships
+HEADER_DATABASE ..> TYPEDEF_DATABASECONFIG : <<declares>>
+HEADER_DATABASE ..> TYPEDEF_QUERYRESULT : <<declares>>
+HEADER_DATABASE ..> TYPEDEF_DATABASETYPE : <<declares>>
+
+' Uses relationships
+TYPEDEF_DATABASECONFIG ..> TYPEDEF_DATABASETYPE : <<uses>>
+
+@enduml
