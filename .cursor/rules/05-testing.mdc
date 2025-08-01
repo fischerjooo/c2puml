@@ -1,15 +1,28 @@
-# Testing
+# Testing & Workflow
 
-## Test Framework and Structure
-- Use `pytest` for all unit and integration tests.
-- Name all test files with the prefix `test_`, and place them in the `tests/` directory.
+## Test Structure  
+- `tests/unit/`: Individual components
+- `tests/feature/`: Complete workflows  
+- `tests/integration/`: End-to-end scenarios
+- Target 90%+ coverage with pytest
 
-## Test Structure
-- **Unit Tests** (`tests/unit/`): Test individual components
-- **Feature Tests** (`tests/feature/`): Test complete workflows
-- **Integration Tests** (`tests/integration/`): Test comprehensive scenarios
+## Development Workflow
+```bash
+# Debug & development
+./scripts/run_all_tests.sh
 
-## Test Coverage Requirements
-- Every new function must be accompanied by tests that cover normal, edge, and failure cases.
-- Target 90%+ test coverage, tracked by `coverage.py`.
-- Avoid testing internal implementation details; test behaviors instead.
+# Integration testing  
+./scripts/run_example.sh
+
+# Full regression testing
+./scripts/run_all.sh
+
+# Generate PNG images (optional)
+./scripts/picgen.sh
+```
+
+## TDD Process
+1. Write failing test that reproduces issue/requirement
+2. Implement minimum code to make test pass
+3. Refactor while keeping tests green
+4. Add tests for edge cases and error conditions

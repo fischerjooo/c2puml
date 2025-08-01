@@ -3857,9 +3857,7 @@
         "string.h",
         "transformed.h"
       ],
-      "macros": [
-        "LEGACY_VERSION"
-      ],
+      "macros": [],
       "name": "transformed.c",
       "structs": {
         "old_point": {
@@ -3884,7 +3882,13 @@
       "unions": {}
     },
     "transformed.h": {
-      "aliases": {},
+      "aliases": {
+        "config_t": {
+          "name": "config_t",
+          "original_type": "void *",
+          "uses": []
+        }
+      },
       "enums": {
         "status_t": {
           "name": "status_t",
@@ -3942,7 +3946,7 @@
           "parameters": [
             {
               "name": "config",
-              "type": "void *",
+              "type": "config_t *",
               "value": null
             }
           ],
@@ -3966,7 +3970,7 @@
               "value": null
             }
           ],
-          "return_type": "void *"
+          "return_type": "config_t *"
         },
         {
           "is_declaration": true,

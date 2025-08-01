@@ -2,8 +2,6 @@
 
 class "transformed" as TRANSFORMED <<source>> #LightBlue
 {
-    -- Macros --
-    - #define LEGACY_VERSION
     -- Functions --
     void keep_this_function()
     int legacy_calculate(int a, int b)
@@ -24,9 +22,9 @@ class "transformed" as HEADER_TRANSFORMED <<header>> #LightGreen
     + status_t initialize_system()
     + void keep_this_function()
     + void legacy_cleanup()
-    + int legacy_init(void * config)
+    + int legacy_init(config_t * config)
     + int main()
-    + void * old_create_config(const char * name)
+    + config_t * old_create_config(const char * name)
     + void process_data(const point3d_t * point)
 }
 
@@ -57,6 +55,11 @@ class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
     + STATUS_PENDING
 }
 
+class "config_t" as TYPEDEF_CONFIG_T <<typedef>> #LightYellow
+{
+    + void *
+}
+
 
 ' Include relationships
 TRANSFORMED --> HEADER_TRANSFORMED : <<include>>
@@ -66,6 +69,7 @@ TRANSFORMED ..> TYPEDEF_OLD_POINT : <<declares>>
 HEADER_TRANSFORMED ..> TYPEDEF_MODERN_CONFIG : <<declares>>
 HEADER_TRANSFORMED ..> TYPEDEF_POINT3D_T : <<declares>>
 HEADER_TRANSFORMED ..> TYPEDEF_STATUS_T : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_CONFIG_T : <<declares>>
 
 ' Uses relationships
 

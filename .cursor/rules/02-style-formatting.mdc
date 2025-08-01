@@ -1,14 +1,13 @@
-# Style and Formatting
+# Code Style & Quality
 
-## Naming Conventions
-- Use `snake_case` for variables and function names.
-- Use `PascalCase` for class names.
+## Naming & Formatting
+- Variables/functions: `snake_case`
+- Classes: `PascalCase`  
+- 4 spaces, 88 char limit (Black formatting)
+- Type hints required on all functions
 
-## Code Formatting
-- Use 4 spaces per indent level.
-- Limit lines to 88 characters (follow Black formatting).
-
-## Git Pre-commit Hook
-- Use git pre-commit hooks to automatically run Black and isort before each commit.
-- This ensures consistent code formatting across the project.
-- Pre-commit hooks should be configured to format code and check for linting issues.
+## Quality Standards
+- No wildcard imports or mutable defaults
+- Prefer early returns over nested conditionals
+- Use Flake8, Pylint, Mypy for static analysis
+- Google-style docstrings for public APIs

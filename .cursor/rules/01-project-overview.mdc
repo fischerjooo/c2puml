@@ -1,22 +1,15 @@
-# Project Overview
+# C2PlantUML Project Overview
 
-This is a Python project focused on clean code and test-driven development practices for a C to PlantUML Converter.
-
-## Project Workflow Reference
-- Always consider the instructions and practices described in `workflow.md` as part of the coding and testing guidelines.
-- Align refactors, feature implementations, and test practices with the documented workflow whenever applicable.
+Python project that converts C/C++ code to PlantUML diagrams.
 
 ## Processing Flow
-1. **Parse C/C++ files** and generate model.json
-2. **Verify model sanity** - perform sanity checks on parsed values
-3. **Transform model** based on configuration
-4. **Generate PlantUML files** from the transformed model
+1. **Parse** C/C++ files → model.json
+2. **Verify** model sanity
+3. **Transform** model based on configuration  
+4. **Generate** PlantUML files
 
-## General Principles
-- Write readable, maintainable code following Pythonic conventions.
-- Every new function must have a corresponding test written first (TDD).
-- Keep each file focused on a single concern or responsibility.
-- Avoid side effects in functions unless explicitly needed.
-- Use modern Python packaging with pyproject.toml
-- Do not create new markdown files - only edit existing markdown files
-- Keep documentation concise and focused on practical usage
+## Core Principles
+- Test-driven development (TDD)
+- Single responsibility per file
+- Modern Python with pyproject.toml
+- Concise, practical documentation only
