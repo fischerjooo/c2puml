@@ -47,11 +47,6 @@
       "include_relations": [
         {
           "depth": 1,
-          "included_file": "common.h",
-          "source_file": "application.c"
-        },
-        {
-          "depth": 1,
           "included_file": "database.h",
           "source_file": "application.c"
         },
@@ -59,91 +54,6 @@
           "depth": 1,
           "included_file": "network.h",
           "source_file": "application.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "signal.h",
-          "source_file": "application.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "stdio.h",
-          "source_file": "application.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "stdlib.h",
-          "source_file": "application.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "string.h",
-          "source_file": "application.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "unistd.h",
-          "source_file": "application.c"
-        },
-        {
-          "depth": 2,
-          "included_file": "common.h",
-          "source_file": "database.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "mysql/mysql.h",
-          "source_file": "database.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "postgresql/libpq-fe.h",
-          "source_file": "database.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "sqlite3.h",
-          "source_file": "database.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "stdio.h",
-          "source_file": "database.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "stdlib.h",
-          "source_file": "database.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "arpa/inet.h",
-          "source_file": "network.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "common.h",
-          "source_file": "network.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "netdb.h",
-          "source_file": "network.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "netinet/in.h",
-          "source_file": "network.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "sys/socket.h",
-          "source_file": "network.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "unistd.h",
-          "source_file": "network.h"
         }
       ],
       "includes": [
@@ -598,36 +508,6 @@
           "depth": 1,
           "included_file": "complex.h",
           "source_file": "complex.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "stdio.h",
-          "source_file": "complex.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "stdlib.h",
-          "source_file": "complex.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "string.h",
-          "source_file": "complex.c"
-        },
-        {
-          "depth": 2,
-          "included_file": "stdbool.h",
-          "source_file": "complex.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "stddef.h",
-          "source_file": "complex.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "stdint.h",
-          "source_file": "complex.h"
         }
       ],
       "includes": [
@@ -1488,46 +1368,6 @@
           "depth": 1,
           "included_file": "database.h",
           "source_file": "database.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "errno.h",
-          "source_file": "database.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "string.h",
-          "source_file": "database.c"
-        },
-        {
-          "depth": 2,
-          "included_file": "common.h",
-          "source_file": "database.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "mysql/mysql.h",
-          "source_file": "database.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "postgresql/libpq-fe.h",
-          "source_file": "database.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "sqlite3.h",
-          "source_file": "database.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "stdio.h",
-          "source_file": "database.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "stdlib.h",
-          "source_file": "database.h"
         }
       ],
       "includes": [
@@ -2007,28 +1847,8 @@
       "globals": [],
       "include_relations": [
         {
-          "depth": 4,
-          "included_file": "stddef.h",
-          "source_file": "config.h"
-        },
-        {
-          "depth": 4,
-          "included_file": "stdint.h",
-          "source_file": "config.h"
-        },
-        {
           "depth": 1,
           "included_file": "geometry.h",
-          "source_file": "geometry.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "stdlib.h",
-          "source_file": "geometry.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "string.h",
           "source_file": "geometry.c"
         },
         {
@@ -2042,16 +1862,6 @@
           "source_file": "geometry.h"
         },
         {
-          "depth": 4,
-          "included_file": "config.h",
-          "source_file": "logger.h"
-        },
-        {
-          "depth": 4,
-          "included_file": "stdio.h",
-          "source_file": "logger.h"
-        },
-        {
           "depth": 3,
           "included_file": "config.h",
           "source_file": "math_utils.h"
@@ -2063,17 +1873,7 @@
         },
         {
           "depth": 3,
-          "included_file": "geometry.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 3,
           "included_file": "logger.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "stddef.h",
           "source_file": "sample.h"
         }
       ],
@@ -2219,38 +2019,13 @@
       ],
       "include_relations": [
         {
-          "depth": 3,
-          "included_file": "stddef.h",
-          "source_file": "config.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "stdint.h",
-          "source_file": "config.h"
-        },
-        {
           "depth": 1,
           "included_file": "logger.h",
           "source_file": "logger.c"
         },
         {
-          "depth": 1,
-          "included_file": "stdarg.h",
-          "source_file": "logger.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "string.h",
-          "source_file": "logger.c"
-        },
-        {
           "depth": 2,
           "included_file": "config.h",
-          "source_file": "logger.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "stdio.h",
           "source_file": "logger.h"
         }
       ],
@@ -2412,16 +2187,6 @@
       ],
       "globals": [],
       "include_relations": [
-        {
-          "depth": 3,
-          "included_file": "stddef.h",
-          "source_file": "config.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "stdint.h",
-          "source_file": "config.h"
-        },
         {
           "depth": 1,
           "included_file": "math_utils.h",
@@ -2686,63 +2451,8 @@
       "include_relations": [
         {
           "depth": 1,
-          "included_file": "errno.h",
-          "source_file": "network.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "fcntl.h",
-          "source_file": "network.c"
-        },
-        {
-          "depth": 1,
           "included_file": "network.h",
           "source_file": "network.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "stdio.h",
-          "source_file": "network.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "stdlib.h",
-          "source_file": "network.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "string.h",
-          "source_file": "network.c"
-        },
-        {
-          "depth": 2,
-          "included_file": "arpa/inet.h",
-          "source_file": "network.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "common.h",
-          "source_file": "network.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "netdb.h",
-          "source_file": "network.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "netinet/in.h",
-          "source_file": "network.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "sys/socket.h",
-          "source_file": "network.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "unistd.h",
-          "source_file": "network.h"
         }
       ],
       "includes": [
@@ -3091,31 +2801,6 @@
           "depth": 1,
           "included_file": "preprocessed.h",
           "source_file": "preprocessed.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "stdio.h",
-          "source_file": "preprocessed.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "stdlib.h",
-          "source_file": "preprocessed.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "string.h",
-          "source_file": "preprocessed.c"
-        },
-        {
-          "depth": 2,
-          "included_file": "stddef.h",
-          "source_file": "preprocessed.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "stdint.h",
-          "source_file": "preprocessed.h"
         }
       ],
       "includes": [
@@ -3684,11 +3369,6 @@
         },
         {
           "depth": 2,
-          "included_file": "stdio.h",
-          "source_file": "logger.h"
-        },
-        {
-          "depth": 2,
           "included_file": "config.h",
           "source_file": "math_utils.h"
         },
@@ -3713,33 +3393,8 @@
           "source_file": "sample.c"
         },
         {
-          "depth": 1,
-          "included_file": "stdio.h",
-          "source_file": "sample.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "stdlib.h",
-          "source_file": "sample.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "string.h",
-          "source_file": "sample.c"
-        },
-        {
           "depth": 2,
           "included_file": "config.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "geometry.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "logger.h",
           "source_file": "sample.h"
         }
       ],
@@ -4044,31 +3699,6 @@
       ],
       "include_relations": [
         {
-          "depth": 3,
-          "included_file": "stddef.h",
-          "source_file": "config.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "stdint.h",
-          "source_file": "config.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "stdio.h",
-          "source_file": "filtered_header.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "stdlib.h",
-          "source_file": "filtered_header.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "filtered_header.h",
-          "source_file": "first_level.h"
-        },
-        {
           "depth": 2,
           "included_file": "math_utils.h",
           "source_file": "geometry.h"
@@ -4085,32 +3715,12 @@
         },
         {
           "depth": 2,
-          "included_file": "stdio.h",
-          "source_file": "logger.h"
-        },
-        {
-          "depth": 2,
           "included_file": "config.h",
           "source_file": "math_utils.h"
         },
         {
           "depth": 2,
           "included_file": "config.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "geometry.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "logger.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "stddef.h",
           "source_file": "sample.h"
         },
         {
@@ -4141,21 +3751,6 @@
         {
           "depth": 1,
           "included_file": "sample.h",
-          "source_file": "sample2.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "stdio.h",
-          "source_file": "sample2.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "stdlib.h",
-          "source_file": "sample2.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "string.h",
           "source_file": "sample2.c"
         }
       ],
@@ -4252,28 +3847,8 @@
       "include_relations": [
         {
           "depth": 1,
-          "included_file": "stdio.h",
-          "source_file": "transformed.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "stdlib.h",
-          "source_file": "transformed.c"
-        },
-        {
-          "depth": 1,
-          "included_file": "string.h",
-          "source_file": "transformed.c"
-        },
-        {
-          "depth": 1,
           "included_file": "transformed.h",
           "source_file": "transformed.c"
-        },
-        {
-          "depth": 2,
-          "included_file": "stdio.h",
-          "source_file": "transformed.h"
         }
       ],
       "includes": [
@@ -4572,16 +4147,6 @@
           "source_file": "complex_example.h"
         },
         {
-          "depth": 3,
-          "included_file": "stddef.h",
-          "source_file": "config.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "stdint.h",
-          "source_file": "config.h"
-        },
-        {
           "depth": 2,
           "included_file": "math_utils.h",
           "source_file": "geometry.h"
@@ -4595,36 +4160,6 @@
           "depth": 2,
           "included_file": "config.h",
           "source_file": "logger.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "stdio.h",
-          "source_file": "logger.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "config.h",
-          "source_file": "math_utils.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "config.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "geometry.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "logger.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "stddef.h",
-          "source_file": "sample.h"
         },
         {
           "depth": 1,
@@ -4643,11 +4178,6 @@
         },
         {
           "depth": 1,
-          "included_file": "stdlib.h",
-          "source_file": "typedef_test.c"
-        },
-        {
-          "depth": 1,
           "included_file": "typedef_test.h",
           "source_file": "typedef_test.c"
         },
@@ -4658,17 +4188,7 @@
         },
         {
           "depth": 2,
-          "included_file": "logger.h",
-          "source_file": "typedef_test.h"
-        },
-        {
-          "depth": 2,
           "included_file": "sample.h",
-          "source_file": "typedef_test.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "stdint.h",
           "source_file": "typedef_test.h"
         }
       ],
