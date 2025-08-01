@@ -4,7 +4,7 @@ class "complex" as COMPLEX <<source>> #LightBlue
 {
     -- Global Variables --
     Process_Cfg_Process_acpfct_t Process_Cfg_Process_acpfct
-    math_operation_t global_math_ops [ 10 ]
+    math_operation_t global_math_ops[10]
     -- Functions --
     static Std_ReturnType ProcessorAdapter_Process(const Process_T * job_pst)
     static Std_ReturnType ProcessorHardware_Process(const Process_T * job_pst)
@@ -19,7 +19,7 @@ class "complex" as COMPLEX <<source>> #LightBlue
     static int modulo_operation(int a, int b)
     static int multiply_operation(int a, int b)
     static void print_result(int * data, int size)
-    int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], ...)
+    int process_with_callbacks(int data[], int size, math_operation_t operations[], ...)
     void run_complex_tests()
     static int subtract_operation(int a, int b)
     static int test_callback(int * item)
@@ -55,7 +55,7 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
     + void * create_handler(const char * name, int ( * init_func ) ( void * ) init_func, ...)
     + int execute_operations(int value, math_ops_array_t ops, int op_count unnamed)
     + math_operation_t * get_math_operations()
-    + int process_with_callbacks(int data [ ], int size, math_operation_t operations [ ], ...)
+    + int process_with_callbacks(int data[], int size, math_operation_t operations[], ...)
     + void test_processor_job_processing()
     + void test_processor_utility_macros()
 }
@@ -101,7 +101,7 @@ class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<typedef>> #LightYellow
 
 class "operation_set_t" as TYPEDEF_OPERATION_SET_T <<typedef>> #LightYellow
 {
-    + void ( * callbacks [ 3 ] ) ( int , char * )
+    + void ( * callbacks[3] ) ( int , char * )
     + int count
     + math_operation_t[5] operations
 }
