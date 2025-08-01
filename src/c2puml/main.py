@@ -15,7 +15,47 @@ import os
 import sys
 from pathlib import Path
 
+# Auto-resolve c2puml module path without installation
+def setup_module_path():
+    """Automatically add the src directory to Python path if c2puml module is not found."""
+    try:
+        import c2puml
+        return  # Module already available
+    except ImportError:
+        # Find the project root (where pyproject.toml is located)
+        current_dir = Path(__file__).resolve().parent
+        project_root = None
+        
+        # Walk up the directory tree to find pyproject.toml
+        for parent in [current_dir] + list(current_dir.parents):
+            if (parent / "pyproject.toml").exists():
+                project_root = parent
+                break
+        
+        if project_root:
+            src_path = project_root / "src"
+            if src_path.exists() and src_path not in sys.path:
+                sys.path.insert(0, str(src_path))
+                print(f"🔧 Auto-added {src_path} to Python path")
+                return True
+        
+        # If we can't find the project structure, try relative paths
+        script_dir = Path(__file__).resolve().parent
+        possible_paths = [
+            script_dir.parent.parent / "src",  # src/c2puml/main.py -> src/
+            script_dir.parent.parent.parent / "src",  # deeper nesting
+        ]
+        
+        for path in possible_paths:
+            if path.exists() and str(path) not in sys.path:
+                sys.path.insert(0, str(path))
+                print(f"🔧 Auto-added {path} to Python path")
+                return True
+        
+        return False
 
+# Call the path setup before any imports
+setup_module_path()
 
 from .config import Config
 from .core.generator import Generator
