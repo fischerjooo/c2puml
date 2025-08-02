@@ -375,7 +375,7 @@ void test_function() {
         # self.assertIn("struct Test_Struct", content)  # no + prefix in source files - REMOVED
         # Instead, verify struct appears as separate typedef class
         self.assertIn(
-            'class "Test_Struct" as TYPEDEF_TEST_STRUCT <<typedef>> #LightYellow',
+            'class "Test_Struct" as TYPEDEF_TEST_STRUCT <<struct>> #LightYellow',
             diagram,
         )
 
@@ -519,18 +519,18 @@ void test_function() {
 
         # Check that struct typedef classes are generated
         self.assertIn(
-            'class "Person" as TYPEDEF_PERSON <<typedef>> #LightYellow', diagram
+            'class "Person" as TYPEDEF_PERSON <<struct>> #LightYellow', diagram
         )
         self.assertIn(
-            'class "Config" as TYPEDEF_CONFIG <<typedef>> #LightYellow', diagram
+            'class "Config" as TYPEDEF_CONFIG <<struct>> #LightYellow', diagram
         )
 
         # Check that enum typedef classes are generated
         self.assertIn(
-            'class "Status" as TYPEDEF_STATUS <<typedef>> #LightYellow', diagram
+            'class "Status" as TYPEDEF_STATUS <<enumeration>> #LightYellow', diagram
         )
         self.assertIn(
-            'class "Color" as TYPEDEF_COLOR <<typedef>> #LightYellow', diagram
+            'class "Color" as TYPEDEF_COLOR <<enumeration>> #LightYellow', diagram
         )
 
         # Check that alias typedef classes are generated

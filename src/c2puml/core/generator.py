@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from ..models import FileModel, ProjectModel
+from ..models import Field, FileModel, Function, ProjectModel
 
 # PlantUML generation constants
 MAX_LINE_LENGTH = 120
@@ -101,7 +101,7 @@ class Generator:
 
         lines = [f"@startuml {basename}", ""]
 
-        self._generate_all_file_classes(lines, include_tree, uml_ids)
+        self._generate_all_file_classes(lines, include_tree, uml_ids, project_model)
         self._generate_relationships(lines, include_tree, uml_ids, project_model)
 
         lines.extend(["", "@enduml"])
@@ -112,13 +112,14 @@ class Generator:
         lines: List[str],
         include_tree: Dict[str, FileModel],
         uml_ids: Dict[str, str],
+        project_model: ProjectModel,
     ):
         """Generate all file classes (C files, headers, and typedefs)"""
         self._generate_file_classes_by_extension(
-            lines, include_tree, uml_ids, ".c", self._generate_c_file_class
+            lines, include_tree, uml_ids, project_model, ".c", self._generate_c_file_class
         )
         self._generate_file_classes_by_extension(
-            lines, include_tree, uml_ids, ".h", self._generate_header_class
+            lines, include_tree, uml_ids, project_model, ".h", self._generate_header_class
         )
         self._generate_typedef_classes_for_all_files(lines, include_tree, uml_ids)
 
@@ -127,13 +128,14 @@ class Generator:
         lines: List[str],
         include_tree: Dict[str, FileModel],
         uml_ids: Dict[str, str],
+        project_model: ProjectModel,
         extension: str,
         generator_method,
     ):
         """Generate file classes for files with specific extension"""
         for file_path, file_data in sorted(include_tree.items()):
             if file_path.endswith(extension):
-                generator_method(lines, file_data, uml_ids)
+                generator_method(lines, file_data, uml_ids, project_model)
 
     def _generate_typedef_classes_for_all_files(
         self,
@@ -339,23 +341,22 @@ class Generator:
                     lines.append(self._format_function_signature(func, prefix))
 
     def _generate_c_file_class(
-        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
+        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str], project_model: ProjectModel
     ):
         """Generate class for C file using filename-based keys"""
-        self._generate_file_class(
+        self._generate_file_class_with_visibility(
             lines,
             file_model,
             uml_ids,
+            project_model,
             class_type="source",
             color=COLOR_SOURCE,
             macro_prefix="- ",
-            global_prefix="",
-            function_prefix="",
             is_declaration_only=False,
         )
 
     def _generate_header_class(
-        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
+        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str], project_model: ProjectModel
     ):
         """Generate class for header file using filename-based keys"""
         self._generate_file_class(
@@ -369,6 +370,35 @@ class Generator:
             function_prefix="+ ",
             is_declaration_only=True,
         )
+
+    def _generate_file_class_with_visibility(
+        self,
+        lines: List[str],
+        file_model: FileModel,
+        uml_ids: Dict[str, str],
+        project_model: ProjectModel,
+        class_type: str,
+        color: str,
+        macro_prefix: str,
+        is_declaration_only: bool,
+    ):
+        """Generate class for source file with dynamic visibility based on header presence"""
+        basename = Path(file_model.name).stem
+        filename = Path(file_model.name).name
+        uml_id = uml_ids.get(filename)
+
+        if not uml_id:
+            return
+
+        lines.append(f'class "{basename}" as {uml_id} <<{class_type}>> {color}')
+        lines.append("{")
+
+        self._add_macros_section(lines, file_model, macro_prefix)
+        self._add_globals_section_with_visibility(lines, file_model, project_model)
+        self._add_functions_section_with_visibility(lines, file_model, project_model, is_declaration_only)
+
+        lines.append("}")
+        lines.append("")
 
     def _generate_file_class(
         self,
@@ -402,6 +432,54 @@ class Generator:
         lines.append("}")
         lines.append("")
 
+    def _add_globals_section_with_visibility(
+        self, lines: List[str], file_model: FileModel, project_model: ProjectModel
+    ):
+        """Add global variables section with visibility based on header presence"""
+        if file_model.globals:
+            lines.append(f"{INDENT}-- Global Variables --")
+            for global_var in sorted(file_model.globals, key=lambda x: x.name):
+                prefix = self._get_visibility_prefix_for_global(global_var, project_model)
+                lines.append(self._format_global_variable(global_var, prefix))
+
+    def _add_functions_section_with_visibility(
+        self,
+        lines: List[str],
+        file_model: FileModel,
+        project_model: ProjectModel,
+        is_declaration_only: bool = False,
+    ):
+        """Add functions section with visibility based on header presence"""
+        if file_model.functions:
+            lines.append(f"{INDENT}-- Functions --")
+            for func in sorted(file_model.functions, key=lambda x: x.name):
+                if is_declaration_only and func.is_declaration:
+                    prefix = "+ "
+                    lines.append(self._format_function_signature(func, prefix))
+                elif not is_declaration_only and not func.is_declaration:
+                    prefix = self._get_visibility_prefix_for_function(func, project_model)
+                    lines.append(self._format_function_signature(func, prefix))
+
+    def _get_visibility_prefix_for_global(self, global_var: Field, project_model: ProjectModel) -> str:
+        """Determine visibility prefix for a global variable based on header presence"""
+        # Check all header files (.h files) for this global
+        for filename, file_model in project_model.files.items():
+            if filename.endswith(".h"):
+                for header_global in file_model.globals:
+                    if header_global.name == global_var.name:
+                        return "+ "  # Public - present in header
+        return "- "  # Private - not in any header
+
+    def _get_visibility_prefix_for_function(self, func: Function, project_model: ProjectModel) -> str:
+        """Determine visibility prefix for a function based on header presence"""
+        # Check all header files (.h files) for this function
+        for filename, file_model in project_model.files.items():
+            if filename.endswith(".h"):
+                for header_func in file_model.functions:
+                    if header_func.name == func.name and header_func.is_declaration:
+                        return "+ "  # Public - present in header
+        return "- "  # Private - not in any header
+
     def _generate_typedef_classes(
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
     ):
@@ -419,11 +497,11 @@ class Generator:
             uml_id = uml_ids.get(f"typedef_{struct_name}")
             if uml_id:
                 lines.append(
-                    f'class "{struct_name}" as {uml_id} <<typedef>> {COLOR_TYPEDEF}'
+                    f'class "{struct_name}" as {uml_id} <<struct>> {COLOR_TYPEDEF}'
                 )
                 lines.append("{")
                 for field in sorted(struct_data.fields, key=lambda x: x.name):
-                    self._generate_field_with_nested_structs(lines, field, "    ")
+                    self._generate_field_with_nested_structs(lines, field, "    + ")
                 lines.append("}")
                 lines.append("")
 
@@ -435,14 +513,14 @@ class Generator:
             uml_id = uml_ids.get(f"typedef_{enum_name}")
             if uml_id:
                 lines.append(
-                    f'class "{enum_name}" as {uml_id} <<typedef>> {COLOR_TYPEDEF}'
+                    f'class "{enum_name}" as {uml_id} <<enumeration>> {COLOR_TYPEDEF}'
                 )
                 lines.append("{")
                 for value in sorted(enum_data.values, key=lambda x: x.name):
                     if value.value:
-                        lines.append(f"    + {value.name} = {value.value}")
+                        lines.append(f"    {value.name} = {value.value}")
                     else:
-                        lines.append(f"    + {value.name}")
+                        lines.append(f"    {value.name}")
                 lines.append("}")
                 lines.append("")
 
@@ -469,26 +547,20 @@ class Generator:
             uml_id = uml_ids.get(f"typedef_{union_name}")
             if uml_id:
                 lines.append(
-                    f'class "{union_name}" as {uml_id} <<typedef>> {COLOR_TYPEDEF}'
+                    f'class "{union_name}" as {uml_id} <<union>> {COLOR_TYPEDEF}'
                 )
                 lines.append("{")
                 for field in sorted(union_data.fields, key=lambda x: x.name):
-                    self._generate_field_with_nested_structs(lines, field, "    ")
+                    self._generate_field_with_nested_structs(lines, field, "    + ")
                 lines.append("}")
                 lines.append("")
 
     def _process_alias_content(self, lines: List[str], alias_data):
         """Process the content of an alias typedef with proper formatting"""
-        # Handle multi-line alias types with proper nested struct indentation
-        alias_lines = alias_data.original_type.split("\n")
-        inside_struct = False
-        nested_content = []
-
-        # Check if this is a truncated typedef (missing closing parenthesis or brace)
-        if self._is_truncated_typedef(alias_data, alias_lines):
-            self._handle_truncated_typedef(lines, alias_lines)
-        else:
-            self._handle_normal_alias(lines, alias_lines, inside_struct, nested_content)
+        # For aliases, show "alias of {original_type}" format
+        # Clean up multi-line types by taking only the first line for simplicity
+        original_type = alias_data.original_type.split("\n")[0].strip()
+        lines.append(f"    alias of {original_type}")
 
     def _is_truncated_typedef(self, alias_data, alias_lines: List[str]) -> bool:
         """Check if this is a truncated typedef"""
@@ -569,17 +641,17 @@ class Generator:
             if nested_content:
                 # Create a flattened representation
                 content_str = "; ".join(nested_content)
-                lines.append(f"{base_indent}+ struct {{ {content_str} }} {field.name}")
+                lines.append(f"{base_indent}struct {{ {content_str} }} {field.name}")
             else:
-                lines.append(f"{base_indent}+ struct {{ }} {field.name}")
+                lines.append(f"{base_indent}struct {{ }} {field.name}")
         else:
             # Handle regular multi-line field types
             field_lines = field_text.split("\n")
             for i, line in enumerate(field_lines):
                 if i == 0:
-                    lines.append(f"{base_indent}+ {line}")
+                    lines.append(f"{base_indent}{line}")
                 else:
-                    lines.append(f"+ {line}")
+                    lines.append(f"{line}")
 
     def _generate_relationships(
         self,

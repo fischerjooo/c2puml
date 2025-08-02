@@ -3,15 +3,15 @@
 class "network" as NETWORK <<source>> #LightBlue
 {
     -- Functions --
-    void network_cleanup(NetworkConfig * config)
-    int network_connect(NetworkConfig * config, const char * host, int port)
-    NetworkStatus network_get_status(const NetworkConfig * config)
-    int network_init(NetworkConfig * config)
-    int network_listen(NetworkConfig * config, int port)
-    ssize_t network_receive(int socket_fd, void * buffer, size_t size)
-    ssize_t network_send(int socket_fd, const void * data, size_t size)
-    int network_set_nonblocking(int socket_fd)
-    const char * network_status_string(NetworkStatus status)
+    + void network_cleanup(NetworkConfig * config)
+    + int network_connect(NetworkConfig * config, const char * host, int port)
+    + NetworkStatus network_get_status(const NetworkConfig * config)
+    + int network_init(NetworkConfig * config)
+    + int network_listen(NetworkConfig * config, int port)
+    + ssize_t network_receive(int socket_fd, void * buffer, size_t size)
+    + ssize_t network_send(int socket_fd, const void * data, size_t size)
+    + int network_set_nonblocking(int socket_fd)
+    + const char * network_status_string(NetworkStatus status)
 }
 
 class "network" as HEADER_NETWORK <<header>> #LightGreen
@@ -34,7 +34,7 @@ class "network" as HEADER_NETWORK <<header>> #LightGreen
     + const char * network_status_string(NetworkStatus status)
 }
 
-class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<typedef>> #LightYellow
+class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<struct>> #LightYellow
 {
     + struct sockaddr_in address
     + char * hostname
@@ -42,12 +42,12 @@ class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<typedef>> #LightYellow
     + int socket_fd
 }
 
-class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<typedef>> #LightYellow
+class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<enumeration>> #LightYellow
 {
-    + NET_STATUS_CONNECTED
-    + NET_STATUS_CONNECTING
-    + NET_STATUS_DISCONNECTED
-    + NET_STATUS_ERROR
+    NET_STATUS_CONNECTED
+    NET_STATUS_CONNECTING
+    NET_STATUS_DISCONNECTED
+    NET_STATUS_ERROR
 }
 
 
