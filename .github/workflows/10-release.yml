@@ -41,91 +41,145 @@ jobs:
         id: release_date
         run: |
           # Always use current date
-          echo "date=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+          RELEASE_DATE=$(date +%Y-%m-%d)
+          echo "date=${RELEASE_DATE}" >> $GITHUB_OUTPUT
           
           # Build tag name with optional suffix
-          TAG_NAME="v${{ steps.release_date.outputs.date }}"
+          TAG_NAME="v${RELEASE_DATE}"
           if [ -n "${{ github.event.inputs.release_suffix }}" ]; then
             TAG_NAME="${TAG_NAME}-${{ github.event.inputs.release_suffix }}"
           fi
           echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
 
-      - name: "10.05 Create or update release branch"
+      - name: "10.05 Update release branch"
         run: |
-          # Check if release branch exists
+          # Check if release branch exists, create if not
           if git ls-remote --heads origin release | grep -q release; then
+            echo "📋 Checking out existing release branch..."
             git checkout release
             git pull origin release
-            # Remove all files except .git
-            git rm -rf . || true
-            git clean -fdx || true
           else
-            git checkout --orphan release
+            echo "📋 Creating new release branch from main..."
+            git checkout -b release
           fi
+          
+          echo "📁 Current release branch contents:"
+          ls -la
+          
+          # Remove all current files except .git
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          
+          echo "📁 After cleanup:"
+          ls -la
 
-      - name: "10.06 Copy files from main branch"
+      - name: "10.06 Copy release files from main"
         run: |
-          # Stash any changes to avoid checkout conflicts
-          git stash || true
+          # Ensure we have the latest main branch reference
+          git fetch origin main
           
-          # Switch back to main to copy files
-          git checkout main
+          # Copy the specific files we want in the release
+          git checkout origin/main -- src/c2puml/
+          git checkout origin/main -- main.py
+          git checkout origin/main -- README.md
           
-          # Create necessary directories
-          mkdir -p src/
+          echo "📁 Release files copied:"
+          ls -la
+          echo "📁 Contents of src/:"
+          ls -la src/
           
-          # Copy src/c2puml and its contents
-          cp -r src/c2puml src/
-          
-          # Copy main.py and README.md from root
-          cp main.py .
-          cp README.md .
-          
-          # Switch back to release branch
-          git checkout release
-          
-          # Add all copied files
+          # Stage all changes
           git add .
 
       - name: "10.07 Verify copied files"
         run: |
           echo "📁 Verifying copied files..."
           ls -la
+          echo "📁 Contents of src/:"
+          ls -la src/ || echo "src/ directory not found"
           echo "📁 Contents of src/c2puml:"
-          ls -la src/c2puml/
+          ls -la src/c2puml/ || echo "src/c2puml/ directory not found"
           echo "📄 Main files:"
-          ls -la main.py README.md
+          ls -la main.py README.md || echo "Some main files not found"
+          echo "🔍 Git status after file operations:"
+          git status
 
-      - name: "10.08 Commit changes"
+      - name: "10.08 Commit and push release"
         run: |
-          git commit -m "Release ${{ steps.release_date.outputs.tag }} - $(date)"
+          # Check if there are any changes to commit
+          if git diff --staged --quiet && [ -z "$(git status --porcelain)" ]; then
+            echo "ℹ️ No changes detected, creating empty commit to update release branch"
+            git commit --allow-empty -m "Release ${{ steps.release_date.outputs.tag }} - $(date)"
+          else
+            echo "✅ Changes detected, committing release files"
+            git commit -m "Release ${{ steps.release_date.outputs.tag }} - $(date)"
+          fi
+          
+          echo "📤 Pushing release branch to origin"
           git push origin release
 
       - name: "10.09 Create and push tag"
+        id: create_tag
         run: |
-          git tag -a "${{ steps.release_date.outputs.tag }}" -m "Release ${{ steps.release_date.outputs.tag }}"
-          git push origin "${{ steps.release_date.outputs.tag }}"
+          TAG_NAME="${{ steps.release_date.outputs.tag }}"
+          
+          # Check if tag already exists
+          if git tag -l "$TAG_NAME" | grep -q "$TAG_NAME"; then
+            echo "⚠️ Tag $TAG_NAME already exists locally"
+            
+            # Check if it exists on remote
+            if git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME$"; then
+              echo "⚠️ Tag $TAG_NAME also exists on remote"
+              
+              # Create a unique tag with timestamp
+              TIMESTAMP=$(date +%H%M%S)
+              NEW_TAG_NAME="${TAG_NAME}-${TIMESTAMP}"
+              echo "📝 Creating new tag: $NEW_TAG_NAME"
+              git tag -a "$NEW_TAG_NAME" -m "Release $NEW_TAG_NAME"
+              git push origin "$NEW_TAG_NAME"
+              
+              # Update the tag output for the GitHub release step
+              echo "tag=$NEW_TAG_NAME" >> $GITHUB_OUTPUT
+            else
+              echo "📝 Tag exists locally but not on remote, pushing existing tag"
+              git push origin "$TAG_NAME"
+            fi
+          else
+            echo "📝 Creating new tag: $TAG_NAME"
+            git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
+            git push origin "$TAG_NAME"
+          fi
 
       - name: "10.10 Create GitHub Release"
-        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.release_date.outputs.tag }}
-          release_name: Release ${{ steps.release_date.outputs.tag }}
-          body: |
-            ## Release ${{ steps.release_date.outputs.tag }}
-            
-            This release contains:
-            - C2PlantUML source code (`src/c2puml/`)
-            - Main application entry point (`main.py`)
-            - Documentation (`README.md`)
-            
-            ### Files included:
-            - `src/c2puml/` - Core C2PlantUML library
-            - `main.py` - Application entry point
-            - `README.md` - Project documentation
-            
-            ${{ github.event.inputs.release_notes != '' && format('### Additional Notes\n\n{0}', github.event.inputs.release_notes) || '' }}
-          draft: false
-          prerelease: false
+        run: |
+          # Create release notes
+          RELEASE_NOTES="## Release ${{ steps.release_date.outputs.tag }}
+
+          This release contains:
+          - C2PlantUML source code (\`src/c2puml/\`)
+          - Main application entry point (\`main.py\`)
+          - Documentation (\`README.md\`)
+
+          ### Files included:
+          - \`src/c2puml/\` - Core C2PlantUML library
+          - \`main.py\` - Application entry point
+          - \`README.md\` - Project documentation"
+          
+          # Add additional notes if provided
+          if [ -n "${{ github.event.inputs.release_notes }}" ]; then
+            RELEASE_NOTES="${RELEASE_NOTES}
+
+          ### Additional Notes
+
+          ${{ github.event.inputs.release_notes }}"
+          fi
+          
+          # Use the actual tag that was created (might be different if original existed)
+          ACTUAL_TAG="${{ steps.create_tag.outputs.tag || steps.release_date.outputs.tag }}"
+          
+          # Create the release using gh CLI
+          gh release create "$ACTUAL_TAG" \
+            --title "Release $ACTUAL_TAG" \
+            --notes "$RELEASE_NOTES" \
+            --target release
