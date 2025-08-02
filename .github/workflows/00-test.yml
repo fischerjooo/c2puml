@@ -1,29 +1,28 @@
-name: "01. Test and Validate"
+name: "00. Test (Side Branches)"
 
 on:
   push:
-    branches: [main, master]
+    branches-ignore: [main, master]
   pull_request:
     branches: [main, master]
-  workflow_dispatch:
 
 jobs:
-  test-and-validate:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: [3.9]
 
     steps:
-    - name: "01.01 Checkout code"
+    - name: "00.01 Checkout code"
       uses: actions/checkout@v4
 
-    - name: "01.02 Setup Python ${{ matrix.python-version }}"
+    - name: "00.02 Setup Python ${{ matrix.python-version }}"
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: "01.03 Cache dependencies"
+    - name: "00.03 Cache dependencies"
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
@@ -31,63 +30,43 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    - name: "01.04 Install dependencies"
+    - name: "00.04 Install dependencies"
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements-dev.txt
         pip install -e .
 
-    - name: "01.05 Verify package installation"
+    - name: "00.05 Verify package installation"
       run: |
         python -c "import c2puml; print('✅ Package installed successfully')"
         python -c "from c2puml.core.parser import CParser; print('✅ Core modules accessible')"
         python main.py --help
 
-    - name: "01.06 Run unit tests"
+    - name: "00.06 Run unit tests"
       run: |
         echo "🧪 Running unit tests..."
         python -m pytest tests/unit/ -v --tb=short
 
-    - name: "01.07 Run integration tests"
+    - name: "00.07 Run integration tests"
       run: |
         echo "🧪 Running integration tests..."
         python -m pytest tests/integration/ -v --tb=short
 
-    - name: "01.08 Run feature tests"
+    - name: "00.08 Run feature tests"
       run: |
         echo "🧪 Running feature tests..."
         python -m pytest tests/feature/ -v --tb=short
 
-    - name: "01.09 Run example workflow"
+    - name: "00.09 Run example workflow"
       run: |
         echo "🚀 Running example workflow..."
         bash scripts/run_example.sh
 
-    - name: "01.10 Generate coverage report"
-      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-      run: |
-        echo "📊 Generating coverage report..."
-        bash scripts/run_tests_with_coverage.sh
-
-    - name: "01.11 Upload test artifacts"
+    - name: "00.10 Upload test artifacts"
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: test-results-py${{ matrix.python-version }}
+        name: test-results-side-branch-py${{ matrix.python-version }}
         path: |
           artifacts/test_reports/
-          artifacts/coverage/
-        retention-days: 30
-
-    - name: "01.12 Trigger next workflow"
-      if: success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      uses: actions/github-script@v7
-      with:
-        script: |
-          console.log('🚀 Triggering PlantUML generation workflow...');
-          await github.rest.actions.createWorkflowDispatch({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            workflow_id: '02-generate-plantuml.yml',
-            ref: context.ref
-          });
+        retention-days: 7

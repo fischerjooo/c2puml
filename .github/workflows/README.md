@@ -2,15 +2,30 @@
 
 ## Overview
 
-This repository uses a streamlined, numbered workflow system that follows a clear execution hierarchy. The workflows are designed to be simple, reliable, and easy to understand.
+This repository uses a streamlined, numbered workflow system that follows a clear execution hierarchy. The workflows are designed to be simple, reliable, and easy to understand, with different workflows for side branches vs main branch.
 
 ## Workflow Hierarchy
 
-### 01. Test and Validate (`01-test-and-validate.yml`)
-**Purpose**: Comprehensive testing and validation of the codebase
+### 00. Test (Side Branches) (`00-test.yml`)
+**Purpose**: Basic testing for side branches and pull requests
+**Triggers**: 
+- Push to any branch except main/master
+- Pull requests to main/master branches
+- Manual dispatch
+
+**Steps**:
+1. **00.01-00.04**: Setup environment and dependencies
+2. **00.05**: Verify package installation
+3. **00.06-00.08**: Run different test suites (unit, integration, feature)
+4. **00.09**: Run example workflow
+5. **00.10**: Upload test artifacts (7-day retention)
+
+**Outputs**: Test results, artifacts (no coverage, no subsequent workflows)
+
+### 01. Test and Coverage (Main Branch) (`01-test-and-coverage.yml`)
+**Purpose**: Comprehensive testing and coverage for main branch
 **Triggers**: 
 - Push to main/master branches
-- Pull requests to main/master branches
 - Manual dispatch
 
 **Steps**:
@@ -18,13 +33,13 @@ This repository uses a streamlined, numbered workflow system that follows a clea
 2. **01.05**: Verify package installation
 3. **01.06-01.08**: Run different test suites (unit, integration, feature)
 4. **01.09**: Run example workflow
-5. **01.10**: Generate coverage reports (main branch only)
-6. **01.11**: Upload test artifacts
-7. **01.12**: Trigger PlantUML generation (main branch only)
+5. **01.10**: Generate coverage reports
+6. **01.11**: Upload test artifacts (30-day retention)
+7. **01.12**: Trigger PlantUML generation
 
-**Outputs**: Test results, coverage reports, artifacts
+**Outputs**: Test results, coverage reports, artifacts, triggers PlantUML generation
 
-### 02. Generate PlantUML Diagrams (`02-generate-plantuml.yml`)
+### 02. PlantUML to PNG (`02-puml-to-png.yml`)
 **Purpose**: Convert PlantUML files to PNG images and create diagram index
 **Triggers**:
 - Called by workflow 01 (main branch only)
@@ -59,56 +74,66 @@ This repository uses a streamlined, numbered workflow system that follows a clea
 
 ## Execution Flow
 
+### Side Branches and PRs
 ```
-PR/Commit → 01. Test and Validate
-    ↓ (if main branch)
-    02. Generate PlantUML Diagrams
-    ↓ (if main branch)
+Side Branch Push/PR → 00. Test (Side Branches)
+    ↓ (stops here - no further workflows)
+```
+
+### Main Branch
+```
+Main Branch Push → 01. Test and Coverage (Main Branch)
+    ↓ (if successful)
+    02. PlantUML to PNG
+    ↓ (if successful)
     03. Deploy Website
 ```
 
 ## Key Improvements Over Previous Setup
 
-### ✅ **Simplified Structure**
-- **Clear numbering**: 01, 02, 03 makes hierarchy obvious
-- **Single responsibility**: Each workflow has one clear purpose
-- **Reduced complexity**: Removed unnecessary duplicate prevention logic
+### ✅ **Optimized for Different Branch Types**
+- **Side branches**: Lightweight testing only (workflow 00)
+- **Main branch**: Full pipeline with coverage and deployment (workflows 01-03)
+- **Clear separation**: Different workflows for different purposes
 
-### ✅ **Better Naming**
-- **Descriptive names**: Each workflow name clearly indicates its purpose
-- **Numbered steps**: Each step has a clear number for easy reference
-- **Consistent formatting**: All workflows follow the same naming pattern
+### ✅ **Clear Naming Convention**
+- **Workflows**: `00-test.yml`, `01-test-and-coverage.yml`, `02-puml-to-png.yml`, `03-deploy-website.yml`
+- **Steps**: `00.01`, `00.02`, `01.01`, `01.02`, etc.
+- **Consistent patterns**: All workflows follow the same structure
 
 ### ✅ **Eliminated Redundancy**
-- **No duplicate tests**: Tests run once in workflow 01
-- **No complex waiting**: Removed unnecessary workflow waiting logic
-- **Streamlined triggers**: Clear trigger chain without loops
+- **Side branches**: No unnecessary coverage or deployment
+- **Main branch**: Full pipeline only when needed
+- **Streamlined triggers**: Clear, linear trigger chain
 
 ### ✅ **Improved Reliability**
-- **Simplified Git operations**: Reduced complex conflict resolution
-- **Clear dependencies**: Each workflow clearly shows what it depends on
-- **Better error handling**: Simpler, more predictable error scenarios
+- **Simplified Git operations**: Basic pull/push with fallback
+- **Clear dependencies**: Each workflow shows what it depends on
+- **Better error handling**: Predictable failure scenarios
 
 ### ✅ **Enhanced Maintainability**
-- **Modular design**: Each workflow can be modified independently
+- **Modular design**: Each workflow is independent
 - **Clear documentation**: This README explains the entire system
 - **Consistent patterns**: All workflows follow the same structure
 
 ## Manual Workflow Execution
 
-### Run All Workflows
+### Run All Workflows (Main Branch)
 ```bash
 # Trigger the entire pipeline
-gh workflow run "01-test-and-validate.yml"
+gh workflow run "01-test-and-coverage.yml"
 ```
 
 ### Run Individual Workflows
 ```bash
-# Run only tests
-gh workflow run "01-test-and-validate.yml"
+# Run only tests (side branch style)
+gh workflow run "00-test.yml"
+
+# Run tests with coverage (main branch style)
+gh workflow run "01-test-and-coverage.yml"
 
 # Generate only PlantUML diagrams
-gh workflow run "02-generate-plantuml.yml"
+gh workflow run "02-puml-to-png.yml"
 
 # Deploy only website
 gh workflow run "03-deploy-website.yml"
@@ -120,9 +145,10 @@ gh workflow run "03-deploy-website.yml"
 - `PERSONAL_ACCESS_TOKEN`: For repository write access (optional, falls back to `github.token`)
 
 ### Branch Protection
-- Workflows run on `main` and `master` branches
-- PR workflows run on all PRs to main/master
-- Only main/master branch triggers subsequent workflows
+- **Side branches**: Only workflow 00 runs
+- **Main branch**: Full pipeline (workflows 01-03)
+- **PR workflows**: Only workflow 00 runs
+- **Main branch triggers**: All subsequent workflows
 
 ## Troubleshooting
 
@@ -142,11 +168,25 @@ gh workflow run "03-deploy-website.yml"
 
 ## Migration from Old Workflows
 
-The old workflows (`test.yml`, `test-coverage.yml`, `puml2png.yml`, `deploy-website.yml`) should be disabled or removed after confirming the new workflows work correctly.
+The old workflows have been replaced with the new numbered system. The new structure provides better separation between side branch and main branch workflows.
 
 ### Migration Checklist
-- [ ] Test new workflow 01 with a PR
+- [ ] Test new workflow 00 with a side branch
+- [ ] Test new workflow 01 with main branch
 - [ ] Verify workflow 02 triggers correctly
 - [ ] Confirm workflow 03 deploys successfully
-- [ ] Disable old workflows
 - [ ] Update any external references to old workflow names
+
+## Branch Strategy
+
+### Side Branches
+- **Purpose**: Development and feature work
+- **Workflow**: 00-test.yml only
+- **Benefits**: Fast feedback, no unnecessary overhead
+- **Retention**: 7-day artifact retention
+
+### Main Branch
+- **Purpose**: Production-ready code
+- **Workflow**: Full pipeline (01-03)
+- **Benefits**: Comprehensive testing, coverage, deployment
+- **Retention**: 30-day artifact retention
