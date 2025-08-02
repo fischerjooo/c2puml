@@ -904,8 +904,7 @@ class Transformer:
         
         self.logger.debug("Total removed types identified: %s", list(removed_types))
         
-        # Now clean up type references across all files (not just target files)
-        # because type references can appear in any file that uses the typedef
+        # Clean up type references across all files since typedefs can be used anywhere
         cleaned_count = 0
         for file_path, file_model in model.files.items():
             file_cleaned = 0
@@ -973,7 +972,7 @@ class Transformer:
         if not type_str or not removed_types:
             return False
             
-        # Simple check - look for removed type names in the type string
+        # Check for removed type names in the type string
         # This handles cases like "old_point_t *", "const old_config_t", etc.
         for removed_type in removed_types:
             if removed_type in type_str:

@@ -231,7 +231,7 @@ class FileModel:
             if "uses" in alias_data:
                 alias_data["uses"] = sorted(alias_data["uses"])
 
-        # typedef_relations removed - tag names are now in struct/enum/union
+        # Tag names are now stored in struct/enum/union objects
         return data
 
     @classmethod
@@ -286,7 +286,7 @@ class FileModel:
             else:
                 enums[name] = enum_data
 
-        # typedef_relations removed - tag names are now in struct/enum/union
+        # Tag names are now stored in struct/enum/union objects
 
         # Convert include_relations back to IncludeRelation objects
         include_relations_data = data.get("include_relations", [])

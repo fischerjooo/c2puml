@@ -265,7 +265,7 @@ class Generator:
             params = macro.split("(")[1].split(")")[0]
             return f"{INDENT}{prefix}#define {macro_name}({params})"
         else:
-            # Simple macro
+            # Basic macro
             macro_name = macro.replace("#define ", "")
             return f"{INDENT}{prefix}#define {macro_name}"
 

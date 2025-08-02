@@ -17,7 +17,7 @@ from .models import FileModel
 class Config:
     """Configuration class for C to PlantUML converter"""
 
-    # Basic configuration
+    # Configuration settings
     project_name: str = "Unknown_Project"
     source_folders: List[str] = field(default_factory=list)
     output_dir: str = "./output"

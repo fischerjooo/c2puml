@@ -907,7 +907,7 @@ class StructureFinder:
                             break
 
                     # If we found a non-whitespace token, that's the end of the return type
-                    # Now we need to find the start by looking backwards from there
+                    # Find the start by looking backwards from there
                     if return_type_start >= 0:
                         return_type_end = return_type_start
                         return_type_start = return_type_end
@@ -1023,7 +1023,7 @@ class StructureFinder:
         if depth > 0:
             return None
 
-        # Now look for either ; (declaration) or { (definition)
+        # Look for either ; (declaration) or { (definition)
         while pos < len(self.tokens):
             if self.tokens[pos].type == TokenType.SEMICOLON:
                 return pos
