@@ -3,11 +3,6 @@ name: 10. Release
 on:
   workflow_dispatch:
     inputs:
-      release_date:
-        description: 'Release date (YYYY-MM-DD format)'
-        required: false
-        default: ''
-        type: string
       release_suffix:
         description: 'Optional suffix to append to tag name (e.g., "beta", "rc1")'
         required: false
@@ -45,11 +40,8 @@ jobs:
       - name: "10.04 Generate release date and tag"
         id: release_date
         run: |
-          if [ -n "${{ github.event.inputs.release_date }}" ]; then
-            echo "date=${{ github.event.inputs.release_date }}" >> $GITHUB_OUTPUT
-          else
-            echo "date=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
-          fi
+          # Always use current date
+          echo "date=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
           
           # Build tag name with optional suffix
           TAG_NAME="v${{ steps.release_date.outputs.date }}"
