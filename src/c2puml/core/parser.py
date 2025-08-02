@@ -794,10 +794,32 @@ class CParser:
             return self._parse_complex_typedef(tokens, pos)
 
         # Collect all non-whitespace/comment tokens until semicolon
+        # But handle nested structures properly
         all_tokens = []
-        while pos < len(tokens) and tokens[pos].type != TokenType.SEMICOLON:
-            if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
-                all_tokens.append(tokens[pos])
+        brace_count = 0
+        paren_count = 0
+        
+        while pos < len(tokens):
+            token = tokens[pos]
+            
+            # Track nested braces and parentheses
+            if token.type == TokenType.LBRACE:
+                brace_count += 1
+            elif token.type == TokenType.RBRACE:
+                brace_count -= 1
+            elif token.type == TokenType.LPAREN:
+                paren_count += 1
+            elif token.type == TokenType.RPAREN:
+                paren_count -= 1
+            elif token.type == TokenType.SEMICOLON:
+                # Only treat semicolon as end if we're not inside nested structures
+                # For function pointer typedefs, we need to be outside the parameter list parentheses
+                if brace_count == 0 and paren_count == 0:
+                    # We're outside any nested structures and parentheses
+                    break
+            
+            if token.type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
+                all_tokens.append(token)
             pos += 1
 
         if len(all_tokens) < 2:
@@ -823,7 +845,13 @@ class CParser:
                 and all_tokens[i + 2].type == TokenType.ASTERISK
                 and all_tokens[i + 3].type == TokenType.IDENTIFIER
             ):
-                # typedef ret (*name)(...)
+                # Check if this is followed by a parameter list
+                if i + 4 < len(all_tokens) and all_tokens[i + 4].type == TokenType.RPAREN:
+                    if i + 5 < len(all_tokens) and all_tokens[i + 5].type == TokenType.LPAREN:
+                        # This is a function pointer with parameters - skip this pattern and use the complex logic
+                        break
+                
+                # Simple function pointer typedef without complex parameters
                 typedef_name = all_tokens[i + 3].value
                 # Fix: Properly format function pointer type - preserve spaces between tokens but not around parentheses
                 formatted_tokens = []
