@@ -15,7 +15,7 @@ jobs:
       actions: write
     strategy:
       matrix:
-        python-version: [3.9]
+        python-version: [3.11]
 
     steps:
     - name: "01.01 Checkout code"
