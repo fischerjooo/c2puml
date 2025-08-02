@@ -3,6 +3,11 @@ name: "01. Test and Coverage"
 on:
   push:
     branches: [main, master]
+    paths-ignore:
+      - 'artifacts/output_example/*.png'
+      - 'artifacts/output_example/diagram_index.html'
+      - 'artifacts/test_reports/**'
+      - 'artifacts/coverage/**'
   workflow_dispatch:
 
 jobs:

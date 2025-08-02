@@ -23,7 +23,7 @@ This repository uses a streamlined, numbered workflow system that follows a clea
 ### 01. Test and Coverage (`01-test-and-coverage.yml`)
 **Purpose**: Comprehensive testing and coverage for main branch
 **Triggers**: 
-- Push to main/master branches
+- Push to main/master branches (excluding generated files)
 - Manual dispatch
 
 **Steps**:
@@ -80,11 +80,12 @@ Pull Request → 00. Test
 
 ### Main Branch
 ```
-Main Branch Push → 01. Test and Coverage
+Main Branch Push (source code) → 01. Test and Coverage
     ↓ (if successful)
     02. PlantUML to PNG
-    ↓ (if successful)
+    ↓ (commits generated files to main)
     03. Deploy Website
+    ↓ (no loop - workflow 01 ignores generated files)
 ```
 
 ## Key Improvements Over Previous Setup
@@ -103,6 +104,7 @@ Main Branch Push → 01. Test and Coverage
 - **Pull requests**: No unnecessary coverage or deployment
 - **Main branch**: Full pipeline only when needed
 - **Streamlined triggers**: Clear, linear trigger chain
+- **No infinite loops**: Path filtering prevents workflow loops
 
 ### ✅ **Improved Reliability**
 - **Simplified Git operations**: Basic pull/push with fallback
@@ -147,6 +149,11 @@ gh workflow run "03-deploy-website.yml"
 - **Main branch**: Full pipeline (workflows 01-03)
 - **PR workflows**: Only workflow 00 runs
 - **Main branch triggers**: All subsequent workflows
+
+### Path Filtering
+- **Workflow 01**: Ignores generated files (PNG, HTML, test reports, coverage) to prevent infinite loops
+- **Workflow 02**: Only triggers on PlantUML file changes or manual dispatch
+- **Workflow 03**: Only triggers on workflow completion or manual dispatch
 
 ## Troubleshooting
 
