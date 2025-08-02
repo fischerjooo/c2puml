@@ -135,25 +135,33 @@ jobs:
           git push origin "${{ steps.release_date.outputs.tag }}"
 
       - name: "10.10 Create GitHub Release"
-        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.release_date.outputs.tag }}
-          release_name: Release ${{ steps.release_date.outputs.tag }}
-          body: |
-            ## Release ${{ steps.release_date.outputs.tag }}
-            
-            This release contains:
-            - C2PlantUML source code (`src/c2puml/`)
-            - Main application entry point (`main.py`)
-            - Documentation (`README.md`)
-            
-            ### Files included:
-            - `src/c2puml/` - Core C2PlantUML library
-            - `main.py` - Application entry point
-            - `README.md` - Project documentation
-            
-            ${{ github.event.inputs.release_notes != '' && format('### Additional Notes\n\n{0}', github.event.inputs.release_notes) || '' }}
-          draft: false
-          prerelease: false
+        run: |
+          # Create release notes
+          RELEASE_NOTES="## Release ${{ steps.release_date.outputs.tag }}
+
+          This release contains:
+          - C2PlantUML source code (\`src/c2puml/\`)
+          - Main application entry point (\`main.py\`)
+          - Documentation (\`README.md\`)
+
+          ### Files included:
+          - \`src/c2puml/\` - Core C2PlantUML library
+          - \`main.py\` - Application entry point
+          - \`README.md\` - Project documentation"
+          
+          # Add additional notes if provided
+          if [ -n "${{ github.event.inputs.release_notes }}" ]; then
+            RELEASE_NOTES="${RELEASE_NOTES}
+
+          ### Additional Notes
+
+          ${{ github.event.inputs.release_notes }}"
+          fi
+          
+          # Create the release using gh CLI
+          gh release create "${{ steps.release_date.outputs.tag }}" \
+            --title "Release ${{ steps.release_date.outputs.tag }}" \
+            --notes "$RELEASE_NOTES" \
+            --target release
