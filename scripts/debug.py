@@ -24,13 +24,17 @@ from pathlib import Path
 
 # =============================================================================
 # DEBUG CONFIGURATION - Modify these constants as needed
+# Uncomment and modify the constants you want to use as defaults
 # =============================================================================
 
+# Default command to run (parse, transform, generate, or leave empty for full workflow)
+# COMMAND: str = "parse"
+
 # Default configuration file path (relative to project root)
-CONFIG_PATH: str = "./tests/example/config.json"
+# CONFIG_PATH: str = "./tests/example/config.json"
 
 # Default verbose output
-VERBOSE: bool = True
+# VERBOSE: bool = True
 
 # =============================================================================
 # END CONFIGURATION
@@ -61,20 +65,51 @@ def main():
     # Build command for c2puml.py
     cmd = [sys.executable, str(c2puml_script)]
 
-    # Add default config if no config specified in arguments
-    if not any(arg.startswith('--config') or arg.startswith('-c') for arg in sys.argv[1:]):
-        cmd.extend(["--config", CONFIG_PATH])
+    # Check if constants are defined (uncommented)
+    has_command = 'COMMAND' in globals()
+    has_config = 'CONFIG_PATH' in globals()
+    has_verbose = 'VERBOSE' in globals()
 
-    # Add default verbose if not specified in arguments
-    if VERBOSE and not any(arg.startswith('--verbose') or arg.startswith('-v') for arg in sys.argv[1:]):
-        cmd.append("--verbose")
+    # Get command line arguments (excluding script name)
+    args = sys.argv[1:]
+
+    # Handle COMMAND constant
+    if has_command:
+        # Check if a command is already specified in arguments
+        command_specified = any(arg in ['parse', 'transform', 'generate'] for arg in args)
+        if not command_specified:
+            cmd.append(COMMAND)
+            logging.info("Using default command: %s", COMMAND)
+
+    # Handle CONFIG_PATH constant
+    if has_config:
+        # Check if config is already specified in arguments
+        config_specified = any(arg.startswith('--config') or arg.startswith('-c') for arg in args)
+        if not config_specified:
+            cmd.extend(["--config", CONFIG_PATH])
+            logging.info("Using default config: %s", CONFIG_PATH)
+
+    # Handle VERBOSE constant
+    if has_verbose:
+        # Check if verbose is already specified in arguments
+        verbose_specified = any(arg.startswith('--verbose') or arg.startswith('-v') for arg in args)
+        if not verbose_specified and VERBOSE:
+            cmd.append("--verbose")
+            logging.info("Using default verbose: %s", VERBOSE)
 
     # Forward all command line arguments
-    cmd.extend(sys.argv[1:])
+    cmd.extend(args)
 
+    # Log configuration summary
     logging.info("Debug Configuration:")
-    logging.info("  Default Config: %s", CONFIG_PATH)
-    logging.info("  Default Verbose: %s", VERBOSE)
+    if has_command:
+        logging.info("  Default Command: %s", COMMAND)
+    if has_config:
+        logging.info("  Default Config: %s", CONFIG_PATH)
+    if has_verbose:
+        logging.info("  Default Verbose: %s", VERBOSE)
+    if not any([has_command, has_config, has_verbose]):
+        logging.info("  No defaults configured - forwarding arguments as-is")
     logging.info("Running command: %s", " ".join(cmd))
 
     try:
