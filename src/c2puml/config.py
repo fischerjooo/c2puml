@@ -133,15 +133,27 @@ class Config:
             if "project_roots" in data and "source_folders" not in data:
                 data["source_folders"] = data.pop("project_roots")
 
-            # Validate required fields
+            # Enhanced validation for source_folders
             if "source_folders" not in data:
                 raise ValueError("Configuration must contain 'source_folders' field")
 
             if not isinstance(data["source_folders"], list):
-                raise ValueError("'source_folders' must be a list")
+                raise ValueError(f"'source_folders' must be a list, got: {type(data['source_folders'])}")
+
+            if not data["source_folders"]:
+                raise ValueError("'source_folders' list cannot be empty")
+
+            # Validate each source folder
+            for i, folder in enumerate(data["source_folders"]):
+                if not isinstance(folder, str):
+                    raise ValueError(f"Source folder at index {i} must be a string, got: {type(folder)}")
+                if not folder.strip():
+                    raise ValueError(f"Source folder at index {i} cannot be empty or whitespace: {repr(folder)}")
 
             return cls(**data)
 
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid JSON in configuration file {config_file}: {e}")
         except Exception as e:
             raise ValueError(
                 f"Failed to load configuration from {config_file}: {e}"
