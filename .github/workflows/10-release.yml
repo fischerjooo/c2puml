@@ -74,10 +74,13 @@ jobs:
 
       - name: "10.06 Copy release files from main"
         run: |
+          # Ensure we have the latest main branch reference
+          git fetch origin main
+          
           # Copy the specific files we want in the release
-          git checkout main -- src/c2puml/
-          git checkout main -- main.py
-          git checkout main -- README.md
+          git checkout origin/main -- src/c2puml/
+          git checkout origin/main -- main.py
+          git checkout origin/main -- README.md
           
           echo "📁 Release files copied:"
           ls -la
