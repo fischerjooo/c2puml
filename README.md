@@ -19,8 +19,6 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 
 - [📖 Specification](docs/specification.md) - Complete technical specification and architecture documentation
 - [🎨 PlantUML Template](docs/puml_template.md) - PlantUML formatting template and diagram structure rules
-- [🔧 Include Processing](docs/SIMPLIFIED_INCLUDE_PROCESSING.md) - Simplified include processing implementation details
-- [🐛 Include Filtering Issues](docs/INCLUDE_FILTERING_BUGS_AND_FIXES.md) - Known issues and fixes for include filtering
 
 ## Features
 
