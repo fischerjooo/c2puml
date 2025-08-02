@@ -13,12 +13,12 @@ This template defines the structure for generating PlantUML diagrams from C sour
 - **Macros**: `-` prefix for visibility
 - **Global Variables**: No prefix for visibility
 - **Functions**: No prefix for visibility
-- **Structs/Enums/Unions**: Only the name is shown (e.g., `struct MyStruct`, `enum MyEnum`)
+- **Structs/Enums/Unions**: NOT shown in source file sections
 - **Primitive Typedefs**: NOT shown in source file sections - all typedefs get their own separate classes
 
 ### Header Files (H files)
 - **All elements**: `+` prefix for visibility
-- **Structs/Enums/Unions**: Only the name is shown (e.g., `+ struct MyStruct`, `+ enum MyEnum`)
+- **Structs/Enums/Unions**: NOT shown in header file sections
 - **Primitive Typedefs**: NOT shown in header file sections - all typedefs get their own separate classes
 
 ### Typedef Classes
@@ -72,10 +72,7 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
     {type} {variable_name}
     -- Functions --
     {return_type} {function_name}({parameters})
-    -- Structs/Enums/Unions --
-    struct {struct_name}
-    enum {enum_name}
-    union {union_name}
+
 }
 
 ' Header file class (H file)
@@ -88,10 +85,7 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
     + {type} {variable_name}
     -- Functions --
     + {return_type} {function_name}({parameters})
-    -- Structs/Enums/Unions --
-    + struct {struct_name}
-    + enum {enum_name}
-    + union {union_name}
+
 }
 
 ' Typedef classes (all typedefs in separate classes)
@@ -127,7 +121,8 @@ class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 - **Uses relationships**: Dotted lines showing typedef dependencies
 
 ### Content Organization
-- **Sections**: Macros, Global Variables, Functions, Structs/Enums/Unions
+- **Source files**: Macros, Global Variables, Functions
+- **Header files**: Macros, Global Variables, Functions
 - **Visibility**: Consistent use of `+` for headers, `-` for source files
 - **No #include lines**: All include relationships are visualized with arrows only
 - **No typedefs in files**: All typedefs are shown in separate typedef classes only
