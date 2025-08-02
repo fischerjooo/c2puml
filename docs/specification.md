@@ -585,7 +585,12 @@ The PlantUML formatting template and all diagram structure rules are now maintai
 #### 5.5.1 Color Scheme
 - **Source files**: `#LightBlue` background, `<<source>>` stereotype
 - **Header files**: `#LightGreen` background, `<<header>>` stereotype
-- **Typedefs**: `#LightYellow` background, `<<typedef>>` stereotype
+- **Typedefs**: `#LightYellow` background with specific stereotypes:
+  - **Enums**: `<<enumeration>>` stereotype
+  - **Structs**: `<<struct>>` stereotype
+  - **Unions**: `<<union>>` stereotype
+  - **Function pointers**: `<<function pointer>>` stereotype
+  - **Aliases**: `<<typedef>>` stereotype
 - **Types**: `#LightGray` background, `<<type>>` stereotype
 
 #### 5.5.2 Visibility Notation
