@@ -173,6 +173,39 @@ class TestGeneratorNewFormatting(unittest.TestCase):
         self.assertIn("alias of int", diagram)
         self.assertIn("alias of char*", diagram)
 
+    def test_function_pointer_formatting_with_function_pointer_stereotype(self):
+        """Test that function pointer typedefs use <<function pointer>> stereotype"""
+        # Create function pointer alias data
+        callback_alias = Alias(name="callback_t", original_type="int(* callback_t)(int, int)")
+        log_callback_alias = Alias(name="log_callback_t", original_type="void(* log_callback_t)(const char*)")
+
+        # Create file with function pointer aliases
+        file_model = FileModel(
+            file_path="test.c",
+            name="test.c",
+            aliases={"callback_t": callback_alias, "log_callback_t": log_callback_alias},
+        )
+
+        project_model = ProjectModel(
+            project_name="test_project",
+            source_folder="/test", 
+            files={"test.c": file_model},
+        )
+
+        # Generate diagram
+        diagram = self.generator.generate_diagram(file_model, project_model)
+
+        # Check function pointer formatting
+        expected_callback_class = 'class "callback_t" as TYPEDEF_CALLBACK_T <<function pointer>> #LightYellow'
+        self.assertIn(expected_callback_class, diagram)
+
+        expected_log_callback_class = 'class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<function pointer>> #LightYellow'
+        self.assertIn(expected_log_callback_class, diagram)
+
+        # Check content formatting with 'alias of' prefix
+        self.assertIn("alias of int(* callback_t)(int, int)", diagram)
+        self.assertIn("alias of void(* log_callback_t)(const char*)", diagram)
+
     def test_complex_typedef_combination(self):
         """Test combination of all typedef types with correct stereotypes"""
         # Create all typedef types
@@ -192,6 +225,7 @@ class TestGeneratorNewFormatting(unittest.TestCase):
         )
 
         int_alias = Alias(name="Integer", original_type="int")
+        callback_alias = Alias(name="callback_t", original_type="int(* callback_t)(int, int)")
 
         # Create file with all types
         file_model = FileModel(
@@ -200,7 +234,7 @@ class TestGeneratorNewFormatting(unittest.TestCase):
             enums={"Color": color_enum},
             structs={"Person": person_struct},
             unions={"Value": value_union},
-            aliases={"Integer": int_alias},
+            aliases={"Integer": int_alias, "callback_t": callback_alias},
         )
 
         project_model = ProjectModel(
@@ -217,6 +251,7 @@ class TestGeneratorNewFormatting(unittest.TestCase):
         self.assertIn('<<struct>>', diagram)
         self.assertIn('<<union>>', diagram)
         self.assertIn('<<typedef>>', diagram)
+        self.assertIn('<<function pointer>>', diagram)
 
         # Verify no old <<typedef>> stereotypes for enum/struct/union
         enum_lines = [line for line in diagram.split('\n') if 'TYPEDEF_COLOR' in line]
@@ -230,6 +265,11 @@ class TestGeneratorNewFormatting(unittest.TestCase):
         union_lines = [line for line in diagram.split('\n') if 'TYPEDEF_VALUE' in line]
         self.assertTrue(any('<<union>>' in line for line in union_lines))
         self.assertFalse(any('<<typedef>>' in line for line in union_lines))
+
+        # Verify function pointer uses correct stereotype
+        callback_lines = [line for line in diagram.split('\n') if 'TYPEDEF_CALLBACK_T' in line]
+        self.assertTrue(any('<<function pointer>>' in line for line in callback_lines))
+        self.assertFalse(any('<<typedef>>' in line for line in callback_lines))
 
     def test_public_private_visibility_logic(self):
         """Test that globals and functions are marked as public if present in headers, private otherwise"""

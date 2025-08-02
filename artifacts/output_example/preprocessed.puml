@@ -117,12 +117,12 @@ class "status_t" as TYPEDEF_STATUS_T <<enumeration>> #LightYellow
     STATUS_UNKNOWN = - 1
 }
 
-class "basic_callback_t" as TYPEDEF_BASIC_CALLBACK_T <<typedef>> #LightYellow
+class "basic_callback_t" as TYPEDEF_BASIC_CALLBACK_T <<function pointer>> #LightYellow
 {
     alias of int(* basic_callback_t)(void)
 }
 
-class "feature_callback_t" as TYPEDEF_FEATURE_CALLBACK_T <<typedef>> #LightYellow
+class "feature_callback_t" as TYPEDEF_FEATURE_CALLBACK_T <<function pointer>> #LightYellow
 {
     alias of int(* feature_callback_t)(enabled_feature_t * feature)
 }
