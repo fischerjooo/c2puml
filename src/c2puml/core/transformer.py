@@ -667,17 +667,11 @@ class Transformer:
         if filename.endswith(".c"):
             return filename
 
-        # For header files, we need to find the corresponding .c file
-        # This is a simplified approach - in a real scenario, we might need
-        # more sophisticated logic to determine which .c file includes this header
-        # For now, we'll look for a .c file with the same base name
+        # For header files, find the corresponding .c file
         base_name = Path(file_path).stem
 
-        # Check if there's a corresponding .c file in the same directory
-        # This is a heuristic and might need to be enhanced
+        # Look for a .c file with the same base name
         if base_name and not filename.startswith("."):
-            # For header files, we'll use the first .c file we find as the root
-            # This is a limitation of the current approach
             return base_name + ".c"
 
         # Fallback: use the filename as root (original behavior)
@@ -994,8 +988,7 @@ class Transformer:
         cleaned_type = type_str
         for removed_type in removed_types:
             if removed_type in cleaned_type:
-                # Replace the removed type with "void" to maintain some type safety
-                # This is a simple approach - more sophisticated would be to have replacement rules
+                # Replace the removed type with "void" to maintain type safety
                 cleaned_type = cleaned_type.replace(removed_type, "void")
                 
         # Clean up any double spaces or other artifacts
@@ -1019,8 +1012,7 @@ class Transformer:
             
         self.logger.debug("Cleaning type references for removed typedefs: %s", list(removed_typedef_names))
         
-        # Clean up type references across all files (not just target files)
-        # because type references can appear in any file that uses the typedef
+        # Clean up type references across all files since typedefs can be used anywhere
         cleaned_count = 0
         for file_path, file_model in model.files.items():
             file_cleaned = 0

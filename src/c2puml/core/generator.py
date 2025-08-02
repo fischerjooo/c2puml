@@ -71,8 +71,8 @@ class Generator:
             # Only process C files (not headers) for diagram generation
             if file_model.name.endswith(".c"):
                 # Generate PlantUML content
-                # Note: include_depth is ignored since the transformer already processes
-                # file-specific include depth settings and stores them in include_relations
+                # include_depth is handled by the transformer which processes
+                # file-specific settings and stores them in include_relations
                 puml_content = self.generate_diagram(
                     file_model, project_model, include_depth=1
                 )

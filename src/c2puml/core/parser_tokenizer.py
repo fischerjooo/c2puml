@@ -630,7 +630,7 @@ class StructureFinder:
             self.pos += 1
 
         if not self._current_token_is(TokenType.LBRACE):
-            # This is a variable declaration, not a struct definition
+            # This is a variable declaration
             return None
 
         # Find matching closing brace
@@ -672,7 +672,7 @@ class StructureFinder:
             # Check if there's a variable name after the brace
             while name_pos < len(self.tokens):
                 if self.tokens[name_pos].type == TokenType.IDENTIFIER:
-                    # This is a variable name, not a struct name
+                    # This is a variable name
                     struct_name = ""
                     break
                 elif self.tokens[name_pos].type == TokenType.SEMICOLON:
@@ -726,8 +726,7 @@ class StructureFinder:
 
         # Check if this is a forward declaration (no braces)
         if not self._current_token_is(TokenType.LBRACE):
-            # This is a forward declaration like "typedef struct Node* NodePtr;"
-            # Not a struct definition, so skip it
+            # This is a forward declaration, skip it
             self.pos = start_pos + 1
             return None
 
@@ -826,7 +825,7 @@ class StructureFinder:
             # Anonymous enum - check if there's a variable name after the brace
             while name_pos < len(self.tokens):
                 if self.tokens[name_pos].type == TokenType.IDENTIFIER:
-                    # This is a variable name, not an enum name
+                    # This is a variable name
                     enum_name = ""
                     break
                 elif self.tokens[name_pos].type == TokenType.SEMICOLON:

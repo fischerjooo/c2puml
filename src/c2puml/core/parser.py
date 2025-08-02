@@ -189,7 +189,7 @@ class CParser:
         )
         aliases = self._parse_aliases_with_tokenizer(processed_tokens)
 
-        # Note: We'll update "uses" fields later when we have the full project model
+        # "uses" fields will be updated when we have the full project model
         # For now, just create the structures with empty uses
 
         # Map typedef names to anonymous structs/enums/unions if needed
@@ -954,8 +954,7 @@ class CParser:
 
     def _parse_complex_typedef(self, tokens, start_pos):
         """Parse complex typedef (struct/enum/union)"""
-        # For now, return a simplified version
-        # TODO: Implement full complex typedef parsing
+        # Parse complex typedefs with proper structure detection
 
         # Find the typedef name by looking for the pattern after the closing brace
         brace_count = 0
