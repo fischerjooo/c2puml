@@ -52,7 +52,7 @@ class Generator:
                     pass  # Ignore errors if file can't be removed
 
     def generate(
-        self, model_file: str, output_dir: str = "./output", include_depth: int = 1
+        self, model_file: str, output_dir: str = "./output", include_depth: int = None
     ) -> str:
         """Generate PlantUML files for all C files in the model"""
         # Load the model
@@ -71,8 +71,10 @@ class Generator:
             # Only process C files (not headers) for diagram generation
             if file_model.name.endswith(".c"):
                 # Generate PlantUML content
+                # Note: include_depth is ignored since the transformer already processes
+                # file-specific include depth settings and stores them in include_relations
                 puml_content = self.generate_diagram(
-                    file_model, project_model, include_depth
+                    file_model, project_model, include_depth=1
                 )
 
                 # Create output filename
