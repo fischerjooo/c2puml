@@ -24,7 +24,7 @@ The C to PlantUML Converter is a Python-based tool that analyzes C/C++ source co
 - **Advanced Filtering**: Regex-based filtering of files and code elements with pattern matching
 - **Model Transformation**: Multi-stage renaming, filtering, and addition of elements using configuration-driven rules
 - **File Selection for Transformations**: Apply transformations to all files or selected ones with regex patterns
-- **Structured Output**: Organized packaging of generated diagrams with customizable structure and artifact management
+
 
 ### Transformation System
 The system includes a comprehensive transformation pipeline that allows for sophisticated code model manipulation:
@@ -170,7 +170,7 @@ Functional configuration examples for common use cases:
 - **R1**: Parse C/C++ source files and extract structural information (structs, enums, unions, functions, macros, globals, typedefs)
 - **R2**: Generate comprehensive JSON models representing parsed code structure
 - **R3**: Convert JSON models into PlantUML class diagrams with proper UML notation
-- **R4**: Support multi-project analysis with configurable project roots
+- **R4**: Support multi-project analysis with configurable source folders
 - **R5**: Provide command-line interface with multiple operation modes
 - **R6**: Parse and visualize typedef relationships with proper UML stereotypes («defines», «alias»)
 - **R7**: Support configurable include depth processing for header relationships
@@ -180,7 +180,7 @@ Functional configuration examples for common use cases:
 - **R9**: Support regex-based filtering of files and code elements
 - **R10**: Enable model transformation with renaming and element addition capabilities
 - **R11**: Support multi-configuration file loading and merging
-- **R12**: Generate structured output with customizable packaging
+
 - **R13**: Provide robust error handling
 - **R14**: Parse and visualize unions with their fields
 - **R15**: Handle typedefs for struct/enum/union (named and anonymous) with content display
@@ -519,7 +519,7 @@ pytest tests/feature/test_component_features.py
 ## 5. PlantUML Output Specification
 
 ### 5.1 Diagram Structure
-The PlantUML formatting template and all diagram structure rules are now maintained in [puml_template.md](./puml_template.md). Please refer to that file for the up-to-date template, class structure, and relationship grouping rules.
+The PlantUML formatting template and all diagram structure rules are now maintained in [puml_template.md](puml_template.md). Please refer to that file for the up-to-date template, class structure, and relationship grouping rules.
 
 ### 5.2 Typedef Relationship Visualization
 
