@@ -541,7 +541,7 @@ void test_function() {
             'class "String" as TYPEDEF_STRING <<typedef>> #LightYellow', diagram
         )
         self.assertIn(
-            'class "Callback" as TYPEDEF_CALLBACK <<typedef>> #LightYellow', diagram
+            'class "Callback" as TYPEDEF_CALLBACK <<function pointer>> #LightYellow', diagram
         )
 
     def test_union_generation(self):

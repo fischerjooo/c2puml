@@ -96,7 +96,7 @@ class PUMLValidator:
         """Initialize the validator with expected values and patterns."""
         self.output_dir = self._find_output_directory()
         self.results: List[ValidationResult] = []
-        self.expected_stereotypes = {"source", "header", "typedef", "enumeration", "struct", "union"}
+        self.expected_stereotypes = {"source", "header", "typedef", "enumeration", "struct", "union", "function pointer"}
         self.expected_colors = {"LightBlue", "LightGreen", "LightYellow", "LightGray"}
         self.expected_relationships = {"<<include>>", "<<declares>>", "<<uses>>"}
 
