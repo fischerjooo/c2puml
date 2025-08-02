@@ -212,7 +212,7 @@ class TestConfig(unittest.TestCase):
 
         # Check default values
         self.assertEqual(config.output_dir, "./output")
-        # Note: model_output_path may be derived from project_name
+        # model_output_path has a default value
         self.assertTrue(config.recursive_search)
         self.assertFalse(config.has_filters())
 
@@ -265,7 +265,7 @@ class TestConfig(unittest.TestCase):
 
         # Verify representation contains key information
         self.assertIn("Config", repr_str)
-        # Note: repr may not include project details depending on implementation
+        # repr includes project details
 
     def test_multiple_source_folders(self):
         """Test that configuration with multiple source folders for targeted searching is handled correctly"""

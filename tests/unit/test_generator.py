@@ -499,7 +499,7 @@ void test_function() {
         self.assertIn("-- Global Variables --", diagram)
 
         # Check that parsed global variables appear
-        # Note: The exact format may depend on how the parser handles initialization
+        # Global variables are parsed and displayed in the diagram
         self.assertIn("global_counter", diagram)
         self.assertIn("global_message", diagram)
         self.assertIn("internal_value", diagram)

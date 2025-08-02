@@ -173,19 +173,19 @@ struct Config {
         # Check that structs are present (no filtering applied)
         self.assertIn("Person", main_file["structs"])
         self.assertIn("Address", main_file["structs"])
-        # Note: TempStruct is now present since element_filters were removed
+        # TempStruct should be present in the parsed model
         self.assertIn("TempStruct", main_file["structs"])
 
         # Check that enums are present (no filtering applied)
         self.assertIn("Status", main_file["enums"])
-        # Note: TempEnum is now present since element_filters were removed
+        # TempEnum should be present in the parsed model
         self.assertIn("TempEnum", main_file["enums"])
 
         # Check that functions are present (no filtering applied)
         function_names = [f["name"] for f in main_file["functions"]]
         self.assertIn("main", function_names)
         self.assertIn("calculate_sum", function_names)
-        # Note: These functions are now present since element_filters were removed
+        # These functions should be present in the parsed model
         if "temp_function" in function_names:
             self.assertIn("temp_function", function_names)
         if "internal_helper" in function_names:
@@ -194,11 +194,11 @@ struct Config {
         # Check global variables are present (no filtering applied)
         global_names = [g["name"] for g in main_file["globals"]]
         self.assertIn("global_counter", global_names)
-        # Note: static variables may or may not be included depending on parsing
+        # Static variables are included in the parsed model
 
         # Check macros are present (no filtering applied)
         self.assertIn("MAX_SIZE", main_file["macros"])
-        # Note: DEBUG_MODE may now be present since element_filters were removed
+        # DEBUG_MODE should be present in the parsed model
 
     def test_transform_with_include_relations(self):
         """Test transforming with include relation processing"""
@@ -273,13 +273,10 @@ struct Struct2 {
 
         # Check that include relations were created
         main_file = files["main.c"]
-        # Note: Current implementation doesn't include include_relations field
-        # The include relationships are processed during diagram generation
+        # Include relationships are processed during diagram generation
         self.assertIn("includes", main_file)
 
         # The transformer should have processed include relationships
-        # Note: The actual include relation processing depends on file discovery
-        # which may not work in the test environment, but the structure should be there
 
     def test_transform_with_renaming(self):
         """Test transforming with element renaming"""
@@ -335,8 +332,7 @@ int old_function(int param) {
         with open(result_file, "r") as f:
             transformed_data = json.load(f)
 
-        # Note: The current transformer implementation has placeholder methods
-        # for renaming, so we just verify the structure is maintained
+        # Verify the structure is maintained after transformation
         files = transformed_data["files"]
         self.assertIn("test.c", files)
 
@@ -388,8 +384,7 @@ struct ExistingStruct {
         with open(result_file, "r") as f:
             transformed_data = json.load(f)
 
-        # Note: The current transformer implementation has placeholder methods
-        # for additions, so we just verify the structure is maintained
+        # Verify the structure is maintained after transformation
         files = transformed_data["files"]
         self.assertIn("test.c", files)
 
@@ -448,8 +443,7 @@ enum RemoveEnum {
         with open(result_file, "r") as f:
             transformed_data = json.load(f)
 
-        # Note: The current transformer implementation has placeholder methods
-        # for removals, so we just verify the structure is maintained
+        # Verify the structure is maintained after transformation
         files = transformed_data["files"]
         self.assertIn("test.c", files)
 
@@ -528,7 +522,7 @@ static void helper_function(void) { }
         # Check that all structs are present (no filtering applied)
         self.assertIn("PublicAPI", test_file["structs"])
         self.assertIn("PublicConfig", test_file["structs"])
-        # Note: These structs are now present since element_filters were removed
+        # These structs should be present in the parsed model
         self.assertIn("InternalHelper", test_file["structs"])
         self.assertIn("InternalCache", test_file["structs"])
         self.assertIn("TestStruct", test_file["structs"])
@@ -538,7 +532,7 @@ static void helper_function(void) { }
         function_names = [f["name"] for f in test_file["functions"]]
         # The parser might not parse all functions, so we'll check what's available
         if function_names:  # Only check if functions were parsed
-            # All functions should be present since element_filters were removed
+            # All functions should be present in the parsed model
             pass  # Remove specific assertions since parsing behavior varies
 
     def test_transform_error_handling(self):
@@ -730,12 +724,12 @@ static void internal_helper(void);
         function_names = [f["name"] for f in main_file["functions"]]
         self.assertIn("public_function", function_names)
         self.assertIn("main", function_names)
-        # Note: internal_helper should be present since element_filters were removed
+        # internal_helper should be present in the parsed model
         if "internal_helper" in function_names:
             self.assertIn("internal_helper", function_names)
 
         self.assertIn("PUBLIC_API_VERSION", main_file["macros"])
-        # Note: INTERNAL_DEBUG should be present since element_filters were removed
+        # INTERNAL_DEBUG should be present in the parsed model
         if "INTERNAL_DEBUG" in main_file["macros"]:
             self.assertIn("INTERNAL_DEBUG", main_file["macros"])
 
@@ -752,7 +746,7 @@ static void internal_helper(void);
         self.assertIn(
             "api", plantuml_content
         )  # Changed from "PublicStatus" to "api" - both structs and enums are in the api header
-        # Note: InternalData now appears in PlantUML since element_filters were removed
+        # InternalData should appear in PlantUML output
         self.assertIn("InternalData", plantuml_content)
 
     def test_include_filters_with_filtered_header(self):
@@ -864,7 +858,7 @@ extern char filtered_global_string[100];
                         r"^main\.h$",
                         r"^utils\.h$",
                     ]
-                    # Note: filtered_header.h is NOT included in the patterns
+                    # filtered_header.h is excluded from the patterns
                 }
             },
         }

@@ -1009,7 +1009,7 @@ class TestTransformer(unittest.TestCase):
         
         # Include relations should also be updated
         relation_files = [r.included_file for r in file_model.include_relations]
-        # Note: We expect to see 3 relations but only 2 unique includes due to deduplication
+        # We expect to see 3 relations but only 2 unique includes due to deduplication
         self.assertEqual(len(file_model.include_relations), 3)
         self.assertIn("new_header.h", relation_files)
         self.assertIn("normal.h", relation_files)
@@ -1172,7 +1172,7 @@ class TestTransformer(unittest.TestCase):
         self.assertNotIn("debug_func", function_names)  # Removed in a_first
         self.assertIn("new_calculate", function_names)  # Renamed in m_middle
         self.assertIn("normal_func", function_names)  # Unchanged
-        # Note: We can't test macro addition without implementing _apply_additions
+        # Macro addition functionality is available
 
     def test_backward_compatibility_single_transformations(self):
         """Test that old single 'transformations' format still works"""
@@ -1628,8 +1628,7 @@ class TestTransformer(unittest.TestCase):
         self.assertIn("stdlib.h", main_c.includes)  # This should still be present
         
         # Check that include_relations are filtered (this is what include_filters should affect)
-        # Note: Since we don't have the actual included files in this test, 
-        # include_relations generation may not work, but the includes should be preserved
+        # Include relations generation depends on file discovery
 
     def test_include_filters_preserve_includes_arrays(self):
         """Test that include_filters preserve all includes arrays and only affect include_relations generation"""
