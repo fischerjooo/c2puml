@@ -79,7 +79,7 @@ class PreprocessorEvaluator:
         # Handle macro expansions
         condition = self._expand_macros(condition)
 
-        # Simple evaluation for common patterns
+        # Evaluate common patterns
         return self._evaluate_simple_expression(condition)
 
     def _expand_defined_operator(self, condition: str) -> str:
@@ -97,7 +97,7 @@ class PreprocessorEvaluator:
 
     def _expand_macros(self, condition: str) -> str:
         """Expand macros in the condition."""
-        # Simple macro expansion for common cases
+        # Macro expansion for common cases
         for macro_name, macro_value in self.macro_values.items():
             # Replace macro name with its value
             pattern = r"\b" + re.escape(macro_name) + r"\b"
@@ -200,7 +200,7 @@ class PreprocessorEvaluator:
                     self._evaluate_simple_expression(part.strip()) for part in parts
                 )
             if "!" in condition:
-                # Simple negation
+                # Negation
                 negated = condition.replace("!", "").strip()
                 return not self._evaluate_simple_expression(negated)
 

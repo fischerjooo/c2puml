@@ -487,7 +487,7 @@ class PUMLValidator:
                 if line.startswith("alias of"):
                     found_alias_format = True
                 elif line.startswith("+"):
-                    # Old format - should be updated to new alias format
+                    # Alias format should use 'alias of' prefix
                     self._add_result(
                         ValidationLevel.WARNING,
                         f"Alias typedef should use 'alias of' format instead of +: {item}",
