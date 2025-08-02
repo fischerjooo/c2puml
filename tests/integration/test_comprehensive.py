@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
 """
-Consolidated integration tests for the C to PlantUML converter.
+Comprehensive integration tests for the C to PlantUML converter.
 
-This file consolidates tests from:
-- test_include_processing_comprehensive.py
-- test_parser_tokenizer_integration.py
-
-Organized into logical test groups focusing on:
+This file contains integration tests organized into logical test groups focusing on:
 1. Comprehensive include processing integration
 2. Parser-tokenizer integration scenarios
 3. End-to-end system integration

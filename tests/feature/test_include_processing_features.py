@@ -1,15 +1,8 @@
 #!/usr/bin/env python3
 """
-Consolidated feature tests for include header processing functionality.
+Comprehensive feature tests for include header processing functionality.
 
-This file consolidates tests from:
-- test_include_processing_features.py
-- test_include_processing_enhanced_features.py
-- test_include_processing_integration.py
-- test_include_dependency_processing.py
-- test_include_processing_comprehensive.py (integration)
-
-Organized into logical test groups focusing on:
+This file contains feature tests organized into logical test groups focusing on:
 1. Basic workflow features
 2. Complex project structures
 3. Integration scenarios
