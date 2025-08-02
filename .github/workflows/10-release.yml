@@ -41,10 +41,11 @@ jobs:
         id: release_date
         run: |
           # Always use current date
-          echo "date=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+          RELEASE_DATE=$(date +%Y-%m-%d)
+          echo "date=${RELEASE_DATE}" >> $GITHUB_OUTPUT
           
           # Build tag name with optional suffix
-          TAG_NAME="v${{ steps.release_date.outputs.date }}"
+          TAG_NAME="v${RELEASE_DATE}"
           if [ -n "${{ github.event.inputs.release_suffix }}" ]; then
             TAG_NAME="${TAG_NAME}-${{ github.event.inputs.release_suffix }}"
           fi
@@ -100,14 +101,32 @@ jobs:
         run: |
           echo "📁 Verifying copied files..."
           ls -la
+          echo "📁 Contents of src/:"
+          ls -la src/ || echo "src/ directory not found"
           echo "📁 Contents of src/c2puml:"
-          ls -la src/c2puml/
+          ls -la src/c2puml/ || echo "src/c2puml/ directory not found"
           echo "📄 Main files:"
-          ls -la main.py README.md
+          ls -la main.py README.md || echo "Some main files not found"
+          echo "🔍 Git status after file operations:"
+          git status
 
       - name: "10.08 Commit changes"
         run: |
-          git commit -m "Release ${{ steps.release_date.outputs.tag }} - $(date)"
+          # Check if there are any changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit, checking if files were added..."
+            if [ -z "$(git status --porcelain)" ]; then
+              echo "No changes detected. Creating empty commit to update release branch."
+              git commit --allow-empty -m "Release ${{ steps.release_date.outputs.tag }} - $(date)"
+            else
+              echo "Changes detected, committing..."
+              git add .
+              git commit -m "Release ${{ steps.release_date.outputs.tag }} - $(date)"
+            fi
+          else
+            echo "Staged changes detected, committing..."
+            git commit -m "Release ${{ steps.release_date.outputs.tag }} - $(date)"
+          fi
           git push origin release
 
       - name: "10.09 Create and push tag"
