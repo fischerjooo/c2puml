@@ -17,8 +17,8 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 
 ## Documentation
 
-- [📖 Specification](docs/specification.md) - Complete technical specification and architecture documentation
-- [🎨 PlantUML Template](docs/puml_template.md) - PlantUML formatting template and diagram structure rules
+- [📖 Specification](https://github.com/fischerjooo/c2puml/blob/main/docs/specification.md) - Complete technical specification and architecture documentation
+- [🎨 PlantUML Template](https://github.com/fischerjooo/c2puml/blob/main/docs/puml_template.md) - PlantUML formatting template and diagram structure rules
 
 ## Features
 
