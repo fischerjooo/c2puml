@@ -1,0 +1,118 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_date:
+        description: 'Release date (YYYY-MM-DD format)'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Generate release date
+        id: release_date
+        run: |
+          if [ -n "${{ github.event.inputs.release_date }}" ]; then
+            echo "date=${{ github.event.inputs.release_date }}" >> $GITHUB_OUTPUT
+          else
+            echo "date=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+          fi
+          echo "tag=v${{ steps.release_date.outputs.date }}" >> $GITHUB_OUTPUT
+
+      - name: Create or update release branch
+        run: |
+          # Check if release branch exists
+          if git ls-remote --heads origin release | grep -q release; then
+            git checkout release
+            git pull origin release
+            # Remove all files except .git
+            git rm -rf . || true
+            git clean -fdx || true
+          else
+            git checkout --orphan release
+          fi
+
+      - name: Copy files from main branch
+        run: |
+          # Switch back to main to copy files
+          git checkout main
+          
+          # Create necessary directories
+          mkdir -p src/
+          
+          # Copy src/c2puml and its contents
+          cp -r src/c2puml src/
+          
+          # Copy main.py and README.md from root
+          cp main.py .
+          cp README.md .
+          
+          # Switch back to release branch
+          git checkout release
+          
+          # Add all copied files
+          git add .
+
+      - name: Verify copied files
+        run: |
+          echo "📁 Verifying copied files..."
+          ls -la
+          echo "📁 Contents of src/c2puml:"
+          ls -la src/c2puml/
+          echo "📄 Main files:"
+          ls -la main.py README.md
+
+      - name: Commit changes
+        run: |
+          git commit -m "Release ${{ steps.release_date.outputs.tag }} - $(date)"
+          git push origin release
+
+      - name: Create and push tag
+        run: |
+          git tag -a "${{ steps.release_date.outputs.tag }}" -m "Release ${{ steps.release_date.outputs.tag }}"
+          git push origin "${{ steps.release_date.outputs.tag }}"
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.release_date.outputs.tag }}
+          release_name: Release ${{ steps.release_date.outputs.tag }}
+          body: |
+            ## Release ${{ steps.release_date.outputs.tag }}
+            
+            This release contains:
+            - C2PlantUML source code (`src/c2puml/`)
+            - Main application entry point (`main.py`)
+            - Documentation (`README.md`)
+            
+            ### Files included:
+            - `src/c2puml/` - Core C2PlantUML library
+            - `main.py` - Application entry point
+            - `README.md` - Project documentation
+          draft: false
+          prerelease: false
