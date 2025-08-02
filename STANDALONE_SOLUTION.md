@@ -2,33 +2,24 @@
 
 ## Overview
 
-The c2puml Python application has been successfully adapted to work directly without installation. This solution provides multiple ways to run c2puml without requiring package installation, making it more portable and easier to use in various environments.
+The c2puml Python application has been successfully adapted to work directly without installation. This solution provides a simple way to run c2puml without requiring package installation, making it more portable and easier to use in various environments.
 
 ## What Was Created
 
-### 1. Main Standalone Script
-- **File**: `c2puml_standalone.py`
-- **Purpose**: The core standalone Python script that can run c2puml without installation
+### Main Standalone Script
+- **File**: `c2puml.py`
+- **Purpose**: The standalone Python script that can run c2puml without installation
 - **Features**: 
   - Automatically adds the `src/` directory to Python's module search path
   - Imports c2puml modules directly from source code
   - Provides the same functionality as the installed version
   - Includes error handling and helpful error messages
 
-### 2. Platform-Specific Wrappers
-- **Unix/Linux/macOS**: `c2puml_standalone.sh`
-- **Windows**: `c2puml_standalone.bat`
-- **Purpose**: Provide convenient command-line interfaces for different platforms
-- **Features**: 
-  - Check for Python availability
-  - Pass all arguments through to the main script
-  - Provide platform-appropriate error handling
-
-### 3. Documentation
+### Documentation
 - **File**: `README_STANDALONE.md`
 - **Purpose**: Comprehensive documentation for the standalone version
 - **Content**: 
-  - Usage instructions for all platforms
+  - Usage instructions
   - Troubleshooting guide
   - Comparison with installed version
   - Integration examples
@@ -68,37 +59,27 @@ except ImportError as e:
 
 ## Usage Examples
 
-### Method 1: Direct Python Execution
+### Direct Python Execution
 ```bash
 # Full workflow
-python3 c2puml_standalone.py --config tests/example/config.json
+python3 c2puml.py --config tests/example/config.json
 
 # Individual steps
-python3 c2puml_standalone.py --config tests/example/config.json parse
-python3 c2puml_standalone.py --config tests/example/config.json transform
-python3 c2puml_standalone.py --config tests/example/config.json generate
+python3 c2puml.py --config tests/example/config.json parse
+python3 c2puml.py --config tests/example/config.json transform
+python3 c2puml.py --config tests/example/config.json generate
 
 # With verbose output
-python3 c2puml_standalone.py --config tests/example/config.json --verbose
-```
-
-### Method 2: Using Shell Scripts
-```bash
-# Unix/Linux/macOS
-./c2puml_standalone.sh --config tests/example/config.json
-
-# Windows
-c2puml_standalone.bat --config tests/example/config.json
+python3 c2puml.py --config tests/example/config.json --verbose
 ```
 
 ## Verification
 
 The standalone version has been tested and verified to work correctly:
 
-1. **Help Command**: `python3 c2puml_standalone.py --help` ✓
-2. **Shell Script**: `./c2puml_standalone.sh --help` ✓
-3. **Full Workflow**: Successfully processed the example configuration ✓
-4. **Output Generation**: Generated all expected PlantUML files ✓
+1. **Help Command**: `python3 c2puml.py --help` ✓
+2. **Full Workflow**: Successfully processed the example configuration ✓
+3. **Output Generation**: Generated all expected PlantUML files ✓
 
 ## Advantages
 
@@ -149,7 +130,7 @@ The standalone version has been tested and verified to work correctly:
 | Feature | Standalone | Installed |
 |---------|------------|-----------|
 | Installation | None required | `pip install -e .` |
-| Command | `python3 c2puml_standalone.py` | `c2puml` |
+| Command | `python3 c2puml.py` | `c2puml` |
 | Portability | High (copy files) | Low (system dependent) |
 | Updates | Manual (update source) | `pip install --upgrade` |
 | Dependencies | Manual management | Automatic via pip |
@@ -163,20 +144,20 @@ The standalone version has been tested and verified to work correctly:
 ```bash
 #!/bin/bash
 # Generate PlantUML diagrams in build process
-python3 c2puml_standalone.py --config config.json --verbose
+python3 c2puml.py --config config.json --verbose
 ```
 
 ### CI/CD Pipelines
 ```yaml
 - name: Generate PlantUML diagrams
-  run: python3 c2puml_standalone.py --config config.json
+  run: python3 c2puml.py --config config.json
 ```
 
 ### Docker Containers
 ```dockerfile
-COPY c2puml_standalone.py /app/
+COPY c2puml.py /app/
 COPY src/ /app/src/
-RUN python3 c2puml_standalone.py --config config.json
+RUN python3 c2puml.py --config config.json
 ```
 
 ## Troubleshooting
@@ -202,11 +183,10 @@ RUN python3 c2puml_standalone.py --config config.json
 The standalone version of c2puml provides a robust, portable solution for running the application without installation. It maintains full functionality while offering significant advantages for development, testing, and deployment scenarios.
 
 The solution includes:
-- ✅ Main standalone Python script
-- ✅ Platform-specific wrappers
+- ✅ Main standalone Python script (`c2puml.py`)
 - ✅ Comprehensive documentation
 - ✅ Error handling and validation
 - ✅ Verified functionality
-- ✅ Multiple usage methods
+- ✅ Simple usage method
 
 This makes c2puml much more accessible and easier to integrate into various workflows without the overhead of package installation.

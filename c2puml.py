@@ -6,10 +6,10 @@ This script allows running c2puml without installation by adding the src directo
 to the Python path and importing the necessary modules directly.
 
 Usage:
-    python3 c2puml_standalone.py --config config.json [parse|transform|generate]
-    python3 c2puml_standalone.py config_folder [parse|transform|generate]
-    python3 c2puml_standalone.py [parse|transform|generate]  # Uses current directory as config folder
-    python3 c2puml_standalone.py              # Full workflow (parse, transform, generate)
+    python3 c2puml.py --config config.json [parse|transform|generate]
+    python3 c2puml.py config_folder [parse|transform|generate]
+    python3 c2puml.py [parse|transform|generate]  # Uses current directory as config folder
+    python3 c2puml.py              # Full workflow (parse, transform, generate)
 """
 
 import argparse

@@ -9,9 +9,7 @@ This directory contains a standalone version of the c2puml application that can 
 
 ## Files
 
-- `c2puml_standalone.py` - The main standalone Python script
-- `c2puml_standalone.sh` - Unix/Linux/macOS shell script wrapper
-- `c2puml_standalone.bat` - Windows batch file wrapper
+- `c2puml.py` - The main standalone Python script
 - `README_STANDALONE.md` - This documentation file
 
 ## Prerequisites
@@ -21,41 +19,22 @@ This directory contains a standalone version of the c2puml application that can 
 
 ## Usage
 
-### Method 1: Direct Python execution
+### Direct Python execution
 
 ```bash
 # Full workflow: Parse → Transform → Generate diagrams
-python3 c2puml_standalone.py --config tests/example/config.json
+python3 c2puml.py --config tests/example/config.json
 
 # Using current directory configuration (merges all .json files)
-python3 c2puml_standalone.py
+python3 c2puml.py
 
 # Individual steps
-python3 c2puml_standalone.py --config tests/example/config.json parse      # Step 1: Parse only
-python3 c2puml_standalone.py --config tests/example/config.json transform  # Step 2: Transform only
-python3 c2puml_standalone.py --config tests/example/config.json generate   # Step 3: Generate only
+python3 c2puml.py --config tests/example/config.json parse      # Step 1: Parse only
+python3 c2puml.py --config tests/example/config.json transform  # Step 2: Transform only
+python3 c2puml.py --config tests/example/config.json generate   # Step 3: Generate only
 
 # With verbose output for debugging
-python3 c2puml_standalone.py --config tests/example/config.json --verbose
-```
-
-### Method 2: Using shell scripts (Unix/Linux/macOS)
-
-```bash
-# Make sure the script is executable (should already be done)
-chmod +x c2puml_standalone.sh
-
-# Run the application
-./c2puml_standalone.sh --config tests/example/config.json
-./c2puml_standalone.sh --config tests/example/config.json --verbose
-```
-
-### Method 3: Using batch file (Windows)
-
-```cmd
-# Run the application
-c2puml_standalone.bat --config tests/example/config.json
-c2puml_standalone.bat --config tests/example/config.json --verbose
+python3 c2puml.py --config tests/example/config.json --verbose
 ```
 
 ## How it works
@@ -77,7 +56,7 @@ Here's a complete example of using the standalone version:
 cd /path/to/c2puml
 
 # 2. Run the standalone version on the example
-python3 c2puml_standalone.py --config tests/example/config.json
+python3 c2puml.py --config tests/example/config.json
 
 # 3. Check the output
 ls output/
@@ -118,7 +97,7 @@ ls output/
 | Feature | Standalone | Installed |
 |---------|------------|-----------|
 | Installation | None required | `pip install -e .` |
-| Command | `python3 c2puml_standalone.py` | `c2puml` |
+| Command | `python3 c2puml.py` | `c2puml` |
 | Portability | High (copy files) | Low (system dependent) |
 | Updates | Manual (update source) | `pip install --upgrade` |
 | Dependencies | Manual management | Automatic via pip |
@@ -129,11 +108,11 @@ The standalone version can be easily integrated into existing build scripts or C
 
 ```bash
 # In a build script
-python3 c2puml_standalone.py --config config.json --verbose
+python3 c2puml.py --config config.json --verbose
 
 # In a CI/CD pipeline
 - name: Generate PlantUML diagrams
-  run: python3 c2puml_standalone.py --config config.json
+  run: python3 c2puml.py --config config.json
 ```
 
 ## Support
