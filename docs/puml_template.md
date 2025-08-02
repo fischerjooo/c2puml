@@ -10,9 +10,9 @@ This template defines the structure for generating PlantUML diagrams from C sour
 ## Content Formatting Rules
 
 ### Source Files (C files)
-- **Macros**: `-` prefix for visibility
-- **Global Variables**: No prefix for visibility
-- **Functions**: No prefix for visibility
+- **Macros**: `-` prefix for visibility (private)
+- **Global Variables**: `+` prefix if declared in headers (public), `-` prefix if not (private)
+- **Functions**: `+` prefix if declared in headers (public), `-` prefix if not (private)
 - **Structs/Enums/Unions**: NOT shown in source file sections
 - **Primitive Typedefs**: NOT shown in source file sections - all typedefs get their own separate classes
 
@@ -22,12 +22,10 @@ This template defines the structure for generating PlantUML diagrams from C sour
 - **Primitive Typedefs**: NOT shown in header file sections - all typedefs get their own separate classes
 
 ### Typedef Classes
-- **All typedefs**: Separate classes for all typedefs (structs, enums, unions, function pointers, primitives)
-- **Struct typedefs**: Show field names and types (e.g., `+ int x`, `+ char* name`)
-- **Enum typedefs**: Show enum value names (e.g., `+ LOG_DEBUG`, `+ LOG_INFO`)
-- **Union typedefs**: Show union field names and types (e.g., `+ int i`, `+ float f`)
-- **Function pointer typedefs**: Show complete signature (e.g., `+ int(* callback)(int, char*)`)
-- **Primitive typedefs**: Show the original type name (e.g., `+ uint32_t`, `+ char*`)
+- **Enum typedefs**: Use `<<enumeration>>` stereotype, show enum value names without prefix (e.g., `LOG_DEBUG`, `LOG_INFO`)
+- **Struct typedefs**: Use `<<struct>>` stereotype, show field names and types with `+` prefix (e.g., `+ int x`, `+ char* name`)
+- **Union typedefs**: Use `<<union>>` stereotype, show union field names and types with `+` prefix (e.g., `+ int i`, `+ float f`)
+- **Alias typedefs**: Use `<<typedef>>` stereotype, show as `alias of {original_type}` (e.g., `alias of int`, `alias of char*`)
 
 ### Macro Display
 - **Simple defines**: Show only the macro name (e.g., `#define PI`, `#define VERSION`)
@@ -41,7 +39,11 @@ This template defines the structure for generating PlantUML diagrams from C sour
 ## Color Scheme
 - **Source files**: `#LightBlue` background with `<<source>>` stereotype
 - **Header files**: `#LightGreen` background with `<<header>>` stereotype  
-- **Typedefs**: `#LightYellow` background with `<<typedef>>` stereotype
+- **Typedef classes**: `#LightYellow` background with specific stereotypes:
+  - **Enums**: `<<enumeration>>` stereotype
+  - **Structs**: `<<struct>>` stereotype
+  - **Unions**: `<<union>>` stereotype
+  - **Aliases**: `<<typedef>>` stereotype
 
 ## Relationship Types
 
@@ -69,9 +71,14 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
     - #define {macro_name}
     - #define {macro_name}({parameters})
     -- Global Variables --
-    {type} {variable_name}
+    + {type} {variable_name}    // if declared in header (public)
+    - {type} {variable_name}    // if not in header (private)
     -- Functions --
-    {return_type} {function_name}({parameters})
+    + {return_type} {function_name}({parameters})    // if declared in header (public)
+    + {return_type} {function_name}({parameters})    // other public functions
+
+    - {return_type} {function_name}({parameters})    // if not in header (private)
+    - {return_type} {function_name}({parameters})    // other private functions
 
 }
 
@@ -89,9 +96,29 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
 }
 
 ' Typedef classes (all typedefs in separate classes)
-class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
+' Enum typedefs
+class "{enum_name}" as {ENUM_UML_ID} <<enumeration>> #LightYellow
 {
-    + {typedef_content}
+    {enum_value}
+    {enum_value} = {value}
+}
+
+' Struct typedefs  
+class "{struct_name}" as {STRUCT_UML_ID} <<struct>> #LightYellow
+{
+    + {type} {field_name}
+}
+
+' Union typedefs
+class "{union_name}" as {UNION_UML_ID} <<union>> #LightYellow
+{
+    + {type} {field_name}
+}
+
+' Alias typedefs
+class "{alias_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
+{
+    alias of {original_type}
 }
 
 ' Include relationships
@@ -122,8 +149,13 @@ class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 
 ### Content Organization
 - **Source files**: Macros, Global Variables, Functions
-- **Header files**: Macros, Global Variables, Functions
-- **Visibility**: Consistent use of `+` for headers, `-` for source files
+- **Header files**: Macros, Global Variables, Functions  
+- **Visibility in source files**: 
+  - `+` prefix for globals/functions that are declared in headers (public)
+  - `-` prefix for globals/functions that are not in headers (private)
+  - `-` prefix for all macros (private)
+  - **Grouping**: Public elements are listed first, followed by an empty line, then private elements
+- **Visibility in header files**: `+` prefix for all elements (public)
 - **No #include lines**: All include relationships are visualized with arrows only
 - **No typedefs in files**: All typedefs are shown in separate typedef classes only
 
@@ -141,3 +173,27 @@ class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 - All typedefs are represented as separate classes for clarity
 - Relationships are grouped as: Include, Declaration, and Uses
 - The system supports complex C constructs including function pointers, arrays, and nested structures
+
+## New Formatting Features
+
+### Enhanced Typedef Stereotypes
+The system now uses specific UML stereotypes for different typedef types:
+- **Enums**: `<<enumeration>>` with enum values shown without prefix
+- **Structs**: `<<struct>>` with fields shown with `+` prefix
+- **Unions**: `<<union>>` with fields shown with `+` prefix  
+- **Aliases**: `<<typedef>>` with content shown as `alias of {original_type}`
+
+### Dynamic Visibility Detection
+For source files, the system automatically determines visibility based on header presence:
+- **Public elements** (`+` prefix): Functions and globals that are declared in at least one header file
+- **Private elements** (`-` prefix): Functions and globals that are not declared in any header file
+
+This provides a more accurate representation of the actual API surface and internal implementation details.
+
+### Improved Readability with Grouping
+Elements in source files are now grouped by visibility for better readability:
+- **Public elements** (functions and globals declared in headers) are listed first with `+` prefix
+- **Empty line separator** clearly divides public and private sections  
+- **Private elements** (functions and globals not in headers) are listed after with `-` prefix
+
+This grouping makes it easy to distinguish between the public API and internal implementation at a glance.

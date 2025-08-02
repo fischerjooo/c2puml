@@ -96,7 +96,7 @@ class PUMLValidator:
         """Initialize the validator with expected values and patterns."""
         self.output_dir = self._find_output_directory()
         self.results: List[ValidationResult] = []
-        self.expected_stereotypes = {"source", "header", "typedef"}
+        self.expected_stereotypes = {"source", "header", "typedef", "enumeration", "struct", "union"}
         self.expected_colors = {"LightBlue", "LightGreen", "LightYellow", "LightGray"}
         self.expected_relationships = {"<<include>>", "<<declares>>", "<<uses>>"}
 
@@ -243,9 +243,10 @@ class PUMLValidator:
                 if line.startswith(("+", "-")) and "(" not in line:
                     variables.append(line)
             else:
-                # For typedef classes, everything is a field
-                if stereotype == "typedef" and line.startswith("+"):
-                    fields.append(line)
+                # For typedef classes, everything is a field or value
+                if stereotype in ["typedef", "struct", "union", "enumeration"]:
+                    if line.startswith("+") or line.startswith("alias of") or not line.startswith(("-", "+")):
+                        fields.append(line)
                 elif line.startswith(("+", "-")):
                     # Auto-categorize based on content
                     if "#define" in line:
@@ -383,7 +384,7 @@ class PUMLValidator:
                     filename,
                 )
 
-        elif cls.stereotype == "typedef":
+        elif cls.stereotype in ["typedef", "enumeration", "struct", "union"]:
             if not cls.uml_id.startswith("TYPEDEF_"):
                 self._add_result(
                     ValidationLevel.ERROR,
@@ -397,17 +398,18 @@ class PUMLValidator:
             self._validate_source_content(cls, filename)
         elif cls.stereotype == "header":
             self._validate_header_content(cls, filename)
-        elif cls.stereotype == "typedef":
+        elif cls.stereotype in ["typedef", "enumeration", "struct", "union"]:
             self._validate_typedef_content(cls, filename)
 
     def _validate_source_content(self, cls: PUMLClass, filename: str):
         """Validate source file class content."""
-        # Source files should not have + prefix for global elements
+        # Source files can have + prefix for public elements (declared in headers)
+        # and - prefix for private elements (not in headers)
         for item in cls.variables + cls.functions:
-            if item.startswith("+"):
+            if not (item.startswith("+") or item.startswith("-")):
                 self._add_result(
-                    ValidationLevel.ERROR,
-                    f"Source class {cls.uml_id} should not have + prefix: {item}",
+                    ValidationLevel.WARNING,
+                    f"Source class {cls.uml_id} item should have + or - prefix: {item}",
                     filename,
                 )
 
@@ -435,18 +437,69 @@ class PUMLValidator:
                     )
 
     def _validate_typedef_content(self, cls: PUMLClass, filename: str):
-        """Validate typedef class content."""
-        # Typedef classes should have + prefix for all elements
+        """Validate typedef class content based on stereotype."""
+        if cls.stereotype == "enumeration":
+            # Enum values should not have + prefix
+            self._validate_enum_typedef_content(cls, filename)
+        elif cls.stereotype in ["struct", "union"]:
+            # Struct and union fields should have + prefix
+            self._validate_struct_union_typedef_content(cls, filename)
+        elif cls.stereotype == "typedef":
+            # Alias typedefs should show "alias of" format
+            self._validate_alias_typedef_content(cls, filename)
+
+    def _validate_enum_typedef_content(self, cls: PUMLClass, filename: str):
+        """Validate enum typedef content - values should not have + prefix."""
         all_items = cls.fields + cls.values
         for item in all_items:
             line = item.strip()
             if line and not line.startswith("'") and not line.startswith("--"):
+                if line.startswith("+"):
+                    self._add_result(
+                        ValidationLevel.WARNING,
+                        f"Enum value should not have + prefix: {item}",
+                        filename,
+                    )
+
+    def _validate_struct_union_typedef_content(self, cls: PUMLClass, filename: str):
+        """Validate struct/union typedef content - fields should have + prefix."""
+        all_items = cls.fields + cls.values
+        for item in all_items:
+            line = item.strip()
+            if line and not line.startswith("'") and not line.startswith("--"):
+                # Skip alias format lines (these belong to alias typedefs, not struct/union)
+                if line.startswith("alias of"):
+                    continue
                 if not line.startswith("+"):
                     self._add_result(
                         ValidationLevel.ERROR,
-                        f"Typedef class item should have + prefix: {item}",
+                        f"Struct/Union field should have + prefix: {item}",
                         filename,
                     )
+
+    def _validate_alias_typedef_content(self, cls: PUMLClass, filename: str):
+        """Validate alias typedef content - should show 'alias of' format."""
+        all_items = cls.fields + cls.values
+        found_alias_format = False
+        for item in all_items:
+            line = item.strip()
+            if line and not line.startswith("'") and not line.startswith("--"):
+                if line.startswith("alias of"):
+                    found_alias_format = True
+                elif line.startswith("+"):
+                    # Old format - should be updated to new alias format
+                    self._add_result(
+                        ValidationLevel.WARNING,
+                        f"Alias typedef should use 'alias of' format instead of +: {item}",
+                        filename,
+                    )
+        
+        if not found_alias_format and all_items:
+            self._add_result(
+                ValidationLevel.INFO,
+                f"Alias typedef {cls.uml_id} should contain 'alias of' format",
+                filename,
+            )
 
     def validate_relationships(
         self,
@@ -877,18 +930,18 @@ class PUMLValidator:
     def validate_enum_content(self, classes: Dict[str, PUMLClass], filename: str):
         """Validate enum content and structure."""
         for uml_id, cls in classes.items():
-            if cls.stereotype == "typedef" and cls.values:
+            if cls.stereotype == "enumeration" or (cls.stereotype == "typedef" and cls.values):
                 # This is an enum typedef
                 self._validate_enum_values(cls, filename)
 
     def _validate_enum_values(self, enum_class: PUMLClass, filename: str):
         """Validate individual enum values."""
         for value in enum_class.values:
-            # Check for proper enum value format
-            if not value.startswith("+"):
+            # Enum values should not have + prefix in new format
+            if value.startswith("+"):
                 self._add_result(
-                    ValidationLevel.ERROR,
-                    f"Enum value should start with +: {value}",
+                    ValidationLevel.WARNING,
+                    f"Enum value should not start with + in new format: {value}",
                     filename,
                 )
 
@@ -906,9 +959,15 @@ class PUMLValidator:
     def validate_struct_content(self, classes: Dict[str, PUMLClass], filename: str):
         """Validate struct content and fields."""
         for uml_id, cls in classes.items():
-            if cls.stereotype == "typedef" and cls.fields and not cls.values:
-                # This is a struct typedef
+            if cls.stereotype in ["struct", "union"]:
+                # This is a struct/union typedef with new stereotypes
                 self._validate_struct_fields(cls, filename)
+            elif cls.stereotype == "typedef" and cls.fields and not cls.values:
+                # This might be a struct typedef with old stereotype - check content
+                has_alias_format = any(field.strip().startswith("alias of") for field in cls.fields)
+                if not has_alias_format:
+                    # This is a struct typedef (not an alias)
+                    self._validate_struct_fields(cls, filename)
 
     def _validate_struct_fields(self, struct_class: PUMLClass, filename: str):
         """Validate individual struct fields."""

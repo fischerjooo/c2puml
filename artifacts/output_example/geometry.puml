@@ -3,8 +3,8 @@
 class "geometry" as GEOMETRY <<source>> #LightBlue
 {
     -- Functions --
-    triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
-    int triangle_area(const triangle_t * tri)
+    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
+    + int triangle_area(const triangle_t * tri)
 }
 
 class "config" as HEADER_CONFIG <<header>> #LightGreen
@@ -61,64 +61,64 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + extern void process_point(point_t * p)
 }
 
-class "GlobalStatus" as TYPEDEF_GLOBALSTATUS <<typedef>> #LightYellow
+class "GlobalStatus" as TYPEDEF_GLOBALSTATUS <<enumeration>> #LightYellow
 {
-    + GS_ERROR
-    + GS_OK
-    + GS_UNKNOWN
+    GS_ERROR
+    GS_OK
+    GS_UNKNOWN
 }
 
 class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
 {
-    + uint32_t
+    alias of uint32_t
 }
 
 class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 {
-    + int32_t
+    alias of int32_t
 }
 
-class "triangle_t" as TYPEDEF_TRIANGLE_T <<typedef>> #LightYellow
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<struct>> #LightYellow
 {
     + char[MAX_LABEL_LEN] label
     + point_t[3] vertices
 }
 
-class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<typedef>> #LightYellow
+class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<enumeration>> #LightYellow
 {
-    + LOG_DEBUG = 0
-    + LOG_ERROR
-    + LOG_INFO
-    + LOG_WARN
+    LOG_DEBUG = 0
+    LOG_ERROR
+    LOG_INFO
+    LOG_WARN
 }
 
 class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
 {
-    + void(* log_callback_t)(log_level_t level , const char * message)
+    alias of void(* log_callback_t)(log_level_t level , const char * message)
 }
 
 class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
 {
-    + int(* math_op_t)(int , int)
+    alias of int(* math_op_t)(int , int)
 }
 
 class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 {
-    + double
+    alias of double
 }
 
-class "point_t" as TYPEDEF_POINT_T <<typedef>> #LightYellow
+class "point_t" as TYPEDEF_POINT_T <<struct>> #LightYellow
 {
     + char[32] label
     + int x
     + int y
 }
 
-class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<typedef>> #LightYellow
+class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<enumeration>> #LightYellow
 {
-    + STATE_ERROR
-    + STATE_IDLE = 0
-    + STATE_RUNNING
+    STATE_ERROR
+    STATE_IDLE = 0
+    STATE_RUNNING
 }
 
 
