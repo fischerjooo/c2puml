@@ -55,13 +55,33 @@ jobs:
         run: |
           # Check if release branch exists
           if git ls-remote --heads origin release | grep -q release; then
+            echo "📋 Release branch exists, checking out and cleaning..."
             git checkout release
             git pull origin release
-            # Remove all files except .git
-            git rm -rf . || true
-            git clean -fdx || true
+            
+            echo "📁 Files before cleanup:"
+            ls -la
+            
+            # Remove all tracked files (but preserve .git)
+            if [ -n "$(git ls-files)" ]; then
+              git ls-files -z | xargs -0 git rm -f
+              echo "✅ Removed tracked files"
+            else
+              echo "ℹ️ No tracked files to remove"
+            fi
+            
+            # Remove any untracked files and directories
+            git clean -fdx
+            
+            echo "📁 Files after cleanup:"
+            ls -la
+            echo "✅ Cleaned existing release branch"
           else
+            echo "📋 Creating new orphan release branch..."
             git checkout --orphan release
+            # Remove any files that might be in the working directory
+            git rm -rf . 2>/dev/null || true
+            echo "✅ Created new orphan release branch"
           fi
 
       - name: "10.06 Copy files from main branch"
