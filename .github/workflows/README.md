@@ -7,11 +7,9 @@ This repository uses a streamlined, numbered workflow system that follows a clea
 ## Workflow Hierarchy
 
 ### 00. Test (`00-test.yml`)
-**Purpose**: Basic testing for side branches and pull requests
+**Purpose**: Basic testing for pull requests
 **Triggers**: 
-- Push to any branch except main/master
 - Pull requests to main/master branches
-- Manual dispatch
 
 **Steps**:
 1. **00.01-00.04**: Setup environment and dependencies
@@ -74,9 +72,9 @@ This repository uses a streamlined, numbered workflow system that follows a clea
 
 ## Execution Flow
 
-### Side Branches and PRs
+### Pull Requests
 ```
-Side Branch Push/PR → 00. Test
+Pull Request → 00. Test
     ↓ (stops here - no further workflows)
 ```
 
@@ -92,7 +90,7 @@ Main Branch Push → 01. Test and Coverage
 ## Key Improvements Over Previous Setup
 
 ### ✅ **Optimized for Different Branch Types**
-- **Side branches**: Lightweight testing only (workflow 00)
+- **Pull requests**: Lightweight testing only (workflow 00)
 - **Main branch**: Full pipeline with coverage and deployment (workflows 01-03)
 - **Clear separation**: Different workflows for different purposes
 
@@ -102,7 +100,7 @@ Main Branch Push → 01. Test and Coverage
 - **Consistent patterns**: All workflows follow the same structure
 
 ### ✅ **Eliminated Redundancy**
-- **Side branches**: No unnecessary coverage or deployment
+- **Pull requests**: No unnecessary coverage or deployment
 - **Main branch**: Full pipeline only when needed
 - **Streamlined triggers**: Clear, linear trigger chain
 
@@ -145,7 +143,7 @@ gh workflow run "03-deploy-website.yml"
 - `PERSONAL_ACCESS_TOKEN`: For repository write access (optional, falls back to `github.token`)
 
 ### Branch Protection
-- **Side branches**: Only workflow 00 runs
+- **Pull requests**: Only workflow 00 runs
 - **Main branch**: Full pipeline (workflows 01-03)
 - **PR workflows**: Only workflow 00 runs
 - **Main branch triggers**: All subsequent workflows
@@ -171,7 +169,7 @@ gh workflow run "03-deploy-website.yml"
 The old workflows have been replaced with the new numbered system. The new structure provides better separation between side branch and main branch workflows.
 
 ### Migration Checklist
-- [ ] Test new workflow 00 with a side branch
+- [ ] Test new workflow 00 with a pull request
 - [ ] Test new workflow 01 with main branch
 - [ ] Verify workflow 02 triggers correctly
 - [ ] Confirm workflow 03 deploys successfully
@@ -179,8 +177,8 @@ The old workflows have been replaced with the new numbered system. The new struc
 
 ## Branch Strategy
 
-### Side Branches
-- **Purpose**: Development and feature work
+### Pull Requests
+- **Purpose**: Code review and validation
 - **Workflow**: 00-test.yml only
 - **Benefits**: Fast feedback, no unnecessary overhead
 - **Retention**: 7-day artifact retention
