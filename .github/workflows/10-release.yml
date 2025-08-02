@@ -91,7 +91,22 @@ jobs:
           # Stage all changes
           git add .
 
-      - name: "10.07 Generate release notes file"
+      - name: "10.07 Update version in pyproject.toml"
+        run: |
+          # Generate version in format YYYY.M.D (e.g., 2025.8.2)
+          VERSION=$(date +%Y.%-m.%-d)
+          echo "📝 Updating version to: $VERSION"
+          
+          # Update the version in pyproject.toml
+          sed -i "s/^version = .*/version = \"$VERSION\"/" pyproject.toml
+          
+          echo "📄 Updated pyproject.toml version:"
+          grep "^version = " pyproject.toml
+          
+          # Stage the updated file
+          git add pyproject.toml
+
+      - name: "10.08 Generate release notes file"
         run: |
           # Create release-note.md file with release tag and description
           cat > release-note.md << 'EOF'
@@ -130,7 +145,7 @@ jobs:
           # Add the release notes file to git
           git add release-note.md
 
-      - name: "10.08 Verify copied files"
+      - name: "10.09 Verify copied files"
         run: |
           echo "📁 Verifying copied files..."
           ls -la
@@ -143,7 +158,7 @@ jobs:
           echo "🔍 Git status after file operations:"
           git status
 
-      - name: "10.09 Commit and push release"
+      - name: "10.10 Commit and push release"
         run: |
           # Check if there are any changes to commit
           if git diff --staged --quiet && [ -z "$(git status --porcelain)" ]; then
@@ -157,7 +172,7 @@ jobs:
           echo "📤 Pushing release branch to origin"
           git push origin release
 
-      - name: "10.10 Create and push tag"
+      - name: "10.11 Create and push tag"
         id: create_tag
         run: |
           TAG_NAME="${{ steps.release_date.outputs.tag }}"
@@ -189,7 +204,7 @@ jobs:
             git push origin "$TAG_NAME"
           fi
 
-      - name: "10.11 Create GitHub Release"
+      - name: "10.12 Create GitHub Release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
