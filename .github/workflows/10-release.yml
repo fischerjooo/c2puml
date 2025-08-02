@@ -25,7 +25,7 @@ jobs:
       - name: "10.02 Set up Python"
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.9'
 
       - name: "10.03 Configure Git"
         run: |
