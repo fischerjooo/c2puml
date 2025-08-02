@@ -73,43 +73,41 @@ def main():
     # Get command line arguments (excluding script name)
     args = sys.argv[1:]
 
-    # Handle COMMAND constant
+    # Handle COMMAND constant - overrides any command in arguments
     if has_command:
-        # Check if a command is already specified in arguments
-        command_specified = any(arg in ['parse', 'transform', 'generate'] for arg in args)
-        if not command_specified:
-            cmd.append(COMMAND)
-            logging.info("Using default command: %s", COMMAND)
+        cmd.append(COMMAND)
+        logging.info("Overriding command with: %s", COMMAND)
+        # Remove any existing command from arguments
+        args = [arg for arg in args if arg not in ['parse', 'transform', 'generate']]
 
-    # Handle CONFIG_PATH constant
+    # Handle CONFIG_PATH constant - overrides any config in arguments
     if has_config:
-        # Check if config is already specified in arguments
-        config_specified = any(arg.startswith('--config') or arg.startswith('-c') for arg in args)
-        if not config_specified:
-            cmd.extend(["--config", CONFIG_PATH])
-            logging.info("Using default config: %s", CONFIG_PATH)
+        cmd.extend(["--config", CONFIG_PATH])
+        logging.info("Overriding config with: %s", CONFIG_PATH)
+        # Remove any existing config arguments
+        args = [arg for i, arg in enumerate(args) if not (arg.startswith('--config') or arg.startswith('-c')) and (i == 0 or not args[i-1].startswith('--config'))]
 
-    # Handle VERBOSE constant
+    # Handle VERBOSE constant - overrides any verbose in arguments
     if has_verbose:
-        # Check if verbose is already specified in arguments
-        verbose_specified = any(arg.startswith('--verbose') or arg.startswith('-v') for arg in args)
-        if not verbose_specified and VERBOSE:
+        if VERBOSE:
             cmd.append("--verbose")
-            logging.info("Using default verbose: %s", VERBOSE)
+            logging.info("Overriding verbose with: %s", VERBOSE)
+        # Remove any existing verbose arguments
+        args = [arg for arg in args if not (arg.startswith('--verbose') or arg.startswith('-v'))]
 
-    # Forward all command line arguments
+    # Forward remaining command line arguments
     cmd.extend(args)
 
     # Log configuration summary
     logging.info("Debug Configuration:")
     if has_command:
-        logging.info("  Default Command: %s", COMMAND)
+        logging.info("  Override Command: %s", COMMAND)
     if has_config:
-        logging.info("  Default Config: %s", CONFIG_PATH)
+        logging.info("  Override Config: %s", CONFIG_PATH)
     if has_verbose:
-        logging.info("  Default Verbose: %s", VERBOSE)
+        logging.info("  Override Verbose: %s", VERBOSE)
     if not any([has_command, has_config, has_verbose]):
-        logging.info("  No defaults configured - forwarding arguments as-is")
+        logging.info("  No overrides configured - forwarding arguments as-is")
     logging.info("Running command: %s", " ".join(cmd))
 
     try:
