@@ -31,27 +31,22 @@ jobs:
         pip install -e .
 
     - name: Verify package installation
-      env:
-        PYTHONPATH: ${{ github.workspace }}/src
       run: |
         echo "🔍 Verifying package installation..."
         python -c "import sys; print('Python path:', sys.path)"
         python -c "import c2puml; print('✅ Package installed successfully')"
         python -c "from c2puml.core.parser import CParser; print('✅ Core modules accessible')"
-        # Also test with PYTHONPATH fallback
-        echo "🔍 Testing with PYTHONPATH fallback..."
-        python -c "import c2puml; print('✅ PYTHONPATH approach works')"
+        # Test the standalone c2puml.py script
+        echo "🔍 Testing standalone c2puml.py script..."
+        python c2puml.py --help
+        echo "✅ Standalone script works correctly"
 
     - name: Run all tests (Shell)
-      env:
-        PYTHONPATH: ${{ github.workspace }}/src
       run: |
         echo "🧪 Running comprehensive test suite (Shell)..."
         bash scripts/run_all_tests.sh
 
     - name: Run example (Shell)
-      env:
-        PYTHONPATH: ${{ github.workspace }}/src
       run: |
         echo "🚀 Running example script..."
         bash scripts/run_example.sh
