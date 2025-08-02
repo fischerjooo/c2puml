@@ -10,6 +10,9 @@ on:
 jobs:
   test-and-coverage:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
     strategy:
       matrix:
         python-version: [3.9]
