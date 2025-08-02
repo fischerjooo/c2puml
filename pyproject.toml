@@ -8,7 +8,7 @@ version = "3.0.0"
 description = "Convert C/C++ code to PlantUML diagrams with advanced filtering and transformation capabilities"
 readme = "README.md"
 authors = [
-    {name = "C to PlantUML Team", email = "team@c2puml.com"}
+    {name = "C to PlantUML Team", email = "fischerjooo@users.noreply.github.com"}
 ]
 license = {text = "MIT"}
 classifiers = [
@@ -32,6 +32,14 @@ classifiers = [
 requires-python = ">=3.7"
 dependencies = []
 keywords = ["c", "cpp", "plantuml", "uml", "diagram", "code-generation", "documentation"]
+
+[project.urls]
+Homepage = "https://github.com/fischerjooo/c2puml"
+Repository = "https://github.com/fischerjooo/c2puml"
+Issues = "https://github.com/fischerjooo/c2puml/issues"
+Documentation = "https://fischerjooo.github.io/c2puml"
+"Download ZIP" = "https://github.com/fischerjooo/c2puml/archive/refs/heads/release.zip"
+"Download TAR.GZ" = "https://github.com/fischerjooo/c2puml/archive/refs/heads/release.tar.gz"
 
 [project.scripts]
 c2puml = "c2puml.main:main"
