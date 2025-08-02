@@ -57,7 +57,7 @@ class TestInvalidSourcePaths(unittest.TestCase):
             self.c_parser.parse_project("")
         
         error_msg = str(cm.exception)
-        self.assertIn("Source folder cannot be empty or whitespace", error_msg)
+        self.assertIn("Source folder must be a non-empty string", error_msg)
 
     def test_whitespace_source_folder_string(self):
         """Test error handling for whitespace-only source folder string."""
@@ -165,41 +165,86 @@ class TestInvalidSourcePaths(unittest.TestCase):
 
     def test_config_empty_source_folders(self):
         """Test Config.load with empty source_folders."""
+        import tempfile
+        import json
+        import os
+        
+        # Create a temporary config file with empty source_folders
+        temp_dir = tempfile.mkdtemp()
+        config_path = os.path.join(temp_dir, "test_config.json")
         config_data = {
             "source_folders": [],
             "project_name": "test"
         }
         
+        with open(config_path, "w") as f:
+            json.dump(config_data, f)
+        
+        # Empty source_folders list should raise an error when loading
         with self.assertRaises(ValueError) as cm:
-            Config(**config_data)
+            Config.load(config_path)
         
         error_msg = str(cm.exception)
         self.assertIn("cannot be empty", error_msg)
+        
+        # Clean up
+        import shutil
+        shutil.rmtree(temp_dir)
 
     def test_config_non_list_source_folders(self):
         """Test Config.load with non-list source_folders."""
+        import tempfile
+        import json
+        import os
+        
+        # Create a temporary config file with non-list source_folders
+        temp_dir = tempfile.mkdtemp()
+        config_path = os.path.join(temp_dir, "test_config.json")
         config_data = {
             "source_folders": "not_a_list",
             "project_name": "test"
         }
         
+        with open(config_path, "w") as f:
+            json.dump(config_data, f)
+        
+        # Non-list source_folders should raise an error when loading
         with self.assertRaises(ValueError) as cm:
-            Config(**config_data)
+            Config.load(config_path)
         
         error_msg = str(cm.exception)
         self.assertIn("must be a list", error_msg)
+        
+        # Clean up
+        import shutil
+        shutil.rmtree(temp_dir)
 
     def test_config_missing_source_folders(self):
         """Test Config.load with missing source_folders."""
+        import tempfile
+        import json
+        import os
+        
+        # Create a temporary config file without source_folders
+        temp_dir = tempfile.mkdtemp()
+        config_path = os.path.join(temp_dir, "test_config.json")
         config_data = {
             "project_name": "test"
         }
         
+        with open(config_path, "w") as f:
+            json.dump(config_data, f)
+        
+        # Missing source_folders should raise an error when loading
         with self.assertRaises(ValueError) as cm:
-            Config(**config_data)
+            Config.load(config_path)
         
         error_msg = str(cm.exception)
         self.assertIn("must contain 'source_folders' field", error_msg)
+        
+        # Clean up
+        import shutil
+        shutil.rmtree(temp_dir)
 
     def test_multiple_source_folders_partial_failure(self):
         """Test handling when some source folders fail but others succeed."""
