@@ -14,12 +14,12 @@ This template defines the structure for generating PlantUML diagrams from C sour
 - **Global Variables**: No prefix for visibility
 - **Functions**: No prefix for visibility
 - **Structs/Enums/Unions**: Only the name is shown (e.g., `struct MyStruct`, `enum MyEnum`)
-- **Primitive Typedefs**: Only primitive typedefs with `relationship_type = "alias"` are shown with `-` prefix
+- **Primitive Typedefs**: NOT shown in source file sections - all typedefs get their own separate classes
 
 ### Header Files (H files)
 - **All elements**: `+` prefix for visibility
-- **Primitive Typedefs**: Only primitive typedefs with `relationship_type = "alias"` are shown with `+` prefix
 - **Structs/Enums/Unions**: Only the name is shown (e.g., `+ struct MyStruct`, `+ enum MyEnum`)
+- **Primitive Typedefs**: NOT shown in header file sections - all typedefs get their own separate classes
 
 ### Typedef Classes
 - **All typedefs**: Separate classes for all typedefs (structs, enums, unions, function pointers, primitives)
@@ -76,8 +76,6 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
     struct {struct_name}
     enum {enum_name}
     union {union_name}
-    -- Primitive Typedefs --
-    - typedef {original_type} {typedef_name}
 }
 
 ' Header file class (H file)
@@ -94,8 +92,6 @@ class "{header_name}" as {HEADER_UML_ID} <<header>> #LightGreen
     + struct {struct_name}
     + enum {enum_name}
     + union {union_name}
-    -- Primitive Typedefs --
-    + typedef {original_type} {typedef_name}
 }
 
 ' Typedef classes (all typedefs in separate classes)
@@ -121,9 +117,9 @@ class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 ## Key Features
 
 ### Typedef Handling
-- **Primitive typedefs**: Only shown in file/header classes if `relationship_type = "alias"` and not struct/enum/union
-- **Complex typedefs**: Struct, enum, and union typedefs are NOT shown in file/header classes to avoid duplication
-- **Typedef classes**: All typedefs (primitive and complex) are shown in separate typedef classes with their content and relationships
+- **All typedefs**: All typedefs (primitive and complex) are shown in separate typedef classes only
+- **No typedefs in file/header classes**: Typedefs are never shown in source or header file sections to avoid duplication
+- **Declaration relationships**: Files that declare typedefs are connected via `<<declares>>` relationships to their typedef classes
 
 ### Relationship Visualization
 - **Include relationships**: Arrows showing file dependencies
@@ -131,9 +127,10 @@ class "{typedef_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 - **Uses relationships**: Dotted lines showing typedef dependencies
 
 ### Content Organization
-- **Sections**: Macros, Global Variables, Functions, Structs/Enums/Unions, Primitive Typedefs
+- **Sections**: Macros, Global Variables, Functions, Structs/Enums/Unions
 - **Visibility**: Consistent use of `+` for headers, `-` for source files
 - **No #include lines**: All include relationships are visualized with arrows only
+- **No typedefs in files**: All typedefs are shown in separate typedef classes only
 
 ### Advanced Features
 - **Function pointers**: Complete signature display with parameter names
