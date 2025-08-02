@@ -69,9 +69,9 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + char * DEFAULT_LABEL
     + int MAX_POINTS
     -- Functions --
-    + extern int calculate_sum(int a, int b)
-    + extern point_t * create_point(int x, int y, const char * label)
-    + extern void process_point(point_t * p)
+    + int calculate_sum(int a, int b)
+    + point_t * create_point(int x, int y, const char * label)
+    + void process_point(point_t * p)
 }
 
 class "GlobalStatus" as TYPEDEF_GLOBALSTATUS <<enumeration>> #LightYellow

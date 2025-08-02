@@ -278,10 +278,13 @@ class Generator:
         params = self._format_function_parameters(func.parameters)
         param_str = ", ".join(params)
 
-        full_signature = f"{INDENT}{prefix}{func.return_type} {func.name}({param_str})"
+        # Remove 'extern' keyword from return type for UML diagrams
+        return_type = func.return_type.replace("extern ", "").strip()
+
+        full_signature = f"{INDENT}{prefix}{return_type} {func.name}({param_str})"
         if len(full_signature) > MAX_LINE_LENGTH:
             param_str = self._truncate_parameters(params, func, prefix)
-            return f"{INDENT}{prefix}{func.return_type} {func.name}({param_str})"
+            return f"{INDENT}{prefix}{return_type} {func.name}({param_str})"
         return full_signature
 
     def _format_function_parameters(self, parameters) -> List[str]:
