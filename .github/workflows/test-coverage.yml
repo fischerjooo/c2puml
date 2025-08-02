@@ -49,20 +49,17 @@ jobs:
           pip install -e .
 
       - name: 🔍 Verify package installation
-        env:
-          PYTHONPATH: ${{ github.workspace }}/src
         run: |
           echo "🔍 Verifying package installation..."
           python -c "import sys; print('Python path:', sys.path)"
           python -c "import c2puml; print('✅ Package installed successfully')"
           python -c "from c2puml.core.parser import CParser; print('✅ Core modules accessible')"
-          # Also test with PYTHONPATH fallback
-          echo "🔍 Testing with PYTHONPATH fallback..."
-          python -c "import c2puml; print('✅ PYTHONPATH approach works')"
+          # Test the standalone main.py script
+          echo "🔍 Testing standalone main.py script..."
+          python main.py --help
+          echo "✅ Standalone script works correctly"
 
       - name: 🧪 Run comprehensive test suite with coverage
-        env:
-          PYTHONPATH: ${{ github.workspace }}/src
         run: |
           echo "🧪 Running comprehensive test suite with coverage analysis..."
           ./scripts/run_tests_with_coverage.sh

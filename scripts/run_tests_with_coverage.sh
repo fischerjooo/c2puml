@@ -83,10 +83,10 @@ if [ "$HAS_COVERAGE" = true ]; then
     # Check if pytest is available, otherwise use unittest
     if python3 -m pytest --version &>/dev/null; then
         print_status "Running all tests with coverage using pytest..."
-        PYTHONPATH=src python3 -m coverage run -m pytest tests/ -v 2>&1 | tee artifacts/test_reports/test-output.log
+        python3 -m coverage run -m pytest tests/ -v 2>&1 | tee artifacts/test_reports/test-output.log
     else
         print_status "pytest not available, running tests with coverage using unittest discovery..."
-        PYTHONPATH=src python3 -m coverage run run_all_tests.py 2>&1 | tee artifacts/test_reports/test-output.log
+        python3 -m coverage run scripts/run_all_tests.py 2>&1 | tee artifacts/test_reports/test-output.log
     fi
     
     # Run examples if they exist
@@ -95,7 +95,7 @@ if [ "$HAS_COVERAGE" = true ]; then
         for example in examples/*.py; do
             if [ -f "$example" ]; then
                 print_status "Running example: $example"
-                PYTHONPATH=src python3 -m coverage run -a "$example"
+                python3 -m coverage run -a "$example"
             fi
         done
     fi
@@ -103,7 +103,7 @@ if [ "$HAS_COVERAGE" = true ]; then
     # Run the C to PlantUML example with coverage
     if [ -f "scripts/run_example_with_coverage.py" ]; then
         print_status "Running C to PlantUML example with coverage..."
-        PYTHONPATH=src python3 -m coverage run -a scripts/run_example_with_coverage.py
+        python3 -m coverage run -a scripts/run_example_with_coverage.py
     fi
     
     # Step 2: Generate comprehensive coverage reports
@@ -125,7 +125,7 @@ if [ "$HAS_COVERAGE" = true ]; then
     else
         print_warning "No coverage data found. Running a simple test to generate some coverage data..."
         # Run a simple test with coverage to ensure we have some data
-        PYTHONPATH=src python3 -m coverage run -c "import c2puml; print('✅ Basic import test passed')" 2>/dev/null || true
+        python3 -m coverage run -c "import c2puml; print('✅ Basic import test passed')" 2>/dev/null || true
         # Try generating reports again
         if python3 -m coverage report &>/dev/null; then
             print_status "Generating HTML coverage reports with basic data..."
@@ -184,7 +184,7 @@ if [ "$HAS_COVERAGE" = true ]; then
 else
     # Fallback: Run all tests using the existing test runner without coverage
     print_status "Running all unit tests without coverage..."
-    python3 run_all_tests.py --verbosity 2 2>&1 | tee artifacts/test_reports/test-output.log
+    python3 scripts/run_all_tests.py --verbosity 2 2>&1 | tee artifacts/test_reports/test-output.log
 fi
 
 # Check if tests passed
