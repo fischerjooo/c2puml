@@ -1,4 +1,4 @@
-name: "02. Generate PlantUML Diagrams"
+name: "02. PlantUML to PNG"
 
 on:
   workflow_dispatch:
@@ -18,7 +18,7 @@ on:
     paths:
       - 'artifacts/output_example/**/*.puml'
       - 'picgen.sh'
-      - '.github/workflows/02-generate-plantuml.yml'
+      - '.github/workflows/02-puml-to-png.yml'
     branches: [main, master]
 
 jobs:
