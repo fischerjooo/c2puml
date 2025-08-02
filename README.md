@@ -20,6 +20,11 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 - [📖 Specification](https://github.com/fischerjooo/c2puml/blob/main/docs/specification.md) - Complete technical specification and architecture documentation
 - [🎨 PlantUML Template](https://github.com/fischerjooo/c2puml/blob/main/docs/puml_template.md) - PlantUML formatting template and diagram structure rules
 
+## Releases
+
+- [📦 Download ZIP](https://github.com/fischerjooo/c2puml/archive/refs/heads/release.zip) - Download the latest release as ZIP archive
+- [📦 Download TAR.GZ](https://github.com/fischerjooo/c2puml/archive/refs/heads/release.tar.gz) - Download the latest release as TAR.GZ archive
+
 ## Features
 
 - **Advanced C/C++ Parsing**: Comprehensive tokenization-based parsing with robust preprocessor handling and conditional compilation support
