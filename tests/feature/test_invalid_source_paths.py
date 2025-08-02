@@ -116,20 +116,38 @@ class TestInvalidSourcePaths(unittest.TestCase):
         self.assertIn("Available directories in parent", error_msg)
 
     def test_permission_denied_handling(self):
-        """Test handling of permission denied errors."""
-        # This test might not work on all systems, so we'll make it conditional
+        """Test error handling for permission denied scenarios."""
+        import tempfile
+        import os
+        import stat
+        
+        # Create a temporary directory
+        temp_dir = tempfile.mkdtemp()
+        restricted_dir = os.path.join(temp_dir, "restricted")
+        os.makedirs(restricted_dir)
+        
         try:
-            # Try to access a system directory that might be restricted
-            system_path = "/root"
-            if os.path.exists(system_path) and not os.access(system_path, os.R_OK):
-                with self.assertRaises(ValueError) as cm:
-                    self.c_parser.parse_project(system_path)
-                
-                error_msg = str(cm.exception)
-                self.assertIn("Permission denied", error_msg)
-        except (OSError, PermissionError):
-            # Skip this test if we can't test it
-            self.skipTest("Cannot test permission denied scenario on this system")
+            # Remove read permissions from the directory
+            os.chmod(restricted_dir, 0o000)  # No permissions
+            
+            # This should raise a ValueError due to permission denied
+            with self.assertRaises(ValueError) as cm:
+                self.c_parser.parse_project(restricted_dir)
+            
+            error_msg = str(cm.exception)
+            self.assertIn("Permission denied", error_msg)
+            
+        except (OSError, PermissionError) as e:
+            # If we can't modify permissions, skip this test
+            self.skipTest(f"Cannot test permission denied scenario: {e}")
+        finally:
+            # Restore permissions and clean up
+            try:
+                os.chmod(restricted_dir, 0o755)
+                import shutil
+                shutil.rmtree(temp_dir)
+            except (OSError, PermissionError):
+                pass  # Ignore cleanup errors
 
     def test_parser_empty_source_folders_list(self):
         """Test Parser.parse with empty source_folders list."""
