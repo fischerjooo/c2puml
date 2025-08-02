@@ -1,4 +1,4 @@
-name: Release
+name: 10. Release
 
 on:
   workflow_dispatch:
@@ -73,6 +73,9 @@ jobs:
 
       - name: "10.06 Copy files from main branch"
         run: |
+          # Stash any changes to avoid checkout conflicts
+          git stash || true
+          
           # Switch back to main to copy files
           git checkout main
           
