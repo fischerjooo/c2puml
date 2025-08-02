@@ -8,6 +8,16 @@ on:
         required: false
         default: ''
         type: string
+      release_suffix:
+        description: 'Optional suffix to append to tag name (e.g., "beta", "rc1")'
+        required: false
+        default: ''
+        type: string
+      release_notes:
+        description: 'Additional release notes to include in the release body'
+        required: false
+        default: ''
+        type: string
 
 jobs:
   release:
@@ -32,7 +42,7 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: "10.04 Generate release date"
+      - name: "10.04 Generate release date and tag"
         id: release_date
         run: |
           if [ -n "${{ github.event.inputs.release_date }}" ]; then
@@ -40,7 +50,13 @@ jobs:
           else
             echo "date=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
           fi
-          echo "tag=v${{ steps.release_date.outputs.date }}" >> $GITHUB_OUTPUT
+          
+          # Build tag name with optional suffix
+          TAG_NAME="v${{ steps.release_date.outputs.date }}"
+          if [ -n "${{ github.event.inputs.release_suffix }}" ]; then
+            TAG_NAME="${TAG_NAME}-${{ github.event.inputs.release_suffix }}"
+          fi
+          echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
 
       - name: "10.05 Create or update release branch"
         run: |
@@ -114,5 +130,7 @@ jobs:
             - `src/c2puml/` - Core C2PlantUML library
             - `main.py` - Application entry point
             - `README.md` - Project documentation
+            
+            ${{ github.event.inputs.release_notes != '' && format('### Additional Notes\n\n{0}', github.event.inputs.release_notes) || '' }}
           draft: false
           prerelease: false
