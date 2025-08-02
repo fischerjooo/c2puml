@@ -7,9 +7,9 @@ echo Cleaning previous output...
 if exist "artifacts\output_example" rmdir /s /q "artifacts\output_example"
 if exist "tests\example\artifacts\output_example" rmdir /s /q "tests\example\artifacts\output_example"
 
-REM Run the full workflow using the new CLI interface
+REM Run the full workflow using the standalone main.py
 echo Running example workflow with config.json...
-set PYTHONPATH=src && python -m c2puml.main --config tests/example/config.json --verbose
+python main.py --config tests/example/config.json --verbose
 
 echo PlantUML diagrams generated in: ./artifacts/output_example (see config.json)
 

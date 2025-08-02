@@ -155,13 +155,13 @@
         </div>
 
         <h1>Test Results Summary</h1>
-        <div class="timestamp">Generated: 2025-08-02 06:48:48</div>
+        <div class="timestamp">Generated: 2025-08-02 07:44:17</div>
 
         <div class="summary-card">
             <h2 style="margin-top: 0;">Test Execution Results</h2>
             <div style="margin-bottom: 20px;">
                 <span class="status-badge">PASSED</span>
-                <span style="margin-left: 10px; color: #666;">Execution completed in 2.83 seconds</span>
+                <span style="margin-left: 10px; color: #666;">Execution completed in 1.15 seconds</span>
             </div>
 
             <div class="stats-grid">
@@ -198,10 +198,15 @@
                 <p><strong>Failed:</strong> 0 (0.0%)</p>
                 <p><strong>Skipped:</strong> 0 (0.0%)</p>
                 <p><strong>Errors:</strong> 0 (0.0%)</p>
-                <p><strong>Execution Time:</strong> 2.83 seconds</p>
+                <p><strong>Execution Time:</strong> 1.15 seconds</p>
                 <p><strong>Overall Status:</strong> PASSED</p>
             </div>
 
+            
+            <div class="failed-tests">
+                <div class="failed-header">Failed Tests Details</div>
+                <div class="failed-item">Test that generate command works when called independently without model files ... 2025-08-02 07:44:16,497 - root - INFO - Using config: /tmp/tmpvefrognz/config.json</div><div class="failed-item">2025-08-02 07:44:16,497 - root - INFO - Output folder: /tmp/tmpvefrognz/output</div><div class="failed-item">2025-08-02 07:44:16,497 - root - ERROR - No model file found for generation.</div><div class="failed-item"></div><div class="failed-item"><frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour</div><div class="failed-item">Test that generate mode works when called independently without model files ... 2025-08-02 07:44:17,102 - root - INFO - Using config: /tmp/tmpquw9l6f1/config.json</div><div class="failed-item">2025-08-02 07:44:17,103 - root - INFO - Output folder: /tmp/tmpquw9l6f1/output</div><div class="failed-item">2025-08-02 07:44:17,103 - root - ERROR - No model file found for generation.</div><div class="failed-item"></div><div class="failed-item"><frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour</div><div class="failed-item">Test that invalid source folder raises an error ... 2025-08-02 07:44:17,474 - c2puml.core.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders</div><div class="failed-item">2025-08-02 07:44:17,474 - c2puml.core.parser - INFO - Parsing source folder 1/1: /nonexistent/path</div><div class="failed-item">2025-08-02 07:44:17,474 - c2puml.core.parser - ERROR - Failed to parse source folder /nonexistent/path: Source folder not found: /nonexistent/path</div><div class="failed-item">ok</div><div class="failed-item">test_multiple_source_folders_parsing (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_multiple_source_folders_parsing)</div>
+            </div>
             
 
         </div>

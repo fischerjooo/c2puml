@@ -8,9 +8,9 @@ cd "$SCRIPT_DIR/.."
 echo "Cleaning previous output..."
 rm -rf artifacts/output_example tests/example/artifacts/output_example
 
-# Run the full workflow using the new CLI interface
+# Run the full workflow using the standalone main.py
 echo "Running example workflow with config.json..."
-PYTHONPATH=src python3 -m c2puml.main --config tests/example/config.json
+python3 main.py --config tests/example/config.json
 
 echo "PlantUML diagrams generated in: ./artifacts/output_example (see config.json)"
 

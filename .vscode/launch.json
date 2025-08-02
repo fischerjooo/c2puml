@@ -12,7 +12,10 @@
                 "PYTHONPATH": "${workspaceFolder}",
                 "PYTHONHOME": "${env:PYTHONHOME}"
             },
-            "args": [],
+            "args": [
+                "--config",
+                "tests/example/config.json"
+            ],
             "justMyCode": false
         },
         {
@@ -27,7 +30,9 @@
                 "PYTHONHOME": "${env:PYTHONHOME}"
             },
             "args": [
-                "parse"
+                "parse",
+                "--config",
+                "tests/example/config.json"
             ],
             "justMyCode": false
         },
@@ -43,7 +48,9 @@
                 "PYTHONHOME": "${env:PYTHONHOME}"
             },
             "args": [
-                "transform"
+                "transform",
+                "--config",
+                "tests/example/config.json"
             ],
             "justMyCode": false
         },
@@ -59,7 +66,9 @@
                 "PYTHONHOME": "${env:PYTHONHOME}"
             },
             "args": [
-                "generate"
+                "generate",
+                "--config",
+                "tests/example/config.json"
             ],
             "justMyCode": false
         },
@@ -140,7 +149,7 @@
             "id": "configPath",
             "type": "promptString",
             "description": "Enter the path to your config file",
-            "default": "../config.json"
+            "default": "tests/example/config.json"
         },
         {
             "id": "workflow",
