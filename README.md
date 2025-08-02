@@ -383,6 +383,12 @@ python scripts/run_example_with_coverage.py # Example with coverage
 **"Dot executable does not exist" (PlantUML PNG generation)**
 - **Solution**: Install Graphviz or use the provided scripts: `./scripts/picgen.sh` or `scripts/picgen.bat`
 
+**Invalid source paths**
+- **Enhanced Error Handling**: The library now provides detailed error messages for invalid source paths instead of crashing
+- **Helpful Context**: Error messages include current working directory, parent directory information, and suggestions
+- **Multiple Source Folders**: Partial failures are handled gracefully when some folders are valid
+- **See**: [Error Handling Guide](docs/error_handling_guide.md) for comprehensive troubleshooting
+
 ### Getting Help
 
 - **Quick Test**: Try the standalone script first: `python3 main.py --config tests/example/config.json`
