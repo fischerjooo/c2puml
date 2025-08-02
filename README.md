@@ -15,6 +15,13 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 - [📊 Example Diagrams](https://fischerjooo.github.io/c2puml/artifacts/output_example/diagram_index.html) - Quick view of all generated PlantUML diagrams and PNG images
 - [📋 Example Source Code](https://github.com/fischerjooo/c2puml/tree/main/tests/example) - Browse the example C/C++ source files used for testing and demonstration
 
+## Documentation
+
+- [📖 Specification](docs/specification.md) - Complete technical specification and architecture documentation
+- [🎨 PlantUML Template](docs/puml_template.md) - PlantUML formatting template and diagram structure rules
+- [🔧 Include Processing](docs/SIMPLIFIED_INCLUDE_PROCESSING.md) - Simplified include processing implementation details
+- [🐛 Include Filtering Issues](docs/INCLUDE_FILTERING_BUGS_AND_FIXES.md) - Known issues and fixes for include filtering
+
 ## Features
 
 - **Advanced C/C++ Parsing**: Comprehensive tokenization-based parsing with robust preprocessor handling and conditional compilation support
@@ -293,4 +300,4 @@ MIT License
 
 ---
 
-**Documentation Status**: This README and accompanying specification.md have been comprehensively updated as of December 2024 to reflect the current v3.0.0 implementation, including the new modular core architecture, advanced tokenization capabilities, preprocessor support, and model verification features. All documentation now accurately represents the mature, production-ready codebase with over 700 commits of active development.
+**Documentation Status**: This README and accompanying [specification.md](docs/specification.md) have been comprehensively updated as of December 2024 to reflect the current v3.0.0 implementation, including the new modular core architecture, advanced tokenization capabilities, preprocessor support, and model verification features. All documentation now accurately represents the mature, production-ready codebase with over 700 commits of active development.
