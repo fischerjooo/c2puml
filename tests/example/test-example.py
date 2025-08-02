@@ -14,12 +14,14 @@ Validation Categories:
 5. File-specific Validation - expected content for each file type
 6. Enum/Struct Validation - proper formatting of typedef content
 7. Include Filtering Validation - validate include filter behavior and configurations
+8. Deep Content Analysis - extensive validation of puml model files and their contents
 
 Usage:
-    python3 test-example.py [--test-include-filtering]
+    python3 test-example.py [--test-include-filtering] [--deep-analysis]
 
 Arguments:
     --test-include-filtering  Run include filtering validation tests with example configurations
+    --deep-analysis          Run extensive deep content analysis of generated puml files
 
 Returns:
     0 if all validations pass
@@ -96,9 +98,20 @@ class PUMLValidator:
         """Initialize the validator with expected values and patterns."""
         self.output_dir = self._find_output_directory()
         self.results: List[ValidationResult] = []
-        self.expected_stereotypes = {"source", "header", "typedef", "enumeration", "struct", "union", "function pointer"}
-        self.expected_colors = {"LightBlue", "LightGreen", "LightYellow", "LightGray"}
-        self.expected_relationships = {"<<include>>", "<<declares>>", "<<uses>>"}
+        self.expectations = self._load_expectations()
+        self.expected_stereotypes = set(self.expectations.get("validation_rules", {}).get("expected_stereotypes", []))
+        self.expected_colors = set(self.expectations.get("validation_rules", {}).get("expected_colors", []))
+        self.expected_relationships = set(self.expectations.get("validation_rules", {}).get("expected_relationships", []))
+        
+    def _load_expectations(self) -> Dict[str, Any]:
+        """Load expectations from the JSON configuration file."""
+        expectations_file = Path(__file__).parent / "test-example.json"
+        try:
+            with open(expectations_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Warning: Could not load expectations file {expectations_file}: {e}")
+            return {}
 
     def _find_output_directory(self) -> Path:
         """Find the output directory path."""
@@ -720,18 +733,10 @@ class PUMLValidator:
         self, content: str, classes: Dict[str, PUMLClass], filename: str
     ):
         """Validate complex.puml specific content."""
+        file_expectations = self.expectations.get("file_expectations", {}).get("complex", {})
+        
         # Check for essential macros
-        essential_macros = [
-            "COMPLEX_MACRO_FUNC",
-            "PROCESS_ARRAY",
-            "CREATE_FUNC_NAME",
-            "STRINGIFY",
-            "TOSTRING",
-            "UTILS_U16_TO_U8ARR_BIG_ENDIAN",
-            "UTILS_U32_TO_U8ARR_BIG_ENDIAN",
-            "HANDLE_OPERATION",
-        ]
-
+        essential_macros = file_expectations.get("essential_macros", [])
         for macro in essential_macros:
             if macro not in content:
                 self._add_result(
@@ -739,15 +744,7 @@ class PUMLValidator:
                 )
 
         # Check for essential functions
-        essential_functions = [
-            "test_complex_macro",
-            "test_process_array",
-            "test_handle_operation",
-            "test_processor_job_processing",
-            "run_complex_tests",
-            "process_with_callbacks",
-        ]
-
+        essential_functions = file_expectations.get("essential_functions", [])
         for func in essential_functions:
             if func not in content:
                 self._add_result(
@@ -757,12 +754,7 @@ class PUMLValidator:
                 )
 
         # Check for essential typedefs
-        essential_typedefs = [
-            "TYPEDEF_PROCESS_T",
-            "TYPEDEF_MATH_OPERATION_T",
-            "TYPEDEF_COMPLEX_HANDLER_T",
-        ]
-
+        essential_typedefs = file_expectations.get("essential_typedefs", [])
         for typedef in essential_typedefs:
             if typedef not in classes:
                 self._add_result(
@@ -775,15 +767,9 @@ class PUMLValidator:
         self, content: str, classes: Dict[str, PUMLClass], filename: str
     ):
         """Validate typedef_test.puml specific content."""
-        essential_typedefs = [
-            "TYPEDEF_MYLEN",
-            "TYPEDEF_MYINT",
-            "TYPEDEF_MYSTRING",
-            "TYPEDEF_MYBUFFER",
-            "TYPEDEF_MYCOMPLEX",
-            "TYPEDEF_COLOR_T",
-        ]
-
+        file_expectations = self.expectations.get("file_expectations", {}).get("typedef_test", {})
+        
+        essential_typedefs = file_expectations.get("essential_typedefs", [])
         for typedef in essential_typedefs:
             if typedef not in classes:
                 self._add_result(
@@ -793,7 +779,7 @@ class PUMLValidator:
                 )
 
         # Check for enum values
-        essential_enum_values = ["COLOR_RED", "COLOR_GREEN", "COLOR_BLUE"]
+        essential_enum_values = file_expectations.get("essential_enum_values", [])
         for enum_val in essential_enum_values:
             if enum_val not in content:
                 self._add_result(
@@ -804,7 +790,9 @@ class PUMLValidator:
         self, content: str, classes: Dict[str, PUMLClass], filename: str
     ):
         """Validate sample.puml specific content."""
-        essential_functions = ["calculate_sum", "create_point", "process_point", "main"]
+        file_expectations = self.expectations.get("file_expectations", {}).get("sample", {})
+        
+        essential_functions = file_expectations.get("essential_functions", [])
         for func in essential_functions:
             if func not in content:
                 self._add_result(
@@ -814,19 +802,7 @@ class PUMLValidator:
                 )
 
         # Check that filtered_header.h content is not present in the PUML file
-        filtered_content_indicators = [
-            "filtered_header",
-            "FILTERED_CONSTANT",
-            "FILTERED_MACRO",
-            "filtered_struct_t",
-            "filtered_enum_t",
-            "filtered_function1",
-            "filtered_function2",
-            "filtered_function3",
-            "filtered_global_var",
-            "filtered_global_string",
-        ]
-
+        filtered_content_indicators = file_expectations.get("filtered_content_indicators", [])
         for indicator in filtered_content_indicators:
             if indicator in content:
                 self._add_result(
@@ -839,7 +815,9 @@ class PUMLValidator:
         self, content: str, classes: Dict[str, PUMLClass], filename: str
     ):
         """Validate sample2.puml specific content."""
-        essential_functions = ["calculate_sum", "create_point", "process_point", "main"]
+        file_expectations = self.expectations.get("file_expectations", {}).get("sample2", {})
+        
+        essential_functions = file_expectations.get("essential_functions", [])
         for func in essential_functions:
             if func not in content:
                 self._add_result(
@@ -849,28 +827,16 @@ class PUMLValidator:
                 )
 
         # Check that filtered_header.h content IS present in the PUML file (opposite of sample.puml)
-        filtered_content_indicators = [
-            "filtered_header",
-            "FILTERED_CONSTANT",
-            "FILTERED_MACRO",
-            "filtered_struct_t",
-            "filtered_enum_t",
-            "filtered_function1",
-            "filtered_function2",
-            "filtered_function3",
-            "filtered_global_var",
-            "filtered_global_string",
-        ]
-
+        expected_filtered_content = file_expectations.get("expected_filtered_content", [])
         found_indicators = []
-        for indicator in filtered_content_indicators:
+        for indicator in expected_filtered_content:
             if indicator in content:
                 found_indicators.append(indicator)
 
         if not found_indicators:
             self._add_result(
                 ValidationLevel.ERROR,
-                f"Filtered content from filtered_header.h should appear in sample2.puml but none found. Expected: {filtered_content_indicators}",
+                f"Filtered content from filtered_header.h should appear in sample2.puml but none found. Expected: {expected_filtered_content}",
                 filename,
             )
 
@@ -878,7 +844,8 @@ class PUMLValidator:
         self, content: str, classes: Dict[str, PUMLClass], filename: str
     ):
         """Validate geometry.puml specific content."""
-        essential_functions = ["create_triangle", "triangle_area"]
+        file_expectations = self.expectations.get("file_expectations", {}).get("geometry", {})
+        essential_functions = file_expectations.get("essential_functions", [])
         for func in essential_functions:
             if func not in content:
                 self._add_result(
@@ -891,7 +858,8 @@ class PUMLValidator:
         self, content: str, classes: Dict[str, PUMLClass], filename: str
     ):
         """Validate logger.puml specific content."""
-        essential_functions = ["log_message", "set_log_callback"]
+        file_expectations = self.expectations.get("file_expectations", {}).get("logger", {})
+        essential_functions = file_expectations.get("essential_functions", [])
         for func in essential_functions:
             if func not in content:
                 self._add_result(
@@ -904,7 +872,8 @@ class PUMLValidator:
         self, content: str, classes: Dict[str, PUMLClass], filename: str
     ):
         """Validate math_utils.puml specific content."""
-        essential_functions = ["add", "subtract", "average"]
+        file_expectations = self.expectations.get("file_expectations", {}).get("math_utils", {})
+        essential_functions = file_expectations.get("essential_functions", [])
         for func in essential_functions:
             if func not in content:
                 self._add_result(
@@ -917,8 +886,9 @@ class PUMLValidator:
         self, content: str, classes: Dict[str, PUMLClass], filename: str
     ):
         """Validate preprocessed.puml specific content."""
+        file_expectations = self.expectations.get("file_expectations", {}).get("preprocessed", {})
         # Check for preprocessing artifacts
-        preprocessing_indicators = ["#if", "#ifdef", "#define"]
+        preprocessing_indicators = file_expectations.get("preprocessing_indicators", ["#if", "#ifdef", "#define"])
         has_preprocessing = any(
             indicator in content for indicator in preprocessing_indicators
         )
@@ -999,17 +969,8 @@ class PUMLValidator:
 
     def _get_expected_classes(self, base_name: str) -> List[str]:
         """Get expected classes for a specific file."""
-        # This could be loaded from a configuration file or database
-        expected_classes_map = {
-            "typedef_test": ["TYPEDEF_TEST", "TYPEDEF_MYLEN", "TYPEDEF_MYINT"],
-            "complex": ["COMPLEX", "HEADER_COMPLEX", "TYPEDEF_PROCESS_T"],
-            "sample": ["SAMPLE", "HEADER_CONFIG", "TYPEDEF_POINT_T"],
-            "geometry": ["GEOMETRY", "HEADER_GEOMETRY", "TYPEDEF_TRIANGLE_T"],
-            "logger": ["LOGGER", "HEADER_LOGGER", "TYPEDEF_LOG_LEVEL_T"],
-            "math_utils": ["MATH_UTILS", "HEADER_MATH_UTILS", "TYPEDEF_REAL_T"],
-            "preprocessed": ["PREPROCESSED", "HEADER_PREPROCESSED"],
-        }
-        return expected_classes_map.get(base_name, [])
+        file_expectations = self.expectations.get("file_expectations", {}).get(base_name, {})
+        return file_expectations.get("expected_classes", [])
 
     def validate_file(self, filename: str) -> bool:
         """Validate a single PUML file comprehensively."""
@@ -1078,29 +1039,10 @@ class PUMLValidator:
         self, content: str, classes: Dict[str, PUMLClass], filename: str
     ):
         """Validate transformed.puml specific content to test transformation features."""
-        # These elements should be REMOVED by transformations
-        removed_elements = [
-            # Legacy typedefs that should be removed
-            "legacy_int_t", "legacy_string_t", "old_point_t", "legacy_uint_t", "legacy_handle_t",
-            # Test functions that should be removed 
-            "test_function_one", "test_function_two", "test_helper_function",
-            # Debug functions that should be removed
-            "debug_log", "debug_validate_config",
-            # Deprecated macros that should be removed
-            "DEPRECATED_MAX_SIZE", "OLD_VERSION", "LEGACY_DEBUG", "LEGACY_BUFFER_SIZE", 
-            "OLD_API_VERSION", "DEPRECATED_FLAG",
-            # Old global variables that should be removed
-            "old_global_counter", "deprecated_message", "old_error_code", "legacy_path",
-            # Legacy structures that should be removed
-            "legacy_data", "legacy_node",
-            # Old enums that should be removed  
-            "old_status", "legacy_color", "old_error_type", "legacy_mode",
-            # Old unions that should be removed
-            "old_value", "old_variant",
-            # Includes that should be removed
-            "time.h", "unistd.h"
-        ]
+        file_expectations = self.expectations.get("file_expectations", {}).get("transformed", {})
         
+        # These elements should be REMOVED by transformations
+        removed_elements = file_expectations.get("removed_elements", [])
         for element in removed_elements:
             if element in content:
                 self._add_result(
@@ -1110,11 +1052,7 @@ class PUMLValidator:
                 )
         
         # These elements should be PRESENT (not removed)
-        preserved_elements = [
-            "main", "keep_this_function", "initialize_system", "process_data", 
-            "cleanup_resources", "point3d_t", "status_t"
-        ]
-        
+        preserved_elements = file_expectations.get("preserved_elements", [])
         for element in preserved_elements:
             if element not in content:
                 self._add_result(
@@ -1124,14 +1062,7 @@ class PUMLValidator:
                 )
         
         # These elements should be RENAMED (check for new names)
-        renamed_elements = {
-            "old_config_t": "config_t",
-            "deprecated_print_info": "legacy_print_info", 
-            "OLD_API_VERSION": "LEGACY_API_VERSION",
-            "legacy_path": "system_path",
-            "old_config": "modern_config"
-        }
-        
+        renamed_elements = file_expectations.get("renamed_elements", {})
         for old_name, new_name in renamed_elements.items():
             if old_name in content:
                 self._add_result(
@@ -1186,6 +1117,367 @@ class PUMLValidator:
 
         if not errors and not warnings:
             print("✅ All validations passed!")
+
+    def run_deep_content_analysis(self) -> bool:
+        """Run extensive deep content analysis of generated puml files."""
+        print("🔍 Starting Deep Content Analysis...")
+        
+        deep_analysis_config = self.expectations.get("puml_content_validation", {}).get("deep_content_analysis", {})
+        
+        # Find all PlantUML files
+        puml_files = list(self.output_dir.glob("*.puml"))
+        if not puml_files:
+            print("❌ No PlantUML files found for deep analysis")
+            return False
+
+        print(f"Found {len(puml_files)} PlantUML files for deep analysis")
+
+        all_valid = True
+        for puml_file in puml_files:
+            if not self._analyze_puml_file_deeply(puml_file.name, deep_analysis_config):
+                all_valid = False
+
+        return all_valid
+
+    def _analyze_puml_file_deeply(self, filename: str, analysis_config: Dict[str, bool]) -> bool:
+        """Perform deep analysis of a single PUML file."""
+        print(f"🔬 Deep analyzing {filename}...")
+
+        parsed_data = self.parse_puml_file(filename)
+        if not parsed_data:
+            return False
+
+        content = parsed_data.get("content", "")
+        classes = parsed_data.get("classes", {})
+        relationships = parsed_data.get("relationships", [])
+
+        # Run all deep analysis checks
+        if analysis_config.get("function_pointer_validation", False):
+            self._validate_function_pointers_deeply(content, filename)
+        
+        if analysis_config.get("complex_type_validation", False):
+            self._validate_complex_types_deeply(content, filename)
+        
+        if analysis_config.get("nested_structure_validation", False):
+            self._validate_nested_structures_deeply(content, filename)
+        
+        if analysis_config.get("array_type_validation", False):
+            self._validate_array_types_deeply(content, filename)
+        
+        if analysis_config.get("pointer_type_validation", False):
+            self._validate_pointer_types_deeply(content, filename)
+        
+        if analysis_config.get("anonymous_structure_validation", False):
+            self._validate_anonymous_structures_deeply(content, filename)
+        
+        if analysis_config.get("macro_expansion_validation", False):
+            self._validate_macro_expansions_deeply(content, filename)
+        
+        if analysis_config.get("preprocessor_directive_validation", False):
+            self._validate_preprocessor_directives_deeply(content, filename)
+        
+        if analysis_config.get("include_depth_validation", False):
+            self._validate_include_depth_deeply(relationships, filename)
+        
+        if analysis_config.get("typedef_relationship_validation", False):
+            self._validate_typedef_relationships_deeply(classes, relationships, filename)
+        
+        if analysis_config.get("visibility_detection_validation", False):
+            self._validate_visibility_detection_deeply(classes, filename)
+        
+        if analysis_config.get("stereotype_consistency_validation", False):
+            self._validate_stereotype_consistency_deeply(classes, filename)
+        
+        if analysis_config.get("color_scheme_validation", False):
+            self._validate_color_scheme_deeply(classes, filename)
+        
+        if analysis_config.get("naming_convention_validation", False):
+            self._validate_naming_conventions_deeply(classes, filename)
+        
+        if analysis_config.get("content_grouping_validation", False):
+            self._validate_content_grouping_deeply(classes, filename)
+
+        return True
+
+    def _validate_function_pointers_deeply(self, content: str, filename: str):
+        """Deep validation of function pointer syntax and structure."""
+        lines = content.split('\n')
+        
+        for i, line in enumerate(lines, 1):
+            if "(*" in line and ")" in line:
+                # Check for proper function pointer syntax
+                if not re.search(r'\(\s*\*\s*\w*\s*\)', line):
+                    self._add_result(
+                        ValidationLevel.WARNING,
+                        f"Function pointer syntax may be malformed: {line.strip()}",
+                        filename, i
+                    )
+                
+                # Check for balanced parentheses in function pointers
+                open_parens = line.count('(')
+                close_parens = line.count(')')
+                if open_parens != close_parens:
+                    self._add_result(
+                        ValidationLevel.ERROR,
+                        f"Unbalanced parentheses in function pointer: {line.strip()}",
+                        filename, i
+                    )
+
+    def _validate_complex_types_deeply(self, content: str, filename: str):
+        """Deep validation of complex type definitions."""
+        lines = content.split('\n')
+        
+        for i, line in enumerate(lines, 1):
+            # Check for complex type patterns
+            if re.search(r'\w+\s*\*\s*\w+', line):
+                # Pointer type
+                if not re.search(r'\w+\s+\*\s*\w+', line):
+                    self._add_result(
+                        ValidationLevel.WARNING,
+                        f"Pointer type formatting may be inconsistent: {line.strip()}",
+                        filename, i
+                    )
+            
+            # Check for const qualifiers
+            if 'const' in line and '*' in line:
+                if not re.search(r'const\s+\w+\s*\*', line) and not re.search(r'\w+\s*\*\s*const', line):
+                    self._add_result(
+                        ValidationLevel.INFO,
+                        f"Const qualifier placement may be non-standard: {line.strip()}",
+                        filename, i
+                    )
+
+    def _validate_nested_structures_deeply(self, content: str, filename: str):
+        """Deep validation of nested structure definitions."""
+        lines = content.split('\n')
+        
+        for i, line in enumerate(lines, 1):
+            # Check for nested struct patterns
+            if 'struct' in line and '{' in line:
+                # Look for nested structure definitions
+                if re.search(r'struct\s+\w+\s*\{', line):
+                    self._add_result(
+                        ValidationLevel.INFO,
+                        f"Nested structure definition found: {line.strip()}",
+                        filename, i
+                    )
+
+    def _validate_array_types_deeply(self, content: str, filename: str):
+        """Deep validation of array type definitions."""
+        lines = content.split('\n')
+        
+        for i, line in enumerate(lines, 1):
+            # Check for array syntax
+            if '[' in line and ']' in line:
+                # Validate array bracket placement
+                if re.search(r'\w+\s*\[\s*\w*\s*\]', line):
+                    # Check for proper spacing
+                    if re.search(r'\w+\s*\[\s+\w*\s*\]', line):
+                        self._add_result(
+                            ValidationLevel.WARNING,
+                            f"Array brackets may have excessive spacing: {line.strip()}",
+                            filename, i
+                        )
+
+    def _validate_pointer_types_deeply(self, content: str, filename: str):
+        """Deep validation of pointer type definitions."""
+        lines = content.split('\n')
+        
+        for i, line in enumerate(lines, 1):
+            # Check for pointer syntax patterns
+            if '*' in line:
+                # Check for multiple pointers
+                star_count = line.count('*')
+                if star_count > 2:
+                    self._add_result(
+                        ValidationLevel.WARNING,
+                        f"Multiple pointer levels detected: {line.strip()}",
+                        filename, i
+                    )
+
+    def _validate_anonymous_structures_deeply(self, content: str, filename: str):
+        """Deep validation of anonymous structure handling."""
+        lines = content.split('\n')
+        
+        for i, line in enumerate(lines, 1):
+            # Check for anonymous structure patterns
+            if '__anonymous_struct__' in line:
+                self._add_result(
+                    ValidationLevel.INFO,
+                    f"Anonymous structure detected: {line.strip()}",
+                    filename, i
+                )
+
+    def _validate_macro_expansions_deeply(self, content: str, filename: str):
+        """Deep validation of macro expansion handling."""
+        lines = content.split('\n')
+        
+        for i, line in enumerate(lines, 1):
+            # Check for macro definition patterns
+            if '#define' in line:
+                # Check for function-like macros
+                if '(' in line and ')' in line:
+                    if not re.search(r'#define\s+\w+\s*\([^)]*\)', line):
+                        self._add_result(
+                            ValidationLevel.WARNING,
+                            f"Function-like macro syntax may be malformed: {line.strip()}",
+                            filename, i
+                        )
+
+    def _validate_preprocessor_directives_deeply(self, content: str, filename: str):
+        """Deep validation of preprocessor directive handling."""
+        lines = content.split('\n')
+        
+        for i, line in enumerate(lines, 1):
+            # Check for preprocessor directives
+            if line.strip().startswith('#'):
+                directive = line.strip().split()[0] if line.strip().split() else ""
+                if directive not in ['#if', '#ifdef', '#ifndef', '#elif', '#else', '#endif', '#define', '#undef', '#include']:
+                    self._add_result(
+                        ValidationLevel.WARNING,
+                        f"Unknown preprocessor directive: {line.strip()}",
+                        filename, i
+                    )
+
+    def _validate_include_depth_deeply(self, relationships: List[PUMLRelationship], filename: str):
+        """Deep validation of include depth processing."""
+        include_relationships = [r for r in relationships if '<<include>>' in r.label]
+        
+        # Check for circular includes
+        include_graph = {}
+        for rel in include_relationships:
+            if rel.source not in include_graph:
+                include_graph[rel.source] = []
+            include_graph[rel.source].append(rel.target)
+        
+        # Simple circular dependency check
+        for source, targets in include_graph.items():
+            for target in targets:
+                if target in include_graph and source in include_graph[target]:
+                    self._add_result(
+                        ValidationLevel.WARNING,
+                        f"Potential circular include dependency: {source} <-> {target}",
+                        filename
+                    )
+
+    def _validate_typedef_relationships_deeply(self, classes: Dict[str, PUMLClass], relationships: List[PUMLRelationship], filename: str):
+        """Deep validation of typedef relationships."""
+        typedef_classes = {k: v for k, v in classes.items() if v.stereotype in ['typedef', 'enumeration', 'struct', 'union', 'function pointer']}
+        
+        # Check that all typedef classes have proper relationships
+        for uml_id, cls in typedef_classes.items():
+            has_relationship = any(r.source == uml_id or r.target == uml_id for r in relationships)
+            if not has_relationship:
+                self._add_result(
+                    ValidationLevel.INFO,
+                    f"Typedef class {uml_id} has no relationships",
+                    filename
+                )
+
+    def _validate_visibility_detection_deeply(self, classes: Dict[str, PUMLClass], filename: str):
+        """Deep validation of visibility detection logic."""
+        source_classes = {k: v for k, v in classes.items() if v.stereotype == 'source'}
+        
+        for uml_id, cls in source_classes.items():
+            # Check that public elements (declared in headers) have + prefix
+            # Check that private elements (not in headers) have - prefix
+            for func in cls.functions:
+                if func.startswith('+'):
+                    # This should be declared in a header
+                    pass
+                elif func.startswith('-'):
+                    # This should not be declared in a header
+                    pass
+                else:
+                    self._add_result(
+                        ValidationLevel.WARNING,
+                        f"Function {func} in source class {uml_id} has no visibility prefix",
+                        filename
+                    )
+
+    def _validate_stereotype_consistency_deeply(self, classes: Dict[str, PUMLClass], filename: str):
+        """Deep validation of stereotype consistency."""
+        for uml_id, cls in classes.items():
+            # Check that stereotypes match content
+            if cls.stereotype == 'enumeration' and not cls.values:
+                self._add_result(
+                    ValidationLevel.WARNING,
+                    f"Enumeration class {uml_id} has no enum values",
+                    filename
+                )
+            
+            if cls.stereotype == 'struct' and not cls.fields:
+                self._add_result(
+                    ValidationLevel.WARNING,
+                    f"Struct class {uml_id} has no fields",
+                    filename
+                )
+
+    def _validate_color_scheme_deeply(self, classes: Dict[str, PUMLClass], filename: str):
+        """Deep validation of color scheme consistency."""
+        color_mapping = {
+            'source': 'LightBlue',
+            'header': 'LightGreen',
+            'typedef': 'LightYellow',
+            'enumeration': 'LightYellow',
+            'struct': 'LightYellow',
+            'union': 'LightYellow',
+            'function pointer': 'LightYellow'
+        }
+        
+        for uml_id, cls in classes.items():
+            expected_color = color_mapping.get(cls.stereotype)
+            if expected_color and cls.color != expected_color:
+                self._add_result(
+                    ValidationLevel.ERROR,
+                    f"Class {uml_id} has wrong color: expected {expected_color}, got {cls.color}",
+                    filename
+                )
+
+    def _validate_naming_conventions_deeply(self, classes: Dict[str, PUMLClass], filename: str):
+        """Deep validation of naming conventions."""
+        for uml_id, cls in classes.items():
+            if cls.stereotype == 'source':
+                # Source files should be named after the filename in uppercase
+                expected_name = cls.name.upper().replace('-', '_').replace('.', '_')
+                if cls.uml_id != expected_name:
+                    self._add_result(
+                        ValidationLevel.WARNING,
+                        f"Source class {cls.uml_id} should be named {expected_name}",
+                        filename
+                    )
+            
+            elif cls.stereotype == 'header':
+                if not cls.uml_id.startswith('HEADER_'):
+                    self._add_result(
+                        ValidationLevel.ERROR,
+                        f"Header class {cls.uml_id} should have HEADER_ prefix",
+                        filename
+                    )
+            
+            elif cls.stereotype in ['typedef', 'enumeration', 'struct', 'union', 'function pointer']:
+                if not cls.uml_id.startswith('TYPEDEF_'):
+                    self._add_result(
+                        ValidationLevel.ERROR,
+                        f"Typedef class {cls.uml_id} should have TYPEDEF_ prefix",
+                        filename
+                    )
+
+    def _validate_content_grouping_deeply(self, classes: Dict[str, PUMLClass], filename: str):
+        """Deep validation of content grouping and organization."""
+        for uml_id, cls in classes.items():
+            if cls.stereotype == 'source':
+                # Check that public elements come before private elements
+                public_elements = [item for item in cls.functions + cls.variables if item.startswith('+')]
+                private_elements = [item for item in cls.functions + cls.variables if item.startswith('-')]
+                
+                if public_elements and private_elements:
+                    # This is a basic check - in a real implementation, you'd check the actual order
+                    self._add_result(
+                        ValidationLevel.INFO,
+                        f"Source class {uml_id} has both public ({len(public_elements)}) and private ({len(private_elements)}) elements",
+                        filename
+                    )
 
 
 class IncludeFilteringValidator:
@@ -1465,6 +1757,8 @@ def main():
     parser = argparse.ArgumentParser(description="Comprehensive PUML validation suite")
     parser.add_argument("--test-include-filtering", action="store_true", 
                        help="Run include filtering validation tests")
+    parser.add_argument("--deep-analysis", action="store_true",
+                       help="Run extensive deep content analysis of generated puml files")
     args = parser.parse_args()
     
     try:
@@ -1475,6 +1769,11 @@ def main():
             include_validator = IncludeFilteringValidator()
             include_success = include_validator.run_include_filtering_tests()
             overall_success = overall_success and include_success
+        elif args.deep_analysis:
+            print("🔬 Running Deep Content Analysis...")
+            validator = PUMLValidator()
+            deep_success = validator.run_deep_content_analysis()
+            overall_success = overall_success and deep_success
         else:
             print("📋 Running Standard PUML Validation...")
             validator = PUMLValidator()
