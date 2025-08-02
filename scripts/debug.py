@@ -3,7 +3,7 @@
 Debug entry point for C to PlantUML converter
 
 This script provides a convenient way to debug the converter with predefined configurations.
-It can be run directly from VSCode in debug mode.
+It uses the standalone c2puml.py script directly.
 
 Configuration is done by modifying the constants at the top of this file, or by passing
 command line arguments.
@@ -20,19 +20,9 @@ Usage:
 import argparse
 import logging
 import os
+import subprocess
 import sys
 from pathlib import Path
-
-# Add the project root to Python path
-# Go up one level to project root since script is now in scripts/
-project_root = Path(__file__).parent.parent
-# Add src directory to path for new package structure
-src_path = project_root / "src"
-if src_path.exists():
-    sys.path.insert(0, str(src_path))
-sys.path.insert(0, str(project_root))
-
-from c2puml.main import main as main_function
 
 # =============================================================================
 # DEBUG CONFIGURATION - Modify these constants as needed
@@ -52,9 +42,9 @@ VERBOSE: bool = True
 # =============================================================================
 
 
-def setup_logging():
+def setup_logging(verbose: bool):
     """Setup logging based on configuration"""
-    level = logging.DEBUG if VERBOSE else logging.INFO
+    level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(
         level=level,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -114,12 +104,7 @@ def main():
     verbose = args.verbose if args.verbose is not None else VERBOSE
 
     # Setup logging
-    level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[logging.StreamHandler(sys.stdout)],
-    )
+    setup_logging(verbose)
 
     # Validate configuration
     if workflow not in ["full", "parse", "transform", "generate"]:
@@ -142,45 +127,39 @@ def main():
     logging.info("  Config: %s", config_path)
     logging.info("  Verbose: %s", verbose)
 
-    # Set up sys.argv to simulate command line arguments for main function
-    original_argv = sys.argv.copy()
+    # Get project root (go up one level from scripts/ directory)
+    project_root = Path(__file__).parent.parent
+    c2puml_script = project_root / "c2puml.py"
+
+    if not c2puml_script.exists():
+        logging.error("c2puml.py not found at: %s", c2puml_script)
+        return 1
+
+    # Build command for c2puml.py
+    cmd = [sys.executable, str(c2puml_script), "--config", config_path]
+
+    # Add workflow command
+    if workflow != "full":
+        cmd.append(workflow)
+
+    # Add verbose flag
+    if verbose:
+        cmd.append("--verbose")
+
+    logging.info("Running command: %s", " ".join(cmd))
 
     try:
-        # Prepare arguments for main function
-        main_args = ["debug.py"]  # Script name
-
-        # Add config file
-        main_args.extend(["--config", config_path])
-
-        # Add workflow command
-        if workflow != "full":
-            main_args.append(workflow)
-
-        # Add verbose flag
-        if verbose:
-            main_args.append("--verbose")
-
-        # Replace sys.argv
-        sys.argv = main_args
-
-        logging.info("Running with arguments: %s", main_args)
-
-        # Call the main function
-        result = main_function()
-
-        logging.info("Debug run completed with result: %s", result)
-        return result
+        # Run c2puml.py
+        result = subprocess.run(cmd, cwd=project_root)
+        
+        logging.info("Debug run completed with result: %s", result.returncode)
+        return result.returncode
 
     except Exception as e:
         logging.error("Debug run failed: %s", e)
         import traceback
-
         traceback.print_exc()
         return 1
-
-    finally:
-        # Restore original argv
-        sys.argv = original_argv
 
 
 if __name__ == "__main__":
