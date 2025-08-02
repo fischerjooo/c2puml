@@ -56,13 +56,13 @@ def main():
 
     # Get project root (go up one level from scripts/ directory)
     project_root = Path(__file__).parent.parent
-    c2puml_script = project_root / "c2puml.py"
+    c2puml_script = project_root / "c2puml_standalone.py"
 
     if not c2puml_script.exists():
-        logging.error("c2puml.py not found at: %s", c2puml_script)
+        logging.error("c2puml_standalone.py not found at: %s", c2puml_script)
         return 1
 
-    # Build command for c2puml.py
+    # Build command for c2puml_standalone.py
     cmd = [sys.executable, str(c2puml_script)]
 
     # Check if constants are defined (uncommented)

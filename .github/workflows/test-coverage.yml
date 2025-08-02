@@ -54,9 +54,9 @@ jobs:
           python -c "import sys; print('Python path:', sys.path)"
           python -c "import c2puml; print('✅ Package installed successfully')"
           python -c "from c2puml.core.parser import CParser; print('✅ Core modules accessible')"
-          # Test the standalone c2puml.py script
-          echo "🔍 Testing standalone c2puml.py script..."
-          python c2puml.py --help
+          # Test the standalone c2puml_standalone.py script
+          echo "🔍 Testing standalone c2puml_standalone.py script..."
+          python c2puml_standalone.py --help
           echo "✅ Standalone script works correctly"
 
       - name: 🧪 Run comprehensive test suite with coverage

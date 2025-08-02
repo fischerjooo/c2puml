@@ -47,7 +47,7 @@ If you prefer not to install the package, you can use the standalone script dire
 git clone https://github.com/fischerjooo/c2puml.git
 cd c2puml
 # No installation needed - just run the script directly
-python3 c2puml.py --config tests/example/config.json
+python3 c2puml_standalone.py --config tests/example/config.json
 ```
 
 **Prerequisites for standalone usage:**
@@ -83,18 +83,18 @@ python3 -m c2puml.main --config tests/example/config.json
 
 ```bash
 # Full workflow: Parse → Transform → Generate diagrams
-python3 c2puml.py --config tests/example/config.json
+python3 c2puml_standalone.py --config tests/example/config.json
 
 # Using current directory configuration (merges all .json files)
-python3 c2puml.py
+python3 c2puml_standalone.py
 
 # Individual steps
-python3 c2puml.py --config tests/example/config.json parse      # Step 1: Parse only
-python3 c2puml.py --config tests/example/config.json transform  # Step 2: Transform only
-python3 c2puml.py --config tests/example/config.json generate   # Step 3: Generate only
+python3 c2puml_standalone.py --config tests/example/config.json parse      # Step 1: Parse only
+python3 c2puml_standalone.py --config tests/example/config.json transform  # Step 2: Transform only
+python3 c2puml_standalone.py --config tests/example/config.json generate   # Step 3: Generate only
 
 # With verbose output for debugging
-python3 c2puml.py --config tests/example/config.json --verbose
+python3 c2puml_standalone.py --config tests/example/config.json --verbose
 ```
 
 **Note**: Both methods provide identical functionality. Choose the one that best fits your workflow.
@@ -104,7 +104,7 @@ python3 c2puml.py --config tests/example/config.json --verbose
 | Feature | Installed Package | Standalone Script |
 |---------|-------------------|-------------------|
 | **Installation** | `pip install -e .` | None required |
-| **Command** | `c2puml` | `python3 c2puml.py` |
+| **Command** | `c2puml` | `python3 c2puml_standalone.py` |
 | **Portability** | System dependent | High (copy files) |
 | **Updates** | `pip install --upgrade` | Manual (update source) |
 | **Dependencies** | Automatic via pip | Manual management |
@@ -343,7 +343,7 @@ scripts/run_all.bat            # Windows
 ./scripts/run_example.sh       # Linux/macOS
 scripts/run_example.bat        # Windows
 # Or use standalone script directly:
-python3 c2puml.py --config tests/example/config.json
+python3 c2puml_standalone.py --config tests/example/config.json
 
 # Install dependencies
 scripts/install_dependencies.bat # Windows
@@ -363,21 +363,21 @@ python scripts/run_example_with_coverage.py # Example with coverage
 
 **"Command 'c2puml' not found"**
 - **Solution**: Install the package with `pip install -e .`
-- **Alternative**: Use the standalone script: `python3 c2puml.py --config config.json`
+- **Alternative**: Use the standalone script: `python3 c2puml_standalone.py --config config.json`
 
 **"Module 'c2puml' not found"**
 - **Solution**: Ensure you're in the project root directory and the `src/` folder exists
 - **Alternative**: Use the standalone script which handles path setup automatically
 
 **"Permission denied" errors**
-- **Solution**: Use the standalone script which doesn't require installation: `python3 c2puml.py`
+- **Solution**: Use the standalone script which doesn't require installation: `python3 c2puml_standalone.py`
 
 **"Dot executable does not exist" (PlantUML PNG generation)**
 - **Solution**: Install Graphviz or use the provided scripts: `./scripts/picgen.sh` or `scripts/picgen.bat`
 
 ### Getting Help
 
-- **Quick Test**: Try the standalone script first: `python3 c2puml.py --config tests/example/config.json`
+- **Quick Test**: Try the standalone script first: `python3 c2puml_standalone.py --config tests/example/config.json`
 - **Development**: Use the debug script: `python scripts/debug.py`
 - **Examples**: Run the example workflow: `./scripts/run_example.sh` or `scripts/run_example.bat`
 
