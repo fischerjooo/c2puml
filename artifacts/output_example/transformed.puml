@@ -4,9 +4,10 @@ class "transformed" as TRANSFORMED <<source>> #LightBlue
 {
     -- Functions --
     + void keep_this_function()
+    + int main()
+
     - int legacy_calculate(int a, int b)
     - void legacy_print_info(const char * message)
-    + int main()
     - void * old_create_point(int x, int y)
 }
 

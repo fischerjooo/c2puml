@@ -75,7 +75,10 @@ class "{basename}" as {UML_ID} <<source>> #LightBlue
     - {type} {variable_name}    // if not in header (private)
     -- Functions --
     + {return_type} {function_name}({parameters})    // if declared in header (public)
+    + {return_type} {function_name}({parameters})    // other public functions
+
     - {return_type} {function_name}({parameters})    // if not in header (private)
+    - {return_type} {function_name}({parameters})    // other private functions
 
 }
 
@@ -151,6 +154,7 @@ class "{alias_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
   - `+` prefix for globals/functions that are declared in headers (public)
   - `-` prefix for globals/functions that are not in headers (private)
   - `-` prefix for all macros (private)
+  - **Grouping**: Public elements are listed first, followed by an empty line, then private elements
 - **Visibility in header files**: `+` prefix for all elements (public)
 - **No #include lines**: All include relationships are visualized with arrows only
 - **No typedefs in files**: All typedefs are shown in separate typedef classes only
@@ -185,3 +189,11 @@ For source files, the system automatically determines visibility based on header
 - **Private elements** (`-` prefix): Functions and globals that are not declared in any header file
 
 This provides a more accurate representation of the actual API surface and internal implementation details.
+
+### Improved Readability with Grouping
+Elements in source files are now grouped by visibility for better readability:
+- **Public elements** (functions and globals declared in headers) are listed first with `+` prefix
+- **Empty line separator** clearly divides public and private sections  
+- **Private elements** (functions and globals not in headers) are listed after with `-` prefix
+
+This grouping makes it easy to distinguish between the public API and internal implementation at a glance.
