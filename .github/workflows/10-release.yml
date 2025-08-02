@@ -118,9 +118,36 @@ jobs:
           git push origin release
 
       - name: "10.09 Create and push tag"
+        id: create_tag
         run: |
-          git tag -a "${{ steps.release_date.outputs.tag }}" -m "Release ${{ steps.release_date.outputs.tag }}"
-          git push origin "${{ steps.release_date.outputs.tag }}"
+          TAG_NAME="${{ steps.release_date.outputs.tag }}"
+          
+          # Check if tag already exists
+          if git tag -l "$TAG_NAME" | grep -q "$TAG_NAME"; then
+            echo "⚠️ Tag $TAG_NAME already exists locally"
+            
+            # Check if it exists on remote
+            if git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME$"; then
+              echo "⚠️ Tag $TAG_NAME also exists on remote"
+              
+              # Create a unique tag with timestamp
+              TIMESTAMP=$(date +%H%M%S)
+              NEW_TAG_NAME="${TAG_NAME}-${TIMESTAMP}"
+              echo "📝 Creating new tag: $NEW_TAG_NAME"
+              git tag -a "$NEW_TAG_NAME" -m "Release $NEW_TAG_NAME"
+              git push origin "$NEW_TAG_NAME"
+              
+              # Update the tag output for the GitHub release step
+              echo "tag=$NEW_TAG_NAME" >> $GITHUB_OUTPUT
+            else
+              echo "📝 Tag exists locally but not on remote, pushing existing tag"
+              git push origin "$TAG_NAME"
+            fi
+          else
+            echo "📝 Creating new tag: $TAG_NAME"
+            git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
+            git push origin "$TAG_NAME"
+          fi
 
       - name: "10.10 Create GitHub Release"
         env:
@@ -148,8 +175,11 @@ jobs:
           ${{ github.event.inputs.release_notes }}"
           fi
           
+          # Use the actual tag that was created (might be different if original existed)
+          ACTUAL_TAG="${{ steps.create_tag.outputs.tag || steps.release_date.outputs.tag }}"
+          
           # Create the release using gh CLI
-          gh release create "${{ steps.release_date.outputs.tag }}" \
-            --title "Release ${{ steps.release_date.outputs.tag }}" \
+          gh release create "$ACTUAL_TAG" \
+            --title "Release $ACTUAL_TAG" \
             --notes "$RELEASE_NOTES" \
             --target release
