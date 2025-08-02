@@ -31,15 +31,34 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 
 ## Installation
 
+### Option 1: Install as Python Package (Recommended)
+
 ```bash
 git clone https://github.com/fischerjooo/c2puml.git
 cd c2puml
 python3 -m pip install -e .
 ```
 
+### Option 2: Use Standalone Script (No Installation Required)
+
+If you prefer not to install the package, you can use the standalone script directly:
+
+```bash
+git clone https://github.com/fischerjooo/c2puml.git
+cd c2puml
+# No installation needed - just run the script directly
+python3 c2puml.py --config tests/example/config.json
+```
+
+**Prerequisites for standalone usage:**
+- Python 3.7 or later
+- The complete c2puml source code (including the `src/` directory)
+
 ## Quick Start
 
 ### Basic Usage
+
+#### Using Installed Package
 
 ```bash
 # Full workflow: Parse → Transform → Generate diagrams
@@ -59,6 +78,50 @@ c2puml --config tests/example/config.json --verbose
 # Alternative module syntax
 python3 -m c2puml.main --config tests/example/config.json
 ```
+
+#### Using Standalone Script (No Installation)
+
+```bash
+# Full workflow: Parse → Transform → Generate diagrams
+python3 c2puml.py --config tests/example/config.json
+
+# Using current directory configuration (merges all .json files)
+python3 c2puml.py
+
+# Individual steps
+python3 c2puml.py --config tests/example/config.json parse      # Step 1: Parse only
+python3 c2puml.py --config tests/example/config.json transform  # Step 2: Transform only
+python3 c2puml.py --config tests/example/config.json generate   # Step 3: Generate only
+
+# With verbose output for debugging
+python3 c2puml.py --config tests/example/config.json --verbose
+```
+
+**Note**: Both methods provide identical functionality. Choose the one that best fits your workflow.
+
+### Installation vs Standalone: Which to Choose?
+
+| Feature | Installed Package | Standalone Script |
+|---------|-------------------|-------------------|
+| **Installation** | `pip install -e .` | None required |
+| **Command** | `c2puml` | `python3 c2puml.py` |
+| **Portability** | System dependent | High (copy files) |
+| **Updates** | `pip install --upgrade` | Manual (update source) |
+| **Dependencies** | Automatic via pip | Manual management |
+| **Development** | Good | Excellent |
+| **CI/CD Integration** | Standard | Easy |
+| **Distribution** | Package distribution | Source required |
+
+**Choose installed package if:**
+- You plan to use c2puml regularly
+- You want automatic dependency management
+- You prefer standard Python package workflows
+
+**Choose standalone script if:**
+- You want to try c2puml without installation
+- You're in a restricted environment
+- You need maximum portability
+- You're doing development or testing
 
 ### Generate PNG Images
 
@@ -279,6 +342,8 @@ scripts/run_all.bat            # Windows
 # Run example workflow
 ./scripts/run_example.sh       # Linux/macOS
 scripts/run_example.bat        # Windows
+# Or use standalone script directly:
+python3 c2puml.py --config tests/example/config.json
 
 # Install dependencies
 scripts/install_dependencies.bat # Windows
@@ -291,6 +356,30 @@ scripts/git_reset_pull.bat     # Windows - Reset and pull from remote
 python scripts/debug.py        # Development debugging script
 python scripts/run_example_with_coverage.py # Example with coverage
 ```
+
+## Troubleshooting
+
+### Common Issues
+
+**"Command 'c2puml' not found"**
+- **Solution**: Install the package with `pip install -e .`
+- **Alternative**: Use the standalone script: `python3 c2puml.py --config config.json`
+
+**"Module 'c2puml' not found"**
+- **Solution**: Ensure you're in the project root directory and the `src/` folder exists
+- **Alternative**: Use the standalone script which handles path setup automatically
+
+**"Permission denied" errors**
+- **Solution**: Use the standalone script which doesn't require installation: `python3 c2puml.py`
+
+**"Dot executable does not exist" (PlantUML PNG generation)**
+- **Solution**: Install Graphviz or use the provided scripts: `./scripts/picgen.sh` or `scripts/picgen.bat`
+
+### Getting Help
+
+- **Quick Test**: Try the standalone script first: `python3 c2puml.py --config tests/example/config.json`
+- **Development**: Use the debug script: `python scripts/debug.py`
+- **Examples**: Run the example workflow: `./scripts/run_example.sh` or `scripts/run_example.bat`
 
 ## License
 
