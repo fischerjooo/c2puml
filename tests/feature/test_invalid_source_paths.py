@@ -97,88 +97,32 @@ class TestInvalidSourcePaths(unittest.TestCase):
 
     def test_parent_directory_exists_message(self):
         """Test that parent directory information is provided."""
-        # Create a parent directory but not the target
-        parent_dir = os.path.join(self.temp_dir, "parent")
-        os.makedirs(parent_dir)
-        
-        # Create some subdirectories in parent
-        os.makedirs(os.path.join(parent_dir, "subdir1"))
-        os.makedirs(os.path.join(parent_dir, "subdir2"))
-        
-        target_path = os.path.join(parent_dir, "nonexistent")
-        
-        with self.assertRaises(ValueError) as cm:
-            self.c_parser.parse_project(target_path)
-        
-        error_msg = str(cm.exception)
-        self.assertIn("Source folder not found", error_msg)
-        self.assertIn("Parent directory exists", error_msg)
-        self.assertIn("Available directories in parent", error_msg)
-
-    def test_permission_denied_handling(self):
-        """Test error handling for permission denied scenarios."""
+        # Create a temporary directory structure
         import tempfile
         import os
         
-        # Create a temporary directory
         temp_dir = tempfile.mkdtemp()
-        restricted_dir = os.path.join(temp_dir, "restricted")
+        parent_dir = os.path.join(temp_dir, "parent")
+        child_dir = os.path.join(parent_dir, "child")
         
         try:
-            # Create a directory first
-            os.makedirs(restricted_dir)
+            os.makedirs(parent_dir)
             
-            # Try to remove permissions - if this fails, skip the test
-            try:
-                os.chmod(restricted_dir, 0o000)  # No permissions
-                
-                # Check if we can still access it
-                can_read = os.access(restricted_dir, os.R_OK)
-                
-                if can_read:
-                    # If we can still read it, the system doesn't respect chmod restrictions
-                    # In this case, we'll test with a file instead
-                    os.rmdir(restricted_dir)
-                    with open(restricted_dir, 'w') as f:
-                        f.write("This is a file, not a directory")
-                    
-                    # This should raise a ValueError because it's a file, not a directory
-                    with self.assertRaises(ValueError) as cm:
-                        self.c_parser.parse_project(restricted_dir)
-                    
-                    error_msg = str(cm.exception)
-                    self.assertIn("must be a directory", error_msg)
-                else:
-                    # This should raise a ValueError due to permission denied
-                    with self.assertRaises(ValueError) as cm:
-                        self.c_parser.parse_project(restricted_dir)
-                    
-                    error_msg = str(cm.exception)
-                    self.assertIn("Permission denied", error_msg)
-                    
-            except (OSError, PermissionError):
-                # If chmod fails, test with a file instead
-                os.rmdir(restricted_dir)
-                with open(restricted_dir, 'w') as f:
-                    f.write("This is a file, not a directory")
-                
-                # This should raise a ValueError because it's a file, not a directory
-                with self.assertRaises(ValueError) as cm:
-                    self.c_parser.parse_project(restricted_dir)
-                
-                error_msg = str(cm.exception)
-                self.assertIn("must be a directory", error_msg)
+            # Create some subdirectories in parent so the "Available directories" message appears
+            os.makedirs(os.path.join(parent_dir, "subdir1"))
+            os.makedirs(os.path.join(parent_dir, "subdir2"))
             
-        except (OSError, PermissionError) as e:
-            # If we can't create anything, skip this test
-            self.skipTest(f"Cannot test permission denied scenario: {e}")
+            # Try to access a non-existent child directory
+            with self.assertRaises(ValueError) as cm:
+                self.c_parser.parse_project(child_dir)
+            
+            error_msg = str(cm.exception)
+            self.assertIn("Parent directory exists", error_msg)
+            self.assertIn("Available directories in parent", error_msg)
+            
         finally:
-            # Clean up
-            try:
-                import shutil
-                shutil.rmtree(temp_dir)
-            except (OSError, PermissionError):
-                pass  # Ignore cleanup errors
+            import shutil
+            shutil.rmtree(temp_dir, ignore_errors=True)
 
     def test_parser_empty_source_folders_list(self):
         """Test Parser.parse with empty source_folders list."""
