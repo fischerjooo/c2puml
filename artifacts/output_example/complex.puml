@@ -144,7 +144,7 @@ class "Process_Cfg_Process_acpfct_t" as TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T <<t
 
 class "Process_Cfg_Process_fct" as TYPEDEF_PROCESS_CFG_PROCESS_FCT <<function pointer>> #LightYellow
 {
-    alias of Std_ReturnType(* Process_Cfg_Process_fct)(const Process_T * job_pst)
+    alias of Std_ReturnType(* Process_Cfg_Process_fct) (const Process_T * job_pst)
 }
 
 class "Std_ReturnType" as TYPEDEF_STD_RETURNTYPE <<typedef>> #LightYellow
@@ -154,7 +154,7 @@ class "Std_ReturnType" as TYPEDEF_STD_RETURNTYPE <<typedef>> #LightYellow
 
 class "complex_callback_t" as TYPEDEF_COMPLEX_CALLBACK_T <<function pointer>> #LightYellow
 {
-    alias of int(* complex_callback_t)(
+    alias of int(* complex_callback_t) (
 }
 
 class "complex_func_ptr_t" as TYPEDEF_COMPLEX_FUNC_PTR_T <<typedef>> #LightYellow
@@ -169,12 +169,12 @@ class "data_processor_array_t" as TYPEDEF_DATA_PROCESSOR_ARRAY_T <<typedef>> #Li
 
 class "data_processor_t" as TYPEDEF_DATA_PROCESSOR_T <<function pointer>> #LightYellow
 {
-    alias of int(* data_processor_t)(data_item_t * item , void * context)
+    alias of int(* data_processor_t) (data_item_t * item , void * context)
 }
 
 class "debug_callback_t" as TYPEDEF_DEBUG_CALLBACK_T <<function pointer>> #LightYellow
 {
-    alias of void(* debug_callback_t)(const char * message , int level)
+    alias of void(* debug_callback_t) (const char * message , int level)
 }
 
 class "handler_table_t" as TYPEDEF_HANDLER_TABLE_T <<typedef>> #LightYellow
@@ -184,7 +184,7 @@ class "handler_table_t" as TYPEDEF_HANDLER_TABLE_T <<typedef>> #LightYellow
 
 class "math_operation_t" as TYPEDEF_MATH_OPERATION_T <<function pointer>> #LightYellow
 {
-    alias of int(* math_operation_t)(int , int)
+    alias of int(* math_operation_t) (int , int)
 }
 
 class "math_ops_array_t" as TYPEDEF_MATH_OPS_ARRAY_T <<typedef>> #LightYellow
@@ -194,7 +194,7 @@ class "math_ops_array_t" as TYPEDEF_MATH_OPS_ARRAY_T <<typedef>> #LightYellow
 
 class "release_callback_t" as TYPEDEF_RELEASE_CALLBACK_T <<function pointer>> #LightYellow
 {
-    alias of void(* release_callback_t)(const char * message)
+    alias of void(* release_callback_t) (const char * message)
 }
 
 class "uint16" as TYPEDEF_UINT16 <<typedef>> #LightYellow

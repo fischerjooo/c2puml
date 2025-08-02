@@ -224,7 +224,7 @@ class TestNewFormattingIntegration(unittest.TestCase):
         
         # Alias content should show 'alias of'
         self.assertIn('alias of float', diagram)
-        self.assertIn('alias of void (*)(Rectangle*)', diagram)
+        self.assertIn('alias of void (*) (Rectangle*)', diagram)
         self.assertIn('alias of Pixel*', diagram)
 
     def _validate_visibility_logic(self, diagram: str):

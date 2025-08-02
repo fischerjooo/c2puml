@@ -203,8 +203,8 @@ class TestGeneratorNewFormatting(unittest.TestCase):
         self.assertIn(expected_log_callback_class, diagram)
 
         # Check content formatting with 'alias of' prefix
-        self.assertIn("alias of int(* callback_t)(int, int)", diagram)
-        self.assertIn("alias of void(* log_callback_t)(const char*)", diagram)
+        self.assertIn("alias of int(* callback_t) (int, int)", diagram)
+        self.assertIn("alias of void(* log_callback_t) (const char*)", diagram)
 
     def test_complex_typedef_combination(self):
         """Test combination of all typedef types with correct stereotypes"""

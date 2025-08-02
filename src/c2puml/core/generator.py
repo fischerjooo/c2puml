@@ -6,6 +6,7 @@ Follows the template format with strict separation of typedefs and clear relatio
 
 import glob
 import os
+import re
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -618,6 +619,14 @@ class Generator:
         # For aliases, show "alias of {original_type}" format
         # Clean up multi-line types by taking only the first line for simplicity
         original_type = alias_data.original_type.split("\n")[0].strip()
+        
+        # Fix function pointer formatting for better readability
+        if "(*" in original_type and ")" in original_type:
+            # Ensure proper spacing around function pointer syntax
+            original_type = re.sub(r'\(\s*\*', '(*', original_type)  # Remove spaces between ( and *
+            original_type = re.sub(r'\*\s*\)', '*)', original_type)   # Remove spaces between * and )
+            original_type = re.sub(r'\)\s*\(', ') (', original_type)  # Add space between ) and (
+        
         lines.append(f"    alias of {original_type}")
 
     def _is_truncated_typedef(self, alias_data, alias_lines: List[str]) -> bool:

@@ -46,7 +46,7 @@ class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 
 class "math_op_t" as TYPEDEF_MATH_OP_T <<function pointer>> #LightYellow
 {
-    alias of int(* math_op_t)(int , int)
+    alias of int(* math_op_t) (int , int)
 }
 
 class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow

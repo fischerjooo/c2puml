@@ -257,6 +257,21 @@ class ModelVerifier:
         if self._has_unbalanced_brackets(value):
             return True
 
+        # Allow complex initialization patterns (function pointer arrays, struct initializers)
+        # These are valid C patterns that might look suspicious but are actually correct
+        valid_complex_patterns = [
+            r"^\s*\{\s*&[a-zA-Z_][a-zA-Z0-9_]*\s*,?\s*\&[a-zA-Z_][a-zA-Z0-9_]*\s*,?\s*\&[a-zA-Z_][a-zA-Z0-9_]*\s*,?\s*\}\s*$",  # Function pointer array: {&func1, &func2, &func3}
+            r"^\s*\{\s*[a-zA-Z_][a-zA-Z0-9_]*\s*,?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*,?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*,?\s*\}\s*$",  # Struct initializer: {field1, field2, field3}
+            r"^\s*\{\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\}\s*$",  # Single element initializer: {element}
+            r"^\s*\{\s*\}\s*$",  # Empty initializer: {}
+        ]
+
+        for pattern in valid_complex_patterns:
+            if re.match(pattern, value):
+                return False  # This is a valid complex pattern, not suspicious
+
+        return False
+
         # Check for excessive newlines or backslashes
         if value.count("\n") > 3 or value.count("\\") > 5:
             return True

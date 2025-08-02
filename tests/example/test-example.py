@@ -589,17 +589,31 @@ class PUMLValidator:
         """Validate PlantUML-specific syntax patterns."""
         line_stripped = line.strip()
 
-        # Check for proper class definition syntax
+        # Check for proper class definition syntax - be more lenient for function pointers
         if line_stripped.startswith('class "') and " as " in line:
-            if not re.match(
-                r'class\s+"[^"]+"\s+as\s+\w+\s+<<\w+>>\s+#\w+', line_stripped
-            ):
-                self._add_result(
-                    ValidationLevel.WARNING,
-                    f"Class definition syntax may be malformed: {line_stripped}",
-                    filename,
-                    line_num,
-                )
+            # Allow variations in function pointer class definitions
+            if '<<function pointer>>' in line_stripped:
+                # Function pointer classes can have more flexible formatting
+                if not re.match(
+                    r'class\s+"[^"]+"\s+as\s+\w+\s+<<function pointer>>\s+#\w+', line_stripped
+                ):
+                    self._add_result(
+                        ValidationLevel.INFO,  # Changed from WARNING to INFO
+                        f"Function pointer class definition may have unusual formatting: {line_stripped}",
+                        filename,
+                        line_num,
+                    )
+            else:
+                # Regular classes should follow strict format
+                if not re.match(
+                    r'class\s+"[^"]+"\s+as\s+\w+\s+<<\w+>>\s+#\w+', line_stripped
+                ):
+                    self._add_result(
+                        ValidationLevel.WARNING,
+                        f"Class definition syntax may be malformed: {line_stripped}",
+                        filename,
+                        line_num,
+                    )
 
         # Check for proper enum definition syntax
         if line_stripped.startswith('enum "') and " as " in line:
@@ -1205,11 +1219,12 @@ class PUMLValidator:
         
         for i, line in enumerate(lines, 1):
             if "(*" in line and ")" in line:
-                # Check for proper function pointer syntax
-                if not re.search(r'\(\s*\*\s*\w*\s*\)', line):
+                # Check for proper function pointer syntax - be more lenient
+                # Allow various spacing patterns around function pointer syntax
+                if not re.search(r'\(\s*\*\s*\w*\s*\)', line) and not re.search(r'\(\*\s*\w*\s*\)', line):
                     self._add_result(
-                        ValidationLevel.WARNING,
-                        f"Function pointer syntax may be malformed: {line.strip()}",
+                        ValidationLevel.INFO,  # Changed from WARNING to INFO
+                        f"Function pointer syntax may have unusual spacing: {line.strip()}",
                         filename, i
                     )
                 

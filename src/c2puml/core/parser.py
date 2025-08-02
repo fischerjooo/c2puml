@@ -848,7 +848,7 @@ class CParser:
                 # Check if this is followed by a parameter list
                 if i + 4 < len(all_tokens) and all_tokens[i + 4].type == TokenType.RPAREN:
                     if i + 5 < len(all_tokens) and all_tokens[i + 5].type == TokenType.LPAREN:
-                        # This is a function pointer with parameters - skip this pattern and use the complex logic
+                        # This is a function pointer with parameters - handle it in the complex logic below
                         break
                 
                 # Simple function pointer typedef without complex parameters
@@ -908,12 +908,18 @@ class CParser:
 
                     if paren_count == 0:
                         typedef_name = all_tokens[i + 3].value
-                        # Format the complete typedef properly
+                        # Format the complete typedef properly with better spacing
                         formatted_tokens = []
                         for j, token in enumerate(all_tokens):
                             if token.type in [TokenType.LPAREN, TokenType.RPAREN]:
                                 # Don't add spaces around parentheses
                                 formatted_tokens.append(token.value)
+                            elif token.type == TokenType.ASTERISK:
+                                # Add space before asterisk for better readability
+                                if j > 0 and all_tokens[j - 1].type not in [TokenType.LPAREN]:
+                                    formatted_tokens.append(" " + token.value)
+                                else:
+                                    formatted_tokens.append(token.value)
                             elif j > 0 and all_tokens[j - 1].type not in [
                                 TokenType.LPAREN,
                                 TokenType.RPAREN,
