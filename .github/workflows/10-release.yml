@@ -71,18 +71,27 @@ jobs:
           # Switch back to main to copy files
           git checkout main
           
-          # Create necessary directories
-          mkdir -p src/
+          # Create temporary directory to store files
+          TEMP_DIR=$(mktemp -d)
           
-          # Copy src/c2puml and its contents
-          cp -r src/c2puml src/
-          
-          # Copy main.py and README.md from root
-          cp main.py .
-          cp README.md .
+          # Copy files to temporary directory
+          cp -r src/c2puml "$TEMP_DIR/"
+          cp main.py "$TEMP_DIR/"
+          cp README.md "$TEMP_DIR/"
           
           # Switch back to release branch
           git checkout release
+          
+          # Create necessary directories
+          mkdir -p src/
+          
+          # Copy files from temporary directory to release branch
+          cp -r "$TEMP_DIR/c2puml" src/
+          cp "$TEMP_DIR/main.py" .
+          cp "$TEMP_DIR/README.md" .
+          
+          # Clean up temporary directory
+          rm -rf "$TEMP_DIR"
           
           # Add all copied files
           git add .
