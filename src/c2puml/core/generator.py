@@ -435,12 +435,34 @@ class Generator:
     def _add_globals_section_with_visibility(
         self, lines: List[str], file_model: FileModel, project_model: ProjectModel
     ):
-        """Add global variables section with visibility based on header presence"""
+        """Add global variables section with visibility based on header presence, grouped by visibility"""
         if file_model.globals:
             lines.append(f"{INDENT}-- Global Variables --")
+            
+            # Separate globals into public and private groups
+            public_globals = []
+            private_globals = []
+            
             for global_var in sorted(file_model.globals, key=lambda x: x.name):
                 prefix = self._get_visibility_prefix_for_global(global_var, project_model)
-                lines.append(self._format_global_variable(global_var, prefix))
+                formatted_global = self._format_global_variable(global_var, prefix)
+                
+                if prefix == "+ ":
+                    public_globals.append(formatted_global)
+                else:
+                    private_globals.append(formatted_global)
+            
+            # Add public globals first
+            for global_line in public_globals:
+                lines.append(global_line)
+            
+            # Add empty line between public and private if both exist
+            if public_globals and private_globals:
+                lines.append("")
+            
+            # Add private globals
+            for global_line in private_globals:
+                lines.append(global_line)
 
     def _add_functions_section_with_visibility(
         self,
@@ -449,16 +471,39 @@ class Generator:
         project_model: ProjectModel,
         is_declaration_only: bool = False,
     ):
-        """Add functions section with visibility based on header presence"""
+        """Add functions section with visibility based on header presence, grouped by visibility"""
         if file_model.functions:
             lines.append(f"{INDENT}-- Functions --")
+            
+            # Separate functions into public and private groups
+            public_functions = []
+            private_functions = []
+            
             for func in sorted(file_model.functions, key=lambda x: x.name):
                 if is_declaration_only and func.is_declaration:
                     prefix = "+ "
-                    lines.append(self._format_function_signature(func, prefix))
+                    formatted_function = self._format_function_signature(func, prefix)
+                    public_functions.append(formatted_function)
                 elif not is_declaration_only and not func.is_declaration:
                     prefix = self._get_visibility_prefix_for_function(func, project_model)
-                    lines.append(self._format_function_signature(func, prefix))
+                    formatted_function = self._format_function_signature(func, prefix)
+                    
+                    if prefix == "+ ":
+                        public_functions.append(formatted_function)
+                    else:
+                        private_functions.append(formatted_function)
+            
+            # Add public functions first
+            for function_line in public_functions:
+                lines.append(function_line)
+            
+            # Add empty line between public and private if both exist
+            if public_functions and private_functions:
+                lines.append("")
+            
+            # Add private functions
+            for function_line in private_functions:
+                lines.append(function_line)
 
     def _get_visibility_prefix_for_global(self, global_var: Field, project_model: ProjectModel) -> str:
         """Determine visibility prefix for a global variable based on header presence"""

@@ -6,6 +6,7 @@ class "application" as APPLICATION <<source>> #LightBlue
     - volatile int running
     -- Functions --
     + int main(int argc, char *[] argv)
+
     - void signal_handler(int sig)
 }
 

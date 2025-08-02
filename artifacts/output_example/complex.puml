@@ -6,20 +6,23 @@ class "complex" as COMPLEX <<source>> #LightBlue
     - Process_Cfg_Process_acpfct_t Process_Cfg_Process_acpfct
     - math_operation_t[10] global_math_ops
     -- Functions --
+    + complex_handler_t * create_complex_handler(const char * name, ...)
+    + void * create_handler(const char * name, int ( * init_func ) ( void * ) init_func, ...)
+    + int execute_operations(int value, math_ops_array_t ops, int op_count)
+    + math_operation_t * get_math_operations()
+    + int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, ...)
+    + void test_processor_job_processing()
+    + void test_processor_utility_macros()
+
     - static Std_ReturnType ProcessorAdapter_Process(const Process_T * job_pst)
     - static Std_ReturnType ProcessorHardware_Process(const Process_T * job_pst)
     - static Std_ReturnType ProcessorService_Process(const Process_T * job_pst)
     - static int add_operation(int a, int b)
-    + complex_handler_t * create_complex_handler(const char * name, ...)
-    + void * create_handler(const char * name, int ( * init_func ) ( void * ) init_func, ...)
     - static int divide_operation(int a, int b)
-    + int execute_operations(int value, math_ops_array_t ops, int op_count)
-    + math_operation_t * get_math_operations()
     - static void init_math_operations()
     - static int modulo_operation(int a, int b)
     - static int multiply_operation(int a, int b)
     - static void print_result(int * data, int size)
-    + int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, ...)
     - void run_complex_tests()
     - static int subtract_operation(int a, int b)
     - static int test_callback(int * item)
@@ -29,8 +32,6 @@ class "complex" as COMPLEX <<source>> #LightBlue
     - void test_mixed_union()
     - void test_operation_set()
     - void test_process_array(int * arr, int size)
-    + void test_processor_job_processing()
-    + void test_processor_utility_macros()
     - void test_stringify_macro()
 }
 

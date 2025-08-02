@@ -13,10 +13,11 @@ class "sample2" as SAMPLE2 <<source>> #LightBlue
     -- Functions --
     + int calculate_sum(int a, int b)
     + point_t * create_point(int x, int y, const char * label)
-    - void demo_triangle_usage()
-    - static void internal_helper()
     + int main()
     + void process_point(point_t * p)
+
+    - void demo_triangle_usage()
+    - static void internal_helper()
 }
 
 class "config" as HEADER_CONFIG <<header>> #LightGreen
