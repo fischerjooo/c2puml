@@ -6,7 +6,7 @@ This repository uses a streamlined, numbered workflow system that follows a clea
 
 ## Workflow Hierarchy
 
-### 00. Test (Side Branches) (`00-test.yml`)
+### 00. Test (`00-test.yml`)
 **Purpose**: Basic testing for side branches and pull requests
 **Triggers**: 
 - Push to any branch except main/master
@@ -22,7 +22,7 @@ This repository uses a streamlined, numbered workflow system that follows a clea
 
 **Outputs**: Test results, artifacts (no coverage, no subsequent workflows)
 
-### 01. Test and Coverage (Main Branch) (`01-test-and-coverage.yml`)
+### 01. Test and Coverage (`01-test-and-coverage.yml`)
 **Purpose**: Comprehensive testing and coverage for main branch
 **Triggers**: 
 - Push to main/master branches
@@ -76,13 +76,13 @@ This repository uses a streamlined, numbered workflow system that follows a clea
 
 ### Side Branches and PRs
 ```
-Side Branch Push/PR → 00. Test (Side Branches)
+Side Branch Push/PR → 00. Test
     ↓ (stops here - no further workflows)
 ```
 
 ### Main Branch
 ```
-Main Branch Push → 01. Test and Coverage (Main Branch)
+Main Branch Push → 01. Test and Coverage
     ↓ (if successful)
     02. PlantUML to PNG
     ↓ (if successful)
@@ -126,10 +126,10 @@ gh workflow run "01-test-and-coverage.yml"
 
 ### Run Individual Workflows
 ```bash
-# Run only tests (side branch style)
+# Run only tests
 gh workflow run "00-test.yml"
 
-# Run tests with coverage (main branch style)
+# Run tests with coverage
 gh workflow run "01-test-and-coverage.yml"
 
 # Generate only PlantUML diagrams

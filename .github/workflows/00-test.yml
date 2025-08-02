@@ -1,4 +1,4 @@
-name: "00. Test (Side Branches)"
+name: "00. Test"
 
 on:
   push:
