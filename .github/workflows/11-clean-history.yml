@@ -25,6 +25,7 @@ jobs:
     permissions:
       contents: write
       actions: write
+      workflows: write
     steps:
       - name: "11.01 Checkout repository"
         uses: actions/checkout@v4
@@ -130,7 +131,24 @@ jobs:
               
               # Replay the remaining commits
               echo "📝 Replaying last $((COMMIT_COUNT-1)) commits..."
-              git cherry-pick "$NEW_ROOT_COMMIT..origin/$BRANCH"
+              
+              # Cherry-pick with proper error handling for empty commits and merge commits
+              if ! git cherry-pick -m 1 --allow-empty "$NEW_ROOT_COMMIT..origin/$BRANCH"; then
+                # Handle cherry-pick conflicts or empty commits
+                while [ -f .git/CHERRY_PICK_HEAD ]; do
+                  # Check if this is an empty commit
+                  if git diff-index --quiet --cached HEAD; then
+                    echo "⚠️ Skipping empty commit..."
+                    git cherry-pick --skip
+                  else
+                    echo "❌ Cherry-pick failed with conflicts that need manual resolution"
+                    echo "Current status:"
+                    git status
+                    echo "Attempting to skip this commit and continue..."
+                    git cherry-pick --skip
+                  fi
+                done
+              fi
               
               # Replace the original branch
               git branch -M "$TEMP_BRANCH" "$BRANCH"
