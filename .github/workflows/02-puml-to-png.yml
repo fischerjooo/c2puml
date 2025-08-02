@@ -14,12 +14,6 @@ on:
         description: 'Output folder containing .puml files'
         required: false
         type: string
-  push:
-    paths:
-      - 'artifacts/output_example/**/*.puml'
-      - 'picgen.sh'
-      - '.github/workflows/02-puml-to-png.yml'
-    branches: [main, master]
 
 jobs:
   generate-plantuml:

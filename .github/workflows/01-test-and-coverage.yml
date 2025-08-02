@@ -82,14 +82,20 @@ jobs:
         retention-days: 30
 
     - name: "01.12 Trigger PlantUML generation"
-      if: success()
+      if: success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       uses: actions/github-script@v7
       with:
         script: |
           console.log('🚀 Triggering PlantUML generation workflow...');
-          await github.rest.actions.createWorkflowDispatch({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            workflow_id: '02-puml-to-png.yml',
-            ref: context.ref
-          });
+          try {
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: '02-puml-to-png.yml',
+              ref: context.ref
+            });
+            console.log('✅ Successfully triggered PlantUML generation workflow');
+          } catch (error) {
+            console.error('❌ Failed to trigger PlantUML generation workflow:', error);
+            core.setFailed('Failed to trigger PlantUML generation workflow');
+          }
