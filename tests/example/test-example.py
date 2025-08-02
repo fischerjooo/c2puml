@@ -149,7 +149,7 @@ class PUMLValidator:
 
         # Pattern for class definitions
         class_pattern = (
-            r'class\s+"([^"]+)"\s+as\s+(\w+)\s+<<(\w+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
+            r'class\s+"([^"]+)"\s+as\s+(\w+)\s+<<([^>]+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
         )
         matches = re.finditer(class_pattern, content, re.DOTALL)
 
@@ -180,7 +180,7 @@ class PUMLValidator:
 
         # Pattern for enum definitions
         enum_pattern = (
-            r'enum\s+"([^"]+)"\s+as\s+(\w+)\s+<<(\w+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
+            r'enum\s+"([^"]+)"\s+as\s+(\w+)\s+<<([^>]+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
         )
         enum_matches = re.finditer(enum_pattern, content, re.DOTALL)
 
@@ -384,7 +384,7 @@ class PUMLValidator:
                     filename,
                 )
 
-        elif cls.stereotype in ["typedef", "enumeration", "struct", "union"]:
+        elif cls.stereotype in ["typedef", "enumeration", "struct", "union", "function pointer"]:
             if not cls.uml_id.startswith("TYPEDEF_"):
                 self._add_result(
                     ValidationLevel.ERROR,
@@ -398,7 +398,7 @@ class PUMLValidator:
             self._validate_source_content(cls, filename)
         elif cls.stereotype == "header":
             self._validate_header_content(cls, filename)
-        elif cls.stereotype in ["typedef", "enumeration", "struct", "union"]:
+        elif cls.stereotype in ["typedef", "enumeration", "struct", "union", "function pointer"]:
             self._validate_typedef_content(cls, filename)
 
     def _validate_source_content(self, cls: PUMLClass, filename: str):
@@ -444,8 +444,8 @@ class PUMLValidator:
         elif cls.stereotype in ["struct", "union"]:
             # Struct and union fields should have + prefix
             self._validate_struct_union_typedef_content(cls, filename)
-        elif cls.stereotype == "typedef":
-            # Alias typedefs should show "alias of" format
+        elif cls.stereotype in ["typedef", "function pointer"]:
+            # Alias typedefs and function pointers should show "alias of" format
             self._validate_alias_typedef_content(cls, filename)
 
     def _validate_enum_typedef_content(self, cls: PUMLClass, filename: str):
