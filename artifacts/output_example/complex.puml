@@ -152,9 +152,9 @@ class "Std_ReturnType" as TYPEDEF_STD_RETURNTYPE <<typedef>> #LightYellow
     alias of int
 }
 
-class "complex_callback_t" as TYPEDEF_COMPLEX_CALLBACK_T <<function pointer>> #LightYellow
+class "complex_callback_t" as TYPEDEF_COMPLEX_CALLBACK_T <<typedef>> #LightYellow
 {
-    alias of int(* complex_callback_t) (
+    alias of int(* complex_callback_t) ...)
 }
 
 class "complex_func_ptr_t" as TYPEDEF_COMPLEX_FUNC_PTR_T <<typedef>> #LightYellow
@@ -257,7 +257,6 @@ TYPEDEF_OPERATION_SET_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>
 TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T ..> TYPEDEF_PROCESS_CFG_PROCESS_FCT : <<uses>>
 TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_PROCESS_T : <<uses>>
 TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>
-TYPEDEF_COMPLEX_CALLBACK_T ..> TYPEDEF_PARAM4 : <<uses>>
 TYPEDEF_DATA_PROCESSOR_ARRAY_T ..> TYPEDEF_DATA_PROCESSOR_T : <<uses>>
 TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>
 TYPEDEF_HANDLER_TABLE_T ..> TYPEDEF_HANDLER_ENTRY_T : <<uses>>

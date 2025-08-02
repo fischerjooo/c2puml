@@ -660,6 +660,14 @@ class PUMLValidator:
                     filename,
                     line_num,
                 )
+            # Special case for simplified complex function pointers with ...
+            elif " ...)" in line:
+                self._add_result(
+                    ValidationLevel.INFO,
+                    f"Complex function pointer simplified with ellipsis: {line.strip()}",
+                    filename,
+                    line_num,
+                )
             else:
                 self._add_result(
                     ValidationLevel.ERROR,

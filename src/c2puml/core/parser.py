@@ -899,38 +899,72 @@ class CParser:
                     # Find the closing parenthesis for the parameter list
                     paren_count = 1
                     param_end = i + 6
+                    has_nested_struct = False
+                    
                     while param_end < len(all_tokens) and paren_count > 0:
                         if all_tokens[param_end].type == TokenType.LPAREN:
                             paren_count += 1
                         elif all_tokens[param_end].type == TokenType.RPAREN:
                             paren_count -= 1
+                        elif all_tokens[param_end].type == TokenType.LBRACE:
+                            # Found a nested struct - mark this as complex
+                            has_nested_struct = True
                         param_end += 1
 
                     if paren_count == 0:
                         typedef_name = all_tokens[i + 3].value
-                        # Format the complete typedef properly with better spacing
-                        formatted_tokens = []
-                        for j, token in enumerate(all_tokens):
-                            if token.type in [TokenType.LPAREN, TokenType.RPAREN]:
-                                # Don't add spaces around parentheses
-                                formatted_tokens.append(token.value)
-                            elif token.type == TokenType.ASTERISK:
-                                # Add space before asterisk for better readability
-                                if j > 0 and all_tokens[j - 1].type not in [TokenType.LPAREN]:
+                        
+                        if has_nested_struct:
+                            # For complex nested structs, simplify the parameter list
+                            formatted_tokens = []
+                            # Add everything up to the opening parenthesis of the parameter list
+                            for j in range(i + 5):
+                                token = all_tokens[j]
+                                if token.type in [TokenType.LPAREN, TokenType.RPAREN]:
+                                    formatted_tokens.append(token.value)
+                                elif token.type == TokenType.ASTERISK:
+                                    if j > 0 and all_tokens[j - 1].type not in [TokenType.LPAREN]:
+                                        formatted_tokens.append(" " + token.value)
+                                    else:
+                                        formatted_tokens.append(token.value)
+                                elif j > 0 and all_tokens[j - 1].type not in [
+                                    TokenType.LPAREN,
+                                    TokenType.RPAREN,
+                                ]:
                                     formatted_tokens.append(" " + token.value)
                                 else:
                                     formatted_tokens.append(token.value)
-                            elif j > 0 and all_tokens[j - 1].type not in [
-                                TokenType.LPAREN,
-                                TokenType.RPAREN,
-                            ]:
-                                # Add space before token if previous token wasn't a parenthesis
-                                formatted_tokens.append(" " + token.value)
-                            else:
-                                # No space before token
-                                formatted_tokens.append(token.value)
-                        original_type = "".join(formatted_tokens)
-                        return (typedef_name, original_type)
+                            
+                            # Add simplified parameter list with ...
+                            formatted_tokens.append(" ...")
+                            formatted_tokens.append(")")
+                            
+                            original_type = "".join(formatted_tokens)
+                            return (typedef_name, original_type)
+                        else:
+                            # Regular complex function pointer - format normally
+                            formatted_tokens = []
+                            for j, token in enumerate(all_tokens):
+                                if token.type in [TokenType.LPAREN, TokenType.RPAREN]:
+                                    # Don't add spaces around parentheses
+                                    formatted_tokens.append(token.value)
+                                elif token.type == TokenType.ASTERISK:
+                                    # Add space before asterisk for better readability
+                                    if j > 0 and all_tokens[j - 1].type not in [TokenType.LPAREN]:
+                                        formatted_tokens.append(" " + token.value)
+                                    else:
+                                        formatted_tokens.append(token.value)
+                                elif j > 0 and all_tokens[j - 1].type not in [
+                                    TokenType.LPAREN,
+                                    TokenType.RPAREN,
+                                ]:
+                                    # Add space before token if previous token wasn't a parenthesis
+                                    formatted_tokens.append(" " + token.value)
+                                else:
+                                    # No space before token
+                                    formatted_tokens.append(token.value)
+                            original_type = "".join(formatted_tokens)
+                            return (typedef_name, original_type)
 
         # Array typedef: typedef type name[size];
         for i in range(len(all_tokens)):
