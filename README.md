@@ -296,6 +296,4 @@ python scripts/run_example_with_coverage.py # Example with coverage
 
 MIT License
 
----
 
-**Documentation Status**: This README and accompanying [specification.md](docs/specification.md) have been comprehensively updated as of December 2024 to reflect the current v3.0.0 implementation, including the new modular core architecture, advanced tokenization capabilities, preprocessor support, and model verification features. All documentation now accurately represents the mature, production-ready codebase with over 700 commits of active development.
