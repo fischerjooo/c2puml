@@ -34,18 +34,65 @@ class CParser:
         self, source_folder: str, recursive_search: bool = True, config: "Config" = None
     ) -> ProjectModel:
         """Parse a C/C++ project and return a model"""
-        source_folder_path = Path(source_folder).resolve()
+        # Enhanced source path validation
+        if not source_folder or not isinstance(source_folder, str):
+            raise ValueError(f"Source folder must be a non-empty string, got: {type(source_folder)}")
+        
+        if not source_folder.strip():
+            raise ValueError("Source folder cannot be empty or whitespace")
+        
+        try:
+            source_folder_path = Path(source_folder).resolve()
+        except (OSError, RuntimeError) as e:
+            raise ValueError(f"Failed to resolve source folder path '{source_folder}': {e}")
 
         if not source_folder_path.exists():
-            raise ValueError(f"Source folder not found: {source_folder_path}")
+            # Provide helpful error message with suggestions
+            error_msg = f"Source folder not found: {source_folder_path}"
+            
+            # Check if it's a relative path issue
+            if not Path(source_folder).is_absolute():
+                current_dir = Path.cwd()
+                error_msg += f"\nCurrent working directory: {current_dir}"
+                error_msg += f"\nTried to resolve relative path: {source_folder}"
+            
+            # Check if parent directory exists
+            parent_dir = source_folder_path.parent
+            if parent_dir.exists():
+                error_msg += f"\nParent directory exists: {parent_dir}"
+                # List contents of parent directory
+                try:
+                    contents = [item.name for item in parent_dir.iterdir() if item.is_dir()]
+                    if contents:
+                        error_msg += f"\nAvailable directories in parent: {', '.join(contents[:10])}"
+                        if len(contents) > 10:
+                            error_msg += f" (and {len(contents) - 10} more)"
+                except (OSError, PermissionError):
+                    error_msg += "\nCannot list parent directory contents (permission denied)"
+            else:
+                error_msg += f"\nParent directory does not exist: {parent_dir}"
+            
+            raise ValueError(error_msg)
 
         if not source_folder_path.is_dir():
-            raise ValueError(f"Source folder must be a directory: {source_folder_path}")
+            raise ValueError(f"Source folder must be a directory, got: {source_folder_path} (is_file: {source_folder_path.is_file()})")
+
+        # Check if directory is readable
+        try:
+            source_folder_path.iterdir()
+        except PermissionError:
+            raise ValueError(f"Permission denied accessing source folder: {source_folder_path}")
+        except OSError as e:
+            raise ValueError(f"Error accessing source folder '{source_folder_path}': {e}")
 
         self.logger.info("Parsing project: %s", source_folder_path)
 
         # Find all C/C++ files in the project
-        all_c_files = self._find_c_files(source_folder_path, recursive_search)
+        try:
+            all_c_files = self._find_c_files(source_folder_path, recursive_search)
+        except OSError as e:
+            raise ValueError(f"Error searching for C/C++ files in '{source_folder_path}': {e}")
+        
         self.logger.info("Found %d C/C++ files", len(all_c_files))
 
         # Apply file filtering based on configuration
@@ -656,27 +703,52 @@ class CParser:
 
         self.logger.debug("Searching for files with extensions: %s", c_extensions)
 
-        if recursive_search:
-            for ext in c_extensions:
-                files.extend(source_folder_path.rglob(f"*{ext}"))
-        else:
-            for ext in c_extensions:
-                files.extend(source_folder_path.glob(f"*{ext}"))
+        try:
+            if recursive_search:
+                for ext in c_extensions:
+                    try:
+                        files.extend(source_folder_path.rglob(f"*{ext}"))
+                    except (OSError, PermissionError) as e:
+                        self.logger.warning("Error during recursive search for %s files: %s", ext, e)
+                        # Continue with other extensions
+            else:
+                for ext in c_extensions:
+                    try:
+                        files.extend(source_folder_path.glob(f"*{ext}"))
+                    except (OSError, PermissionError) as e:
+                        self.logger.warning("Error during search for %s files: %s", ext, e)
+                        # Continue with other extensions
+        except Exception as e:
+            raise OSError(f"Failed to search for C/C++ files in '{source_folder_path}': {e}")
 
         # Filter out hidden files and common exclude patterns
         filtered_files = []
         exclude_patterns = {".git", "__pycache__", "node_modules", ".vscode", ".idea"}
 
         for file_path in files:
-            # Skip hidden files and directories
-            if any(part.startswith(".") for part in file_path.parts):
-                continue
+            try:
+                # Skip hidden files and directories
+                if any(part.startswith(".") for part in file_path.parts):
+                    continue
 
-            # Skip common exclude patterns
-            if any(pattern in file_path.parts for pattern in exclude_patterns):
-                continue
+                # Skip common exclude patterns
+                if any(pattern in file_path.parts for pattern in exclude_patterns):
+                    continue
 
-            filtered_files.append(file_path)
+                # Verify the file is actually accessible
+                if not file_path.exists():
+                    self.logger.debug("Skipping non-existent file: %s", file_path)
+                    continue
+                
+                if not file_path.is_file():
+                    self.logger.debug("Skipping non-file item: %s", file_path)
+                    continue
+
+                filtered_files.append(file_path)
+            except (OSError, PermissionError) as e:
+                self.logger.warning("Error accessing file %s: %s", file_path, e)
+                # Skip files we can't access
+                continue
 
         self.logger.debug("Found %d C/C++ files after filtering", len(filtered_files))
         return sorted(filtered_files)
@@ -1489,29 +1561,30 @@ class Parser:
         recursive_search: bool = True,
         config: "Config" = None,
     ) -> str:
-        """
-        Step 1: Parse C code files and generate model.json
+        """Parse C/C++ projects and generate model.json
 
         Args:
-            source_folders: A list of source folder directories within the project
-            output_file: Output JSON model file path
+            source_folders: List of source folder directories within the project
+            output_file: Path to the output model.json file
             recursive_search: Whether to search subdirectories recursively
-            config: Configuration object for filtering, include depth, and project name
+            config: Configuration object for filtering and processing
 
         Returns:
             Path to the generated model.json file
         """
-        # Validate source_folders is a list
+        # Enhanced validation for source_folders
         if not isinstance(source_folders, list):
-            raise TypeError("source_folders must be a list of strings")
+            raise TypeError(f"source_folders must be a list of strings, got: {type(source_folders)}")
 
         if not source_folders:
             raise ValueError("At least one source folder must be provided")
 
-        # Validate all items are strings
-        for folder in source_folders:
+        # Validate all items are strings and not empty
+        for i, folder in enumerate(source_folders):
             if not isinstance(folder, str):
-                raise TypeError("All source folders must be strings")
+                raise TypeError(f"All source folders must be strings, got {type(folder)} at index {i}: {folder}")
+            if not folder.strip():
+                raise ValueError(f"Source folder at index {i} cannot be empty or whitespace: {repr(folder)}")
 
         self.logger.info(
             f"Step 1: Parsing C/C++ project with {len(source_folders)} source folders"
@@ -1527,6 +1600,7 @@ class Parser:
         total_structs = 0
         total_enums = 0
         total_functions = 0
+        failed_folders = []
 
         for i, source_folder in enumerate(source_folders):
             self.logger.info(
@@ -1554,7 +1628,29 @@ class Parser:
                 self.logger.error(
                     "Failed to parse source folder %s: %s", source_folder, e
                 )
-                raise
+                failed_folders.append((source_folder, str(e)))
+                
+                # If this is the only source folder, re-raise the error
+                if len(source_folders) == 1:
+                    raise
+                
+                # For multiple source folders, continue with others but log the failure
+                self.logger.warning(
+                    "Continuing with other source folders despite failure in %s", source_folder
+                )
+
+        # If all source folders failed, raise an error
+        if failed_folders and len(failed_folders) == len(source_folders):
+            error_msg = "All source folders failed to parse:\n"
+            for folder, error in failed_folders:
+                error_msg += f"  - {folder}: {error}\n"
+            raise RuntimeError(error_msg)
+
+        # If some folders failed, log a warning
+        if failed_folders:
+            self.logger.warning(
+                f"Failed to parse {len(failed_folders)} out of {len(source_folders)} source folders"
+            )
 
         # Create combined project model
         combined_model = ProjectModel(
@@ -1571,7 +1667,10 @@ class Parser:
         combined_model.update_uses_fields()
 
         # Save combined model to JSON file
-        combined_model.save(output_file)
+        try:
+            combined_model.save(output_file)
+        except Exception as e:
+            raise RuntimeError(f"Failed to save model to {output_file}: {e}") from e
 
         # Step 1.5: Verify model sanity
         self.logger.info("Step 1.5: Verifying model sanity...")

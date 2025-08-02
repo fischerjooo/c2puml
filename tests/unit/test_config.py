@@ -295,7 +295,7 @@ class TestConfig(unittest.TestCase):
 
 
     def test_empty_source_folders(self):
-        """Test that empty source_folders list is handled correctly"""
+        """Test that empty source_folders list raises an appropriate error"""
         config_data = {
             "project_name": "test_project",
             "source_folders": [],
@@ -303,10 +303,13 @@ class TestConfig(unittest.TestCase):
         }
 
         config_path = self.create_test_config(config_data)
-        config = Config.load(config_path)
-
-        self.assertEqual(config.source_folders, [])
-        self.assertTrue(isinstance(config.source_folders, list))
+        
+        # Empty source_folders list should now raise an error
+        with self.assertRaises(ValueError) as cm:
+            Config.load(config_path)
+        
+        error_msg = str(cm.exception)
+        self.assertIn("cannot be empty", error_msg)
 
     def test_single_source_folder(self):
         """Test that single source folder is handled correctly (backward compatibility)"""
