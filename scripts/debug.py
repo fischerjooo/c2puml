@@ -24,7 +24,7 @@ from pathlib import Path
 
 # =============================================================================
 # DEBUG CONFIGURATION - Modify these constants as needed
-# Uncomment and modify the constants you want to use as defaults
+# Uncomment and modify the constants you want to use to override parameters
 # =============================================================================
 
 # Default command to run (parse, transform, generate, or leave empty for full workflow)
