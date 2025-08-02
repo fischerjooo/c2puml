@@ -42,7 +42,6 @@ This repository uses a streamlined, numbered workflow system that follows a clea
 **Triggers**:
 - Called by workflow 01 (main branch only)
 - Manual dispatch
-- Push to PlantUML files on main/master
 
 **Steps**:
 1. **02.01-02.02**: Setup environment and Git configuration
@@ -81,7 +80,7 @@ Pull Request → 00. Test
 ### Main Branch
 ```
 Main Branch Push (source code) → 01. Test and Coverage
-    ↓ (if successful)
+    ↓ (if successful and on main/master)
     02. PlantUML to PNG
     ↓ (commits generated files to main)
     03. Deploy Website
