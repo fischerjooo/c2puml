@@ -16,23 +16,23 @@ jobs:
       contents: write
       actions: write
     steps:
-      - name: Checkout repository
+      - name: "10.01 Checkout repository"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Python
+      - name: "10.02 Set up Python"
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Configure Git
+      - name: "10.03 Configure Git"
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Generate release date
+      - name: "10.04 Generate release date"
         id: release_date
         run: |
           if [ -n "${{ github.event.inputs.release_date }}" ]; then
@@ -42,7 +42,7 @@ jobs:
           fi
           echo "tag=v${{ steps.release_date.outputs.date }}" >> $GITHUB_OUTPUT
 
-      - name: Create or update release branch
+      - name: "10.05 Create or update release branch"
         run: |
           # Check if release branch exists
           if git ls-remote --heads origin release | grep -q release; then
@@ -55,7 +55,7 @@ jobs:
             git checkout --orphan release
           fi
 
-      - name: Copy files from main branch
+      - name: "10.06 Copy files from main branch"
         run: |
           # Switch back to main to copy files
           git checkout main
@@ -76,7 +76,7 @@ jobs:
           # Add all copied files
           git add .
 
-      - name: Verify copied files
+      - name: "10.07 Verify copied files"
         run: |
           echo "📁 Verifying copied files..."
           ls -la
@@ -85,17 +85,17 @@ jobs:
           echo "📄 Main files:"
           ls -la main.py README.md
 
-      - name: Commit changes
+      - name: "10.08 Commit changes"
         run: |
           git commit -m "Release ${{ steps.release_date.outputs.tag }} - $(date)"
           git push origin release
 
-      - name: Create and push tag
+      - name: "10.09 Create and push tag"
         run: |
           git tag -a "${{ steps.release_date.outputs.tag }}" -m "Release ${{ steps.release_date.outputs.tag }}"
           git push origin "${{ steps.release_date.outputs.tag }}"
 
-      - name: Create GitHub Release
+      - name: "10.10 Create GitHub Release"
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
