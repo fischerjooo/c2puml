@@ -51,70 +51,40 @@ jobs:
           fi
           echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
 
-      - name: "10.05 Create or update release branch"
+      - name: "10.05 Update release branch"
         run: |
-          # Check if release branch exists
+          # Check if release branch exists, create if not
           if git ls-remote --heads origin release | grep -q release; then
-            echo "📋 Release branch exists, checking out and cleaning..."
+            echo "📋 Checking out existing release branch..."
             git checkout release
             git pull origin release
-            
-            echo "📁 Files before cleanup:"
-            ls -la
-            
-            # Remove all tracked files (but preserve .git)
-            if [ -n "$(git ls-files)" ]; then
-              git ls-files -z | xargs -0 git rm -f
-              echo "✅ Removed tracked files"
-            else
-              echo "ℹ️ No tracked files to remove"
-            fi
-            
-            # Remove any untracked files and directories
-            git clean -fdx
-            
-            echo "📁 Files after cleanup:"
-            ls -la
-            echo "✅ Cleaned existing release branch"
           else
-            echo "📋 Creating new orphan release branch..."
-            git checkout --orphan release
-            # Remove any files that might be in the working directory
-            git rm -rf . 2>/dev/null || true
-            echo "✅ Created new orphan release branch"
+            echo "📋 Creating new release branch from main..."
+            git checkout -b release
           fi
+          
+          echo "📁 Current release branch contents:"
+          ls -la
+          
+          # Remove all current files except .git
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          
+          echo "📁 After cleanup:"
+          ls -la
 
-      - name: "10.06 Copy files from main branch"
+      - name: "10.06 Copy release files from main"
         run: |
-          # Stash any changes to avoid checkout conflicts
-          git stash || true
+          # Copy the specific files we want in the release
+          git checkout main -- src/c2puml/
+          git checkout main -- main.py
+          git checkout main -- README.md
           
-          # Switch back to main to copy files
-          git checkout main
+          echo "📁 Release files copied:"
+          ls -la
+          echo "📁 Contents of src/:"
+          ls -la src/
           
-          # Create temporary directory to store files
-          TEMP_DIR=$(mktemp -d)
-          
-          # Copy files to temporary directory
-          cp -r src/c2puml "$TEMP_DIR/"
-          cp main.py "$TEMP_DIR/"
-          cp README.md "$TEMP_DIR/"
-          
-          # Switch back to release branch
-          git checkout release
-          
-          # Create necessary directories
-          mkdir -p src/
-          
-          # Copy files from temporary directory to release branch
-          cp -r "$TEMP_DIR/c2puml" src/
-          cp "$TEMP_DIR/main.py" .
-          cp "$TEMP_DIR/README.md" .
-          
-          # Clean up temporary directory
-          rm -rf "$TEMP_DIR"
-          
-          # Add all copied files
+          # Stage all changes
           git add .
 
       - name: "10.07 Verify copied files"
@@ -130,23 +100,18 @@ jobs:
           echo "🔍 Git status after file operations:"
           git status
 
-      - name: "10.08 Commit changes"
+      - name: "10.08 Commit and push release"
         run: |
           # Check if there are any changes to commit
-          if git diff --staged --quiet; then
-            echo "No changes to commit, checking if files were added..."
-            if [ -z "$(git status --porcelain)" ]; then
-              echo "No changes detected. Creating empty commit to update release branch."
-              git commit --allow-empty -m "Release ${{ steps.release_date.outputs.tag }} - $(date)"
-            else
-              echo "Changes detected, committing..."
-              git add .
-              git commit -m "Release ${{ steps.release_date.outputs.tag }} - $(date)"
-            fi
+          if git diff --staged --quiet && [ -z "$(git status --porcelain)" ]; then
+            echo "ℹ️ No changes detected, creating empty commit to update release branch"
+            git commit --allow-empty -m "Release ${{ steps.release_date.outputs.tag }} - $(date)"
           else
-            echo "Staged changes detected, committing..."
+            echo "✅ Changes detected, committing release files"
             git commit -m "Release ${{ steps.release_date.outputs.tag }} - $(date)"
           fi
+          
+          echo "📤 Pushing release branch to origin"
           git push origin release
 
       - name: "10.09 Create and push tag"
