@@ -3,16 +3,16 @@
 class "database" as DATABASE <<source>> #LightBlue
 {
     -- Functions --
-    int database_begin_transaction(DatabaseConfig * config)
-    int database_commit_transaction(DatabaseConfig * config)
-    int database_connect(DatabaseConfig * config)
-    void database_disconnect(DatabaseConfig * config)
-    QueryResult * database_execute_query(DatabaseConfig * config, const char * query)
-    int database_execute_update(DatabaseConfig * config, const char * query)
-    void database_free_result(QueryResult * result)
-    const char * database_get_error(const DatabaseConfig * config)
-    int database_is_connected(const DatabaseConfig * config)
-    int database_rollback_transaction(DatabaseConfig * config)
+    + int database_begin_transaction(DatabaseConfig * config)
+    + int database_commit_transaction(DatabaseConfig * config)
+    + int database_connect(DatabaseConfig * config)
+    + void database_disconnect(DatabaseConfig * config)
+    + QueryResult * database_execute_query(DatabaseConfig * config, const char * query)
+    + int database_execute_update(DatabaseConfig * config, const char * query)
+    + void database_free_result(QueryResult * result)
+    + const char * database_get_error(const DatabaseConfig * config)
+    + int database_is_connected(const DatabaseConfig * config)
+    + int database_rollback_transaction(DatabaseConfig * config)
 }
 
 class "database" as HEADER_DATABASE <<header>> #LightGreen
@@ -35,7 +35,7 @@ class "database" as HEADER_DATABASE <<header>> #LightGreen
     + int database_rollback_transaction(DatabaseConfig * config)
 }
 
-class "DatabaseConfig" as TYPEDEF_DATABASECONFIG <<typedef>> #LightYellow
+class "DatabaseConfig" as TYPEDEF_DATABASECONFIG <<struct>> #LightYellow
 {
     + void * connection
     + char[MAX_DB_NAME_LENGTH] db_name
@@ -46,7 +46,7 @@ class "DatabaseConfig" as TYPEDEF_DATABASECONFIG <<typedef>> #LightYellow
     + char[128] username
 }
 
-class "QueryResult" as TYPEDEF_QUERYRESULT <<typedef>> #LightYellow
+class "QueryResult" as TYPEDEF_QUERYRESULT <<struct>> #LightYellow
 {
     + int column_count
     + char * * column_names
@@ -54,11 +54,11 @@ class "QueryResult" as TYPEDEF_QUERYRESULT <<typedef>> #LightYellow
     + int row_count
 }
 
-class "DatabaseType" as TYPEDEF_DATABASETYPE <<typedef>> #LightYellow
+class "DatabaseType" as TYPEDEF_DATABASETYPE <<enumeration>> #LightYellow
 {
-    + DB_TYPE_MYSQL
-    + DB_TYPE_POSTGRESQL
-    + DB_TYPE_SQLITE
+    DB_TYPE_MYSQL
+    DB_TYPE_POSTGRESQL
+    DB_TYPE_SQLITE
 }
 
 

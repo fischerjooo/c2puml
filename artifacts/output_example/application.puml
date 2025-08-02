@@ -3,10 +3,11 @@
 class "application" as APPLICATION <<source>> #LightBlue
 {
     -- Global Variables --
-    volatile int running
+    - volatile int running
     -- Functions --
-    int main(int argc, char *[] argv)
-    void signal_handler(int sig)
+    + int main(int argc, char *[] argv)
+
+    - void signal_handler(int sig)
 }
 
 class "database" as HEADER_DATABASE <<header>> #LightGreen
@@ -49,7 +50,7 @@ class "network" as HEADER_NETWORK <<header>> #LightGreen
     + const char * network_status_string(NetworkStatus status)
 }
 
-class "DatabaseConfig" as TYPEDEF_DATABASECONFIG <<typedef>> #LightYellow
+class "DatabaseConfig" as TYPEDEF_DATABASECONFIG <<struct>> #LightYellow
 {
     + void * connection
     + char[MAX_DB_NAME_LENGTH] db_name
@@ -60,7 +61,7 @@ class "DatabaseConfig" as TYPEDEF_DATABASECONFIG <<typedef>> #LightYellow
     + char[128] username
 }
 
-class "QueryResult" as TYPEDEF_QUERYRESULT <<typedef>> #LightYellow
+class "QueryResult" as TYPEDEF_QUERYRESULT <<struct>> #LightYellow
 {
     + int column_count
     + char * * column_names
@@ -68,14 +69,14 @@ class "QueryResult" as TYPEDEF_QUERYRESULT <<typedef>> #LightYellow
     + int row_count
 }
 
-class "DatabaseType" as TYPEDEF_DATABASETYPE <<typedef>> #LightYellow
+class "DatabaseType" as TYPEDEF_DATABASETYPE <<enumeration>> #LightYellow
 {
-    + DB_TYPE_MYSQL
-    + DB_TYPE_POSTGRESQL
-    + DB_TYPE_SQLITE
+    DB_TYPE_MYSQL
+    DB_TYPE_POSTGRESQL
+    DB_TYPE_SQLITE
 }
 
-class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<typedef>> #LightYellow
+class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<struct>> #LightYellow
 {
     + struct sockaddr_in address
     + char * hostname
@@ -83,12 +84,12 @@ class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<typedef>> #LightYellow
     + int socket_fd
 }
 
-class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<typedef>> #LightYellow
+class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<enumeration>> #LightYellow
 {
-    + NET_STATUS_CONNECTED
-    + NET_STATUS_CONNECTING
-    + NET_STATUS_DISCONNECTED
-    + NET_STATUS_ERROR
+    NET_STATUS_CONNECTED
+    NET_STATUS_CONNECTING
+    NET_STATUS_DISCONNECTED
+    NET_STATUS_ERROR
 }
 
 

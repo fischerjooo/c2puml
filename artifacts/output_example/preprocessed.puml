@@ -3,11 +3,12 @@
 class "preprocessed" as PREPROCESSED <<source>> #LightBlue
 {
     -- Functions --
-    void complex_function()
-    int main()
-    void test_function_pointers()
-    void test_preprocessing_edge_cases()
-    void test_typedef_preprocessing()
+    + int main()
+
+    - void complex_function()
+    - void test_function_pointers()
+    - void test_preprocessing_edge_cases()
+    - void test_typedef_preprocessing()
 }
 
 class "preprocessed" as HEADER_PREPROCESSED <<header>> #LightGreen
@@ -28,121 +29,121 @@ class "preprocessed" as HEADER_PREPROCESSED <<header>> #LightGreen
     + int process_feature(enabled_feature_t * feature)
 }
 
-class "basic_struct_t" as TYPEDEF_BASIC_STRUCT_T <<typedef>> #LightYellow
+class "basic_struct_t" as TYPEDEF_BASIC_STRUCT_T <<struct>> #LightYellow
 {
     + int basic_id
 }
 
-class "debug_enabled_t" as TYPEDEF_DEBUG_ENABLED_T <<typedef>> #LightYellow
+class "debug_enabled_t" as TYPEDEF_DEBUG_ENABLED_T <<struct>> #LightYellow
 {
     + int debug_enabled_id
     + char[64] debug_enabled_name
 }
 
-class "debug_feature_t" as TYPEDEF_DEBUG_FEATURE_T <<typedef>> #LightYellow
+class "debug_feature_t" as TYPEDEF_DEBUG_FEATURE_T <<struct>> #LightYellow
 {
     + int debug_id
     + char[64] debug_name
 }
 
-class "debug_optimized_t" as TYPEDEF_DEBUG_OPTIMIZED_T <<typedef>> #LightYellow
+class "debug_optimized_t" as TYPEDEF_DEBUG_OPTIMIZED_T <<struct>> #LightYellow
 {
     + char[128] debug_buffer
     + int debug_field
 }
 
-class "debug_struct_t" as TYPEDEF_DEBUG_STRUCT_T <<typedef>> #LightYellow
+class "debug_struct_t" as TYPEDEF_DEBUG_STRUCT_T <<struct>> #LightYellow
 {
     + int debug_id
     + char[64] debug_name
     + int extra_debug_field
 }
 
-class "default_struct_t" as TYPEDEF_DEFAULT_STRUCT_T <<typedef>> #LightYellow
+class "default_struct_t" as TYPEDEF_DEFAULT_STRUCT_T <<struct>> #LightYellow
 {
     + int default_field
 }
 
-class "disabled_feature_t" as TYPEDEF_DISABLED_FEATURE_T <<typedef>> #LightYellow
+class "disabled_feature_t" as TYPEDEF_DISABLED_FEATURE_T <<struct>> #LightYellow
 {
     + int id
 }
 
-class "disabled_t" as TYPEDEF_DISABLED_T <<typedef>> #LightYellow
+class "disabled_t" as TYPEDEF_DISABLED_T <<struct>> #LightYellow
 {
     + int disabled_id
 }
 
-class "enabled_feature_t" as TYPEDEF_ENABLED_FEATURE_T <<typedef>> #LightYellow
+class "enabled_feature_t" as TYPEDEF_ENABLED_FEATURE_T <<struct>> #LightYellow
 {
     + int id
     + char[32] name
 }
 
-class "enabled_t" as TYPEDEF_ENABLED_T <<typedef>> #LightYellow
+class "enabled_t" as TYPEDEF_ENABLED_T <<struct>> #LightYellow
 {
     + int enabled_id
     + char[32] enabled_name
 }
 
-class "feature_struct_t" as TYPEDEF_FEATURE_STRUCT_T <<typedef>> #LightYellow
+class "feature_struct_t" as TYPEDEF_FEATURE_STRUCT_T <<struct>> #LightYellow
 {
     + int feature_id
     + char[32] feature_name
 }
 
-class "optimized_struct_t" as TYPEDEF_OPTIMIZED_STRUCT_T <<typedef>> #LightYellow
+class "optimized_struct_t" as TYPEDEF_OPTIMIZED_STRUCT_T <<struct>> #LightYellow
 {
     + char[MAX_SIZE] large_buffer
     + int optimized_field
     + char[MIN_SIZE] small_buffer
 }
 
-class "release_struct_t" as TYPEDEF_RELEASE_STRUCT_T <<typedef>> #LightYellow
+class "release_struct_t" as TYPEDEF_RELEASE_STRUCT_T <<struct>> #LightYellow
 {
     + int release_id
 }
 
-class "simple_debug_t" as TYPEDEF_SIMPLE_DEBUG_T <<typedef>> #LightYellow
+class "simple_debug_t" as TYPEDEF_SIMPLE_DEBUG_T <<struct>> #LightYellow
 {
     + int debug_id
 }
 
-class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+class "status_t" as TYPEDEF_STATUS_T <<enumeration>> #LightYellow
 {
-    + STATUS_DISABLED = 0
-    + STATUS_ENABLED = 1
-    + STATUS_OFF = 0
-    + STATUS_UNKNOWN = - 1
+    STATUS_DISABLED = 0
+    STATUS_ENABLED = 1
+    STATUS_OFF = 0
+    STATUS_UNKNOWN = - 1
 }
 
 class "basic_callback_t" as TYPEDEF_BASIC_CALLBACK_T <<typedef>> #LightYellow
 {
-    + int(* basic_callback_t)(void)
+    alias of int(* basic_callback_t)(void)
 }
 
 class "feature_callback_t" as TYPEDEF_FEATURE_CALLBACK_T <<typedef>> #LightYellow
 {
-    + int(* feature_callback_t)(enabled_feature_t * feature)
+    alias of int(* feature_callback_t)(enabled_feature_t * feature)
 }
 
 class "large_buffer_t" as TYPEDEF_LARGE_BUFFER_T <<typedef>> #LightYellow
 {
-    + char large_buffer_t[MAX_SIZE]
+    alias of char large_buffer_t[MAX_SIZE]
 }
 
 class "small_buffer_t" as TYPEDEF_SMALL_BUFFER_T <<typedef>> #LightYellow
 {
-    + char small_buffer_t[MIN_SIZE]
+    alias of char small_buffer_t[MIN_SIZE]
 }
 
-class "basic_union_t" as TYPEDEF_BASIC_UNION_T <<typedef>> #LightYellow
+class "basic_union_t" as TYPEDEF_BASIC_UNION_T <<union>> #LightYellow
 {
     + char char_value
     + int int_value
 }
 
-class "feature_union_t" as TYPEDEF_FEATURE_UNION_T <<typedef>> #LightYellow
+class "feature_union_t" as TYPEDEF_FEATURE_UNION_T <<union>> #LightYellow
 {
     + char char_value
     + double debug_value

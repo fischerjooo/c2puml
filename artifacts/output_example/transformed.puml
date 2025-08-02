@@ -3,11 +3,12 @@
 class "transformed" as TRANSFORMED <<source>> #LightBlue
 {
     -- Functions --
-    void keep_this_function()
-    int legacy_calculate(int a, int b)
-    void legacy_print_info(const char * message)
-    int main()
-    void * old_create_point(int x, int y)
+    + void keep_this_function()
+    + int main()
+
+    - int legacy_calculate(int a, int b)
+    - void legacy_print_info(const char * message)
+    - void * old_create_point(int x, int y)
 }
 
 class "transformed" as HEADER_TRANSFORMED <<header>> #LightGreen
@@ -28,36 +29,36 @@ class "transformed" as HEADER_TRANSFORMED <<header>> #LightGreen
     + void process_data(const point3d_t * point)
 }
 
-class "old_point" as TYPEDEF_OLD_POINT <<typedef>> #LightYellow
+class "old_point" as TYPEDEF_OLD_POINT <<struct>> #LightYellow
 {
     + int x
     + int y
 }
 
-class "modern_config" as TYPEDEF_MODERN_CONFIG <<typedef>> #LightYellow
+class "modern_config" as TYPEDEF_MODERN_CONFIG <<struct>> #LightYellow
 {
     + int flags
     + char[64] name
     + int version
 }
 
-class "point3d_t" as TYPEDEF_POINT3D_T <<typedef>> #LightYellow
+class "point3d_t" as TYPEDEF_POINT3D_T <<struct>> #LightYellow
 {
     + int x
     + int y
     + int z
 }
 
-class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+class "status_t" as TYPEDEF_STATUS_T <<enumeration>> #LightYellow
 {
-    + STATUS_ERROR
-    + STATUS_OK
-    + STATUS_PENDING
+    STATUS_ERROR
+    STATUS_OK
+    STATUS_PENDING
 }
 
 class "config_t" as TYPEDEF_CONFIG_T <<typedef>> #LightYellow
 {
-    + void *
+    alias of void *
 }
 
 
