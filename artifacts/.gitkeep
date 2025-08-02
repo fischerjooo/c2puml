@@ -1,5 +1,0 @@
-# This file ensures the artifacts directory is tracked by git
-# All generated files are stored here:
-# - test_reports/: Test execution logs and summaries
-# - coverage/: Coverage reports and HTML
-# - output_example/: Generated example outputs and diagrams
