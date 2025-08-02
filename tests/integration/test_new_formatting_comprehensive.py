@@ -219,7 +219,7 @@ class TestNewFormattingIntegration(unittest.TestCase):
     def _validate_alias_formatting(self, diagram: str):
         """Validate that aliases use <<typedef>> stereotype with 'alias of' prefix"""
         self.assertIn('class "Coordinate" as TYPEDEF_COORDINATE <<typedef>> #LightYellow', diagram)
-        self.assertIn('class "RenderCallback" as TYPEDEF_RENDERCALLBACK <<typedef>> #LightYellow', diagram)
+        self.assertIn('class "RenderCallback" as TYPEDEF_RENDERCALLBACK <<function pointer>> #LightYellow', diagram)
         self.assertIn('class "PixelBuffer" as TYPEDEF_PIXELBUFFER <<typedef>> #LightYellow', diagram)
         
         # Alias content should show 'alias of'

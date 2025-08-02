@@ -576,13 +576,23 @@ class Generator:
         for alias_name, alias_data in sorted(file_model.aliases.items()):
             uml_id = uml_ids.get(f"typedef_{alias_name}")
             if uml_id:
+                # Determine stereotype based on whether this is a function pointer typedef
+                stereotype = self._get_alias_stereotype(alias_data)
                 lines.append(
-                    f'class "{alias_name}" as {uml_id} <<typedef>> {COLOR_TYPEDEF}'
+                    f'class "{alias_name}" as {uml_id} {stereotype} {COLOR_TYPEDEF}'
                 )
                 lines.append("{")
                 self._process_alias_content(lines, alias_data)
                 lines.append("}")
                 lines.append("")
+
+    def _get_alias_stereotype(self, alias_data) -> str:
+        """Determine the appropriate stereotype for an alias typedef"""
+        original_type = alias_data.original_type.strip()
+        # Check if this is a function pointer typedef by looking for the pattern (*name)(
+        if "(*" in original_type and "(" in original_type.split("(*")[1]:
+            return "<<function pointer>>"
+        return "<<typedef>>"
 
     def _generate_union_classes(
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]

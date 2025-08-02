@@ -518,8 +518,10 @@
         },
         "complex_callback_t": {
           "name": "complex_callback_t",
-          "original_type": "int(* complex_callback_t)(\n int param1 , \n char * param2 , \n void * param3 , \n struct { \n int nested1",
-          "uses": []
+          "original_type": "int(* complex_callback_t)(\n int param1 , \n char * param2 , \n void * param3 , \n struct { \n int nested1 ; \n char * nested2 ; \n void(* nested_func)(int); \n } * param4 \n)",
+          "uses": [
+            "param4"
+          ]
         },
         "complex_func_ptr_t": {
           "name": "complex_func_ptr_t",

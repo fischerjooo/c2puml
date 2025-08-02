@@ -105,12 +105,12 @@ class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<enumeration>> #LightYellow
     LOG_WARN
 }
 
-class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<typedef>> #LightYellow
+class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<function pointer>> #LightYellow
 {
     alias of void(* log_callback_t)(log_level_t level , const char * message)
 }
 
-class "math_op_t" as TYPEDEF_MATH_OP_T <<typedef>> #LightYellow
+class "math_op_t" as TYPEDEF_MATH_OP_T <<function pointer>> #LightYellow
 {
     alias of int(* math_op_t)(int , int)
 }

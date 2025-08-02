@@ -25,6 +25,7 @@ This template defines the structure for generating PlantUML diagrams from C sour
 - **Enum typedefs**: Use `<<enumeration>>` stereotype, show enum value names without prefix (e.g., `LOG_DEBUG`, `LOG_INFO`)
 - **Struct typedefs**: Use `<<struct>>` stereotype, show field names and types with `+` prefix (e.g., `+ int x`, `+ char* name`)
 - **Union typedefs**: Use `<<union>>` stereotype, show union field names and types with `+` prefix (e.g., `+ int i`, `+ float f`)
+- **Function pointer typedefs**: Use `<<function pointer>>` stereotype, show as `alias of {original_type}` (e.g., `alias of int(* callback)(int, int)`)
 - **Alias typedefs**: Use `<<typedef>>` stereotype, show as `alias of {original_type}` (e.g., `alias of int`, `alias of char*`)
 
 ### Macro Display
@@ -43,6 +44,7 @@ This template defines the structure for generating PlantUML diagrams from C sour
   - **Enums**: `<<enumeration>>` stereotype
   - **Structs**: `<<struct>>` stereotype
   - **Unions**: `<<union>>` stereotype
+  - **Function pointers**: `<<function pointer>>` stereotype
   - **Aliases**: `<<typedef>>` stereotype
 
 ## Relationship Types
@@ -113,6 +115,12 @@ class "{struct_name}" as {STRUCT_UML_ID} <<struct>> #LightYellow
 class "{union_name}" as {UNION_UML_ID} <<union>> #LightYellow
 {
     + {type} {field_name}
+}
+
+' Function pointer typedefs
+class "{function_pointer_name}" as {FUNCTION_POINTER_UML_ID} <<function pointer>> #LightYellow
+{
+    alias of {original_type}
 }
 
 ' Alias typedefs
