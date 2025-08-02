@@ -5,8 +5,8 @@ Debug entry point for C to PlantUML converter
 This script provides a convenient way to debug the converter with predefined configurations.
 It uses the standalone c2puml.py script directly.
 
-Configuration is done by modifying the constants at the top of this file, or by passing
-command line arguments.
+Configuration is done by modifying the constants at the top of this file.
+All command line arguments are forwarded directly to c2puml.py.
 
 Usage:
     python debug.py                           # Uses internal DEBUG CONFIGURATION
@@ -17,9 +17,7 @@ Usage:
     python debug.py parse --config ./my_config.json # Parse with custom config
 """
 
-import argparse
 import logging
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -28,13 +26,10 @@ from pathlib import Path
 # DEBUG CONFIGURATION - Modify these constants as needed
 # =============================================================================
 
-# Workflow selection: "full", "parse", "transform", "generate"
-WORKFLOW: str = "full"
-
-# Configuration file path (relative to project root)
+# Default configuration file path (relative to project root)
 CONFIG_PATH: str = "./tests/example/config.json"
 
-# Verbose output
+# Default verbose output
 VERBOSE: bool = True
 
 # =============================================================================
@@ -42,90 +37,18 @@ VERBOSE: bool = True
 # =============================================================================
 
 
-def setup_logging(verbose: bool):
-    """Setup logging based on configuration"""
-    level = logging.DEBUG if verbose else logging.INFO
+def setup_logging():
+    """Setup logging"""
     logging.basicConfig(
-        level=level,
+        level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[logging.StreamHandler(sys.stdout)],
     )
 
 
-def parse_arguments():
-    """Parse command line arguments"""
-    parser = argparse.ArgumentParser(
-        description="Debug entry point for C to PlantUML converter",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  %(prog)s                           # Uses internal DEBUG CONFIGURATION
-  %(prog)s parse                     # Parse only workflow
-  %(prog)s transform                 # Transform only workflow
-  %(prog)s generate                  # Generate only workflow
-  %(prog)s --config ./my_config.json # Use custom config file
-  %(prog)s parse --config ./my_config.json # Parse with custom config
-        """,
-    )
-    parser.add_argument(
-        "workflow",
-        nargs="?",
-        choices=["parse", "transform", "generate"],
-        help="Which workflow to run: parse, transform, or generate. If omitted, runs full workflow.",
-    )
-    parser.add_argument(
-        "--config",
-        "-c",
-        type=str,
-        help="Path to config file (optional, uses internal CONFIG_PATH if not provided)",
-    )
-    parser.add_argument(
-        "--verbose",
-        "-v",
-        action="store_true",
-        help="Enable verbose output (overrides internal VERBOSE setting)",
-    )
-
-    return parser.parse_args()
-
-
 def main():
     """Main debug entry point"""
-    # Parse command line arguments
-    args = parse_arguments()
-
-    # Determine workflow from arguments or use default
-    workflow = args.workflow if args.workflow else WORKFLOW
-
-    # Determine config path from arguments or use default
-    config_path = args.config if args.config else CONFIG_PATH
-
-    # Determine verbose setting from arguments or use default
-    verbose = args.verbose if args.verbose is not None else VERBOSE
-
-    # Setup logging
-    setup_logging(verbose)
-
-    # Validate configuration
-    if workflow not in ["full", "parse", "transform", "generate"]:
-        logging.error(
-            "Invalid workflow: %s. Must be one of: full, parse, transform, generate",
-            workflow,
-        )
-        return 1
-
-    # Check if config file exists
-    if not os.path.exists(config_path):
-        logging.error("Configuration file not found: %s", config_path)
-        logging.error(
-            "Please ensure the config file exists or update CONFIG_PATH in debug.py"
-        )
-        return 1
-
-    logging.info("Debug Configuration:")
-    logging.info("  Workflow: %s", workflow)
-    logging.info("  Config: %s", config_path)
-    logging.info("  Verbose: %s", verbose)
+    setup_logging()
 
     # Get project root (go up one level from scripts/ directory)
     project_root = Path(__file__).parent.parent
@@ -136,16 +59,22 @@ def main():
         return 1
 
     # Build command for c2puml.py
-    cmd = [sys.executable, str(c2puml_script), "--config", config_path]
+    cmd = [sys.executable, str(c2puml_script)]
 
-    # Add workflow command
-    if workflow != "full":
-        cmd.append(workflow)
+    # Add default config if no config specified in arguments
+    if not any(arg.startswith('--config') or arg.startswith('-c') for arg in sys.argv[1:]):
+        cmd.extend(["--config", CONFIG_PATH])
 
-    # Add verbose flag
-    if verbose:
+    # Add default verbose if not specified in arguments
+    if VERBOSE and not any(arg.startswith('--verbose') or arg.startswith('-v') for arg in sys.argv[1:]):
         cmd.append("--verbose")
 
+    # Forward all command line arguments
+    cmd.extend(sys.argv[1:])
+
+    logging.info("Debug Configuration:")
+    logging.info("  Default Config: %s", CONFIG_PATH)
+    logging.info("  Default Verbose: %s", VERBOSE)
     logging.info("Running command: %s", " ".join(cmd))
 
     try:
