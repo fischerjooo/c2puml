@@ -9,7 +9,7 @@ This repository uses a streamlined, numbered workflow system that follows a clea
 ### 00. Test (`00-test.yml`)
 **Purpose**: Basic testing for pull requests
 **Triggers**: 
-- Pull requests to main/master branches
+- Pull requests to main/master branches (excluding artifacts)
 
 **Steps**:
 1. **00.01-00.04**: Setup environment and dependencies
@@ -23,7 +23,7 @@ This repository uses a streamlined, numbered workflow system that follows a clea
 ### 01. Test and Coverage (`01-test-and-coverage.yml`)
 **Purpose**: Comprehensive testing and coverage for main branch
 **Triggers**: 
-- Push to main/master branches (excluding generated files)
+- Push to main/master branches (excluding artifacts)
 - Manual dispatch
 
 **Steps**:
@@ -85,7 +85,7 @@ Main Branch Push (source code) → 01. Test and Coverage
     02. PlantUML to PNG
     ↓ (commits generated files to main)
     03. Deploy Website
-    ↓ (no loop - workflow 01 ignores generated files)
+    ↓ (no loop - workflow 01 ignores artifacts)
 ```
 
 ## Key Improvements Over Previous Setup
@@ -151,7 +151,8 @@ gh workflow run "03-deploy-website.yml"
 - **Main branch triggers**: All subsequent workflows
 
 ### Path Filtering
-- **Workflow 01**: Ignores generated files (PNG, HTML, test reports, coverage) to prevent infinite loops
+- **Workflow 00**: Ignores all changes in `artifacts/` folder to prevent unnecessary runs
+- **Workflow 01**: Ignores all changes in `artifacts/` folder to prevent infinite loops
 - **Workflow 02**: Only triggers on PlantUML file changes or manual dispatch
 - **Workflow 03**: Only triggers on workflow completion or manual dispatch
 
