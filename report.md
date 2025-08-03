@@ -2,14 +2,44 @@
 
 ## Executive Summary
 
-This report analyzes the generated PlantUML files from the C to PlantUML converter tool and compares them against the source C header files. The analysis reveals several categories of issues ranging from structural problems to parsing accuracy concerns.
+This report analyzes the generated PlantUML files from the C to PlantUML converter tool and compares them against the source C header files, taking into account the tool's specifications, intended functionality, and configuration. The analysis reveals both successful implementations and areas where the tool falls short of its documented capabilities.
 
 ## Methodology
 
 The analysis examined:
 - **Generated PlantUML files**: Located in `artifacts/output_example/`
 - **Source C header files**: Located in `tests/example/source/`
+- **Tool documentation**: README.md, specification.md, and puml_template.md
+- **Configuration**: tests/example/config.json
 - **Tool source code**: Located in `src/c2puml/core/`
+
+## Tool Specifications Analysis
+
+### Intended Functionality (Based on Documentation)
+
+According to the README and specifications, the tool is designed to:
+
+1. **Parse C/C++ source files** with comprehensive tokenization
+2. **Generate PlantUML diagrams** showing:
+   - Structs, enums, unions, functions, global variables, macros, typedefs
+   - Include relationships between files
+   - Typedef relationships with proper UML stereotypes
+   - Color-coded elements (source, headers, typedefs)
+   - Dynamic visibility detection (public/private based on header presence)
+
+3. **Support advanced features**:
+   - File-specific configuration with include filters
+   - Model transformations (rename, remove, add)
+   - Multi-stage processing pipeline
+   - Preprocessor directive handling
+
+### Configuration Analysis
+
+The example configuration shows:
+- **Include depth**: Set to 10 (very high)
+- **File-specific settings**: Different include filters and depths for specific files
+- **Transformations**: Rename and cleanup transformations defined
+- **Recursive search**: Enabled
 
 ## Issues Identified
 
@@ -35,6 +65,8 @@ class "triangle_t" as TYPEDEF_TRIANGLE_T <<struct>> #LightYellow
 
 **Issue**: The field order is reversed. The source has `vertices` first, then `label`, but the PlantUML shows `label` first, then `vertices`.
 
+**Specification Compliance**: ❌ **FAILS** - The tool should preserve the original field order as specified in the C code.
+
 #### 1.2 Missing Struct Tags
 **Source (`typedef_test.h`):**
 ```c
@@ -53,7 +85,9 @@ class "MyBuffer" as TYPEDEF_MYBUF <<struct>> #LightYellow
 }
 ```
 
-**Issue**: The struct tag `MyBuffer_tag` is not preserved or shown in the PlantUML output, which could be important for understanding the original C structure.
+**Issue**: The struct tag `MyBuffer_tag` is not preserved or shown in the PlantUML output.
+
+**Specification Compliance**: ⚠️ **PARTIAL** - While the tool correctly identifies the typedef, it doesn't preserve the struct tag information which could be important for understanding the original C structure.
 
 ### 2. **Function Parameter Parsing Issues**
 
@@ -74,6 +108,8 @@ int execute_operations(
 
 **Issue**: The parameter `op_count` is incorrectly labeled as "unnamed" when it clearly has a name in the source.
 
+**Specification Compliance**: ❌ **FAILS** - The tool should correctly parse and display function parameters as specified in the documentation.
+
 #### 2.2 Array Parameter Notation
 **Source (`complex.h`):**
 ```c
@@ -91,7 +127,9 @@ int process_with_callbacks(
 + int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, ...)
 ```
 
-**Issue**: The array notation is inconsistent. The source uses `int data[]` but the PlantUML shows `int[] data`. While both are valid C syntax, the tool should preserve the original format.
+**Issue**: The array notation is inconsistent. The source uses `int data[]` but the PlantUML shows `int[] data`.
+
+**Specification Compliance**: ⚠️ **PARTIAL** - While both are valid C syntax, the tool should preserve the original format as specified in the source code.
 
 ### 3. **Macro Processing Issues**
 
@@ -111,7 +149,9 @@ int process_with_callbacks(
 + #define DEPRECATED
 ```
 
-**Issue**: The conditional macro definition results in duplicate entries in the PlantUML output, which is confusing and incorrect.
+**Issue**: The conditional macro definition results in duplicate entries in the PlantUML output.
+
+**Specification Compliance**: ❌ **FAILS** - The tool claims to handle preprocessor directives but fails to properly process conditional compilation.
 
 #### 3.2 Complex Macro Content Loss
 **Source (`complex.h`):**
@@ -132,7 +172,9 @@ int process_with_callbacks(
 + #define COMPLEX_MACRO_FUNC(x, y, z)
 ```
 
-**Issue**: The complex macro body is completely lost in the PlantUML output, showing only the macro name and parameters.
+**Issue**: The complex macro body is completely lost in the PlantUML output.
+
+**Specification Compliance**: ❌ **FAILS** - The tool should preserve macro content as specified in the puml_template.md.
 
 ### 4. **Anonymous Structure Processing Issues**
 
@@ -170,57 +212,11 @@ class "array_of_anon_structs_t" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T <<struct>> #L
 
 **Issue**: The anonymous structure is not properly represented. The fields are flattened and mixed up, and the nested structure is lost.
 
-### 5. **Type Reference Issues**
+**Specification Compliance**: ❌ **FAILS** - The tool should properly handle anonymous structures as specified in the documentation.
 
-#### 5.1 Missing Type Dependencies
-**Source (`typedef_test.h`):**
-```c
-typedef MyComplex * MyComplexPtr;
-```
+### 5. **Include Relationship Issues**
 
-**Generated PlantUML (`typedef_test.puml`):**
-```plantuml
-class "MyComplexPtr" as TYPEDEF_MYCOMPLEXPTR <<typedef>> #LightYellow
-{
-    alias of MyComplex *
-}
-```
-
-**Issue**: The relationship between `MyComplexPtr` and `MyComplex` is not properly established in the PlantUML relationships section.
-
-#### 5.2 Incomplete Type Resolution
-**Source (`database.h`):**
-```c
-typedef struct {
-    DatabaseType type;
-    char db_name[MAX_DB_NAME_LENGTH];
-    char host[256];
-    int port;
-    char username[128];
-    char password[128];
-    void* connection;  // Type depends on database type
-} DatabaseConfig;
-```
-
-**Generated PlantUML (`database.puml`):**
-```plantuml
-class "DatabaseConfig" as TYPEDEF_DATABASECONFIG <<struct>> #LightYellow
-{
-    + void * connection
-    + char[MAX_DB_NAME_LENGTH] db_name
-    + char[256] host
-    + char[128] password
-    + int port
-    + DatabaseType type
-    + char[128] username
-}
-```
-
-**Issue**: The field order is different from the source, and the comment about the connection type dependency is lost.
-
-### 6. **Include Relationship Issues**
-
-#### 6.1 Missing Include Relationships
+#### 5.1 Missing Include Relationships
 **Source (`sample.h`):**
 ```c
 #include <stddef.h>
@@ -246,114 +242,182 @@ HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 
 **Issue**: The include relationship `HEADER_SAMPLE --> HEADER_LOGGER` is missing, even though `sample.h` includes `logger.h`.
 
-### 7. **Enum Processing Issues**
+**Specification Compliance**: ❌ **FAILS** - The tool should capture all include relationships as specified.
 
-#### 7.1 Enum Value Order Preservation
-**Source (`sample.h`):**
+### 6. **Visibility Detection Issues**
+
+#### 6.1 Incorrect Visibility Assignment
+**Source (`application.c`):**
 ```c
-typedef enum system_state_tag
-{
-    STATE_IDLE = 0,
-    STATE_RUNNING,
-    STATE_ERROR
-} system_state_t;
+static volatile int running = 1;
+void signal_handler(int sig) { ... }
 ```
 
-**Generated PlantUML (`sample.puml`):**
-```plantuml
-class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<enumeration>> #LightYellow
-{
-    STATE_ERROR
-    STATE_IDLE = 0
-    STATE_RUNNING
-}
-```
-
-**Issue**: The enum values are not in the same order as the source. The source has `STATE_IDLE = 0` first, but the PlantUML shows `STATE_ERROR` first.
-
-### 8. **Function Pointer Processing Issues**
-
-#### 8.1 Complex Function Pointer Types
-**Source (`complex.h`):**
-```c
-typedef int (*(*complex_func_ptr_t)(int, char*))(double, void*);
-```
-
-**Generated PlantUML (`complex.puml`):**
-```plantuml
-class "complex_func_ptr_t" as TYPEDEF_COMPLEX_FUNC_PTR_T <<function pointer>> #LightYellow
-{
-    alias of int ( * ( * complex_func_ptr_t ) ( int , char * ) ) ( double , void * )
-}
-```
-
-**Issue**: The function pointer type is not properly formatted and is difficult to read. The spacing and parentheses are not clearly represented.
-
-### 9. **Global Variable Processing Issues**
-
-#### 9.1 Missing Global Variables
-**Source (`sample.c`):**
-```c
-static char buffer[MAX_SIZE];
-static int global_counter = 0;
-static double* global_ptr = NULL;
-```
-
-**Generated PlantUML (`sample.puml`):**
+**Generated PlantUML (`application.puml`):**
 ```plantuml
 -- Global Variables --
-- char[MAX_SIZE] buffer
-- int global_counter
-- double * global_ptr
+- volatile int running
+-- Functions --
++ int main(int argc, char *[] argv)
+- void signal_handler(int sig)
 ```
 
-**Issue**: The static qualifier and initial values are lost in the PlantUML output.
+**Issue**: The `signal_handler` function is marked as private (`-`) but it's not declared in any header file, so it should be private. However, the tool claims to have "Smart Visibility Detection" but doesn't properly handle static functions.
 
-### 10. **Code Generation Quality Issues**
+**Specification Compliance**: ⚠️ **PARTIAL** - The visibility detection works for some cases but fails for static functions.
 
-#### 10.1 Inconsistent Naming Conventions
-The tool generates UML IDs with inconsistent naming:
-- Some use `TYPEDEF_` prefix
-- Some use `HEADER_` prefix
-- Some use direct names
+### 7. **Template Compliance Issues**
 
-This inconsistency makes the diagrams harder to understand and maintain.
+#### 7.1 Inconsistent Naming Conventions
+According to `puml_template.md`, the tool should use:
+- **C files**: No prefix, based on filename in capital letters (e.g., `main.c` → `MAIN`)
+- **H files**: `HEADER_` prefix, based on filename in capital letters (e.g., `utils.h` → `HEADER_UTILS`)
+- **Typedefs**: `TYPEDEF_` prefix, based on typedef name in capital letters (e.g., `MyStruct` → `TYPEDEF_MYSTRUCT`)
 
-#### 10.2 Missing Documentation
-The generated PlantUML files lack:
-- Comments explaining complex relationships
-- Documentation about the source files
-- Version information
-- Generation timestamp
+**Actual Generated IDs:**
+```plantuml
+class "application" as APPLICATION <<source>> #LightBlue
+class "database" as HEADER_DATABASE <<header>> #LightGreen
+class "MyBuffer" as TYPEDEF_MYBUF <<struct>> #LightYellow
+```
+
+**Issue**: The typedef naming is inconsistent. `MyBuffer` should be `TYPEDEF_MYBUFFER` but is `TYPEDEF_MYBUF`.
+
+**Specification Compliance**: ❌ **FAILS** - The tool doesn't follow its own naming conventions.
+
+### 8. **Configuration Processing Issues**
+
+#### 8.1 File-Specific Configuration Not Applied
+The configuration specifies:
+```json
+"file_specific": {
+  "sample.c": {
+    "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$", ...],
+    "include_depth": 3
+  }
+}
+```
+
+**Issue**: The generated PlantUML shows many more includes than the filter should allow, suggesting the file-specific configuration is not being properly applied.
+
+**Specification Compliance**: ❌ **FAILS** - The tool should respect file-specific configuration as documented.
+
+### 9. **Transformation System Issues**
+
+#### 9.1 Transformations Not Applied
+The configuration includes transformation rules:
+```json
+"transformations_01_rename": {
+  "file_selection": [".*transformed\\.(c|h)$"],
+  "rename": {
+    "typedef": {"^old_config_t$": "config_t"},
+    "functions": {"^deprecated_(.*)": "legacy_\\1"}
+  }
+}
+```
+
+**Issue**: No evidence that these transformations are being applied in the generated output.
+
+**Specification Compliance**: ❌ **FAILS** - The transformation system appears to be non-functional despite being documented as fully implemented.
+
+### 10. **Preprocessor Handling Issues**
+
+#### 10.1 Conditional Compilation Not Handled
+**Source (`complex.h`):**
+```c
+#if defined(__GNUC__) && __GNUC__ >= 4
+    #define DEPRECATED __attribute__((deprecated))
+#else
+    #define DEPRECATED
+#endif
+```
+
+**Issue**: The tool claims to handle preprocessor directives but fails to properly process conditional compilation, resulting in duplicate macro definitions.
+
+**Specification Compliance**: ❌ **FAILS** - The preprocessor handling is incomplete.
+
+## Successful Implementations
+
+### 1. **Basic Structure Recognition**
+✅ **PASSES** - The tool correctly identifies:
+- Structs, enums, unions, functions, macros, typedefs
+- Basic include relationships
+- File types (source vs header)
+
+### 2. **UML Stereotype Usage**
+✅ **PASSES** - The tool correctly uses:
+- `<<source>>` for C files
+- `<<header>>` for header files
+- `<<struct>>`, `<<enumeration>>`, `<<union>>` for typedefs
+
+### 3. **Color Coding**
+✅ **PASSES** - The tool correctly applies:
+- `#LightBlue` for source files
+- `#LightGreen` for header files
+- `#LightYellow` for typedefs
+
+### 4. **Basic Typedef Processing**
+✅ **PASSES** - The tool correctly:
+- Identifies typedefs and their types
+- Creates separate classes for typedefs
+- Shows basic type relationships
+
+## Specification Compliance Summary
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Basic C/C++ Parsing | ✅ PASSES | Core functionality works |
+| Struct/Enum/Union Recognition | ✅ PASSES | Correctly identifies structures |
+| Function Parsing | ⚠️ PARTIAL | Parameter parsing has issues |
+| Macro Processing | ❌ FAILS | Content loss and duplicate issues |
+| Include Relationships | ⚠️ PARTIAL | Missing some relationships |
+| Typedef Processing | ✅ PASSES | Basic functionality works |
+| Anonymous Structure Handling | ❌ FAILS | Poor representation |
+| Preprocessor Handling | ❌ FAILS | Conditional compilation issues |
+| File-Specific Configuration | ❌ FAILS | Not properly applied |
+| Transformation System | ❌ FAILS | Appears non-functional |
+| Template Compliance | ❌ FAILS | Naming conventions not followed |
+| Visibility Detection | ⚠️ PARTIAL | Works for some cases |
 
 ## Recommendations
 
-### 1. **Immediate Fixes**
-1. **Fix struct field order preservation** - Ensure fields appear in the same order as the source
-2. **Improve macro processing** - Handle conditional macros and preserve macro bodies
-3. **Fix parameter parsing** - Correctly identify and format function parameters
-4. **Preserve struct tags** - Include struct tags in the output for better traceability
+### 1. **Critical Fixes (High Priority)**
+1. **Fix parameter parsing** - Correctly identify and format function parameters
+2. **Implement preprocessor handling** - Properly process conditional compilation
+3. **Fix include relationship discovery** - Ensure all includes are captured
+4. **Implement file-specific configuration** - Apply filters and depth settings correctly
 
-### 2. **Medium-term Improvements**
-1. **Enhance anonymous structure handling** - Better representation of nested anonymous structures
-2. **Improve type relationship mapping** - Better tracking of typedef dependencies
-3. **Fix include relationship discovery** - Ensure all include relationships are captured
-4. **Standardize naming conventions** - Consistent UML ID generation
+### 2. **Important Fixes (Medium Priority)**
+1. **Fix struct field order preservation** - Maintain original field order
+2. **Implement transformation system** - Make rename/remove operations functional
+3. **Fix anonymous structure handling** - Properly represent nested structures
+4. **Follow naming conventions** - Implement the documented UML ID rules
 
-### 3. **Long-term Enhancements**
-1. **Add documentation generation** - Include source file information and generation metadata
-2. **Improve complex type handling** - Better support for function pointers and complex typedefs
-3. **Add validation** - Verify generated PlantUML against source files
-4. **Performance optimization** - Improve parsing speed for large codebases
+### 3. **Quality Improvements (Low Priority)**
+1. **Preserve struct tags** - Include struct tag information
+2. **Improve macro content display** - Show macro bodies when possible
+3. **Enhance visibility detection** - Better handling of static functions
+4. **Add validation** - Verify generated output against specifications
+
+### 4. **Documentation Updates**
+1. **Update specifications** - Reflect actual implementation status
+2. **Fix template documentation** - Ensure it matches actual output
+3. **Add known limitations** - Document what doesn't work
+4. **Provide working examples** - Show what the tool actually does well
 
 ## Conclusion
 
-While the C to PlantUML converter successfully generates basic UML diagrams, there are significant issues with accuracy, completeness, and consistency. The tool needs substantial improvements in parsing accuracy, relationship mapping, and output quality to be considered production-ready.
+The C to PlantUML converter shows promise with its basic functionality working correctly. However, it falls significantly short of its documented capabilities in several critical areas:
 
-The most critical issues are:
-1. **Structural accuracy** - Field order and structure preservation
-2. **Macro processing** - Handling complex macros and conditional definitions
-3. **Type relationship mapping** - Proper tracking of typedefs and dependencies
-4. **Include relationship discovery** - Complete capture of header dependencies
+**Major Issues:**
+1. **Preprocessor handling is incomplete** - A core advertised feature
+2. **Transformation system appears non-functional** - Despite being documented as fully implemented
+3. **File-specific configuration not working** - A key feature for customization
+4. **Parameter parsing has significant bugs** - Affects core functionality
 
-Addressing these issues would significantly improve the tool's usefulness for C code documentation and analysis.
+**Positive Aspects:**
+1. **Basic parsing works well** - Core C/C++ structure recognition is solid
+2. **UML output is properly formatted** - Follows PlantUML standards
+3. **Architecture is sound** - The 3-step pipeline design is good
+
+**Recommendation**: The tool needs substantial work to match its documentation before it can be considered production-ready. The gap between advertised features and actual implementation is significant, particularly in the transformation system and preprocessor handling.
