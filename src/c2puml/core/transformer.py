@@ -2043,6 +2043,7 @@ class Transformer:
             includes=data.get("includes", []),
             macros=data.get("macros", []),
             aliases=aliases,
+            anonymous_relationships=data.get("anonymous_relationships", {}),
         )
 
     def _save_model(self, model: ProjectModel, output_file: str) -> None:

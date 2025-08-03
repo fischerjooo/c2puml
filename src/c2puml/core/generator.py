@@ -749,8 +749,8 @@ class Generator:
     ):
         """Generate relationships between elements"""
         self._generate_include_relationships(lines, include_tree, uml_ids)
-        self._generate_declaration_relationships(lines, include_tree, uml_ids)
-        self._generate_uses_relationships(lines, include_tree, uml_ids)
+        self._generate_declaration_relationships(lines, include_tree, uml_ids, project_model)
+        self._generate_uses_relationships(lines, include_tree, uml_ids, project_model)
         self._generate_anonymous_relationships(lines, project_model, uml_ids)
 
     def _generate_include_relationships(
@@ -806,6 +806,7 @@ class Generator:
         lines: List[str],
         include_tree: Dict[str, FileModel],
         uml_ids: Dict[str, str],
+        project_model: ProjectModel,
     ):
         """Generate declaration relationships between files and typedefs"""
         lines.append("' Declaration relationships")
@@ -817,6 +818,10 @@ class Generator:
                 for collection_name in typedef_collections_names:
                     typedef_collection = getattr(file_model, collection_name)
                     for typedef_name in sorted(typedef_collection.keys()):
+                        # Skip anonymous structures - they should not have declares relationships from files
+                        if self._is_anonymous_structure_in_project(typedef_name, project_model):
+                            continue
+                            
                         typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
                         if typedef_uml_id:
                             lines.append(
@@ -831,22 +836,32 @@ class Generator:
         file_key = Path(file_name).name
         return uml_ids.get(file_key)
 
+    def _is_anonymous_structure_in_project(self, typedef_name: str, project_model: ProjectModel) -> bool:
+        """Check if a typedef is an anonymous structure using the provided project model"""
+        for file_model in project_model.files.values():
+            if file_model.anonymous_relationships:
+                for parent_name, children in file_model.anonymous_relationships.items():
+                    if typedef_name in children:
+                        return True
+        return False
+
     def _generate_uses_relationships(
         self,
         lines: List[str],
         include_tree: Dict[str, FileModel],
         uml_ids: Dict[str, str],
+        project_model: ProjectModel,
     ):
         """Generate uses relationships between typedefs"""
         lines.append("' Uses relationships")
         for file_name, file_model in sorted(include_tree.items()):
             # Struct uses relationships
             self._add_typedef_uses_relationships(
-                lines, file_model.structs, uml_ids, "struct"
+                lines, file_model.structs, uml_ids, "struct", project_model
             )
             # Alias uses relationships
             self._add_typedef_uses_relationships(
-                lines, file_model.aliases, uml_ids, "alias"
+                lines, file_model.aliases, uml_ids, "alias", project_model
             )
 
     def _add_typedef_uses_relationships(
@@ -855,6 +870,7 @@ class Generator:
         typedef_collection: Dict,
         uml_ids: Dict[str, str],
         typedef_type: str,
+        project_model: ProjectModel,
     ):
         """Add uses relationships for a specific typedef collection"""
         for typedef_name, typedef_data in sorted(typedef_collection.items()):
@@ -863,6 +879,9 @@ class Generator:
                 for used_type in sorted(typedef_data.uses):
                     used_uml_id = uml_ids.get(f"typedef_{used_type}")
                     if used_uml_id:
+                        # Skip relationships to anonymous structures - they will be handled as composition
+                        if self._is_anonymous_structure_in_project(used_type, project_model):
+                            continue
                         lines.append(f"{typedef_uml_id} ..> {used_uml_id} : <<uses>>")
 
     def _generate_anonymous_relationships(
