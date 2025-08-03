@@ -214,7 +214,7 @@ class AnonymousTypedefProcessor:
         if '(*' in struct_content or 'handler' in struct_content.lower():
             return True
         
-        # Skip structures with deeply nested braces (more than 2 levels)
+        # Skip structures with very deeply nested braces (more than 3 levels)
         brace_depth = 0
         max_depth = 0
         for char in struct_content:
@@ -224,11 +224,11 @@ class AnonymousTypedefProcessor:
             elif char == '}':
                 brace_depth -= 1
         
-        if max_depth > 2:
+        if max_depth > 3:
             return True
         
-        # Skip structures that are too large (more than 300 characters)
-        if len(struct_content) > 300:
+        # Skip structures that are too large (more than 500 characters)
+        if len(struct_content) > 500:
             return True
         
         return False

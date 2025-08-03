@@ -97,6 +97,17 @@ class "complex_handler_t" as TYPEDEF_COMPLEX_HANDLER_T <<struct>> #LightYellow
     + int ( * ) ( const char * ) validate_func
 }
 
+class "complex_naming_test_t" as TYPEDEF_COMPLEX_NAMING_TEST_T <<struct>> #LightYellow
+{
+    + complex_naming_test_t_anonymous_struct_1 deep_a1
+    + complex_naming_test_t_anonymous_struct_1 first_a
+    + complex_naming_test_t_anonymous_struct_1 nested_a1
+}
+
+class "complex_naming_test_t_anonymous_struct_1" as TYPEDEF_COMPLEX_NAMING_TEST_T_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
+{
+}
+
 class "config_param" as TYPEDEF_CONFIG_PARAM <<struct>> #LightYellow
 {
     + int config_flags
@@ -115,6 +126,15 @@ class "data_union_anonymous_struct_1" as TYPEDEF_DATA_UNION_ANONYMOUS_STRUCT_1 <
 {
 }
 
+class "extreme_nesting_test_t" as TYPEDEF_EXTREME_NESTING_TEST_T <<struct>> #LightYellow
+{
+    + extreme_nesting_test_t_anonymous_struct_1 level4_field
+}
+
+class "extreme_nesting_test_t_anonymous_struct_1" as TYPEDEF_EXTREME_NESTING_TEST_T_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
+{
+}
+
 class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<struct>> #LightYellow
 {
     + void ( * ) ( void ) cleanup_func
@@ -125,6 +145,10 @@ class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<struct>> #LightYellow
 }
 
 class "item_value_anonymous_struct_1" as TYPEDEF_ITEM_VALUE_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
+{
+}
+
+class "mixed_union_anonymous_struct_1" as TYPEDEF_MIXED_UNION_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
 {
 }
 
@@ -147,6 +171,15 @@ class "multi_anonymous_t" as TYPEDEF_MULTI_ANONYMOUS_T <<struct>> #LightYellow
 }
 
 class "multi_anonymous_t_anonymous_struct_1" as TYPEDEF_MULTI_ANONYMOUS_T_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
+{
+}
+
+class "multiple_simple_anonymous_t" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T <<struct>> #LightYellow
+{
+    + multiple_simple_anonymous_t_anonymous_struct_1 first_field
+}
+
+class "multiple_simple_anonymous_t_anonymous_struct_1" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
 {
 }
 
@@ -184,6 +217,10 @@ class "simplified_handler_t" as TYPEDEF_SIMPLIFIED_HANDLER_T <<struct>> #LightYe
     + int event_count
     + int event_flags
     + char[32] event_name
+}
+
+class "struct_union_anonymous_struct_1" as TYPEDEF_STRUCT_UNION_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
+{
 }
 
 class "struct_with_struct_t" as TYPEDEF_STRUCT_WITH_STRUCT_T <<struct>> #LightYellow
@@ -332,6 +369,11 @@ class "first_anon_union" as TYPEDEF_FIRST_ANON_UNION <<union>> #LightYellow
     + int union_int
 }
 
+class "first_union" as TYPEDEF_FIRST_UNION <<union>> #LightYellow
+{
+    + int union_field1
+}
+
 class "item_value" as TYPEDEF_ITEM_VALUE <<union>> #LightYellow
 {
     + float float_data
@@ -343,6 +385,11 @@ class "level3_union" as TYPEDEF_LEVEL3_UNION <<union>> #LightYellow
 {
     + float level3_float
     + int level3_int
+}
+
+class "mixed_union" as TYPEDEF_MIXED_UNION <<union>> #LightYellow
+{
+    + mixed_union_anonymous_struct_1 mixed_field
 }
 
 class "mixed_union_t" as TYPEDEF_MIXED_UNION_T <<union>> #LightYellow
@@ -357,6 +404,17 @@ class "result_data" as TYPEDEF_RESULT_DATA <<union>> #LightYellow
 {
     + char[128] error_message
     + int success_value
+}
+
+class "second_union" as TYPEDEF_SECOND_UNION <<union>> #LightYellow
+{
+    + int union_field2
+}
+
+class "struct_union" as TYPEDEF_STRUCT_UNION <<union>> #LightYellow
+{
+    + int struct_union_int
+    + struct_union_anonymous_struct_1 struct_union_struct_field
 }
 
 class "union_with_struct_t" as TYPEDEF_UNION_WITH_STRUCT_T <<union>> #LightYellow
@@ -388,20 +446,28 @@ HEADER_COMPLEX ..> TYPEDEF___ANONYMOUS_STRUCT__ : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_ARRAY_OF_ANON_STRUCTS_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ANONYMOUS_STRUCT_1 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_COMPLEX_HANDLER_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_COMPLEX_NAMING_TEST_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_COMPLEX_NAMING_TEST_T_ANONYMOUS_STRUCT_1 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_CONFIG_PARAM : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_DATA_ITEM_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_DATA_UNION_ANONYMOUS_STRUCT_1 : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_EXTREME_NESTING_TEST_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_EXTREME_NESTING_TEST_T_ANONYMOUS_STRUCT_1 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_HANDLER_ENTRY_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_ITEM_VALUE_ANONYMOUS_STRUCT_1 : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_MIXED_UNION_ANONYMOUS_STRUCT_1 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_MODERATELY_NESTED_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_MODERATELY_NESTED_T_ANONYMOUS_STRUCT_1 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_MULTI_ANONYMOUS_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_MULTI_ANONYMOUS_T_ANONYMOUS_STRUCT_1 : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_ANONYMOUS_STRUCT_1 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_OPERATION_SET_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_PARAM4 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_PROCESSOR_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_RESULT_GENERATOR_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_SIMPLIFIED_HANDLER_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_STRUCT_UNION_ANONYMOUS_STRUCT_1 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_STRUCT_WITH_STRUCT_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_STRUCT_WITH_STRUCT_T_ANONYMOUS_STRUCT_1 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_STRUCT_WITH_UNION_T : <<declares>>
@@ -428,17 +494,24 @@ HEADER_COMPLEX ..> TYPEDEF_UINT8 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_CONFIG_VALUE : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_DATA_UNION : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_FIRST_ANON_UNION : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_FIRST_UNION : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_ITEM_VALUE : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_LEVEL3_UNION : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_MIXED_UNION : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_MIXED_UNION_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_RESULT_DATA : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_SECOND_UNION : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_STRUCT_UNION : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_UNION_WITH_STRUCT_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_UNION_WITH_UNION_T : <<declares>>
 
 ' Uses relationships
 TYPEDEF_ARRAY_OF_ANON_STRUCTS_T ..> TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ANONYMOUS_STRUCT_1 : <<uses>>
+TYPEDEF_COMPLEX_NAMING_TEST_T ..> TYPEDEF_COMPLEX_NAMING_TEST_T_ANONYMOUS_STRUCT_1 : <<uses>>
+TYPEDEF_EXTREME_NESTING_TEST_T ..> TYPEDEF_EXTREME_NESTING_TEST_T_ANONYMOUS_STRUCT_1 : <<uses>>
 TYPEDEF_MODERATELY_NESTED_T ..> TYPEDEF_MODERATELY_NESTED_T_ANONYMOUS_STRUCT_1 : <<uses>>
 TYPEDEF_MULTI_ANONYMOUS_T ..> TYPEDEF_MULTI_ANONYMOUS_T_ANONYMOUS_STRUCT_1 : <<uses>>
+TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T ..> TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_ANONYMOUS_STRUCT_1 : <<uses>>
 TYPEDEF_OPERATION_SET_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>
 TYPEDEF_STRUCT_WITH_STRUCT_T ..> TYPEDEF_STRUCT_WITH_STRUCT_T_ANONYMOUS_STRUCT_1 : <<uses>>
 TYPEDEF_STRUCT_WITH_UNION_T ..> TYPEDEF_STRUCT_WITH_UNION_T_ANONYMOUS_STRUCT_1 : <<uses>>

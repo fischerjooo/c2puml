@@ -335,6 +335,102 @@ typedef struct {
     } second_anon_struct;
 } multi_anonymous_t;
 
+// Case 5b: Extended multiple anonymous - testing complex naming indexing
+typedef struct {
+    // First level - multiple structs
+    struct {
+        int first_a;
+        struct {
+            int nested_a1;
+            struct {
+                int deep_a1;
+            } deep_struct_a1;
+            struct {
+                int deep_a2;
+            } deep_struct_a2;
+        } nested_struct_a;
+        struct {
+            int nested_a2;
+        } nested_struct_a2;
+    } first_struct;
+    
+    struct {
+        int second_a;
+        struct {
+            int nested_b1;
+        } nested_struct_b;
+    } second_struct;
+    
+    // Mixed unions and structs
+    union {
+        int union_value;
+        struct {
+            int union_struct_field;
+            struct {
+                int deep_union_struct;
+            } deep_in_union;
+        } union_struct;
+    } mixed_union;
+    
+    struct {
+        int third_a;
+        union {
+            int struct_union_int;
+            struct {
+                int struct_union_struct_field;
+            } struct_union_struct;
+        } struct_union;
+    } third_struct;
+} complex_naming_test_t;
+
+// Case 5c: Even more complex nesting to test indexing limits
+typedef struct {
+    struct {
+        struct {
+            struct {
+                int level4_field;
+            } level4_struct_1;
+            struct {
+                int level4_field2;
+            } level4_struct_2;
+        } level3_struct_1;
+        struct {
+            int level3_field;
+        } level3_struct_2;
+    } level2_struct_1;
+    
+    struct {
+        union {
+            struct {
+                int mixed_field;
+            } mixed_struct;
+        } mixed_union;
+    } level2_struct_2;
+} extreme_nesting_test_t;
+
+// Case 5d: Simple multiple anonymous to specifically test naming indexing
+typedef struct {
+    struct {
+        int first_field;
+    } first_anon;
+    
+    struct {
+        int second_field;
+    } second_anon;
+    
+    struct {
+        int third_field;
+    } third_anon;
+    
+    union {
+        int union_field1;
+    } first_union;
+    
+    union {
+        int union_field2;
+    } second_union;
+} multiple_simple_anonymous_t;
+
 // Case 6: Function pointer with anonymous struct parameter (already exists but let's add more)
 typedef void (*callback_with_anon_struct_t)(
     int id,
