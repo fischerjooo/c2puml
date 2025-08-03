@@ -1566,7 +1566,22 @@ class AnonymousTypedefValidator:
         }
         
         self.expected_function_pointer_anonyms = {
-            # Function pointer processing is currently disabled for complexity reasons
+            # Function pointer processing is now enabled with proper complexity filtering
+            "callback_with_anon_struct_t_anonymous_struct_1": {
+                "parent": "callback_with_anon_struct_t",
+                "type": "struct",
+                "fields": ["config_flags", "config_name"]
+            },
+            "callback_with_anon_struct_t_anonymous_union_2": {
+                "parent": "callback_with_anon_struct_t_anonymous_struct_1",
+                "type": "union", 
+                "fields": ["int_config", "float_config"]
+            },
+            "complex_callback_t_anonymous_struct_1": {
+                "parent": "complex_callback_t",
+                "type": "struct",
+                "fields": ["nested1", "nested2", "nested_func"]
+            }
         }
     
     def validate_anonymous_typedefs(self) -> bool:
@@ -1662,7 +1677,8 @@ class AnonymousTypedefValidator:
         
         # We should have relationships for most anonymous entities
         # Allow flexibility since some relationships might not be captured depending on usage
-        return found_relationships >= 5  # Require at least 5 relationships
+        min_expected = min(10, len(all_expected) // 2)  # At least half the entities or 10, whichever is smaller
+        return found_relationships >= min_expected
 
 
 def main():
