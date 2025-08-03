@@ -1304,7 +1304,7 @@ class CParser:
         # Parse parameter tokens between parentheses
         param_tokens = []
         for i in range(paren_start + 1, paren_end):
-            if tokens[i].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
+            if tokens[i].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
                 param_tokens.append(tokens[i])
 
         # If no parameters or just "void", return empty list
