@@ -110,29 +110,6 @@ int execute_operations(
 
 **Specification Compliance**: ❌ **FAILS** - The tool should not generate duplicate macro entries for the same macro name.
 
-#### 3.2 Complex Macro Content Loss
-**Source (`complex.h`):**
-```c
-#define COMPLEX_MACRO_FUNC(x, y, z) do { \
-    int temp_var = (x) + (y) * (z); \
-    if (temp_var > 100) { \
-        temp_var = temp_var / 2; \
-    } else { \
-        temp_var = temp_var * 3; \
-    } \
-    (x) = temp_var; \
-} while(0)
-```
-
-**Generated PlantUML (`complex.puml`):**
-```plantuml
-+ #define COMPLEX_MACRO_FUNC(x, y, z)
-```
-
-**Issue**: The complex macro body is completely lost in the PlantUML output.
-
-**Specification Compliance**: ❌ **FAILS** - The tool should preserve macro content as specified in the puml_template.md.
-
 ### 4. **Anonymous Structure Processing Issues**
 
 #### 4.1 Incomplete Anonymous Struct Representation
