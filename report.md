@@ -148,31 +148,9 @@ class "array_of_anon_structs_t" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T <<struct>> #L
 
 **Specification Compliance**: ❌ **FAILS** - The tool should properly handle anonymous structures as specified in the documentation.
 
-### 5. **Visibility Detection Issues**
+### 5. **Template Compliance Issues**
 
-#### 5.1 Static Function Visibility
-**Source (`application.c`):**
-```c
-static volatile int running = 1;
-void signal_handler(int sig) { ... }
-```
-
-**Generated PlantUML (`application.puml`):**
-```plantuml
--- Global Variables --
-- volatile int running
--- Functions --
-+ int main(int argc, char *[] argv)
-- void signal_handler(int sig)
-```
-
-**Issue**: The `signal_handler` function is correctly marked as private (`-`) since it's not declared in any header file, and the `running` variable is also correctly marked as private. The visibility detection appears to be working correctly for this case.
-
-**Specification Compliance**: ✅ **PASSES** - The visibility detection correctly identifies private elements that are not declared in headers.
-
-### 6. **Template Compliance Issues**
-
-#### 6.1 Inconsistent Naming Conventions
+#### 5.1 Inconsistent Naming Conventions
 According to `puml_template.md`, the tool should use:
 - **C files**: No prefix, based on filename in capital letters (e.g., `main.c` → `MAIN`)
 - **H files**: `HEADER_` prefix, based on filename in capital letters (e.g., `utils.h` → `HEADER_UTILS`)
@@ -189,9 +167,9 @@ class "MyBuffer" as TYPEDEF_MYBUF <<struct>> #LightYellow
 
 **Specification Compliance**: ❌ **FAILS** - The tool doesn't follow its own naming conventions.
 
-### 7. **Configuration Processing Issues**
+### 6. **Configuration Processing Issues**
 
-#### 7.1 File-Specific Configuration Not Applied
+#### 6.1 File-Specific Configuration Not Applied
 The configuration specifies:
 ```json
 "file_specific": {
@@ -206,9 +184,9 @@ The configuration specifies:
 
 **Specification Compliance**: ❌ **FAILS** - The tool should respect file-specific configuration as documented.
 
-### 8. **Transformation System Issues**
+### 7. **Transformation System Issues**
 
-#### 8.1 Transformations Not Applied
+#### 7.1 Transformations Not Applied
 The configuration includes transformation rules:
 ```json
 "transformations_01_rename": {
@@ -264,7 +242,6 @@ The configuration includes transformation rules:
 | File-Specific Configuration | ❌ FAILS | Not properly applied |
 | Transformation System | ❌ FAILS | Appears non-functional |
 | Template Compliance | ❌ FAILS | Naming conventions not followed |
-| Visibility Detection | ✅ PASSES | Works correctly |
 
 ## Recommendations
 
