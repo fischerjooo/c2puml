@@ -1328,10 +1328,18 @@ class Transformer:
             return
         
         def get_macro_name(macro: str) -> str:
+            # Extract macro name from "#define MACRO_NAME value" format
+            if macro.startswith("#define "):
+                return macro.split(" ")[1]
             return macro
         
         def create_renamed_macro(name: str, macro: str) -> str:
-            return name
+            # Replace the macro name in the original macro string
+            if macro.startswith("#define "):
+                parts = macro.split(" ", 2)  # Split into ["#define", "OLD_NAME", "rest"]
+                if len(parts) >= 2:
+                    return f"#define {name} {parts[2]}" if len(parts) > 2 else f"#define {name}"
+            return macro
         
         file_model.macros = self._rename_list_elements(
             file_model.macros, patterns_map, get_macro_name, 
@@ -1614,6 +1622,9 @@ class Transformer:
     def _remove_macros(self, file_model: FileModel, patterns: List[str]) -> None:
         """Remove macros matching regex patterns"""
         def get_macro_name(macro: str) -> str:
+            # Extract macro name from "#define MACRO_NAME value" format
+            if macro.startswith("#define "):
+                return macro.split(" ")[1]
             return macro
             
         file_model.macros = self._remove_list_elements(
