@@ -2,58 +2,10 @@
 
 ## Current Status
 
-**Completed Issues (Fixed and Tested):**
-- ✅ **Issue 1.2**: Union Field Order Preservation / Nested Union/Struct Flattening
-- ✅ **Issue 2.1**: Function Parameter Parsing
-- ✅ **Issue 3.1**: Macro Deduplication
-- ✅ **Issue 4.1**: Template Compliance - Naming Conventions
-- ✅ **Issue 5.1**: File-Specific Configuration
-- ✅ **Issue 6.1**: Transformation System
-- ✅ **Issue 7.1**: Anonymous Structure Handling
-
 **Temporarily Disabled:**
 - ⏸️ **Anonymous Structure Processing**: Feature disabled due to complexity and potential conflicts with other fixes
 
 ## Remaining Open Issues
-
-### Issue 1.1: Struct Field Order Preservation
-**Status**: ❌ **OPEN** - High Priority
-
-**Problem**: Struct fields are not preserved in their original order from the C source code.
-
-**Example**:
-```c
-// Source C code
-typedef struct triangle_tag {
-    point_t vertices[3];
-    char label[MAX_LABEL_LEN];
-} triangle_t;
-```
-
-**Current Output**:
-```plantuml
-class "triangle_t" as TYPEDEF_TRIANGLE_T <<struct>> #LightYellow
-{
-    + char[MAX_LABEL_LEN] label
-    + point_t[3] vertices
-}
-```
-
-**Expected Output**:
-```plantuml
-class "triangle_t" as TYPEDEF_TRIANGLE_T <<struct>> #LightYellow
-{
-    + point_t[3] vertices
-    + char[MAX_LABEL_LEN] label
-}
-```
-
-**Root Cause**: The field parsing logic in `find_struct_fields` does not preserve the original order of fields as they appear in the source code.
-
-**Fix Required**:
-1. Modify `find_struct_fields` in `src/c2puml/core/parser_tokenizer.py` to preserve field order
-2. Update the field collection logic to maintain original sequence
-3. Add test coverage for field order preservation
 
 ### Issue 8.1: Anonymous Structure Processing (Re-enable)
 **Status**: ⏸️ **DISABLED** - Low Priority
@@ -99,19 +51,14 @@ python -m pytest tests/ --cov=src/c2puml --cov-report=html
 
 ## Next Steps
 
-1. **Priority 1**: Fix Issue 1.1 (Struct Field Order Preservation)
-   - This is the only remaining high-priority issue
-   - Should be addressed using TDD approach
-   - Requires careful modification of field parsing logic
-
-2. **Priority 2**: Re-enable Issue 8.1 (Anonymous Structure Processing)
-   - Only after Issue 1.1 is resolved
-   - Requires careful testing to ensure no conflicts
+1. **Priority 1**: Re-enable Issue 8.1 (Anonymous Structure Processing)
+   - This is the only remaining issue to address
+   - Requires careful testing to ensure no conflicts with other fixes
    - May need refactoring to work with other fixes
 
 ## Notes
 
-- All other issues from the original TODO have been successfully resolved
+- All high-priority issues from the original TODO have been successfully resolved
 - The codebase is in a stable state with comprehensive test coverage
 - Anonymous structure processing can be re-enabled when needed
-- Focus should be on Issue 1.1 as the primary remaining concern
+- The only remaining work is re-enabling Issue 8.1 (Anonymous Structure Processing)
