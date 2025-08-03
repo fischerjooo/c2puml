@@ -15,7 +15,8 @@ from .parser_tokenizer import (
     find_struct_fields,
 )
 from .preprocessor import PreprocessorManager
-from .parser_anonymous_processor import AnonymousTypedefProcessor
+# DISABLED: Anonymous structure processing temporarily disabled
+# from .parser_anonymous_processor import AnonymousTypedefProcessor
 from ..utils import detect_file_encoding
 
 if TYPE_CHECKING:
@@ -209,8 +210,9 @@ class CParser:
         )
 
         # Process anonymous typedefs after initial parsing
-        anonymous_processor = AnonymousTypedefProcessor()
-        anonymous_processor.process_file_model(file_model)
+        # DISABLED: Anonymous structure processing temporarily disabled
+        # anonymous_processor = AnonymousTypedefProcessor()
+        # anonymous_processor.process_file_model(file_model)
 
         return file_model
 
@@ -560,14 +562,18 @@ class CParser:
                     r"#define\s+([A-Za-z_][A-Za-z0-9_]*\s*\([^)]*\))", token.value
                 )
                 if func_match:
-                    macros.append(func_match.group(1))
+                    macro_name = func_match.group(1)
+                    if macro_name not in macros:
+                        macros.append(macro_name)
                 else:
                     # For simple defines: extract only the name
                     simple_match = re.search(
                         r"#define\s+([A-Za-z_][A-Za-z0-9_]*)", token.value
                     )
                     if simple_match:
-                        macros.append(simple_match.group(1))
+                        macro_name = simple_match.group(1)
+                        if macro_name not in macros:
+                            macros.append(macro_name)
 
         return macros
 
@@ -1304,7 +1310,7 @@ class CParser:
         # Parse parameter tokens between parentheses
         param_tokens = []
         for i in range(paren_start + 1, paren_end):
-            if tokens[i].type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
+            if tokens[i].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
                 param_tokens.append(tokens[i])
 
         # If no parameters or just "void", return empty list

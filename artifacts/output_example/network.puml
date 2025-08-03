@@ -36,10 +36,10 @@ class "network" as HEADER_NETWORK <<header>> #LightGreen
 
 class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<struct>> #LightYellow
 {
-    + struct sockaddr_in address
-    + char * hostname
-    + int port
     + int socket_fd
+    + struct sockaddr_in address
+    + int port
+    + char * hostname
 }
 
 class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<enumeration>> #LightYellow
