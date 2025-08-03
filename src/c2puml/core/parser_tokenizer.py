@@ -1169,21 +1169,56 @@ def find_struct_fields(
         return fields
     pos += 1  # Skip opening brace
 
-    # Find the closing brace position
+    # Find the closing brace position of the main struct body
     closing_brace_pos = pos
-    while (
-        closing_brace_pos <= struct_end
-        and tokens[closing_brace_pos].type != TokenType.RBRACE
-    ):
+    brace_count = 1  # Start at 1 because we're already past the opening brace
+    while closing_brace_pos <= struct_end:
+        if tokens[closing_brace_pos].type == TokenType.LBRACE:
+            brace_count += 1
+        elif tokens[closing_brace_pos].type == TokenType.RBRACE:
+            brace_count -= 1
+            if brace_count == 0:
+                # This is the closing brace of the main struct body
+                break
         closing_brace_pos += 1
 
     # Only parse fields up to the closing brace
     while pos < closing_brace_pos and tokens[pos].type != TokenType.RBRACE:
         field_tokens = []
-        while pos < closing_brace_pos and tokens[pos].type != TokenType.SEMICOLON:
+        # Collect tokens until we find the semicolon that ends this field
+        # For nested structures, we need to handle braces properly
+        brace_count = 0
+        while pos < closing_brace_pos:
+            if tokens[pos].type == TokenType.LBRACE:
+                brace_count += 1
+            elif tokens[pos].type == TokenType.RBRACE:
+                brace_count -= 1
+                # Only stop if we're at the main closing brace
+                if pos == closing_brace_pos:
+                    break
+            elif tokens[pos].type == TokenType.SEMICOLON and brace_count == 0:
+                # This is the semicolon that ends the field
+                break
+            
             if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
                 field_tokens.append(tokens[pos])
             pos += 1
+        
+        # For nested structures, we need to continue collecting tokens until we find the field name
+        # and the semicolon that ends the entire field
+        if (len(field_tokens) >= 3 and 
+            field_tokens[0].type in [TokenType.STRUCT, TokenType.UNION] and 
+            field_tokens[1].type == TokenType.LBRACE):
+            # This might be a nested structure, continue collecting until we find the field name
+            temp_pos = pos
+            while temp_pos < len(tokens):
+                if tokens[temp_pos].type == TokenType.SEMICOLON:
+                    # Found the semicolon that ends the field
+                    break
+                if tokens[temp_pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                    field_tokens.append(tokens[temp_pos])
+                temp_pos += 1
+            pos = temp_pos
 
         # Parse field from collected tokens
         if len(field_tokens) >= 2:
@@ -1193,41 +1228,54 @@ def find_struct_fields(
                 and field_tokens[0].type == TokenType.STRUCT
                 and field_tokens[1].type == TokenType.LBRACE
             ):
-                # This is a nested anonymous struct
-                # Find the struct name (last token before semicolon)
-                field_name = field_tokens[-1].value
-                # Create a simplified type representation for nested struct
-                field_type = "struct { ... }"
-                if (
-                    field_name
-                    and field_name.strip()
-                    and field_name not in ["[", "]", ";", "}"]
-                ):
-                    stripped_name = field_name.strip()
-                    if stripped_name:
-                        fields.append((stripped_name, field_type))
+                # This is a nested struct - find the field name after the closing brace
+                # Look for the pattern: struct { ... } field_name;
+                field_name = None
+                # Find the LAST closing brace and then the field name
+                # This handles deeply nested structures correctly
+                for i in range(len(field_tokens) - 1, -1, -1):
+                    if field_tokens[i].type == TokenType.RBRACE and i + 1 < len(field_tokens):
+                        # The field name should be the next identifier after the closing brace
+                        for j in range(i + 1, len(field_tokens)):
+                            if field_tokens[j].type == TokenType.IDENTIFIER:
+                                field_name = field_tokens[j].value
+                                break
+                        if field_name:
+                            break
+                
+                if field_name:
+                    field_type = "struct { ... }"
+                    if field_name not in ["[", "]", ";", "}"]:
+                        fields.append((field_name, field_type))
                         # Skip parsing the nested struct's fields as separate fields
-                        continue
-            # Check if this is a nested struct field with more complex structure
+                        # Let the normal flow handle semicolon advancement
+            # Check if this is a nested union field
             elif (
-                len(field_tokens) >= 4
-                and field_tokens[0].type == TokenType.STRUCT
+                len(field_tokens) >= 3
+                and field_tokens[0].type == TokenType.UNION
                 and field_tokens[1].type == TokenType.LBRACE
-                and field_tokens[-1].type == TokenType.IDENTIFIER
             ):
-                # This is a nested anonymous struct with a name
-                field_name = field_tokens[-1].value
-                field_type = "struct { ... }"
-                if (
-                    field_name
-                    and field_name.strip()
-                    and field_name not in ["[", "]", ";", "}"]
-                ):
-                    stripped_name = field_name.strip()
-                    if stripped_name:
-                        fields.append((stripped_name, field_type))
-                        # Skip parsing the nested struct's fields as separate fields
-                        continue
+                # This is a nested union - find the field name after the closing brace
+                # Look for the pattern: union { ... } field_name;
+                field_name = None
+                # Find the LAST closing brace and then the field name
+                # This handles deeply nested structures correctly
+                for i in range(len(field_tokens) - 1, -1, -1):
+                    if field_tokens[i].type == TokenType.RBRACE and i + 1 < len(field_tokens):
+                        # The field name should be the next identifier after the closing brace
+                        for j in range(i + 1, len(field_tokens)):
+                            if field_tokens[j].type == TokenType.IDENTIFIER:
+                                field_name = field_tokens[j].value
+                                break
+                        if field_name:
+                            break
+                
+                if field_name:
+                    field_type = "union { ... }"
+                    if field_name not in ["[", "]", ";", "}"]:
+                        fields.append((field_name, field_type))
+                        # Skip parsing the nested union's fields as separate fields
+                        # Let the normal flow handle semicolon advancement
             # Function pointer array field: type (*name[size])(params)
             elif (
                 len(field_tokens) >= 8

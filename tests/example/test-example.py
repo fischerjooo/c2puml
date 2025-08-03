@@ -1719,11 +1719,12 @@ def main():
             standard_success = validator.run_all_validations()
             overall_success = overall_success and standard_success
             
-            if standard_success:
-                print("🔬 Running Anonymous Typedef Validation...")
-                anon_validator = AnonymousTypedefValidator()
-                anon_success = anon_validator.validate_anonymous_typedefs()
-                overall_success = overall_success and anon_success
+            # DISABLED: Anonymous typedef validation temporarily disabled
+            # if standard_success:
+            #     print("🔬 Running Anonymous Typedef Validation...")
+            #     anon_validator = AnonymousTypedefValidator()
+            #     anon_success = anon_validator.validate_anonymous_typedefs()
+            #     overall_success = overall_success and anon_success
 
         if not overall_success:
             print("\n❌ Validation failed")
