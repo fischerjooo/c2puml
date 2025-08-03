@@ -869,9 +869,9 @@ class Generator:
         self, lines: List[str], project_model: ProjectModel, uml_ids: Dict[str, str]
     ):
         """Generate composition relationships for anonymous structures."""
-        # Add a section header for clarity
-        lines.append("")
-        lines.append("' Anonymous structure relationships (composition)")
+        # First, check if there are any anonymous relationships
+        has_relationships = False
+        relationships_to_generate = []
         
         # Process all files in the project model
         for file_name, file_model in project_model.files.items():
@@ -886,8 +886,15 @@ class Generator:
                     child_id = self._get_anonymous_uml_id(child_name, uml_ids)
                     
                     if parent_id and child_id:
-                        # Use composition arrow (*--) with "contains" label
-                        lines.append(f"{parent_id} *-- {child_id} : contains")
+                        has_relationships = True
+                        relationships_to_generate.append(f"{parent_id} *-- {child_id} : contains")
+        
+        # Only add the section header and relationships if we have any
+        if has_relationships:
+            lines.append("")
+            lines.append("' Anonymous structure relationships (composition)")
+            for relationship in relationships_to_generate:
+                lines.append(relationship)
 
     def _get_anonymous_uml_id(self, entity_name: str, uml_ids: Dict[str, str]) -> Optional[str]:
         """Get UML ID for an anonymous structure entity, trying different patterns."""

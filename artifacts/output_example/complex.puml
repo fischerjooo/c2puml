@@ -638,6 +638,4 @@ TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>
 TYPEDEF_HANDLER_TABLE_T ..> TYPEDEF_HANDLER_ENTRY_T : <<uses>>
 TYPEDEF_MATH_OPS_ARRAY_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>
 
-' Anonymous structure relationships (composition)
-
 @enduml

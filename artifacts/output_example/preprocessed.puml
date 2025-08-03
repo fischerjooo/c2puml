@@ -180,6 +180,4 @@ HEADER_PREPROCESSED ..> TYPEDEF_FEATURE_UNION_T : <<declares>>
 ' Uses relationships
 TYPEDEF_FEATURE_CALLBACK_T ..> TYPEDEF_ENABLED_FEATURE_T : <<uses>>
 
-' Anonymous structure relationships (composition)
-
 @enduml

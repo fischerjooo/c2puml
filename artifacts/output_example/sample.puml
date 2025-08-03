@@ -162,6 +162,4 @@ HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : <<declares>>
 TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
 TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
 
-' Anonymous structure relationships (composition)
-
 @enduml

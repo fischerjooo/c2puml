@@ -68,6 +68,4 @@ HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
 
 ' Uses relationships
 
-' Anonymous structure relationships (composition)
-
 @enduml

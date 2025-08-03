@@ -72,6 +72,4 @@ HEADER_LOGGER ..> TYPEDEF_LOG_CALLBACK_T : <<declares>>
 ' Uses relationships
 TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
 
-' Anonymous structure relationships (composition)
-
 @enduml

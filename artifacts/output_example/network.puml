@@ -60,6 +60,4 @@ HEADER_NETWORK ..> TYPEDEF_NETWORKSTATUS : <<declares>>
 
 ' Uses relationships
 
-' Anonymous structure relationships (composition)
-
 @enduml
