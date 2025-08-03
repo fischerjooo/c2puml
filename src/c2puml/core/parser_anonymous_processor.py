@@ -13,10 +13,10 @@ class AnonymousTypedefProcessor:
 
     def process_file_model(self, file_model: FileModel) -> None:
         """Process all typedefs in a file model to extract anonymous structures."""
-        # Skip alias processing for now to focus on simpler struct/union cases
-        # aliases_to_process = list(file_model.aliases.items())
-        # for alias_name, alias_data in aliases_to_process:
-        #     self._process_alias_for_anonymous_structs(file_model, alias_name, alias_data)
+        # Process alias typedefs with improved complexity filtering
+        aliases_to_process = list(file_model.aliases.items())
+        for alias_name, alias_data in aliases_to_process:
+            self._process_alias_for_anonymous_structs(file_model, alias_name, alias_data)
 
         # Process struct typedefs
         structs_to_process = list(file_model.structs.items())
@@ -93,12 +93,22 @@ class AnonymousTypedefProcessor:
         """Extract anonymous struct/union definitions from text using balanced brace matching."""
         anonymous_structs = []
         
+        # Check if this text starts with 'typedef struct' - if so, skip the outer struct
+        text_stripped = text.strip()
+        skip_first_struct = text_stripped.startswith('typedef struct') or text_stripped.startswith('typedef union')
+        
         # Look for struct/union keywords followed by {
         pattern = r'(struct|union)\s*\{'
+        first_match_skipped = False
         
         for match in re.finditer(pattern, text):
             struct_type = match.group(1)
             start_pos = match.end() - 1  # Position of the opening brace
+            
+            # Skip the first struct/union if it's a typedef outer structure
+            if skip_first_struct and not first_match_skipped:
+                first_match_skipped = True
+                continue
             
             # Find the matching closing brace using balanced brace counting
             brace_count = 0
@@ -159,6 +169,11 @@ class AnonymousTypedefProcessor:
                     fields.append(Field(name=field_name, type=field_type))
                 continue
             
+            # Handle comma-separated declarations: int a, b, c; char *ptr1, *ptr2;
+            if ',' in decl:
+                fields.extend(self._parse_comma_separated_fields(decl))
+                continue
+            
             # Handle array declarations: type name[size] or type name[]
             array_match = re.match(r'(.+?)\s+(\w+)\s*\[([^\]]*)\]\s*$', decl)
             if array_match:
@@ -172,47 +187,133 @@ class AnonymousTypedefProcessor:
                 fields.append(Field(name=field_name, type=full_type))
                 continue
             
-            # Regular field: type name, type name1, name2
+            # Regular single field: type name
             parts = decl.strip().split()
             if len(parts) >= 2:
-                # Handle multiple declarations: int a, b, c;
-                if ',' in decl:
-                    # Split by comma and process each
-                    type_and_first = ' '.join(parts[:-1]) if len(parts) > 1 else parts[0]
-                    remaining = parts[-1]
-                    
-                    # Find the type (everything before the first name)
-                    type_parts = type_and_first.split()
-                    if len(type_parts) >= 2:
-                        field_type = ' '.join(type_parts[:-1])
-                        first_name = type_parts[-1].rstrip(',')
-                        fields.append(Field(name=first_name, type=field_type))
-                        
-                        # Process remaining names
-                        for name in remaining.split(','):
-                            name = name.strip().rstrip(',')
-                            if name:
-                                fields.append(Field(name=name, type=field_type))
+                field_type = ' '.join(parts[:-1])
+                field_name = parts[-1]
+                # Clean up field name (remove trailing punctuation)
+                field_name = re.sub(r'[^\w]', '', field_name)
+                if field_name:  # Only add if we have a valid name
+                    fields.append(Field(name=field_name, type=field_type))
+        
+        return fields
+
+    def _parse_comma_separated_fields(self, decl: str) -> List[Field]:
+        """Parse comma-separated field declarations like 'int a, b, c;' or 'char *ptr1, *ptr2;'."""
+        fields = []
+        
+        # Split by comma to get individual field parts
+        field_parts = [part.strip() for part in decl.split(',')]
+        if not field_parts:
+            return fields
+            
+        # Parse the first field to get the base type
+        first_field = field_parts[0].strip()
+        
+        # Handle array case for first field: int arr1[10], arr2[20]
+        array_match = re.match(r'(.+?)\s+(\w+)\s*\[([^\]]*)\]\s*$', first_field)
+        if array_match:
+            base_type = array_match.group(1).strip()
+            first_name = array_match.group(2).strip()
+            first_size = array_match.group(3).strip()
+            
+            if first_size:
+                first_type = f"{base_type}[{first_size}]"
+            else:
+                first_type = f"{base_type}[]"
+            fields.append(Field(name=first_name, type=first_type))
+            
+            # Process remaining fields as arrays
+            for part in field_parts[1:]:
+                part = part.strip()
+                # Look for array syntax: arr2[20]
+                array_match = re.match(r'(\w+)\s*\[([^\]]*)\]\s*$', part)
+                if array_match:
+                    name = array_match.group(1).strip()
+                    size = array_match.group(2).strip()
+                    if size:
+                        field_type = f"{base_type}[{size}]"
+                    else:
+                        field_type = f"{base_type}[]"
+                    fields.append(Field(name=name, type=field_type))
                 else:
-                    # Single declaration: type name
-                    field_type = ' '.join(parts[:-1])
-                    field_name = parts[-1]
-                    # Clean up field name (remove trailing punctuation)
-                    field_name = re.sub(r'[^\w]', '', field_name)
-                    if field_name:  # Only add if we have a valid name
-                        fields.append(Field(name=field_name, type=field_type))
+                    # Simple name without array - treat as simple field
+                    name = re.sub(r'[^\w]', '', part)
+                    if name:
+                        fields.append(Field(name=name, type=base_type))
+            return fields
+        
+        # Parse first field normally to extract base type
+        first_parts = first_field.split()
+        if len(first_parts) < 2:
+            return fields
+            
+        # Extract base type and first field name
+        base_type = ' '.join(first_parts[:-1])
+        first_name = first_parts[-1]
+        
+        # Handle pointer syntax: char *ptr1, *ptr2
+        if first_name.startswith('*'):
+            base_type += " *"
+            first_name = first_name[1:]  # Remove leading *
+        
+        # Clean up first field name
+        first_name = re.sub(r'[^\w]', '', first_name)
+        if first_name:
+            fields.append(Field(name=first_name, type=base_type))
+        
+        # Process remaining fields
+        for part in field_parts[1:]:
+            part = part.strip()
+            if not part:
+                continue
+                
+            # Handle pointer syntax: *ptr2
+            field_type = base_type
+            if part.startswith('*'):
+                if not base_type.endswith('*'):
+                    field_type = base_type + " *"
+                part = part[1:]  # Remove leading *
+            
+            # Clean up field name
+            field_name = re.sub(r'[^\w]', '', part)
+            if field_name:
+                fields.append(Field(name=field_name, type=field_type))
         
         return fields
 
     def _is_too_complex_to_process(self, struct_content: str) -> bool:
         """Check if a struct is too complex to safely process."""
         # Skip structures with function pointer arrays as they're too complex
-        if 'handlers[' in struct_content or '(*' in struct_content and '[' in struct_content:
+        if 'handlers[' in struct_content or ('(*' in struct_content and '[' in struct_content):
             return True
         
-        # Skip all function pointer related structures for now
-        if '(*' in struct_content or 'handler' in struct_content.lower():
+        # Skip structures with multiple function pointers (complex cases)
+        func_ptr_count = struct_content.count('(*')
+        if func_ptr_count > 2:
             return True
+        
+        # Skip structures with deeply nested function pointers
+        if '(*' in struct_content and '(*' in struct_content[struct_content.find('(*') + 2:]:
+            # Check if there are nested function pointers within function pointers
+            first_func_ptr = struct_content.find('(*')
+            if first_func_ptr != -1:
+                # Find the closing ) for the first function pointer
+                paren_count = 0
+                pos = first_func_ptr + 2
+                while pos < len(struct_content):
+                    if struct_content[pos] == '(':
+                        paren_count += 1
+                    elif struct_content[pos] == ')':
+                        if paren_count == 0:
+                            # Check if there's another function pointer after this one
+                            remaining = struct_content[pos:]
+                            if '(*' in remaining:
+                                return True
+                            break
+                        paren_count -= 1
+                    pos += 1
         
         # Skip structures with very deeply nested braces (more than 3 levels)
         brace_depth = 0

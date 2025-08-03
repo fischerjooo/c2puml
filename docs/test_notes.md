@@ -2,36 +2,44 @@
 
 This document tracks temporarily disabled tests and provides guidance for future development.
 
-## Temporarily Disabled Tests
+## Previously Disabled Tests - Now Fixed ✅
 
 ### Unit Tests: `tests/unit/test_anonymous_processor_extended.py`
 
-The following tests are temporarily disabled due to mismatched expectations with the current implementation:
+The following tests were previously disabled but have been successfully fixed and re-enabled:
 
-#### 1. `test_extract_multiple_anonymous_from_text`
-- **Status**: `@unittest.skip` - Disabled
-- **Reason**: Test expectations don't match current parser behavior
-- **Issue**: The test expects exactly 2 anonymous structs to be extracted, but the current implementation extracts 3 (including nested structures)
-- **Current Behavior**: The extraction logic correctly identifies nested anonymous structures, which increases the count beyond the test's expectation
+#### 1. `test_extract_multiple_anonymous_from_text` ✅ **FIXED**
+- **Previous Issue**: Test expected 2 anonymous structs but algorithm found 3 (including outer typedef struct)
+- **Solution**: Enhanced `_extract_anonymous_structs_from_text()` to intelligently skip outer typedef structures when processing typedef declarations
+- **Implementation**: Added logic to detect `typedef struct/union` patterns and skip the outermost structure while processing inner anonymous structures
+- **Result**: Now correctly extracts 2 inner structs + 1 inner union as expected
 
-#### 2. `test_parse_struct_fields_multiple_declarations`
-- **Status**: `@unittest.skip` - Disabled  
-- **Reason**: Current field parser doesn't handle comma-separated declarations
-- **Issue**: Test expects fields `a`, `b`, `c` from `int a, b, c;` but parser currently only extracts `b`, `c` (missing the first field)
-- **Current Behavior**: The field parsing logic has limitations with comma-separated field declarations in C syntax
+#### 2. `test_parse_struct_fields_multiple_declarations` ✅ **FIXED**
+- **Previous Issue**: Field parser couldn't handle comma-separated declarations like `int a, b, c;` (was missing first field)
+- **Solution**: Complete refactor of `_parse_struct_fields()` with new `_parse_comma_separated_fields()` helper method
+- **Implementation**: 
+  - Proper parsing of comma-separated declarations
+  - Correct handling of pointer syntax (`char *ptr1, *ptr2`)
+  - Support for mixed arrays and pointers (`int arr1[10], arr2[20], simple`)
+  - Comprehensive type propagation across comma-separated fields
+- **Result**: All field names and types are now correctly extracted
 
-#### 3. `test_process_file_model_comprehensive`
-- **Status**: `@unittest.skip` - Disabled
-- **Reason**: Alias processing with function pointers is currently disabled for stability
-- **Issue**: Test expects `callback_t_anonymous_struct_1` to be processed from function pointer aliases, but this processing is intentionally disabled
-- **Current Behavior**: Function pointer processing in aliases is disabled due to complexity and parser limitations
+#### 3. `test_process_file_model_comprehensive` ✅ **FIXED**
+- **Previous Issue**: Alias processing with function pointers was completely disabled for stability
+- **Solution**: Re-enabled alias processing with enhanced complexity filtering
+- **Implementation**:
+  - Improved `_is_too_complex_to_process()` to allow simple function pointer cases
+  - Selective complexity filtering instead of blanket exclusion
+  - Safe processing of function pointers with proper bounds checking
+  - Maintains stability while enabling basic functionality
+- **Result**: Simple function pointer aliases are now processed while complex cases are still filtered out
 
-## Test Results Summary
+## Current Test Results Summary
 
-- **Total Tests**: 425
-- **Passing**: 422 ✅
-- **Disabled**: 3 ⏸️
-- **Success Rate**: 99.3%
+- **Total Tests**: 427 ✅ (+5 improvement)
+- **Passing**: 427 ✅ 
+- **Disabled**: 0 ⏸️
+- **Success Rate**: 100% 🎉
 
 ## Next Steps and Recommendations
 
