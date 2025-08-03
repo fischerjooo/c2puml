@@ -1339,7 +1339,8 @@ class Transformer:
                 parts = macro.split(" ", 2)  # Split into ["#define", "OLD_NAME", "rest"]
                 if len(parts) >= 2:
                     return f"#define {name} {parts[2]}" if len(parts) > 2 else f"#define {name}"
-            return macro
+            # If it's just a macro name without #define prefix, return the new name
+            return name
         
         file_model.macros = self._rename_list_elements(
             file_model.macros, patterns_map, get_macro_name, 

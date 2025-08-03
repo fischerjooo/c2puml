@@ -4548,9 +4548,7 @@
         "string.h",
         "transformed.h"
       ],
-      "macros": [
-        "OLD_VERSION"
-      ],
+      "macros": [],
       "name": "transformed.c",
       "structs": {
         "old_point": {
@@ -4692,7 +4690,7 @@
         "stdio.h"
       ],
       "macros": [
-        "OLD_API_VERSION",
+        "LEGACY_API_VERSION",
         "TRANSFORMED_H"
       ],
       "name": "transformed.h",

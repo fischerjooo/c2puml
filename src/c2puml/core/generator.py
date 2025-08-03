@@ -6,6 +6,7 @@ Follows the template format with strict separation of typedefs and clear relatio
 
 import glob
 import os
+import re
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -685,7 +686,7 @@ class Generator:
         """Generate field with proper handling of nested structures"""
         field_text = f"{field.type} {field.name}"
 
-        # Check if this is a nested struct field
+        # Check if this is a nested struct field with newlines
         if field.type.startswith("struct {") and "\n" in field.type:
             # Parse the nested struct content and flatten it
             struct_parts = field.type.split("\n")
@@ -704,6 +705,31 @@ class Generator:
                 lines.append(f"{base_indent}struct {{ {content_str} }} {field.name}")
             else:
                 lines.append(f"{base_indent}struct {{ }} {field.name}")
+        # Check if this is a simplified anonymous struct/union (created by find_struct_fields)
+        elif field.type in ["struct { ... }", "union { ... }"]:
+            # Format as: + struct { ... } field_name
+            struct_type = "struct" if "struct" in field.type else "union"
+            lines.append(f"{base_indent}{struct_type} {{ ... }} {field.name}")
+        # Check if this is a simplified anonymous struct/union with field name
+        elif re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+\w+', field.type):
+            # Format as: + struct { ... } field_name
+            lines.append(f"{base_indent}{field.type}")
+        # Check if this is an actual anonymous struct/union pattern like "struct { int x; } nested"
+        elif re.search(r'(struct|union)\s*\{[^}]*\}\s+\w+', field.type):
+            # Format as: + struct { ... } field_name
+            struct_type = "struct" if "struct" in field.type else "union"
+            field_name = field.name
+            lines.append(f"{base_indent}{struct_type} {{ ... }} {field_name}")
+        # Check if this is a named anonymous struct/union (created by AnonymousTypedefProcessor)
+        elif field.type.endswith("_anonymous_struct_1") or field.type.endswith("_anonymous_union_1"):
+            # Format as: + struct { ... } field_name or + union { ... } field_name
+            if "struct" in field.type:
+                lines.append(f"{base_indent}struct {{ ... }} {field.name}")
+            elif "union" in field.type:
+                lines.append(f"{base_indent}union {{ ... }} {field.name}")
+            else:
+                # Fallback to regular field formatting
+                lines.append(f"{base_indent}{field.type} {field.name}")
         else:
             # Handle regular multi-line field types
             field_lines = field_text.split("\n")

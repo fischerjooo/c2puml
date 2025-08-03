@@ -356,13 +356,22 @@ class AnonymousTypedefProcessor:
 
     def _field_contains_anonymous_struct(self, field: Field) -> bool:
         """Check if a field contains an anonymous struct/union definition."""
-        # Process fields that contain simplified anonymous structures
-        # These are created by find_struct_fields and need to be expanded into separate entities
+        # Check for simplified anonymous structures (created by find_struct_fields)
         if field.type in ["union { ... }", "struct { ... }"]:
             return True
-        # Also check for the pattern "struct { ... } field_name" or "union { ... } field_name"
+        
+        # Check for patterns like "struct { ... } field_name" or "union { ... } field_name"
         if re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+\w+', field.type):
             return True
+        
+        # Check for actual anonymous struct/union patterns like "struct { int x; } nested"
+        if re.search(r'(struct|union)\s*\{[^}]*\}\s+\w+', field.type):
+            return True
+        
+        # Check for anonymous structs without field names like "struct { int x; }"
+        if re.search(r'(struct|union)\s*\{[^}]*\}(?!\s*\w)', field.type):
+            return True
+        
         return False
 
     def _extract_anonymous_from_field(
@@ -413,6 +422,57 @@ class AnonymousTypedefProcessor:
                 
                 # Update the field type to reference the named structure
                 field.type = f"{anon_name} {field_name}"
+        
+        # Handle actual anonymous struct/union patterns like "struct { int x; } nested"
+        elif re.search(r'(struct|union)\s*\{[^}]*\}\s+\w+', field.type):
+            # Extract the anonymous struct content and field name
+            match = re.search(r'((struct|union)\s*\{[^}]*\})\s+(\w+)', field.type)
+            if match:
+                struct_content = match.group(1)
+                struct_type = match.group(2)
+                field_name = match.group(3)
+                anon_name = self._generate_anonymous_name(parent_name, struct_type, 1)
+                
+                # Create the anonymous struct/union with actual content
+                if struct_type == "struct":
+                    anon_struct = self._create_anonymous_struct(anon_name, struct_content)
+                    file_model.structs[anon_name] = anon_struct
+                elif struct_type == "union":
+                    anon_union = self._create_anonymous_union(anon_name, struct_content)
+                    file_model.unions[anon_name] = anon_union
+                
+                # Track the relationship
+                if parent_name not in file_model.anonymous_relationships:
+                    file_model.anonymous_relationships[parent_name] = []
+                file_model.anonymous_relationships[parent_name].append(anon_name)
+                
+                # Update the field type to reference the named structure
+                field.type = f"{anon_name} {field_name}"
+        
+        # Handle anonymous structs without field names like "struct { int x; }"
+        elif re.search(r'(struct|union)\s*\{[^}]*\}(?!\s*\w)', field.type):
+            # Extract the anonymous struct content
+            match = re.search(r'((struct|union)\s*\{[^}]*\})', field.type)
+            if match:
+                struct_content = match.group(1)
+                struct_type = match.group(2)
+                anon_name = self._generate_anonymous_name(parent_name, struct_type, 1)
+                
+                # Create the anonymous struct/union with actual content
+                if struct_type == "struct":
+                    anon_struct = self._create_anonymous_struct(anon_name, struct_content)
+                    file_model.structs[anon_name] = anon_struct
+                elif struct_type == "union":
+                    anon_union = self._create_anonymous_union(anon_name, struct_content)
+                    file_model.unions[anon_name] = anon_union
+                
+                # Track the relationship
+                if parent_name not in file_model.anonymous_relationships:
+                    file_model.anonymous_relationships[parent_name] = []
+                file_model.anonymous_relationships[parent_name].append(anon_name)
+                
+                # Update the field type to reference the named structure
+                field.type = anon_name
         
         # Handle complex anonymous structures (original logic)
         else:
