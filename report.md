@@ -110,45 +110,7 @@ int execute_operations(
 
 **Specification Compliance**: ❌ **FAILS** - The tool should not generate duplicate macro entries for the same macro name.
 
-### 4. **Anonymous Structure Processing Issues**
-
-#### 4.1 Incomplete Anonymous Struct Representation
-**Source (`complex.h`):**
-```c
-typedef struct {
-    int count;
-    struct {
-        int item_id;
-        char item_name[32];
-        union {
-            int int_data;
-            float float_data;
-            struct {
-                int x, y;
-            } point_data;
-        } item_value;
-    } items[10];
-} array_of_anon_structs_t;
-```
-
-**Generated PlantUML (`complex.puml`):**
-```plantuml
-class "array_of_anon_structs_t" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T <<struct>> #LightYellow
-{
-    + int count
-    + float float_data
-    + union { int int_data
-    + array_of_anon_structs_t_anonymous_struct_1 item_id
-    + char[32] item_name
-    + array_of_anon_structs_t_anonymous_struct_1 y
-}
-```
-
-**Issue**: The anonymous structure is not properly represented. The fields are flattened and mixed up, and the nested structure is lost.
-
-**Specification Compliance**: ❌ **FAILS** - The tool should properly handle anonymous structures as specified in the documentation.
-
-### 5. **Template Compliance Issues**
+### 4. **Template Compliance Issues**
 
 #### 5.1 Inconsistent Naming Conventions
 According to `puml_template.md`, the tool should use:
@@ -202,6 +164,44 @@ The configuration includes transformation rules:
 
 **Specification Compliance**: ❌ **FAILS** - The transformation system appears to be non-functional despite being documented as fully implemented.
 
+### 8. **Anonymous Structure Processing Issues**
+
+#### 8.1 Incomplete Anonymous Struct Representation
+**Source (`complex.h`):**
+```c
+typedef struct {
+    int count;
+    struct {
+        int item_id;
+        char item_name[32];
+        union {
+            int int_data;
+            float float_data;
+            struct {
+                int x, y;
+            } point_data;
+        } item_value;
+    } items[10];
+} array_of_anon_structs_t;
+```
+
+**Generated PlantUML (`complex.puml`):**
+```plantuml
+class "array_of_anon_structs_t" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T <<struct>> #LightYellow
+{
+    + int count
+    + float float_data
+    + union { int int_data
+    + array_of_anon_structs_t_anonymous_struct_1 item_id
+    + char[32] item_name
+    + array_of_anon_structs_t_anonymous_struct_1 y
+}
+```
+
+**Issue**: The anonymous structure is not properly represented. The fields are flattened and mixed up, and the nested structure is lost.
+
+**Specification Compliance**: ❌ **FAILS** - The tool should properly handle anonymous structures as specified in the documentation.
+
 ## Successful Implementations
 
 ### 1. **Basic Structure Recognition**
@@ -238,10 +238,10 @@ The configuration includes transformation rules:
 | Macro Processing | ⚠️ PARTIAL | Duplicate macro entries issue |
 | Include Relationships | ✅ PASSES | Correctly applies configuration filters |
 | Typedef Processing | ✅ PASSES | Basic functionality works |
-| Anonymous Structure Handling | ❌ FAILS | Poor representation |
+| Template Compliance | ❌ FAILS | Naming conventions not followed |
 | File-Specific Configuration | ❌ FAILS | Not properly applied |
 | Transformation System | ❌ FAILS | Appears non-functional |
-| Template Compliance | ❌ FAILS | Naming conventions not followed |
+| Anonymous Structure Handling | ❌ FAILS | Poor representation (lowest priority) |
 
 ## Recommendations
 
