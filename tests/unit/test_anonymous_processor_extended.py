@@ -71,11 +71,19 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
 
     def test_generate_anonymous_name(self):
         """Test the anonymous name generation."""
-        name1 = self.processor._generate_anonymous_name("parent_struct", "struct", 1)
-        name2 = self.processor._generate_anonymous_name("parent_union", "union", 2)
+        # Test new ParentType_fieldName pattern
+        name1 = self.processor._generate_anonymous_name("parent_struct", "data")
+        name2 = self.processor._generate_anonymous_name("parent_union", "info")
         
-        self.assertEqual(name1, "parent_struct_anonymous_struct_1")
-        self.assertEqual(name2, "parent_union_anonymous_union_2")
+        self.assertEqual(name1, "parent_struct_data")
+        self.assertEqual(name2, "parent_union_info")
+        
+        # Test fallback to old pattern when field name is not available
+        name3 = self.processor._generate_anonymous_name("parent_struct", field_name=None, struct_type="struct", counter=1)
+        name4 = self.processor._generate_anonymous_name("parent_union", field_name=None, struct_type="union", counter=2)
+        
+        self.assertEqual(name3, "parent_struct_anonymous_struct_1")
+        self.assertEqual(name4, "parent_union_anonymous_union_2")
 
     def test_parse_struct_fields_simple(self):
         """Test parsing simple struct fields."""
@@ -253,8 +261,8 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
             file_model, "parent_struct", struct_data
         )
         
-        # Check that anonymous struct was extracted
-        self.assertIn("parent_struct_anonymous_struct_1", file_model.structs)
+        # Check that anonymous struct was extracted with new naming convention (uses field name)
+        self.assertIn("parent_struct_nested", file_model.structs)
         self.assertIn("parent_struct", file_model.anonymous_relationships)
 
     def test_process_union_for_anonymous_structs(self):
@@ -278,8 +286,8 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
             file_model, "parent_union", union_data
         )
         
-        # Check that anonymous struct was extracted
-        self.assertIn("parent_union_anonymous_struct_1", file_model.structs)
+        # Check that anonymous struct was extracted with new naming convention (uses field name)
+        self.assertIn("parent_union_struct_value", file_model.structs)
         self.assertIn("parent_union", file_model.anonymous_relationships)
 
     def test_process_file_model_comprehensive(self):
@@ -311,13 +319,13 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         # Process the entire file model
         self.processor.process_file_model(file_model)
         
-        # Verify all anonymous structures were extracted
+        # Verify all anonymous structures were extracted  
         expected_anon_structs = [
-            "callback_t_anonymous_struct_1",
-            "main_union_anonymous_struct_1"
+            "callback_t_anonymous_struct_1",  # Complex case - uses fallback naming
+            "main_union_complex"  # Simple case - uses new ParentType_fieldName naming
         ]
         expected_anon_unions = [
-            "main_struct_anonymous_union_1"
+            "main_struct_data"  # Simple case - uses new ParentType_fieldName naming
         ]
         
         for anon_struct in expected_anon_structs:

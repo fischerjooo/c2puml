@@ -705,32 +705,16 @@ class Generator:
                 lines.append(f"{base_indent}struct {{ {content_str} }} {field.name}")
             else:
                 lines.append(f"{base_indent}struct {{ }} {field.name}")
-        # DISABLED: Anonymous structure handling temporarily disabled
-        # Check if this is a simplified anonymous struct/union (created by find_struct_fields)
-        # elif field.type in ["struct { ... }", "union { ... }"]:
-        #     # Format as: + struct { ... } field_name
-        #     struct_type = "struct" if "struct" in field.type else "union"
-        #     lines.append(f"{base_indent}{struct_type} {{ ... }} {field.name}")
-        # # Check if this is a simplified anonymous struct/union with field name
-        # elif re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+\w+', field.type):
-        #     # Format as: + struct { ... } field_name
-        #     lines.append(f"{base_indent}{field.type}")
-        # # Check if this is an actual anonymous struct/union pattern like "struct { int x; } nested"
-        # elif re.search(r'(struct|union)\s*\{[^}]*\}\s+\w+', field.type):
-        #     # Format as: + struct { ... } field_name
-        #     struct_type = "struct" if "struct" in field.type else "union"
-        #     field_name = field.name
-        #     lines.append(f"{base_indent}{struct_type} {{ ... }} {field_name}")
-        # # Check if this is a named anonymous struct/union (created by AnonymousTypedefProcessor)
-        # elif field.type.endswith("_anonymous_struct_1") or field.type.endswith("_anonymous_union_1"):
-        #     # Format as: + struct { ... } field_name or + union { ... } field_name
-        #     if "struct" in field.type:
-        #         lines.append(f"{base_indent}struct {{ ... }} {field.name}")
-        #     elif "union" in field.type:
-        #         lines.append(f"{base_indent}union {{ ... }} {field.name}")
-        #     else:
-        #         # Fallback to regular field formatting
-        #         lines.append(f"{base_indent}{field.type} {field.name}")
+        # Check if this is a named anonymous struct/union (created by AnonymousTypedefProcessor)
+        # Pattern: field.type should be "SomeParent_fieldname" where field.name is "fieldname"
+        elif "_" in field.type and field.type.split("_")[-1] == field.name:
+            # This is an anonymous structure reference - format as composition
+            lines.append(f"{base_indent}{field.name} : {field.type}")
+        # Check if this is a simplified anonymous struct/union (created by find_struct_fields) 
+        elif field.type in ["struct { ... }", "union { ... }"]:
+            # This means AnonymousTypedefProcessor should have converted it, fallback to simple format
+            struct_type = "struct" if "struct" in field.type else "union"
+            lines.append(f"{base_indent}{struct_type} {{ ... }} {field.name}")
         else:
             # Handle regular multi-line field types
             field_lines = field_text.split("\n")
@@ -751,6 +735,7 @@ class Generator:
         self._generate_include_relationships(lines, include_tree, uml_ids)
         self._generate_declaration_relationships(lines, include_tree, uml_ids)
         self._generate_uses_relationships(lines, include_tree, uml_ids)
+        self._generate_anonymous_relationships(lines, project_model, uml_ids)
 
     def _generate_include_relationships(
         self,
@@ -863,3 +848,49 @@ class Generator:
                     used_uml_id = uml_ids.get(f"typedef_{used_type}")
                     if used_uml_id:
                         lines.append(f"{typedef_uml_id} ..> {used_uml_id} : <<uses>>")
+
+    def _generate_anonymous_relationships(
+        self, lines: List[str], project_model: ProjectModel, uml_ids: Dict[str, str]
+    ):
+        """Generate composition relationships for anonymous structures."""
+        has_relationships = False
+        
+        # Check all files for anonymous relationships
+        for file_name, file_model in project_model.files.items():
+            if file_model.anonymous_relationships:
+                if not has_relationships:
+                    lines.append("")
+                    lines.append("' Anonymous structure relationships (composition)")
+                    has_relationships = True
+                
+                for parent_name, children in file_model.anonymous_relationships.items():
+                    parent_id = self._get_typedef_uml_id(parent_name, uml_ids)
+                    
+                    for child_name in children:
+                        child_id = self._get_typedef_uml_id(child_name, uml_ids)
+                        
+                        if parent_id and child_id:
+                            # Use composition arrow (*--) with "contains" label
+                            lines.append(f"{parent_id} *-- {child_id} : contains")
+        
+        if has_relationships:
+            lines.append("")
+    
+    def _get_typedef_uml_id(self, typedef_name: str, uml_ids: Dict[str, str]) -> Optional[str]:
+        """Get UML ID for a typedef, trying different naming conventions."""
+        # Try direct name
+        uml_id = uml_ids.get(f"typedef_{typedef_name}")
+        if uml_id:
+            return uml_id
+        
+        # Try uppercase version
+        uml_id = uml_ids.get(f"typedef_{typedef_name.upper()}")
+        if uml_id:
+            return uml_id
+        
+        # Try with TYPEDEF_ prefix (common pattern)
+        uml_id = uml_ids.get(f"TYPEDEF_{typedef_name.upper()}")
+        if uml_id:
+            return uml_id
+        
+        return None

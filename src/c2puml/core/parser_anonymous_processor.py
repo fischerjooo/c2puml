@@ -46,7 +46,7 @@ class AnonymousTypedefProcessor:
         
         if filtered_structs:
             for i, (struct_content, struct_type) in enumerate(filtered_structs, 1):
-                anon_name = self._generate_anonymous_name(alias_name, struct_type, i)
+                anon_name = self._generate_anonymous_name(alias_name, field_name=None, struct_type=struct_type, counter=i)
                 
                 # Create the anonymous struct/union
                 if struct_type == "struct":
@@ -129,9 +129,14 @@ class AnonymousTypedefProcessor:
         
         return anonymous_structs
 
-    def _generate_anonymous_name(self, parent_name: str, struct_type: str, counter: int) -> str:
-        """Generate a name for an anonymous structure."""
-        return f"{parent_name}_anonymous_{struct_type}_{counter}"
+    def _generate_anonymous_name(self, parent_name: str, field_name: str = None, struct_type: str = None, counter: int = None) -> str:
+        """Generate a meaningful name for anonymous structure based on parent and field."""
+        if field_name:
+            # Use the improved ParentType_fieldName pattern
+            return f"{parent_name}_{field_name}"
+        else:
+            # Fallback to old pattern when field name is not available
+            return f"{parent_name}_anonymous_{struct_type}_{counter}"
 
     def _create_anonymous_struct(self, name: str, content: str) -> Struct:
         """Create a Struct object from anonymous content."""
@@ -381,7 +386,7 @@ class AnonymousTypedefProcessor:
         # Handle simplified anonymous structure types
         if field.type in ["struct { ... }", "union { ... }"]:
             struct_type = "struct" if "struct" in field.type else "union"
-            anon_name = self._generate_anonymous_name(parent_name, struct_type, 1)
+            anon_name = self._generate_anonymous_name(parent_name, field.name)
             
             # Create a placeholder anonymous struct/union
             if struct_type == "struct":
@@ -405,7 +410,7 @@ class AnonymousTypedefProcessor:
             if match:
                 struct_type = match.group(1)
                 field_name = match.group(2)
-                anon_name = self._generate_anonymous_name(parent_name, struct_type, 1)
+                anon_name = self._generate_anonymous_name(parent_name, field_name)
                 
                 # Create a placeholder anonymous struct/union
                 if struct_type == "struct":
@@ -425,13 +430,13 @@ class AnonymousTypedefProcessor:
         
         # Handle actual anonymous struct/union patterns like "struct { int x; } nested"
         elif re.search(r'(struct|union)\s*\{[^}]*\}\s+\w+', field.type):
-            # Extract the anonymous struct content and field name
+            # Extract the anonymous struct content 
             match = re.search(r'((struct|union)\s*\{[^}]*\})\s+(\w+)', field.type)
             if match:
                 struct_content = match.group(1)
                 struct_type = match.group(2)
-                field_name = match.group(3)
-                anon_name = self._generate_anonymous_name(parent_name, struct_type, 1)
+                # Use the actual field name for improved naming convention
+                anon_name = self._generate_anonymous_name(parent_name, field.name)
                 
                 # Create the anonymous struct/union with actual content
                 if struct_type == "struct":
@@ -447,7 +452,7 @@ class AnonymousTypedefProcessor:
                 file_model.anonymous_relationships[parent_name].append(anon_name)
                 
                 # Update the field type to reference the named structure
-                field.type = f"{anon_name} {field_name}"
+                field.type = anon_name
         
         # Handle anonymous structs without field names like "struct { int x; }"
         elif re.search(r'(struct|union)\s*\{[^}]*\}(?!\s*\w)', field.type):
@@ -456,7 +461,7 @@ class AnonymousTypedefProcessor:
             if match:
                 struct_content = match.group(1)
                 struct_type = match.group(2)
-                anon_name = self._generate_anonymous_name(parent_name, struct_type, 1)
+                anon_name = self._generate_anonymous_name(parent_name, field.name)
                 
                 # Create the anonymous struct/union with actual content
                 if struct_type == "struct":
@@ -480,7 +485,7 @@ class AnonymousTypedefProcessor:
             
             if anonymous_structs:
                 for i, (struct_content, struct_type) in enumerate(anonymous_structs, 1):
-                    anon_name = self._generate_anonymous_name(parent_name, struct_type, i)
+                    anon_name = self._generate_anonymous_name(parent_name, field_name=None, struct_type=struct_type, counter=i)
                     
                     # Create the anonymous struct/union
                     if struct_type == "struct":

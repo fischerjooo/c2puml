@@ -15,8 +15,7 @@ from .parser_tokenizer import (
     find_struct_fields,
 )
 from .preprocessor import PreprocessorManager
-# DISABLED: Anonymous structure processing temporarily disabled
-# from .parser_anonymous_processor import AnonymousTypedefProcessor
+from .parser_anonymous_processor import AnonymousTypedefProcessor
 from ..utils import detect_file_encoding
 
 if TYPE_CHECKING:
@@ -210,9 +209,8 @@ class CParser:
         )
 
         # Process anonymous typedefs after initial parsing
-        # DISABLED: Anonymous structure processing temporarily disabled
-        # anonymous_processor = AnonymousTypedefProcessor()
-        # anonymous_processor.process_file_model(file_model)
+        anonymous_processor = AnonymousTypedefProcessor()
+        anonymous_processor.process_file_model(file_model)
 
         return file_model
 
