@@ -406,6 +406,43 @@ class AnonymousTypedefProcessor:
             # Update the field type to reference the named structure
             field.type = anon_name
             
+        # Handle preserved content format: "struct { /*ANON:encoded_content:field_name*/ ... }"
+        elif re.search(r'/\*ANON:([^:]+):([^*]+)\*/', field.type):
+            struct_match = re.search(r'(struct|union)', field.type)
+            content_match = re.search(r'/\*ANON:([^:]+):([^*]+)\*/', field.type)
+            if struct_match and content_match:
+                struct_type = struct_match.group(1)
+                encoded_content = content_match.group(1)
+                field_name = content_match.group(2)
+                
+                # Decode the preserved content
+                import base64
+                try:
+                    content = base64.b64decode(encoded_content).decode()
+                    anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name=field_name)
+                    
+                    # Parse the content to create the structure with actual fields
+                    if struct_type == "struct":
+                        anon_struct = self._create_anonymous_struct(anon_name, content)
+                        file_model.structs[anon_name] = anon_struct
+                    elif struct_type == "union":
+                        anon_union = self._create_anonymous_union(anon_name, content)
+                        file_model.unions[anon_name] = anon_union
+                    
+                    # Track the relationship
+                    if parent_name not in file_model.anonymous_relationships:
+                        file_model.anonymous_relationships[parent_name] = []
+                    file_model.anonymous_relationships[parent_name].append(anon_name)
+                    
+                    # Update the field type to reference the named structure  
+                    field.type = anon_name
+                    
+                except Exception as e:
+                    # If decoding fails, fall back to placeholder
+                    print(f"Warning: Failed to decode anonymous structure content: {e}")
+                    import traceback
+                    traceback.print_exc()
+            
         # Handle patterns like "struct { ... } field_name"
         elif re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+\w+', field.type):
             match = re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+(\w+)', field.type)

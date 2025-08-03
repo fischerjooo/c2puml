@@ -1244,7 +1244,16 @@ def find_struct_fields(
                             break
                 
                 if field_name:
-                    field_type = "struct { ... }"
+                    # Extract the content between braces for anonymous structure processing
+                    content = _extract_brace_content(field_tokens)
+                    if content:
+                        # Preserve content for anonymous processor using special format
+                        import base64
+                        encoded_content = base64.b64encode(content.encode()).decode()
+                        field_type = f"struct {{ /*ANON:{encoded_content}:{field_name}*/ ... }}"
+                    else:
+                        field_type = "struct { ... }"
+                    
                     if field_name not in ["[", "]", ";", "}"]:
                         fields.append((field_name, field_type))
                         # Skip parsing the nested struct's fields as separate fields
@@ -1271,7 +1280,16 @@ def find_struct_fields(
                             break
                 
                 if field_name:
-                    field_type = "union { ... }"
+                    # Extract the content between braces for anonymous structure processing
+                    content = _extract_brace_content(field_tokens)
+                    if content:
+                        # Preserve content for anonymous processor using special format
+                        import base64
+                        encoded_content = base64.b64encode(content.encode()).decode()
+                        field_type = f"union {{ /*ANON:{encoded_content}:{field_name}*/ ... }}"
+                    else:
+                        field_type = "union { ... }"
+                    
                     if field_name not in ["[", "]", ";", "}"]:
                         fields.append((field_name, field_type))
                         # Skip parsing the nested union's fields as separate fields
@@ -1466,3 +1484,51 @@ def find_enum_values(tokens: List[Token], enum_start: int, enum_end: int) -> Lis
             if value_str:
                 values.append(value_str)
     return values
+
+
+def _extract_brace_content(field_tokens: List[Token]) -> str:
+    """Extract the content between braces from field tokens.
+    
+    Args:
+        field_tokens: List of tokens representing a field with anonymous structure
+        
+    Returns:
+        String content between the braces, or empty string if not found
+    """
+    content_tokens = []
+    in_braces = False
+    brace_count = 0
+    
+    for token in field_tokens:
+        if token.type == TokenType.LBRACE:
+            if not in_braces:
+                in_braces = True
+                brace_count = 1
+            else:
+                brace_count += 1
+                content_tokens.append(token)
+        elif token.type == TokenType.RBRACE:
+            if in_braces:
+                brace_count -= 1
+                if brace_count == 0:
+                    # Found the closing brace
+                    break
+                else:
+                    content_tokens.append(token)
+        elif in_braces:
+            content_tokens.append(token)
+    
+    # Convert tokens back to text preserving spacing
+    if content_tokens:
+        result = ""
+        for i, token in enumerate(content_tokens):
+            result += token.value
+            # Add space after most tokens except when next token is punctuation
+            if (i < len(content_tokens) - 1 and 
+                token.type not in [TokenType.WHITESPACE, TokenType.NEWLINE] and
+                content_tokens[i + 1].type not in [TokenType.LBRACKET, TokenType.RBRACKET, 
+                                                   TokenType.SEMICOLON, TokenType.COMMA,
+                                                   TokenType.WHITESPACE, TokenType.NEWLINE]):
+                result += " "
+        return result
+    return ""

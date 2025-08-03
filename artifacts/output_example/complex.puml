@@ -82,6 +82,14 @@ class "array_of_anon_structs_t" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T <<struct>> #L
 
 class "array_of_anon_structs_t_items" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS <<struct>> #LightYellow
 {
+    + int item_id
+    + char[32] item_name
+    + union { int int_data
+    + float float_data
+    + struct { int x
+    + struct { int y
+    + } point_data
+    + } item_value
 }
 
 class "callback_with_anon_struct_t_anonymous_struct_1" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
@@ -109,10 +117,14 @@ class "complex_handler_t" as TYPEDEF_COMPLEX_HANDLER_T <<struct>> #LightYellow
 
 class "complex_handler_t_memory_manager" as TYPEDEF_COMPLEX_HANDLER_T_MEMORY_MANAGER <<struct>> #LightYellow
 {
+    + int max_size
+    + int ( * resize_func ) ( void * * size_t
 }
 
 class "complex_handler_t_validator" as TYPEDEF_COMPLEX_HANDLER_T_VALIDATOR <<struct>> #LightYellow
 {
+    + char[32] name
+    + void ( * format_func ) ( char * int
 }
 
 class "complex_naming_test_t" as TYPEDEF_COMPLEX_NAMING_TEST_T <<struct>> #LightYellow
@@ -125,14 +137,31 @@ class "complex_naming_test_t" as TYPEDEF_COMPLEX_NAMING_TEST_T <<struct>> #Light
 
 class "complex_naming_test_t_first_struct" as TYPEDEF_COMPLEX_NAMING_TEST_T_FIRST_STRUCT <<struct>> #LightYellow
 {
+    + int first_a
+    + struct { int nested_a1
+    + struct { int deep_a1
+    + } deep_struct_a1
+    + struct { int deep_a2
+    + } deep_struct_a2
+    + } nested_struct_a
+    + struct { int nested_a2
+    + } nested_struct_a2
 }
 
 class "complex_naming_test_t_second_struct" as TYPEDEF_COMPLEX_NAMING_TEST_T_SECOND_STRUCT <<struct>> #LightYellow
 {
+    + int second_a
+    + struct { int nested_b1
+    + } nested_struct_b
 }
 
 class "complex_naming_test_t_third_struct" as TYPEDEF_COMPLEX_NAMING_TEST_T_THIRD_STRUCT <<struct>> #LightYellow
 {
+    + int third_a
+    + union { int struct_union_int
+    + struct { int struct_union_struct_field
+    + } struct_union_struct
+    + } struct_union
 }
 
 class "config_param" as TYPEDEF_CONFIG_PARAM <<struct>> #LightYellow
@@ -150,6 +179,9 @@ class "data_item_t" as TYPEDEF_DATA_ITEM_T <<struct>> #LightYellow
 
 class "data_union_point_value" as TYPEDEF_DATA_UNION_POINT_VALUE <<struct>> #LightYellow
 {
+    + int x
+    + int y
+    + int z
 }
 
 class "extreme_nesting_test_t" as TYPEDEF_EXTREME_NESTING_TEST_T <<struct>> #LightYellow
@@ -160,10 +192,20 @@ class "extreme_nesting_test_t" as TYPEDEF_EXTREME_NESTING_TEST_T <<struct>> #Lig
 
 class "extreme_nesting_test_t_level2_struct_1" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1 <<struct>> #LightYellow
 {
+    + struct { struct { int level4_field
+    + } level4_struct_1
+    + struct { int level4_field2
+    + } level4_struct_2
+    + } level3_struct_1
+    + struct { int level3_field
+    + } level3_struct_2
 }
 
 class "extreme_nesting_test_t_level2_struct_2" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2 <<struct>> #LightYellow
 {
+    + union { struct { int mixed_field
+    + } mixed_struct
+    + } mixed_union
 }
 
 class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<struct>> #LightYellow
@@ -177,10 +219,13 @@ class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<struct>> #LightYellow
 
 class "item_value_point_data" as TYPEDEF_ITEM_VALUE_POINT_DATA <<struct>> #LightYellow
 {
+    + int x
+    + int y
 }
 
 class "mixed_union_mixed_struct" as TYPEDEF_MIXED_UNION_MIXED_STRUCT <<struct>> #LightYellow
 {
+    + int mixed_field
 }
 
 class "moderately_nested_t" as TYPEDEF_MODERATELY_NESTED_T <<struct>> #LightYellow
@@ -191,6 +236,10 @@ class "moderately_nested_t" as TYPEDEF_MODERATELY_NESTED_T <<struct>> #LightYell
 
 class "moderately_nested_t_level2_struct" as TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT <<struct>> #LightYellow
 {
+    + int level2_id
+    + union { int level3_int
+    + float level3_float
+    + } level3_union
 }
 
 class "multi_anonymous_t" as TYPEDEF_MULTI_ANONYMOUS_T <<struct>> #LightYellow
@@ -202,10 +251,16 @@ class "multi_anonymous_t" as TYPEDEF_MULTI_ANONYMOUS_T <<struct>> #LightYellow
 
 class "multi_anonymous_t_first_anon_struct" as TYPEDEF_MULTI_ANONYMOUS_T_FIRST_ANON_STRUCT <<struct>> #LightYellow
 {
+    + int first_x
+    + int first_y
 }
 
 class "multi_anonymous_t_second_anon_struct" as TYPEDEF_MULTI_ANONYMOUS_T_SECOND_ANON_STRUCT <<struct>> #LightYellow
 {
+    + char[32] second_name
+    + int second_id
+    + struct { int deep_value
+    + } deep_struct
 }
 
 class "multiple_simple_anonymous_t" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T <<struct>> #LightYellow
@@ -219,14 +274,17 @@ class "multiple_simple_anonymous_t" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T <<str
 
 class "multiple_simple_anonymous_t_first_anon" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_FIRST_ANON <<struct>> #LightYellow
 {
+    + int first_field
 }
 
 class "multiple_simple_anonymous_t_second_anon" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_SECOND_ANON <<struct>> #LightYellow
 {
+    + int second_field
 }
 
 class "multiple_simple_anonymous_t_third_anon" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_THIRD_ANON <<struct>> #LightYellow
 {
+    + int third_field
 }
 
 class "operation_set_t" as TYPEDEF_OPERATION_SET_T <<struct>> #LightYellow
@@ -266,6 +324,7 @@ class "simplified_handler_t" as TYPEDEF_SIMPLIFIED_HANDLER_T <<struct>> #LightYe
 
 class "struct_union_struct_union_struct" as TYPEDEF_STRUCT_UNION_STRUCT_UNION_STRUCT <<struct>> #LightYellow
 {
+    + int struct_union_struct_field
 }
 
 class "struct_with_struct_t" as TYPEDEF_STRUCT_WITH_STRUCT_T <<struct>> #LightYellow
@@ -278,6 +337,9 @@ class "struct_with_struct_t" as TYPEDEF_STRUCT_WITH_STRUCT_T <<struct>> #LightYe
 
 class "struct_with_struct_t_inner_struct" as TYPEDEF_STRUCT_WITH_STRUCT_T_INNER_STRUCT <<struct>> #LightYellow
 {
+    + int inner_x
+    + int inner_y
+    + char[16] inner_label
 }
 
 class "struct_with_union_t" as TYPEDEF_STRUCT_WITH_UNION_T <<struct>> #LightYellow
@@ -289,6 +351,12 @@ class "struct_with_union_t" as TYPEDEF_STRUCT_WITH_UNION_T <<struct>> #LightYell
 
 class "union_with_struct_t_complex_struct" as TYPEDEF_UNION_WITH_STRUCT_T_COMPLEX_STRUCT <<struct>> #LightYellow
 {
+    + char[16] header
+    + int payload_size
+    + void * payload_data
+    + struct { int error_code
+    + char[128] error_msg
+    + } error_info
 }
 
 class "operation_type_t" as TYPEDEF_OPERATION_TYPE_T <<enumeration>> #LightYellow
@@ -389,6 +457,8 @@ class "uint8" as TYPEDEF_UINT8 <<typedef>> #LightYellow
 
 class "__anonymous_struct___level3_union" as TYPEDEF___ANONYMOUS_STRUCT___LEVEL3_UNION <<union>> #LightYellow
 {
+    + int level3_int
+    + float level3_float
 }
 
 class "callback_with_anon_struct_t_anonymous_union_2" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_ANONYMOUS_UNION_2 <<union>> #LightYellow
@@ -399,10 +469,17 @@ class "callback_with_anon_struct_t_anonymous_union_2" as TYPEDEF_CALLBACK_WITH_A
 
 class "complex_naming_test_t_mixed_union" as TYPEDEF_COMPLEX_NAMING_TEST_T_MIXED_UNION <<union>> #LightYellow
 {
+    + int union_value
+    + struct { int union_struct_field
+    + struct { int deep_union_struct
+    + } deep_in_union
+    + } union_struct
 }
 
 class "config_param_config_value" as TYPEDEF_CONFIG_PARAM_CONFIG_VALUE <<union>> #LightYellow
 {
+    + int int_config
+    + float float_config
 }
 
 class "config_value" as TYPEDEF_CONFIG_VALUE <<union>> #LightYellow
@@ -458,14 +535,18 @@ class "mixed_union_t" as TYPEDEF_MIXED_UNION_T <<union>> #LightYellow
 
 class "multi_anonymous_t_first_anon_union" as TYPEDEF_MULTI_ANONYMOUS_T_FIRST_ANON_UNION <<union>> #LightYellow
 {
+    + int union_int
+    + float union_float
 }
 
 class "multiple_simple_anonymous_t_first_union" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_FIRST_UNION <<union>> #LightYellow
 {
+    + int union_field1
 }
 
 class "multiple_simple_anonymous_t_second_union" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_SECOND_UNION <<union>> #LightYellow
 {
+    + int union_field2
 }
 
 class "result_data" as TYPEDEF_RESULT_DATA <<union>> #LightYellow
@@ -476,6 +557,8 @@ class "result_data" as TYPEDEF_RESULT_DATA <<union>> #LightYellow
 
 class "result_generator_t_result_data" as TYPEDEF_RESULT_GENERATOR_T_RESULT_DATA <<union>> #LightYellow
 {
+    + int success_value
+    + char[128] error_message
 }
 
 class "second_union" as TYPEDEF_SECOND_UNION <<union>> #LightYellow
@@ -491,6 +574,13 @@ class "struct_union" as TYPEDEF_STRUCT_UNION <<union>> #LightYellow
 
 class "struct_with_union_t_data_union" as TYPEDEF_STRUCT_WITH_UNION_T_DATA_UNION <<union>> #LightYellow
 {
+    + int int_value
+    + float float_value
+    + char[64] string_value
+    + struct { int x
+    + struct { int y
+    + struct { int z
+    + } point_value
 }
 
 class "union_with_struct_t" as TYPEDEF_UNION_WITH_STRUCT_T <<union>> #LightYellow
@@ -510,6 +600,11 @@ class "union_with_union_t" as TYPEDEF_UNION_WITH_UNION_T <<union>> #LightYellow
 
 class "union_with_union_t_nested_union" as TYPEDEF_UNION_WITH_UNION_T_NESTED_UNION <<union>> #LightYellow
 {
+    + float nested_float
+    + double nested_double
+    + union { char deep_char
+    + short deep_short
+    + } deep_union
 }
 
 

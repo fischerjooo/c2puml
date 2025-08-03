@@ -952,7 +952,48 @@
           ]
         },
         "array_of_anon_structs_t_items": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "item_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "item_name",
+              "type": "char[32]",
+              "value": null
+            },
+            {
+              "name": "int_data",
+              "type": "union { int",
+              "value": null
+            },
+            {
+              "name": "float_data",
+              "type": "float",
+              "value": null
+            },
+            {
+              "name": "x",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "point_data",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "item_value",
+              "type": "}",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "array_of_anon_structs_t_items",
           "tag_name": "",
@@ -1041,14 +1082,36 @@
           ]
         },
         "complex_handler_t_memory_manager": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "max_size",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "size_t",
+              "type": "int ( * resize_func ) ( void * *",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "complex_handler_t_memory_manager",
           "tag_name": "",
           "uses": []
         },
         "complex_handler_t_validator": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "name",
+              "type": "char[32]",
+              "value": null
+            },
+            {
+              "name": "int",
+              "type": "void ( * format_func ) ( char *",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "complex_handler_t_validator",
           "tag_name": "",
@@ -1088,21 +1151,109 @@
           ]
         },
         "complex_naming_test_t_first_struct": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "first_a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "nested_a1",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "deep_a1",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "deep_struct_a1",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "deep_a2",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "deep_struct_a2",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "nested_struct_a",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "nested_a2",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "nested_struct_a2",
+              "type": "}",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "complex_naming_test_t_first_struct",
           "tag_name": "",
           "uses": []
         },
         "complex_naming_test_t_second_struct": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "second_a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "nested_b1",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "nested_struct_b",
+              "type": "}",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "complex_naming_test_t_second_struct",
           "tag_name": "",
           "uses": []
         },
         "complex_naming_test_t_third_struct": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "third_a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "struct_union_int",
+              "type": "union { int",
+              "value": null
+            },
+            {
+              "name": "struct_union_struct_field",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "struct_union_struct",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "struct_union",
+              "type": "}",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "complex_naming_test_t_third_struct",
           "tag_name": "",
@@ -1152,7 +1303,23 @@
           "uses": []
         },
         "data_union_point_value": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "z",
+              "type": "int",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "data_union_point_value",
           "tag_name": "",
@@ -1180,14 +1347,66 @@
           ]
         },
         "extreme_nesting_test_t_level2_struct_1": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "level4_field",
+              "type": "struct { struct { int",
+              "value": null
+            },
+            {
+              "name": "level4_struct_1",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "level4_field2",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "level4_struct_2",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "level3_struct_1",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "level3_field",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "level3_struct_2",
+              "type": "}",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "extreme_nesting_test_t_level2_struct_1",
           "tag_name": "",
           "uses": []
         },
         "extreme_nesting_test_t_level2_struct_2": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "mixed_field",
+              "type": "union { struct { int",
+              "value": null
+            },
+            {
+              "name": "mixed_struct",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "mixed_union",
+              "type": "}",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "extreme_nesting_test_t_level2_struct_2",
           "tag_name": "",
@@ -1227,14 +1446,31 @@
           "uses": []
         },
         "item_value_point_data": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "item_value_point_data",
           "tag_name": "",
           "uses": []
         },
         "mixed_union_mixed_struct": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "mixed_field",
+              "type": "int",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "mixed_union_mixed_struct",
           "tag_name": "",
@@ -1261,7 +1497,28 @@
           ]
         },
         "moderately_nested_t_level2_struct": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "level2_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "level3_int",
+              "type": "union { int",
+              "value": null
+            },
+            {
+              "name": "level3_float",
+              "type": "float",
+              "value": null
+            },
+            {
+              "name": "level3_union",
+              "type": "}",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "moderately_nested_t_level2_struct",
           "tag_name": "",
@@ -1295,14 +1552,46 @@
           ]
         },
         "multi_anonymous_t_first_anon_struct": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "first_x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "first_y",
+              "type": "int",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "multi_anonymous_t_first_anon_struct",
           "tag_name": "",
           "uses": []
         },
         "multi_anonymous_t_second_anon_struct": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "second_name",
+              "type": "char[32]",
+              "value": null
+            },
+            {
+              "name": "second_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "deep_value",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "deep_struct",
+              "type": "}",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "multi_anonymous_t_second_anon_struct",
           "tag_name": "",
@@ -1348,21 +1637,39 @@
           ]
         },
         "multiple_simple_anonymous_t_first_anon": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "first_field",
+              "type": "int",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "multiple_simple_anonymous_t_first_anon",
           "tag_name": "",
           "uses": []
         },
         "multiple_simple_anonymous_t_second_anon": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "second_field",
+              "type": "int",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "multiple_simple_anonymous_t_second_anon",
           "tag_name": "",
           "uses": []
         },
         "multiple_simple_anonymous_t_third_anon": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "third_field",
+              "type": "int",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "multiple_simple_anonymous_t_third_anon",
           "tag_name": "",
@@ -1488,7 +1795,13 @@
           "uses": []
         },
         "struct_union_struct_union_struct": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "struct_union_struct_field",
+              "type": "int",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "struct_union_struct_union_struct",
           "tag_name": "",
@@ -1525,7 +1838,23 @@
           ]
         },
         "struct_with_struct_t_inner_struct": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "inner_x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "inner_y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "inner_label",
+              "type": "char[16]",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "struct_with_struct_t_inner_struct",
           "tag_name": "",
@@ -1557,7 +1886,38 @@
           ]
         },
         "union_with_struct_t_complex_struct": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "header",
+              "type": "char[16]",
+              "value": null
+            },
+            {
+              "name": "payload_size",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "payload_data",
+              "type": "void *",
+              "value": null
+            },
+            {
+              "name": "error_code",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "error_msg",
+              "type": "char[128]",
+              "value": null
+            },
+            {
+              "name": "error_info",
+              "type": "}",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "union_with_struct_t_complex_struct",
           "tag_name": "",
@@ -1566,7 +1926,18 @@
       },
       "unions": {
         "__anonymous_struct___level3_union": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "level3_int",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "level3_float",
+              "type": "float",
+              "value": null
+            }
+          ],
           "name": "__anonymous_struct___level3_union",
           "tag_name": "",
           "uses": []
@@ -1589,13 +1960,50 @@
           "uses": []
         },
         "complex_naming_test_t_mixed_union": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "union_value",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "union_struct_field",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "deep_union_struct",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "deep_in_union",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "union_struct",
+              "type": "}",
+              "value": null
+            }
+          ],
           "name": "complex_naming_test_t_mixed_union",
           "tag_name": "",
           "uses": []
         },
         "config_param_config_value": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "int_config",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "float_config",
+              "type": "float",
+              "value": null
+            }
+          ],
           "name": "config_param_config_value",
           "tag_name": "",
           "uses": []
@@ -1758,19 +2166,42 @@
           "uses": []
         },
         "multi_anonymous_t_first_anon_union": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "union_int",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "union_float",
+              "type": "float",
+              "value": null
+            }
+          ],
           "name": "multi_anonymous_t_first_anon_union",
           "tag_name": "",
           "uses": []
         },
         "multiple_simple_anonymous_t_first_union": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "union_field1",
+              "type": "int",
+              "value": null
+            }
+          ],
           "name": "multiple_simple_anonymous_t_first_union",
           "tag_name": "",
           "uses": []
         },
         "multiple_simple_anonymous_t_second_union": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "union_field2",
+              "type": "int",
+              "value": null
+            }
+          ],
           "name": "multiple_simple_anonymous_t_second_union",
           "tag_name": "",
           "uses": []
@@ -1793,7 +2224,18 @@
           "uses": []
         },
         "result_generator_t_result_data": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "success_value",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "error_message",
+              "type": "char[128]",
+              "value": null
+            }
+          ],
           "name": "result_generator_t_result_data",
           "tag_name": "",
           "uses": []
@@ -1830,7 +2272,43 @@
           ]
         },
         "struct_with_union_t_data_union": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "int_value",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "float_value",
+              "type": "float",
+              "value": null
+            },
+            {
+              "name": "string_value",
+              "type": "char[64]",
+              "value": null
+            },
+            {
+              "name": "x",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "z",
+              "type": "struct { int",
+              "value": null
+            },
+            {
+              "name": "point_value",
+              "type": "}",
+              "value": null
+            }
+          ],
           "name": "struct_with_union_t_data_union",
           "tag_name": "",
           "uses": []
@@ -1889,7 +2367,33 @@
           ]
         },
         "union_with_union_t_nested_union": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "nested_float",
+              "type": "float",
+              "value": null
+            },
+            {
+              "name": "nested_double",
+              "type": "double",
+              "value": null
+            },
+            {
+              "name": "deep_char",
+              "type": "union { char",
+              "value": null
+            },
+            {
+              "name": "deep_short",
+              "type": "short",
+              "value": null
+            },
+            {
+              "name": "deep_union",
+              "type": "}",
+              "value": null
+            }
+          ],
           "name": "union_with_union_t_nested_union",
           "tag_name": "",
           "uses": []
