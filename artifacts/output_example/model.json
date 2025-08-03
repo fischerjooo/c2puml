@@ -610,6 +610,9 @@
           "callback_with_anon_struct_t_anonymous_struct_1",
           "callback_with_anon_struct_t_anonymous_union_2"
         ],
+        "callback_with_anon_struct_t_anonymous_struct_1": [
+          "callback_with_anon_struct_t_anonymous_struct_1_config_value"
+        ],
         "complex_callback_t": [
           "complex_callback_t_anonymous_struct_1"
         ],
@@ -971,25 +974,17 @@
               "value": null
             },
             {
-              "name": "int_config",
-              "type": "union { int",
-              "value": null
-            },
-            {
-              "name": "float_config",
-              "type": "float",
-              "value": null
-            },
-            {
               "name": "config_value",
-              "type": "}",
+              "type": "callback_with_anon_struct_t_anonymous_struct_1_config_value",
               "value": null
             }
           ],
           "methods": [],
           "name": "callback_with_anon_struct_t_anonymous_struct_1",
           "tag_name": "",
-          "uses": []
+          "uses": [
+            "callback_with_anon_struct_t_anonymous_struct_1_config_value"
+          ]
         },
         "complex_callback_t_anonymous_struct_1": {
           "fields": [
@@ -1568,6 +1563,12 @@
         "__anonymous_struct___level3_union": {
           "fields": [],
           "name": "__anonymous_struct___level3_union",
+          "tag_name": "",
+          "uses": []
+        },
+        "callback_with_anon_struct_t_anonymous_struct_1_config_value": {
+          "fields": [],
+          "name": "callback_with_anon_struct_t_anonymous_struct_1_config_value",
           "tag_name": "",
           "uses": []
         },

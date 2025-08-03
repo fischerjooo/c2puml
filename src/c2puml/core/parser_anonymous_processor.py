@@ -52,9 +52,13 @@ class AnonymousTypedefProcessor:
                 if struct_type == "struct":
                     anon_struct = self._create_anonymous_struct(anon_name, struct_content)
                     file_model.structs[anon_name] = anon_struct
+                    # Recursively process the new structure for nested anonymous structures
+                    self._process_structure_recursively(file_model, anon_struct)
                 elif struct_type == "union":
                     anon_union = self._create_anonymous_union(anon_name, struct_content)
                     file_model.unions[anon_name] = anon_union
+                    # Recursively process the new structure for nested anonymous structures
+                    self._process_structure_recursively(file_model, anon_union)
                 
                 # Track the relationship
                 if alias_name not in file_model.anonymous_relationships:
@@ -141,12 +145,52 @@ class AnonymousTypedefProcessor:
     def _create_anonymous_struct(self, name: str, content: str) -> Struct:
         """Create a Struct object from anonymous content."""
         fields = self._parse_struct_fields(content)
-        return Struct(name=name, fields=fields)
+        struct = Struct(name=name, fields=fields)
+        return struct
 
     def _create_anonymous_union(self, name: str, content: str) -> Union:
         """Create a Union object from anonymous content."""
         fields = self._parse_struct_fields(content)
-        return Union(name=name, fields=fields)
+        union = Union(name=name, fields=fields)
+        return union
+
+    def _process_structure_recursively(self, file_model: FileModel, struct_or_union: object) -> None:
+        """Recursively process a newly created structure to extract nested anonymous structures."""
+        # Process fields for anonymous structures
+        for field in struct_or_union.fields:
+            if self._field_contains_anonymous_struct(field):
+                # Process this field for anonymous structures
+                self._extract_anonymous_from_field(file_model, struct_or_union.name, field)
+
+    def _split_balanced_fields(self, content: str) -> List[str]:
+        """Split field declarations on semicolons while respecting brace balance."""
+        fields = []
+        current_field = ""
+        brace_count = 0
+        
+        i = 0
+        while i < len(content):
+            char = content[i]
+            current_field += char
+            
+            if char == '{':
+                brace_count += 1
+            elif char == '}':
+                brace_count -= 1
+            elif char == ';' and brace_count == 0:
+                # This semicolon is at the top level, so it ends a field
+                field = current_field[:-1].strip()  # Remove the semicolon and strip
+                if field:
+                    fields.append(field)
+                current_field = ""
+            
+            i += 1
+        
+        # Handle the last field if it doesn't end with a semicolon
+        if current_field.strip():
+            fields.append(current_field.strip())
+        
+        return fields
 
     def _parse_struct_fields(self, content: str) -> List[Field]:
         """Parse field definitions from struct/union content."""
@@ -157,8 +201,8 @@ class AnonymousTypedefProcessor:
         if not content:
             return fields
         
-        # Simple field parsing - split by semicolons and extract type/name
-        field_declarations = [f.strip() for f in content.split(';') if f.strip()]
+        # Parse field declarations with balanced brace handling
+        field_declarations = self._split_balanced_fields(content)
         
         for decl in field_declarations:
             if not decl:
@@ -442,9 +486,13 @@ class AnonymousTypedefProcessor:
                 if struct_type == "struct":
                     anon_struct = self._create_anonymous_struct(anon_name, struct_content)
                     file_model.structs[anon_name] = anon_struct
+                    # Recursively process the new structure for nested anonymous structures
+                    self._process_structure_recursively(file_model, anon_struct)
                 elif struct_type == "union":
                     anon_union = self._create_anonymous_union(anon_name, struct_content)
                     file_model.unions[anon_name] = anon_union
+                    # Recursively process the new structure for nested anonymous structures
+                    self._process_structure_recursively(file_model, anon_union)
                 
                 # Track the relationship
                 if parent_name not in file_model.anonymous_relationships:
@@ -467,9 +515,13 @@ class AnonymousTypedefProcessor:
                 if struct_type == "struct":
                     anon_struct = self._create_anonymous_struct(anon_name, struct_content)
                     file_model.structs[anon_name] = anon_struct
+                    # Recursively process the new structure for nested anonymous structures
+                    self._process_structure_recursively(file_model, anon_struct)
                 elif struct_type == "union":
                     anon_union = self._create_anonymous_union(anon_name, struct_content)
                     file_model.unions[anon_name] = anon_union
+                    # Recursively process the new structure for nested anonymous structures
+                    self._process_structure_recursively(file_model, anon_union)
                 
                 # Track the relationship
                 if parent_name not in file_model.anonymous_relationships:
@@ -491,9 +543,13 @@ class AnonymousTypedefProcessor:
                     if struct_type == "struct":
                         anon_struct = self._create_anonymous_struct(anon_name, struct_content)
                         file_model.structs[anon_name] = anon_struct
+                        # Recursively process the new structure for nested anonymous structures
+                        self._process_structure_recursively(file_model, anon_struct)
                     elif struct_type == "union":
                         anon_union = self._create_anonymous_union(anon_name, struct_content)
                         file_model.unions[anon_name] = anon_union
+                        # Recursively process the new structure for nested anonymous structures
+                        self._process_structure_recursively(file_model, anon_union)
                     
                     # Track the relationship
                     if parent_name not in file_model.anonymous_relationships:

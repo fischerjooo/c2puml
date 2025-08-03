@@ -107,4 +107,7 @@ HEADER_NETWORK ..> TYPEDEF_NETWORKSTATUS : <<declares>>
 ' Uses relationships
 TYPEDEF_DATABASECONFIG ..> TYPEDEF_DATABASETYPE : <<uses>>
 
+' Anonymous structure relationships (composition)
+
+
 @enduml

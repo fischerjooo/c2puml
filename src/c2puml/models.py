@@ -340,6 +340,7 @@ class FileModel:
         new_data["unions"] = unions
         new_data["aliases"] = aliases
         new_data["include_relations"] = include_relations
+        new_data["anonymous_relationships"] = data.get("anonymous_relationships", {})
 
         return cls(**new_data)
 
