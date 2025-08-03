@@ -23,6 +23,20 @@
 3. Re-enable and fix anonymous structure tests
 4. Ensure compatibility with other fixes (especially Issue 1.2)
 
+**Improved Naming Convention**:
+When re-enabling, implement intuitive naming for anonymous structures:
+- Use pattern: `ParentType_fieldName` instead of generic `parent_anonymous_struct_1`
+- Example: `struct { ... } position` in type `Tree` becomes `Tree_position`
+- For nested anonymous structures: `Tree_branch_leaf` (parent_parent_field)
+- This makes generated diagrams self-documenting and easier to understand
+
+**Implementation Example**:
+```python
+def _generate_anonymous_name(self, parent_name: str, field_name: str) -> str:
+    """Generate meaningful name: ParentType_fieldName"""
+    return f"{parent_name}_{field_name}"
+```
+
 ## Development Guidelines
 
 ### Test-Driven Development Approach
