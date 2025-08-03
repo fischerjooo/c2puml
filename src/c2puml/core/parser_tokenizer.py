@@ -1169,12 +1169,17 @@ def find_struct_fields(
         return fields
     pos += 1  # Skip opening brace
 
-    # Find the closing brace position
+    # Find the closing brace position of the main struct body
     closing_brace_pos = pos
-    while (
-        closing_brace_pos <= struct_end
-        and tokens[closing_brace_pos].type != TokenType.RBRACE
-    ):
+    brace_count = 1  # Start at 1 because we're already past the opening brace
+    while closing_brace_pos <= struct_end:
+        if tokens[closing_brace_pos].type == TokenType.LBRACE:
+            brace_count += 1
+        elif tokens[closing_brace_pos].type == TokenType.RBRACE:
+            brace_count -= 1
+            if brace_count == 0:
+                # This is the closing brace of the main struct body
+                break
         closing_brace_pos += 1
 
     # Only parse fields up to the closing brace
@@ -1198,6 +1203,22 @@ def find_struct_fields(
             if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
                 field_tokens.append(tokens[pos])
             pos += 1
+        
+        # For nested structures, we need to continue collecting tokens until we find the field name
+        # and the semicolon that ends the entire field
+        if (len(field_tokens) >= 3 and 
+            field_tokens[0].type in [TokenType.STRUCT, TokenType.UNION] and 
+            field_tokens[1].type == TokenType.LBRACE):
+            # This might be a nested structure, continue collecting until we find the field name
+            temp_pos = pos
+            while temp_pos < len(tokens):
+                if tokens[temp_pos].type == TokenType.SEMICOLON:
+                    # Found the semicolon that ends the field
+                    break
+                if tokens[temp_pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                    field_tokens.append(tokens[temp_pos])
+                temp_pos += 1
+            pos = temp_pos
 
         # Parse field from collected tokens
         if len(field_tokens) >= 2:
@@ -1225,7 +1246,7 @@ def find_struct_fields(
                     if field_name not in ["[", "]", ";", "}"]:
                         fields.append((field_name, field_type))
                         # Skip parsing the nested struct's fields as separate fields
-                        continue
+                        # Let the normal flow handle semicolon advancement
             # Check if this is a nested union field
             elif (
                 len(field_tokens) >= 3
@@ -1250,7 +1271,7 @@ def find_struct_fields(
                     if field_name not in ["[", "]", ";", "}"]:
                         fields.append((field_name, field_type))
                         # Skip parsing the nested union's fields as separate fields
-                        continue
+                        # Let the normal flow handle semicolon advancement
             # Function pointer array field: type (*name[size])(params)
             elif (
                 len(field_tokens) >= 8

@@ -35,7 +35,7 @@ class TestStructFieldOrderPreservation(unittest.TestCase):
         """
         
         # Create a temporary file with the test code
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.h', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
             f.write(source_code)
             temp_file = f.name
         
