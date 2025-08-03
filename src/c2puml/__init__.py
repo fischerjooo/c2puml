@@ -28,7 +28,7 @@ from .models import (
 )
 
 # Import core processing modules
-from .core.parser import CParser, Parser
+from .core.parser import Parser
 from .core.transformer import Transformer
 from .core.generator import Generator
 from .core.preprocessor import PreprocessorManager
@@ -57,7 +57,6 @@ __all__ = [
     "main",
     "Config",
     "Parser",
-    "CParser",
     "Transformer",
     "Generator",
     "PreprocessorManager",

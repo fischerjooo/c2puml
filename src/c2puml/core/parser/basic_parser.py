@@ -1,7 +1,7 @@
 """
-Simple Parser Module
+Basic Parser Module
 
-Handles basic typedefs and simple types with minimal complexity:
+Handles basic typedefs and types with minimal complexity:
 - typedef int MyInt;
 - typedef char* MyString;
 - typedef int MyArray[10];
@@ -14,13 +14,13 @@ from typing import List, Optional, Dict, Any
 from .base import BaseParser, ParserLevel, ParseContext, ParseResult, TypedefInfo
 
 
-class SimpleTypedefParser(BaseParser):
-    """Parser for simple typedefs like 'typedef int MyInt;'."""
+class BasicTypedefParser(BaseParser):
+    """Parser for basic typedefs like 'typedef int MyInt;'."""
     
     def __init__(self):
         super().__init__()
         self.level = ParserLevel.SIMPLE
-        self.name = "SimpleTypedefParser"
+        self.name = "BasicTypedefParser"
     
     def can_parse(self, text: str, context: ParseContext) -> bool:
         """Check if this parser can handle the given typedef text."""
@@ -49,7 +49,7 @@ class SimpleTypedefParser(BaseParser):
             text = self.preprocess_text(text)
             
             # Extract basic information
-            typedef_info = self._parse_simple_typedef(text, context)
+            typedef_info = self._parse_basic_typedef(text, context)
             
             return ParseResult(
                 success=True,
@@ -61,22 +61,22 @@ class SimpleTypedefParser(BaseParser):
         except Exception as e:
             return ParseResult(
                 success=False,
-                error_message=f"Failed to parse simple typedef: {str(e)}",
+                error_message=f"Failed to parse basic typedef: {str(e)}",
                 parser_level=self.level
             )
     
-    def _parse_simple_typedef(self, text: str, context: ParseContext) -> TypedefInfo:
-        """Parse a simple typedef into TypedefInfo."""
+    def _parse_basic_typedef(self, text: str, context: ParseContext) -> TypedefInfo:
+        """Parse a basic typedef into TypedefInfo."""
         # Match: typedef <type> <name>;
         match = re.match(r'typedef\s+(\w+(?:\s*\*\s*|\s+\[[^\]]*\])*)\s+(\w+)\s*;', text)
         
         if not match:
-            raise ValueError(f"Cannot parse simple typedef: {text}")
+            raise ValueError(f"Cannot parse basic typedef: {text}")
         
         base_type, name = match.groups()
         
         # Determine typedef type and extract additional info
-        typedef_type = "simple"
+        typedef_type = "basic"
         pointer_level = 0
         array_size = None
         is_const = False
@@ -121,22 +121,22 @@ class SimpleTypedefParser(BaseParser):
         )
 
 
-class SimpleFieldParser(BaseParser):
-    """Parser for simple field declarations within structs/unions."""
+class BasicFieldParser(BaseParser):
+    """Parser for basic field declarations within structs/unions."""
     
     def __init__(self):
         super().__init__()
         self.level = ParserLevel.SIMPLE
-        self.name = "SimpleFieldParser"
+        self.name = "BasicFieldParser"
     
     def can_parse(self, text: str, context: ParseContext) -> bool:
         """Check if this parser can handle the given field text."""
         text = self.preprocess_text(text)
         
-        # Simple field pattern: <type> <name>;
-        simple_pattern = r'^\s*\w+(?:\s*\*\s*|\s+\[[^\]]*\])*\s+\w+\s*;?\s*$'
+        # Basic field pattern: <type> <name>;
+        basic_pattern = r'^\s*\w+(?:\s*\*\s*|\s+\[[^\]]*\])*\s+\w+\s*;?\s*$'
         
-        if not re.match(simple_pattern, text):
+        if not re.match(basic_pattern, text):
             return False
         
         # Check that it's not complex
@@ -155,7 +155,7 @@ class SimpleFieldParser(BaseParser):
             text = self.preprocess_text(text)
             
             # Parse the field
-            field = self._parse_simple_field(text)
+            field = self._parse_basic_field(text)
             
             return ParseResult(
                 success=True,
@@ -167,12 +167,12 @@ class SimpleFieldParser(BaseParser):
         except Exception as e:
             return ParseResult(
                 success=False,
-                error_message=f"Failed to parse simple field: {str(e)}",
+                error_message=f"Failed to parse basic field: {str(e)}",
                 parser_level=self.level
             )
     
-    def _parse_simple_field(self, text: str):
-        """Parse a simple field declaration."""
+    def _parse_basic_field(self, text: str):
+        """Parse a basic field declaration."""
         from ...models import Field
         
         # Remove trailing semicolon if present
@@ -214,22 +214,22 @@ class SimpleFieldParser(BaseParser):
         raise ValueError(f"Cannot parse field: {text}")
 
 
-class SimpleTypeParser(BaseParser):
-    """Parser for simple type declarations."""
+class BasicTypeParser(BaseParser):
+    """Parser for basic type declarations."""
     
     def __init__(self):
         super().__init__()
         self.level = ParserLevel.SIMPLE
-        self.name = "SimpleTypeParser"
+        self.name = "BasicTypeParser"
     
     def can_parse(self, text: str, context: ParseContext) -> bool:
         """Check if this parser can handle the given type text."""
         text = self.preprocess_text(text)
         
-        # Simple type pattern: just a type name
-        simple_pattern = r'^\s*\w+(?:\s*\*\s*|\s+\[[^\]]*\])*\s*$'
+        # Basic type pattern: just a type name
+        basic_pattern = r'^\s*\w+(?:\s*\*\s*|\s+\[[^\]]*\])*\s*$'
         
-        if not re.match(simple_pattern, text):
+        if not re.match(basic_pattern, text):
             return False
         
         # Check that it's not complex
@@ -248,7 +248,7 @@ class SimpleTypeParser(BaseParser):
             text = self.preprocess_text(text)
             
             # Parse the type
-            type_info = self._parse_simple_type(text)
+            type_info = self._parse_basic_type(text)
             
             return ParseResult(
                 success=True,
@@ -260,12 +260,12 @@ class SimpleTypeParser(BaseParser):
         except Exception as e:
             return ParseResult(
                 success=False,
-                error_message=f"Failed to parse simple type: {str(e)}",
+                error_message=f"Failed to parse basic type: {str(e)}",
                 parser_level=self.level
             )
     
-    def _parse_simple_type(self, text: str) -> Dict[str, Any]:
-        """Parse a simple type declaration."""
+    def _parse_basic_type(self, text: str) -> Dict[str, Any]:
+        """Parse a basic type declaration."""
         text = text.strip()
         
         # Extract basic type information

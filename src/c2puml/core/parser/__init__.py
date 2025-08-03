@@ -6,7 +6,7 @@ with different complexity levels handled by specialized sub-modules.
 
 Architecture:
 - base.py: Base classes and interfaces
-- simple_parser.py: Basic typedefs and simple types
+- basic_parser.py: Basic typedefs and types
 - struct_parser.py: Struct/union parsing
 - complex_parser.py: Function pointers, arrays, nested structures
 - anonymous_parser.py: Anonymous struct/union extraction
@@ -14,21 +14,22 @@ Architecture:
 - pipeline.py: Main parsing pipeline coordinator
 """
 
-from .pipeline import UnifiedParser, AnonymousTypedefProcessor
+from .pipeline import UnifiedParser, AnonymousTypedefProcessor, Parser
 from .base import ParserLevel, BaseParser, ParseResult
-from .simple_parser import SimpleTypedefParser, SimpleFieldParser, SimpleTypeParser
+from .basic_parser import BasicTypedefParser, BasicFieldParser, BasicTypeParser
 from .struct_parser import StructTypedefParser, UnionTypedefParser, EnumTypedefParser
 
 __all__ = [
     # New unified system
     'UnifiedParser',
     'AnonymousTypedefProcessor',
+    'Parser',
     'ParserLevel',
     'BaseParser', 
     'ParseResult',
-    'SimpleTypedefParser',
-    'SimpleFieldParser',
-    'SimpleTypeParser',
+    'BasicTypedefParser',
+    'BasicFieldParser',
+    'BasicTypeParser',
     'StructTypedefParser',
     'UnionTypedefParser',
     'EnumTypedefParser'

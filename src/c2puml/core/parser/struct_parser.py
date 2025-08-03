@@ -12,7 +12,7 @@ import re
 from typing import List, Optional, Dict, Any, Tuple
 
 from .base import BaseParser, ParserLevel, ParseContext, ParseResult, TypedefInfo
-from .simple_parser import SimpleFieldParser
+from .basic_parser import BasicFieldParser
 
 
 class StructTypedefParser(BaseParser):
@@ -22,7 +22,7 @@ class StructTypedefParser(BaseParser):
         super().__init__()
         self.level = ParserLevel.STRUCT
         self.name = "StructTypedefParser"
-        self.field_parser = SimpleFieldParser()
+        self.field_parser = BasicFieldParser()
     
     def can_parse(self, text: str, context: ParseContext) -> bool:
         """Check if this parser can handle the given typedef text."""
@@ -121,7 +121,7 @@ class StructTypedefParser(BaseParser):
         if not decl.strip():
             return None
         
-        # Try to parse as simple field first
+        # Try to parse as basic field first
         field_context = ParseContext(
             file_path=context.file_path,
             line_number=context.line_number,
@@ -186,7 +186,7 @@ class UnionTypedefParser(BaseParser):
         super().__init__()
         self.level = ParserLevel.STRUCT
         self.name = "UnionTypedefParser"
-        self.field_parser = SimpleFieldParser()
+        self.field_parser = BasicFieldParser()
     
     def can_parse(self, text: str, context: ParseContext) -> bool:
         """Check if this parser can handle the given typedef text."""
@@ -285,7 +285,7 @@ class UnionTypedefParser(BaseParser):
         if not decl.strip():
             return None
         
-        # Try to parse as simple field first
+        # Try to parse as basic field first
         field_context = ParseContext(
             file_path=context.file_path,
             line_number=context.line_number,

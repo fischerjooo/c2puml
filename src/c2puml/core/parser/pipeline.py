@@ -7,14 +7,15 @@ and provides the interface for the existing architecture.
 
 import logging
 from typing import List, Optional, Dict, Any, Set
+from pathlib import Path
 
 from .base import (
     ParserLevel, ParseContext, ParseResult, TypedefInfo, 
     AnonymousStructure, ParserRegistry, ParsingPipeline, ParserError
 )
-from .simple_parser import SimpleTypedefParser, SimpleFieldParser, SimpleTypeParser
+from .basic_parser import BasicTypedefParser, BasicFieldParser, BasicTypeParser
 from .struct_parser import StructTypedefParser, UnionTypedefParser, EnumTypedefParser
-from ...models import Struct, Union, Field, Alias, FileModel
+from ...models import Struct, Union, Field, Alias, FileModel, ProjectModel
 
 
 class UnifiedParser:
@@ -31,10 +32,10 @@ class UnifiedParser:
     
     def _register_parsers(self):
         """Register all available parsers in the pipeline."""
-        # Simple parsers
-        self.pipeline.add_parser(SimpleTypedefParser())
-        self.pipeline.add_parser(SimpleFieldParser())
-        self.pipeline.add_parser(SimpleTypeParser())
+        # Basic parsers
+        self.pipeline.add_parser(BasicTypedefParser())
+        self.pipeline.add_parser(BasicFieldParser())
+        self.pipeline.add_parser(BasicTypeParser())
         
         # Struct parsers
         self.pipeline.add_parser(StructTypedefParser())
@@ -96,7 +97,7 @@ class UnifiedParser:
         )
         
         # Parse the typedef using the pipeline
-        result = self.pipeline.parse_text(alias_data.type, context)
+        result = self.pipeline.parse_text(alias_data.original_type, context)
         
         if result.success and isinstance(result.parsed_data, TypedefInfo):
             self.processed_typedefs[alias_name] = result.parsed_data
@@ -277,9 +278,365 @@ class UnifiedParser:
         return self.processed_typedefs.copy()
 
 
-# Backward compatibility interface
+# Compatibility wrapper for the old Parser interface
+class Parser:
+    """Compatibility wrapper for the old Parser interface using the new UnifiedParser system."""
+    
+    def __init__(self):
+        self.unified_parser = UnifiedParser()
+        self.logger = logging.getLogger(__name__)
+        # Import the old parser components directly
+        from ..parser_tokenizer import CTokenizer, StructureFinder
+        from ..preprocessor import PreprocessorManager
+        from ...models import ProjectModel, FileModel
+        from ...utils import detect_file_encoding
+        
+        self.tokenizer = CTokenizer()
+        self.StructureFinder = StructureFinder  # Store the class, not an instance
+        self.preprocessor = PreprocessorManager()
+        self.detect_encoding = detect_file_encoding
+        
+        # Add c_parser attribute for backward compatibility
+        self.c_parser = self
+    
+    def parse(self, source_folders: List[str], output_file: str = "model.json", 
+              recursive_search: bool = True, config=None) -> "ProjectModel":
+        """Parse C/C++ projects and generate model.json - compatibility wrapper."""
+        self.logger.info(f"Parsing project with {len(source_folders)} source folders")
+        
+        # Convert source folders to Path objects
+        source_paths = [Path(folder) for folder in source_folders]
+        
+        # Create project model with required parameters
+        project_name = config.project_name if config and hasattr(config, 'project_name') else "Unknown"
+        source_folder = str(source_paths[0]) if source_paths else "."
+        project_model = ProjectModel(project_name=project_name, source_folder=source_folder)
+        
+        # Process each source folder
+        for source_path in source_paths:
+            if not source_path.exists():
+                raise FileNotFoundError(f"Source folder not found: {source_path}")
+            
+            self.logger.info(f"Processing source folder: {source_path}")
+            
+            # Find all C/C++ files
+            c_files = []
+            if recursive_search:
+                c_files.extend(source_path.rglob("*.c"))
+                c_files.extend(source_path.rglob("*.h"))
+                c_files.extend(source_path.rglob("*.cpp"))
+                c_files.extend(source_path.rglob("*.hpp"))
+            else:
+                c_files.extend(source_path.glob("*.c"))
+                c_files.extend(source_path.glob("*.h"))
+                c_files.extend(source_path.glob("*.cpp"))
+                c_files.extend(source_path.glob("*.hpp"))
+            
+            self.logger.info(f"Found {len(c_files)} C/C++ files in {source_path}")
+            for file_path in c_files:
+                self.logger.info(f"  - {file_path}")
+            
+            # Process each file
+            for file_path in c_files:
+                try:
+                    self.logger.info(f"Processing file: {file_path}")
+                    
+                    # Read file content
+                    encoding = self.detect_encoding(file_path)
+                    with open(file_path, 'r', encoding=encoding) as f:
+                        content = f.read()
+                    
+                    self.logger.info(f"File content length: {len(content)}")
+                    
+                    # Tokenize content first
+                    tokens = self.tokenizer.tokenize(content)
+                    self.logger.info(f"Tokenized into {len(tokens)} tokens")
+                    
+                    # Preprocess tokens
+                    processed_tokens = self.preprocessor.process_file(tokens)
+                    self.logger.info(f"Preprocessed into {len(processed_tokens)} tokens")
+                    
+                    # Convert back to content for structure finder
+                    processed_content = ' '.join([token.value for token in processed_tokens])
+                    
+                    # Create structure finder with tokens
+                    structure_finder = self.StructureFinder(tokens)
+                    
+                    # Find structures
+                    structs = structure_finder.find_structs()
+                    unions = structure_finder.find_unions()
+                    enums = structure_finder.find_enums()
+                    functions = structure_finder.find_functions()
+                    typedefs = structure_finder.find_typedefs()
+                    
+                    self.logger.info(f"Found {len(structs)} structs, {len(unions)} unions, {len(enums)} enums, {len(functions)} functions, {len(typedefs)} typedefs")
+                    
+                    # Convert to the expected format
+                    structs_dict = {}
+                    unions_dict = {}
+                    enums_dict = {}
+                    aliases_dict = {}
+                    functions_dict = {}
+                    
+                    # Process typedefs
+                    for start_pos, end_pos, typedef_name, original_type in typedefs:
+                        self.logger.info(f"Processing typedef: {typedef_name} = {original_type}")
+                        # Create Alias object
+                        from ...models import Alias
+                        aliases_dict[typedef_name] = Alias(
+                            name=typedef_name,
+                            original_type=original_type
+                        )
+                        self.logger.info(f"Created alias object for {typedef_name}")
+                    
+                    # Process structs
+                    for start_pos, end_pos, name in structs:
+                        self.logger.info(f"Processing struct: {name} at positions {start_pos}-{end_pos}")
+                        struct_content = self._extract_token_range(tokens, start_pos, end_pos)
+                        fields = self._parse_struct_fields(tokens, start_pos, end_pos)
+                        self.logger.info(f"Found {len(fields)} fields for struct {name}")
+                        
+                        # Convert fields to Field objects
+                        field_objects = []
+                        for field_name, field_type in fields:
+                            field_objects.append(Field(name=field_name, type=field_type))
+                        
+                        # Create Struct object
+                        from ...models import Struct
+                        structs_dict[name] = Struct(
+                            name=name,
+                            fields=field_objects,
+                            tag_name=""
+                        )
+                        self.logger.info(f"Created struct object for {name}")
+                    
+                    # Process unions
+                    for start_pos, end_pos, name in unions:
+                        self.logger.info(f"Processing union: {name} at positions {start_pos}-{end_pos}")
+                        union_content = self._extract_token_range(tokens, start_pos, end_pos)
+                        fields = self._parse_struct_fields(tokens, start_pos, end_pos)
+                        # Convert fields to Field objects
+                        field_objects = []
+                        for field_name, field_type in fields:
+                            field_objects.append(Field(name=field_name, type=field_type))
+                        
+                        # Create Union object
+                        from ...models import Union
+                        unions_dict[name] = Union(
+                            name=name,
+                            fields=field_objects,
+                            tag_name=""
+                        )
+                        self.logger.info(f"Created union object for {name}")
+                    
+                    # Process enums
+                    for start_pos, end_pos, name in enums:
+                        self.logger.info(f"Processing enum: {name} at positions {start_pos}-{end_pos}")
+                        enum_content = self._extract_token_range(tokens, start_pos, end_pos)
+                        values = self._parse_enum_values(tokens, start_pos, end_pos)
+                        # Convert values to EnumValue objects
+                        from ...models import EnumValue, Enum
+                        enum_value_objects = []
+                        for value_name in values:
+                            enum_value_objects.append(EnumValue(name=value_name))
+                        
+                        # Create Enum object
+                        enums_dict[name] = Enum(
+                            name=name,
+                            values=enum_value_objects
+                        )
+                        self.logger.info(f"Created enum object for {name}")
+                    
+                    # Create file model
+                    self.logger.info(f"Creating file model with {len(structs_dict)} structs, {len(unions_dict)} unions, {len(enums_dict)} enums")
+                    file_model = FileModel(
+                        file_path=str(file_path),
+                        structs=structs_dict,
+                        unions=unions_dict,
+                        enums=enums_dict,
+                        aliases=aliases_dict,
+                        functions=functions_dict,
+                        includes=[]
+                    )
+                    
+                    # Process with unified parser
+                    self.unified_parser.process_file(file_model)
+                    
+                    # Add to project model
+                    project_model.files[file_path.name] = file_model
+                    self.logger.info(f"Added file {file_path.name} to project model")
+                    
+                except Exception as e:
+                    self.logger.warning(f"Failed to process file {file_path}: {e}")
+                    import traceback
+                    self.logger.warning(f"Traceback: {traceback.format_exc()}")
+        
+        # Save to output file
+        project_model.save(output_file)
+        
+        return project_model
+    
+    def parse_project(self, source_paths, config=None, recursive_search: bool = True) -> "ProjectModel":
+        """Parse project - compatibility method."""
+        # Handle both Path objects and strings
+        if isinstance(source_paths, (str, Path)):
+            source_paths = [source_paths]
+        
+        # Convert to Path objects if they're strings
+        path_objects = []
+        for path in source_paths:
+            if isinstance(path, str):
+                path_objects.append(Path(path))
+            else:
+                path_objects.append(path)
+        
+        source_folders = [str(path) for path in path_objects]
+        return self.parse(source_folders, "model.json", recursive_search, config)
+    
+    def parse_file(self, file_path: Path, filename: str) -> str:
+        """Parse single file - compatibility method."""
+        # For single file parsing, we'll create a temporary project model
+        project_name = "SingleFile"
+        source_folder = str(file_path.parent)
+        project_model = ProjectModel(project_name=project_name, source_folder=source_folder)
+        
+        try:
+            # Read file content
+            encoding = self.detect_encoding(file_path)
+            with open(file_path, 'r', encoding=encoding) as f:
+                content = f.read()
+            
+            # Tokenize content first
+            tokens = self.tokenizer.tokenize(content)
+            
+            # Preprocess tokens
+            processed_tokens = self.preprocessor.process_file(tokens)
+            
+            # Convert back to content for structure finder
+            processed_content = ' '.join([token.value for token in processed_tokens])
+            
+            # Create structure finder with tokens
+            structure_finder = self.StructureFinder(tokens)
+            
+            # Find structures
+            structs = structure_finder.find_structs()
+            unions = structure_finder.find_unions()
+            enums = structure_finder.find_enums()
+            functions = structure_finder.find_functions()
+            typedefs = structure_finder.find_typedefs()
+            
+            # Convert to the expected format
+            structs_dict = {}
+            unions_dict = {}
+            enums_dict = {}
+            aliases_dict = {}
+            functions_dict = {}
+            
+            # Process typedefs
+            for start_pos, end_pos, typedef_name, original_type in typedefs:
+                # Create Alias object
+                from ...models import Alias
+                aliases_dict[typedef_name] = Alias(
+                    name=typedef_name,
+                    original_type=original_type
+                )
+            
+            # Process structs
+            for start_pos, end_pos, name in structs:
+                struct_content = self._extract_token_range(tokens, start_pos, end_pos)
+                fields = self._parse_struct_fields(tokens, start_pos, end_pos)
+                # Convert fields to Field objects
+                field_objects = []
+                for field_name, field_type in fields:
+                    field_objects.append(Field(name=field_name, type=field_type))
+                
+                # Create Struct object
+                from ...models import Struct
+                structs_dict[name] = Struct(
+                    name=name,
+                    fields=field_objects,
+                    tag_name=""
+                )
+            
+            # Process unions
+            for start_pos, end_pos, name in unions:
+                union_content = self._extract_token_range(tokens, start_pos, end_pos)
+                fields = self._parse_struct_fields(tokens, start_pos, end_pos)
+                # Convert fields to Field objects
+                field_objects = []
+                for field_name, field_type in fields:
+                    field_objects.append(Field(name=field_name, type=field_type))
+                
+                # Create Union object
+                from ...models import Union
+                unions_dict[name] = Union(
+                    name=name,
+                    fields=field_objects,
+                    tag_name=""
+                )
+            
+            # Process enums
+            for start_pos, end_pos, name in enums:
+                enum_content = self._extract_token_range(tokens, start_pos, end_pos)
+                values = self._parse_enum_values(tokens, start_pos, end_pos)
+                # Convert values to EnumValue objects
+                from ...models import EnumValue, Enum
+                enum_value_objects = []
+                for value_name in values:
+                    enum_value_objects.append(EnumValue(name=value_name))
+                
+                # Create Enum object
+                enums_dict[name] = Enum(
+                    name=name,
+                    values=enum_value_objects
+                )
+            
+            # Create file model
+            file_model = FileModel(
+                file_path=str(file_path),
+                structs=structs_dict,
+                unions=unions_dict,
+                enums=enums_dict,
+                aliases=aliases_dict,
+                functions=functions_dict,
+                includes=[]
+            )
+            
+            # Process with unified parser
+            self.unified_parser.process_file(file_model)
+            
+            # Add to project model
+            project_model.files[file_path.name] = file_model
+            
+        except Exception as e:
+            self.logger.warning(f"Failed to process file {file_path}: {e}")
+            raise
+        
+        # Save to output file
+        output_file = f"{filename}_model.json"
+        project_model.save(output_file)
+        
+        return output_file
+    
+    def _extract_token_range(self, tokens, start, end):
+        """Extract text from token range."""
+        from ..parser_tokenizer import extract_token_range
+        return extract_token_range(tokens, start, end)
+    
+    def _parse_struct_fields(self, tokens, start, end):
+        """Parse struct fields."""
+        from ..parser_tokenizer import find_struct_fields
+        return find_struct_fields(tokens, start, end)
+    
+    def _parse_enum_values(self, tokens, start, end):
+        """Parse enum values."""
+        from ..parser_tokenizer import find_enum_values
+        return find_enum_values(tokens, start, end)
+
+
+# Main parser interface
 class AnonymousTypedefProcessor:
-    """Backward compatibility wrapper for the existing architecture."""
+    """Main processor for anonymous typedefs using the unified parser system."""
     
     def __init__(self):
         self.unified_parser = UnifiedParser()

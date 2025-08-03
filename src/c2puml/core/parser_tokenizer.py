@@ -532,6 +532,44 @@ class StructureFinder:
 
         return unions
 
+    def find_typedefs(self) -> List[Tuple[int, int, str, str]]:
+        """Find simple typedef definitions in token stream
+        
+        Returns:
+            List of tuples (start_pos, end_pos, typedef_name, original_type)
+        """
+        typedefs = []
+        self.pos = 0
+
+        while self.pos < len(self.tokens):
+            if self._current_token_is(TokenType.TYPEDEF):
+                # Check if this is a typedef struct/union/enum (skip these)
+                next_pos = self.pos + 1
+                while next_pos < len(self.tokens):
+                    token = self.tokens[next_pos]
+                    if token.type in [TokenType.STRUCT, TokenType.UNION, TokenType.ENUM]:
+                        # Skip typedef struct/union/enum - they're handled by other methods
+                        self.pos += 1
+                        break
+                    elif token.type == TokenType.IDENTIFIER:
+                        # This is a simple typedef, parse it
+                        typedef_info = self._parse_simple_typedef()
+                        if typedef_info:
+                            typedefs.append(typedef_info)
+                        break
+                    elif token.type == TokenType.SEMICOLON:
+                        # End of typedef without finding anything useful
+                        self.pos += 1
+                        break
+                    next_pos += 1
+                else:
+                    # No break occurred, move to next token
+                    self.pos += 1
+            else:
+                self.pos += 1
+
+        return typedefs
+
     def _current_token_is(self, token_type: TokenType) -> bool:
         """Check if current token is of specified type"""
         return self.pos < len(self.tokens) and self.tokens[self.pos].type == token_type
@@ -1140,6 +1178,63 @@ class StructureFinder:
             self.pos += 1
 
         return (start_pos, end_pos, typedef_name)
+
+    def _parse_simple_typedef(self) -> Optional[Tuple[int, int, str, str]]:
+        """Parse a simple typedef statement like 'typedef int Integer;' or 'typedef void (*Callback)(int);'"""
+        start_pos = self.pos
+        
+        # Skip 'typedef'
+        if not self._current_token_is(TokenType.TYPEDEF):
+            return None
+        self.pos += 1
+        
+        # Look for the typedef name and semicolon
+        typedef_name = None
+        end_pos = None
+        
+        while self.pos < len(self.tokens):
+            token = self.tokens[self.pos]
+            
+            # If we find a semicolon, we've reached the end
+            if token.type == TokenType.SEMICOLON:
+                end_pos = self.pos
+                break
+                
+            # Look for identifiers that could be the typedef name
+            if token.type == TokenType.IDENTIFIER:
+                # Check if this is the typedef name (followed by semicolon or parentheses)
+                next_pos = self.pos + 1
+                if next_pos < len(self.tokens):
+                    next_token = self.tokens[next_pos]
+                    if next_token.type == TokenType.SEMICOLON:
+                        # Simple typedef: typedef int Integer;
+                        typedef_name = token.value
+                        end_pos = next_pos
+                        break
+                    elif next_token.type == TokenType.RPAREN:
+                        # Function pointer typedef: typedef void (*Callback)(int);
+                        typedef_name = token.value
+                        # Find the semicolon
+                        while next_pos < len(self.tokens):
+                            if self.tokens[next_pos].type == TokenType.SEMICOLON:
+                                end_pos = next_pos
+                                break
+                            next_pos += 1
+                        break
+            
+            self.pos += 1
+        
+        if typedef_name and end_pos is not None:
+            # Extract the original type (everything between typedef and the identifier)
+            original_type_tokens = []
+            for i in range(start_pos + 1, end_pos):  # +1 to skip typedef
+                if i < len(self.tokens):
+                    original_type_tokens.append(self.tokens[i].value)
+            
+            original_type = ' '.join(original_type_tokens).strip()
+            return (start_pos, end_pos, typedef_name, original_type)
+        
+        return None
 
 
 def extract_token_range(tokens: List[Token], start: int, end: int) -> str:
