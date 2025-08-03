@@ -181,7 +181,7 @@ class TestIncludeFilteringBugs(unittest.TestCase):
                 print(f"Test case {i} failed with error: {e}")
 
     def test_include_relations_vs_includes_array_consistency(self):
-        """Test that the direct _apply_include_filters method filters both includes and include_relations consistently"""
+        """Test that the direct _apply_include_filters method preserves includes arrays and only filters include_relations"""
         # Create files with both includes arrays and include_relations
         main_c = FileModel(
             file_path="/test/main.c",
@@ -206,16 +206,16 @@ class TestIncludeFilteringBugs(unittest.TestCase):
         result = self.transformer._apply_include_filters(project_model, include_filters)
         main_file = result.files["main.c"]
         
-        # Check comprehensive filtering behavior: both includes arrays and include_relations are filtered consistently
+        # Check correct filtering behavior: includes arrays should be preserved, only include_relations filtered
         includes_has_header1 = "header1.h" in main_file.includes
         includes_has_header2 = "header2.h" in main_file.includes
         
         relations_has_header1 = any(rel.included_file == "header1.h" for rel in main_file.include_relations)
         relations_has_header2 = any(rel.included_file == "header2.h" for rel in main_file.include_relations)
         
-        # COMPREHENSIVE FILTERING: both includes and include_relations are filtered the same way
-        self.assertTrue(includes_has_header1, "header1.h should be in includes array (matches filter)")
-        self.assertFalse(includes_has_header2, "header2.h should NOT be in includes array (doesn't match filter)")
+        # CORRECT BEHAVIOR: includes arrays should be preserved, only include_relations filtered
+        self.assertTrue(includes_has_header1, "header1.h should be in includes array (preserved)")
+        self.assertTrue(includes_has_header2, "header2.h should be in includes array (preserved)")
         
         self.assertTrue(relations_has_header1, "header1.h should be in include_relations (matches filter)")
         self.assertFalse(relations_has_header2, "header2.h should NOT be in include_relations (doesn't match filter)")
@@ -265,10 +265,11 @@ class TestIncludeFilteringBugs(unittest.TestCase):
         main_file_pipeline = result_pipeline.files["main.c"]
         main_file_direct = result_direct.files["main.c"]
         
-        # Pipeline should preserve includes arrays, direct method should filter them
+        # Both pipeline and direct method should preserve includes arrays (correct behavior)
         self.assertEqual(len(main_file_pipeline.includes), 2, "Pipeline should preserve all includes")
-        self.assertEqual(len(main_file_direct.includes), 1, "Direct method should filter includes")
-        self.assertIn("stdio.h", main_file_direct.includes, "Direct method should keep matching includes")
+        self.assertEqual(len(main_file_direct.includes), 2, "Direct method should preserve all includes")
+        self.assertIn("stdio.h", main_file_direct.includes, "Direct method should preserve all includes")
+        self.assertIn("stdlib.h", main_file_direct.includes, "Direct method should preserve all includes")
 
     def test_include_filter_with_no_matching_files(self):
         """Test include filtering when no files match the specified root file names"""

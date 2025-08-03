@@ -1339,12 +1339,12 @@ class TestTransformer(unittest.TestCase):
             project_model, self.transformer._extract_include_filters_from_config(config)
         )
 
-        # Check that includes were filtered
-        self.assertEqual(len(result.files["main.c"].includes), 2)
+        # Check that includes were preserved (correct behavior)
+        self.assertEqual(len(result.files["main.c"].includes), 4)
         self.assertIn("stdio.h", result.files["main.c"].includes)
         self.assertIn("string.h", result.files["main.c"].includes)
-        self.assertNotIn("stdlib.h", result.files["main.c"].includes)
-        self.assertNotIn("math.h", result.files["main.c"].includes)
+        self.assertIn("stdlib.h", result.files["main.c"].includes)
+        self.assertIn("math.h", result.files["main.c"].includes)
 
         # Check that include_relations were filtered
         self.assertEqual(len(result.files["main.c"].include_relations), 2)
@@ -1414,19 +1414,19 @@ class TestTransformer(unittest.TestCase):
             project_model, self.transformer._extract_include_filters_from_config(config)
         )
 
-        # Check main.c filtering
+        # Check main.c filtering (includes preserved, only relations filtered)
         main_c = result.files["main.c"]
-        self.assertEqual(len(main_c.includes), 2)
+        self.assertEqual(len(main_c.includes), 3)
         self.assertIn("stdio.h", main_c.includes)
         self.assertIn("stdlib.h", main_c.includes)
-        self.assertNotIn("utils.h", main_c.includes)
+        self.assertIn("utils.h", main_c.includes)
 
-        # Check utils.c filtering
+        # Check utils.c filtering (includes preserved, only relations filtered)
         utils_c = result.files["utils.c"]
-        self.assertEqual(len(utils_c.includes), 1)
+        self.assertEqual(len(utils_c.includes), 3)
         self.assertIn("string.h", utils_c.includes)
-        self.assertNotIn("math.h", utils_c.includes)
-        self.assertNotIn("utils.h", utils_c.includes)
+        self.assertIn("math.h", utils_c.includes)
+        self.assertIn("utils.h", utils_c.includes)
 
     def test_apply_include_filters_no_matching_root_file(self):
         """Test include filtering when root file doesn't match any filters"""

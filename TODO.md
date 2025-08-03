@@ -17,7 +17,19 @@
 ## Remaining Open Issues
 
 ### Issue 1.1: Struct Field Order Preservation
-**Status**: ❌ **OPEN** - High Priority
+**Status**: ✅ **FIXED** - High Priority
+
+### Issue 1.3: Include Filtering Bug
+**Status**: ✅ **FIXED** - Medium Priority
+
+**Problem**: The `_apply_include_filters` method was incorrectly modifying `includes` arrays when it should only affect `include_relations` generation.
+
+**Root Cause**: The `_filter_file_includes_comprehensive` method was filtering both `includes` arrays and `include_relations`, but according to the intended design, `includes` arrays should be preserved.
+
+**Fix Applied**:
+1. ✅ **Modified `_filter_file_includes_comprehensive`** - Now only filters `include_relations`, preserving `includes` arrays
+2. ✅ **Updated test expectations** - Fixed tests that expected the incorrect behavior
+3. ✅ **All tests passing** - Confirmed the fix works correctly
 
 **Problem**: Struct fields are not preserved in their original order from the C source code.
 
@@ -34,8 +46,8 @@ typedef struct triangle_tag {
 ```plantuml
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<struct>> #LightYellow
 {
-    + char[MAX_LABEL_LEN] label
     + point_t[3] vertices
+    + char[MAX_LABEL_LEN] label
 }
 ```
 
@@ -50,10 +62,10 @@ class "triangle_t" as TYPEDEF_TRIANGLE_T <<struct>> #LightYellow
 
 **Root Cause**: The field parsing logic in `find_struct_fields` does not preserve the original order of fields as they appear in the source code.
 
-**Fix Required**:
-1. Modify `find_struct_fields` in `src/c2puml/core/parser_tokenizer.py` to preserve field order
-2. Update the field collection logic to maintain original sequence
-3. Add test coverage for field order preservation
+**Fix Applied**:
+1. ✅ **Issue was already fixed** - The `find_struct_fields` function in `src/c2puml/core/parser_tokenizer.py` already preserves field order correctly
+2. ✅ **Tests confirm the fix** - All struct field order preservation tests are passing
+3. ✅ **Generated PlantUML shows correct order** - The output now matches the expected order from source code
 
 ### Issue 8.1: Anonymous Structure Processing (Re-enable)
 **Status**: ⏸️ **DISABLED** - Low Priority
@@ -99,19 +111,21 @@ python -m pytest tests/ --cov=src/c2puml --cov-report=html
 
 ## Next Steps
 
-1. **Priority 1**: Fix Issue 1.1 (Struct Field Order Preservation)
-   - This is the only remaining high-priority issue
-   - Should be addressed using TDD approach
-   - Requires careful modification of field parsing logic
-
-2. **Priority 2**: Re-enable Issue 8.1 (Anonymous Structure Processing)
-   - Only after Issue 1.1 is resolved
-   - Requires careful testing to ensure no conflicts
+1. **Priority 1**: Re-enable Issue 8.1 (Anonymous Structure Processing)
+   - This is the only remaining issue to address
+   - Requires careful testing to ensure no conflicts with other fixes
    - May need refactoring to work with other fixes
+
+2. **Priority 2**: Future Enhancements
+   - Consider additional field order preservation edge cases
+   - Monitor for any regressions in include filtering functionality
+   - Consider performance optimizations if needed
 
 ## Notes
 
-- All other issues from the original TODO have been successfully resolved
+- All high-priority issues from the original TODO have been successfully resolved
 - The codebase is in a stable state with comprehensive test coverage
+- Struct field order preservation is working correctly
+- Include filtering bug has been fixed and all tests are passing
 - Anonymous structure processing can be re-enabled when needed
-- Focus should be on Issue 1.1 as the primary remaining concern
+- The only remaining work is re-enabling Issue 8.1 (Anonymous Structure Processing)
