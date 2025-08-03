@@ -328,14 +328,13 @@ The configuration includes transformation rules:
 The C to PlantUML converter shows promise with its basic functionality working correctly. However, it falls significantly short of its documented capabilities in several critical areas:
 
 **Major Issues:**
-1. **Preprocessor handling is incomplete** - A core advertised feature
-2. **Transformation system appears non-functional** - Despite being documented as fully implemented
-3. **File-specific configuration not working** - A key feature for customization
-4. **Parameter parsing has significant bugs** - Affects core functionality
+1. **Transformation system appears non-functional** - Despite being documented as fully implemented
+2. **File-specific configuration not working** - A key feature for customization
+3. **Parameter parsing has significant bugs** - Affects core functionality
 
 **Positive Aspects:**
 1. **Basic parsing works well** - Core C/C++ structure recognition is solid
 2. **UML output is properly formatted** - Follows PlantUML standards
 3. **Architecture is sound** - The 3-step pipeline design is good
 
-**Recommendation**: The tool needs substantial work to match its documentation before it can be considered production-ready. The gap between advertised features and actual implementation is significant, particularly in the transformation system and preprocessor handling.
+**Recommendation**: The tool needs substantial work to match its documentation before it can be considered production-ready. The gap between advertised features and actual implementation is significant, particularly in the transformation system and configuration handling.
