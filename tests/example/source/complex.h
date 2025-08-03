@@ -256,6 +256,143 @@ complex_handler_t* create_complex_handler(
 void test_processor_job_processing(void);
 void test_processor_utility_macros(void);
 
+// ===================================================================
+// COMPREHENSIVE ANONYMOUS TYPEDEF TEST CASES
+// ===================================================================
+
+// Case 1: struct-within-struct typedef
+typedef struct {
+    int outer_id;
+    char outer_name[32];
+    struct {
+        int inner_x;
+        int inner_y;
+        char inner_label[16];
+    } inner_struct;
+    int outer_flags;
+} struct_with_struct_t;
+
+// Case 2: union-within-struct typedef  
+typedef struct {
+    int type_id;
+    union {
+        int int_value;
+        float float_value;
+        char string_value[64];
+        struct {
+            int x, y, z;
+        } point_value;
+    } data_union;
+    int checksum;
+} struct_with_union_t;
+
+// Case 3: struct-within-union typedef
+typedef union {
+    int simple_int;
+    float simple_float;
+    struct {
+        char header[16];
+        int payload_size;
+        void* payload_data;
+        struct {
+            int error_code;
+            char error_msg[128];
+        } error_info;
+    } complex_struct;
+    char raw_bytes[256];
+} union_with_struct_t;
+
+// Case 4: union-within-union typedef (nested unions)
+typedef union {
+    int primary_int;
+    union {
+        float nested_float;
+        double nested_double;
+        union {
+            char deep_char;
+            short deep_short;
+        } deep_union;
+    } nested_union;
+    char primary_bytes[32];
+} union_with_union_t;
+
+// Case 5: Multiple anonymous structures in same typedef
+typedef struct {
+    struct {
+        int first_x;
+        int first_y;
+    } first_anon_struct;
+    union {
+        int union_int;
+        float union_float;
+    } first_anon_union;
+    struct {
+        char second_name[32];
+        int second_id;
+        struct {
+            int deep_value;
+        } deep_struct;
+    } second_anon_struct;
+} multi_anonymous_t;
+
+// Case 6: Function pointer with anonymous struct parameter (already exists but let's add more)
+typedef void (*callback_with_anon_struct_t)(
+    int id,
+    struct {
+        int config_flags;
+        char config_name[64];
+        union {
+            int int_config;
+            float float_config;
+        } config_value;
+    }* config_param,
+    void* user_data
+);
+
+// Case 7: Function pointer returning anonymous struct
+typedef struct {
+    int result_code;
+    union {
+        int success_value;
+        char error_message[128];
+    } result_data;
+} (*result_generator_t)(int input_id, const char* input_name);
+
+// Case 8: Array of anonymous structs
+typedef struct {
+    int count;
+    struct {
+        int item_id;
+        char item_name[32];
+        union {
+            int int_data;
+            float float_data;
+            struct {
+                int x, y;
+            } point_data;
+        } item_value;
+    } items[10];
+} array_of_anon_structs_t;
+
+// Case 9: Moderately nested anonymous structures
+typedef struct {
+    int level1_id;
+    struct {
+        int level2_id;
+        union {
+            int level3_int;
+            float level3_float;
+        } level3_union;
+    } level2_struct;
+} moderately_nested_t;
+
+// Case 10: Simple struct with standard fields
+typedef struct {
+    int event_count;
+    char event_name[32];
+    int event_flags;
+} simplified_handler_t;
+
 // The nasty const array of function pointers is defined in complex.c
 
 #endif /* COMPLEX_H */

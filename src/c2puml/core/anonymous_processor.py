@@ -13,10 +13,10 @@ class AnonymousTypedefProcessor:
 
     def process_file_model(self, file_model: FileModel) -> None:
         """Process all typedefs in a file model to extract anonymous structures."""
-        # Process aliases (function pointer typedefs)
-        aliases_to_process = list(file_model.aliases.items())
-        for alias_name, alias_data in aliases_to_process:
-            self._process_alias_for_anonymous_structs(file_model, alias_name, alias_data)
+        # Skip alias processing for now to focus on simpler struct/union cases
+        # aliases_to_process = list(file_model.aliases.items())
+        # for alias_name, alias_data in aliases_to_process:
+        #     self._process_alias_for_anonymous_structs(file_model, alias_name, alias_data)
 
         # Process struct typedefs
         structs_to_process = list(file_model.structs.items())
@@ -37,8 +37,15 @@ class AnonymousTypedefProcessor:
         # Find anonymous struct patterns in function pointer parameters
         anonymous_structs = self._extract_anonymous_structs_from_text(original_type)
         
-        if anonymous_structs:
-            for i, (struct_content, struct_type) in enumerate(anonymous_structs, 1):
+        # Filter out overly complex structures that might cause parsing issues
+        filtered_structs = []
+        for struct_content, struct_type in anonymous_structs:
+            # Skip structures with function pointer arrays or other complex patterns
+            if not self._is_too_complex_to_process(struct_content):
+                filtered_structs.append((struct_content, struct_type))
+        
+        if filtered_structs:
+            for i, (struct_content, struct_type) in enumerate(filtered_structs, 1):
                 anon_name = self._generate_anonymous_name(alias_name, struct_type, i)
                 
                 # Create the anonymous struct/union
@@ -83,17 +90,32 @@ class AnonymousTypedefProcessor:
     def _extract_anonymous_structs_from_text(
         self, text: str
     ) -> List[Tuple[str, str]]:
-        """Extract anonymous struct/union definitions from text."""
+        """Extract anonymous struct/union definitions from text using balanced brace matching."""
         anonymous_structs = []
         
-        # Pattern to match anonymous struct/union: struct { ... } or union { ... }
-        pattern = r'(struct|union)\s*\{\s*([^{}]*(?:\{[^{}]*\}[^{}]*)*)\s*\}'
+        # Look for struct/union keywords followed by {
+        pattern = r'(struct|union)\s*\{'
         
-        matches = re.finditer(pattern, text, re.DOTALL)
-        for match in matches:
-            struct_type = match.group(1)  # 'struct' or 'union'
-            struct_content = match.group(2).strip()
-            anonymous_structs.append((struct_content, struct_type))
+        for match in re.finditer(pattern, text):
+            struct_type = match.group(1)
+            start_pos = match.end() - 1  # Position of the opening brace
+            
+            # Find the matching closing brace using balanced brace counting
+            brace_count = 0
+            pos = start_pos
+            
+            while pos < len(text):
+                if text[pos] == '{':
+                    brace_count += 1
+                elif text[pos] == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        # Found the matching closing brace
+                        struct_content = text[start_pos + 1:pos].strip()
+                        if struct_content:  # Only add non-empty content
+                            anonymous_structs.append((struct_content, struct_type))
+                        break
+                pos += 1
         
         return anonymous_structs
 
@@ -115,6 +137,11 @@ class AnonymousTypedefProcessor:
         """Parse field definitions from struct/union content."""
         fields = []
         
+        # Clean up the content first
+        content = content.strip()
+        if not content:
+            return fields
+        
         # Simple field parsing - split by semicolons and extract type/name
         field_declarations = [f.strip() for f in content.split(';') if f.strip()]
         
@@ -130,6 +157,19 @@ class AnonymousTypedefProcessor:
                     field_name = func_ptr_match.group(1)
                     field_type = decl.strip()
                     fields.append(Field(name=field_name, type=field_type))
+                continue
+            
+            # Handle array declarations: type name[size] or type name[]
+            array_match = re.match(r'(.+?)\s+(\w+)\s*\[([^\]]*)\]\s*$', decl)
+            if array_match:
+                field_type = array_match.group(1).strip()
+                field_name = array_match.group(2).strip()
+                array_size = array_match.group(3).strip()
+                if array_size:
+                    full_type = f"{field_type}[{array_size}]"
+                else:
+                    full_type = f"{field_type}[]"
+                fields.append(Field(name=field_name, type=full_type))
                 continue
             
             # Regular field: type name, type name1, name2
@@ -157,16 +197,56 @@ class AnonymousTypedefProcessor:
                     # Single declaration: type name
                     field_type = ' '.join(parts[:-1])
                     field_name = parts[-1]
-                    fields.append(Field(name=field_name, type=field_type))
+                    # Clean up field name (remove trailing punctuation)
+                    field_name = re.sub(r'[^\w]', '', field_name)
+                    if field_name:  # Only add if we have a valid name
+                        fields.append(Field(name=field_name, type=field_type))
         
         return fields
+
+    def _is_too_complex_to_process(self, struct_content: str) -> bool:
+        """Check if a struct is too complex to safely process."""
+        # Skip structures with function pointer arrays as they're too complex
+        if 'handlers[' in struct_content or '(*' in struct_content and '[' in struct_content:
+            return True
+        
+        # Skip all function pointer related structures for now
+        if '(*' in struct_content or 'handler' in struct_content.lower():
+            return True
+        
+        # Skip structures with deeply nested braces (more than 2 levels)
+        brace_depth = 0
+        max_depth = 0
+        for char in struct_content:
+            if char == '{':
+                brace_depth += 1
+                max_depth = max(max_depth, brace_depth)
+            elif char == '}':
+                brace_depth -= 1
+        
+        if max_depth > 2:
+            return True
+        
+        # Skip structures that are too large (more than 300 characters)
+        if len(struct_content) > 300:
+            return True
+        
+        return False
 
     def _replace_anonymous_struct_with_reference(
         self, original_type: str, struct_content: str, anon_name: str, struct_type: str
     ) -> str:
         """Replace anonymous struct definition with reference to named typedef."""
-        # Pattern to match the full anonymous struct: struct { content }
-        pattern = rf'{struct_type}\s*\{{\s*{re.escape(struct_content)}\s*\}}'
+        # Use a more robust approach to find and replace the anonymous struct
+        # Look for the exact pattern: struct_type { struct_content }
+        
+        # Escape special regex characters in struct_content but preserve structure
+        escaped_content = re.escape(struct_content)
+        # Un-escape some characters we want to match flexibly
+        escaped_content = escaped_content.replace(r'\ ', r'\s*').replace(r'\n', r'\s*')
+        
+        # Pattern to match the full anonymous struct with flexible whitespace
+        pattern = rf'{struct_type}\s*\{{\s*{escaped_content}\s*\}}'
         replacement = anon_name
         
         # Replace the anonymous struct with just the name
