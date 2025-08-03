@@ -45,7 +45,6 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         self.assertIn("nested2", struct_content)
         self.assertIn("nested_func", struct_content)
 
-    @unittest.skip("Temporarily disabled - test expectations don't match current parser behavior")
     def test_extract_multiple_anonymous_from_text(self):
         """Test extraction of multiple anonymous structures from text."""
         text = '''typedef struct {
@@ -102,7 +101,6 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         self.assertIn("callback", field_names)
         self.assertIn("string_field", field_names)
 
-    @unittest.skip("Temporarily disabled - current field parser doesn't handle comma-separated declarations")
     def test_parse_struct_fields_multiple_declarations(self):
         """Test parsing struct fields with multiple declarations per line."""
         content = "int a, b, c; char x, y; float single;"
@@ -117,6 +115,64 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         self.assertIn("x", field_names)
         self.assertIn("y", field_names)
         self.assertIn("single", field_names)
+
+    def test_parse_struct_fields_mixed_declarations(self):
+        """Test parsing mixed single and multiple field declarations."""
+        content = "int solo; char *ptr1, *ptr2; unsigned long count1, count2, count3; float value;"
+        
+        fields = self.processor._parse_struct_fields(content)
+        
+        field_names = [f.name for f in fields]
+        field_types = {f.name: f.type for f in fields}
+        
+        # Check all names are present
+        self.assertIn("solo", field_names)
+        self.assertIn("ptr1", field_names) 
+        self.assertIn("ptr2", field_names)
+        self.assertIn("count1", field_names)
+        self.assertIn("count2", field_names)
+        self.assertIn("count3", field_names)
+        self.assertIn("value", field_names)
+        
+        # Check types are correctly assigned
+        self.assertEqual(field_types["solo"], "int")
+        self.assertEqual(field_types["ptr1"], "char *")
+        self.assertEqual(field_types["ptr2"], "char *")
+        self.assertEqual(field_types["count1"], "unsigned long")
+        self.assertEqual(field_types["count2"], "unsigned long")
+        self.assertEqual(field_types["count3"], "unsigned long")
+        self.assertEqual(field_types["value"], "float")
+
+    def test_parse_struct_fields_complex_comma_declarations(self):
+        """Test parsing complex comma-separated declarations with arrays and pointers."""
+        content = "struct point *p1, *p2; int arr1[10], arr2[20], simple; void *data1, *data2;"
+        
+        fields = self.processor._parse_struct_fields(content)
+        
+        field_names = [f.name for f in fields]
+        field_types = {f.name: f.type for f in fields}
+        
+        # Check pointer fields
+        self.assertIn("p1", field_names)
+        self.assertIn("p2", field_names)
+        self.assertEqual(field_types["p1"], "struct point *")
+        self.assertEqual(field_types["p2"], "struct point *")
+        
+        # Check array fields  
+        self.assertIn("arr1", field_names)
+        self.assertIn("arr2", field_names)
+        self.assertEqual(field_types["arr1"], "int[10]")
+        self.assertEqual(field_types["arr2"], "int[20]")
+        
+        # Check simple field
+        self.assertIn("simple", field_names)
+        self.assertEqual(field_types["simple"], "int")
+        
+        # Check void pointers
+        self.assertIn("data1", field_names)
+        self.assertIn("data2", field_names)
+        self.assertEqual(field_types["data1"], "void *")
+        self.assertEqual(field_types["data2"], "void *")
 
     def test_replace_anonymous_struct_with_reference(self):
         """Test replacing anonymous struct definitions with references."""
@@ -226,7 +282,6 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         self.assertIn("parent_union_anonymous_struct_1", file_model.structs)
         self.assertIn("parent_union", file_model.anonymous_relationships)
 
-    @unittest.skip("Temporarily disabled - alias processing with function pointers is currently disabled")
     def test_process_file_model_comprehensive(self):
         """Test processing a complete file model with various anonymous structures."""
         file_model = FileModel(file_path="test.h")

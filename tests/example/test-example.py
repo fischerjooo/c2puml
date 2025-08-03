@@ -1566,7 +1566,22 @@ class AnonymousTypedefValidator:
         }
         
         self.expected_function_pointer_anonyms = {
-            # Function pointer processing is currently disabled for complexity reasons
+            # Function pointer processing is now enabled with proper complexity filtering
+            "callback_with_anon_struct_t_anonymous_struct_1": {
+                "parent": "callback_with_anon_struct_t",
+                "type": "struct",
+                "fields": ["config_flags", "config_name"]
+            },
+            "callback_with_anon_struct_t_anonymous_union_2": {
+                "parent": "callback_with_anon_struct_t_anonymous_struct_1",
+                "type": "union", 
+                "fields": ["int_config", "float_config"]
+            },
+            "complex_callback_t_anonymous_struct_1": {
+                "parent": "complex_callback_t",
+                "type": "struct",
+                "fields": ["nested1", "nested2", "nested_func"]
+            }
         }
     
     def validate_anonymous_typedefs(self) -> bool:
@@ -1640,29 +1655,47 @@ class AnonymousTypedefValidator:
     
     def _validate_relationships(self, puml_content: str) -> bool:
         """Validate that proper relationships exist between parent and anonymous entities."""
-        # Look for usage relationships (parent ..> anonymous : <<uses>>)
-        relationship_pattern = r'(\w+)\s+\.\.>\s+(\w+)\s*:\s*<<uses>>'
-        relationships = re.findall(relationship_pattern, puml_content)
+        all_expected = {**self.expected_anonymous_structs, **self.expected_function_pointer_anonyms}
+        
+        # Get all anonymous entity IDs in PUML format
+        anonymous_entity_ids = []
+        for anon_name in all_expected.keys():
+            puml_id = f"TYPEDEF_{anon_name.upper()}"
+            anonymous_entity_ids.append(puml_id)
         
         found_relationships = 0
-        expected_relationships = 0
         
-        # Count expected relationships
-        all_expected = {**self.expected_anonymous_structs, **self.expected_function_pointer_anonyms}
-        for anon_name, details in all_expected.items():
-            expected_relationships += 1
+        # Count ALL types of relationships involving anonymous entities
         
-        # Check relationships
-        for parent_id, child_id in relationships:
-            if "ANONYMOUS" in child_id:
+        # 1. USES relationships (parent ..> anonymous : <<uses>>)
+        uses_pattern = r'(\w+)\s+\.\.>\s+(\w+)\s*:\s*<<uses>>'
+        uses_relationships = re.findall(uses_pattern, puml_content)
+        for parent_id, child_id in uses_relationships:
+            if child_id in anonymous_entity_ids:
                 found_relationships += 1
         
-        print(f"   Found {found_relationships} anonymous relationships")
-        print(f"   Expected at least {len(all_expected)} anonymous relationships")
+        # 2. HEADER relationships (HEADER_X ..> anonymous)
+        header_pattern = r'(HEADER_\w+)\s+\.\.>\s+(\w+)'
+        header_relationships = re.findall(header_pattern, puml_content)
+        for header_id, target_id in header_relationships:
+            if target_id in anonymous_entity_ids:
+                found_relationships += 1
+                
+        # 3. Composition/Aggregation relationships (entity -- entity)
+        comp_pattern = r'(\w+)\s+--\s+(\w+)'
+        comp_relationships = re.findall(comp_pattern, puml_content)
+        for source_id, target_id in comp_relationships:
+            if source_id in anonymous_entity_ids or target_id in anonymous_entity_ids:
+                found_relationships += 1
         
-        # We should have relationships for most anonymous entities
-        # Allow flexibility since some relationships might not be captured depending on usage
-        return found_relationships >= 5  # Require at least 5 relationships
+        # Every anonymous entity should have at least one relationship
+        # (if it exists in PUML, it must be referenced somehow)
+        min_expected = len(all_expected)  # One relationship per entity minimum
+        
+        print(f"   Found {found_relationships} anonymous relationships")
+        print(f"   Expected at least {min_expected} anonymous relationships (one per entity)")
+        
+        return found_relationships >= min_expected
 
 
 def main():

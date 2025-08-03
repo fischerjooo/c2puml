@@ -90,6 +90,22 @@ class "array_of_anon_structs_t_anonymous_struct_1" as TYPEDEF_ARRAY_OF_ANON_STRU
 {
 }
 
+class "callback_with_anon_struct_t_anonymous_struct_1" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
+{
+    + int config_flags
+    + char[64] config_name
+    + } config_value
+    + float float_config
+    + union { int int_config
+}
+
+class "complex_callback_t_anonymous_struct_1" as TYPEDEF_COMPLEX_CALLBACK_T_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
+{
+    + int nested1
+    + char * nested2
+    + void(* nested_func)(int) nested_func
+}
+
 class "complex_handler_t" as TYPEDEF_COMPLEX_HANDLER_T <<struct>> #LightYellow
 {
     + void ( * ) ( char * , int ) format_func
@@ -286,12 +302,12 @@ class "Std_ReturnType" as TYPEDEF_STD_RETURNTYPE <<typedef>> #LightYellow
 
 class "callback_with_anon_struct_t" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T <<function pointer>> #LightYellow
 {
-    alias of void(* callback_with_anon_struct_t)( int id , struct { int config_flags ; char config_name [ 64 ] ; union { int int_config ; float float_config ; } config_value ; } * config_param , void * user_data )
+    alias of void(* callback_with_anon_struct_t)( int id , struct { int config_flags ; char config_name [ 64 ] ; callback_with_anon_struct_t_anonymous_union_2 config_value ; } * config_param , void * user_data )
 }
 
 class "complex_callback_t" as TYPEDEF_COMPLEX_CALLBACK_T <<function pointer>> #LightYellow
 {
-    alias of int(* complex_callback_t)( int param1 , char * param2 , void * param3 , struct { int nested1 ; char * nested2 ; void(* nested_func)(int); } * param4 )
+    alias of int(* complex_callback_t)( int param1 , char * param2 , void * param3 , complex_callback_t_anonymous_struct_1 * param4 )
 }
 
 class "complex_func_ptr_t" as TYPEDEF_COMPLEX_FUNC_PTR_T <<typedef>> #LightYellow
@@ -347,6 +363,12 @@ class "uint32" as TYPEDEF_UINT32 <<typedef>> #LightYellow
 class "uint8" as TYPEDEF_UINT8 <<typedef>> #LightYellow
 {
     alias of uint8_t
+}
+
+class "callback_with_anon_struct_t_anonymous_union_2" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_ANONYMOUS_UNION_2 <<union>> #LightYellow
+{
+    + float float_config
+    + int int_config
 }
 
 class "config_value" as TYPEDEF_CONFIG_VALUE <<union>> #LightYellow
@@ -445,6 +467,8 @@ HEADER_COMPLEX ..> TYPEDEF_PROCESS_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF___ANONYMOUS_STRUCT__ : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_ARRAY_OF_ANON_STRUCTS_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ANONYMOUS_STRUCT_1 : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_ANONYMOUS_STRUCT_1 : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_COMPLEX_CALLBACK_T_ANONYMOUS_STRUCT_1 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_COMPLEX_HANDLER_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_COMPLEX_NAMING_TEST_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_COMPLEX_NAMING_TEST_T_ANONYMOUS_STRUCT_1 : <<declares>>
@@ -491,6 +515,7 @@ HEADER_COMPLEX ..> TYPEDEF_RELEASE_CALLBACK_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_UINT16 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_UINT32 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_UINT8 : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_ANONYMOUS_UNION_2 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_CONFIG_VALUE : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_DATA_UNION : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_FIRST_ANON_UNION : <<declares>>
@@ -518,8 +543,10 @@ TYPEDEF_STRUCT_WITH_UNION_T ..> TYPEDEF_STRUCT_WITH_UNION_T_ANONYMOUS_STRUCT_1 :
 TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T ..> TYPEDEF_PROCESS_CFG_PROCESS_FCT : <<uses>>
 TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_PROCESS_T : <<uses>>
 TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>
+TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T ..> TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_ANONYMOUS_UNION_2 : <<uses>>
 TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T ..> TYPEDEF_CONFIG_PARAM : <<uses>>
 TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T ..> TYPEDEF_CONFIG_VALUE : <<uses>>
+TYPEDEF_COMPLEX_CALLBACK_T ..> TYPEDEF_COMPLEX_CALLBACK_T_ANONYMOUS_STRUCT_1 : <<uses>>
 TYPEDEF_COMPLEX_CALLBACK_T ..> TYPEDEF_PARAM4 : <<uses>>
 TYPEDEF_DATA_PROCESSOR_ARRAY_T ..> TYPEDEF_DATA_PROCESSOR_T : <<uses>>
 TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>
