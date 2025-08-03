@@ -132,6 +132,41 @@ def _format_field(self, field: Field, base_indent: str) -> List[str]:
     lines.append(f"{base_indent}{field_text}")
     
     return lines
+
+def _generate_relationships(self, lines: List[str], include_tree: Dict[str, FileModel], 
+                          uml_ids: Dict[str, str], project_model: ProjectModel):
+    """Generate relationships between elements including anonymous structure composition."""
+    # ... existing relationship generation ...
+    
+    # Add anonymous structure relationships
+    for file_name, file_model in project_model.files.items():
+        self._generate_anonymous_relationships(lines, file_model, uml_ids)
+
+def _generate_anonymous_relationships(self, lines: List[str], file_model: FileModel, 
+                                    uml_ids: Dict[str, str]):
+    """Generate composition relationships for anonymous structures."""
+    if not file_model.anonymous_relationships:
+        return
+        
+    # Add a comment for clarity
+    lines.append("")
+    lines.append("' Anonymous structure relationships (composition)")
+    
+    for parent_name, children in file_model.anonymous_relationships.items():
+        parent_id = uml_ids.get(parent_name)
+        if not parent_id:
+            # Try with typedef prefix
+            parent_id = uml_ids.get(f"TYPEDEF_{parent_name.upper()}")
+            
+        for child_name in children:
+            child_id = uml_ids.get(child_name)
+            if not child_id:
+                # Try with typedef prefix
+                child_id = uml_ids.get(f"TYPEDEF_{child_name.upper()}")
+                
+            if parent_id and child_id:
+                # Use composition arrow (*--) with "contains" label
+                lines.append(f"{parent_id} *-- {child_id} : contains")
 ```
 
 ### 6. Test Suite
@@ -178,6 +213,11 @@ def test_anonymous_structure_complete_flow():
     assert "position : GameObject_position" in puml_content
     assert "data : GameObject_data" in puml_content
     assert "complex : GameObject_data_complex" in puml_content
+    
+    # Verify composition relationships
+    assert "TYPEDEF_GAMEOBJECT *-- TYPEDEF_GAMEOBJECT_POSITION : contains" in puml_content
+    assert "TYPEDEF_GAMEOBJECT *-- TYPEDEF_GAMEOBJECT_DATA : contains" in puml_content
+    assert "TYPEDEF_GAMEOBJECT_DATA *-- TYPEDEF_GAMEOBJECT_DATA_COMPLEX : contains" in puml_content
 ```
 
 ## Benefits of No Backward Compatibility

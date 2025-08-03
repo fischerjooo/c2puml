@@ -30,11 +30,28 @@ When re-enabling, implement intuitive naming for anonymous structures:
 - For nested anonymous structures: `Tree_branch_leaf` (parent_parent_field)
 - This makes generated diagrams self-documenting and easier to understand
 
+**Relationship Visualization**:
+Anonymous structures should be connected to their parents using composition relationships:
+- Use `*--` (composition/filled diamond) arrow instead of `-->` (association)
+- Label relationships with "contains" for clarity
+- Example: `Rectangle *-- Rectangle_position : contains`
+- This correctly represents that anonymous structures are owned by and part of their parent
+
 **Implementation Example**:
 ```python
 def _generate_anonymous_name(self, parent_name: str, field_name: str) -> str:
     """Generate meaningful name: ParentType_fieldName"""
     return f"{parent_name}_{field_name}"
+
+# In generator.py for relationships
+def _generate_anonymous_relationships(self, lines, file_model, uml_ids):
+    """Generate composition relationships for anonymous structures."""
+    for parent, children in file_model.anonymous_relationships.items():
+        parent_id = uml_ids.get(parent)
+        for child in children:
+            child_id = uml_ids.get(child)
+            if parent_id and child_id:
+                lines.append(f"{parent_id} *-- {child_id} : contains")
 ```
 
 ## Development Guidelines

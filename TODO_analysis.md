@@ -268,6 +268,19 @@ For a detailed comparison, see `TODO_proposal_comparison.md`.
 3. Add configuration options for detail level
 4. Generate documentation
 
+**Specific Implementation for Relationships**:
+```python
+# In generator.py
+def _generate_anonymous_relationships(self, lines, file_model, uml_ids):
+    """Generate composition relationships for anonymous structures."""
+    for parent, children in file_model.anonymous_relationships.items():
+        parent_id = self._get_uml_id(parent, uml_ids)
+        for child in children:
+            child_id = self._get_uml_id(child, uml_ids)
+            if parent_id and child_id:
+                lines.append(f"{parent_id} *-- {child_id} : contains")
+```
+
 ### Phase 4: Handle Edge Cases
 1. Function pointer parameters with anonymous structs
 2. Arrays of anonymous structures
@@ -331,9 +344,9 @@ class "test_anonymous_t_data_complex_value" <<struct>> {
     + double imag
 }
 
-test_anonymous_t --> test_anonymous_t_position : contains
-test_anonymous_t --> test_anonymous_t_data : contains
-test_anonymous_t_data --> test_anonymous_t_data_complex_value : contains
+test_anonymous_t *-- test_anonymous_t_position : contains
+test_anonymous_t *-- test_anonymous_t_data : contains
+test_anonymous_t_data *-- test_anonymous_t_data_complex_value : contains
 ```
 
 ### Real-World Example:
@@ -364,9 +377,45 @@ class "Rectangle_size" <<struct>> {
     + int width
     + int height
 }
+
+Rectangle *-- Rectangle_position : contains
+Rectangle *-- Rectangle_size : contains
 ```
 
+### Relationship Visualization:
+The `*--` (composition) arrow with "contains" label clearly shows:
+- **Ownership**: The parent type owns the anonymous structure
+- **Lifecycle**: Anonymous structures exist only as part of their parent
+- **Composition**: These are integral parts of the parent structure, not just associations
+
 This would provide full visibility into the structure hierarchy while maintaining readability.
+
+## UML Relationship Rationale
+
+### Why Composition (*--) is Correct
+
+Anonymous structures in C represent a **composition** relationship, not just an association:
+
+1. **Lifetime Management**: Anonymous structures are created and destroyed with their parent
+2. **Strong Ownership**: The parent struct owns the anonymous structure completely
+3. **No Independent Existence**: Anonymous structures cannot exist without their parent
+4. **Memory Layout**: They are physically part of the parent's memory layout
+
+### Comparison of UML Arrows:
+- `-->` (Association): Independent objects that know about each other
+- `*--` (Composition): Strong "part-of" relationship with shared lifecycle
+- `o--` (Aggregation): Weak "has-a" relationship
+
+For anonymous structures, composition (*--) is the only correct choice because:
+```c
+typedef struct {
+    struct { int x, y; } position;  // position IS PART OF Rectangle
+} Rectangle;
+
+// When Rectangle is destroyed, position is destroyed
+// position cannot exist without Rectangle
+// Rectangle has exclusive ownership of position
+```
 
 ## Conclusion
 
