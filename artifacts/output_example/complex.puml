@@ -96,7 +96,9 @@ class "callback_with_anon_struct_t_anonymous_struct_1" as TYPEDEF_CALLBACK_WITH_
 {
     + int config_flags
     + char[64] config_name
-    + callback_with_anon_struct_t_anonymous_union_2 config_value
+    + union { int int_config
+    + float float_config
+    + } config_value
 }
 
 class "complex_callback_t_anonymous_struct_1" as TYPEDEF_COMPLEX_CALLBACK_T_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
@@ -393,7 +395,7 @@ class "Std_ReturnType" as TYPEDEF_STD_RETURNTYPE <<typedef>> #LightYellow
 
 class "callback_with_anon_struct_t" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T <<function pointer>> #LightYellow
 {
-    alias of void(* callback_with_anon_struct_t)( int id , callback_with_anon_struct_t_anonymous_struct_1 * config_param , void * user_data )
+    alias of void(* callback_with_anon_struct_t)( int id , struct { int config_flags ; char config_name [ 64 ] ; callback_with_anon_struct_t_anonymous_union_2 config_value ; } * config_param , void * user_data )
 }
 
 class "complex_callback_t" as TYPEDEF_COMPLEX_CALLBACK_T <<function pointer>> #LightYellow
@@ -670,6 +672,7 @@ TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T ..> TYPEDEF_PROCESS_CFG_PROCESS_FCT : <<use
 TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_PROCESS_T : <<uses>>
 TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>
 TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T ..> TYPEDEF_CONFIG_PARAM : <<uses>>
+TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T ..> TYPEDEF_CONFIG_VALUE : <<uses>>
 TYPEDEF_COMPLEX_CALLBACK_T ..> TYPEDEF_PARAM4 : <<uses>>
 TYPEDEF_DATA_PROCESSOR_ARRAY_T ..> TYPEDEF_DATA_PROCESSOR_T : <<uses>>
 TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>
@@ -679,7 +682,6 @@ TYPEDEF_MATH_OPS_ARRAY_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>
 ' Anonymous structure relationships (composition)
 TYPEDEF___ANONYMOUS_STRUCT__ *-- TYPEDEF___ANONYMOUS_STRUCT___LEVEL3_UNION : contains
 TYPEDEF_ARRAY_OF_ANON_STRUCTS_T *-- TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS : contains
-TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T *-- TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_ANONYMOUS_STRUCT_1 : contains
 TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T *-- TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_ANONYMOUS_STRUCT_1 : contains
 TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T *-- TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_ANONYMOUS_UNION_2 : contains
 TYPEDEF_COMPLEX_CALLBACK_T *-- TYPEDEF_COMPLEX_CALLBACK_T_ANONYMOUS_STRUCT_1 : contains
