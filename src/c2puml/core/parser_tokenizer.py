@@ -3,6 +3,7 @@
 Tokenizer module for C to PlantUML converter - Helper library for tokenizing C/C++ code
 """
 
+import base64
 import logging
 import re
 from dataclasses import dataclass
@@ -1154,6 +1155,15 @@ def extract_token_range(tokens: List[Token], start: int, end: int) -> str:
     )
 
 
+def _extract_tokens_content(tokens: List[Token], start_idx: int, end_idx: int) -> str:
+    """Extract the original content from tokens between start and end indices"""
+    content_parts = []
+    for i in range(start_idx, end_idx + 1):
+        if i < len(tokens):
+            content_parts.append(tokens[i].value)
+    return ''.join(content_parts)
+
+
 def find_struct_fields(
     tokens: List[Token], struct_start: int, struct_end: int
 ) -> List[Tuple[str, str]]:
@@ -1244,7 +1254,30 @@ def find_struct_fields(
                             break
                 
                 if field_name:
-                    field_type = "struct { ... }"
+                    # Extract content between braces for preservation
+                    content_start = -1
+                    content_end = -1
+                    brace_depth = 0
+                    for idx in range(len(field_tokens)):
+                        if field_tokens[idx].type == TokenType.LBRACE:
+                            if brace_depth == 0:
+                                content_start = idx + 1
+                            brace_depth += 1
+                        elif field_tokens[idx].type == TokenType.RBRACE:
+                            brace_depth -= 1
+                            if brace_depth == 0:
+                                content_end = idx - 1
+                                break
+                    
+                    if content_start != -1 and content_end != -1 and content_end >= content_start:
+                        # Extract the content between braces
+                        content = _extract_tokens_content(field_tokens, content_start, content_end)
+                        # Encode content for preservation
+                        encoded = base64.b64encode(content.encode()).decode()
+                        field_type = f"struct {{ /*ANON:{encoded}:{field_name}*/ ... }}"
+                    else:
+                        field_type = "struct { ... }"
+                    
                     if field_name not in ["[", "]", ";", "}"]:
                         fields.append((field_name, field_type))
                         # Skip parsing the nested struct's fields as separate fields
@@ -1271,7 +1304,30 @@ def find_struct_fields(
                             break
                 
                 if field_name:
-                    field_type = "union { ... }"
+                    # Extract content between braces for preservation
+                    content_start = -1
+                    content_end = -1
+                    brace_depth = 0
+                    for idx in range(len(field_tokens)):
+                        if field_tokens[idx].type == TokenType.LBRACE:
+                            if brace_depth == 0:
+                                content_start = idx + 1
+                            brace_depth += 1
+                        elif field_tokens[idx].type == TokenType.RBRACE:
+                            brace_depth -= 1
+                            if brace_depth == 0:
+                                content_end = idx - 1
+                                break
+                    
+                    if content_start != -1 and content_end != -1 and content_end >= content_start:
+                        # Extract the content between braces
+                        content = _extract_tokens_content(field_tokens, content_start, content_end)
+                        # Encode content for preservation
+                        encoded = base64.b64encode(content.encode()).decode()
+                        field_type = f"union {{ /*ANON:{encoded}:{field_name}*/ ... }}"
+                    else:
+                        field_type = "union { ... }"
+                    
                     if field_name not in ["[", "]", ";", "}"]:
                         fields.append((field_name, field_type))
                         # Skip parsing the nested union's fields as separate fields
