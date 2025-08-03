@@ -1672,12 +1672,14 @@ class AnonymousTypedefValidator:
             if "ANONYMOUS" in child_id:
                 found_relationships += 1
         
-        print(f"   Found {found_relationships} anonymous relationships")
-        print(f"   Expected at least {len(all_expected)} anonymous relationships")
-        
         # We should have relationships for most anonymous entities
         # Allow flexibility since some relationships might not be captured depending on usage
-        min_expected = min(10, len(all_expected) // 2)  # At least half the entities or 10, whichever is smaller
+        # Expect at least 30% of entities to have relationships, with a minimum of 5
+        min_expected = max(5, len(all_expected) * 3 // 10)  # At least 30% of entities or 5, whichever is larger
+        
+        print(f"   Found {found_relationships} anonymous relationships")
+        print(f"   Expected at least {min_expected} anonymous relationships (30% of {len(all_expected)} entities)")
+        
         return found_relationships >= min_expected
 
 
