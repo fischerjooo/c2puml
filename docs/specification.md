@@ -356,6 +356,7 @@ class FileModel:
     typedefs: Dict[str, str]
     typedef_relations: List[TypedefRelation]
     include_relations: List[IncludeRelation]
+    anonymous_relationships: Dict[str, List[str]]  # Maps parent types to their anonymous children
 ```
 
 #### 3.3.3 Typedef Relation Model
@@ -384,9 +385,53 @@ class Union:
     fields: List[Field]
 ```
 
-### 3.4 Configuration Parameters
+### 3.4 Anonymous Structure Processing
 
-#### 3.4.1 Core Configuration
+The system automatically detects and processes anonymous structures (unnamed structs/unions within typedefs) to create clear, maintainable PlantUML diagrams.
+
+#### 3.4.1 Detection and Extraction
+- **Tokenizer Enhancement**: Preserves anonymous structure content using base64-encoded markers
+- **Pattern**: `struct { /*ANON:base64content:fieldname*/ ... }`
+- **Processing**: AnonymousTypedefProcessor extracts and creates named entities
+
+#### 3.4.2 Naming Convention
+- **Pattern**: `ParentType_fieldName`
+- **Example**: Anonymous `struct { ... } position` in `Rectangle` becomes `Rectangle_position`
+- **Nested**: `ParentType_parentField_childField` for deeply nested structures
+- **Fallback**: For complex cases (e.g., function pointers), falls back to `Parent_anonymous_struct_N`
+
+#### 3.4.3 Model Structure
+- **New Field**: `anonymous_relationships: Dict[str, List[str]]` in FileModel
+- **Purpose**: Tracks parent-child relationships between types and their anonymous structures
+- **Example**: `{"Rectangle": ["Rectangle_position", "Rectangle_size"]}`
+
+#### 3.4.4 Processing Pipeline
+1. **Parse Phase**: Tokenizer preserves anonymous structure content
+2. **Model Phase**: Parser creates initial model with markers
+3. **Transform Phase**: AnonymousTypedefProcessor creates named entities
+4. **Generate Phase**: Generator creates composition relationships
+
+#### 3.4.5 UML Representation
+- **Separate Classes**: Each anonymous structure becomes a separate class
+- **Composition Relationships**: Uses `*--` arrows with "contains" label
+- **Field References**: Anonymous fields show type references instead of inline definitions
+- **Example**:
+  ```plantuml
+  class "Rectangle" as TYPEDEF_RECTANGLE <<struct>> #LightYellow {
+      + position : Rectangle_position
+  }
+  
+  class "Rectangle_position" as TYPEDEF_RECTANGLE_POSITION <<struct>> #LightYellow {
+      + int x
+      + int y
+  }
+  
+  TYPEDEF_RECTANGLE *-- TYPEDEF_RECTANGLE_POSITION : contains
+  ```
+
+### 3.5 Configuration Parameters
+
+#### 3.5.1 Core Configuration
 The system uses a JSON-based configuration file with the following parameters:
 
 ```json
@@ -425,7 +470,7 @@ The system uses a JSON-based configuration file with the following parameters:
 }
 ```
 
-#### 3.4.2 Configuration Parameters
+#### 3.5.2 Configuration Parameters
 - **`project_name`**: Name of the project for identification
 - **`source_folders`**: List of source directories to analyze
 - **`output_dir`**: Output directory for generated files
@@ -438,7 +483,7 @@ The system uses a JSON-based configuration file with the following parameters:
 
 **Note**: The `recursive_search` parameter was renamed from `recursive` in a recent update for better clarity. The system maintains backward compatibility for configuration loading.
 
-### 3.5 Command Interface
+### 3.6 Command Interface
 The system provides a simplified CLI with optional step specification:
 
 ```bash

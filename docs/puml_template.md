@@ -61,6 +61,13 @@ This template defines the structure for generating PlantUML diagrams from C sour
 - **Typedefs using other typedefs**: `{TYPEDEF} ..> {OTHER_TYPEDEF} : <<uses>>`
 - Shows dependencies between typedefs
 
+### Composition Relationships (Anonymous Structures)
+- **Anonymous structure ownership**: `{PARENT_TYPEDEF} *-- {ANONYMOUS_TYPEDEF} : contains`
+- Shows that anonymous structures are owned by and part of their parent
+- Uses composition arrows (*--) to indicate strong "part-of" relationship with shared lifecycle
+- **Naming Convention**: Anonymous structures use `ParentType_fieldName` pattern
+- **Example**: `TYPEDEF_RECTANGLE *-- TYPEDEF_RECTANGLE_POSITION : contains`
+
 ## Template Structure
 
 ```plantuml
@@ -197,6 +204,50 @@ For source files, the system automatically determines visibility based on header
 - **Private elements** (`-` prefix): Functions and globals that are not declared in any header file
 
 This provides a more accurate representation of the actual API surface and internal implementation details.
+
+### Anonymous Structure Representation
+
+Anonymous structures within typedefs are extracted and represented as separate classes with meaningful names:
+
+#### Example Input
+```c
+typedef struct {
+    struct {
+        int x, y;
+    } position;
+    struct {
+        int width, height;
+    } size;
+} Rectangle;
+```
+
+#### Generated PlantUML
+```plantuml
+class "Rectangle" as TYPEDEF_RECTANGLE <<struct>> #LightYellow {
+    + position : Rectangle_position
+    + size : Rectangle_size
+}
+
+class "Rectangle_position" as TYPEDEF_RECTANGLE_POSITION <<struct>> #LightYellow {
+    + int x
+    + int y
+}
+
+class "Rectangle_size" as TYPEDEF_RECTANGLE_SIZE <<struct>> #LightYellow {
+    + int width
+    + int height
+}
+
+TYPEDEF_RECTANGLE *-- TYPEDEF_RECTANGLE_POSITION : contains
+TYPEDEF_RECTANGLE *-- TYPEDEF_RECTANGLE_SIZE : contains
+```
+
+#### Key Features
+- **Automatic Processing**: Anonymous structures are automatically detected and processed
+- **Meaningful Names**: The `ParentType_fieldName` convention makes diagrams self-documenting
+- **Proper UML**: Composition arrows correctly represent the ownership relationship
+- **No Configuration Needed**: Works out of the box without backward compatibility concerns
+- **Nested Support**: Handles arbitrary nesting depth with clear naming
 
 ### Improved Readability with Grouping
 Elements in source files are now grouped by visibility for better readability:
