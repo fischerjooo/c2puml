@@ -9,7 +9,7 @@ import re
 
 class TestFileSpecificConfiguration:
     def test_file_specific_include_filter(self):
-        """Test that file-specific include filters are applied correctly"""
+        """Test that file-specific include filters preserve includes arrays correctly"""
         # Create a test project model
         project_model = ProjectModel(project_name="test_project", source_folder="/tmp")
         
@@ -51,36 +51,31 @@ class TestFileSpecificConfiguration:
         # Create transformer and apply include filters
         transformer = Transformer()
         include_filters = transformer._extract_include_filters_from_config(config)
-        transformer._apply_include_filters(project_model, include_filters, strict_filtering=True)
+        transformer._apply_include_filters(project_model, include_filters)
         
-        # Check that filtered includes are removed
+        # Check that includes arrays are preserved (correct behavior)
         filtered_includes = file_model.includes
         print(f"Filtered includes: {filtered_includes}")
         
-        # These should be present (allowed by filter)
-        expected_includes = {
+        # All includes should be preserved (includes arrays are never modified)
+        all_includes = {
             "stdio.h",
             "stdlib.h",
             "string.h", 
             "sample.h",
             "math_utils.h",
             "logger.h",
-            "geometry.h"
-        }
-        
-        # These should be filtered out
-        filtered_out_includes = {
+            "geometry.h",
             "filtered_header.h",
             "first_level.h"
         }
         
-        # Verify expected includes are present
-        for include in expected_includes:
-            assert include in filtered_includes, f"Expected include '{include}' should be present"
+        # Verify all includes are preserved
+        for include in all_includes:
+            assert include in filtered_includes, f"All includes should be preserved: '{include}' should be present"
         
-        # Verify filtered includes are removed
-        for include in filtered_out_includes:
-            assert include not in filtered_includes, f"Filtered include '{include}' should be removed"
+        # Verify the total count is correct
+        assert len(filtered_includes) == len(all_includes), f"All {len(all_includes)} includes should be preserved"
         
         print("✅ File-specific include filter test passed")
 

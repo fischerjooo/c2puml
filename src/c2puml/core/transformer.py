@@ -563,19 +563,16 @@ class Transformer:
 
 
     def _apply_include_filters(
-        self, model: ProjectModel, include_filters: Dict[str, List[str]], strict_filtering: bool = False
+        self, model: ProjectModel, include_filters: Dict[str, List[str]]
     ) -> ProjectModel:
         """Apply include filters for each root file based on regex patterns
         
         Args:
             model: The project model to apply filters to
             include_filters: Dictionary mapping root files to their include filter patterns
-            strict_filtering: If True, filter both includes arrays and include_relations.
-                            If False, only filter include_relations (preserve includes arrays).
         """
         self.logger.info(
-            "Applying include filters for %d root files (strict: %s)", 
-            len(include_filters), strict_filtering
+            "Applying include filters for %d root files", len(include_filters)
         )
 
         # Compile regex patterns for each root file
@@ -612,15 +609,10 @@ class Transformer:
             )
 
             if root_file in compiled_filters:
-                # Apply filtering based on the strict_filtering parameter
-                if strict_filtering:
-                    self._filter_file_includes_strict(
-                        file_model, compiled_filters[root_file], root_file
-                    )
-                else:
-                    self._filter_file_includes_comprehensive(
-                        file_model, compiled_filters[root_file], root_file
-                    )
+                # Apply comprehensive filtering (preserve includes arrays, filter include_relations)
+                self._filter_file_includes_comprehensive(
+                    file_model, compiled_filters[root_file], root_file
+                )
 
         return model
 
@@ -762,54 +754,7 @@ class Transformer:
             len(file_model.include_relations),
         )
 
-    def _filter_file_includes_strict(
-        self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
-    ) -> None:
-        """Strict filtering that filters both includes arrays and include_relations.
-        This is used for file-specific include filtering where the includes arrays should be filtered."""
-        self.logger.debug(
-            "Strict filtering for file %s (root: %s)", file_model.name, root_file
-        )
 
-        # Filter includes arrays
-        original_includes_count = len(file_model.includes)
-        filtered_includes = set()
-
-        for include_name in file_model.includes:
-            if self._matches_any_pattern(include_name, patterns):
-                filtered_includes.add(include_name)
-            else:
-                self.logger.debug(
-                    "Filtered out include: %s (root: %s)", include_name, root_file
-                )
-
-        file_model.includes = filtered_includes
-
-        # Filter include_relations
-        original_relations_count = len(file_model.include_relations)
-        filtered_relations = []
-
-        for relation in file_model.include_relations:
-            if self._matches_any_pattern(relation.included_file, patterns):
-                filtered_relations.append(relation)
-            else:
-                self.logger.debug(
-                    "Filtered out include relation: %s -> %s (root: %s)",
-                    relation.source_file,
-                    relation.included_file,
-                    root_file,
-                )
-
-        file_model.include_relations = filtered_relations
-
-        self.logger.debug(
-            "Strict filtering for %s: includes %d->%d, relations %d->%d",
-            file_model.name,
-            original_includes_count,
-            len(file_model.includes),
-            original_relations_count,
-            len(file_model.include_relations),
-        )
 
     def _matches_any_pattern(self, text: str, patterns: List[Pattern[str]]) -> bool:
         """Check if text matches any of the given regex patterns"""
