@@ -44,8 +44,8 @@ class TestAnonymousStructureHandling:
             print(f"Anonymous relationships: {file_model.anonymous_relationships}")
             
             # Check that the main struct has anonymous relationships
-            main_struct = file_model.structs["array_of_anon_structs_t"]
-            assert hasattr(main_struct, 'anonymous_relationships'), "Main struct should have anonymous relationships"
+            assert "array_of_anon_structs_t" in file_model.anonymous_relationships, "Main struct should have anonymous relationships"
+            assert len(file_model.anonymous_relationships["array_of_anon_structs_t"]) > 0, "Should have anonymous entities"
             
             print("✅ Anonymous struct in typedef test passed")
             
@@ -79,6 +79,9 @@ class TestAnonymousStructureHandling:
             
             # Check that anonymous relationships are created
             print(f"Anonymous relationships: {file_model.anonymous_relationships}")
+            
+            assert "nested_anonymous_t" in file_model.anonymous_relationships, "Should have anonymous relationships"
+            assert len(file_model.anonymous_relationships["nested_anonymous_t"]) > 0, "Should have anonymous entities"
             
             print("✅ Nested anonymous structures test passed")
             
@@ -117,6 +120,9 @@ class TestAnonymousStructureHandling:
             
             # Check that anonymous relationships are created
             print(f"Anonymous relationships: {file_model.anonymous_relationships}")
+            
+            assert "struct_with_union_t" in file_model.anonymous_relationships, "Should have anonymous relationships"
+            assert len(file_model.anonymous_relationships["struct_with_union_t"]) > 0, "Should have anonymous entities"
             
             print("✅ Anonymous union handling test passed")
             
@@ -157,6 +163,9 @@ class TestAnonymousStructureHandling:
             # Check that anonymous relationships are created
             print(f"Anonymous relationships: {file_model.anonymous_relationships}")
             
+            assert "multiple_anonymous_t" in file_model.anonymous_relationships, "Should have anonymous relationships"
+            assert len(file_model.anonymous_relationships["multiple_anonymous_t"]) > 0, "Should have anonymous entities"
+            
             print("✅ Multiple anonymous structures test passed")
             
         finally:
@@ -195,10 +204,15 @@ class TestAnonymousStructureHandling:
             field_names = [f.name for f in main_struct.fields]
             assert "items" in field_names, "Anonymous struct field should be parsed"
             
-            # Check if the field type contains the simplified format
+            # Check if the field type has been converted to a named reference
             items_field = next(f for f in main_struct.fields if f.name == "items")
             print(f"Items field type: '{items_field.type}'")
-            assert "struct { ... }" in items_field.type, "Field should have simplified struct type"
+            assert "anonymous_struct" in items_field.type, "Field should reference anonymous struct"
+            
+            # Check that anonymous relationships are created
+            print(f"Anonymous relationships: {file_model.anonymous_relationships}")
+            assert "simple_anonymous_t" in file_model.anonymous_relationships, "Should have anonymous relationships"
+            assert len(file_model.anonymous_relationships["simple_anonymous_t"]) > 0, "Should have anonymous entities"
             
             print("✅ Anonymous structure field parsing test passed")
             
@@ -207,10 +221,9 @@ class TestAnonymousStructureHandling:
 
 if __name__ == "__main__":
     test = TestAnonymousStructureHandling()
-    try:
-        test.test_anonymous_structure_field_parsing()
-        print("✅ Anonymous structure field parsing test passed")
-    except Exception as e:
-        print(f"❌ Anonymous structure field parsing test failed: {e}")
-        import traceback
-        traceback.print_exc()
+    test.test_anonymous_struct_in_typedef()
+    test.test_nested_anonymous_structures()
+    test.test_anonymous_union_handling()
+    test.test_multiple_anonymous_structures()
+    test.test_anonymous_structure_field_parsing()
+    print("🎉 All anonymous structure handling tests passed!")

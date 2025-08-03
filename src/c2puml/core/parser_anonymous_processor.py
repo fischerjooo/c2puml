@@ -356,17 +356,12 @@ class AnonymousTypedefProcessor:
 
     def _field_contains_anonymous_struct(self, field: Field) -> bool:
         """Check if a field contains an anonymous struct/union definition."""
-        # Only process fields that contain anonymous structures
-        # Skip fields that already have the correct format (e.g., "union { ... }")
-        if 'struct {' in field.type or 'union {' in field.type:
-            # Check if this is a simple nested structure with a field name
-            # If the field type ends with a field name pattern, it's already correctly formatted
-            if re.search(r'\}\s+\w+\s*$', field.type):
-                return False
-            # Skip fields that have the simplified format "union { ... }" or "struct { ... }"
-            # These are already correctly parsed by find_struct_fields
-            if field.type in ["union { ... }", "struct { ... }"]:
-                return False
+        # Process fields that contain simplified anonymous structures
+        # These are created by find_struct_fields and need to be expanded into separate entities
+        if field.type in ["union { ... }", "struct { ... }"]:
+            return True
+        # Also check for the pattern "struct { ... } field_name" or "union { ... } field_name"
+        if re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+\w+', field.type):
             return True
         return False
 
@@ -374,18 +369,41 @@ class AnonymousTypedefProcessor:
         self, file_model: FileModel, parent_name: str, field: Field
     ) -> None:
         """Extract anonymous structures from a field definition."""
-        anonymous_structs = self._extract_anonymous_structs_from_text(field.type)
-        
-        if anonymous_structs:
-            for i, (struct_content, struct_type) in enumerate(anonymous_structs, 1):
-                anon_name = self._generate_anonymous_name(parent_name, struct_type, i)
+        # Handle simplified anonymous structure types
+        if field.type in ["struct { ... }", "union { ... }"]:
+            struct_type = "struct" if "struct" in field.type else "union"
+            anon_name = self._generate_anonymous_name(parent_name, struct_type, 1)
+            
+            # Create a placeholder anonymous struct/union
+            if struct_type == "struct":
+                anon_struct = Struct(anon_name, [], tag_name="")
+                file_model.structs[anon_name] = anon_struct
+            elif struct_type == "union":
+                anon_union = Union(anon_name, [], tag_name="")
+                file_model.unions[anon_name] = anon_union
+            
+            # Track the relationship
+            if parent_name not in file_model.anonymous_relationships:
+                file_model.anonymous_relationships[parent_name] = []
+            file_model.anonymous_relationships[parent_name].append(anon_name)
+            
+            # Update the field type to reference the named structure
+            field.type = anon_name
+            
+        # Handle patterns like "struct { ... } field_name"
+        elif re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+\w+', field.type):
+            match = re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+(\w+)', field.type)
+            if match:
+                struct_type = match.group(1)
+                field_name = match.group(2)
+                anon_name = self._generate_anonymous_name(parent_name, struct_type, 1)
                 
-                # Create the anonymous struct/union
+                # Create a placeholder anonymous struct/union
                 if struct_type == "struct":
-                    anon_struct = self._create_anonymous_struct(anon_name, struct_content)
+                    anon_struct = Struct(anon_name, [], tag_name="")
                     file_model.structs[anon_name] = anon_struct
                 elif struct_type == "union":
-                    anon_union = self._create_anonymous_union(anon_name, struct_content)
+                    anon_union = Union(anon_name, [], tag_name="")
                     file_model.unions[anon_name] = anon_union
                 
                 # Track the relationship
@@ -394,6 +412,30 @@ class AnonymousTypedefProcessor:
                 file_model.anonymous_relationships[parent_name].append(anon_name)
                 
                 # Update the field type to reference the named structure
-                field.type = self._replace_anonymous_struct_with_reference(
-                    field.type, struct_content, anon_name, struct_type
-                )
+                field.type = f"{anon_name} {field_name}"
+        
+        # Handle complex anonymous structures (original logic)
+        else:
+            anonymous_structs = self._extract_anonymous_structs_from_text(field.type)
+            
+            if anonymous_structs:
+                for i, (struct_content, struct_type) in enumerate(anonymous_structs, 1):
+                    anon_name = self._generate_anonymous_name(parent_name, struct_type, i)
+                    
+                    # Create the anonymous struct/union
+                    if struct_type == "struct":
+                        anon_struct = self._create_anonymous_struct(anon_name, struct_content)
+                        file_model.structs[anon_name] = anon_struct
+                    elif struct_type == "union":
+                        anon_union = self._create_anonymous_union(anon_name, struct_content)
+                        file_model.unions[anon_name] = anon_union
+                    
+                    # Track the relationship
+                    if parent_name not in file_model.anonymous_relationships:
+                        file_model.anonymous_relationships[parent_name] = []
+                    file_model.anonymous_relationships[parent_name].append(anon_name)
+                    
+                    # Update the field type to reference the named structure
+                    field.type = self._replace_anonymous_struct_with_reference(
+                        field.type, struct_content, anon_name, struct_type
+                    )

@@ -2,6 +2,8 @@
 
 class "transformed" as TRANSFORMED <<source>> #LightBlue
 {
+    -- Macros --
+    - #define OLD_VERSION
     -- Functions --
     + void keep_this_function()
     + int main()
@@ -14,7 +16,7 @@ class "transformed" as TRANSFORMED <<source>> #LightBlue
 class "transformed" as HEADER_TRANSFORMED <<header>> #LightGreen
 {
     -- Macros --
-    + #define LEGACY_API_VERSION
+    + #define OLD_API_VERSION
     + #define TRANSFORMED_H
     -- Global Variables --
     + char * system_path
