@@ -106,9 +106,9 @@ int execute_operations(
 + #define DEPRECATED
 ```
 
-**Issue**: The conditional macro definition results in duplicate entries in the PlantUML output.
+**Issue**: The same macro name `DEPRECATED` appears twice in the PlantUML output, which is incorrect and confusing.
 
-**Specification Compliance**: ❌ **FAILS** - The tool claims to handle preprocessor directives but fails to properly process conditional compilation.
+**Specification Compliance**: ❌ **FAILS** - The tool should not generate duplicate macro entries for the same macro name.
 
 #### 3.2 Complex Macro Content Loss
 **Source (`complex.h`):**
