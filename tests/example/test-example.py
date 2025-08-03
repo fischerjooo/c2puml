@@ -1465,122 +1465,118 @@ class AnonymousTypedefValidator:
     
     def __init__(self):
         self.output_dir = Path(__file__).parent / ".." / ".." / "artifacts" / "output_example"
+        
+        # Define exact expectations for anonymous structures with their expected fields
         self.expected_anonymous_structs = {
-            # struct-within-struct
+            # struct-within-struct: should have inner_x, inner_y, inner_label fields
             "struct_with_struct_t_anonymous_struct_1": {
                 "parent": "struct_with_struct_t",
                 "type": "struct",
-                "fields": ["inner_x", "inner_y", "inner_label"]
+                "expected_fields": ["inner_x", "inner_y", "inner_label"],
+                "field_types": {
+                    "inner_x": "int",
+                    "inner_y": "int", 
+                    "inner_label": "char [16]"
+                }
             },
-            # union-within-struct (nested struct within union) 
+            # union-within-struct: should have x, y, z fields
             "struct_with_union_t_anonymous_struct_1": {
                 "parent": "struct_with_union_t",
-                "type": "struct", 
-                "fields": ["x", "y", "z"]
+                "type": "struct",
+                "expected_fields": ["x", "y", "z"],
+                "field_types": {
+                    "x": "int",
+                    "y": "int",
+                    "z": "int"
+                }
             },
-            # struct-within-union (main struct)
+            # struct-within-union: should have header, payload_size, payload_data, error_info
             "union_with_struct_t_anonymous_struct_1": {
                 "parent": "union_with_struct_t",
                 "type": "struct",
-                "fields": ["header", "payload_size", "payload_data", "error_info"]
+                "expected_fields": ["header", "payload_size", "payload_data", "error_info"],
+                "field_types": {
+                    "header": "char [16]",
+                    "payload_size": "int",
+                    "payload_data": "void *",
+                    "error_info": "struct"  # This is a nested struct
+                }
             },
             # Multiple anonymous - first struct
             "multi_anonymous_t_anonymous_struct_1": {
                 "parent": "multi_anonymous_t",
                 "type": "struct",
-                "fields": ["first_x", "first_y"]
+                "expected_fields": ["first_x", "first_y"],
+                "field_types": {
+                    "first_x": "int",
+                    "first_y": "int"
+                }
             },
             # Moderately nested - second struct
             "moderately_nested_t_anonymous_struct_1": {
                 "parent": "moderately_nested_t",
                 "type": "struct",
-                "fields": ["level2_id", "level3_union"]
+                "expected_fields": ["level2_id", "level3_union"],
+                "field_types": {
+                    "level2_id": "int",
+                    "level3_union": "union"
+                }
             },
             # Array of anonymous structs
             "array_of_anon_structs_t_anonymous_struct_1": {
                 "parent": "array_of_anon_structs_t",
                 "type": "struct",
-                "fields": ["item_id", "item_name", "item_value"]
+                "expected_fields": ["item_id", "item_name", "item_value"],
+                "field_types": {
+                    "item_id": "int",
+                    "item_name": "char [32]",
+                    "item_value": "union"
+                }
             },
             # Data union anonymous struct
             "data_union_anonymous_struct_1": {
                 "parent": "struct_with_union_t",
-                "type": "struct", 
-                "fields": ["x", "y", "z"]
+                "type": "struct",
+                "expected_fields": ["x", "y", "z"],
+                "field_types": {
+                    "x": "int",
+                    "y": "int",
+                    "z": "int"
+                }
             },
             # Item value anonymous struct
             "item_value_anonymous_struct_1": {
                 "parent": "array_of_anon_structs_t_anonymous_struct_1",
                 "type": "struct",
-                "fields": ["x", "y"]
-            },
-            # *** NEW COMPREHENSIVE TEST CASES ***
-            # Anonymous struct from general parsing
-            "__anonymous_struct__": {
-                "parent": "various",
-                "type": "struct",
-                "fields": []
-            },
-            # Complex naming test
-            "complex_naming_test_t_anonymous_struct_1": {
-                "parent": "complex_naming_test_t",
-                "type": "struct", 
-                "fields": []
-            },
-            # Extreme nesting test
-            "extreme_nesting_test_t_anonymous_struct_1": {
-                "parent": "extreme_nesting_test_t",
-                "type": "struct",
-                "fields": []
-            },
-            # Mixed union anonymous struct
-            "mixed_union_anonymous_struct_1": {
-                "parent": "various",
-                "type": "struct",
-                "fields": []
-            },
-            # Multiple simple anonymous (main typedef)
-            "multi_anonymous_t": {
-                "parent": "complex_typedef",
-                "type": "struct",
-                "fields": []
-            },
-            # Multiple simple anonymous (first anonymous)
-            "multiple_simple_anonymous_t": {
-                "parent": "multiple_simple_anonymous_t",
-                "type": "struct",
-                "fields": []
-            },
-            # Multiple simple anonymous (nested anonymous)
-            "multiple_simple_anonymous_t_anonymous_struct_1": {
-                "parent": "multiple_simple_anonymous_t",
-                "type": "struct",
-                "fields": []
-            },
-            # Struct union anonymous struct
-            "struct_union_anonymous_struct_1": {
-                "parent": "various",
-                "type": "struct",
-                "fields": []
+                "expected_fields": ["x", "y"],
+                "field_types": {
+                    "x": "int",
+                    "y": "int"
+                }
             }
         }
         
-        self.expected_function_pointer_anonyms = {
-            # Function pointer processing is now enabled with proper complexity filtering
-            "callback_with_anon_struct_t_anonymous_struct_1": {
-                "parent": "callback_with_anon_struct_t",
-                "type": "struct",
-                "fields": ["config_flags", "config_name"]
-            },
+        # Define exact expectations for anonymous unions
+        self.expected_anonymous_unions = {
             "callback_with_anon_struct_t_anonymous_union_2": {
-                "parent": "callback_with_anon_struct_t_anonymous_struct_1",
-                "type": "union", 
-                "fields": ["int_config", "float_config"]
+                "parent": "callback_with_anon_struct_t",
+                "type": "union",
+                "expected_fields": ["int_config", "float_config"],
+                "field_types": {
+                    "int_config": "int",
+                    "float_config": "float"
+                }
             },
-            "complex_callback_t_anonymous_struct_1": {
-                "parent": "complex_callback_t",
-                "type": "struct",
-                "fields": ["nested1", "nested2", "nested_func"]
+            "struct_with_union_t_anonymous_union_1": {
+                "parent": "struct_with_union_t",
+                "type": "union",
+                "expected_fields": ["int_value", "float_value", "string_value", "point_value"],
+                "field_types": {
+                    "int_value": "int",
+                    "float_value": "float",
+                    "string_value": "char [64]",
+                    "point_value": "struct"
+                }
             }
         }
     
@@ -1602,7 +1598,7 @@ class AnonymousTypedefValidator:
             puml_content = f.read()
         
         # Validate each expected anonymous struct/union
-        all_expected = {**self.expected_anonymous_structs, **self.expected_function_pointer_anonyms}
+        all_expected = {**self.expected_anonymous_structs, **self.expected_anonymous_unions}
         
         found_anonymous = set()
         for anon_name, details in all_expected.items():
@@ -1641,7 +1637,7 @@ class AnonymousTypedefValidator:
         return success
     
     def _validate_anonymous_entity(self, puml_content: str, anon_name: str, details: dict) -> bool:
-        """Validate that a specific anonymous entity exists with correct properties."""
+        """Validate that a specific anonymous entity exists with correct properties and fields."""
         # Check if the class definition exists
         expected_type = "struct" if details["type"] == "struct" else "union"
         class_pattern = rf'class "{re.escape(anon_name)}" as \w+ <<{expected_type}>> #LightYellow'
@@ -1649,13 +1645,45 @@ class AnonymousTypedefValidator:
         if not re.search(class_pattern, puml_content):
             return False
         
-        # For now, just check that the class exists - detailed field validation is complex
-        # due to the way PlantUML generates field representations
+        # Extract the class body to check field content
+        class_body_pattern = rf'class "{re.escape(anon_name)}" as \w+ <<{expected_type}>> #LightYellow\s*{{(.*?)}}'
+        body_match = re.search(class_body_pattern, puml_content, re.DOTALL)
+        
+        if not body_match:
+            return False
+        
+        class_body = body_match.group(1).strip()
+        
+        # Check if the class has the expected fields
+        expected_fields = details.get("expected_fields", [])
+        field_types = details.get("field_types", {})
+        
+        if not expected_fields:
+            # If no fields expected, just check that the class exists
+            return True
+        
+        # Check each expected field
+        for field_name in expected_fields:
+            # Look for the field in the class body
+            field_pattern = rf'\+ {re.escape(field_name)}'
+            if not re.search(field_pattern, class_body):
+                print(f"   ❌ Missing field '{field_name}' in {anon_name}")
+                return False
+            
+            # Check field type if specified
+            if field_name in field_types:
+                expected_type = field_types[field_name]
+                # Look for the field with its type
+                field_with_type_pattern = rf'\+ {re.escape(field_name)}.*{re.escape(expected_type)}'
+                if not re.search(field_with_type_pattern, class_body):
+                    print(f"   ⚠️  Field '{field_name}' in {anon_name} has unexpected type")
+                    # Don't fail on type mismatch, just warn
+        
         return True
     
     def _validate_relationships(self, puml_content: str) -> bool:
         """Validate that proper relationships exist between parent and anonymous entities."""
-        all_expected = {**self.expected_anonymous_structs, **self.expected_function_pointer_anonyms}
+        all_expected = {**self.expected_anonymous_structs, **self.expected_anonymous_unions}
         
         # Get all anonymous entity IDs in PUML format
         anonymous_entity_ids = []

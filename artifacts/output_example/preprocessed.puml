@@ -37,25 +37,25 @@ class "basic_struct_t" as TYPEDEF_BASIC_STRUCT_T <<struct>> #LightYellow
 class "debug_enabled_t" as TYPEDEF_DEBUG_ENABLED_T <<struct>> #LightYellow
 {
     + int debug_enabled_id
-    + char[64] debug_enabled_name
+    + char [64] debug_enabled_name
 }
 
 class "debug_feature_t" as TYPEDEF_DEBUG_FEATURE_T <<struct>> #LightYellow
 {
     + int debug_id
-    + char[64] debug_name
+    + char [64] debug_name
 }
 
 class "debug_optimized_t" as TYPEDEF_DEBUG_OPTIMIZED_T <<struct>> #LightYellow
 {
-    + char[128] debug_buffer
+    + char [128] debug_buffer
     + int debug_field
 }
 
 class "debug_struct_t" as TYPEDEF_DEBUG_STRUCT_T <<struct>> #LightYellow
 {
     + int debug_id
-    + char[64] debug_name
+    + char [64] debug_name
     + int extra_debug_field
 }
 
@@ -77,26 +77,26 @@ class "disabled_t" as TYPEDEF_DISABLED_T <<struct>> #LightYellow
 class "enabled_feature_t" as TYPEDEF_ENABLED_FEATURE_T <<struct>> #LightYellow
 {
     + int id
-    + char[32] name
+    + char [32] name
 }
 
 class "enabled_t" as TYPEDEF_ENABLED_T <<struct>> #LightYellow
 {
     + int enabled_id
-    + char[32] enabled_name
+    + char [32] enabled_name
 }
 
 class "feature_struct_t" as TYPEDEF_FEATURE_STRUCT_T <<struct>> #LightYellow
 {
     + int feature_id
-    + char[32] feature_name
+    + char [32] feature_name
 }
 
 class "optimized_struct_t" as TYPEDEF_OPTIMIZED_STRUCT_T <<struct>> #LightYellow
 {
-    + char[MAX_SIZE] large_buffer
+    + char [MAX_SIZE] large_buffer
     + int optimized_field
-    + char[MIN_SIZE] small_buffer
+    + char [MIN_SIZE] small_buffer
 }
 
 class "release_struct_t" as TYPEDEF_RELEASE_STRUCT_T <<struct>> #LightYellow

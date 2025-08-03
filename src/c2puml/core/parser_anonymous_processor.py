@@ -152,50 +152,53 @@ class AnonymousTypedefProcessor:
         if not content:
             return fields
         
-        # Simple field parsing - split by semicolons and extract type/name
-        field_declarations = [f.strip() for f in content.split(';') if f.strip()]
-        
-        for decl in field_declarations:
-            if not decl:
-                continue
+        # Handle the case where content is already a field definition
+        # (e.g., "int inner_x; int inner_y; char inner_label[16];")
+        if ';' in content:
+            # Split by semicolons to get individual field declarations
+            field_declarations = [f.strip() for f in content.split(';') if f.strip()]
+            
+            for decl in field_declarations:
+                if not decl:
+                    continue
+                    
+                # Handle function pointer fields: void (*name)(int)
+                if '(*' in decl and ')(' in decl:
+                    # Extract function pointer name
+                    func_ptr_match = re.search(r'\(\*\s*(\w+)\s*\)', decl)
+                    if func_ptr_match:
+                        field_name = func_ptr_match.group(1)
+                        field_type = decl.strip()
+                        fields.append(Field(name=field_name, type=field_type))
+                    continue
                 
-            # Handle function pointer fields: void (*name)(int)
-            if '(*' in decl and ')(' in decl:
-                # Extract function pointer name
-                func_ptr_match = re.search(r'\(\*\s*(\w+)\s*\)', decl)
-                if func_ptr_match:
-                    field_name = func_ptr_match.group(1)
-                    field_type = decl.strip()
-                    fields.append(Field(name=field_name, type=field_type))
-                continue
-            
-            # Handle comma-separated declarations: int a, b, c; char *ptr1, *ptr2;
-            if ',' in decl:
-                fields.extend(self._parse_comma_separated_fields(decl))
-                continue
-            
-            # Handle array declarations: type name[size] or type name[]
-            array_match = re.match(r'(.+?)\s+(\w+)\s*\[([^\]]*)\]\s*$', decl)
-            if array_match:
-                field_type = array_match.group(1).strip()
-                field_name = array_match.group(2).strip()
-                array_size = array_match.group(3).strip()
-                if array_size:
-                    full_type = f"{field_type}[{array_size}]"
-                else:
-                    full_type = f"{field_type}[]"
-                fields.append(Field(name=field_name, type=full_type))
-                continue
-            
-            # Regular single field: type name
-            parts = decl.strip().split()
-            if len(parts) >= 2:
-                field_type = ' '.join(parts[:-1])
-                field_name = parts[-1]
-                # Clean up field name (remove trailing punctuation)
-                field_name = re.sub(r'[^\w]', '', field_name)
-                if field_name:  # Only add if we have a valid name
-                    fields.append(Field(name=field_name, type=field_type))
+                # Handle comma-separated declarations: int a, b, c; char *ptr1, *ptr2;
+                if ',' in decl:
+                    fields.extend(self._parse_comma_separated_fields(decl))
+                    continue
+                
+                # Handle array declarations: type name[size] or type name[]
+                array_match = re.match(r'(.+?)\s+(\w+)\s*\[([^\]]*)\]\s*$', decl)
+                if array_match:
+                    field_type = array_match.group(1).strip()
+                    field_name = array_match.group(2).strip()
+                    array_size = array_match.group(3).strip()
+                    if array_size:
+                        full_type = f"{field_type}[{array_size}]"
+                    else:
+                        full_type = f"{field_type}[]"
+                    fields.append(Field(name=field_name, type=full_type))
+                    continue
+                
+                # Regular single field: type name
+                parts = decl.strip().split()
+                if len(parts) >= 2:
+                    field_type = ' '.join(parts[:-1])
+                    field_name = parts[-1]
+                    # Clean up field name (remove trailing punctuation)
+                    field_name = re.sub(r'[^\w]', '', field_name)
+                    if field_name:  # Only add if we have a valid name
+                        fields.append(Field(name=field_name, type=field_type))
         
         return fields
 

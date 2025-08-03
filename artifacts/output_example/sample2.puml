@@ -115,7 +115,7 @@ class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 class "filtered_struct_t" as TYPEDEF_FILTERED_STRUCT_T <<struct>> #LightYellow
 {
     + int filtered_field1
-    + char[50] filtered_field2
+    + char [50] filtered_field2
     + double filtered_field3
 }
 
@@ -128,8 +128,8 @@ class "filtered_enum_t" as TYPEDEF_FILTERED_ENUM_T <<enumeration>> #LightYellow
 
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<struct>> #LightYellow
 {
-    + char[MAX_LABEL_LEN] label
-    + point_t[3] vertices
+    + char [MAX_LABEL_LEN] label
+    + point_t [3] vertices
 }
 
 class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<enumeration>> #LightYellow
@@ -157,7 +157,7 @@ class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
 
 class "point_t" as TYPEDEF_POINT_T <<struct>> #LightYellow
 {
-    + char[32] label
+    + char [32] label
     + int x
     + int y
 }
