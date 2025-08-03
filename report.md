@@ -148,39 +148,9 @@ class "array_of_anon_structs_t" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T <<struct>> #L
 
 **Specification Compliance**: ❌ **FAILS** - The tool should properly handle anonymous structures as specified in the documentation.
 
-### 5. **Include Relationship Issues**
+### 5. **Visibility Detection Issues**
 
-#### 5.1 Missing Include Relationships
-**Source (`sample.h`):**
-```c
-#include <stddef.h>
-#include "config.h"
-// ... later in the file ...
-#include "geometry.h"
-#include "logger.h"
-```
-
-**Generated PlantUML (`sample.puml`):**
-```plantuml
-' Include relationships
-HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
-HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
-HEADER_LOGGER --> HEADER_CONFIG : <<include>>
-HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
-SAMPLE --> HEADER_GEOMETRY : <<include>>
-SAMPLE --> HEADER_LOGGER : <<include>>
-SAMPLE --> HEADER_MATH_UTILS : <<include>>
-SAMPLE --> HEADER_SAMPLE : <<include>>
-HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
-```
-
-**Issue**: The include relationship `HEADER_SAMPLE --> HEADER_LOGGER` is missing, even though `sample.h` includes `logger.h`.
-
-**Specification Compliance**: ❌ **FAILS** - The tool should capture all include relationships as specified.
-
-### 6. **Visibility Detection Issues**
-
-#### 6.1 Static Function Visibility
+#### 5.1 Static Function Visibility
 **Source (`application.c`):**
 ```c
 static volatile int running = 1;
@@ -200,9 +170,9 @@ void signal_handler(int sig) { ... }
 
 **Specification Compliance**: ✅ **PASSES** - The visibility detection correctly identifies private elements that are not declared in headers.
 
-### 7. **Template Compliance Issues**
+### 6. **Template Compliance Issues**
 
-#### 7.1 Inconsistent Naming Conventions
+#### 6.1 Inconsistent Naming Conventions
 According to `puml_template.md`, the tool should use:
 - **C files**: No prefix, based on filename in capital letters (e.g., `main.c` → `MAIN`)
 - **H files**: `HEADER_` prefix, based on filename in capital letters (e.g., `utils.h` → `HEADER_UTILS`)
@@ -219,9 +189,9 @@ class "MyBuffer" as TYPEDEF_MYBUF <<struct>> #LightYellow
 
 **Specification Compliance**: ❌ **FAILS** - The tool doesn't follow its own naming conventions.
 
-### 8. **Configuration Processing Issues**
+### 7. **Configuration Processing Issues**
 
-#### 8.1 File-Specific Configuration Not Applied
+#### 7.1 File-Specific Configuration Not Applied
 The configuration specifies:
 ```json
 "file_specific": {
@@ -236,9 +206,9 @@ The configuration specifies:
 
 **Specification Compliance**: ❌ **FAILS** - The tool should respect file-specific configuration as documented.
 
-### 9. **Transformation System Issues**
+### 8. **Transformation System Issues**
 
-#### 9.1 Transformations Not Applied
+#### 8.1 Transformations Not Applied
 The configuration includes transformation rules:
 ```json
 "transformations_01_rename": {
@@ -287,15 +257,14 @@ The configuration includes transformation rules:
 | Basic C/C++ Parsing | ✅ PASSES | Core functionality works |
 | Struct/Enum/Union Recognition | ✅ PASSES | Correctly identifies structures |
 | Function Parsing | ⚠️ PARTIAL | Parameter parsing has issues |
-| Macro Processing | ❌ FAILS | Content loss and duplicate issues |
-| Include Relationships | ⚠️ PARTIAL | Missing some relationships |
+| Macro Processing | ⚠️ PARTIAL | Duplicate macro entries issue |
+| Include Relationships | ✅ PASSES | Correctly applies configuration filters |
 | Typedef Processing | ✅ PASSES | Basic functionality works |
 | Anonymous Structure Handling | ❌ FAILS | Poor representation |
-| Preprocessor Handling | ❌ FAILS | Conditional compilation issues |
 | File-Specific Configuration | ❌ FAILS | Not properly applied |
 | Transformation System | ❌ FAILS | Appears non-functional |
 | Template Compliance | ❌ FAILS | Naming conventions not followed |
-| Visibility Detection | ⚠️ PARTIAL | Works for some cases |
+| Visibility Detection | ✅ PASSES | Works correctly |
 
 ## Recommendations
 
