@@ -51,7 +51,7 @@ class TestFileSpecificConfiguration:
         # Create transformer and apply include filters
         transformer = Transformer()
         include_filters = transformer._extract_include_filters_from_config(config)
-        transformer._apply_include_filters(project_model, include_filters)
+        transformer._apply_include_filters(project_model, include_filters, strict_filtering=True)
         
         # Check that filtered includes are removed
         filtered_includes = file_model.includes
