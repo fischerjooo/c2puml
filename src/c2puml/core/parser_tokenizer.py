@@ -1231,15 +1231,17 @@ def find_struct_fields(
                 # This is a nested struct - find the field name after the closing brace
                 # Look for the pattern: struct { ... } field_name;
                 field_name = None
-                # Find the closing brace and then the field name
-                for i, token in enumerate(field_tokens):
-                    if token.type == TokenType.RBRACE and i + 1 < len(field_tokens):
+                # Find the LAST closing brace and then the field name
+                # This handles deeply nested structures correctly
+                for i in range(len(field_tokens) - 1, -1, -1):
+                    if field_tokens[i].type == TokenType.RBRACE and i + 1 < len(field_tokens):
                         # The field name should be the next identifier after the closing brace
                         for j in range(i + 1, len(field_tokens)):
                             if field_tokens[j].type == TokenType.IDENTIFIER:
                                 field_name = field_tokens[j].value
                                 break
-                        break
+                        if field_name:
+                            break
                 
                 if field_name:
                     field_type = "struct { ... }"
@@ -1256,15 +1258,17 @@ def find_struct_fields(
                 # This is a nested union - find the field name after the closing brace
                 # Look for the pattern: union { ... } field_name;
                 field_name = None
-                # Find the closing brace and then the field name
-                for i, token in enumerate(field_tokens):
-                    if token.type == TokenType.RBRACE and i + 1 < len(field_tokens):
+                # Find the LAST closing brace and then the field name
+                # This handles deeply nested structures correctly
+                for i in range(len(field_tokens) - 1, -1, -1):
+                    if field_tokens[i].type == TokenType.RBRACE and i + 1 < len(field_tokens):
                         # The field name should be the next identifier after the closing brace
                         for j in range(i + 1, len(field_tokens)):
                             if field_tokens[j].type == TokenType.IDENTIFIER:
                                 field_name = field_tokens[j].value
                                 break
-                        break
+                        if field_name:
+                            break
                 
                 if field_name:
                     field_type = "union { ... }"

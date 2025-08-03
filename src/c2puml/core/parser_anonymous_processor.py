@@ -356,7 +356,19 @@ class AnonymousTypedefProcessor:
 
     def _field_contains_anonymous_struct(self, field: Field) -> bool:
         """Check if a field contains an anonymous struct/union definition."""
-        return 'struct {' in field.type or 'union {' in field.type
+        # Only process fields that contain anonymous structures
+        # Skip fields that already have the correct format (e.g., "union { ... }")
+        if 'struct {' in field.type or 'union {' in field.type:
+            # Check if this is a simple nested structure with a field name
+            # If the field type ends with a field name pattern, it's already correctly formatted
+            if re.search(r'\}\s+\w+\s*$', field.type):
+                return False
+            # Skip fields that have the simplified format "union { ... }" or "struct { ... }"
+            # These are already correctly parsed by find_struct_fields
+            if field.type in ["union { ... }", "struct { ... }"]:
+                return False
+            return True
+        return False
 
     def _extract_anonymous_from_field(
         self, file_model: FileModel, parent_name: str, field: Field
