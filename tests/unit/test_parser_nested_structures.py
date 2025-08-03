@@ -157,20 +157,27 @@ class TestNestedStructurePreservation(unittest.TestCase):
             print("Generated PlantUML content:")
             print(puml_content)
             
-            # Check that the nested structure is preserved in the generated PlantUML
-            # The union should show nested_union as a field, not flattened fields
-            nested_union_index = puml_content.find("+ union { ... } nested_union")
+            # Check that the nested structure is preserved with improved anonymous processing
+            # The union should now reference the extracted anonymous union
+            nested_union_index = puml_content.find("+ test_union_t_nested_union nested_union")
             primary_int_index = puml_content.find("+ int primary_int")
             primary_bytes_index = puml_content.find("+ char[32] primary_bytes")
             
             # All fields should be found
-            self.assertNotEqual(nested_union_index, -1, "nested_union field should be found in PlantUML")
+            self.assertNotEqual(nested_union_index, -1, "nested_union field with improved naming should be found in PlantUML")
             self.assertNotEqual(primary_int_index, -1, "primary_int field should be found in PlantUML")
             self.assertNotEqual(primary_bytes_index, -1, "primary_bytes field should be found in PlantUML")
             
             # Check that we have exactly 3 fields (not flattened)
-            field_count = puml_content.count("+ int primary_int") + puml_content.count("+ union { ... } nested_union") + puml_content.count("+ char[32] primary_bytes")
+            field_count = puml_content.count("+ int primary_int") + puml_content.count("+ test_union_t_nested_union nested_union") + puml_content.count("+ char[32] primary_bytes")
             self.assertEqual(field_count, 3, f"Should have exactly 3 fields, found {field_count}")
+            
+            # Check that the anonymous union was extracted as a separate entity
+            self.assertIn("test_union_t_nested_union", puml_content, "Anonymous union should be extracted as separate entity")
+            
+            # Check that composition relationship is present
+            composition_relationship = puml_content.find("*-- TYPEDEF_TEST_UNION_T_NESTED_UNION : contains")
+            self.assertNotEqual(composition_relationship, -1, "Composition relationship should be present")
             
         finally:
             # Clean up

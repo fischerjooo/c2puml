@@ -259,7 +259,52 @@ tests/
   - Integration with tokenizer, preprocessor, and verifier components
   - **Note**: Does NOT perform model element filtering - preserves all elements for transformer
 
-#### 3.2.3 Tokenizer (`core/parser_tokenizer.py`)
+#### 3.2.3 Anonymous Structure Processing (`core/parser_anonymous_processor.py`)
+- **Purpose**: Extract and process anonymous structures within typedefs and nested structures
+- **Functionality**: ✅ **FULLY IMPLEMENTED AND TESTED**
+- **Key Features**:
+  - **Improved Naming Convention**: Uses meaningful names following the pattern `ParentType_fieldName` (e.g., `Rectangle_position` instead of `Rectangle_anonymous_struct_1`)
+  - **Content Preservation**: Extracts anonymous structure content and creates named entities
+  - **Relationship Tracking**: Maintains parent-child relationships in `anonymous_relationships` field
+  - **Nested Support**: Handles deeply nested anonymous structures recursively
+  - **Multiple Types**: Supports both anonymous structs and unions
+  - **Composition Relationships**: Generates UML composition relationships (*--) with "contains" labels in PlantUML output
+
+- **Processing Workflow**:
+  1. **Detection**: Identifies anonymous structures in field types (e.g., `struct { int x; int y; } position`)
+  2. **Extraction**: Extracts the anonymous structure content
+  3. **Naming**: Generates meaningful names using parent type and field name
+  4. **Creation**: Creates new named entities (structs/unions) in the model
+  5. **Reference Update**: Updates field types to reference the new named entities
+  6. **Relationship Tracking**: Records parent-child relationships for diagram generation
+
+- **Supported Patterns**:
+  ```c
+  // Simple anonymous struct
+  typedef struct {
+      struct { int x, y; } position;  // → Creates "ParentType_position"
+  } Rectangle;
+  
+  // Anonymous union
+  typedef struct {
+      union { int i; float f; } data;  // → Creates "ParentType_data"
+  } Container;
+  
+  // Nested anonymous structures
+  typedef struct {
+      struct {
+          union { int val; } config;   // → Creates nested hierarchies
+      } settings;
+  } ComplexType;
+  ```
+
+- **Model Impact**:
+  - **New Entities**: Anonymous structures become separate entities in `structs`/`unions` collections
+  - **Updated References**: Field types reference the new named entities
+  - **Relationship Data**: `anonymous_relationships` maps parent entities to their extracted children
+  - **Composition Visualization**: PlantUML generates `*--` relationships with "contains" labels
+
+#### 3.2.4 Tokenizer (`core/parser_tokenizer.py`)
 - **Purpose**: Advanced C/C++ lexical analysis and tokenization
 - **Responsibilities**:
   - Comprehensive C/C++ token recognition and classification
@@ -270,7 +315,7 @@ tests/
   - Preprocessor directive tokenization
   - Token stream management and navigation
 
-#### 3.2.4 Preprocessor (`core/preprocessor.py`)
+#### 3.2.5 Preprocessor (`core/preprocessor.py`)
 - **Purpose**: Handle preprocessor directives and conditional compilation
 - **Responsibilities**:
   - #if, #elif, #else, #endif directive processing
@@ -281,7 +326,7 @@ tests/
   - Nested preprocessor block handling
   - Integration with tokenizer for directive detection
 
-#### 3.2.5 Verifier (`core/verifier.py`)
+#### 3.2.6 Verifier (`core/verifier.py`)
 - **Purpose**: Model validation and sanity checking
 - **Responsibilities**:
   - Project model structure validation
@@ -292,7 +337,7 @@ tests/
   - Comprehensive error reporting and issue tracking
   - Post-parsing model quality assurance
 
-#### 3.2.6 Transformer (`core/transformer.py`)
+#### 3.2.7 Transformer (`core/transformer.py`)
 - **Purpose**: Step 2 - Transform model based on configuration
 - **Responsibilities**:
   - Configuration loading and validation
@@ -304,7 +349,7 @@ tests/
   - File selection for transformer actions (apply to all files or selected ones)
   - Multi-stage transformation pipeline support
 
-#### 3.2.7 Generator (`core/generator.py`)
+#### 3.2.8 Generator (`core/generator.py`)
 - **Purpose**: Step 3 - Generate puml files based on model.json
 - **Responsibilities**:
   - PlantUML diagram generation with proper formatting and styling
@@ -316,7 +361,7 @@ tests/
   - Output file organization and directory structure management
   - PlantUML template compliance and formatting standards
 
-#### 3.2.8 Configuration (`config.py`)
+#### 3.2.9 Configuration (`config.py`)
 - **Purpose**: Configuration management and input filtering
 - **Responsibilities**:
   - Configuration loading and validation with backward compatibility
