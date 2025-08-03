@@ -204,10 +204,10 @@ class TestAnonymousStructureHandling:
             field_names = [f.name for f in main_struct.fields]
             assert "items" in field_names, "Anonymous struct field should be parsed"
             
-            # Check if the field type has been converted to a named reference
+            # Check if the field type has been converted to a named reference using improved naming
             items_field = next(f for f in main_struct.fields if f.name == "items")
             print(f"Items field type: '{items_field.type}'")
-            assert "anonymous_struct" in items_field.type, "Field should reference anonymous struct"
+            assert "simple_anonymous_t_items" in items_field.type, "Field should reference named anonymous struct with improved naming"
             
             # Check that anonymous relationships are created
             print(f"Anonymous relationships: {file_model.anonymous_relationships}")

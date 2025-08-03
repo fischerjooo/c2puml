@@ -61,6 +61,27 @@ This template defines the structure for generating PlantUML diagrams from C sour
 - **Typedefs using other typedefs**: `{TYPEDEF} ..> {OTHER_TYPEDEF} : <<uses>>`
 - Shows dependencies between typedefs
 
+### Composition Relationships (Anonymous Structures)
+- **Anonymous structure ownership**: `{PARENT_TYPEDEF} *-- {CHILD_TYPEDEF} : contains`
+- Uses composition arrow (`*--`) to show strong ownership relationship
+- Anonymous structures are owned by and exist only as part of their parent
+- Generated for extracted anonymous structures using improved naming convention
+
+**Example:**
+```plantuml
+' Anonymous structure relationships (composition)
+TYPEDEF_RECTANGLE *-- TYPEDEF_RECTANGLE_POSITION : contains
+TYPEDEF_RECTANGLE *-- TYPEDEF_RECTANGLE_SIZE : contains
+```
+
+This represents:
+```c
+typedef struct {
+    struct { int x, y; } position;      // → Rectangle_position
+    struct { int width, height; } size; // → Rectangle_size
+} Rectangle;
+```
+
 ## Template Structure
 
 ```plantuml
@@ -172,7 +193,7 @@ class "{alias_name}" as {TYPEDEF_UML_ID} <<typedef>> #LightYellow
 - **Complex types**: Array types, pointer types, and nested structures properly displayed
 - **Enum values**: All enum values shown with their assigned values
 - **Union fields**: All union fields displayed with their types
-- **Anonymous structs**: Handled with descriptive names like `__anonymous_struct__`
+- **Anonymous structures**: Extracted as separate entities with meaningful names using `ParentType_fieldName` pattern (e.g., `Rectangle_position`)
 
 ## Notes
 - Standard library headers are displayed without angle brackets

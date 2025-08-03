@@ -253,8 +253,8 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
             file_model, "parent_struct", struct_data
         )
         
-        # Check that anonymous struct was extracted
-        self.assertIn("parent_struct_anonymous_struct_1", file_model.structs)
+        # Check that anonymous struct was extracted with improved naming
+        self.assertIn("parent_struct_nested_data", file_model.structs)
         self.assertIn("parent_struct", file_model.anonymous_relationships)
 
     def test_process_union_for_anonymous_structs(self):
@@ -278,8 +278,8 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
             file_model, "parent_union", union_data
         )
         
-        # Check that anonymous struct was extracted
-        self.assertIn("parent_union_anonymous_struct_1", file_model.structs)
+        # Check that anonymous struct was extracted with improved naming
+        self.assertIn("parent_union_struct_data", file_model.structs)
         self.assertIn("parent_union", file_model.anonymous_relationships)
 
     def test_process_file_model_comprehensive(self):
@@ -311,13 +311,13 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         # Process the entire file model
         self.processor.process_file_model(file_model)
         
-        # Verify all anonymous structures were extracted
+        # Verify all anonymous structures were extracted with improved naming
         expected_anon_structs = [
-            "callback_t_anonymous_struct_1",
-            "main_union_anonymous_struct_1"
+            "callback_t_anonymous_struct_1",  # Complex type, uses counter
+            "main_union_point_data"           # Uses field name
         ]
         expected_anon_unions = [
-            "main_struct_anonymous_union_1"
+            "main_struct_data_union"          # Uses field name
         ]
         
         for anon_struct in expected_anon_structs:
