@@ -188,6 +188,7 @@ class FileModel:
     aliases: Dict[str, Alias] = field(default_factory=dict)
     unions: Dict[str, Union] = field(default_factory=dict)
     include_relations: List[IncludeRelation] = field(default_factory=list)
+    anonymous_relationships: Dict[str, List[str]] = field(default_factory=dict)  # parent -> [child1, child2, ...]
 
     def __post_init__(self):
         """Extract filename from file_path if not provided"""
@@ -213,6 +214,8 @@ class FileModel:
         data["unions"] = dict(sorted(data["unions"].items()))
         data["aliases"] = dict(sorted(data["aliases"].items()))
         data["macros"] = sorted(data["macros"])
+        # Sort anonymous relationships for consistent ordering
+        data["anonymous_relationships"] = {k: sorted(v) for k, v in sorted(data["anonymous_relationships"].items())}
         # Sort functions and globals by name (they are already objects, not dicts)
         data["functions"] = sorted(self.functions, key=lambda x: x.name)
         data["globals"] = sorted(self.globals, key=lambda x: x.name)
@@ -231,7 +234,7 @@ class FileModel:
             if "uses" in alias_data:
                 alias_data["uses"] = sorted(alias_data["uses"])
 
-        # typedef_relations removed - tag names are now in struct/enum/union
+        # Tag names are now stored in struct/enum/union objects
         return data
 
     @classmethod
@@ -286,7 +289,7 @@ class FileModel:
             else:
                 enums[name] = enum_data
 
-        # typedef_relations removed - tag names are now in struct/enum/union
+        # Tag names are now stored in struct/enum/union objects
 
         # Convert include_relations back to IncludeRelation objects
         include_relations_data = data.get("include_relations", [])

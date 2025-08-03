@@ -33,6 +33,8 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 - **Configuration System**: Flexible filtering and transformation capabilities with file-specific settings
 - **Model Verification**: Built-in sanity checking and validation of parsed models to ensure accuracy
 - **Cross-Platform**: Works on Linux, macOS, and Windows with platform-specific batch/shell scripts
+- **Enhanced UML Stereotypes**: Uses specific stereotypes for different typedef types (<<enumeration>>, <<struct>>, <<union>>, <<typedef>>)
+- **Smart Visibility Detection**: Automatically determines public/private visibility based on header file declarations
 
 ## Installation
 
@@ -264,8 +266,9 @@ The tool creates PlantUML diagrams showing:
 - Source files with functions, structs, enums, unions
 - Header files with declarations
 - Include relationships between files
-- Typedef relationships with proper UML stereotypes
+- Typedef relationships with enhanced UML stereotypes
 - Color-coded elements (source, headers, typedefs)
+- Dynamic visibility detection (public/private based on header presence)
 
 ## Architecture
 
@@ -379,6 +382,12 @@ python scripts/run_example_with_coverage.py # Example with coverage
 
 **"Dot executable does not exist" (PlantUML PNG generation)**
 - **Solution**: Install Graphviz or use the provided scripts: `./scripts/picgen.sh` or `scripts/picgen.bat`
+
+**Invalid source paths**
+- **Enhanced Error Handling**: The library now provides detailed error messages for invalid source paths instead of crashing
+- **Helpful Context**: Error messages include current working directory, parent directory information, and suggestions
+- **Multiple Source Folders**: Partial failures are handled gracefully when some folders are valid
+- **See**: [Error Handling Guide](docs/error_handling_guide.md) for comprehensive troubleshooting
 
 ### Getting Help
 

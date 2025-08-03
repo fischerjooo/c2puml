@@ -565,7 +565,12 @@ class Transformer:
     def _apply_include_filters(
         self, model: ProjectModel, include_filters: Dict[str, List[str]]
     ) -> ProjectModel:
-        """Apply include filters for each root file based on regex patterns"""
+        """Apply include filters for each root file based on regex patterns
+        
+        Args:
+            model: The project model to apply filters to
+            include_filters: Dictionary mapping root files to their include filter patterns
+        """
         self.logger.info(
             "Applying include filters for %d root files", len(include_filters)
         )
@@ -604,7 +609,7 @@ class Transformer:
             )
 
             if root_file in compiled_filters:
-                # Apply comprehensive filtering for this root file
+                # Apply comprehensive filtering (preserve includes arrays, filter include_relations)
                 self._filter_file_includes_comprehensive(
                     file_model, compiled_filters[root_file], root_file
                 )
@@ -667,17 +672,11 @@ class Transformer:
         if filename.endswith(".c"):
             return filename
 
-        # For header files, we need to find the corresponding .c file
-        # This is a simplified approach - in a real scenario, we might need
-        # more sophisticated logic to determine which .c file includes this header
-        # For now, we'll look for a .c file with the same base name
+        # For header files, find the corresponding .c file
         base_name = Path(file_path).stem
 
-        # Check if there's a corresponding .c file in the same directory
-        # This is a heuristic and might need to be enhanced
+        # Look for a .c file with the same base name
         if base_name and not filename.startswith("."):
-            # For header files, we'll use the first .c file we find as the root
-            # This is a limitation of the current approach
             return base_name + ".c"
 
         # Fallback: use the filename as root (original behavior)
@@ -723,27 +722,14 @@ class Transformer:
     def _filter_file_includes_comprehensive(
         self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
     ) -> None:
-        """Comprehensive filtering that affects both includes arrays and include_relations.
+        """Comprehensive filtering that affects only include_relations, preserving includes arrays.
         This is used by the direct _apply_include_filters method for complete filtering."""
         self.logger.debug(
             "Comprehensive filtering for file %s (root: %s)", file_model.name, root_file
         )
 
-        # Filter includes arrays
-        original_includes_count = len(file_model.includes)
-        filtered_includes = set()
-
-        for include_name in file_model.includes:
-            if self._matches_any_pattern(include_name, patterns):
-                filtered_includes.add(include_name)
-            else:
-                self.logger.debug(
-                    "Filtered out include: %s (root: %s)", include_name, root_file
-                )
-
-        file_model.includes = filtered_includes
-
-        # Filter include_relations
+        # IMPORTANT: Do NOT filter includes arrays - they should be preserved
+        # Only filter include_relations based on the patterns
         original_relations_count = len(file_model.include_relations)
         filtered_relations = []
 
@@ -761,13 +747,14 @@ class Transformer:
         file_model.include_relations = filtered_relations
 
         self.logger.debug(
-            "Comprehensive filtering for %s: includes %d->%d, relations %d->%d",
+            "Comprehensive filtering for %s: includes preserved (%d), relations %d->%d",
             file_model.name,
-            original_includes_count,
             len(file_model.includes),
             original_relations_count,
             len(file_model.include_relations),
         )
+
+
 
     def _matches_any_pattern(self, text: str, patterns: List[Pattern[str]]) -> bool:
         """Check if text matches any of the given regex patterns"""
@@ -910,8 +897,7 @@ class Transformer:
         
         self.logger.debug("Total removed types identified: %s", list(removed_types))
         
-        # Now clean up type references across all files (not just target files)
-        # because type references can appear in any file that uses the typedef
+        # Clean up type references across all files since typedefs can be used anywhere
         cleaned_count = 0
         for file_path, file_model in model.files.items():
             file_cleaned = 0
@@ -979,7 +965,7 @@ class Transformer:
         if not type_str or not removed_types:
             return False
             
-        # Simple check - look for removed type names in the type string
+        # Check for removed type names in the type string
         # This handles cases like "old_point_t *", "const old_config_t", etc.
         for removed_type in removed_types:
             if removed_type in type_str:
@@ -994,8 +980,7 @@ class Transformer:
         cleaned_type = type_str
         for removed_type in removed_types:
             if removed_type in cleaned_type:
-                # Replace the removed type with "void" to maintain some type safety
-                # This is a simple approach - more sophisticated would be to have replacement rules
+                # Replace the removed type with "void" to maintain type safety
                 cleaned_type = cleaned_type.replace(removed_type, "void")
                 
         # Clean up any double spaces or other artifacts
@@ -1019,8 +1004,7 @@ class Transformer:
             
         self.logger.debug("Cleaning type references for removed typedefs: %s", list(removed_typedef_names))
         
-        # Clean up type references across all files (not just target files)
-        # because type references can appear in any file that uses the typedef
+        # Clean up type references across all files since typedefs can be used anywhere
         cleaned_count = 0
         for file_path, file_model in model.files.items():
             file_cleaned = 0
@@ -1337,9 +1321,18 @@ class Transformer:
             return
         
         def get_macro_name(macro: str) -> str:
+            # Extract macro name from "#define MACRO_NAME value" format
+            if macro.startswith("#define "):
+                return macro.split(" ")[1]
             return macro
         
         def create_renamed_macro(name: str, macro: str) -> str:
+            # Replace the macro name in the original macro string
+            if macro.startswith("#define "):
+                parts = macro.split(" ", 2)  # Split into ["#define", "OLD_NAME", "rest"]
+                if len(parts) >= 2:
+                    return f"#define {name} {parts[2]}" if len(parts) > 2 else f"#define {name}"
+            # If it's just a macro name without #define prefix, return the new name
             return name
         
         file_model.macros = self._rename_list_elements(
@@ -1623,6 +1616,9 @@ class Transformer:
     def _remove_macros(self, file_model: FileModel, patterns: List[str]) -> None:
         """Remove macros matching regex patterns"""
         def get_macro_name(macro: str) -> str:
+            # Extract macro name from "#define MACRO_NAME value" format
+            if macro.startswith("#define "):
+                return macro.split(" ")[1]
             return macro
             
         file_model.macros = self._remove_list_elements(
@@ -2047,6 +2043,7 @@ class Transformer:
             includes=data.get("includes", []),
             macros=data.get("macros", []),
             aliases=aliases,
+            anonymous_relationships=data.get("anonymous_relationships", {}),
         )
 
     def _save_model(self, model: ProjectModel, output_file: str) -> None:

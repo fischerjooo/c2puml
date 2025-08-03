@@ -120,6 +120,14 @@ Usage:
             return 0
         except (OSError, ValueError, RuntimeError) as e:
             logging.error("Error during parsing: %s", e)
+            # Provide additional context for common issues
+            if "Source folder not found" in str(e):
+                logging.error("Please check that the source_folders in your configuration exist and are accessible.")
+                logging.error("You can use absolute paths or relative paths from the current working directory.")
+            elif "Permission denied" in str(e):
+                logging.error("Please check file permissions for the source folders.")
+            elif "Invalid JSON" in str(e):
+                logging.error("Please check that your configuration file contains valid JSON.")
             return 1
 
     # Transform command
@@ -152,6 +160,7 @@ Usage:
                 model_to_use = model_file
             else:
                 logging.error("No model file found for generation.")
+                logging.error("Please run the parse step first to generate a model file.")
                 return 1
             generator.generate(
                 model_file=model_to_use,
@@ -198,6 +207,16 @@ Usage:
         return 0
     except (OSError, ValueError, RuntimeError) as e:
         logging.error("Error in workflow: %s", e)
+        # Provide additional context for common issues
+        if "Source folder not found" in str(e):
+            logging.error("Please check that the source_folders in your configuration exist and are accessible.")
+            logging.error("You can use absolute paths or relative paths from the current working directory.")
+        elif "Permission denied" in str(e):
+            logging.error("Please check file permissions for the source folders.")
+        elif "Invalid JSON" in str(e):
+            logging.error("Please check that your configuration file contains valid JSON.")
+        elif "Configuration must contain" in str(e):
+            logging.error("Please check that your configuration file has the required 'source_folders' field.")
         return 1
 
 

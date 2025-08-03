@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "c2puml"
-version = "2025.8.2"
+version = "2025.8.3"
 description = "Convert C/C++ code to PlantUML diagrams with advanced filtering and transformation capabilities"
 readme = "README.md"
 authors = [
