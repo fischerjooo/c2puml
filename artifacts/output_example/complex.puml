@@ -63,26 +63,26 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
 
 class "Process_T" as TYPEDEF_PROCESS_T <<struct>> #LightYellow
 {
-    + size_t data_size
-    + char * job_data
     + int job_id
+    + char * job_data
+    + size_t data_size
     + int priority
 }
 
 class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<struct>> #LightYellow
 {
     + int level2_id
-    + float level3_float
     + union { int level3_int
+    + float level3_float
 }
 
 class "array_of_anon_structs_t" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T <<struct>> #LightYellow
 {
     + int count
-    + float float_data
-    + union { int int_data
     + array_of_anon_structs_t_anonymous_struct_1 item_id
     + char[32] item_name
+    + union { int int_data
+    + float float_data
     + array_of_anon_structs_t_anonymous_struct_1 y
 }
 
@@ -94,9 +94,9 @@ class "callback_with_anon_struct_t_anonymous_struct_1" as TYPEDEF_CALLBACK_WITH_
 {
     + int config_flags
     + char[64] config_name
-    + } config_value
-    + float float_config
     + union { int int_config
+    + float float_config
+    + } config_value
 }
 
 class "complex_callback_t_anonymous_struct_1" as TYPEDEF_COMPLEX_CALLBACK_T_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
@@ -108,16 +108,16 @@ class "complex_callback_t_anonymous_struct_1" as TYPEDEF_COMPLEX_CALLBACK_T_ANON
 
 class "complex_handler_t" as TYPEDEF_COMPLEX_HANDLER_T <<struct>> #LightYellow
 {
-    + void ( * ) ( char * , int ) format_func
     + int id
     + int ( * ) ( const char * ) validate_func
+    + void ( * ) ( char * , int ) format_func
 }
 
 class "complex_naming_test_t" as TYPEDEF_COMPLEX_NAMING_TEST_T <<struct>> #LightYellow
 {
-    + complex_naming_test_t_anonymous_struct_1 deep_a1
     + complex_naming_test_t_anonymous_struct_1 first_a
     + complex_naming_test_t_anonymous_struct_1 nested_a1
+    + complex_naming_test_t_anonymous_struct_1 deep_a1
 }
 
 class "complex_naming_test_t_anonymous_struct_1" as TYPEDEF_COMPLEX_NAMING_TEST_T_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
@@ -128,14 +128,14 @@ class "config_param" as TYPEDEF_CONFIG_PARAM <<struct>> #LightYellow
 {
     + int config_flags
     + char[64] config_name
-    + float float_config
     + union { int int_config
+    + float float_config
 }
 
 class "data_item_t" as TYPEDEF_DATA_ITEM_T <<struct>> #LightYellow
 {
-    + char * name
     + int value
+    + char * name
 }
 
 class "data_union_anonymous_struct_1" as TYPEDEF_DATA_UNION_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
@@ -153,11 +153,11 @@ class "extreme_nesting_test_t_anonymous_struct_1" as TYPEDEF_EXTREME_NESTING_TES
 
 class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<struct>> #LightYellow
 {
-    + void ( * ) ( void ) cleanup_func
     + int id
-    + void ( * ) ( void ) init_func
     + char[16] name
+    + void ( * ) ( void ) init_func
     + int ( * ) ( int , int ) process_func
+    + void ( * ) ( void ) cleanup_func
 }
 
 class "item_value_anonymous_struct_1" as TYPEDEF_ITEM_VALUE_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
@@ -172,8 +172,8 @@ class "moderately_nested_t" as TYPEDEF_MODERATELY_NESTED_T <<struct>> #LightYell
 {
     + int level1_id
     + moderately_nested_t_anonymous_struct_1 level2_id
-    + float level3_float
     + union { int level3_int
+    + float level3_float
 }
 
 class "moderately_nested_t_anonymous_struct_1" as TYPEDEF_MODERATELY_NESTED_T_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
@@ -201,9 +201,9 @@ class "multiple_simple_anonymous_t_anonymous_struct_1" as TYPEDEF_MULTIPLE_SIMPL
 
 class "operation_set_t" as TYPEDEF_OPERATION_SET_T <<struct>> #LightYellow
 {
-    + void(* callbacks[3])(int , char *) callbacks
     + int count
     + math_operation_t[5] operations
+    + void(* callbacks[3])(int , char *) callbacks
 }
 
 class "param4" as TYPEDEF_PARAM4 <<struct>> #LightYellow
@@ -215,24 +215,24 @@ class "param4" as TYPEDEF_PARAM4 <<struct>> #LightYellow
 
 class "processor_t" as TYPEDEF_PROCESSOR_T <<struct>> #LightYellow
 {
-    + void ( * ) ( void * ) cleanup_func
     + int id
     + char[64] name
     + int ( * ) ( int , char * ) process_func
+    + void ( * ) ( void * ) cleanup_func
 }
 
 class "result_generator_t" as TYPEDEF_RESULT_GENERATOR_T <<struct>> #LightYellow
 {
-    + char[128] error_message
     + int result_code
     + union { int success_value
+    + char[128] error_message
 }
 
 class "simplified_handler_t" as TYPEDEF_SIMPLIFIED_HANDLER_T <<struct>> #LightYellow
 {
     + int event_count
-    + int event_flags
     + char[32] event_name
+    + int event_flags
 }
 
 class "struct_union_anonymous_struct_1" as TYPEDEF_STRUCT_UNION_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
@@ -241,11 +241,11 @@ class "struct_union_anonymous_struct_1" as TYPEDEF_STRUCT_UNION_ANONYMOUS_STRUCT
 
 class "struct_with_struct_t" as TYPEDEF_STRUCT_WITH_STRUCT_T <<struct>> #LightYellow
 {
-    + char[16] inner_label
-    + struct_with_struct_t_anonymous_struct_1 inner_x
-    + int inner_y
     + int outer_id
     + char[32] outer_name
+    + struct_with_struct_t_anonymous_struct_1 inner_x
+    + int inner_y
+    + char[16] inner_label
 }
 
 class "struct_with_struct_t_anonymous_struct_1" as TYPEDEF_STRUCT_WITH_STRUCT_T_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
@@ -254,10 +254,10 @@ class "struct_with_struct_t_anonymous_struct_1" as TYPEDEF_STRUCT_WITH_STRUCT_T_
 
 class "struct_with_union_t" as TYPEDEF_STRUCT_WITH_UNION_T <<struct>> #LightYellow
 {
-    + float float_value
-    + union { int int_value
-    + char[64] string_value
     + int type_id
+    + union { int int_value
+    + float float_value
+    + char[64] string_value
     + struct_with_union_t_anonymous_struct_1 z
 }
 
@@ -367,28 +367,28 @@ class "uint8" as TYPEDEF_UINT8 <<typedef>> #LightYellow
 
 class "callback_with_anon_struct_t_anonymous_union_2" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_ANONYMOUS_UNION_2 <<union>> #LightYellow
 {
-    + float float_config
     + int int_config
+    + float float_config
 }
 
 class "config_value" as TYPEDEF_CONFIG_VALUE <<union>> #LightYellow
 {
-    + float float_config
     + int int_config
+    + float float_config
 }
 
 class "data_union" as TYPEDEF_DATA_UNION <<union>> #LightYellow
 {
-    + float float_value
     + int int_value
+    + float float_value
     + char[64] string_value
     + data_union_anonymous_struct_1 z
 }
 
 class "first_anon_union" as TYPEDEF_FIRST_ANON_UNION <<union>> #LightYellow
 {
-    + float union_float
     + int union_int
+    + float union_float
 }
 
 class "first_union" as TYPEDEF_FIRST_UNION <<union>> #LightYellow
@@ -398,15 +398,15 @@ class "first_union" as TYPEDEF_FIRST_UNION <<union>> #LightYellow
 
 class "item_value" as TYPEDEF_ITEM_VALUE <<union>> #LightYellow
 {
-    + float float_data
     + int int_data
+    + float float_data
     + item_value_anonymous_struct_1 y
 }
 
 class "level3_union" as TYPEDEF_LEVEL3_UNION <<union>> #LightYellow
 {
-    + float level3_float
     + int level3_int
+    + float level3_float
 }
 
 class "mixed_union" as TYPEDEF_MIXED_UNION <<union>> #LightYellow
@@ -416,16 +416,16 @@ class "mixed_union" as TYPEDEF_MIXED_UNION <<union>> #LightYellow
 
 class "mixed_union_t" as TYPEDEF_MIXED_UNION_T <<union>> #LightYellow
 {
-    + int ( * ) ( int ) int_func
     + int int_val
     + char * str_val
     + void ( * ) ( void ) void_func
+    + int ( * ) ( int ) int_func
 }
 
 class "result_data" as TYPEDEF_RESULT_DATA <<union>> #LightYellow
 {
-    + char[128] error_message
     + int success_value
+    + char[128] error_message
 }
 
 class "second_union" as TYPEDEF_SECOND_UNION <<union>> #LightYellow
@@ -441,21 +441,21 @@ class "struct_union" as TYPEDEF_STRUCT_UNION <<union>> #LightYellow
 
 class "union_with_struct_t" as TYPEDEF_UNION_WITH_STRUCT_T <<union>> #LightYellow
 {
+    + int simple_int
+    + float simple_float
+    + int payload_size
+    + void * payload_data
     + union_with_struct_t_anonymous_struct_1 error_code
     + char[128] error_msg
-    + void * payload_data
-    + int payload_size
-    + float simple_float
-    + int simple_int
 }
 
 class "union_with_union_t" as TYPEDEF_UNION_WITH_UNION_T <<union>> #LightYellow
 {
+    + int primary_int
+    + union { float nested_float
+    + double nested_double
     + union { char deep_char
     + short deep_short
-    + double nested_double
-    + union { float nested_float
-    + int primary_int
 }
 
 

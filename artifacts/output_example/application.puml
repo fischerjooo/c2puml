@@ -52,21 +52,21 @@ class "network" as HEADER_NETWORK <<header>> #LightGreen
 
 class "DatabaseConfig" as TYPEDEF_DATABASECONFIG <<struct>> #LightYellow
 {
-    + void * connection
+    + DatabaseType type
     + char[MAX_DB_NAME_LENGTH] db_name
     + char[256] host
-    + char[128] password
     + int port
-    + DatabaseType type
     + char[128] username
+    + char[128] password
+    + void * connection
 }
 
 class "QueryResult" as TYPEDEF_QUERYRESULT <<struct>> #LightYellow
 {
-    + int column_count
-    + char * * column_names
-    + char * * data
     + int row_count
+    + int column_count
+    + char * * data
+    + char * * column_names
 }
 
 class "DatabaseType" as TYPEDEF_DATABASETYPE <<enumeration>> #LightYellow
@@ -78,10 +78,10 @@ class "DatabaseType" as TYPEDEF_DATABASETYPE <<enumeration>> #LightYellow
 
 class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<struct>> #LightYellow
 {
-    + struct sockaddr_in address
-    + char * hostname
-    + int port
     + int socket_fd
+    + struct sockaddr_in address
+    + int port
+    + char * hostname
 }
 
 class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<enumeration>> #LightYellow

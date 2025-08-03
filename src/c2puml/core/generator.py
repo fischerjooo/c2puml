@@ -548,7 +548,7 @@ class Generator:
                     f'class "{struct_name}" as {uml_id} <<struct>> {COLOR_TYPEDEF}'
                 )
                 lines.append("{")
-                for field in sorted(struct_data.fields, key=lambda x: x.name):
+                for field in struct_data.fields:
                     self._generate_field_with_nested_structs(lines, field, "    + ")
                 lines.append("}")
                 lines.append("")
@@ -608,7 +608,7 @@ class Generator:
                     f'class "{union_name}" as {uml_id} <<union>> {COLOR_TYPEDEF}'
                 )
                 lines.append("{")
-                for field in sorted(union_data.fields, key=lambda x: x.name):
+                for field in union_data.fields:
                     self._generate_field_with_nested_structs(lines, field, "    + ")
                 lines.append("}")
                 lines.append("")

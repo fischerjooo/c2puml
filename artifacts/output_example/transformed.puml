@@ -37,9 +37,9 @@ class "old_point" as TYPEDEF_OLD_POINT <<struct>> #LightYellow
 
 class "modern_config" as TYPEDEF_MODERN_CONFIG <<struct>> #LightYellow
 {
-    + int flags
-    + char[64] name
     + int version
+    + char[64] name
+    + int flags
 }
 
 class "point3d_t" as TYPEDEF_POINT3D_T <<struct>> #LightYellow
