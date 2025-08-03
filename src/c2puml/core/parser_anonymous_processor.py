@@ -162,6 +162,12 @@ class AnonymousTypedefProcessor:
                 if not decl:
                     continue
                     
+                # Handle nested anonymous structs/unions: struct { ... } name or union { ... } name
+                nested_result = self._parse_nested_anonymous_struct(decl)
+                if nested_result:
+                    fields.append(nested_result)
+                    continue
+                
                 # Handle function pointer fields: void (*name)(int)
                 if '(*' in decl and ')(' in decl:
                     # Extract function pointer name
@@ -201,6 +207,44 @@ class AnonymousTypedefProcessor:
                         fields.append(Field(name=field_name, type=field_type))
         
         return fields
+
+    def _parse_nested_anonymous_struct(self, decl: str) -> Optional[Field]:
+        """Parse nested anonymous struct/union declarations with proper brace matching."""
+        # Look for struct or union at the beginning
+        struct_match = re.match(r'(struct|union)\s*\{', decl)
+        if not struct_match:
+            return None
+        
+        struct_type = struct_match.group(1)
+        
+        # Find the matching closing brace and field name
+        brace_count = 0
+        start_pos = decl.find('{')
+        if start_pos == -1:
+            return None
+        
+        # Count braces to find the matching closing brace
+        for i, char in enumerate(decl[start_pos:], start_pos):
+            if char == '{':
+                brace_count += 1
+            elif char == '}':
+                brace_count -= 1
+                if brace_count == 0:
+                    # Found the matching closing brace
+                    end_pos = i
+                    # Extract the field name after the closing brace
+                    remaining = decl[end_pos + 1:].strip()
+                    if remaining:
+                        # The field name should be the last word
+                        field_name = remaining.split()[-1].strip()
+                        # Extract the content between braces
+                        content = decl[start_pos + 1:end_pos].strip()
+                        # Create a proper type representation
+                        field_type = f"{struct_type} {{ {content} }}"
+                        return Field(name=field_name, type=field_type)
+                    break
+        
+        return None
 
     def _parse_comma_separated_fields(self, decl: str) -> List[Field]:
         """Parse comma-separated field declarations like 'int a, b, c;' or 'char *ptr1, *ptr2;'."""
