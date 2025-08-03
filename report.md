@@ -269,6 +269,308 @@ class "array_of_anon_structs_t" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T <<struct>> #L
 3. **Add known limitations** - Document what doesn't work
 4. **Provide working examples** - Show what the tool actually does well
 
+## Agile Test-Driven Development Fix Plan
+
+### Development Workflow
+
+**Always follow this TDD cycle for each issue:**
+1. **Write failing test first** - Create unit test or assertion that detects the specific issue
+2. **Run tests** - Verify the test fails (`./scripts/run_all.sh`)
+3. **Implement minimal fix** - Write code to make the test pass
+4. **Run tests again** - Ensure all tests pass and no regressions
+5. **Refactor** - Clean up code while keeping tests green
+6. **Document** - Update relevant documentation
+
+### Issue-Specific Fix Plans
+
+#### Issue 1.1: Struct Field Order Preservation
+
+**Test-First Approach:**
+```python
+# tests/unit/test_parser_struct_order.py
+def test_struct_field_order_preservation():
+    """Test that struct fields maintain their original order"""
+    source_code = """
+    typedef struct triangle_tag {
+        point_t vertices[3];
+        char label[MAX_LABEL_LEN];
+    } triangle_t;
+    """
+    result = parse_struct(source_code)
+    assert result.fields[0].name == "vertices"  # Should be first
+    assert result.fields[1].name == "label"     # Should be second
+```
+
+**Implementation Steps:**
+1. Add field order tracking in `parser_tokenizer.py`
+2. Modify struct parsing to preserve field order
+3. Update generator to respect field order
+4. Add integration test in `tests/example/test-example.py`
+
+**Test Command:**
+```bash
+./scripts/run_all.sh  # Run full test suite
+```
+
+#### Issue 2.1: Function Parameter Parsing
+
+**Test-First Approach:**
+```python
+# tests/unit/test_parser_function_params.py
+def test_function_parameter_parsing():
+    """Test that function parameters are correctly parsed"""
+    source_code = """
+    int execute_operations(
+        int value,
+        math_ops_array_t ops,
+        int op_count
+    );
+    """
+    result = parse_function(source_code)
+    assert result.parameters[2].name == "op_count"  # Should have name
+    assert not result.parameters[2].is_unnamed      # Should not be unnamed
+```
+
+**Implementation Steps:**
+1. Fix parameter name extraction in `parser_tokenizer.py`
+2. Update parameter parsing logic
+3. Add parameter validation in `verifier.py`
+4. Test with complex parameter scenarios
+
+#### Issue 3.1: Duplicate Macro Definitions
+
+**Test-First Approach:**
+```python
+# tests/unit/test_parser_macro_duplicates.py
+def test_no_duplicate_macro_definitions():
+    """Test that same macro name doesn't appear twice"""
+    source_code = """
+    #if defined(__GNUC__) && __GNUC__ >= 4
+        #define DEPRECATED __attribute__((deprecated))
+    #else
+        #define DEPRECATED
+    #endif
+    """
+    result = parse_macros(source_code)
+    macro_names = [m.name for m in result.macros]
+    assert len(macro_names) == len(set(macro_names))  # No duplicates
+```
+
+**Implementation Steps:**
+1. Add macro deduplication in `parser.py`
+2. Implement macro name tracking
+3. Update preprocessor handling
+4. Add macro validation tests
+
+#### Issue 4.1: Template Compliance (Naming Conventions)
+
+**Test-First Approach:**
+```python
+# tests/unit/test_generator_naming.py
+def test_uml_id_naming_conventions():
+    """Test that UML IDs follow naming conventions"""
+    typedef_name = "MyBuffer"
+    expected_id = "TYPEDEF_MYBUFFER"
+    actual_id = generate_typedef_uml_id(typedef_name)
+    assert actual_id == expected_id
+```
+
+**Implementation Steps:**
+1. Fix UML ID generation in `generator.py`
+2. Implement proper naming conventions
+3. Add naming validation
+4. Update all generated files
+
+#### Issue 5.1: File-Specific Configuration
+
+**Test-First Approach:**
+```python
+# tests/unit/test_transformer_config.py
+def test_file_specific_include_filter():
+    """Test that file-specific include filters are applied"""
+    config = {
+        "file_specific": {
+            "sample.c": {
+                "include_filter": ["^stdio\\.h$", "^stdlib\\.h$"],
+                "include_depth": 1
+            }
+        }
+    }
+    result = apply_file_specific_config(model, config)
+    sample_includes = result.files["sample.c"].includes
+    assert all(re.match("^(stdio|stdlib)\\.h$", inc) for inc in sample_includes)
+```
+
+**Implementation Steps:**
+1. Fix configuration application in `transformer.py`
+2. Implement proper include filtering
+3. Add configuration validation
+4. Test with various filter patterns
+
+#### Issue 6.1: Transformation System
+
+**Test-First Approach:**
+```python
+# tests/unit/test_transformer_rename.py
+def test_typedef_renaming():
+    """Test that typedef renaming works correctly"""
+    config = {
+        "rename": {
+            "typedef": {"^old_config_t$": "config_t"}
+        }
+    }
+    model = create_test_model_with_typedef("old_config_t")
+    result = apply_rename_transformations(model, config)
+    assert "config_t" in result.typedefs
+    assert "old_config_t" not in result.typedefs
+```
+
+**Implementation Steps:**
+1. Implement transformation engine in `transformer.py`
+2. Add rename/remove operations
+3. Implement pattern matching
+4. Add comprehensive transformation tests
+
+#### Issue 7.1: Anonymous Structure Handling
+
+**Test-First Approach:**
+```python
+# tests/unit/test_parser_anonymous_struct.py
+def test_anonymous_struct_representation():
+    """Test that anonymous structures are properly represented"""
+    source_code = """
+    typedef struct {
+        int count;
+        struct {
+            int item_id;
+            char item_name[32];
+        } items[10];
+    } array_of_anon_structs_t;
+    """
+    result = parse_struct(source_code)
+    assert result.has_nested_structure
+    assert result.fields[1].is_anonymous_struct
+    assert result.fields[1].nested_fields[0].name == "item_id"
+```
+
+**Implementation Steps:**
+1. Enhance anonymous struct parsing
+2. Implement nested structure representation
+3. Update generator for complex structures
+4. Add visualization improvements
+
+### Development Environment Setup
+
+**Prerequisites:**
+```bash
+# Install development dependencies
+pip install -r requirements-dev.txt
+
+# Install package in development mode
+pip install -e .
+
+# Verify setup
+./scripts/run_all.sh
+```
+
+**Daily Development Workflow:**
+```bash
+# 1. Start with failing test
+python -m pytest tests/unit/test_specific_issue.py::test_issue -v
+
+# 2. Implement fix
+# Edit relevant source files
+
+# 3. Run tests
+./scripts/run_all.sh
+
+# 4. Check specific test
+python -m pytest tests/unit/test_specific_issue.py::test_issue -v
+
+# 5. Run full suite
+./scripts/run_all.sh
+```
+
+### Testing Strategy
+
+**Unit Tests:**
+- Create specific tests for each issue
+- Test individual components in isolation
+- Mock dependencies where appropriate
+- Use descriptive test names
+
+**Integration Tests:**
+- Test complete workflows
+- Use real C source files
+- Verify end-to-end functionality
+- Test configuration scenarios
+
+**Regression Tests:**
+- Ensure existing functionality works
+- Test edge cases and error conditions
+- Verify performance doesn't degrade
+- Check backward compatibility
+
+### Quality Gates
+
+**Before Each Commit:**
+1. All unit tests pass
+2. All integration tests pass
+3. Code coverage maintained or improved
+4. No new linting errors
+5. Documentation updated
+
+**Before Each Release:**
+1. Full test suite passes
+2. Performance benchmarks met
+3. Security scan clean
+4. Documentation complete
+5. Example outputs verified
+
+### Monitoring and Validation
+
+**Continuous Testing:**
+```bash
+# Run tests in watch mode during development
+python -m pytest tests/ -f --tb=short
+
+# Run specific test file
+python -m pytest tests/unit/test_parser.py -v
+
+# Run with coverage
+python -m pytest tests/ --cov=src/c2puml --cov-report=html
+```
+
+**Output Validation:**
+```bash
+# Generate example outputs
+python3 main.py --config tests/example/config.json
+
+# Verify generated PlantUML files
+ls -la artifacts/output_example/*.puml
+
+# Check for specific issues in output
+grep -n "unnamed" artifacts/output_example/*.puml
+grep -n "DEPRECATED" artifacts/output_example/*.puml | wc -l
+```
+
+### Success Metrics
+
+**For Each Issue Fix:**
+- [ ] Failing test written and documented
+- [ ] Test passes after implementation
+- [ ] No regressions in existing functionality
+- [ ] Code coverage maintained
+- [ ] Documentation updated
+- [ ] Example outputs verified
+
+**Overall Project Health:**
+- Test coverage > 90%
+- All tests passing
+- No critical issues in generated output
+- Performance within acceptable limits
+- Documentation matches implementation
+
 ## Conclusion
 
 The C to PlantUML converter shows promise with its basic functionality working correctly. However, it falls significantly short of its documented capabilities in several critical areas:
@@ -283,4 +585,4 @@ The C to PlantUML converter shows promise with its basic functionality working c
 2. **UML output is properly formatted** - Follows PlantUML standards
 3. **Architecture is sound** - The 3-step pipeline design is good
 
-**Recommendation**: The tool needs substantial work to match its documentation before it can be considered production-ready. The gap between advertised features and actual implementation is significant, particularly in the transformation system and configuration handling.
+**Recommendation**: The tool needs substantial work to match its documentation before it can be considered production-ready. The gap between advertised features and actual implementation is significant, particularly in the transformation system and configuration handling. The provided agile test-driven development plan offers a structured approach to systematically address these issues while maintaining code quality and preventing regressions.
