@@ -91,6 +91,17 @@ This structure involves both named nested structures (Issue 1.2) and anonymous s
 3. Replace anonymous references with named references
 4. Track relationships in `anonymous_relationships`
 
+### Improved Naming Convention:
+Instead of generic names like `parent_anonymous_struct_1`, the processor should use meaningful names based on the context:
+- **Pattern**: `ParentType_fieldName` for anonymous structures
+- **Example**: `struct { ... } position` in `Tree` becomes `Tree_position`
+- **Nested**: `struct { ... } leaf` inside `Tree_branch` becomes `Tree_branch_leaf`
+
+This provides:
+- **Clarity**: Names directly indicate the relationship
+- **Uniqueness**: Parent-field combination ensures no conflicts
+- **Traceability**: Easy to understand the source of each anonymous type
+
 ### Implementation Challenges:
 1. **Regex Complexity**: Matching balanced braces in C code with regex is error-prone
 2. **Tokenization Conflicts**: The tokenizer already simplifies structures, making it hard to preserve content
@@ -118,10 +129,37 @@ This creates a "chicken and egg" problem where the information needed is discard
 3. Let AnonymousTypedefProcessor extract from the preserved content
 4. Clean up markers during final generation
 
+**Improved Naming Convention Implementation**:
+```python
+# In parser_anonymous_processor.py
+def _generate_anonymous_name(self, parent_name: str, field_name: str, struct_type: str = None) -> str:
+    """Generate a meaningful name for anonymous structure based on parent and field."""
+    # Use parent_field pattern for clarity
+    return f"{parent_name}_{field_name}"
+
+def _extract_anonymous_from_field(self, file_model: FileModel, parent_name: str, field: Field) -> None:
+    """Extract anonymous structures with improved naming."""
+    if field.type in ["struct { ... }", "union { ... }"]:
+        # Generate name based on parent type and field name
+        anon_name = self._generate_anonymous_name(parent_name, field.name)
+        
+        # Create the anonymous struct/union
+        if "struct" in field.type:
+            anon_struct = Struct(anon_name, [], tag_name="")
+            file_model.structs[anon_name] = anon_struct
+        else:
+            anon_union = Union(anon_name, [], tag_name="")
+            file_model.unions[anon_name] = anon_union
+        
+        # Update field type to reference the named structure
+        field.type = anon_name
+```
+
 **Pros**:
 - Minimal changes to existing architecture
 - Preserves backward compatibility
 - Can be implemented incrementally
+- **Intuitive naming makes diagrams self-documenting**
 
 **Cons**:
 - Requires careful tokenizer modifications
@@ -274,29 +312,59 @@ class "test_anonymous_t" <<struct>> {
 ```plantuml
 class "test_anonymous_t" <<struct>> {
     + int type
-    + position : test_anonymous_t_anonymous_struct_1
-    + data : test_anonymous_t_anonymous_union_1
+    + position : test_anonymous_t_position
+    + data : test_anonymous_t_data
 }
 
-class "test_anonymous_t_anonymous_struct_1" <<struct>> {
+class "test_anonymous_t_position" <<struct>> {
     + int x
     + int y
 }
 
-class "test_anonymous_t_anonymous_union_1" <<union>> {
+class "test_anonymous_t_data" <<union>> {
     + int int_value
     + float float_value
-    + complex_value : test_anonymous_t_anonymous_struct_2
+    + complex_value : test_anonymous_t_data_complex_value
 }
 
-class "test_anonymous_t_anonymous_struct_2" <<struct>> {
+class "test_anonymous_t_data_complex_value" <<struct>> {
     + double real
     + double imag
 }
 
-test_anonymous_t --> test_anonymous_t_anonymous_struct_1 : contains
-test_anonymous_t --> test_anonymous_t_anonymous_union_1 : contains
-test_anonymous_t_anonymous_union_1 --> test_anonymous_t_anonymous_struct_2 : contains
+test_anonymous_t --> test_anonymous_t_position : contains
+test_anonymous_t --> test_anonymous_t_data : contains
+test_anonymous_t_data --> test_anonymous_t_data_complex_value : contains
+```
+
+### Real-World Example:
+```c
+typedef struct {
+    struct {
+        int x, y;
+    } position;
+    struct {
+        int width, height;
+    } size;
+} Rectangle;
+```
+
+Would generate:
+```plantuml
+class "Rectangle" <<struct>> {
+    + position : Rectangle_position
+    + size : Rectangle_size
+}
+
+class "Rectangle_position" <<struct>> {
+    + int x
+    + int y
+}
+
+class "Rectangle_size" <<struct>> {
+    + int width
+    + int height
+}
 ```
 
 This would provide full visibility into the structure hierarchy while maintaining readability.
