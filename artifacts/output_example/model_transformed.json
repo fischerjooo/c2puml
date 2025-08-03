@@ -537,11 +537,10 @@
         },
         "callback_with_anon_struct_t": {
           "name": "callback_with_anon_struct_t",
-          "original_type": "void(* callback_with_anon_struct_t)(\n int id , \n struct { \n int config_flags ; \n char config_name [ 64 ] ; \n callback_with_anon_struct_t_anonymous_union_2 config_value ; \n } * config_param , \n void * user_data \n)",
+          "original_type": "void(* callback_with_anon_struct_t)(\n int id , \n callback_with_anon_struct_t_anonymous_struct_1 * config_param , \n void * user_data \n)",
           "uses": [
-            "callback_with_anon_struct_t_anonymous_union_2",
-            "config_param",
-            "config_value"
+            "callback_with_anon_struct_t_anonymous_struct_1",
+            "config_param"
           ]
         },
         "complex_callback_t": {
@@ -624,6 +623,7 @@
           "array_of_anon_structs_t_items"
         ],
         "callback_with_anon_struct_t": [
+          "callback_with_anon_struct_t_anonymous_struct_1",
           "callback_with_anon_struct_t_anonymous_struct_1",
           "callback_with_anon_struct_t_anonymous_union_2"
         ],
@@ -1029,25 +1029,17 @@
               "value": null
             },
             {
-              "name": "int_config",
-              "type": "union { int",
-              "value": null
-            },
-            {
-              "name": "float_config",
-              "type": "float",
-              "value": null
-            },
-            {
               "name": "config_value",
-              "type": "}",
+              "type": "callback_with_anon_struct_t_anonymous_union_2",
               "value": null
             }
           ],
           "methods": [],
           "name": "callback_with_anon_struct_t_anonymous_struct_1",
           "tag_name": "",
-          "uses": []
+          "uses": [
+            "callback_with_anon_struct_t_anonymous_union_2"
+          ]
         },
         "complex_callback_t_anonymous_struct_1": {
           "fields": [

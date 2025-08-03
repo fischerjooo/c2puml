@@ -13,20 +13,37 @@ class AnonymousTypedefProcessor:
 
     def process_file_model(self, file_model: FileModel) -> None:
         """Process all typedefs in a file model to extract anonymous structures."""
-        # Process alias typedefs with improved complexity filtering
-        aliases_to_process = list(file_model.aliases.items())
-        for alias_name, alias_data in aliases_to_process:
-            self._process_alias_for_anonymous_structs(file_model, alias_name, alias_data)
+        max_iterations = 5  # Prevent infinite loops
+        iteration = 0
+        
+        while iteration < max_iterations:
+            iteration += 1
+            initial_struct_count = len(file_model.structs)
+            initial_union_count = len(file_model.unions)
+            
+            # Process alias typedefs with improved complexity filtering
+            aliases_to_process = list(file_model.aliases.items())
+            for alias_name, alias_data in aliases_to_process:
+                self._process_alias_for_anonymous_structs(file_model, alias_name, alias_data)
 
-        # Process struct typedefs
-        structs_to_process = list(file_model.structs.items())
-        for struct_name, struct_data in structs_to_process:
-            self._process_struct_for_anonymous_structs(file_model, struct_name, struct_data)
+            # Process struct typedefs
+            structs_to_process = list(file_model.structs.items())
+            for struct_name, struct_data in structs_to_process:
+                self._process_struct_for_anonymous_structs(file_model, struct_name, struct_data)
 
-        # Process union typedefs  
-        unions_to_process = list(file_model.unions.items())
-        for union_name, union_data in unions_to_process:
-            self._process_union_for_anonymous_structs(file_model, union_name, union_data)
+            # Process union typedefs  
+            unions_to_process = list(file_model.unions.items())
+            for union_name, union_data in unions_to_process:
+                self._process_union_for_anonymous_structs(file_model, union_name, union_data)
+            
+            # Check if any new structures were created
+            final_struct_count = len(file_model.structs)
+            final_union_count = len(file_model.unions)
+            
+            if (final_struct_count == initial_struct_count and 
+                final_union_count == initial_union_count):
+                # No new structures created, we're done
+                break
 
     def _process_alias_for_anonymous_structs(
         self, file_model: FileModel, alias_name: str, alias_data: Alias
