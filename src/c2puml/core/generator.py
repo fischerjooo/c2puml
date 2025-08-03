@@ -616,8 +616,10 @@ class Generator:
     def _process_alias_content(self, lines: List[str], alias_data):
         """Process the content of an alias typedef with proper formatting"""
         # For aliases, show "alias of {original_type}" format
-        # Clean up multi-line types by taking only the first line for simplicity
-        original_type = alias_data.original_type.split("\n")[0].strip()
+        # Handle multi-line types properly by cleaning up newlines and extra whitespace
+        original_type = alias_data.original_type.replace('\n', ' ').strip()
+        # Normalize multiple spaces to single spaces
+        original_type = ' '.join(original_type.split())
         lines.append(f"    alias of {original_type}")
 
     def _is_truncated_typedef(self, alias_data, alias_lines: List[str]) -> bool:
