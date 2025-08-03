@@ -1089,8 +1089,18 @@
               "value": null
             },
             {
-              "name": "size_t",
-              "type": "int ( * resize_func ) ( void * *",
+              "name": "alloc_func",
+              "type": "void * ( * alloc_func ) ( size_t )",
+              "value": null
+            },
+            {
+              "name": "free_func",
+              "type": "void ( * free_func ) ( void * )",
+              "value": null
+            },
+            {
+              "name": "resize_func",
+              "type": "int ( * resize_func ) ( void * *, size_t )",
               "value": null
             }
           ],
@@ -1107,8 +1117,13 @@
               "value": null
             },
             {
-              "name": "int",
-              "type": "void ( * format_func ) ( char *",
+              "name": "validate_func",
+              "type": "int ( * validate_func ) ( const char * )",
+              "value": null
+            },
+            {
+              "name": "format_func",
+              "type": "void ( * format_func ) ( char *, int )",
               "value": null
             }
           ],

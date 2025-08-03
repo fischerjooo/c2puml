@@ -118,13 +118,16 @@ class "complex_handler_t" as TYPEDEF_COMPLEX_HANDLER_T <<struct>> #LightYellow
 class "complex_handler_t_memory_manager" as TYPEDEF_COMPLEX_HANDLER_T_MEMORY_MANAGER <<struct>> #LightYellow
 {
     + int max_size
-    + int ( * resize_func ) ( void * * size_t
+    + void * ( * alloc_func ) ( size_t ) alloc_func
+    + void ( * free_func ) ( void * ) free_func
+    + int ( * resize_func ) ( void * *, size_t ) resize_func
 }
 
 class "complex_handler_t_validator" as TYPEDEF_COMPLEX_HANDLER_T_VALIDATOR <<struct>> #LightYellow
 {
     + char[32] name
-    + void ( * format_func ) ( char * int
+    + int ( * validate_func ) ( const char * ) validate_func
+    + void ( * format_func ) ( char *, int ) format_func
 }
 
 class "complex_naming_test_t" as TYPEDEF_COMPLEX_NAMING_TEST_T <<struct>> #LightYellow

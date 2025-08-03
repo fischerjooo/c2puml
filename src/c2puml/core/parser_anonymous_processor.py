@@ -166,10 +166,10 @@ class AnonymousTypedefProcessor:
             if not decl:
                 continue
                 
-            # Handle function pointer fields: void (*name)(int)
-            if '(*' in decl and ')(' in decl:
-                # Extract function pointer name
-                func_ptr_match = re.search(r'\(\*\s*(\w+)\s*\)', decl)
+            # Handle function pointer fields: void (*name)(int) or void ( * name ) ( int )
+            if re.search(r'\(\s*\*\s*\w+\s*\)', decl) and re.search(r'\)\s*\(', decl):
+                # Extract function pointer name - handle both compact and spaced formats
+                func_ptr_match = re.search(r'\(\s*\*\s*(\w+)\s*\)', decl)
                 if func_ptr_match:
                     field_name = func_ptr_match.group(1)
                     field_type = decl.strip()
