@@ -74,6 +74,7 @@ class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<struct>> #LightYe
     + int level2_id
     + float level3_float
     + union {  } level3_int
+    + } level3_union
 }
 
 class "array_of_anon_structs_t" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T <<struct>> #LightYellow
@@ -83,6 +84,9 @@ class "array_of_anon_structs_t" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T <<struct>> #L
     + union {  } int_data
     + struct {  } item_id
     + char [32] item_name
+    + } item_value
+    + } [10] items
+    + } point_data
     + array_of_anon_structs_t_anonymous_struct_1 y
 }
 
@@ -108,22 +112,52 @@ class "complex_callback_t_anonymous_struct_1" as TYPEDEF_COMPLEX_CALLBACK_T_ANON
 
 class "complex_handler_t" as TYPEDEF_COMPLEX_HANDLER_T <<struct>> #LightYellow
 {
+    + void * ( * alloc_func ) ( size_t )
     + void(* format_func)(char * , int) format_func
+    + void(* free_func)(void *) free_func
     + int id
+    + struct {  } max_size
+    + } memory_manager
+    + int(* resize_func)(void * * , size_t) resize_func
     + int(* validate_func)(const char *) validate_func
+    + } validator
 }
 
 class "complex_naming_test_t" as TYPEDEF_COMPLEX_NAMING_TEST_T <<struct>> #LightYellow
 {
     + struct {  } deep_a1
+    + struct {  } deep_a2
+    + } deep_in_union
+    + } deep_struct_a1
+    + } deep_struct_a2
+    + struct {  } deep_union_struct
     + struct {  } first_a
+    + } first_struct
+    + } mixed_union
     + struct {  } nested_a1
+    + struct {  } nested_a2
+    + struct {  } nested_b1
+    + } nested_struct_a
+    + } nested_struct_a2
+    + } nested_struct_b
+    + struct {  } second_a
+    + } second_struct
+    + } struct_union
+    + union {  } struct_union_int
+    + } struct_union_struct
+    + struct {  } struct_union_struct_field
+    + struct {  } third_a
+    + } third_struct
+    + } union_struct
+    + struct {  } union_struct_field
+    + union {  } union_value
 }
 
 class "config_param" as TYPEDEF_CONFIG_PARAM <<struct>> #LightYellow
 {
     + int config_flags
     + char [64] config_name
+    + } config_value
     + float float_config
     + union {  } int_config
 }
@@ -140,7 +174,18 @@ class "data_union_anonymous_struct_1" as TYPEDEF_DATA_UNION_ANONYMOUS_STRUCT_1 <
 
 class "extreme_nesting_test_t" as TYPEDEF_EXTREME_NESTING_TEST_T <<struct>> #LightYellow
 {
+    + } level2_struct_1
+    + } level2_struct_2
+    + struct {  } level3_field
+    + } level3_struct_1
+    + } level3_struct_2
     + struct { { } level4_field
+    + struct {  } level4_field2
+    + } level4_struct_1
+    + } level4_struct_2
+    + struct { { } mixed_field
+    + } mixed_struct
+    + } mixed_union
 }
 
 class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<struct>> #LightYellow
@@ -160,19 +205,38 @@ class "moderately_nested_t" as TYPEDEF_MODERATELY_NESTED_T <<struct>> #LightYell
 {
     + int level1_id
     + struct {  } level2_id
+    + } level2_struct
     + float level3_float
     + union {  } level3_int
+    + } level3_union
 }
 
 class "multi_anonymous_t" as TYPEDEF_MULTI_ANONYMOUS_T <<struct>> #LightYellow
 {
+    + } deep_struct
+    + struct {  } deep_value
+    + } first_anon_struct
+    + } first_anon_union
     + struct {  } first_x
     + int first_y
+    + } second_anon_struct
+    + int second_id
+    + float union_float
+    + union {  } union_int
 }
 
 class "multiple_simple_anonymous_t" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T <<struct>> #LightYellow
 {
+    + } first_anon
     + struct {  } first_field
+    + } first_union
+    + } second_anon
+    + struct {  } second_field
+    + } second_union
+    + } third_anon
+    + struct {  } third_field
+    + union {  } union_field1
+    + union {  } union_field2
 }
 
 class "operation_set_t" as TYPEDEF_OPERATION_SET_T <<struct>> #LightYellow
@@ -201,6 +265,7 @@ class "result_generator_t" as TYPEDEF_RESULT_GENERATOR_T <<struct>> #LightYellow
 {
     + char [128] error_message
     + int result_code
+    + } result_data
     + union {  } success_value
 }
 
@@ -214,16 +279,21 @@ class "simplified_handler_t" as TYPEDEF_SIMPLIFIED_HANDLER_T <<struct>> #LightYe
 class "struct_with_struct_t" as TYPEDEF_STRUCT_WITH_STRUCT_T <<struct>> #LightYellow
 {
     + char [16] inner_label
+    + } inner_struct
     + struct {  } inner_x
     + int inner_y
+    + int outer_flags
     + int outer_id
     + char [32] outer_name
 }
 
 class "struct_with_union_t" as TYPEDEF_STRUCT_WITH_UNION_T <<struct>> #LightYellow
 {
+    + int checksum
+    + } data_union
     + float float_value
     + union {  } int_value
+    + } point_value
     + char [64] string_value
     + int type_id
     + struct_with_union_t_anonymous_struct_1 z
@@ -345,6 +415,7 @@ class "data_union" as TYPEDEF_DATA_UNION <<union>> #LightYellow
 {
     + float float_value
     + int int_value
+    + } point_value
     + char [64] string_value
     + data_union_anonymous_struct_1 z
 }
@@ -364,6 +435,7 @@ class "item_value" as TYPEDEF_ITEM_VALUE <<union>> #LightYellow
 {
     + float float_data
     + int int_data
+    + } point_data
     + item_value_anonymous_struct_1 y
 }
 
@@ -376,6 +448,7 @@ class "level3_union" as TYPEDEF_LEVEL3_UNION <<union>> #LightYellow
 class "mixed_union" as TYPEDEF_MIXED_UNION <<union>> #LightYellow
 {
     + struct {  } mixed_field
+    + } mixed_struct
 }
 
 class "mixed_union_t" as TYPEDEF_MIXED_UNION_T <<union>> #LightYellow
@@ -400,15 +473,19 @@ class "second_union" as TYPEDEF_SECOND_UNION <<union>> #LightYellow
 class "struct_union" as TYPEDEF_STRUCT_UNION <<union>> #LightYellow
 {
     + int struct_union_int
+    + } struct_union_struct
     + struct {  } struct_union_struct_field
 }
 
 class "union_with_struct_t" as TYPEDEF_UNION_WITH_STRUCT_T <<union>> #LightYellow
 {
+    + } complex_struct
     + struct {  } error_code
+    + } error_info
     + char [128] error_msg
     + void * payload_data
     + int payload_size
+    + char [256] raw_bytes
     + float simple_float
     + int simple_int
 }
@@ -417,8 +494,11 @@ class "union_with_union_t" as TYPEDEF_UNION_WITH_UNION_T <<union>> #LightYellow
 {
     + union {  } deep_char
     + short deep_short
+    + } deep_union
     + double nested_double
     + union {  } nested_float
+    + } nested_union
+    + char [32] primary_bytes
     + int primary_int
 }
 

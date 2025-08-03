@@ -1163,20 +1163,27 @@ def find_struct_fields(
     """
     fields = []
     pos = struct_start
+    
+    # Find the opening brace of the struct
     while pos <= struct_end and tokens[pos].type != TokenType.LBRACE:
         pos += 1
     if pos > struct_end:
         return fields
     pos += 1  # Skip opening brace
-
+    
     # Find the closing brace position
+    brace_count = 1
     closing_brace_pos = pos
-    while (
-        closing_brace_pos <= struct_end
-        and tokens[closing_brace_pos].type != TokenType.RBRACE
-    ):
+    while closing_brace_pos <= struct_end and brace_count > 0:
+        if tokens[closing_brace_pos].type == TokenType.LBRACE:
+            brace_count += 1
+        elif tokens[closing_brace_pos].type == TokenType.RBRACE:
+            brace_count -= 1
         closing_brace_pos += 1
-
+    
+    if brace_count > 0:
+        return fields  # Unmatched braces
+    
     # Only parse fields up to the closing brace
     while pos < closing_brace_pos and tokens[pos].type != TokenType.RBRACE:
         field_tokens = []
@@ -1498,37 +1505,41 @@ def find_enum_values(tokens: List[Token], enum_start: int, enum_end: int) -> Lis
     """Extract enum values from enum token range"""
     values = []
     pos = enum_start
+    
+    # Find the opening brace of the enum
     while pos <= enum_end and tokens[pos].type != TokenType.LBRACE:
         pos += 1
     if pos > enum_end:
         return values
     pos += 1  # Skip opening brace
-    current_value = []
-    while pos <= enum_end and tokens[pos].type != TokenType.RBRACE:
-        token = tokens[pos]
-        if token.type == TokenType.COMMA:
-            if current_value:
-                filtered_value = [
-                    t
-                    for t in current_value
-                    if t.type not in [TokenType.WHITESPACE, TokenType.COMMENT]
-                ]
-                if filtered_value:
-                    value_str = " ".join(t.value for t in filtered_value).strip()
-                    if value_str:
-                        values.append(value_str)
-                current_value = []
-        elif token.type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
-            current_value.append(token)
-        pos += 1
-    if current_value:
-        filtered_value = [
-            t
-            for t in current_value
-            if t.type not in [TokenType.WHITESPACE, TokenType.COMMENT]
-        ]
-        if filtered_value:
-            value_str = " ".join(t.value for t in filtered_value).strip()
-            if value_str:
-                values.append(value_str)
+    
+    # Find the closing brace position
+    brace_count = 1
+    closing_brace_pos = pos
+    while closing_brace_pos <= enum_end and brace_count > 0:
+        if tokens[closing_brace_pos].type == TokenType.LBRACE:
+            brace_count += 1
+        elif tokens[closing_brace_pos].type == TokenType.RBRACE:
+            brace_count -= 1
+        closing_brace_pos += 1
+    
+    if brace_count > 0:
+        return values  # Unmatched braces
+    
+    # Extract enum values
+    while pos < closing_brace_pos and tokens[pos].type != TokenType.RBRACE:
+        value_tokens = []
+        while pos < closing_brace_pos and tokens[pos].type != TokenType.COMMA and tokens[pos].type != TokenType.RBRACE:
+            if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                value_tokens.append(tokens[pos])
+            pos += 1
+        
+        if value_tokens:
+            value_str = " ".join(t.value for t in value_tokens)
+            if value_str.strip():
+                values.append(value_str.strip())
+        
+        if pos < closing_brace_pos and tokens[pos].type == TokenType.COMMA:
+            pos += 1  # Skip comma
+    
     return values

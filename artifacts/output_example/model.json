@@ -875,6 +875,11 @@
               "name": "level3_float",
               "type": "float",
               "value": null
+            },
+            {
+              "name": "level3_union",
+              "type": "}",
+              "value": null
             }
           ],
           "methods": [],
@@ -912,6 +917,21 @@
             {
               "name": "y",
               "type": "array_of_anon_structs_t_anonymous_struct_1",
+              "value": null
+            },
+            {
+              "name": "point_data",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "item_value",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "items",
+              "type": "} [10]",
               "value": null
             }
           ],
@@ -1001,6 +1021,36 @@
               "name": "format_func",
               "type": "void(* format_func)(char * , int)",
               "value": null
+            },
+            {
+              "name": "validator",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "max_size",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": ")",
+              "type": "void * ( * alloc_func ) ( size_t",
+              "value": null
+            },
+            {
+              "name": "free_func",
+              "type": "void(* free_func)(void *)",
+              "value": null
+            },
+            {
+              "name": "resize_func",
+              "type": "int(* resize_func)(void * * , size_t)",
+              "value": null
+            },
+            {
+              "name": "memory_manager",
+              "type": "}",
+              "value": null
             }
           ],
           "methods": [],
@@ -1023,6 +1073,121 @@
             {
               "name": "deep_a1",
               "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "deep_struct_a1",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "deep_a2",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "deep_struct_a2",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "nested_struct_a",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "nested_a2",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "nested_struct_a2",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "first_struct",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "second_a",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "nested_b1",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "nested_struct_b",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "second_struct",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "union_value",
+              "type": "union {  }",
+              "value": null
+            },
+            {
+              "name": "union_struct_field",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "deep_union_struct",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "deep_in_union",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "union_struct",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "mixed_union",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "third_a",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "struct_union_int",
+              "type": "union {  }",
+              "value": null
+            },
+            {
+              "name": "struct_union_struct_field",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "struct_union_struct",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "struct_union",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "third_struct",
+              "type": "}",
               "value": null
             }
           ],
@@ -1051,6 +1216,11 @@
             {
               "name": "float_config",
               "type": "float",
+              "value": null
+            },
+            {
+              "name": "config_value",
+              "type": "}",
               "value": null
             }
           ],
@@ -1089,6 +1259,61 @@
             {
               "name": "level4_field",
               "type": "struct { { }",
+              "value": null
+            },
+            {
+              "name": "level4_struct_1",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "level4_field2",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "level4_struct_2",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "level3_struct_1",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "level3_field",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "level3_struct_2",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "level2_struct_1",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "mixed_field",
+              "type": "struct { { }",
+              "value": null
+            },
+            {
+              "name": "mixed_struct",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "mixed_union",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "level2_struct_2",
+              "type": "}",
               "value": null
             }
           ],
@@ -1158,6 +1383,16 @@
               "name": "level3_float",
               "type": "float",
               "value": null
+            },
+            {
+              "name": "level3_union",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "level2_struct",
+              "type": "}",
+              "value": null
             }
           ],
           "methods": [],
@@ -1176,6 +1411,46 @@
               "name": "first_y",
               "type": "int",
               "value": null
+            },
+            {
+              "name": "first_anon_struct",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "union_int",
+              "type": "union {  }",
+              "value": null
+            },
+            {
+              "name": "union_float",
+              "type": "float",
+              "value": null
+            },
+            {
+              "name": "first_anon_union",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "second_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "deep_value",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "deep_struct",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "second_anon_struct",
+              "type": "}",
+              "value": null
             }
           ],
           "methods": [],
@@ -1188,6 +1463,51 @@
             {
               "name": "first_field",
               "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "first_anon",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "second_field",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "second_anon",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "third_field",
+              "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "third_anon",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "union_field1",
+              "type": "union {  }",
+              "value": null
+            },
+            {
+              "name": "first_union",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "union_field2",
+              "type": "union {  }",
+              "value": null
+            },
+            {
+              "name": "second_union",
+              "type": "}",
               "value": null
             }
           ],
@@ -1288,6 +1608,11 @@
               "name": "error_message",
               "type": "char [128]",
               "value": null
+            },
+            {
+              "name": "result_data",
+              "type": "}",
+              "value": null
             }
           ],
           "methods": [],
@@ -1344,6 +1669,16 @@
               "name": "inner_label",
               "type": "char [16]",
               "value": null
+            },
+            {
+              "name": "inner_struct",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "outer_flags",
+              "type": "int",
+              "value": null
             }
           ],
           "methods": [],
@@ -1376,6 +1711,21 @@
             {
               "name": "z",
               "type": "struct_with_union_t_anonymous_struct_1",
+              "value": null
+            },
+            {
+              "name": "point_value",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "data_union",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "checksum",
+              "type": "int",
               "value": null
             }
           ],
@@ -1450,6 +1800,11 @@
               "name": "z",
               "type": "data_union_anonymous_struct_1",
               "value": null
+            },
+            {
+              "name": "point_value",
+              "type": "}",
+              "value": null
             }
           ],
           "name": "data_union",
@@ -1503,6 +1858,11 @@
               "name": "y",
               "type": "item_value_anonymous_struct_1",
               "value": null
+            },
+            {
+              "name": "point_data",
+              "type": "}",
+              "value": null
             }
           ],
           "name": "item_value",
@@ -1533,6 +1893,11 @@
             {
               "name": "mixed_field",
               "type": "struct {  }",
+              "value": null
+            },
+            {
+              "name": "mixed_struct",
+              "type": "}",
               "value": null
             }
           ],
@@ -1607,6 +1972,11 @@
               "name": "struct_union_struct_field",
               "type": "struct {  }",
               "value": null
+            },
+            {
+              "name": "struct_union_struct",
+              "type": "}",
+              "value": null
             }
           ],
           "name": "struct_union",
@@ -1644,6 +2014,21 @@
               "name": "error_msg",
               "type": "char [128]",
               "value": null
+            },
+            {
+              "name": "error_info",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "complex_struct",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "raw_bytes",
+              "type": "char [256]",
+              "value": null
             }
           ],
           "name": "union_with_struct_t",
@@ -1675,6 +2060,21 @@
             {
               "name": "deep_short",
               "type": "short",
+              "value": null
+            },
+            {
+              "name": "deep_union",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "nested_union",
+              "type": "}",
+              "value": null
+            },
+            {
+              "name": "primary_bytes",
+              "type": "char [32]",
               "value": null
             }
           ],
