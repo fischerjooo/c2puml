@@ -725,7 +725,7 @@ class Generator:
         self._generate_include_relationships(lines, include_tree, uml_ids)
         self._generate_declaration_relationships(lines, include_tree, uml_ids)
         self._generate_uses_relationships(lines, include_tree, uml_ids)
-        self._generate_anonymous_relationships(lines, project_model, uml_ids)
+        self._generate_anonymous_relationships(lines, include_tree, uml_ids)
 
     def _generate_include_relationships(
         self,
@@ -842,12 +842,12 @@ class Generator:
     def _generate_anonymous_relationships(
         self,
         lines: List[str],
-        project_model: ProjectModel,
+        include_tree: Dict[str, FileModel],
         uml_ids: Dict[str, str],
     ):
         """Generate composition relationships for anonymous structures"""
         has_anonymous = False
-        for file_model in project_model.files.values():
+        for file_model in include_tree.values():
             if file_model.anonymous_relationships:
                 has_anonymous = True
                 break
@@ -858,7 +858,7 @@ class Generator:
         lines.append("")
         lines.append("' Anonymous structure relationships (composition)")
         
-        for file_name, file_model in sorted(project_model.files.items()):
+        for file_name, file_model in sorted(include_tree.items()):
             if not file_model.anonymous_relationships:
                 continue
                 
@@ -868,17 +868,17 @@ class Generator:
                 
                 # Check if it's a typedef
                 if parent_name in file_model.aliases:
-                    parent_id = uml_ids.get(f"TYPEDEF_{parent_name.upper()}")
+                    parent_id = uml_ids.get(f"typedef_{parent_name}")
                 # Check if it's a struct
                 elif parent_name in file_model.structs:
-                    parent_id = uml_ids.get(f"TYPEDEF_{parent_name.upper()}")
+                    parent_id = uml_ids.get(f"typedef_{parent_name}")
                     if not parent_id:
-                        parent_id = uml_ids.get(f"STRUCT_{parent_name.upper()}")
+                        parent_id = uml_ids.get(f"struct_{parent_name}")
                 # Check if it's a union
                 elif parent_name in file_model.unions:
-                    parent_id = uml_ids.get(f"TYPEDEF_{parent_name.upper()}")
+                    parent_id = uml_ids.get(f"typedef_{parent_name}")
                     if not parent_id:
-                        parent_id = uml_ids.get(f"UNION_{parent_name.upper()}")
+                        parent_id = uml_ids.get(f"union_{parent_name}")
                 
                 if not parent_id:
                     continue
@@ -889,14 +889,14 @@ class Generator:
                     
                     # Check if it's a struct
                     if child_name in file_model.structs:
-                        child_id = uml_ids.get(f"TYPEDEF_{child_name.upper()}")
+                        child_id = uml_ids.get(f"typedef_{child_name}")
                         if not child_id:
-                            child_id = uml_ids.get(f"STRUCT_{child_name.upper()}")
+                            child_id = uml_ids.get(f"struct_{child_name}")
                     # Check if it's a union
                     elif child_name in file_model.unions:
-                        child_id = uml_ids.get(f"TYPEDEF_{child_name.upper()}")
+                        child_id = uml_ids.get(f"typedef_{child_name}")
                         if not child_id:
-                            child_id = uml_ids.get(f"UNION_{child_name.upper()}")
+                            child_id = uml_ids.get(f"union_{child_name}")
                     
                     if parent_id and child_id:
                         # Use composition arrow (*--) with "contains" label
