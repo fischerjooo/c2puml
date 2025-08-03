@@ -254,22 +254,6 @@ The configuration includes transformation rules:
 
 **Specification Compliance**: ❌ **FAILS** - The transformation system appears to be non-functional despite being documented as fully implemented.
 
-### 10. **Preprocessor Handling Issues**
-
-#### 10.1 Conditional Compilation Not Handled
-**Source (`complex.h`):**
-```c
-#if defined(__GNUC__) && __GNUC__ >= 4
-    #define DEPRECATED __attribute__((deprecated))
-#else
-    #define DEPRECATED
-#endif
-```
-
-**Issue**: The tool claims to handle preprocessor directives but fails to properly process conditional compilation, resulting in duplicate macro definitions.
-
-**Specification Compliance**: ❌ **FAILS** - The preprocessor handling is incomplete.
-
 ## Successful Implementations
 
 ### 1. **Basic Structure Recognition**
