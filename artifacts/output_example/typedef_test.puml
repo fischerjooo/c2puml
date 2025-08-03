@@ -303,4 +303,6 @@ TYPEDEF_MYCALLBACK ..> TYPEDEF_MYBUFFER : <<uses>>
 TYPEDEF_MYCOMPLEXARRAY ..> TYPEDEF_MYCOMPLEXPTR : <<uses>>
 TYPEDEF_MYCOMPLEXPTR ..> TYPEDEF_MYCOMPLEX : <<uses>>
 
+' Anonymous structure relationships (composition)
+
 @enduml

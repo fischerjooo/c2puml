@@ -73,4 +73,6 @@ HEADER_DATABASE ..> TYPEDEF_DATABASETYPE : <<declares>>
 ' Uses relationships
 TYPEDEF_DATABASECONFIG ..> TYPEDEF_DATABASETYPE : <<uses>>
 
+' Anonymous structure relationships (composition)
+
 @enduml

@@ -895,19 +895,19 @@ class Generator:
         if entity_name in uml_ids:
             return uml_ids[entity_name]
             
-        # Try with typedef prefix (uppercase)
-        typedef_id = f"TYPEDEF_{entity_name.upper()}"
-        if typedef_id in uml_ids:
-            return uml_ids[typedef_id]
+        # Try with typedef prefix (lowercase)
+        typedef_key = f"typedef_{entity_name.lower()}"
+        if typedef_key in uml_ids:
+            return uml_ids[typedef_key]
             
         # Try struct prefix
-        struct_id = f"STRUCT_{entity_name.upper()}"
-        if struct_id in uml_ids:
-            return uml_ids[struct_id]
+        struct_key = f"struct_{entity_name.lower()}"
+        if struct_key in uml_ids:
+            return uml_ids[struct_key]
             
         # Try union prefix
-        union_id = f"UNION_{entity_name.upper()}"
-        if union_id in uml_ids:
-            return uml_ids[union_id]
+        union_key = f"union_{entity_name.lower()}"
+        if union_key in uml_ids:
+            return uml_ids[union_key]
             
         return None
