@@ -67,28 +67,6 @@ class "triangle_t" as TYPEDEF_TRIANGLE_T <<struct>> #LightYellow
 
 **Specification Compliance**: ❌ **FAILS** - The tool should preserve the original field order as specified in the C code.
 
-#### 1.2 Missing Struct Tags
-**Source (`typedef_test.h`):**
-```c
-typedef struct MyBuffer_tag {
-    MyLen length;
-    MyString data;
-} MyBuffer;
-```
-
-**Generated PlantUML (`typedef_test.puml`):**
-```plantuml
-class "MyBuffer" as TYPEDEF_MYBUF <<struct>> #LightYellow
-{
-    + MyLen length
-    + MyString data
-}
-```
-
-**Issue**: The struct tag `MyBuffer_tag` is not preserved or shown in the PlantUML output.
-
-**Specification Compliance**: ⚠️ **PARTIAL** - While the tool correctly identifies the typedef, it doesn't preserve the struct tag information which could be important for understanding the original C structure.
-
 ### 2. **Function Parameter Parsing Issues**
 
 #### 2.1 Incorrect Parameter Formatting
@@ -109,27 +87,6 @@ int execute_operations(
 **Issue**: The parameter `op_count` is incorrectly labeled as "unnamed" when it clearly has a name in the source.
 
 **Specification Compliance**: ❌ **FAILS** - The tool should correctly parse and display function parameters as specified in the documentation.
-
-#### 2.2 Array Parameter Notation
-**Source (`complex.h`):**
-```c
-int process_with_callbacks(
-    int data[],
-    int size,
-    math_operation_t operations[],
-    int op_count,
-    ...
-);
-```
-
-**Generated PlantUML (`complex.puml`):**
-```plantuml
-+ int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, ...)
-```
-
-**Issue**: The array notation is inconsistent. The source uses `int data[]` but the PlantUML shows `int[] data`.
-
-**Specification Compliance**: ⚠️ **PARTIAL** - While both are valid C syntax, the tool should preserve the original format as specified in the source code.
 
 ### 3. **Macro Processing Issues**
 
