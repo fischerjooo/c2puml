@@ -153,23 +153,20 @@ class TestNestedStructurePreservation(unittest.TestCase):
             # Generate PlantUML
             puml_content = self.generator.generate_diagram(file_model, project_model)
             
-            # Debug: Print the generated content
-            print("Generated PlantUML content:")
-            print(puml_content)
-            
             # Check that the nested structure is preserved in the generated PlantUML
-            # The union should show nested_union as a field, not flattened fields
-            nested_union_index = puml_content.find("+ union { ... } nested_union")
+            # With anonymous structure processing, the nested union is extracted and named
+            # So we should look for the named reference instead of inline union
+            nested_union_ref = puml_content.find("+ test_union_t_nested_union nested_union")
             primary_int_index = puml_content.find("+ int primary_int")
             primary_bytes_index = puml_content.find("+ char[32] primary_bytes")
             
             # All fields should be found
-            self.assertNotEqual(nested_union_index, -1, "nested_union field should be found in PlantUML")
+            self.assertNotEqual(nested_union_ref, -1, "nested_union field should be found in PlantUML as a named reference")
             self.assertNotEqual(primary_int_index, -1, "primary_int field should be found in PlantUML")
             self.assertNotEqual(primary_bytes_index, -1, "primary_bytes field should be found in PlantUML")
             
             # Check that we have exactly 3 fields (not flattened)
-            field_count = puml_content.count("+ int primary_int") + puml_content.count("+ union { ... } nested_union") + puml_content.count("+ char[32] primary_bytes")
+            field_count = puml_content.count("+ int primary_int") + puml_content.count("+ test_union_t_nested_union nested_union") + puml_content.count("+ char[32] primary_bytes")
             self.assertEqual(field_count, 3, f"Should have exactly 3 fields, found {field_count}")
             
         finally:

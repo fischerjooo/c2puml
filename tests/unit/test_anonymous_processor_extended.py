@@ -71,11 +71,19 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
 
     def test_generate_anonymous_name(self):
         """Test the anonymous name generation."""
-        name1 = self.processor._generate_anonymous_name("parent_struct", "struct", 1)
-        name2 = self.processor._generate_anonymous_name("parent_union", "union", 2)
+        # Test with field name (new convention)
+        name1 = self.processor._generate_anonymous_name("parent_struct", "nested", "struct")
+        name2 = self.processor._generate_anonymous_name("parent_union", "data", "union")
         
-        self.assertEqual(name1, "parent_struct_anonymous_struct_1")
-        self.assertEqual(name2, "parent_union_anonymous_union_2")
+        self.assertEqual(name1, "parent_struct_nested")
+        self.assertEqual(name2, "parent_union_data")
+        
+        # Test without field name (fallback to counter)
+        name3 = self.processor._generate_anonymous_name("parent_struct", None, "struct")
+        name4 = self.processor._generate_anonymous_name("parent_struct", None, "struct")
+        
+        self.assertEqual(name3, "parent_struct_anonymous_struct_1")
+        self.assertEqual(name4, "parent_struct_anonymous_struct_2")
 
     def test_parse_struct_fields_simple(self):
         """Test parsing simple struct fields."""
@@ -254,7 +262,7 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         )
         
         # Check that anonymous struct was extracted
-        self.assertIn("parent_struct_anonymous_struct_1", file_model.structs)
+        self.assertIn("parent_struct_nested_data", file_model.structs)
         self.assertIn("parent_struct", file_model.anonymous_relationships)
 
     def test_process_union_for_anonymous_structs(self):
@@ -279,7 +287,7 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         )
         
         # Check that anonymous struct was extracted
-        self.assertIn("parent_union_anonymous_struct_1", file_model.structs)
+        self.assertIn("parent_union_struct_data", file_model.structs)
         self.assertIn("parent_union", file_model.anonymous_relationships)
 
     def test_process_file_model_comprehensive(self):
@@ -313,11 +321,11 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         
         # Verify all anonymous structures were extracted
         expected_anon_structs = [
-            "callback_t_anonymous_struct_1",
-            "main_union_anonymous_struct_1"
+            "callback_t_anonymous_struct_1",  # No field name for typedef, uses counter
+            "main_union_point_data"  # Has field name "point_data"
         ]
         expected_anon_unions = [
-            "main_struct_anonymous_union_1"
+            "main_struct_data_union"  # Has field name "data_union"
         ]
         
         for anon_struct in expected_anon_structs:
