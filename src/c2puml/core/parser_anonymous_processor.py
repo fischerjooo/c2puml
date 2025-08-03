@@ -46,7 +46,7 @@ class AnonymousTypedefProcessor:
         
         if filtered_structs:
             for i, (struct_content, struct_type) in enumerate(filtered_structs, 1):
-                anon_name = self._generate_anonymous_name(alias_name, struct_type, i)
+                anon_name = self._generate_anonymous_name(alias_name, struct_type, counter=i)
                 
                 # Create the anonymous struct/union
                 if struct_type == "struct":
@@ -129,9 +129,16 @@ class AnonymousTypedefProcessor:
         
         return anonymous_structs
 
-    def _generate_anonymous_name(self, parent_name: str, struct_type: str, counter: int) -> str:
-        """Generate a name for an anonymous structure."""
-        return f"{parent_name}_anonymous_{struct_type}_{counter}"
+    def _generate_anonymous_name(self, parent_name: str, struct_type: str, counter: int = None, field_name: str = None) -> str:
+        """Generate a meaningful name for an anonymous structure.
+        
+        Uses the improved naming convention: ParentType_fieldName when field_name is available,
+        otherwise falls back to the counter-based approach.
+        """
+        if field_name:
+            return f"{parent_name}_{field_name}"
+        else:
+            return f"{parent_name}_anonymous_{struct_type}_{counter}"
 
     def _create_anonymous_struct(self, name: str, content: str) -> Struct:
         """Create a Struct object from anonymous content."""
@@ -381,7 +388,7 @@ class AnonymousTypedefProcessor:
         # Handle simplified anonymous structure types
         if field.type in ["struct { ... }", "union { ... }"]:
             struct_type = "struct" if "struct" in field.type else "union"
-            anon_name = self._generate_anonymous_name(parent_name, struct_type, 1)
+            anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name=field.name)
             
             # Create a placeholder anonymous struct/union
             if struct_type == "struct":
@@ -405,7 +412,7 @@ class AnonymousTypedefProcessor:
             if match:
                 struct_type = match.group(1)
                 field_name = match.group(2)
-                anon_name = self._generate_anonymous_name(parent_name, struct_type, 1)
+                anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name=field_name)
                 
                 # Create a placeholder anonymous struct/union
                 if struct_type == "struct":
@@ -431,7 +438,7 @@ class AnonymousTypedefProcessor:
                 struct_content = match.group(1)
                 struct_type = match.group(2)
                 field_name = match.group(3)
-                anon_name = self._generate_anonymous_name(parent_name, struct_type, 1)
+                anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name=field_name)
                 
                 # Create the anonymous struct/union with actual content
                 if struct_type == "struct":
@@ -456,7 +463,8 @@ class AnonymousTypedefProcessor:
             if match:
                 struct_content = match.group(1)
                 struct_type = match.group(2)
-                anon_name = self._generate_anonymous_name(parent_name, struct_type, 1)
+                # For anonymous structs without field names, use counter-based naming
+                anon_name = self._generate_anonymous_name(parent_name, struct_type, counter=1)
                 
                 # Create the anonymous struct/union with actual content
                 if struct_type == "struct":
@@ -480,7 +488,7 @@ class AnonymousTypedefProcessor:
             
             if anonymous_structs:
                 for i, (struct_content, struct_type) in enumerate(anonymous_structs, 1):
-                    anon_name = self._generate_anonymous_name(parent_name, struct_type, i)
+                    anon_name = self._generate_anonymous_name(parent_name, struct_type, counter=i)
                     
                     # Create the anonymous struct/union
                     if struct_type == "struct":

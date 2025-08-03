@@ -751,6 +751,7 @@ class Generator:
         self._generate_include_relationships(lines, include_tree, uml_ids)
         self._generate_declaration_relationships(lines, include_tree, uml_ids)
         self._generate_uses_relationships(lines, include_tree, uml_ids)
+        self._generate_anonymous_relationships(lines, project_model, uml_ids)
 
     def _generate_include_relationships(
         self,
@@ -863,3 +864,50 @@ class Generator:
                     used_uml_id = uml_ids.get(f"typedef_{used_type}")
                     if used_uml_id:
                         lines.append(f"{typedef_uml_id} ..> {used_uml_id} : <<uses>>")
+
+    def _generate_anonymous_relationships(
+        self, lines: List[str], project_model: ProjectModel, uml_ids: Dict[str, str]
+    ):
+        """Generate composition relationships for anonymous structures."""
+        # Add a section header for clarity
+        lines.append("")
+        lines.append("' Anonymous structure relationships (composition)")
+        
+        # Process all files in the project model
+        for file_name, file_model in project_model.files.items():
+            if not file_model.anonymous_relationships:
+                continue
+                
+            # Generate relationships for each parent-child pair
+            for parent_name, children in file_model.anonymous_relationships.items():
+                parent_id = self._get_anonymous_uml_id(parent_name, uml_ids)
+                
+                for child_name in children:
+                    child_id = self._get_anonymous_uml_id(child_name, uml_ids)
+                    
+                    if parent_id and child_id:
+                        # Use composition arrow (*--) with "contains" label
+                        lines.append(f"{parent_id} *-- {child_id} : contains")
+
+    def _get_anonymous_uml_id(self, entity_name: str, uml_ids: Dict[str, str]) -> Optional[str]:
+        """Get UML ID for an anonymous structure entity, trying different patterns."""
+        # Try direct name
+        if entity_name in uml_ids:
+            return uml_ids[entity_name]
+            
+        # Try with typedef prefix (uppercase)
+        typedef_id = f"TYPEDEF_{entity_name.upper()}"
+        if typedef_id in uml_ids:
+            return uml_ids[typedef_id]
+            
+        # Try struct prefix
+        struct_id = f"STRUCT_{entity_name.upper()}"
+        if struct_id in uml_ids:
+            return uml_ids[struct_id]
+            
+        # Try union prefix
+        union_id = f"UNION_{entity_name.upper()}"
+        if union_id in uml_ids:
+            return uml_ids[union_id]
+            
+        return None
