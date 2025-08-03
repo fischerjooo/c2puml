@@ -15,6 +15,7 @@ from .parser_tokenizer import (
     find_struct_fields,
 )
 from .preprocessor import PreprocessorManager
+from .anonymous_processor import AnonymousTypedefProcessor
 from ..utils import detect_file_encoding
 
 if TYPE_CHECKING:
@@ -194,7 +195,7 @@ class CParser:
         # Map typedef names to anonymous structs/enums/unions if needed
         # This logic will be handled by typedef_relations instead
 
-        return FileModel(
+        file_model = FileModel(
             file_path=str(file_path),
             structs=structs,
             enums=enums,
@@ -206,6 +207,12 @@ class CParser:
             aliases=aliases,
             # Tag names are now stored in struct/enum/union objects
         )
+
+        # Process anonymous typedefs after initial parsing
+        anonymous_processor = AnonymousTypedefProcessor()
+        anonymous_processor.process_file_model(file_model)
+
+        return file_model
 
     def _parse_structs_with_tokenizer(
         self, tokens, structure_finder

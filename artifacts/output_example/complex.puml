@@ -77,6 +77,13 @@ class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<struct>> #LightYe
     + int ( * ) ( void * * , size_t ) resize_func
 }
 
+class "complex_callback_t_anonymous_struct_1" as TYPEDEF_COMPLEX_CALLBACK_T_ANONYMOUS_STRUCT_1 <<struct>> #LightYellow
+{
+    + int nested1
+    + char * nested2
+    + void(* nested_func)(int) nested_func
+}
+
 class "complex_handler_t" as TYPEDEF_COMPLEX_HANDLER_T <<struct>> #LightYellow
 {
     + void ( * ) ( char * , int ) format_func
@@ -154,7 +161,7 @@ class "Std_ReturnType" as TYPEDEF_STD_RETURNTYPE <<typedef>> #LightYellow
 
 class "complex_callback_t" as TYPEDEF_COMPLEX_CALLBACK_T <<function pointer>> #LightYellow
 {
-    alias of int(* complex_callback_t)(
+    alias of int(* complex_callback_t)( int param1 , char * param2 , void * param3 , complex_callback_t_anonymous_struct_1 * param4 )
 }
 
 class "complex_func_ptr_t" as TYPEDEF_COMPLEX_FUNC_PTR_T <<typedef>> #LightYellow
@@ -227,6 +234,7 @@ COMPLEX --> HEADER_COMPLEX : <<include>>
 ' Declaration relationships
 HEADER_COMPLEX ..> TYPEDEF_PROCESS_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF___ANONYMOUS_STRUCT__ : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_COMPLEX_CALLBACK_T_ANONYMOUS_STRUCT_1 : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_COMPLEX_HANDLER_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_DATA_ITEM_T : <<declares>>
 HEADER_COMPLEX ..> TYPEDEF_HANDLER_ENTRY_T : <<declares>>
@@ -257,6 +265,7 @@ TYPEDEF_OPERATION_SET_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>
 TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T ..> TYPEDEF_PROCESS_CFG_PROCESS_FCT : <<uses>>
 TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_PROCESS_T : <<uses>>
 TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>
+TYPEDEF_COMPLEX_CALLBACK_T ..> TYPEDEF_COMPLEX_CALLBACK_T_ANONYMOUS_STRUCT_1 : <<uses>>
 TYPEDEF_COMPLEX_CALLBACK_T ..> TYPEDEF_PARAM4 : <<uses>>
 TYPEDEF_DATA_PROCESSOR_ARRAY_T ..> TYPEDEF_DATA_PROCESSOR_T : <<uses>>
 TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>

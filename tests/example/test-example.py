@@ -579,7 +579,7 @@ class PUMLValidator:
         # Check for proper class definition syntax
         if line_stripped.startswith('class "') and " as " in line:
             if not re.match(
-                r'class\s+"[^"]+"\s+as\s+\w+\s+<<\w+>>\s+#\w+', line_stripped
+                r'class\s+"[^"]+"\s+as\s+\w+\s+<<[\w\s]+>>\s+#\w+', line_stripped
             ):
                 self._add_result(
                     ValidationLevel.WARNING,

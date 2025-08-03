@@ -2,6 +2,7 @@
   "files": {
     "application.c": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/application.c",
       "functions": [
@@ -62,6 +63,7 @@
     },
     "complex.c": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/complex.c",
       "functions": [
@@ -518,8 +520,9 @@
         },
         "complex_callback_t": {
           "name": "complex_callback_t",
-          "original_type": "int(* complex_callback_t)(\n int param1 , \n char * param2 , \n void * param3 , \n struct { \n int nested1 ; \n char * nested2 ; \n void(* nested_func)(int); \n } * param4 \n)",
+          "original_type": "int(* complex_callback_t)(\n int param1 , \n char * param2 , \n void * param3 , \n complex_callback_t_anonymous_struct_1 * param4 \n)",
           "uses": [
+            "complex_callback_t_anonymous_struct_1",
             "param4"
           ]
         },
@@ -586,6 +589,11 @@
           "original_type": "uint8_t",
           "uses": []
         }
+      },
+      "anonymous_relationships": {
+        "complex_callback_t": [
+          "complex_callback_t_anonymous_struct_1"
+        ]
       },
       "enums": {
         "operation_type_t": {
@@ -854,6 +862,29 @@
           "tag_name": "",
           "uses": []
         },
+        "complex_callback_t_anonymous_struct_1": {
+          "fields": [
+            {
+              "name": "nested1",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "nested2",
+              "type": "char *",
+              "value": null
+            },
+            {
+              "name": "nested_func",
+              "type": "void(* nested_func)(int)",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "complex_callback_t_anonymous_struct_1",
+          "tag_name": "",
+          "uses": []
+        },
         "complex_handler_t": {
           "fields": [
             {
@@ -1037,6 +1068,7 @@
     },
     "complex_example.h": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {
         "CE_Status_t": {
           "name": "CE_Status_t",
@@ -1138,6 +1170,7 @@
           "uses": []
         }
       },
+      "anonymous_relationships": {},
       "enums": {
         "GlobalStatus": {
           "name": "GlobalStatus",
@@ -1178,6 +1211,7 @@
     },
     "database.c": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/database.c",
       "functions": [
@@ -1336,6 +1370,7 @@
     },
     "database.h": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {
         "DatabaseType": {
           "name": "DatabaseType",
@@ -1622,6 +1657,7 @@
     },
     "filtered_header.h": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {
         "filtered_enum_t": {
           "name": "filtered_enum_t",
@@ -1736,6 +1772,7 @@
     },
     "first_level.h": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/first_level.h",
       "functions": [],
@@ -1753,6 +1790,7 @@
     },
     "geometry.c": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/geometry.c",
       "functions": [
@@ -1812,6 +1850,7 @@
     },
     "geometry.h": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/geometry.h",
       "functions": [
@@ -1893,6 +1932,7 @@
     },
     "logger.c": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/logger.c",
       "functions": [
@@ -1961,6 +2001,7 @@
           ]
         }
       },
+      "anonymous_relationships": {},
       "enums": {
         "log_level_t": {
           "name": "log_level_t",
@@ -2039,6 +2080,7 @@
     },
     "math_utils.c": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/math_utils.c",
       "functions": [
@@ -2120,6 +2162,7 @@
           "uses": []
         }
       },
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/math_utils.h",
       "functions": [
@@ -2192,6 +2235,7 @@
     },
     "network.c": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/network.c",
       "functions": [
@@ -2365,6 +2409,7 @@
     },
     "network.h": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {
         "NetworkStatus": {
           "name": "NetworkStatus",
@@ -2620,6 +2665,7 @@
     },
     "preprocessed.c": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/preprocessed.c",
       "functions": [
@@ -2697,6 +2743,7 @@
           "uses": []
         }
       },
+      "anonymous_relationships": {},
       "enums": {
         "status_t": {
           "name": "status_t",
@@ -3065,6 +3112,7 @@
     },
     "sample.c": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/sample.c",
       "functions": [
@@ -3232,6 +3280,7 @@
     },
     "sample.h": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {
         "system_state_t": {
           "name": "system_state_t",
@@ -3365,6 +3414,7 @@
     },
     "sample2.c": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/sample2.c",
       "functions": [
@@ -3543,6 +3593,7 @@
           "uses": []
         }
       },
+      "anonymous_relationships": {},
       "enums": {
         "legacy_color": {
           "name": "legacy_color",
@@ -3792,6 +3843,7 @@
           "uses": []
         }
       },
+      "anonymous_relationships": {},
       "enums": {
         "legacy_mode": {
           "name": "legacy_mode",
@@ -4065,6 +4117,7 @@
     },
     "typedef_test.c": {
       "aliases": {},
+      "anonymous_relationships": {},
       "enums": {},
       "file_path": "/workspace/tests/example/source/typedef_test.c",
       "functions": [
@@ -4202,6 +4255,7 @@
           "uses": []
         }
       },
+      "anonymous_relationships": {},
       "enums": {
         "Color_t": {
           "name": "Color_t",
