@@ -61,6 +61,59 @@ This template defines the structure for generating PlantUML diagrams from C sour
 - **Typedefs using other typedefs**: `{TYPEDEF} ..> {OTHER_TYPEDEF} : <<uses>>`
 - Shows dependencies between typedefs
 
+### Composition Relationships (Anonymous Structures)
+- **Syntax**: `{PARENT_TYPEDEF} *-- {CHILD_TYPEDEF} : contains`
+- **Purpose**: Shows that anonymous structures are owned by and part of their parent
+- **Example**: `TYPEDEF_RECTANGLE *-- TYPEDEF_RECTANGLE_POSITION : contains`
+- **Meaning**: The parent type has exclusive ownership and the child cannot exist independently
+
+## Anonymous Structure Representation
+
+Anonymous structures within typedefs are extracted and represented as separate classes with meaningful names.
+
+### Naming Convention
+- **Pattern**: `ParentType_fieldName`
+- **UML ID**: `TYPEDEF_PARENTTYPE_FIELDNAME` (all caps)
+- **Example**: `Rectangle_position` → `TYPEDEF_RECTANGLE_POSITION`
+
+### Example
+```plantuml
+class "Rectangle" as TYPEDEF_RECTANGLE <<struct>> #LightYellow {
+    + position : Rectangle_position
+    + size : Rectangle_size
+}
+
+class "Rectangle_position" as TYPEDEF_RECTANGLE_POSITION <<struct>> #LightYellow {
+    + int x
+    + int y
+}
+
+class "Rectangle_size" as TYPEDEF_RECTANGLE_SIZE <<struct>> #LightYellow {
+    + int width
+    + int height
+}
+
+TYPEDEF_RECTANGLE *-- TYPEDEF_RECTANGLE_POSITION : contains
+TYPEDEF_RECTANGLE *-- TYPEDEF_RECTANGLE_SIZE : contains
+```
+
+### Nested Anonymous Structures
+For deeply nested anonymous structures:
+```plantuml
+class "GameObject_data" as TYPEDEF_GAMEOBJECT_DATA <<union>> #LightYellow {
+    + int int_value
+    + float float_value
+    + complex : GameObject_data_complex
+}
+
+class "GameObject_data_complex" as TYPEDEF_GAMEOBJECT_DATA_COMPLEX <<struct>> #LightYellow {
+    + double real
+    + double imag
+}
+
+TYPEDEF_GAMEOBJECT_DATA *-- TYPEDEF_GAMEOBJECT_DATA_COMPLEX : contains
+```
+
 ## Template Structure
 
 ```plantuml

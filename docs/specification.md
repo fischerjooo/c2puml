@@ -257,6 +257,7 @@ tests/
   - Robust typedef parsing for struct/enum/union (named and anonymous)
   - Include dependency processing with configurable depth
   - Integration with tokenizer, preprocessor, and verifier components
+  - Anonymous structure processing via AnonymousTypedefProcessor
   - **Note**: Does NOT perform model element filtering - preserves all elements for transformer
 
 #### 3.2.3 Tokenizer (`core/parser_tokenizer.py`)
@@ -269,6 +270,7 @@ tests/
   - Operator and punctuation recognition
   - Preprocessor directive tokenization
   - Token stream management and navigation
+  - Anonymous structure content preservation with base64 encoding
 
 #### 3.2.4 Preprocessor (`core/preprocessor.py`)
 - **Purpose**: Handle preprocessor directives and conditional compilation
@@ -327,9 +329,34 @@ tests/
   - Recursive search configuration management
   - Multi-stage transformation configuration support
 
-### 3.3 Data Models
+### 3.3 Anonymous Structure Processing
 
-#### 3.3.1 Project Model (`models.py`)
+The system automatically detects and processes anonymous structures (unnamed structs/unions within typedefs) to create clear, maintainable PlantUML diagrams.
+
+#### Detection and Extraction
+- **Tokenizer Enhancement**: Preserves anonymous structure content using base64-encoded markers
+- **Pattern**: `struct { /*ANON:base64content:fieldname*/ ... }`
+- **Processing**: AnonymousTypedefProcessor extracts and creates named entities
+
+#### Naming Convention
+- **Pattern**: `ParentType_fieldName`
+- **Example**: Anonymous `struct { ... } position` in `Rectangle` becomes `Rectangle_position`
+- **Nested**: `ParentType_parentField_childField` for deeply nested structures
+
+#### Model Structure
+- **New Field**: `anonymous_relationships: Dict[str, List[str]]` in FileModel
+- **Purpose**: Tracks parent-child relationships between types and their anonymous structures
+- **Example**: `{"Rectangle": ["Rectangle_position", "Rectangle_size"]}`
+
+#### Processing Pipeline
+1. **Parse Phase**: Tokenizer preserves anonymous structure content
+2. **Model Phase**: Parser creates initial model with markers
+3. **Transform Phase**: AnonymousTypedefProcessor creates named entities
+4. **Generate Phase**: Generator creates composition relationships
+
+### 3.4 Data Models
+
+#### 3.4.1 Project Model (`models.py`)
 ```python
 @dataclass
 class ProjectModel:
@@ -339,7 +366,7 @@ class ProjectModel:
     created_at: str
 ```
 
-#### 3.3.2 File Model
+#### 3.4.2 File Model
 ```python
 @dataclass
 class FileModel:
@@ -356,9 +383,10 @@ class FileModel:
     typedefs: Dict[str, str]
     typedef_relations: List[TypedefRelation]
     include_relations: List[IncludeRelation]
+    anonymous_relationships: Dict[str, List[str]]  # Maps parent types to their anonymous children
 ```
 
-#### 3.3.3 Typedef Relation Model
+#### 3.4.3 Typedef Relation Model
 ```python
 @dataclass
 class TypedefRelation:
@@ -367,7 +395,7 @@ class TypedefRelation:
     relationship_type: str  # 'defines' or 'alias'
 ```
 
-#### 3.3.4 Include Relation Model
+#### 3.4.4 Include Relation Model
 ```python
 @dataclass
 class IncludeRelation:
@@ -376,7 +404,7 @@ class IncludeRelation:
     depth: int
 ```
 
-#### 3.3.5 Union Model
+#### 3.4.5 Union Model
 ```python
 @dataclass
 class Union:
@@ -384,9 +412,9 @@ class Union:
     fields: List[Field]
 ```
 
-### 3.4 Configuration Parameters
+### 3.5 Configuration Parameters
 
-#### 3.4.1 Core Configuration
+#### 3.5.1 Core Configuration
 The system uses a JSON-based configuration file with the following parameters:
 
 ```json
@@ -425,7 +453,7 @@ The system uses a JSON-based configuration file with the following parameters:
 }
 ```
 
-#### 3.4.2 Configuration Parameters
+#### 3.5.2 Configuration Parameters
 - **`project_name`**: Name of the project for identification
 - **`source_folders`**: List of source directories to analyze
 - **`output_dir`**: Output directory for generated files
@@ -438,7 +466,7 @@ The system uses a JSON-based configuration file with the following parameters:
 
 **Note**: The `recursive_search` parameter was renamed from `recursive` in a recent update for better clarity. The system maintains backward compatibility for configuration loading.
 
-### 3.5 Command Interface
+### 3.6 Command Interface
 The system provides a simplified CLI with optional step specification:
 
 ```bash
