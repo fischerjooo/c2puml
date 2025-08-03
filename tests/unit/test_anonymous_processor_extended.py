@@ -15,7 +15,7 @@ if src_path.exists():
     sys.path.insert(0, str(src_path))
 
 from c2puml.models import FileModel, Alias, Struct, Field, Union
-from c2puml.core.anonymous_processor import AnonymousTypedefProcessor
+from c2puml.core.parser_anonymous_processor import AnonymousTypedefProcessor
 
 
 class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
