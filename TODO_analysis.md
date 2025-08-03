@@ -157,9 +157,9 @@ def _extract_anonymous_from_field(self, file_model: FileModel, parent_name: str,
 
 **Pros**:
 - Minimal changes to existing architecture
-- Preserves backward compatibility
 - Can be implemented incrementally
 - **Intuitive naming makes diagrams self-documenting**
+- Clean separation of concerns
 
 **Cons**:
 - Requires careful tokenizer modifications
@@ -195,12 +195,12 @@ def _extract_anonymous_from_field(self, file_model: FileModel, parent_name: str,
 **Pros**:
 - Single pass solution
 - No post-processing needed
-- Simpler data flow
 
 **Cons**:
 - Major parser refactoring
 - Breaks current architecture
-- Hard to disable/enable feature
+- Difficult to test in isolation
+- Higher risk of bugs
 
 ### Solution 4: AST-Based Parsing (Long-term)
 **Approach**: Use a proper C parser (like pycparser) to build an AST
@@ -246,7 +246,7 @@ While Solution 3 (Integrated Parsing) might appear more efficient as a single-pa
 
 The key insight is that **modularity beats efficiency** in this context. The slight performance overhead of Solution 1's marker approach is negligible compared to the benefits of maintainability, testability, and architectural cleanliness.
 
-For a detailed comparison, see `solution_comparison.md`.
+For a detailed comparison, see `TODO_proposal_comparison.md`.
 
 ## Recommended Implementation Plan
 
@@ -276,11 +276,10 @@ For a detailed comparison, see `solution_comparison.md`.
 
 ## Risk Mitigation
 
-1. **Feature Flag**: Add configuration option to enable/disable anonymous processing
-2. **Graceful Degradation**: Fall back to `{ ... }` if processing fails
-3. **Validation**: Add verifier checks for anonymous relationships
-4. **Incremental Rollout**: Start with simple cases, add complexity gradually
-5. **Comprehensive Testing**: Test with real-world C codebases
+1. **Graceful Degradation**: Fall back to `{ ... }` if processing fails
+2. **Validation**: Add verifier checks for anonymous relationships
+3. **Incremental Rollout**: Start with simple cases, add complexity gradually
+4. **Comprehensive Testing**: Test with real-world C codebases
 
 ## Alternative Approaches
 
