@@ -287,6 +287,29 @@ def _generate_anonymous_relationships(self, lines, file_model, uml_ids):
 3. Deeply nested scenarios
 4. Circular references
 
+### Phase 5: Documentation Updates (CRITICAL)
+
+**📄 Update docs/specification.md:**
+- Add section on anonymous structure processing
+- Document the tokenizer preservation mechanism
+- Explain the AnonymousTypedefProcessor workflow
+- Detail the naming convention (ParentType_fieldName)
+- Show model structure with anonymous_relationships
+- Include examples of the complete processing pipeline
+
+**📄 Update docs/puml_template.md:**
+- Add anonymous structure representation patterns
+- Document composition relationship syntax (*--)
+- Provide complete examples with parent-child relationships
+- Show best practices for complex nested structures
+- Include visual guidelines for readability
+
+**Why Documentation is Critical:**
+- Future developers need to understand the anonymous structure handling
+- The feature adds complexity that must be well-documented
+- Template documentation ensures consistent PlantUML output
+- Specification ensures proper implementation and maintenance
+
 ## Risk Mitigation
 
 1. **Graceful Degradation**: Fall back to `{ ... }` if processing fails
