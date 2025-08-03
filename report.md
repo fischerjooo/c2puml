@@ -180,7 +180,7 @@ HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 
 ### 6. **Visibility Detection Issues**
 
-#### 6.1 Incorrect Visibility Assignment
+#### 6.1 Static Function Visibility
 **Source (`application.c`):**
 ```c
 static volatile int running = 1;
@@ -196,9 +196,9 @@ void signal_handler(int sig) { ... }
 - void signal_handler(int sig)
 ```
 
-**Issue**: The `signal_handler` function is marked as private (`-`) but it's not declared in any header file, so it should be private. However, the tool claims to have "Smart Visibility Detection" but doesn't properly handle static functions.
+**Issue**: The `signal_handler` function is correctly marked as private (`-`) since it's not declared in any header file, and the `running` variable is also correctly marked as private. The visibility detection appears to be working correctly for this case.
 
-**Specification Compliance**: ⚠️ **PARTIAL** - The visibility detection works for some cases but fails for static functions.
+**Specification Compliance**: ✅ **PASSES** - The visibility detection correctly identifies private elements that are not declared in headers.
 
 ### 7. **Template Compliance Issues**
 
