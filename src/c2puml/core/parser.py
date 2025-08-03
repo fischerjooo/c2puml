@@ -15,7 +15,7 @@ from .parser_tokenizer import (
     find_struct_fields,
 )
 from .preprocessor import PreprocessorManager
-from .parser_anonymous_processor import AnonymousTypedefProcessor
+from .parser import AnonymousTypedefProcessor  # Updated import to use new unified system
 from ..utils import detect_file_encoding
 
 if TYPE_CHECKING:
