@@ -560,14 +560,18 @@ class CParser:
                     r"#define\s+([A-Za-z_][A-Za-z0-9_]*\s*\([^)]*\))", token.value
                 )
                 if func_match:
-                    macros.append(func_match.group(1))
+                    macro_name = func_match.group(1)
+                    if macro_name not in macros:
+                        macros.append(macro_name)
                 else:
                     # For simple defines: extract only the name
                     simple_match = re.search(
                         r"#define\s+([A-Za-z_][A-Za-z0-9_]*)", token.value
                     )
                     if simple_match:
-                        macros.append(simple_match.group(1))
+                        macro_name = simple_match.group(1)
+                        if macro_name not in macros:
+                            macros.append(macro_name)
 
         return macros
 
