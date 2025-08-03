@@ -51,6 +51,7 @@ The system includes a comprehensive transformation pipeline that allows for soph
 - **Include Filtering**: Apply include filters to specific files only
 - **Selective Transformation**: Apply transformations to specific files using regex patterns
 - **Configuration Inheritance**: Fallback to global settings when file-specific settings are not defined
+- **Include Relationship Filtering**: File-specific include filters control which include relationships are shown in the generated diagrams, filtering both direct includes and transitive includes (header-to-header relationships) for the specified file
 
 #### Transformation Pipeline
 - **Multi-Stage Processing**: Support for multiple transformation containers applied in order
