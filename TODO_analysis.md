@@ -182,6 +182,34 @@ This creates a "chicken and egg" problem where the information needed is discard
 - External dependency
 - May not handle preprocessor directives well
 
+## Why Solution 1 Over Solution 3?
+
+While Solution 3 (Integrated Parsing) might appear more efficient as a single-pass solution, Solution 1 (Early Content Preservation) is superior for several critical reasons:
+
+### Architectural Considerations:
+- **Solution 1** maintains clean separation of concerns - parsing remains parsing, anonymous processing is a separate stage
+- **Solution 3** violates Single Responsibility Principle by mixing anonymous processing into core parsing logic
+
+### Implementation Risk:
+- **Solution 1** requires minimal, localized changes that can be easily rolled back
+- **Solution 3** requires fundamental parser refactoring with high regression risk
+
+### Team Development:
+- **Solution 1** allows parallel development - different developers can work on tokenizer markers vs anonymous processor
+- **Solution 3** creates bottlenecks - all changes happen in the core parser
+
+### Testing Strategy:
+- **Solution 1** preserves existing tests and allows isolated testing of new functionality
+- **Solution 3** requires rewriting most parser tests with complex test setups
+
+### Feature Management:
+- **Solution 1** enables clean feature toggling with a simple on/off switch
+- **Solution 3** requires complex conditional logic throughout the parser
+
+The key insight is that **modularity beats efficiency** in this context. The slight performance overhead of Solution 1's marker approach is negligible compared to the benefits of maintainability, testability, and architectural cleanliness.
+
+For a detailed comparison, see `solution_comparison.md`.
+
 ## Recommended Implementation Plan
 
 ### Phase 1: Restore Basic Functionality
