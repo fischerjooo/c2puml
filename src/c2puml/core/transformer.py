@@ -565,7 +565,12 @@ class Transformer:
     def _apply_include_filters(
         self, model: ProjectModel, include_filters: Dict[str, List[str]]
     ) -> ProjectModel:
-        """Apply include filters for each root file based on regex patterns"""
+        """Apply include filters for each root file based on regex patterns
+        
+        Args:
+            model: The project model to apply filters to
+            include_filters: Dictionary mapping root files to their include filter patterns
+        """
         self.logger.info(
             "Applying include filters for %d root files", len(include_filters)
         )
@@ -604,7 +609,7 @@ class Transformer:
             )
 
             if root_file in compiled_filters:
-                # Apply comprehensive filtering for this root file
+                # Apply comprehensive filtering (preserve includes arrays, filter include_relations)
                 self._filter_file_includes_comprehensive(
                     file_model, compiled_filters[root_file], root_file
                 )
@@ -717,27 +722,14 @@ class Transformer:
     def _filter_file_includes_comprehensive(
         self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
     ) -> None:
-        """Comprehensive filtering that affects both includes arrays and include_relations.
+        """Comprehensive filtering that affects only include_relations, preserving includes arrays.
         This is used by the direct _apply_include_filters method for complete filtering."""
         self.logger.debug(
             "Comprehensive filtering for file %s (root: %s)", file_model.name, root_file
         )
 
-        # Filter includes arrays
-        original_includes_count = len(file_model.includes)
-        filtered_includes = set()
-
-        for include_name in file_model.includes:
-            if self._matches_any_pattern(include_name, patterns):
-                filtered_includes.add(include_name)
-            else:
-                self.logger.debug(
-                    "Filtered out include: %s (root: %s)", include_name, root_file
-                )
-
-        file_model.includes = filtered_includes
-
-        # Filter include_relations
+        # IMPORTANT: Do NOT filter includes arrays - they should be preserved
+        # Only filter include_relations based on the patterns
         original_relations_count = len(file_model.include_relations)
         filtered_relations = []
 
@@ -755,13 +747,14 @@ class Transformer:
         file_model.include_relations = filtered_relations
 
         self.logger.debug(
-            "Comprehensive filtering for %s: includes %d->%d, relations %d->%d",
+            "Comprehensive filtering for %s: includes preserved (%d), relations %d->%d",
             file_model.name,
-            original_includes_count,
             len(file_model.includes),
             original_relations_count,
             len(file_model.include_relations),
         )
+
+
 
     def _matches_any_pattern(self, text: str, patterns: List[Pattern[str]]) -> bool:
         """Check if text matches any of the given regex patterns"""
