@@ -1513,6 +1513,55 @@ class AnonymousTypedefValidator:
                 "parent": "array_of_anon_structs_t_anonymous_struct_1",
                 "type": "struct",
                 "fields": ["x", "y"]
+            },
+            # *** NEW COMPREHENSIVE TEST CASES ***
+            # Anonymous struct from general parsing
+            "__anonymous_struct__": {
+                "parent": "various",
+                "type": "struct",
+                "fields": []
+            },
+            # Complex naming test
+            "complex_naming_test_t_anonymous_struct_1": {
+                "parent": "complex_naming_test_t",
+                "type": "struct", 
+                "fields": []
+            },
+            # Extreme nesting test
+            "extreme_nesting_test_t_anonymous_struct_1": {
+                "parent": "extreme_nesting_test_t",
+                "type": "struct",
+                "fields": []
+            },
+            # Mixed union anonymous struct
+            "mixed_union_anonymous_struct_1": {
+                "parent": "various",
+                "type": "struct",
+                "fields": []
+            },
+            # Multiple simple anonymous (main typedef)
+            "multi_anonymous_t": {
+                "parent": "complex_typedef",
+                "type": "struct",
+                "fields": []
+            },
+            # Multiple simple anonymous (first anonymous)
+            "multiple_simple_anonymous_t": {
+                "parent": "multiple_simple_anonymous_t",
+                "type": "struct",
+                "fields": []
+            },
+            # Multiple simple anonymous (nested anonymous)
+            "multiple_simple_anonymous_t_anonymous_struct_1": {
+                "parent": "multiple_simple_anonymous_t",
+                "type": "struct",
+                "fields": []
+            },
+            # Struct union anonymous struct
+            "struct_union_anonymous_struct_1": {
+                "parent": "various",
+                "type": "struct",
+                "fields": []
             }
         }
         
