@@ -11,6 +11,7 @@ class AnonymousTypedefProcessor:
     def __init__(self):
         self.anonymous_counters: Dict[str, Dict[str, int]] = {}  # parent -> {type -> count}
         self.global_anonymous_structures = {}  # Track anonymous structures globally by content hash
+        self.content_to_structure_map = {}  # content_hash -> (name, struct_type)
 
     def process_file_model(self, file_model: FileModel) -> None:
         """Process all typedefs in a file model to extract anonymous structures using multi-pass processing."""
@@ -173,10 +174,32 @@ class AnonymousTypedefProcessor:
         hash_input = f"{struct_type}:{normalized}"
         return hashlib.md5(hash_input.encode()).hexdigest()[:8]
     
+    def _find_existing_anonymous_structure(self, content: str, struct_type: str) -> Optional[str]:
+        """Find an existing anonymous structure with the same content."""
+        content_hash = self._generate_content_hash(content, struct_type)
+        if content_hash in self.content_to_structure_map:
+            existing_name, existing_type = self.content_to_structure_map[content_hash]
+            if existing_type == struct_type:
+                return existing_name
+        return None
+    
+    def _register_anonymous_structure(self, name: str, content: str, struct_type: str) -> None:
+        """Register an anonymous structure in the global tracking system."""
+        content_hash = self._generate_content_hash(content, struct_type)
+        self.content_to_structure_map[content_hash] = (name, struct_type)
+    
     def _get_or_create_anonymous_structure(self, file_model: FileModel, content: str, struct_type: str, 
                                          parent_name: str, field_name: str) -> str:
         """Get existing anonymous structure or create new one based on content hash."""
-        # Always create a new anonymous structure with the correct naming convention
+        # First, check if we already have a structure with this content
+        existing_name = self._find_existing_anonymous_structure(content, struct_type)
+        if existing_name:
+            # Check if the existing structure still exists in the model
+            if (struct_type == "struct" and existing_name in file_model.structs) or \
+               (struct_type == "union" and existing_name in file_model.unions):
+                return existing_name
+        
+        # Create a new anonymous structure with the correct naming convention
         anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name)
         
         # Check if this structure already exists with the correct name
@@ -191,6 +214,9 @@ class AnonymousTypedefProcessor:
         elif struct_type == "union":
             anon_union = self._create_anonymous_union(anon_name, content)
             file_model.unions[anon_name] = anon_union
+        
+        # Register the structure in the global tracking system
+        self._register_anonymous_structure(anon_name, content, struct_type)
         
         return anon_name
 
