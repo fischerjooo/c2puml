@@ -1190,6 +1190,7 @@ def find_struct_fields(
         brace_count = 0
         field_start_pos = pos
         
+        # First pass: collect tokens until we find a semicolon outside of braces
         while pos < closing_brace_pos:
             if tokens[pos].type == TokenType.LBRACE:
                 brace_count += 1
