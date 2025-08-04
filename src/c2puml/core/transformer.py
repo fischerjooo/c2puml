@@ -2167,8 +2167,8 @@ class Transformer:
                 
                 # Process each include in the current file
                 for include_name in current_file.includes:
-                    # Apply include filters only at depth 1 (direct includes from root C file)
-                    if compiled_filters and depth == 1:
+                    # Apply include filters at all depths (not just depth 1)
+                    if compiled_filters:
                         if not any(pattern.search(include_name) for pattern in compiled_filters):
                             self.logger.debug(
                                 "Filtered out include %s at depth %d for %s",
