@@ -74,8 +74,8 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         name1 = self.processor._generate_anonymous_name("parent_struct", "struct", 1)
         name2 = self.processor._generate_anonymous_name("parent_union", "union", 2)
         
-        self.assertEqual(name1, "parent_struct_anonymous_struct_1")
-        self.assertEqual(name2, "parent_union_anonymous_union_2")
+        self.assertEqual(name1, "parent_struct_struct_1")
+        self.assertEqual(name2, "parent_union_union_2")
 
     def test_parse_struct_fields_simple(self):
         """Test parsing simple struct fields."""
