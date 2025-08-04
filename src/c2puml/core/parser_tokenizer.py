@@ -1321,25 +1321,47 @@ def find_struct_fields(
             
             # Check if this is an array field: type name [ size ]
             elif (len(field_tokens) >= 4 and 
-                  field_tokens[-3].type == TokenType.LBRACKET and 
-                  field_tokens[-1].type == TokenType.RBRACKET):
+                  any(t.type == TokenType.LBRACKET for t in field_tokens) and 
+                  any(t.type == TokenType.RBRACKET for t in field_tokens)):
                 
-                field_name = field_tokens[-4].value
-                type_tokens = field_tokens[:-4]
-                field_type = " ".join(t.value for t in type_tokens) + "[" + field_tokens[-2].value + "]"
+                # Find the opening bracket
+                bracket_start = None
+                for i, token in enumerate(field_tokens):
+                    if token.type == TokenType.LBRACKET:
+                        bracket_start = i
+                        break
                 
-                if (field_name and field_name.strip() and field_type.strip() and 
-                    field_name not in ["[", "]", ";", "}"]):
-                    fields.append((field_name.strip(), field_type.strip()))
+                if bracket_start is not None and bracket_start > 0:
+                    # Field name is the token before the opening bracket
+                    field_name = field_tokens[bracket_start - 1].value
+                    # Type is everything before the field name
+                    type_tokens = field_tokens[:bracket_start - 1]
+                    # Array part is from opening bracket to closing bracket
+                    array_tokens = field_tokens[bracket_start:]
+                    
+                    # Remove semicolon from array_tokens if present
+                    if array_tokens and array_tokens[-1].type == TokenType.SEMICOLON:
+                        array_tokens = array_tokens[:-1]
+                    
+                    field_type = " ".join(t.value for t in type_tokens) + " " + " ".join(t.value for t in array_tokens)
+                    
+                    if (field_name and field_name.strip() and field_type.strip() and 
+                        field_name not in ["[", "]", ";", "}"]):
+                        fields.append((field_name.strip(), field_type.strip()))
             
             # Regular field: type name
             else:
-                field_name = field_tokens[-1].value
-                field_type = " ".join(t.value for t in field_tokens[:-1])
+                # Remove semicolon from the end if present
+                if field_tokens and field_tokens[-1].type == TokenType.SEMICOLON:
+                    field_tokens = field_tokens[:-1]
                 
-                if (field_name not in ["[", "]", ";", "}"] and field_name and 
-                    field_name.strip() and field_type.strip()):
-                    fields.append((field_name.strip(), field_type.strip()))
+                if field_tokens:
+                    field_name = field_tokens[-1].value
+                    field_type = " ".join(t.value for t in field_tokens[:-1])
+                    
+                    if (field_name not in ["[", "]", ";", "}"] and field_name and 
+                        field_name.strip() and field_type.strip()):
+                        fields.append((field_name.strip(), field_type.strip()))
     
     return fields
 
