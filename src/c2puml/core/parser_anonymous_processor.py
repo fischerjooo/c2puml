@@ -61,14 +61,14 @@ class AnonymousTypedefProcessor:
         
         # Filter out overly complex structures that might cause parsing issues
         filtered_structs = []
-        for struct_content, struct_type in anonymous_structs:
+        for struct_content, struct_type, field_name in anonymous_structs:
             # Skip structures with function pointer arrays or other complex patterns
             if not self._is_too_complex_to_process(struct_content):
-                filtered_structs.append((struct_content, struct_type))
+                filtered_structs.append((struct_content, struct_type, field_name))
         
         if filtered_structs:
-            for i, (struct_content, struct_type) in enumerate(filtered_structs, 1):
-                anon_name = self._generate_anonymous_name(alias_name, struct_type, counter=i)
+            for i, (struct_content, struct_type, field_name) in enumerate(filtered_structs, 1):
+                anon_name = self._generate_anonymous_name(alias_name, struct_type, field_name)
                 
                 # Create the anonymous struct/union
                 if struct_type == "struct":
@@ -112,7 +112,7 @@ class AnonymousTypedefProcessor:
 
     def _extract_anonymous_structs_from_text(
         self, text: str
-    ) -> List[Tuple[str, str]]:
+    ) -> List[Tuple[str, str, str]]:
         """Extract anonymous struct/union definitions from text using balanced brace matching."""
         anonymous_structs = []
         
@@ -149,11 +149,16 @@ class AnonymousTypedefProcessor:
                         content_end = pos
                         struct_content = text[start_pos:content_end + 1]
                         
+                        # Extract the field name after the closing brace
+                        remaining = text[content_end + 1:].strip()
+                        field_match = re.match(r'^[*\s\[\]]*(\w+)', remaining)
+                        field_name = field_match.group(1) if field_match else f"field_{len(anonymous_structs) + 1}"
+                        
                         # Skip the first struct/union if it's a typedef
                         if skip_first_struct and match == matches[0]:
                             skip_first_struct = False
                         else:
-                            anonymous_structs.append((struct_content, struct_type))
+                            anonymous_structs.append((struct_content, struct_type, field_name))
                         break
                 pos += 1
         
@@ -576,8 +581,8 @@ class AnonymousTypedefProcessor:
             struct_info = self._extract_balanced_anonymous_struct_no_field_name(field.type)
             if struct_info:
                 struct_content, struct_type = struct_info
-                # For anonymous structs without field names, use counter-based naming
-                anon_name = self._generate_anonymous_name(parent_name, struct_type, counter=1)
+                # For anonymous structs without field names, use field name from field.name
+                anon_name = self._generate_anonymous_name(parent_name, struct_type, field.name)
                 
                 # Create the anonymous struct/union with actual content
                 if struct_type == "struct":
@@ -602,7 +607,9 @@ class AnonymousTypedefProcessor:
             
             if anonymous_structs:
                 for i, (struct_content, struct_type) in enumerate(anonymous_structs, 1):
-                    anon_name = self._generate_anonymous_name(parent_name, struct_type, counter=i)
+                    # For text-based extraction, use a fallback field name
+                    field_name = f"field_{i}"
+                    anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name)
                     
                     # Create the anonymous struct/union
                     if struct_type == "struct":
@@ -828,7 +835,9 @@ class AnonymousTypedefProcessor:
                         
                         # Extract the field name
                         remaining = text[pos + 1:].strip()
-                        field_match = re.match(r'^(\w+)', remaining)
+                        # Handle field names that might have modifiers like * or []
+                        # Look for the actual field name after any modifiers
+                        field_match = re.match(r'^[*\s\[\]]*(\w+)', remaining)
                         if field_match:
                             field_name = field_match.group(1)
                             return struct_content, struct_type, field_name
