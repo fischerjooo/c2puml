@@ -38,7 +38,7 @@ class "old_point" as TYPEDEF_OLD_POINT <<struct>> #LightYellow
 class "modern_config" as TYPEDEF_MODERN_CONFIG <<struct>> #LightYellow
 {
     + int version
-    + char[64] name
+    + char [ 64 ] name
     + int flags
 }
 

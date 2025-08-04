@@ -1033,7 +1033,7 @@
             },
             {
               "name": "item_name",
-              "type": "char[32]",
+              "type": "char [ 32 ]",
               "value": null
             },
             {
@@ -1058,7 +1058,7 @@
             },
             {
               "name": "config_name",
-              "type": "char[64]",
+              "type": "char [ 64 ]",
               "value": null
             },
             {
@@ -1088,7 +1088,7 @@
             },
             {
               "name": "nested_func",
-              "type": "void ( * ) ( int )",
+              "type": "void ( * ) ( int ) ;",
               "value": null
             }
           ],
@@ -1132,17 +1132,17 @@
             },
             {
               "name": "alloc_func",
-              "type": "void * ( * ) ( size_t )",
+              "type": "void * ( * ) ( size_t ) ;",
               "value": null
             },
             {
               "name": "free_func",
-              "type": "void ( * ) ( void * )",
+              "type": "void ( * ) ( void * ) ;",
               "value": null
             },
             {
               "name": "resize_func",
-              "type": "int ( * ) ( void * * , size_t )",
+              "type": "int ( * ) ( void * * , size_t ) ;",
               "value": null
             }
           ],
@@ -1155,17 +1155,17 @@
           "fields": [
             {
               "name": "name",
-              "type": "char[32]",
+              "type": "char [ 32 ]",
               "value": null
             },
             {
               "name": "validate_func",
-              "type": "int ( * ) ( const char * )",
+              "type": "int ( * ) ( const char * ) ;",
               "value": null
             },
             {
               "name": "format_func",
-              "type": "void ( * ) ( char * , int )",
+              "type": "void ( * ) ( char * , int ) ;",
               "value": null
             }
           ],
@@ -1393,7 +1393,7 @@
             },
             {
               "name": "config_name",
-              "type": "char[64]",
+              "type": "char [ 64 ]",
               "value": null
             },
             {
@@ -1532,22 +1532,22 @@
             },
             {
               "name": "name",
-              "type": "char[16]",
+              "type": "char [ 16 ]",
               "value": null
             },
             {
               "name": "init_func",
-              "type": "void ( * ) ( void )",
+              "type": "void ( * ) ( void ) ;",
               "value": null
             },
             {
               "name": "process_func",
-              "type": "int ( * ) ( int , int )",
+              "type": "int ( * ) ( int , int ) ;",
               "value": null
             },
             {
               "name": "cleanup_func",
-              "type": "void ( * ) ( void )",
+              "type": "void ( * ) ( void ) ;",
               "value": null
             }
           ],
@@ -1671,7 +1671,7 @@
           "fields": [
             {
               "name": "second_name",
-              "type": "char[32]",
+              "type": "char [ 32 ]",
               "value": null
             },
             {
@@ -1792,12 +1792,12 @@
             },
             {
               "name": "operations",
-              "type": "math_operation_t[5]",
+              "type": "math_operation_t [ 5 ]",
               "value": null
             },
             {
               "name": "callbacks",
-              "type": "void(* callbacks[3])(int , char *)",
+              "type": "void ( * callbacks [ 3 ] ) ( int , char * ) ;",
               "value": null
             }
           ],
@@ -1822,7 +1822,7 @@
             },
             {
               "name": "nested_func",
-              "type": "void ( * ) ( int )",
+              "type": "void ( * ) ( int ) ;",
               "value": null
             }
           ],
@@ -1840,17 +1840,17 @@
             },
             {
               "name": "name",
-              "type": "char[64]",
+              "type": "char [ 64 ]",
               "value": null
             },
             {
               "name": "process_func",
-              "type": "int ( * ) ( int , char * )",
+              "type": "int ( * ) ( int , char * ) ;",
               "value": null
             },
             {
               "name": "cleanup_func",
-              "type": "void ( * ) ( void * )",
+              "type": "void ( * ) ( void * ) ;",
               "value": null
             }
           ],
@@ -1888,7 +1888,7 @@
             },
             {
               "name": "event_name",
-              "type": "char[32]",
+              "type": "char [ 32 ]",
               "value": null
             },
             {
@@ -1924,7 +1924,7 @@
             },
             {
               "name": "outer_name",
-              "type": "char[32]",
+              "type": "char [ 32 ]",
               "value": null
             },
             {
@@ -1959,7 +1959,7 @@
             },
             {
               "name": "inner_label",
-              "type": "char[16]",
+              "type": "char [ 16 ]",
               "value": null
             }
           ],
@@ -1997,7 +1997,7 @@
           "fields": [
             {
               "name": "header",
-              "type": "char[16]",
+              "type": "char [ 16 ]",
               "value": null
             },
             {
@@ -2032,7 +2032,7 @@
             },
             {
               "name": "error_msg",
-              "type": "char[128]",
+              "type": "char [ 128 ]",
               "value": null
             }
           ],
@@ -2187,7 +2187,7 @@
             },
             {
               "name": "string_value",
-              "type": "char[64]",
+              "type": "char [ 64 ]",
               "value": null
             },
             {
@@ -2300,12 +2300,12 @@
             },
             {
               "name": "void_func",
-              "type": "void ( * ) ( void )",
+              "type": "void ( * ) ( void ) ;",
               "value": null
             },
             {
               "name": "int_func",
-              "type": "int ( * ) ( int )",
+              "type": "int ( * ) ( int ) ;",
               "value": null
             }
           ],
@@ -2363,7 +2363,7 @@
             },
             {
               "name": "error_message",
-              "type": "char[128]",
+              "type": "char [ 128 ]",
               "value": null
             }
           ],
@@ -2380,7 +2380,7 @@
             },
             {
               "name": "error_message",
-              "type": "char[128]",
+              "type": "char [ 128 ]",
               "value": null
             }
           ],
@@ -2433,7 +2433,7 @@
             },
             {
               "name": "string_value",
-              "type": "char[64]",
+              "type": "char [ 64 ]",
               "value": null
             },
             {
@@ -2467,7 +2467,7 @@
             },
             {
               "name": "raw_bytes",
-              "type": "char[256]",
+              "type": "char [ 256 ]",
               "value": null
             }
           ],
@@ -2491,7 +2491,7 @@
             },
             {
               "name": "primary_bytes",
-              "type": "char[32]",
+              "type": "char [ 32 ]",
               "value": null
             }
           ],
@@ -2594,7 +2594,7 @@
             },
             {
               "name": "values",
-              "type": "int[5]",
+              "type": "int [ 5 ]",
               "value": null
             }
           ],
@@ -2615,7 +2615,7 @@
             },
             {
               "name": "description",
-              "type": "char[MAX_LABEL_LEN]",
+              "type": "char [ MAX_LABEL_LEN ]",
               "value": null
             },
             {
@@ -3072,12 +3072,12 @@
             },
             {
               "name": "db_name",
-              "type": "char[MAX_DB_NAME_LENGTH]",
+              "type": "char [ MAX_DB_NAME_LENGTH ]",
               "value": null
             },
             {
               "name": "host",
-              "type": "char[256]",
+              "type": "char [ 256 ]",
               "value": null
             },
             {
@@ -3087,12 +3087,12 @@
             },
             {
               "name": "username",
-              "type": "char[128]",
+              "type": "char [ 128 ]",
               "value": null
             },
             {
               "name": "password",
-              "type": "char[128]",
+              "type": "char [ 128 ]",
               "value": null
             },
             {
@@ -3237,7 +3237,7 @@
             },
             {
               "name": "filtered_field2",
-              "type": "char[50]",
+              "type": "char [ 50 ]",
               "value": null
             },
             {
@@ -3426,12 +3426,12 @@
           "fields": [
             {
               "name": "vertices",
-              "type": "point_t[3]",
+              "type": "point_t [ 3 ]",
               "value": null
             },
             {
               "name": "label",
-              "type": "char[MAX_LABEL_LEN]",
+              "type": "char [ MAX_LABEL_LEN ]",
               "value": null
             }
           ],
@@ -4406,7 +4406,7 @@
             },
             {
               "name": "debug_enabled_name",
-              "type": "char[64]",
+              "type": "char [ 64 ]",
               "value": null
             }
           ],
@@ -4424,7 +4424,7 @@
             },
             {
               "name": "debug_name",
-              "type": "char[64]",
+              "type": "char [ 64 ]",
               "value": null
             }
           ],
@@ -4442,7 +4442,7 @@
             },
             {
               "name": "debug_buffer",
-              "type": "char[128]",
+              "type": "char [ 128 ]",
               "value": null
             }
           ],
@@ -4460,7 +4460,7 @@
             },
             {
               "name": "debug_name",
-              "type": "char[64]",
+              "type": "char [ 64 ]",
               "value": null
             },
             {
@@ -4522,7 +4522,7 @@
             },
             {
               "name": "name",
-              "type": "char[32]",
+              "type": "char [ 32 ]",
               "value": null
             }
           ],
@@ -4540,7 +4540,7 @@
             },
             {
               "name": "enabled_name",
-              "type": "char[32]",
+              "type": "char [ 32 ]",
               "value": null
             }
           ],
@@ -4558,7 +4558,7 @@
             },
             {
               "name": "feature_name",
-              "type": "char[32]",
+              "type": "char [ 32 ]",
               "value": null
             }
           ],
@@ -4576,12 +4576,12 @@
             },
             {
               "name": "large_buffer",
-              "type": "char[MAX_SIZE]",
+              "type": "char [ MAX_SIZE ]",
               "value": null
             },
             {
               "name": "small_buffer",
-              "type": "char[MIN_SIZE]",
+              "type": "char [ MIN_SIZE ]",
               "value": null
             }
           ],
@@ -4995,7 +4995,7 @@
             },
             {
               "name": "label",
-              "type": "char[32]",
+              "type": "char [ 32 ]",
               "value": null
             }
           ],
@@ -5471,7 +5471,7 @@
             },
             {
               "name": "name",
-              "type": "char[64]",
+              "type": "char [ 64 ]",
               "value": null
             },
             {

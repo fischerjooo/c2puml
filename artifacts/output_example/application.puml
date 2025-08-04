@@ -53,11 +53,11 @@ class "network" as HEADER_NETWORK <<header>> #LightGreen
 class "DatabaseConfig" as TYPEDEF_DATABASECONFIG <<struct>> #LightYellow
 {
     + DatabaseType type
-    + char[MAX_DB_NAME_LENGTH] db_name
-    + char[256] host
+    + char [ MAX_DB_NAME_LENGTH ] db_name
+    + char [ 256 ] host
     + int port
-    + char[128] username
-    + char[128] password
+    + char [ 128 ] username
+    + char [ 128 ] password
     + void * connection
 }
 
