@@ -1415,8 +1415,18 @@
         "data_union_point_value": {
           "fields": [
             {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
               "name": "z",
-              "type": "int x , y ,",
+              "type": "int",
               "value": null
             }
           ],
@@ -1542,8 +1552,13 @@
         "item_value_point_data": {
           "fields": [
             {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
               "name": "y",
-              "type": "int x ,",
+              "type": "int",
               "value": null
             }
           ],
