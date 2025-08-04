@@ -228,6 +228,75 @@ class TestGlobalParsing(unittest.TestCase):
         finally:
             os.unlink(temp_file)
 
+    def test_parse_complex_array_initialization_issue(self):
+        """Test parsing the specific complex array initialization issue from complex.c"""
+        content = """
+        typedef int Std_ReturnType;
+        typedef struct {
+            int job_id;
+            char* job_data;
+            size_t data_size;
+            int priority;
+        } Process_T;
+        
+        typedef Std_ReturnType (*Process_Cfg_Process_fct)(const Process_T *job_pst);
+        typedef Process_Cfg_Process_fct Process_Cfg_Process_acpfct_t[3];
+        
+        static Std_ReturnType ProcessorAdapter_Process(const Process_T *job_pst) {
+            return 0;
+        }
+        
+        static Std_ReturnType ProcessorService_Process(const Process_T *job_pst) {
+            return 0;
+        }
+        
+        static Std_ReturnType ProcessorHardware_Process(const Process_T *job_pst) {
+            return 0;
+        }
+        
+        // The nasty edge case: const array of function pointers with complex name
+        Process_Cfg_Process_acpfct_t Process_Cfg_Process_acpfct = {
+            &ProcessorAdapter_Process,
+            &ProcessorService_Process,
+            &ProcessorHardware_Process,
+        };
+        """
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".c", delete=False) as f:
+            f.write(content)
+            temp_file = f.name
+
+        try:
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
+            
+            # Should parse the global variable
+            global_names = [g.name for g in file_model.globals]
+            self.assertIn("Process_Cfg_Process_acpfct", global_names)
+            
+            # Find the specific global variable
+            global_var = None
+            for g in file_model.globals:
+                if g.name == "Process_Cfg_Process_acpfct":
+                    global_var = g
+                    break
+            
+            self.assertIsNotNone(global_var)
+            self.assertEqual(global_var.type, "Process_Cfg_Process_acpfct_t")
+            
+            # The value should be properly formatted without excessive whitespace
+            self.assertIsNotNone(global_var.value)
+            # Should not contain suspicious formatting like excessive newlines
+            self.assertNotIn("\n", global_var.value)
+            # Should be a clean array initialization
+            self.assertIn("{", global_var.value)
+            self.assertIn("}", global_var.value)
+            self.assertIn("ProcessorAdapter_Process", global_var.value)
+            self.assertIn("ProcessorService_Process", global_var.value)
+            self.assertIn("ProcessorHardware_Process", global_var.value)
+            
+        finally:
+            os.unlink(temp_file)
+
 
 if __name__ == "__main__":
     unittest.main()
