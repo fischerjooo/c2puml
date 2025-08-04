@@ -290,6 +290,14 @@ class PUMLValidator:
                 r"(\w+)\s+\.\.>\s+(\w+)\s+:\s+([^<][^\n]*)",
                 "..>",
             ),  # Non-bracketed declares/uses
+            (
+                r"(\w+)\s+\*--\s+(\w+)\s+:\s+(<<[^>]+>>)",
+                "*--",
+            ),  # Composition relationships with labels
+            (
+                r"(\w+)\s+\*--\s+(\w+)\s+:\s+([^<][^\n]*)",
+                "*--",
+            ),  # Composition relationships without labels
         ]
 
         for pattern, arrow_type in patterns:
@@ -596,6 +604,52 @@ class PUMLValidator:
             else:
                 uml_ids.add(uml_id)
 
+    def _validate_contains_relationships(self, relationships: List[PUMLRelationship], filename: str):
+        """Validate that in contains relationships, each child class can have only one parent container."""
+        # Find all contains relationships
+        contains_relationships = []
+        for rel in relationships:
+            # Check for contains relationships - these typically use composition arrows (*--)
+            # or have "contains" in the label
+            if (rel.type == "*--" or 
+                "contains" in rel.label.lower() or
+                rel.label == "<<contains>>"):
+                contains_relationships.append(rel)
+        
+        # Group children by their parent to validate the rule
+        child_to_parents = {}
+        
+        for rel in contains_relationships:
+            parent = rel.source
+            child = rel.target
+            
+            if child not in child_to_parents:
+                child_to_parents[child] = []
+            child_to_parents[child].append(parent)
+        
+        # Validate that each child has at most one parent
+        for child, parents in child_to_parents.items():
+            if len(parents) > 1:
+                self._add_result(
+                    ValidationLevel.ERROR,
+                    f"Child class '{child}' has multiple container parents: {', '.join(parents)} - "
+                    f"each class can have only one container parent",
+                    filename,
+                )
+            elif len(parents) == 1:
+                # This is valid - child has exactly one parent
+                pass
+            # If len(parents) == 0, it means no contains relationships found (which is fine)
+        
+        # Also validate that we found some contains relationships if there are classes
+        if not contains_relationships:
+            # This is just informational - not all diagrams need contains relationships
+            self._add_result(
+                ValidationLevel.INFO,
+                f"No contains relationships found in {filename}",
+                filename,
+            )
+
     def validate_relationships(
         self,
         relationships: List[PUMLRelationship],
@@ -646,6 +700,9 @@ class PUMLValidator:
                         f"Relationship label should use <<>> format: {rel.label}",
                         filename,
                     )
+        
+        # NEW ASSERTION: Validate contains relationships - each child can have only one parent
+        self._validate_contains_relationships(relationships, filename)
 
     def validate_content_patterns(self, content: str, filename: str):
         """Validate specific content patterns and detect issues."""
