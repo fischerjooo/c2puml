@@ -64,8 +64,8 @@ The C2PlantUML application is a well-structured Python tool for converting C/C++
 - [x] Removed semicolon from array field types
 - [x] Fixed comma-separated field declarations (e.g., `struct point *p1, *p2;`)
 - [x] Fixed PlantUML relationship label format (changed from 'contains' to '<<contains>>')
+- [x] Fixed array field spacing in PlantUML output (removed extra spaces around brackets)
 - [ ] Fix complex nested structure parsing (anonymous structures within anonymous structures)
-- [ ] Fix array field spacing in PlantUML output (remove extra spaces around brackets)
 - [ ] Test fix with complex nested structures
 - [ ] Verify reduction in verification warnings
 
@@ -74,7 +74,10 @@ The C2PlantUML application is a well-structured Python tool for converting C/C++
 - [ ] Test deduplication with complex nested structures
 - [ ] Verify reduction in duplicate anonymous structure warnings
 
-**Status**: ✅ **COMPLETED** - The anonymous structure deduplication is working correctly. The warnings about duplicate anonymous structures are actually expected behavior and indicate that the deduplication system is functioning properly. The same anonymous structure content is correctly being referenced by multiple parent structures, which is the intended behavior for content-based deduplication.
+**Current Status**: 
+- ✅ **Major Progress**: Fixed comma-separated field declarations, PlantUML relationship labels, and array field spacing
+- ❌ **Remaining Issue**: Complex nested structure parsing - anonymous structures within anonymous structures are not being parsed correctly
+- 📊 **Test Status**: 7 failing tests (same as before, but different issues resolved)
 
 **Resolution**: The "duplicate anonymous structure" warnings in the PlantUML validation are not actual errors but expected behavior. The validation code correctly identifies these as known cases and treats them as warnings rather than errors. The deduplication logic is working as intended - when the same anonymous structure content appears in multiple parent structures, it correctly creates a single structure and references it from multiple parents.
 
