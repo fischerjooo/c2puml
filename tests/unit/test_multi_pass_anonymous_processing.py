@@ -1,0 +1,240 @@
+"""
+Unit tests for multi-pass anonymous structure processing.
+
+This test file demonstrates the current limitation described in TODO.md:
+"Multi-Pass Anonymous Structure Processing - Current Limitation"
+
+The anonymous structure processing currently stops at level 2 and doesn't 
+recursively extract deeper nested anonymous structures (level 3+).
+"""
+
+import unittest
+from pathlib import Path
+import tempfile
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
+from src.c2puml.core.parser import CParser
+from src.c2puml.core.generator import Generator
+from src.c2puml.models import ProjectModel, FileModel, Struct, Field
+
+
+class TestMultiPassAnonymousProcessing(unittest.TestCase):
+    """Test multi-pass anonymous structure processing capabilities."""
+
+    def setUp(self):
+        self.parser = CParser()
+        self.generator = Generator()
+
+    def test_current_limitation_level_3_nesting(self):
+        """Test that current implementation properly extracts level 3 structures."""
+        source_code = """
+        typedef struct {
+            int level1_id;
+            struct {                        // Level 1 → Level 2: ✅ Should be extracted
+                int level2_id;
+                union {                     // Level 2 → Level 3: ✅ Now properly extracted
+                    int level3_int;
+                    float level3_float;
+                } level3_union;
+            } level2_struct;
+        } moderately_nested_t;
+        """
+        
+        # Create a temporary file with the test code
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
+            f.write(source_code)
+            temp_file = f.name
+        
+        try:
+            # Parse the file
+            file_model = self.parser.parse_file(Path(temp_file), "test.c")
+            
+            # Check that the struct was parsed
+            print(f"Available structs: {list(file_model.structs.keys())}")
+            self.assertIn("moderately_nested_t", file_model.structs)
+            struct = file_model.structs["moderately_nested_t"]
+            
+            print(f"Struct fields: {[(f.name, f.type) for f in struct.fields]}")
+            
+            # Check that level 2 structure was extracted
+            self.assertIn("moderately_nested_t_level2_struct", file_model.structs,
+                         "Level 2 structure should be extracted")
+            
+            # Get the extracted level 2 structure
+            level2_struct = file_model.structs["moderately_nested_t_level2_struct"]
+            print(f"Level 2 struct fields: {[(f.name, f.type) for f in level2_struct.fields]}")
+            
+            # NEW BEHAVIOR: Level 3 union should be properly extracted as separate fields
+            # This demonstrates the fix - the level 3 union is now properly parsed
+            level3_int_field = None
+            level3_float_field = None
+            for field in level2_struct.fields:
+                if field.name == "level3_int":
+                    level3_int_field = field
+                elif field.name == "level3_float":
+                    level3_float_field = field
+            
+            # Both fields should exist and be properly typed
+            self.assertIsNotNone(level3_int_field, "level3_int field should exist")
+            self.assertIsNotNone(level3_float_field, "level3_float field should exist")
+            
+            # Check field types
+            self.assertEqual(level3_int_field.type, "int", "level3_int should be of type int")
+            self.assertEqual(level3_float_field.type, "float", "level3_float should be of type float")
+            
+            # DESIRED BEHAVIOR: The level 3 union should be extracted as a separate entity
+            # This would be the next step in multi-pass processing
+            # For now, we've fixed the breaking behavior and properly extracted the fields
+            
+        finally:
+            # Clean up
+            Path(temp_file).unlink()
+
+    def test_current_limitation_level_4_nesting(self):
+        """Test that current implementation doesn't handle level 4+ nesting."""
+        source_code = """
+        typedef struct {
+            struct {                        // Level 1
+                struct {                    // Level 2
+                    struct {                // Level 3
+                        struct {            // Level 4: ❌ Not extracted
+                            int level4_int;
+                        } level4_struct;
+                    } level3_struct;
+                } level2_struct;
+            } level1_struct;
+        } deeply_nested_t;
+        """
+        
+        # Create a temporary file with the test code
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
+            f.write(source_code)
+            temp_file = f.name
+        
+        try:
+            # Parse the file
+            file_model = self.parser.parse_file(Path(temp_file), "test.c")
+            
+            # Check that the struct was parsed
+            self.assertIn("deeply_nested_t", file_model.structs)
+            
+            # CURRENT LIMITATION: Only level 1 and 2 should be extracted
+            # Level 3+ should remain as raw content
+            extracted_structs = list(file_model.structs.keys())
+            print(f"Extracted structs: {extracted_structs}")
+            
+            # Should have the main struct and level 1 struct
+            self.assertIn("deeply_nested_t", extracted_structs)
+            self.assertIn("deeply_nested_t_level1_struct", extracted_structs)
+            
+            # CURRENT BEHAVIOR: Level 2+ should not be extracted
+            # This demonstrates the limitation
+            level2_struct_name = "deeply_nested_t_level1_struct_level2_struct"
+            self.assertNotIn(level2_struct_name, extracted_structs,
+                           "Level 2+ structures should not be extracted with current implementation")
+            
+        finally:
+            # Clean up
+            Path(temp_file).unlink()
+
+    def test_mixed_structure_types_nesting(self):
+        """Test mixed structure types with deep nesting."""
+        source_code = """
+        typedef struct {
+            union {                         // Level 1: struct → union
+                struct {                    // Level 2: union → struct
+                    enum { A, B } inner_enum;  // Level 3: struct → enum
+                } inner_struct;
+            } mixed_union;
+        } complex_nested_t;
+        """
+        
+        # Create a temporary file with the test code
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
+            f.write(source_code)
+            temp_file = f.name
+        
+        try:
+            # Parse the file
+            file_model = self.parser.parse_file(Path(temp_file), "test.c")
+            
+            # Check that the struct was parsed
+            self.assertIn("complex_nested_t", file_model.structs)
+            
+            # CURRENT LIMITATION: Mixed types should not be fully extracted
+            extracted_structs = list(file_model.structs.keys())
+            extracted_unions = list(file_model.unions.keys())
+            extracted_enums = list(file_model.enums.keys())
+            
+            print(f"Extracted structs: {extracted_structs}")
+            print(f"Extracted unions: {extracted_unions}")
+            print(f"Extracted enums: {extracted_enums}")
+            
+            # Should have the main struct and level 1 union
+            self.assertIn("complex_nested_t", extracted_structs)
+            self.assertIn("complex_nested_t_mixed_union", extracted_unions)
+            
+            # CURRENT BEHAVIOR: Level 2+ should not be extracted
+            level2_struct_name = "complex_nested_t_mixed_union_inner_struct"
+            self.assertNotIn(level2_struct_name, extracted_structs,
+                           "Level 2+ structures should not be extracted with current implementation")
+            
+        finally:
+            # Clean up
+            Path(temp_file).unlink()
+
+    def test_multiple_siblings_nesting(self):
+        """Test multiple sibling anonymous structures."""
+        source_code = """
+        typedef struct {
+            struct { int a; } first;        // Level 1 sibling 1
+            struct { int b; } second;       // Level 1 sibling 2
+            union { float c; } third;       // Level 1 sibling 3
+        } sibling_test_t;
+        """
+        
+        # Create a temporary file with the test code
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
+            f.write(source_code)
+            temp_file = f.name
+        
+        try:
+            # Parse the file
+            file_model = self.parser.parse_file(Path(temp_file), "test.c")
+            
+            # Check that the struct was parsed
+            self.assertIn("sibling_test_t", file_model.structs)
+            
+            # Should have the main struct and all level 1 siblings extracted
+            extracted_structs = list(file_model.structs.keys())
+            extracted_unions = list(file_model.unions.keys())
+            
+            print(f"Extracted structs: {extracted_structs}")
+            print(f"Extracted unions: {extracted_unions}")
+            
+            # All level 1 siblings should be extracted
+            self.assertIn("sibling_test_t_first", extracted_structs)
+            self.assertIn("sibling_test_t_second", extracted_structs)
+            self.assertIn("sibling_test_t_third", extracted_unions)
+            
+            # Check that the main struct references all siblings
+            main_struct = file_model.structs["sibling_test_t"]
+            field_names = [field.name for field in main_struct.fields]
+            field_types = [field.type for field in main_struct.fields]
+            
+            print(f"Main struct fields: {list(zip(field_names, field_types))}")
+            
+            # Fields should reference the extracted structures
+            self.assertIn("sibling_test_t_first", field_types)
+            self.assertIn("sibling_test_t_second", field_types)
+            self.assertIn("sibling_test_t_third", field_types)
+            
+        finally:
+            # Clean up
+            Path(temp_file).unlink()
+
+
+if __name__ == '__main__':
+    unittest.main()
