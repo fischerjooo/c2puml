@@ -39,7 +39,7 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         result = self.processor._extract_anonymous_structs_from_text(text)
         
         self.assertEqual(len(result), 1)
-        struct_content, struct_type = result[0]
+        struct_content, struct_type, field_name = result[0]
         self.assertEqual(struct_type, "struct")
         self.assertIn("nested1", struct_content)
         self.assertIn("nested2", struct_content)
@@ -63,19 +63,19 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         result = self.processor._extract_anonymous_structs_from_text(text)
         
         # Should find 2 structs and 1 union
-        struct_count = sum(1 for _, t in result if t == "struct")
-        union_count = sum(1 for _, t in result if t == "union")
+        struct_count = sum(1 for _, t, _ in result if t == "struct")
+        union_count = sum(1 for _, t, _ in result if t == "union")
         
         self.assertEqual(struct_count, 2)
         self.assertEqual(union_count, 1)
 
     def test_generate_anonymous_name(self):
         """Test the anonymous name generation."""
-        name1 = self.processor._generate_anonymous_name("parent_struct", "struct", 1)
-        name2 = self.processor._generate_anonymous_name("parent_union", "union", 2)
+        name1 = self.processor._generate_anonymous_name("parent_struct", "struct", "field1")
+        name2 = self.processor._generate_anonymous_name("parent_union", "union", "field2")
         
-        self.assertEqual(name1, "parent_struct_anonymous_struct_1")
-        self.assertEqual(name2, "parent_union_anonymous_union_2")
+        self.assertEqual(name1, "parent_struct_field1")
+        self.assertEqual(name2, "parent_union_field2")
 
     def test_parse_struct_fields_simple(self):
         """Test parsing simple struct fields."""
@@ -227,9 +227,9 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         )
         
         # Check that anonymous struct was extracted
-        self.assertIn("test_callback_t_anonymous_struct_1", file_model.structs)
+        self.assertIn("test_callback_t_event_info", file_model.structs)
         self.assertIn("test_callback_t", file_model.anonymous_relationships)
-        self.assertIn("test_callback_t_anonymous_struct_1", 
+        self.assertIn("test_callback_t_event_info", 
                      file_model.anonymous_relationships["test_callback_t"])
 
     def test_process_struct_for_anonymous_structs(self):
@@ -313,7 +313,7 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         
         # Verify all anonymous structures were extracted with improved naming
         expected_anon_structs = [
-            "callback_t_anonymous_struct_1",  # Complex type, uses counter
+            "callback_t_param",  # Uses field name 'param'
             "main_union_point_data"           # Uses field name
         ]
         expected_anon_unions = [

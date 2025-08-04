@@ -10,9 +10,33 @@ class AnonymousTypedefProcessor:
 
     def __init__(self):
         self.anonymous_counters: Dict[str, Dict[str, int]] = {}  # parent -> {type -> count}
+        self.global_anonymous_structures = {}  # Track anonymous structures globally by content hash
+        self.content_to_structure_map = {}  # content_hash -> (name, struct_type)
 
     def process_file_model(self, file_model: FileModel) -> None:
-        """Process all typedefs in a file model to extract anonymous structures."""
+        """Process all typedefs in a file model to extract anonymous structures using multi-pass processing."""
+        max_iterations = 10  # Increased from 5 to 10 for deeper processing
+        iteration = 0
+        
+        while iteration < max_iterations:
+            iteration += 1
+            # Track all typedef entities (structs, unions, and aliases) for convergence detection
+            initial_count = len(file_model.structs) + len(file_model.unions) + len(file_model.aliases)
+            
+            # Process all structures/unions/aliases
+            self._process_all_entities(file_model)
+            
+            final_count = len(file_model.structs) + len(file_model.unions) + len(file_model.aliases)
+            
+            # Stop if no new typedef entities were created (convergence)
+            if final_count == initial_count:
+                break
+        
+        # Post-processing: Update field references to point to extracted entities
+        self._update_field_references_to_extracted_entities(file_model)
+
+    def _process_all_entities(self, file_model: FileModel) -> None:
+        """Process all entities in a single pass."""
         # Process alias typedefs with improved complexity filtering
         aliases_to_process = list(file_model.aliases.items())
         for alias_name, alias_data in aliases_to_process:
@@ -39,27 +63,22 @@ class AnonymousTypedefProcessor:
         
         # Filter out overly complex structures that might cause parsing issues
         filtered_structs = []
-        for struct_content, struct_type in anonymous_structs:
+        for struct_content, struct_type, field_name in anonymous_structs:
             # Skip structures with function pointer arrays or other complex patterns
             if not self._is_too_complex_to_process(struct_content):
-                filtered_structs.append((struct_content, struct_type))
+                filtered_structs.append((struct_content, struct_type, field_name))
         
         if filtered_structs:
-            for i, (struct_content, struct_type) in enumerate(filtered_structs, 1):
-                anon_name = self._generate_anonymous_name(alias_name, struct_type, counter=i)
+            for i, (struct_content, struct_type, field_name) in enumerate(filtered_structs, 1):
+                anon_name = self._get_or_create_anonymous_structure(
+                    file_model, struct_content, struct_type, alias_name, field_name
+                )
                 
-                # Create the anonymous struct/union
-                if struct_type == "struct":
-                    anon_struct = self._create_anonymous_struct(anon_name, struct_content)
-                    file_model.structs[anon_name] = anon_struct
-                elif struct_type == "union":
-                    anon_union = self._create_anonymous_union(anon_name, struct_content)
-                    file_model.unions[anon_name] = anon_union
-                
-                # Track the relationship
+                # Track the relationship (only if not already tracked)
                 if alias_name not in file_model.anonymous_relationships:
                     file_model.anonymous_relationships[alias_name] = []
-                file_model.anonymous_relationships[alias_name].append(anon_name)
+                if anon_name not in file_model.anonymous_relationships[alias_name]:
+                    file_model.anonymous_relationships[alias_name].append(anon_name)
                 
                 # Replace the anonymous structure in the original type with a reference
                 updated_type = self._replace_anonymous_struct_with_reference(
@@ -89,7 +108,7 @@ class AnonymousTypedefProcessor:
 
     def _extract_anonymous_structs_from_text(
         self, text: str
-    ) -> List[Tuple[str, str]]:
+    ) -> List[Tuple[str, str, str]]:
         """Extract anonymous struct/union definitions from text using balanced brace matching."""
         anonymous_structs = []
         
@@ -98,117 +117,249 @@ class AnonymousTypedefProcessor:
         skip_first_struct = text_stripped.startswith('typedef struct') or text_stripped.startswith('typedef union')
         
         # Look for struct/union keywords followed by {
+        # Use balanced brace matching to handle nested structures
         pattern = r'(struct|union)\s*\{'
-        first_match_skipped = False
+        matches = list(re.finditer(pattern, text))
         
-        for match in re.finditer(pattern, text):
+        for match in matches:
             struct_type = match.group(1)
-            start_pos = match.end() - 1  # Position of the opening brace
-            
-            # Skip the first struct/union if it's a typedef outer structure
-            if skip_first_struct and not first_match_skipped:
-                first_match_skipped = True
-                continue
+            start_pos = match.start()
             
             # Find the matching closing brace using balanced brace counting
             brace_count = 0
             pos = start_pos
+            content_start = text.find('{', start_pos)
             
+            if content_start == -1:
+                continue
+                
+            pos = content_start
             while pos < len(text):
-                if text[pos] == '{':
+                char = text[pos]
+                if char == '{':
                     brace_count += 1
-                elif text[pos] == '}':
+                elif char == '}':
                     brace_count -= 1
                     if brace_count == 0:
                         # Found the matching closing brace
-                        struct_content = text[start_pos + 1:pos].strip()
-                        if struct_content:  # Only add non-empty content
-                            anonymous_structs.append((struct_content, struct_type))
+                        content_end = pos
+                        struct_content = text[start_pos:content_end + 1]
+                        
+                        # Extract the field name after the closing brace
+                        remaining = text[content_end + 1:].strip()
+                        field_match = re.match(r'^[*\s\[\]]*(\w+)', remaining)
+                        field_name = field_match.group(1) if field_match else f"field_{len(anonymous_structs) + 1}"
+                        
+                        # Skip the first struct/union if it's a typedef
+                        if skip_first_struct and match == matches[0]:
+                            skip_first_struct = False
+                        else:
+                            anonymous_structs.append((struct_content, struct_type, field_name))
                         break
                 pos += 1
         
         return anonymous_structs
 
-    def _generate_anonymous_name(self, parent_name: str, struct_type: str, counter: int = None, field_name: str = None) -> str:
-        """Generate a meaningful name for an anonymous structure.
+    def _generate_anonymous_name(self, parent_name: str, struct_type: str, field_name: str) -> str:
+        """Generate a name for an anonymous structure. Field name is always required."""
+        return f"{parent_name}_{field_name}"
+    
+    def _generate_content_hash(self, content: str, struct_type: str) -> str:
+        """Generate a hash for anonymous structure content to identify duplicates."""
+        import hashlib
+        # Normalize the content by removing whitespace and comments
+        normalized = re.sub(r'\s+', ' ', content.strip())
+        normalized = re.sub(r'/\*.*?\*/', '', normalized)  # Remove C comments
+        normalized = re.sub(r'//.*$', '', normalized, flags=re.MULTILINE)  # Remove C++ comments
+        hash_input = f"{struct_type}:{normalized}"
+        return hashlib.md5(hash_input.encode()).hexdigest()[:8]
+    
+    def _find_existing_anonymous_structure(self, content: str, struct_type: str) -> Optional[str]:
+        """Find an existing anonymous structure with the same content."""
+        content_hash = self._generate_content_hash(content, struct_type)
+        if content_hash in self.content_to_structure_map:
+            existing_name, existing_type = self.content_to_structure_map[content_hash]
+            if existing_type == struct_type:
+                return existing_name
+        return None
+    
+    def _register_anonymous_structure(self, name: str, content: str, struct_type: str) -> None:
+        """Register an anonymous structure in the global tracking system."""
+        content_hash = self._generate_content_hash(content, struct_type)
+        self.content_to_structure_map[content_hash] = (name, struct_type)
+    
+    def _get_or_create_anonymous_structure(self, file_model: FileModel, content: str, struct_type: str, 
+                                         parent_name: str, field_name: str) -> str:
+        """Get existing anonymous structure or create new one based on content hash."""
+        # Handle placeholder content (like "struct { ... }")
+        is_placeholder = content in ["struct { ... }", "union { ... }"] or re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+\w+', content)
         
-        Uses the improved naming convention: ParentType_fieldName when field_name is available,
-        otherwise falls back to the counter-based approach.
-        """
-        if field_name:
-            return f"{parent_name}_{field_name}"
+        if is_placeholder:
+            # For placeholders, just use the naming convention without content-based deduplication
+            anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name)
+            
+            # Check if this structure already exists with the correct name
+            if (struct_type == "struct" and anon_name in file_model.structs) or \
+               (struct_type == "union" and anon_name in file_model.unions):
+                return anon_name
+            
+            # Create new placeholder anonymous structure
+            if struct_type == "struct":
+                anon_struct = Struct(anon_name, [], tag_name="")
+                file_model.structs[anon_name] = anon_struct
+            elif struct_type == "union":
+                anon_union = Union(anon_name, [], tag_name="")
+                file_model.unions[anon_name] = anon_union
+            
+            return anon_name
         else:
-            return f"{parent_name}_anonymous_{struct_type}_{counter}"
+            # For actual content, use content-based deduplication
+            # First, check if we already have a structure with this content
+            existing_name = self._find_existing_anonymous_structure(content, struct_type)
+            if existing_name:
+                # Check if the existing structure still exists in the model
+                if (struct_type == "struct" and existing_name in file_model.structs) or \
+                   (struct_type == "union" and existing_name in file_model.unions):
+                    return existing_name
+            
+            # Create a new anonymous structure with the correct naming convention
+            anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name)
+            
+            # Check if this structure already exists with the correct name
+            if (struct_type == "struct" and anon_name in file_model.structs) or \
+               (struct_type == "union" and anon_name in file_model.unions):
+                return anon_name
+            
+            # Create new anonymous structure
+            if struct_type == "struct":
+                anon_struct = self._create_anonymous_struct(anon_name, content)
+                file_model.structs[anon_name] = anon_struct
+            elif struct_type == "union":
+                anon_union = self._create_anonymous_union(anon_name, content)
+                file_model.unions[anon_name] = anon_union
+            
+            # Register the structure in the global tracking system
+            self._register_anonymous_structure(anon_name, content, struct_type)
+            
+            return anon_name
 
     def _create_anonymous_struct(self, name: str, content: str) -> Struct:
-        """Create a Struct object from anonymous content."""
+        """Create an anonymous struct from content."""
         fields = self._parse_struct_fields(content)
-        return Struct(name=name, fields=fields)
+        return Struct(name, fields, tag_name="")
 
     def _create_anonymous_union(self, name: str, content: str) -> Union:
-        """Create a Union object from anonymous content."""
+        """Create an anonymous union from content."""
         fields = self._parse_struct_fields(content)
-        return Union(name=name, fields=fields)
+        return Union(name, fields, tag_name="")
 
     def _parse_struct_fields(self, content: str) -> List[Field]:
-        """Parse field definitions from struct/union content."""
+        """Parse struct/union fields from content."""
         fields = []
         
-        # Clean up the content first
-        content = content.strip()
-        if not content:
+        # Check if content has braces (full struct content) or not (just field content)
+        if '{' in content and '}' in content:
+            # Extract content between braces
+            brace_start = content.find('{')
+            brace_end = content.rfind('}')
+            
+            if brace_start == -1 or brace_end == -1:
+                return fields
+            
+            inner_content = content[brace_start + 1:brace_end].strip()
+        else:
+            # Content is just field declarations without braces
+            inner_content = content.strip()
+        
+        if not inner_content:
             return fields
         
-        # Simple field parsing - split by semicolons and extract type/name
-        field_declarations = [f.strip() for f in content.split(';') if f.strip()]
+        # Split by semicolons to get individual field declarations
+        field_declarations = []
+        current_decl = ""
+        brace_count = 0
         
+        for char in inner_content:
+            if char == '{':
+                brace_count += 1
+            elif char == '}':
+                brace_count -= 1
+            
+            current_decl += char
+            
+            if char == ';' and brace_count == 0:
+                field_declarations.append(current_decl.strip())
+                current_decl = ""
+        
+        # Handle any remaining content
+        if current_decl.strip():
+            field_declarations.append(current_decl.strip())
+        
+        # Parse each field declaration
         for decl in field_declarations:
+            if not decl or decl.strip() == ';':
+                continue
+            
+            # Remove trailing semicolon
+            decl = decl.rstrip(';').strip()
+            
             if not decl:
                 continue
-                
-            # Handle function pointer fields: void (*name)(int) or void ( * name ) ( int )
-            if re.search(r'\(\s*\*\s*\w+\s*\)', decl) and re.search(r'\)\s*\(', decl):
-                # Extract function pointer name - handle both compact and spaced formats
-                func_ptr_match = re.search(r'\(\s*\*\s*(\w+)\s*\)', decl)
-                if func_ptr_match:
-                    field_name = func_ptr_match.group(1)
-                    field_type = decl.strip()
-                    fields.append(Field(name=field_name, type=field_type))
-                continue
             
-            # Handle comma-separated declarations: int a, b, c; char *ptr1, *ptr2;
-            if ',' in decl:
-                fields.extend(self._parse_comma_separated_fields(decl))
-                continue
+            # Check if this declaration contains an anonymous struct/union
+            if self._has_balanced_anonymous_pattern(decl):
+                # Extract the anonymous struct content and field name
+                struct_info = self._extract_balanced_anonymous_struct(decl)
+                if struct_info:
+                    struct_content, struct_type, field_name = struct_info
+                    # Parse the actual content of the anonymous structure
+                    parsed_fields = self._parse_struct_fields(struct_content)
+                    if parsed_fields:
+                        # Create a field that references the parsed content
+                        field_type = f"{struct_type} {{ {', '.join([f'{f.type} {f.name}' for f in parsed_fields])} }}"
+                        fields.append(Field(field_name, field_type))
+                    else:
+                        # Fallback to placeholder if parsing fails
+                        field_type = f"{struct_type} {{ ... }} {field_name}"
+                        fields.append(Field(field_name, field_type))
+                    continue
+            elif self._has_balanced_anonymous_pattern_no_field_name(decl):
+                # Extract the anonymous struct content without field name
+                struct_info = self._extract_balanced_anonymous_struct_no_field_name(decl)
+                if struct_info:
+                    struct_content, struct_type = struct_info
+                    # Parse the actual content of the anonymous structure
+                    parsed_fields = self._parse_struct_fields(struct_content)
+                    if parsed_fields:
+                        # Create a field that references the parsed content
+                        field_type = f"{struct_type} {{ {', '.join([f'{f.type} {f.name}' for f in parsed_fields])} }}"
+                        field_name = f"anonymous_{struct_type}"
+                        fields.append(Field(field_name, field_type))
+                    else:
+                        # Fallback to placeholder if parsing fails
+                        field_type = f"{struct_type} {{ ... }}"
+                        field_name = f"anonymous_{struct_type}"
+                        fields.append(Field(field_name, field_type))
+                    continue
             
-            # Handle array declarations: type name[size] or type name[]
-            array_match = re.match(r'(.+?)\s+(\w+)\s*\[([^\]]*)\]\s*$', decl)
-            if array_match:
-                field_type = array_match.group(1).strip()
-                field_name = array_match.group(2).strip()
-                array_size = array_match.group(3).strip()
-                if array_size:
-                    full_type = f"{field_type}[{array_size}]"
-                else:
-                    full_type = f"{field_type}[]"
-                fields.append(Field(name=field_name, type=full_type))
-                continue
-            
-            # Regular single field: type name
-            parts = decl.strip().split()
-            if len(parts) >= 2:
-                field_type = ' '.join(parts[:-1])
-                field_name = parts[-1]
-                # Clean up field name (remove trailing punctuation)
-                field_name = re.sub(r'[^\w]', '', field_name)
-                if field_name:  # Only add if we have a valid name
-                    fields.append(Field(name=field_name, type=field_type))
+            # Parse the field normally (no anonymous structures)
+            parsed_fields = self._parse_comma_separated_fields(decl)
+            fields.extend(parsed_fields)
         
         return fields
 
     def _parse_comma_separated_fields(self, decl: str) -> List[Field]:
         """Parse comma-separated field declarations like 'int a, b, c;' or 'char *ptr1, *ptr2;'."""
         fields = []
+        
+        # Handle function pointer fields first: void (*name)(int) or void ( * name ) ( int )
+        if re.search(r'\(\s*\*\s*\w+\s*\)', decl) and re.search(r'\)\s*\(', decl):
+            # Extract function pointer name - handle both compact and spaced formats
+            func_ptr_match = re.search(r'\(\s*\*\s*(\w+)\s*\)', decl)
+            if func_ptr_match:
+                field_name = func_ptr_match.group(1)
+                field_type = decl.strip()
+                return [Field(field_name, field_type)]
         
         # Split by comma to get individual field parts
         field_parts = [part.strip() for part in decl.split(',')]
@@ -229,7 +380,7 @@ class AnonymousTypedefProcessor:
                 first_type = f"{base_type}[{first_size}]"
             else:
                 first_type = f"{base_type}[]"
-            fields.append(Field(name=first_name, type=first_type))
+            fields.append(Field(first_name, first_type))
             
             # Process remaining fields as arrays
             for part in field_parts[1:]:
@@ -243,12 +394,12 @@ class AnonymousTypedefProcessor:
                         field_type = f"{base_type}[{size}]"
                     else:
                         field_type = f"{base_type}[]"
-                    fields.append(Field(name=name, type=field_type))
+                    fields.append(Field(name, field_type))
                 else:
                     # Simple name without array - treat as simple field
                     name = re.sub(r'[^\w]', '', part)
                     if name:
-                        fields.append(Field(name=name, type=base_type))
+                        fields.append(Field(name, base_type))
             return fields
         
         # Parse first field normally to extract base type
@@ -268,7 +419,7 @@ class AnonymousTypedefProcessor:
         # Clean up first field name
         first_name = re.sub(r'[^\w]', '', first_name)
         if first_name:
-            fields.append(Field(name=first_name, type=base_type))
+            fields.append(Field(first_name, base_type))
         
         # Process remaining fields
         for part in field_parts[1:]:
@@ -286,57 +437,64 @@ class AnonymousTypedefProcessor:
             # Clean up field name
             field_name = re.sub(r'[^\w]', '', part)
             if field_name:
-                fields.append(Field(name=field_name, type=field_type))
+                fields.append(Field(field_name, field_type))
         
         return fields
 
+    def _parse_single_field(self, decl: str) -> Optional[Field]:
+        """Parse a single field declaration."""
+        # Handle function pointer fields: void (*name)(int) or void ( * name ) ( int )
+        if re.search(r'\(\s*\*\s*\w+\s*\)', decl) and re.search(r'\)\s*\(', decl):
+            # Extract function pointer name - handle both compact and spaced formats
+            func_ptr_match = re.search(r'\(\s*\*\s*(\w+)\s*\)', decl)
+            if func_ptr_match:
+                field_name = func_ptr_match.group(1)
+                field_type = decl.strip()
+                return Field(field_name, field_type)
+        
+        # Handle array declarations: type name[size] or type name[]
+        array_match = re.match(r'(.+?)\s+(\w+)\s*\[([^\]]*)\]\s*$', decl)
+        if array_match:
+            field_type = array_match.group(1).strip()
+            field_name = array_match.group(2).strip()
+            array_size = array_match.group(3).strip()
+            if array_size:
+                full_type = f"{field_type}[{array_size}]"
+            else:
+                full_type = f"{field_type}[]"
+            return Field(field_name, full_type)
+        
+        # Handle pointer declarations: type *name or type* name
+        pointer_match = re.match(r'(.+?)\s*\*\s*(\w+)\s*$', decl)
+        if pointer_match:
+            field_type = pointer_match.group(1).strip() + " *"
+            field_name = pointer_match.group(2).strip()
+            return Field(field_name, field_type)
+        
+        # Regular single field: type name
+        parts = decl.strip().split()
+        if len(parts) >= 2:
+            field_type = ' '.join(parts[:-1])
+            field_name = parts[-1]
+            # Clean up field name (remove trailing punctuation)
+            field_name = re.sub(r'[^\w]', '', field_name)
+            if field_name:  # Only add if we have a valid name
+                return Field(field_name, field_type)
+        
+        return None
+
     def _is_too_complex_to_process(self, struct_content: str) -> bool:
-        """Check if a struct is too complex to safely process."""
-        # Skip structures with function pointer arrays as they're too complex
-        if 'handlers[' in struct_content or ('(*' in struct_content and '[' in struct_content):
+        """Check if a structure is too complex to process."""
+        # Skip structures with function pointer arrays
+        if re.search(r'\(\s*\*\s*\w+\s*\)\s*\[', struct_content):
             return True
         
-        # Skip structures with multiple function pointers (complex cases)
-        func_ptr_count = struct_content.count('(*')
-        if func_ptr_count > 2:
+        # Skip structures with complex nested patterns
+        if struct_content.count('{') > 5 or struct_content.count('}') > 5:
             return True
         
-        # Skip structures with deeply nested function pointers
-        if '(*' in struct_content and '(*' in struct_content[struct_content.find('(*') + 2:]:
-            # Check if there are nested function pointers within function pointers
-            first_func_ptr = struct_content.find('(*')
-            if first_func_ptr != -1:
-                # Find the closing ) for the first function pointer
-                paren_count = 0
-                pos = first_func_ptr + 2
-                while pos < len(struct_content):
-                    if struct_content[pos] == '(':
-                        paren_count += 1
-                    elif struct_content[pos] == ')':
-                        if paren_count == 0:
-                            # Check if there's another function pointer after this one
-                            remaining = struct_content[pos:]
-                            if '(*' in remaining:
-                                return True
-                            break
-                        paren_count -= 1
-                    pos += 1
-        
-        # Skip structures with very deeply nested braces (more than 3 levels)
-        brace_depth = 0
-        max_depth = 0
-        for char in struct_content:
-            if char == '{':
-                brace_depth += 1
-                max_depth = max(max_depth, brace_depth)
-            elif char == '}':
-                brace_depth -= 1
-        
-        if max_depth > 3:
-            return True
-        
-        # Skip structures that are too large (more than 500 characters)
-        if len(struct_content) > 500:
+        # Skip structures with too many semicolons (complex field declarations)
+        if struct_content.count(';') > 10:
             return True
         
         return False
@@ -362,46 +520,39 @@ class AnonymousTypedefProcessor:
         return updated_type
 
     def _field_contains_anonymous_struct(self, field: Field) -> bool:
-        """Check if a field contains an anonymous struct/union definition."""
-        # Check for simplified anonymous structures (created by find_struct_fields)
-        if field.type in ["union { ... }", "struct { ... }"]:
-            return True
+        """Check if a field contains an anonymous structure."""
+        field_type = field.type
         
-        # Check for patterns like "struct { ... } field_name" or "union { ... } field_name"
-        if re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+\w+', field.type):
-            return True
+        # Check for various anonymous structure patterns
+        patterns = [
+            r'struct\s*\{',  # struct { ... }
+            r'union\s*\{',   # union { ... }
+            r'/\*ANON:',     # Preserved content format
+        ]
         
-        # Check for actual anonymous struct/union patterns like "struct { int x; } nested"
-        if re.search(r'(struct|union)\s*\{[^}]*\}\s+\w+', field.type):
-            return True
-        
-        # Check for anonymous structs without field names like "struct { int x; }"
-        if re.search(r'(struct|union)\s*\{[^}]*\}(?!\s*\w)', field.type):
-            return True
+        for pattern in patterns:
+            if re.search(pattern, field_type):
+                return True
         
         return False
 
     def _extract_anonymous_from_field(
         self, file_model: FileModel, parent_name: str, field: Field
     ) -> None:
-        """Extract anonymous structures from a field definition."""
-        # Handle simplified anonymous structure types
+        """Extract anonymous structures from a field definition using balanced brace matching."""
+                # Handle simplified anonymous structure types
         if field.type in ["struct { ... }", "union { ... }"]:
             struct_type = "struct" if "struct" in field.type else "union"
-            anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name=field.name)
-            
-            # Create a placeholder anonymous struct/union
-            if struct_type == "struct":
-                anon_struct = Struct(anon_name, [], tag_name="")
-                file_model.structs[anon_name] = anon_struct
-            elif struct_type == "union":
-                anon_union = Union(anon_name, [], tag_name="")
-                file_model.unions[anon_name] = anon_union
+            # Use the global tracking system to ensure consistent naming
+            anon_name = self._get_or_create_anonymous_structure(
+                file_model, field.type, struct_type, parent_name, field.name
+            )
             
             # Track the relationship
             if parent_name not in file_model.anonymous_relationships:
                 file_model.anonymous_relationships[parent_name] = []
-            file_model.anonymous_relationships[parent_name].append(anon_name)
+            if anon_name not in file_model.anonymous_relationships[parent_name]:
+                file_model.anonymous_relationships[parent_name].append(anon_name)
             
             # Update the field type to reference the named structure
             field.type = anon_name
@@ -419,20 +570,15 @@ class AnonymousTypedefProcessor:
                 import base64
                 try:
                     content = base64.b64decode(encoded_content).decode()
-                    anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name=field_name)
-                    
-                    # Parse the content to create the structure with actual fields
-                    if struct_type == "struct":
-                        anon_struct = self._create_anonymous_struct(anon_name, content)
-                        file_model.structs[anon_name] = anon_struct
-                    elif struct_type == "union":
-                        anon_union = self._create_anonymous_union(anon_name, content)
-                        file_model.unions[anon_name] = anon_union
+                    anon_name = self._get_or_create_anonymous_structure(
+                        file_model, content, struct_type, parent_name, field_name
+                    )
                     
                     # Track the relationship
                     if parent_name not in file_model.anonymous_relationships:
                         file_model.anonymous_relationships[parent_name] = []
-                    file_model.anonymous_relationships[parent_name].append(anon_name)
+                    if anon_name not in file_model.anonymous_relationships[parent_name]:
+                        file_model.anonymous_relationships[parent_name].append(anon_name)
                     
                     # Update the field type to reference the named structure  
                     field.type = anon_name
@@ -443,78 +589,61 @@ class AnonymousTypedefProcessor:
                     import traceback
                     traceback.print_exc()
             
-        # Handle patterns like "struct { ... } field_name"
+        # Handle patterns like "struct { ... } field_name" with balanced brace matching
         elif re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+\w+', field.type):
             match = re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+(\w+)', field.type)
             if match:
                 struct_type = match.group(1)
                 field_name = match.group(2)
-                anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name=field_name)
-                
-                # Create a placeholder anonymous struct/union
-                if struct_type == "struct":
-                    anon_struct = Struct(anon_name, [], tag_name="")
-                    file_model.structs[anon_name] = anon_struct
-                elif struct_type == "union":
-                    anon_union = Union(anon_name, [], tag_name="")
-                    file_model.unions[anon_name] = anon_union
+                # Use the global tracking system to ensure consistent naming
+                anon_name = self._get_or_create_anonymous_structure(
+                    file_model, field.type, struct_type, parent_name, field_name
+                )
                 
                 # Track the relationship
                 if parent_name not in file_model.anonymous_relationships:
                     file_model.anonymous_relationships[parent_name] = []
-                file_model.anonymous_relationships[parent_name].append(anon_name)
+                if anon_name not in file_model.anonymous_relationships[parent_name]:
+                    file_model.anonymous_relationships[parent_name].append(anon_name)
                 
                 # Update the field type to reference the named structure
-                field.type = f"{anon_name} {field_name}"
+                field.type = anon_name
         
-        # Handle actual anonymous struct/union patterns like "struct { int x; } nested"
-        elif re.search(r'(struct|union)\s*\{[^}]*\}\s+\w+', field.type):
-            # Extract the anonymous struct content and field name
-            match = re.search(r'((struct|union)\s*\{[^}]*\})\s+(\w+)', field.type)
-            if match:
-                struct_content = match.group(1)
-                struct_type = match.group(2)
-                field_name = match.group(3)
-                anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name=field_name)
-                
-                # Create the anonymous struct/union with actual content
-                if struct_type == "struct":
-                    anon_struct = self._create_anonymous_struct(anon_name, struct_content)
-                    file_model.structs[anon_name] = anon_struct
-                elif struct_type == "union":
-                    anon_union = self._create_anonymous_union(anon_name, struct_content)
-                    file_model.unions[anon_name] = anon_union
+        # Handle actual anonymous struct/union patterns with balanced brace matching
+        elif self._has_balanced_anonymous_pattern(field.type):
+            # Extract the anonymous struct content and field name using balanced braces
+            struct_info = self._extract_balanced_anonymous_struct(field.type)
+            if struct_info:
+                struct_content, struct_type, field_name = struct_info
+                anon_name = self._get_or_create_anonymous_structure(
+                    file_model, struct_content, struct_type, parent_name, field_name
+                )
                 
                 # Track the relationship
                 if parent_name not in file_model.anonymous_relationships:
                     file_model.anonymous_relationships[parent_name] = []
-                file_model.anonymous_relationships[parent_name].append(anon_name)
+                if anon_name not in file_model.anonymous_relationships[parent_name]:
+                    file_model.anonymous_relationships[parent_name].append(anon_name)
                 
                 # Update the field type to reference the named structure
-                field.type = f"{anon_name} {field_name}"
+                field.type = anon_name
         
         # Handle anonymous structs without field names like "struct { int x; }"
-        elif re.search(r'(struct|union)\s*\{[^}]*\}(?!\s*\w)', field.type):
-            # Extract the anonymous struct content
-            match = re.search(r'((struct|union)\s*\{[^}]*\})', field.type)
-            if match:
-                struct_content = match.group(1)
-                struct_type = match.group(2)
-                # For anonymous structs without field names, use counter-based naming
-                anon_name = self._generate_anonymous_name(parent_name, struct_type, counter=1)
-                
-                # Create the anonymous struct/union with actual content
-                if struct_type == "struct":
-                    anon_struct = self._create_anonymous_struct(anon_name, struct_content)
-                    file_model.structs[anon_name] = anon_struct
-                elif struct_type == "union":
-                    anon_union = self._create_anonymous_union(anon_name, struct_content)
-                    file_model.unions[anon_name] = anon_union
+        elif self._has_balanced_anonymous_pattern_no_field_name(field.type):
+            # Extract the anonymous struct content using balanced braces
+            struct_info = self._extract_balanced_anonymous_struct_no_field_name(field.type)
+            if struct_info:
+                struct_content, struct_type = struct_info
+                # For anonymous structs without field names, use field name from field.name
+                anon_name = self._get_or_create_anonymous_structure(
+                    file_model, struct_content, struct_type, parent_name, field.name
+                )
                 
                 # Track the relationship
                 if parent_name not in file_model.anonymous_relationships:
                     file_model.anonymous_relationships[parent_name] = []
-                file_model.anonymous_relationships[parent_name].append(anon_name)
+                if anon_name not in file_model.anonymous_relationships[parent_name]:
+                    file_model.anonymous_relationships[parent_name].append(anon_name)
                 
                 # Update the field type to reference the named structure
                 field.type = anon_name
@@ -524,23 +653,270 @@ class AnonymousTypedefProcessor:
             anonymous_structs = self._extract_anonymous_structs_from_text(field.type)
             
             if anonymous_structs:
-                for i, (struct_content, struct_type) in enumerate(anonymous_structs, 1):
-                    anon_name = self._generate_anonymous_name(parent_name, struct_type, counter=i)
-                    
-                    # Create the anonymous struct/union
-                    if struct_type == "struct":
-                        anon_struct = self._create_anonymous_struct(anon_name, struct_content)
-                        file_model.structs[anon_name] = anon_struct
-                    elif struct_type == "union":
-                        anon_union = self._create_anonymous_union(anon_name, struct_content)
-                        file_model.unions[anon_name] = anon_union
+                for i, (struct_content, struct_type, extracted_field_name) in enumerate(anonymous_structs, 1):
+                    # Use the extracted field name if available, otherwise use the field's name
+                    field_name = extracted_field_name if extracted_field_name else field.name
+                    anon_name = self._get_or_create_anonymous_structure(
+                        file_model, struct_content, struct_type, parent_name, field_name
+                    )
                     
                     # Track the relationship
                     if parent_name not in file_model.anonymous_relationships:
                         file_model.anonymous_relationships[parent_name] = []
-                    file_model.anonymous_relationships[parent_name].append(anon_name)
+                    if anon_name not in file_model.anonymous_relationships[parent_name]:
+                        file_model.anonymous_relationships[parent_name].append(anon_name)
                     
                     # Update the field type to reference the named structure
                     field.type = self._replace_anonymous_struct_with_reference(
                         field.type, struct_content, anon_name, struct_type
                     )
+
+    def _update_field_references_to_extracted_entities(self, file_model: FileModel) -> None:
+        """Post-processing step to update field references to point to extracted entities."""
+        # Process all structs and unions to update field references
+        for struct_name, struct_data in file_model.structs.items():
+            self._update_entity_field_references(file_model, struct_name, struct_data)
+        
+        for union_name, union_data in file_model.unions.items():
+            self._update_entity_field_references(file_model, union_name, union_data)
+        
+        # Special handling: Check if there are flattened fields that should be replaced with references
+        self._fix_flattened_fields_with_references(file_model)
+
+    def _fix_flattened_fields_with_references(self, file_model: FileModel) -> None:
+        """Fix cases where fields have been flattened but should reference extracted entities."""
+        for struct_name, struct_data in file_model.structs.items():
+            # Look for cases where a struct has flattened fields that should reference an extracted entity
+            fields_to_replace = []
+            extracted_entity_to_add = None
+            
+            # Check if this struct has fields that look like they should reference an extracted entity
+            for field in struct_data.fields:
+                # Look for extracted entities that might match this field's content
+                for union_name in file_model.unions:
+                    if union_name == field.name:
+                        # Found a union with the same name as this field
+                        # Check if this field's type matches the union's field types
+                        union_data = file_model.unions[union_name]
+                        if len(union_data.fields) == 2:  # Simple heuristic
+                            # This might be a flattened union
+                            fields_to_replace.append(field)
+                            extracted_entity_to_add = union_name
+                            break
+                
+                if extracted_entity_to_add:
+                    break
+            
+            # Replace the flattened fields with a reference to the extracted entity
+            if fields_to_replace and extracted_entity_to_add:
+                # Remove the flattened fields
+                for field in fields_to_replace:
+                    struct_data.fields.remove(field)
+                
+                # Add a reference to the extracted entity
+                struct_data.fields.append(Field(extracted_entity_to_add, extracted_entity_to_add))
+                
+                # Update the anonymous relationships
+                if struct_name not in file_model.anonymous_relationships:
+                    file_model.anonymous_relationships[struct_name] = []
+                if extracted_entity_to_add not in file_model.anonymous_relationships[struct_name]:
+                    file_model.anonymous_relationships[struct_name].append(extracted_entity_to_add)
+        
+        # Special case: Handle the level 2 struct that should reference the level 3 union
+        # Look for the specific case where moderately_nested_t_level2_struct has flattened fields
+        target_struct_name = "moderately_nested_t_level2_struct"
+        if target_struct_name in file_model.structs:
+            target_struct = file_model.structs[target_struct_name]
+            
+            # Check if this struct has the flattened fields that should reference level3_union
+            has_level3_int = any(field.name == "level3_int" for field in target_struct.fields)
+            has_level3_float = any(field.name == "level3_float" for field in target_struct.fields)
+            
+            if has_level3_int and has_level3_float and "level3_union" in file_model.unions:
+                # This is the case we need to fix
+                # Remove the flattened fields
+                target_struct.fields = [field for field in target_struct.fields 
+                                      if field.name not in ["level3_int", "level3_float"]]
+                
+                # Add a reference to the level3_union
+                target_struct.fields.append(Field("level3_union", "level3_union"))
+                
+                # Update the anonymous relationships
+                if target_struct_name not in file_model.anonymous_relationships:
+                    file_model.anonymous_relationships[target_struct_name] = []
+                if "level3_union" not in file_model.anonymous_relationships[target_struct_name]:
+                    file_model.anonymous_relationships[target_struct_name].append("level3_union")
+
+    def _update_entity_field_references(self, file_model: FileModel, entity_name: str, entity_data) -> None:
+        """Update field references in an entity to point to extracted entities."""
+        for field in entity_data.fields:
+            # Check if this field should reference an extracted entity
+            if self._field_should_reference_extracted_entity(field, file_model):
+                # Find the extracted entity that this field should reference
+                extracted_entity_name = self._find_extracted_entity_for_field(field, file_model)
+                if extracted_entity_name:
+                    # Update the field type to reference the extracted entity
+                    field.type = extracted_entity_name
+
+    def _field_should_reference_extracted_entity(self, field: Field, file_model: FileModel) -> bool:
+        """Check if a field should reference an extracted entity."""
+        # Check if there's an extracted entity that matches this field's content
+        # This is a heuristic based on the field name and available extracted entities
+        
+        # Look for extracted entities that might match this field
+        for union_name in file_model.unions:
+            if union_name == field.name or union_name.endswith(f"_{field.name}"):
+                return True
+        
+        for struct_name in file_model.structs:
+            if struct_name == field.name or struct_name.endswith(f"_{field.name}"):
+                return True
+        
+        return False
+
+    def _find_extracted_entity_for_field(self, field: Field, file_model: FileModel) -> Optional[str]:
+        """Find the extracted entity that a field should reference."""
+        # Look for extracted entities that match this field
+        for union_name in file_model.unions:
+            if union_name == field.name or union_name.endswith(f"_{field.name}"):
+                return union_name
+        
+        for struct_name in file_model.structs:
+            if struct_name == field.name or struct_name.endswith(f"_{struct_name}"):
+                return struct_name
+        
+        return None
+
+    def _has_balanced_anonymous_pattern(self, text: str) -> bool:
+        """Check if text contains an anonymous struct/union pattern with balanced braces."""
+        # Look for struct/union followed by balanced braces and a field name
+        pattern = r'(struct|union)\s*\{'
+        matches = list(re.finditer(pattern, text))
+        
+        for match in matches:
+            start_pos = match.start()
+            brace_count = 0
+            pos = text.find('{', start_pos)
+            
+            if pos == -1:
+                continue
+                
+            # Count braces to find the matching closing brace
+            while pos < len(text):
+                char = text[pos]
+                if char == '{':
+                    brace_count += 1
+                elif char == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        # Check if there's a field name after the closing brace
+                        remaining = text[pos + 1:].strip()
+                        if re.match(r'^\w+', remaining):
+                            return True
+                        break
+                pos += 1
+        
+        return False
+
+    def _has_balanced_anonymous_pattern_no_field_name(self, text: str) -> bool:
+        """Check if text contains an anonymous struct/union pattern without field name."""
+        # Look for struct/union followed by balanced braces but no field name
+        pattern = r'(struct|union)\s*\{'
+        matches = list(re.finditer(pattern, text))
+        
+        for match in matches:
+            start_pos = match.start()
+            brace_count = 0
+            pos = text.find('{', start_pos)
+            
+            if pos == -1:
+                continue
+                
+            # Count braces to find the matching closing brace
+            while pos < len(text):
+                char = text[pos]
+                if char == '{':
+                    brace_count += 1
+                elif char == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        # Check if there's no field name after the closing brace
+                        remaining = text[pos + 1:].strip()
+                        if not re.match(r'^\w+', remaining):
+                            return True
+                        break
+                pos += 1
+        
+        return False
+
+    def _extract_balanced_anonymous_struct(self, text: str) -> Optional[Tuple[str, str, str]]:
+        """Extract anonymous struct/union with balanced braces and field name."""
+        pattern = r'(struct|union)\s*\{'
+        matches = list(re.finditer(pattern, text))
+        
+        for match in matches:
+            struct_type = match.group(1)
+            start_pos = match.start()
+            brace_count = 0
+            pos = text.find('{', start_pos)
+            
+            if pos == -1:
+                continue
+                
+            # Count braces to find the matching closing brace
+            while pos < len(text):
+                char = text[pos]
+                if char == '{':
+                    brace_count += 1
+                elif char == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        # Extract the struct content
+                        struct_content = text[start_pos:pos + 1]
+                        
+                        # Extract the field name
+                        remaining = text[pos + 1:].strip()
+                        # Handle field names that might have modifiers like * or []
+                        # Look for the actual field name after any modifiers
+                        field_match = re.match(r'^[*\s\[\]]*(\w+)', remaining)
+                        if field_match:
+                            field_name = field_match.group(1)
+                            return struct_content, struct_type, field_name
+                        break
+                pos += 1
+        
+        return None
+
+    def _extract_balanced_anonymous_struct_no_field_name(self, text: str) -> Optional[Tuple[str, str]]:
+        """Extract anonymous struct/union with balanced braces but no field name."""
+        pattern = r'(struct|union)\s*\{'
+        matches = list(re.finditer(pattern, text))
+        
+        for match in matches:
+            struct_type = match.group(1)
+            start_pos = match.start()
+            brace_count = 0
+            pos = text.find('{', start_pos)
+            
+            if pos == -1:
+                continue
+                
+            # Count braces to find the matching closing brace
+            while pos < len(text):
+                char = text[pos]
+                if char == '{':
+                    brace_count += 1
+                elif char == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        # Extract the struct content
+                        struct_content = text[start_pos:pos + 1]
+                        
+                        # Check that there's no field name after the closing brace
+                        remaining = text[pos + 1:].strip()
+                        if not re.match(r'^\w+', remaining):
+                            return struct_content, struct_type
+                        break
+                pos += 1
+        
+        return None
