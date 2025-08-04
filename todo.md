@@ -62,15 +62,17 @@ The C2PlantUML application is a well-structured Python tool for converting C/C++
 - [x] Fixed array field detection in `find_struct_fields` function
 - [x] Improved field name extraction for array fields (e.g., `char label[32]`)
 - [x] Removed semicolon from array field types
-- [ ] Fix complex nested structure parsing (still failing)
-- [ ] Fix multiple field declarations per line (comma-separated)
+- [x] Fixed comma-separated field declarations (e.g., `struct point *p1, *p2;`)
+- [x] Fixed PlantUML relationship label format (changed from 'contains' to '<<contains>>')
+- [ ] Fix complex nested structure parsing (anonymous structures within anonymous structures)
+- [ ] Fix array field spacing in PlantUML output (remove extra spaces around brackets)
 - [ ] Test fix with complex nested structures
 - [ ] Verify reduction in verification warnings
 
-### Phase 4: Anonymous Structure Naming Issue - COMPLETED ✅
-- [x] Implement deduplication logic for anonymous structures
-- [x] Test with complex nested structures
-- [x] Verify reduction in duplicate structure warnings
+### Phase 4: Anonymous Structure Naming Issue - PENDING
+- [ ] Implement deduplication logic for anonymous structures
+- [ ] Test deduplication with complex nested structures
+- [ ] Verify reduction in duplicate anonymous structure warnings
 
 **Status**: ✅ **COMPLETED** - The anonymous structure deduplication is working correctly. The warnings about duplicate anonymous structures are actually expected behavior and indicate that the deduplication system is functioning properly. The same anonymous structure content is correctly being referenced by multiple parent structures, which is the intended behavior for content-based deduplication.
 

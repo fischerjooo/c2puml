@@ -1364,7 +1364,7 @@ def find_struct_fields(
                         
                         if first_bracket_start_local is not None and first_bracket_end_local is not None:
                             first_field_name = first_field_tokens[0].value
-                            first_array_size = " ".join(t.value for t in first_field_tokens[first_bracket_start_local + 1:first_bracket_end_local])
+                            first_array_size = "".join(t.value for t in first_field_tokens[first_bracket_start_local + 1:first_bracket_end_local] if t.type not in [TokenType.WHITESPACE, TokenType.NEWLINE])
                             field_names.append((first_field_name, first_array_size))
                         
                         current_pos = comma_positions[0] + 1
@@ -1385,7 +1385,7 @@ def find_struct_fields(
                             
                             if bracket_start_local is not None and bracket_end_local is not None:
                                 field_name = field_tokens_slice[0].value
-                                array_size = " ".join(t.value for t in field_tokens_slice[bracket_start_local + 1:bracket_end_local])
+                                array_size = "".join(t.value for t in field_tokens_slice[bracket_start_local + 1:bracket_end_local] if t.type not in [TokenType.WHITESPACE, TokenType.NEWLINE])
                                 field_names.append((field_name, array_size))
                             
                             current_pos = comma_pos + 1
@@ -1410,7 +1410,7 @@ def find_struct_fields(
                                 
                                 if bracket_start_local is not None and bracket_end_local is not None:
                                     field_name = last_field_tokens[0].value
-                                    array_size = " ".join(t.value for t in last_field_tokens[bracket_start_local + 1:bracket_end_local])
+                                    array_size = "".join(t.value for t in last_field_tokens[bracket_start_local + 1:bracket_end_local] if t.type not in [TokenType.WHITESPACE, TokenType.NEWLINE])
                                     field_names.append((field_name, array_size))
                             else:
                                 # Last field is a simple field (no array)
@@ -1446,7 +1446,9 @@ def find_struct_fields(
                         if array_tokens and array_tokens[-1].type == TokenType.SEMICOLON:
                             array_tokens = array_tokens[:-1]
                         
-                        field_type = " ".join(t.value for t in type_tokens) + " " + " ".join(t.value for t in array_tokens)
+                        # Extract array size without extra spaces
+                        array_size = "".join(t.value for t in array_tokens if t.type not in [TokenType.WHITESPACE, TokenType.NEWLINE])
+                        field_type = " ".join(t.value for t in type_tokens) + "[" + array_size + "]"
                         
                         if (field_name and field_name.strip() and field_type.strip() and 
                             field_name not in ["[", "]", ";", "}"]):
