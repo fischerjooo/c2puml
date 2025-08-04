@@ -281,6 +281,83 @@ typedef struct {
         
         self.assertTrue(nested_a2_found, "nested_a2 field should be found")
 
+    def test_debug_find_struct_fields_complex(self):
+        """Debug test to understand why find_struct_fields fails on complex nested structures"""
+        # This is the problematic structure from complex.h
+        source_code = """
+typedef struct {
+    struct {
+        struct {
+            int level3_field;
+        } level2_field;
+    } level1_field;
+} complex_naming_test_t;
+"""
+        
+        tokenizer = CTokenizer()
+        tokens = tokenizer.tokenize(source_code)
+        
+        # Find the struct start and end
+        struct_start = None
+        struct_end = None
+        
+        for i, token in enumerate(tokens):
+            if token.type == TokenType.TYPEDEF:
+                # Find the next STRUCT token (skip whitespace)
+                j = i + 1
+                while j < len(tokens) and tokens[j].type in [TokenType.WHITESPACE, TokenType.NEWLINE]:
+                    j += 1
+                if j < len(tokens) and tokens[j].type == TokenType.STRUCT:
+                    # Find the next LBRACE token
+                    k = j + 1
+                    while k < len(tokens) and tokens[k].type in [TokenType.WHITESPACE, TokenType.NEWLINE]:
+                        k += 1
+                    if k < len(tokens) and tokens[k].type == TokenType.LBRACE:
+                        struct_start = k  # Start at the opening brace
+                        break
+        
+        if struct_start is None:
+            self.fail("Could not find TYPEDEF STRUCT")
+        
+        # Find the closing brace of the main struct
+        brace_count = 0
+        for i in range(struct_start, len(tokens)):
+            if tokens[i].type == TokenType.LBRACE:
+                brace_count += 1
+            elif tokens[i].type == TokenType.RBRACE:
+                brace_count -= 1
+                if brace_count == 0:
+                    struct_end = i
+                    break
+        
+        if struct_end is None:
+            self.fail("Could not find struct end")
+        
+        print(f"\n=== DEBUG: Token sequence for complex nested structure ===")
+        print(f"Struct start: {struct_start}, Struct end: {struct_end}")
+        print(f"Tokens from {struct_start} to {struct_end}:")
+        for i in range(struct_start, min(struct_end + 10, len(tokens))):
+            print(f"  {i}: {tokens[i]}")
+        
+        # Call find_struct_fields with detailed debugging
+        print(f"\n=== DEBUG: Calling find_struct_fields ===")
+        fields = find_struct_fields(tokens, struct_start, struct_end)
+        
+        print(f"\n=== DEBUG: Parsed fields ===")
+        for i, (name, field_type) in enumerate(fields):
+            print(f"  Field {i}: name='{name}', type='{field_type}'")
+        
+        # The expected result should be:
+        # - level1_field with type containing the nested structure
+        assert len(fields) > 0, "Should find at least one field"
+        
+        # Check if we found the expected field
+        field_names = [name for name, _ in fields]
+        print(f"Found field names: {field_names}")
+        
+        # The main issue is that we should find 'level1_field' as a field
+        assert 'level1_field' in field_names, f"Expected to find 'level1_field', found: {field_names}"
+
     def test_complex_nested_structure_exact_reproduction(self):
         """Test the exact complex structure from complex.h that causes the issue"""
         test_code = """

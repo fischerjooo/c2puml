@@ -89,11 +89,6 @@ class "array_of_anon_structs_t_items" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS <
 
 class "callback_with_anon_struct_t_config_param" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM <<struct>> #LightYellow
 {
-    + config_value config_value
-}
-
-class "callback_with_anon_struct_t_config_param_config_value" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM_CONFIG_VALUE <<struct>> #LightYellow
-{
     + int config_flags
     + char[64] config_name
     + config_value config_value
@@ -101,6 +96,9 @@ class "callback_with_anon_struct_t_config_param_config_value" as TYPEDEF_CALLBAC
 
 class "complex_callback_t_param4" as TYPEDEF_COMPLEX_CALLBACK_T_PARAM4 <<struct>> #LightYellow
 {
+    + int nested1
+    + char * nested2
+    + void ( * ) ( int ) nested_func
 }
 
 class "complex_handler_t" as TYPEDEF_COMPLEX_HANDLER_T <<struct>> #LightYellow
@@ -216,34 +214,23 @@ class "extreme_nesting_test_t" as TYPEDEF_EXTREME_NESTING_TEST_T <<struct>> #Lig
 
 class "extreme_nesting_test_t_level2_struct_1" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1 <<struct>> #LightYellow
 {
-    + extreme_nesting_test_t_level2_struct_1_level3_struct_1 level3_struct_1
-    + extreme_nesting_test_t_level2_struct_1_level3_struct_2 level3_struct_2
+    + extreme_nesting_test_t_level2_struct_1_level4_struct_1 level4_struct_1
+    + extreme_nesting_test_t_level2_struct_1_level4_struct_2 level4_struct_2
 }
 
-class "extreme_nesting_test_t_level2_struct_1_level3_struct_1" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL3_STRUCT_1 <<struct>> #LightYellow
-{
-    + extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_1 level4_struct_1
-    + extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_2 level4_struct_2
-}
-
-class "extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_1" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL3_STRUCT_1_LEVEL4_STRUCT_1 <<struct>> #LightYellow
+class "extreme_nesting_test_t_level2_struct_1_level4_struct_1" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL4_STRUCT_1 <<struct>> #LightYellow
 {
     + int level4_field
 }
 
-class "extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_2" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL3_STRUCT_1_LEVEL4_STRUCT_2 <<struct>> #LightYellow
+class "extreme_nesting_test_t_level2_struct_1_level4_struct_2" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL4_STRUCT_2 <<struct>> #LightYellow
 {
     + int level4_field2
 }
 
-class "extreme_nesting_test_t_level2_struct_1_level3_struct_2" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL3_STRUCT_2 <<struct>> #LightYellow
-{
-    + int level3_field
-}
-
 class "extreme_nesting_test_t_level2_struct_2" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2 <<struct>> #LightYellow
 {
-    + mixed_union mixed_union
+    + int mixed_field
 }
 
 class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<struct>> #LightYellow
@@ -513,6 +500,8 @@ class "array_of_anon_structs_t_items_item_value" as TYPEDEF_ARRAY_OF_ANON_STRUCT
 
 class "callback_with_anon_struct_t_config_value" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_VALUE <<union>> #LightYellow
 {
+    + int int_config
+    + float float_config
 }
 
 class "complex_naming_test_t_mixed_union" as TYPEDEF_COMPLEX_NAMING_TEST_T_MIXED_UNION <<union>> #LightYellow
@@ -545,11 +534,6 @@ class "data_union" as TYPEDEF_DATA_UNION <<union>> #LightYellow
     + float float_value
     + char[64] string_value
     + data_union_point_value point_value
-}
-
-class "extreme_nesting_test_t_level2_struct_2_mixed_union" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2_MIXED_UNION <<union>> #LightYellow
-{
-    + mixed_union_mixed_struct mixed_struct
 }
 
 class "first_anon_union" as TYPEDEF_FIRST_ANON_UNION <<union>> #LightYellow
@@ -718,7 +702,6 @@ HEADER_COMPLEX ..> TYPEDEF_UNION_WITH_UNION_T : <<declares>>
 ' Uses relationships
 TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS ..> TYPEDEF_ITEM_VALUE : <<uses>>
 TYPEDEF_COMPLEX_NAMING_TEST_T ..> TYPEDEF_MIXED_UNION : <<uses>>
-TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2 ..> TYPEDEF_MIXED_UNION : <<uses>>
 TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T ..> TYPEDEF_FIRST_UNION : <<uses>>
 TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T ..> TYPEDEF_SECOND_UNION : <<uses>>
 TYPEDEF_OPERATION_SET_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>
@@ -741,10 +724,8 @@ TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS *-- TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS_
 TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS_ITEM_VALUE *-- TYPEDEF_ITEM_VALUE_POINT_DATA : contains
 TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T *-- TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM : contains
 TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T *-- TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_VALUE : contains
-TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM *-- TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM_CONFIG_VALUE : contains
+TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM *-- TYPEDEF_CONFIG_PARAM_CONFIG_VALUE : contains
 TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM *-- TYPEDEF_CONFIG_VALUE : contains
-TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM_CONFIG_VALUE *-- TYPEDEF_CONFIG_PARAM_CONFIG_VALUE : contains
-TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM_CONFIG_VALUE *-- TYPEDEF_CONFIG_VALUE : contains
 TYPEDEF_COMPLEX_CALLBACK_T *-- TYPEDEF_COMPLEX_CALLBACK_T_PARAM4 : contains
 TYPEDEF_COMPLEX_HANDLER_T *-- TYPEDEF_COMPLEX_HANDLER_T_MEMORY_MANAGER : contains
 TYPEDEF_COMPLEX_HANDLER_T *-- TYPEDEF_COMPLEX_HANDLER_T_VALIDATOR : contains
@@ -767,12 +748,8 @@ TYPEDEF_CONFIG_PARAM *-- TYPEDEF_CONFIG_VALUE : contains
 TYPEDEF_DATA_UNION *-- TYPEDEF_DATA_UNION_POINT_VALUE : contains
 TYPEDEF_EXTREME_NESTING_TEST_T *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1 : contains
 TYPEDEF_EXTREME_NESTING_TEST_T *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2 : contains
-TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1 *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL3_STRUCT_1 : contains
-TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1 *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL3_STRUCT_2 : contains
-TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL3_STRUCT_1 *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL3_STRUCT_1_LEVEL4_STRUCT_1 : contains
-TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL3_STRUCT_1 *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL3_STRUCT_1_LEVEL4_STRUCT_2 : contains
-TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2 *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2_MIXED_UNION : contains
-TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2_MIXED_UNION *-- TYPEDEF_MIXED_UNION_MIXED_STRUCT : contains
+TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1 *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL4_STRUCT_1 : contains
+TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1 *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL4_STRUCT_2 : contains
 TYPEDEF_ITEM_VALUE *-- TYPEDEF_ITEM_VALUE_POINT_DATA : contains
 TYPEDEF_MIXED_UNION *-- TYPEDEF_MIXED_UNION_MIXED_STRUCT : contains
 TYPEDEF_MODERATELY_NESTED_T *-- TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT : contains

@@ -633,10 +633,6 @@
           "callback_with_anon_struct_t_config_value"
         ],
         "callback_with_anon_struct_t_config_param": [
-          "callback_with_anon_struct_t_config_param_config_value",
-          "config_value"
-        ],
-        "callback_with_anon_struct_t_config_param_config_value": [
           "config_param_config_value",
           "config_value"
         ],
@@ -689,18 +685,8 @@
           "extreme_nesting_test_t_level2_struct_2"
         ],
         "extreme_nesting_test_t_level2_struct_1": [
-          "extreme_nesting_test_t_level2_struct_1_level3_struct_1",
-          "extreme_nesting_test_t_level2_struct_1_level3_struct_2"
-        ],
-        "extreme_nesting_test_t_level2_struct_1_level3_struct_1": [
-          "extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_1",
-          "extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_2"
-        ],
-        "extreme_nesting_test_t_level2_struct_2": [
-          "extreme_nesting_test_t_level2_struct_2_mixed_union"
-        ],
-        "extreme_nesting_test_t_level2_struct_2_mixed_union": [
-          "mixed_union_mixed_struct"
+          "extreme_nesting_test_t_level2_struct_1_level4_struct_1",
+          "extreme_nesting_test_t_level2_struct_1_level4_struct_2"
         ],
         "item_value": [
           "item_value_point_data"
@@ -1066,21 +1052,6 @@
         "callback_with_anon_struct_t_config_param": {
           "fields": [
             {
-              "name": "config_value",
-              "type": "config_value",
-              "value": null
-            }
-          ],
-          "methods": [],
-          "name": "callback_with_anon_struct_t_config_param",
-          "tag_name": "",
-          "uses": [
-            "config_value"
-          ]
-        },
-        "callback_with_anon_struct_t_config_param_config_value": {
-          "fields": [
-            {
               "name": "config_flags",
               "type": "int",
               "value": null
@@ -1097,14 +1068,30 @@
             }
           ],
           "methods": [],
-          "name": "callback_with_anon_struct_t_config_param_config_value",
+          "name": "callback_with_anon_struct_t_config_param",
           "tag_name": "",
           "uses": [
             "config_value"
           ]
         },
         "complex_callback_t_param4": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "nested1",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "nested2",
+              "type": "char *",
+              "value": null
+            },
+            {
+              "name": "nested_func",
+              "type": "void ( * ) ( int )",
+              "value": null
+            }
+          ],
           "methods": [],
           "name": "complex_callback_t_param4",
           "tag_name": "",
@@ -1479,13 +1466,13 @@
         "extreme_nesting_test_t_level2_struct_1": {
           "fields": [
             {
-              "name": "level3_struct_1",
-              "type": "extreme_nesting_test_t_level2_struct_1_level3_struct_1",
+              "name": "level4_struct_1",
+              "type": "extreme_nesting_test_t_level2_struct_1_level4_struct_1",
               "value": null
             },
             {
-              "name": "level3_struct_2",
-              "type": "extreme_nesting_test_t_level2_struct_1_level3_struct_2",
+              "name": "level4_struct_2",
+              "type": "extreme_nesting_test_t_level2_struct_1_level4_struct_2",
               "value": null
             }
           ],
@@ -1493,32 +1480,11 @@
           "name": "extreme_nesting_test_t_level2_struct_1",
           "tag_name": "",
           "uses": [
-            "extreme_nesting_test_t_level2_struct_1_level3_struct_1",
-            "extreme_nesting_test_t_level2_struct_1_level3_struct_2"
+            "extreme_nesting_test_t_level2_struct_1_level4_struct_1",
+            "extreme_nesting_test_t_level2_struct_1_level4_struct_2"
           ]
         },
-        "extreme_nesting_test_t_level2_struct_1_level3_struct_1": {
-          "fields": [
-            {
-              "name": "level4_struct_1",
-              "type": "extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_1",
-              "value": null
-            },
-            {
-              "name": "level4_struct_2",
-              "type": "extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_2",
-              "value": null
-            }
-          ],
-          "methods": [],
-          "name": "extreme_nesting_test_t_level2_struct_1_level3_struct_1",
-          "tag_name": "",
-          "uses": [
-            "extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_1",
-            "extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_2"
-          ]
-        },
-        "extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_1": {
+        "extreme_nesting_test_t_level2_struct_1_level4_struct_1": {
           "fields": [
             {
               "name": "level4_field",
@@ -1527,11 +1493,11 @@
             }
           ],
           "methods": [],
-          "name": "extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_1",
+          "name": "extreme_nesting_test_t_level2_struct_1_level4_struct_1",
           "tag_name": "",
           "uses": []
         },
-        "extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_2": {
+        "extreme_nesting_test_t_level2_struct_1_level4_struct_2": {
           "fields": [
             {
               "name": "level4_field2",
@@ -1540,37 +1506,22 @@
             }
           ],
           "methods": [],
-          "name": "extreme_nesting_test_t_level2_struct_1_level3_struct_1_level4_struct_2",
-          "tag_name": "",
-          "uses": []
-        },
-        "extreme_nesting_test_t_level2_struct_1_level3_struct_2": {
-          "fields": [
-            {
-              "name": "level3_field",
-              "type": "int",
-              "value": null
-            }
-          ],
-          "methods": [],
-          "name": "extreme_nesting_test_t_level2_struct_1_level3_struct_2",
+          "name": "extreme_nesting_test_t_level2_struct_1_level4_struct_2",
           "tag_name": "",
           "uses": []
         },
         "extreme_nesting_test_t_level2_struct_2": {
           "fields": [
             {
-              "name": "mixed_union",
-              "type": "mixed_union",
+              "name": "mixed_field",
+              "type": "int",
               "value": null
             }
           ],
           "methods": [],
           "name": "extreme_nesting_test_t_level2_struct_2",
           "tag_name": "",
-          "uses": [
-            "mixed_union"
-          ]
+          "uses": []
         },
         "handler_entry_t": {
           "fields": [
@@ -2134,7 +2085,18 @@
           ]
         },
         "callback_with_anon_struct_t_config_value": {
-          "fields": [],
+          "fields": [
+            {
+              "name": "int_config",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "float_config",
+              "type": "float",
+              "value": null
+            }
+          ],
           "name": "callback_with_anon_struct_t_config_value",
           "tag_name": "",
           "uses": []
@@ -2238,20 +2200,6 @@
           "tag_name": "",
           "uses": [
             "data_union_point_value"
-          ]
-        },
-        "extreme_nesting_test_t_level2_struct_2_mixed_union": {
-          "fields": [
-            {
-              "name": "mixed_struct",
-              "type": "mixed_union_mixed_struct",
-              "value": null
-            }
-          ],
-          "name": "extreme_nesting_test_t_level2_struct_2_mixed_union",
-          "tag_name": "",
-          "uses": [
-            "mixed_union_mixed_struct"
           ]
         },
         "first_anon_union": {

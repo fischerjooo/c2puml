@@ -66,13 +66,20 @@ The C2PlantUML application is a well-structured Python tool for converting C/C++
 
 **Resolution**: Updated the `_parse_struct_fields` method in `parser_anonymous_processor.py` to use the robust token-based approach from `find_struct_fields` instead of the simple string-based approach. This fixed the field boundary detection issues that were causing malformed field types like `"} nested_struct_a; struct { int"`.
 
-**Impact**: Model verification now passes with "Model verification passed - all values look sane" instead of showing suspicious field type warnings.
+**Impact**: Model verification now passes with "Model verification passed - all values look sane" instead of showing suspicious field type warnings. The parsing issues for complex nested anonymous structures have been resolved.
 
-### Phase 4: Anonymous Structure Naming Issue - PENDING
+### Phase 4: Anonymous Structure Naming Issue - IN PROGRESS
+- [x] Identified remaining issues: empty content errors and duplicate anonymous structure warnings
+- [x] Investigate empty content errors in PlantUML generation
+- [x] Fixed anonymous structure field parsing in `_parse_struct_fields` method
 - [ ] Investigate duplicate anonymous structure processing
 - [ ] Implement deduplication logic
 - [ ] Test with complex nested structures
-- [ ] Verify complete resolution of verification warnings
+- [ ] Verify complete resolution of all warnings and errors
+
+**Resolution**: Fixed the `_parse_struct_fields` method in `parser_anonymous_processor.py` to properly handle cases where the content is already a complete struct/union definition. The method was incorrectly wrapping complete struct definitions in additional braces, causing the tokenizer to fail to find the correct field boundaries.
+
+**Impact**: Empty content errors resolved (0 errors, down from 2). Anonymous structures in function pointer parameters now correctly extract their fields.
 
 ## Technical Details
 

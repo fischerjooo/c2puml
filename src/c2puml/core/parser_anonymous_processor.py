@@ -257,8 +257,14 @@ class AnonymousTypedefProcessor:
         """Parse struct/union fields from content using tokenizer approach."""
         from .parser_tokenizer import CTokenizer, find_struct_fields, TokenType
         
-        # Create a complete struct definition from the content
-        struct_def = f"struct {{ {content} }}"
+        # Check if content is already a complete struct/union definition
+        content_stripped = content.strip()
+        if content_stripped.startswith('struct {') or content_stripped.startswith('union {'):
+            # Content is already a complete struct/union definition
+            struct_def = content
+        else:
+            # Create a complete struct definition from the content
+            struct_def = f"struct {{ {content} }}"
         
         # Tokenize the content
         tokenizer = CTokenizer()
