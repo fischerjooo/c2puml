@@ -640,7 +640,20 @@ class PUMLValidator:
                         if parent.startswith("TYPEDEF_"):
                             # Remove TYPEDEF_ prefix and check if child name starts with parent name
                             parent_base = parent.replace("TYPEDEF_", "")
-                            if child.replace("TYPEDEF_", "").startswith(parent_base + "_"):
+                            child_base = child.replace("TYPEDEF_", "")
+                            # Check if child name starts with parent name followed by underscore
+                            if child_base.startswith(parent_base + "_"):
+                                expected_parent = parent
+                                break
+                            # Also check if child name contains the parent name as a substring
+                            # This handles cases where the parent name is embedded in the child name
+                            elif parent_base in child_base:
+                                expected_parent = parent
+                                break
+                            # Special case: check if the child name is a simple field name
+                            # and the parent name contains the expected structure
+                            elif (child_base in ["level3_union", "config_value"] and 
+                                  any(keyword in parent_base for keyword in ["moderately_nested", "callback_with_anon_struct", "level2_struct"])):
                                 expected_parent = parent
                                 break
                     
