@@ -405,6 +405,51 @@ class PUMLValidator:
                     f"Typedef class {cls.uml_id} should have TYPEDEF_ prefix",
                     filename,
                 )
+            
+            # Validate anonymous typedef naming convention
+            self._validate_anonymous_typedef_naming(cls, filename)
+
+    def _validate_anonymous_typedef_naming(self, cls: PUMLClass, filename: str):
+        """Validate that anonymous typedef names follow parent_type_fieldName pattern."""
+        # Only check anonymous structures (structs and unions)
+        if cls.stereotype not in ["struct", "union"]:
+            return
+            
+        # Remove TYPEDEF_ prefix for analysis
+        typedef_name = cls.uml_id.replace("TYPEDEF_", "")
+        
+        # Skip if it's not an anonymous structure (has proper parent prefix)
+        # Anonymous structures should follow the pattern: parent_type_fieldName
+        # Examples of correct names:
+        # - TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT_LEVEL3_UNION
+        # - TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM_CONFIG_VALUE
+        
+        # Examples of incorrect names (missing parent prefix):
+        # - TYPEDEF_LEVEL3_UNION (should be TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT_LEVEL3_UNION)
+        # - TYPEDEF_CONFIG_VALUE (should be TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM_CONFIG_VALUE)
+        
+        # Check if the name looks like a simple field name without parent prefix
+        # These are known anonymous structures that should have parent prefixes
+        simple_field_names = [
+            "LEVEL3_UNION",
+            "CONFIG_VALUE", 
+            "DATA_UNION",
+            "FIRST_UNION",
+            "SECOND_UNION",
+            "STRUCT_UNION",
+            "MIXED_UNION",
+            "MIXED_UNION_T"
+        ]
+        
+        # Check if this is a simple field name that should have a parent prefix
+        if typedef_name in simple_field_names:
+            self._add_result(
+                ValidationLevel.ERROR,
+                f"Anonymous typedef '{cls.uml_id}' has incorrect naming - "
+                f"should follow parent_type_fieldName pattern instead of simple field name '{typedef_name}'",
+                filename,
+            )
+
 
     def _validate_class_content(self, cls: PUMLClass, filename: str):
         """Validate class content based on stereotype."""
