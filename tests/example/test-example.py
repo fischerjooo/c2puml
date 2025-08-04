@@ -363,6 +363,12 @@ class PUMLValidator:
 
             # Validate content based on stereotype
             self._validate_class_content(cls, filename)
+            
+            # NEW ASSERTION 1: All class objects shall have content and never be empty {}
+            self._validate_class_has_content(cls, filename)
+        
+        # NEW ASSERTION 2: A class can be contained maximum one time
+        self._validate_no_duplicate_classes(classes, filename)
 
     def _validate_naming_conventions(self, cls: PUMLClass, filename: str):
         """Validate class naming conventions."""
@@ -500,6 +506,95 @@ class PUMLValidator:
                 f"Alias typedef {cls.uml_id} should contain 'alias of' format",
                 filename,
             )
+
+    def _validate_class_has_content(self, cls: PUMLClass, filename: str):
+        """Validate that all class objects have content and are never empty {}."""
+        # Check if the class body is empty or contains only whitespace/comments
+        body_content = cls.body.strip()
+        
+        # Remove comments and section headers to check for actual content
+        lines = [line.strip() for line in body_content.split('\n') if line.strip()]
+        content_lines = []
+        
+        for line in lines:
+            # Skip comments, section headers, and empty lines
+            if (line.startswith("'") or 
+                (line.startswith("--") and line.endswith("--")) or
+                not line):
+                continue
+            content_lines.append(line)
+        
+        # Check if there's any actual content
+        if not content_lines:
+            self._add_result(
+                ValidationLevel.ERROR,
+                f"Class {cls.uml_id} has empty content {{}} - all classes must have content",
+                filename,
+            )
+        else:
+            # Additional check: ensure the content is meaningful
+            meaningful_content = False
+            for line in content_lines:
+                # Check for actual data (fields, functions, variables, etc.)
+                if (line.startswith(('+', '-')) or  # Public/private members
+                    line.startswith('alias of') or  # Alias definitions
+                    ':' in line or  # Field definitions
+                    '(' in line or  # Function definitions
+                    '=' in line):   # Variable assignments
+                    meaningful_content = True
+                    break
+            
+            if not meaningful_content:
+                self._add_result(
+                    ValidationLevel.WARNING,
+                    f"Class {cls.uml_id} has minimal content - consider adding more meaningful content",
+                    filename,
+                )
+
+    def _validate_no_duplicate_classes(self, classes: Dict[str, PUMLClass], filename: str):
+        """Validate that a class can be contained maximum one time (no duplicates)."""
+        # Check for duplicate class names (different UML IDs but same class name)
+        # BUT allow source and header files to have the same base name (this is expected)
+        class_names = {}
+        duplicate_found = False
+        
+        for uml_id, cls in classes.items():
+            class_name = cls.name
+            
+            if class_name in class_names:
+                # Check if this is an expected source/header pair
+                existing_uml_id = class_names[class_name]
+                existing_cls = classes[existing_uml_id]
+                
+                # Allow source and header files to have the same base name
+                if ((cls.stereotype == "source" and existing_cls.stereotype == "header") or
+                    (cls.stereotype == "header" and existing_cls.stereotype == "source")):
+                    # This is expected - source and header files can have the same base name
+                    continue
+                
+                # Found a real duplicate class name
+                duplicate_found = True
+                self._add_result(
+                    ValidationLevel.ERROR,
+                    f"Duplicate class '{class_name}' found: {existing_uml_id} and {uml_id} - "
+                    f"a class can be contained maximum one time",
+                    filename,
+                )
+            else:
+                class_names[class_name] = uml_id
+        
+        # Also check for duplicate UML IDs (shouldn't happen but good to verify)
+        uml_ids = set()
+        for uml_id in classes.keys():
+            if uml_id in uml_ids:
+                duplicate_found = True
+                self._add_result(
+                    ValidationLevel.ERROR,
+                    f"Duplicate UML ID '{uml_id}' found - this should not happen",
+                    filename,
+                )
+            else:
+                uml_ids.add(uml_id)
 
     def validate_relationships(
         self,
