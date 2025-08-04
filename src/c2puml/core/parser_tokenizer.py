@@ -1324,30 +1324,133 @@ def find_struct_fields(
                   any(t.type == TokenType.LBRACKET for t in field_tokens) and 
                   any(t.type == TokenType.RBRACKET for t in field_tokens)):
                 
-                # Find the opening bracket
-                bracket_start = None
+                # Check if this is a comma-separated array field declaration
+                comma_positions = []
                 for i, token in enumerate(field_tokens):
-                    if token.type == TokenType.LBRACKET:
-                        bracket_start = i
-                        break
+                    if token.type == TokenType.COMMA:
+                        comma_positions.append(i)
                 
-                if bracket_start is not None and bracket_start > 0:
-                    # Field name is the token before the opening bracket
-                    field_name = field_tokens[bracket_start - 1].value
-                    # Type is everything before the field name
-                    type_tokens = field_tokens[:bracket_start - 1]
-                    # Array part is from opening bracket to closing bracket
-                    array_tokens = field_tokens[bracket_start:]
+                if comma_positions:
+                    # Handle comma-separated array fields
+                    # Find the first array field to determine the base type
+                    first_bracket_start = None
+                    for i, token in enumerate(field_tokens):
+                        if token.type == TokenType.LBRACKET:
+                            first_bracket_start = i
+                            break
                     
-                    # Remove semicolon from array_tokens if present
-                    if array_tokens and array_tokens[-1].type == TokenType.SEMICOLON:
-                        array_tokens = array_tokens[:-1]
+                    if first_bracket_start is not None and first_bracket_start > 0:
+                        # Base type is everything before the first field name
+                        base_type_tokens = field_tokens[:first_bracket_start - 1]
+                        base_type = " ".join(t.value for t in base_type_tokens)
+                        
+                        # Extract all array field names and sizes
+                        field_names = []
+                        current_pos = first_bracket_start - 1  # Start at the first field name
+                        
+                        # Process the first array field
+                        first_field_end = comma_positions[0] if comma_positions else len(field_tokens)
+                        first_field_tokens = field_tokens[current_pos:first_field_end]
+                        
+                        # Find the array size for the first field
+                        first_bracket_start_local = None
+                        first_bracket_end_local = None
+                        for i, token in enumerate(first_field_tokens):
+                            if token.type == TokenType.LBRACKET:
+                                first_bracket_start_local = i
+                            elif token.type == TokenType.RBRACKET:
+                                first_bracket_end_local = i
+                                break
+                        
+                        if first_bracket_start_local is not None and first_bracket_end_local is not None:
+                            first_field_name = first_field_tokens[0].value
+                            first_array_size = " ".join(t.value for t in first_field_tokens[first_bracket_start_local + 1:first_bracket_end_local])
+                            field_names.append((first_field_name, first_array_size))
+                        
+                        current_pos = comma_positions[0] + 1
+                        
+                        # Process remaining array fields
+                        for comma_pos in comma_positions[1:]:
+                            field_tokens_slice = field_tokens[current_pos:comma_pos]
+                            
+                            # Find the array size for this field
+                            bracket_start_local = None
+                            bracket_end_local = None
+                            for i, token in enumerate(field_tokens_slice):
+                                if token.type == TokenType.LBRACKET:
+                                    bracket_start_local = i
+                                elif token.type == TokenType.RBRACKET:
+                                    bracket_end_local = i
+                                    break
+                            
+                            if bracket_start_local is not None and bracket_end_local is not None:
+                                field_name = field_tokens_slice[0].value
+                                array_size = " ".join(t.value for t in field_tokens_slice[bracket_start_local + 1:bracket_end_local])
+                                field_names.append((field_name, array_size))
+                            
+                            current_pos = comma_pos + 1
+                        
+                        # Process the last field (after the last comma)
+                        if current_pos < len(field_tokens):
+                            last_field_tokens = field_tokens[current_pos:]
+                            
+                            # Check if the last field is an array or simple field
+                            has_brackets = any(t.type == TokenType.LBRACKET for t in last_field_tokens)
+                            
+                            if has_brackets:
+                                # Last field is an array
+                                bracket_start_local = None
+                                bracket_end_local = None
+                                for i, token in enumerate(last_field_tokens):
+                                    if token.type == TokenType.LBRACKET:
+                                        bracket_start_local = i
+                                    elif token.type == TokenType.RBRACKET:
+                                        bracket_end_local = i
+                                        break
+                                
+                                if bracket_start_local is not None and bracket_end_local is not None:
+                                    field_name = last_field_tokens[0].value
+                                    array_size = " ".join(t.value for t in last_field_tokens[bracket_start_local + 1:bracket_end_local])
+                                    field_names.append((field_name, array_size))
+                            else:
+                                # Last field is a simple field (no array)
+                                field_name = last_field_tokens[0].value
+                                field_names.append((field_name, None))
+                        
+                        # Create fields for each name
+                        for field_name, array_size in field_names:
+                            if field_name and field_name.strip() and base_type.strip():
+                                if array_size is not None:
+                                    field_type = f"{base_type}[{array_size}]"
+                                else:
+                                    field_type = base_type
+                                fields.append((field_name.strip(), field_type.strip()))
+                else:
+                    # Single array field (original logic)
+                    # Find the opening bracket
+                    bracket_start = None
+                    for i, token in enumerate(field_tokens):
+                        if token.type == TokenType.LBRACKET:
+                            bracket_start = i
+                            break
                     
-                    field_type = " ".join(t.value for t in type_tokens) + " " + " ".join(t.value for t in array_tokens)
-                    
-                    if (field_name and field_name.strip() and field_type.strip() and 
-                        field_name not in ["[", "]", ";", "}"]):
-                        fields.append((field_name.strip(), field_type.strip()))
+                    if bracket_start is not None and bracket_start > 0:
+                        # Field name is the token before the opening bracket
+                        field_name = field_tokens[bracket_start - 1].value
+                        # Type is everything before the field name
+                        type_tokens = field_tokens[:bracket_start - 1]
+                        # Array part is from opening bracket to closing bracket
+                        array_tokens = field_tokens[bracket_start:]
+                        
+                        # Remove semicolon from array_tokens if present
+                        if array_tokens and array_tokens[-1].type == TokenType.SEMICOLON:
+                            array_tokens = array_tokens[:-1]
+                        
+                        field_type = " ".join(t.value for t in type_tokens) + " " + " ".join(t.value for t in array_tokens)
+                        
+                        if (field_name and field_name.strip() and field_type.strip() and 
+                            field_name not in ["[", "]", ";", "}"]):
+                            fields.append((field_name.strip(), field_type.strip()))
             
             # Regular field: type name
             else:
@@ -1356,12 +1459,80 @@ def find_struct_fields(
                     field_tokens = field_tokens[:-1]
                 
                 if field_tokens:
-                    field_name = field_tokens[-1].value
-                    field_type = " ".join(t.value for t in field_tokens[:-1])
+                    # Check if this is a comma-separated field declaration
+                    comma_positions = []
+                    for i, token in enumerate(field_tokens):
+                        if token.type == TokenType.COMMA:
+                            comma_positions.append(i)
                     
-                    if (field_name not in ["[", "]", ";", "}"] and field_name and 
-                        field_name.strip() and field_type.strip()):
-                        fields.append((field_name.strip(), field_type.strip()))
+                    if comma_positions:
+                        # Handle comma-separated fields
+                        # Find the actual field name position (last identifier)
+                        first_field_end = comma_positions[0] if comma_positions else len(field_tokens)
+                        first_field_name = None
+                        field_name_pos = None
+                        for i in range(len(field_tokens[:first_field_end])):
+                            if field_tokens[i].type == TokenType.IDENTIFIER:
+                                first_field_name = field_tokens[i].value
+                                field_name_pos = i
+                        
+                        if first_field_name is not None:
+                            # Check if there's an asterisk before the field name
+                            has_pointer = False
+                            for i in range(field_name_pos):
+                                if field_tokens[i].type == TokenType.ASTERISK:
+                                    has_pointer = True
+                                    break
+                            
+                            # Build the base type
+                            base_type_tokens = field_tokens[:field_name_pos]
+                            base_type = " ".join(t.value for t in base_type_tokens)
+                            # Only add asterisk if it's not already in the base type
+                            if has_pointer and not any(t.type == TokenType.ASTERISK for t in base_type_tokens):
+                                base_type += " *"
+                            
+                            # Extract all field names
+                            field_names = [first_field_name]
+                            current_pos = comma_positions[0] + 1 if comma_positions else len(field_tokens)
+                            
+                            for comma_pos in comma_positions[1:]:
+                                # Get field name from current_pos to comma_pos
+                                field_name_tokens = field_tokens[current_pos:comma_pos]
+                                # Find the last identifier in the field tokens (this is the field name)
+                                field_name = None
+                                for token in reversed(field_name_tokens):
+                                    if token.type == TokenType.IDENTIFIER:
+                                        field_name = token.value
+                                        break
+                                if field_name:
+                                    field_names.append(field_name)
+                                current_pos = comma_pos + 1
+                            
+                            # Get the last field name (after the last comma)
+                            if current_pos < len(field_tokens):
+                                last_field_tokens = field_tokens[current_pos:]
+                                # Find the last identifier in the last field tokens (this is the field name)
+                                last_field_name = None
+                                for token in reversed(last_field_tokens):
+                                    if token.type == TokenType.IDENTIFIER:
+                                        last_field_name = token.value
+                                        break
+                                if last_field_name:
+                                    field_names.append(last_field_name)
+                            
+                            # Create fields for each name
+                            for field_name in field_names:
+                                if (field_name not in ["[", "]", ";", "}"] and field_name and 
+                                    field_name.strip() and base_type.strip()):
+                                    fields.append((field_name.strip(), base_type.strip()))
+                    else:
+                        # Single field (original logic)
+                        field_name = field_tokens[-1].value
+                        field_type = " ".join(t.value for t in field_tokens[:-1])
+                        
+                        if (field_name not in ["[", "]", ";", "}"] and field_name and 
+                            field_name.strip() and field_type.strip()):
+                            fields.append((field_name.strip(), field_type.strip()))
     
     return fields
 

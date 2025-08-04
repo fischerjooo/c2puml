@@ -257,6 +257,81 @@ class AnonymousTypedefProcessor:
         """Parse struct/union fields from content using tokenizer approach."""
         from .parser_tokenizer import CTokenizer, find_struct_fields, TokenType
         
+        # Check if content contains multiple field declarations separated by semicolons
+        if ';' in content and not content.strip().startswith('struct {') and not content.strip().startswith('union {'):
+            # Split content into individual field declarations
+            field_declarations = []
+            current_decl = ""
+            brace_count = 0
+            
+            for char in content:
+                if char == '{':
+                    brace_count += 1
+                elif char == '}':
+                    brace_count -= 1
+                
+                current_decl += char
+                
+                if char == ';' and brace_count == 0:
+                    field_declarations.append(current_decl.strip())
+                    current_decl = ""
+            
+            # Handle any remaining content
+            if current_decl.strip():
+                field_declarations.append(current_decl.strip())
+            
+            # Process each field declaration separately
+            all_fields = []
+            for decl in field_declarations:
+                if decl and decl.strip() != ';':
+                    # Create a complete struct definition for this single declaration
+                    struct_def = f"struct {{ {decl} }}"
+                    
+                    # Tokenize and parse this single declaration
+                    tokenizer = CTokenizer()
+                    tokens = tokenizer.tokenize(struct_def)
+                    
+                    # Find the struct definition
+                    struct_start = None
+                    struct_end = None
+                    
+                    # Find struct (skip whitespace)
+                    for i in range(len(tokens) - 1):
+                        if tokens[i].type == TokenType.STRUCT:
+                            # Find the next LBRACE token
+                            j = i + 1
+                            while j < len(tokens) and tokens[j].type in [TokenType.WHITESPACE, TokenType.NEWLINE]:
+                                j += 1
+                            if j < len(tokens) and tokens[j].type == TokenType.LBRACE:
+                                struct_start = j  # Start at the opening brace
+                                break
+                    
+                    if struct_start:
+                        # Find the closing brace
+                        brace_count = 1
+                        for j in range(struct_start + 1, len(tokens)):
+                            if tokens[j].type == TokenType.LBRACE:
+                                brace_count += 1
+                            elif tokens[j].type == TokenType.RBRACE:
+                                brace_count -= 1
+                                if brace_count == 0:
+                                    struct_end = j
+                                    break
+                    
+                    if struct_start is not None and struct_end is not None:
+                        # Parse fields using the robust find_struct_fields function
+                        field_tuples = find_struct_fields(tokens, struct_start, struct_end)
+                        
+                        # Convert to Field objects
+                        for field_name, field_type in field_tuples:
+                            try:
+                                all_fields.append(Field(field_name, field_type))
+                            except ValueError as e:
+                                print(f"Warning: Error creating field {field_name}: {e}")
+            
+            return all_fields
+        
+        # Original approach for single declarations or complete struct definitions
         # Check if content is already a complete struct/union definition
         content_stripped = content.strip()
         if content_stripped.startswith('struct {') or content_stripped.startswith('union {'):
