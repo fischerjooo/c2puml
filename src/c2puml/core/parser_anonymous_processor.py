@@ -13,19 +13,20 @@ class AnonymousTypedefProcessor:
 
     def process_file_model(self, file_model: FileModel) -> None:
         """Process all typedefs in a file model to extract anonymous structures using multi-pass processing."""
-        max_iterations = 5  # Prevent infinite loops
+        max_iterations = 10  # Increased from 5 to 10 for deeper processing
         iteration = 0
         
         while iteration < max_iterations:
             iteration += 1
-            initial_count = len(file_model.structs) + len(file_model.unions)
+            # Track all typedef entities (structs, unions, and aliases) for convergence detection
+            initial_count = len(file_model.structs) + len(file_model.unions) + len(file_model.aliases)
             
             # Process all structures/unions/aliases
             self._process_all_entities(file_model)
             
-            final_count = len(file_model.structs) + len(file_model.unions)
+            final_count = len(file_model.structs) + len(file_model.unions) + len(file_model.aliases)
             
-            # Stop if no new entities were created (convergence)
+            # Stop if no new typedef entities were created (convergence)
             if final_count == initial_count:
                 break
         
