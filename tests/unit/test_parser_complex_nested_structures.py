@@ -283,24 +283,36 @@ typedef struct {
 
     def test_debug_find_struct_fields_complex(self):
         """Debug test to understand why find_struct_fields fails on complex nested structures"""
-        # This is the problematic structure from complex.h
-        source_code = """
+        # Create the complex structure that's failing
+        complex_code = """
 typedef struct {
     struct {
+        int first_a;
         struct {
-            int level3_field;
-        } level2_field;
-    } level1_field;
+            int nested_a1;
+            struct {
+                int deep_a1;
+            } deep_struct_a1;
+            struct {
+                int deep_a2;
+            } deep_struct_a2;
+        } nested_struct_a;
+        struct {
+            int nested_a2;
+        } nested_struct_a2;
+    } first_struct;
 } complex_naming_test_t;
 """
         
+        # Tokenize the code
         tokenizer = CTokenizer()
-        tokens = tokenizer.tokenize(source_code)
+        tokens = tokenizer.tokenize(complex_code)
         
         # Find the struct start and end
         struct_start = None
         struct_end = None
         
+        # Look for TYPEDEF STRUCT pattern
         for i, token in enumerate(tokens):
             if token.type == TokenType.TYPEDEF:
                 # Find the next STRUCT token (skip whitespace)
@@ -333,30 +345,28 @@ typedef struct {
         if struct_end is None:
             self.fail("Could not find struct end")
         
-        print(f"\n=== DEBUG: Token sequence for complex nested structure ===")
+        print("=== DEBUG: Token sequence for complex nested structure ===")
         print(f"Struct start: {struct_start}, Struct end: {struct_end}")
-        print(f"Tokens from {struct_start} to {struct_end}:")
-        for i in range(struct_start, min(struct_end + 10, len(tokens))):
+        print("Tokens from {} to {}:".format(struct_start, struct_end))
+        for i in range(struct_start, min(struct_end + 1, len(tokens))):
             print(f"  {i}: {tokens[i]}")
         
-        # Call find_struct_fields with detailed debugging
-        print(f"\n=== DEBUG: Calling find_struct_fields ===")
+        # Call find_struct_fields directly
         fields = find_struct_fields(tokens, struct_start, struct_end)
         
-        print(f"\n=== DEBUG: Parsed fields ===")
-        for i, (name, field_type) in enumerate(fields):
-            print(f"  Field {i}: name='{name}', type='{field_type}'")
+        print("=== DEBUG: Parsed fields ===")
+        for field_name, field_type in fields:
+            print(f"Field: '{field_name}' -> '{field_type}'")
         
-        # The expected result should be:
-        # - level1_field with type containing the nested structure
-        assert len(fields) > 0, "Should find at least one field"
+        # Check if we found the expected fields
+        field_names = [field[0] for field in fields]
+        print(f"Field names found: {field_names}")
         
-        # Check if we found the expected field
-        field_names = [name for name, _ in fields]
-        print(f"Found field names: {field_names}")
+        # The complex structure should have at least one field
+        self.assertGreater(len(fields), 0, "Should find at least one field")
         
-        # The main issue is that we should find 'level1_field' as a field
-        assert 'level1_field' in field_names, f"Expected to find 'level1_field', found: {field_names}"
+        # Check for specific fields that should be found
+        self.assertIn("first_struct", field_names, "first_struct field should be found")
 
     def test_anonymous_structure_deduplication(self):
         """Test that anonymous structures with identical content are deduplicated correctly"""
