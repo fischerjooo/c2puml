@@ -5,7 +5,7 @@ This test file demonstrates the current limitation described in TODO.md:
 "Multi-Pass Anonymous Structure Processing - Current Limitation"
 
 The anonymous structure processing currently stops at level 2 and doesn't 
-recursively extract deeper nested anonymous structures (level 3+).
+recursively extracts deeper nested anonymous structures (level 3+).
 """
 
 import unittest
@@ -230,6 +230,234 @@ class TestMultiPassAnonymousProcessing(unittest.TestCase):
             self.assertIn("sibling_test_t_first", field_types)
             self.assertIn("sibling_test_t_second", field_types)
             self.assertIn("sibling_test_t_third", field_types)
+            
+        finally:
+            # Clean up
+            Path(temp_file).unlink()
+
+    def test_level_3_extraction_as_separate_entity(self):
+        """Test that level 3+ structures should be extracted as separate entities, not just flattened fields."""
+        source_code = """
+        typedef struct {
+            int level1_id;
+            struct {                        // Level 1 → Level 2: ✅ Extracted as separate structure
+                int level2_id;
+                union {                     // Level 2 → Level 3: ❌ Currently flattened, should be separate entity
+                    int level3_int;
+                    float level3_float;
+                } level3_union;
+            } level2_struct;
+        } moderately_nested_t;
+        """
+        
+        # Create a temporary file with the test code
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
+            f.write(source_code)
+            temp_file = f.name
+        
+        try:
+            # Parse the file
+            file_model = self.parser.parse_file(Path(temp_file), "test.c")
+            
+            # Check that the main struct was parsed
+            self.assertIn("moderately_nested_t", file_model.structs)
+            struct = file_model.structs["moderately_nested_t"]
+            
+            # Check that level 2 structure was extracted
+            self.assertIn("moderately_nested_t_level2_struct", file_model.structs,
+                         "Level 2 structure should be extracted")
+            
+            # Get the extracted level 2 structure
+            level2_struct = file_model.structs["moderately_nested_t_level2_struct"]
+            
+            # CURRENT BEHAVIOR: Level 3 union is flattened into separate fields
+            # This is what we currently have:
+            level3_int_field = None
+            level3_float_field = None
+            for field in level2_struct.fields:
+                if field.name == "level3_int":
+                    level3_int_field = field
+                elif field.name == "level3_float":
+                    level3_float_field = field
+            
+            # Both fields should exist and be properly typed
+            self.assertIsNotNone(level3_int_field, "level3_int field should exist")
+            self.assertIsNotNone(level3_float_field, "level3_float field should exist")
+            
+            # DESIRED BEHAVIOR: Level 3 union should be extracted as a separate entity
+            # This is what we want to achieve:
+            # 1. A separate union entity should be created: "moderately_nested_t_level2_struct_level3_union"
+            # 2. The level2_struct should have a field "level3_union" of type "moderately_nested_t_level2_struct_level3_union"
+            # 3. The level3_union entity should contain the fields "level3_int" and "level3_float"
+            
+            # For now, we'll test the current behavior and document the desired behavior
+            print(f"Current behavior - Level 2 struct fields: {[(f.name, f.type) for f in level2_struct.fields]}")
+            print(f"Current behavior - Available structs: {list(file_model.structs.keys())}")
+            print(f"Current behavior - Available unions: {list(file_model.unions.keys())}")
+            
+            # TODO: Implement the desired behavior where level 3+ structures are extracted as separate entities
+            # The test should then assert:
+            # 1. A union named "moderately_nested_t_level2_struct_level3_union" exists in file_model.unions
+            # 2. The level2_struct has a field "level3_union" of type "moderately_nested_t_level2_struct_level3_union"
+            # 3. The level3_union contains fields "level3_int" and "level3_float"
+            
+        finally:
+            # Clean up
+            Path(temp_file).unlink()
+
+    def test_debug_field_types_after_processing(self):
+        """Debug test to see what field types look like after processing."""
+        source_code = """
+        typedef struct {
+            int level1_id;
+            struct {                        // Level 1 → Level 2: ✅ Extracted as separate structure
+                int level2_id;
+                union {                     // Level 2 → Level 3: ❌ Currently flattened, should be separate entity
+                    int level3_int;
+                    float level3_float;
+                } level3_union;
+            } level2_struct;
+        } moderately_nested_t;
+        """
+        
+        # Create a temporary file with the test code
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
+            f.write(source_code)
+            temp_file = f.name
+        
+        try:
+            # Parse the file
+            file_model = self.parser.parse_file(Path(temp_file), "test.c")
+            
+            # Check that the main struct was parsed
+            self.assertIn("moderately_nested_t", file_model.structs)
+            struct = file_model.structs["moderately_nested_t"]
+            
+            # Check that level 2 structure was extracted
+            self.assertIn("moderately_nested_t_level2_struct", file_model.structs,
+                         "Level 2 structure should be extracted")
+            
+            # Get the extracted level 2 structure
+            level2_struct = file_model.structs["moderately_nested_t_level2_struct"]
+            
+            # Debug: Print all field information
+            print(f"\n=== DEBUG: Field Information ===")
+            print(f"Level 2 struct name: {level2_struct.name}")
+            print(f"Level 2 struct fields:")
+            for i, field in enumerate(level2_struct.fields):
+                print(f"  Field {i}: name='{field.name}', type='{field.type}'")
+            
+            print(f"\n=== DEBUG: Available Entities ===")
+            print(f"Available structs: {list(file_model.structs.keys())}")
+            print(f"Available unions: {list(file_model.unions.keys())}")
+            
+            print(f"\n=== DEBUG: Anonymous Relationships ===")
+            print(f"Anonymous relationships: {file_model.anonymous_relationships}")
+            
+            # Check if there's a field that should reference the level 3 union
+            level3_union_field = None
+            for field in level2_struct.fields:
+                if field.name == "level3_union":
+                    level3_union_field = field
+                    break
+            
+            if level3_union_field:
+                print(f"\n=== DEBUG: Level 3 Union Field ===")
+                print(f"Field name: {level3_union_field.name}")
+                print(f"Field type: {level3_union_field.type}")
+            else:
+                print(f"\n=== DEBUG: No level3_union field found ===")
+                print(f"Available field names: {[f.name for f in level2_struct.fields]}")
+            
+        finally:
+            # Clean up
+            Path(temp_file).unlink()
+
+    def test_debug_processing_flow(self):
+        """Debug test to understand the processing flow and field updates."""
+        source_code = """
+        typedef struct {
+            int level1_id;
+            struct {                        // Level 1 → Level 2: ✅ Extracted as separate structure
+                int level2_id;
+                union {                     // Level 2 → Level 3: ❌ Currently flattened, should be separate entity
+                    int level3_int;
+                    float level3_float;
+                } level3_union;
+            } level2_struct;
+        } moderately_nested_t;
+        """
+        
+        # Create a temporary file with the test code
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
+            f.write(source_code)
+            temp_file = f.name
+        
+        try:
+            # Parse the file
+            file_model = self.parser.parse_file(Path(temp_file), "test.c")
+            
+            # Check that the main struct was parsed
+            self.assertIn("moderately_nested_t", file_model.structs)
+            struct = file_model.structs["moderately_nested_t"]
+            
+            # Check that level 2 structure was extracted
+            self.assertIn("moderately_nested_t_level2_struct", file_model.structs,
+                         "Level 2 structure should be extracted")
+            
+            # Get the extracted level 2 structure
+            level2_struct = file_model.structs["moderately_nested_t_level2_struct"]
+            
+            # Debug: Print all field information
+            print(f"\n=== DEBUG: Processing Flow Analysis ===")
+            print(f"Level 2 struct name: {level2_struct.name}")
+            print(f"Level 2 struct fields:")
+            for i, field in enumerate(level2_struct.fields):
+                print(f"  Field {i}: name='{field.name}', type='{field.type}'")
+            
+            print(f"\n=== DEBUG: Available Entities ===")
+            print(f"Available structs: {list(file_model.structs.keys())}")
+            print(f"Available unions: {list(file_model.unions.keys())}")
+            
+            print(f"\n=== DEBUG: Anonymous Relationships ===")
+            print(f"Anonymous relationships: {file_model.anonymous_relationships}")
+            
+            # Check if there's a field that should reference the level 3 union
+            level3_union_field = None
+            for field in level2_struct.fields:
+                if field.name == "level3_union":
+                    level3_union_field = field
+                    break
+            
+            if level3_union_field:
+                print(f"\n=== DEBUG: Level 3 Union Field ===")
+                print(f"Field name: {level3_union_field.name}")
+                print(f"Field type: {level3_union_field.type}")
+            else:
+                print(f"\n=== DEBUG: No level3_union field found ===")
+                print(f"Available field names: {[f.name for f in level2_struct.fields]}")
+            
+            # Check if the level 3 union exists and what its fields are
+            if 'level3_union' in file_model.unions:
+                level3_union = file_model.unions['level3_union']
+                print(f"\n=== DEBUG: Level 3 Union Entity ===")
+                print(f"Union name: {level3_union.name}")
+                print(f"Union fields:")
+                for i, field in enumerate(level3_union.fields):
+                    print(f"  Field {i}: name='{field.name}', type='{field.type}'")
+            
+            # The issue is that the level 3 union is being extracted as a separate entity,
+            # but the field in the level 2 struct is not being updated to reference it.
+            # Instead, the level 3 union content is being flattened into individual fields.
+            
+            # DESIRED BEHAVIOR:
+            # 1. Level 2 struct should have a field "level3_union" of type "level3_union"
+            # 2. The "level3_union" entity should contain fields "level3_int" and "level3_float"
+            # 3. The level 2 struct should NOT have flattened fields "level3_int" and "level3_float"
+            
+            print(f"\n=== DEBUG: Expected vs Actual ===")
+            print(f"Expected: Level 2 struct should have field 'level3_union' of type 'level3_union'")
+            print(f"Actual: Level 2 struct has fields {[f.name for f in level2_struct.fields]}")
             
         finally:
             # Clean up

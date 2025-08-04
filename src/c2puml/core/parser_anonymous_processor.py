@@ -231,7 +231,29 @@ class AnonymousTypedefProcessor:
             if not decl:
                 continue
             
-            # Parse the field
+            # Check if this declaration contains an anonymous struct/union
+            if self._has_balanced_anonymous_pattern(decl):
+                # Extract the anonymous struct content and field name
+                struct_info = self._extract_balanced_anonymous_struct(decl)
+                if struct_info:
+                    struct_content, struct_type, field_name = struct_info
+                    # Create a special field type that preserves the anonymous structure
+                    field_type = f"{struct_type} {{ ... }} {field_name}"
+                    fields.append(Field(field_name, field_type))
+                    continue
+            elif self._has_balanced_anonymous_pattern_no_field_name(decl):
+                # Extract the anonymous struct content without field name
+                struct_info = self._extract_balanced_anonymous_struct_no_field_name(decl)
+                if struct_info:
+                    struct_content, struct_type = struct_info
+                    # Create a special field type that preserves the anonymous structure
+                    field_type = f"{struct_type} {{ ... }}"
+                    # Generate a field name based on the struct type
+                    field_name = f"anonymous_{struct_type}"
+                    fields.append(Field(field_name, field_type))
+                    continue
+            
+            # Parse the field normally (no anonymous structures)
             parsed_fields = self._parse_comma_separated_fields(decl)
             fields.extend(parsed_fields)
         
@@ -509,7 +531,7 @@ class AnonymousTypedefProcessor:
                 file_model.anonymous_relationships[parent_name].append(anon_name)
                 
                 # Update the field type to reference the named structure
-                field.type = f"{anon_name} {field_name}"
+                field.type = anon_name
         
         # Handle actual anonymous struct/union patterns with balanced brace matching
         elif self._has_balanced_anonymous_pattern(field.type):
@@ -533,7 +555,7 @@ class AnonymousTypedefProcessor:
                 file_model.anonymous_relationships[parent_name].append(anon_name)
                 
                 # Update the field type to reference the named structure
-                field.type = f"{anon_name} {field_name}"
+                field.type = anon_name
         
         # Handle anonymous structs without field names like "struct { int x; }"
         elif self._has_balanced_anonymous_pattern_no_field_name(field.type):
