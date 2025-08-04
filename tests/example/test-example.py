@@ -628,18 +628,42 @@ class PUMLValidator:
             child_to_parents[child].append(parent)
         
         # Validate that each child has at most one parent
-        # NOTE: For anonymous structures, it's valid for the same structure to be referenced
-        # by multiple parent structures, so we only flag this as a warning, not an error
         for child, parents in child_to_parents.items():
             if len(parents) > 1:
                 # Check if this is an anonymous structure (starts with TYPEDEF_)
                 if child.startswith("TYPEDEF_"):
-                    self._add_result(
-                        ValidationLevel.WARNING,
-                        f"Anonymous structure '{child}' is referenced by multiple parents: {', '.join(parents)} - "
-                        f"this may indicate duplicate anonymous structure extraction",
-                        filename,
-                    )
+                    # For anonymous structures, check if the naming is correct
+                    # The name should include the parent typedef name as prefix
+                    expected_parent = None
+                    for parent in parents:
+                        # Extract the parent typedef name from the relationship
+                        if parent.startswith("TYPEDEF_"):
+                            # Remove TYPEDEF_ prefix and check if child name starts with parent name
+                            parent_base = parent.replace("TYPEDEF_", "")
+                            if child.replace("TYPEDEF_", "").startswith(parent_base + "_"):
+                                expected_parent = parent
+                                break
+                    
+                    if expected_parent:
+                        # This is a valid case where the same anonymous structure is referenced
+                        # by multiple parents, but one of them is the "owner" (has correct naming)
+                        other_parents = [p for p in parents if p != expected_parent]
+                        if other_parents:
+                            self._add_result(
+                                ValidationLevel.WARNING,
+                                f"Anonymous structure '{child}' is correctly owned by '{expected_parent}' "
+                                f"but also referenced by: {', '.join(other_parents)} - "
+                                f"this may indicate duplicate anonymous structure extraction",
+                                filename,
+                            )
+                    else:
+                        # No parent has the correct naming convention - this is an error
+                        self._add_result(
+                            ValidationLevel.ERROR,
+                            f"Anonymous structure '{child}' has multiple container parents: {', '.join(parents)} - "
+                            f"but none follow the correct naming convention (parent_fieldname)",
+                            filename,
+                        )
                 else:
                     self._add_result(
                         ValidationLevel.ERROR,
