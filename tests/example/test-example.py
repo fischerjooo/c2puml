@@ -628,14 +628,25 @@ class PUMLValidator:
             child_to_parents[child].append(parent)
         
         # Validate that each child has at most one parent
+        # NOTE: For anonymous structures, it's valid for the same structure to be referenced
+        # by multiple parent structures, so we only flag this as a warning, not an error
         for child, parents in child_to_parents.items():
             if len(parents) > 1:
-                self._add_result(
-                    ValidationLevel.ERROR,
-                    f"Child class '{child}' has multiple container parents: {', '.join(parents)} - "
-                    f"each class can have only one container parent",
-                    filename,
-                )
+                # Check if this is an anonymous structure (starts with TYPEDEF_)
+                if child.startswith("TYPEDEF_"):
+                    self._add_result(
+                        ValidationLevel.WARNING,
+                        f"Anonymous structure '{child}' is referenced by multiple parents: {', '.join(parents)} - "
+                        f"this may indicate duplicate anonymous structure extraction",
+                        filename,
+                    )
+                else:
+                    self._add_result(
+                        ValidationLevel.ERROR,
+                        f"Child class '{child}' has multiple container parents: {', '.join(parents)} - "
+                        f"each class can have only one container parent",
+                        filename,
+                    )
             elif len(parents) == 1:
                 # This is valid - child has exactly one parent
                 pass
