@@ -241,20 +241,34 @@ class AnonymousTypedefProcessor:
                 struct_info = self._extract_balanced_anonymous_struct(decl)
                 if struct_info:
                     struct_content, struct_type, field_name = struct_info
-                    # Create a special field type that preserves the anonymous structure
-                    field_type = f"{struct_type} {{ ... }} {field_name}"
-                    fields.append(Field(field_name, field_type))
+                    # Parse the actual content of the anonymous structure
+                    parsed_fields = self._parse_struct_fields(struct_content)
+                    if parsed_fields:
+                        # Create a field that references the parsed content
+                        field_type = f"{struct_type} {{ {', '.join([f'{f.type} {f.name}' for f in parsed_fields])} }}"
+                        fields.append(Field(field_name, field_type))
+                    else:
+                        # Fallback to placeholder if parsing fails
+                        field_type = f"{struct_type} {{ ... }} {field_name}"
+                        fields.append(Field(field_name, field_type))
                     continue
             elif self._has_balanced_anonymous_pattern_no_field_name(decl):
                 # Extract the anonymous struct content without field name
                 struct_info = self._extract_balanced_anonymous_struct_no_field_name(decl)
                 if struct_info:
                     struct_content, struct_type = struct_info
-                    # Create a special field type that preserves the anonymous structure
-                    field_type = f"{struct_type} {{ ... }}"
-                    # Generate a field name based on the struct type
-                    field_name = f"anonymous_{struct_type}"
-                    fields.append(Field(field_name, field_type))
+                    # Parse the actual content of the anonymous structure
+                    parsed_fields = self._parse_struct_fields(struct_content)
+                    if parsed_fields:
+                        # Create a field that references the parsed content
+                        field_type = f"{struct_type} {{ {', '.join([f'{f.type} {f.name}' for f in parsed_fields])} }}"
+                        field_name = f"anonymous_{struct_type}"
+                        fields.append(Field(field_name, field_type))
+                    else:
+                        # Fallback to placeholder if parsing fails
+                        field_type = f"{struct_type} {{ ... }}"
+                        field_name = f"anonymous_{struct_type}"
+                        fields.append(Field(field_name, field_type))
                     continue
             
             # Parse the field normally (no anonymous structures)
