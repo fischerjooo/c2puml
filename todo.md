@@ -156,63 +156,73 @@ typedef Process_Cfg_Process_fct Process_Cfg_Process_acpfct_t[PROCESSOR_CFG_MODUL
 2. **Typedef Relationships**: Some complex typedef relationships not properly visualized
 3. **Anonymous Structures**: Naming convention works but some relationships may be incorrect
 
-## Recommendations
+## Development Plan
 
-### Immediate Fixes (High Priority)
+### Phase 1: Fix Parsing Issues (High Priority)
 
-1. **Fix Array Initialization Parsing**
-   - Update tokenizer to properly handle global variable initializations
-   - Separate field parsing from initialization parsing
-   - Add specific handling for function pointer arrays
+#### 1.1 Fix Array Initialization Parsing
+- **Target**: `src/c2puml/core/parser_tokenizer.py` - Global variable parsing
+- **Issue**: Global variable initialization with complex array of function pointers
+- **Solution**: Update tokenizer to properly handle global variable initializations
+- **Test**: Write test for `Process_Cfg_Process_acpfct` initialization parsing
 
-2. **Fix Anonymous Typedef Naming**
-   - Fix anonymous structure processor to correctly identify parent type names
-   - Implement proper `ParentType_fieldName` naming convention
-   - Fix field boundary detection in complex nested structures
-   - Ensure parent type context is preserved in anonymous structure names
-   - Handle deeply nested anonymous structures correctly
+#### 1.2 Fix Anonymous Typedef Naming
+- **Target**: `src/c2puml/core/parser_tokenizer.py` - Anonymous structure processor
+- **Issue**: Anonymous structure naming is inconsistent and missing parent type names
+- **Solution**: Fix anonymous structure processor to correctly identify parent type names
+- **Test**: Write tests for `moderately_nested_t_level2_struct` naming
 
-3. **Fix Typedef Array Parsing**
-   - Add support for macro constants in array sizes
-   - Improve typedef relationship detection
-   - Handle complex typedef chains properly
+#### 1.3 Fix Field Boundary Detection
+- **Target**: `src/c2puml/core/parser_tokenizer.py` - Field parsing in complex nested structures
+- **Issue**: Malformed field types in complex nested structures
+- **Solution**: Fix field boundary detection in complex nested structures
+- **Test**: Write tests for `nested_a2` and `level3_field` parsing
 
-### Configuration Improvements (Medium Priority)
+#### 1.4 Fix Typedef Array Parsing
+- **Target**: `src/c2puml/core/parser_tokenizer.py` - Typedef parsing
+- **Issue**: Array typedefs with macro constants not parsed correctly
+- **Solution**: Add support for macro constants in array sizes
+- **Test**: Write test for `Process_Cfg_Process_acpfct_t[PROCESSOR_CFG_MODULE_COUNT]` parsing
 
-1. **Remove Duplicate Source Folder**
-   ```json
-   "source_folders": ["tests/example/source"]
-   ```
+### Phase 2: Configuration Improvements (Medium Priority)
 
-2. **Reduce Include Depth**
-   ```json
-   "include_depth": 3
-   ```
+#### 2.1 Remove Duplicate Source Folder
+- **Target**: `tests/example/config.json`
+- **Issue**: Duplicate source folder entry
+- **Solution**: Remove duplicate entry
+- **Test**: Verify no duplicate processing
 
-3. **Add File Filters**
-   ```json
-   "file_filters": {
-     "include": [".*\\.(c|h)$"],
-     "exclude": [".*test.*", ".*\\.bak$"]
-   }
-   ```
+#### 2.2 Reduce Include Depth
+- **Target**: `tests/example/config.json`
+- **Issue**: Excessive include depth (10)
+- **Solution**: Reduce to 3-5 for better performance
+- **Test**: Verify performance improvement
 
-### Code Quality Improvements (Low Priority)
+#### 2.3 Add File Filters
+- **Target**: `tests/example/config.json`
+- **Issue**: Empty file filters
+- **Solution**: Add appropriate include/exclude patterns
+- **Test**: Verify proper file filtering
 
-1. **Enhanced Error Handling**
-   - Add more specific error messages for parsing failures
-   - Implement recovery mechanisms for malformed code
-   - Add validation for complex C constructs
+### Phase 3: Quality Assurance (Low Priority)
 
-2. **Performance Optimization**
-   - Optimize tokenization for large files
-   - Implement caching for repeated patterns
-   - Add progress reporting for large projects
+#### 3.1 Enhanced Error Handling
+- **Target**: All core modules
+- **Issue**: Generic error messages for parsing failures
+- **Solution**: Add more specific error messages and recovery mechanisms
+- **Test**: Verify better error reporting
 
-3. **Documentation Updates**
-   - Add examples for complex C constructs
-   - Document known limitations
-   - Provide troubleshooting guide for parsing issues
+#### 3.2 Performance Optimization
+- **Target**: Tokenizer and parser
+- **Issue**: Potential performance issues with large files
+- **Solution**: Optimize tokenization and add caching
+- **Test**: Verify performance improvements
+
+#### 3.3 Documentation Updates
+- **Target**: All documentation files
+- **Issue**: Missing examples for complex C constructs
+- **Solution**: Add comprehensive examples and troubleshooting guide
+- **Test**: Verify documentation completeness
 
 ## Test-Driven Development Plan
 
@@ -258,6 +268,28 @@ typedef Process_Cfg_Process_fct Process_Cfg_Process_acpfct_t[PROCESSOR_CFG_MODUL
 2. **Short-term**: Implement configuration improvements
 3. **Medium-term**: Add comprehensive error handling
 4. **Long-term**: Performance optimization and advanced features
+
+## Current Development Status
+
+### Analysis Complete ✅
+- [x] Read all .mdc and .md files
+- [x] Analyzed todo.md issues
+- [x] Ran all tests (444 passing)
+- [x] Ran example workflow
+- [x] Identified specific parsing issues
+- [x] Created comprehensive development plan
+
+### Ready to Start Development ✅
+- [x] Understanding of application architecture
+- [x] Clear issue identification
+- [x] Test-driven development plan
+- [x] Priority-based approach
+
+### Next Action: Begin Phase 1 Implementation
+1. Start with array initialization parsing fix
+2. Write failing tests first (TDD approach)
+3. Implement fixes incrementally
+4. Verify with comprehensive testing
 
 ## Conclusion
 
