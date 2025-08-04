@@ -81,7 +81,8 @@ class AnonymousTypedefProcessor:
                 # Track the relationship
                 if alias_name not in file_model.anonymous_relationships:
                     file_model.anonymous_relationships[alias_name] = []
-                file_model.anonymous_relationships[alias_name].append(anon_name)
+                if anon_name not in file_model.anonymous_relationships[alias_name]:
+                    file_model.anonymous_relationships[alias_name].append(anon_name)
                 
                 # Replace the anonymous structure in the original type with a reference
                 updated_type = self._replace_anonymous_struct_with_reference(
@@ -485,7 +486,8 @@ class AnonymousTypedefProcessor:
             # Track the relationship
             if parent_name not in file_model.anonymous_relationships:
                 file_model.anonymous_relationships[parent_name] = []
-            file_model.anonymous_relationships[parent_name].append(anon_name)
+            if anon_name not in file_model.anonymous_relationships[parent_name]:
+                file_model.anonymous_relationships[parent_name].append(anon_name)
             
             # Update the field type to reference the named structure
             field.type = anon_name
@@ -516,7 +518,8 @@ class AnonymousTypedefProcessor:
                     # Track the relationship
                     if parent_name not in file_model.anonymous_relationships:
                         file_model.anonymous_relationships[parent_name] = []
-                    file_model.anonymous_relationships[parent_name].append(anon_name)
+                    if anon_name not in file_model.anonymous_relationships[parent_name]:
+                        file_model.anonymous_relationships[parent_name].append(anon_name)
                     
                     # Update the field type to reference the named structure  
                     field.type = anon_name
@@ -546,7 +549,8 @@ class AnonymousTypedefProcessor:
                 # Track the relationship
                 if parent_name not in file_model.anonymous_relationships:
                     file_model.anonymous_relationships[parent_name] = []
-                file_model.anonymous_relationships[parent_name].append(anon_name)
+                if anon_name not in file_model.anonymous_relationships[parent_name]:
+                    file_model.anonymous_relationships[parent_name].append(anon_name)
                 
                 # Update the field type to reference the named structure
                 field.type = anon_name
@@ -570,7 +574,8 @@ class AnonymousTypedefProcessor:
                 # Track the relationship
                 if parent_name not in file_model.anonymous_relationships:
                     file_model.anonymous_relationships[parent_name] = []
-                file_model.anonymous_relationships[parent_name].append(anon_name)
+                if anon_name not in file_model.anonymous_relationships[parent_name]:
+                    file_model.anonymous_relationships[parent_name].append(anon_name)
                 
                 # Update the field type to reference the named structure
                 field.type = anon_name
@@ -595,7 +600,8 @@ class AnonymousTypedefProcessor:
                 # Track the relationship
                 if parent_name not in file_model.anonymous_relationships:
                     file_model.anonymous_relationships[parent_name] = []
-                file_model.anonymous_relationships[parent_name].append(anon_name)
+                if anon_name not in file_model.anonymous_relationships[parent_name]:
+                    file_model.anonymous_relationships[parent_name].append(anon_name)
                 
                 # Update the field type to reference the named structure
                 field.type = anon_name
@@ -619,7 +625,8 @@ class AnonymousTypedefProcessor:
                     # Track the relationship
                     if parent_name not in file_model.anonymous_relationships:
                         file_model.anonymous_relationships[parent_name] = []
-                    file_model.anonymous_relationships[parent_name].append(anon_name)
+                    if anon_name not in file_model.anonymous_relationships[parent_name]:
+                        file_model.anonymous_relationships[parent_name].append(anon_name)
                     
                     # Update the field type to reference the named structure
                     field.type = self._replace_anonymous_struct_with_reference(
@@ -674,7 +681,8 @@ class AnonymousTypedefProcessor:
                 # Update the anonymous relationships
                 if struct_name not in file_model.anonymous_relationships:
                     file_model.anonymous_relationships[struct_name] = []
-                file_model.anonymous_relationships[struct_name].append(extracted_entity_to_add)
+                if extracted_entity_to_add not in file_model.anonymous_relationships[struct_name]:
+                    file_model.anonymous_relationships[struct_name].append(extracted_entity_to_add)
         
         # Special case: Handle the level 2 struct that should reference the level 3 union
         # Look for the specific case where moderately_nested_t_level2_struct has flattened fields
@@ -698,7 +706,8 @@ class AnonymousTypedefProcessor:
                 # Update the anonymous relationships
                 if target_struct_name not in file_model.anonymous_relationships:
                     file_model.anonymous_relationships[target_struct_name] = []
-                file_model.anonymous_relationships[target_struct_name].append("level3_union")
+                if "level3_union" not in file_model.anonymous_relationships[target_struct_name]:
+                    file_model.anonymous_relationships[target_struct_name].append("level3_union")
 
     def _update_entity_field_references(self, file_model: FileModel, entity_name: str, entity_data) -> None:
         """Update field references in an entity to point to extracted entities."""
