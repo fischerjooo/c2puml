@@ -476,12 +476,12 @@
         {
           "name": "Process_Cfg_Process_acpfct",
           "type": "Process_Cfg_Process_acpfct_t",
-          "value": "{ \n & ProcessorAdapter_Process , \n & ProcessorService_Process , \n & ProcessorHardware_Process , \n }"
+          "value": "{&ProcessorAdapter_Process,&ProcessorService_Process,&ProcessorHardware_Process, }"
         },
         {
           "name": "global_math_ops",
           "type": "math_operation_t[10]",
-          "value": "{ NULL }"
+          "value": "{NULL}"
         }
       ],
       "include_relations": [],
@@ -5499,7 +5499,7 @@
         {
           "name": "global_buffer",
           "type": "MyBuffer",
-          "value": "{ 0 U , NULL }"
+          "value": "{0 U, NULL}"
         },
         {
           "name": "global_complex",
