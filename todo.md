@@ -54,13 +54,19 @@ The C2PlantUML application is a well-structured Python tool for converting C/C++
 - [x] Verified fix with comprehensive testing
 - [x] Confirmed reduction in verification warnings (3 → 2)
 
-### Phase 3: Anonymous Typedef Naming Issues - IN PROGRESS
+### Phase 3: Anonymous Typedef Naming Issues - COMPLETED ✅
 - [x] Identified specific malformed field types
 - [x] Analyzed field parsing logic in `parser_tokenizer.py`
 - [x] Created test to reproduce the issue
-- [ ] Implement robust field boundary detection
-- [ ] Test fix with complex nested structures
-- [ ] Verify reduction in verification warnings
+- [x] Created fixed tokenizer implementation
+- [x] Replaced original tokenizer with fixed version
+- [x] Fixed anonymous structure processor to use robust token-based parsing
+- [x] Test fix with complex nested structures
+- [x] Verified reduction in verification warnings
+
+**Resolution**: Updated the `_parse_struct_fields` method in `parser_anonymous_processor.py` to use the robust token-based approach from `find_struct_fields` instead of the simple string-based approach. This fixed the field boundary detection issues that were causing malformed field types like `"} nested_struct_a; struct { int"`.
+
+**Impact**: Model verification now passes with "Model verification passed - all values look sane" instead of showing suspicious field type warnings.
 
 ### Phase 4: Anonymous Structure Naming Issue - PENDING
 - [ ] Investigate duplicate anonymous structure processing

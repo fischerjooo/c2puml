@@ -1157,7 +1157,7 @@ def extract_token_range(tokens: List[Token], start: int, end: int) -> str:
 def find_struct_fields(
     tokens: List[Token], struct_start: int, struct_end: int
 ) -> List[Tuple[str, str]]:
-    """Extract field information from struct token range
+    """Extract field information from struct token range with improved logic
     Returns:
         List of tuples (field_name, field_type)
     """
@@ -1215,19 +1215,51 @@ def find_struct_fields(
             # This might be a nested structure, continue collecting until we find the field name
             temp_pos = pos
             brace_count = 0  # Track nested braces to find the correct field boundary
-            while temp_pos < len(tokens):
+            field_complete = False
+            
+            # First, collect all tokens until we find the closing brace of this nested structure
+            while temp_pos < len(tokens) and not field_complete:
                 if tokens[temp_pos].type == TokenType.LBRACE:
                     brace_count += 1
                 elif tokens[temp_pos].type == TokenType.RBRACE:
                     brace_count -= 1
+                    # If we're back to brace_count == 0, we've found the closing brace of this nested structure
+                    if brace_count == 0:
+                        # Look for the field name after this closing brace
+                        name_pos = temp_pos + 1
+                        while name_pos < len(tokens):
+                            if tokens[name_pos].type == TokenType.IDENTIFIER:
+                                # Found the field name, now look for the semicolon
+                                semicolon_pos = name_pos + 1
+                                while semicolon_pos < len(tokens):
+                                    if tokens[semicolon_pos].type == TokenType.SEMICOLON:
+                                        # Found the complete field, collect all tokens up to the semicolon
+                                        for i in range(temp_pos + 1, semicolon_pos + 1):
+                                            if tokens[i].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                                                field_tokens.append(tokens[i])
+                                        pos = semicolon_pos + 1
+                                        field_complete = True
+                                        break
+                                    elif tokens[semicolon_pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                                        # Found something other than whitespace before semicolon, this is not a valid field
+                                        break
+                                    semicolon_pos += 1
+                                break
+                            elif tokens[name_pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                                # Found something other than whitespace before identifier, this is not a valid field
+                                break
+                            name_pos += 1
+                        break
                 elif tokens[temp_pos].type == TokenType.SEMICOLON and brace_count == 0:
                     # Found the semicolon that ends the field (not inside nested braces)
                     break
                 
-                if tokens[temp_pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                if not field_complete and tokens[temp_pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
                     field_tokens.append(tokens[temp_pos])
                 temp_pos += 1
-            pos = temp_pos
+            
+            if not field_complete:
+                pos = temp_pos
 
         # Parse field from collected tokens
         if len(field_tokens) >= 2:
@@ -1321,9 +1353,7 @@ def find_struct_fields(
                         break
 
                 if name_end is not None:
-                    field_name = " ".join(
-                        t.value for t in field_tokens[name_start:name_end]
-                    )
+                    field_name = field_tokens[name_start].value
 
                     # Format the type properly - preserve spaces between tokens but not around brackets/parentheses
                     formatted_tokens = []
@@ -1452,6 +1482,7 @@ def find_struct_fields(
                         fields.append((stripped_name, stripped_type))
         if pos < closing_brace_pos:
             pos += 1  # Skip semicolon
+    
     return fields
 
 

@@ -254,7 +254,62 @@ class AnonymousTypedefProcessor:
         return Union(name, fields, tag_name="")
 
     def _parse_struct_fields(self, content: str) -> List[Field]:
-        """Parse struct/union fields from content."""
+        """Parse struct/union fields from content using tokenizer approach."""
+        from .parser_tokenizer import CTokenizer, find_struct_fields, TokenType
+        
+        # Create a complete struct definition from the content
+        struct_def = f"struct {{ {content} }}"
+        
+        # Tokenize the content
+        tokenizer = CTokenizer()
+        tokens = tokenizer.tokenize(struct_def)
+        
+        # Find the struct definition
+        struct_start = None
+        struct_end = None
+        
+        # Find struct (skip whitespace)
+        for i in range(len(tokens) - 1):
+            if tokens[i].type == TokenType.STRUCT:
+                # Find the next LBRACE token
+                j = i + 1
+                while j < len(tokens) and tokens[j].type in [TokenType.WHITESPACE, TokenType.NEWLINE]:
+                    j += 1
+                if j < len(tokens) and tokens[j].type == TokenType.LBRACE:
+                    struct_start = j  # Start at the opening brace
+                    break
+        
+        if struct_start:
+            # Find the closing brace
+            brace_count = 1
+            for j in range(struct_start + 1, len(tokens)):
+                if tokens[j].type == TokenType.LBRACE:
+                    brace_count += 1
+                elif tokens[j].type == TokenType.RBRACE:
+                    brace_count -= 1
+                    if brace_count == 0:
+                        struct_end = j
+                        break
+        
+        if struct_start is not None and struct_end is not None:
+            # Parse fields using the robust find_struct_fields function
+            field_tuples = find_struct_fields(tokens, struct_start, struct_end)
+            
+            # Convert to Field objects
+            fields = []
+            for field_name, field_type in field_tuples:
+                try:
+                    fields.append(Field(field_name, field_type))
+                except ValueError as e:
+                    print(f"Warning: Error creating field {field_name}: {e}")
+            
+            return fields
+        
+        # Fallback to the old string-based approach if tokenization fails
+        return self._parse_struct_fields_fallback(content)
+    
+    def _parse_struct_fields_fallback(self, content: str) -> List[Field]:
+        """Fallback string-based parsing for struct/union fields."""
         fields = []
         
         # Check if content has braces (full struct content) or not (just field content)
@@ -313,7 +368,7 @@ class AnonymousTypedefProcessor:
                 if struct_info:
                     struct_content, struct_type, field_name = struct_info
                     # Parse the actual content of the anonymous structure
-                    parsed_fields = self._parse_struct_fields(struct_content)
+                    parsed_fields = self._parse_struct_fields_fallback(struct_content)
                     if parsed_fields:
                         # Create a field that references the parsed content
                         field_type = f"{struct_type} {{ {', '.join([f'{f.type} {f.name}' for f in parsed_fields])} }}"
@@ -329,7 +384,7 @@ class AnonymousTypedefProcessor:
                 if struct_info:
                     struct_content, struct_type = struct_info
                     # Parse the actual content of the anonymous structure
-                    parsed_fields = self._parse_struct_fields(struct_content)
+                    parsed_fields = self._parse_struct_fields_fallback(struct_content)
                     if parsed_fields:
                         # Create a field that references the parsed content
                         field_type = f"{struct_type} {{ {', '.join([f'{f.type} {f.name}' for f in parsed_fields])} }}"
