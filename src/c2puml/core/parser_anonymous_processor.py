@@ -159,21 +159,9 @@ class AnonymousTypedefProcessor:
         
         return anonymous_structs
 
-    def _generate_anonymous_name(self, parent_name: str, struct_type: str, counter: int = None, field_name: str = None) -> str:
-        """Generate a name for an anonymous structure."""
-        if field_name:
-            return f"{parent_name}_{field_name}"
-        else:
-            # For anonymous structures without field names, use a simple naming scheme
-            # without the "anonymous_type_number" pattern
-            if counter is None:
-                if parent_name not in self.anonymous_counters:
-                    self.anonymous_counters[parent_name] = {}
-                if struct_type not in self.anonymous_counters[parent_name]:
-                    self.anonymous_counters[parent_name][struct_type] = 0
-                self.anonymous_counters[parent_name][struct_type] += 1
-                counter = self.anonymous_counters[parent_name][struct_type]
-            return f"{parent_name}_{struct_type}_{counter}"
+    def _generate_anonymous_name(self, parent_name: str, struct_type: str, field_name: str) -> str:
+        """Generate a name for an anonymous structure. Field name is always required."""
+        return f"{parent_name}_{field_name}"
 
     def _create_anonymous_struct(self, name: str, content: str) -> Struct:
         """Create an anonymous struct from content."""
