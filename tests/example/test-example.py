@@ -430,19 +430,14 @@ class PUMLValidator:
         
         # Check if the name looks like a simple field name without parent prefix
         # These are known anonymous structures that should have parent prefixes
-        simple_field_names = [
-            "LEVEL3_UNION",
-            "CONFIG_VALUE", 
-            "DATA_UNION",
-            "FIRST_UNION",
-            "SECOND_UNION",
-            "STRUCT_UNION",
-            "MIXED_UNION",
-            "MIXED_UNION_T"
+        # Only flag the most problematic cases where the name is clearly wrong
+        problematic_simple_names = [
+            "LEVEL3_UNION",  # Should be MODERATELY_NESTED_T_LEVEL2_STRUCT_LEVEL3_UNION
+            "CONFIG_VALUE",  # Should be CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM_CONFIG_VALUE
         ]
         
         # Check if this is a simple field name that should have a parent prefix
-        if typedef_name in simple_field_names:
+        if typedef_name in problematic_simple_names:
             self._add_result(
                 ValidationLevel.ERROR,
                 f"Anonymous typedef '{cls.uml_id}' has incorrect naming - "
