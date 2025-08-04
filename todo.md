@@ -72,14 +72,16 @@ The C2PlantUML application is a well-structured Python tool for converting C/C++
 - [x] Identified remaining issues: empty content errors and duplicate anonymous structure warnings
 - [x] Investigate empty content errors in PlantUML generation
 - [x] Fixed anonymous structure field parsing in `_parse_struct_fields` method
-- [ ] Investigate duplicate anonymous structure processing
-- [ ] Implement deduplication logic
+- [x] Investigate duplicate anonymous structure processing
+- [ ] Implement deduplication logic fix
 - [ ] Test with complex nested structures
 - [ ] Verify complete resolution of all warnings and errors
 
 **Resolution**: Fixed the `_parse_struct_fields` method in `parser_anonymous_processor.py` to properly handle cases where the content is already a complete struct/union definition. The method was incorrectly wrapping complete struct definitions in additional braces, causing the tokenizer to fail to find the correct field boundaries.
 
-**Impact**: Empty content errors resolved (0 errors, down from 2). Anonymous structures in function pointer parameters now correctly extract their fields.
+**Impact**: Empty content errors resolved (0 errors, down from 2). Anonymous structures in function pointer parameters now correctly extract their fields. Test suite maintains baseline with 450 passing tests (8 failures remain, same as before fix).
+
+**Current Issue**: Duplicate anonymous structure warnings persist due to deduplication logic not working correctly for structures with identical content but different parent contexts. The same union `{ int level3_int; float level3_float; }` is being extracted as both `TYPEDEF_LEVEL3_UNION` and `TYPEDEF___ANONYMOUS_STRUCT___LEVEL3_UNION`.
 
 ## Technical Details
 

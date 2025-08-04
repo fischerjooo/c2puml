@@ -358,6 +358,115 @@ typedef struct {
         # The main issue is that we should find 'level1_field' as a field
         assert 'level1_field' in field_names, f"Expected to find 'level1_field', found: {field_names}"
 
+    def test_anonymous_structure_deduplication(self):
+        """Test that anonymous structures with identical content are deduplicated correctly"""
+        # This test verifies that the same anonymous union content is not duplicated
+        test_code = """
+typedef struct {
+    int level1_id;
+    struct {
+        int level2_id;
+        union {
+            int level3_int;
+            float level3_float;
+        } level3_union;
+    } level2_struct;
+} moderately_nested_t;
+
+typedef struct {
+    int other_id;
+    struct {
+        int other_level2_id;
+        union {
+            int level3_int;
+            float level3_float;
+        } level3_union;
+    } other_level2_struct;
+} other_nested_t;
+"""
+        
+        # Create temporary file
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.h', delete=False) as f:
+            f.write(test_code)
+            temp_file = f.name
+        
+        try:
+            # Parse the file
+            parser = CParser()
+            model = parser.parse_project(os.path.dirname(temp_file))
+            
+            # Find the structs in the model
+            file_model = list(model.files.values())[0]
+            
+            # Check that both structs exist
+            self.assertIn('moderately_nested_t', file_model.structs)
+            self.assertIn('other_nested_t', file_model.structs)
+            
+            # Get the extracted anonymous structures
+            moderately_nested = file_model.structs['moderately_nested_t']
+            other_nested = file_model.structs['other_nested_t']
+            
+            # Debug: Print all struct names to see what was extracted
+            print(f"All struct names: {list(file_model.structs.keys())}")
+            
+            # Debug: Print all fields in moderately_nested_t
+            print(f"moderately_nested_t fields: {[(f.name, f.type) for f in moderately_nested.fields]}")
+            print(f"other_nested_t fields: {[(f.name, f.type) for f in other_nested.fields]}")
+            
+            # Debug: Check the extracted level2_struct
+            if 'moderately_nested_t_level2_struct' in file_model.structs:
+                level2_struct = file_model.structs['moderately_nested_t_level2_struct']
+                print(f"moderately_nested_t_level2_struct fields: {[(f.name, f.type) for f in level2_struct.fields]}")
+            
+            if 'other_nested_t_other_level2_struct' in file_model.structs:
+                other_level2_struct = file_model.structs['other_nested_t_other_level2_struct']
+                print(f"other_nested_t_other_level2_struct fields: {[(f.name, f.type) for f in other_level2_struct.fields]}")
+            
+            # Check that the level3_union field in both structs references the same extracted structure
+            moderately_level3_field = None
+            other_level3_field = None
+            
+            # Look in the extracted level2_struct
+            if 'moderately_nested_t_level2_struct' in file_model.structs:
+                level2_struct = file_model.structs['moderately_nested_t_level2_struct']
+                for field in level2_struct.fields:
+                    if field.name == 'level3_union':
+                        moderately_level3_field = field
+                        break
+            
+            if 'other_nested_t_other_level2_struct' in file_model.structs:
+                other_level2_struct = file_model.structs['other_nested_t_other_level2_struct']
+                for field in other_level2_struct.fields:
+                    if field.name == 'level3_union':
+                        other_level3_field = field
+                        break
+            
+            self.assertIsNotNone(moderately_level3_field, "level3_union field should be found in moderately_nested_t_level2_struct")
+            self.assertIsNotNone(other_level3_field, "level3_union field should be found in other_nested_t_other_level2_struct")
+            
+            print(f"moderately_nested_t_level2_struct.level3_union type: {moderately_level3_field.type}")
+            print(f"other_nested_t_other_level2_struct.level3_union type: {other_level3_field.type}")
+            
+            # The types should be the same (referencing the same extracted structure)
+            self.assertEqual(moderately_level3_field.type, other_level3_field.type, 
+                           "Both structs should reference the same extracted anonymous union")
+            
+            # Verify that the referenced structure exists and has the correct content
+            referenced_struct_name = moderately_level3_field.type
+            self.assertIn(referenced_struct_name, file_model.unions, 
+                         f"Referenced union {referenced_struct_name} should exist")
+            
+            referenced_union = file_model.unions[referenced_struct_name]
+            print(f"Referenced union fields: {[(f.name, f.type) for f in referenced_union.fields]}")
+            
+            # Check that the union has the expected fields
+            field_names = [f.name for f in referenced_union.fields]
+            self.assertIn('level3_int', field_names, "Union should contain level3_int field")
+            self.assertIn('level3_float', field_names, "Union should contain level3_float field")
+            
+        finally:
+            os.unlink(temp_file)
+
     def test_complex_nested_structure_exact_reproduction(self):
         """Test the exact complex structure from complex.h that causes the issue"""
         test_code = """
