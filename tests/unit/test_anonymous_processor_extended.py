@@ -331,6 +331,84 @@ class TestAnonymousTypedefProcessorExtended(unittest.TestCase):
         self.assertIn("main_struct", file_model.anonymous_relationships)
         self.assertIn("main_union", file_model.anonymous_relationships)
 
+    def test_duplicate_anonymous_structure_deduplication(self):
+        """Test that duplicate anonymous structures are properly deduplicated."""
+        processor = AnonymousTypedefProcessor()
+        file_model = FileModel("test.c")
+        
+        # Create a complex structure with the same anonymous union appearing in multiple places
+        complex_struct = Struct("complex_naming_test_t", [
+            Field("first_struct", "struct { int first_a; union { int level3_int; float level3_float; } level3_union; }")
+        ], tag_name="")
+        
+        file_model.structs["complex_naming_test_t"] = complex_struct
+        
+        # Process the file model
+        processor.process_file_model(file_model)
+        
+        # Check that only one anonymous union was created for the same content
+        union_names = list(file_model.unions.keys())
+        level3_unions = [name for name in union_names if "level3" in name.lower()]
+        
+        # Should have only one level3 union, not multiple
+        self.assertEqual(len(level3_unions), 1, f"Expected 1 level3 union, found {len(level3_unions)}: {level3_unions}")
+        
+        # Check that the anonymous relationships are correct
+        if "complex_naming_test_t" in file_model.anonymous_relationships:
+            relationships = file_model.anonymous_relationships["complex_naming_test_t"]
+            # Should reference the same union structure
+            self.assertEqual(len(relationships), 1, f"Expected 1 relationship, found {len(relationships)}: {relationships}")
+        
+        print(f"Created unions: {list(file_model.unions.keys())}")
+        print(f"Anonymous relationships: {file_model.anonymous_relationships}")
+
+    def test_multiple_parent_anonymous_structure_deduplication(self):
+        """Test that the same anonymous structure content in multiple parents is properly deduplicated."""
+        processor = AnonymousTypedefProcessor()
+        file_model = FileModel("test.c")
+        
+        # Create multiple structures that contain the same anonymous union content
+        # This reproduces the issue from the warnings
+        struct1 = Struct("TYPEDEF___ANONYMOUS_STRUCT__", [
+            Field("level3_union", "union { int level3_int; float level3_float; }")
+        ], tag_name="")
+        
+        struct2 = Struct("TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT", [
+            Field("level3_union", "union { int level3_int; float level3_float; }")
+        ], tag_name="")
+        
+        file_model.structs["TYPEDEF___ANONYMOUS_STRUCT__"] = struct1
+        file_model.structs["TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT"] = struct2
+        
+        # Process the file model
+        processor.process_file_model(file_model)
+        
+        # Check that only one anonymous union was created for the same content
+        union_names = list(file_model.unions.keys())
+        level3_unions = [name for name in union_names if "level3" in name.lower()]
+        
+        # Should have only one level3 union, not multiple
+        self.assertEqual(len(level3_unions), 1, f"Expected 1 level3 union, found {len(level3_unions)}: {level3_unions}")
+        
+        # Check that both parent structures reference the same union
+        if "TYPEDEF___ANONYMOUS_STRUCT__" in file_model.anonymous_relationships:
+            relationships1 = file_model.anonymous_relationships["TYPEDEF___ANONYMOUS_STRUCT__"]
+            self.assertEqual(len(relationships1), 1, f"Expected 1 relationship for struct1, found {len(relationships1)}")
+        
+        if "TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT" in file_model.anonymous_relationships:
+            relationships2 = file_model.anonymous_relationships["TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT"]
+            self.assertEqual(len(relationships2), 1, f"Expected 1 relationship for struct2, found {len(relationships2)}")
+        
+        # Both should reference the same union
+        if ("TYPEDEF___ANONYMOUS_STRUCT__" in file_model.anonymous_relationships and 
+            "TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT" in file_model.anonymous_relationships):
+            union1 = file_model.anonymous_relationships["TYPEDEF___ANONYMOUS_STRUCT__"][0]
+            union2 = file_model.anonymous_relationships["TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT"][0]
+            self.assertEqual(union1, union2, f"Both structures should reference the same union: {union1} vs {union2}")
+        
+        print(f"Created unions: {list(file_model.unions.keys())}")
+        print(f"Anonymous relationships: {file_model.anonymous_relationships}")
+
 
 if __name__ == "__main__":
     unittest.main()
