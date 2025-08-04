@@ -627,21 +627,13 @@
         ],
         "callback_with_anon_struct_t": [
           "callback_with_anon_struct_t_anonymous_struct_1",
-          "callback_with_anon_struct_t_anonymous_struct_1",
-          "callback_with_anon_struct_t_anonymous_struct_1",
-          "callback_with_anon_struct_t_anonymous_union_2",
-          "callback_with_anon_struct_t_anonymous_union_2",
           "callback_with_anon_struct_t_anonymous_union_2"
         ],
         "callback_with_anon_struct_t_anonymous_struct_1": [
           "callback_with_anon_struct_t_anonymous_struct_1_anonymous_union_1",
-          "callback_with_anon_struct_t_anonymous_struct_1_anonymous_union_1",
-          "callback_with_anon_struct_t_anonymous_struct_1_anonymous_union_1",
           "config_value"
         ],
         "complex_callback_t": [
-          "complex_callback_t_anonymous_struct_1",
-          "complex_callback_t_anonymous_struct_1",
           "complex_callback_t_anonymous_struct_1"
         ],
         "complex_handler_t": [
@@ -655,7 +647,6 @@
           "complex_naming_test_t_third_struct"
         ],
         "complex_naming_test_t_first_struct": [
-          "complex_naming_test_t_first_struct_anonymous_struct_1",
           "complex_naming_test_t_first_struct_anonymous_struct_1"
         ],
         "complex_naming_test_t_mixed_union": [
@@ -676,7 +667,6 @@
           "extreme_nesting_test_t_level2_struct_2"
         ],
         "extreme_nesting_test_t_level2_struct_1": [
-          "extreme_nesting_test_t_level2_struct_1_anonymous_struct_1",
           "extreme_nesting_test_t_level2_struct_1_anonymous_struct_1"
         ],
         "extreme_nesting_test_t_level2_struct_2": [
