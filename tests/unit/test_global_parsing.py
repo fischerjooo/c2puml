@@ -297,6 +297,131 @@ class TestGlobalParsing(unittest.TestCase):
         finally:
             os.unlink(temp_file)
 
+    def test_parse_anonymous_typedef_naming_issue(self):
+        """Test parsing the specific anonymous typedef naming issue from complex.h"""
+        content = """
+        typedef struct {
+            // First level - multiple structs
+            struct {
+                int first_a;
+                struct {
+                    int nested_a1;
+                    struct {
+                        int deep_a1;
+                    } deep_struct_a1;
+                    struct {
+                        int deep_a2;
+                    } deep_struct_a2;
+                } nested_struct_a;
+                struct {
+                    int nested_a2;
+                } nested_struct_a2;
+            } first_struct;
+            
+            struct {
+                struct {
+                    struct {
+                        int level4_field;
+                    } level4_struct_1;
+                    struct {
+                        int level4_field2;
+                    } level4_struct_2;
+                } level3_struct_1;
+                struct {
+                    int level3_field;
+                } level3_struct_2;
+            } level2_struct_1;
+        } complex_naming_test_t;
+        """
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".h", delete=False) as f:
+            f.write(content)
+            temp_file = f.name
+
+        try:
+            file_model = self.parser.parse_file(Path(temp_file), Path(temp_file).name)
+            
+            # Should parse the typedef struct
+            self.assertIn("complex_naming_test_t", file_model.structs)
+            
+            # Get the struct
+            struct = file_model.structs["complex_naming_test_t"]
+            
+            # Check that fields are properly parsed
+            field_names = [field.name for field in struct.fields]
+            self.assertIn("first_struct", field_names)
+            self.assertIn("level2_struct_1", field_names)
+            
+            # The field types should not contain malformed content
+            for field in struct.fields:
+                # Should not contain suspicious field type patterns
+                self.assertNotIn("} nested_struct_a; struct { int", field.type)
+                self.assertNotIn("} level3_struct_1; struct { int", field.type)
+                # Should not contain excessive closing braces followed by struct keywords
+                self.assertNotIn("} struct {", field.type)
+                # Should not contain malformed field boundaries
+                self.assertNotIn("} level3_struct_1; struct { int", field.type)
+            
+        finally:
+            os.unlink(temp_file)
+
+    def test_parse_exact_anonymous_typedef_issue(self):
+        """Test parsing the exact anonymous typedef issue from complex.h"""
+        content = """
+        typedef struct {
+            // First level - multiple structs
+            struct {
+                int first_a;
+                struct {
+                    int nested_a1;
+                    struct {
+                        int deep_a1;
+                    } deep_struct_a1;
+                    struct {
+                        int deep_a2;
+                    } deep_struct_a2;
+                } nested_struct_a;
+                struct {
+                    int nested_a2;
+                } nested_struct_a2;
+            } first_struct;
+        } complex_naming_test_t;
+        """
+
+        # Create a temporary file
+        temp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.h', delete=False)
+        try:
+            temp_file.write(content)
+            temp_file.close()
+            
+            parser = CParser()
+            result = parser.parse_file(Path(temp_file.name), "test.h")
+            
+            # Find the complex_naming_test_t struct
+            if "complex_naming_test_t" in result.structs:
+                struct = result.structs["complex_naming_test_t"]
+                # Debug: print all field names to see what's being parsed
+                field_names = [field.name for field in struct.fields]
+                print(f"DEBUG: Found fields in complex_naming_test_t: {field_names}")
+                
+                # Check that first_struct field exists and has the correct type
+                field_found = False
+                for field in struct.fields:
+                    if field.name == "first_struct":
+                        field_found = True
+                        # The type should be a struct type, not a malformed type
+                        self.assertIn("struct", field.type, 
+                                     f"Field first_struct should have a struct type, but got '{field.type}'")
+                        # Should not contain malformed field type patterns
+                        self.assertNotIn("} nested_struct_a; struct { int", field.type,
+                                        f"Field first_struct should not contain malformed field type patterns")
+                        break
+                self.assertTrue(field_found, "Field first_struct not found in complex_naming_test_t")
+            else:
+                self.fail("Struct complex_naming_test_t not found")
+        finally:
+            os.unlink(temp_file.name)
+
 
 if __name__ == "__main__":
     unittest.main()
