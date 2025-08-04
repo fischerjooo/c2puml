@@ -715,6 +715,83 @@ struct {
         self.assertTrue(nested_struct_a2_found, "nested_struct_a2 field should be found")
         self.assertFalse(nested_a2_found, "nested_a2 should not be a field name")
 
+    def test_find_struct_fields_debug_complex(self):
+        """Test find_struct_fields directly with the complex nested structure to debug the issue."""
+        # The problematic structure from complex.h
+        code = """
+typedef struct {
+    struct {
+        struct {
+            int level3_field;
+        } level2_field;
+    } level1_field;
+} complex_naming_test_t;
+"""
+        
+        tokenizer = CTokenizer()
+        tokens = tokenizer.tokenize(code)
+        
+        # Find the struct start and end
+        struct_start = None
+        struct_end = None
+        
+        for i, token in enumerate(tokens):
+            if token.type == TokenType.TYPEDEF:
+                # Look for the opening brace after typedef struct
+                for j in range(i, len(tokens)):
+                    if tokens[j].type == TokenType.LBRACE:
+                        struct_start = j
+                        break
+                if struct_start:
+                    break
+        
+        if struct_start:
+            # Find the closing brace
+            brace_count = 1
+            for i in range(struct_start + 1, len(tokens)):
+                if tokens[i].type == TokenType.LBRACE:
+                    brace_count += 1
+                elif tokens[i].type == TokenType.RBRACE:
+                    brace_count -= 1
+                    if brace_count == 0:
+                        struct_end = i
+                        break
+        
+        print(f"Struct start: {struct_start}, Struct end: {struct_end}")
+        print(f"Tokens from {struct_start} to {struct_end}:")
+        for i in range(struct_start, min(struct_end + 1, len(tokens))):
+            print(f"  {i}: {tokens[i]}")
+        
+        if struct_start is not None and struct_end is not None:
+            fields = find_struct_fields(tokens, struct_start, struct_end)
+            print(f"Parsed fields: {fields}")
+            
+            # Check if we found the expected field
+            expected_field = "level1_field"
+            found = any(field[0] == expected_field for field in fields)
+            print(f"Expected field '{expected_field}' found: {found}")
+            
+            if not found:
+                print("Field not found! Let's examine the token sequence more carefully...")
+                # Let's look at the specific tokens around where we expect the field
+                for i in range(struct_start, struct_end + 1):
+                    if tokens[i].type == TokenType.IDENTIFIER and tokens[i].value == expected_field:
+                        print(f"Found '{expected_field}' at position {i}")
+                        # Show context around this position
+                        start_ctx = max(0, i - 10)
+                        end_ctx = min(len(tokens), i + 10)
+                        print("Context:")
+                        for j in range(start_ctx, end_ctx):
+                            marker = ">>>" if j == i else "   "
+                            print(f"{marker} {j}: {tokens[j]}")
+                        break
+            else:
+                print("Field found successfully!")
+            
+            assert found, f"Expected field '{expected_field}' not found in parsed fields: {fields}"
+        else:
+            self.fail("Could not find struct boundaries")
+
 
 if __name__ == '__main__':
     unittest.main()
