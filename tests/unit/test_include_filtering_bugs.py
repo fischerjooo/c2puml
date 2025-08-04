@@ -23,11 +23,14 @@ class TestIncludeFilteringBugs(unittest.TestCase):
         """
         Test that include filters are applied at all depths, not just depth 1.
         
-        This test reproduces the exact bug scenario from the user's question:
-        - Crypto_CancelJob.c includes Crypto.h and Crypto_Prv_CancelJob.h (depth 1)
-        - Crypto.h includes Crypto_Rb_Types.h, Crypto_Types.h, Crypto_MemMap.h (depth 2)
-        - Crypto_Prv_CancelJob.h includes Crypto_Prv_Check.h, Crypto_Prv_ErrorDetection.h (depth 2)
-        - Crypto_Types.h includes Crypto_Defines.h (depth 3)
+        This test creates a hierarchical include structure to verify that include
+        filters are properly applied at all depths, not just direct includes.
+        
+        Structure:
+        - processor.c includes worker.h and api.h (depth 1)
+        - api.h includes types.h, memory.h, platform.h (depth 2)
+        - worker.h includes validation.h, errors.h (depth 2)
+        - types.h includes constants.h (depth 3)
         
         The bug was that include filters were only applied at depth 1, allowing
         all transitive includes (depth 2+) to pass through even if they didn't
@@ -36,76 +39,76 @@ class TestIncludeFilteringBugs(unittest.TestCase):
         Expected behavior: Only includes matching the filter patterns should be
         present in include_relations, regardless of depth.
         """
-        # Create the exact project structure from the user's issue
+        # Create a project with hierarchical include structure
         project = ProjectModel(
-            project_name="crypto_test",
+            project_name="filter_test",
             source_folder="/test",
             files={}
         )
         
         # Main C file that includes two headers
-        crypto_cancel_job_c = FileModel(
-            file_path="Crypto_CancelJob.c",
-            includes={"Crypto_Prv_CancelJob.h", "Crypto.h"},
+        processor_c = FileModel(
+            file_path="processor.c",
+            includes={"worker.h", "api.h"},
             structs={}, enums={}, unions={}, functions=[], globals=[], 
             macros=[], aliases={}, include_relations=[]
         )
         
         # Private header that includes other private headers (should be filtered out at depth 2)
-        crypto_prv_cancel_job_h = FileModel(
-            file_path="Crypto_Prv_CancelJob.h",
-            includes={"Crypto_Prv_Check.h", "Crypto_Prv_ErrorDetection.h"},
+        worker_h = FileModel(
+            file_path="worker.h",
+            includes={"validation.h", "errors.h"},
             structs={}, enums={}, unions={}, functions=[], globals=[], 
             macros=[], aliases={}, include_relations=[]
         )
         
-        # Main crypto header that includes types and other headers (should be filtered out at depth 2)
-        crypto_h = FileModel(
-            file_path="Crypto.h",
-            includes={"Crypto_Rb_Types.h", "Crypto_Types.h", "Crypto_MemMap.h"},
+        # Main API header that includes types and other headers (should be filtered out at depth 2)
+        api_h = FileModel(
+            file_path="api.h",
+            includes={"types.h", "memory.h", "platform.h"},
             structs={}, enums={}, unions={}, functions=[], globals=[], 
             macros=[], aliases={}, include_relations=[]
         )
         
         # Types header that includes defines (should be filtered out at depth 3)
-        crypto_types_h = FileModel(
-            file_path="Crypto_Types.h",
-            includes={"Crypto_Defines.h"},
+        types_h = FileModel(
+            file_path="types.h",
+            includes={"constants.h"},
             structs={}, enums={}, unions={}, functions=[], globals=[], 
             macros=[], aliases={}, include_relations=[]
         )
         
         # Other headers that should be filtered out
-        crypto_rb_types_h = FileModel(
-            file_path="Crypto_Rb_Types.h",
+        memory_h = FileModel(
+            file_path="memory.h",
             includes={},
             structs={}, enums={}, unions={}, functions=[], globals=[], 
             macros=[], aliases={}, include_relations=[]
         )
         
-        crypto_defines_h = FileModel(
-            file_path="Crypto_Defines.h",
+        constants_h = FileModel(
+            file_path="constants.h",
             includes={},
             structs={}, enums={}, unions={}, functions=[], globals=[], 
             macros=[], aliases={}, include_relations=[]
         )
         
-        crypto_memmap_h = FileModel(
-            file_path="Crypto_MemMap.h",
+        platform_h = FileModel(
+            file_path="platform.h",
             includes={},
             structs={}, enums={}, unions={}, functions=[], globals=[], 
             macros=[], aliases={}, include_relations=[]
         )
         
-        crypto_prv_check_h = FileModel(
-            file_path="Crypto_Prv_Check.h",
+        validation_h = FileModel(
+            file_path="validation.h",
             includes={},
             structs={}, enums={}, unions={}, functions=[], globals=[], 
             macros=[], aliases={}, include_relations=[]
         )
         
-        crypto_prv_error_detection_h = FileModel(
-            file_path="Crypto_Prv_ErrorDetection.h",
+        errors_h = FileModel(
+            file_path="errors.h",
             includes={},
             structs={}, enums={}, unions={}, functions=[], globals=[], 
             macros=[], aliases={}, include_relations=[]
@@ -113,25 +116,25 @@ class TestIncludeFilteringBugs(unittest.TestCase):
         
         # Add all files to the project
         project.files = {
-            "Crypto_CancelJob.c": crypto_cancel_job_c,
-            "Crypto_Prv_CancelJob.h": crypto_prv_cancel_job_h,
-            "Crypto.h": crypto_h,
-            "Crypto_Types.h": crypto_types_h,
-            "Crypto_Rb_Types.h": crypto_rb_types_h,
-            "Crypto_Defines.h": crypto_defines_h,
-            "Crypto_MemMap.h": crypto_memmap_h,
-            "Crypto_Prv_Check.h": crypto_prv_check_h,
-            "Crypto_Prv_ErrorDetection.h": crypto_prv_error_detection_h
+            "processor.c": processor_c,
+            "worker.h": worker_h,
+            "api.h": api_h,
+            "types.h": types_h,
+            "memory.h": memory_h,
+            "constants.h": constants_h,
+            "platform.h": platform_h,
+            "validation.h": validation_h,
+            "errors.h": errors_h
         }
         
-        # Configure file-specific include filters exactly as in the user's issue
+        # Configure file-specific include filters to only allow specific patterns
         config = {
             "include_depth": 1,  # Global depth
             "file_specific": {
-                "Crypto_CancelJob.c": {
+                "processor.c": {
                     "include_filter": [
-                        "Crypto_Prv_CancelJob\\.h$",  # Only allow this private header
-                        "Crypto\\.h$"                  # Only allow the main crypto header
+                        "worker\\.h$",  # Only allow the worker header
+                        "api\\.h$"     # Only allow the API header
                     ],
                     "include_depth": 3  # Allow deeper includes, but only matching the filter
                 }
@@ -141,41 +144,41 @@ class TestIncludeFilteringBugs(unittest.TestCase):
         # Process include relations using the simplified method
         result = self.transformer._process_include_relations_simplified(project, config)
         
-        # Get the processed include relations for Crypto_CancelJob.c
-        cancel_job_relations = crypto_cancel_job_c.include_relations
+        # Get the processed include relations for processor.c
+        processor_relations = processor_c.include_relations
         
-        print(f"\nFound {len(cancel_job_relations)} include relations:")
-        for rel in cancel_job_relations:
+        print(f"\nFound {len(processor_relations)} include relations:")
+        for rel in processor_relations:
             print(f"  {rel.source_file} -> {rel.included_file} (depth {rel.depth})")
         
         # CRITICAL TEST: With the bug, we would see 8 relations (including filtered ones)
         # With the fix, we should see only 2 relations (matching the filter)
         
         # Expected relations (only these should be present):
-        # 1. Crypto_CancelJob.c -> Crypto.h (depth 1) - matches "Crypto\\.h$" 
-        # 2. Crypto_CancelJob.c -> Crypto_Prv_CancelJob.h (depth 1) - matches "Crypto_Prv_CancelJob\\.h$"
+        # 1. processor.c -> api.h (depth 1) - matches "api\\.h$" 
+        # 2. processor.c -> worker.h (depth 1) - matches "worker\\.h$"
         
         # With the bug, we would also see (these should NOT be present):
-        # 3. Crypto.h -> Crypto_Rb_Types.h (depth 2) - does NOT match filter
-        # 4. Crypto.h -> Crypto_Types.h (depth 2) - does NOT match filter  
-        # 5. Crypto.h -> Crypto_MemMap.h (depth 2) - does NOT match filter
-        # 6. Crypto_Prv_CancelJob.h -> Crypto_Prv_Check.h (depth 2) - does NOT match filter
-        # 7. Crypto_Prv_CancelJob.h -> Crypto_Prv_ErrorDetection.h (depth 2) - does NOT match filter
-        # 8. Crypto_Types.h -> Crypto_Defines.h (depth 3) - does NOT match filter
+        # 3. api.h -> types.h (depth 2) - does NOT match filter
+        # 4. api.h -> memory.h (depth 2) - does NOT match filter  
+        # 5. api.h -> platform.h (depth 2) - does NOT match filter
+        # 6. worker.h -> validation.h (depth 2) - does NOT match filter
+        # 7. worker.h -> errors.h (depth 2) - does NOT match filter
+        # 8. types.h -> constants.h (depth 3) - does NOT match filter
         
         # Verify we have exactly 2 relations (the fix)
         self.assertEqual(
-            len(cancel_job_relations), 2, 
-            f"Expected exactly 2 include relations after filtering, but got {len(cancel_job_relations)}. "
+            len(processor_relations), 2, 
+            f"Expected exactly 2 include relations after filtering, but got {len(processor_relations)}. "
             f"If this is 8, the bug is present (filters only applied at depth 1). "
-            f"Relations found: {[(r.source_file, r.included_file, r.depth) for r in cancel_job_relations]}"
+            f"Relations found: {[(r.source_file, r.included_file, r.depth) for r in processor_relations]}"
         )
         
         # Verify the specific relations that should be present
-        relation_tuples = {(rel.source_file, rel.included_file, rel.depth) for rel in cancel_job_relations}
+        relation_tuples = {(rel.source_file, rel.included_file, rel.depth) for rel in processor_relations}
         expected_relations = {
-            ("Crypto_CancelJob.c", "Crypto.h", 1),
-            ("Crypto_CancelJob.c", "Crypto_Prv_CancelJob.h", 1)
+            ("processor.c", "api.h", 1),
+            ("processor.c", "worker.h", 1)
         }
         
         self.assertEqual(
@@ -186,15 +189,15 @@ class TestIncludeFilteringBugs(unittest.TestCase):
         
         # Verify no filtered relations are present (these would indicate the bug)
         unwanted_relations = {
-            ("Crypto.h", "Crypto_Rb_Types.h"),
-            ("Crypto.h", "Crypto_Types.h"),
-            ("Crypto.h", "Crypto_MemMap.h"),
-            ("Crypto_Prv_CancelJob.h", "Crypto_Prv_Check.h"),
-            ("Crypto_Prv_CancelJob.h", "Crypto_Prv_ErrorDetection.h"),
-            ("Crypto_Types.h", "Crypto_Defines.h")
+            ("api.h", "types.h"),
+            ("api.h", "memory.h"),
+            ("api.h", "platform.h"),
+            ("worker.h", "validation.h"),
+            ("worker.h", "errors.h"),
+            ("types.h", "constants.h")
         }
         
-        actual_source_target_pairs = {(rel.source_file, rel.included_file) for rel in cancel_job_relations}
+        actual_source_target_pairs = {(rel.source_file, rel.included_file) for rel in processor_relations}
         
         for unwanted_source, unwanted_target in unwanted_relations:
             self.assertNotIn(
