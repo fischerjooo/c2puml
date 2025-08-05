@@ -5712,7 +5712,7 @@
             },
             {
               "name": "errmsg",
-              "type": "char * *",
+              "type": "char **",
               "value": null
             }
           ],
@@ -5756,7 +5756,7 @@
             },
             {
               "name": "ppDb",
-              "type": "sqlite3 * *",
+              "type": "sqlite3 **",
               "value": null
             }
           ],
@@ -5784,12 +5784,12 @@
             },
             {
               "name": "ppStmt",
-              "type": "sqlite3_stmt * *",
+              "type": "sqlite3_stmt **",
               "value": null
             },
             {
               "name": "pzTail",
-              "type": "const char * *",
+              "type": "const char **",
               "value": null
             }
           ],

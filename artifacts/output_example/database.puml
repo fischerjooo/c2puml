@@ -56,7 +56,7 @@ class "database" as HEADER_DATABASE <<header>> #LightGreen
     + int database_rollback_transaction(DatabaseConfig * config)
 }
 
-class "libpq-fe" as HEADER_LIBPQ-FE <<header>> #LightGreen
+class "libpq-fe" as HEADER_LIBPQ_FE <<header>> #LightGreen
 {
     -- Macros --
     + #define CONNECTION_BAD
@@ -143,11 +143,11 @@ class "sqlite3" as HEADER_SQLITE3 <<header>> #LightGreen
     + const unsigned char * sqlite3_column_text(sqlite3_stmt * pStmt, int iCol)
     + int sqlite3_column_type(sqlite3_stmt * pStmt, int iCol)
     + const char * sqlite3_errmsg(sqlite3 * db)
-    + int sqlite3_exec(sqlite3 * db, const char * sql, sqlite3_callback callback, void * arg, char * * errmsg)
+    + int sqlite3_exec(sqlite3 * db, const char * sql, sqlite3_callback callback, void * arg, char ** errmsg)
     + int sqlite3_finalize(sqlite3_stmt * pStmt)
     + void sqlite3_free(void * ptr)
-    + int sqlite3_open(const char * filename, sqlite3 * * ppDb)
-    + int sqlite3_prepare_v2(sqlite3 * db, const char * zSql, int nByte, sqlite3_stmt * * ppStmt, const char * * pzTail)
+    + int sqlite3_open(const char * filename, sqlite3 ** ppDb)
+    + int sqlite3_prepare_v2(sqlite3 * db, const char * zSql, int nByte, sqlite3_stmt ** ppStmt, const char ** pzTail)
     + int sqlite3_step(sqlite3_stmt * pStmt)
 }
 
@@ -221,7 +221,7 @@ class "sqlite3_callback" as TYPEDEF_SQLITE3_CALLBACK <<function pointer>> #Light
 ' Include relationships
 DATABASE --> HEADER_DATABASE : <<include>>
 HEADER_DATABASE --> HEADER_COMMON : <<include>>
-HEADER_DATABASE --> HEADER_LIBPQ-FE : <<include>>
+HEADER_DATABASE --> HEADER_LIBPQ_FE : <<include>>
 HEADER_DATABASE --> HEADER_MYSQL : <<include>>
 HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>
 
@@ -233,7 +233,7 @@ HEADER_COMMON ..> TYPEDEF_STATUS_BOOL_T : <<declares>>
 HEADER_DATABASE ..> TYPEDEF_DATABASECONFIG : <<declares>>
 HEADER_DATABASE ..> TYPEDEF_QUERYRESULT : <<declares>>
 HEADER_DATABASE ..> TYPEDEF_DATABASETYPE : <<declares>>
-HEADER_LIBPQ-FE ..> TYPEDEF_EXECSTATUSTYPE : <<declares>>
+HEADER_LIBPQ_FE ..> TYPEDEF_EXECSTATUSTYPE : <<declares>>
 HEADER_SQLITE3 ..> TYPEDEF_SQLITE3_CALLBACK : <<declares>>
 
 ' Uses relationships
