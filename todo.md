@@ -86,7 +86,7 @@ class UnifiedTestCase(unittest.TestCase):
     def test_feature(self):
         # 1. Get paths to test data for CLI execution
         input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)
+        config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
         
         # 2. Execute through CLI interface only
         result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
@@ -109,7 +109,7 @@ class UnifiedTestCase(unittest.TestCase):
     def test_with_assertion_data(self):
         """Example of using assertions.json for large validation data"""
         input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)
+        config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
         
         result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
         self.assertEqual(result.exit_code, 0)
@@ -146,7 +146,7 @@ class UnifiedTestCase(unittest.TestCase):
     def test_individual_steps(self):
         """Example of testing individual pipeline steps via CLI"""
         input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)
+        config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
         
         # Step 1: Parse only
         parse_result = self.executor.run_parse_only(input_path, config_path, self.output_dir)
@@ -210,7 +210,7 @@ class TestDataFactory:
         """Returns path to test_<name>/input/ directory for CLI execution"""
     
     def load_test_config(self, test_name: str) -> str:
-        """Returns path to test_<name>/config.json for CLI execution"""
+        """Returns path to test_<name>/input/config.json for CLI execution"""
     
     def load_test_assertions(self, test_name: str) -> dict:
         """Loads assertion data from test_<name>/assertions.json if it exists"""
@@ -273,11 +273,11 @@ Each test folder contains its own project and configuration data:
 ```
 test_<name>/
 ├── test_<name>.py      # Test implementation
-├── input/              # Test input files (C/C++ source, model.json, etc.)
+├── input/              # All test input files (config, source, model files)
+│   ├── config.json     # Test configuration (always required)
 │   ├── main.c          # For unit tests: C files, model.json, etc.
 │   ├── utils.h         # For feature/integration: C/C++ source files
 │   └── subdir/         # Nested directories if needed
-├── config.json        # Test configuration
 └── assertions.json     # Optional: Large assertion data (lists, structures, expected content)
 ```
 
@@ -369,6 +369,9 @@ test_<name>/
 - **Versioning**: Test data and logic evolve together
 - **Debugging**: Easier to reproduce issues with self-contained test environments
 - **Clean Test Code**: Large assertion data is externalized, keeping test methods focused
+- **Unified Input Location**: All application inputs (config, source, model files) are in one place
+- **Consistent CLI Arguments**: CLI input path points to folder containing all necessary files
+- **Logical Grouping**: Configuration naturally belongs with the files it configures
 
 ### 4. Result Validation Framework
 
@@ -397,7 +400,9 @@ Structured validation of generated models:
 **Example Usage:**
 ```python
 def test_transformations_via_normal_model_validation(self):
-    # Execute pipeline with transformations configured in config.json
+    # Execute pipeline with transformations configured in input/config.json
+    input_path = self.data_factory.load_test_input(self.test_name)
+    config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
     result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
     self.assertEqual(result.exit_code, 0)
     
@@ -679,7 +684,7 @@ tests/example/
 // tests/example/test-example.json
 {
   "description": "Expected outputs for example project test",
-  "note": "This test uses source/ folder and existing config.json, unlike other tests that use input/ and test-specific config.json",
+  "note": "This test uses source/ folder with config.json at root level, unlike other tests that use input/ folder with config.json inside input/",
   "model_expectations": {
     "files_count": 3,
     "required_files": ["sample.c", "sample.h", "config.h"],
@@ -870,7 +875,7 @@ class TestFeatureName(UnifiedTestCase):
     def test_custom_edge_case_validation(self):
         """Example of custom validation for complex edge cases"""
         input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)
+        config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
         
         result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
         self.assertEqual(result.exit_code, 0)
