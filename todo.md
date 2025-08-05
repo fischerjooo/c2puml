@@ -166,10 +166,15 @@ Structured validation of generated models:
 
 ```python
 class ModelValidator:
+    def assert_model_structure_valid(self, model: dict)
+    def assert_files_parsed(self, model: dict, expected_files: list)
     def assert_struct_exists(self, model: dict, struct_name: str)
+    def assert_function_exists(self, model: dict, func_name: str)
     def assert_function_declared(self, model: dict, func_name: str)
     def assert_include_relationship(self, model: dict, source: str, target: str)
     def assert_transformation_applied(self, before: dict, after: dict, transformation: dict)
+    def assert_enum_exists(self, model: dict, enum_name: str)
+    def assert_typedef_exists(self, model: dict, typedef_name: str)
 ```
 
 #### 4.2 PlantUML Validation
@@ -188,12 +193,23 @@ class PlantUMLValidator:
 #### 4.3 Example Test Validation
 **Priority: MEDIUM**
 
-The `tests/example/` directory should be preserved with its current structure but enhanced with a standardized expectations file:
+The `tests/example/` directory should be preserved with its current structure but enhanced with a standardized expectations file. **Note**: The example test has a different structure than other tests:
 
+**Example Test Structure (preserved as-is):**
+```
+tests/example/
+├── source/             # C/C++ source files (different from other tests' input/)
+├── config.json         # Existing configuration (different from test-specific structure)
+├── test-example.py     # Example workflow test
+└── test-example.json   # NEW - Expected outputs specification
+```
+
+**Proposed test-example.json for validation:**
 ```json
 // tests/example/test-example.json
 {
   "description": "Expected outputs for example project test",
+  "note": "This test uses source/ folder and existing config.json, unlike other tests that use input/ and test-specific config.json",
   "model_expectations": {
     "files_count": 3,
     "required_files": ["sample.c", "sample.h", "config.h"],
@@ -276,14 +292,6 @@ tests/
     └── test-example.json # Expected outputs specification
 ```
 
-#### 5.2 Test Naming Conventions
-**Priority: LOW**
-
-Standardize test naming:
-- `test_<functionality>_<scenario>_<expectation>`
-- Example: `test_parsing_complex_project_generates_valid_model`
-- Example: `test_transformation_rename_function_updates_references`
-
 ### 6. Boundary Separation and Component Isolation
 
 #### 6.1 Test-Application Boundaries
@@ -326,9 +334,16 @@ class TestFeatureName(UnifiedTestCase):
         # Act  
         result = self.executor.run_full_pipeline(test_input, config)
         
-        # Assert
-        self.validator.assert_model_valid(result.model)
+        # Assert - Model validation
+        self.validator.assert_model_structure_valid(result.model)
+        self.validator.assert_files_parsed(result.model, ["main.c", "utils.h"])
+        self.validator.assert_struct_exists(result.model, "Point")
+        self.validator.assert_function_exists(result.model, "main")
+        
+        # Assert - PlantUML validation
         self.validator.assert_puml_contains(result.puml, expected_elements)
+        self.validator.assert_class_exists(result.puml, "MAIN", "source")
+        self.validator.assert_relationship(result.puml, "MAIN", "HEADER_UTILS", "include")
 ```
 
 #### 7.2 Documentation Standards
