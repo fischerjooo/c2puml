@@ -73,7 +73,6 @@ class UnifiedTestCase(unittest.TestCase):
         # Specialized validators for different aspects
         self.model_validator = ModelValidator()
         self.puml_validator = PlantUMLValidator()
-        self.config_validator = ConfigValidator()
         self.output_validator = OutputValidator()
         # Get test name from class name (e.g., TestParsing -> test_parsing)
         self.test_name = self.__class__.__name__.lower().replace('test', 'test_')
@@ -419,7 +418,7 @@ test_<name>/
 The validation framework provides two approaches for test validation:
 
 **🔧 Generic Framework Validation (Recommended for most cases):**
-- Use `ModelValidator`, `PlantUMLValidator`, `ConfigValidator`, `OutputValidator`
+- Use `ModelValidator`, `PlantUMLValidator`, `OutputValidator`
 - Covers 90% of common validation scenarios
 - Consistent, reusable, and maintainable
 - Well-tested validation logic
@@ -566,26 +565,12 @@ class PlantUMLValidator:
     def assert_puml_no_syntax_errors(self, puml_content: str)
 
 
-class ConfigValidator:
+class OutputValidator:
     # Configuration file validation
     def assert_config_file_exists(self, config_path: str)
     def assert_config_json_valid(self, config_content: str)
     def assert_config_schema_valid(self, config: dict)
     
-    # Configuration content validation
-    def assert_config_project_name(self, config: dict, expected_name: str)
-    def assert_config_source_folders(self, config: dict, expected_folders: list)
-    def assert_config_output_dir(self, config: dict, expected_dir: str)
-    def assert_config_recursive_search(self, config: dict, expected_value: bool)
-    def assert_config_include_depth(self, config: dict, expected_depth: int)
-    
-    # Configuration transformation validation
-    def assert_config_transformations_exist(self, config: dict)
-    def assert_config_file_specific_settings(self, config: dict, filename: str)
-    def assert_config_filter_patterns(self, config: dict)
-
-
-class OutputValidator:
     # Output directory validation
     def assert_output_dir_exists(self, output_path: str)
     def assert_output_dir_structure(self, output_path: str, expected_structure: dict)
