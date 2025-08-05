@@ -2,16 +2,16 @@
 
 ## Executive Summary
 
-This document outlines the comprehensive work required to transform the current c2puml test suite (58 test files across unit, feature, and integration categories) into a unified, maintainable, and robust testing framework. The primary focus is on **test-application boundary separation** and **public API testing** to ensure the application remains flexible to internal changes.
+This document outlines the comprehensive work required to transform the current c2puml test suite (58 test files across unit, feature, integration, and example categories) into a unified, maintainable, and robust testing framework. The primary focus is on **test-application boundary separation** and **public API testing** to ensure the application remains flexible to internal changes. The existing `tests/example/` structure will be preserved and enhanced with standardized expectations.
 
 ## Current State Analysis
 
 ### Current Test Structure
-- **58 test files** across 3 categories:
+- **58 test files** across 4 categories:
   - `tests/unit/` (37 files) - Individual component tests
   - `tests/feature/` (12 files) - Complete workflow tests  
   - `tests/integration/` (2 files) - End-to-end scenarios
-  - `tests/example/` (1 file) - Example project test
+  - `tests/example/` (1 file) - Example project test (to be preserved)
 - **Mixed testing approaches**: Some tests use internal functions, others use public APIs
 - **Inconsistent patterns**: Different test classes use different setup/teardown approaches
 - **Direct internal access**: Many tests directly import and test internal components
@@ -170,6 +170,41 @@ class PlantUMLValidator:
     def assert_no_duplicate_elements(self, puml_content: str)
 ```
 
+#### 4.3 Example Test Validation
+**Priority: MEDIUM**
+
+The `tests/example/` directory should be preserved with its current structure but enhanced with a standardized expectations file:
+
+```json
+// tests/example/test-example.json
+{
+  "description": "Expected outputs for example project test",
+  "model_expectations": {
+    "files_count": 3,
+    "required_files": ["sample.c", "sample.h", "config.h"],
+    "structs": ["Point", "Rectangle", "User"],
+    "functions": ["main", "calculate_area", "init_config"],
+    "enums": ["Color", "Status"],
+    "typedefs": ["int32_t", "point_t"]
+  },
+  "puml_expectations": {
+    "generated_files": ["sample.puml"],
+    "required_classes": [
+      {"name": "sample", "stereotype": "source"},
+      {"name": "sample.h", "stereotype": "header"},
+      {"name": "Point", "stereotype": "struct"}
+    ],
+    "required_relationships": [
+      {"source": "SAMPLE", "target": "HEADER_SAMPLE", "type": "include"}
+    ]
+  },
+  "transformation_expectations": {
+    "renamed_functions": {"deprecated_print_info": "legacy_print_info"},
+    "removed_elements": ["test_debug_function", "LEGACY_MACRO"]
+  }
+}
+```
+
 ### 5. Test Organization and Refactoring
 
 #### 5.1 Test Categorization
@@ -193,10 +228,14 @@ tests/
 ├── integration/        # Integration tests
 │   ├── test_real_projects.py     # Tests with realistic C projects
 │   └── test_performance.py       # Performance benchmarks
-└── data/              # Test data and expected outputs
-    ├── projects/      # Test C/C++ projects
-    ├── configs/       # Test configurations
-    └── expected/      # Expected outputs
+├── example/            # Keep existing example test (preserved as-is)
+│   ├── source/         # Example C/C++ source files
+│   ├── config.json     # Example configuration
+│   ├── test-example.py # Example workflow test
+│   └── test-example.json # Expected outputs specification
+└── data/              # Test data templates for framework
+    ├── projects/      # Test C/C++ project templates
+    └── configs/       # Test configuration templates
 ```
 
 #### 5.2 Test Naming Conventions
@@ -268,16 +307,19 @@ class TestFeatureName(UnifiedTestCase):
 2. Implement `TestExecutor` with CLI interface
 3. Implement basic `TestDataFactory`
 4. Implement `ResultValidator` for models and PlantUML
+5. Create `test-example.json` specification for the existing example test
 
 #### Phase 2: Public API Migration (Week 3-4)
-1. Identify tests using internal APIs (audit all 58 files)
+1. Identify tests using internal APIs (audit all 57 files, excluding preserved example)
 2. Refactor high-priority unit tests to use public APIs
 3. Create conversion utilities for existing test patterns
+4. Update example test to use new validation framework while preserving its structure
 
 #### Phase 3: Test Reorganization (Week 5-6)
-1. Reorganize tests into new category structure
+1. Reorganize tests into new category structure (preserve `tests/example/` as-is)
 2. Consolidate duplicate test logic
 3. Standardize test naming and documentation
+4. Validate example test works with new framework
 
 #### Phase 4: Validation and Cleanup (Week 7-8)
 1. Ensure all tests pass with new framework
@@ -322,9 +364,10 @@ class TestFeatureName(UnifiedTestCase):
 ## Next Steps
 
 1. **Review and approve** this plan with the development team
-2. **Create framework foundation** in `tests/framework/`
-3. **Start with pilot migration** of 5-10 representative test files
-4. **Iterate and refine** framework based on pilot results
-5. **Execute full migration** following the phase plan
+2. **Create `test-example.json`** specification for the existing example test
+3. **Create framework foundation** in `tests/framework/`
+4. **Start with pilot migration** of 5-10 representative test files (excluding the preserved example)
+5. **Iterate and refine** framework based on pilot results
+6. **Execute full migration** following the phase plan
 
-This unified testing approach will ensure that c2puml remains flexible to internal changes while providing comprehensive validation of its public API functionality.
+This unified testing approach will ensure that c2puml remains flexible to internal changes while providing comprehensive validation of its public API functionality. The preserved `tests/example/` serves as a reference implementation and comprehensive end-to-end test case.
