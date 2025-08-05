@@ -1504,8 +1504,9 @@ class CParser:
                 type_tokens = param_tokens[:-1]
                 param_type = " ".join(t.value for t in type_tokens)
                 
-                # Fix array bracket spacing
+                # Fix array bracket spacing and pointer spacing
                 param_type = self._fix_array_bracket_spacing(param_type)
+                param_type = self._fix_pointer_spacing(param_type)
 
             # Handle unnamed parameters (just type)
             if param_name in [
@@ -1566,6 +1567,15 @@ class CParser:
         # Remove spaces around array brackets
         type_str = re.sub(r'\s*\[\s*', '[', type_str)
         type_str = re.sub(r'\s*\]\s*', ']', type_str)
+        return type_str
+
+    def _fix_pointer_spacing(self, type_str: str) -> str:
+        """Fix spacing around pointer asterisks in type strings"""
+        import re
+        # Fix double pointer spacing: "type * *" -> "type **"
+        type_str = re.sub(r'\*\s+\*', '**', type_str)
+        # Fix triple pointer spacing: "type * * *" -> "type ***"
+        type_str = re.sub(r'\*\s+\*\s+\*', '***', type_str)
         return type_str
 
     def _clean_type_string(self, type_str: str) -> str:
