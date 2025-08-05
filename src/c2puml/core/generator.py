@@ -228,7 +228,7 @@ class Generator:
         uml_ids = {}
 
         for filename, file_model in include_tree.items():
-            basename = Path(filename).stem.upper()
+            basename = Path(filename).stem.upper().replace("-", "_")
             file_key = Path(filename).name  # Use just the filename as key
 
             if filename.endswith(".c"):
