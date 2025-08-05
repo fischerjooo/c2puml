@@ -11,6 +11,33 @@ This document provides comprehensive analysis and specific recommendations for m
 - **3 critical files** must be split due to excessive size (80, 41, 36 methods)
 - **All files** currently use internal APIs and need CLI-only conversion
 
+## Progress Tracking
+
+### Migration Status Overview
+- **Framework Foundation:** ⏳ Pending - TestDataFactory, TestExecutor, Validators
+- **Critical Splits (3 files):** ⏳ Pending - Planning phase required
+- **High Priority (24 files):** ⏳ Pending - All files have detailed recommendations
+- **Medium Priority (18 files):** ⏳ Pending - All files have detailed recommendations
+- **Low Priority (8 files):** ⏳ Pending - All files have detailed recommendations
+
+### Progress Legend
+- ⏳ **Pending** - Not yet started
+- 🔄 **In Progress** - Currently being worked on
+- ✅ **Completed** - Migrated and verified
+- 🚫 **Blocked** - Waiting for dependencies
+
+### Update Instructions
+**Important:** This document should be updated with progress as migration work proceeds. Change progress markers from ⏳ to 🔄 when starting work, and to ✅ when completed. Update `todo.md` to reference any changes in this file.
+
+### File Coverage Verification
+**All 50 test files analyzed and covered:**
+
+**Unit Tests (37 files):** ✅ All covered with detailed recommendations
+**Feature Tests (11 files):** ✅ All covered with detailed recommendations  
+**Integration Tests (2 files):** ✅ All covered with detailed recommendations
+
+**Total Coverage:** 50/50 files (100%) - Every test file has specific migration strategy, data file recommendations, and progress tracking
+
 ## Critical Decision: Input Strategy Requirements
 
 ### The Core Rule
@@ -43,40 +70,43 @@ This is because when explicit files are used as input, all tests in that test.py
 
 #### Files Requiring Splits (3 files - CRITICAL)
 
-**1. test_transformer.py (80 methods)**
+**1. test_transformer.py (80 methods)** 🚨 CRITICAL SPLIT REQUIRED
 - **Recommended Split:** 9 separate test files by transformation type
-  - `test_transformation_rename.py` - Function/typedef/macro renaming
-  - `test_transformation_remove.py` - Element removal operations
-  - `test_transformation_add.py` - Element addition operations
-  - `test_transformation_file_selection.py` - File-specific transformations
-  - `test_transformation_config.py` - Configuration validation
-  - `test_transformation_validation.py` - Transformation validation
-  - `test_transformation_error_handling.py` - Error scenarios
-  - `test_transformation_edge_cases.py` - Edge cases and complex scenarios
-  - `test_transformation_integration.py` - End-to-end transformation workflows
+  - `test_transformation_rename.py` - Function/typedef/macro renaming - **Progress:** ⏳ Pending
+  - `test_transformation_remove.py` - Element removal operations - **Progress:** ⏳ Pending
+  - `test_transformation_add.py` - Element addition operations - **Progress:** ⏳ Pending
+  - `test_transformation_file_selection.py` - File-specific transformations - **Progress:** ⏳ Pending
+  - `test_transformation_config.py` - Configuration validation - **Progress:** ⏳ Pending
+  - `test_transformation_validation.py` - Transformation validation - **Progress:** ⏳ Pending
+  - `test_transformation_error_handling.py` - Error scenarios - **Progress:** ⏳ Pending
+  - `test_transformation_edge_cases.py` - Edge cases and complex scenarios - **Progress:** ⏳ Pending
+  - `test_transformation_integration.py` - End-to-end transformation workflows - **Progress:** ⏳ Pending
 - **Input Strategy:** data_*.json for each transformation type
 - **Data Files Needed:** data_rename_functions.json, data_remove_elements.json, data_add_elements.json, etc.
+- **Overall Progress:** ⏳ Pending - Requires planning phase first
 
-**2. test_tokenizer.py (41 methods)**
+**2. test_tokenizer.py (41 methods)** 🚨 CRITICAL SPLIT REQUIRED
 - **Recommended Split:** 4 separate test files by token category
-  - `test_tokenizer_keywords.py` - C keywords and reserved words
-  - `test_tokenizer_identifiers.py` - Variable/function names and identifiers
-  - `test_tokenizer_operators.py` - Operators and punctuation
-  - `test_tokenizer_complex.py` - Complex tokenization scenarios
+  - `test_tokenizer_keywords.py` - C keywords and reserved words - **Progress:** ⏳ Pending
+  - `test_tokenizer_identifiers.py` - Variable/function names and identifiers - **Progress:** ⏳ Pending
+  - `test_tokenizer_operators.py` - Operators and punctuation - **Progress:** ⏳ Pending
+  - `test_tokenizer_complex.py` - Complex tokenization scenarios - **Progress:** ⏳ Pending
 - **Input Strategy:** data_*.json for each token category
 - **Data Files Needed:** data_keywords.json, data_identifiers.json, data_operators.json, data_complex_tokens.json
+- **Overall Progress:** ⏳ Pending - Requires planning phase first
 
-**3. test_parser_comprehensive.py (36 methods)**
+**3. test_parser_comprehensive.py (36 methods)** 🚨 CRITICAL SPLIT REQUIRED
 - **Recommended Split:** 7 separate test files by C language construct
-  - `test_parser_struct.py` - Structure parsing (simple, nested, anonymous)
-  - `test_parser_enum.py` - Enumeration parsing
-  - `test_parser_function.py` - Function declarations and definitions
-  - `test_parser_global.py` - Global variables and declarations
-  - `test_parser_include.py` - Include processing
-  - `test_parser_macro.py` - Macro processing
-  - `test_parser_typedef.py` - Typedef processing
+  - `test_parser_struct.py` - Structure parsing (simple, nested, anonymous) - **Progress:** ⏳ Pending
+  - `test_parser_enum.py` - Enumeration parsing - **Progress:** ⏳ Pending
+  - `test_parser_function.py` - Function declarations and definitions - **Progress:** ⏳ Pending
+  - `test_parser_global.py` - Global variables and declarations - **Progress:** ⏳ Pending
+  - `test_parser_include.py` - Include processing - **Progress:** ⏳ Pending
+  - `test_parser_macro.py` - Macro processing - **Progress:** ⏳ Pending
+  - `test_parser_typedef.py` - Typedef processing - **Progress:** ⏳ Pending
 - **Input Strategy:** data_*.json for each language construct
 - **Data Files Needed:** data_simple_struct.json, data_nested_struct.json, data_anonymous_struct.json, etc.
+- **Overall Progress:** ⏳ Pending - Requires planning phase first
 
 #### High Priority Files Using Data JSON Strategy (21 files)
 
@@ -87,6 +117,7 @@ This is because when explicit files are used as input, all tests in that test.py
   - data_complex_generation.json - Complex diagrams with relationships
   - data_formatting_test.json - Formatting compliance tests
   - data_relationship_generation.json - Include/typedef relationships
+- **Progress:** ⏳ Pending
 
 **test_preprocessor_bug.py (19 methods)**
 - **Strategy:** Use data_preprocessor_*.json for different directive types
@@ -95,6 +126,7 @@ This is because when explicit files are used as input, all tests in that test.py
   - data_define.json - #define macro testing
   - data_include.json - #include directive testing
   - data_conditional.json - Complex conditional compilation
+- **Progress:** ⏳ Pending
 
 **test_invalid_source_paths.py (17 methods)**
 - **Strategy:** Use data_path_error_*.json for different error scenarios
@@ -102,6 +134,7 @@ This is because when explicit files are used as input, all tests in that test.py
   - data_missing_files.json - Missing source files
   - data_invalid_paths.json - Invalid path formats
   - data_permission_errors.json - Permission-related errors
+- **Progress:** ⏳ Pending
 
 **test_anonymous_processor_extended.py (14 methods)**
 - **Strategy:** Use data_anonymous_*.json for complexity levels
@@ -109,73 +142,242 @@ This is because when explicit files are used as input, all tests in that test.py
   - data_simple_anonymous.json - Basic anonymous structures
   - data_nested_anonymous.json - Nested anonymous structures
   - data_complex_anonymous.json - Complex hierarchies
+- **Progress:** ⏳ Pending
 
 **test_preprocessor_handling.py (14 methods)**
 - **Strategy:** Use data_preprocessor_handling_*.json by directive type
 - **Recommended Data Files:**
   - data_conditional_compilation.json - Conditional compilation testing
   - data_macro_expansion.json - Macro expansion scenarios
+- **Progress:** ⏳ Pending
 
 **Other High Priority Files:**
-- test_include_processing_features.py (12 methods) - Include processing features
-- test_parser.py (10 methods) - Core parser functionality
-- test_global_parsing.py (9 methods) - Global variable parsing
-- test_component_features.py (9 methods) - Component integration features
-- test_transformer_features.py (9 methods) - Transformer feature testing
-- test_comprehensive.py (9 methods) - End-to-end scenarios
-- test_multi_pass_anonymous_processing.py (8 methods) - Multi-pass processing
-- test_crypto_filter_usecase.py (8 methods) - Crypto filtering use cases
-- test_parser_filtering.py (8 methods) - Parser filtering logic
-- test_multiple_source_folders.py (7 methods) - Multiple source folder handling
-- test_generator_new_formatting.py (7 methods) - New formatting features
-- test_generator_visibility_logic.py (6 methods) - Visibility detection logic
+
+**test_include_processing_features.py (12 methods)** - Include processing features
+- **Strategy:** Use data_include_*.json for different include scenarios
+- **Data Files:** data_basic_includes.json, data_nested_includes.json, data_circular_includes.json
+- **Progress:** ⏳ Pending
+
+**test_parser.py (10 methods)** - Core parser functionality
+- **Strategy:** Use data_parser_*.json for different parsing scenarios
+- **Data Files:** data_basic_parsing.json, data_complex_parsing.json, data_error_handling.json
+- **Progress:** ⏳ Pending
+
+**test_global_parsing.py (9 methods)** - Global variable parsing
+- **Strategy:** Use data_global_*.json for different global variable scenarios
+- **Data Files:** data_simple_globals.json, data_complex_globals.json, data_initialized_globals.json
+- **Progress:** ⏳ Pending
+
+**test_component_features.py (9 methods)** - Component integration features
+- **Strategy:** Use data_component_*.json for different integration tests
+- **Data Files:** data_parser_integration.json, data_generator_integration.json, data_full_workflow.json
+- **Progress:** ⏳ Pending
+
+**test_transformer_features.py (9 methods)** - Transformer feature testing
+- **Strategy:** Use data_transform_feature_*.json for feature testing
+- **Data Files:** data_basic_transforms.json, data_advanced_transforms.json, data_edge_cases.json
+- **Progress:** ⏳ Pending
+
+**test_comprehensive.py (9 methods)** - End-to-end scenarios
+- **Strategy:** Use data_comprehensive_*.json for complete workflows
+- **Data Files:** data_full_project.json, data_complex_project.json, data_real_world.json
+- **Progress:** ⏳ Pending
+
+**test_multi_pass_anonymous_processing.py (8 methods)** - Multi-pass processing
+- **Strategy:** Use data_multipass_*.json for multi-pass scenarios
+- **Data Files:** data_simple_multipass.json, data_complex_multipass.json, data_nested_multipass.json
+- **Progress:** ⏳ Pending
+
+**test_crypto_filter_usecase.py (8 methods)** - Crypto filtering use cases
+- **Strategy:** Use data_crypto_*.json for different filtering scenarios
+- **Data Files:** data_crypto_basic.json, data_crypto_advanced.json, data_crypto_edge_cases.json
+- **Progress:** ⏳ Pending
+
+**test_parser_filtering.py (8 methods)** - Parser filtering logic
+- **Strategy:** Use data_filter_*.json for different filtering patterns
+- **Data Files:** data_include_filters.json, data_exclude_filters.json, data_mixed_filters.json
+- **Progress:** ⏳ Pending
+
+**test_multiple_source_folders.py (7 methods)** - Multiple source folder handling
+- **Strategy:** Use data_multifolder_*.json for folder scenarios
+- **Data Files:** data_two_folders.json, data_many_folders.json, data_nested_folders.json
+- **Progress:** ⏳ Pending
+
+**test_generator_new_formatting.py (7 methods)** - New formatting features
+- **Strategy:** Use data_formatting_*.json for formatting tests
+- **Data Files:** data_new_stereotypes.json, data_visibility_formatting.json, data_relationship_formatting.json
+- **Progress:** ⏳ Pending
+
+**test_generator_visibility_logic.py (6 methods)** - Visibility detection logic
+- **Strategy:** Use data_visibility_*.json for visibility tests
+- **Data Files:** data_public_private.json, data_header_detection.json, data_visibility_edge_cases.json
+- **Progress:** ⏳ Pending
 
 ### Medium Priority Files (18 files)
 
 #### Configuration and Setup Files
-- **test_config.py (13 methods)** - Configuration handling
-  - Data files: data_basic_config.json, data_advanced_config.json, data_invalid_config.json
+
+**test_config.py (13 methods)** - Configuration handling
+- **Strategy:** Use data_config_*.json for different config scenarios
+- **Data Files:** data_basic_config.json, data_advanced_config.json, data_invalid_config.json, data_file_specific_config.json
+- **Progress:** ⏳ Pending
 
 #### Generator Related Files
-- **test_include_filtering_bugs.py (12 methods)** - Include filtering edge cases
-- **test_verifier.py (12 methods)** - Model verification logic
-- **test_typedef_extraction.py (9 methods)** - Typedef extraction logic
-- **test_utils.py (7 methods)** - Utility function testing
+
+**test_include_filtering_bugs.py (12 methods)** - Include filtering edge cases
+- **Strategy:** Use data_include_bug_*.json for different bug scenarios
+- **Data Files:** data_filter_edge_cases.json, data_regex_patterns.json, data_performance_issues.json
+- **Progress:** ⏳ Pending
+
+**test_verifier.py (12 methods)** - Model verification logic
+- **Strategy:** Use data_verification_*.json for different validation scenarios
+- **Data Files:** data_valid_models.json, data_invalid_models.json, data_edge_case_models.json
+- **Progress:** ⏳ Pending
+
+**test_typedef_extraction.py (9 methods)** - Typedef extraction logic
+- **Strategy:** Use data_typedef_*.json for different typedef scenarios
+- **Data Files:** data_simple_typedefs.json, data_complex_typedefs.json, data_nested_typedefs.json
+- **Progress:** ⏳ Pending
+
+**test_utils.py (7 methods)** - Utility function testing
+- **Strategy:** Use data_utils_*.json for utility testing
+- **Data Files:** data_file_utils.json, data_string_utils.json, data_path_utils.json
+- **Progress:** ⏳ Pending
 
 #### Parser Specific Files
-- **test_anonymous_structure_handling.py (5 methods)** - Anonymous structure handling
-- **test_transformation_system.py (5 methods)** - Transformation system
-- **test_crypto_filter_pattern.py (5 methods)** - Crypto filtering patterns
-- **test_function_parameters.py (4 methods)** - Function parameter parsing
-- **test_file_specific_configuration.py (4 methods)** - File-specific config handling
-- **test_absolute_path_bug_detection.py (4 methods)** - Path handling validation
+
+**test_anonymous_structure_handling.py (5 methods)** - Anonymous structure handling
+- **Strategy:** Use data_anonymous_handling_*.json for different handling scenarios
+- **Data Files:** data_simple_anonymous.json, data_nested_anonymous.json, data_complex_anonymous.json
+- **Progress:** ⏳ Pending
+
+**test_transformation_system.py (5 methods)** - Transformation system
+- **Strategy:** Use data_transform_system_*.json for system testing
+- **Data Files:** data_system_config.json, data_system_validation.json, data_system_integration.json
+- **Progress:** ⏳ Pending
+
+**test_crypto_filter_pattern.py (5 methods)** - Crypto filtering patterns
+- **Strategy:** Use data_crypto_pattern_*.json for pattern testing
+- **Data Files:** data_basic_patterns.json, data_complex_patterns.json, data_edge_patterns.json
+- **Progress:** ⏳ Pending
+
+**test_function_parameters.py (4 methods)** - Function parameter parsing
+- **Strategy:** Use data_function_param_*.json for parameter scenarios
+- **Data Files:** data_simple_params.json, data_complex_params.json, data_variadic_params.json
+- **Progress:** ⏳ Pending
+
+**test_file_specific_configuration.py (4 methods)** - File-specific config handling
+- **Strategy:** Use data_file_config_*.json for file-specific scenarios
+- **Data Files:** data_single_file_config.json, data_multiple_file_config.json, data_override_config.json
+- **Progress:** ⏳ Pending
+
+**test_absolute_path_bug_detection.py (4 methods)** - Path handling validation
+- **Strategy:** Use data_path_bug_*.json for path testing
+- **Data Files:** data_absolute_paths.json, data_relative_paths.json, data_invalid_paths.json
+- **Progress:** ⏳ Pending
 
 #### Generator Testing Files
-- **test_generator_include_tree_bug.py (4 methods)** - Include tree validation
-- **test_generator_naming_conventions.py (4 methods)** - Naming convention compliance
-- **test_integration.py (4 methods)** - Integration testing
-- **test_generator_grouping.py (3 methods)** - Element grouping in output
-- **test_include_processing.py (3 methods)** - Include processing logic
-- **test_parser_nested_structures.py (3 methods)** - Nested structure parsing
-- **test_parser_struct_order.py (3 methods)** - Struct field order preservation
+
+**test_generator_include_tree_bug.py (4 methods)** - Include tree validation
+- **Strategy:** Use data_include_tree_*.json for tree testing
+- **Data Files:** data_simple_tree.json, data_complex_tree.json, data_circular_tree.json
+- **Progress:** ⏳ Pending
+
+**test_generator_naming_conventions.py (4 methods)** - Naming convention compliance
+- **Strategy:** Use data_naming_*.json for naming tests
+- **Data Files:** data_class_naming.json, data_relationship_naming.json, data_stereotype_naming.json
+- **Progress:** ⏳ Pending
+
+**test_integration.py (4 methods)** - Integration testing
+- **Strategy:** Use data_integration_*.json for integration scenarios
+- **Data Files:** data_basic_integration.json, data_complex_integration.json, data_error_integration.json
+- **Progress:** ⏳ Pending
+
+**test_generator_grouping.py (3 methods)** - Element grouping in output
+- **Strategy:** Use data_grouping_*.json for grouping tests
+- **Data Files:** data_public_private_grouping.json, data_element_grouping.json, data_visibility_grouping.json
+- **Progress:** ⏳ Pending
+
+**test_include_processing.py (3 methods)** - Include processing logic
+- **Strategy:** Use data_include_proc_*.json for processing tests
+- **Data Files:** data_basic_includes.json, data_nested_includes.json, data_depth_includes.json
+- **Progress:** ⏳ Pending
+
+**test_parser_nested_structures.py (3 methods)** - Nested structure parsing
+- **Strategy:** Use data_nested_*.json for nested scenarios
+- **Data Files:** data_simple_nested.json, data_deep_nested.json, data_complex_nested.json
+- **Progress:** ⏳ Pending
+
+**test_parser_struct_order.py (3 methods)** - Struct field order preservation
+- **Strategy:** Use data_struct_order_*.json for ordering tests
+- **Data Files:** data_simple_order.json, data_complex_order.json, data_mixed_order.json
+- **Progress:** ⏳ Pending
 
 ### Low Priority Files (8 files)
 
 #### Explicit Files Strategy (Suitable for single input approach)
-- **test_cli_modes.py (6 methods)** - CLI mode switching
-- **test_cli_feature.py (5 methods)** - CLI interface testing
-- **test_generator_duplicate_includes.py (2 methods)** - Include duplication handling
-- **test_generator_exact_format.py (2 methods)** - PlantUML formatting validation
-- **test_new_formatting_comprehensive.py (2 methods)** - New formatting integration
-- **test_parser_function_params.py (2 methods)** - Function parameter parsing
-- **test_parser_macro_duplicates.py (2 methods)** - Macro duplication handling
+
+**test_cli_modes.py (6 methods)** - CLI mode switching
+- **Strategy:** Use explicit files - all methods can share same CLI test setup
+- **Input Files:** cli_test.c, cli_config.json, sample_project/
+- **Progress:** ⏳ Pending
+
+**test_cli_feature.py (5 methods)** - CLI interface testing
+- **Strategy:** Use explicit files - focused on CLI interface validation
+- **Input Files:** feature_test.c, feature_config.json, test_project/
+- **Progress:** ⏳ Pending
+
+**test_generator_duplicate_includes.py (2 methods)** - Include duplication handling
+- **Strategy:** Use explicit files - simple duplication scenario
+- **Input Files:** duplicate_test.c, duplicate_includes.h, config.json
+- **Progress:** ⏳ Pending
+
+**test_generator_exact_format.py (2 methods)** - PlantUML formatting validation
+- **Strategy:** Can use data_format_*.json for different format tests
+- **Data Files:** data_basic_format.json, data_advanced_format.json
+- **Progress:** ⏳ Pending
+
+**test_new_formatting_comprehensive.py (2 methods)** - New formatting integration
+- **Strategy:** Can use data_new_format_*.json for formatting tests
+- **Data Files:** data_stereotype_format.json, data_relationship_format.json
+- **Progress:** ⏳ Pending
+
+**test_parser_function_params.py (2 methods)** - Function parameter parsing
+- **Strategy:** Use data_func_params_*.json for parameter scenarios
+- **Data Files:** data_simple_params.json, data_complex_params.json
+- **Progress:** ⏳ Pending
+
+**test_parser_macro_duplicates.py (2 methods)** - Macro duplication handling
+- **Strategy:** Use data_macro_dup_*.json for duplication scenarios
+- **Data Files:** data_simple_duplicates.json, data_complex_duplicates.json
+- **Progress:** ⏳ Pending
 
 #### Debug Files (Minimal priority)
-- **test_debug_actual_parsing.py (1 method)** - Debug functionality
-- **test_debug_field_parsing.py (1 method)** - Debug functionality
-- **test_debug_field_processing.py (1 method)** - Debug functionality
-- **test_debug_tokens.py (1 method)** - Debug functionality
-- **test_debug_field_parsing_detailed.py (0 methods)** - Debug functionality
+
+**test_debug_actual_parsing.py (1 method)** - Debug functionality
+- **Strategy:** Use explicit files - simple debug test
+- **Input Files:** debug_simple.c, debug_config.json
+- **Progress:** ⏳ Pending
+
+**test_debug_field_parsing.py (1 method)** - Debug functionality
+- **Strategy:** Use explicit files - field parsing debug
+- **Input Files:** debug_fields.c, debug_config.json
+- **Progress:** ⏳ Pending
+
+**test_debug_field_processing.py (1 method)** - Debug functionality
+- **Strategy:** Use explicit files - field processing debug
+- **Input Files:** debug_processing.c, debug_config.json
+- **Progress:** ⏳ Pending
+
+**test_debug_tokens.py (1 method)** - Debug functionality
+- **Strategy:** Use explicit files - token debug
+- **Input Files:** debug_tokens.c, debug_config.json
+- **Progress:** ⏳ Pending
+
+**test_debug_field_parsing_detailed.py (0 methods)** - Debug functionality
+- **Strategy:** Use explicit files - detailed debug (may need investigation)
+- **Input Files:** debug_detailed.c, debug_config.json
+- **Progress:** ⏳ Pending - Investigate if this file has actual tests
 
 ## Data JSON File Examples
 

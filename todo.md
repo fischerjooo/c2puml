@@ -6,6 +6,8 @@ This document outlines the comprehensive work required to transform the current 
 
 **Progress Tracking**: This document serves as the central workflow description to track migration progress. All milestones, completion status, and blocking issues should be updated directly in this file to maintain a clear record of the transformation progress.
 
+**📋 Detailed Recommendations**: See `todo_recommendations.md` for comprehensive file-by-file analysis, specific migration strategies, data file recommendations, and progress tracking for all 50 test files. **Important:** Update both `todo.md` and `todo_recommendations.md` as migration work progresses.
+
 ## Current State Analysis
 
 ### Current Test Structure
@@ -1571,9 +1573,10 @@ This unified testing approach will ensure that c2puml remains flexible to intern
 - Specific data.json file suggestions for each test scenario
 
 **Detailed recommendations available in:**
-- `todo_recommendations.json` - Complete analysis data
-- `migration_summary.py` - Readable summary script
+- `todo_recommendations.md` - Complete migration documentation with file-by-file analysis
+- Specific strategies for all 50 test files with progress tracking
 - Examples of folder structures and data.json formats provided
+- Migration phases and implementation guidelines
 
 ## 🎯 Key Benefits of Self-Contained Test Structure
 
