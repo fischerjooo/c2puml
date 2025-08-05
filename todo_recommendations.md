@@ -412,6 +412,12 @@ This is because when explicit files are used as input, all tests in that test.py
       "classes": ["Point"],
       "relationships": []
     }
+  },
+  "assertions": {
+    "additional_validations": {
+      "struct_field_count": {"Point": 2},
+      "function_parameter_count": {"main": 0}
+    }
   }
 }
 ```
@@ -508,36 +514,33 @@ test_generator_duplicate_includes/
 │   ├── main.c
 │   ├── utils.h
 │   └── types.h
-└── assertions.json     # Optional: only if large data needed
+└── assertions.json     # Required for Option 1 (explicit files approach)
 ```
 
 ### Multiple Scenarios (Data JSON Strategy)
 ```
 test_parser_filtering/
 ├── test_parser_filtering.py
-├── input/
-│   ├── data_include_patterns.json  # Self-contained: config + source + expected results
-│   ├── data_exclude_patterns.json  # Self-contained: config + source + expected results
-│   └── data_mixed_filters.json     # Self-contained: config + source + expected results
-└── assertions.json                 # Optional: only if large data needed
+└── input/
+    ├── data_include_patterns.json  # Self-contained: config + source + expected results + assertions
+    ├── data_exclude_patterns.json  # Self-contained: config + source + expected results + assertions
+    └── data_mixed_filters.json     # Self-contained: config + source + expected results + assertions
 ```
 
 ### Split Large Test Example
 ```
 test_struct_parsing/
 ├── test_struct_parsing.py
-├── input/
-│   ├── data_simple_struct.json     # Self-contained: config + source + expected results
-│   ├── data_nested_struct.json     # Self-contained: config + source + expected results
-│   └── data_anonymous_struct.json  # Self-contained: config + source + expected results
-└── assertions.json                 # Optional: only if large data needed
+└── input/
+    ├── data_simple_struct.json     # Self-contained: config + source + expected results + assertions
+    ├── data_nested_struct.json     # Self-contained: config + source + expected results + assertions
+    └── data_anonymous_struct.json  # Self-contained: config + source + expected results + assertions
 
 test_enum_parsing/
 ├── test_enum_parsing.py
-├── input/
-│   ├── data_simple_enum.json       # Self-contained: config + source + expected results
-│   └── data_typedef_enum.json      # Self-contained: config + source + expected results
-└── assertions.json                 # Optional: only if large data needed
+└── input/
+    ├── data_simple_enum.json       # Self-contained: config + source + expected results + assertions
+    └── data_typedef_enum.json      # Self-contained: config + source + expected results + assertions
 
 ... (additional split test folders)
 ```
@@ -699,6 +702,12 @@ validate_expected_results(test_name: str, data_file: str, actual_results: dict) 
     "transformed_model": {
       "...": "expected transformation results"
     }
+  },
+  "assertions": {
+    "large_function_list": ["func1", "func2", "..."],
+    "complex_validation_data": {
+      "nested_checks": ["item1", "item2"]
+    }
   }
 }
 ```
@@ -709,18 +718,20 @@ validate_expected_results(test_name: str, data_file: str, actual_results: dict) 
 - **source_files**: Use for tests that generate C source files (parsing tests)
 - **input_model**: Use for tests that skip parsing (transformation/generation tests)
 - **expected_results**: Always recommended - enables automatic validation
+- **assertions**: Optional - large assertion data (replaces assertions.json for Option 2)
 
 **Two Mutually Exclusive Input Approaches:**
 
 **1. Explicit Files Approach:**
 - input/ contains: config.json + source files (.c/.h) + optional model.json
+- assertions.json file at test root level (alongside input/)
 - All test methods in the test.py file share the same input
 - NO data.json files present
 
 **2. Data JSON Approach:**
-- input/ contains: ONLY data_*.json files (each self-contained)
-- Each data.json file includes: test_metadata + c2puml_config + source_files/input_model + expected_results
-- NO config.json or source files present
+- input/ contains: ONLY data_*.json files (each completely self-contained)
+- Each data.json file includes: test_metadata + c2puml_config + source_files/input_model + expected_results + assertions
+- NO config.json, source files, or assertions.json file present
 
 **Validation Philosophy:**
 Simple model elements and PlantUML expectations in `expected_results` are sufficient for validating any modification, transformation, or generation. No complex assertion structures are needed - basic lists of expected structs, functions, and includes are enough.

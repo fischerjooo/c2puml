@@ -247,12 +247,28 @@ class UnifiedTestCase(unittest.TestCase):
                 puml_file = f"{self.output_dir}/main.puml"
                 self.output_validator.assert_file_contains(puml_file, class_name)
         
-        # Optional: Use assertions.json ONLY for very large data that would clutter data.json
-        if self.data_factory.has_test_assertions(self.test_name):
-            assertions = self.data_factory.load_test_assertions(self.test_name)
-            # Only for large lists that would make data.json unreadable
+        # Option 2 (Data.json): Use assertions section within data.json file
+        if "assertions" in data:
+            assertions = data["assertions"]
             if "large_function_list" in assertions:
                 for func_name in assertions["large_function_list"]:
+                    self.model_validator.assert_model_function_exists(model, func_name)
+    
+    def test_explicit_files_with_assertions_json(self):
+        """Example using Option 1: explicit files + assertions.json"""
+        input_path = self.data_factory.load_test_input(self.test_name)
+        config_path = self.data_factory.load_test_config(self.test_name)
+        
+        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+        self.assertEqual(result.exit_code, 0)
+        
+        # Option 1 (Explicit files): Use external assertions.json file
+        if self.data_factory.has_test_assertions(self.test_name):
+            assertions = self.data_factory.load_test_assertions(self.test_name)
+            if "critical_functions" in assertions:
+                with open(f"{self.output_dir}/model.json", 'r') as f:
+                    model = json.load(f)
+                for func_name in assertions["critical_functions"]:
                     self.model_validator.assert_model_function_exists(model, func_name)
     
     def test_individual_steps(self):
@@ -324,11 +340,11 @@ class TestDataFactory:
     def load_test_config(self, test_name: str, data_file: str = None) -> str:
         """Returns path to config.json (explicit) or extracts config from data_file for CLI execution"""
     
-    def load_test_assertions(self, test_name: str) -> dict:
-        """Loads optional large assertion data from test_<n>/assertions.json (rarely needed)"""
+    def load_test_assertions(self, test_name: str, data_file: str = None) -> dict:
+        """Loads assertion data from test_<n>/assertions.json (Option 1) or from data_file.assertions (Option 2)"""
     
-    def has_test_assertions(self, test_name: str) -> bool:
-        """Returns True if test_<n>/assertions.json exists (most tests won't need this)"""
+    def has_test_assertions(self, test_name: str, data_file: str = None) -> bool:
+        """Returns True if assertions exist in assertions.json (Option 1) or in data_file.assertions (Option 2)"""
     
     def create_temp_project(self, input_files: dict) -> str:
         """Creates temporary project and returns path for CLI execution"""
@@ -382,17 +398,17 @@ Each test folder contains its own project and configuration data:
 test_<n>/
 ├── test_<n>.py         # Test implementation
 ├── input/              # Test input files - choose ONE approach per test
-│   # Option 1: Single use case with explicit files (all test methods use same input)
+│   # Option 1: Explicit files approach (all test methods use same input)
 │   ├── config.json     # c2puml configuration
 │   ├── main.c          # Source files for testing
 │   ├── utils.h         # Header files
 │   ├── model.json      # Optional: Pre-parsed model for transformation testing
 │   └── subdir/         # Optional: Nested directories
-│   # Option 2: Multiple use cases with data.json files (NO config.json or source files)
-│   ├── data_case1.json # Test case 1: complete config + source content + expected results
-│   ├── data_case2.json # Test case 2: complete config + different content + expected results
-│   └── data_case3.json # Test case 3: complete config + additional scenarios + expected results
-└── assertions.json     # Optional: Only for large data that would clutter data.json files
+│   # Option 2: Data.json approach (NO config.json or source files)
+│   ├── data_case1.json # Test case 1: complete config + source + expected results + assertions
+│   ├── data_case2.json # Test case 2: complete config + content + expected results + assertions
+│   └── data_case3.json # Test case 3: complete config + scenarios + expected results + assertions
+└── assertions.json     # Used ONLY with Option 1 (explicit files approach)
 ```
 
 **Input Data Options:**
@@ -408,8 +424,8 @@ For **smaller source inputs**, tests can specify source file structure and conte
 For **larger inputs**, it is recommended to use explicit input files (actual .c/.h files) rather than data.json specifications for better readability and maintainability.
 
 **Input Structure per Use Case:**
-- **Single use case:** Explicit files only (main.c, utils.h, config.json, model.json) - NO data.json files
-- **Multiple use cases:** Multiple data_case#.json files only (each self-contained) - NO config.json or source files
+- **Option 1 (Explicit files):** config.json + source files + assertions.json - NO data.json files
+- **Option 2 (Data.json):** ONLY data_*.json files (completely self-contained including assertions) - NO config.json, source files, or assertions.json
 
 **Data.json Structure Guidelines:**
 
@@ -419,6 +435,7 @@ For **larger inputs**, it is recommended to use explicit input files (actual .c/
 - `source_files`: C/C++ source code content (for source generation tests)
 - `input_model`: Pre-parsed model data (for transformation/generation-only tests)
 - `expected_results`: Expected outputs for validation
+- `assertions`: Large assertion data (equivalent to assertions.json content) - optional
 
 **Multiple Test Cases per File:**
 Per test.py file which contains multiple test cases, there can be multiple data.json files with different names (e.g., `data_case1.json`, `data_case2.json`) for each test case which can be individually loaded. The TestDataFactory shall have extended functionality to handle these data.json files and generate the inputs needed for testing.
@@ -455,6 +472,12 @@ If a test.py file requires **multiple or different inputs** to run various tests
     "plantuml_elements": {
       "classes": ["Point"],
       "relationships": []
+    }
+  },
+  "assertions": {
+    "large_function_list": ["func1", "func2", "func3"],
+    "complex_validation_data": {
+      "nested_structures": ["Point", "Rectangle", "Circle"]
     }
   }
 }
@@ -503,6 +526,13 @@ If a test.py file requires **multiple or different inputs** to run various tests
       ],
       "macros": ["VERSION"],
       "includes": ["stdio.h", "config.h"]
+    }
+  },
+  "assertions": {
+    "transformation_validation": {
+      "removed_functions": ["deprecated_print_info"],
+      "renamed_functions": {"deprecated_print_info": "legacy_print_info"},
+      "removed_includes": ["time.h"]
     }
   }
 }
@@ -575,8 +605,8 @@ If a test.py file requires **multiple or different inputs** to run various tests
 - **Optional:** Use assertions.json only for large data lists that would clutter data.json files (rarely needed)
 
 **Key Constraint:** Each test folder can use ONE approach only:
-- **Explicit files approach:** input/ contains config.json + source files + model.json (all test methods share same input)
-- **Data.json approach:** input/ contains ONLY data_*.json files (no config.json or source files) - each data file is self-contained
+- **Option 1 (Explicit files):** input/ contains config.json + source files + model.json, PLUS assertions.json (all test methods share same input)
+- **Option 2 (Data.json):** input/ contains ONLY data_*.json files (each completely self-contained including assertions) - NO config.json, source files, or assertions.json
 
 **Example Scenarios:**
 
@@ -597,11 +627,10 @@ class TestParserFeatures(UnifiedTestCase):
 ```
 test_parser_features/
 ├── test_parser_features.py
-├── input/
-│   ├── data_simple.json      # Simple struct test case (contains config + source)
-│   ├── data_complex.json     # Complex nested test case (contains config + source)
-│   └── data_macros.json      # Macro expansion test case (contains config + source)
-└── assertions.json           # Optional: only if large data needed
+└── input/
+    ├── data_simple.json      # Self-contained: config + source + expected results + assertions
+    ├── data_complex.json     # Self-contained: config + source + expected results + assertions
+    └── data_macros.json      # Self-contained: config + source + expected results + assertions
 ```
 
 ```python
