@@ -256,20 +256,30 @@ class UnifiedTestCase(unittest.TestCase):
     
     def test_explicit_files_with_assertions_json(self):
         """Example using Option 1: explicit files + assertions.json"""
+        # Option 1: Uses input/config.json + input/source files + assertions.json
         input_path = self.data_factory.load_test_input(self.test_name)
         config_path = self.data_factory.load_test_config(self.test_name)
         
         result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
         self.assertEqual(result.exit_code, 0)
         
-        # Option 1 (Explicit files): Use external assertions.json file
-        if self.data_factory.has_test_assertions(self.test_name):
-            assertions = self.data_factory.load_test_assertions(self.test_name)
-            if "critical_functions" in assertions:
-                with open(f"{self.output_dir}/model.json", 'r') as f:
-                    model = json.load(f)
-                for func_name in assertions["critical_functions"]:
-                    self.model_validator.assert_model_function_exists(model, func_name)
+        # Load validation data from external assertions.json file (Option 1 approach)
+        assertions = self.data_factory.load_test_assertions(self.test_name)
+        
+        with open(f"{self.output_dir}/model.json", 'r') as f:
+            model = json.load(f)
+        
+        # Validate expected model elements
+        expected_model = assertions["expected_model_elements"]
+        for struct_name in expected_model["structs"]:
+            self.model_validator.assert_model_struct_exists(model, struct_name)
+        for func_name in expected_model["functions"]:
+            self.model_validator.assert_model_function_exists(model, func_name)
+        
+        # Validate large function lists
+        if "large_validation_lists" in assertions:
+            for func_name in assertions["large_validation_lists"]["critical_functions"]:
+                self.model_validator.assert_model_function_exists(model, func_name)
     
     def test_individual_steps(self):
         """Example of testing individual pipeline steps via CLI"""
@@ -538,34 +548,45 @@ If a test.py file requires **multiple or different inputs** to run various tests
 }
 ```
 
-**Example assertions.json Structure (Simple, Optional):**
+**Example assertions.json Structure (Option 1: Explicit Files):**
 ```json
 {
-  "description": "Optional large assertion data - only when data.json expected_results are insufficient",
+  "description": "Assertion data for Option 1 (explicit files approach) - complements input/config.json + source files",
   
-  "large_string_lists": [
-    "very_long_function_name_1", "very_long_function_name_2", 
-    "very_long_function_name_3", "...", "very_long_function_name_100"
-  ],
-  
-  "complex_nested_data": {
-    "large_include_hierarchy": {
-      "level1": ["stdio.h", "stdlib.h", "string.h"],
-      "level2": ["custom_header1.h", "custom_header2.h"],
-      "level3": ["deep_nested_header.h"]
-    }
+  "expected_model_elements": {
+    "structs": ["ConfigManager", "DataProcessor", "ErrorHandler"],
+    "functions": ["main", "init_system", "process_data", "cleanup_resources"],
+    "enums": ["SystemState", "ErrorType", "LogLevel"],
+    "includes": ["stdio.h", "stdlib.h", "string.h", "config.h"]
   },
   
-  "bulky_test_data": {
-    "large_expected_output": "...very long PlantUML content or large JSON structures that would clutter data.json..."
+  "expected_plantuml_elements": {
+    "classes": ["ConfigManager", "DataProcessor", "ErrorHandler"],
+    "relationships": [
+      "ConfigManager --> DataProcessor",
+      "DataProcessor --> ErrorHandler"
+    ]
+  },
+  
+  "large_validation_lists": {
+    "critical_functions": [
+      "init_system", "validate_config", "allocate_memory", "process_input",
+      "transform_data", "validate_output", "cleanup_resources", "handle_error",
+      "log_message", "format_output", "save_results", "finalize_system"
+    ]
+  },
+  
+  "transformation_validation": {
+    "should_be_removed": ["debug_print", "test_helper", "mock_function"],
+    "should_be_renamed": {
+      "old_calculate": "new_calculate_metrics",
+      "old_report": "new_generate_report"
+    }
   }
 }
 ```
 
-**Note:** Most tests should use `expected_results` in data.json files instead of assertions.json. Use assertions.json only for:
-- Large lists that would clutter data.json
-- Complex nested validation data
-- Bulky expected outputs (long PlantUML content, large JSON structures)
+**Note:** This assertions.json is used with Option 1 (explicit files approach) where input/ contains config.json + source files. For Option 2 (data.json approach), all assertions are embedded within the data.json files themselves.
 
 **Benefits of Self-Contained Structure:**
 - **Isolation**: Each test has its own data, preventing cross-test interference
