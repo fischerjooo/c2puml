@@ -70,6 +70,7 @@ class UnifiedTestCase(unittest.TestCase):
     def setUp(self):
         self.executor = TestExecutor()
         self.data_factory = TestDataFactory()
+        self.assertion_loader = AssertionDataLoader()
         # Specialized validators for different aspects
         self.model_validator = ModelValidator()
         self.puml_validator = PlantUMLValidator()
@@ -79,6 +80,8 @@ class UnifiedTestCase(unittest.TestCase):
         self.test_name = self.__class__.__name__.lower().replace('test', 'test_')
         # Create temporary output directory for this test
         self.output_dir = tempfile.mkdtemp()
+        # Load assertion data if available
+        self.assertions = self.assertion_loader.load_assertion_data(self.test_name) if self.data_factory.has_test_assertions(self.test_name) else {}
     
     def test_feature(self):
         # 1. Get paths to test data for CLI execution
@@ -102,6 +105,43 @@ class UnifiedTestCase(unittest.TestCase):
         
         for puml_file in puml_files:
             self.puml_validator.assert_puml_file_syntax_valid(puml_file)
+    
+    def test_with_assertion_data(self):
+        """Example of using assertions.json for large validation data"""
+        input_path = self.data_factory.load_test_input(self.test_name)
+        config_path = self.data_factory.load_test_config(self.test_name)
+        
+        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+        self.assertEqual(result.exit_code, 0)
+        
+        # Load model
+        with open(f"{self.output_dir}/model.json", 'r') as f:
+            model = json.load(f)
+        
+        # Use assertion data for validation (if assertions.json exists)
+        if self.assertions:
+            # Validate expected functions from assertions.json
+            expected_functions = self.assertion_loader.get_expected_model_elements(self.test_name, "functions")
+            for func_name in expected_functions:
+                self.model_validator.assert_model_function_exists(model, func_name)
+            
+            # Validate forbidden elements from assertions.json
+            forbidden_elements = self.assertion_loader.get_forbidden_elements(self.test_name, "functions")
+            for func_name in forbidden_elements:
+                self.model_validator.assert_model_function_not_exists(model, func_name)
+            
+            # Validate PlantUML content from assertions.json
+            expected_puml_lines = self.assertion_loader.get_expected_puml_lines(self.test_name, "main")
+            main_puml_file = f"{self.output_dir}/main.puml"
+            self.output_validator.assert_file_contains_lines(main_puml_file, expected_puml_lines)
+            
+            # Validate include relationships from assertions.json
+            expected_relations = self.assertion_loader.get_expected_relationships(self.test_name, "include_relations")
+            self.model_validator.assert_model_include_relationships_exist(model, expected_relations)
+        else:
+            # Fallback to inline assertions when no assertions.json
+            self.model_validator.assert_model_function_exists(model, "main")
+            self.model_validator.assert_model_struct_exists(model, "Point")
     
     def test_individual_steps(self):
         """Example of testing individual pipeline steps via CLI"""
@@ -172,11 +212,39 @@ class TestDataFactory:
     def load_test_config(self, test_name: str) -> str:
         """Returns path to test_<name>/config.json for CLI execution"""
     
+    def load_test_assertions(self, test_name: str) -> dict:
+        """Loads assertion data from test_<name>/assertions.json if it exists"""
+    
+    def has_test_assertions(self, test_name: str) -> bool:
+        """Returns True if test_<name>/assertions.json exists"""
+    
     def create_temp_project(self, input_files: dict) -> str:
         """Creates temporary project and returns path for CLI execution"""
     
     def get_test_data_path(self, test_name: str, subpath: str = "") -> str:
         """Returns absolute path to test data for CLI arguments"""
+
+
+class AssertionDataLoader:
+    """Component for loading and managing assertion data from assertions.json files"""
+    
+    def load_assertion_data(self, test_name: str) -> dict:
+        """Loads assertion data from test_<name>/assertions.json"""
+    
+    def get_expected_model_elements(self, test_name: str, element_type: str) -> list:
+        """Gets expected elements list for model validation (structs, functions, etc.)"""
+    
+    def get_expected_puml_lines(self, test_name: str, file_name: str = "main") -> list:
+        """Gets expected PlantUML content lines for file validation"""
+    
+    def get_forbidden_elements(self, test_name: str, element_type: str = "all") -> list:
+        """Gets forbidden elements that should not appear in output"""
+    
+    def get_expected_relationships(self, test_name: str, relationship_type: str) -> list:
+        """Gets expected relationships (include_relations, typedef_relations, etc.)"""
+    
+    def get_custom_validation_data(self, test_name: str, validation_key: str) -> any:
+        """Gets custom validation data for edge cases"""
 
 
 class TestExecutor:
@@ -209,7 +277,89 @@ test_<name>/
 │   ├── main.c          # For unit tests: C files, model.json, etc.
 │   ├── utils.h         # For feature/integration: C/C++ source files
 │   └── subdir/         # Nested directories if needed
-└── config.json        # Test configuration
+├── config.json        # Test configuration
+└── assertions.json     # Optional: Large assertion data (lists, structures, expected content)
+```
+
+**Example assertions.json Structure:**
+```json
+{
+  "description": "Large assertion data for test_complex_parsing",
+  "model_expectations": {
+    "functions": [
+      "main", "init_system", "process_data", "cleanup_resources",
+      "handle_error", "log_message", "parse_config", "validate_input",
+      "calculate_metrics", "generate_report", "save_results", "load_settings"
+    ],
+    "structs": [
+      "SystemConfig", "DataProcessor", "ErrorHandler", "Logger", 
+      "MetricsCollector", "ReportGenerator", "ResultStorage", "Settings"
+    ],
+    "enums": [
+      "SystemState", "ErrorType", "LogLevel", "ProcessingMode",
+      "MetricType", "ReportFormat", "StorageType", "SettingCategory"
+    ],
+    "includes": [
+      "stdio.h", "stdlib.h", "string.h", "time.h", "errno.h",
+      "sys/types.h", "sys/stat.h", "unistd.h", "fcntl.h"
+    ],
+    "include_relations": [
+      {"source": "main.c", "target": "stdio.h"},
+      {"source": "main.c", "target": "system_config.h"},
+      {"source": "data_processor.c", "target": "string.h"},
+      {"source": "data_processor.c", "target": "data_types.h"},
+      {"source": "error_handler.c", "target": "errno.h"},
+      {"source": "logger.c", "target": "time.h"}
+    ]
+  },
+  "forbidden_elements": {
+    "functions": ["debug_print", "test_helper", "mock_function"],
+    "structs": ["DebugInfo", "TestStruct"],
+    "macros": ["DEBUG_MODE", "TEST_FLAG", "DEPRECATED_MACRO"]
+  },
+  "puml_expectations": {
+    "main.puml": [
+      "@startuml main",
+      "class \"main\" as MAIN <<source>> #LightBlue",
+      "class \"system_config.h\" as HEADER_SYSTEM_CONFIG <<header>> #LightGreen",
+      "MAIN --> HEADER_SYSTEM_CONFIG : <<include>>",
+      "class \"SystemConfig\" as TYPEDEF_SYSTEMCONFIG <<struct>> #LightYellow",
+      "HEADER_SYSTEM_CONFIG ..> TYPEDEF_SYSTEMCONFIG : <<declares>>",
+      "SystemConfig",
+      "{ + int max_connections }",
+      "{ + char server_name[256] }",
+      "{ + double timeout_seconds }",
+      "@enduml"
+    ],
+    "data_processor.puml": [
+      "@startuml data_processor",
+      "class \"data_processor\" as DATA_PROCESSOR <<source>> #LightBlue",
+      "class \"DataProcessor\" as TYPEDEF_DATAPROCESSOR <<struct>> #LightYellow",
+      "{ + void* input_buffer }",
+      "{ + size_t buffer_size }",
+      "{ + ProcessingMode mode }",
+      "@enduml"
+    ]
+  },
+  "custom_validation": {
+    "complex_anonymous_structs": [
+      "SystemConfig_connection_settings",
+      "SystemConfig_logging_config", 
+      "DataProcessor_buffer_manager"
+    ],
+    "performance_expectations": {
+      "max_parsing_time_seconds": 5.0,
+      "max_model_file_size_kb": 100,
+      "max_puml_files": 10
+    },
+    "edge_case_patterns": {
+      "circular_include_detection": {
+        "should_detect": ["circular_a.h", "circular_b.h"],
+        "should_resolve": ["valid_a.h", "valid_b.h"]
+      }
+    }
+  }
+}
 ```
 
 **Benefits of Self-Contained Structure:**
@@ -218,6 +368,7 @@ test_<name>/
 - **Maintainability**: Changes to one test don't affect others
 - **Versioning**: Test data and logic evolve together
 - **Debugging**: Easier to reproduce issues with self-contained test environments
+- **Clean Test Code**: Large assertion data is externalized, keeping test methods focused
 
 ### 4. Result Validation Framework
 
