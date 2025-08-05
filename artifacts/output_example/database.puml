@@ -15,6 +15,27 @@ class "database" as DATABASE <<source>> #LightBlue
     + int database_rollback_transaction(DatabaseConfig * config)
 }
 
+class "common" as HEADER_COMMON <<header>> #LightGreen
+{
+    -- Macros --
+    + #define ARRAY_SIZE(arr)
+    + #define COMMON_H
+    + #define DEPRECATED
+    + #define ERROR_GENERAL
+    + #define ERROR_INVALID_PARAM
+    + #define ERROR_MEMORY
+    + #define ERROR_TIMEOUT
+    + #define MAX(a, b)
+    + #define MIN(a, b)
+    + #define PACKED
+    + #define SUCCESS
+    + #define UNUSED(x)
+    -- Functions --
+    + void common_cleanup()
+    + const char * common_get_error_string(result_t error)
+    + result_t common_init()
+}
+
 class "database" as HEADER_DATABASE <<header>> #LightGreen
 {
     -- Macros --
@@ -33,6 +54,130 @@ class "database" as HEADER_DATABASE <<header>> #LightGreen
     + const char * database_get_error(const DatabaseConfig * config)
     + int database_is_connected(const DatabaseConfig * config)
     + int database_rollback_transaction(DatabaseConfig * config)
+}
+
+class "libpq-fe" as HEADER_LIBPQ-FE <<header>> #LightGreen
+{
+    -- Macros --
+    + #define CONNECTION_BAD
+    + #define CONNECTION_OK
+    + #define LIBPQ_FE_H
+    -- Global Variables --
+    + "C" { typedef struct pg_conn PGconn
+    -- Functions --
+    + void PQclear(PGresult * res)
+    + PGconn * PQconnectdb(const char * conninfo)
+    + const char * PQerrorMessage(const PGconn * conn)
+    + PGresult * PQexec(PGconn * conn, const char * command)
+    + void PQfinish(PGconn * conn)
+    + char * PQfname(const PGresult * res, int field_num)
+    + char * PQgetvalue(const PGresult * res, int tup_num, int field_num)
+    + int PQnfields(const PGresult * res)
+    + int PQntuples(const PGresult * res)
+    + int PQresultStatus(const PGresult * res)
+    + int PQstatus(const PGconn * conn)
+}
+
+class "mysql" as HEADER_MYSQL <<header>> #LightGreen
+{
+    -- Macros --
+    + #define MYSQL_ERROR
+    + #define MYSQL_H
+    + #define MYSQL_SUCCESS
+    -- Global Variables --
+    + "C" { typedef struct st_mysql MYSQL
+    -- Functions --
+    + void mysql_close(MYSQL * mysql)
+    + const char * mysql_error(MYSQL * mysql)
+    + MYSQL_ROW mysql_fetch_row(MYSQL_RES * result)
+    + void mysql_free_result(MYSQL_RES * result)
+    + MYSQL * mysql_init(MYSQL * mysql)
+    + unsigned int mysql_num_fields(MYSQL_RES * result)
+    + unsigned long mysql_num_rows(MYSQL_RES * result)
+    + int mysql_ping(MYSQL * mysql)
+    + int mysql_query(MYSQL * mysql, const char * query)
+    + MYSQL * mysql_real_connect(MYSQL * mysql, const char * host, const char * user, ...)
+    + MYSQL_RES * mysql_store_result(MYSQL * mysql)
+}
+
+class "sqlite3" as HEADER_SQLITE3 <<header>> #LightGreen
+{
+    -- Macros --
+    + #define SQLITE3_H
+    + #define SQLITE_ABORT
+    + #define SQLITE_AUTH
+    + #define SQLITE_BUSY
+    + #define SQLITE_CANTOPEN
+    + #define SQLITE_CONSTRAINT
+    + #define SQLITE_CORRUPT
+    + #define SQLITE_DONE
+    + #define SQLITE_EMPTY
+    + #define SQLITE_ERROR
+    + #define SQLITE_FORMAT
+    + #define SQLITE_FULL
+    + #define SQLITE_INTERNAL
+    + #define SQLITE_INTERRUPT
+    + #define SQLITE_IOERR
+    + #define SQLITE_LOCKED
+    + #define SQLITE_MISMATCH
+    + #define SQLITE_MISUSE
+    + #define SQLITE_NOLFS
+    + #define SQLITE_NOMEM
+    + #define SQLITE_NOTADB
+    + #define SQLITE_NOTFOUND
+    + #define SQLITE_OK
+    + #define SQLITE_PERM
+    + #define SQLITE_PROTOCOL
+    + #define SQLITE_RANGE
+    + #define SQLITE_READONLY
+    + #define SQLITE_ROW
+    + #define SQLITE_SCHEMA
+    + #define SQLITE_TOOBIG
+    -- Global Variables --
+    + "C" { typedef struct sqlite3 sqlite3
+    -- Functions --
+    + int sqlite3_bind_blob(sqlite3_stmt * pStmt, int i, const void * value, int n, ...)
+    + int sqlite3_bind_double(sqlite3_stmt * pStmt, int i, double value)
+    + int sqlite3_bind_int(sqlite3_stmt * pStmt, int i, int value)
+    + int sqlite3_bind_text(sqlite3_stmt * pStmt, int i, const char * value, int n, ...)
+    + int sqlite3_close(sqlite3 * db)
+    + const void * sqlite3_column_blob(sqlite3_stmt * pStmt, int iCol)
+    + int sqlite3_column_count(sqlite3_stmt * pStmt)
+    + double sqlite3_column_double(sqlite3_stmt * pStmt, int iCol)
+    + int sqlite3_column_int(sqlite3_stmt * pStmt, int iCol)
+    + const char * sqlite3_column_name(sqlite3_stmt * pStmt, int iCol)
+    + const unsigned char * sqlite3_column_text(sqlite3_stmt * pStmt, int iCol)
+    + int sqlite3_column_type(sqlite3_stmt * pStmt, int iCol)
+    + const char * sqlite3_errmsg(sqlite3 * db)
+    + int sqlite3_exec(sqlite3 * db, const char * sql, sqlite3_callback callback, void * arg, char * * errmsg)
+    + int sqlite3_finalize(sqlite3_stmt * pStmt)
+    + void sqlite3_free(void * ptr)
+    + int sqlite3_open(const char * filename, sqlite3 * * ppDb)
+    + int sqlite3_prepare_v2(sqlite3 * db, const char * zSql, int nByte, sqlite3_stmt * * ppStmt, const char * * pzTail)
+    + int sqlite3_step(sqlite3_stmt * pStmt)
+}
+
+class "common_status_t" as TYPEDEF_COMMON_STATUS_T <<enumeration>> #LightYellow
+{
+    STATUS_ERROR = - 1
+    STATUS_OK = 0
+    STATUS_PENDING = 1
+    STATUS_TIMEOUT = 2
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
+    alias of uint32_t
+}
+
+class "result_t" as TYPEDEF_RESULT_T <<typedef>> #LightYellow
+{
+    alias of int32_t
+}
+
+class "status_bool_t" as TYPEDEF_STATUS_BOOL_T <<typedef>> #LightYellow
+{
+    alias of bool
 }
 
 class "DatabaseConfig" as TYPEDEF_DATABASECONFIG <<struct>> #LightYellow
@@ -61,14 +206,41 @@ class "DatabaseType" as TYPEDEF_DATABASETYPE <<enumeration>> #LightYellow
     DB_TYPE_SQLITE
 }
 
+class "ExecStatusType" as TYPEDEF_EXECSTATUSTYPE <<enumeration>> #LightYellow
+{
+    PGRES_BAD_RESPONSE = 5
+    PGRES_COMMAND_OK = 1
+    PGRES_COPY_IN = 4
+    PGRES_COPY_OUT = 3
+    PGRES_EMPTY_QUERY = 0
+    PGRES_FATAL_ERROR = 7
+    PGRES_NONFATAL_ERROR = 6
+    PGRES_TUPLES_OK = 2
+}
+
+class "sqlite3_callback" as TYPEDEF_SQLITE3_CALLBACK <<function pointer>> #LightYellow
+{
+    alias of int(* sqlite3_callback)(void * , int , char * * , char * *)
+}
+
 
 ' Include relationships
 DATABASE --> HEADER_DATABASE : <<include>>
+HEADER_DATABASE --> HEADER_COMMON : <<include>>
+HEADER_DATABASE --> HEADER_LIBPQ-FE : <<include>>
+HEADER_DATABASE --> HEADER_MYSQL : <<include>>
+HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>
 
 ' Declaration relationships
+HEADER_COMMON ..> TYPEDEF_COMMON_STATUS_T : <<declares>>
+HEADER_COMMON ..> TYPEDEF_ID_T : <<declares>>
+HEADER_COMMON ..> TYPEDEF_RESULT_T : <<declares>>
+HEADER_COMMON ..> TYPEDEF_STATUS_BOOL_T : <<declares>>
 HEADER_DATABASE ..> TYPEDEF_DATABASECONFIG : <<declares>>
 HEADER_DATABASE ..> TYPEDEF_QUERYRESULT : <<declares>>
 HEADER_DATABASE ..> TYPEDEF_DATABASETYPE : <<declares>>
+HEADER_LIBPQ-FE ..> TYPEDEF_EXECSTATUSTYPE : <<declares>>
+HEADER_SQLITE3 ..> TYPEDEF_SQLITE3_CALLBACK : <<declares>>
 
 ' Uses relationships
 TYPEDEF_DATABASECONFIG ..> TYPEDEF_DATABASETYPE : <<uses>>

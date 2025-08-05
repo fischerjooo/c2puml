@@ -61,6 +61,104 @@
       "structs": {},
       "unions": {}
     },
+    "common.h": {
+      "aliases": {
+        "id_t": {
+          "name": "id_t",
+          "original_type": "uint32_t",
+          "uses": []
+        },
+        "result_t": {
+          "name": "result_t",
+          "original_type": "int32_t",
+          "uses": []
+        },
+        "status_bool_t": {
+          "name": "status_bool_t",
+          "original_type": "bool",
+          "uses": []
+        }
+      },
+      "anonymous_relationships": {},
+      "enums": {
+        "common_status_t": {
+          "name": "common_status_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "STATUS_OK",
+              "value": "0"
+            },
+            {
+              "name": "STATUS_ERROR",
+              "value": "- 1"
+            },
+            {
+              "name": "STATUS_PENDING",
+              "value": "1"
+            },
+            {
+              "name": "STATUS_TIMEOUT",
+              "value": "2"
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/common.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "common_cleanup",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "common_get_error_string",
+          "parameters": [
+            {
+              "name": "error",
+              "type": "result_t",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "common_init",
+          "parameters": [],
+          "return_type": "result_t"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "stdbool.h",
+        "stddef.h",
+        "stdint.h"
+      ],
+      "macros": [
+        "ARRAY_SIZE(arr)",
+        "COMMON_H",
+        "DEPRECATED",
+        "ERROR_GENERAL",
+        "ERROR_INVALID_PARAM",
+        "ERROR_MEMORY",
+        "ERROR_TIMEOUT",
+        "MAX(a, b)",
+        "MIN(a, b)",
+        "PACKED",
+        "SUCCESS",
+        "UNUSED(x)"
+      ],
+      "name": "common.h",
+      "structs": {},
+      "unions": {}
+    },
     "complex.c": {
       "aliases": {},
       "anonymous_relationships": {},
@@ -2875,8 +2973,8 @@
       "include_relations": [],
       "includes": [
         "common.h",
-        "mysql/mysql.h",
-        "postgresql/libpq-fe.h",
+        "libpq-fe.h",
+        "mysql.h",
         "sqlite3.h",
         "stdio.h",
         "stdlib.h"
@@ -3239,6 +3337,235 @@
       },
       "unions": {}
     },
+    "libpq-fe.h": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {
+        "ExecStatusType": {
+          "name": "ExecStatusType",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "PGRES_EMPTY_QUERY",
+              "value": "0"
+            },
+            {
+              "name": "PGRES_COMMAND_OK",
+              "value": "1"
+            },
+            {
+              "name": "PGRES_TUPLES_OK",
+              "value": "2"
+            },
+            {
+              "name": "PGRES_COPY_OUT",
+              "value": "3"
+            },
+            {
+              "name": "PGRES_COPY_IN",
+              "value": "4"
+            },
+            {
+              "name": "PGRES_BAD_RESPONSE",
+              "value": "5"
+            },
+            {
+              "name": "PGRES_NONFATAL_ERROR",
+              "value": "6"
+            },
+            {
+              "name": "PGRES_FATAL_ERROR",
+              "value": "7"
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/libpq-fe.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "PQclear",
+          "parameters": [
+            {
+              "name": "res",
+              "type": "PGresult *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "PQconnectdb",
+          "parameters": [
+            {
+              "name": "conninfo",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "PGconn *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "PQerrorMessage",
+          "parameters": [
+            {
+              "name": "conn",
+              "type": "const PGconn *",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "PQexec",
+          "parameters": [
+            {
+              "name": "conn",
+              "type": "PGconn *",
+              "value": null
+            },
+            {
+              "name": "command",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "PGresult *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "PQfinish",
+          "parameters": [
+            {
+              "name": "conn",
+              "type": "PGconn *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "PQfname",
+          "parameters": [
+            {
+              "name": "res",
+              "type": "const PGresult *",
+              "value": null
+            },
+            {
+              "name": "field_num",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "char *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "PQgetvalue",
+          "parameters": [
+            {
+              "name": "res",
+              "type": "const PGresult *",
+              "value": null
+            },
+            {
+              "name": "tup_num",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "field_num",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "char *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "PQnfields",
+          "parameters": [
+            {
+              "name": "res",
+              "type": "const PGresult *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "PQntuples",
+          "parameters": [
+            {
+              "name": "res",
+              "type": "const PGresult *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "PQresultStatus",
+          "parameters": [
+            {
+              "name": "res",
+              "type": "const PGresult *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "PQstatus",
+          "parameters": [
+            {
+              "name": "conn",
+              "type": "const PGconn *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [
+        {
+          "name": "PGconn",
+          "type": "\"C\" { typedef struct pg_conn",
+          "value": null
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "stddef.h"
+      ],
+      "macros": [
+        "CONNECTION_BAD",
+        "CONNECTION_OK",
+        "LIBPQ_FE_H"
+      ],
+      "name": "libpq-fe.h",
+      "structs": {},
+      "unions": {}
+    },
     "logger.c": {
       "aliases": {},
       "anonymous_relationships": {},
@@ -3539,6 +3866,216 @@
         "MATH_UTILS_H"
       ],
       "name": "math_utils.h",
+      "structs": {},
+      "unions": {}
+    },
+    "mysql.h": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/mysql.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "mysql_close",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "mysql_error",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "mysql_fetch_row",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "MYSQL_RES *",
+              "value": null
+            }
+          ],
+          "return_type": "MYSQL_ROW"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "mysql_free_result",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "MYSQL_RES *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "mysql_init",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            }
+          ],
+          "return_type": "MYSQL *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "mysql_num_fields",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "MYSQL_RES *",
+              "value": null
+            }
+          ],
+          "return_type": "unsigned int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "mysql_num_rows",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "MYSQL_RES *",
+              "value": null
+            }
+          ],
+          "return_type": "unsigned long"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "mysql_ping",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "mysql_query",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            },
+            {
+              "name": "query",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "mysql_real_connect",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            },
+            {
+              "name": "host",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "user",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "passwd",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "db",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "unsigned int",
+              "value": null
+            },
+            {
+              "name": "unix_socket",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "clientflag",
+              "type": "unsigned long",
+              "value": null
+            }
+          ],
+          "return_type": "MYSQL *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "mysql_store_result",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            }
+          ],
+          "return_type": "MYSQL_RES *"
+        }
+      ],
+      "globals": [
+        {
+          "name": "MYSQL",
+          "type": "\"C\" { typedef struct st_mysql",
+          "value": null
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "stddef.h"
+      ],
+      "macros": [
+        "MYSQL_ERROR",
+        "MYSQL_H",
+        "MYSQL_SUCCESS"
+      ],
+      "name": "mysql.h",
       "structs": {},
       "unions": {}
     },
@@ -4889,6 +5426,448 @@
       "structs": {},
       "unions": {}
     },
+    "sqlite3.h": {
+      "aliases": {
+        "sqlite3_callback": {
+          "name": "sqlite3_callback",
+          "original_type": "int(* sqlite3_callback)(void * , int , char * * , char * *)",
+          "uses": []
+        }
+      },
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/sqlite3.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_bind_blob",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "value",
+              "type": "const void *",
+              "value": null
+            },
+            {
+              "name": "n",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "destructor",
+              "type": "void ( * destructor ) ( void * )",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_bind_double",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "value",
+              "type": "double",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_bind_int",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "value",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_bind_text",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "value",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "n",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "destructor",
+              "type": "void ( * destructor ) ( void * )",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_close",
+          "parameters": [
+            {
+              "name": "db",
+              "type": "sqlite3 *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_column_blob",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "iCol",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "const void *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_column_count",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_column_double",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "iCol",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "double"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_column_int",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "iCol",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_column_name",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "iCol",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_column_text",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "iCol",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "const unsigned char *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_column_type",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "iCol",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_errmsg",
+          "parameters": [
+            {
+              "name": "db",
+              "type": "sqlite3 *",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_exec",
+          "parameters": [
+            {
+              "name": "db",
+              "type": "sqlite3 *",
+              "value": null
+            },
+            {
+              "name": "sql",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "callback",
+              "type": "sqlite3_callback",
+              "value": null
+            },
+            {
+              "name": "arg",
+              "type": "void *",
+              "value": null
+            },
+            {
+              "name": "errmsg",
+              "type": "char * *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_finalize",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_free",
+          "parameters": [
+            {
+              "name": "ptr",
+              "type": "void *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_open",
+          "parameters": [
+            {
+              "name": "filename",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "ppDb",
+              "type": "sqlite3 * *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_prepare_v2",
+          "parameters": [
+            {
+              "name": "db",
+              "type": "sqlite3 *",
+              "value": null
+            },
+            {
+              "name": "zSql",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "nByte",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "ppStmt",
+              "type": "sqlite3_stmt * *",
+              "value": null
+            },
+            {
+              "name": "pzTail",
+              "type": "const char * *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "sqlite3_step",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [
+        {
+          "name": "sqlite3",
+          "type": "\"C\" { typedef struct sqlite3",
+          "value": null
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "stddef.h"
+      ],
+      "macros": [
+        "SQLITE3_H",
+        "SQLITE_ABORT",
+        "SQLITE_AUTH",
+        "SQLITE_BUSY",
+        "SQLITE_CANTOPEN",
+        "SQLITE_CONSTRAINT",
+        "SQLITE_CORRUPT",
+        "SQLITE_DONE",
+        "SQLITE_EMPTY",
+        "SQLITE_ERROR",
+        "SQLITE_FORMAT",
+        "SQLITE_FULL",
+        "SQLITE_INTERNAL",
+        "SQLITE_INTERRUPT",
+        "SQLITE_IOERR",
+        "SQLITE_LOCKED",
+        "SQLITE_MISMATCH",
+        "SQLITE_MISUSE",
+        "SQLITE_NOLFS",
+        "SQLITE_NOMEM",
+        "SQLITE_NOTADB",
+        "SQLITE_NOTFOUND",
+        "SQLITE_OK",
+        "SQLITE_PERM",
+        "SQLITE_PROTOCOL",
+        "SQLITE_RANGE",
+        "SQLITE_READONLY",
+        "SQLITE_ROW",
+        "SQLITE_SCHEMA",
+        "SQLITE_TOOBIG"
+      ],
+      "name": "sqlite3.h",
+      "structs": {},
+      "unions": {}
+    },
     "transformed.c": {
       "aliases": {
         "legacy_int_t": {
@@ -5017,7 +5996,7 @@
               "value": null
             }
           ],
-          "return_type": "old_point_t *"
+          "return_type": "old_point *"
         },
         {
           "is_declaration": false,
@@ -5060,6 +6039,26 @@
       ],
       "name": "transformed.c",
       "structs": {
+        "__anonymous_struct__": {
+          "fields": [
+            {
+              "name": ")",
+              "type": "struct old_point * point = malloc ( sizeof ( struct old_point )",
+              "value": null
+            },
+            {
+              "name": "point",
+              "type": "if ( point ) { point -> x = x ; point -> y = y ; } return",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "__anonymous_struct__",
+          "tag_name": "",
+          "uses": [
+            "old_point"
+          ]
+        },
         "legacy_data": {
           "fields": [
             {
@@ -5074,7 +6073,7 @@
             },
             {
               "name": "position",
-              "type": "old_point_t",
+              "type": "struct old_point",
               "value": null
             }
           ],
@@ -5082,7 +6081,7 @@
           "name": "legacy_data",
           "tag_name": "",
           "uses": [
-            "old_point_t"
+            "old_point"
           ]
         },
         "old_point": {
