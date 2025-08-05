@@ -1,9 +1,9 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#include <sqlite3.h>
-#include <mysql/mysql.h>
-#include <postgresql/libpq-fe.h>
+#include "sqlite3.h"
+#include "mysql.h"
+#include "libpq-fe.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "common.h"

@@ -6,7 +6,11 @@
 // Legacy typedefs that can be removed/renamed
 typedef int legacy_int_t;
 typedef char* legacy_string_t;
-typedef struct old_point old_point_t;
+// Note: old_point_t is defined as void* in transformed.h, so we need to use the struct directly
+struct old_point {
+    int x;
+    int y;
+};
 
 // Deprecated macros that can be removed
 #define DEPRECATED_MAX_SIZE 1024
@@ -18,15 +22,12 @@ int old_global_counter = 0;
 legacy_string_t deprecated_message = "old version";
 
 // Deprecated structures that can be removed/renamed
-struct old_point {
-    int x;
-    int y;
-};
+// old_point struct is now defined above
 
 struct legacy_data {
     int id;
     char name[32];
-    old_point_t position;
+    struct old_point position;
 };
 
 // Deprecated enums that can be removed/renamed
@@ -58,8 +59,8 @@ void deprecated_print_info(const char* message) {
     printf("DEPRECATED: %s\n", message);
 }
 
-old_point_t* old_create_point(int x, int y) {
-    old_point_t* point = malloc(sizeof(old_point_t));
+struct old_point* old_create_point(int x, int y) {
+    struct old_point* point = malloc(sizeof(struct old_point));
     if (point) {
         point->x = x;
         point->y = y;
@@ -90,7 +91,7 @@ int main() {
     legacy_calculate(1, 2);
     deprecated_print_info("test message");
     
-    old_point_t* pt = old_create_point(10, 20);
+    struct old_point* pt = old_create_point(10, 20);
     if (pt) {
         printf("Point: (%d, %d)\n", pt->x, pt->y);
         free(pt);
