@@ -583,17 +583,12 @@ class PUMLValidator:
             )
         else:
             # Additional check: ensure the content is meaningful
-            meaningful_content = False
-            for line in content_lines:
-                # Check for actual data (fields, functions, variables, etc.)
-                if (line.startswith(('+', '-')) or  # Public/private members
-                    line.startswith('alias of') or  # Alias definitions
-                    ':' in line or  # Field definitions
-                    '(' in line or  # Function definitions
-                    '=' in line or  # Variable assignments
-                    (line.strip() and not line.startswith(('--', "'")))):  # Any non-empty, non-comment line (e.g., enum values)
-                    meaningful_content = True
-                    break
+            # If we have content_lines (after filtering comments/headers), consider it meaningful
+            # This includes enum values, struct fields, function signatures, etc.
+            if len(content_lines) >= 1:
+                meaningful_content = True
+            else:
+                meaningful_content = False
             
             if not meaningful_content:
                 self._add_result(
