@@ -70,7 +70,6 @@ class UnifiedTestCase(unittest.TestCase):
     def setUp(self):
         self.executor = TestExecutor()
         self.data_factory = TestDataFactory()
-        self.assertion_loader = AssertionDataLoader()
         # Specialized validators for different aspects
         self.model_validator = ModelValidator()
         self.puml_validator = PlantUMLValidator()
@@ -81,7 +80,7 @@ class UnifiedTestCase(unittest.TestCase):
         # Create temporary output directory for this test
         self.output_dir = tempfile.mkdtemp()
         # Load assertion data if available - full dictionary access
-        self.assertions = self.assertion_loader.load_assertion_data(self.test_name) if self.assertion_loader.has_assertion_data(self.test_name) else {}
+        self.assertions = self.data_factory.load_test_assertions(self.test_name) if self.data_factory.has_test_assertions(self.test_name) else {}
     
     def test_feature(self):
         # 1. Get paths to test data for CLI execution
@@ -274,7 +273,7 @@ class TestDataFactory:
         """Returns path to test_<name>/input/config.json for CLI execution"""
     
     def load_test_assertions(self, test_name: str) -> dict:
-        """Loads assertion data from test_<name>/assertions.json if it exists"""
+        """Loads assertion data from test_<name>/assertions.json and returns full dictionary"""
     
     def has_test_assertions(self, test_name: str) -> bool:
         """Returns True if test_<name>/assertions.json exists"""
@@ -284,16 +283,6 @@ class TestDataFactory:
     
     def get_test_data_path(self, test_name: str, subpath: str = "") -> str:
         """Returns absolute path to test data for CLI arguments"""
-
-
-class AssertionDataLoader:
-    """Component for loading and managing assertion data from assertions.json files"""
-    
-    def load_assertion_data(self, test_name: str) -> dict:
-        """Loads assertion data from test_<name>/assertions.json and returns full dictionary"""
-    
-    def has_assertion_data(self, test_name: str) -> bool:
-        """Returns True if test_<name>/assertions.json exists"""
 
 
 class TestExecutor:
