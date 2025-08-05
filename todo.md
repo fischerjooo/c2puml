@@ -70,7 +70,11 @@ class UnifiedTestCase(unittest.TestCase):
     def setUp(self):
         self.executor = TestExecutor()
         self.data_factory = TestDataFactory()
-        self.validator = ResultValidator()
+        # Specialized validators for different aspects
+        self.model_validator = ModelValidator()
+        self.puml_validator = PlantUMLValidator()
+        self.config_validator = ConfigValidator()
+        self.output_validator = OutputValidator()
         # Get test name from class name (e.g., TestParsing -> test_parsing)
         self.test_name = self.__class__.__name__.lower().replace('test', 'test_')
     
@@ -83,8 +87,9 @@ class UnifiedTestCase(unittest.TestCase):
         result = self.executor.run_full_pipeline(test_input, config)
         
         # 3. Validate results
-        self.validator.assert_model_valid(result.model)
-        self.validator.assert_puml_contains(result.puml, expected_elements)
+        self.model_validator.assert_model_structure_valid(result.model)
+        self.puml_validator.assert_puml_contains(result.puml_content, expected_elements)
+        self.output_validator.assert_output_dir_exists(result.output_dir)
 ```
 
 ### 2. Public API Testing Strategy
@@ -166,15 +171,29 @@ Structured validation of generated models:
 
 ```python
 class ModelValidator:
+    # Model structure and content validation
     def assert_model_structure_valid(self, model: dict)
-    def assert_files_parsed(self, model: dict, expected_files: list)
-    def assert_struct_exists(self, model: dict, struct_name: str)
-    def assert_function_exists(self, model: dict, func_name: str)
-    def assert_function_declared(self, model: dict, func_name: str)
-    def assert_include_relationship(self, model: dict, source: str, target: str)
-    def assert_transformation_applied(self, before: dict, after: dict, transformation: dict)
-    def assert_enum_exists(self, model: dict, enum_name: str)
-    def assert_typedef_exists(self, model: dict, typedef_name: str)
+    def assert_model_files_parsed(self, model: dict, expected_files: list)
+    def assert_model_file_count(self, model: dict, expected_count: int)
+    def assert_model_project_name(self, model: dict, expected_name: str)
+    
+    # Model element existence validation
+    def assert_model_struct_exists(self, model: dict, struct_name: str)
+    def assert_model_function_exists(self, model: dict, func_name: str)
+    def assert_model_function_declared(self, model: dict, func_name: str)
+    def assert_model_enum_exists(self, model: dict, enum_name: str)
+    def assert_model_typedef_exists(self, model: dict, typedef_name: str)
+    def assert_model_global_exists(self, model: dict, global_name: str)
+    def assert_model_macro_exists(self, model: dict, macro_name: str)
+    
+    # Model relationship validation
+    def assert_model_include_relationship(self, model: dict, source: str, target: str)
+    def assert_model_typedef_relationship(self, model: dict, typedef: str, original: str)
+    
+    # Model transformation validation
+    def assert_model_transformation_applied(self, before: dict, after: dict, transformation: dict)
+    def assert_model_element_renamed(self, model: dict, old_name: str, new_name: str)
+    def assert_model_element_removed(self, model: dict, element_name: str)
 ```
 
 #### 4.2 PlantUML Validation
@@ -184,10 +203,71 @@ Validation of generated PlantUML files:
 
 ```python
 class PlantUMLValidator:
-    def assert_class_exists(self, puml_content: str, class_name: str, stereotype: str)
-    def assert_relationship(self, puml_content: str, source: str, target: str, rel_type: str)
-    def assert_formatting_compliant(self, puml_content: str)
-    def assert_no_duplicate_elements(self, puml_content: str)
+    # PlantUML file validation
+    def assert_puml_file_exists(self, output_dir: str, filename: str)
+    def assert_puml_file_count(self, output_dir: str, expected_count: int)
+    def assert_puml_file_syntax_valid(self, puml_content: str)
+    
+    # PlantUML content validation
+    def assert_puml_contains(self, puml_content: str, expected_text: str)
+    def assert_puml_not_contains(self, puml_content: str, forbidden_text: str)
+    def assert_puml_class_exists(self, puml_content: str, class_name: str, stereotype: str)
+    def assert_puml_class_count(self, puml_content: str, expected_count: int)
+    
+    # PlantUML relationship validation
+    def assert_puml_relationship(self, puml_content: str, source: str, target: str, rel_type: str)
+    def assert_puml_relationship_count(self, puml_content: str, expected_count: int)
+    def assert_puml_includes_arrow(self, puml_content: str, source: str, target: str)
+    def assert_puml_declares_relationship(self, puml_content: str, file: str, typedef: str)
+    
+    # PlantUML formatting validation
+    def assert_puml_formatting_compliant(self, puml_content: str)
+    def assert_puml_no_duplicate_elements(self, puml_content: str)
+    def assert_puml_proper_stereotypes(self, puml_content: str)
+    def assert_puml_color_scheme(self, puml_content: str)
+    def assert_puml_visibility_notation(self, puml_content: str)
+    
+    # PlantUML structure validation
+    def assert_puml_start_end_tags(self, puml_content: str)
+    def assert_puml_proper_grouping(self, puml_content: str)
+    def assert_puml_no_syntax_errors(self, puml_content: str)
+
+
+class ConfigValidator:
+    # Configuration file validation
+    def assert_config_file_exists(self, config_path: str)
+    def assert_config_json_valid(self, config_content: str)
+    def assert_config_schema_valid(self, config: dict)
+    
+    # Configuration content validation
+    def assert_config_project_name(self, config: dict, expected_name: str)
+    def assert_config_source_folders(self, config: dict, expected_folders: list)
+    def assert_config_output_dir(self, config: dict, expected_dir: str)
+    def assert_config_recursive_search(self, config: dict, expected_value: bool)
+    def assert_config_include_depth(self, config: dict, expected_depth: int)
+    
+    # Configuration transformation validation
+    def assert_config_transformations_exist(self, config: dict)
+    def assert_config_file_specific_settings(self, config: dict, filename: str)
+    def assert_config_filter_patterns(self, config: dict)
+
+
+class OutputValidator:
+    # Output directory validation
+    def assert_output_dir_exists(self, output_path: str)
+    def assert_output_dir_structure(self, output_path: str, expected_structure: dict)
+    def assert_output_file_count(self, output_path: str, expected_count: int)
+    
+    # Log validation
+    def assert_log_contains(self, log_content: str, expected_message: str)
+    def assert_log_no_errors(self, log_content: str)
+    def assert_log_warning_count(self, log_content: str, expected_count: int)
+    def assert_log_execution_time(self, log_content: str, max_seconds: int)
+    
+    # Performance validation
+    def assert_execution_time_under(self, actual_time: float, max_time: float)
+    def assert_memory_usage_under(self, actual_memory: int, max_memory: int)
+    def assert_file_size_under(self, file_path: str, max_size: int)
 ```
 
 #### 4.3 Example Test Validation
@@ -335,15 +415,27 @@ class TestFeatureName(UnifiedTestCase):
         result = self.executor.run_full_pipeline(test_input, config)
         
         # Assert - Model validation
-        self.validator.assert_model_structure_valid(result.model)
-        self.validator.assert_files_parsed(result.model, ["main.c", "utils.h"])
-        self.validator.assert_struct_exists(result.model, "Point")
-        self.validator.assert_function_exists(result.model, "main")
+        self.model_validator.assert_model_structure_valid(result.model)
+        self.model_validator.assert_model_files_parsed(result.model, ["main.c", "utils.h"])
+        self.model_validator.assert_model_struct_exists(result.model, "Point")
+        self.model_validator.assert_model_function_exists(result.model, "main")
         
-        # Assert - PlantUML validation
-        self.validator.assert_puml_contains(result.puml, expected_elements)
-        self.validator.assert_class_exists(result.puml, "MAIN", "source")
-        self.validator.assert_relationship(result.puml, "MAIN", "HEADER_UTILS", "include")
+        # Assert - PlantUML file validation
+        self.puml_validator.assert_puml_file_exists(result.output_dir, "main.puml")
+        self.puml_validator.assert_puml_file_syntax_valid(result.puml_content)
+        
+        # Assert - PlantUML content validation
+        self.puml_validator.assert_puml_contains(result.puml_content, expected_elements)
+        self.puml_validator.assert_puml_class_exists(result.puml_content, "MAIN", "source")
+        self.puml_validator.assert_puml_relationship(result.puml_content, "MAIN", "HEADER_UTILS", "include")
+        
+        # Assert - PlantUML formatting validation
+        self.puml_validator.assert_puml_formatting_compliant(result.puml_content)
+        self.puml_validator.assert_puml_proper_stereotypes(result.puml_content)
+        
+        # Assert - Output validation
+        self.output_validator.assert_output_dir_exists(result.output_dir)
+        self.output_validator.assert_log_no_errors(result.log_content)
 ```
 
 #### 7.2 Documentation Standards
