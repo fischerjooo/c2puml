@@ -169,6 +169,26 @@ test_<name>/
 
 Structured validation of generated models:
 
+**Example Usage:**
+```python
+def test_model_generation(self):
+    # Validate model structure
+    self.model_validator.assert_model_structure_valid(result.model)
+    self.model_validator.assert_model_files_parsed(result.model, ["main.c", "utils.h"])
+    
+    # Validate model file content with specific lines
+    expected_model_lines = [
+        '"project_name": "test_project"',
+        '"structs": {',
+        '"Point": {',
+        '"functions": ['
+    ]
+    self.model_validator.assert_model_file_contains_lines(
+        result.model_file_path, 
+        expected_model_lines
+    )
+```
+
 ```python
 class ModelValidator:
     # Model structure and content validation
@@ -194,6 +214,11 @@ class ModelValidator:
     def assert_model_transformation_applied(self, before: dict, after: dict, transformation: dict)
     def assert_model_element_renamed(self, model: dict, old_name: str, new_name: str)
     def assert_model_element_removed(self, model: dict, element_name: str)
+    
+    # Model file validation
+    def assert_model_file_contains_lines(self, model_file_path: str, expected_lines: list)
+    def assert_model_file_structure_valid(self, model_file_path: str)
+    def assert_model_json_syntax_valid(self, model_file_path: str)
 ```
 
 #### 4.2 PlantUML Validation
@@ -211,6 +236,8 @@ class PlantUMLValidator:
     # PlantUML content validation
     def assert_puml_contains(self, puml_content: str, expected_text: str)
     def assert_puml_not_contains(self, puml_content: str, forbidden_text: str)
+    def assert_puml_contains_lines(self, puml_content: str, expected_lines: list)
+    def assert_puml_not_contains_lines(self, puml_content: str, forbidden_lines: list)
     def assert_puml_class_exists(self, puml_content: str, class_name: str, stereotype: str)
     def assert_puml_class_count(self, puml_content: str, expected_count: int)
     
@@ -258,8 +285,19 @@ class OutputValidator:
     def assert_output_dir_structure(self, output_path: str, expected_structure: dict)
     def assert_output_file_count(self, output_path: str, expected_count: int)
     
+    # File content validation
+    def assert_file_exists(self, file_path: str)
+    def assert_file_contains(self, file_path: str, expected_text: str)
+    def assert_file_not_contains(self, file_path: str, forbidden_text: str)
+    def assert_file_contains_lines(self, file_path: str, expected_lines: list)
+    def assert_file_not_contains_lines(self, file_path: str, forbidden_lines: list)
+    def assert_file_line_count(self, file_path: str, expected_count: int)
+    def assert_file_empty(self, file_path: str)
+    def assert_file_not_empty(self, file_path: str)
+    
     # Log validation
     def assert_log_contains(self, log_content: str, expected_message: str)
+    def assert_log_contains_lines(self, log_content: str, expected_lines: list)
     def assert_log_no_errors(self, log_content: str)
     def assert_log_warning_count(self, log_content: str, expected_count: int)
     def assert_log_execution_time(self, log_content: str, max_seconds: int)
@@ -435,7 +473,27 @@ class TestFeatureName(UnifiedTestCase):
         
         # Assert - Output validation
         self.output_validator.assert_output_dir_exists(result.output_dir)
+        self.output_validator.assert_file_exists(f"{result.output_dir}/main.puml")
         self.output_validator.assert_log_no_errors(result.log_content)
+        
+        # Assert - File content validation with specific lines
+        expected_puml_lines = [
+            'class "main" as MAIN <<source>> #LightBlue',
+            'class "utils.h" as HEADER_UTILS <<header>> #LightGreen',
+            'MAIN --> HEADER_UTILS : <<include>>'
+        ]
+        self.output_validator.assert_file_contains_lines(
+            f"{result.output_dir}/main.puml", 
+            expected_puml_lines
+        )
+        
+        # Assert - PlantUML specific content validation
+        self.puml_validator.assert_puml_contains_lines(result.puml_content, [
+            '+ void main()',
+            '+ struct Point',
+            '@startuml main',
+            '@enduml'
+        ])
 ```
 
 #### 7.2 Documentation Standards
