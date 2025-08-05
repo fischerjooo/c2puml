@@ -239,17 +239,32 @@ def test_model_generation_with_transformations(self):
     # Validate original content is removed (transformation effects)
     self.model_validator.assert_model_function_not_exists(result.model, "deprecated_print_info")
     
+    # Validate includes and relationships (should be preserved after transformation)
+    expected_includes = ["stdio.h", "sample.h", "config.h"]
+    self.model_validator.assert_model_includes_exist(result.model, expected_includes)
+    
+    expected_include_relations = [
+        {"source": "sample.c", "target": "stdio.h"},
+        {"source": "sample.c", "target": "sample.h"}
+    ]
+    self.model_validator.assert_model_include_relationships_exist(result.model, expected_include_relations)
+    
+    # Validate specific include was removed by transformation (if configured)
+    self.model_validator.assert_model_include_not_exists(result.model, "time.h")  # Removed by transformation
+    
     # Validate model file content with specific lines (post-transformation)
     expected_model_lines = [
         '"project_name": "test_project"',
         '"name": "legacy_print_info"',  # Renamed function appears
+        '"includes": ["stdio.h", "sample.h", "config.h"]',  # Expected includes
         '"structs": {',
         '"Point": {'
     ]
     forbidden_model_lines = [
         '"deprecated_print_info"',  # Original function name should not appear
         '"test_debug_function"',    # Removed function should not appear
-        '"LEGACY_MACRO"'            # Removed macro should not appear
+        '"LEGACY_MACRO"',           # Removed macro should not appear
+        '"time.h"'                  # Removed include should not appear
     ]
     self.model_validator.assert_model_file_contains_lines(result.model_file_path, expected_model_lines)
     self.model_validator.assert_model_file_not_contains_lines(result.model_file_path, forbidden_model_lines)
@@ -278,8 +293,14 @@ class ModelValidator:
     def assert_model_macro_exists(self, model: dict, macro_name: str)
     def assert_model_macro_not_exists(self, model: dict, macro_name: str)
     
+    # Model includes validation
+    def assert_model_includes_exist(self, model: dict, expected_includes: list)
+    def assert_model_include_exists(self, model: dict, include_name: str)
+    def assert_model_include_not_exists(self, model: dict, include_name: str)
+    
     # Model relationship validation
     def assert_model_include_relationship(self, model: dict, source: str, target: str)
+    def assert_model_include_relationships_exist(self, model: dict, expected_relations: list)
     def assert_model_typedef_relationship(self, model: dict, typedef: str, original: str)
     
     # Model transformation validation
@@ -408,6 +429,12 @@ tests/example/
     "functions": ["main", "calculate_area", "init_config", "legacy_print_info"],
     "enums": ["Color", "Status"],
     "typedefs": ["int32_t", "point_t"],
+    "includes": ["stdio.h", "stdlib.h", "sample.h", "config.h"],
+    "include_relations": [
+      {"source": "sample.c", "target": "stdio.h"},
+      {"source": "sample.c", "target": "sample.h"},
+      {"source": "sample.h", "target": "config.h"}
+    ],
     "forbidden_elements": ["deprecated_print_info", "test_debug_function", "LEGACY_MACRO"]
   },
   "puml_expectations": {
@@ -550,6 +577,18 @@ class TestFeatureName(UnifiedTestCase):
         self.model_validator.assert_model_structure_valid(model_content)
         self.model_validator.assert_model_function_exists(model_content, "main")
         self.model_validator.assert_model_struct_exists(model_content, "Point")
+        
+        # Assert - Include validation
+        expected_includes = ["stdio.h", "stdlib.h", "sample.h", "config.h"]
+        self.model_validator.assert_model_includes_exist(model_content, expected_includes)
+        
+        # Assert - Include relationships validation
+        expected_relations = [
+            {"source": "sample.c", "target": "stdio.h"},
+            {"source": "sample.c", "target": "sample.h"},
+            {"source": "sample.h", "target": "config.h"}
+        ]
+        self.model_validator.assert_model_include_relationships_exist(model_content, expected_relations)
         
         # Assert - PlantUML file validation (via file content)
         with open(main_puml_file, 'r') as f:
