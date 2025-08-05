@@ -171,22 +171,31 @@ Structured validation of generated models:
 
 **Example Usage:**
 ```python
-def test_model_generation(self):
+def test_model_generation_with_transformations(self):
     # Validate model structure
     self.model_validator.assert_model_structure_valid(result.model)
     self.model_validator.assert_model_files_parsed(result.model, ["main.c", "utils.h"])
     
-    # Validate model file content with specific lines
+    # Validate transformed content exists (renamed functions)
+    self.model_validator.assert_model_function_exists(result.model, "legacy_print_info")
+    
+    # Validate original content is removed (transformation effects)
+    self.model_validator.assert_model_function_not_exists(result.model, "deprecated_print_info")
+    
+    # Validate model file content with specific lines (post-transformation)
     expected_model_lines = [
         '"project_name": "test_project"',
+        '"name": "legacy_print_info"',  # Renamed function appears
         '"structs": {',
-        '"Point": {',
-        '"functions": ['
+        '"Point": {'
     ]
-    self.model_validator.assert_model_file_contains_lines(
-        result.model_file_path, 
-        expected_model_lines
-    )
+    forbidden_model_lines = [
+        '"deprecated_print_info"',  # Original function name should not appear
+        '"test_debug_function"',    # Removed function should not appear
+        '"LEGACY_MACRO"'            # Removed macro should not appear
+    ]
+    self.model_validator.assert_model_file_contains_lines(result.model_file_path, expected_model_lines)
+    self.model_validator.assert_model_file_not_contains_lines(result.model_file_path, forbidden_model_lines)
 ```
 
 ```python
@@ -199,12 +208,18 @@ class ModelValidator:
     
     # Model element existence validation
     def assert_model_struct_exists(self, model: dict, struct_name: str)
+    def assert_model_struct_not_exists(self, model: dict, struct_name: str)
     def assert_model_function_exists(self, model: dict, func_name: str)
+    def assert_model_function_not_exists(self, model: dict, func_name: str)
     def assert_model_function_declared(self, model: dict, func_name: str)
     def assert_model_enum_exists(self, model: dict, enum_name: str)
+    def assert_model_enum_not_exists(self, model: dict, enum_name: str)
     def assert_model_typedef_exists(self, model: dict, typedef_name: str)
+    def assert_model_typedef_not_exists(self, model: dict, typedef_name: str)
     def assert_model_global_exists(self, model: dict, global_name: str)
+    def assert_model_global_not_exists(self, model: dict, global_name: str)
     def assert_model_macro_exists(self, model: dict, macro_name: str)
+    def assert_model_macro_not_exists(self, model: dict, macro_name: str)
     
     # Model relationship validation
     def assert_model_include_relationship(self, model: dict, source: str, target: str)
@@ -217,6 +232,7 @@ class ModelValidator:
     
     # Model file validation
     def assert_model_file_contains_lines(self, model_file_path: str, expected_lines: list)
+    def assert_model_file_not_contains_lines(self, model_file_path: str, forbidden_lines: list)
     def assert_model_file_structure_valid(self, model_file_path: str)
     def assert_model_json_syntax_valid(self, model_file_path: str)
 ```
@@ -332,9 +348,10 @@ tests/example/
     "files_count": 3,
     "required_files": ["sample.c", "sample.h", "config.h"],
     "structs": ["Point", "Rectangle", "User"],
-    "functions": ["main", "calculate_area", "init_config"],
+    "functions": ["main", "calculate_area", "init_config", "legacy_print_info"],
     "enums": ["Color", "Status"],
-    "typedefs": ["int32_t", "point_t"]
+    "typedefs": ["int32_t", "point_t"],
+    "forbidden_elements": ["deprecated_print_info", "test_debug_function", "LEGACY_MACRO"]
   },
   "puml_expectations": {
     "generated_files": ["sample.puml"],
@@ -345,11 +362,17 @@ tests/example/
     ],
     "required_relationships": [
       {"source": "SAMPLE", "target": "HEADER_SAMPLE", "type": "include"}
+    ],
+    "required_content_lines": [
+      "class \"sample\" as SAMPLE <<source>> #LightBlue",
+      "+ void legacy_print_info()",
+      "class \"Point\" as TYPEDEF_POINT <<struct>> #LightYellow"
+    ],
+    "forbidden_content_lines": [
+      "deprecated_print_info",
+      "test_debug_function",
+      "LEGACY_MACRO"
     ]
-  },
-  "transformation_expectations": {
-    "renamed_functions": {"deprecated_print_info": "legacy_print_info"},
-    "removed_elements": ["test_debug_function", "LEGACY_MACRO"]
   }
 }
 ```
