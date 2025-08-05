@@ -25,12 +25,7 @@ Based on analysis of the codebase, the public APIs are:
    python3 main.py --config config.json [parse|transform|generate]
    ```
 
-2. **Package Interface** (`src/c2puml/__init__.py`):
-   ```python
-   from c2puml import Parser, Transformer, Generator
-   ```
-
-3. **Configuration Interface**:
+2. **Configuration Interface**:
    - JSON configuration files with standardized schema
    - Input: C/C++ source files and headers
    - Output: model.json, transformed_model.json, .puml files
@@ -152,7 +147,7 @@ class UnifiedTestCase(unittest.TestCase):
     def test_flexible_assertion_examples(self):
         """Example showing different ways tests can structure their assertion data"""
         input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)
+        config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
         
         result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
         self.assertEqual(result.exit_code, 0)
@@ -865,7 +860,7 @@ class TestFeatureName(UnifiedTestCase):
         """Clear description of what this test validates"""
         # Arrange - Get paths to self-contained test data
         input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)
+        config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
         
         # Act - Execute through CLI interface only
         result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
@@ -918,7 +913,7 @@ class TestFeatureName(UnifiedTestCase):
             '@startuml main',
             '@enduml'
         ]
-                 self.output_validator.assert_file_contains_lines(main_puml_file, expected_puml_lines)
+        self.output_validator.assert_file_contains_lines(main_puml_file, expected_puml_lines)
     
     def test_custom_edge_case_validation(self):
         """Example of custom validation for complex edge cases"""
@@ -1066,7 +1061,7 @@ class TestFeatureName(UnifiedTestCase):
 
 #### Phase 2: Public API Migration (Week 3-4)
 1. Identify tests using internal APIs (audit all 57 files, excluding preserved example)
-2. Refactor high-priority unit tests to use public APIs
+2. Refactor high-priority unit tests to use CLI-only interface
 3. Create conversion utilities for existing test patterns
 4. Update example test to use new validation framework while preserving its structure
 
@@ -1086,7 +1081,7 @@ class TestFeatureName(UnifiedTestCase):
 ### 9. Success Criteria
 
 #### Technical Criteria
-- **Zero internal API usage**: All tests use only public APIs
+- **Zero internal API usage**: All tests use only CLI interface (main.py)
 - **100% test pass rate**: All migrated tests pass consistently  
 - **Maintainable boundaries**: Clear separation between test and application code
 - **Consistent patterns**: All tests follow unified structure and naming
