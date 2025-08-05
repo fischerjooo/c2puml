@@ -77,19 +77,56 @@ class UnifiedTestCase(unittest.TestCase):
         self.output_validator = OutputValidator()
         # Get test name from class name (e.g., TestParsing -> test_parsing)
         self.test_name = self.__class__.__name__.lower().replace('test', 'test_')
+        # Create temporary output directory for this test
+        self.output_dir = tempfile.mkdtemp()
     
     def test_feature(self):
-        # 1. Load test data from self-contained folders
-        test_input = self.data_factory.load_test_input(self.test_name)
-        config = self.data_factory.load_test_config(self.test_name)
+        # 1. Get paths to test data for CLI execution
+        input_path = self.data_factory.load_test_input(self.test_name)
+        config_path = self.data_factory.load_test_config(self.test_name)
         
-        # 2. Execute through public API
-        result = self.executor.run_full_pipeline(test_input, config)
+        # 2. Execute through CLI interface only
+        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
         
-        # 3. Validate results
-        self.model_validator.assert_model_structure_valid(result.model)
-        self.puml_validator.assert_puml_contains(result.puml_content, expected_elements)
-        self.output_validator.assert_output_dir_exists(result.output_dir)
+        # 3. Validate CLI execution and results
+        self.assertEqual(result.exit_code, 0, f"CLI failed: {result.stderr}")
+        self.output_validator.assert_output_dir_exists(self.output_dir)
+        self.output_validator.assert_log_no_errors(result.stdout)
+        
+        # 4. Load and validate generated files
+        model_file = f"{self.output_dir}/model.json"
+        self.model_validator.assert_model_json_syntax_valid(model_file)
+        
+        puml_files = glob.glob(f"{self.output_dir}/*.puml")
+        self.assertGreater(len(puml_files), 0, "No PlantUML files generated")
+        
+        for puml_file in puml_files:
+            self.puml_validator.assert_puml_file_syntax_valid(puml_file)
+    
+    def test_individual_steps(self):
+        """Example of testing individual pipeline steps via CLI"""
+        input_path = self.data_factory.load_test_input(self.test_name)
+        config_path = self.data_factory.load_test_config(self.test_name)
+        
+        # Step 1: Parse only
+        parse_result = self.executor.run_parse_only(input_path, config_path, self.output_dir)
+        self.assertEqual(parse_result.exit_code, 0, f"Parse step failed: {parse_result.stderr}")
+        
+        model_file = f"{self.output_dir}/model.json"
+        self.output_validator.assert_file_exists(model_file)
+        self.model_validator.assert_model_json_syntax_valid(model_file)
+        
+        # Step 2: Transform only (operates on existing model.json)
+        transform_result = self.executor.run_transform_only(config_path, self.output_dir)
+        self.assertEqual(transform_result.exit_code, 0, f"Transform step failed: {transform_result.stderr}")
+        
+        # Step 3: Generate only (operates on transformed model)
+        generate_result = self.executor.run_generate_only(config_path, self.output_dir)
+        self.assertEqual(generate_result.exit_code, 0, f"Generate step failed: {generate_result.stderr}")
+        
+        # Validate final output
+        puml_files = glob.glob(f"{self.output_dir}/*.puml")
+        self.assertGreater(len(puml_files), 0, "No PlantUML files generated")
 ```
 
 ### 2. Public API Testing Strategy
@@ -97,17 +134,20 @@ class UnifiedTestCase(unittest.TestCase):
 #### 2.1 CLI Interface Testing
 **Priority: HIGH**
 
-All tests should execute c2puml through:
-- Direct CLI calls using `subprocess`
-- Package imports using the public `c2puml` module interface
+All tests should execute c2puml through the CLI interface only:
+- **CLI execution**: `subprocess.run(['python3', 'main.py', '--config', ...])` ✅
+- **Individual steps**: `python3 main.py --config config.json [parse|transform|generate]` ✅
 
-**Forbidden**: Direct imports of internal modules like:
+**Forbidden**: Direct imports of any internal modules:
 - `from c2puml.core.parser import CParser` ❌
 - `from c2puml.core.tokenizer import CTokenizer` ❌
+- `from c2puml import Parser, Transformer, Generator` ❌
 
-**Allowed**: Public interfaces only:
-- `from c2puml import Parser, Transformer, Generator` ✅
-- CLI execution: `subprocess.run(['python3', 'main.py', '--config', ...])` ✅
+**Only Allowed**: CLI interface through main.py:
+- `python3 main.py --config config.json` - Full pipeline
+- `python3 main.py --config config.json parse` - Parse only
+- `python3 main.py --config config.json transform` - Transform only  
+- `python3 main.py --config config.json generate` - Generate only
 
 #### 2.2 Test Input/Output Validation
 **Priority: HIGH**
@@ -126,17 +166,34 @@ Create reusable test data generators:
 
 ```python
 class TestDataFactory:
-    def load_test_input(self, test_name: str) -> TestInput:
-        """Loads test input from test_<name>/input/ directory (C files, model.json, etc.)"""
+    def load_test_input(self, test_name: str) -> str:
+        """Returns path to test_<name>/input/ directory for CLI execution"""
     
-    def load_test_config(self, test_name: str) -> ConfigData:
-        """Loads configuration from test_<name>/config.json"""
+    def load_test_config(self, test_name: str) -> str:
+        """Returns path to test_<name>/config.json for CLI execution"""
     
-    def create_temp_project(self, input_files: dict) -> TestProject:
-        """Creates temporary project for dynamic test generation"""
+    def create_temp_project(self, input_files: dict) -> str:
+        """Creates temporary project and returns path for CLI execution"""
     
-    def get_test_data_path(self, test_name: str, subpath: str = "") -> Path:
-        """Returns path to test data: test_<name>/input/ or test_<name>/config.json"""
+    def get_test_data_path(self, test_name: str, subpath: str = "") -> str:
+        """Returns absolute path to test data for CLI arguments"""
+
+
+class TestExecutor:
+    def run_cli_command(self, command: list, cwd: str = None) -> CLIResult:
+        """Executes CLI command and returns result with output, logs, and exit code"""
+    
+    def run_full_pipeline(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
+        """Runs complete pipeline: python3 main.py --config <config>"""
+    
+    def run_parse_only(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
+        """Runs parse step only: python3 main.py --config <config> parse"""
+    
+    def run_transform_only(self, config_path: str, output_dir: str) -> CLIResult:
+        """Runs transform step only: python3 main.py --config <config> transform"""
+    
+    def run_generate_only(self, config_path: str, output_dir: str) -> CLIResult:
+        """Runs generate step only: python3 main.py --config <config> generate"""
 ```
 
 #### 3.2 Self-Contained Test Data
@@ -468,55 +525,50 @@ class TestFeatureName(UnifiedTestCase):
     
     def test_scenario_name(self):
         """Clear description of what this test validates"""
-        # Arrange - Load from self-contained test folder
-        test_input = self.data_factory.load_test_input(self.test_name)
-        config = self.data_factory.load_test_config(self.test_name)
+        # Arrange - Get paths to self-contained test data
+        input_path = self.data_factory.load_test_input(self.test_name)
+        config_path = self.data_factory.load_test_config(self.test_name)
         
-        # Act  
-        result = self.executor.run_full_pipeline(test_input, config)
+        # Act - Execute through CLI interface only
+        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
         
-        # Assert - Model validation
-        self.model_validator.assert_model_structure_valid(result.model)
-        self.model_validator.assert_model_files_parsed(result.model, ["main.c", "utils.h"])
-        self.model_validator.assert_model_struct_exists(result.model, "Point")
-        self.model_validator.assert_model_function_exists(result.model, "main")
+        # Assert - CLI execution validation
+        self.assertEqual(result.exit_code, 0, f"CLI execution failed: {result.stderr}")
+        self.output_validator.assert_log_no_errors(result.stdout)
         
-        # Assert - PlantUML file validation
-        self.puml_validator.assert_puml_file_exists(result.output_dir, "main.puml")
-        self.puml_validator.assert_puml_file_syntax_valid(result.puml_content)
+        # Assert - Output file validation
+        model_file = f"{self.output_dir}/model.json"
+        main_puml_file = f"{self.output_dir}/main.puml"
         
-        # Assert - PlantUML content validation
-        self.puml_validator.assert_puml_contains(result.puml_content, expected_elements)
-        self.puml_validator.assert_puml_class_exists(result.puml_content, "MAIN", "source")
-        self.puml_validator.assert_puml_relationship(result.puml_content, "MAIN", "HEADER_UTILS", "include")
+        self.output_validator.assert_file_exists(model_file)
+        self.output_validator.assert_file_exists(main_puml_file)
         
-        # Assert - PlantUML formatting validation
-        self.puml_validator.assert_puml_formatting_compliant(result.puml_content)
-        self.puml_validator.assert_puml_proper_stereotypes(result.puml_content)
+        # Assert - Model file validation (via file content)
+        with open(model_file, 'r') as f:
+            model_content = json.load(f)
         
-        # Assert - Output validation
-        self.output_validator.assert_output_dir_exists(result.output_dir)
-        self.output_validator.assert_file_exists(f"{result.output_dir}/main.puml")
-        self.output_validator.assert_log_no_errors(result.log_content)
+        self.model_validator.assert_model_structure_valid(model_content)
+        self.model_validator.assert_model_function_exists(model_content, "main")
+        self.model_validator.assert_model_struct_exists(model_content, "Point")
+        
+        # Assert - PlantUML file validation (via file content)
+        with open(main_puml_file, 'r') as f:
+            puml_content = f.read()
+        
+        self.puml_validator.assert_puml_file_syntax_valid(puml_content)
+        self.puml_validator.assert_puml_formatting_compliant(puml_content)
         
         # Assert - File content validation with specific lines
         expected_puml_lines = [
             'class "main" as MAIN <<source>> #LightBlue',
             'class "utils.h" as HEADER_UTILS <<header>> #LightGreen',
-            'MAIN --> HEADER_UTILS : <<include>>'
-        ]
-        self.output_validator.assert_file_contains_lines(
-            f"{result.output_dir}/main.puml", 
-            expected_puml_lines
-        )
-        
-        # Assert - PlantUML specific content validation
-        self.puml_validator.assert_puml_contains_lines(result.puml_content, [
+            'MAIN --> HEADER_UTILS : <<include>>',
             '+ void main()',
             '+ struct Point',
             '@startuml main',
             '@enduml'
-        ])
+        ]
+        self.output_validator.assert_file_contains_lines(main_puml_file, expected_puml_lines)
 ```
 
 #### 7.2 Documentation Standards
