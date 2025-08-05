@@ -80,8 +80,8 @@ class UnifiedTestCase(unittest.TestCase):
         self.test_name = self.__class__.__name__.lower().replace('test', 'test_')
         # Create temporary output directory for this test
         self.output_dir = tempfile.mkdtemp()
-        # Load assertion data if available
-        self.assertions = self.assertion_loader.load_assertion_data(self.test_name) if self.data_factory.has_test_assertions(self.test_name) else {}
+        # Load assertion data if available - full dictionary access
+        self.assertions = self.assertion_loader.load_assertion_data(self.test_name) if self.assertion_loader.has_assertion_data(self.test_name) else {}
     
     def test_feature(self):
         # 1. Get paths to test data for CLI execution
@@ -120,28 +120,89 @@ class UnifiedTestCase(unittest.TestCase):
         
         # Use assertion data for validation (if assertions.json exists)
         if self.assertions:
-            # Validate expected functions from assertions.json
-            expected_functions = self.assertion_loader.get_expected_model_elements(self.test_name, "functions")
-            for func_name in expected_functions:
-                self.model_validator.assert_model_function_exists(model, func_name)
+            # Direct access to test-specific assertion data
+            # Test can name its assertion sections however it wants
             
-            # Validate forbidden elements from assertions.json
-            forbidden_elements = self.assertion_loader.get_forbidden_elements(self.test_name, "functions")
-            for func_name in forbidden_elements:
-                self.model_validator.assert_model_function_not_exists(model, func_name)
+            # Example: Validate expected functions
+            if "critical_functions" in self.assertions:
+                for func_name in self.assertions["critical_functions"]:
+                    self.model_validator.assert_model_function_exists(model, func_name)
             
-            # Validate PlantUML content from assertions.json
-            expected_puml_lines = self.assertion_loader.get_expected_puml_lines(self.test_name, "main")
-            main_puml_file = f"{self.output_dir}/main.puml"
-            self.output_validator.assert_file_contains_lines(main_puml_file, expected_puml_lines)
+            # Example: Validate forbidden elements  
+            if "should_not_exist" in self.assertions:
+                for func_name in self.assertions["should_not_exist"]:
+                    self.model_validator.assert_model_function_not_exists(model, func_name)
             
-            # Validate include relationships from assertions.json
-            expected_relations = self.assertion_loader.get_expected_relationships(self.test_name, "include_relations")
-            self.model_validator.assert_model_include_relationships_exist(model, expected_relations)
+            # Example: Validate PlantUML content with custom naming
+            if "expected_main_puml_content" in self.assertions:
+                main_puml_file = f"{self.output_dir}/main.puml"
+                self.output_validator.assert_file_contains_lines(main_puml_file, self.assertions["expected_main_puml_content"])
+            
+            # Example: Test-specific validation with custom structure
+            if "parser_validation" in self.assertions:
+                parser_data = self.assertions["parser_validation"]
+                if "required_structs" in parser_data:
+                    for struct_name in parser_data["required_structs"]:
+                        self.model_validator.assert_model_struct_exists(model, struct_name)
+                if "include_chain" in parser_data:
+                    self.model_validator.assert_model_include_relationships_exist(model, parser_data["include_chain"])
         else:
             # Fallback to inline assertions when no assertions.json
             self.model_validator.assert_model_function_exists(model, "main")
             self.model_validator.assert_model_struct_exists(model, "Point")
+    
+    def test_flexible_assertion_examples(self):
+        """Example showing different ways tests can structure their assertion data"""
+        input_path = self.data_factory.load_test_input(self.test_name)
+        config_path = self.data_factory.load_test_config(self.test_name)
+        
+        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+        self.assertEqual(result.exit_code, 0)
+        
+        with open(f"{self.output_dir}/model.json", 'r') as f:
+            model = json.load(f)
+        
+        if self.assertions:
+            # Each test can name its sections however it wants
+            
+            # Simple list validation
+            if "must_parse_these_files" in self.assertions:
+                for filename in self.assertions["must_parse_these_files"]:
+                    self.model_validator.assert_model_file_parsed(model, filename)
+            
+            # Complex nested validation 
+            if "memory_management_check" in self.assertions:
+                mm_check = self.assertions["memory_management_check"]
+                if "allocation_functions" in mm_check:
+                    for func in mm_check["allocation_functions"]:
+                        self.model_validator.assert_model_function_exists(model, func)
+                if "dangerous_patterns" in mm_check:
+                    for pattern in mm_check["dangerous_patterns"]:
+                        self.model_validator.assert_model_function_not_exists(model, pattern)
+            
+            # Performance validation with custom thresholds
+            if "this_test_performance_limits" in self.assertions:
+                perf = self.assertions["this_test_performance_limits"]
+                # Custom validation logic specific to this test
+                if "max_struct_count" in perf:
+                    struct_count = len(model.get("structs", []))
+                    self.assertLessEqual(struct_count, perf["max_struct_count"])
+            
+            # Transformation validation with before/after checks
+            if "transformation_verification" in self.assertions:
+                trans = self.assertions["transformation_verification"]
+                # Check that old elements are gone
+                for old_func in trans.get("should_be_removed", []):
+                    self.model_validator.assert_model_function_not_exists(model, old_func)
+                # Check that new elements are present
+                for new_func in trans.get("should_be_added", []):
+                    self.model_validator.assert_model_function_exists(model, new_func)
+            
+            # PlantUML validation with multiple files
+            if "puml_file_checks" in self.assertions:
+                for puml_file, expected_lines in self.assertions["puml_file_checks"].items():
+                    puml_path = f"{self.output_dir}/{puml_file}"
+                    self.output_validator.assert_file_contains_lines(puml_path, expected_lines)
     
     def test_individual_steps(self):
         """Example of testing individual pipeline steps via CLI"""
@@ -229,22 +290,10 @@ class AssertionDataLoader:
     """Component for loading and managing assertion data from assertions.json files"""
     
     def load_assertion_data(self, test_name: str) -> dict:
-        """Loads assertion data from test_<name>/assertions.json"""
+        """Loads assertion data from test_<name>/assertions.json and returns full dictionary"""
     
-    def get_expected_model_elements(self, test_name: str, element_type: str) -> list:
-        """Gets expected elements list for model validation (structs, functions, etc.)"""
-    
-    def get_expected_puml_lines(self, test_name: str, file_name: str = "main") -> list:
-        """Gets expected PlantUML content lines for file validation"""
-    
-    def get_forbidden_elements(self, test_name: str, element_type: str = "all") -> list:
-        """Gets forbidden elements that should not appear in output"""
-    
-    def get_expected_relationships(self, test_name: str, relationship_type: str) -> list:
-        """Gets expected relationships (include_relations, typedef_relations, etc.)"""
-    
-    def get_custom_validation_data(self, test_name: str, validation_key: str) -> any:
-        """Gets custom validation data for edge cases"""
+    def has_assertion_data(self, test_name: str) -> bool:
+        """Returns True if test_<name>/assertions.json exists"""
 
 
 class TestExecutor:
@@ -281,81 +330,79 @@ test_<name>/
 └── assertions.json     # Optional: Large assertion data (lists, structures, expected content)
 ```
 
-**Example assertions.json Structure:**
+**Example assertions.json Structure (Flexible Naming):**
 ```json
 {
-  "description": "Large assertion data for test_complex_parsing",
-  "model_expectations": {
-    "functions": [
-      "main", "init_system", "process_data", "cleanup_resources",
-      "handle_error", "log_message", "parse_config", "validate_input",
-      "calculate_metrics", "generate_report", "save_results", "load_settings"
-    ],
-    "structs": [
-      "SystemConfig", "DataProcessor", "ErrorHandler", "Logger", 
-      "MetricsCollector", "ReportGenerator", "ResultStorage", "Settings"
-    ],
-    "enums": [
-      "SystemState", "ErrorType", "LogLevel", "ProcessingMode",
-      "MetricType", "ReportFormat", "StorageType", "SettingCategory"
-    ],
-    "includes": [
-      "stdio.h", "stdlib.h", "string.h", "time.h", "errno.h",
-      "sys/types.h", "sys/stat.h", "unistd.h", "fcntl.h"
-    ],
-    "include_relations": [
+  "description": "Flexible assertion data for test_complex_parsing - use any naming you want",
+  
+  "critical_functions": [
+    "main", "init_system", "process_data", "cleanup_resources",
+    "handle_error", "log_message", "parse_config", "validate_input"
+  ],
+  
+  "should_not_exist": [
+    "debug_print", "test_helper", "mock_function", "deprecated_legacy_func"
+  ],
+  
+  "parser_validation": {
+    "required_structs": ["SystemConfig", "DataProcessor", "ErrorHandler"],
+    "required_enums": ["SystemState", "ErrorType", "LogLevel"],
+    "include_chain": [
       {"source": "main.c", "target": "stdio.h"},
       {"source": "main.c", "target": "system_config.h"},
-      {"source": "data_processor.c", "target": "string.h"},
-      {"source": "data_processor.c", "target": "data_types.h"},
-      {"source": "error_handler.c", "target": "errno.h"},
-      {"source": "logger.c", "target": "time.h"}
-    ]
-  },
-  "forbidden_elements": {
-    "functions": ["debug_print", "test_helper", "mock_function"],
-    "structs": ["DebugInfo", "TestStruct"],
-    "macros": ["DEBUG_MODE", "TEST_FLAG", "DEPRECATED_MACRO"]
-  },
-  "puml_expectations": {
-    "main.puml": [
-      "@startuml main",
-      "class \"main\" as MAIN <<source>> #LightBlue",
-      "class \"system_config.h\" as HEADER_SYSTEM_CONFIG <<header>> #LightGreen",
-      "MAIN --> HEADER_SYSTEM_CONFIG : <<include>>",
-      "class \"SystemConfig\" as TYPEDEF_SYSTEMCONFIG <<struct>> #LightYellow",
-      "HEADER_SYSTEM_CONFIG ..> TYPEDEF_SYSTEMCONFIG : <<declares>>",
-      "SystemConfig",
-      "{ + int max_connections }",
-      "{ + char server_name[256] }",
-      "{ + double timeout_seconds }",
-      "@enduml"
+      {"source": "data_processor.c", "target": "string.h"}
     ],
-    "data_processor.puml": [
-      "@startuml data_processor",
-      "class \"data_processor\" as DATA_PROCESSOR <<source>> #LightBlue",
-      "class \"DataProcessor\" as TYPEDEF_DATAPROCESSOR <<struct>> #LightYellow",
-      "{ + void* input_buffer }",
-      "{ + size_t buffer_size }",
-      "{ + ProcessingMode mode }",
-      "@enduml"
-    ]
+    "must_have_includes": ["stdio.h", "stdlib.h", "string.h", "time.h"]
   },
-  "custom_validation": {
-    "complex_anonymous_structs": [
+  
+  "expected_main_puml_content": [
+    "@startuml main",
+    "class \"main\" as MAIN <<source>> #LightBlue",
+    "class \"system_config.h\" as HEADER_SYSTEM_CONFIG <<header>> #LightGreen",
+    "MAIN --> HEADER_SYSTEM_CONFIG : <<include>>",
+    "@enduml"
+  ],
+  
+  "data_processor_puml_lines": [
+    "class \"DataProcessor\" as TYPEDEF_DATAPROCESSOR <<struct>> #LightYellow",
+    "{ + void* input_buffer }",
+    "{ + size_t buffer_size }"
+  ],
+  
+  "transformation_effects": {
+    "renamed_functions": {
+      "old_calculate": "new_calculate_metrics",
+      "old_report": "new_generate_report"
+    },
+    "filtered_out_functions": ["debug_helper", "test_mock"],
+    "added_functions": ["injected_logger", "added_validator"]
+  },
+  
+  "performance_constraints": {
+    "max_parsing_time_seconds": 5.0,
+    "max_model_file_size_kb": 100,
+    "max_generated_files": 10
+  },
+  
+  "edge_case_checks": {
+    "anonymous_struct_handling": [
       "SystemConfig_connection_settings",
-      "SystemConfig_logging_config", 
       "DataProcessor_buffer_manager"
     ],
-    "performance_expectations": {
-      "max_parsing_time_seconds": 5.0,
-      "max_model_file_size_kb": 100,
-      "max_puml_files": 10
+    "circular_includes": {
+      "should_detect": ["circular_a.h", "circular_b.h"],
+      "should_resolve": ["valid_a.h", "valid_b.h"]
     },
-    "edge_case_patterns": {
-      "circular_include_detection": {
-        "should_detect": ["circular_a.h", "circular_b.h"],
-        "should_resolve": ["valid_a.h", "valid_b.h"]
+    "complex_typedef_chains": [
+      "typedef_level_1", "typedef_level_2", "typedef_level_3"
+    ]
+  },
+  
+  "custom_test_specific_data": {
+    "whatever_name_you_want": ["any", "data", "structure"],
+    "nested_validation": {
+      "level1": {
+        "level2": ["deeply", "nested", "assertions"]
       }
     }
   }
@@ -372,6 +419,8 @@ test_<name>/
 - **Unified Input Location**: All application inputs (config, source, model files) are in one place
 - **Consistent CLI Arguments**: CLI input path points to folder containing all necessary files
 - **Logical Grouping**: Configuration naturally belongs with the files it configures
+- **Flexible Assertion Data**: Tests can structure assertions.json with any naming and organization
+- **Test-Specific Validation**: Each test defines its own assertion structure and validation logic
 
 ### 4. Result Validation Framework
 
