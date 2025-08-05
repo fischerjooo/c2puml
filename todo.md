@@ -245,37 +245,41 @@ Structured validation of generated models:
 
 **Example Usage:**
 ```python
-def test_model_generation_with_transformations(self):
-    # Validate model structure
-    self.model_validator.assert_model_structure_valid(result.model)
-    self.model_validator.assert_model_files_parsed(result.model, ["main.c", "utils.h"])
+def test_transformations_via_normal_model_validation(self):
+    # Execute pipeline with transformations configured in config.json
+    result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+    self.assertEqual(result.exit_code, 0)
     
-    # Validate transformed content exists (renamed functions)
-    self.model_validator.assert_model_function_exists(result.model, "legacy_print_info")
+    # Load the final model (after transformations have been applied)
+    with open(f"{self.output_dir}/model.json", 'r') as f:
+        model = json.load(f)
     
-    # Validate original content is removed (transformation effects)
-    self.model_validator.assert_model_function_not_exists(result.model, "deprecated_print_info")
+    # Validate model structure (standard validation)
+    self.model_validator.assert_model_structure_valid(model)
+    self.model_validator.assert_model_files_parsed(model, ["main.c", "utils.h"])
     
-    # Validate includes and relationships (should be preserved after transformation)
+    # Validate transformation results using normal model assertions
+    # ✅ Renamed function should exist in final model
+    self.model_validator.assert_model_function_exists(model, "legacy_print_info")
+    
+    # ❌ Original function should NOT exist in final model
+    self.model_validator.assert_model_function_not_exists(model, "deprecated_print_info")
+    
+    # ❌ Removed elements should NOT exist in final model
+    self.model_validator.assert_model_function_not_exists(model, "test_debug_function")
+    self.model_validator.assert_model_macro_not_exists(model, "LEGACY_MACRO")
+    
+    # ✅ Preserved elements should still exist
     expected_includes = ["stdio.h", "sample.h", "config.h"]
-    self.model_validator.assert_model_includes_exist(result.model, expected_includes)
+    self.model_validator.assert_model_includes_exist(model, expected_includes)
     
-    expected_include_relations = [
-        {"source": "sample.c", "target": "stdio.h"},
-        {"source": "sample.c", "target": "sample.h"}
-    ]
-    self.model_validator.assert_model_include_relationships_exist(result.model, expected_include_relations)
+    # ❌ Removed includes should NOT exist
+    self.model_validator.assert_model_include_not_exists(model, "time.h")  # Removed by config
     
-    # Validate specific include was removed by transformation (if configured)
-    self.model_validator.assert_model_include_not_exists(result.model, "time.h")  # Removed by transformation
-    
-    # Validate model file content with specific lines (post-transformation)
+    # Validate file content reflects transformations
     expected_model_lines = [
-        '"project_name": "test_project"',
         '"name": "legacy_print_info"',  # Renamed function appears
-        '"includes": ["stdio.h", "sample.h", "config.h"]',  # Expected includes
-        '"structs": {',
-        '"Point": {'
+        '"includes": ["stdio.h", "sample.h", "config.h"]'  # Expected includes
     ]
     forbidden_model_lines = [
         '"deprecated_print_info"',  # Original function name should not appear
@@ -283,8 +287,10 @@ def test_model_generation_with_transformations(self):
         '"LEGACY_MACRO"',           # Removed macro should not appear
         '"time.h"'                  # Removed include should not appear
     ]
-    self.model_validator.assert_model_file_contains_lines(result.model_file_path, expected_model_lines)
-    self.model_validator.assert_model_file_not_contains_lines(result.model_file_path, forbidden_model_lines)
+    
+    model_file_path = f"{self.output_dir}/model.json"
+    self.model_validator.assert_model_file_contains_lines(model_file_path, expected_model_lines)
+    self.model_validator.assert_model_file_not_contains_lines(model_file_path, forbidden_model_lines)
 ```
 
 ```python
@@ -319,11 +325,6 @@ class ModelValidator:
     def assert_model_include_relationship(self, model: dict, source: str, target: str)
     def assert_model_include_relationships_exist(self, model: dict, expected_relations: list)
     def assert_model_typedef_relationship(self, model: dict, typedef: str, original: str)
-    
-    # Model transformation validation
-    def assert_model_transformation_applied(self, before: dict, after: dict, transformation: dict)
-    def assert_model_element_renamed(self, model: dict, old_name: str, new_name: str)
-    def assert_model_element_removed(self, model: dict, element_name: str)
     
     # Model file validation
     def assert_model_file_contains_lines(self, model_file_path: str, expected_lines: list)
