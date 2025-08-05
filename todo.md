@@ -97,12 +97,28 @@ The C2PlantUML application is a well-structured Python tool for converting C/C++
 **Problematic Pattern**:
 ```c
 struct {
+    int nested_a1;
+    struct {
+        int deep_a1;
+    } deep_struct_a1;
+    struct {
+        int deep_a2;
+    } deep_struct_a2;
+} nested_struct_a;
+struct {
     int nested_a2;
 } nested_struct_a2;
 ```
 
 **Current Result**: `"type": "} nested_struct_a; struct { int"`  
 **Expected Result**: `"type": "int"` or proper struct type
+
+**Root Cause Analysis**: The field parsing logic in `find_struct_fields` is not correctly handling the boundaries between multiple nested anonymous structures. When it encounters the pattern above, it's incorrectly parsing the field type by including tokens from the previous structure's closing brace and the next structure's opening.
+
+**Solution Plan**: 
+1. Improve the field boundary detection logic to properly handle multiple consecutive anonymous structures
+2. Ensure that each field is parsed independently without cross-contamination from adjacent structures
+3. Add better validation to detect and handle malformed field types
 
 ## Next Steps
 
