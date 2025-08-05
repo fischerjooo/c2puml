@@ -416,6 +416,137 @@ class TestFeatureName(UnifiedTestCase):
 
 ---
 
+## Test Migration Tracking
+
+### Overview
+- **Total Test Files**: 48 test files to migrate (excluding preserved example)
+- **Unit Tests**: 37 files
+- **Feature Tests**: 10 files  
+- **Integration Tests**: 2 files
+- **Preserved**: 1 file (`tests/example/test-example.py`)
+
+### Migration Status Legend
+- ✅ **Completed** - Migrated to unified framework with self-contained structure
+- 🔄 **In Progress** - Currently being migrated
+- ⏳ **Pending** - Not yet started
+- 🚫 **Skipped** - Preserved as-is or deprecated
+
+### Unit Tests (37 files)
+
+| Test File | Status | Priority | Notes |
+|-----------|--------|----------|-------|
+| `test_absolute_path_bug_detection.py` | ⏳ | Medium | Path handling validation |
+| `test_anonymous_processor_extended.py` | ⏳ | High | Core anonymous structure processing |
+| `test_anonymous_structure_handling.py` | ⏳ | High | Anonymous structure handling |
+| `test_config.py` | ⏳ | High | Configuration loading/validation |
+| `test_debug_actual_parsing.py` | ⏳ | Low | Debug functionality |
+| `test_debug_field_parsing.py` | ⏳ | Low | Debug functionality |
+| `test_debug_field_parsing_detailed.py` | ⏳ | Low | Debug functionality |
+| `test_debug_field_processing.py` | ⏳ | Low | Debug functionality |
+| `test_debug_tokens.py` | ⏳ | Low | Debug functionality |
+| `test_file_specific_configuration.py` | ⏳ | Medium | File-specific config handling |
+| `test_function_parameters.py` | ⏳ | Medium | Function parameter parsing |
+| `test_generator.py` | ⏳ | High | Core PlantUML generation |
+| `test_generator_duplicate_includes.py` | ⏳ | Medium | Include duplication handling |
+| `test_generator_exact_format.py` | ⏳ | Medium | PlantUML formatting validation |
+| `test_generator_grouping.py` | ⏳ | Medium | Element grouping in output |
+| `test_generator_include_tree_bug.py` | ⏳ | Medium | Include tree validation |
+| `test_generator_naming_conventions.py` | ⏳ | Medium | Naming convention compliance |
+| `test_generator_new_formatting.py` | ⏳ | Medium | New formatting features |
+| `test_generator_visibility_logic.py` | ⏳ | Medium | Visibility detection logic |
+| `test_global_parsing.py` | ⏳ | Medium | Global variable parsing |
+| `test_include_filtering_bugs.py` | ⏳ | Medium | Include filtering edge cases |
+| `test_include_processing.py` | ⏳ | Medium | Include processing logic |
+| `test_multi_pass_anonymous_processing.py` | ⏳ | High | Multi-pass anonymous processing |
+| `test_parser.py` | ⏳ | High | Core parser functionality |
+| `test_parser_comprehensive.py` | ⏳ | High | Comprehensive parser testing |
+| `test_parser_filtering.py` | ⏳ | High | Parser filtering logic |
+| `test_parser_function_params.py` | ⏳ | Medium | Function parameter parsing |
+| `test_parser_macro_duplicates.py` | ⏳ | Medium | Macro duplication handling |
+| `test_parser_nested_structures.py` | ⏳ | Medium | Nested structure parsing |
+| `test_parser_struct_order.py` | ⏳ | Medium | Struct field order preservation |
+| `test_preprocessor_bug.py` | ⏳ | Medium | Preprocessor bug fixes |
+| `test_preprocessor_handling.py` | ⏳ | High | Core preprocessor functionality |
+| `test_tokenizer.py` | ⏳ | High | Core tokenizer functionality |
+| `test_transformation_system.py` | ⏳ | High | Transformation system |
+| `test_transformer.py` | ⏳ | High | Core transformer functionality |
+| `test_typedef_extraction.py` | ⏳ | Medium | Typedef extraction logic |
+| `test_utils.py` | ⏳ | Low | Utility function testing |
+| `test_verifier.py` | ⏳ | Medium | Model verification logic |
+
+### Feature Tests (10 files)
+
+| Test File | Status | Priority | Notes |
+|-----------|--------|----------|-------|
+| `test_cli_feature.py` | ⏳ | High | CLI interface testing |
+| `test_cli_modes.py` | ⏳ | High | CLI mode switching |
+| `test_component_features.py` | ⏳ | High | Component integration features |
+| `test_crypto_filter_pattern.py` | ⏳ | Medium | Crypto filtering patterns |
+| `test_crypto_filter_usecase.py` | ⏳ | Medium | Crypto filtering use cases |
+| `test_include_processing_features.py` | ⏳ | High | Include processing features |
+| `test_integration.py` | ⏳ | High | Feature integration testing |
+| `test_invalid_source_paths.py` | ⏳ | Medium | Error handling for invalid paths |
+| `test_multiple_source_folders.py` | ⏳ | Medium | Multiple source folder handling |
+| `test_transformer_features.py` | ⏳ | High | Transformer feature testing |
+
+### Integration Tests (2 files)
+
+| Test File | Status | Priority | Notes |
+|-----------|--------|----------|-------|
+| `test_comprehensive.py` | ⏳ | High | Comprehensive end-to-end testing |
+| `test_new_formatting_comprehensive.py` | ⏳ | Medium | New formatting integration |
+
+### Preserved Tests (1 file)
+
+| Test File | Status | Priority | Notes |
+|-----------|--------|----------|-------|
+| `test-example.py` | 🚫 | N/A | Preserved as-is, enhanced with test-example.json |
+
+### Supporting Files to Update
+
+| File | Status | Priority | Notes |
+|------|--------|----------|-------|
+| `tests/conftest.py` | ⏳ | High | Update pytest configuration for new framework |
+| `tests/utils.py` | ⏳ | High | Migrate to new framework utilities |
+| `tests/feature/base.py` | ⏳ | Medium | Update base feature test class |
+| `tests/__init__.py` | ⏳ | Low | Update package initialization |
+| `tests/unit/__init__.py` | ⏳ | Low | Update unit test package |
+| `tests/feature/__init__.py` | ⏳ | Low | Update feature test package |
+| `tests/integration/__init__.py` | ⏳ | Low | Update integration test package |
+
+### Migration Progress Summary
+
+- **Completed**: 0/48 (0%)
+- **In Progress**: 0/48 (0%)
+- **Pending**: 48/48 (100%)
+- **High Priority**: 18 files
+- **Medium Priority**: 23 files
+- **Low Priority**: 7 files
+
+### Next Migration Targets (Recommended Order)
+
+1. **Framework Foundation** (Week 1-2):
+   - Update `tests/conftest.py` and `tests/utils.py` first
+   - Create `tests/framework/` structure
+
+2. **High Priority Unit Tests** (Week 3-4):
+   - `test_config.py` - Configuration handling
+   - `test_parser.py` - Core parser functionality
+   - `test_parser_comprehensive.py` - Comprehensive parser testing
+   - `test_tokenizer.py` - Core tokenizer functionality
+   - `test_transformer.py` - Core transformer functionality
+
+3. **High Priority Feature Tests** (Week 5-6):
+   - `test_cli_feature.py` - CLI interface testing
+   - `test_component_features.py` - Component integration
+   - `test_include_processing_features.py` - Include processing
+
+4. **Integration Tests** (Week 7-8):
+   - `test_comprehensive.py` - End-to-end testing
+   - Performance validation and cleanup
+
+---
+
 ## Next Steps
 
 1. **Review and approve** this plan with the development team
