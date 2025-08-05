@@ -330,8 +330,8 @@ class TestDataFactory:
     def load_test_input(self, test_name: str) -> str:
         """Returns path to test_<name>/input/ directory for CLI execution"""
     
-    def load_test_config(self, test_name: str) -> str:
-        """Returns path to test_<name>/input/config.json for CLI execution"""
+    def load_test_config(self, test_name: str, data_file: str = None) -> str:
+        """Returns path to config.json (explicit) or extracts config from data_file for CLI execution"""
     
     def load_test_assertions(self, test_name: str) -> dict:
         """Loads assertion data from test_<name>/assertions.json and returns full dictionary"""
@@ -359,6 +359,9 @@ class TestDataFactory:
     
     def list_data_json_files(self, test_name: str) -> list:
         """Returns list of all data*.json files in test_<n>/input/ directory"""
+    
+    def extract_config_from_data(self, test_name: str, data_file: str) -> str:
+        """Extracts config section from data_file and creates temp config.json for CLI execution"""
 
 
 class TestExecutor:
@@ -385,24 +388,37 @@ Each test folder contains its own project and configuration data:
 
 **Test Folder Structure Pattern:**
 ```
-test_<name>/
-├── test_<name>.py      # Test implementation
-├── input/              # All test input files (config, source, model files)
-│   ├── config.json     # Test configuration (always required)
-│   ├── main.c          # For unit tests: C files, model.json, etc.
-│   ├── utils.h         # For feature/integration: C/C++ source files
-│   └── subdir/         # Nested directories if needed
-│   ├── data.json       # Optional: Source file structure and content specification
-│   ├── data_case1.json # Optional: Test case specific data files
-│   ├── data_case2.json # Optional: Additional test cases with different data
+test_<n>/
+├── test_<n>.py         # Test implementation
+├── input/              # All test input files - flexible structure per use case
+│   # Option 1: Single use case with explicit files
+│   ├── config.json     # Optional: c2puml configuration (can be in data.json instead)
+│   ├── main.c          # Source files for testing
+│   ├── utils.h         # Header files
+│   ├── model.json      # Optional: Pre-parsed model for transformation testing
+│   └── subdir/         # Optional: Nested directories
+│   # Option 2: Multiple use cases with data.json files
+│   ├── data_case1.json # Test case 1: includes config, source content, or model
+│   ├── data_case2.json # Test case 2: different configuration/content
+│   └── data_case3.json # Test case 3: additional scenarios
 └── assertions.json     # Optional: Large assertion data (lists, structures, expected content)
 ```
 
 **Input Data Options:**
 
+**Configuration Flexibility:** Tests can use either:
+- Explicit `config.json` file for single-use-case scenarios
+- Configuration embedded within `data_case#.json` files for multi-use-case scenarios
+- Mixed approach: default `config.json` with overrides in `data_case#.json`
+
+**Content Specification:**
 For **smaller source inputs**, tests can specify source file structure and content in `data.json` files found in the input folder. This allows generating the required source files or model.json files dynamically based on the test case needs.
 
 For **larger inputs**, it is recommended to use explicit input files (actual .c/.h files) rather than data.json specifications for better readability and maintainability.
+
+**Input Structure per Use Case:**
+- **Single use case:** Explicit files (main.c, utils.h, config.json, model.json)
+- **Multiple use cases:** Multiple data_case#.json files, each containing its own config, source content, or model specifications
 
 **Multiple Test Cases per File:**
 Per test.py file which contains multiple test cases, there can be multiple data.json files with different names (e.g., `data_case1.json`, `data_case2.json`) for each test case which can be individually loaded. The TestDataFactory shall have extended functionality to handle these data.json files and generate the inputs needed for testing.
@@ -415,6 +431,13 @@ If a test.py file requires **multiple or different inputs** to run various tests
 {
   "description": "Source file specification for smaller test inputs",
   "generate_type": "source_files",
+  "config": {
+    "project_name": "test_small_project",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 2
+  },
   "files": {
     "main.c": {
       "content": "#include <stdio.h>\n#include \"types.h\"\n\nint main() {\n    Point p = {10, 20};\n    return 0;\n}",
@@ -424,10 +447,6 @@ If a test.py file requires **multiple or different inputs** to run various tests
       "content": "#ifndef TYPES_H\n#define TYPES_H\n\ntypedef struct {\n    int x;\n    int y;\n} Point;\n\n#endif",
       "includes": []
     }
-  },
-  "config_overrides": {
-    "project_name": "test_small_project",
-    "include_depth": 2
   }
 }
 ```
@@ -437,6 +456,20 @@ If a test.py file requires **multiple or different inputs** to run various tests
 {
   "description": "Pre-parsed model for transformation testing",
   "generate_type": "model_json",
+  "config": {
+    "project_name": "test_transformation",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "transformations": {
+      "rename": {
+        "functions": {"^deprecated_(.*)": "legacy_\\1"}
+      },
+      "remove": {
+        "macros": ["LEGACY_MACRO"],
+        "includes": ["time.h"]
+      }
+    }
+  },
   "model": {
     "project_name": "test_transformation",
     "files": {
@@ -447,17 +480,6 @@ If a test.py file requires **multiple or different inputs** to run various tests
         ],
         "macros": ["LEGACY_MACRO", "VERSION"],
         "includes": ["stdio.h", "time.h", "config.h"]
-      }
-    }
-  },
-  "config_overrides": {
-    "transformations": {
-      "rename": {
-        "functions": {"^deprecated_(.*)": "legacy_\\1"}
-      },
-      "remove": {
-        "macros": ["LEGACY_MACRO"],
-        "includes": ["time.h"]
       }
     }
   }

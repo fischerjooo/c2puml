@@ -319,8 +319,8 @@ This is because when explicit files are used as input, all tests in that test.py
 #### Explicit Files Strategy (Suitable for single input approach)
 
 **test_cli_modes.py (6 methods)** - CLI mode switching
-- **Strategy:** Use explicit files - all methods can share same CLI test setup
-- **Input Files:** cli_test.c, cli_config.json, sample_project/
+- **Strategy:** Use data_mode_*.json - different CLI modes need different configurations
+- **Data Files:** data_parse_only.json, data_transform_only.json, data_generate_only.json, data_full_pipeline.json
 - **Progress:** ⏳ Pending
 
 **test_cli_feature.py (5 methods)** - CLI interface testing
@@ -388,6 +388,12 @@ This is because when explicit files are used as input, all tests in that test.py
 {
   "description": "Basic struct parsing test",
   "generate_type": "source_files",
+  "config": {
+    "project_name": "test_struct_parsing",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  },
   "files": {
     "test.c": {
       "content": "#include <stdio.h>\n\nstruct Point {\n    int x;\n    int y;\n};\n\nint main() {\n    struct Point p = {10, 20};\n    return 0;\n}"
@@ -406,13 +412,16 @@ This is because when explicit files are used as input, all tests in that test.py
 {
   "description": "Conditional compilation test",
   "generate_type": "source_files",
+  "config": {
+    "project_name": "test_preprocessor",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "preprocessor_defines": ["DEBUG"]
+  },
   "files": {
     "conditional.c": {
       "content": "#ifdef DEBUG\n#define LOG(x) printf(x)\n#else\n#define LOG(x)\n#endif\n\nint main() {\n    LOG(\"Debug mode\");\n    return 0;\n}"
     }
-  },
-  "config_overrides": {
-    "preprocessor_defines": ["DEBUG"]
   }
 }
 ```
@@ -423,6 +432,19 @@ This is because when explicit files are used as input, all tests in that test.py
 {
   "description": "Function renaming transformation test",
   "generate_type": "model_json",
+  "config": {
+    "project_name": "test_transformation",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "transformations": {
+      "rename": {
+        "functions": {
+          "^deprecated_(.*)": "legacy_\\1",
+          "^old_(.*)": "legacy_\\1"
+        }
+      }
+    }
+  },
   "model": {
     "files": {
       "main.c": {
@@ -430,16 +452,6 @@ This is because when explicit files are used as input, all tests in that test.py
           {"name": "deprecated_init", "return_type": "void"},
           {"name": "old_cleanup", "return_type": "void"}
         ]
-      }
-    }
-  },
-  "config_overrides": {
-    "transformations": {
-      "rename": {
-        "functions": {
-          "^deprecated_(.*)": "legacy_\\1",
-          "^old_(.*)": "legacy_\\1"
-        }
       }
     }
   }
@@ -453,7 +465,7 @@ This is because when explicit files are used as input, all tests in that test.py
 test_generator_duplicate_includes/
 ├── test_generator_duplicate_includes.py
 ├── input/
-│   ├── config.json
+│   ├── config.json     # Optional: can be embedded in data.json instead
 │   ├── main.c
 │   ├── utils.h
 │   └── types.h
@@ -465,10 +477,10 @@ test_generator_duplicate_includes/
 test_parser_filtering/
 ├── test_parser_filtering.py
 ├── input/
-│   ├── config.json
-│   ├── data_include_patterns.json
-│   ├── data_exclude_patterns.json
-│   └── data_mixed_filters.json
+│   ├── config.json                 # Optional: default config (can be overridden per data file)
+│   ├── data_include_patterns.json  # Contains own config section
+│   ├── data_exclude_patterns.json  # Contains own config section
+│   └── data_mixed_filters.json     # Contains own config section
 └── assertions.json
 ```
 
@@ -477,18 +489,17 @@ test_parser_filtering/
 test_struct_parsing/
 ├── test_struct_parsing.py
 ├── input/
-│   ├── config.json
-│   ├── data_simple_struct.json
-│   ├── data_nested_struct.json
-│   └── data_anonymous_struct.json
+│   ├── config.json                 # Optional: default config
+│   ├── data_simple_struct.json     # Contains config + source content
+│   ├── data_nested_struct.json     # Contains config + source content
+│   └── data_anonymous_struct.json  # Contains config + source content
 └── assertions.json
 
 test_enum_parsing/
 ├── test_enum_parsing.py
 ├── input/
-│   ├── config.json
-│   ├── data_simple_enum.json
-│   └── data_typedef_enum.json
+│   ├── data_simple_enum.json       # Contains config + source content
+│   └── data_typedef_enum.json      # Contains config + source content
 └── assertions.json
 
 ... (additional split test folders)
@@ -581,8 +592,8 @@ The TestDataFactory must support the following functionality for the data_*.json
 load_test_input(test_name: str) -> str
     Returns path to test_<n>/input/ directory for CLI execution
 
-load_test_config(test_name: str) -> str
-    Returns path to test_<n>/input/config.json for CLI execution
+load_test_config(test_name: str, data_file: str = None) -> str
+    Returns path to config.json (explicit) or extracts config from data_file for CLI execution
 
 load_test_data_json(test_name: str, data_file: str = "data.json") -> dict
     Loads data.json from test_<n>/input/<data_file> and returns parsed content
@@ -598,14 +609,25 @@ has_data_json(test_name: str, data_file: str = "data.json") -> bool
 
 list_data_json_files(test_name: str) -> list
     Returns list of all data*.json files in test_<n>/input/ directory
+
+extract_config_from_data(test_name: str, data_file: str) -> str
+    Extracts config section from data_file and creates temp config.json for CLI execution
 ```
+
+### Configuration Handling
+
+**Flexible Configuration Options:**
+- **Explicit config.json**: Use standalone config.json for single-use-case tests
+- **Embedded config**: Include "config" section within data_*.json files
+- **Mixed approach**: Default config.json with per-test-case overrides in data files
+- **Configuration precedence**: data_file.config > explicit config.json > default values
 
 ### Data Generation Types
 
 **Source Files Generation (`"generate_type": "source_files"`):**
 - Generate .c/.h files from content specifications
 - Support includes, structs, functions, macros, etc.
-- Allow configuration overrides
+- Include complete configuration within data file
 
 **Model JSON Generation (`"generate_type": "model_json"`):**
 - Generate pre-parsed model.json for transformation testing
@@ -750,3 +772,29 @@ def create_temp_project(project_data: Dict[str, str], base_dir: Optional[str] = 
 ### Important Note for Migration Planning
 
 The existing framework files were **NOT considered** in the initial analysis since they use internal APIs and conflict with the CLI-only approach. These files must be treated as **legacy code** that will be completely replaced, not adapted. This ensures a clean break from internal API dependencies and establishes the proper test-application boundary separation.
+
+## Key Configuration Updates
+
+### Important Changes Made
+
+**Configuration Flexibility Enhancement:**
+- **config.json is now OPTIONAL** - can be embedded in data_*.json files instead
+- **Three configuration approaches supported:**
+  1. Explicit config.json for single-use-case tests
+  2. Embedded config sections in data_*.json files  
+  3. Mixed approach with defaults + per-case overrides
+
+**Updated Input Structure:**
+- **Option 1:** Single use case with explicit files (main.c, utils.h, optional config.json)
+- **Option 2:** Multiple use cases with data_case#.json files (each containing config + content)
+
+**Enhanced TestDataFactory Methods:**
+- `load_test_config(test_name, data_file=None)` - handles both explicit and embedded config
+- `extract_config_from_data(test_name, data_file)` - extracts config from data files
+
+**Strategy Refinements:**
+- Some files previously marked as "explicit files" strategy changed to "data_*.json" where multiple configurations are needed
+- All data.json examples now include complete config sections
+- Folder structure examples updated to show configuration flexibility
+
+This enhancement provides maximum flexibility while maintaining the CLI-only approach and proper test-application boundary separation.
