@@ -1256,8 +1256,8 @@ def find_struct_fields(
                     # Validate that this is a proper field name and not a malformed type
                     # Check for common malformed patterns
                     field_type_str = " ".join(t.value for t in field_tokens)
-                    if ("} " in field_type_str and "; struct { int" in field_type_str) or
-                        ("} " in field_type_str and "; struct {" in field_type_str):
+                    if (("} " in field_type_str and "; struct { int" in field_type_str) or
+                        ("} " in field_type_str and "; struct {" in field_type_str)):
                         # This is a malformed field type - skip it
                         continue
                     
@@ -1300,8 +1300,8 @@ def find_struct_fields(
                     # Validate that this is a proper field name and not a malformed type
                     # Check for common malformed patterns
                     field_type_str = " ".join(t.value for t in field_tokens)
-                    if ("} " in field_type_str and "; union { int" in field_type_str) or
-                        ("} " in field_type_str and "; union {" in field_type_str):
+                    if (("} " in field_type_str and "; union { int" in field_type_str) or
+                        ("} " in field_type_str and "; union {" in field_type_str)):
                         # This is a malformed field type - skip it
                         continue
                     
