@@ -4,6 +4,8 @@
 
 This document outlines the comprehensive work required to transform the current c2puml test suite (58 test files across unit, feature, integration, and example categories) into a unified, maintainable, and robust testing framework. The primary focus is on **test-application boundary separation** and **public API testing** to ensure the application remains flexible to internal changes. The existing `tests/example/` structure will be preserved and enhanced with standardized expectations.
 
+**Progress Tracking**: This document serves as the central workflow description to track migration progress. All milestones, completion status, and blocking issues should be updated directly in this file to maintain a clear record of the transformation progress.
+
 ## Current State Analysis
 
 ### Current Test Structure
@@ -15,6 +17,8 @@ This document outlines the comprehensive work required to transform the current 
 - **Mixed testing approaches**: Some tests use internal functions, others use public APIs
 - **Inconsistent patterns**: Different test classes use different setup/teardown approaches
 - **Direct internal access**: Many tests directly import and test internal components
+
+**Note on Test Restructuring**: The refactoring of existing tests may require splitting up or restructuring test cases differently than their current organization. Some large test files may be broken down into multiple focused test cases, while related tests may be consolidated. This restructuring is necessary to align with the public API testing approach and improve test maintainability.
 
 ### Public API Surface (Target for Testing)
 Based on analysis of the codebase, the public APIs are:
@@ -40,7 +44,7 @@ Based on analysis of the codebase, the public APIs are:
 Create a new unified framework with these components:
 
 - **`TestExecutor`**: Runs c2puml through public APIs only
-- **`TestDataFactory`**: Generates test C/C++ projects and configurations
+- **`TestDataFactory`**: Generates test C/C++ projects and configurations, handles data.json files for dynamic input generation
 - **`ResultValidator`**: Validates outputs (model.json, .puml files, logs)
 - **`TestProjectBuilder`**: Builds temporary test projects with complex structures
 
@@ -143,6 +147,65 @@ class UnifiedTestCase(unittest.TestCase):
             # Fallback to inline assertions when no assertions.json
             self.model_validator.assert_model_function_exists(model, "main")
             self.model_validator.assert_model_struct_exists(model, "Point")
+    
+    def test_with_data_json_source_generation(self):
+        """Example of using data.json for dynamic source file generation"""
+        # Check if data.json exists for this test
+        if self.data_factory.has_data_json(self.test_name):
+            # Generate source files from data.json specification
+            input_path = self.data_factory.generate_source_files_from_data(self.test_name)
+            config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
+        else:
+            # Fallback to regular input files
+            input_path = self.data_factory.load_test_input(self.test_name)
+            config_path = self.data_factory.load_test_config(self.test_name)
+        
+        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+        self.assertEqual(result.exit_code, 0)
+        
+        # Standard validation
+        model_file = f"{self.output_dir}/model.json"
+        self.model_validator.assert_model_json_syntax_valid(model_file)
+    
+    def test_multiple_data_cases(self):
+        """Example of using multiple data.json files for different test cases"""
+        # List all available data files for this test
+        data_files = self.data_factory.list_data_json_files(self.test_name)
+        
+        if data_files:
+            # Test each data case
+            for data_file in data_files:
+                with self.subTest(data_case=data_file):
+                    # Load specific data case
+                    data = self.data_factory.load_test_data_json(self.test_name, data_file)
+                    
+                    # Generate appropriate input based on data type
+                    if data.get("generate_type") == "source_files":
+                        input_path = self.data_factory.generate_source_files_from_data(self.test_name, data_file)
+                    elif data.get("generate_type") == "model_json":
+                        input_path = self.data_factory.generate_model_from_data(self.test_name, data_file)
+                    else:
+                        input_path = self.data_factory.load_test_input(self.test_name)
+                    
+                    config_path = self.data_factory.load_test_config(self.test_name)
+                    
+                    # Execute pipeline
+                    result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+                    self.assertEqual(result.exit_code, 0, f"Failed for data case: {data_file}")
+                    
+                    # Validate results based on data case expectations
+                    if "expected_functions" in data:
+                        model_file = f"{self.output_dir}/model.json"
+                        with open(model_file, 'r') as f:
+                            model = json.load(f)
+                        for func_name in data["expected_functions"]:
+                            self.model_validator.assert_model_function_exists(model, func_name)
+        else:
+            # Fallback to regular test when no data files available
+            input_path = self.data_factory.load_test_input(self.test_name)
+            config_path = self.data_factory.load_test_config(self.test_name)
+            result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+            self.assertEqual(result.exit_code, 0)
     
     def test_flexible_assertion_examples(self):
         """Example showing different ways tests can structure their assertion data"""
@@ -277,6 +340,21 @@ class TestDataFactory:
     
     def get_test_data_path(self, test_name: str, subpath: str = "") -> str:
         """Returns absolute path to test data for CLI arguments"""
+    
+    def load_test_data_json(self, test_name: str, data_file: str = "data.json") -> dict:
+        """Loads data.json from test_<n>/input/<data_file> and returns parsed content"""
+    
+    def generate_source_files_from_data(self, test_name: str, data_file: str = "data.json") -> str:
+        """Generates source files from data.json specification and returns input path for CLI"""
+    
+    def generate_model_from_data(self, test_name: str, data_file: str = "data.json") -> str:
+        """Generates model.json from data.json specification and returns input path for CLI"""
+    
+    def has_data_json(self, test_name: str, data_file: str = "data.json") -> bool:
+        """Returns True if test_<n>/input/<data_file> exists"""
+    
+    def list_data_json_files(self, test_name: str) -> list:
+        """Returns list of all data*.json files in test_<n>/input/ directory"""
 
 
 class TestExecutor:
@@ -310,7 +388,73 @@ test_<name>/
 │   ├── main.c          # For unit tests: C files, model.json, etc.
 │   ├── utils.h         # For feature/integration: C/C++ source files
 │   └── subdir/         # Nested directories if needed
+│   ├── data.json       # Optional: Source file structure and content specification
+│   ├── data_case1.json # Optional: Test case specific data files
+│   ├── data_case2.json # Optional: Additional test cases with different data
 └── assertions.json     # Optional: Large assertion data (lists, structures, expected content)
+```
+
+**Input Data Options:**
+
+For **smaller source inputs**, tests can specify source file structure and content in `data.json` files found in the input folder. This allows generating the required source files or model.json files dynamically based on the test case needs.
+
+For **larger inputs**, it is recommended to use explicit input files (actual .c/.h files) rather than data.json specifications for better readability and maintainability.
+
+**Multiple Test Cases per File:**
+Per test.py file which contains multiple test cases, there can be multiple data.json files with different names (e.g., `data_case1.json`, `data_case2.json`) for each test case which can be individually loaded. The TestDataFactory shall have extended functionality to handle these data.json files and generate the inputs needed for testing.
+
+**Example data.json Structure for Source Generation:**
+```json
+{
+  "description": "Source file specification for smaller test inputs",
+  "generate_type": "source_files",
+  "files": {
+    "main.c": {
+      "content": "#include <stdio.h>\n#include \"types.h\"\n\nint main() {\n    Point p = {10, 20};\n    return 0;\n}",
+      "includes": ["stdio.h", "types.h"]
+    },
+    "types.h": {
+      "content": "#ifndef TYPES_H\n#define TYPES_H\n\ntypedef struct {\n    int x;\n    int y;\n} Point;\n\n#endif",
+      "includes": []
+    }
+  },
+  "config_overrides": {
+    "project_name": "test_small_project",
+    "include_depth": 2
+  }
+}
+```
+
+**Example data_case1.json for Model Generation:**
+```json
+{
+  "description": "Pre-parsed model for transformation testing",
+  "generate_type": "model_json",
+  "model": {
+    "project_name": "test_transformation",
+    "files": {
+      "main.c": {
+        "functions": [
+          {"name": "deprecated_print_info", "return_type": "void", "parameters": []},
+          {"name": "main", "return_type": "int", "parameters": []}
+        ],
+        "macros": ["LEGACY_MACRO", "VERSION"],
+        "includes": ["stdio.h", "time.h", "config.h"]
+      }
+    }
+  },
+  "config_overrides": {
+    "transformations": {
+      "rename": {
+        "functions": {"^deprecated_(.*)": "legacy_\\1"}
+      },
+      "remove": {
+        "macros": ["LEGACY_MACRO"],
+        "includes": ["time.h"]
+      }
+    }
+  }
+}
 ```
 
 **Example assertions.json Structure (Flexible Naming):**
@@ -404,6 +548,24 @@ test_<name>/
 - **Logical Grouping**: Configuration naturally belongs with the files it configures
 - **Flexible Assertion Data**: Tests can structure assertions.json with any naming and organization
 - **Test-Specific Validation**: Each test defines its own assertion structure and validation logic
+- **Dynamic Input Generation**: Support for data.json files allows flexible input generation for smaller test cases
+- **Multiple Test Cases**: Single test.py files can handle multiple scenarios using different data files
+
+**Input Size Guidelines:**
+
+**Use data.json for:**
+- Small test cases (< 50 lines of C code total)
+- Simple struct/enum definitions
+- Basic function declarations
+- Unit tests focusing on specific features
+- Tests requiring multiple similar variants
+
+**Use explicit files for:**
+- Large test cases (> 50 lines of C code)
+- Complex project structures
+- Real-world code examples
+- Integration tests with multiple dependencies
+- Tests requiring detailed file organization
 
 ### 4. Result Validation Framework
 
@@ -1107,10 +1269,11 @@ class TestFeatureName(UnifiedTestCase):
 #### Phase 1: Framework Foundation (Week 1-2)
 1. Create `tests/framework/` structure
 2. Implement `TestExecutor` with CLI interface
-3. Implement basic `TestDataFactory`
-4. Implement `ResultValidator` for models and PlantUML
-5. Create `test-example.json` specification for the existing example test
-6. **Verify baseline**: Run `run_all.sh` to establish current test suite baseline
+3. Implement basic `TestDataFactory` with data.json support
+4. Implement extended `TestDataFactory` methods for source/model generation
+5. Implement `ResultValidator` for models and PlantUML
+6. Create `test-example.json` specification for the existing example test
+7. **Verify baseline**: Run `run_all.sh` to establish current test suite baseline
 
 #### Phase 2: Public API Migration (Week 3-4)
 1. Identify tests using internal APIs (audit all 57 files, excluding preserved example)
@@ -1122,10 +1285,12 @@ class TestFeatureName(UnifiedTestCase):
 #### Phase 3: Test Reorganization (Week 5-6)
 1. Create self-contained test folders for each test file with `input/` subdirectory and `config.json`
 2. Migrate test data into respective test folders (preserve `tests/example/` as-is)
-3. Update test implementations to use `TestDataFactory.load_test_input()` and `load_test_config()`
-4. Consolidate duplicate test logic and standardize naming conventions
-5. Validate example test works with new framework
-6. **Verify reorganization**: Run `run_all.sh` after test structure changes to ensure consistency
+3. Convert appropriate small tests to use data.json for source generation
+4. Create multiple data_case*.json files for tests with multiple scenarios
+5. Update test implementations to use `TestDataFactory.load_test_input()` and `load_test_config()`
+6. Consolidate duplicate test logic and standardize naming conventions
+7. Validate example test works with new framework
+8. **Verify reorganization**: Run `run_all.sh` after test structure changes to ensure consistency
 
 #### Phase 4: Validation and Cleanup (Week 7-8)
 1. Ensure all tests pass with new framework
