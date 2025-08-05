@@ -19,6 +19,7 @@ This document provides comprehensive analysis and specific recommendations for m
 - **High Priority (24 files):** ⏳ Pending - All files have detailed recommendations
 - **Medium Priority (18 files):** ⏳ Pending - All files have detailed recommendations
 - **Low Priority (8 files):** ⏳ Pending - All files have detailed recommendations
+- **Framework Cleanup:** ⏳ Pending - Remove legacy framework files after migration
 
 ### Progress Legend
 - ⏳ **Pending** - Not yet started
@@ -664,3 +665,88 @@ This migration plan provides a comprehensive roadmap for transforming all 50 tes
 5. **Track progress**: Update todo.md with migration status
 
 The detailed recommendations ensure that the migration will result in a robust, maintainable test suite that validates public API behavior while remaining flexible to internal implementation changes.
+
+## Existing Test Framework Cleanup
+
+### Current Framework Files to Be Replaced/Removed
+
+The following existing test framework files are currently used but will be replaced by the new unified framework:
+
+**🗑️ Files to be REMOVED after migration completion:**
+
+1. **`/tests/utils.py` (374 lines)** - Existing test utilities
+   - Contains: `ProjectBuilder`, `MockObjectFactory`, `AssertionHelpers`, `TestDataProviders`
+   - **Why remove:** Uses internal API imports (`from c2puml.generator import Generator`, etc.)
+   - **Replaced by:** New `TestDataFactory` with CLI-only approach
+   - **Progress:** ⏳ Pending - Remove after all tests migrated
+
+2. **`/tests/feature/base.py` (189 lines)** - Feature test base class
+   - Contains: `BaseFeatureTest` class with internal API usage
+   - **Why remove:** Inherits from `unittest.TestCase` and uses internal pipeline calls
+   - **Replaced by:** New `UnifiedTestCase` with CLI-only execution
+   - **Progress:** ⏳ Pending - Remove after all tests migrated
+
+3. **`/tests/conftest.py` (129 lines)** - pytest configuration
+   - Contains: Basic fixtures like `temp_dir`, `config_factory`, `file_factory`
+   - **Status:** **EVALUATE** - May be partially reusable for basic fixtures
+   - **Decision needed:** Keep basic fixtures, remove any internal API dependencies
+   - **Progress:** ⏳ Pending - Clean up after framework implementation
+
+### Framework Analysis
+
+**Existing Internal API Usage (to be eliminated):**
+```python
+# From tests/utils.py - PROBLEMATIC
+from c2puml.generator import Generator
+from c2puml.parser import Parser  
+from c2puml.transformer import Transformer
+
+# From tests/feature/base.py - PROBLEMATIC  
+parser = Parser()
+transformer = Transformer()
+generator = Generator()
+```
+
+**Existing Good Patterns (to be preserved):**
+```python
+# From conftest.py - REUSABLE
+@pytest.fixture(scope="function")
+def temp_dir():
+    """Create a temporary directory that gets cleaned up after each test."""
+    
+# From utils.py - CONCEPT REUSABLE
+def create_temp_project(project_data: Dict[str, str], base_dir: Optional[str] = None) -> Path:
+```
+
+### Migration Cleanup Phase
+
+**After unified framework implementation is complete:**
+
+1. **Phase 1: Verify No Dependencies**
+   - Ensure all 50 test files use new `TestDataFactory` and `TestExecutor`
+   - Confirm no imports from old framework files
+   - **Progress:** ⏳ Pending
+
+2. **Phase 2: Remove Old Framework Files**
+   - Delete `/tests/utils.py` ✅ Safe to remove
+   - Delete `/tests/feature/base.py` ✅ Safe to remove  
+   - **Progress:** ⏳ Pending
+
+3. **Phase 3: Clean conftest.py**
+   - Keep basic fixtures (`temp_dir`, file creation helpers)
+   - Remove any internal API dependencies
+   - Ensure compatibility with new unified framework
+   - **Progress:** ⏳ Pending
+
+### Size Reduction Benefits
+
+**Lines of Code Reduction:**
+- Current framework: ~692 lines (utils.py + base.py + conftest.py)
+- New framework: Estimated ~400-500 lines (focused, CLI-only)
+- **Net reduction:** ~200-300 lines of cleaner, maintainable code
+
+**Key Improvement:** Elimination of internal API dependencies makes the entire test suite resilient to internal refactoring.
+
+### Important Note for Migration Planning
+
+The existing framework files were **NOT considered** in the initial analysis since they use internal APIs and conflict with the CLI-only approach. These files must be treated as **legacy code** that will be completely replaced, not adapted. This ensures a clean break from internal API dependencies and establishes the proper test-application boundary separation.

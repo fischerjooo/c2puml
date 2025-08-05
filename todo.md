@@ -8,6 +8,8 @@ This document outlines the comprehensive work required to transform the current 
 
 **📋 Detailed Recommendations**: See `todo_recommendations.md` for comprehensive file-by-file analysis, specific migration strategies, data file recommendations, and progress tracking for all 50 test files. **Important:** Update both `todo.md` and `todo_recommendations.md` as migration work progresses.
 
+**🗑️ Framework Cleanup**: The existing framework files (`tests/utils.py`, `tests/feature/base.py`) use internal APIs and will be completely removed after migration. These legacy files were not adapted as they conflict with the CLI-only approach required for proper test-application boundary separation.
+
 ## Current State Analysis
 
 ### Current Test Structure
