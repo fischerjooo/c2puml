@@ -221,7 +221,24 @@ test_<name>/
 
 ### 4. Result Validation Framework
 
-#### 4.1 Model Validation
+#### 4.1 Generic vs Custom Validation Strategy
+**Priority: HIGH**
+
+The validation framework provides two approaches for test validation:
+
+**🔧 Generic Framework Validation (Recommended for most cases):**
+- Use `ModelValidator`, `PlantUMLValidator`, `ConfigValidator`, `OutputValidator`
+- Covers 90% of common validation scenarios
+- Consistent, reusable, and maintainable
+- Well-tested validation logic
+
+**🎯 Custom Validation (For complex edge cases):**
+- Implement custom validation methods within test cases
+- Handle complex algorithms, edge cases, or domain-specific validation
+- Use when generic framework limitations are encountered
+- Combine with generic validation for comprehensive coverage
+
+#### 4.2 Model Validation
 **Priority: HIGH**
 
 Structured validation of generated models:
@@ -315,7 +332,7 @@ class ModelValidator:
     def assert_model_json_syntax_valid(self, model_file_path: str)
 ```
 
-#### 4.2 PlantUML Validation
+#### 4.3 PlantUML Validation
 **Priority: HIGH**
 
 Validation of generated PlantUML files:
@@ -400,9 +417,98 @@ class OutputValidator:
     def assert_execution_time_under(self, actual_time: float, max_time: float)
     def assert_memory_usage_under(self, actual_memory: int, max_memory: int)
     def assert_file_size_under(self, file_path: str, max_size: int)
+
+
+class CustomValidationMixin:
+    """Mixin for tests that need custom validation beyond the generic framework"""
+    
+    def validate_with_custom_logic(self, model: dict, puml_files: list, test_specific_checks: callable):
+        """
+        Template method for combining generic validation with custom edge case validation.
+        
+        Args:
+            model: Parsed model.json content
+            puml_files: List of generated PlantUML files
+            test_specific_checks: Callable that performs test-specific validation
+        """
+        # First run standard generic validations
+        self.model_validator.assert_model_structure_valid(model)
+        
+        for puml_file in puml_files:
+            self.puml_validator.assert_puml_file_syntax_valid(puml_file)
+        
+        # Then run custom validation logic
+        test_specific_checks(model, puml_files)
+    
+    def build_include_dependency_graph(self, model: dict) -> dict:
+        """Helper method to build include dependency graph for custom analysis"""
+        include_graph = {}
+        for filename, file_data in model['files'].items():
+            include_graph[filename] = file_data.get('includes', [])
+        return include_graph
+    
+    def extract_elements_by_pattern(self, model: dict, element_type: str, pattern: str) -> list:
+        """Helper method to extract elements matching specific patterns"""
+        import re
+        elements = []
+        regex = re.compile(pattern)
+        
+        for file_data in model['files'].values():
+            for element in file_data.get(element_type, []):
+                element_name = element if isinstance(element, str) else element.get('name', '')
+                if regex.match(element_name):
+                    elements.append(element)
+        return elements
 ```
 
-#### 4.3 Example Test Validation
+#### 4.4 Custom Validation for Edge Cases
+**Priority: MEDIUM**
+
+When the generic validation framework cannot handle specific edge cases, implement custom validation logic:
+
+**Common Edge Cases Requiring Custom Validation:**
+- **Complex Anonymous Structure Hierarchies**: Multi-level nested anonymous structures with complex naming
+- **Circular Include Detection**: Custom algorithms to detect and validate circular dependencies
+- **Conditional Compilation Logic**: Macro expansion consistency and preprocessor directive handling
+- **Complex Transformation Patterns**: Multi-step transformations with interdependencies
+- **Performance Characteristics**: Memory usage, parsing time, or output file size validation
+- **Domain-Specific Algorithms**: Custom C language feature handling or specialized parsing logic
+
+**Example Custom Validation Pattern:**
+```python
+class TestComplexFeature(UnifiedTestCase, CustomValidationMixin):
+    def test_complex_edge_case(self):
+        # 1. Standard CLI execution
+        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+        self.assertEqual(result.exit_code, 0)
+        
+        # 2. Load generated files
+        with open(f"{self.output_dir}/model.json", 'r') as f:
+            model = json.load(f)
+        puml_files = glob.glob(f"{self.output_dir}/*.puml")
+        
+        # 3. Generic validation first
+        self.model_validator.assert_model_structure_valid(model)
+        for puml_file in puml_files:
+            self.puml_validator.assert_puml_file_syntax_valid(puml_file)
+        
+        # 4. Custom validation for edge cases
+        self._validate_complex_algorithm_specific_behavior(model, puml_files)
+    
+    def _validate_complex_algorithm_specific_behavior(self, model: dict, puml_files: list):
+        # Custom validation logic that generic framework cannot handle
+        # Example: validate complex anonymous struct naming patterns
+        anonymous_structs = self.extract_elements_by_pattern(
+            model, 'structs', r'.*Container_.*_config_.*'
+        )
+        self.assertGreater(len(anonymous_structs), 0, "Complex anonymous patterns not found")
+        
+        # Example: validate custom include dependency resolution
+        include_graph = self.build_include_dependency_graph(model)
+        self._assert_no_circular_dependencies(include_graph)
+```
+
+#### 4.5 Example Test Validation
 **Priority: MEDIUM**
 
 The `tests/example/` directory should be preserved with its current structure but enhanced with a standardized expectations file. **Note**: The example test has a different structure than other tests:
@@ -607,7 +713,133 @@ class TestFeatureName(UnifiedTestCase):
             '@startuml main',
             '@enduml'
         ]
-        self.output_validator.assert_file_contains_lines(main_puml_file, expected_puml_lines)
+                 self.output_validator.assert_file_contains_lines(main_puml_file, expected_puml_lines)
+    
+    def test_custom_edge_case_validation(self):
+        """Example of custom validation for complex edge cases"""
+        input_path = self.data_factory.load_test_input(self.test_name)
+        config_path = self.data_factory.load_test_config(self.test_name)
+        
+        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+        self.assertEqual(result.exit_code, 0)
+        
+        # Standard validation using generic framework
+        model_file = f"{self.output_dir}/model.json"
+        with open(model_file, 'r') as f:
+            model_content = json.load(f)
+        
+        self.model_validator.assert_model_structure_valid(model_content)
+        
+        # Custom validation for complex edge cases that generic framework can't handle
+        self._validate_complex_anonymous_struct_hierarchy(model_content)
+        self._validate_circular_include_detection(model_content)
+        self._validate_macro_expansion_consistency(model_content)
+        
+    def _validate_complex_anonymous_struct_hierarchy(self, model: dict):
+        """Custom validation for complex anonymous struct processing"""
+        # Generic framework might not handle deeply nested anonymous structures
+        # with multiple levels and complex naming patterns
+        
+        # Find the parent struct
+        parent_struct = None
+        for file_data in model['files'].values():
+            if 'ComplexContainer' in file_data.get('structs', {}):
+                parent_struct = file_data['structs']['ComplexContainer']
+                break
+        
+        self.assertIsNotNone(parent_struct, "ComplexContainer struct not found")
+        
+        # Validate that anonymous structure extraction created proper hierarchy
+        expected_anonymous_names = [
+            'ComplexContainer_settings',
+            'ComplexContainer_settings_config',
+            'ComplexContainer_settings_config_data'
+        ]
+        
+        # Check that all levels of anonymous structures were properly extracted
+        for anonymous_name in expected_anonymous_names:
+            found = False
+            for file_data in model['files'].values():
+                if anonymous_name in file_data.get('structs', {}):
+                    found = True
+                    break
+            self.assertTrue(found, f"Anonymous struct {anonymous_name} not properly extracted")
+        
+        # Validate composition relationships exist in the model
+        if 'anonymous_relationships' in model:
+            relationships = model['anonymous_relationships']
+            self.assertIn('ComplexContainer', relationships)
+            self.assertIn('ComplexContainer_settings', relationships['ComplexContainer'])
+    
+    def _validate_circular_include_detection(self, model: dict):
+        """Custom validation for circular include detection logic"""
+        # Generic framework can't validate complex circular dependency logic
+        
+        include_graph = {}
+        
+        # Build include dependency graph from model
+        for filename, file_data in model['files'].items():
+            include_graph[filename] = file_data.get('includes', [])
+        
+        # Custom algorithm to detect circular includes
+        def has_circular_dependency(node, visited, rec_stack):
+            visited.add(node)
+            rec_stack.add(node)
+            
+            for neighbor in include_graph.get(node, []):
+                if neighbor in include_graph:  # Only check files in our project
+                    if neighbor not in visited:
+                        if has_circular_dependency(neighbor, visited, rec_stack):
+                            return True
+                    elif neighbor in rec_stack:
+                        return True
+            
+            rec_stack.remove(node)
+            return False
+        
+        # Validate no circular dependencies exist
+        visited = set()
+        for filename in include_graph:
+            if filename not in visited:
+                self.assertFalse(
+                    has_circular_dependency(filename, visited, set()),
+                    f"Circular include dependency detected involving {filename}"
+                )
+    
+    def _validate_macro_expansion_consistency(self, model: dict):
+        """Custom validation for macro expansion edge cases"""
+        # Validate that conditional compilation macros are handled correctly
+        
+        macro_definitions = {}
+        conditional_blocks = {}
+        
+        # Extract all macro definitions and conditional compilation info
+        for filename, file_data in model['files'].items():
+            macros = file_data.get('macros', [])
+            for macro in macros:
+                if isinstance(macro, dict) and 'name' in macro:
+                    macro_definitions[macro['name']] = macro.get('value', '')
+            
+            # Look for conditional compilation information (if available in model)
+            if 'conditional_compilation' in file_data:
+                conditional_blocks[filename] = file_data['conditional_compilation']
+        
+        # Custom validation: ensure DEBUG macros are consistently handled
+        if 'DEBUG' in macro_definitions:
+            # If DEBUG is defined, ensure debug functions are included
+            debug_functions = []
+            for file_data in model['files'].values():
+                for func in file_data.get('functions', []):
+                    if isinstance(func, dict) and func.get('name', '').startswith('debug_'):
+                        debug_functions.append(func['name'])
+            
+            if macro_definitions['DEBUG']:
+                self.assertGreater(len(debug_functions), 0, 
+                    "DEBUG macro defined but no debug functions found")
+            else:
+                # If DEBUG is explicitly undefined, debug functions should be filtered out
+                self.assertEqual(len(debug_functions), 0,
+                    "DEBUG macro undefined but debug functions still present")
 ```
 
 #### 7.2 Documentation Standards
