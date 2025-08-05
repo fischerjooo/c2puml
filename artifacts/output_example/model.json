@@ -3546,13 +3546,7 @@
           "return_type": "int"
         }
       ],
-      "globals": [
-        {
-          "name": "PGconn",
-          "type": "\"C\" { typedef struct pg_conn",
-          "value": null
-        }
-      ],
+      "globals": [],
       "include_relations": [],
       "includes": [
         "stddef.h"
@@ -4059,13 +4053,7 @@
           "return_type": "MYSQL_RES *"
         }
       ],
-      "globals": [
-        {
-          "name": "MYSQL",
-          "type": "\"C\" { typedef struct st_mysql",
-          "value": null
-        }
-      ],
+      "globals": [],
       "include_relations": [],
       "includes": [
         "stddef.h"
@@ -5821,13 +5809,7 @@
           "return_type": "int"
         }
       ],
-      "globals": [
-        {
-          "name": "sqlite3",
-          "type": "\"C\" { typedef struct sqlite3",
-          "value": null
-        }
-      ],
+      "globals": [],
       "include_relations": [],
       "includes": [
         "stddef.h"

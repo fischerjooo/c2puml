@@ -3,13 +3,10 @@
 
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 // Mock PostgreSQL types
 typedef struct pg_conn PGconn;
 typedef struct pg_result PGresult;
+typedef struct pg_stmt PGstmt;
 
 // Mock PostgreSQL constants
 #define CONNECTION_OK 0
@@ -39,9 +36,5 @@ char* PQgetvalue(const PGresult* res, int tup_num, int field_num);
 char* PQfname(const PGresult* res, int field_num);
 void PQclear(PGresult* res);
 const char* PQerrorMessage(const PGconn* conn);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // LIBPQ_FE_H

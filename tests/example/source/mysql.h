@@ -3,10 +3,6 @@
 
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 // Mock MySQL types
 typedef struct st_mysql MYSQL;
 typedef struct st_mysql_res MYSQL_RES;
@@ -31,9 +27,5 @@ const char* mysql_error(MYSQL* mysql);
 int mysql_ping(MYSQL* mysql);
 unsigned int mysql_num_fields(MYSQL_RES* result);
 unsigned long mysql_num_rows(MYSQL_RES* result);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // MYSQL_H

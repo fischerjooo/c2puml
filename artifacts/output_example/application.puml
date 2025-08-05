@@ -57,8 +57,6 @@ class "libpq-fe" as HEADER_LIBPQ-FE <<header>> #LightGreen
     + #define CONNECTION_BAD
     + #define CONNECTION_OK
     + #define LIBPQ_FE_H
-    -- Global Variables --
-    + "C" { typedef struct pg_conn PGconn
     -- Functions --
     + void PQclear(PGresult * res)
     + PGconn * PQconnectdb(const char * conninfo)
@@ -79,8 +77,6 @@ class "mysql" as HEADER_MYSQL <<header>> #LightGreen
     + #define MYSQL_ERROR
     + #define MYSQL_H
     + #define MYSQL_SUCCESS
-    -- Global Variables --
-    + "C" { typedef struct st_mysql MYSQL
     -- Functions --
     + void mysql_close(MYSQL * mysql)
     + const char * mysql_error(MYSQL * mysql)
@@ -148,8 +144,6 @@ class "sqlite3" as HEADER_SQLITE3 <<header>> #LightGreen
     + #define SQLITE_ROW
     + #define SQLITE_SCHEMA
     + #define SQLITE_TOOBIG
-    -- Global Variables --
-    + "C" { typedef struct sqlite3 sqlite3
     -- Functions --
     + int sqlite3_bind_blob(sqlite3_stmt * pStmt, int i, const void * value, int n, ...)
     + int sqlite3_bind_double(sqlite3_stmt * pStmt, int i, double value)

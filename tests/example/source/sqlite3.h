@@ -3,10 +3,6 @@
 
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 // Mock SQLite types and structures
 typedef struct sqlite3 sqlite3;
 typedef struct sqlite3_stmt sqlite3_stmt;
@@ -63,9 +59,5 @@ int sqlite3_bind_double(sqlite3_stmt *pStmt, int i, double value);
 int sqlite3_bind_text(sqlite3_stmt *pStmt, int i, const char *value, int n, void(*destructor)(void*));
 int sqlite3_bind_blob(sqlite3_stmt *pStmt, int i, const void *value, int n, void(*destructor)(void*));
 void sqlite3_free(void* ptr);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // SQLITE3_H
