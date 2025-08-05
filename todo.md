@@ -121,17 +121,17 @@ Create reusable test data generators:
 
 ```python
 class TestDataFactory:
-    def load_test_project(self, test_name: str) -> TestProject:
-        """Loads C/C++ project from test_<name>/source/ directory"""
+    def load_test_input(self, test_name: str) -> TestInput:
+        """Loads test input from test_<name>/input/ directory (C files, model.json, etc.)"""
     
     def load_test_config(self, test_name: str) -> ConfigData:
         """Loads configuration from test_<name>/config.json"""
     
-    def create_temp_project(self, source_files: dict) -> TestProject:
+    def create_temp_project(self, input_files: dict) -> TestProject:
         """Creates temporary project for dynamic test generation"""
     
     def get_test_data_path(self, test_name: str, subpath: str = "") -> Path:
-        """Returns path to test data: test_<name>/source/ or test_<name>/config.json"""
+        """Returns path to test data: test_<name>/input/ or test_<name>/config.json"""
 ```
 
 #### 3.2 Self-Contained Test Data
@@ -143,9 +143,9 @@ Each test folder contains its own project and configuration data:
 ```
 test_<name>/
 ├── test_<name>.py      # Test implementation
-├── source/             # C/C++ source files specific to this test
-│   ├── main.c
-│   ├── utils.h
+├── input/              # Test input files (C/C++ source, model.json, etc.)
+│   ├── main.c          # For unit tests: C files, model.json, etc.
+│   ├── utils.h         # For feature/integration: C/C++ source files
 │   └── subdir/         # Nested directories if needed
 └── config.json        # Test configuration
 ```
@@ -233,19 +233,19 @@ tests/
 ├── unit/               # Refactored unit tests (public API only)
 │   ├── test_parsing/              # Self-contained test folder
 │   │   ├── test_parsing.py        # Test implementation
-│   │   ├── source/                # Test C/C++ source files
+│   │   ├── input/                 # Test input files (C/C++ source, model.json, etc.)
 │   │   └── config.json            # Test configuration
 │   ├── test_transformation/       # Self-contained test folder
 │   │   ├── test_transformation.py # Test implementation
-│   │   ├── source/                # Test C/C++ source files
+│   │   ├── input/                 # Test input files (C/C++ source, model.json, etc.)
 │   │   └── config.json            # Test configuration
 │   ├── test_generation/           # Self-contained test folder
 │   │   ├── test_generation.py     # Test implementation
-│   │   ├── source/                # Test C/C++ source files
+│   │   ├── input/                 # Test input files (C/C++ source, model.json, etc.)
 │   │   └── config.json            # Test configuration
 │   └── test_configuration/        # Self-contained test folder
 │       ├── test_configuration.py  # Test implementation
-│       ├── source/                # Test C/C++ source files (if needed)
+│       ├── input/                 # Test input files (if needed)
 │       └── config.json            # Test configuration
 ├── feature/            # Refactored feature tests
 │   ├── test_full_workflow/        # Self-contained test folder
