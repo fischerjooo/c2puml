@@ -51,7 +51,7 @@ class "database" as HEADER_DATABASE <<header>> #LightGreen
     + int database_rollback_transaction(DatabaseConfig * config)
 }
 
-class "libpq-fe" as HEADER_LIBPQ-FE <<header>> #LightGreen
+class "libpq-fe" as HEADER_LIBPQ_FE <<header>> #LightGreen
 {
     -- Macros --
     + #define CONNECTION_BAD
@@ -161,7 +161,7 @@ class "sqlite3" as HEADER_SQLITE3 <<header>> #LightGreen
     + int sqlite3_exec(sqlite3 * db, const char * sql, sqlite3_callback callback, void * arg, char * * errmsg)
     + int sqlite3_finalize(sqlite3_stmt * pStmt)
     + void sqlite3_free(void * ptr)
-    + int sqlite3_open(const char * filename, sqlite3 * * ppDb)
+    + int sqlite3_open(const char * filename, sqlite3 ** ppDb)
     + int sqlite3_prepare_v2(sqlite3 * db, const char * zSql, int nByte, sqlite3_stmt * * ppStmt, const char * * pzTail)
     + int sqlite3_step(sqlite3_stmt * pStmt)
 }
@@ -253,7 +253,7 @@ class "sqlite3_callback" as TYPEDEF_SQLITE3_CALLBACK <<function pointer>> #Light
 APPLICATION --> HEADER_COMMON : <<include>>
 APPLICATION --> HEADER_DATABASE : <<include>>
 APPLICATION --> HEADER_NETWORK : <<include>>
-HEADER_DATABASE --> HEADER_LIBPQ-FE : <<include>>
+HEADER_DATABASE --> HEADER_LIBPQ_FE : <<include>>
 HEADER_DATABASE --> HEADER_MYSQL : <<include>>
 HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>
 
@@ -265,7 +265,7 @@ HEADER_COMMON ..> TYPEDEF_STATUS_BOOL_T : <<declares>>
 HEADER_DATABASE ..> TYPEDEF_DATABASECONFIG : <<declares>>
 HEADER_DATABASE ..> TYPEDEF_QUERYRESULT : <<declares>>
 HEADER_DATABASE ..> TYPEDEF_DATABASETYPE : <<declares>>
-HEADER_LIBPQ-FE ..> TYPEDEF_EXECSTATUSTYPE : <<declares>>
+HEADER_LIBPQ_FE ..> TYPEDEF_EXECSTATUSTYPE : <<declares>>
 HEADER_NETWORK ..> TYPEDEF_NETWORKCONFIG : <<declares>>
 HEADER_NETWORK ..> TYPEDEF_NETWORKSTATUS : <<declares>>
 HEADER_SQLITE3 ..> TYPEDEF_SQLITE3_CALLBACK : <<declares>>
