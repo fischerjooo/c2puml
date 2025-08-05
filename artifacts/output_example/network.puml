@@ -14,6 +14,27 @@ class "network" as NETWORK <<source>> #LightBlue
     + const char * network_status_string(NetworkStatus status)
 }
 
+class "common" as HEADER_COMMON <<header>> #LightGreen
+{
+    -- Macros --
+    + #define ARRAY_SIZE(arr)
+    + #define COMMON_H
+    + #define DEPRECATED
+    + #define ERROR_GENERAL
+    + #define ERROR_INVALID_PARAM
+    + #define ERROR_MEMORY
+    + #define ERROR_TIMEOUT
+    + #define MAX(a, b)
+    + #define MIN(a, b)
+    + #define PACKED
+    + #define SUCCESS
+    + #define UNUSED(x)
+    -- Functions --
+    + void common_cleanup()
+    + const char * common_get_error_string(result_t error)
+    + result_t common_init()
+}
+
 class "network" as HEADER_NETWORK <<header>> #LightGreen
 {
     -- Macros --
@@ -32,6 +53,29 @@ class "network" as HEADER_NETWORK <<header>> #LightGreen
     + ssize_t network_send(int socket_fd, const void * data, size_t size)
     + int network_set_nonblocking(int socket_fd)
     + const char * network_status_string(NetworkStatus status)
+}
+
+class "common_status_t" as TYPEDEF_COMMON_STATUS_T <<enumeration>> #LightYellow
+{
+    STATUS_ERROR = - 1
+    STATUS_OK = 0
+    STATUS_PENDING = 1
+    STATUS_TIMEOUT = 2
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
+    alias of uint32_t
+}
+
+class "result_t" as TYPEDEF_RESULT_T <<typedef>> #LightYellow
+{
+    alias of int32_t
+}
+
+class "status_bool_t" as TYPEDEF_STATUS_BOOL_T <<typedef>> #LightYellow
+{
+    alias of bool
 }
 
 class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<struct>> #LightYellow
@@ -53,8 +97,13 @@ class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<enumeration>> #LightYellow
 
 ' Include relationships
 NETWORK --> HEADER_NETWORK : <<include>>
+HEADER_NETWORK --> HEADER_COMMON : <<include>>
 
 ' Declaration relationships
+HEADER_COMMON ..> TYPEDEF_COMMON_STATUS_T : <<declares>>
+HEADER_COMMON ..> TYPEDEF_ID_T : <<declares>>
+HEADER_COMMON ..> TYPEDEF_RESULT_T : <<declares>>
+HEADER_COMMON ..> TYPEDEF_STATUS_BOOL_T : <<declares>>
 HEADER_NETWORK ..> TYPEDEF_NETWORKCONFIG : <<declares>>
 HEADER_NETWORK ..> TYPEDEF_NETWORKSTATUS : <<declares>>
 

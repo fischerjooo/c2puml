@@ -149,7 +149,7 @@ class PUMLValidator:
 
         # Pattern for class definitions
         class_pattern = (
-            r'class\s+"([^"]+)"\s+as\s+(\w+)\s+<<([^>]+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
+            r'class\s+"([^"]+)"\s+as\s+([\w-]+)\s+<<([^>]+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
         )
         matches = re.finditer(class_pattern, content, re.DOTALL)
 
@@ -180,7 +180,7 @@ class PUMLValidator:
 
         # Pattern for enum definitions
         enum_pattern = (
-            r'enum\s+"([^"]+)"\s+as\s+(\w+)\s+<<([^>]+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
+            r'enum\s+"([^"]+)"\s+as\s+([\w-]+)\s+<<([^>]+)>>\s+#(\w+)\s*\n\s*\{([^}]+)\}'
         )
         enum_matches = re.finditer(enum_pattern, content, re.DOTALL)
 
@@ -277,25 +277,25 @@ class PUMLValidator:
 
         # Pattern for relationships with labels
         patterns = [
-            (r"(\w+)\s+-->\s+(\w+)\s+:\s+(<<[^>]+>>)", "-->"),  # Include relationships
+            (r"([\w-]+)\s+-->\s+([\w-]+)\s+:\s+(<<[^>]+>>)", "-->"),  # Include relationships
             (
-                r"(\w+)\s+\.\.>\s+(\w+)\s+:\s+(<<[^>]+>>)",
+                r"([\w-]+)\s+\.\.>\s+([\w-]+)\s+:\s+(<<[^>]+>>)",
                 "..>",
             ),  # Declares/Uses relationships
             (
-                r"(\w+)\s+-->\s+(\w+)\s+:\s+([^<][^\n]*)",
+                r"([\w-]+)\s+-->\s+([\w-]+)\s+:\s+([^<][^\n]*)",
                 "-->",
             ),  # Non-bracketed includes
             (
-                r"(\w+)\s+\.\.>\s+(\w+)\s+:\s+([^<][^\n]*)",
+                r"([\w-]+)\s+\.\.>\s+([\w-]+)\s+:\s+([^<][^\n]*)",
                 "..>",
             ),  # Non-bracketed declares/uses
             (
-                r"(\w+)\s+\*--\s+(\w+)\s+:\s+(<<[^>]+>>)",
+                r"([\w-]+)\s+\*--\s+([\w-]+)\s+:\s+(<<[^>]+>>)",
                 "*--",
             ),  # Composition relationships with labels
             (
-                r"(\w+)\s+\*--\s+(\w+)\s+:\s+([^<][^\n]*)",
+                r"([\w-]+)\s+\*--\s+([\w-]+)\s+:\s+([^<][^\n]*)",
                 "*--",
             ),  # Composition relationships without labels
         ]
