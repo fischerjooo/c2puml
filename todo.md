@@ -843,9 +843,61 @@ Test component integration through public interfaces:
 - Error propagation and handling
 - File I/O and output organization
 
-### 7. Test Readability and Maintainability
+### 7. Test Development and Verification Workflow
 
-#### 7.1 Standardized Test Patterns
+#### 7.1 Individual Test Development Process
+**Priority: HIGH**
+
+For each test file migration, follow this workflow:
+
+```bash
+# 1. Individual test development and verification
+python -m pytest tests/unit/test_parsing/test_parsing.py -v
+
+# 2. Verify individual test passes
+# Make changes and iterate until test passes
+
+# 3. Run full test suite to ensure no regressions
+./run_all.sh
+
+# 4. Analyze run_all.sh results
+# - Check for any new failures
+# - Verify performance hasn't degraded
+# - Ensure all tests still pass
+```
+
+**Key Benefits:**
+- **Fast iteration**: Individual test execution for rapid development
+- **Regression detection**: Full suite verification catches unexpected interactions
+- **Performance monitoring**: Track execution time changes
+- **Integration validation**: Ensure changes don't break other tests
+
+#### 7.2 Continuous Verification Strategy
+**Priority: HIGH**
+
+**During Development:**
+```bash
+# Quick feedback loop for active development
+python -m pytest tests/unit/test_<name>/test_<name>.py -v --tb=short
+```
+
+**Before Committing:**
+```bash
+# Comprehensive verification before code commit
+./run_all.sh > test_results.log 2>&1
+# Review test_results.log for any issues
+```
+
+**Weekly Integration:**
+```bash
+# Full suite with performance analysis
+time ./run_all.sh
+# Compare execution times to baseline
+```
+
+### 8. Test Readability and Maintainability
+
+#### 8.1 Standardized Test Patterns
 **Priority: MEDIUM**
 
 Common patterns for all tests:
@@ -1042,7 +1094,7 @@ class TestFeatureName(UnifiedTestCase):
                     "DEBUG macro undefined but debug functions still present")
 ```
 
-#### 7.2 Documentation Standards
+#### 8.2 Documentation Standards
 **Priority: LOW**
 
 - **Clear test descriptions**: Each test explains what it validates
@@ -1050,7 +1102,7 @@ class TestFeatureName(UnifiedTestCase):
 - **Expected behavior**: Tests clearly state expected outcomes
 - **Failure diagnostics**: Useful error messages for test failures
 
-### 8. Implementation Plan
+### 9. Implementation Plan
 
 #### Phase 1: Framework Foundation (Week 1-2)
 1. Create `tests/framework/` structure
@@ -1058,12 +1110,14 @@ class TestFeatureName(UnifiedTestCase):
 3. Implement basic `TestDataFactory`
 4. Implement `ResultValidator` for models and PlantUML
 5. Create `test-example.json` specification for the existing example test
+6. **Verify baseline**: Run `run_all.sh` to establish current test suite baseline
 
 #### Phase 2: Public API Migration (Week 3-4)
 1. Identify tests using internal APIs (audit all 57 files, excluding preserved example)
 2. Refactor high-priority unit tests to use CLI-only interface
 3. Create conversion utilities for existing test patterns
 4. Update example test to use new validation framework while preserving its structure
+5. **Verify migration**: Run `run_all.sh` after each test file migration to ensure no regressions
 
 #### Phase 3: Test Reorganization (Week 5-6)
 1. Create self-contained test folders for each test file with `input/` subdirectory and `config.json`
@@ -1071,18 +1125,21 @@ class TestFeatureName(UnifiedTestCase):
 3. Update test implementations to use `TestDataFactory.load_test_input()` and `load_test_config()`
 4. Consolidate duplicate test logic and standardize naming conventions
 5. Validate example test works with new framework
+6. **Verify reorganization**: Run `run_all.sh` after test structure changes to ensure consistency
 
 #### Phase 4: Validation and Cleanup (Week 7-8)
 1. Ensure all tests pass with new framework
 2. Performance testing of new test suite
 3. Documentation updates and test coverage analysis
 4. Remove deprecated test utilities
+5. **Final validation**: Run `run_all.sh` for comprehensive test suite verification
+6. **Performance analysis**: Compare `run_all.sh` execution times before/after migration
 
-### 9. Success Criteria
+### 10. Success Criteria
 
 #### Technical Criteria
 - **Zero internal API usage**: All tests use only CLI interface (main.py)
-- **100% test pass rate**: All migrated tests pass consistently  
+- **100% test pass rate**: All migrated tests pass consistently via `run_all.sh`
 - **Maintainable boundaries**: Clear separation between test and application code
 - **Consistent patterns**: All tests follow unified structure and naming
 
@@ -1090,7 +1147,7 @@ class TestFeatureName(UnifiedTestCase):
 - **Test readability**: Tests are easy to understand and modify
 - **Failure diagnostics**: Test failures provide clear guidance
 - **Coverage preservation**: No reduction in test coverage during migration
-- **Performance**: Test suite execution time remains reasonable
+- **Performance**: Test suite execution time via `run_all.sh` remains reasonable
 
 #### Validation Criteria
 - **Flexible to changes**: Tests continue passing when internal implementation changes
@@ -1098,7 +1155,7 @@ class TestFeatureName(UnifiedTestCase):
 - **Realistic scenarios**: Tests cover real-world usage patterns
 - **Error handling**: Tests validate error conditions and edge cases
 
-### 10. Risk Mitigation
+### 11. Risk Mitigation
 
 #### Migration Risks
 - **Breaking existing tests**: Gradual migration with parallel test execution
@@ -1222,10 +1279,13 @@ class TestFeatureName(UnifiedTestCase):
 ### Next Migration Targets (Recommended Order)
 
 1. **Framework Foundation** (Week 1-2):
+   - Establish baseline: `./run_all.sh > baseline_results.log`
    - Update `tests/conftest.py` and `tests/utils.py` first
    - Create `tests/framework/` structure
+   - Verify foundation: `./run_all.sh` (should match baseline)
 
 2. **High Priority Unit Tests** (Week 3-4):
+   - For each test file: develop → `pytest test_file.py` → `./run_all.sh`
    - `test_config.py` - Configuration handling
    - `test_parser.py` - Core parser functionality
    - `test_parser_comprehensive.py` - Comprehensive parser testing
@@ -1233,13 +1293,15 @@ class TestFeatureName(UnifiedTestCase):
    - `test_transformer.py` - Core transformer functionality
 
 3. **High Priority Feature Tests** (Week 5-6):
+   - Continue individual → full suite verification pattern
    - `test_cli_feature.py` - CLI interface testing
    - `test_component_features.py` - Component integration
    - `test_include_processing_features.py` - Include processing
 
 4. **Integration Tests** (Week 7-8):
    - `test_comprehensive.py` - End-to-end testing
-   - Performance validation and cleanup
+   - Final verification: `time ./run_all.sh > final_results.log`
+   - Performance comparison: baseline vs final execution times
 
 ---
 
