@@ -386,22 +386,32 @@ This is because when explicit files are used as input, all tests in that test.py
 **File:** `data_simple_struct.json`
 ```json
 {
-  "description": "Basic struct parsing test",
-  "generate_type": "source_files",
-  "config": {
+  "test_metadata": {
+    "description": "Basic struct parsing test",
+    "test_type": "unit",
+    "focus": "struct_parsing",
+    "expected_duration": "fast"
+  },
+  "c2puml_config": {
     "project_name": "test_struct_parsing",
     "source_folders": ["."],
     "output_dir": "./output",
-    "recursive_search": true
+    "recursive_search": true,
+    "file_extensions": [".c", ".h"]
   },
-  "files": {
-    "test.c": {
-      "content": "#include <stdio.h>\n\nstruct Point {\n    int x;\n    int y;\n};\n\nint main() {\n    struct Point p = {10, 20};\n    return 0;\n}"
+  "source_files": {
+    "test.c": "#include <stdio.h>\n\nstruct Point {\n    int x;\n    int y;\n};\n\nint main() {\n    struct Point p = {10, 20};\n    return 0;\n}"
+  },
+  "expected_results": {
+    "model_elements": {
+      "structs": ["Point"],
+      "functions": ["main"],
+      "includes": ["stdio.h"]
+    },
+    "plantuml_elements": {
+      "classes": ["Point"],
+      "relationships": []
     }
-  },
-  "expected_elements": {
-    "structs": ["Point"],
-    "functions": ["main"]
   }
 }
 ```
@@ -410,17 +420,27 @@ This is because when explicit files are used as input, all tests in that test.py
 **File:** `data_ifdef_test.json`
 ```json
 {
-  "description": "Conditional compilation test",
-  "generate_type": "source_files",
-  "config": {
+  "test_metadata": {
+    "description": "Conditional compilation test",
+    "test_type": "unit",
+    "focus": "preprocessor_conditionals",
+    "expected_duration": "fast"
+  },
+  "c2puml_config": {
     "project_name": "test_preprocessor",
     "source_folders": ["."],
     "output_dir": "./output",
-    "preprocessor_defines": ["DEBUG"]
+    "preprocessor_defines": ["DEBUG"],
+    "include_preprocessor_conditionals": true
   },
-  "files": {
-    "conditional.c": {
-      "content": "#ifdef DEBUG\n#define LOG(x) printf(x)\n#else\n#define LOG(x)\n#endif\n\nint main() {\n    LOG(\"Debug mode\");\n    return 0;\n}"
+  "source_files": {
+    "conditional.c": "#ifdef DEBUG\n#define LOG(x) printf(x)\n#else\n#define LOG(x)\n#endif\n\nint main() {\n    LOG(\"Debug mode\");\n    return 0;\n}"
+  },
+  "expected_results": {
+    "model_elements": {
+      "functions": ["main"],
+      "macros": ["LOG"],
+      "preprocessor_branches": ["DEBUG"]
     }
   }
 }
@@ -430,9 +450,13 @@ This is because when explicit files are used as input, all tests in that test.py
 **File:** `data_rename_functions.json`
 ```json
 {
-  "description": "Function renaming transformation test",
-  "generate_type": "model_json",
-  "config": {
+  "test_metadata": {
+    "description": "Function renaming transformation test",
+    "test_type": "integration",
+    "focus": "transformation_pipeline",
+    "expected_duration": "medium"
+  },
+  "c2puml_config": {
     "project_name": "test_transformation",
     "source_folders": ["."],
     "output_dir": "./output",
@@ -445,14 +469,29 @@ This is because when explicit files are used as input, all tests in that test.py
       }
     }
   },
-  "model": {
+  "input_model": {
+    "project_name": "test_transformation",
     "files": {
       "main.c": {
         "functions": [
-          {"name": "deprecated_init", "return_type": "void"},
-          {"name": "old_cleanup", "return_type": "void"}
+          {"name": "deprecated_init", "return_type": "void", "parameters": []},
+          {"name": "old_cleanup", "return_type": "void", "parameters": []},
+          {"name": "main", "return_type": "int", "parameters": []}
         ]
       }
+    }
+  },
+  "expected_results": {
+    "transformed_model": {
+      "functions": [
+        {"name": "legacy_init", "return_type": "void"},
+        {"name": "legacy_cleanup", "return_type": "void"},
+        {"name": "main", "return_type": "int"}
+      ]
+    },
+    "plantuml_elements": {
+      "classes": [],
+      "functions": ["legacy_init", "legacy_cleanup", "main"]
     }
   }
 }
@@ -599,10 +638,10 @@ load_test_data_json(test_name: str, data_file: str = "data.json") -> dict
     Loads data.json from test_<n>/input/<data_file> and returns parsed content
 
 generate_source_files_from_data(test_name: str, data_file: str = "data.json") -> str
-    Generates source files from data.json specification and returns input path for CLI
+    Generates source files from 'source_files' section and returns input path for CLI
 
 generate_model_from_data(test_name: str, data_file: str = "data.json") -> str
-    Generates model.json from data.json specification and returns input path for CLI
+    Generates model.json from 'input_model' section and returns input path for CLI
 
 has_data_json(test_name: str, data_file: str = "data.json") -> bool
     Returns True if test_<n>/input/<data_file> exists
@@ -611,16 +650,75 @@ list_data_json_files(test_name: str) -> list
     Returns list of all data*.json files in test_<n>/input/ directory
 
 extract_config_from_data(test_name: str, data_file: str) -> str
-    Extracts config section from data_file and creates temp config.json for CLI execution
+    Extracts 'c2puml_config' section from data_file and creates temp config.json for CLI execution
+
+validate_expected_results(test_name: str, data_file: str, actual_results: dict) -> bool
+    Validates actual results against 'expected_results' section in data_file
 ```
+
+### Data.json Structure Definition
+
+**Standardized Section Organization:**
+
+```json
+{
+  "test_metadata": {
+    "description": "Human-readable test description",
+    "test_type": "unit|integration|feature",
+    "focus": "struct_parsing|transformation|generation",
+    "expected_duration": "fast|medium|slow"
+  },
+  "c2puml_config": {
+    "project_name": "test_project_name",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "...": "complete c2puml configuration (equivalent to config.json)"
+  },
+  "source_files": {
+    "filename.c": "complete C source code content",
+    "filename.h": "complete header file content"
+  },
+  "input_model": {
+    "project_name": "model_name",
+    "files": {
+      "filename.c": {
+        "functions": [...],
+        "structs": [...],
+        "...": "pre-parsed model data"
+      }
+    }
+  },
+  "expected_results": {
+    "model_elements": {
+      "structs": ["StructName"],
+      "functions": ["function_name"],
+      "includes": ["stdio.h"]
+    },
+    "plantuml_elements": {
+      "classes": ["ClassName"],
+      "relationships": ["dependency", "inheritance"]
+    },
+    "transformed_model": {
+      "...": "expected transformation results"
+    }
+  }
+}
+```
+
+**Section Usage Rules:**
+- **test_metadata**: Always required - provides test context and classification
+- **c2puml_config**: Required if no explicit config.json - complete c2puml configuration
+- **source_files**: Use for tests that generate C source files (parsing tests)
+- **input_model**: Use for tests that skip parsing (transformation/generation tests)
+- **expected_results**: Always recommended - enables automatic validation
 
 ### Configuration Handling
 
 **Flexible Configuration Options:**
 - **Explicit config.json**: Use standalone config.json for single-use-case tests
-- **Embedded config**: Include "config" section within data_*.json files
+- **Embedded config**: Include "c2puml_config" section within data_*.json files
 - **Mixed approach**: Default config.json with per-test-case overrides in data files
-- **Configuration precedence**: data_file.config > explicit config.json > default values
+- **Configuration precedence**: data_file.c2puml_config > explicit config.json > default values
 
 ### Data Generation Types
 
@@ -777,24 +875,31 @@ The existing framework files were **NOT considered** in the initial analysis sin
 
 ### Important Changes Made
 
+**Data.json Structure Standardization:**
+- **Clear section organization**: `test_metadata`, `c2puml_config`, `source_files`, `input_model`, `expected_results`
+- **Semantic naming**: Replaced generic "config", "files", "model" with descriptive section names
+- **Validation support**: `expected_results` section enables automatic test validation
+- **Test classification**: `test_metadata` provides context and categorization
+
 **Configuration Flexibility Enhancement:**
-- **config.json is now OPTIONAL** - can be embedded in data_*.json files instead
+- **config.json is now OPTIONAL** - can be embedded as `c2puml_config` in data_*.json files
 - **Three configuration approaches supported:**
   1. Explicit config.json for single-use-case tests
-  2. Embedded config sections in data_*.json files  
+  2. Embedded `c2puml_config` sections in data_*.json files  
   3. Mixed approach with defaults + per-case overrides
 
 **Updated Input Structure:**
 - **Option 1:** Single use case with explicit files (main.c, utils.h, optional config.json)
-- **Option 2:** Multiple use cases with data_case#.json files (each containing config + content)
+- **Option 2:** Multiple use cases with data_case#.json files (each containing structured sections)
 
 **Enhanced TestDataFactory Methods:**
 - `load_test_config(test_name, data_file=None)` - handles both explicit and embedded config
-- `extract_config_from_data(test_name, data_file)` - extracts config from data files
+- `extract_config_from_data(test_name, data_file)` - extracts `c2puml_config` from data files
+- `validate_expected_results(test_name, data_file, actual_results)` - validates against expected results
 
 **Strategy Refinements:**
-- Some files previously marked as "explicit files" strategy changed to "data_*.json" where multiple configurations are needed
-- All data.json examples now include complete config sections
-- Folder structure examples updated to show configuration flexibility
+- **Improved data.json examples** with clear section organization and better grouping
+- **Test method examples** updated to use structured sections properly
+- **Validation integration** using `expected_results` for automatic test verification
 
-This enhancement provides maximum flexibility while maintaining the CLI-only approach and proper test-application boundary separation.
+This enhancement provides maximum flexibility and clarity while maintaining the CLI-only approach and proper test-application boundary separation.

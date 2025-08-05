@@ -154,62 +154,70 @@ class UnifiedTestCase(unittest.TestCase):
     
     def test_with_data_json_source_generation(self):
         """Example of using data.json for dynamic source file generation"""
-        # Check if data.json exists for this test
-        if self.data_factory.has_data_json(self.test_name):
-            # Generate source files from data.json specification
-            input_path = self.data_factory.generate_source_files_from_data(self.test_name)
-            config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
-        else:
-            # Fallback to regular input files
-            input_path = self.data_factory.load_test_input(self.test_name)
-            config_path = self.data_factory.load_test_config(self.test_name)
+        # Load test data and use structured sections
+        data = self.data_factory.load_test_data_json(self.test_name, "data_struct_test.json")
+        
+        # Generate source files from 'source_files' section
+        input_path = self.data_factory.generate_source_files_from_data(self.test_name, "data_struct_test.json")
+        
+        # Extract config from 'c2puml_config' section
+        config_path = self.data_factory.extract_config_from_data(self.test_name, "data_struct_test.json")
         
         result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
         self.assertEqual(result.exit_code, 0)
         
-        # Standard validation
+        # Validate against 'expected_results' section
+        expected = data["expected_results"]["model_elements"]
         model_file = f"{self.output_dir}/model.json"
-        self.model_validator.assert_model_json_syntax_valid(model_file)
+        with open(model_file, 'r') as f:
+            model = json.load(f)
+        
+        for struct_name in expected["structs"]:
+            self.model_validator.assert_model_struct_exists(model, struct_name)
     
     def test_multiple_data_cases(self):
         """Example of using multiple data.json files for different test cases"""
         # List all available data files for this test
         data_files = self.data_factory.list_data_json_files(self.test_name)
         
-        if data_files:
-            # Test each data case
-            for data_file in data_files:
-                with self.subTest(data_case=data_file):
-                    # Load specific data case
-                    data = self.data_factory.load_test_data_json(self.test_name, data_file)
-                    
-                    # Generate appropriate input based on data type
-                    if data.get("generate_type") == "source_files":
-                        input_path = self.data_factory.generate_source_files_from_data(self.test_name, data_file)
-                    elif data.get("generate_type") == "model_json":
-                        input_path = self.data_factory.generate_model_from_data(self.test_name, data_file)
-                    else:
-                        input_path = self.data_factory.load_test_input(self.test_name)
-                    
+        for data_file in data_files:
+            with self.subTest(data_case=data_file):
+                # Load specific data case with structured sections
+                data = self.data_factory.load_test_data_json(self.test_name, data_file)
+                test_metadata = data["test_metadata"]
+                
+                # Generate appropriate input based on available sections
+                if "source_files" in data:
+                    input_path = self.data_factory.generate_source_files_from_data(self.test_name, data_file)
+                elif "input_model" in data:
+                    input_path = self.data_factory.generate_model_from_data(self.test_name, data_file)
+                else:
+                    input_path = self.data_factory.load_test_input(self.test_name)
+                
+                # Extract config from 'c2puml_config' section or use explicit config
+                if "c2puml_config" in data:
+                    config_path = self.data_factory.extract_config_from_data(self.test_name, data_file)
+                else:
                     config_path = self.data_factory.load_test_config(self.test_name)
+                
+                # Execute pipeline
+                result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+                self.assertEqual(result.exit_code, 0, f"Failed for data case: {data_file}")
+                
+                # Validate results using 'expected_results' section
+                if "expected_results" in data:
+                    expected = data["expected_results"]
+                    model_file = f"{self.output_dir}/model.json"
+                    with open(model_file, 'r') as f:
+                        model = json.load(f)
                     
-                    # Execute pipeline
-                    result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
-                    self.assertEqual(result.exit_code, 0, f"Failed for data case: {data_file}")
-                    
-                    # Validate results based on data case expectations
-                    if "expected_functions" in data:
-                        model_file = f"{self.output_dir}/model.json"
-                        with open(model_file, 'r') as f:
-                            model = json.load(f)
-                        for func_name in data["expected_functions"]:
+                    # Validate model elements if specified
+                    if "model_elements" in expected:
+                        model_elements = expected["model_elements"]
+                        for struct_name in model_elements.get("structs", []):
+                            self.model_validator.assert_model_struct_exists(model, struct_name)
+                        for func_name in model_elements.get("functions", []):
                             self.model_validator.assert_model_function_exists(model, func_name)
-        else:
-            # Fallback to regular test when no data files available
-            input_path = self.data_factory.load_test_input(self.test_name)
-            config_path = self.data_factory.load_test_config(self.test_name)
-            result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
-            self.assertEqual(result.exit_code, 0)
     
     def test_flexible_assertion_examples(self):
         """Example showing different ways tests can structure their assertion data"""
@@ -349,10 +357,10 @@ class TestDataFactory:
         """Loads data.json from test_<n>/input/<data_file> and returns parsed content"""
     
     def generate_source_files_from_data(self, test_name: str, data_file: str = "data.json") -> str:
-        """Generates source files from data.json specification and returns input path for CLI"""
+        """Generates source files from data.json 'source_files' section and returns input path for CLI"""
     
     def generate_model_from_data(self, test_name: str, data_file: str = "data.json") -> str:
-        """Generates model.json from data.json specification and returns input path for CLI"""
+        """Generates model.json from data.json 'input_model' section and returns input path for CLI"""
     
     def has_data_json(self, test_name: str, data_file: str = "data.json") -> bool:
         """Returns True if test_<n>/input/<data_file> exists"""
@@ -361,7 +369,7 @@ class TestDataFactory:
         """Returns list of all data*.json files in test_<n>/input/ directory"""
     
     def extract_config_from_data(self, test_name: str, data_file: str) -> str:
-        """Extracts config section from data_file and creates temp config.json for CLI execution"""
+        """Extracts 'c2puml_config' section from data_file and creates temp config.json for CLI execution"""
 
 
 class TestExecutor:
@@ -420,6 +428,15 @@ For **larger inputs**, it is recommended to use explicit input files (actual .c/
 - **Single use case:** Explicit files (main.c, utils.h, config.json, model.json)
 - **Multiple use cases:** Multiple data_case#.json files, each containing its own config, source content, or model specifications
 
+**Data.json Structure Guidelines:**
+
+**Clear Section Organization:**
+- `test_metadata`: Test description, type, expected duration, focus area
+- `c2puml_config`: Complete c2puml configuration (equivalent to config.json content)
+- `source_files`: C/C++ source code content (for source generation tests)
+- `input_model`: Pre-parsed model data (for transformation/generation-only tests)
+- `expected_results`: Expected outputs for validation
+
 **Multiple Test Cases per File:**
 Per test.py file which contains multiple test cases, there can be multiple data.json files with different names (e.g., `data_case1.json`, `data_case2.json`) for each test case which can be individually loaded. The TestDataFactory shall have extended functionality to handle these data.json files and generate the inputs needed for testing.
 
@@ -429,23 +446,32 @@ If a test.py file requires **multiple or different inputs** to run various tests
 **Example data.json Structure for Source Generation:**
 ```json
 {
-  "description": "Source file specification for smaller test inputs",
-  "generate_type": "source_files",
-  "config": {
+  "test_metadata": {
+    "description": "Source file specification for smaller test inputs",
+    "test_type": "unit",
+    "expected_duration": "fast"
+  },
+  "c2puml_config": {
     "project_name": "test_small_project",
     "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true,
-    "include_depth": 2
+    "include_depth": 2,
+    "file_extensions": [".c", ".h"]
   },
-  "files": {
-    "main.c": {
-      "content": "#include <stdio.h>\n#include \"types.h\"\n\nint main() {\n    Point p = {10, 20};\n    return 0;\n}",
+  "source_files": {
+    "main.c": "#include <stdio.h>\n#include \"types.h\"\n\nint main() {\n    Point p = {10, 20};\n    return 0;\n}",
+    "types.h": "#ifndef TYPES_H\n#define TYPES_H\n\ntypedef struct {\n    int x;\n    int y;\n} Point;\n\n#endif"
+  },
+  "expected_results": {
+    "model_elements": {
+      "structs": ["Point"],
+      "functions": ["main"],
       "includes": ["stdio.h", "types.h"]
     },
-    "types.h": {
-      "content": "#ifndef TYPES_H\n#define TYPES_H\n\ntypedef struct {\n    int x;\n    int y;\n} Point;\n\n#endif",
-      "includes": []
+    "plantuml_elements": {
+      "classes": ["Point"],
+      "relationships": []
     }
   }
 }
@@ -454,9 +480,12 @@ If a test.py file requires **multiple or different inputs** to run various tests
 **Example data_case1.json for Model Generation:**
 ```json
 {
-  "description": "Pre-parsed model for transformation testing",
-  "generate_type": "model_json",
-  "config": {
+  "test_metadata": {
+    "description": "Pre-parsed model for transformation testing",
+    "test_type": "integration",
+    "focus": "transformation_pipeline"
+  },
+  "c2puml_config": {
     "project_name": "test_transformation",
     "source_folders": ["."],
     "output_dir": "./output",
@@ -470,7 +499,7 @@ If a test.py file requires **multiple or different inputs** to run various tests
       }
     }
   },
-  "model": {
+  "input_model": {
     "project_name": "test_transformation",
     "files": {
       "main.c": {
@@ -481,6 +510,16 @@ If a test.py file requires **multiple or different inputs** to run various tests
         "macros": ["LEGACY_MACRO", "VERSION"],
         "includes": ["stdio.h", "time.h", "config.h"]
       }
+    }
+  },
+  "expected_results": {
+    "transformed_model": {
+      "functions": [
+        {"name": "legacy_print_info", "return_type": "void"},
+        {"name": "main", "return_type": "int"}
+      ],
+      "macros": ["VERSION"],
+      "includes": ["stdio.h", "config.h"]
     }
   }
 }
