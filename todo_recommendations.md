@@ -712,6 +712,9 @@ validate_expected_results(test_name: str, data_file: str, actual_results: dict) 
 - **input_model**: Use for tests that skip parsing (transformation/generation tests)
 - **expected_results**: Always recommended - enables automatic validation
 
+**Validation Philosophy:**
+Simple model elements and PlantUML expectations in `expected_results` are sufficient for validating any modification, transformation, or generation. No complex assertion structures are needed - basic lists of expected structs, functions, and includes are enough.
+
 ### Configuration Handling
 
 **Flexible Configuration Options:**

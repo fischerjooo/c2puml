@@ -219,58 +219,41 @@ class UnifiedTestCase(unittest.TestCase):
                         for func_name in model_elements.get("functions", []):
                             self.model_validator.assert_model_function_exists(model, func_name)
     
-    def test_flexible_assertion_examples(self):
-        """Example showing different ways tests can structure their assertion data"""
-        input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
+    def test_preferred_validation_approach(self):
+        """Example showing the preferred validation approach using data.json expected_results"""
+        # Load data.json with expected_results section (preferred approach)
+        data = self.data_factory.load_test_data_json(self.test_name, "data_simple_test.json")
+        input_path = self.data_factory.generate_source_files_from_data(self.test_name, "data_simple_test.json")
+        config_path = self.data_factory.extract_config_from_data(self.test_name, "data_simple_test.json")
         
         result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
         self.assertEqual(result.exit_code, 0)
         
+        # Simple validation using expected_results from data.json - no complex structures needed
+        expected = data["expected_results"]["model_elements"]
         with open(f"{self.output_dir}/model.json", 'r') as f:
             model = json.load(f)
         
-        if self.assertions:
-            # Each test can name its sections however it wants
-            
-            # Simple list validation
-            if "must_parse_these_files" in self.assertions:
-                for filename in self.assertions["must_parse_these_files"]:
-                    self.model_validator.assert_model_file_parsed(model, filename)
-            
-            # Complex nested validation 
-            if "memory_management_check" in self.assertions:
-                mm_check = self.assertions["memory_management_check"]
-                if "allocation_functions" in mm_check:
-                    for func in mm_check["allocation_functions"]:
-                        self.model_validator.assert_model_function_exists(model, func)
-                if "dangerous_patterns" in mm_check:
-                    for pattern in mm_check["dangerous_patterns"]:
-                        self.model_validator.assert_model_function_not_exists(model, pattern)
-            
-            # Performance validation with custom thresholds
-            if "this_test_performance_limits" in self.assertions:
-                perf = self.assertions["this_test_performance_limits"]
-                # Custom validation logic specific to this test
-                if "max_struct_count" in perf:
-                    struct_count = len(model.get("structs", []))
-                    self.assertLessEqual(struct_count, perf["max_struct_count"])
-            
-            # Transformation validation with before/after checks
-            if "transformation_verification" in self.assertions:
-                trans = self.assertions["transformation_verification"]
-                # Check that old elements are gone
-                for old_func in trans.get("should_be_removed", []):
-                    self.model_validator.assert_model_function_not_exists(model, old_func)
-                # Check that new elements are present
-                for new_func in trans.get("should_be_added", []):
-                    self.model_validator.assert_model_function_exists(model, new_func)
-            
-            # PlantUML validation with multiple files
-            if "puml_file_checks" in self.assertions:
-                for puml_file, expected_lines in self.assertions["puml_file_checks"].items():
-                    puml_path = f"{self.output_dir}/{puml_file}"
-                    self.output_validator.assert_file_contains_lines(puml_path, expected_lines)
+        # Simple checks - exactly what the user specified is sufficient for any modification/transformation
+        for struct_name in expected.get("structs", []):
+            self.model_validator.assert_model_struct_exists(model, struct_name)
+        for func_name in expected.get("functions", []):
+            self.model_validator.assert_model_function_exists(model, func_name)
+        
+        # PlantUML validation using expected_results 
+        if "plantuml_elements" in data["expected_results"]:
+            puml_expected = data["expected_results"]["plantuml_elements"]
+            for class_name in puml_expected.get("classes", []):
+                puml_file = f"{self.output_dir}/main.puml"
+                self.output_validator.assert_file_contains(puml_file, class_name)
+        
+        # Optional: Use assertions.json ONLY for very large data that would clutter data.json
+        if self.data_factory.has_test_assertions(self.test_name):
+            assertions = self.data_factory.load_test_assertions(self.test_name)
+            # Only for large lists that would make data.json unreadable
+            if "large_function_list" in assertions:
+                for func_name in assertions["large_function_list"]:
+                    self.model_validator.assert_model_function_exists(model, func_name)
     
     def test_individual_steps(self):
         """Example of testing individual pipeline steps via CLI"""
@@ -342,10 +325,10 @@ class TestDataFactory:
         """Returns path to config.json (explicit) or extracts config from data_file for CLI execution"""
     
     def load_test_assertions(self, test_name: str) -> dict:
-        """Loads assertion data from test_<name>/assertions.json and returns full dictionary"""
+        """Loads optional large assertion data from test_<n>/assertions.json (rarely needed)"""
     
     def has_test_assertions(self, test_name: str) -> bool:
-        """Returns True if test_<name>/assertions.json exists"""
+        """Returns True if test_<n>/assertions.json exists (most tests won't need this)"""
     
     def create_temp_project(self, input_files: dict) -> str:
         """Creates temporary project and returns path for CLI execution"""
@@ -409,7 +392,7 @@ test_<n>/
 │   ├── data_case1.json # Test case 1: includes config, source content, or model
 │   ├── data_case2.json # Test case 2: different configuration/content
 │   └── data_case3.json # Test case 3: additional scenarios
-└── assertions.json     # Optional: Large assertion data (lists, structures, expected content)
+└── assertions.json     # Optional: Only for large data that would clutter data.json files
 ```
 
 **Input Data Options:**
@@ -525,84 +508,34 @@ If a test.py file requires **multiple or different inputs** to run various tests
 }
 ```
 
-**Example assertions.json Structure (Flexible Naming):**
+**Example assertions.json Structure (Simple, Optional):**
 ```json
 {
-  "description": "Flexible assertion data for test_complex_parsing - use any naming you want",
+  "description": "Optional large assertion data - only when data.json expected_results are insufficient",
   
-  "critical_functions": [
-    "main", "init_system", "process_data", "cleanup_resources",
-    "handle_error", "log_message", "parse_config", "validate_input"
+  "large_string_lists": [
+    "very_long_function_name_1", "very_long_function_name_2", 
+    "very_long_function_name_3", "...", "very_long_function_name_100"
   ],
   
-  "should_not_exist": [
-    "debug_print", "test_helper", "mock_function", "deprecated_legacy_func"
-  ],
-  
-  "parser_validation": {
-    "required_structs": ["SystemConfig", "DataProcessor", "ErrorHandler"],
-    "required_enums": ["SystemState", "ErrorType", "LogLevel"],
-    "include_chain": [
-      {"source": "main.c", "target": "stdio.h"},
-      {"source": "main.c", "target": "system_config.h"},
-      {"source": "data_processor.c", "target": "string.h"}
-    ],
-    "must_have_includes": ["stdio.h", "stdlib.h", "string.h", "time.h"]
-  },
-  
-  "expected_main_puml_content": [
-    "@startuml main",
-    "class \"main\" as MAIN <<source>> #LightBlue",
-    "class \"system_config.h\" as HEADER_SYSTEM_CONFIG <<header>> #LightGreen",
-    "MAIN --> HEADER_SYSTEM_CONFIG : <<include>>",
-    "@enduml"
-  ],
-  
-  "data_processor_puml_lines": [
-    "class \"DataProcessor\" as TYPEDEF_DATAPROCESSOR <<struct>> #LightYellow",
-    "{ + void* input_buffer }",
-    "{ + size_t buffer_size }"
-  ],
-  
-  "transformation_effects": {
-    "renamed_functions": {
-      "old_calculate": "new_calculate_metrics",
-      "old_report": "new_generate_report"
-    },
-    "filtered_out_functions": ["debug_helper", "test_mock"],
-    "added_functions": ["injected_logger", "added_validator"]
-  },
-  
-  "performance_constraints": {
-    "max_parsing_time_seconds": 5.0,
-    "max_model_file_size_kb": 100,
-    "max_generated_files": 10
-  },
-  
-  "edge_case_checks": {
-    "anonymous_struct_handling": [
-      "SystemConfig_connection_settings",
-      "DataProcessor_buffer_manager"
-    ],
-    "circular_includes": {
-      "should_detect": ["circular_a.h", "circular_b.h"],
-      "should_resolve": ["valid_a.h", "valid_b.h"]
-    },
-    "complex_typedef_chains": [
-      "typedef_level_1", "typedef_level_2", "typedef_level_3"
-    ]
-  },
-  
-  "custom_test_specific_data": {
-    "whatever_name_you_want": ["any", "data", "structure"],
-    "nested_validation": {
-      "level1": {
-        "level2": ["deeply", "nested", "assertions"]
-      }
+  "complex_nested_data": {
+    "large_include_hierarchy": {
+      "level1": ["stdio.h", "stdlib.h", "string.h"],
+      "level2": ["custom_header1.h", "custom_header2.h"],
+      "level3": ["deep_nested_header.h"]
     }
+  },
+  
+  "bulky_test_data": {
+    "large_expected_output": "...very long PlantUML content or large JSON structures that would clutter data.json..."
   }
 }
 ```
+
+**Note:** Most tests should use `expected_results` in data.json files instead of assertions.json. Use assertions.json only for:
+- Large lists that would clutter data.json
+- Complex nested validation data
+- Bulky expected outputs (long PlantUML content, large JSON structures)
 
 **Benefits of Self-Contained Structure:**
 - **Isolation**: Each test has its own data, preventing cross-test interference
@@ -636,6 +569,10 @@ If a test.py file requires **multiple or different inputs** to run various tests
 - Integration tests with multiple dependencies
 - Tests requiring detailed file organization
 - **Only when ALL test methods in the test.py file can use the same input files**
+
+**Validation Approach:**
+- **Primary:** Use `expected_results` section in data.json files - simple model and PlantUML expectations are sufficient for any modification/transformation validation
+- **Optional:** Use assertions.json only for large data lists that would clutter data.json files (rarely needed)
 
 **Key Constraint:** Since each test folder has only one `input/` directory, explicit files force all test methods in that test.py file to share the same input data. If different test methods need different inputs, you must use the data_##.json approach to generate method-specific inputs dynamically.
 
