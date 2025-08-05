@@ -403,6 +403,9 @@ For **larger inputs**, it is recommended to use explicit input files (actual .c/
 **Multiple Test Cases per File:**
 Per test.py file which contains multiple test cases, there can be multiple data.json files with different names (e.g., `data_case1.json`, `data_case2.json`) for each test case which can be individually loaded. The TestDataFactory shall have extended functionality to handle these data.json files and generate the inputs needed for testing.
 
+**Important Input Strategy Decision:**
+If a test.py file requires **multiple or different inputs** to run various tests, then it **must use the data_##.json input scheme**. This is because when explicit files are used as input, all tests in that test.py file must use the same input files, since there is only a single `input/` folder per test. The data_##.json approach allows each test method to generate its own specific input requirements dynamically.
+
 **Example data.json Structure for Source Generation:**
 ```json
 {
@@ -553,12 +556,13 @@ Per test.py file which contains multiple test cases, there can be multiple data.
 
 **Input Size Guidelines:**
 
-**Use data.json for:**
+**Use data_##.json for:**
 - Small test cases (< 50 lines of C code total)
 - Simple struct/enum definitions
 - Basic function declarations
 - Unit tests focusing on specific features
 - Tests requiring multiple similar variants
+- **Any test.py file that needs multiple or different inputs for different test methods**
 
 **Use explicit files for:**
 - Large test cases (> 50 lines of C code)
@@ -566,6 +570,49 @@ Per test.py file which contains multiple test cases, there can be multiple data.
 - Real-world code examples
 - Integration tests with multiple dependencies
 - Tests requiring detailed file organization
+- **Only when ALL test methods in the test.py file can use the same input files**
+
+**Key Constraint:** Since each test folder has only one `input/` directory, explicit files force all test methods in that test.py file to share the same input data. If different test methods need different inputs, you must use the data_##.json approach to generate method-specific inputs dynamically.
+
+**Example Scenarios:**
+
+```python
+# ❌ PROBLEMATIC: This test class needs different inputs per method
+class TestParserFeatures(UnifiedTestCase):
+    def test_simple_struct_parsing(self):
+        # Needs: simple.c with basic struct
+        
+    def test_complex_nested_parsing(self):
+        # Needs: complex.c with nested structures
+        
+    def test_macro_expansion_parsing(self):
+        # Needs: macros.c with complex macro definitions
+```
+
+**Solution: Use data_##.json files:**
+```
+test_parser_features/
+├── test_parser_features.py
+├── input/
+│   ├── config.json
+│   ├── data_simple.json      # Simple struct test case
+│   ├── data_complex.json     # Complex nested test case
+│   └── data_macros.json      # Macro expansion test case
+└── assertions.json
+```
+
+```python
+# ✅ CORRECT: Each test method gets its own input via data files
+class TestParserFeatures(UnifiedTestCase):
+    def test_simple_struct_parsing(self):
+        input_path = self.data_factory.generate_source_files_from_data(self.test_name, "data_simple.json")
+        
+    def test_complex_nested_parsing(self):
+        input_path = self.data_factory.generate_source_files_from_data(self.test_name, "data_complex.json")
+        
+    def test_macro_expansion_parsing(self):
+        input_path = self.data_factory.generate_source_files_from_data(self.test_name, "data_macros.json")
+```
 
 ### 4. Result Validation Framework
 
@@ -1348,6 +1395,12 @@ class TestFeatureName(UnifiedTestCase):
 - 🔄 **In Progress** - Currently being migrated
 - ⏳ **Pending** - Not yet started
 - 🚫 **Skipped** - Preserved as-is or deprecated
+
+### Input Strategy Assessment
+During migration, each test file must be assessed for its input requirements:
+- **Single Input**: Can use explicit files in `input/` folder (all test methods share same input)
+- **Multiple Inputs**: Must use data_##.json files (each test method can have different input)
+- **Mixed Requirements**: Split into separate test files or convert to data_##.json approach
 
 ### Unit Tests (37 files)
 
