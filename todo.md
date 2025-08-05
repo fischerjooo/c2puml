@@ -76,11 +76,11 @@ class UnifiedTestCase(unittest.TestCase):
     
     def test_feature(self):
         # 1. Load test data from self-contained folders
-        project = self.data_factory.load_test_project(self.test_name)
+        test_input = self.data_factory.load_test_input(self.test_name)
         config = self.data_factory.load_test_config(self.test_name)
         
         # 2. Execute through public API
-        result = self.executor.run_full_pipeline(project, config)
+        result = self.executor.run_full_pipeline(test_input, config)
         
         # 3. Validate results
         self.validator.assert_model_valid(result.model)
@@ -250,24 +250,24 @@ tests/
 ├── feature/            # Refactored feature tests
 │   ├── test_full_workflow/        # Self-contained test folder
 │   │   ├── test_full_workflow.py  # Test implementation
-│   │   ├── source/                # Test C/C++ source files
+│   │   ├── input/                 # Test input files (C/C++ source, model.json, etc.)
 │   │   └── config.json            # Test configuration
 │   ├── test_include_processing/   # Self-contained test folder
 │   │   ├── test_include_processing.py # Test implementation
-│   │   ├── source/                # Test C/C++ source files
+│   │   ├── input/                 # Test input files (C/C++ source, model.json, etc.)
 │   │   └── config.json            # Test configuration
 │   └── test_transformations/      # Self-contained test folder
 │       ├── test_transformations.py # Test implementation
-│       ├── source/                # Test C/C++ source files
+│       ├── input/                 # Test input files (C/C++ source, model.json, etc.)
 │       └── config.json            # Test configuration
 ├── integration/        # Integration tests
 │   ├── test_real_projects/        # Self-contained test folder
 │   │   ├── test_real_projects.py  # Test implementation
-│   │   ├── source/                # Test C/C++ source files
+│   │   ├── input/                 # Test input files (C/C++ source, model.json, etc.)
 │   │   └── config.json            # Test configuration
 │   └── test_performance/          # Self-contained test folder
 │       ├── test_performance.py    # Test implementation
-│       ├── source/                # Test C/C++ source files
+│       ├── input/                 # Test input files (C/C++ source, model.json, etc.)
 │       └── config.json            # Test configuration
 └── example/            # Keep existing example test (preserved as-is)
     ├── source/         # Example C/C++ source files
@@ -320,11 +320,11 @@ class TestFeatureName(UnifiedTestCase):
     def test_scenario_name(self):
         """Clear description of what this test validates"""
         # Arrange - Load from self-contained test folder
-        project = self.data_factory.load_test_project(self.test_name)
+        test_input = self.data_factory.load_test_input(self.test_name)
         config = self.data_factory.load_test_config(self.test_name)
         
         # Act  
-        result = self.executor.run_full_pipeline(project, config)
+        result = self.executor.run_full_pipeline(test_input, config)
         
         # Assert
         self.validator.assert_model_valid(result.model)
@@ -355,9 +355,9 @@ class TestFeatureName(UnifiedTestCase):
 4. Update example test to use new validation framework while preserving its structure
 
 #### Phase 3: Test Reorganization (Week 5-6)
-1. Create self-contained test folders for each test file with `source/` subdirectory and `config.json`
+1. Create self-contained test folders for each test file with `input/` subdirectory and `config.json`
 2. Migrate test data into respective test folders (preserve `tests/example/` as-is)
-3. Update test implementations to use `TestDataFactory.load_test_project()` and `load_test_config()`
+3. Update test implementations to use `TestDataFactory.load_test_input()` and `load_test_config()`
 4. Consolidate duplicate test logic and standardize naming conventions
 5. Validate example test works with new framework
 
@@ -410,11 +410,11 @@ class TestFeatureName(UnifiedTestCase):
 5. **Iterate and refine** framework based on pilot results
 6. **Execute full migration** following the phase plan
 
-This unified testing approach will ensure that c2puml remains flexible to internal changes while providing comprehensive validation of its public API functionality. The self-contained test structure with individual `project/` and `config/` folders provides excellent isolation and maintainability, while the preserved `tests/example/` serves as a reference implementation and comprehensive end-to-end test case.
+This unified testing approach will ensure that c2puml remains flexible to internal changes while providing comprehensive validation of its public API functionality. The self-contained test structure with individual `input/` folders and `config.json` files provides excellent isolation and maintainability, while the preserved `tests/example/` serves as a reference implementation and comprehensive end-to-end test case.
 
 ## 🎯 Key Benefits of Self-Contained Test Structure
 
-1. **Perfect Isolation**: Each test has its own `project/` and `config/` folders, ensuring no cross-test interference
+1. **Perfect Isolation**: Each test has its own `input/` folder and `config.json`, ensuring no cross-test interference
 2. **Clear Organization**: Test data is co-located with test logic, making it easy to understand and maintain  
 3. **Version Control Friendly**: Test data and logic evolve together, making changes easier to track and review
 4. **Debugging Simplicity**: Each test environment is self-contained, making issue reproduction straightforward
