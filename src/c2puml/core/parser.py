@@ -1194,6 +1194,8 @@ class CParser:
                                     var_type = self._clean_type_string(var_type)
                                     value_tokens = collected_tokens[assign_idx + 1 :]
                                     var_value = " ".join(t.value for t in value_tokens)
+                                    # Clean the value string to remove excessive whitespace and newlines
+                                    var_value = self._clean_value_string(var_value)
                                     return (var_name, var_type, var_value)
                             break
                 else:
@@ -1205,6 +1207,8 @@ class CParser:
                     var_type = self._clean_type_string(var_type)
                     var_type = self._fix_array_bracket_spacing(var_type)
                     var_value = " ".join(t.value for t in value_tokens)
+                    # Clean the value string to remove excessive whitespace and newlines
+                    var_value = self._clean_value_string(var_value)
                     return (var_name, var_type, var_value)
         else:
             # No assignment: type name or type name[size]
@@ -1575,6 +1579,24 @@ class CParser:
         cleaned = re.sub(r'\s+', ' ', cleaned)
         # Strip leading/trailing whitespace
         cleaned = cleaned.strip()
+        return cleaned
+
+    def _clean_value_string(self, value_str: str) -> str:
+        """Clean value string by removing excessive whitespace and newlines"""
+        if not value_str:
+            return value_str
+        # Replace newlines with spaces and normalize whitespace
+        cleaned = value_str.replace('\n', ' ')
+        # Normalize multiple spaces to single space
+        import re
+        cleaned = re.sub(r'\s+', ' ', cleaned)
+        # Strip leading/trailing whitespace
+        cleaned = cleaned.strip()
+        # Remove excessive spaces around braces and operators
+        cleaned = re.sub(r'\s*{\s*', '{', cleaned)
+        cleaned = re.sub(r'\s*}\s*', '}', cleaned)
+        cleaned = re.sub(r'\s*,\s*', ', ', cleaned)
+        cleaned = re.sub(r'\s*&\s*', '&', cleaned)
         return cleaned
 
     def _get_timestamp(self) -> str:
