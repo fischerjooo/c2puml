@@ -504,11 +504,11 @@ This is because when explicit files are used as input, all tests in that test.py
 test_generator_duplicate_includes/
 ├── test_generator_duplicate_includes.py
 ├── input/
-│   ├── config.json     # Optional: can be embedded in data.json instead
+│   ├── config.json     # Required for explicit files approach
 │   ├── main.c
 │   ├── utils.h
 │   └── types.h
-└── assertions.json
+└── assertions.json     # Optional: only if large data needed
 ```
 
 ### Multiple Scenarios (Data JSON Strategy)
@@ -516,11 +516,10 @@ test_generator_duplicate_includes/
 test_parser_filtering/
 ├── test_parser_filtering.py
 ├── input/
-│   ├── config.json                 # Optional: default config (can be overridden per data file)
-│   ├── data_include_patterns.json  # Contains own config section
-│   ├── data_exclude_patterns.json  # Contains own config section
-│   └── data_mixed_filters.json     # Contains own config section
-└── assertions.json
+│   ├── data_include_patterns.json  # Self-contained: config + source + expected results
+│   ├── data_exclude_patterns.json  # Self-contained: config + source + expected results
+│   └── data_mixed_filters.json     # Self-contained: config + source + expected results
+└── assertions.json                 # Optional: only if large data needed
 ```
 
 ### Split Large Test Example
@@ -528,18 +527,17 @@ test_parser_filtering/
 test_struct_parsing/
 ├── test_struct_parsing.py
 ├── input/
-│   ├── config.json                 # Optional: default config
-│   ├── data_simple_struct.json     # Contains config + source content
-│   ├── data_nested_struct.json     # Contains config + source content
-│   └── data_anonymous_struct.json  # Contains config + source content
-└── assertions.json
+│   ├── data_simple_struct.json     # Self-contained: config + source + expected results
+│   ├── data_nested_struct.json     # Self-contained: config + source + expected results
+│   └── data_anonymous_struct.json  # Self-contained: config + source + expected results
+└── assertions.json                 # Optional: only if large data needed
 
 test_enum_parsing/
 ├── test_enum_parsing.py
 ├── input/
-│   ├── data_simple_enum.json       # Contains config + source content
-│   └── data_typedef_enum.json      # Contains config + source content
-└── assertions.json
+│   ├── data_simple_enum.json       # Self-contained: config + source + expected results
+│   └── data_typedef_enum.json      # Self-contained: config + source + expected results
+└── assertions.json                 # Optional: only if large data needed
 
 ... (additional split test folders)
 ```
@@ -707,10 +705,22 @@ validate_expected_results(test_name: str, data_file: str, actual_results: dict) 
 
 **Section Usage Rules:**
 - **test_metadata**: Always required - provides test context and classification
-- **c2puml_config**: Required if no explicit config.json - complete c2puml configuration
+- **c2puml_config**: Required in data.json files - complete c2puml configuration
 - **source_files**: Use for tests that generate C source files (parsing tests)
 - **input_model**: Use for tests that skip parsing (transformation/generation tests)
 - **expected_results**: Always recommended - enables automatic validation
+
+**Two Mutually Exclusive Input Approaches:**
+
+**1. Explicit Files Approach:**
+- input/ contains: config.json + source files (.c/.h) + optional model.json
+- All test methods in the test.py file share the same input
+- NO data.json files present
+
+**2. Data JSON Approach:**
+- input/ contains: ONLY data_*.json files (each self-contained)
+- Each data.json file includes: test_metadata + c2puml_config + source_files/input_model + expected_results
+- NO config.json or source files present
 
 **Validation Philosophy:**
 Simple model elements and PlantUML expectations in `expected_results` are sufficient for validating any modification, transformation, or generation. No complex assertion structures are needed - basic lists of expected structs, functions, and includes are enough.

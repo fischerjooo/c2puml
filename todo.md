@@ -381,17 +381,17 @@ Each test folder contains its own project and configuration data:
 ```
 test_<n>/
 ├── test_<n>.py         # Test implementation
-├── input/              # All test input files - flexible structure per use case
-│   # Option 1: Single use case with explicit files
-│   ├── config.json     # Optional: c2puml configuration (can be in data.json instead)
+├── input/              # Test input files - choose ONE approach per test
+│   # Option 1: Single use case with explicit files (all test methods use same input)
+│   ├── config.json     # c2puml configuration
 │   ├── main.c          # Source files for testing
 │   ├── utils.h         # Header files
 │   ├── model.json      # Optional: Pre-parsed model for transformation testing
 │   └── subdir/         # Optional: Nested directories
-│   # Option 2: Multiple use cases with data.json files
-│   ├── data_case1.json # Test case 1: includes config, source content, or model
-│   ├── data_case2.json # Test case 2: different configuration/content
-│   └── data_case3.json # Test case 3: additional scenarios
+│   # Option 2: Multiple use cases with data.json files (NO config.json or source files)
+│   ├── data_case1.json # Test case 1: complete config + source content + expected results
+│   ├── data_case2.json # Test case 2: complete config + different content + expected results
+│   └── data_case3.json # Test case 3: complete config + additional scenarios + expected results
 └── assertions.json     # Optional: Only for large data that would clutter data.json files
 ```
 
@@ -408,8 +408,8 @@ For **smaller source inputs**, tests can specify source file structure and conte
 For **larger inputs**, it is recommended to use explicit input files (actual .c/.h files) rather than data.json specifications for better readability and maintainability.
 
 **Input Structure per Use Case:**
-- **Single use case:** Explicit files (main.c, utils.h, config.json, model.json)
-- **Multiple use cases:** Multiple data_case#.json files, each containing its own config, source content, or model specifications
+- **Single use case:** Explicit files only (main.c, utils.h, config.json, model.json) - NO data.json files
+- **Multiple use cases:** Multiple data_case#.json files only (each self-contained) - NO config.json or source files
 
 **Data.json Structure Guidelines:**
 
@@ -574,7 +574,9 @@ If a test.py file requires **multiple or different inputs** to run various tests
 - **Primary:** Use `expected_results` section in data.json files - simple model and PlantUML expectations are sufficient for any modification/transformation validation
 - **Optional:** Use assertions.json only for large data lists that would clutter data.json files (rarely needed)
 
-**Key Constraint:** Since each test folder has only one `input/` directory, explicit files force all test methods in that test.py file to share the same input data. If different test methods need different inputs, you must use the data_##.json approach to generate method-specific inputs dynamically.
+**Key Constraint:** Each test folder can use ONE approach only:
+- **Explicit files approach:** input/ contains config.json + source files + model.json (all test methods share same input)
+- **Data.json approach:** input/ contains ONLY data_*.json files (no config.json or source files) - each data file is self-contained
 
 **Example Scenarios:**
 
@@ -596,11 +598,10 @@ class TestParserFeatures(UnifiedTestCase):
 test_parser_features/
 ├── test_parser_features.py
 ├── input/
-│   ├── config.json
-│   ├── data_simple.json      # Simple struct test case
-│   ├── data_complex.json     # Complex nested test case
-│   └── data_macros.json      # Macro expansion test case
-└── assertions.json
+│   ├── data_simple.json      # Simple struct test case (contains config + source)
+│   ├── data_complex.json     # Complex nested test case (contains config + source)
+│   └── data_macros.json      # Macro expansion test case (contains config + source)
+└── assertions.json           # Optional: only if large data needed
 ```
 
 ```python
