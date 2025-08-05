@@ -1188,6 +1188,9 @@ def find_struct_fields(
         # Collect tokens until we find the semicolon that ends this field
         # For nested structures, we need to handle braces properly
         brace_count = 0
+        field_start_pos = pos
+        
+        # First pass: collect tokens until we find a semicolon outside of braces
         while pos < closing_brace_pos:
             if tokens[pos].type == TokenType.LBRACE:
                 brace_count += 1
@@ -1211,10 +1214,16 @@ def find_struct_fields(
             field_tokens[1].type == TokenType.LBRACE):
             # This might be a nested structure, continue collecting until we find the field name
             temp_pos = pos
+            brace_count = 0  # Track nested braces to find the correct field boundary
             while temp_pos < len(tokens):
-                if tokens[temp_pos].type == TokenType.SEMICOLON:
-                    # Found the semicolon that ends the field
+                if tokens[temp_pos].type == TokenType.LBRACE:
+                    brace_count += 1
+                elif tokens[temp_pos].type == TokenType.RBRACE:
+                    brace_count -= 1
+                elif tokens[temp_pos].type == TokenType.SEMICOLON and brace_count == 0:
+                    # Found the semicolon that ends the field (not inside nested braces)
                     break
+                
                 if tokens[temp_pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
                     field_tokens.append(tokens[temp_pos])
                 temp_pos += 1
