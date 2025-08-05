@@ -760,42 +760,67 @@ tests/
 ├── unit/               # Refactored unit tests (public API only)
 │   ├── test_parsing/              # Self-contained test folder
 │   │   ├── test_parsing.py        # Test implementation
-│   │   ├── input/                 # Test input files (C/C++ source, model.json, etc.)
-│   │   └── config.json            # Test configuration
+│   │   ├── input/                 # All test input files
+│   │   │   ├── config.json        # Test configuration
+│   │   │   ├── main.c             # C/C++ source files
+│   │   │   └── utils.h            # Header files
+│   │   └── assertions.json        # Optional: Large assertion data
 │   ├── test_transformation/       # Self-contained test folder
 │   │   ├── test_transformation.py # Test implementation
-│   │   ├── input/                 # Test input files (C/C++ source, model.json, etc.)
-│   │   └── config.json            # Test configuration
+│   │   ├── input/                 # All test input files
+│   │   │   ├── config.json        # Test configuration
+│   │   │   └── model.json         # Pre-parsed model for transformation tests
+│   │   └── assertions.json        # Optional: Large assertion data
 │   ├── test_generation/           # Self-contained test folder
 │   │   ├── test_generation.py     # Test implementation
-│   │   ├── input/                 # Test input files (C/C++ source, model.json, etc.)
-│   │   └── config.json            # Test configuration
+│   │   ├── input/                 # All test input files
+│   │   │   ├── config.json        # Test configuration
+│   │   │   └── model.json         # Pre-parsed model for generation tests
+│   │   └── assertions.json        # Optional: Large assertion data
 │   └── test_configuration/        # Self-contained test folder
 │       ├── test_configuration.py  # Test implementation
-│       ├── input/                 # Test input files (if needed)
-│       └── config.json            # Test configuration
+│       ├── input/                 # All test input files
+│       │   └── config.json        # Test configuration to validate
+│       └── assertions.json        # Optional: Large assertion data
 ├── feature/            # Refactored feature tests
 │   ├── test_full_workflow/        # Self-contained test folder
 │   │   ├── test_full_workflow.py  # Test implementation
-│   │   ├── input/                 # Test input files (C/C++ source, model.json, etc.)
-│   │   └── config.json            # Test configuration
+│   │   ├── input/                 # All test input files
+│   │   │   ├── config.json        # Test configuration
+│   │   │   ├── main.c             # C/C++ source files
+│   │   │   ├── utils.h            # Header files
+│   │   │   └── subdir/            # Nested directories if needed
+│   │   └── assertions.json        # Optional: Large assertion data
 │   ├── test_include_processing/   # Self-contained test folder
 │   │   ├── test_include_processing.py # Test implementation
-│   │   ├── input/                 # Test input files (C/C++ source, model.json, etc.)
-│   │   └── config.json            # Test configuration
+│   │   ├── input/                 # All test input files
+│   │   │   ├── config.json        # Test configuration
+│   │   │   ├── main.c             # C/C++ source files
+│   │   │   └── includes/          # Include hierarchy
+│   │   └── assertions.json        # Optional: Large assertion data
 │   └── test_transformations/      # Self-contained test folder
 │       ├── test_transformations.py # Test implementation
-│       ├── input/                 # Test input files (C/C++ source, model.json, etc.)
-│       └── config.json            # Test configuration
+│       ├── input/                 # All test input files
+│       │   ├── config.json        # Test configuration with transformations
+│       │   ├── main.c             # C/C++ source files
+│       │   └── headers/           # Header files
+│       └── assertions.json        # Optional: Large assertion data
 ├── integration/        # Integration tests
 │   ├── test_real_projects/        # Self-contained test folder
 │   │   ├── test_real_projects.py  # Test implementation
-│   │   ├── input/                 # Test input files (C/C++ source, model.json, etc.)
-│   │   └── config.json            # Test configuration
+│   │   ├── input/                 # All test input files
+│   │   │   ├── config.json        # Test configuration
+│   │   │   └── realistic_project/ # Real C/C++ project structure
+│   │   │       ├── src/           # Source files
+│   │   │       ├── include/       # Header files
+│   │   │       └── lib/           # Library files
+│   │   └── assertions.json        # Optional: Large assertion data
 │   └── test_performance/          # Self-contained test folder
 │       ├── test_performance.py    # Test implementation
-│       ├── input/                 # Test input files (C/C++ source, model.json, etc.)
-│       └── config.json            # Test configuration
+│       ├── input/                 # All test input files
+│       │   ├── config.json        # Test configuration
+│       │   └── large_project/     # Large C/C++ project for performance testing
+│       └── assertions.json        # Optional: Large assertion data
 └── example/            # Keep existing example test (preserved as-is)
     ├── source/         # Example C/C++ source files
     ├── config.json     # Example configuration
