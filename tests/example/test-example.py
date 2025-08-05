@@ -590,7 +590,8 @@ class PUMLValidator:
                     line.startswith('alias of') or  # Alias definitions
                     ':' in line or  # Field definitions
                     '(' in line or  # Function definitions
-                    '=' in line):   # Variable assignments
+                    '=' in line or  # Variable assignments
+                    (line.strip() and not line.startswith(('--', "'")))):  # Any non-empty, non-comment line (e.g., enum values)
                     meaningful_content = True
                     break
             
