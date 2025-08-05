@@ -176,7 +176,7 @@ class TestNestedStructurePreservation(unittest.TestCase):
             self.assertIn("test_union_t_nested_union", puml_content, "Anonymous union should be extracted as separate entity")
             
             # Check that composition relationship is present
-            composition_relationship = puml_content.find("*-- TYPEDEF_TEST_UNION_T_NESTED_UNION : contains")
+            composition_relationship = puml_content.find("TYPEDEF_TEST_UNION_T *-- TYPEDEF_TEST_UNION_T_NESTED_UNION : <<contains>>")
             self.assertNotEqual(composition_relationship, -1, "Composition relationship should be present")
             
         finally:
