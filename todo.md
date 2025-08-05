@@ -77,7 +77,7 @@ class UnifiedTestCase(unittest.TestCase):
     def test_feature(self):
         # 1. Load test data from self-contained folders
         project = self.data_factory.load_test_project(self.test_name)
-        config = self.data_factory.load_test_config(self.test_name, "basic")
+        config = self.data_factory.load_test_config(self.test_name)
         
         # 2. Execute through public API
         result = self.executor.run_full_pipeline(project, config)
@@ -122,16 +122,16 @@ Create reusable test data generators:
 ```python
 class TestDataFactory:
     def load_test_project(self, test_name: str) -> TestProject:
-        """Loads C/C++ project from test_<name>/project/ directory"""
+        """Loads C/C++ project from test_<name>/source/ directory"""
     
-    def load_test_config(self, test_name: str, config_name: str = "basic") -> ConfigData:
-        """Loads configuration from test_<name>/config/<config_name>.json"""
+    def load_test_config(self, test_name: str) -> ConfigData:
+        """Loads configuration from test_<name>/config.json"""
     
     def create_temp_project(self, source_files: dict) -> TestProject:
         """Creates temporary project for dynamic test generation"""
     
     def get_test_data_path(self, test_name: str, subpath: str = "") -> Path:
-        """Returns path to test data: test_<name>/project/ or test_<name>/config/"""
+        """Returns path to test data: test_<name>/source/ or test_<name>/config.json"""
 ```
 
 #### 3.2 Self-Contained Test Data
@@ -143,14 +143,11 @@ Each test folder contains its own project and configuration data:
 ```
 test_<name>/
 ├── test_<name>.py      # Test implementation
-├── project/            # C/C++ source files specific to this test
+├── source/             # C/C++ source files specific to this test
 │   ├── main.c
 │   ├── utils.h
 │   └── subdir/         # Nested directories if needed
-└── config/             # Configuration files specific to this test
-    ├── basic.json      # Basic test configuration
-    ├── advanced.json   # Advanced test configuration
-    └── error.json      # Error scenario configuration
+└── config.json        # Test configuration
 ```
 
 **Benefits of Self-Contained Structure:**
@@ -236,42 +233,42 @@ tests/
 ├── unit/               # Refactored unit tests (public API only)
 │   ├── test_parsing/              # Self-contained test folder
 │   │   ├── test_parsing.py        # Test implementation
-│   │   ├── project/               # Test C/C++ source files
-│   │   └── config/                # Test configuration files
+│   │   ├── source/                # Test C/C++ source files
+│   │   └── config.json            # Test configuration
 │   ├── test_transformation/       # Self-contained test folder
 │   │   ├── test_transformation.py # Test implementation
-│   │   ├── project/               # Test C/C++ source files
-│   │   └── config/                # Test configuration files
+│   │   ├── source/                # Test C/C++ source files
+│   │   └── config.json            # Test configuration
 │   ├── test_generation/           # Self-contained test folder
 │   │   ├── test_generation.py     # Test implementation
-│   │   ├── project/               # Test C/C++ source files
-│   │   └── config/                # Test configuration files
+│   │   ├── source/                # Test C/C++ source files
+│   │   └── config.json            # Test configuration
 │   └── test_configuration/        # Self-contained test folder
 │       ├── test_configuration.py  # Test implementation
-│       ├── project/               # Test C/C++ source files (if needed)
-│       └── config/                # Test configuration files
+│       ├── source/                # Test C/C++ source files (if needed)
+│       └── config.json            # Test configuration
 ├── feature/            # Refactored feature tests
 │   ├── test_full_workflow/        # Self-contained test folder
 │   │   ├── test_full_workflow.py  # Test implementation
-│   │   ├── project/               # Test C/C++ source files
-│   │   └── config/                # Test configuration files
+│   │   ├── source/                # Test C/C++ source files
+│   │   └── config.json            # Test configuration
 │   ├── test_include_processing/   # Self-contained test folder
 │   │   ├── test_include_processing.py # Test implementation
-│   │   ├── project/               # Test C/C++ source files
-│   │   └── config/                # Test configuration files
+│   │   ├── source/                # Test C/C++ source files
+│   │   └── config.json            # Test configuration
 │   └── test_transformations/      # Self-contained test folder
 │       ├── test_transformations.py # Test implementation
-│       ├── project/               # Test C/C++ source files
-│       └── config/                # Test configuration files
+│       ├── source/                # Test C/C++ source files
+│       └── config.json            # Test configuration
 ├── integration/        # Integration tests
 │   ├── test_real_projects/        # Self-contained test folder
 │   │   ├── test_real_projects.py  # Test implementation
-│   │   ├── project/               # Test C/C++ source files
-│   │   └── config/                # Test configuration files
+│   │   ├── source/                # Test C/C++ source files
+│   │   └── config.json            # Test configuration
 │   └── test_performance/          # Self-contained test folder
 │       ├── test_performance.py    # Test implementation
-│       ├── project/               # Test C/C++ source files
-│       └── config/                # Test configuration files
+│       ├── source/                # Test C/C++ source files
+│       └── config.json            # Test configuration
 └── example/            # Keep existing example test (preserved as-is)
     ├── source/         # Example C/C++ source files
     ├── config.json     # Example configuration
@@ -324,7 +321,7 @@ class TestFeatureName(UnifiedTestCase):
         """Clear description of what this test validates"""
         # Arrange - Load from self-contained test folder
         project = self.data_factory.load_test_project(self.test_name)
-        config = self.data_factory.load_test_config(self.test_name, "scenario")
+        config = self.data_factory.load_test_config(self.test_name)
         
         # Act  
         result = self.executor.run_full_pipeline(project, config)
@@ -358,7 +355,7 @@ class TestFeatureName(UnifiedTestCase):
 4. Update example test to use new validation framework while preserving its structure
 
 #### Phase 3: Test Reorganization (Week 5-6)
-1. Create self-contained test folders for each test file with `project/` and `config/` subdirectories
+1. Create self-contained test folders for each test file with `source/` subdirectory and `config.json`
 2. Migrate test data into respective test folders (preserve `tests/example/` as-is)
 3. Update test implementations to use `TestDataFactory.load_test_project()` and `load_test_config()`
 4. Consolidate duplicate test logic and standardize naming conventions
