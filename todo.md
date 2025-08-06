@@ -2,13 +2,13 @@
 
 ## Executive Summary
 
-This document outlines the comprehensive work required to transform the current c2puml test suite (58 test files across unit, feature, integration, and example categories) into a unified, maintainable, and robust testing framework. The primary focus is on **test-application boundary separation** and **public API testing** to ensure the application remains flexible to internal changes. The existing `tests/example/` structure will be preserved and enhanced with standardized expectations.
+This document outlines the comprehensive work required to transform the current c2puml test suite (58 test files across unit, feature, integration, and example categories) into a unified, maintainable, and robust testing framework. The primary focus is on **test-application boundary separation** and **public API testing** to ensure the application remains flexible to internal changes.
 
-**Progress Tracking**: This document serves as the central workflow description to track migration progress. All milestones, completion status, and blocking issues should be updated directly in this file to maintain a clear record of the transformation progress.
+**Progress Tracking**: This document serves as the central workflow description to track migration progress. All milestones, completion status, and blocking issues should be updated directly in this file.
 
-**📋 Detailed Recommendations**: See `todo_recommendations.md` for comprehensive file-by-file analysis, specific migration strategies, data file recommendations, and progress tracking for all 50 test files. **Important:** Update both `todo.md` and `todo_recommendations.md` as migration work progresses.
+**📋 Detailed Recommendations**: See `todo_recommendations.md` for comprehensive file-by-file analysis and input strategy guidelines.
 
-**🗑️ Framework Cleanup**: The existing framework files (`tests/utils.py`, `tests/feature/base.py`) use internal APIs and will be completely removed after migration. These legacy files were not adapted as they conflict with the CLI-only approach required for proper test-application boundary separation.
+**🗑️ Framework Cleanup**: The existing framework files (`tests/utils.py`, `tests/feature/base.py`) use internal APIs and will be completely removed after migration.
 
 ## Current State Analysis
 
@@ -19,10 +19,7 @@ This document outlines the comprehensive work required to transform the current 
   - `tests/integration/` (2 files) - End-to-end scenarios
   - `tests/example/` (1 file) - Example project test (to be preserved)
 - **Mixed testing approaches**: Some tests use internal functions, others use public APIs
-- **Inconsistent patterns**: Different test classes use different setup/teardown approaches
 - **Direct internal access**: Many tests directly import and test internal components
-
-**Note on Test Restructuring**: The refactoring of existing tests may require splitting up or restructuring test cases differently than their current organization. Some large test files may be broken down into multiple focused test cases, while related tests may be consolidated. This restructuring is necessary to align with the public API testing approach and improve test maintainability.
 
 ### Public API Surface (Target for Testing)
 Based on analysis of the codebase, the public APIs are:
@@ -48,263 +45,247 @@ Based on analysis of the codebase, the public APIs are:
 Create a new unified framework with these components:
 
 - **`TestExecutor`**: Runs c2puml through public APIs only
-- **`TestDataFactory`**: Generates test C/C++ projects and configurations, handles data.json files for dynamic input generation
-- **`ResultValidator`**: Validates outputs (model.json, .puml files, logs)
-- **`TestProjectBuilder`**: Builds temporary test projects with complex structures
+- **`TestInputFactory`**: Unified factory for managing all test input data (both explicit files and input-###.json)
+- **`ModelValidator`, `PlantUMLValidator`, `OutputValidator`, `FileValidator`**: Validates outputs (model.json, .puml files, logs)
 
 ```python
-# Example structure
+# Framework structure
 tests/framework/
 ├── __init__.py
-├── executor.py      # TestExecutor class
-├── data_factory.py  # TestDataFactory class  
-├── validator.py     # ResultValidator class
-├── builder.py       # TestProjectBuilder class
-└── fixtures.py      # Common test fixtures
+├── executor.py         # TestExecutor class
+├── input_factory.py    # TestInputFactory class (unified input management)
+├── validators.py       # ModelValidator, PlantUMLValidator, OutputValidator, FileValidator classes
+└── fixtures.py        # Common test fixtures and helper utilities
 ```
 
-#### 1.2 Test Execution Patterns
+#### 1.2 Test Framework Public APIs
 **Priority: HIGH**
 
-Standardize how tests execute c2puml:
+The unified test framework provides comprehensive public APIs for all testing scenarios:
 
+##### Core Test Base Class
 ```python
 class UnifiedTestCase(unittest.TestCase):
+    """Base class for all c2puml tests - provides standard setup and utilities"""
+    
     def setUp(self):
         self.executor = TestExecutor()
-        self.data_factory = TestDataFactory()
-        # Specialized validators for different aspects
+        self.input_factory = TestInputFactory()  # Unified input management
         self.model_validator = ModelValidator()
         self.puml_validator = PlantUMLValidator()
         self.output_validator = OutputValidator()
-        # Get test name from class name (e.g., TestParsing -> test_parsing)
+        self.file_validator = FileValidator()
         self.test_name = self.__class__.__name__.lower().replace('test', 'test_')
-        # Create temporary output directory for this test
-        self.output_dir = tempfile.mkdtemp()
-        # Load assertion data if available - full dictionary access
-        self.assertions = self.data_factory.load_test_assertions(self.test_name) if self.data_factory.has_test_assertions(self.test_name) else {}
+        self.temp_dirs = []  # Track temporary directories for cleanup
+        
+    def tearDown(self):
+        """Clean up temporary directories and files"""
+        for temp_dir in self.temp_dirs:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+        shutil.rmtree(self.output_dir, ignore_errors=True)
     
-    def test_feature(self):
-        # 1. Get paths to test data for CLI execution
-        input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
-        
-        # 2. Execute through CLI interface only
-        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
-        
-        # 3. Validate CLI execution and results
-        self.assertEqual(result.exit_code, 0, f"CLI failed: {result.stderr}")
-        self.output_validator.assert_output_dir_exists(self.output_dir)
-        self.output_validator.assert_log_no_errors(result.stdout)
-        
-        # 4. Load and validate generated files
-        model_file = f"{self.output_dir}/model.json"
-        self.model_validator.assert_model_json_syntax_valid(model_file)
-        
-        puml_files = glob.glob(f"{self.output_dir}/*.puml")
-        self.assertGreater(len(puml_files), 0, "No PlantUML files generated")
-        
-        for puml_file in puml_files:
-            self.puml_validator.assert_puml_file_syntax_valid(puml_file)
+    def create_temp_dir(self) -> str:
+        """Create and track a temporary directory"""
+        temp_dir = tempfile.mkdtemp()
+        self.temp_dirs.append(temp_dir)
+        return temp_dir
+```
+
+##### TestExecutor - CLI Execution Engine
+```python
+class TestExecutor:
+    """Executes c2puml through CLI interface only - no internal API access"""
     
-    def test_with_assertion_data(self):
-        """Example of using assertions.json for large validation data"""
-        input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
+    # Core Pipeline Execution
+    def run_full_pipeline(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
+    def run_parse_only(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
+    def run_transform_only(self, config_path: str, output_dir: str) -> CLIResult  
+    def run_generate_only(self, config_path: str, output_dir: str) -> CLIResult
+    
+    # Advanced Pipeline Control
+    def run_with_verbose(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
+    def run_with_timeout(self, input_path: str, config_path: str, output_dir: str, timeout: int) -> CLIResult
+    def run_with_env_vars(self, input_path: str, config_path: str, output_dir: str, env: dict) -> CLIResult
+    
+    # Error Testing Support
+    def run_expecting_failure(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
+    def run_and_capture_stderr(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
+    
+    # Performance Testing  
+    def run_with_timing(self, input_path: str, config_path: str, output_dir: str) -> TimedCLIResult
+    def run_with_memory_tracking(self, input_path: str, config_path: str, output_dir: str) -> MemoryCLIResult
+    
+    # Output Management
+    def get_test_output_dir(self, test_name: str, scenario: str = None) -> str:
+        """Returns output directory path next to test file (output/ or output-<scenario>/)"""
+    
+    def cleanup_output_dir(self, output_dir: str) -> None:
+        """Cleans output directory before test execution"""
+    
+    def preserve_output_for_review(self, output_dir: str) -> None:
+        """Marks output directory to be preserved for manual review"""
+```
+
+##### TestInputFactory - Unified Input Management
+```python
+class TestInputFactory:
+    """Unified factory for managing all test input data (both explicit files and input-###.json)"""
+    
+    def __init__(self):
+        pass
+    
+    # === File-Based Approach (Feature/Example/Integration Tests) ===
+    
+    def load_test_files(self, test_name: str) -> Tuple[str, str]:
+        """Load test files and return (input_path, config_path)"""
+        input_path = self.get_test_data_path(test_name, "input")
+        config_path = os.path.join(input_path, "config.json")
+        return input_path, config_path
+    
+    def load_test_assertions(self, test_name: str) -> dict:
+        """Load assertions.json for file-based approach (Option 1)"""
+        assertions_path = self.get_test_data_path(test_name, "assertions.json")
+        if os.path.exists(assertions_path):
+            with open(assertions_path, 'r') as f:
+                return json.load(f)
+        return {}
+    
+    def load_scenario_assertions(self, test_name: str, input_file: str) -> dict:
+        """Load assert-###.json for specific input scenario (Option 2)"""
+        # Convert input-simple_struct.json -> assert-simple_struct.json
+        assert_file = input_file.replace("input-", "assert-")
+        assertions_path = self.get_test_data_path(test_name, assert_file)
+        if os.path.exists(assertions_path):
+            with open(assertions_path, 'r') as f:
+                return json.load(f)
+        return {}
+    
+    def load_test_method_assertions(self, test_name: str, method_name: str) -> dict:
+        """Load assertions for specific test method from assertions.json (Option 1)"""
+        all_assertions = self.load_test_assertions(test_name)
+        return all_assertions.get(method_name, {})
+    
+    # === Input JSON Approach (Unit Tests) ===
+    
+    def load_input_json_scenario(self, test_name: str, input_file: str) -> Tuple[str, str]:
+        """Load input-###.json and return (input_path, config_path)"""
+        # Load input-###.json file
+        input_file_path = self.get_test_data_path(test_name, f"input/{input_file}")
+        with open(input_file_path, 'r') as f:
+            input_data = json.load(f)
         
-        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
-        self.assertEqual(result.exit_code, 0)
+        # Validate structure
+        self._validate_input_json_structure(input_data)
         
-        # Load model
-        with open(f"{self.output_dir}/model.json", 'r') as f:
-            model = json.load(f)
+        # Create temporary files
+        temp_dir = tempfile.mkdtemp()
+        input_path = self._create_temp_source_files(input_data, temp_dir)
+        config_path = self._create_temp_config_file(input_data, temp_dir)
         
-        # Use assertion data for validation (if assertions.json exists)
-        if self.assertions:
-            # Direct access to test-specific assertion data
-            # Test can name its assertion sections however it wants
-            
-            # Example: Validate expected functions
-            if "critical_functions" in self.assertions:
-                for func_name in self.assertions["critical_functions"]:
-                    self.model_validator.assert_model_function_exists(model, func_name)
-            
-            # Example: Validate forbidden elements  
-            if "should_not_exist" in self.assertions:
-                for func_name in self.assertions["should_not_exist"]:
-                    self.model_validator.assert_model_function_not_exists(model, func_name)
-            
-            # Example: Validate PlantUML content with custom naming
-            if "expected_main_puml_content" in self.assertions:
-                main_puml_file = f"{self.output_dir}/main.puml"
-                self.output_validator.assert_file_contains_lines(main_puml_file, self.assertions["expected_main_puml_content"])
-            
-            # Example: Test-specific validation with custom structure
-            if "parser_validation" in self.assertions:
-                parser_data = self.assertions["parser_validation"]
-                if "required_structs" in parser_data:
-                    for struct_name in parser_data["required_structs"]:
-                        self.model_validator.assert_model_struct_exists(model, struct_name)
-                if "include_chain" in parser_data:
-                    self.model_validator.assert_model_include_relationships_exist(model, parser_data["include_chain"])
+        return input_path, config_path
+    
+    def list_input_json_files(self, test_name: str) -> List[str]:
+        """List all input-###.json files for a test"""
+        input_dir = self.get_test_data_path(test_name, "input")
+        if not os.path.exists(input_dir):
+            return []
+        return [f for f in os.listdir(input_dir) if f.startswith("input-") and f.endswith(".json")]
+    
+    # === Output Directory Management ===
+    
+    def get_output_dir_for_scenario(self, test_name: str, scenario_name: str = None) -> str:
+        """Get output directory: output/ or output-<scenario>/"""
+        test_dir = self.get_test_data_path(test_name).replace("/input", "")
+        if scenario_name:
+            # Extract meaningful name from input file
+            clean_name = scenario_name.replace("input-", "").replace(".json", "")
+            return os.path.join(test_dir, f"output-{clean_name}")
         else:
-            # Fallback to inline assertions when no assertions.json
-            self.model_validator.assert_model_function_exists(model, "main")
-            self.model_validator.assert_model_struct_exists(model, "Point")
+            return os.path.join(test_dir, "output")
     
-    def test_with_data_json_source_generation(self):
-        """Example of using data.json for dynamic source file generation"""
-        # Load test data and use structured sections
-        data = self.data_factory.load_test_data_json(self.test_name, "data_struct_test.json")
-        
-        # Generate source files from 'source_files' section
-        input_path = self.data_factory.generate_source_files_from_data(self.test_name, "data_struct_test.json")
-        
-        # Extract config from 'c2puml_config' section
-        config_path = self.data_factory.extract_config_from_data(self.test_name, "data_struct_test.json")
-        
-        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
-        self.assertEqual(result.exit_code, 0)
-        
-        # Validate against 'expected_results' section
-        expected = data["expected_results"]["model_elements"]
-        model_file = f"{self.output_dir}/model.json"
-        with open(model_file, 'r') as f:
-            model = json.load(f)
-        
-        for struct_name in expected["structs"]:
-            self.model_validator.assert_model_struct_exists(model, struct_name)
+    def get_example_output_dir(self, test_name: str) -> str:
+        """Returns artifacts/examples/<name>/ for example tests"""
+        return f"artifacts/examples/{test_name.replace('test_example_', '')}"
     
-    def test_multiple_data_cases(self):
-        """Example of using multiple data.json files for different test cases"""
-        # List all available data files for this test
-        data_files = self.data_factory.list_data_json_files(self.test_name)
-        
-        for data_file in data_files:
-            with self.subTest(data_case=data_file):
-                # Load specific data case with structured sections
-                data = self.data_factory.load_test_data_json(self.test_name, data_file)
-                test_metadata = data["test_metadata"]
-                
-                # Generate appropriate input based on available sections
-                if "source_files" in data:
-                    input_path = self.data_factory.generate_source_files_from_data(self.test_name, data_file)
-                elif "input_model" in data:
-                    input_path = self.data_factory.generate_model_from_data(self.test_name, data_file)
-                else:
-                    input_path = self.data_factory.load_test_input(self.test_name)
-                
-                # Extract config from 'c2puml_config' section or use explicit config
-                if "c2puml_config" in data:
-                    config_path = self.data_factory.extract_config_from_data(self.test_name, data_file)
-                else:
-                    config_path = self.data_factory.load_test_config(self.test_name)
-                
-                # Execute pipeline
-                result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
-                self.assertEqual(result.exit_code, 0, f"Failed for data case: {data_file}")
-                
-                # Validate results using 'expected_results' section
-                if "expected_results" in data:
-                    expected = data["expected_results"]
-                    model_file = f"{self.output_dir}/model.json"
-                    with open(model_file, 'r') as f:
-                        model = json.load(f)
-                    
-                    # Validate model elements if specified
-                    if "model_elements" in expected:
-                        model_elements = expected["model_elements"]
-                        for struct_name in model_elements.get("structs", []):
-                            self.model_validator.assert_model_struct_exists(model, struct_name)
-                        for func_name in model_elements.get("functions", []):
-                            self.model_validator.assert_model_function_exists(model, func_name)
+    def ensure_output_dir_clean(self, output_dir: str) -> None:
+        """Ensure output directory exists and is clean"""
+        if os.path.exists(output_dir):
+            shutil.rmtree(output_dir)
+        os.makedirs(output_dir, exist_ok=True)
     
-    def test_preferred_validation_approach(self):
-        """Example showing the preferred validation approach using data.json expected_results"""
-        # Load data.json with expected_results section (preferred approach)
-        data = self.data_factory.load_test_data_json(self.test_name, "data_simple_test.json")
-        input_path = self.data_factory.generate_source_files_from_data(self.test_name, "data_simple_test.json")
-        config_path = self.data_factory.extract_config_from_data(self.test_name, "data_simple_test.json")
-        
-        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
-        self.assertEqual(result.exit_code, 0)
-        
-        # Simple validation using expected_results from data.json - no complex structures needed
-        expected = data["expected_results"]["model_elements"]
-        with open(f"{self.output_dir}/model.json", 'r') as f:
-            model = json.load(f)
-        
-        # Simple checks - exactly what the user specified is sufficient for any modification/transformation
-        for struct_name in expected.get("structs", []):
-            self.model_validator.assert_model_struct_exists(model, struct_name)
-        for func_name in expected.get("functions", []):
-            self.model_validator.assert_model_function_exists(model, func_name)
-        
-        # PlantUML validation using expected_results 
-        if "plantuml_elements" in data["expected_results"]:
-            puml_expected = data["expected_results"]["plantuml_elements"]
-            for class_name in puml_expected.get("classes", []):
-                puml_file = f"{self.output_dir}/main.puml"
-                self.output_validator.assert_file_contains(puml_file, class_name)
-        
-        # Option 2 (Data.json): Use assertions section within data.json file
-        if "assertions" in data:
-            assertions = data["assertions"]
-            if "large_function_list" in assertions:
-                for func_name in assertions["large_function_list"]:
-                    self.model_validator.assert_model_function_exists(model, func_name)
+    # === Utility Methods ===
     
-    def test_explicit_files_with_assertions_json(self):
-        """Example using Option 1: explicit files + assertions.json"""
-        # Option 1: Uses input/config.json + input/source files + assertions.json
-        input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)
-        
-        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
-        self.assertEqual(result.exit_code, 0)
-        
-        # Load validation data from external assertions.json file (Option 1 approach)
-        assertions = self.data_factory.load_test_assertions(self.test_name)
-        
-        with open(f"{self.output_dir}/model.json", 'r') as f:
-            model = json.load(f)
-        
-        # Validate expected model elements
-        expected_model = assertions["expected_model_elements"]
-        for struct_name in expected_model["structs"]:
-            self.model_validator.assert_model_struct_exists(model, struct_name)
-        for func_name in expected_model["functions"]:
-            self.model_validator.assert_model_function_exists(model, func_name)
-        
-        # Validate large function lists
-        if "large_validation_lists" in assertions:
-            for func_name in assertions["large_validation_lists"]["critical_functions"]:
-                self.model_validator.assert_model_function_exists(model, func_name)
+    def get_test_data_path(self, test_name: str, subpath: str = "") -> str:
+        """Get path to test data directory or file"""
+        base_path = f"tests/{self._get_test_category(test_name)}/{test_name}"
+        return os.path.join(base_path, subpath) if subpath else base_path
     
-    def test_individual_steps(self):
-        """Example of testing individual pipeline steps via CLI"""
-        input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
+    def _get_test_category(self, test_name: str) -> str:
+        """Determine test category from test name"""
+        if test_name.startswith("test_example_"):
+            return "example"
+        elif "feature" in test_name or "integration" in test_name or "comprehensive" in test_name:
+            return "feature"
+        else:
+            return "unit"
+    
+    # === Private Helper Methods ===
+    
+    def _validate_input_json_structure(self, input_data: dict) -> None:
+        """Validate input-###.json structure (no expected_results allowed)"""
+        required_sections = ["test_metadata", "c2puml_config", "source_files"]
+        forbidden_sections = ["expected_results"]
         
-        # Step 1: Parse only
-        parse_result = self.executor.run_parse_only(input_path, config_path, self.output_dir)
-        self.assertEqual(parse_result.exit_code, 0, f"Parse step failed: {parse_result.stderr}")
+        missing = [s for s in required_sections if s not in input_data]
+        if missing:
+            raise ValueError(f"Missing required sections in input JSON: {missing}")
         
-        model_file = f"{self.output_dir}/model.json"
-        self.output_validator.assert_file_exists(model_file)
-        self.model_validator.assert_model_json_syntax_valid(model_file)
-        
-        # Step 2: Transform only (operates on existing model.json)
-        transform_result = self.executor.run_transform_only(config_path, self.output_dir)
-        self.assertEqual(transform_result.exit_code, 0, f"Transform step failed: {transform_result.stderr}")
-        
-        # Step 3: Generate only (operates on transformed model)
-        generate_result = self.executor.run_generate_only(config_path, self.output_dir)
-        self.assertEqual(generate_result.exit_code, 0, f"Generate step failed: {generate_result.stderr}")
-        
-        # Validate final output
-        puml_files = glob.glob(f"{self.output_dir}/*.puml")
-        self.assertGreater(len(puml_files), 0, "No PlantUML files generated")
+        forbidden_found = [s for s in forbidden_sections if s in input_data]
+        if forbidden_found:
+            raise ValueError(f"Forbidden sections in input JSON (use assertion files instead): {forbidden_found}")
+    
+    def _create_temp_config_file(self, input_data: dict, temp_dir: str) -> str:
+        """Create temporary config.json from input data"""
+        config = input_data.get("c2puml_config", {})
+        config_path = os.path.join(temp_dir, "config.json")
+        with open(config_path, 'w') as f:
+            json.dump(config, f, indent=2)
+        return config_path
+    
+    def _create_temp_source_files(self, input_data: dict, temp_dir: str) -> str:
+        """Create temporary source files from input data"""
+        source_files = input_data.get("source_files", {})
+        for filename, content in source_files.items():
+            file_path = os.path.join(temp_dir, filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            with open(file_path, 'w') as f:
+                f.write(content)
+        return temp_dir
+```
+
+**Unified Usage Pattern (with Assertion Files):**
+```python
+# For Feature Tests (file-based): 
+input_path, config_path = self.input_factory.load_test_files(self.test_name)
+assertions = self.input_factory.load_test_assertions(self.test_name)
+# Returns: ("test_feature/input/", "test_feature/input/config.json", assertions_dict)
+
+# For Unit Tests (single input-###.json scenario):
+input_path, config_path = self.input_factory.load_input_json_scenario(
+    self.test_name, "input-simple_struct.json"
+)
+assertions = self.input_factory.load_scenario_assertions(self.test_name, "input-simple_struct.json")
+# Returns: (temp_dir_path, temp_config_path) + assertions from assert-simple_struct.json
+
+# For Unit Tests (multiple input-###.json scenarios):
+input_files = self.input_factory.list_input_json_files(self.test_name)
+for input_file in input_files:
+    with self.subTest(scenario=input_file):
+        input_path, config_path = self.input_factory.load_input_json_scenario(
+            self.test_name, input_file
+        )
+        assertions = self.input_factory.load_scenario_assertions(self.test_name, input_file)
+        # Test with this scenario using data-driven assertions...
 ```
 
 ### 2. Public API Testing Strategy
@@ -319,690 +300,706 @@ All tests should execute c2puml through the CLI interface only:
 **Forbidden**: Direct imports of any internal modules:
 - `from c2puml.core.parser import CParser` ❌
 - `from c2puml.core.tokenizer import CTokenizer` ❌
-- `from c2puml import Parser, Transformer, Generator` ❌
 
-**Only Allowed**: CLI interface through main.py:
-- `python3 main.py --config config.json` - Full pipeline
-- `python3 main.py --config config.json parse` - Parse only
-- `python3 main.py --config config.json transform` - Transform only  
-- `python3 main.py --config config.json generate` - Generate only
+**Only Allowed**: CLI interface through main.py
 
-#### 2.2 Test Input/Output Validation
-**Priority: HIGH**
+### 3. Test Data Management and Helper Classes
 
-Tests should validate:
-- **Input validation**: Configuration files, C/C++ source structure
-- **Output validation**: Generated model.json structure, PlantUML syntax, file organization
-- **Log validation**: Error messages, warning patterns, execution flow
-
-### 3. Test Data Management
-
-#### 3.1 Standardized Test Data Factory
+#### 3.1 Common Usage Patterns and Result Types
 **Priority: MEDIUM**
-
-Create reusable test data generators:
 
 ```python
-class TestDataFactory:
-    def load_test_input(self, test_name: str) -> str:
-        """Returns path to test_<name>/input/ directory for CLI execution"""
-    
-    def load_test_config(self, test_name: str, data_file: str = None) -> str:
-        """Returns path to config.json (explicit) or extracts config from data_file for CLI execution"""
-    
-    def load_test_assertions(self, test_name: str, data_file: str = None) -> dict:
-        """Loads assertion data from test_<n>/assertions.json (Option 1) or from data_file.assertions (Option 2)"""
-    
-    def has_test_assertions(self, test_name: str, data_file: str = None) -> bool:
-        """Returns True if assertions exist in assertions.json (Option 1) or in data_file.assertions (Option 2)"""
-    
-    def create_temp_project(self, input_files: dict) -> str:
-        """Creates temporary project and returns path for CLI execution"""
-    
-    def get_test_data_path(self, test_name: str, subpath: str = "") -> str:
-        """Returns absolute path to test data for CLI arguments"""
-    
-    def load_test_data_json(self, test_name: str, data_file: str = "data.json") -> dict:
-        """Loads data.json from test_<n>/input/<data_file> and returns parsed content"""
-    
-    def generate_source_files_from_data(self, test_name: str, data_file: str = "data.json") -> str:
-        """Generates source files from data.json 'source_files' section and returns input path for CLI"""
-    
-    def generate_model_from_data(self, test_name: str, data_file: str = "data.json") -> str:
-        """Generates model.json from data.json 'input_model' section and returns input path for CLI"""
-    
-    def has_data_json(self, test_name: str, data_file: str = "data.json") -> bool:
-        """Returns True if test_<n>/input/<data_file> exists"""
-    
-    def list_data_json_files(self, test_name: str) -> list:
-        """Returns list of all data*.json files in test_<n>/input/ directory"""
-    
-    def extract_config_from_data(self, test_name: str, data_file: str) -> str:
-        """Extracts 'c2puml_config' section from data_file and creates temp config.json for CLI execution"""
+# Result Types for CLI Execution
+@dataclass
+class CLIResult:
+    """Standard result from CLI execution"""
+    exit_code: int
+    stdout: str
+    stderr: str
+    execution_time: float
+    command: List[str]
+    working_dir: str
 
+@dataclass  
+class TimedCLIResult(CLIResult):
+    """CLI result with detailed timing information"""
+    parse_time: float
+    transform_time: float  
+    generate_time: float
+    total_time: float
 
-class TestExecutor:
-    def run_cli_command(self, command: list, cwd: str = None) -> CLIResult:
-        """Executes CLI command and returns result with output, logs, and exit code"""
-    
-    def run_full_pipeline(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
-        """Runs complete pipeline: python3 main.py --config <config>"""
-    
-    def run_parse_only(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
-        """Runs parse step only: python3 main.py --config <config> parse"""
-    
-    def run_transform_only(self, config_path: str, output_dir: str) -> CLIResult:
-        """Runs transform step only: python3 main.py --config <config> transform"""
-    
-    def run_generate_only(self, config_path: str, output_dir: str) -> CLIResult:
-        """Runs generate step only: python3 main.py --config <config> generate"""
+@dataclass
+class MemoryCLIResult(CLIResult):
+    """CLI result with memory usage tracking"""
+    peak_memory_mb: int
+    memory_samples: List[int]
+    memory_timeline: List[tuple]  # (timestamp, memory_mb)
+
+# Test Usage Example using individual validators directly
+class TestStructParsing(UnifiedTestCase):
+    """Example test class using the framework components directly"""
 ```
 
-#### 3.2 Self-Contained Test Data
+#### 3.2 Test Folder Structure and Output Management
 **Priority: MEDIUM**
 
-Each test folder contains its own project and configuration data:
-
-**Test Folder Structure Pattern:**
+**Test Folder Structure Pattern (with Output Management and Assertions):**
 ```
 test_<n>/
 ├── test_<n>.py         # Test implementation
 ├── input/              # Test input files - choose ONE approach per test
-│   # Option 1: Explicit files approach (all test methods use same input)
+│   # Option 1: File-based approach (feature tests ALWAYS use this)
 │   ├── config.json     # c2puml configuration
 │   ├── main.c          # Source files for testing
 │   ├── utils.h         # Header files
 │   ├── model.json      # Optional: Pre-parsed model for transformation testing
 │   └── subdir/         # Optional: Nested directories
-│   # Option 2: Data.json approach (NO config.json or source files)
-│   ├── data_case1.json # Test case 1: complete config + source + expected results + assertions
-│   ├── data_case2.json # Test case 2: complete config + content + expected results + assertions
-│   └── data_case3.json # Test case 3: complete config + scenarios + expected results + assertions
-└── assertions.json     # Used ONLY with Option 1 (explicit files approach)
+│   # Option 2: Input JSON approach (NO config.json or source files)
+│   ├── input-simple_struct.json   # Test case 1: complete config + source (NO expected results)
+│   ├── input-nested_struct.json   # Test case 2: complete config + content (NO expected results)
+│   └── input-error_case.json      # Test case 3: complete config + scenarios (NO expected results)
+├── assertions.json     # Used with Option 1: contains all test method assertions
+├── assert-simple_struct.json      # Used with Option 2: assertions for input-simple_struct.json
+├── assert-nested_struct.json      # Used with Option 2: assertions for input-nested_struct.json  
+├── assert-error_case.json         # Used with Option 2: assertions for input-error_case.json
+└── output/             # Generated during test execution (Git ignored except for examples)
+    ├── model.json      # Generated model file
+    ├── diagram.puml    # Generated PlantUML files
+    └── logs/           # Execution logs and debug output
 ```
 
-**Input Data Options:**
+**Multiple Use-Case Output Structure (with Assertion Files):**
+```
+test_<n>/
+├── test_<n>.py
+├── input/
+│   ├── input-simple_struct.json
+│   ├── input-nested_struct.json
+│   └── input-error_case.json
+├── assert-simple_struct.json   # Assertions for input-simple_struct.json
+├── assert-nested_struct.json   # Assertions for input-nested_struct.json
+├── assert-error_case.json      # Assertions for input-error_case.json
+├── output-simple_struct/       # Generated for input-simple_struct.json (Git ignored)
+│   ├── model.json
+│   ├── diagram.puml
+│   └── c2puml.log
+├── output-nested_struct/       # Generated for input-nested_struct.json (Git ignored)
+│   ├── model.json
+│   ├── diagram.puml
+│   └── c2puml.log
+└── output-error_case/          # Generated for input-error_case.json (Git ignored)
+    ├── error.log
+    └── stderr.txt
+```
 
-**Configuration Flexibility:** Tests can use either:
-- Explicit `config.json` file for single-use-case scenarios
-- Configuration embedded within `data_case#.json` files for multi-use-case scenarios
-- Mixed approach: default `config.json` with overrides in `data_case#.json`
+**Exception - Example Tests (Use Artifacts Folder):**
+```
+test_example_<name>/
+├── test_example_<name>.py
+├── input/
+│   ├── config.json     # Example configuration
+│   └── src/            # Example source code
+└── # NO local output/ folder - outputs to artifacts/examples/<name>/ instead
+```
 
-**Content Specification:**
-For **smaller source inputs**, tests can specify source file structure and content in `data.json` files found in the input folder. This allows generating the required source files or model.json files dynamically based on the test case needs.
+**Git Ignore Configuration:**
+```gitignore
+# Test output directories (except examples)
+tests/unit/*/output/
+tests/unit/*/output-*/
+tests/feature/*/output/
+tests/feature/*/output-*/
+tests/integration/*/output/
+tests/integration/*/output-*/
 
-For **larger inputs**, it is recommended to use explicit input files (actual .c/.h files) rather than data.json specifications for better readability and maintainability.
+# Keep example outputs for documentation
+!tests/example/*/output/
 
-**Input Structure per Use Case:**
-- **Option 1 (Explicit files):** config.json + source files + assertions.json - NO data.json files
-- **Option 2 (Data.json):** ONLY data_*.json files (completely self-contained including assertions) - NO config.json, source files, or assertions.json
+# Temporary test files
+*.tmp
+*.temp
+test_temp_*
+```
 
-**Data.json Structure Guidelines:**
+**Input Strategy Guidelines:**
 
-**Clear Section Organization:**
-- `test_metadata`: Test description, type, expected duration, focus area
-- `c2puml_config`: Complete c2puml configuration (equivalent to config.json content)
-- `source_files`: C/C++ source code content (for source generation tests)
-- `input_model`: Pre-parsed model data (for transformation/generation-only tests)
-- `expected_results`: Expected outputs for validation
-- `assertions`: Large assertion data (equivalent to assertions.json content) - optional
+**FEATURE TESTS and EXAMPLE TESTS ALWAYS use Option 1 (file-based approach)** as they test complete workflows and need comprehensive project structures.
 
-**Multiple Test Cases per File:**
-Per test.py file which contains multiple test cases, there can be multiple data.json files with different names (e.g., `data_case1.json`, `data_case2.json`) for each test case which can be individually loaded. The TestDataFactory shall have extended functionality to handle these data.json files and generate the inputs needed for testing.
+**Use input-##.json for:**
+- Small unit test cases (< 50 lines of C code total)
+- Multiple test scenarios in one test file
+- Tests requiring different inputs per method
 
-**Important Input Strategy Decision:**
-If a test.py file requires **multiple or different inputs** to run various tests, then it **must use the data_##.json input scheme**. This is because when explicit files are used as input, all tests in that test.py file must use the same input files, since there is only a single `input/` folder per test. The data_##.json approach allows each test method to generate its own specific input requirements dynamically.
+**Use file-based approach for:**
+- Feature tests (ALWAYS)
+- Example tests (ALWAYS)
+- Large test cases (> 50 lines of C code)
+- Complex project structures
+- Real-world code examples
 
-**Example data.json Structure for Source Generation:**
+**Input JSON Structure (meaningful names, NO expected results):**
 ```json
+// Example: input-simple_struct.json (input data only)
 {
   "test_metadata": {
-    "description": "Source file specification for smaller test inputs",
+    "description": "Basic struct parsing test",
     "test_type": "unit",
     "expected_duration": "fast"
   },
   "c2puml_config": {
-    "project_name": "test_small_project",
+    "project_name": "test_struct_parsing",
     "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true,
-    "include_depth": 2,
-    "file_extensions": [".c", ".h"]
+    "output_dir": "./output"
   },
   "source_files": {
-    "main.c": "#include <stdio.h>\n#include \"types.h\"\n\nint main() {\n    Point p = {10, 20};\n    return 0;\n}",
-    "types.h": "#ifndef TYPES_H\n#define TYPES_H\n\ntypedef struct {\n    int x;\n    int y;\n} Point;\n\n#endif"
+    "main.c": "C source code content",
+    "utils.h": "Header file content"
+  }
+}
+```
+
+**Assertion JSON Structure (meaningful keys, data-driven validation):**
+```json
+// Example: assert-simple_struct.json (validation criteria only)
+{
+  "cli_execution": {
+    "expected_exit_code": 0,
+    "should_succeed": true,
+    "max_execution_time_seconds": 10
   },
-  "expected_results": {
-    "model_elements": {
-      "structs": ["Point"],
-      "functions": ["main"],
-      "includes": ["stdio.h", "types.h"]
+  "expected_files": {
+    "must_exist": ["model.json", "diagram.puml"],
+    "must_not_exist": ["error.log"],
+    "file_count_in_output": 2
+  },
+  "model_validation": {
+    "required_structs": [
+      {
+        "name": "Point",
+        "fields": ["x", "y"],
+        "field_types": {"x": "int", "y": "int"}
+      }
+    ],
+    "required_functions": [
+      {
+        "name": "main",
+        "return_type": "int",
+        "parameters": []
+      }
+    ],
+    "required_includes": ["stdio.h"],
+    "total_struct_count": 1,
+    "total_function_count": 1
+  },
+  "plantuml_validation": {
+    "required_classes": [
+      {
+        "name": "Point",
+        "stereotype": "struct",
+        "visibility": "public"
+      }
+    ],
+    "required_fields_in_puml": [
+      "+ int x",
+      "+ int y"
+    ],
+    "forbidden_content": ["ERROR", "INVALID"],
+    "must_contain_text": ["@startuml", "@enduml"]
+  },
+  "console_output": {
+    "success_indicators": ["Processing completed", "Generated model.json"],
+    "forbidden_errors": ["ERROR", "FATAL", "Exception"],
+    "forbidden_warnings": [],
+    "log_level": "INFO"
+  }
+}
+```
+
+**Meaningful Input File Naming Examples:**
+- `input-simple_struct.json` - Basic structure parsing
+- `input-nested_struct.json` - Nested structure handling
+- `input-basic_generation.json` - Simple PlantUML generation
+- `input-complex_filters.json` - Complex filtering scenarios
+- `input-error_handling.json` - Error condition testing
+- `input-multipass_anonymous.json` - Multi-pass anonymous processing
+
+**Corresponding Assertion File Naming Examples:**
+- `assert-simple_struct.json` - Validation criteria for simple struct test
+- `assert-nested_struct.json` - Validation criteria for nested struct test
+- `assert-basic_generation.json` - PlantUML generation validation
+- `assert-complex_filters.json` - Filter behavior validation
+- `assert-error_handling.json` - Error condition validation
+- `assert-multipass_anonymous.json` - Multi-pass processing validation
+
+**Example assertions.json for Feature Tests:**
+```json
+{
+  "test_include_parsing": {
+    "cli_execution": {
+      "expected_exit_code": 0,
+      "should_succeed": true,
+      "max_execution_time_seconds": 15
     },
-    "plantuml_elements": {
-      "classes": ["Point"],
-      "relationships": []
+    "expected_files": {
+      "must_exist": ["model.json", "include_diagram.puml"],
+      "must_not_exist": ["error.log"]
+    },
+    "model_validation": {
+      "required_includes": ["stdio.h", "utils.h", "types.h"],
+      "required_structs": [{"name": "Data", "fields": ["value"]}],
+      "required_functions": [{"name": "main"}, {"name": "process_data"}]
     }
   },
-  "assertions": {
-    "large_function_list": ["func1", "func2", "func3"],
-    "complex_validation_data": {
-      "nested_structures": ["Point", "Rectangle", "Circle"]
-    }
-  }
-}
-```
-
-**Example data_case1.json for Model Generation:**
-```json
-{
-  "test_metadata": {
-    "description": "Pre-parsed model for transformation testing",
-    "test_type": "integration",
-    "focus": "transformation_pipeline"
-  },
-  "c2puml_config": {
-    "project_name": "test_transformation",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "transformations": {
-      "rename": {
-        "functions": {"^deprecated_(.*)": "legacy_\\1"}
-      },
-      "remove": {
-        "macros": ["LEGACY_MACRO"],
-        "includes": ["time.h"]
-      }
-    }
-  },
-  "input_model": {
-    "project_name": "test_transformation",
-    "files": {
-      "main.c": {
-        "functions": [
-          {"name": "deprecated_print_info", "return_type": "void", "parameters": []},
-          {"name": "main", "return_type": "int", "parameters": []}
-        ],
-        "macros": ["LEGACY_MACRO", "VERSION"],
-        "includes": ["stdio.h", "time.h", "config.h"]
-      }
-    }
-  },
-  "expected_results": {
-    "transformed_model": {
-      "functions": [
-        {"name": "legacy_print_info", "return_type": "void"},
-        {"name": "main", "return_type": "int"}
-      ],
-      "macros": ["VERSION"],
-      "includes": ["stdio.h", "config.h"]
-    }
-  },
-  "assertions": {
-    "transformation_validation": {
-      "removed_functions": ["deprecated_print_info"],
-      "renamed_functions": {"deprecated_print_info": "legacy_print_info"},
-      "removed_includes": ["time.h"]
+  "test_nested_includes": {
+    "cli_execution": {"expected_exit_code": 0},
+    "model_validation": {
+      "include_relationships": [
+        {"from": "main.c", "to": "utils.h"},
+        {"from": "utils.h", "to": "types.h"}
+      ]
+    },
+    "plantuml_validation": {
+      "required_relationships": [
+        {"type": "include", "from": "main.c", "to": "utils.h"}
+      ]
     }
   }
 }
 ```
 
-**Example assertions.json Structure (Option 1: Explicit Files):**
-```json
-{
-  "description": "Assertion data for Option 1 (explicit files approach) - complements input/config.json + source files",
-  
-  "expected_model_elements": {
-    "structs": ["ConfigManager", "DataProcessor", "ErrorHandler"],
-    "functions": ["main", "init_system", "process_data", "cleanup_resources"],
-    "enums": ["SystemState", "ErrorType", "LogLevel"],
-    "includes": ["stdio.h", "stdlib.h", "string.h", "config.h"]
-  },
-  
-  "expected_plantuml_elements": {
-    "classes": ["ConfigManager", "DataProcessor", "ErrorHandler"],
-    "relationships": [
-      "ConfigManager --> DataProcessor",
-      "DataProcessor --> ErrorHandler"
-    ]
-  },
-  
-  "large_validation_lists": {
-    "critical_functions": [
-      "init_system", "validate_config", "allocate_memory", "process_input",
-      "transform_data", "validate_output", "cleanup_resources", "handle_error",
-      "log_message", "format_output", "save_results", "finalize_system"
-    ]
-  },
-  
-  "transformation_validation": {
-    "should_be_removed": ["debug_print", "test_helper", "mock_function"],
-    "should_be_renamed": {
-      "old_calculate": "new_calculate_metrics",
-      "old_report": "new_generate_report"
-    }
-  }
-}
-```
-
-**Note:** This assertions.json is used with Option 1 (explicit files approach) where input/ contains config.json + source files. For Option 2 (data.json approach), all assertions are embedded within the data.json files themselves.
-
-**Benefits of Self-Contained Structure:**
-- **Isolation**: Each test has its own data, preventing cross-test interference
-- **Clarity**: Test data is co-located with test logic for easy understanding
-- **Maintainability**: Changes to one test don't affect others
-- **Versioning**: Test data and logic evolve together
-- **Debugging**: Easier to reproduce issues with self-contained test environments
-- **Clean Test Code**: Large assertion data is externalized, keeping test methods focused
-- **Unified Input Location**: All application inputs (config, source, model files) are in one place
-- **Consistent CLI Arguments**: CLI input path points to folder containing all necessary files
-- **Logical Grouping**: Configuration naturally belongs with the files it configures
-- **Flexible Assertion Data**: Tests can structure assertions.json with any naming and organization
-- **Test-Specific Validation**: Each test defines its own assertion structure and validation logic
-- **Dynamic Input Generation**: Support for data.json files allows flexible input generation for smaller test cases
-- **Multiple Test Cases**: Single test.py files can handle multiple scenarios using different data files
-
-**Input Size Guidelines:**
-
-**Use data_##.json for:**
-- Small test cases (< 50 lines of C code total)
-- Simple struct/enum definitions
-- Basic function declarations
-- Unit tests focusing on specific features
-- Tests requiring multiple similar variants
-- **Any test.py file that needs multiple or different inputs for different test methods**
-
-**Use explicit files for:**
-- Large test cases (> 50 lines of C code)
-- Complex project structures
-- Real-world code examples
-- Integration tests with multiple dependencies
-- Tests requiring detailed file organization
-- **Only when ALL test methods in the test.py file can use the same input files**
-
-**Validation Approach:**
-- **Primary:** Use `expected_results` section in data.json files - simple model and PlantUML expectations are sufficient for any modification/transformation validation
-- **Optional:** Use assertions.json only for large data lists that would clutter data.json files (rarely needed)
-
-**Key Constraint:** Each test folder can use ONE approach only:
-- **Option 1 (Explicit files):** input/ contains config.json + source files + model.json, PLUS assertions.json (all test methods share same input)
-- **Option 2 (Data.json):** input/ contains ONLY data_*.json files (each completely self-contained including assertions) - NO config.json, source files, or assertions.json
-
-**Example Scenarios:**
+#### 3.3 Complete Test Framework Usage Example
+**Priority: HIGH**
 
 ```python
-# ❌ PROBLEMATIC: This test class needs different inputs per method
-class TestParserFeatures(UnifiedTestCase):
-    def test_simple_struct_parsing(self):
-        # Needs: simple.c with basic struct
+class TestStructParsing(UnifiedTestCase):
+    """Example showing comprehensive framework usage"""
+    
+    def test_simple_struct_file_based(self):
+        """Example using file-based approach with data-driven assertions"""
+        # Load test files and assertions
+        input_path, config_path = self.input_factory.load_test_files(self.test_name)
+        assertions = self.input_factory.load_test_assertions(self.test_name)
         
-    def test_complex_nested_parsing(self):
-        # Needs: complex.c with nested structures
+        # Get output directory next to test file
+        output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name)
+        self.input_factory.ensure_output_dir_clean(output_dir)
         
-    def test_macro_expansion_parsing(self):
-        # Needs: macros.c with complex macro definitions
-```
-
-**Solution: Use data_##.json files:**
-```
-test_parser_features/
-├── test_parser_features.py
-└── input/
-    ├── data_simple.json      # Self-contained: config + source + expected results + assertions
-    ├── data_complex.json     # Self-contained: config + source + expected results + assertions
-    └── data_macros.json      # Self-contained: config + source + expected results + assertions
-```
-
-```python
-# ✅ CORRECT: Each test method gets its own input via data files
-class TestParserFeatures(UnifiedTestCase):
-    def test_simple_struct_parsing(self):
-        input_path = self.data_factory.generate_source_files_from_data(self.test_name, "data_simple.json")
+        # Execute through CLI
+        result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
         
-    def test_complex_nested_parsing(self):
-        input_path = self.data_factory.generate_source_files_from_data(self.test_name, "data_complex.json")
+        # Data-driven CLI validation
+        cli_assertions = assertions.get("cli_execution", {})
+        expected_exit_code = cli_assertions.get("expected_exit_code", 0)
+        self.assertEqual(result.exit_code, expected_exit_code, f"CLI failed: {result.stderr}")
         
-    def test_macro_expansion_parsing(self):
-        input_path = self.data_factory.generate_source_files_from_data(self.test_name, "data_macros.json")
+        if cli_assertions.get("max_execution_time_seconds"):
+            self.assertLess(result.execution_time, cli_assertions["max_execution_time_seconds"])
+        
+        # Data-driven file validation
+        file_assertions = assertions.get("expected_files", {})
+        for required_file in file_assertions.get("must_exist", []):
+            file_path = os.path.join(output_dir, required_file)
+            self.assertTrue(os.path.exists(file_path), f"Required file not found: {required_file}")
+        
+        for forbidden_file in file_assertions.get("must_not_exist", []):
+            file_path = os.path.join(output_dir, forbidden_file)
+            self.assertFalse(os.path.exists(file_path), f"Forbidden file found: {forbidden_file}")
+        
+        # Data-driven model validation
+        model_file = os.path.join(output_dir, "model.json")
+        with open(model_file, 'r') as f:
+            model = json.load(f)
+        
+        model_assertions = assertions.get("model_validation", {})
+        for struct_spec in model_assertions.get("required_structs", []):
+            self.model_validator.assert_model_struct_exists(model, struct_spec["name"])
+            if "fields" in struct_spec:
+                self.model_validator.assert_model_struct_fields(model, struct_spec["name"], struct_spec["fields"])
+        
+        for func_spec in model_assertions.get("required_functions", []):
+            self.model_validator.assert_model_function_exists(model, func_spec["name"])
+        
+        # Data-driven PlantUML validation
+        puml_files = glob.glob(os.path.join(output_dir, "*.puml"))
+        self.assertGreater(len(puml_files), 0, "No PlantUML files generated")
+        
+        with open(puml_files[0], 'r') as f:
+            puml_content = f.read()
+        
+        puml_assertions = assertions.get("plantuml_validation", {})
+        for class_spec in puml_assertions.get("required_classes", []):
+            self.puml_validator.assert_puml_class_exists(puml_content, class_spec["name"], class_spec.get("stereotype"))
+        
+        for required_text in puml_assertions.get("required_fields_in_puml", []):
+            self.puml_validator.assert_puml_contains(puml_content, required_text)
+        
+    def test_multiple_structs_with_input_json(self):
+        """Example using input JSON approach with separate assertion file"""
+        # Load input-###.json scenario and corresponding assertions
+        input_path, config_path = self.input_factory.load_input_json_scenario(
+            self.test_name, "input-multiple_structs.json"
+        )
+        assertions = self.input_factory.load_scenario_assertions(self.test_name, "input-multiple_structs.json")
+        
+        # Get output directory for this scenario
+        output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name, "input-multiple_structs.json")
+        self.input_factory.ensure_output_dir_clean(output_dir)
+        
+        # Execute and validate
+        result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
+        
+        # Data-driven CLI validation
+        cli_assertions = assertions.get("cli_execution", {})
+        expected_exit_code = cli_assertions.get("expected_exit_code", 0)
+        self.assertEqual(result.exit_code, expected_exit_code, f"CLI failed: {result.stderr}")
+        
+        # Data-driven model validation
+        model_file = os.path.join(output_dir, "model.json")
+        with open(model_file, 'r') as f:
+            model = json.load(f)
+        
+        # Use assertions from assert-multiple_structs.json
+        model_assertions = assertions.get("model_validation", {})
+        for struct_spec in model_assertions.get("required_structs", []):
+            self.model_validator.assert_model_struct_exists(model, struct_spec["name"])
+        
+        # Validate total counts if specified
+        if "total_struct_count" in model_assertions:
+            self.model_validator.assert_model_element_count(model, "structs", model_assertions["total_struct_count"])
+        
+    def test_error_handling_scenario(self):
+        """Example testing error conditions"""
+        # Create invalid source files manually
+        temp_dir = self.create_temp_dir()
+        
+        # Create invalid C source
+        invalid_c_content = "struct InvalidStruct { invalid syntax here"
+        source_file = os.path.join(temp_dir, "invalid.c")
+        with open(source_file, 'w') as f:
+            f.write(invalid_c_content)
+        
+        # Create basic config
+        config_data = {
+            "project_name": "test_invalid",
+            "source_folders": ["."],
+            "output_dir": "./output"
+        }
+        config_file = os.path.join(temp_dir, "config.json")
+        with open(config_file, 'w') as f:
+            json.dump(config_data, f)
+        
+        # Execute expecting failure
+        output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name)
+        result = self.executor.run_expecting_failure(temp_dir, config_file, output_dir)
+        
+        # Validate failure
+        self.assertNotEqual(result.exit_code, 0, "Expected CLI to fail but it succeeded")
+        self.assertIn("syntax error", result.stderr)
+        
+    def test_performance_monitoring(self):
+        """Example with performance testing"""
+        input_path, config_path = self.input_factory.load_test_files(self.test_name)
+        
+        # Execute with timing
+        output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name)
+        result = self.executor.run_with_timing(input_path, config_path, output_dir)
+        
+        self.assertCLISuccess(result)
+        self.assertLess(result.total_time, 5.0, "Execution took too long")
+        self.assertLess(result.parse_time, 2.0, "Parsing took too long")
+        
+    def test_complex_validation_with_custom_logic(self):
+        """Example showing custom validation combined with framework"""
+        input_path, config_path = self.input_factory.load_test_files(self.test_name)
+        
+        output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name)
+        result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
+        self.assertCLISuccess(result)
+        
+        # Framework validations
+        model_file = os.path.join(output_dir, "model.json")
+        self.assertTrue(os.path.exists(model_file), "model.json not generated")
+        
+        with open(model_file, 'r') as f:
+            model = json.load(f)
+        
+        # Validate PlantUML generation
+        puml_files = glob.glob(os.path.join(output_dir, "*.puml"))
+        self.assertGreater(len(puml_files), 0, "No PlantUML files generated")
+        
+        # Custom validation logic
+        with open(puml_files[0], 'r') as f:
+            puml_content = f.read()
+        self._validate_specific_business_logic(model, puml_content)
+        
+        # Advanced file validations
+        model_file = os.path.join(output_dir, "model.json")
+        self.file_validator.assert_json_valid(model_file)
+        self.file_validator.assert_file_valid_utf8(model_file)
+        self.file_validator.assert_file_no_trailing_whitespace(model_file)
+        
+        # Test configuration behavior instead of structure validation
+        # Example: Test that file filtering configuration works by creating test scenario manually
+        temp_dir = self.create_temp_dir()
+        
+        # Create test files 
+        test_files = {
+            "main.c": "int main() { return 0; }",
+            "utils.c": "void utils() {}",
+            "test.test.c": "// This should be excluded"
+        }
+        
+        for filename, content in test_files.items():
+            with open(os.path.join(temp_dir, filename), 'w') as f:
+                f.write(content)
+        
+        # Create config with filters
+        config_with_filters = {
+            "project_name": "test_filters",
+            "source_folders": ["."],
+            "file_filters": {"exclude": ["*.test.c"]}
+        }
+        
+        config_file = os.path.join(temp_dir, "config.json")
+        with open(config_file, 'w') as f:
+            json.dump(config_with_filters, f)
+        
+        # Test that filtering works
+        filter_output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name, "filter_test")
+        result = self.executor.run_full_pipeline(temp_dir, config_file, filter_output_dir)
+        self.assertEqual(result.exit_code, 0)
+        
+        # Validate that only 2 files were processed (excluding *.test.c)
+        model_file = os.path.join(filter_output_dir, "model.json")
+        with open(model_file, 'r') as f:
+            model = json.load(f)
+        self.model_validator.assert_model_file_count(model, 2)
+        
+    def _validate_specific_business_logic(self, model: dict, puml_content: str):
+        """Custom validation for complex scenarios"""
+        # Pattern matching for specific naming conventions
+        struct_names = self.model_validator.assert_model_structs_match_pattern(
+            model, r"^[A-Z][a-zA-Z0-9]*$"
+        )
+        self.assertGreater(len(struct_names), 0, "No properly named structs found")
+        
+        # Complex PlantUML validation
+        self.puml_validator.assert_puml_proper_stereotypes(puml_content)
+        self.puml_validator.assert_puml_no_duplicate_elements(puml_content)
+            
+        # Business rule: All structs should have at least one field
+        for struct_name in struct_names:
+            # This would be a custom validation method you implement
+            self._assert_struct_has_fields(model, struct_name)
+    
+    def test_using_subtest_for_multiple_scenarios(self):
+        """Example using subTest for multiple input files"""
+        input_files = self.input_factory.list_input_json_files(self.test_name)
+        
+        for input_file in input_files:
+            with self.subTest(scenario=input_file):
+                # Get scenario-specific output directory (e.g., output-simple_struct/)
+                output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name, input_file)
+                self.input_factory.ensure_output_dir_clean(output_dir)
+                
+                # Load input-###.json file and create temporary files
+                input_path, config_path, expected_results = self.input_factory.load_input_json_scenario(
+                    self.test_name, input_file
+                )
+                
+                result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
+                self.assertCLISuccess(result, f"Failed for scenario: {input_file}")
+                
+                        # Data-driven validation using assertion files
+        
+        # Use assertions specific to this input file
+        model_assertions = assertions.get("model_validation", {})
+        if model_assertions:
+            model_file = os.path.join(output_dir, "model.json")
+            with open(model_file, 'r') as f:
+                model = json.load(f)
+            
+            for struct_spec in model_assertions.get("required_structs", []):
+                self.model_validator.assert_model_struct_exists(model, struct_spec["name"])
+            
+            for func_spec in model_assertions.get("required_functions", []):
+                self.model_validator.assert_model_function_exists(model, func_spec["name"])
 ```
 
 ### 4. Result Validation Framework
 
-#### 4.1 Generic vs Custom Validation Strategy
+#### 4.1 Comprehensive Validation Framework
 **Priority: HIGH**
 
-The validation framework provides two approaches for test validation:
-
-**🔧 Generic Framework Validation (Recommended for most cases):**
-- Use `ModelValidator`, `PlantUMLValidator`, `OutputValidator`
-- Covers 90% of common validation scenarios
-- Consistent, reusable, and maintainable
-- Well-tested validation logic
-
-**🎯 Custom Validation (For complex edge cases):**
-- Implement custom validation methods within test cases
-- Handle complex algorithms, edge cases, or domain-specific validation
-- Use when generic framework limitations are encountered
-- Combine with generic validation for comprehensive coverage
-
-#### 4.2 Model Validation
-**Priority: HIGH**
-
-Structured validation of generated models:
-
-**Example Usage:**
-```python
-def test_transformations_via_normal_model_validation(self):
-    # Execute pipeline with transformations configured in input/config.json
-    input_path = self.data_factory.load_test_input(self.test_name)
-    config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
-    result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
-    self.assertEqual(result.exit_code, 0)
-    
-    # Load the final model (after transformations have been applied)
-    with open(f"{self.output_dir}/model.json", 'r') as f:
-        model = json.load(f)
-    
-    # Validate model structure (standard validation)
-    self.model_validator.assert_model_structure_valid(model)
-    self.model_validator.assert_model_files_parsed(model, ["main.c", "utils.h"])
-    
-    # Validate transformation results using normal model assertions
-    # ✅ Renamed function should exist in final model
-    self.model_validator.assert_model_function_exists(model, "legacy_print_info")
-    
-    # ❌ Original function should NOT exist in final model
-    self.model_validator.assert_model_function_not_exists(model, "deprecated_print_info")
-    
-    # ❌ Removed elements should NOT exist in final model
-    self.model_validator.assert_model_function_not_exists(model, "test_debug_function")
-    self.model_validator.assert_model_macro_not_exists(model, "LEGACY_MACRO")
-    
-    # ✅ Preserved elements should still exist
-    expected_includes = ["stdio.h", "sample.h", "config.h"]
-    self.model_validator.assert_model_includes_exist(model, expected_includes)
-    
-    # ❌ Removed includes should NOT exist
-    self.model_validator.assert_model_include_not_exists(model, "time.h")  # Removed by config
-    
-    # Validate file content reflects transformations
-    expected_model_lines = [
-        '"name": "legacy_print_info"',  # Renamed function appears
-        '"includes": ["stdio.h", "sample.h", "config.h"]'  # Expected includes
-    ]
-    forbidden_model_lines = [
-        '"deprecated_print_info"',  # Original function name should not appear
-        '"test_debug_function"',    # Removed function should not appear
-        '"LEGACY_MACRO"',           # Removed macro should not appear
-        '"time.h"'                  # Removed include should not appear
-    ]
-    
-    model_file_path = f"{self.output_dir}/model.json"
-    self.model_validator.assert_model_file_contains_lines(model_file_path, expected_model_lines)
-    self.model_validator.assert_model_file_not_contains_lines(model_file_path, forbidden_model_lines)
-```
-
+##### ModelValidator - Model Structure and Content Validation
 ```python
 class ModelValidator:
-    # Model structure and content validation
-    def assert_model_structure_valid(self, model: dict)
-    def assert_model_files_parsed(self, model: dict, expected_files: list)
-    def assert_model_file_count(self, model: dict, expected_count: int)
-    def assert_model_project_name(self, model: dict, expected_name: str)
+    """Validates c2puml generated model.json files and content"""
     
-    # Model element existence validation
-    def assert_model_struct_exists(self, model: dict, struct_name: str)
-    def assert_model_struct_not_exists(self, model: dict, struct_name: str)
-    def assert_model_function_exists(self, model: dict, func_name: str)
-    def assert_model_function_not_exists(self, model: dict, func_name: str)
-    def assert_model_function_declared(self, model: dict, func_name: str)
-    def assert_model_enum_exists(self, model: dict, enum_name: str)
-    def assert_model_enum_not_exists(self, model: dict, enum_name: str)
-    def assert_model_typedef_exists(self, model: dict, typedef_name: str)
-    def assert_model_typedef_not_exists(self, model: dict, typedef_name: str)
-    def assert_model_global_exists(self, model: dict, global_name: str)
-    def assert_model_global_not_exists(self, model: dict, global_name: str)
-    def assert_model_macro_exists(self, model: dict, macro_name: str)
-    def assert_model_macro_not_exists(self, model: dict, macro_name: str)
+    # Core Model Structure Validation
+    def assert_model_structure_valid(self, model: dict) -> None
+    def assert_model_schema_compliant(self, model: dict) -> None
+    def assert_model_project_name(self, model: dict, expected_name: str) -> None
+    def assert_model_file_count(self, model: dict, expected_count: int) -> None
+    def assert_model_files_parsed(self, model: dict, expected_files: List[str]) -> None
     
-    # Model includes validation
-    def assert_model_includes_exist(self, model: dict, expected_includes: list)
-    def assert_model_include_exists(self, model: dict, include_name: str)
-    def assert_model_include_not_exists(self, model: dict, include_name: str)
+    # Element Existence Validation
+    def assert_model_function_exists(self, model: dict, func_name: str) -> None
+    def assert_model_function_not_exists(self, model: dict, func_name: str) -> None
+    def assert_model_struct_exists(self, model: dict, struct_name: str) -> None
+    def assert_model_struct_not_exists(self, model: dict, struct_name: str) -> None
+    def assert_model_enum_exists(self, model: dict, enum_name: str) -> None
+    def assert_model_enum_not_exists(self, model: dict, enum_name: str) -> None
+    def assert_model_typedef_exists(self, model: dict, typedef_name: str) -> None
+    def assert_model_typedef_not_exists(self, model: dict, typedef_name: str) -> None
+    def assert_model_global_exists(self, model: dict, global_name: str) -> None
+    def assert_model_global_not_exists(self, model: dict, global_name: str) -> None
+    def assert_model_macro_exists(self, model: dict, macro_name: str) -> None
+    def assert_model_macro_not_exists(self, model: dict, macro_name: str) -> None
     
-    # Model relationship validation
-    def assert_model_include_relationship(self, model: dict, source: str, target: str)
-    def assert_model_include_relationships_exist(self, model: dict, expected_relations: list)
-    def assert_model_typedef_relationship(self, model: dict, typedef: str, original: str)
+    # Include and Relationship Validation
+    def assert_model_includes_exist(self, model: dict, expected_includes: List[str]) -> None
+    def assert_model_include_exists(self, model: dict, include_name: str) -> None
+    def assert_model_include_not_exists(self, model: dict, include_name: str) -> None
+    def assert_model_include_relationship(self, model: dict, source: str, target: str) -> None
+    def assert_model_include_relationships_exist(self, model: dict, expected_relations: List[dict]) -> None
     
-    # Model file validation
-    def assert_model_file_contains_lines(self, model_file_path: str, expected_lines: list)
-    def assert_model_file_not_contains_lines(self, model_file_path: str, forbidden_lines: list)
-    def assert_model_file_structure_valid(self, model_file_path: str)
-    def assert_model_json_syntax_valid(self, model_file_path: str)
+    # Advanced Element Validation
+    def assert_model_function_signature(self, model: dict, func_name: str, return_type: str, params: List[str]) -> None
+    def assert_model_struct_fields(self, model: dict, struct_name: str, expected_fields: List[str]) -> None
+    def assert_model_enum_values(self, model: dict, enum_name: str, expected_values: List[str]) -> None
+    def assert_model_macro_definition(self, model: dict, macro_name: str, expected_value: str) -> None
+    
+    # File Content Validation
+    def assert_model_file_contains_lines(self, model_file_path: str, expected_lines: List[str]) -> None
+    def assert_model_file_not_contains_lines(self, model_file_path: str, forbidden_lines: List[str]) -> None
+    def assert_model_json_syntax_valid(self, model_file_path: str) -> None
+    def assert_model_element_count(self, model: dict, element_type: str, expected_count: int) -> None
+    
+    # Pattern Matching Validation
+    def assert_model_functions_match_pattern(self, model: dict, pattern: str) -> List[str]
+    def assert_model_structs_match_pattern(self, model: dict, pattern: str) -> List[str]
+    def assert_model_includes_match_pattern(self, model: dict, pattern: str) -> List[str]
 ```
 
-#### 4.3 PlantUML Validation
-**Priority: HIGH**
-
-Validation of generated PlantUML files:
-
+##### PlantUMLValidator - PlantUML File and Content Validation
 ```python
 class PlantUMLValidator:
-    # PlantUML file validation
-    def assert_puml_file_exists(self, output_dir: str, filename: str)
-    def assert_puml_file_count(self, output_dir: str, expected_count: int)
-    def assert_puml_file_syntax_valid(self, puml_content: str)
+    """Validates generated PlantUML files and diagram content"""
     
-    # PlantUML content validation
-    def assert_puml_contains(self, puml_content: str, expected_text: str)
-    def assert_puml_not_contains(self, puml_content: str, forbidden_text: str)
-    def assert_puml_contains_lines(self, puml_content: str, expected_lines: list)
-    def assert_puml_not_contains_lines(self, puml_content: str, forbidden_lines: list)
-    def assert_puml_class_exists(self, puml_content: str, class_name: str, stereotype: str)
-    def assert_puml_class_count(self, puml_content: str, expected_count: int)
+    # File Structure Validation
+    def assert_puml_file_exists(self, output_dir: str, filename: str) -> None
+    def assert_puml_file_count(self, output_dir: str, expected_count: int) -> None
+    def assert_puml_file_syntax_valid(self, puml_content: str) -> None
+    def assert_puml_start_end_tags(self, puml_content: str) -> None
     
-    # PlantUML relationship validation
-    def assert_puml_relationship(self, puml_content: str, source: str, target: str, rel_type: str)
-    def assert_puml_relationship_count(self, puml_content: str, expected_count: int)
-    def assert_puml_includes_arrow(self, puml_content: str, source: str, target: str)
-    def assert_puml_declares_relationship(self, puml_content: str, file: str, typedef: str)
+    # Content Validation
+    def assert_puml_contains(self, puml_content: str, expected_text: str) -> None
+    def assert_puml_not_contains(self, puml_content: str, forbidden_text: str) -> None
+    def assert_puml_contains_lines(self, puml_content: str, expected_lines: List[str]) -> None
+    def assert_puml_not_contains_lines(self, puml_content: str, forbidden_lines: List[str]) -> None
+    def assert_puml_line_count(self, puml_content: str, expected_count: int) -> None
     
-    # PlantUML formatting validation
-    def assert_puml_formatting_compliant(self, puml_content: str)
-    def assert_puml_no_duplicate_elements(self, puml_content: str)
-    def assert_puml_proper_stereotypes(self, puml_content: str)
-    def assert_puml_color_scheme(self, puml_content: str)
-    def assert_puml_visibility_notation(self, puml_content: str)
+    # Element Validation
+    def assert_puml_class_exists(self, puml_content: str, class_name: str, stereotype: str = None) -> None
+    def assert_puml_class_not_exists(self, puml_content: str, class_name: str) -> None
+    def assert_puml_class_count(self, puml_content: str, expected_count: int) -> None
+    def assert_puml_method_exists(self, puml_content: str, class_name: str, method_name: str) -> None
+    def assert_puml_field_exists(self, puml_content: str, class_name: str, field_name: str) -> None
     
-    # PlantUML structure validation
-    def assert_puml_start_end_tags(self, puml_content: str)
-    def assert_puml_proper_grouping(self, puml_content: str)
-    def assert_puml_no_syntax_errors(self, puml_content: str)
-
-
-class OutputValidator:
-    # Configuration file validation
-    def assert_config_file_exists(self, config_path: str)
-    def assert_config_json_valid(self, config_content: str)
-    def assert_config_schema_valid(self, config: dict)
+    # Relationship Validation
+    def assert_puml_relationship(self, puml_content: str, source: str, target: str, rel_type: str) -> None
+    def assert_puml_relationship_count(self, puml_content: str, expected_count: int) -> None
+    def assert_puml_includes_arrow(self, puml_content: str, source: str, target: str) -> None
+    def assert_puml_declares_relationship(self, puml_content: str, file: str, typedef: str) -> None
+    def assert_puml_no_duplicate_relationships(self, puml_content: str) -> None
     
-    # Output directory validation
-    def assert_output_dir_exists(self, output_path: str)
-    def assert_output_dir_structure(self, output_path: str, expected_structure: dict)
-    def assert_output_file_count(self, output_path: str, expected_count: int)
+    # Formatting and Style Validation
+    def assert_puml_formatting_compliant(self, puml_content: str) -> None
+    def assert_puml_proper_stereotypes(self, puml_content: str) -> None
+    def assert_puml_color_scheme(self, puml_content: str, expected_colors: dict) -> None
+    def assert_puml_visibility_notation(self, puml_content: str) -> None
+    def assert_puml_proper_grouping(self, puml_content: str) -> None
+    def assert_puml_no_syntax_errors(self, puml_content: str) -> None
+    def assert_puml_no_duplicate_elements(self, puml_content: str) -> None
     
-    # File content validation
-    def assert_file_exists(self, file_path: str)
-    def assert_file_contains(self, file_path: str, expected_text: str)
-    def assert_file_not_contains(self, file_path: str, forbidden_text: str)
-    def assert_file_contains_lines(self, file_path: str, expected_lines: list)
-    def assert_file_not_contains_lines(self, file_path: str, forbidden_lines: list)
-    def assert_file_line_count(self, file_path: str, expected_count: int)
-    def assert_file_empty(self, file_path: str)
-    def assert_file_not_empty(self, file_path: str)
-    
-    # Log validation
-    def assert_log_contains(self, log_content: str, expected_message: str)
-    def assert_log_contains_lines(self, log_content: str, expected_lines: list)
-    def assert_log_no_errors(self, log_content: str)
-    def assert_log_warning_count(self, log_content: str, expected_count: int)
-    def assert_log_execution_time(self, log_content: str, max_seconds: int)
-    
-    # Performance validation
-    def assert_execution_time_under(self, actual_time: float, max_time: float)
-    def assert_memory_usage_under(self, actual_memory: int, max_memory: int)
-    def assert_file_size_under(self, file_path: str, max_size: int)
-
-
-class CustomValidationMixin:
-    """Mixin for tests that need custom validation beyond the generic framework"""
-    
-    def validate_with_custom_logic(self, model: dict, puml_files: list, test_specific_checks: callable):
-        """
-        Template method for combining generic validation with custom edge case validation.
-        
-        Args:
-            model: Parsed model.json content
-            puml_files: List of generated PlantUML files
-            test_specific_checks: Callable that performs test-specific validation
-        """
-        # First run standard generic validations
-        self.model_validator.assert_model_structure_valid(model)
-        
-        for puml_file in puml_files:
-            self.puml_validator.assert_puml_file_syntax_valid(puml_file)
-        
-        # Then run custom validation logic
-        test_specific_checks(model, puml_files)
-    
-    def build_include_dependency_graph(self, model: dict) -> dict:
-        """Helper method to build include dependency graph for custom analysis"""
-        include_graph = {}
-        for filename, file_data in model['files'].items():
-            include_graph[filename] = file_data.get('includes', [])
-        return include_graph
-    
-    def extract_elements_by_pattern(self, model: dict, element_type: str, pattern: str) -> list:
-        """Helper method to extract elements matching specific patterns"""
-        import re
-        elements = []
-        regex = re.compile(pattern)
-        
-        for file_data in model['files'].values():
-            for element in file_data.get(element_type, []):
-                element_name = element if isinstance(element, str) else element.get('name', '')
-                if regex.match(element_name):
-                    elements.append(element)
-        return elements
+    # Advanced Validation
+    def assert_puml_diagram_title(self, puml_content: str, expected_title: str) -> None
+    def assert_puml_namespace_usage(self, puml_content: str, expected_namespaces: List[str]) -> None
+    def assert_puml_note_exists(self, puml_content: str, note_text: str) -> None
 ```
 
-#### 4.4 Custom Validation for Edge Cases
-**Priority: MEDIUM**
-
-When the generic validation framework cannot handle specific edge cases, implement custom validation logic:
-
-**Common Edge Cases Requiring Custom Validation:**
-- **Complex Anonymous Structure Hierarchies**: Multi-level nested anonymous structures with complex naming
-- **Circular Include Detection**: Custom algorithms to detect and validate circular dependencies
-- **Conditional Compilation Logic**: Macro expansion consistency and preprocessor directive handling
-- **Complex Transformation Patterns**: Multi-step transformations with interdependencies
-- **Performance Characteristics**: Memory usage, parsing time, or output file size validation
-- **Domain-Specific Algorithms**: Custom C language feature handling or specialized parsing logic
-
-**Example Custom Validation Pattern:**
+##### OutputValidator - General Output and File Validation
 ```python
-class TestComplexFeature(UnifiedTestCase, CustomValidationMixin):
-    def test_complex_edge_case(self):
-        # 1. Standard CLI execution
-        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
-        self.assertEqual(result.exit_code, 0)
-        
-        # 2. Load generated files
-        with open(f"{self.output_dir}/model.json", 'r') as f:
-            model = json.load(f)
-        puml_files = glob.glob(f"{self.output_dir}/*.puml")
-        
-        # 3. Generic validation first
-        self.model_validator.assert_model_structure_valid(model)
-        for puml_file in puml_files:
-            self.puml_validator.assert_puml_file_syntax_valid(puml_file)
-        
-        # 4. Custom validation for edge cases
-        self._validate_complex_algorithm_specific_behavior(model, puml_files)
+class OutputValidator:
+    """Validates general output files, directories, and content"""
     
-    def _validate_complex_algorithm_specific_behavior(self, model: dict, puml_files: list):
-        # Custom validation logic that generic framework cannot handle
-        # Example: validate complex anonymous struct naming patterns
-        anonymous_structs = self.extract_elements_by_pattern(
-            model, 'structs', r'.*Container_.*_config_.*'
-        )
-        self.assertGreater(len(anonymous_structs), 0, "Complex anonymous patterns not found")
-        
-        # Example: validate custom include dependency resolution
-        include_graph = self.build_include_dependency_graph(model)
-        self._assert_no_circular_dependencies(include_graph)
+    # Directory and File System Validation
+    def assert_output_dir_exists(self, output_path: str) -> None
+    def assert_output_dir_structure(self, output_path: str, expected_structure: dict) -> None
+    def assert_output_file_count(self, output_path: str, expected_count: int) -> None
+    def assert_file_exists(self, file_path: str) -> None
+    def assert_file_not_exists(self, file_path: str) -> None
+    def assert_directory_empty(self, dir_path: str) -> None
+    def assert_directory_not_empty(self, dir_path: str) -> None
+    
+    # File Content Validation
+    def assert_file_contains(self, file_path: str, expected_text: str) -> None
+    def assert_file_not_contains(self, file_path: str, forbidden_text: str) -> None
+    def assert_file_contains_lines(self, file_path: str, expected_lines: List[str]) -> None
+    def assert_file_not_contains_lines(self, file_path: str, forbidden_lines: List[str]) -> None
+    def assert_file_line_count(self, file_path: str, expected_count: int) -> None
+    def assert_file_empty(self, file_path: str) -> None
+    def assert_file_not_empty(self, file_path: str) -> None
+    def assert_file_size_under(self, file_path: str, max_size: int) -> None
+    def assert_file_encoding(self, file_path: str, expected_encoding: str) -> None
+    
+    # Pattern Matching
+    def assert_file_matches_pattern(self, file_path: str, pattern: str) -> None
+    def assert_file_not_matches_pattern(self, file_path: str, pattern: str) -> None
+    def assert_files_match_glob(self, dir_path: str, glob_pattern: str, expected_count: int) -> None
+    
+    # Log and Output Validation
+    def assert_log_contains(self, log_content: str, expected_message: str) -> None
+    def assert_log_contains_lines(self, log_content: str, expected_lines: List[str]) -> None
+    def assert_log_no_errors(self, log_content: str) -> None
+    def assert_log_no_warnings(self, log_content: str) -> None
+    def assert_log_error_count(self, log_content: str, expected_count: int) -> None
+    def assert_log_warning_count(self, log_content: str, expected_count: int) -> None
+    def assert_log_execution_time(self, log_content: str, max_seconds: int) -> None
+    def assert_log_level(self, log_content: str, expected_level: str) -> None
 ```
 
-#### 4.5 Example Test Validation
-**Priority: MEDIUM**
-
-The `tests/example/` directory should be preserved with its current structure but enhanced with a standardized expectations file. **Note**: The example test has a different structure than other tests:
-
-**Example Test Structure (preserved as-is):**
+##### FileValidator - Advanced File Operations and Validation
+```python
+class FileValidator:
+    """Advanced file validation and manipulation utilities"""
+    
+    # File Comparison
+    def assert_files_equal(self, file1_path: str, file2_path: str) -> None
+    def assert_files_not_equal(self, file1_path: str, file2_path: str) -> None
+    def assert_file_matches_template(self, file_path: str, template_path: str, variables: dict) -> None
+    
+    # JSON File Validation
+    def assert_json_valid(self, json_file_path: str) -> None
+    def assert_json_schema_valid(self, json_file_path: str, schema: dict) -> None
+    def assert_json_contains_key(self, json_file_path: str, key_path: str) -> None
+    def assert_json_value_equals(self, json_file_path: str, key_path: str, expected_value: any) -> None
+    
+    # Advanced Content Validation
+    def assert_file_valid_utf8(self, file_path: str) -> None
+    def assert_file_no_trailing_whitespace(self, file_path: str) -> None
+    def assert_file_unix_line_endings(self, file_path: str) -> None
+    def assert_file_max_line_length(self, file_path: str, max_length: int) -> None
+    
+    # Performance Validation
+    def assert_execution_time_under(self, actual_time: float, max_time: float) -> None
+    def assert_memory_usage_under(self, actual_memory: int, max_memory: int) -> None
+    def assert_file_creation_time_recent(self, file_path: str, max_age_seconds: int) -> None
 ```
-tests/example/
-├── source/             # C/C++ source files (different from other tests' input/)
-├── config.json         # Existing configuration (different from test-specific structure)
-├── test-example.py     # Example workflow test
-└── test-example.json   # NEW - Expected outputs specification
-```
 
-**Proposed test-example.json for validation:**
-```json
-// tests/example/test-example.json
-{
-  "description": "Expected outputs for example project test",
-  "note": "This test uses source/ folder with config.json at root level, unlike other tests that use input/ folder with config.json inside input/",
-  "model_expectations": {
-    "files_count": 3,
-    "required_files": ["sample.c", "sample.h", "config.h"],
-    "structs": ["Point", "Rectangle", "User"],
-    "functions": ["main", "calculate_area", "init_config", "legacy_print_info"],
-    "enums": ["Color", "Status"],
-    "typedefs": ["int32_t", "point_t"],
-    "includes": ["stdio.h", "stdlib.h", "sample.h", "config.h"],
-    "include_relations": [
-      {"source": "sample.c", "target": "stdio.h"},
-      {"source": "sample.c", "target": "sample.h"},
-      {"source": "sample.h", "target": "config.h"}
-    ],
-    "forbidden_elements": ["deprecated_print_info", "test_debug_function", "LEGACY_MACRO"]
-  },
-  "puml_expectations": {
-    "generated_files": ["sample.puml"],
-    "required_classes": [
-      {"name": "sample", "stereotype": "source"},
-      {"name": "sample.h", "stereotype": "header"},
-      {"name": "Point", "stereotype": "struct"}
-    ],
-    "required_relationships": [
-      {"source": "SAMPLE", "target": "HEADER_SAMPLE", "type": "include"}
-    ],
-    "required_content_lines": [
-      "class \"sample\" as SAMPLE <<source>> #LightBlue",
-      "+ void legacy_print_info()",
-      "class \"Point\" as TYPEDEF_POINT <<struct>> #LightYellow"
-    ],
-    "forbidden_content_lines": [
-      "deprecated_print_info",
-      "test_debug_function",
-      "LEGACY_MACRO"
-    ]
-  }
-}
-```
+##### CLI Behavior Validation
+
 
 ### 5. Test Organization and Refactoring
 
@@ -1015,392 +1012,45 @@ Reorganize 58 test files into clear categories with self-contained test folders:
 tests/
 ├── framework/           # New unified testing framework
 ├── unit/               # Refactored unit tests (public API only)
-│   ├── test_parsing/              # Self-contained test folder
-│   │   ├── test_parsing.py        # Test implementation
-│   │   ├── input/                 # All test input files
-│   │   │   ├── config.json        # Test configuration
-│   │   │   ├── main.c             # C/C++ source files
-│   │   │   └── utils.h            # Header files
-│   │   └── assertions.json        # Optional: Large assertion data
-│   ├── test_transformation/       # Self-contained test folder
-│   │   ├── test_transformation.py # Test implementation
-│   │   ├── input/                 # All test input files
-│   │   │   ├── config.json        # Test configuration
-│   │   │   └── model.json         # Pre-parsed model for transformation tests
-│   │   └── assertions.json        # Optional: Large assertion data
-│   ├── test_generation/           # Self-contained test folder
-│   │   ├── test_generation.py     # Test implementation
-│   │   ├── input/                 # All test input files
-│   │   │   ├── config.json        # Test configuration
-│   │   │   └── model.json         # Pre-parsed model for generation tests
-│   │   └── assertions.json        # Optional: Large assertion data
-│   └── test_configuration/        # Self-contained test folder
-│       ├── test_configuration.py  # Test implementation
-│       ├── input/                 # All test input files
-│       │   └── config.json        # Test configuration to validate
-│       └── assertions.json        # Optional: Large assertion data
-├── feature/            # Refactored feature tests
-│   ├── test_full_workflow/        # Self-contained test folder
-│   │   ├── test_full_workflow.py  # Test implementation
-│   │   ├── input/                 # All test input files
-│   │   │   ├── config.json        # Test configuration
-│   │   │   ├── main.c             # C/C++ source files
-│   │   │   ├── utils.h            # Header files
-│   │   │   └── subdir/            # Nested directories if needed
-│   │   └── assertions.json        # Optional: Large assertion data
-│   ├── test_include_processing/   # Self-contained test folder
-│   │   ├── test_include_processing.py # Test implementation
-│   │   ├── input/                 # All test input files
-│   │   │   ├── config.json        # Test configuration
-│   │   │   ├── main.c             # C/C++ source files
-│   │   │   └── includes/          # Include hierarchy
-│   │   └── assertions.json        # Optional: Large assertion data
-│   └── test_transformations/      # Self-contained test folder
-│       ├── test_transformations.py # Test implementation
-│       ├── input/                 # All test input files
-│       │   ├── config.json        # Test configuration with transformations
-│       │   ├── main.c             # C/C++ source files
-│       │   └── headers/           # Header files
-│       └── assertions.json        # Optional: Large assertion data
+│   ├── test_parsing/   # Self-contained test folder
+│   ├── test_transformation/
+│   └── test_generation/
+├── feature/            # Refactored feature tests (ALWAYS use explicit files)
+│   ├── test_full_workflow/
+│   ├── test_include_processing/
+│   └── test_transformations/
 ├── integration/        # Integration tests
-│   ├── test_real_projects/        # Self-contained test folder
-│   │   ├── test_real_projects.py  # Test implementation
-│   │   ├── input/                 # All test input files
-│   │   │   ├── config.json        # Test configuration
-│   │   │   └── realistic_project/ # Real C/C++ project structure
-│   │   │       ├── src/           # Source files
-│   │   │       ├── include/       # Header files
-│   │   │       └── lib/           # Library files
-│   │   └── assertions.json        # Optional: Large assertion data
-│   └── test_performance/          # Self-contained test folder
-│       ├── test_performance.py    # Test implementation
-│       ├── input/                 # All test input files
-│       │   ├── config.json        # Test configuration
-│       │   └── large_project/     # Large C/C++ project for performance testing
-│       └── assertions.json        # Optional: Large assertion data
+│   ├── test_real_projects/
+│   └── test_performance/
 └── example/            # Keep existing example test (preserved as-is)
-    ├── source/         # Example C/C++ source files
-    ├── config.json     # Example configuration
-    ├── test-example.py # Example workflow test
-    └── test-example.json # Expected outputs specification
 ```
 
-### 6. Boundary Separation and Component Isolation
-
-#### 6.1 Test-Application Boundaries
-**Priority: HIGH**
-
-Ensure clean separation:
-- **Tests only interact with public APIs**
-- **No direct access to internal classes/functions**  
-- **No mocking of internal components**
-- **Tests validate behavior, not implementation**
-
-#### 6.2 Component Boundary Testing
-**Priority: MEDIUM**
-
-Test component integration through public interfaces:
-- Parser → Transformer → Generator pipeline
-- Configuration loading and validation
-- Error propagation and handling
-- File I/O and output organization
-
-### 7. Test Development and Verification Workflow
-
-#### 7.1 Individual Test Development Process
-**Priority: HIGH**
-
-For each test file migration, follow this workflow:
-
-```bash
-# 1. Individual test development and verification
-python -m pytest tests/unit/test_parsing/test_parsing.py -v
-
-# 2. Verify individual test passes
-# Make changes and iterate until test passes
-
-# 3. Run full test suite to ensure no regressions
-./run_all.sh
-
-# 4. Analyze run_all.sh results
-# - Check for any new failures
-# - Verify performance hasn't degraded
-# - Ensure all tests still pass
-```
-
-**Key Benefits:**
-- **Fast iteration**: Individual test execution for rapid development
-- **Regression detection**: Full suite verification catches unexpected interactions
-- **Performance monitoring**: Track execution time changes
-- **Integration validation**: Ensure changes don't break other tests
-
-#### 7.2 Continuous Verification Strategy
-**Priority: HIGH**
-
-**During Development:**
-```bash
-# Quick feedback loop for active development
-python -m pytest tests/unit/test_<name>/test_<name>.py -v --tb=short
-```
-
-**Before Committing:**
-```bash
-# Comprehensive verification before code commit
-./run_all.sh > test_results.log 2>&1
-# Review test_results.log for any issues
-```
-
-**Weekly Integration:**
-```bash
-# Full suite with performance analysis
-time ./run_all.sh
-# Compare execution times to baseline
-```
-
-### 8. Test Readability and Maintainability
-
-#### 8.1 Standardized Test Patterns
-**Priority: MEDIUM**
-
-Common patterns for all tests:
-
-```python
-class TestFeatureName(UnifiedTestCase):
-    def setUp(self):
-        super().setUp()
-        # Feature-specific setup
-    
-    def test_scenario_name(self):
-        """Clear description of what this test validates"""
-        # Arrange - Get paths to self-contained test data
-        input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
-        
-        # Act - Execute through CLI interface only
-        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
-        
-        # Assert - CLI execution validation
-        self.assertEqual(result.exit_code, 0, f"CLI execution failed: {result.stderr}")
-        self.output_validator.assert_log_no_errors(result.stdout)
-        
-        # Assert - Output file validation
-        model_file = f"{self.output_dir}/model.json"
-        main_puml_file = f"{self.output_dir}/main.puml"
-        
-        self.output_validator.assert_file_exists(model_file)
-        self.output_validator.assert_file_exists(main_puml_file)
-        
-        # Assert - Model file validation (via file content)
-        with open(model_file, 'r') as f:
-            model_content = json.load(f)
-        
-        self.model_validator.assert_model_structure_valid(model_content)
-        self.model_validator.assert_model_function_exists(model_content, "main")
-        self.model_validator.assert_model_struct_exists(model_content, "Point")
-        
-        # Assert - Include validation
-        expected_includes = ["stdio.h", "stdlib.h", "sample.h", "config.h"]
-        self.model_validator.assert_model_includes_exist(model_content, expected_includes)
-        
-        # Assert - Include relationships validation
-        expected_relations = [
-            {"source": "sample.c", "target": "stdio.h"},
-            {"source": "sample.c", "target": "sample.h"},
-            {"source": "sample.h", "target": "config.h"}
-        ]
-        self.model_validator.assert_model_include_relationships_exist(model_content, expected_relations)
-        
-        # Assert - PlantUML file validation (via file content)
-        with open(main_puml_file, 'r') as f:
-            puml_content = f.read()
-        
-        self.puml_validator.assert_puml_file_syntax_valid(puml_content)
-        self.puml_validator.assert_puml_formatting_compliant(puml_content)
-        
-        # Assert - File content validation with specific lines
-        expected_puml_lines = [
-            'class "main" as MAIN <<source>> #LightBlue',
-            'class "utils.h" as HEADER_UTILS <<header>> #LightGreen',
-            'MAIN --> HEADER_UTILS : <<include>>',
-            '+ void main()',
-            '+ struct Point',
-            '@startuml main',
-            '@enduml'
-        ]
-        self.output_validator.assert_file_contains_lines(main_puml_file, expected_puml_lines)
-    
-    def test_custom_edge_case_validation(self):
-        """Example of custom validation for complex edge cases"""
-        input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)  # Points to input/config.json
-        
-        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
-        self.assertEqual(result.exit_code, 0)
-        
-        # Standard validation using generic framework
-        model_file = f"{self.output_dir}/model.json"
-        with open(model_file, 'r') as f:
-            model_content = json.load(f)
-        
-        self.model_validator.assert_model_structure_valid(model_content)
-        
-        # Custom validation for complex edge cases that generic framework can't handle
-        self._validate_complex_anonymous_struct_hierarchy(model_content)
-        self._validate_circular_include_detection(model_content)
-        self._validate_macro_expansion_consistency(model_content)
-        
-    def _validate_complex_anonymous_struct_hierarchy(self, model: dict):
-        """Custom validation for complex anonymous struct processing"""
-        # Generic framework might not handle deeply nested anonymous structures
-        # with multiple levels and complex naming patterns
-        
-        # Find the parent struct
-        parent_struct = None
-        for file_data in model['files'].values():
-            if 'ComplexContainer' in file_data.get('structs', {}):
-                parent_struct = file_data['structs']['ComplexContainer']
-                break
-        
-        self.assertIsNotNone(parent_struct, "ComplexContainer struct not found")
-        
-        # Validate that anonymous structure extraction created proper hierarchy
-        expected_anonymous_names = [
-            'ComplexContainer_settings',
-            'ComplexContainer_settings_config',
-            'ComplexContainer_settings_config_data'
-        ]
-        
-        # Check that all levels of anonymous structures were properly extracted
-        for anonymous_name in expected_anonymous_names:
-            found = False
-            for file_data in model['files'].values():
-                if anonymous_name in file_data.get('structs', {}):
-                    found = True
-                    break
-            self.assertTrue(found, f"Anonymous struct {anonymous_name} not properly extracted")
-        
-        # Validate composition relationships exist in the model
-        if 'anonymous_relationships' in model:
-            relationships = model['anonymous_relationships']
-            self.assertIn('ComplexContainer', relationships)
-            self.assertIn('ComplexContainer_settings', relationships['ComplexContainer'])
-    
-    def _validate_circular_include_detection(self, model: dict):
-        """Custom validation for circular include detection logic"""
-        # Generic framework can't validate complex circular dependency logic
-        
-        include_graph = {}
-        
-        # Build include dependency graph from model
-        for filename, file_data in model['files'].items():
-            include_graph[filename] = file_data.get('includes', [])
-        
-        # Custom algorithm to detect circular includes
-        def has_circular_dependency(node, visited, rec_stack):
-            visited.add(node)
-            rec_stack.add(node)
-            
-            for neighbor in include_graph.get(node, []):
-                if neighbor in include_graph:  # Only check files in our project
-                    if neighbor not in visited:
-                        if has_circular_dependency(neighbor, visited, rec_stack):
-                            return True
-                    elif neighbor in rec_stack:
-                        return True
-            
-            rec_stack.remove(node)
-            return False
-        
-        # Validate no circular dependencies exist
-        visited = set()
-        for filename in include_graph:
-            if filename not in visited:
-                self.assertFalse(
-                    has_circular_dependency(filename, visited, set()),
-                    f"Circular include dependency detected involving {filename}"
-                )
-    
-    def _validate_macro_expansion_consistency(self, model: dict):
-        """Custom validation for macro expansion edge cases"""
-        # Validate that conditional compilation macros are handled correctly
-        
-        macro_definitions = {}
-        conditional_blocks = {}
-        
-        # Extract all macro definitions and conditional compilation info
-        for filename, file_data in model['files'].items():
-            macros = file_data.get('macros', [])
-            for macro in macros:
-                if isinstance(macro, dict) and 'name' in macro:
-                    macro_definitions[macro['name']] = macro.get('value', '')
-            
-            # Look for conditional compilation information (if available in model)
-            if 'conditional_compilation' in file_data:
-                conditional_blocks[filename] = file_data['conditional_compilation']
-        
-        # Custom validation: ensure DEBUG macros are consistently handled
-        if 'DEBUG' in macro_definitions:
-            # If DEBUG is defined, ensure debug functions are included
-            debug_functions = []
-            for file_data in model['files'].values():
-                for func in file_data.get('functions', []):
-                    if isinstance(func, dict) and func.get('name', '').startswith('debug_'):
-                        debug_functions.append(func['name'])
-            
-            if macro_definitions['DEBUG']:
-                self.assertGreater(len(debug_functions), 0, 
-                    "DEBUG macro defined but no debug functions found")
-            else:
-                # If DEBUG is explicitly undefined, debug functions should be filtered out
-                self.assertEqual(len(debug_functions), 0,
-                    "DEBUG macro undefined but debug functions still present")
-```
-
-#### 8.2 Documentation Standards
-**Priority: LOW**
-
-- **Clear test descriptions**: Each test explains what it validates
-- **Setup documentation**: Complex test setups are well-documented
-- **Expected behavior**: Tests clearly state expected outcomes
-- **Failure diagnostics**: Useful error messages for test failures
-
-### 9. Implementation Plan
+### 6. Implementation Plan
 
 #### Phase 1: Framework Foundation (Week 1-2)
 1. Create `tests/framework/` structure
 2. Implement `TestExecutor` with CLI interface
-3. Implement basic `TestDataFactory` with data.json support
-4. Implement extended `TestDataFactory` methods for source/model generation
-5. Implement `ResultValidator` for models and PlantUML
-6. Create `test-example.json` specification for the existing example test
-7. **Verify baseline**: Run `run_all.sh` to establish current test suite baseline
+3. Implement `TestInputFactory` with unified input management (both explicit files and input-###.json)
+4. Implement validation framework: `ModelValidator`, `PlantUMLValidator`, `OutputValidator`, `FileValidator`
+5. **Verify baseline**: Run `run_all.sh` to establish current test suite baseline
 
 #### Phase 2: Public API Migration (Week 3-4)
-1. Identify tests using internal APIs (audit all 57 files, excluding preserved example)
-2. Refactor high-priority unit tests to use CLI-only interface
-3. Create conversion utilities for existing test patterns
-4. Update example test to use new validation framework while preserving its structure
-5. **Verify migration**: Run `run_all.sh` after each test file migration to ensure no regressions
+1. Refactor high-priority unit tests to use CLI-only interface
+2. Convert appropriate tests to use input-##.json files
+3. **Verify migration**: Run `run_all.sh` after each test file migration
 
 #### Phase 3: Test Reorganization (Week 5-6)
-1. Create self-contained test folders for each test file with `input/` subdirectory and `config.json`
-2. Migrate test data into respective test folders (preserve `tests/example/` as-is)
-3. Convert appropriate small tests to use data.json for source generation
-4. Create multiple data_case*.json files for tests with multiple scenarios
-5. Update test implementations to use `TestDataFactory.load_test_input()` and `load_test_config()`
-6. Consolidate duplicate test logic and standardize naming conventions
-7. Validate example test works with new framework
-8. **Verify reorganization**: Run `run_all.sh` after test structure changes to ensure consistency
+1. Create self-contained test folders
+2. Migrate test data into respective test folders (preserve `tests/example/`)
+3. **Verify reorganization**: Run `run_all.sh` after test structure changes
 
 #### Phase 4: Validation and Cleanup (Week 7-8)
 1. Ensure all tests pass with new framework
 2. Performance testing of new test suite
-3. Documentation updates and test coverage analysis
-4. Remove deprecated test utilities
-5. **Final validation**: Run `run_all.sh` for comprehensive test suite verification
-6. **Performance analysis**: Compare `run_all.sh` execution times before/after migration
+3. Remove deprecated test utilities
+4. **Final validation**: Run `run_all.sh` for comprehensive verification
 
-### 10. Success Criteria
+### 7. Success Criteria
 
 #### Technical Criteria
 - **Zero internal API usage**: All tests use only CLI interface (main.py)
@@ -1413,24 +1063,6 @@ class TestFeatureName(UnifiedTestCase):
 - **Failure diagnostics**: Test failures provide clear guidance
 - **Coverage preservation**: No reduction in test coverage during migration
 - **Performance**: Test suite execution time via `run_all.sh` remains reasonable
-
-#### Validation Criteria
-- **Flexible to changes**: Tests continue passing when internal implementation changes
-- **Comprehensive validation**: Tests validate all aspects of public API behavior
-- **Realistic scenarios**: Tests cover real-world usage patterns
-- **Error handling**: Tests validate error conditions and edge cases
-
-### 11. Risk Mitigation
-
-#### Migration Risks
-- **Breaking existing tests**: Gradual migration with parallel test execution
-- **Coverage gaps**: Careful mapping of existing test coverage to new structure
-- **Performance degradation**: Monitoring test execution times during migration
-
-#### Maintenance Risks  
-- **Framework complexity**: Keep framework simple and well-documented
-- **Over-abstraction**: Balance reusability with test clarity
-- **Dependency management**: Minimize external dependencies in test framework
 
 ---
 
@@ -1449,191 +1081,147 @@ class TestFeatureName(UnifiedTestCase):
 - ⏳ **Pending** - Not yet started
 - 🚫 **Skipped** - Preserved as-is or deprecated
 
-### Input Strategy Assessment
-During migration, each test file must be assessed for its input requirements:
-- **Single Input**: Can use explicit files in `input/` folder (all test methods share same input)
-- **Multiple Inputs**: Must use data_##.json files (each test method can have different input)
-- **Mixed Requirements**: Split into separate test files or convert to data_##.json approach
+### Key Migration Constraints
 
-### Unit Tests (37 files)
+**Feature Tests and Example Tests Strategy:**
+- **ALWAYS use Option 1 (explicit files)** - Feature and example tests require comprehensive project structures
+- **No input-##.json files** for feature or example tests - they test complete workflows
+- All feature and example test files use single `input/` folder with config.json and source files
+- **Generally NO SPLITTING NEEDED** - since all test methods share the same input project, splitting is rarely necessary unless testing completely different features
 
-| Test File | Status | Priority | Notes |
-|-----------|--------|----------|-------|
-| `test_absolute_path_bug_detection.py` | ⏳ | Medium | Path handling validation |
-| `test_anonymous_processor_extended.py` | ⏳ | High | Core anonymous structure processing |
-| `test_anonymous_structure_handling.py` | ⏳ | High | Anonymous structure handling |
-| `test_config.py` | ⏳ | High | Configuration loading/validation |
-| `test_debug_actual_parsing.py` | ⏳ | Low | Debug functionality |
-| `test_debug_field_parsing.py` | ⏳ | Low | Debug functionality |
-| `test_debug_field_parsing_detailed.py` | ⏳ | Low | Debug functionality |
-| `test_debug_field_processing.py` | ⏳ | Low | Debug functionality |
-| `test_debug_tokens.py` | ⏳ | Low | Debug functionality |
-| `test_file_specific_configuration.py` | ⏳ | Medium | File-specific config handling |
-| `test_function_parameters.py` | ⏳ | Medium | Function parameter parsing |
-| `test_generator.py` | ⏳ | High | Core PlantUML generation |
-| `test_generator_duplicate_includes.py` | ⏳ | Medium | Include duplication handling |
-| `test_generator_exact_format.py` | ⏳ | Medium | PlantUML formatting validation |
-| `test_generator_grouping.py` | ⏳ | Medium | Element grouping in output |
-| `test_generator_include_tree_bug.py` | ⏳ | Medium | Include tree validation |
-| `test_generator_naming_conventions.py` | ⏳ | Medium | Naming convention compliance |
-| `test_generator_new_formatting.py` | ⏳ | Medium | New formatting features |
-| `test_generator_visibility_logic.py` | ⏳ | Medium | Visibility detection logic |
-| `test_global_parsing.py` | ⏳ | Medium | Global variable parsing |
-| `test_include_filtering_bugs.py` | ⏳ | Medium | Include filtering edge cases |
-| `test_include_processing.py` | ⏳ | Medium | Include processing logic |
-| `test_multi_pass_anonymous_processing.py` | ⏳ | High | Multi-pass anonymous processing |
-| `test_parser.py` | ⏳ | High | Core parser functionality |
-| `test_parser_comprehensive.py` | ⏳ | High | Comprehensive parser testing |
-| `test_parser_filtering.py` | ⏳ | High | Parser filtering logic |
-| `test_parser_function_params.py` | ⏳ | Medium | Function parameter parsing |
-| `test_parser_macro_duplicates.py` | ⏳ | Medium | Macro duplication handling |
-| `test_parser_nested_structures.py` | ⏳ | Medium | Nested structure parsing |
-| `test_parser_struct_order.py` | ⏳ | Medium | Struct field order preservation |
-| `test_preprocessor_bug.py` | ⏳ | Medium | Preprocessor bug fixes |
-| `test_preprocessor_handling.py` | ⏳ | High | Core preprocessor functionality |
-| `test_tokenizer.py` | ⏳ | High | Core tokenizer functionality |
-| `test_transformation_system.py` | ⏳ | High | Transformation system |
-| `test_transformer.py` | ⏳ | High | Core transformer functionality |
-| `test_typedef_extraction.py` | ⏳ | Medium | Typedef extraction logic |
-| `test_utils.py` | ⏳ | Low | Utility function testing |
-| `test_verifier.py` | ⏳ | Medium | Model verification logic |
-
-### Feature Tests (10 files)
-
-| Test File | Status | Priority | Notes |
-|-----------|--------|----------|-------|
-| `test_cli_feature.py` | ⏳ | High | CLI interface testing |
-| `test_cli_modes.py` | ⏳ | High | CLI mode switching |
-| `test_component_features.py` | ⏳ | High | Component integration features |
-| `test_crypto_filter_pattern.py` | ⏳ | Medium | Crypto filtering patterns |
-| `test_crypto_filter_usecase.py` | ⏳ | Medium | Crypto filtering use cases |
-| `test_include_processing_features.py` | ⏳ | High | Include processing features |
-| `test_integration.py` | ⏳ | High | Feature integration testing |
-| `test_invalid_source_paths.py` | ⏳ | Medium | Error handling for invalid paths |
-| `test_multiple_source_folders.py` | ⏳ | Medium | Multiple source folder handling |
-| `test_transformer_features.py` | ⏳ | High | Transformer feature testing |
-
-### Integration Tests (2 files)
-
-| Test File | Status | Priority | Notes |
-|-----------|--------|----------|-------|
-| `test_comprehensive.py` | ⏳ | High | Comprehensive end-to-end testing |
-| `test_new_formatting_comprehensive.py` | ⏳ | Medium | New formatting integration |
-
-### Preserved Tests (1 file)
-
-| Test File | Status | Priority | Notes |
-|-----------|--------|----------|-------|
-| `test-example.py` | 🚫 | N/A | Preserved as-is, enhanced with test-example.json |
-
-### Supporting Files to Update
-
-| File | Status | Priority | Notes |
-|------|--------|----------|-------|
-| `tests/conftest.py` | ⏳ | High | Update pytest configuration for new framework |
-| `tests/utils.py` | ⏳ | High | Migrate to new framework utilities |
-| `tests/feature/base.py` | ⏳ | Medium | Update base feature test class |
-| `tests/__init__.py` | ⏳ | Low | Update package initialization |
-| `tests/unit/__init__.py` | ⏳ | Low | Update unit test package |
-| `tests/feature/__init__.py` | ⏳ | Low | Update feature test package |
-| `tests/integration/__init__.py` | ⏳ | Low | Update integration test package |
-
-### Migration Progress Summary
-
-**Analysis Phase Complete**: ✅ Analyzed all 50 test files with detailed recommendations
-
-- **Analysis Completed**: 50/50 (100%) - Generated comprehensive migration plan
-- **Implementation Pending**: 50/50 (100%) - Ready for framework development
-- **High Priority**: 24 files (including 3 requiring splits)
-- **Medium Priority**: 18 files  
-- **Low Priority**: 8 files
-- **Data JSON Strategy**: 42 files
-- **Explicit Files Strategy**: 8 files
-- **Files Requiring Split**: 3 files (test_transformer.py, test_tokenizer.py, test_parser_comprehensive.py)
-
-### Next Migration Targets (Based on Analysis Results)
-
-**📊 Analysis Complete**: Detailed recommendations for all 50 files generated in `todo_recommendations.json`
-
-1. **Framework Foundation** (Week 1-2):
-   - Establish baseline: `./run_all.sh > baseline_results.log`
-   - Implement TestDataFactory with data.json support (load_test_data_json, generate_source_files_from_data, etc.)
-   - Implement TestExecutor for CLI-only interface
-   - Create validation framework (ModelValidator, PlantUMLValidator, OutputValidator)
-   - Create `tests/framework/` structure
-   - Verify foundation: `./run_all.sh` (should match baseline)
-
-2. **Phase 1 - Quick Wins** (Week 3-4):
-   - **21 high priority files with manageable effort**
-   - Start with smallest: `test_parser_function_params.py` (2 methods)
-   - Progress through: `test_parser_macro_duplicates.py`, `test_parser_nested_structures.py`
-   - For each test file: develop → `pytest test_file.py` → `./run_all.sh`
-
-3. **Phase 2 - Major Refactoring** (Week 5-8):
-   - **3 large files requiring splits** (80, 41, 36 methods respectively)
-   - `test_transformer.py` → Split into 9 files by transformation type
-   - `test_tokenizer.py` → Split into 4 files by token category  
-   - `test_parser_comprehensive.py` → Split into 7 files by C language construct
-   - Use data_*.json files extensively for different test scenarios
-
-4. **Phase 3 & 4 - Medium/Low Priority** (Week 9-12):
-   - Medium priority: 18 files (most using data_json strategy)
-   - Low priority: 8 files (mostly explicit files strategy)
-   - Final verification: `time ./run_all.sh > final_results.log`
-   - Performance comparison: baseline vs final execution times
-
----
-
-## Next Steps
-
-1. **Review and approve** this plan with the development team
-2. **Create `test-example.json`** specification for the existing example test
-3. **Create framework foundation** in `tests/framework/`
-4. **Start with pilot migration** of 5-10 representative test files (excluding the preserved example)
-5. **Iterate and refine** framework based on pilot results
-6. **Execute full migration** following the phase plan
-
-This unified testing approach will ensure that c2puml remains flexible to internal changes while providing comprehensive validation of its public API functionality. The self-contained test structure with individual `input/` folders and `config.json` files provides excellent isolation and maintainability, while the preserved `tests/example/` serves as a reference implementation and comprehensive end-to-end test case.
-
----
-
-## 📊 Analysis Results Summary (Generated by todo_recommendations.py)
-
-### Executive Summary
-- **50 test files analyzed** with detailed migration strategies
-- **24 high priority** files requiring immediate attention
-- **3 critical files** need splitting due to size (80, 41, 36 methods)
-- **42 files** should use data_*.json strategy for multiple test scenarios
-- **8 files** can use explicit files strategy for single scenarios
+**Unit Tests Strategy:**
+- Use input-##.json for multiple test scenarios
+- Use explicit files only when all test methods can share same input
 
 ### Critical Split Requirements
 1. **test_transformer.py** (80 methods) → 9 files by transformation type
 2. **test_tokenizer.py** (41 methods) → 4 files by token category
 3. **test_parser_comprehensive.py** (36 methods) → 7 files by C language construct
 
-### Implementation Strategy
-- **84% of files** need data_*.json approach due to multiple input requirements
-- **16% of files** can use simple explicit file approach
-- **All files** currently use internal APIs and need CLI-only conversion
+### Migration Progress Summary
 
-### Key Features Implemented in Recommendations
-- Automatic analysis of method complexity and input diversity
-- Smart categorization by C language constructs (struct, enum, function, etc.)
-- Effort estimation based on method count and complexity
-- Dependency tracking for framework implementation order
-- Specific data.json file suggestions for each test scenario
+**Analysis Phase Complete**: ✅ Analyzed all 50 test files with detailed recommendations
 
-**Detailed recommendations available in:**
-- `todo_recommendations.md` - Complete migration documentation with file-by-file analysis
-- Specific strategies for all 50 test files with progress tracking
-- Examples of folder structures and data.json formats provided
-- Migration phases and implementation guidelines
+- **High Priority**: 24 files (including 3 requiring splits)
+- **Medium Priority**: 18 files  
+- **Low Priority**: 8 files
+- **Input JSON Strategy**: 42 files (unit tests only)
+- **Explicit Files Strategy**: 8 files (includes all feature tests)
 
-## 🎯 Key Benefits of Self-Contained Test Structure
+### Complete Test Migration Progress Tracking (50 files)
 
-1. **Perfect Isolation**: Each test has its own `input/` folder and `config.json`, ensuring no cross-test interference
-2. **Clear Organization**: Test data is co-located with test logic, making it easy to understand and maintain  
-3. **Version Control Friendly**: Test data and logic evolve together, making changes easier to track and review
-4. **Debugging Simplicity**: Each test environment is self-contained, making issue reproduction straightforward
-5. **Maintainability**: Changes to one test's data cannot affect other tests, reducing maintenance overhead
-6. **Framework Integration**: Tests use standardized `TestDataFactory` methods to load their data consistently
+| Test File | Category | Status | Priority | Input Strategy | Meaningful Input Names | Notes |
+|-----------|----------|--------|----------|----------------|----------------------|-------|
+| **UNIT TESTS (37 files)** | | | | | | |
+| `test_absolute_path_bug_detection.py` | Unit | ⏳ | Medium | input-path_*.json | input-absolute_paths.json, input-relative_paths.json, input-invalid_paths.json | Path handling validation |
+| `test_anonymous_processor_extended.py` | Unit | ⏳ | High | input-anonymous_*.json | input-basic_anonymous.json, input-nested_anonymous.json, input-complex_hierarchies.json | Core anonymous structure processing |
+| `test_anonymous_structure_handling.py` | Unit | ⏳ | Medium | input-anonymous_*.json | input-simple_anonymous.json, input-nested_anonymous.json, input-complex_anonymous.json | Anonymous structure handling |
+| `test_config.py` | Unit | ⏳ | Medium | input-config_*.json | input-basic_config.json, input-advanced_config.json, input-invalid_config.json, input-file_specific_config.json | Configuration loading/validation |
+| `test_debug_actual_parsing.py` | Unit | ⏳ | Low | Explicit files | debug_simple.c, debug_config.json | Debug functionality |
+| `test_debug_field_parsing.py` | Unit | ⏳ | Low | Explicit files | debug_fields.c, debug_config.json | Debug functionality |
+| `test_debug_field_parsing_detailed.py` | Unit | ⏳ | Low | Explicit files | debug_detailed.c, debug_config.json | Debug functionality |
+| `test_debug_field_processing.py` | Unit | ⏳ | Low | Explicit files | debug_processing.c, debug_config.json | Debug functionality |
+| `test_debug_tokens.py` | Unit | ⏳ | Low | Explicit files | debug_tokens.c, debug_config.json | Debug functionality |
+| `test_file_specific_configuration.py` | Unit | ⏳ | Medium | input-fileconfig_*.json | input-single_file_config.json, input-multiple_file_config.json, input-override_config.json | File-specific config handling |
+| `test_function_parameters.py` | Unit | ⏳ | Medium | input-params_*.json | input-simple_params.json, input-complex_params.json, input-variadic_params.json | Function parameter parsing |
+| `test_generator.py` | Unit | ⏳ | High | input-generation_*.json | input-simple_generation.json, input-complex_diagrams.json, input-format_compliance.json, input-relationship_generation.json | Core PlantUML generation |
+| `test_generator_duplicate_includes.py` | Unit | ⏳ | Low | Explicit files | duplicate_test.c, duplicate_includes.h, config.json | Include duplication handling |
+| `test_generator_exact_format.py` | Unit | ⏳ | Low | input-format_*.json | input-basic_format.json, input-advanced_format.json | PlantUML formatting validation |
+| `test_generator_grouping.py` | Unit | ⏳ | Medium | input-grouping_*.json | input-public_private_grouping.json, input-element_grouping.json, input-visibility_grouping.json | Element grouping in output |
+| `test_generator_include_tree_bug.py` | Unit | ⏳ | Medium | input-tree_*.json | input-simple_tree.json, input-complex_tree.json, input-circular_tree.json | Include tree validation |
+| `test_generator_naming_conventions.py` | Unit | ⏳ | Medium | input-naming_*.json | input-class_naming.json, input-relationship_naming.json, input-stereotype_naming.json | Naming convention compliance |
+| `test_generator_new_formatting.py` | Unit | ⏳ | Medium | input-newformat_*.json | input-new_stereotypes.json, input-visibility_formatting.json, input-relationship_formatting.json | New formatting features |
+| `test_generator_visibility_logic.py` | Unit | ⏳ | Medium | input-visibility_*.json | input-public_private.json, input-header_detection.json, input-visibility_edge_cases.json | Visibility detection logic |
+| `test_global_parsing.py` | Unit | ⏳ | High | input-globals_*.json | input-simple_globals.json, input-complex_globals.json, input-initialized_globals.json | Global variable parsing |
+| `test_include_filtering_bugs.py` | Unit | ⏳ | Medium | input-filterbug_*.json | input-filter_edge_cases.json, input-regex_patterns.json, input-performance_issues.json | Include filtering edge cases |
+| `test_include_processing.py` | Unit | ⏳ | Medium | input-includes_*.json | input-basic_includes.json, input-nested_includes.json, input-depth_includes.json | Include processing logic |
+| `test_multi_pass_anonymous_processing.py` | Unit | ⏳ | High | input-multipass_*.json | input-simple_multipass.json, input-complex_multipass.json, input-nested_multipass.json | Multi-pass anonymous processing |
+| `test_parser.py` | Unit | ⏳ | High | input-parsing_*.json | input-basic_parsing.json, input-complex_parsing.json, input-error_handling.json | Core parser functionality |
+| `test_parser_comprehensive.py` | Unit | ⏳ | High | **SPLIT REQUIRED** | Split into 7 files by C construct | Comprehensive parser testing |
+| `test_parser_filtering.py` | Unit | ⏳ | High | input-filter_*.json | input-include_filters.json, input-exclude_filters.json, input-mixed_filters.json | Parser filtering logic |
+| `test_parser_function_params.py` | Unit | ⏳ | Low | input-funcparams_*.json | input-simple_params.json, input-complex_params.json | Function parameter parsing |
+| `test_parser_macro_duplicates.py` | Unit | ⏳ | Low | input-macrodup_*.json | input-simple_duplicates.json, input-complex_duplicates.json | Macro duplication handling |
+| `test_parser_nested_structures.py` | Unit | ⏳ | Medium | input-nested_*.json | input-simple_nested.json, input-deep_nested.json, input-complex_nested.json | Nested structure parsing |
+| `test_parser_struct_order.py` | Unit | ⏳ | Medium | input-structorder_*.json | input-simple_order.json, input-complex_order.json, input-mixed_order.json | Struct field order preservation |
+| `test_preprocessor_bug.py` | Unit | ⏳ | High | input-prepbug_*.json | input-ifdef_testing.json, input-define_macros.json, input-include_directives.json, input-conditional_compilation.json | Preprocessor bug fixes |
+| `test_preprocessor_handling.py` | Unit | ⏳ | High | input-preproc_*.json | input-conditional_compilation.json, input-macro_expansion.json | Core preprocessor functionality |
+| `test_tokenizer.py` | Unit | ⏳ | High | **SPLIT REQUIRED** | Split into 4 files by token category | Core tokenizer functionality |
+| `test_transformation_system.py` | Unit | ⏳ | Medium | input-transsys_*.json | input-system_config.json, input-system_validation.json, input-system_integration.json | Transformation system |
+| `test_transformer.py` | Unit | ⏳ | High | **SPLIT REQUIRED** | Split into 9 files by transformation type | Core transformer functionality |
+| `test_typedef_extraction.py` | Unit | ⏳ | Medium | input-typedef_*.json | input-simple_typedefs.json, input-complex_typedefs.json, input-nested_typedefs.json | Typedef extraction logic |
+| `test_utils.py` | Unit | ⏳ | Low | input-utils_*.json | input-file_utils.json, input-string_utils.json, input-path_utils.json | Utility function testing |
+| `test_verifier.py` | Unit | ⏳ | Medium | input-verify_*.json | input-valid_models.json, input-invalid_models.json, input-edge_case_models.json | Model verification logic |
+| **FEATURE TESTS (9 files) - NO SPLITS NEEDED** | | | | | | |
+| `test_cli_feature.py` | Feature | ⏳ | Low | Explicit files | feature_test.c, feature_config.json, test_project/ | CLI interface testing - single CLI project |
+| `test_cli_modes.py` | Feature | ⏳ | Low | Explicit files | test_project/, config.json | CLI mode switching - single CLI project |
+| `test_component_features.py` | Feature | ⏳ | High | Explicit files | main.c, headers/, config.json, project structure | Component integration - single project structure |
+| `test_crypto_filter_pattern.py` | Feature | ⏳ | Medium | Explicit files | crypto patterns project/, config.json | Crypto filtering - single crypto project |
+| `test_crypto_filter_usecase.py` | Feature | ⏳ | High | Explicit files | crypto project structure, config.json with filters | Crypto use cases - single crypto project |
+| `test_include_processing_features.py` | Feature | ⏳ | High | Explicit files | main.c, utils.h, includes/, config.json | Include processing - single project with includes |
+| `test_integration.py` | Feature | ⏳ | Medium | Explicit files | integration_project/, config.json | Integration testing - single integration project |
+| `test_multiple_source_folders.py` | Feature | ⏳ | High | Explicit files | folder1/, folder2/, folder3/, config.json | Multi-folder handling - single multi-folder project |
+| `test_transformer_features.py` | Feature | ⏳ | High | Explicit files | source files with transformation config.json | Transformer features - single project with transformations |
+| **INTEGRATION TESTS (2 files) - NO SPLITS NEEDED** | | | | | | |
+| `test_comprehensive.py` | Integration | ⏳ | High | Explicit files | realistic_project/, config.json | Comprehensive testing - single realistic project |
+| `test_new_formatting_comprehensive.py` | Integration | ⏳ | Low | Explicit files | comprehensive_project/, config.json | Formatting integration - single project |
+| **FEATURE TEST (SPECIAL)** | | | | | | |
+| `test_invalid_source_paths.py` | Feature | ⏳ | High | Explicit files | Missing/invalid source project structures | Error handling for invalid paths |
+| **EXAMPLE TESTS (1 file) - PRESERVED** | | | | | | |
+| `test-example.py` | Example | 🚫 | N/A | Explicit files | source/, config.json (preserved as-is) | Preserved example test |
+
+**Legend:**
+- ⏳ **Pending** - Not yet started
+- 🔄 **In Progress** - Currently being worked on  
+- ✅ **Completed** - Migrated and verified
+- 🚫 **Preserved** - Kept as-is
+- **SPLIT REQUIRED** - File must be split before migration
+
+**Key Insights:**
+- **Feature tests use explicit files** - All test methods share the same input project, no splitting needed
+- **Unit tests use input-###.json** - Multiple scenarios per test file, meaningful input names required
+- **3 Critical splits required**: test_transformer.py, test_tokenizer.py, test_parser_comprehensive.py
+
+---
+
+## Next Steps
+
+1. **Review and approve** this plan with the development team
+2. **Create framework foundation** in `tests/framework/`
+3. **Start with pilot migration** of 5-10 representative test files
+4. **Execute full migration** following the phase plan
+
+## Data-Driven Testing with Assertion Files
+
+### Key Benefits of Assertion File Approach
+
+1. **📋 Separation of Concerns**: Test logic is separated from validation criteria
+2. **🔧 Maintainability**: Assertions can be updated without touching test code
+3. **📊 Clarity**: Expected results are explicitly documented in JSON format
+4. **🔄 Reusability**: Assertion patterns can be standardized across tests
+5. **🎯 Self-Documenting**: Meaningful keys make tests easy to understand
+
+### Assertion File Patterns
+
+- **Option 1 (Feature Tests)**: `assertions.json` with test method keys
+- **Option 2 (Unit Tests)**: `assert-###.json` matching `input-###.json` files
+
+### Test Implementation Pattern
+
+```python
+# Load test data and assertions separately
+input_path, config_path = self.input_factory.load_test_files(self.test_name)
+assertions = self.input_factory.load_test_method_assertions(self.test_name, "test_include_parsing")
+
+# Execute c2puml
+result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
+
+# Data-driven validation using assertion criteria
+cli_criteria = assertions.get("cli_execution", {})
+self.assertEqual(result.exit_code, cli_criteria.get("expected_exit_code", 0))
+
+model_criteria = assertions.get("model_validation", {})
+for struct_spec in model_criteria.get("required_structs", []):
+    self.model_validator.assert_model_struct_exists(model, struct_spec["name"])
+```
+
+This unified testing approach ensures that c2puml remains flexible to internal changes while providing comprehensive validation of its public API functionality. The **data-driven assertion files** make tests more maintainable and validation criteria explicit, while feature tests and unit tests use consistent patterns for their respective input strategies.
