@@ -14,7 +14,7 @@ This document provides comprehensive analysis and specific recommendations for m
 ## Progress Tracking
 
 ### Migration Status Overview
-- **Framework Foundation:** ⏳ Pending - TestDataFactory, TestExecutor, Validators
+- **Framework Foundation:** ⏳ Pending - TestInputFactory, TestExecutor, Validators
 - **Critical Splits (3 files):** ⏳ Pending - Planning phase required
 - **High Priority (24 files):** ⏳ Pending - All files have detailed recommendations
 - **Medium Priority (18 files):** ⏳ Pending - All files have detailed recommendations
@@ -551,8 +551,7 @@ class UnifiedTestCase(unittest.TestCase, TestAssertionMixin):
     def setUp(self) -> None:
         # Initialize all framework components
         self.executor = TestExecutor()
-        self.data_factory = TestDataFactory()  # For explicit files
-        self.input_factory = InputFactory()    # For input-###.json files
+        self.input_factory = TestInputFactory()  # Unified input management
         self.model_validator = ModelValidator()
         self.puml_validator = PlantUMLValidator()
         self.output_validator = OutputValidator()
@@ -590,8 +589,8 @@ class TestExecutor:
         """Marks output directory to be preserved for manual review"""
 
 # Test Data Management
-class TestDataFactory:
-    """Manages test input data for explicit files approach (feature/example tests only)"""
+class TestInputFactory:
+    """Unified factory for managing all test input data (both explicit files and input-###.json)"""
     
     # Core Input Loading (Explicit Files Only)
     def load_test_input(self, test_name: str) -> str
@@ -767,18 +766,7 @@ class TestAssertionMixin:
     def assertConfigurationAccepted(self, config_data: dict) -> CLIResult  # Test valid config acceptance
     def assertConfigBehavior(self, config_data: dict, expected_model_properties: dict) -> None  # Test config behavior
 
-# Input JSON Factory
-class InputFactory:
-    """Factory for loading and processing input-###.json files"""
-    
-    def load_input_json(self, input_file_path: str) -> dict
-    def extract_config(self, input_data: dict) -> dict
-    def extract_source_files(self, input_data: dict) -> Dict[str, str]
-    def extract_expected_results(self, input_data: dict) -> dict
-    def extract_test_metadata(self, input_data: dict) -> dict
-    def create_temp_config_file(self, input_data: dict, temp_dir: str) -> str
-    def create_temp_source_files(self, input_data: dict, temp_dir: str) -> str
-    def validate_input_json_structure(self, input_data: dict) -> bool
+# Note: Input JSON functionality is now unified in TestInputFactory above
 
 # Project Templates for Input JSON
 class ProjectTemplates:
@@ -921,33 +909,31 @@ test_temp_*
 ### Phase 1: Framework Foundation (Weeks 1-2)
 **Priority: CRITICAL**
 
-1. **Implement InputFactory for Input JSON Processing**
-   - `load_input_json(input_file_path)` - Load and parse input-###.json files
-   - `validate_input_json_structure(input_data)` - Validate input-###.json structure
-   - `extract_config(input_data)` - Extract c2puml_config section
-   - `extract_source_files(input_data)` - Extract source_files section
-   - `create_temp_config_file(input_data, temp_dir)` - Create temporary config.json
-   - `create_temp_source_files(input_data, temp_dir)` - Create temporary source files
-
-2. **Implement TestDataFactory for Explicit Files**
-   - `load_test_input(test_name)` - Load explicit files directory
-   - `load_test_config(test_name)` - Load explicit config.json
+1. **Implement TestInputFactory for Unified Input Management**
+   - `load_explicit_files(test_name)` - Load explicit files (feature/example tests)
+   - `load_input_json_scenario(test_name, input_file)` - Load input-###.json scenarios (unit tests)
    - `list_input_json_files(test_name)` - Discover available input-###.json files
+   - `get_output_dir_for_scenario(test_name, scenario_name)` - Get output directory management
+   - `ensure_output_dir_clean(output_dir)` - Clean output directories before test execution
 
-3. **Implement TestExecutor for CLI-Only Interface**
+2. **Implement TestExecutor for CLI-Only Interface**
    - `run_full_pipeline(input_path, config_path, output_dir)` - Complete workflow
    - `run_parse_only(input_path, config_path, output_dir)` - Parse step only
    - `run_transform_only(config_path, output_dir)` - Transform step only
    - `run_generate_only(config_path, output_dir)` - Generate step only
 
-4. **Create Validation Framework**
+3. **Create Validation Framework**
    - `ModelValidator` - Model structure and content validation
    - `PlantUMLValidator` - PlantUML file validation
    - `OutputValidator` - General output file validation
    - `FileValidator` - Advanced file operations and validation
    - **Note**: No ConfigValidator - c2puml validates its own configuration
 
-4. **Establish Baseline**
+4. **Implement Helper Classes**
+   - `TestAssertionMixin` - Common assertion patterns
+   - `ProjectTemplates` - Pre-built input-###.json templates
+
+5. **Establish Baseline**
    - Run `./run_all.sh > baseline_results.log`
    - Verify foundation works with existing tests
 
@@ -1024,7 +1010,7 @@ Complete remaining files, including debug files and feature tests.
 
 1. **`/tests/utils.py` (374 lines)** - Existing test utilities
    - **Why remove:** Uses internal API imports (`from c2puml.generator import Generator`, etc.)
-   - **Replaced by:** New `TestDataFactory` with CLI-only approach
+   - **Replaced by:** New `TestInputFactory` with CLI-only approach
    - **Progress:** ⏳ Pending - Remove after all tests migrated
 
 2. **`/tests/feature/base.py` (189 lines)** - Feature test base class
@@ -1042,7 +1028,7 @@ Complete remaining files, including debug files and feature tests.
 **After unified framework implementation is complete:**
 
 1. **Phase 1: Verify No Dependencies**
-   - Ensure all 50 test files use new `TestDataFactory` and `TestExecutor`
+   - Ensure all 50 test files use new `TestInputFactory` and `TestExecutor`
    - Confirm no imports from old framework files
    - **Progress:** ⏳ Pending
 
@@ -1064,7 +1050,7 @@ This migration plan provides a comprehensive roadmap for transforming all 50 tes
 **Key Success Factors:**
 1. **Follow the strategy rule**: Feature tests = explicit files, Unit tests with multiple inputs = input-##.json
 2. **Split large files early**: Don't attempt to migrate 80-method files as-is
-3. **Implement framework first**: TestDataFactory and validation tools are critical
+3. **Implement framework first**: TestInputFactory and validation tools are critical
 4. **Verify continuously**: Run full test suite after each migration
 5. **Track progress**: Update todo.md with migration status
 

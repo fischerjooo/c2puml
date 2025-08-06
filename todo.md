@@ -45,9 +45,10 @@ Based on analysis of the codebase, the public APIs are:
 Create a new unified framework with these components:
 
 - **`TestExecutor`**: Runs c2puml through public APIs only
-- **`TestDataFactory`**: Generates test C/C++ projects and configurations, handles input-##.json files
-- **`ResultValidator`**: Validates outputs (model.json, .puml files, logs)
-- **`TestProjectBuilder`**: Builds temporary test projects with complex structures
+- **`TestInputFactory`**: Unified factory for managing all test input data (both explicit files and input-###.json)
+- **`ModelValidator`, `PlantUMLValidator`, `OutputValidator`, `FileValidator`**: Validates outputs (model.json, .puml files, logs)
+- **`TestAssertionMixin`**: Common assertion patterns for tests
+- **`ProjectTemplates`**: Pre-built input-###.json templates for common test scenarios
 
 ```python
 # Framework structure
@@ -361,65 +362,38 @@ class TestAssertionMixin:
         
         return contents
     
-    def loadInputJsonAndValidate(self, input_file_path: str) -> dict:
-        """Load and validate input-###.json file structure"""
-        input_factory = InputFactory()
-        input_data = input_factory.load_input_json(input_file_path)
-        self.assertTrue(
-            input_factory.validate_input_json_structure(input_data),
-            f"Invalid input-###.json structure in {input_file_path}"
-        )
-        return input_data
+    def assertConfigurationRejected(self, config_data: dict, expected_error: str = None) -> None:
+        """Test that c2puml rejects invalid configuration gracefully"""
+        temp_dir = self.create_temp_dir()
+        config_path = self.input_factory._create_temp_config_file({"c2puml_config": config_data}, temp_dir)
+        
+        result = self.executor.run_expecting_failure(".", config_path, self.create_temp_dir())
+        self.assertCLIFailure(result, expected_error)
+    
+    def assertConfigurationAccepted(self, config_data: dict) -> CLIResult:
+        """Test that c2puml accepts valid configuration and runs successfully"""
+        temp_dir = self.create_temp_dir()
+        config_path = self.input_factory._create_temp_config_file({"c2puml_config": config_data}, temp_dir)
+        
+        result = self.executor.run_full_pipeline(".", config_path, self.create_temp_dir())
+        self.assertCLISuccess(result)
+        return result
+    
+    def assertConfigBehavior(self, config_data: dict, expected_model_properties: dict) -> None:
+        """Test that specific configuration produces expected behavior in the output"""
+        result = self.assertConfigurationAccepted(config_data)
+        model = self.assertValidModelGenerated(result.working_dir)
+        
+        # Validate that config influenced the output as expected
+        for property_name, expected_value in expected_model_properties.items():
+            if property_name == "file_count":
+                self.model_validator.assert_model_file_count(model, expected_value)
+            elif property_name == "parsed_files":
+                self.model_validator.assert_model_files_parsed(model, expected_value)
+            # Add more property checks as needed
 
-class InputFactory:
-    """Factory for loading and processing input-###.json files"""
-    
-    def __init__(self):
-        pass
-    
-    def load_input_json(self, input_file_path: str) -> dict:
-        """Load and parse input-###.json file"""
-        with open(input_file_path, 'r') as f:
-            return json.load(f)
-    
-    def extract_config(self, input_data: dict) -> dict:
-        """Extract c2puml_config section from input-###.json"""
-        return input_data.get("c2puml_config", {})
-    
-    def extract_source_files(self, input_data: dict) -> Dict[str, str]:
-        """Extract source_files section from input-###.json"""
-        return input_data.get("source_files", {})
-    
-    def extract_expected_results(self, input_data: dict) -> dict:
-        """Extract expected_results section from input-###.json"""
-        return input_data.get("expected_results", {})
-    
-    def extract_test_metadata(self, input_data: dict) -> dict:
-        """Extract test_metadata section from input-###.json"""
-        return input_data.get("test_metadata", {})
-    
-    def create_temp_config_file(self, input_data: dict, temp_dir: str) -> str:
-        """Create temporary config.json from input-###.json data"""
-        config = self.extract_config(input_data)
-        config_path = os.path.join(temp_dir, "config.json")
-        with open(config_path, 'w') as f:
-            json.dump(config, f, indent=2)
-        return config_path
-    
-    def create_temp_source_files(self, input_data: dict, temp_dir: str) -> str:
-        """Create temporary source files from input-###.json data"""
-        source_files = self.extract_source_files(input_data)
-        for filename, content in source_files.items():
-            file_path = os.path.join(temp_dir, filename)
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            with open(file_path, 'w') as f:
-                f.write(content)
-        return temp_dir
-    
-    def validate_input_json_structure(self, input_data: dict) -> bool:
-        """Validate that input-###.json has required structure"""
-        required_sections = ["test_metadata", "c2puml_config", "source_files"]
-        return all(section in input_data for section in required_sections)
+class ProjectTemplates:
+    """Pre-built input-###.json templates for common test scenarios"""
 
 class ProjectTemplates:
     """Pre-built input-###.json templates for common test scenarios"""
@@ -752,23 +726,23 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
         invalid_data = ProjectTemplates.simple_struct_template("InvalidStruct")
         invalid_data["source_files"]["main.c"] = "invalid C syntax here"
         
-        # Use InputFactory to create temporary files
-        input_factory = InputFactory()
+        # Use TestInputFactory to create temporary files
         temp_dir = self.create_temp_dir()
-        input_path = input_factory.create_temp_source_files(invalid_data, temp_dir)
-        config_path = input_factory.create_temp_config_file(invalid_data, temp_dir)
+        input_path = self.input_factory._create_temp_source_files(invalid_data, temp_dir)
+        config_path = self.input_factory._create_temp_config_file(invalid_data, temp_dir)
         
         # Execute expecting failure
-        result = self.executor.run_expecting_failure(input_path, config_path, self.output_dir)
+        output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name)
+        result = self.executor.run_expecting_failure(input_path, config_path, output_dir)
         self.assertCLIFailure(result, "syntax error")
         
     def test_performance_monitoring(self):
         """Example with performance testing"""
-        input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)
+        input_path, config_path = self.input_factory.load_explicit_files(self.test_name)
         
         # Execute with timing
-        result = self.executor.run_with_timing(input_path, config_path, self.output_dir)
+        output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name)
+        result = self.executor.run_with_timing(input_path, config_path, output_dir)
         
         self.assertCLISuccess(result)
         self.assertLess(result.total_time, 5.0, "Execution took too long")
@@ -776,21 +750,21 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
         
     def test_complex_validation_with_custom_logic(self):
         """Example showing custom validation combined with framework"""
-        input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)
+        input_path, config_path = self.input_factory.load_explicit_files(self.test_name)
         
-        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+        output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name)
+        result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
         self.assertCLISuccess(result)
         
         # Framework validations
-        model = self.assertValidModelGenerated(self.output_dir)
-        puml_contents = self.assertValidPlantUMLGenerated(self.output_dir)
+        model = self.assertValidModelGenerated(output_dir)
+        puml_contents = self.assertValidPlantUMLGenerated(output_dir)
         
         # Custom validation logic
         self._validate_specific_business_logic(model, puml_contents)
         
         # Advanced file validations
-        model_file = os.path.join(self.output_dir, "model.json")
+        model_file = os.path.join(output_dir, "model.json")
         self.file_validator.assert_json_valid(model_file)
         self.file_validator.assert_file_valid_utf8(model_file)
         self.file_validator.assert_file_no_trailing_whitespace(model_file)
@@ -824,27 +798,23 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
     
     def test_using_subtest_for_multiple_scenarios(self):
         """Example using subTest for multiple input files"""
-        input_files = self.data_factory.list_input_json_files(self.test_name)
+        input_files = self.input_factory.list_input_json_files(self.test_name)
         
         for input_file in input_files:
             with self.subTest(scenario=input_file):
                 # Get scenario-specific output directory (e.g., output-simple_struct/)
-                output_dir = self.data_factory.get_output_dir_for_scenario(self.test_name, input_file)
-                self.data_factory.ensure_output_dir_clean(output_dir)
+                output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name, input_file)
+                self.input_factory.ensure_output_dir_clean(output_dir)
                 
                 # Load input-###.json file and create temporary files
-                input_file_path = self.data_factory.get_test_data_path(self.test_name, f"input/{input_file}")
-                input_data = self.input_factory.load_input_json(input_file_path)
-                
-                temp_dir = self.create_temp_dir()
-                input_path = self.input_factory.create_temp_source_files(input_data, temp_dir)
-                config_path = self.input_factory.create_temp_config_file(input_data, temp_dir)
+                input_path, config_path, expected_results = self.input_factory.load_input_json_scenario(
+                    self.test_name, input_file
+                )
                 
                 result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
                 self.assertCLISuccess(result, f"Failed for scenario: {input_file}")
                 
                 # Scenario-specific validation based on input file data
-                expected_results = self.input_factory.extract_expected_results(input_data)
                 
                 if "model_elements" in expected_results:
                     model = self.assertValidModelGenerated(output_dir)
@@ -1096,9 +1066,10 @@ tests/
 #### Phase 1: Framework Foundation (Week 1-2)
 1. Create `tests/framework/` structure
 2. Implement `TestExecutor` with CLI interface
-3. Implement `TestDataFactory` with input-##.json support
-4. Implement `ResultValidator` for models and PlantUML
-5. **Verify baseline**: Run `run_all.sh` to establish current test suite baseline
+3. Implement `TestInputFactory` with unified input management (both explicit files and input-###.json)
+4. Implement validation framework: `ModelValidator`, `PlantUMLValidator`, `OutputValidator`, `FileValidator`
+5. Implement `TestAssertionMixin` and `ProjectTemplates`
+6. **Verify baseline**: Run `run_all.sh` to establish current test suite baseline
 
 #### Phase 2: Public API Migration (Week 3-4)
 1. Refactor high-priority unit tests to use CLI-only interface
