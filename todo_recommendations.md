@@ -494,19 +494,78 @@ The progress tracking includes:
 }
 ```
 
+**Example assert-simple_struct.json:**
+```json
+{
+  "cli_execution": {
+    "expected_exit_code": 0,
+    "should_succeed": true,
+    "max_execution_time_seconds": 10
+  },
+  "expected_files": {
+    "must_exist": ["model.json", "diagram.puml"],
+    "must_not_exist": ["error.log"],
+    "file_count_in_output": 2
+  },
+  "model_validation": {
+    "required_structs": [
+      {
+        "name": "Point",
+        "fields": ["x", "y"],
+        "field_types": {"x": "int", "y": "int"}
+      }
+    ],
+    "required_functions": [
+      {
+        "name": "main",
+        "return_type": "int",
+        "parameters": []
+      }
+    ],
+    "required_includes": ["stdio.h"],
+    "total_struct_count": 1,
+    "total_function_count": 1
+  },
+  "plantuml_validation": {
+    "required_classes": [
+      {
+        "name": "Point",
+        "stereotype": "struct",
+        "visibility": "public"
+      }
+    ],
+    "required_fields_in_puml": [
+      "+ int x",
+      "+ int y"
+    ],
+    "forbidden_content": ["ERROR", "INVALID"],
+    "must_contain_text": ["@startuml", "@enduml"]
+  },
+  "console_output": {
+    "success_indicators": ["Processing completed", "Generated model.json"],
+    "forbidden_errors": ["ERROR", "FATAL", "Exception"],
+    "forbidden_warnings": [],
+    "log_level": "INFO"
+  }
+}
+```
+
 ## Recommended Folder Structures
 
-### Simple Unit Test (Input JSON Strategy)
+### Simple Unit Test (Input JSON Strategy with Assertion Files)
 ```
 test_parser_filtering/
 ├── test_parser_filtering.py
-└── input/
-    ├── input-include_filters.json  # Self-contained: config + source + expected results
-    ├── input-exclude_filters.json  # Self-contained: config + source + expected results
-    └── input-mixed_filters.json    # Self-contained: config + source + expected results
+├── input/
+│   ├── input-include_filters.json  # Input only: config + source (NO expected results)
+│   ├── input-exclude_filters.json  # Input only: config + source (NO expected results)
+│   └── input-mixed_filters.json    # Input only: config + source (NO expected results)
+├── assert-include_filters.json     # Assertions for include filter test
+├── assert-exclude_filters.json     # Assertions for exclude filter test
+└── assert-mixed_filters.json       # Assertions for mixed filter test
 ```
 
-### Feature Test (File-Based Strategy)
+### Feature Test (File-Based Strategy with Assertions)
 ```
 test_include_processing_features/
 ├── test_include_processing_features.py
@@ -518,23 +577,33 @@ test_include_processing_features/
 │   │   ├── level1.h
 │   │   └── level2.h
 │   └── types.h
-└── assertions.json     # Required for Option 1 (file-based approach)
+├── assertions.json     # Contains all test method assertions with meaningful keys
+│   │                   # Keys like: "test_include_parsing", "test_nested_includes", etc.
+└── output/             # Generated during test execution (Git ignored)
+    ├── model.json
+    ├── diagram.puml
+    └── c2puml.log
 ```
 
-### Split Large Test Example
+### Split Large Test Example (with Assertion Files)
 ```
 test_struct_parsing/
 ├── test_struct_parsing.py
-└── input/
-    ├── input-simple_struct.json     # Simple struct parsing
-    ├── input-nested_struct.json     # Nested struct parsing
-    └── input-anonymous_struct.json  # Anonymous struct parsing
+├── input/
+│   ├── input-simple_struct.json     # Simple struct parsing (input only)
+│   ├── input-nested_struct.json     # Nested struct parsing (input only)
+│   └── input-anonymous_struct.json  # Anonymous struct parsing (input only)
+├── assert-simple_struct.json        # Assertions for simple struct test
+├── assert-nested_struct.json        # Assertions for nested struct test
+└── assert-anonymous_struct.json     # Assertions for anonymous struct test
 
 test_enum_parsing/
 ├── test_enum_parsing.py
-└── input/
-    ├── input-simple_enum.json       # Simple enum parsing
-    └── input-typedef_enum.json      # Typedef enum parsing
+├── input/
+│   ├── input-simple_enum.json       # Simple enum parsing (input only)
+│   └── input-typedef_enum.json      # Typedef enum parsing (input only)
+├── assert-simple_enum.json          # Assertions for simple enum test
+└── assert-typedef_enum.json         # Assertions for typedef enum test
 ```
 
 ## Test Framework Public APIs
@@ -1025,4 +1094,29 @@ This migration plan provides a comprehensive roadmap for transforming all 50 tes
 4. **Verify continuously**: Run full test suite after each migration
 5. **Track progress**: Update todo.md with migration status
 
-The detailed recommendations ensure that the migration will result in a robust, maintainable test suite that validates public API behavior while remaining flexible to internal implementation changes. Feature tests and example tests will always use file-based approach to support comprehensive workflow testing, while unit tests can leverage input-##.json files for multiple test scenarios.
+## Data-Driven Testing Summary
+
+### Assertion File Strategy Benefits
+
+1. **🎯 Clear Separation**: Test input data and validation criteria are completely separated
+2. **📊 Explicit Expectations**: All validation criteria are documented in structured JSON format
+3. **🔧 Easy Maintenance**: Assertions can be updated without touching Python test code
+4. **📋 Self-Documenting**: Meaningful keys like `required_structs`, `forbidden_errors` make intent clear
+5. **🔄 Consistent Patterns**: Standardized assertion structure across all test types
+
+### File Naming Conventions
+
+| Test Type | Input Files | Assertion Files | Usage |
+|-----------|-------------|-----------------|-------|
+| **Feature/Integration** | `input/config.json` + source files | `assertions.json` | One file with test method keys |
+| **Unit (Multiple scenarios)** | `input-scenario_name.json` | `assert-scenario_name.json` | Paired files for each scenario |
+
+### Key Assertion Categories
+
+- **`cli_execution`**: Exit codes, execution time, success/failure criteria
+- **`expected_files`**: Required/forbidden output files, file counts
+- **`model_validation`**: Structs, functions, includes, relationships, counts
+- **`plantuml_validation`**: Classes, stereotypes, content validation
+- **`console_output`**: Success indicators, error patterns, log levels
+
+The detailed recommendations ensure that the migration will result in a robust, maintainable test suite that validates public API behavior while remaining flexible to internal implementation changes. The **data-driven assertion file approach** makes validation criteria explicit and maintainable, while feature tests and unit tests follow consistent patterns for their respective input strategies.

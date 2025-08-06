@@ -143,17 +143,32 @@ class TestInputFactory:
         return input_path, config_path
     
     def load_test_assertions(self, test_name: str) -> dict:
-        """Load assertions.json for file-based approach"""
+        """Load assertions.json for file-based approach (Option 1)"""
         assertions_path = self.get_test_data_path(test_name, "assertions.json")
         if os.path.exists(assertions_path):
             with open(assertions_path, 'r') as f:
                 return json.load(f)
         return {}
     
+    def load_scenario_assertions(self, test_name: str, input_file: str) -> dict:
+        """Load assert-###.json for specific input scenario (Option 2)"""
+        # Convert input-simple_struct.json -> assert-simple_struct.json
+        assert_file = input_file.replace("input-", "assert-")
+        assertions_path = self.get_test_data_path(test_name, assert_file)
+        if os.path.exists(assertions_path):
+            with open(assertions_path, 'r') as f:
+                return json.load(f)
+        return {}
+    
+    def load_test_method_assertions(self, test_name: str, method_name: str) -> dict:
+        """Load assertions for specific test method from assertions.json (Option 1)"""
+        all_assertions = self.load_test_assertions(test_name)
+        return all_assertions.get(method_name, {})
+    
     # === Input JSON Approach (Unit Tests) ===
     
-    def load_input_json_scenario(self, test_name: str, input_file: str) -> Tuple[str, str, dict]:
-        """Load input-###.json and return (input_path, config_path, expected_results)"""
+    def load_input_json_scenario(self, test_name: str, input_file: str) -> Tuple[str, str]:
+        """Load input-###.json and return (input_path, config_path)"""
         # Load input-###.json file
         input_file_path = self.get_test_data_path(test_name, f"input/{input_file}")
         with open(input_file_path, 'r') as f:
@@ -166,9 +181,8 @@ class TestInputFactory:
         temp_dir = tempfile.mkdtemp()
         input_path = self._create_temp_source_files(input_data, temp_dir)
         config_path = self._create_temp_config_file(input_data, temp_dir)
-        expected_results = input_data.get("expected_results", {})
         
-        return input_path, config_path, expected_results
+        return input_path, config_path
     
     def list_input_json_files(self, test_name: str) -> List[str]:
         """List all input-###.json files for a test"""
@@ -218,11 +232,17 @@ class TestInputFactory:
     # === Private Helper Methods ===
     
     def _validate_input_json_structure(self, input_data: dict) -> None:
-        """Validate input-###.json structure"""
+        """Validate input-###.json structure (no expected_results allowed)"""
         required_sections = ["test_metadata", "c2puml_config", "source_files"]
+        forbidden_sections = ["expected_results"]
+        
         missing = [s for s in required_sections if s not in input_data]
         if missing:
             raise ValueError(f"Missing required sections in input JSON: {missing}")
+        
+        forbidden_found = [s for s in forbidden_sections if s in input_data]
+        if forbidden_found:
+            raise ValueError(f"Forbidden sections in input JSON (use assertion files instead): {forbidden_found}")
     
     def _create_temp_config_file(self, input_data: dict, temp_dir: str) -> str:
         """Create temporary config.json from input data"""
@@ -243,26 +263,29 @@ class TestInputFactory:
         return temp_dir
 ```
 
-**Unified Usage Pattern:**
+**Unified Usage Pattern (with Assertion Files):**
 ```python
-# For Feature Tests (file-based):
+# For Feature Tests (file-based): 
 input_path, config_path = self.input_factory.load_test_files(self.test_name)
-# Returns: ("test_feature/input/", "test_feature/input/config.json")
+assertions = self.input_factory.load_test_assertions(self.test_name)
+# Returns: ("test_feature/input/", "test_feature/input/config.json", assertions_dict)
 
 # For Unit Tests (single input-###.json scenario):
-input_path, config_path, expected_results = self.input_factory.load_input_json_scenario(
+input_path, config_path = self.input_factory.load_input_json_scenario(
     self.test_name, "input-simple_struct.json"
 )
-# Returns: (temp_dir_path, temp_config_path, expected_results_dict)
+assertions = self.input_factory.load_scenario_assertions(self.test_name, "input-simple_struct.json")
+# Returns: (temp_dir_path, temp_config_path) + assertions from assert-simple_struct.json
 
 # For Unit Tests (multiple input-###.json scenarios):
 input_files = self.input_factory.list_input_json_files(self.test_name)
 for input_file in input_files:
     with self.subTest(scenario=input_file):
-        input_path, config_path, expected_results = self.input_factory.load_input_json_scenario(
+        input_path, config_path = self.input_factory.load_input_json_scenario(
             self.test_name, input_file
         )
-        # Test with this scenario...
+        assertions = self.input_factory.load_scenario_assertions(self.test_name, input_file)
+        # Test with this scenario using data-driven assertions...
 ```
 
 ### 2. Public API Testing Strategy
@@ -320,29 +343,32 @@ class TestStructParsing(UnifiedTestCase):
 #### 3.2 Test Folder Structure and Output Management
 **Priority: MEDIUM**
 
-**Test Folder Structure Pattern (with Output Management):**
+**Test Folder Structure Pattern (with Output Management and Assertions):**
 ```
 test_<n>/
 ├── test_<n>.py         # Test implementation
 ├── input/              # Test input files - choose ONE approach per test
-│   # Option 1: Explicit files approach (feature tests ALWAYS use this)
+│   # Option 1: File-based approach (feature tests ALWAYS use this)
 │   ├── config.json     # c2puml configuration
 │   ├── main.c          # Source files for testing
 │   ├── utils.h         # Header files
 │   ├── model.json      # Optional: Pre-parsed model for transformation testing
 │   └── subdir/         # Optional: Nested directories
-│   # Option 2: Input.json approach (NO config.json or source files)
-│   ├── input-simple_struct.json   # Test case 1: complete config + source + expected results
-│   ├── input-nested_struct.json   # Test case 2: complete config + content + expected results
-│   └── input-error_case.json      # Test case 3: complete config + scenarios + expected results
-├── assertions.json     # Used ONLY with Option 1 (file-based approach)
+│   # Option 2: Input JSON approach (NO config.json or source files)
+│   ├── input-simple_struct.json   # Test case 1: complete config + source (NO expected results)
+│   ├── input-nested_struct.json   # Test case 2: complete config + content (NO expected results)
+│   └── input-error_case.json      # Test case 3: complete config + scenarios (NO expected results)
+├── assertions.json     # Used with Option 1: contains all test method assertions
+├── assert-simple_struct.json      # Used with Option 2: assertions for input-simple_struct.json
+├── assert-nested_struct.json      # Used with Option 2: assertions for input-nested_struct.json  
+├── assert-error_case.json         # Used with Option 2: assertions for input-error_case.json
 └── output/             # Generated during test execution (Git ignored except for examples)
     ├── model.json      # Generated model file
     ├── diagram.puml    # Generated PlantUML files
     └── logs/           # Execution logs and debug output
 ```
 
-**Multiple Use-Case Output Structure:**
+**Multiple Use-Case Output Structure (with Assertion Files):**
 ```
 test_<n>/
 ├── test_<n>.py
@@ -350,6 +376,9 @@ test_<n>/
 │   ├── input-simple_struct.json
 │   ├── input-nested_struct.json
 │   └── input-error_case.json
+├── assert-simple_struct.json   # Assertions for input-simple_struct.json
+├── assert-nested_struct.json   # Assertions for input-nested_struct.json
+├── assert-error_case.json      # Assertions for input-error_case.json
 ├── output-simple_struct/       # Generated for input-simple_struct.json (Git ignored)
 │   ├── model.json
 │   ├── diagram.puml
@@ -408,9 +437,9 @@ test_temp_*
 - Complex project structures
 - Real-world code examples
 
-**Input JSON Structure (meaningful names):**
+**Input JSON Structure (meaningful names, NO expected results):**
 ```json
-// Example: input-simple_struct.json
+// Example: input-simple_struct.json (input data only)
 {
   "test_metadata": {
     "description": "Basic struct parsing test",
@@ -425,15 +454,63 @@ test_temp_*
   "source_files": {
     "main.c": "C source code content",
     "utils.h": "Header file content"
+  }
+}
+```
+
+**Assertion JSON Structure (meaningful keys, data-driven validation):**
+```json
+// Example: assert-simple_struct.json (validation criteria only)
+{
+  "cli_execution": {
+    "expected_exit_code": 0,
+    "should_succeed": true,
+    "max_execution_time_seconds": 10
   },
-  "expected_results": {
-    "model_elements": {
-      "structs": ["Point"],
-      "functions": ["main"]
-    },
-    "plantuml_elements": {
-      "classes": ["Point"]
-    }
+  "expected_files": {
+    "must_exist": ["model.json", "diagram.puml"],
+    "must_not_exist": ["error.log"],
+    "file_count_in_output": 2
+  },
+  "model_validation": {
+    "required_structs": [
+      {
+        "name": "Point",
+        "fields": ["x", "y"],
+        "field_types": {"x": "int", "y": "int"}
+      }
+    ],
+    "required_functions": [
+      {
+        "name": "main",
+        "return_type": "int",
+        "parameters": []
+      }
+    ],
+    "required_includes": ["stdio.h"],
+    "total_struct_count": 1,
+    "total_function_count": 1
+  },
+  "plantuml_validation": {
+    "required_classes": [
+      {
+        "name": "Point",
+        "stereotype": "struct",
+        "visibility": "public"
+      }
+    ],
+    "required_fields_in_puml": [
+      "+ int x",
+      "+ int y"
+    ],
+    "forbidden_content": ["ERROR", "INVALID"],
+    "must_contain_text": ["@startuml", "@enduml"]
+  },
+  "console_output": {
+    "success_indicators": ["Processing completed", "Generated model.json"],
+    "forbidden_errors": ["ERROR", "FATAL", "Exception"],
+    "forbidden_warnings": [],
+    "log_level": "INFO"
   }
 }
 ```
@@ -446,6 +523,50 @@ test_temp_*
 - `input-error_handling.json` - Error condition testing
 - `input-multipass_anonymous.json` - Multi-pass anonymous processing
 
+**Corresponding Assertion File Naming Examples:**
+- `assert-simple_struct.json` - Validation criteria for simple struct test
+- `assert-nested_struct.json` - Validation criteria for nested struct test
+- `assert-basic_generation.json` - PlantUML generation validation
+- `assert-complex_filters.json` - Filter behavior validation
+- `assert-error_handling.json` - Error condition validation
+- `assert-multipass_anonymous.json` - Multi-pass processing validation
+
+**Example assertions.json for Feature Tests:**
+```json
+{
+  "test_include_parsing": {
+    "cli_execution": {
+      "expected_exit_code": 0,
+      "should_succeed": true,
+      "max_execution_time_seconds": 15
+    },
+    "expected_files": {
+      "must_exist": ["model.json", "include_diagram.puml"],
+      "must_not_exist": ["error.log"]
+    },
+    "model_validation": {
+      "required_includes": ["stdio.h", "utils.h", "types.h"],
+      "required_structs": [{"name": "Data", "fields": ["value"]}],
+      "required_functions": [{"name": "main"}, {"name": "process_data"}]
+    }
+  },
+  "test_nested_includes": {
+    "cli_execution": {"expected_exit_code": 0},
+    "model_validation": {
+      "include_relationships": [
+        {"from": "main.c", "to": "utils.h"},
+        {"from": "utils.h", "to": "types.h"}
+      ]
+    },
+    "plantuml_validation": {
+      "required_relationships": [
+        {"type": "include", "from": "main.c", "to": "utils.h"}
+      ]
+    }
+  }
+}
+```
+
 #### 3.3 Complete Test Framework Usage Example
 **Priority: HIGH**
 
@@ -454,49 +575,71 @@ class TestStructParsing(UnifiedTestCase):
     """Example showing comprehensive framework usage"""
     
     def test_simple_struct_file_based(self):
-        """Example using file-based approach (feature tests)"""
-        # Load test files (feature test approach)
+        """Example using file-based approach with data-driven assertions"""
+        # Load test files and assertions
         input_path, config_path = self.input_factory.load_test_files(self.test_name)
+        assertions = self.input_factory.load_test_assertions(self.test_name)
         
-        # Get output directory next to test file (e.g., test_struct/output/)
+        # Get output directory next to test file
         output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name)
         self.input_factory.ensure_output_dir_clean(output_dir)
         
         # Execute through CLI
         result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
         
-        # Validate CLI execution
-        self.assertEqual(result.exit_code, 0, f"CLI failed: {result.stderr}")
+        # Data-driven CLI validation
+        cli_assertions = assertions.get("cli_execution", {})
+        expected_exit_code = cli_assertions.get("expected_exit_code", 0)
+        self.assertEqual(result.exit_code, expected_exit_code, f"CLI failed: {result.stderr}")
         
-        # Validate model.json generation
+        if cli_assertions.get("max_execution_time_seconds"):
+            self.assertLess(result.execution_time, cli_assertions["max_execution_time_seconds"])
+        
+        # Data-driven file validation
+        file_assertions = assertions.get("expected_files", {})
+        for required_file in file_assertions.get("must_exist", []):
+            file_path = os.path.join(output_dir, required_file)
+            self.assertTrue(os.path.exists(file_path), f"Required file not found: {required_file}")
+        
+        for forbidden_file in file_assertions.get("must_not_exist", []):
+            file_path = os.path.join(output_dir, forbidden_file)
+            self.assertFalse(os.path.exists(file_path), f"Forbidden file found: {forbidden_file}")
+        
+        # Data-driven model validation
         model_file = os.path.join(output_dir, "model.json")
-        self.assertTrue(os.path.exists(model_file), "model.json not generated")
-        
         with open(model_file, 'r') as f:
             model = json.load(f)
         
-        # Validate PlantUML generation
+        model_assertions = assertions.get("model_validation", {})
+        for struct_spec in model_assertions.get("required_structs", []):
+            self.model_validator.assert_model_struct_exists(model, struct_spec["name"])
+            if "fields" in struct_spec:
+                self.model_validator.assert_model_struct_fields(model, struct_spec["name"], struct_spec["fields"])
+        
+        for func_spec in model_assertions.get("required_functions", []):
+            self.model_validator.assert_model_function_exists(model, func_spec["name"])
+        
+        # Data-driven PlantUML validation
         puml_files = glob.glob(os.path.join(output_dir, "*.puml"))
         self.assertGreater(len(puml_files), 0, "No PlantUML files generated")
         
         with open(puml_files[0], 'r') as f:
             puml_content = f.read()
         
-        # Specific model validations using individual validators
-        self.model_validator.assert_model_struct_exists(model, "Point")
-        self.model_validator.assert_model_function_exists(model, "main")
-        self.model_validator.assert_model_struct_fields(model, "Point", ["x", "y"])
+        puml_assertions = assertions.get("plantuml_validation", {})
+        for class_spec in puml_assertions.get("required_classes", []):
+            self.puml_validator.assert_puml_class_exists(puml_content, class_spec["name"], class_spec.get("stereotype"))
         
-        # PlantUML validations using individual validators
-        self.puml_validator.assert_puml_class_exists(puml_content, "Point", "struct")
-        self.puml_validator.assert_puml_contains(puml_content, "+ int x")
+        for required_text in puml_assertions.get("required_fields_in_puml", []):
+            self.puml_validator.assert_puml_contains(puml_content, required_text)
         
     def test_multiple_structs_with_input_json(self):
-        """Example using input JSON approach (unit tests with multiple scenarios)"""
-        # Load input-###.json scenario (unit test approach)
-        input_path, config_path, expected_results = self.input_factory.load_input_json_scenario(
+        """Example using input JSON approach with separate assertion file"""
+        # Load input-###.json scenario and corresponding assertions
+        input_path, config_path = self.input_factory.load_input_json_scenario(
             self.test_name, "input-multiple_structs.json"
         )
+        assertions = self.input_factory.load_scenario_assertions(self.test_name, "input-multiple_structs.json")
         
         # Get output directory for this scenario
         output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name, "input-multiple_structs.json")
@@ -504,19 +647,25 @@ class TestStructParsing(UnifiedTestCase):
         
         # Execute and validate
         result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
-        self.assertEqual(result.exit_code, 0, f"CLI failed: {result.stderr}")
         
-        # Validate model generation
+        # Data-driven CLI validation
+        cli_assertions = assertions.get("cli_execution", {})
+        expected_exit_code = cli_assertions.get("expected_exit_code", 0)
+        self.assertEqual(result.exit_code, expected_exit_code, f"CLI failed: {result.stderr}")
+        
+        # Data-driven model validation
         model_file = os.path.join(output_dir, "model.json")
-        self.assertTrue(os.path.exists(model_file), "model.json not generated")
-        
         with open(model_file, 'r') as f:
             model = json.load(f)
         
-        # Use expected results from input JSON
-        model_elements = expected_results.get("model_elements", {})
-        for struct_name in model_elements.get("structs", []):
-            self.model_validator.assert_model_struct_exists(model, struct_name)
+        # Use assertions from assert-multiple_structs.json
+        model_assertions = assertions.get("model_validation", {})
+        for struct_spec in model_assertions.get("required_structs", []):
+            self.model_validator.assert_model_struct_exists(model, struct_spec["name"])
+        
+        # Validate total counts if specified
+        if "total_struct_count" in model_assertions:
+            self.model_validator.assert_model_element_count(model, "structs", model_assertions["total_struct_count"])
         
     def test_error_handling_scenario(self):
         """Example testing error conditions"""
@@ -661,17 +810,20 @@ class TestStructParsing(UnifiedTestCase):
                 result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
                 self.assertCLISuccess(result, f"Failed for scenario: {input_file}")
                 
-                # Scenario-specific validation based on input file data
-                
-                if "model_elements" in expected_results:
-                    model = self.assertValidModelGenerated(output_dir)
-                    model_elements = expected_results["model_elements"]
-                    
-                    for struct_name in model_elements.get("structs", []):
-                        self.model_validator.assert_model_struct_exists(model, struct_name)
-                    
-                    for func_name in model_elements.get("functions", []):
-                        self.model_validator.assert_model_function_exists(model, func_name)
+                        # Data-driven validation using assertion files
+        
+        # Use assertions specific to this input file
+        model_assertions = assertions.get("model_validation", {})
+        if model_assertions:
+            model_file = os.path.join(output_dir, "model.json")
+            with open(model_file, 'r') as f:
+                model = json.load(f)
+            
+            for struct_spec in model_assertions.get("required_structs", []):
+                self.model_validator.assert_model_struct_exists(model, struct_spec["name"])
+            
+            for func_spec in model_assertions.get("required_functions", []):
+                self.model_validator.assert_model_function_exists(model, func_spec["name"])
 ```
 
 ### 4. Result Validation Framework
@@ -1038,4 +1190,38 @@ tests/
 3. **Start with pilot migration** of 5-10 representative test files
 4. **Execute full migration** following the phase plan
 
-This unified testing approach ensures that c2puml remains flexible to internal changes while providing comprehensive validation of its public API functionality. Feature tests and example tests will always use explicit files to support comprehensive workflow testing, while unit tests can leverage input-##.json files for multiple test scenarios.
+## Data-Driven Testing with Assertion Files
+
+### Key Benefits of Assertion File Approach
+
+1. **📋 Separation of Concerns**: Test logic is separated from validation criteria
+2. **🔧 Maintainability**: Assertions can be updated without touching test code
+3. **📊 Clarity**: Expected results are explicitly documented in JSON format
+4. **🔄 Reusability**: Assertion patterns can be standardized across tests
+5. **🎯 Self-Documenting**: Meaningful keys make tests easy to understand
+
+### Assertion File Patterns
+
+- **Option 1 (Feature Tests)**: `assertions.json` with test method keys
+- **Option 2 (Unit Tests)**: `assert-###.json` matching `input-###.json` files
+
+### Test Implementation Pattern
+
+```python
+# Load test data and assertions separately
+input_path, config_path = self.input_factory.load_test_files(self.test_name)
+assertions = self.input_factory.load_test_method_assertions(self.test_name, "test_include_parsing")
+
+# Execute c2puml
+result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
+
+# Data-driven validation using assertion criteria
+cli_criteria = assertions.get("cli_execution", {})
+self.assertEqual(result.exit_code, cli_criteria.get("expected_exit_code", 0))
+
+model_criteria = assertions.get("model_validation", {})
+for struct_spec in model_criteria.get("required_structs", []):
+    self.model_validator.assert_model_struct_exists(model, struct_spec["name"])
+```
+
+This unified testing approach ensures that c2puml remains flexible to internal changes while providing comprehensive validation of its public API functionality. The **data-driven assertion files** make tests more maintainable and validation criteria explicit, while feature tests and unit tests use consistent patterns for their respective input strategies.
