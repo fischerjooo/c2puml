@@ -847,42 +847,7 @@ class FileValidator:
 ```
 
 ##### CLI Behavior Validation
-```python
-# Instead of validating config structure, we test c2puml's behavior with different configs
 
-class TestAssertionMixin:
-    """Extended with configuration behavior testing"""
-    
-    def assertConfigurationRejected(self, config_data: dict, expected_error: str = None) -> None:
-        """Test that c2puml rejects invalid configuration gracefully"""
-        temp_dir = self.create_temp_dir()
-        config_path = self.input_factory.create_temp_config_file({"c2puml_config": config_data}, temp_dir)
-        
-        result = self.executor.run_expecting_failure(".", config_path, self.create_temp_dir())
-        self.assertCLIFailure(result, expected_error)
-    
-    def assertConfigurationAccepted(self, config_data: dict) -> CLIResult:
-        """Test that c2puml accepts valid configuration and runs successfully"""
-        temp_dir = self.create_temp_dir()
-        config_path = self.input_factory.create_temp_config_file({"c2puml_config": config_data}, temp_dir)
-        
-        result = self.executor.run_full_pipeline(".", config_path, self.create_temp_dir())
-        self.assertCLISuccess(result)
-        return result
-    
-    def assertConfigBehavior(self, config_data: dict, expected_model_properties: dict) -> None:
-        """Test that specific configuration produces expected behavior in the output"""
-        result = self.assertConfigurationAccepted(config_data)
-        model = self.assertValidModelGenerated(result.working_dir)
-        
-        # Validate that config influenced the output as expected
-        for property_name, expected_value in expected_model_properties.items():
-            if property_name == "file_count":
-                self.model_validator.assert_model_file_count(model, expected_value)
-            elif property_name == "parsed_files":
-                self.model_validator.assert_model_files_parsed(model, expected_value)
-            # Add more property checks as needed
-```
 
 ### 5. Test Organization and Refactoring
 
