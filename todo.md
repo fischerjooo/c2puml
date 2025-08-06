@@ -72,14 +72,12 @@ class UnifiedTestCase(unittest.TestCase):
     
     def setUp(self):
         self.executor = TestExecutor()
-        self.data_factory = TestDataFactory()
-        self.input_factory = InputFactory()  # For processing input-###.json files
+        self.input_factory = TestInputFactory()  # Unified input management
         self.model_validator = ModelValidator()
         self.puml_validator = PlantUMLValidator()
         self.output_validator = OutputValidator()
         self.file_validator = FileValidator()
         self.test_name = self.__class__.__name__.lower().replace('test', 'test_')
-        self.output_dir = tempfile.mkdtemp()
         self.temp_dirs = []  # Track temporary directories for cleanup
         
     def tearDown(self):
@@ -130,83 +128,143 @@ class TestExecutor:
         """Marks output directory to be preserved for manual review"""
 ```
 
-##### TestDataFactory - Input Management (Explicit Files)
+##### TestInputFactory - Unified Input Management
 ```python
-class TestDataFactory:
-    """Manages test input data for explicit files approach (feature/example tests)"""
+class TestInputFactory:
+    """Unified factory for managing all test input data (both explicit files and input-###.json)"""
     
-    # Core Input Loading (Explicit Files)
-    def load_test_input(self, test_name: str) -> str
-    def load_test_config(self, test_name: str) -> str
-    def load_test_assertions(self, test_name: str) -> dict
+    def __init__(self):
+        pass
     
-    # Project Building (Explicit Files)
-    def create_temp_project(self, files: Dict[str, str], config: dict = None) -> str
-    def create_project_from_template(self, template_name: str, variables: dict = None) -> str
-    def create_nested_project(self, structure: dict) -> str
+    # === Explicit Files Approach (Feature/Example/Integration Tests) ===
     
-    # Utility Methods
-    def get_test_data_path(self, test_name: str, subpath: str = "") -> str
-    def copy_test_files(self, source_path: str, dest_path: str) -> None
-    def merge_configs(self, base_config: dict, override_config: dict) -> dict
-    def list_input_json_files(self, test_name: str) -> List[str]  # For finding available input-###.json files
+    def load_explicit_files(self, test_name: str) -> Tuple[str, str]:
+        """Load explicit files and return (input_path, config_path)"""
+        input_path = self.get_test_data_path(test_name, "input")
+        config_path = os.path.join(input_path, "config.json")
+        return input_path, config_path
     
-    # Output Directory Management
-    def get_output_dir_for_scenario(self, test_name: str, input_file: str = None) -> str:
-        """Returns output directory path: output/ or output-<scenario_name>/"""
+    def load_explicit_assertions(self, test_name: str) -> dict:
+        """Load assertions.json for explicit files approach"""
+        assertions_path = self.get_test_data_path(test_name, "assertions.json")
+        if os.path.exists(assertions_path):
+            with open(assertions_path, 'r') as f:
+                return json.load(f)
+        return {}
+    
+    # === Input JSON Approach (Unit Tests) ===
+    
+    def load_input_json_scenario(self, test_name: str, input_file: str) -> Tuple[str, str, dict]:
+        """Load input-###.json and return (input_path, config_path, expected_results)"""
+        # Load input-###.json file
+        input_file_path = self.get_test_data_path(test_name, f"input/{input_file}")
+        with open(input_file_path, 'r') as f:
+            input_data = json.load(f)
+        
+        # Validate structure
+        self._validate_input_json_structure(input_data)
+        
+        # Create temporary files
+        temp_dir = tempfile.mkdtemp()
+        input_path = self._create_temp_source_files(input_data, temp_dir)
+        config_path = self._create_temp_config_file(input_data, temp_dir)
+        expected_results = input_data.get("expected_results", {})
+        
+        return input_path, config_path, expected_results
+    
+    def list_input_json_files(self, test_name: str) -> List[str]:
+        """List all input-###.json files for a test"""
+        input_dir = self.get_test_data_path(test_name, "input")
+        if not os.path.exists(input_dir):
+            return []
+        return [f for f in os.listdir(input_dir) if f.startswith("input-") and f.endswith(".json")]
+    
+    # === Output Directory Management ===
+    
+    def get_output_dir_for_scenario(self, test_name: str, scenario_name: str = None) -> str:
+        """Get output directory: output/ or output-<scenario>/"""
+        test_dir = self.get_test_data_path(test_name).replace("/input", "")
+        if scenario_name:
+            # Extract meaningful name from input file
+            clean_name = scenario_name.replace("input-", "").replace(".json", "")
+            return os.path.join(test_dir, f"output-{clean_name}")
+        else:
+            return os.path.join(test_dir, "output")
     
     def get_example_output_dir(self, test_name: str) -> str:
         """Returns artifacts/examples/<name>/ for example tests"""
+        return f"artifacts/examples/{test_name.replace('test_example_', '')}"
     
     def ensure_output_dir_clean(self, output_dir: str) -> None:
-        """Ensures output directory exists and is clean before test execution"""
+        """Ensure output directory exists and is clean"""
+        if os.path.exists(output_dir):
+            shutil.rmtree(output_dir)
+        os.makedirs(output_dir, exist_ok=True)
+    
+    # === Utility Methods ===
+    
+    def get_test_data_path(self, test_name: str, subpath: str = "") -> str:
+        """Get path to test data directory or file"""
+        base_path = f"tests/{self._get_test_category(test_name)}/{test_name}"
+        return os.path.join(base_path, subpath) if subpath else base_path
+    
+    def _get_test_category(self, test_name: str) -> str:
+        """Determine test category from test name"""
+        if test_name.startswith("test_example_"):
+            return "example"
+        elif "feature" in test_name or "integration" in test_name or "comprehensive" in test_name:
+            return "feature"
+        else:
+            return "unit"
+    
+    # === Private Helper Methods ===
+    
+    def _validate_input_json_structure(self, input_data: dict) -> None:
+        """Validate input-###.json structure"""
+        required_sections = ["test_metadata", "c2puml_config", "source_files"]
+        missing = [s for s in required_sections if s not in input_data]
+        if missing:
+            raise ValueError(f"Missing required sections in input JSON: {missing}")
+    
+    def _create_temp_config_file(self, input_data: dict, temp_dir: str) -> str:
+        """Create temporary config.json from input data"""
+        config = input_data.get("c2puml_config", {})
+        config_path = os.path.join(temp_dir, "config.json")
+        with open(config_path, 'w') as f:
+            json.dump(config, f, indent=2)
+        return config_path
+    
+    def _create_temp_source_files(self, input_data: dict, temp_dir: str) -> str:
+        """Create temporary source files from input data"""
+        source_files = input_data.get("source_files", {})
+        for filename, content in source_files.items():
+            file_path = os.path.join(temp_dir, filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            with open(file_path, 'w') as f:
+                f.write(content)
+        return temp_dir
 ```
 
-##### InputFactory - Input JSON Management (Unit Tests)
+**Unified Usage Pattern:**
 ```python
-class InputFactory:
-    """Factory for loading and processing input-###.json files (unit tests only)"""
-    
-    # Core Input JSON Processing
-    def load_input_json(self, input_file_path: str) -> dict:
-        """Load and parse input-###.json file from filesystem"""
-    
-    def validate_input_json_structure(self, input_data: dict) -> bool:
-        """Validate that input-###.json has required sections: test_metadata, c2puml_config, source_files"""
-    
-    # Section Extraction
-    def extract_config(self, input_data: dict) -> dict:
-        """Extract c2puml_config section from input-###.json"""
-    
-    def extract_source_files(self, input_data: dict) -> Dict[str, str]:
-        """Extract source_files section from input-###.json"""
-    
-    def extract_expected_results(self, input_data: dict) -> dict:
-        """Extract expected_results section from input-###.json"""
-    
-    def extract_test_metadata(self, input_data: dict) -> dict:
-        """Extract test_metadata section from input-###.json"""
-    
-    # Temporary File Creation
-    def create_temp_config_file(self, input_data: dict, temp_dir: str) -> str:
-        """Create temporary config.json from input-###.json c2puml_config section"""
-    
-    def create_temp_source_files(self, input_data: dict, temp_dir: str) -> str:
-        """Create temporary source files from input-###.json source_files section"""
-```
+# For Feature Tests (explicit files):
+input_path, config_path = self.input_factory.load_explicit_files(self.test_name)
+# Returns: ("test_feature/input/", "test_feature/input/config.json")
 
-**Key Usage Pattern:**
-```python
-# For Unit Tests with input-###.json files:
-input_factory = InputFactory()
-input_data = input_factory.load_input_json("test_struct/input/input-simple_struct.json")
-temp_dir = self.create_temp_dir()
-input_path = input_factory.create_temp_source_files(input_data, temp_dir)
-config_path = input_factory.create_temp_config_file(input_data, temp_dir)
+# For Unit Tests (single input-###.json scenario):
+input_path, config_path, expected_results = self.input_factory.load_input_json_scenario(
+    self.test_name, "input-simple_struct.json"
+)
+# Returns: (temp_dir_path, temp_config_path, expected_results_dict)
 
-# For Feature Tests with explicit files:
-input_path = self.data_factory.load_test_input(self.test_name)  # Returns test_struct/input/
-config_path = self.data_factory.load_test_config(self.test_name)  # Returns test_struct/input/config.json
+# For Unit Tests (multiple input-###.json scenarios):
+input_files = self.input_factory.list_input_json_files(self.test_name)
+for input_file in input_files:
+    with self.subTest(scenario=input_file):
+        input_path, config_path, expected_results = self.input_factory.load_input_json_scenario(
+            self.test_name, input_file
+        )
+        # Test with this scenario...
 ```
 
 ### 2. Public API Testing Strategy
@@ -641,13 +699,12 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
     
     def test_simple_struct_explicit_files(self):
         """Example using explicit files approach (feature tests)"""
-        # Load test data using explicit files
-        input_path = self.data_factory.load_test_input(self.test_name)
-        config_path = self.data_factory.load_test_config(self.test_name)
+        # Load explicit files (feature test approach)
+        input_path, config_path = self.input_factory.load_explicit_files(self.test_name)
         
         # Get output directory next to test file (e.g., test_struct/output/)
-        output_dir = self.data_factory.get_output_dir_for_scenario(self.test_name)
-        self.data_factory.ensure_output_dir_clean(output_dir)
+        output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name)
+        self.input_factory.ensure_output_dir_clean(output_dir)
         
         # Execute through CLI
         result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
@@ -668,28 +725,25 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
         
     def test_multiple_structs_with_input_json(self):
         """Example using input JSON approach (unit tests with multiple scenarios)"""
-        # Load input-###.json file using InputFactory
-        input_file_path = self.data_factory.get_test_data_path(
-            self.test_name, "input/input-multiple_structs.json"
+        # Load input-###.json scenario (unit test approach)
+        input_path, config_path, expected_results = self.input_factory.load_input_json_scenario(
+            self.test_name, "input-multiple_structs.json"
         )
         
-        # Use InputFactory to process the input-###.json file
-        input_factory = InputFactory()
-        input_data = input_factory.load_input_json(input_file_path)
-        input_factory.validate_input_json_structure(input_data)
-        
-        # Create temporary files from input-###.json data
-        temp_dir = self.create_temp_dir()
-        input_path = input_factory.create_temp_source_files(input_data, temp_dir)
-        config_path = input_factory.create_temp_config_file(input_data, temp_dir)
+        # Get output directory for this scenario
+        output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name, "input-multiple_structs.json")
+        self.input_factory.ensure_output_dir_clean(output_dir)
         
         # Execute and validate
-        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+        result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
         self.assertCLISuccess(result)
         
-        model = self.assertValidModelGenerated(self.output_dir)
-        self.model_validator.assert_model_struct_exists(model, "Point")
-        self.model_validator.assert_model_struct_exists(model, "Rectangle")
+        model = self.assertValidModelGenerated(output_dir)
+        
+        # Use expected results from input JSON
+        model_elements = expected_results.get("model_elements", {})
+        for struct_name in model_elements.get("structs", []):
+            self.model_validator.assert_model_struct_exists(model, struct_name)
         
     def test_error_handling_scenario(self):
         """Example testing error conditions"""
