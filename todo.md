@@ -47,8 +47,6 @@ Create a new unified framework with these components:
 - **`TestExecutor`**: Runs c2puml through public APIs only
 - **`TestInputFactory`**: Unified factory for managing all test input data (both explicit files and input-###.json)
 - **`ModelValidator`, `PlantUMLValidator`, `OutputValidator`, `FileValidator`**: Validates outputs (model.json, .puml files, logs)
-- **`TestAssertionMixin`**: Common assertion patterns for tests
-- **`ProjectTemplates`**: Pre-built input-###.json templates for common test scenarios
 
 ```python
 # Framework structure
@@ -57,8 +55,6 @@ tests/framework/
 ├── executor.py         # TestExecutor class
 ├── input_factory.py    # TestInputFactory class (unified input management)
 ├── validators.py       # ModelValidator, PlantUMLValidator, OutputValidator, FileValidator classes
-├── mixins.py          # TestAssertionMixin class with common assertion patterns
-├── templates.py       # ProjectTemplates class for input-###.json templates
 └── fixtures.py        # Common test fixtures and helper utilities
 ```
 
@@ -316,224 +312,9 @@ class MemoryCLIResult(CLIResult):
     memory_samples: List[int]
     memory_timeline: List[tuple]  # (timestamp, memory_mb)
 
-# Common Test Mixins and Helpers
-class TestAssertionMixin:
-    """Common assertion patterns for c2puml tests"""
-    
-    def assertCLISuccess(self, result: CLIResult, message: str = None) -> None:
-        """Assert CLI execution succeeded"""
-        self.assertEqual(result.exit_code, 0, 
-            f"CLI failed: {result.stderr}\nCommand: {' '.join(result.command)}\n{message or ''}")
-    
-    def assertCLIFailure(self, result: CLIResult, expected_error: str = None) -> None:
-        """Assert CLI execution failed with optional error message check"""
-        self.assertNotEqual(result.exit_code, 0, "Expected CLI to fail but it succeeded")
-        if expected_error:
-            self.assertIn(expected_error, result.stderr)
-    
-    def assertFilesGenerated(self, output_dir: str, expected_files: List[str]) -> None:
-        """Assert expected files were generated"""
-        for filename in expected_files:
-            file_path = os.path.join(output_dir, filename)
-            self.assertTrue(os.path.exists(file_path), f"Expected file not generated: {filename}")
-    
-    def assertValidModelGenerated(self, output_dir: str) -> dict:
-        """Assert valid model.json was generated and return parsed content"""
-        model_file = os.path.join(output_dir, "model.json")
-        self.assertTrue(os.path.exists(model_file), "model.json not generated")
-        
-        with open(model_file, 'r') as f:
-            model = json.load(f)
-        
-        self.model_validator.assert_model_structure_valid(model)
-        return model
-    
-    def assertValidPlantUMLGenerated(self, output_dir: str) -> List[str]:
-        """Assert valid PlantUML files were generated and return file contents"""
-        puml_files = glob.glob(os.path.join(output_dir, "*.puml"))
-        self.assertGreater(len(puml_files), 0, "No PlantUML files generated")
-        
-        contents = []
-        for puml_file in puml_files:
-            with open(puml_file, 'r') as f:
-                content = f.read()
-            self.puml_validator.assert_puml_file_syntax_valid(content)
-            contents.append(content)
-        
-        return contents
-    
-    def assertConfigurationRejected(self, config_data: dict, expected_error: str = None) -> None:
-        """Test that c2puml rejects invalid configuration gracefully"""
-        temp_dir = self.create_temp_dir()
-        config_path = self.input_factory._create_temp_config_file({"c2puml_config": config_data}, temp_dir)
-        
-        result = self.executor.run_expecting_failure(".", config_path, self.create_temp_dir())
-        self.assertCLIFailure(result, expected_error)
-    
-    def assertConfigurationAccepted(self, config_data: dict) -> CLIResult:
-        """Test that c2puml accepts valid configuration and runs successfully"""
-        temp_dir = self.create_temp_dir()
-        config_path = self.input_factory._create_temp_config_file({"c2puml_config": config_data}, temp_dir)
-        
-        result = self.executor.run_full_pipeline(".", config_path, self.create_temp_dir())
-        self.assertCLISuccess(result)
-        return result
-    
-    def assertConfigBehavior(self, config_data: dict, expected_model_properties: dict) -> None:
-        """Test that specific configuration produces expected behavior in the output"""
-        result = self.assertConfigurationAccepted(config_data)
-        model = self.assertValidModelGenerated(result.working_dir)
-        
-        # Validate that config influenced the output as expected
-        for property_name, expected_value in expected_model_properties.items():
-            if property_name == "file_count":
-                self.model_validator.assert_model_file_count(model, expected_value)
-            elif property_name == "parsed_files":
-                self.model_validator.assert_model_files_parsed(model, expected_value)
-            # Add more property checks as needed
-
-class ProjectTemplates:
-    """Pre-built input-###.json templates for common test scenarios"""
-
-class ProjectTemplates:
-    """Pre-built input-###.json templates for common test scenarios"""
-    
-    @staticmethod
-    def simple_struct_template(struct_name: str = "Point") -> dict:
-        """Creates input-simple_struct.json template"""
-        return {
-            "test_metadata": {
-                "description": f"Simple {struct_name} struct test",
-                "test_type": "unit",
-                "expected_duration": "fast"
-            },
-            "c2puml_config": {
-                "project_name": f"test_{struct_name.lower()}",
-                "source_folders": ["."],
-                "output_dir": "./output",
-                "recursive_search": True,
-                "file_extensions": [".c", ".h"]
-            },
-            "source_files": {
-                "main.c": f"""#include <stdio.h>
-
-struct {struct_name} {{
-    int x;
-    int y;
-}};
-
-int main() {{
-    struct {struct_name} p = {{10, 20}};
-    return 0;
-}}"""
-            },
-            "expected_results": {
-                "model_elements": {
-                    "structs": [struct_name],
-                    "functions": ["main"]
-                },
-                "plantuml_elements": {
-                    "classes": [struct_name]
-                }
-            }
-        }
-    
-    @staticmethod
-    def enum_template(enum_name: str = "Color") -> dict:
-        """Creates input-enum_test.json template"""
-        return {
-            "test_metadata": {
-                "description": f"Simple {enum_name} enum test", 
-                "test_type": "unit",
-                "expected_duration": "fast"
-            },
-            "c2puml_config": {
-                "project_name": f"test_{enum_name.lower()}",
-                "source_folders": ["."],
-                "output_dir": "./output",
-                "recursive_search": True,
-                "file_extensions": [".c", ".h"]
-            },
-            "source_files": {
-                "main.c": f"""#include <stdio.h>
-
-enum {enum_name} {{
-    RED,
-    GREEN,
-    BLUE
-}};
-
-int main() {{
-    enum {enum_name} c = RED;
-    return 0;
-}}"""
-            },
-            "expected_results": {
-                "model_elements": {
-                    "enums": [enum_name],
-                    "functions": ["main"]
-                },
-                "plantuml_elements": {
-                    "enums": [enum_name]
-                }
-            }
-        }
-    
-    @staticmethod
-    def include_hierarchy_template() -> dict:
-        """Creates input-include_hierarchy.json template"""
-        return {
-            "test_metadata": {
-                "description": "Include hierarchy test",
-                "test_type": "unit", 
-                "expected_duration": "fast"
-            },
-            "c2puml_config": {
-                "project_name": "test_includes",
-                "source_folders": ["."],
-                "output_dir": "./output",
-                "recursive_search": True,
-                "file_extensions": [".c", ".h"]
-            },
-            "source_files": {
-                "main.c": """#include <stdio.h>
-#include "utils.h"
-
-int main() {
-    return process_data();
-}""",
-                "utils.h": """#ifndef UTILS_H
-#define UTILS_H
-
-#include "types.h"
-
-int process_data();
-
-#endif""",
-                "types.h": """#ifndef TYPES_H  
-#define TYPES_H
-
-typedef struct {
-    int value;
-} Data;
-
-#endif"""
-            },
-            "expected_results": {
-                "model_elements": {
-                    "structs": ["Data"],
-                    "functions": ["main", "process_data"],
-                    "includes": ["stdio.h", "utils.h", "types.h"]
-                },
-                "plantuml_elements": {
-                    "classes": ["Data"],
-                    "relationships": [
-                        {"from": "main.c", "to": "utils.h", "type": "include"},
-                        {"from": "utils.h", "to": "types.h", "type": "include"}
-                    ]
-                }
-            }
-        }
+# Test Usage Example using individual validators directly
+class TestStructParsing(UnifiedTestCase):
+    """Example test class using the framework components directly"""
 ```
 
 #### 3.2 Test Folder Structure and Output Management
@@ -669,7 +450,7 @@ test_temp_*
 **Priority: HIGH**
 
 ```python
-class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
+class TestStructParsing(UnifiedTestCase):
     """Example showing comprehensive framework usage"""
     
     def test_simple_struct_explicit_files(self):
@@ -684,19 +465,31 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
         # Execute through CLI
         result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
         
-        # Use assertion mixin for common validations
-        self.assertCLISuccess(result)
-        model = self.assertValidModelGenerated(output_dir)
-        puml_contents = self.assertValidPlantUMLGenerated(output_dir)
+        # Validate CLI execution
+        self.assertEqual(result.exit_code, 0, f"CLI failed: {result.stderr}")
         
-        # Specific model validations
+        # Validate model.json generation
+        model_file = os.path.join(output_dir, "model.json")
+        self.assertTrue(os.path.exists(model_file), "model.json not generated")
+        
+        with open(model_file, 'r') as f:
+            model = json.load(f)
+        
+        # Validate PlantUML generation
+        puml_files = glob.glob(os.path.join(output_dir, "*.puml"))
+        self.assertGreater(len(puml_files), 0, "No PlantUML files generated")
+        
+        with open(puml_files[0], 'r') as f:
+            puml_content = f.read()
+        
+        # Specific model validations using individual validators
         self.model_validator.assert_model_struct_exists(model, "Point")
         self.model_validator.assert_model_function_exists(model, "main")
         self.model_validator.assert_model_struct_fields(model, "Point", ["x", "y"])
         
-        # PlantUML validations
-        self.puml_validator.assert_puml_class_exists(puml_contents[0], "Point", "struct")
-        self.puml_validator.assert_puml_contains(puml_contents[0], "+ int x")
+        # PlantUML validations using individual validators
+        self.puml_validator.assert_puml_class_exists(puml_content, "Point", "struct")
+        self.puml_validator.assert_puml_contains(puml_content, "+ int x")
         
     def test_multiple_structs_with_input_json(self):
         """Example using input JSON approach (unit tests with multiple scenarios)"""
@@ -711,9 +504,14 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
         
         # Execute and validate
         result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
-        self.assertCLISuccess(result)
+        self.assertEqual(result.exit_code, 0, f"CLI failed: {result.stderr}")
         
-        model = self.assertValidModelGenerated(output_dir)
+        # Validate model generation
+        model_file = os.path.join(output_dir, "model.json")
+        self.assertTrue(os.path.exists(model_file), "model.json not generated")
+        
+        with open(model_file, 'r') as f:
+            model = json.load(f)
         
         # Use expected results from input JSON
         model_elements = expected_results.get("model_elements", {})
@@ -722,19 +520,32 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
         
     def test_error_handling_scenario(self):
         """Example testing error conditions"""
-        # Create invalid source using project template
-        invalid_data = ProjectTemplates.simple_struct_template("InvalidStruct")
-        invalid_data["source_files"]["main.c"] = "invalid C syntax here"
-        
-        # Use TestInputFactory to create temporary files
+        # Create invalid source files manually
         temp_dir = self.create_temp_dir()
-        input_path = self.input_factory._create_temp_source_files(invalid_data, temp_dir)
-        config_path = self.input_factory._create_temp_config_file(invalid_data, temp_dir)
+        
+        # Create invalid C source
+        invalid_c_content = "struct InvalidStruct { invalid syntax here"
+        source_file = os.path.join(temp_dir, "invalid.c")
+        with open(source_file, 'w') as f:
+            f.write(invalid_c_content)
+        
+        # Create basic config
+        config_data = {
+            "project_name": "test_invalid",
+            "source_folders": ["."],
+            "output_dir": "./output"
+        }
+        config_file = os.path.join(temp_dir, "config.json")
+        with open(config_file, 'w') as f:
+            json.dump(config_data, f)
         
         # Execute expecting failure
         output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name)
-        result = self.executor.run_expecting_failure(input_path, config_path, output_dir)
-        self.assertCLIFailure(result, "syntax error")
+        result = self.executor.run_expecting_failure(temp_dir, config_file, output_dir)
+        
+        # Validate failure
+        self.assertNotEqual(result.exit_code, 0, "Expected CLI to fail but it succeeded")
+        self.assertIn("syntax error", result.stderr)
         
     def test_performance_monitoring(self):
         """Example with performance testing"""
@@ -757,11 +568,20 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
         self.assertCLISuccess(result)
         
         # Framework validations
-        model = self.assertValidModelGenerated(output_dir)
-        puml_contents = self.assertValidPlantUMLGenerated(output_dir)
+        model_file = os.path.join(output_dir, "model.json")
+        self.assertTrue(os.path.exists(model_file), "model.json not generated")
+        
+        with open(model_file, 'r') as f:
+            model = json.load(f)
+        
+        # Validate PlantUML generation
+        puml_files = glob.glob(os.path.join(output_dir, "*.puml"))
+        self.assertGreater(len(puml_files), 0, "No PlantUML files generated")
         
         # Custom validation logic
-        self._validate_specific_business_logic(model, puml_contents)
+        with open(puml_files[0], 'r') as f:
+            puml_content = f.read()
+        self._validate_specific_business_logic(model, puml_content)
         
         # Advanced file validations
         model_file = os.path.join(output_dir, "model.json")
@@ -769,16 +589,44 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
         self.file_validator.assert_file_valid_utf8(model_file)
         self.file_validator.assert_file_no_trailing_whitespace(model_file)
         
-        # Test configuration behavior instead of structure
-        # Example: Test that file filtering configuration works
+        # Test configuration behavior instead of structure validation
+        # Example: Test that file filtering configuration works by creating test scenario manually
+        temp_dir = self.create_temp_dir()
+        
+        # Create test files 
+        test_files = {
+            "main.c": "int main() { return 0; }",
+            "utils.c": "void utils() {}",
+            "test.test.c": "// This should be excluded"
+        }
+        
+        for filename, content in test_files.items():
+            with open(os.path.join(temp_dir, filename), 'w') as f:
+                f.write(content)
+        
+        # Create config with filters
         config_with_filters = {
             "project_name": "test_filters",
             "source_folders": ["."],
             "file_filters": {"exclude": ["*.test.c"]}
         }
-        self.assertConfigBehavior(config_with_filters, {"file_count": 2})  # Should exclude test files
         
-    def _validate_specific_business_logic(self, model: dict, puml_contents: List[str]):
+        config_file = os.path.join(temp_dir, "config.json")
+        with open(config_file, 'w') as f:
+            json.dump(config_with_filters, f)
+        
+        # Test that filtering works
+        filter_output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name, "filter_test")
+        result = self.executor.run_full_pipeline(temp_dir, config_file, filter_output_dir)
+        self.assertEqual(result.exit_code, 0)
+        
+        # Validate that only 2 files were processed (excluding *.test.c)
+        model_file = os.path.join(filter_output_dir, "model.json")
+        with open(model_file, 'r') as f:
+            model = json.load(f)
+        self.model_validator.assert_model_file_count(model, 2)
+        
+    def _validate_specific_business_logic(self, model: dict, puml_content: str):
         """Custom validation for complex scenarios"""
         # Pattern matching for specific naming conventions
         struct_names = self.model_validator.assert_model_structs_match_pattern(
@@ -787,9 +635,8 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
         self.assertGreater(len(struct_names), 0, "No properly named structs found")
         
         # Complex PlantUML validation
-        for puml_content in puml_contents:
-            self.puml_validator.assert_puml_proper_stereotypes(puml_content)
-            self.puml_validator.assert_puml_no_duplicate_elements(puml_content)
+        self.puml_validator.assert_puml_proper_stereotypes(puml_content)
+        self.puml_validator.assert_puml_no_duplicate_elements(puml_content)
             
         # Business rule: All structs should have at least one field
         for struct_name in struct_names:
@@ -1068,8 +915,7 @@ tests/
 2. Implement `TestExecutor` with CLI interface
 3. Implement `TestInputFactory` with unified input management (both explicit files and input-###.json)
 4. Implement validation framework: `ModelValidator`, `PlantUMLValidator`, `OutputValidator`, `FileValidator`
-5. Implement `TestAssertionMixin` and `ProjectTemplates`
-6. **Verify baseline**: Run `run_all.sh` to establish current test suite baseline
+5. **Verify baseline**: Run `run_all.sh` to establish current test suite baseline
 
 #### Phase 2: Public API Migration (Week 3-4)
 1. Refactor high-priority unit tests to use CLI-only interface

@@ -752,34 +752,9 @@ class FileValidator:
 ### Helper Classes and Mixins
 
 ```python
-# Common Test Assertion Patterns
-class TestAssertionMixin:
-    """Common assertion patterns for c2puml tests"""
-    
-    def assertCLISuccess(self, result: CLIResult, message: str = None) -> None
-    def assertCLIFailure(self, result: CLIResult, expected_error: str = None) -> None
-    def assertFilesGenerated(self, output_dir: str, expected_files: List[str]) -> None
-    def assertValidModelGenerated(self, output_dir: str) -> dict
-    def assertValidPlantUMLGenerated(self, output_dir: str) -> List[str]
-    def loadInputJsonAndValidate(self, input_file_path: str) -> dict  # Load and validate input-###.json
-    def assertConfigurationRejected(self, config_data: dict, expected_error: str = None) -> None  # Test invalid config handling
-    def assertConfigurationAccepted(self, config_data: dict) -> CLIResult  # Test valid config acceptance
-    def assertConfigBehavior(self, config_data: dict, expected_model_properties: dict) -> None  # Test config behavior
+# Tests use individual validators directly instead of assertion mixins
 
 # Note: Input JSON functionality is now unified in TestInputFactory above
-
-# Project Templates for Input JSON
-class ProjectTemplates:
-    """Pre-built input-###.json templates for common test scenarios"""
-    
-    @staticmethod
-    def simple_struct_template(struct_name: str = "Point") -> dict
-    
-    @staticmethod
-    def enum_template(enum_name: str = "Color") -> dict
-    
-    @staticmethod
-    def include_hierarchy_template() -> dict
 
 # Result Types
 @dataclass
@@ -929,11 +904,7 @@ test_temp_*
    - `FileValidator` - Advanced file operations and validation
    - **Note**: No ConfigValidator - c2puml validates its own configuration
 
-4. **Implement Helper Classes**
-   - `TestAssertionMixin` - Common assertion patterns
-   - `ProjectTemplates` - Pre-built input-###.json templates
-
-5. **Establish Baseline**
+4. **Establish Baseline**
    - Run `./run_all.sh > baseline_results.log`
    - Verify foundation works with existing tests
 
