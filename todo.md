@@ -118,6 +118,16 @@ class TestExecutor:
     # Performance Testing  
     def run_with_timing(self, input_path: str, config_path: str, output_dir: str) -> TimedCLIResult
     def run_with_memory_tracking(self, input_path: str, config_path: str, output_dir: str) -> MemoryCLIResult
+    
+    # Output Management
+    def get_test_output_dir(self, test_name: str, scenario: str = None) -> str:
+        """Returns output directory path next to test file (output/ or output-<scenario>/)"""
+    
+    def cleanup_output_dir(self, output_dir: str) -> None:
+        """Cleans output directory before test execution"""
+    
+    def preserve_output_for_review(self, output_dir: str) -> None:
+        """Marks output directory to be preserved for manual review"""
 ```
 
 ##### TestDataFactory - Input Management
@@ -149,6 +159,16 @@ class TestDataFactory:
     def get_test_data_path(self, test_name: str, subpath: str = "") -> str
     def copy_test_files(self, source_path: str, dest_path: str) -> None
     def merge_configs(self, base_config: dict, override_config: dict) -> dict
+    
+    # Output Directory Management
+    def get_output_dir_for_scenario(self, test_name: str, input_file: str = None) -> str:
+        """Returns output directory path: output/ or output-<scenario_name>/"""
+    
+    def get_example_output_dir(self, test_name: str) -> str:
+        """Returns artifacts/examples/<name>/ for example tests"""
+    
+    def ensure_output_dir_clean(self, output_dir: str) -> None:
+        """Ensures output directory exists and is clean before test execution"""
 ```
 
 ### 2. Public API Testing Strategy
@@ -376,10 +396,10 @@ typedef struct {
             .build()
 ```
 
-#### 3.2 Test Folder Structure
+#### 3.2 Test Folder Structure and Output Management
 **Priority: MEDIUM**
 
-**Test Folder Structure Pattern:**
+**Test Folder Structure Pattern (with Output Management):**
 ```
 test_<n>/
 ├── test_<n>.py         # Test implementation
@@ -391,10 +411,64 @@ test_<n>/
 │   ├── model.json      # Optional: Pre-parsed model for transformation testing
 │   └── subdir/         # Optional: Nested directories
 │   # Option 2: Input.json approach (NO config.json or source files)
-│   ├── input-01.json   # Test case 1: complete config + source + expected results + assertions
-│   ├── input-02.json   # Test case 2: complete config + content + expected results + assertions
-│   └── input-03.json   # Test case 3: complete config + scenarios + expected results + assertions
-└── assertions.json     # Used ONLY with Option 1 (explicit files approach)
+│   ├── input-simple_struct.json   # Test case 1: complete config + source + expected results
+│   ├── input-nested_struct.json   # Test case 2: complete config + content + expected results
+│   └── input-error_case.json      # Test case 3: complete config + scenarios + expected results
+├── assertions.json     # Used ONLY with Option 1 (explicit files approach)
+└── output/             # Generated during test execution (Git ignored except for examples)
+    ├── model.json      # Generated model file
+    ├── diagram.puml    # Generated PlantUML files
+    └── logs/           # Execution logs and debug output
+```
+
+**Multiple Use-Case Output Structure:**
+```
+test_<n>/
+├── test_<n>.py
+├── input/
+│   ├── input-simple_struct.json
+│   ├── input-nested_struct.json
+│   └── input-error_case.json
+├── output-simple_struct/       # Generated for input-simple_struct.json (Git ignored)
+│   ├── model.json
+│   ├── diagram.puml
+│   └── c2puml.log
+├── output-nested_struct/       # Generated for input-nested_struct.json (Git ignored)
+│   ├── model.json
+│   ├── diagram.puml
+│   └── c2puml.log
+└── output-error_case/          # Generated for input-error_case.json (Git ignored)
+    ├── error.log
+    └── stderr.txt
+```
+
+**Exception - Example Tests (Use Artifacts Folder):**
+```
+test_example_<name>/
+├── test_example_<name>.py
+├── input/
+│   ├── config.json     # Example configuration
+│   └── src/            # Example source code
+└── # NO local output/ folder - outputs to artifacts/examples/<name>/ instead
+```
+
+**Git Ignore Configuration:**
+```gitignore
+# Test output directories (except examples)
+tests/unit/*/output/
+tests/unit/*/output-*/
+tests/feature/*/output/
+tests/feature/*/output-*/
+tests/integration/*/output/
+tests/integration/*/output-*/
+
+# Keep example outputs for documentation
+!tests/example/*/output/
+
+# Temporary test files
+*.tmp
+*.temp
+test_temp_*
 ```
 
 **Input Strategy Guidelines:**
@@ -464,13 +538,17 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
         input_path = self.data_factory.load_test_input(self.test_name)
         config_path = self.data_factory.load_test_config(self.test_name)
         
+        # Get output directory next to test file (e.g., test_struct/output/)
+        output_dir = self.data_factory.get_output_dir_for_scenario(self.test_name)
+        self.data_factory.ensure_output_dir_clean(output_dir)
+        
         # Execute through CLI
-        result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+        result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
         
         # Use assertion mixin for common validations
         self.assertCLISuccess(result)
-        model = self.assertValidModelGenerated(self.output_dir)
-        puml_contents = self.assertValidPlantUMLGenerated(self.output_dir)
+        model = self.assertValidModelGenerated(output_dir)
+        puml_contents = self.assertValidPlantUMLGenerated(output_dir)
         
         # Specific model validations
         self.model_validator.assert_model_struct_exists(model, "Point")
@@ -592,6 +670,10 @@ int main() { return 0; }
         
         for input_file in input_files:
             with self.subTest(scenario=input_file):
+                # Get scenario-specific output directory (e.g., output-simple_struct/)
+                output_dir = self.data_factory.get_output_dir_for_scenario(self.test_name, input_file)
+                self.data_factory.ensure_output_dir_clean(output_dir)
+                
                 input_path = self.data_factory.generate_source_files_from_input(
                     self.test_name, input_file
                 )
@@ -599,7 +681,7 @@ int main() { return 0; }
                     self.test_name, input_file
                 )
                 
-                result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
+                result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
                 self.assertCLISuccess(result, f"Failed for scenario: {input_file}")
                 
                 # Scenario-specific validation based on input file data
@@ -607,7 +689,7 @@ int main() { return 0; }
                 expected_results = test_data.get("expected_results", {})
                 
                 if "model_elements" in expected_results:
-                    model = self.assertValidModelGenerated(self.output_dir)
+                    model = self.assertValidModelGenerated(output_dir)
                     model_elements = expected_results["model_elements"]
                     
                     for struct_name in model_elements.get("structs", []):

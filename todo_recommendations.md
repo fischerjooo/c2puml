@@ -572,6 +572,16 @@ class TestExecutor:
     def run_expecting_failure(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
     def run_with_timing(self, input_path: str, config_path: str, output_dir: str) -> TimedCLIResult
     def run_with_memory_tracking(self, input_path: str, config_path: str, output_dir: str) -> MemoryCLIResult
+    
+    # Output Management
+    def get_test_output_dir(self, test_name: str, scenario: str = None) -> str:
+        """Returns output directory path next to test file (output/ or output-<scenario>/)"""
+    
+    def cleanup_output_dir(self, output_dir: str) -> None:
+        """Cleans output directory before test execution"""
+    
+    def preserve_output_for_review(self, output_dir: str) -> None:
+        """Marks output directory to be preserved for manual review"""
 
 # Test Data Management
 class TestDataFactory:
@@ -602,6 +612,16 @@ class TestDataFactory:
     def get_test_data_path(self, test_name: str, subpath: str = "") -> str
     def copy_test_files(self, source_path: str, dest_path: str) -> None
     def merge_configs(self, base_config: dict, override_config: dict) -> dict
+    
+    # Output Directory Management
+    def get_output_dir_for_scenario(self, test_name: str, input_file: str = None) -> str:
+        """Returns output directory path: output/ or output-<scenario_name>/"""
+    
+    def get_example_output_dir(self, test_name: str) -> str:
+        """Returns artifacts/examples/<name>/ for example tests"""
+    
+    def ensure_output_dir_clean(self, output_dir: str) -> None:
+        """Ensures output directory exists and is clean before test execution"""
 ```
 
 ### Validation Framework APIs
@@ -801,6 +821,56 @@ class MemoryCLIResult(CLIResult):
     peak_memory_mb: int
     memory_samples: List[int]
     memory_timeline: List[tuple]
+```
+
+### Test Output Management and Git Configuration
+
+**Test Folder Structure with Output Management:**
+```
+test_<name>/
+├── test_<name>.py         # Test implementation
+├── input/                 # Test input files
+│   ├── config.json        # Option 1: Explicit config (feature/example tests)
+│   ├── main.c             # Option 1: Source files
+│   ├── input-scenario1.json # Option 2: JSON input files (unit tests)
+│   └── input-scenario2.json
+├── output/                # Single scenario output (Git ignored except examples)
+│   ├── model.json
+│   ├── diagram.puml
+│   └── c2puml.log
+├── output-scenario1/      # Multi-scenario output (Git ignored except examples)
+│   ├── model.json
+│   ├── diagram.puml
+│   └── c2puml.log
+└── output-scenario2/      # Multi-scenario output (Git ignored except examples)
+    ├── model.json
+    ├── diagram.puml
+    └── c2puml.log
+```
+
+**Key Output Management Rules:**
+1. **Local Output Review**: All test outputs are generated next to the test file for easy manual review
+2. **Scenario-Specific Outputs**: Multiple input files create separate `output-<scenario>/` directories
+3. **Git Ignore**: All test outputs are ignored except example test outputs (which serve as documentation)
+4. **Example Test Exception**: Example tests output to `artifacts/examples/<name>/` instead of local directories
+
+**Required .gitignore Updates:**
+```gitignore
+# Test output directories (except examples)
+tests/unit/*/output/
+tests/unit/*/output-*/
+tests/feature/*/output/  
+tests/feature/*/output-*/
+tests/integration/*/output/
+tests/integration/*/output-*/
+
+# Keep example outputs for documentation
+!tests/example/*/output/
+
+# Temporary test files
+*.tmp
+*.temp
+test_temp_*
 ```
 
 ### Input-##.json Structure Definition
