@@ -1,30 +1,30 @@
-# C2PUML Test Migration Recommendations
+# C2PUML Test Migration Recommendations - MetaTest.py Data-Driven Approach
 
 ## Executive Summary
 
-This document provides comprehensive analysis and specific recommendations for migrating the C2PUML test suite (50 test files) to the unified testing framework defined in `todo.md`. The analysis focuses on **test-application boundary separation** and **public API testing**.
+This document provides comprehensive analysis and specific recommendations for migrating the C2PUML test suite (58 test files) to the **MetaTest.py data-driven testing framework** defined in `todo.md`. The analysis focuses on **test-application boundary separation**, **public API testing**, and **data-driven test development** using JSON files.
 
 **Key Findings:**
-- **50 test files analyzed** across unit, feature, and integration categories
-- **42 files (84%)** require input-##.json strategy due to multiple input needs
-- **8 files (16%)** can use file-based strategy
+- **58 test files analyzed** across unit, feature, and integration categories
+- **All files** will use MetaTest.py classes for standardized test workflows
+- **All tests** will use JSON files for test data and assertions (data-driven approach)
 - **3 critical files** must be split due to excessive size (80, 41, 36 methods)
-- **All files** currently use internal APIs and need CLI-only conversion
+- **All files** currently use internal APIs and need CLI-only conversion through MetaTest
 
 ## Progress Tracking
 
 ### Migration Status Overview
-- **Framework Foundation:** ⏳ Pending - TestInputFactory, TestExecutor, Validators
+- **MetaTest Framework Development:** ⏳ Pending - Core MetaTest classes and supporting framework
 - **Critical Splits (3 files):** ⏳ Pending - Planning phase required
-- **High Priority (24 files):** ⏳ Pending - All files have detailed recommendations
-- **Medium Priority (18 files):** ⏳ Pending - All files have detailed recommendations
-- **Low Priority (8 files):** ⏳ Pending - All files have detailed recommendations
+- **High Priority (24 files):** ⏳ Pending - All files have detailed MetaTest recommendations
+- **Medium Priority (18 files):** ⏳ Pending - All files have detailed MetaTest recommendations
+- **Low Priority (8 files):** ⏳ Pending - All files have detailed MetaTest recommendations
 - **Framework Cleanup:** ⏳ Pending - Remove legacy framework files after migration
 
 ### Progress Legend
 - ⏳ **Pending** - Not yet started
 - 🔄 **In Progress** - Currently being worked on
-- ✅ **Completed** - Migrated and verified
+- ✅ **Completed** - Migrated to MetaTest framework with JSON data files
 - 🚫 **Blocked** - Waiting for dependencies
 
 ### Update Instructions
@@ -32,78 +32,85 @@ This document provides comprehensive analysis and specific recommendations for m
 
 ### Migration Progress Tracking
 
-📋 **Complete progress tracking for all 50 test files has been moved to `todo.md`** for centralized management.
+📋 **Complete progress tracking for all 58 test files has been moved to `todo.md`** for centralized management.
 
 The progress tracking includes:
-- **37 Unit Tests** - With detailed input-###.json naming strategies
-- **9 Feature Tests** - Using file-based approach (no splits needed)
-- **2 Integration Tests** - Using file-based approach (no splits needed)  
-- **1 Special Feature Test** - Error handling test
+- **37 Unit Tests** - Using appropriate MetaTest classes with JSON data files
+- **12 Feature Tests** - Using IntegrationMetaTest with JSON data files
+- **2 Integration Tests** - Using PerformanceMetaTest/IntegrationMetaTest with JSON data files  
+- **1 Special Feature Test** - Error handling test using ErrorHandlingMetaTest
 - **1 Example Test** - Preserved as-is
 
 **Key Status Information:**
-- ⏳ **50 files pending migration**
+- ⏳ **58 files pending migration to MetaTest framework**
 - 🔴 **3 critical splits required**: `test_transformer.py`, `test_tokenizer.py`, `test_parser_comprehensive.py`
-- ✅ **Framework design completed** with unified `TestInputFactory`
+- ✅ **MetaTest framework design completed** with comprehensive JSON data structure
 
 **👀 See `todo.md` → "Complete Test Migration Progress Tracking" for the full detailed table.**
 
-## Input Strategy Guidelines
+## MetaTest.py Framework Strategy
 
-### The Core Rule
+### Core Philosophy: Data-Driven Test Development
 
-**Feature tests and example tests ALWAYS use file-based approach** as they test complete workflows and need comprehensive project structures.
+**Instead of writing Python code for every test, developers create JSON files that define:**
+1. **Test Input Data** (`test.json` or `test-###.json`) - Source code, configuration, test parameters
+2. **Test Assertions** (`assertions.json` or `assert-###.json`) - Expected results, validation criteria
+3. **Test Metadata** - Test type, description, execution parameters
 
-**Unit tests with multiple test methods requiring different inputs MUST use input-##.json approach.**
+**MetaTest.py classes handle the standardized test workflows, making test development data-driven.**
 
-### Critical Insight: Feature Tests Generally Do NOT Need Splitting
+### MetaTest Class Selection Guidelines
 
-**Since feature tests can only use file-based approach (config.json + source files), all test methods in a feature test file share the same input project.** This means:
+**Choose the appropriate MetaTest class based on test type:**
 
-- **Feature tests typically should NOT be split** unless they test completely different features requiring different projects
-- All test methods in a feature test can use the same input/ directory with the same config.json and source files  
-- Each test method validates different aspects of the same comprehensive workflow
-- Splitting would only be needed if the feature test file covers multiple unrelated features that require completely different project structures
+#### StructParsingMetaTest
+- **Use for**: Struct, enum, union parsing tests
+- **Test scenarios**: Basic parsing, nested structures, anonymous structures, field validation
+- **Examples**: `test_parser.py`, `test_global_parsing.py`, `test_typedef_extraction.py`
 
-### Input Strategy Guidelines
+#### TransformationMetaTest
+- **Use for**: Transformation and filtering tests
+- **Test scenarios**: Renaming, removal, addition of elements, file filtering, configuration validation
+- **Examples**: `test_transformer.py`, `test_parser_filtering.py`, `test_include_filtering_bugs.py`
 
-**Use input-##.json for:**
-- Small unit test cases (< 50 lines of C code total)
-- Multiple test scenarios in one test file
-- Tests requiring different inputs per method
-- **NEVER for feature tests or example tests**
+#### PlantUMLGenerationMetaTest
+- **Use for**: Diagram generation tests
+- **Test scenarios**: PlantUML output validation, formatting, relationships, stereotypes
+- **Examples**: `test_generator.py`, `test_generator_visibility_logic.py`, `test_generator_grouping.py`
 
-**Use file-based approach for:**
-- **Feature tests (ALWAYS) - typically NO split needed**
-- **Example tests (ALWAYS) - typically NO split needed**
-- **Integration tests - typically NO split needed**
-- Large test cases (> 50 lines of C code)
-- Complex project structures
+#### ErrorHandlingMetaTest
+- **Use for**: Error scenarios and edge cases
+- **Test scenarios**: Invalid syntax, missing files, permission errors, timeout scenarios
+- **Examples**: `test_invalid_source_paths.py`, `test_absolute_path_bug_detection.py`
 
-## Key Migration Insights
+#### PerformanceMetaTest
+- **Use for**: Performance and memory testing
+- **Test scenarios**: Large projects, memory usage, execution time validation
+- **Examples**: `test_comprehensive.py` (performance aspects)
 
-### Feature Test Splitting Analysis
+#### IntegrationMetaTest
+- **Use for**: Complex project and workflow tests
+- **Test scenarios**: Multi-file projects, complete workflows, component integration
+- **Examples**: `test_component_features.py`, `test_include_processing_features.py`, `test_multiple_source_folders.py`
 
-**IMPORTANT DISCOVERY:** Most feature tests do NOT need splitting because:
+### JSON File Organization Strategy
 
-1. **File-Based Constraint**: Feature tests can only use file-based approach (config.json + source files)
-2. **Shared Input Project**: All test methods in a feature test file share the same input project structure  
-3. **Different Validation Aspects**: Each test method validates different aspects of the same comprehensive workflow
-4. **Single Output Directory**: All test methods generate output to the same local output/ directory
+**Standardized JSON file naming and organization:**
 
-**When Feature Tests SHOULD Be Split:**
-- Only when they test completely different features requiring entirely different project structures
-- When the feature test file covers multiple unrelated features (rare)
+#### Test Data Files (`test-###.json`)
+- **Naming convention**: `test-<scenario_name>.json`
+- **Examples**: `test-simple_struct.json`, `test-nested_anonymous.json`, `test-rename_functions.json`
+- **Content**: Complete test configuration, source files, execution parameters
 
-**When Feature Tests Should NOT Be Split (Most Cases):**
-- When all test methods validate different aspects of the same feature
-- When all test methods can share the same input project structure
-- When test methods validate different pipeline stages (parse, transform, generate) of the same feature
+#### Assertion Files (`assert-###.json`)
+- **Naming convention**: `assert-<scenario_name>.json` (matching test file)
+- **Examples**: `assert-simple_struct.json`, `assert-nested_anonymous.json`, `assert-rename_functions.json`
+- **Content**: Validation criteria, expected results, performance thresholds
 
-**Migration Impact:**
-- **10 feature tests** → **Direct migration without splitting** (vs. previous assumption of potential splits)
-- **2 integration tests** → **Direct migration without splitting**
-- **Reduced complexity** → Focus splits only on unit tests that actually benefit from input-##.json approach
+#### Template Files
+- **Base templates**: Common test scenarios as reusable templates
+- **Examples**: `template-struct_parsing.json`, `template-transformation.json`, `template-generation.json`
+- **Usage**: Copy template, modify for specific test scenario
 
 ## Detailed File-by-File Analysis
 
@@ -122,8 +129,11 @@ The progress tracking includes:
   - `test_transformation_error_handling.py` - Error scenarios - **Progress:** ⏳ Pending
   - `test_transformation_edge_cases.py` - Edge cases and complex scenarios - **Progress:** ⏳ Pending
   - `test_transformation_integration.py` - End-to-end transformation workflows - **Progress:** ⏳ Pending
-- **Input Strategy:** input-##.json for each transformation type
-- **Input Files Needed:** input-rename_functions.json, input-remove_elements.json, input-add_elements.json, input-file_selection.json, input-config_validation.json, input-error_scenarios.json, input-edge_cases.json, input-integration_workflow.json
+- **MetaTest Class**: `TransformationMetaTest` for all split files
+- **Test JSON Files Needed**: 
+  - `test-rename_functions.json`, `test-remove_elements.json`, `test-add_elements.json`
+  - `test-file_selection.json`, `test-config_validation.json`, `test-error_scenarios.json`
+  - `test-edge_cases.json`, `test-integration_workflow.json`
 - **Overall Progress:** ⏳ Pending - Requires planning phase first
 
 **2. test_tokenizer.py (41 methods)** 🚨 CRITICAL SPLIT REQUIRED
@@ -132,8 +142,8 @@ The progress tracking includes:
   - `test_tokenizer_identifiers.py` - Variable/function names and identifiers - **Progress:** ⏳ Pending
   - `test_tokenizer_operators.py` - Operators and punctuation - **Progress:** ⏳ Pending
   - `test_tokenizer_complex.py` - Complex tokenization scenarios - **Progress:** ⏳ Pending
-- **Input Strategy:** input-##.json for each token category
-- **Input Files Needed:** input-keywords.json, input-identifiers.json, input-operators.json, input-complex_tokens.json
+- **MetaTest Class**: `StructParsingMetaTest` for all split files (tokenization is part of parsing)
+- **Test JSON Files Needed**: `test-keywords.json`, `test-identifiers.json`, `test-operators.json`, `test-complex_tokens.json`
 - **Overall Progress:** ⏳ Pending - Requires planning phase first
 
 **3. test_parser_comprehensive.py (36 methods)** 🚨 CRITICAL SPLIT REQUIRED
@@ -145,119 +155,122 @@ The progress tracking includes:
   - `test_parser_include.py` - Include processing - **Progress:** ⏳ Pending
   - `test_parser_macro.py` - Macro processing - **Progress:** ⏳ Pending
   - `test_parser_typedef.py` - Typedef processing - **Progress:** ⏳ Pending
-- **Input Strategy:** input-##.json for each language construct
-- **Input Files Needed:** input-simple_struct.json, input-nested_struct.json, input-anonymous_struct.json, input-simple_enum.json, input-function_decl.json, input-global_vars.json, input-include_processing.json, input-macro_processing.json, input-typedef_processing.json
+- **MetaTest Class**: `StructParsingMetaTest` for all split files
+- **Test JSON Files Needed**: 
+  - `test-simple_struct.json`, `test-nested_struct.json`, `test-anonymous_struct.json`
+  - `test-simple_enum.json`, `test-function_decl.json`, `test-global_vars.json`
+  - `test-include_processing.json`, `test-macro_processing.json`, `test-typedef_processing.json`
 - **Overall Progress:** ⏳ Pending - Requires planning phase first
 
-#### High Priority Unit Tests Using Input JSON Strategy (21 files)
+#### High Priority Unit Tests Using MetaTest Classes (21 files)
 
 **test_generator.py (20 methods)**
-- **Strategy:** Use input-##.json for different output scenarios
-- **Recommended Input Files:**
-  - input-simple_generation.json - Simple PlantUML generation
-  - input-complex_diagrams.json - Complex diagrams with relationships
-  - input-format_compliance.json - Formatting compliance tests
-  - input-relationship_generation.json - Include/typedef relationships
+- **MetaTest Class**: `PlantUMLGenerationMetaTest`
+- **Recommended Test JSON Files:**
+  - `test-simple_generation.json` - Simple PlantUML generation
+  - `test-complex_diagrams.json` - Complex diagrams with relationships
+  - `test-format_compliance.json` - Formatting compliance tests
+  - `test-relationship_generation.json` - Include/typedef relationships
 - **Progress:** ⏳ Pending
 
 **test_preprocessor_bug.py (19 methods)**
-- **Strategy:** Use input-##.json for different directive types
-- **Recommended Input Files:**
-  - input-ifdef_testing.json - #ifdef/#ifndef testing
-  - input-define_macros.json - #define macro testing
-  - input-include_directives.json - #include directive testing
-  - input-conditional_compilation.json - Complex conditional compilation
+- **MetaTest Class**: `StructParsingMetaTest` (preprocessor is part of parsing)
+- **Recommended Test JSON Files:**
+  - `test-ifdef_testing.json` - #ifdef/#ifndef testing
+  - `test-define_macros.json` - #define macro testing
+  - `test-include_directives.json` - #include directive testing
+  - `test-conditional_compilation.json` - Complex conditional compilation
 - **Progress:** ⏳ Pending
 
 **test_invalid_source_paths.py (17 methods)**
-- **Strategy:** Use input-##.json for different error scenarios
-- **Recommended Input Files:**
-  - input-missing_files.json - Missing source files
-  - input-invalid_paths.json - Invalid path formats
-  - input-permission_errors.json - Permission-related errors
+- **MetaTest Class**: `ErrorHandlingMetaTest`
+- **Recommended Test JSON Files:**
+  - `test-missing_files.json` - Missing source files
+  - `test-invalid_paths.json` - Invalid path formats
+  - `test-permission_errors.json` - Permission-related errors
 - **Progress:** ⏳ Pending
 
 **test_anonymous_processor_extended.py (14 methods)**
-- **Strategy:** Use input-##.json for complexity levels
-- **Recommended Input Files:**
-  - input-basic_anonymous.json - Basic anonymous structures
-  - input-nested_anonymous.json - Nested anonymous structures
-  - input-complex_hierarchies.json - Complex hierarchies
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Recommended Test JSON Files:**
+  - `test-basic_anonymous.json` - Basic anonymous structures
+  - `test-nested_anonymous.json` - Nested anonymous structures
+  - `test-complex_hierarchies.json` - Complex hierarchies
 - **Progress:** ⏳ Pending
 
 **test_preprocessor_handling.py (14 methods)**
-- **Strategy:** Use input-##.json by directive type
-- **Recommended Input Files:**
-  - input-conditional_compilation.json - Conditional compilation testing
-  - input-macro_expansion.json - Macro expansion scenarios
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Recommended Test JSON Files:**
+  - `test-conditional_compilation.json` - Conditional compilation testing
+  - `test-macro_expansion.json` - Macro expansion scenarios
 - **Progress:** ⏳ Pending
 
 **Other High Priority Unit Tests:**
 
 **test_include_processing_features.py (12 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
-- **Strategy:** Use file-based approach with config.json + source files - single comprehensive test suite
-- **Rationale:** Feature tests can only use file-based approach, so all 12 methods share the same input project structure
-- **Input Files:** main.c, utils.h, includes/, config.json - ONE set for all test methods
+- **MetaTest Class**: `IntegrationMetaTest`
+- **Rationale**: Feature tests use IntegrationMetaTest for complex project scenarios
+- **Test JSON Files**: `test-include_processing.json` - Single comprehensive test suite
 - **Progress:** ⏳ Pending - Direct migration without splitting
 
 **test_parser.py (10 methods)** - Core parser functionality
-- **Strategy:** Use input-##.json for different parsing scenarios
-- **Input Files:** input-basic_parsing.json, input-complex_parsing.json, input-error_handling.json
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-basic_parsing.json`, `test-complex_parsing.json`, `test-error_handling.json`
 - **Progress:** ⏳ Pending
 
 **test_global_parsing.py (9 methods)** - Global variable parsing
-- **Strategy:** Use input-##.json for different global variable scenarios
-- **Input Files:** input-simple_globals.json, input-complex_globals.json, input-initialized_globals.json
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-simple_globals.json`, `test-complex_globals.json`, `test-initialized_globals.json`
 - **Progress:** ⏳ Pending
 
 **test_component_features.py (9 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
-- **Strategy:** Use file-based approach for component integration tests - single comprehensive test suite
-- **Rationale:** Feature tests can only use file-based approach, so all 9 methods share the same input project
-- **Input Files:** main.c, headers/, config.json, project structure - ONE set for all test methods
+- **MetaTest Class**: `IntegrationMetaTest`
+- **Rationale**: Feature tests use IntegrationMetaTest for component integration scenarios
+- **Test JSON Files**: `test-component_integration.json` - Single comprehensive test suite
 - **Progress:** ⏳ Pending - Direct migration without splitting
 
 **test_transformer_features.py (9 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
-- **Strategy:** Use file-based approach for transformer feature testing - single comprehensive test suite
-- **Rationale:** Feature tests can only use file-based approach, so all 9 methods share the same transformation config
-- **Input Files:** source files with transformation config.json - ONE set for all test methods
+- **MetaTest Class**: `TransformationMetaTest`
+- **Rationale**: Feature tests use TransformationMetaTest for transformation scenarios
+- **Test JSON Files**: `test-transformer_features.json` - Single comprehensive test suite
 - **Progress:** ⏳ Pending - Direct migration without splitting
 
 **test_comprehensive.py (9 methods)** - **INTEGRATION TEST: NO SPLIT NEEDED**
-- **Strategy:** Use file-based approach for complete workflows - single comprehensive test suite
-- **Rationale:** Integration tests use file-based approach like feature tests, single realistic project for all tests
-- **Input Files:** realistic_project/, config.json - ONE set for all test methods
+- **MetaTest Class**: `IntegrationMetaTest`
+- **Rationale**: Integration tests use IntegrationMetaTest for realistic project scenarios
+- **Test JSON Files**: `test-realistic_project.json` - Single comprehensive test suite
 - **Progress:** ⏳ Pending - Direct migration without splitting
 
 **test_multi_pass_anonymous_processing.py (8 methods)** - Multi-pass processing
-- **Strategy:** Use input-##.json for multi-pass scenarios
-- **Input Files:** input-simple_multipass.json, input-complex_multipass.json, input-nested_multipass.json
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-simple_multipass.json`, `test-complex_multipass.json`, `test-nested_multipass.json`
 - **Progress:** ⏳ Pending
 
 **test_crypto_filter_usecase.py (8 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
-- **Strategy:** Use file-based approach for crypto filtering use cases - single comprehensive test suite
-- **Rationale:** Feature tests can only use file-based approach, so all 8 methods share the same crypto project
-- **Input Files:** crypto project structure, config.json with filters - ONE set for all test methods
+- **MetaTest Class**: `TransformationMetaTest`
+- **Rationale**: Feature tests use TransformationMetaTest for crypto filtering scenarios
+- **Test JSON Files**: `test-crypto_usecases.json` - Single comprehensive test suite
 - **Progress:** ⏳ Pending - Direct migration without splitting
 
 **test_parser_filtering.py (8 methods)** - Parser filtering logic
-- **Strategy:** Use input-##.json for different filtering patterns
-- **Input Files:** input-include_filters.json, input-exclude_filters.json, input-mixed_filters.json
+- **MetaTest Class**: `TransformationMetaTest`
+- **Test JSON Files**: `test-include_filters.json`, `test-exclude_filters.json`, `test-mixed_filters.json`
 - **Progress:** ⏳ Pending
 
 **test_multiple_source_folders.py (7 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
-- **Strategy:** Use file-based approach for multiple folder handling - single comprehensive test suite
-- **Rationale:** Feature tests can only use file-based approach, so all 7 methods share the same multi-folder project
-- **Input Files:** folder1/, folder2/, folder3/, config.json - ONE set for all test methods
+- **MetaTest Class**: `IntegrationMetaTest`
+- **Rationale**: Feature tests use IntegrationMetaTest for multi-folder project scenarios
+- **Test JSON Files**: `test-multi_folder_project.json` - Single comprehensive test suite
 - **Progress:** ⏳ Pending - Direct migration without splitting
 
 **test_generator_new_formatting.py (7 methods)** - New formatting features
-- **Strategy:** Use input-##.json for formatting tests
-- **Input Files:** input-new_stereotypes.json, input-visibility_formatting.json, input-relationship_formatting.json
+- **MetaTest Class**: `PlantUMLGenerationMetaTest`
+- **Test JSON Files**: `test-new_stereotypes.json`, `test-visibility_formatting.json`, `test-relationship_formatting.json`
 - **Progress:** ⏳ Pending
 
 **test_generator_visibility_logic.py (6 methods)** - Visibility detection logic
-- **Strategy:** Use input-##.json for visibility tests
-- **Input Files:** input-public_private.json, input-header_detection.json, input-visibility_edge_cases.json
+- **MetaTest Class**: `PlantUMLGenerationMetaTest`
+- **Test JSON Files**: `test-public_private.json`, `test-header_detection.json`, `test-visibility_edge_cases.json`
 - **Progress:** ⏳ Pending
 
 ### Medium Priority Files (18 files)
@@ -265,261 +278,239 @@ The progress tracking includes:
 #### Configuration and Setup Files
 
 **test_config.py (13 methods)** - Configuration handling
-- **Strategy:** Use input-##.json for different config scenarios
-- **Input Files:** input-01.json (basic config), input-02.json (advanced config), input-03.json (invalid config), input-04.json (file-specific config)
+- **MetaTest Class**: `IntegrationMetaTest`
+- **Test JSON Files**: `test-basic_config.json`, `test-advanced_config.json`, `test-invalid_config.json`, `test-file_specific_config.json`
 - **Progress:** ⏳ Pending
 
 #### Generator Related Files
 
 **test_include_filtering_bugs.py (12 methods)** - Include filtering edge cases
-- **Strategy:** Use input-##.json for different bug scenarios
-- **Input Files:** input-01.json (filter edge cases), input-02.json (regex patterns), input-03.json (performance issues)
+- **MetaTest Class**: `TransformationMetaTest`
+- **Test JSON Files**: `test-filter_edge_cases.json`, `test-regex_patterns.json`, `test-performance_issues.json`
 - **Progress:** ⏳ Pending
 
 **test_verifier.py (12 methods)** - Model verification logic
-- **Strategy:** Use input-##.json for different validation scenarios
-- **Input Files:** input-01.json (valid models), input-02.json (invalid models), input-03.json (edge case models)
+- **MetaTest Class**: `IntegrationMetaTest`
+- **Test JSON Files**: `test-valid_models.json`, `test-invalid_models.json`, `test-edge_case_models.json`
 - **Progress:** ⏳ Pending
 
 **test_typedef_extraction.py (9 methods)** - Typedef extraction logic
-- **Strategy:** Use input-##.json for different typedef scenarios
-- **Input Files:** input-01.json (simple typedefs), input-02.json (complex typedefs), input-03.json (nested typedefs)
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-simple_typedefs.json`, `test-complex_typedefs.json`, `test-nested_typedefs.json`
 - **Progress:** ⏳ Pending
 
 **test_utils.py (7 methods)** - Utility function testing
-- **Strategy:** Use input-##.json for utility testing
-- **Input Files:** input-01.json (file utils), input-02.json (string utils), input-03.json (path utils)
+- **MetaTest Class**: `IntegrationMetaTest`
+- **Test JSON Files**: `test-file_utils.json`, `test-string_utils.json`, `test-path_utils.json`
 - **Progress:** ⏳ Pending
 
 #### Parser Specific Files
 
 **test_anonymous_structure_handling.py (5 methods)** - Anonymous structure handling
-- **Strategy:** Use input-##.json for different handling scenarios
-- **Input Files:** input-01.json (simple anonymous), input-02.json (nested anonymous), input-03.json (complex anonymous)
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-simple_anonymous.json`, `test-nested_anonymous.json`, `test-complex_anonymous.json`
 - **Progress:** ⏳ Pending
 
 **test_transformation_system.py (5 methods)** - Transformation system
-- **Strategy:** Use input-##.json for system testing
-- **Input Files:** input-01.json (system config), input-02.json (system validation), input-03.json (system integration)
+- **MetaTest Class**: `TransformationMetaTest`
+- **Test JSON Files**: `test-system_config.json`, `test-system_validation.json`, `test-system_integration.json`
 - **Progress:** ⏳ Pending
 
 **test_crypto_filter_pattern.py (5 methods)** - Crypto filtering patterns
-- **Strategy:** Use input-##.json for pattern testing
-- **Input Files:** input-01.json (basic patterns), input-02.json (complex patterns), input-03.json (edge patterns)
+- **MetaTest Class**: `TransformationMetaTest`
+- **Test JSON Files**: `test-basic_patterns.json`, `test-complex_patterns.json`, `test-edge_patterns.json`
 - **Progress:** ⏳ Pending
 
 **test_function_parameters.py (4 methods)** - Function parameter parsing
-- **Strategy:** Use input-##.json for parameter scenarios
-- **Input Files:** input-01.json (simple params), input-02.json (complex params), input-03.json (variadic params)
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-simple_params.json`, `test-complex_params.json`, `test-variadic_params.json`
 - **Progress:** ⏳ Pending
 
 **test_file_specific_configuration.py (4 methods)** - File-specific config handling
-- **Strategy:** Use input-##.json for file-specific scenarios
-- **Input Files:** input-01.json (single file config), input-02.json (multiple file config), input-03.json (override config)
+- **MetaTest Class**: `IntegrationMetaTest`
+- **Test JSON Files**: `test-single_file_config.json`, `test-multiple_file_config.json`, `test-override_config.json`
 - **Progress:** ⏳ Pending
 
 **test_absolute_path_bug_detection.py (4 methods)** - Path handling validation
-- **Strategy:** Use input-##.json for path testing
-- **Input Files:** input-01.json (absolute paths), input-02.json (relative paths), input-03.json (invalid paths)
+- **MetaTest Class**: `ErrorHandlingMetaTest`
+- **Test JSON Files**: `test-absolute_paths.json`, `test-relative_paths.json`, `test-invalid_paths.json`
 - **Progress:** ⏳ Pending
 
 #### Generator Testing Files
 
 **test_generator_include_tree_bug.py (4 methods)** - Include tree validation
-- **Strategy:** Use input-##.json for tree testing
-- **Input Files:** input-01.json (simple tree), input-02.json (complex tree), input-03.json (circular tree)
+- **MetaTest Class**: `PlantUMLGenerationMetaTest`
+- **Test JSON Files**: `test-simple_tree.json`, `test-complex_tree.json`, `test-circular_tree.json`
 - **Progress:** ⏳ Pending
 
 **test_generator_naming_conventions.py (4 methods)** - Naming convention compliance
-- **Strategy:** Use input-##.json for naming tests
-- **Input Files:** input-01.json (class naming), input-02.json (relationship naming), input-03.json (stereotype naming)
+- **MetaTest Class**: `PlantUMLGenerationMetaTest`
+- **Test JSON Files**: `test-class_naming.json`, `test-relationship_naming.json`, `test-stereotype_naming.json`
 - **Progress:** ⏳ Pending
 
-**test_integration.py (4 methods)** - **FEATURE TEST: Use file-based approach**
-- **Strategy:** Use file-based approach for integration scenarios
-- **Input Files:** integration_project/, config.json
+**test_integration.py (4 methods)** - **FEATURE TEST: Use IntegrationMetaTest**
+- **MetaTest Class**: `IntegrationMetaTest`
+- **Test JSON Files**: `test-integration_scenarios.json`
 - **Progress:** ⏳ Pending
 
 **test_generator_grouping.py (3 methods)** - Element grouping in output
-- **Strategy:** Use input-##.json for grouping tests
-- **Input Files:** input-01.json (public/private grouping), input-02.json (element grouping), input-03.json (visibility grouping)
+- **MetaTest Class**: `PlantUMLGenerationMetaTest`
+- **Test JSON Files**: `test-public_private_grouping.json`, `test-element_grouping.json`, `test-visibility_grouping.json`
 - **Progress:** ⏳ Pending
 
 **test_include_processing.py (3 methods)** - Include processing logic
-- **Strategy:** Use input-##.json for processing tests
-- **Input Files:** input-01.json (basic includes), input-02.json (nested includes), input-03.json (depth includes)
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-basic_includes.json`, `test-nested_includes.json`, `test-depth_includes.json`
 - **Progress:** ⏳ Pending
 
 **test_parser_nested_structures.py (3 methods)** - Nested structure parsing
-- **Strategy:** Use input-##.json for nested scenarios
-- **Input Files:** input-01.json (simple nested), input-02.json (deep nested), input-03.json (complex nested)
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-simple_nested.json`, `test-deep_nested.json`, `test-complex_nested.json`
 - **Progress:** ⏳ Pending
 
 **test_parser_struct_order.py (3 methods)** - Struct field order preservation
-- **Strategy:** Use input-##.json for ordering tests
-- **Input Files:** input-01.json (simple order), input-02.json (complex order), input-03.json (mixed order)
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-simple_order.json`, `test-complex_order.json`, `test-mixed_order.json`
 - **Progress:** ⏳ Pending
 
 ### Low Priority Files (8 files)
 
 #### CLI Testing Files
 
-**test_cli_modes.py (6 methods)** - **FEATURE TEST: Use file-based approach**
-- **Strategy:** Use file-based approach - CLI mode switching tests complete workflows
-- **Input Files:** test_project/, config.json
+**test_cli_modes.py (6 methods)** - **FEATURE TEST: Use IntegrationMetaTest**
+- **MetaTest Class**: `IntegrationMetaTest`
+- **Test JSON Files**: `test-cli_modes.json`
 - **Progress:** ⏳ Pending
 
-**test_cli_feature.py (5 methods)** - **FEATURE TEST: Use file-based approach**
-- **Strategy:** Use file-based approach - focused on CLI interface validation
-- **Input Files:** feature_test.c, feature_config.json, test_project/
+**test_cli_feature.py (5 methods)** - **FEATURE TEST: Use IntegrationMetaTest**
+- **MetaTest Class**: `IntegrationMetaTest`
+- **Test JSON Files**: `test-cli_interface.json`
 - **Progress:** ⏳ Pending
 
-#### Simple Unit Tests (Can use input-##.json or file-based approach)
+#### Simple Unit Tests (Can use MetaTest classes)
 
 **test_generator_duplicate_includes.py (2 methods)** - Include duplication handling
-- **Strategy:** Use file-based approach - simple duplication scenario
-- **Input Files:** duplicate_test.c, duplicate_includes.h, config.json
+- **MetaTest Class**: `PlantUMLGenerationMetaTest`
+- **Test JSON Files**: `test-duplicate_includes.json`
 - **Progress:** ⏳ Pending
 
 **test_generator_exact_format.py (2 methods)** - PlantUML formatting validation
-- **Strategy:** Can use input-##.json for different format tests
-- **Input Files:** input-01.json (basic format), input-02.json (advanced format)
+- **MetaTest Class**: `PlantUMLGenerationMetaTest`
+- **Test JSON Files**: `test-basic_format.json`, `test-advanced_format.json`
 - **Progress:** ⏳ Pending
 
-**test_new_formatting_comprehensive.py (2 methods)** - **INTEGRATION TEST: Use file-based approach**
-- **Strategy:** Use file-based approach for formatting integration tests
-- **Input Files:** comprehensive_project/, config.json
+**test_new_formatting_comprehensive.py (2 methods)** - **INTEGRATION TEST: Use PlantUMLGenerationMetaTest**
+- **MetaTest Class**: `PlantUMLGenerationMetaTest`
+- **Test JSON Files**: `test-comprehensive_formatting.json`
 - **Progress:** ⏳ Pending
 
 **test_parser_function_params.py (2 methods)** - Function parameter parsing
-- **Strategy:** Use input-##.json for parameter scenarios
-- **Input Files:** input-01.json (simple params), input-02.json (complex params)
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-simple_params.json`, `test-complex_params.json`
 - **Progress:** ⏳ Pending
 
 **test_parser_macro_duplicates.py (2 methods)** - Macro duplication handling
-- **Strategy:** Use input-##.json for duplication scenarios
-- **Input Files:** input-01.json (simple duplicates), input-02.json (complex duplicates)
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-simple_duplicates.json`, `test-complex_duplicates.json`
 - **Progress:** ⏳ Pending
 
 #### Debug Files (Minimal priority)
 
 **test_debug_actual_parsing.py (1 method)** - Debug functionality
-- **Strategy:** Use file-based approach - simple debug test
-- **Input Files:** debug_simple.c, debug_config.json
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-debug_simple.json`
 - **Progress:** ⏳ Pending
 
 **test_debug_field_parsing.py (1 method)** - Debug functionality
-- **Strategy:** Use file-based approach - field parsing debug
-- **Input Files:** debug_fields.c, debug_config.json
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-debug_fields.json`
 - **Progress:** ⏳ Pending
 
 **test_debug_field_processing.py (1 method)** - Debug functionality
-- **Strategy:** Use file-based approach - field processing debug
-- **Input Files:** debug_processing.c, debug_config.json
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-debug_processing.json`
 - **Progress:** ⏳ Pending
 
 **test_debug_tokens.py (1 method)** - Debug functionality
-- **Strategy:** Use file-based approach - token debug
-- **Input Files:** debug_tokens.c, debug_config.json
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-debug_tokens.json`
 - **Progress:** ⏳ Pending
 
 **test_debug_field_parsing_detailed.py (0 methods)** - Debug functionality
-- **Strategy:** Use file-based approach - detailed debug (may need investigation)
-- **Input Files:** debug_detailed.c, debug_config.json
+- **MetaTest Class**: `StructParsingMetaTest`
+- **Test JSON Files**: `test-debug_detailed.json`
 - **Progress:** ⏳ Pending - Investigate if this file has actual tests
 
-## Input JSON File Examples
+## MetaTest JSON File Examples
 
 ### Simple Struct Parsing Example
-**File:** `input-simple_struct.json`
+**File:** `test-simple_struct.json`
 ```json
 {
   "test_metadata": {
-    "description": "Basic struct parsing test",
-    "test_type": "unit",
-    "focus": "struct_parsing",
-    "expected_duration": "fast"
+    "name": "simple_struct_parsing",
+    "description": "Test basic struct parsing functionality",
+    "test_type": "struct_parsing",
+    "category": "unit",
+    "expected_duration": "fast",
+    "tags": ["struct", "basic", "parsing"]
   },
   "c2puml_config": {
     "project_name": "test_struct_parsing",
     "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true,
-    "file_extensions": [".c", ".h"]
+    "file_extensions": [".c", ".h"],
+    "include_depth": 2
   },
   "source_files": {
-    "test.c": "#include <stdio.h>\n\nstruct Point {\n    int x;\n    int y;\n};\n\nint main() {\n    struct Point p = {10, 20};\n    return 0;\n}"
+    "main.c": "#include <stdio.h>\n\nstruct Point {\n    int x;\n    int y;\n};\n\nint main() {\n    struct Point p = {10, 20};\n    return 0;\n}",
+    "utils.h": "#ifndef UTILS_H\n#define UTILS_H\n\nstruct Point;\nvoid print_point(struct Point* p);\n\n#endif"
   },
-  "expected_results": {
-    "model_elements": {
-      "structs": ["Point"],
-      "functions": ["main"],
-      "includes": ["stdio.h"]
-    },
-    "plantuml_elements": {
-      "classes": ["Point"],
-      "relationships": []
-    }
+  "test_parameters": {
+    "execution_mode": "full_pipeline",
+    "timeout_seconds": 30,
+    "verbose_output": false,
+    "preserve_output": false
   }
 }
 ```
 
-### Preprocessor Conditional Example
-**File:** `input-conditional_compilation.json`
-```json
-{
-  "test_metadata": {
-    "description": "Conditional compilation test",
-    "test_type": "unit",
-    "focus": "preprocessor_conditionals",
-    "expected_duration": "fast"
-  },
-  "c2puml_config": {
-    "project_name": "test_preprocessor",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "preprocessor_defines": ["DEBUG"],
-    "include_preprocessor_conditionals": true
-  },
-  "source_files": {
-    "conditional.c": "#ifdef DEBUG\n#define LOG(x) printf(x)\n#else\n#define LOG(x)\n#endif\n\nint main() {\n    LOG(\"Debug mode\");\n    return 0;\n}"
-  },
-  "expected_results": {
-    "model_elements": {
-      "functions": ["main"],
-      "macros": ["LOG"],
-      "preprocessor_branches": ["DEBUG"]
-    }
-  }
-}
-```
-
-**Example assert-simple_struct.json:**
+**Corresponding Assertion File:** `assert-simple_struct.json`
 ```json
 {
   "cli_execution": {
     "expected_exit_code": 0,
     "should_succeed": true,
-    "max_execution_time_seconds": 10
+    "max_execution_time_seconds": 10,
+    "success_indicators": ["Processing completed", "Generated model.json"],
+    "forbidden_errors": ["ERROR", "FATAL", "Exception"],
+    "forbidden_warnings": ["WARNING: Invalid syntax"]
   },
   "expected_files": {
     "must_exist": ["model.json", "diagram.puml"],
-    "must_not_exist": ["error.log"],
-    "file_count_in_output": 2
+    "must_not_exist": ["error.log", "stderr.txt"],
+    "file_count_in_output": 2,
+    "min_file_size_bytes": {
+      "model.json": 100,
+      "diagram.puml": 50
+    }
   },
   "model_validation": {
     "required_structs": [
       {
         "name": "Point",
         "fields": ["x", "y"],
-        "field_types": {"x": "int", "y": "int"}
+        "field_types": {"x": "int", "y": "int"},
+        "visibility": "public"
       }
     ],
     "required_functions": [
       {
         "name": "main",
         "return_type": "int",
-        "parameters": []
+        "parameters": [],
+        "visibility": "public"
       }
     ],
     "required_includes": ["stdio.h"],
@@ -531,466 +522,239 @@ The progress tracking includes:
       {
         "name": "Point",
         "stereotype": "struct",
-        "visibility": "public"
+        "visibility": "public",
+        "must_have_fields": ["+ int x", "+ int y"]
       }
     ],
     "required_fields_in_puml": [
       "+ int x",
       "+ int y"
     ],
-    "forbidden_content": ["ERROR", "INVALID"],
-    "must_contain_text": ["@startuml", "@enduml"]
+    "forbidden_content": ["ERROR", "INVALID", "UNDEFINED"],
+    "must_contain_text": ["@startuml", "@enduml", "class Point"]
+  }
+}
+```
+
+### Transformation Example
+**File:** `test-rename_functions.json`
+```json
+{
+  "test_metadata": {
+    "name": "function_renaming_test",
+    "description": "Test function renaming transformation",
+    "test_type": "transformation",
+    "category": "unit",
+    "expected_duration": "fast",
+    "tags": ["transformation", "rename", "function"]
   },
-  "console_output": {
-    "success_indicators": ["Processing completed", "Generated model.json"],
-    "forbidden_errors": ["ERROR", "FATAL", "Exception"],
-    "forbidden_warnings": [],
-    "log_level": "INFO"
+  "c2puml_config": {
+    "project_name": "test_transformation",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "transformations": [
+      {
+        "type": "rename",
+        "target": "functions",
+        "pattern": "^old_(.*)$",
+        "replacement": "new_\\1"
+      }
+    ]
+  },
+  "source_files": {
+    "main.c": "#include <stdio.h>\n\nvoid old_print_info() {\n    printf(\"Info\\n\");\n}\n\nvoid old_debug_log() {\n    printf(\"Debug\\n\");\n}\n\nint main() {\n    old_print_info();\n    old_debug_log();\n    return 0;\n}"
+  },
+  "test_parameters": {
+    "execution_mode": "step_by_step",
+    "timeout_seconds": 30,
+    "verbose_output": true,
+    "preserve_output": true
+  }
+}
+```
+
+**Corresponding Assertion File:** `assert-rename_functions.json`
+```json
+{
+  "cli_execution": {
+    "expected_exit_code": 0,
+    "should_succeed": true,
+    "max_execution_time_seconds": 15
+  },
+  "model_validation": {
+    "required_functions": [
+      {
+        "name": "new_print_info",
+        "return_type": "void",
+        "parameters": []
+      },
+      {
+        "name": "new_debug_log",
+        "return_type": "void",
+        "parameters": []
+      }
+    ],
+    "forbidden_functions": ["old_print_info", "old_debug_log"],
+    "total_function_count": 3
+  },
+  "transformation_validation": {
+    "renamed_elements": [
+      {
+        "original": "old_print_info",
+        "new": "new_print_info",
+        "type": "function"
+      },
+      {
+        "original": "old_debug_log",
+        "new": "new_debug_log",
+        "type": "function"
+      }
+    ],
+    "transformation_count": 2
+  }
+}
+```
+
+### Error Handling Example
+**File:** `test-invalid_syntax.json`
+```json
+{
+  "test_metadata": {
+    "name": "invalid_syntax_test",
+    "description": "Test error handling for invalid C syntax",
+    "test_type": "error_handling",
+    "category": "unit",
+    "expected_duration": "fast",
+    "tags": ["error", "syntax", "validation"]
+  },
+  "c2puml_config": {
+    "project_name": "test_error_handling",
+    "source_folders": ["."],
+    "output_dir": "./output"
+  },
+  "source_files": {
+    "invalid.c": "struct InvalidStruct { invalid syntax here"
+  },
+  "test_parameters": {
+    "execution_mode": "expect_failure",
+    "timeout_seconds": 30,
+    "verbose_output": false,
+    "preserve_output": false
+  }
+}
+```
+
+**Corresponding Assertion File:** `assert-invalid_syntax.json`
+```json
+{
+  "cli_execution": {
+    "expected_exit_code": 1,
+    "should_succeed": false,
+    "max_execution_time_seconds": 10
+  },
+  "error_validation": {
+    "expected_error_type": "SyntaxError",
+    "expected_error_message": "syntax error",
+    "forbidden_error_types": ["ImportError", "FileNotFoundError"],
+    "allowed_warning_types": ["DeprecationWarning"]
+  },
+  "expected_files": {
+    "must_not_exist": ["model.json", "diagram.puml"],
+    "may_exist": ["error.log", "stderr.txt"]
   }
 }
 ```
 
 ## Recommended Folder Structures
 
-### Simple Unit Test (Input JSON Strategy with Assertion Files)
-```
-test_parser_filtering/
-├── test_parser_filtering.py
-├── input/
-│   ├── input-include_filters.json  # Input only: config + source (NO expected results)
-│   ├── input-exclude_filters.json  # Input only: config + source (NO expected results)
-│   └── input-mixed_filters.json    # Input only: config + source (NO expected results)
-├── assert-include_filters.json     # Assertions for include filter test
-├── assert-exclude_filters.json     # Assertions for exclude filter test
-└── assert-mixed_filters.json       # Assertions for mixed filter test
-```
-
-### Feature Test (File-Based Strategy with Assertions)
-```
-test_include_processing_features/
-├── test_include_processing_features.py
-├── input/
-│   ├── config.json     # Required for file-based approach
-│   ├── main.c
-│   ├── utils.h
-│   ├── includes/
-│   │   ├── level1.h
-│   │   └── level2.h
-│   └── types.h
-├── assertions.json     # Contains all test method assertions with meaningful keys
-│   │                   # Keys like: "test_include_parsing", "test_nested_includes", etc.
-└── output/             # Generated during test execution (Git ignored)
-    ├── model.json
-    ├── diagram.puml
-    └── c2puml.log
-```
-
-### Split Large Test Example (with Assertion Files)
+### Unit Test with MetaTest (StructParsingMetaTest)
 ```
 test_struct_parsing/
 ├── test_struct_parsing.py
-├── input/
-│   ├── input-simple_struct.json     # Simple struct parsing (input only)
-│   ├── input-nested_struct.json     # Nested struct parsing (input only)
-│   └── input-anonymous_struct.json  # Anonymous struct parsing (input only)
-├── assert-simple_struct.json        # Assertions for simple struct test
-├── assert-nested_struct.json        # Assertions for nested struct test
-└── assert-anonymous_struct.json     # Assertions for anonymous struct test
-
-test_enum_parsing/
-├── test_enum_parsing.py
-├── input/
-│   ├── input-simple_enum.json       # Simple enum parsing (input only)
-│   └── input-typedef_enum.json      # Typedef enum parsing (input only)
-├── assert-simple_enum.json          # Assertions for simple enum test
-└── assert-typedef_enum.json         # Assertions for typedef enum test
-```
-
-## Test Framework Public APIs
-
-The unified test framework provides comprehensive public APIs for all testing scenarios. Here are the complete APIs organized by component:
-
-### Core Framework Classes
-
-```python
-# Base Test Class
-class UnifiedTestCase(unittest.TestCase, TestAssertionMixin):
-    """Base class for all c2puml tests with built-in validation helpers"""
-    
-    def setUp(self) -> None:
-        # Initialize all framework components
-        self.executor = TestExecutor()
-        self.input_factory = TestInputFactory()  # Unified input management
-        self.model_validator = ModelValidator()
-        self.puml_validator = PlantUMLValidator()
-        self.output_validator = OutputValidator()
-        self.file_validator = FileValidator()
-        # Note: No ConfigValidator - we test c2puml's behavior with configs, not config structure
-        
-    def tearDown(self) -> None
-    def create_temp_dir(self) -> str
-
-# CLI Execution Engine  
-class TestExecutor:
-    """Executes c2puml through CLI interface only"""
-    
-    # Core Pipeline Execution
-    def run_full_pipeline(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
-    def run_parse_only(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
-    def run_transform_only(self, config_path: str, output_dir: str) -> CLIResult  
-    def run_generate_only(self, config_path: str, output_dir: str) -> CLIResult
-    
-    # Advanced Execution
-    def run_with_verbose(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
-    def run_with_timeout(self, input_path: str, config_path: str, output_dir: str, timeout: int) -> CLIResult
-    def run_expecting_failure(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
-    def run_with_timing(self, input_path: str, config_path: str, output_dir: str) -> TimedCLIResult
-    def run_with_memory_tracking(self, input_path: str, config_path: str, output_dir: str) -> MemoryCLIResult
-    
-    # Output Management
-    def get_test_output_dir(self, test_name: str, scenario: str = None) -> str:
-        """Returns output directory path next to test file (output/ or output-<scenario>/)"""
-    
-    def cleanup_output_dir(self, output_dir: str) -> None:
-        """Cleans output directory before test execution"""
-    
-    def preserve_output_for_review(self, output_dir: str) -> None:
-        """Marks output directory to be preserved for manual review"""
-
-# Test Data Management
-class TestInputFactory:
-    """Unified factory for managing all test input data (both file-based and input-###.json)"""
-    
-    # Core Input Loading (File-Based Only)
-    def load_test_input(self, test_name: str) -> str
-    def load_test_config(self, test_name: str) -> str
-    def load_test_assertions(self, test_name: str) -> dict
-    def load_test_config_dict(self, test_name: str) -> dict
-    
-    # Input JSON File Discovery  
-    def list_input_json_files(self, test_name: str) -> List[str]  # For finding available input-###.json files
-    
-    # Project Building
-    def create_temp_project(self, files: Dict[str, str], config: dict = None) -> str
-    def create_project_from_template(self, template_name: str, variables: dict = None) -> str
-    def create_nested_project(self, structure: dict) -> str
-    
-    # Utility Methods
-    def get_test_data_path(self, test_name: str, subpath: str = "") -> str
-    def copy_test_files(self, source_path: str, dest_path: str) -> None
-    def merge_configs(self, base_config: dict, override_config: dict) -> dict
-    
-    # Output Directory Management
-    def get_output_dir_for_scenario(self, test_name: str, input_file: str = None) -> str:
-        """Returns output directory path: output/ or output-<scenario_name>/"""
-    
-    def get_example_output_dir(self, test_name: str) -> str:
-        """Returns artifacts/examples/<name>/ for example tests"""
-    
-    def ensure_output_dir_clean(self, output_dir: str) -> None:
-        """Ensures output directory exists and is clean before test execution"""
-```
-
-### Validation Framework APIs
-
-```python
-# Model Validation
-class ModelValidator:
-    """Validates c2puml generated model.json files and content"""
-    
-    # Core Structure Validation
-    def assert_model_structure_valid(self, model: dict) -> None
-    def assert_model_schema_compliant(self, model: dict) -> None
-    def assert_model_project_name(self, model: dict, expected_name: str) -> None
-    def assert_model_file_count(self, model: dict, expected_count: int) -> None
-    def assert_model_files_parsed(self, model: dict, expected_files: List[str]) -> None
-    
-    # Element Existence Validation
-    def assert_model_function_exists(self, model: dict, func_name: str) -> None
-    def assert_model_function_not_exists(self, model: dict, func_name: str) -> None
-    def assert_model_struct_exists(self, model: dict, struct_name: str) -> None
-    def assert_model_struct_not_exists(self, model: dict, struct_name: str) -> None
-    def assert_model_enum_exists(self, model: dict, enum_name: str) -> None
-    def assert_model_typedef_exists(self, model: dict, typedef_name: str) -> None
-    def assert_model_global_exists(self, model: dict, global_name: str) -> None
-    def assert_model_macro_exists(self, model: dict, macro_name: str) -> None
-    
-    # Include and Relationship Validation
-    def assert_model_includes_exist(self, model: dict, expected_includes: List[str]) -> None
-    def assert_model_include_exists(self, model: dict, include_name: str) -> None
-    def assert_model_include_relationship(self, model: dict, source: str, target: str) -> None
-    def assert_model_include_relationships_exist(self, model: dict, expected_relations: List[dict]) -> None
-    
-    # Advanced Element Validation
-    def assert_model_function_signature(self, model: dict, func_name: str, return_type: str, params: List[str]) -> None
-    def assert_model_struct_fields(self, model: dict, struct_name: str, expected_fields: List[str]) -> None
-    def assert_model_enum_values(self, model: dict, enum_name: str, expected_values: List[str]) -> None
-    def assert_model_macro_definition(self, model: dict, macro_name: str, expected_value: str) -> None
-    
-    # Pattern Matching and Advanced Validation
-    def assert_model_functions_match_pattern(self, model: dict, pattern: str) -> List[str]
-    def assert_model_structs_match_pattern(self, model: dict, pattern: str) -> List[str]
-    def assert_model_includes_match_pattern(self, model: dict, pattern: str) -> List[str]
-    def assert_model_element_count(self, model: dict, element_type: str, expected_count: int) -> None
-    def assert_model_json_syntax_valid(self, model_file_path: str) -> None
-
-# PlantUML Validation
-class PlantUMLValidator:
-    """Validates generated PlantUML files and diagram content"""
-    
-    # File Structure Validation
-    def assert_puml_file_exists(self, output_dir: str, filename: str) -> None
-    def assert_puml_file_count(self, output_dir: str, expected_count: int) -> None
-    def assert_puml_file_syntax_valid(self, puml_content: str) -> None
-    def assert_puml_start_end_tags(self, puml_content: str) -> None
-    
-    # Content Validation
-    def assert_puml_contains(self, puml_content: str, expected_text: str) -> None
-    def assert_puml_not_contains(self, puml_content: str, forbidden_text: str) -> None
-    def assert_puml_contains_lines(self, puml_content: str, expected_lines: List[str]) -> None
-    def assert_puml_line_count(self, puml_content: str, expected_count: int) -> None
-    
-    # Element Validation
-    def assert_puml_class_exists(self, puml_content: str, class_name: str, stereotype: str = None) -> None
-    def assert_puml_class_count(self, puml_content: str, expected_count: int) -> None
-    def assert_puml_method_exists(self, puml_content: str, class_name: str, method_name: str) -> None
-    def assert_puml_field_exists(self, puml_content: str, class_name: str, field_name: str) -> None
-    
-    # Relationship Validation
-    def assert_puml_relationship(self, puml_content: str, source: str, target: str, rel_type: str) -> None
-    def assert_puml_relationship_count(self, puml_content: str, expected_count: int) -> None
-    def assert_puml_includes_arrow(self, puml_content: str, source: str, target: str) -> None
-    def assert_puml_no_duplicate_relationships(self, puml_content: str) -> None
-    
-    # Formatting and Style Validation
-    def assert_puml_formatting_compliant(self, puml_content: str) -> None
-    def assert_puml_proper_stereotypes(self, puml_content: str) -> None
-    def assert_puml_color_scheme(self, puml_content: str, expected_colors: dict) -> None
-    def assert_puml_no_duplicate_elements(self, puml_content: str) -> None
-
-# Output and File Validation
-class OutputValidator:
-    """Validates general output files, directories, and content"""
-    
-    # Directory and File System Validation
-    def assert_output_dir_exists(self, output_path: str) -> None
-    def assert_output_dir_structure(self, output_path: str, expected_structure: dict) -> None
-    def assert_file_exists(self, file_path: str) -> None
-    def assert_file_not_exists(self, file_path: str) -> None
-    def assert_directory_empty(self, dir_path: str) -> None
-    
-    # File Content Validation
-    def assert_file_contains(self, file_path: str, expected_text: str) -> None
-    def assert_file_not_contains(self, file_path: str, forbidden_text: str) -> None
-    def assert_file_contains_lines(self, file_path: str, expected_lines: List[str]) -> None
-    def assert_file_line_count(self, file_path: str, expected_count: int) -> None
-    def assert_file_empty(self, file_path: str) -> None
-    def assert_file_size_under(self, file_path: str, max_size: int) -> None
-    
-    # Log and Output Validation
-    def assert_log_contains(self, log_content: str, expected_message: str) -> None
-    def assert_log_no_errors(self, log_content: str) -> None
-    def assert_log_no_warnings(self, log_content: str) -> None
-    def assert_log_error_count(self, log_content: str, expected_count: int) -> None
-    def assert_log_execution_time(self, log_content: str, max_seconds: int) -> None
-
-# Advanced File Operations
-class FileValidator:
-    """Advanced file validation and manipulation utilities"""
-    
-    # File Comparison and JSON Validation
-    def assert_files_equal(self, file1_path: str, file2_path: str) -> None
-    def assert_json_valid(self, json_file_path: str) -> None
-    def assert_json_schema_valid(self, json_file_path: str, schema: dict) -> None
-    def assert_json_contains_key(self, json_file_path: str, key_path: str) -> None
-    
-    # Advanced Content Validation
-    def assert_file_valid_utf8(self, file_path: str) -> None
-    def assert_file_no_trailing_whitespace(self, file_path: str) -> None
-    def assert_file_unix_line_endings(self, file_path: str) -> None
-    
-    # Performance Validation
-    def assert_execution_time_under(self, actual_time: float, max_time: float) -> None
-    def assert_memory_usage_under(self, actual_memory: int, max_memory: int) -> None
-
-# Configuration Behavior Testing (not structure validation)
-# Note: We test c2puml's behavior with different configs, not the config structure itself
-# c2puml validates its own configuration - we test the resulting behavior
-```
-
-### Helper Classes and Mixins
-
-```python
-# Tests use individual validators directly instead of assertion mixins
-
-# Note: Input JSON functionality is now unified in TestInputFactory above
-
-# Result Types
-@dataclass
-class CLIResult:
-    """Standard result from CLI execution"""
-    exit_code: int
-    stdout: str
-    stderr: str
-    execution_time: float
-    command: List[str]
-    working_dir: str
-
-@dataclass  
-class TimedCLIResult(CLIResult):
-    """CLI result with detailed timing information"""
-    parse_time: float
-    transform_time: float  
-    generate_time: float
-    total_time: float
-
-@dataclass
-class MemoryCLIResult(CLIResult):
-    """CLI result with memory usage tracking"""
-    peak_memory_mb: int
-    memory_samples: List[int]
-    memory_timeline: List[tuple]
-```
-
-### Test Output Management and Git Configuration
-
-**Test Folder Structure with Output Management:**
-```
-test_<name>/
-├── test_<name>.py         # Test implementation
-├── input/                 # Test input files
-│   ├── config.json        # Option 1: Explicit config (feature/example tests)
-│   ├── main.c             # Option 1: Source files
-│   ├── input-scenario1.json # Option 2: JSON input files (unit tests)
-│   └── input-scenario2.json
-├── output/                # Single scenario output (Git ignored except examples)
-│   ├── model.json
-│   ├── diagram.puml
-│   └── c2puml.log
-├── output-scenario1/      # Multi-scenario output (Git ignored except examples)
-│   ├── model.json
-│   ├── diagram.puml
-│   └── c2puml.log
-└── output-scenario2/      # Multi-scenario output (Git ignored except examples)
+├── test-simple_struct.json
+├── test-nested_struct.json
+├── test-anonymous_struct.json
+├── assert-simple_struct.json
+├── assert-nested_struct.json
+├── assert-anonymous_struct.json
+└── output/          # Generated during test execution
     ├── model.json
     ├── diagram.puml
     └── c2puml.log
 ```
 
-**Key Output Management Rules:**
-1. **Local Output Review**: All test outputs are generated next to the test file for easy manual review
-2. **Scenario-Specific Outputs**: Multiple input files create separate `output-<scenario>/` directories
-3. **Git Ignore**: All test outputs are ignored except example test outputs (which serve as documentation)
-4. **Example Test Exception**: Example tests output to `artifacts/examples/<name>/` instead of local directories
-
-**Required .gitignore Updates:**
-```gitignore
-# Test output directories (except examples)
-tests/unit/*/output/
-tests/unit/*/output-*/
-tests/feature/*/output/  
-tests/feature/*/output-*/
-tests/integration/*/output/
-tests/integration/*/output-*/
-
-# Keep example outputs for documentation
-!tests/example/*/output/
-
-# Temporary test files
-*.tmp
-*.temp
-test_temp_*
+### Feature Test with MetaTest (IntegrationMetaTest)
+```
+test_integration/
+├── test_integration.py
+├── test-complex_project.json
+├── test-multi_file_project.json
+├── assert-complex_project.json
+├── assert-multi_file_project.json
+└── output/          # Generated during test execution
+    ├── model.json
+    ├── diagram.puml
+    └── c2puml.log
 ```
 
-### Input-##.json Structure Definition
+### Split Large Test Example (with MetaTest)
+```
+test_struct_parsing/
+├── test_struct_parsing.py
+├── test-simple_struct.json
+├── test-nested_struct.json
+├── test-anonymous_struct.json
+├── assert-simple_struct.json
+├── assert-nested_struct.json
+└── assert-anonymous_struct.json
 
-**Standardized Section Organization:**
-
-```json
-{
-  "test_metadata": {
-    "description": "Human-readable test description",
-    "test_type": "unit|integration|feature",
-    "focus": "struct_parsing|transformation|generation",
-    "expected_duration": "fast|medium|slow"
-  },
-  "c2puml_config": {
-    "project_name": "test_project_name",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "...": "complete c2puml configuration (equivalent to config.json)"
-  },
-  "source_files": {
-    "filename.c": "complete C source code content",
-    "filename.h": "complete header file content"
-  },
-  "input_model": {
-    "project_name": "model_name",
-    "files": {
-      "filename.c": {
-        "functions": [...],
-        "structs": [...],
-        "...": "pre-parsed model data"
-      }
-    }
-  },
-  "expected_results": {
-    "model_elements": {
-      "structs": ["StructName"],
-      "functions": ["function_name"],
-      "includes": ["stdio.h"]
-    },
-    "plantuml_elements": {
-      "classes": ["ClassName"],
-      "relationships": ["dependency", "inheritance"]
-    }
-  }
-}
+test_enum_parsing/
+├── test_enum_parsing.py
+├── test-simple_enum.json
+├── test-typedef_enum.json
+├── assert-simple_enum.json
+└── assert-typedef_enum.json
 ```
 
 ## Migration Implementation Phases
 
-### Phase 1: Framework Foundation (Weeks 1-2)
+### Phase 1: MetaTest Framework Development (Weeks 1-2)
 **Priority: CRITICAL**
 
-1. **Implement TestInputFactory for Unified Input Management**
-   - `load_test_files(test_name)` - Load test files (feature/example tests)
-   - `load_input_json_scenario(test_name, input_file)` - Load input-###.json scenarios (unit tests)
-   - `list_input_json_files(test_name)` - Discover available input-###.json files
-   - `get_output_dir_for_scenario(test_name, scenario_name)` - Get output directory management
-   - `ensure_output_dir_clean(output_dir)` - Clean output directories before test execution
+1. **Implement Core MetaTest Classes**
+   - `MetaTest` base class with common functionality
+   - `StructParsingMetaTest` for struct parsing scenarios
+   - `TransformationMetaTest` for transformation scenarios
+   - `PlantUMLGenerationMetaTest` for generation scenarios
+   - `ErrorHandlingMetaTest` for error scenarios
+   - `PerformanceMetaTest` for performance testing
+   - `IntegrationMetaTest` for integration scenarios
 
-2. **Implement TestExecutor for CLI-Only Interface**
-   - `run_full_pipeline(input_path, config_path, output_dir)` - Complete workflow
-   - `run_parse_only(input_path, config_path, output_dir)` - Parse step only
-   - `run_transform_only(config_path, output_dir)` - Transform step only
-   - `run_generate_only(config_path, output_dir)` - Generate step only
+2. **Implement Supporting Framework**
+   - `TestExecutor` for CLI execution
+   - `ValidationFramework` for comprehensive validation
+   - `TestDataManager` for JSON file handling
+   - `ResultReporter` for detailed test reporting
 
-3. **Create Validation Framework**
-   - `ModelValidator` - Model structure and content validation
-   - `PlantUMLValidator` - PlantUML file validation
-   - `OutputValidator` - General output file validation
-   - `FileValidator` - Advanced file operations and validation
-   - **Note**: No ConfigValidator - c2puml validates its own configuration
+3. **Create Test Templates**
+   - Template JSON files for common test scenarios
+   - Example test implementations
+   - Documentation and usage guides
 
-4. **Establish Baseline**
-   - Run `./run_all.sh > baseline_results.log`
-   - Verify foundation works with existing tests
-
-### Phase 2: Quick Wins (Weeks 3-4)
+### Phase 2: Pilot Migration (Weeks 3-4)
 **Priority: HIGH - 21 files with manageable effort**
 
 Start with smallest files and progress to larger ones:
 
 1. **test_parser_function_params.py (2 methods)**
-   - Convert to input-##.json approach
-   - Test CLI-only interface implementation
+   - Convert to `StructParsingMetaTest` with JSON files
+   - Test MetaTest framework implementation
 
 2. **test_parser_macro_duplicates.py (2 methods)**
-   - Use input-##.json files
+   - Use `StructParsingMetaTest` with JSON files
 
 3. **test_parser_nested_structures.py (3 methods)**
-   - Use input-##.json files
+   - Use `StructParsingMetaTest` with JSON files
 
 **Verification Process for Each File:**
 - Develop new structure → `pytest test_file.py` → `./run_all.sh`
@@ -1001,40 +765,46 @@ Start with smallest files and progress to larger ones:
 
 **Week 5-6: test_transformer.py (80 methods → 9 files)**
 - Plan split strategy by transformation type
-- Create 9 separate test folders with input-##.json files
+- Create 9 separate test folders with `TransformationMetaTest`
 - Implement and test each split file individually
 
 **Week 7: test_tokenizer.py (41 methods → 4 files)**
 - Split by token category
-- Use input-##.json for each token type
+- Use `StructParsingMetaTest` for each token type
 
 **Week 8: test_parser_comprehensive.py (36 methods → 7 files)**
 - Split by C language construct
-- Create comprehensive input-##.json for each construct type
+- Create comprehensive JSON files for each construct type
 
 ### Phase 4: Medium Priority (Weeks 9-10)
-**18 files - Most using input-##.json strategy**
+**18 files - Most using MetaTest classes**
 
 Focus on configuration, generator, and parser-specific files.
 
 ### Phase 5: Low Priority (Weeks 11-12)
-**8 files - Mix of file-based and input-##.json strategies**
+**8 files - Mix of MetaTest classes**
 
 Complete remaining files, including debug files and feature tests.
 
 ## Success Criteria
 
 ### Technical Criteria
-- **Zero internal API usage**: All tests use only CLI interface (main.py)
-- **100% test pass rate**: All migrated tests pass consistently via `./run_all.sh`
-- **Maintainable boundaries**: Clear separation between test and application code
-- **Consistent patterns**: All tests follow unified structure and naming
+- **Zero internal API usage**: All tests use only CLI interface through MetaTest
+- **100% data-driven**: All tests use JSON files for input and assertions
+- **100% test pass rate**: All migrated tests pass consistently
+- **Framework completeness**: All test scenarios covered by MetaTest classes
+
+### Productivity Criteria
+- **90% reduction in test development time**: JSON files vs. Python coding
+- **100% test maintainability**: Easy to update assertions and test data
+- **Comprehensive coverage**: All public API functionality tested
+- **Developer satisfaction**: Easy to create and maintain tests
 
 ### Quality Criteria
-- **Test readability**: Tests are easy to understand and modify
-- **Failure diagnostics**: Test failures provide clear guidance
-- **Coverage preservation**: No reduction in test coverage during migration
-- **Performance**: Test suite execution time via `./run_all.sh` remains reasonable
+- **Test readability**: JSON files are self-documenting
+- **Failure diagnostics**: Clear error messages and validation failures
+- **Coverage preservation**: No reduction in test coverage
+- **Performance**: Test suite execution time remains reasonable
 
 ### Migration Criteria
 - **Flexible to changes**: Tests continue passing when internal implementation changes
@@ -1050,12 +820,12 @@ Complete remaining files, including debug files and feature tests.
 
 1. **`/tests/utils.py` (374 lines)** - Existing test utilities
    - **Why remove:** Uses internal API imports (`from c2puml.generator import Generator`, etc.)
-   - **Replaced by:** New `TestInputFactory` with CLI-only approach
+   - **Replaced by:** MetaTest framework with CLI-only approach
    - **Progress:** ⏳ Pending - Remove after all tests migrated
 
 2. **`/tests/feature/base.py` (189 lines)** - Feature test base class
    - **Why remove:** Uses internal API and direct pipeline calls
-   - **Replaced by:** New `UnifiedTestCase` with CLI-only execution
+   - **Replaced by:** MetaTest framework with standardized workflows
    - **Progress:** ⏳ Pending - Remove after all tests migrated
 
 3. **`/tests/conftest.py` (129 lines)** - pytest configuration
@@ -1065,10 +835,10 @@ Complete remaining files, including debug files and feature tests.
 
 ### Migration Cleanup Phase
 
-**After unified framework implementation is complete:**
+**After MetaTest framework implementation is complete:**
 
 1. **Phase 1: Verify No Dependencies**
-   - Ensure all 50 test files use new `TestInputFactory` and `TestExecutor`
+   - Ensure all 58 test files use MetaTest framework
    - Confirm no imports from old framework files
    - **Progress:** ⏳ Pending
 
@@ -1080,43 +850,51 @@ Complete remaining files, including debug files and feature tests.
 3. **Phase 3: Clean conftest.py**
    - Keep basic fixtures (`temp_dir`, file creation helpers)
    - Remove any internal API dependencies
-   - Ensure compatibility with new unified framework
+   - Ensure compatibility with MetaTest framework
    - **Progress:** ⏳ Pending
 
 ## Conclusion
 
-This migration plan provides a comprehensive roadmap for transforming all 50 test files from internal API usage to a unified, maintainable, CLI-only testing framework. The analysis identifies specific strategies for each file, provides concrete examples of input structures and folder layouts, and establishes clear implementation phases.
+This migration plan provides a comprehensive roadmap for transforming all 58 test files from internal API usage to the **MetaTest.py data-driven testing framework**. The analysis identifies specific MetaTest classes for each file, provides concrete examples of JSON structures and folder layouts, and establishes clear implementation phases.
 
 **Key Success Factors:**
-1. **Follow the strategy rule**: Feature tests = file-based approach, Unit tests with multiple inputs = input-##.json
+1. **Follow the MetaTest strategy**: Choose appropriate MetaTest class for each test type
 2. **Split large files early**: Don't attempt to migrate 80-method files as-is
-3. **Implement framework first**: TestInputFactory and validation tools are critical
+3. **Implement framework first**: MetaTest classes and supporting framework are critical
 4. **Verify continuously**: Run full test suite after each migration
 5. **Track progress**: Update todo.md with migration status
 
 ## Data-Driven Testing Summary
 
-### Assertion File Strategy Benefits
+### MetaTest Framework Benefits
 
-1. **🎯 Clear Separation**: Test input data and validation criteria are completely separated
-2. **📊 Explicit Expectations**: All validation criteria are documented in structured JSON format
-3. **🔧 Easy Maintenance**: Assertions can be updated without touching Python test code
-4. **📋 Self-Documenting**: Meaningful keys like `required_structs`, `forbidden_errors` make intent clear
-5. **🔄 Consistent Patterns**: Standardized assertion structure across all test types
+1. **🎯 Revolutionary Productivity**: 90% reduction in test development time
+2. **📊 Self-Documenting**: JSON structure makes test intent clear
+3. **🔧 Standardized Workflows**: Consistent test patterns across all types
+4. **📋 Easy Maintenance**: Update assertions without touching code
+5. **🔄 Framework Evolution**: Enhance MetaTest classes without changing test data
 
-### File Naming Conventions
+### MetaTest Class Patterns
 
-| Test Type | Input Files | Assertion Files | Usage |
-|-----------|-------------|-----------------|-------|
-| **Feature/Integration** | `input/config.json` + source files | `assertions.json` | One file with test method keys |
-| **Unit (Multiple scenarios)** | `input-scenario_name.json` | `assert-scenario_name.json` | Paired files for each scenario |
+| Test Type | MetaTest Class | Usage |
+|-----------|----------------|-------|
+| **Struct/Enum/Union Parsing** | `StructParsingMetaTest` | Basic parsing, nested structures, field validation |
+| **Transformations** | `TransformationMetaTest` | Renaming, filtering, element manipulation |
+| **PlantUML Generation** | `PlantUMLGenerationMetaTest` | Diagram output, formatting, relationships |
+| **Error Scenarios** | `ErrorHandlingMetaTest` | Invalid syntax, missing files, edge cases |
+| **Performance Testing** | `PerformanceMetaTest` | Large projects, memory usage, timing |
+| **Integration** | `IntegrationMetaTest` | Complex projects, workflows, component integration |
 
-### Key Assertion Categories
+### Key JSON Categories
 
+- **`test_metadata`**: Test name, description, type, category, duration, tags
+- **`c2puml_config`**: Complete c2puml configuration (equivalent to config.json)
+- **`source_files`**: C/C++ source code content as key-value pairs
+- **`test_parameters`**: Execution mode, timeout, verbose output, preserve output
 - **`cli_execution`**: Exit codes, execution time, success/failure criteria
-- **`expected_files`**: Required/forbidden output files, file counts
 - **`model_validation`**: Structs, functions, includes, relationships, counts
 - **`plantuml_validation`**: Classes, stereotypes, content validation
-- **`console_output`**: Success indicators, error patterns, log levels
+- **`performance_validation`**: Timing thresholds, memory limits
+- **`error_validation`**: Expected errors, forbidden errors, allowed warnings
 
-The detailed recommendations ensure that the migration will result in a robust, maintainable test suite that validates public API behavior while remaining flexible to internal implementation changes. The **data-driven assertion file approach** makes validation criteria explicit and maintainable, while feature tests and unit tests follow consistent patterns for their respective input strategies.
+The detailed recommendations ensure that the migration will result in a robust, maintainable test suite that validates public API behavior while remaining flexible to internal implementation changes. The **MetaTest.py data-driven testing framework** makes test development efficient, maintainable, and accessible to all developers.
