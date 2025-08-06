@@ -30,68 +30,23 @@ This document provides comprehensive analysis and specific recommendations for m
 ### Update Instructions
 **Important:** Update progress markers from ⏳ to 🔄 when starting work, and to ✅ when completed. Update `todo.md` to reference any changes in this file.
 
-### Complete Migration Progress Tracking
+### Migration Progress Tracking
 
-| Test File | Category | Status | Priority | Input Strategy | Meaningful Input Names | Notes |
-|-----------|----------|--------|----------|----------------|----------------------|-------|
-| `test_absolute_path_bug_detection.py` | Unit | ⏳ | Medium | input-path_*.json | input-absolute_paths.json, input-relative_paths.json, input-invalid_paths.json | Path handling validation |
-| `test_anonymous_processor_extended.py` | Unit | ⏳ | High | input-anonymous_*.json | input-basic_anonymous.json, input-nested_anonymous.json, input-complex_hierarchies.json | Core anonymous structure processing |
-| `test_anonymous_structure_handling.py` | Unit | ⏳ | Medium | input-anonymous_*.json | input-simple_anonymous.json, input-nested_anonymous.json, input-complex_anonymous.json | Anonymous structure handling |
-| `test_cli_feature.py` | Feature | ⏳ | Low | Explicit files | feature_test.c, feature_config.json, test_project/ | CLI interface testing |
-| `test_cli_modes.py` | Feature | ⏳ | Low | Explicit files | test_project/, config.json | CLI mode switching |
-| `test_component_features.py` | Feature | ⏳ | High | Explicit files | main.c, headers/, config.json, project structure | Component integration features |
-| `test_comprehensive.py` | Integration | ⏳ | High | Explicit files | realistic_project/, config.json | Comprehensive end-to-end testing |
-| `test_config.py` | Unit | ⏳ | Medium | input-config_*.json | input-basic_config.json, input-advanced_config.json, input-invalid_config.json, input-file_specific_config.json | Configuration loading/validation |
-| `test_crypto_filter_pattern.py` | Feature | ⏳ | Medium | Explicit files | crypto patterns project/, config.json | Crypto filtering patterns |
-| `test_crypto_filter_usecase.py` | Feature | ⏳ | High | Explicit files | crypto project structure, config.json with filters | Crypto filtering use cases |
-| `test_debug_actual_parsing.py` | Unit | ⏳ | Low | Explicit files | debug_simple.c, debug_config.json | Debug functionality |
-| `test_debug_field_parsing.py` | Unit | ⏳ | Low | Explicit files | debug_fields.c, debug_config.json | Debug functionality |
-| `test_debug_field_parsing_detailed.py` | Unit | ⏳ | Low | Explicit files | debug_detailed.c, debug_config.json | Debug functionality |
-| `test_debug_field_processing.py` | Unit | ⏳ | Low | Explicit files | debug_processing.c, debug_config.json | Debug functionality |
-| `test_debug_tokens.py` | Unit | ⏳ | Low | Explicit files | debug_tokens.c, debug_config.json | Debug functionality |
-| `test_file_specific_configuration.py` | Unit | ⏳ | Medium | input-fileconfig_*.json | input-single_file_config.json, input-multiple_file_config.json, input-override_config.json | File-specific config handling |
-| `test_function_parameters.py` | Unit | ⏳ | Medium | input-params_*.json | input-simple_params.json, input-complex_params.json, input-variadic_params.json | Function parameter parsing |
-| `test_generator.py` | Unit | ⏳ | High | input-generation_*.json | input-simple_generation.json, input-complex_diagrams.json, input-format_compliance.json, input-relationship_generation.json | Core PlantUML generation |
-| `test_generator_duplicate_includes.py` | Unit | ⏳ | Low | Explicit files | duplicate_test.c, duplicate_includes.h, config.json | Include duplication handling |
-| `test_generator_exact_format.py` | Unit | ⏳ | Low | input-format_*.json | input-basic_format.json, input-advanced_format.json | PlantUML formatting validation |
-| `test_generator_grouping.py` | Unit | ⏳ | Medium | input-grouping_*.json | input-public_private_grouping.json, input-element_grouping.json, input-visibility_grouping.json | Element grouping in output |
-| `test_generator_include_tree_bug.py` | Unit | ⏳ | Medium | input-tree_*.json | input-simple_tree.json, input-complex_tree.json, input-circular_tree.json | Include tree validation |
-| `test_generator_naming_conventions.py` | Unit | ⏳ | Medium | input-naming_*.json | input-class_naming.json, input-relationship_naming.json, input-stereotype_naming.json | Naming convention compliance |
-| `test_generator_new_formatting.py` | Unit | ⏳ | Medium | input-newformat_*.json | input-new_stereotypes.json, input-visibility_formatting.json, input-relationship_formatting.json | New formatting features |
-| `test_generator_visibility_logic.py` | Unit | ⏳ | Medium | input-visibility_*.json | input-public_private.json, input-header_detection.json, input-visibility_edge_cases.json | Visibility detection logic |
-| `test_global_parsing.py` | Unit | ⏳ | High | input-globals_*.json | input-simple_globals.json, input-complex_globals.json, input-initialized_globals.json | Global variable parsing |
-| `test_include_filtering_bugs.py` | Unit | ⏳ | Medium | input-filterbug_*.json | input-filter_edge_cases.json, input-regex_patterns.json, input-performance_issues.json | Include filtering edge cases |
-| `test_include_processing.py` | Unit | ⏳ | Medium | input-includes_*.json | input-basic_includes.json, input-nested_includes.json, input-depth_includes.json | Include processing logic |
-| `test_include_processing_features.py` | Feature | ⏳ | High | Explicit files | main.c, utils.h, includes/, config.json | Include processing features |
-| `test_integration.py` | Feature | ⏳ | Medium | Explicit files | integration_project/, config.json | Feature integration testing |
-| `test_invalid_source_paths.py` | Feature | ⏳ | High | Explicit files | Missing/invalid source project structures | Error handling for invalid paths |
-| `test_multi_pass_anonymous_processing.py` | Unit | ⏳ | High | input-multipass_*.json | input-simple_multipass.json, input-complex_multipass.json, input-nested_multipass.json | Multi-pass anonymous processing |
-| `test_multiple_source_folders.py` | Feature | ⏳ | High | Explicit files | folder1/, folder2/, folder3/, config.json | Multiple source folder handling |
-| `test_new_formatting_comprehensive.py` | Integration | ⏳ | Low | Explicit files | comprehensive_project/, config.json | New formatting integration |
-| `test_parser.py` | Unit | ⏳ | High | input-parsing_*.json | input-basic_parsing.json, input-complex_parsing.json, input-error_handling.json | Core parser functionality |
-| `test_parser_comprehensive.py` | Unit | ⏳ | High | **SPLIT REQUIRED** | Split into 7 files by C construct | Comprehensive parser testing |
-| `test_parser_filtering.py` | Unit | ⏳ | High | input-filter_*.json | input-include_filters.json, input-exclude_filters.json, input-mixed_filters.json | Parser filtering logic |
-| `test_parser_function_params.py` | Unit | ⏳ | Low | input-funcparams_*.json | input-simple_params.json, input-complex_params.json | Function parameter parsing |
-| `test_parser_macro_duplicates.py` | Unit | ⏳ | Low | input-macrodup_*.json | input-simple_duplicates.json, input-complex_duplicates.json | Macro duplication handling |
-| `test_parser_nested_structures.py` | Unit | ⏳ | Medium | input-nested_*.json | input-simple_nested.json, input-deep_nested.json, input-complex_nested.json | Nested structure parsing |
-| `test_parser_struct_order.py` | Unit | ⏳ | Medium | input-structorder_*.json | input-simple_order.json, input-complex_order.json, input-mixed_order.json | Struct field order preservation |
-| `test_preprocessor_bug.py` | Unit | ⏳ | High | input-prepbug_*.json | input-ifdef_testing.json, input-define_macros.json, input-include_directives.json, input-conditional_compilation.json | Preprocessor bug fixes |
-| `test_preprocessor_handling.py` | Unit | ⏳ | High | input-preproc_*.json | input-conditional_compilation.json, input-macro_expansion.json | Core preprocessor functionality |
-| `test_tokenizer.py` | Unit | ⏳ | High | **SPLIT REQUIRED** | Split into 4 files by token category | Core tokenizer functionality |
-| `test_transformation_system.py` | Unit | ⏳ | Medium | input-transsys_*.json | input-system_config.json, input-system_validation.json, input-system_integration.json | Transformation system |
-| `test_transformer.py` | Unit | ⏳ | High | **SPLIT REQUIRED** | Split into 9 files by transformation type | Core transformer functionality |
-| `test_transformer_features.py` | Feature | ⏳ | High | Explicit files | source files with transformation config.json | Transformer feature testing |
-| `test_typedef_extraction.py` | Unit | ⏳ | Medium | input-typedef_*.json | input-simple_typedefs.json, input-complex_typedefs.json, input-nested_typedefs.json | Typedef extraction logic |
-| `test_utils.py` | Unit | ⏳ | Low | input-utils_*.json | input-file_utils.json, input-string_utils.json, input-path_utils.json | Utility function testing |
-| `test_verifier.py` | Unit | ⏳ | Medium | input-verify_*.json | input-valid_models.json, input-invalid_models.json, input-edge_case_models.json | Model verification logic |
-| `test-example.py` | Example | 🚫 | N/A | Explicit files | source/, config.json (preserved as-is) | Preserved example test |
+📋 **Complete progress tracking for all 50 test files has been moved to `todo.md`** for centralized management.
 
-**Legend:**
-- ⏳ **Pending** - Not yet started
-- 🔄 **In Progress** - Currently being worked on  
-- ✅ **Completed** - Migrated and verified
-- 🚫 **Preserved** - Kept as-is
-- **SPLIT REQUIRED** - File must be split before migration
+The progress tracking includes:
+- **37 Unit Tests** - With detailed input-###.json naming strategies
+- **9 Feature Tests** - Using explicit files (no splits needed)
+- **2 Integration Tests** - Using explicit files (no splits needed)  
+- **1 Special Feature Test** - Error handling test
+- **1 Example Test** - Preserved as-is
+
+**Key Status Information:**
+- ⏳ **50 files pending migration**
+- 🔴 **3 critical splits required**: `test_transformer.py`, `test_tokenizer.py`, `test_parser_comprehensive.py`
+- ✅ **Framework design completed** with unified `TestInputFactory`
+
+**👀 See `todo.md` → "Complete Test Migration Progress Tracking" for the full detailed table.**
 
 ## Input Strategy Guidelines
 
