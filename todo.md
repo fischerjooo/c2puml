@@ -53,11 +53,12 @@ Create a new unified framework with these components:
 # Framework structure
 tests/framework/
 ├── __init__.py
-├── executor.py      # TestExecutor class
-├── data_factory.py  # TestDataFactory class  
-├── validator.py     # ResultValidator class
-├── builder.py       # TestProjectBuilder class
-└── fixtures.py      # Common test fixtures
+├── executor.py         # TestExecutor class
+├── input_factory.py    # TestInputFactory class (unified input management)
+├── validators.py       # ModelValidator, PlantUMLValidator, OutputValidator, FileValidator classes
+├── mixins.py          # TestAssertionMixin class with common assertion patterns
+├── templates.py       # ProjectTemplates class for input-###.json templates
+└── fixtures.py        # Common test fixtures and helper utilities
 ```
 
 #### 1.2 Test Framework Public APIs
