@@ -134,16 +134,16 @@ class TestInputFactory:
     def __init__(self):
         pass
     
-    # === Explicit Files Approach (Feature/Example/Integration Tests) ===
+    # === File-Based Approach (Feature/Example/Integration Tests) ===
     
-    def load_explicit_files(self, test_name: str) -> Tuple[str, str]:
-        """Load explicit files and return (input_path, config_path)"""
+    def load_test_files(self, test_name: str) -> Tuple[str, str]:
+        """Load test files and return (input_path, config_path)"""
         input_path = self.get_test_data_path(test_name, "input")
         config_path = os.path.join(input_path, "config.json")
         return input_path, config_path
     
-    def load_explicit_assertions(self, test_name: str) -> dict:
-        """Load assertions.json for explicit files approach"""
+    def load_test_assertions(self, test_name: str) -> dict:
+        """Load assertions.json for file-based approach"""
         assertions_path = self.get_test_data_path(test_name, "assertions.json")
         if os.path.exists(assertions_path):
             with open(assertions_path, 'r') as f:
@@ -245,8 +245,8 @@ class TestInputFactory:
 
 **Unified Usage Pattern:**
 ```python
-# For Feature Tests (explicit files):
-input_path, config_path = self.input_factory.load_explicit_files(self.test_name)
+# For Feature Tests (file-based):
+input_path, config_path = self.input_factory.load_test_files(self.test_name)
 # Returns: ("test_feature/input/", "test_feature/input/config.json")
 
 # For Unit Tests (single input-###.json scenario):
@@ -335,7 +335,7 @@ test_<n>/
 │   ├── input-simple_struct.json   # Test case 1: complete config + source + expected results
 │   ├── input-nested_struct.json   # Test case 2: complete config + content + expected results
 │   └── input-error_case.json      # Test case 3: complete config + scenarios + expected results
-├── assertions.json     # Used ONLY with Option 1 (explicit files approach)
+├── assertions.json     # Used ONLY with Option 1 (file-based approach)
 └── output/             # Generated during test execution (Git ignored except for examples)
     ├── model.json      # Generated model file
     ├── diagram.puml    # Generated PlantUML files
@@ -394,14 +394,14 @@ test_temp_*
 
 **Input Strategy Guidelines:**
 
-**FEATURE TESTS and EXAMPLE TESTS ALWAYS use Option 1 (explicit files)** as they test complete workflows and need comprehensive project structures.
+**FEATURE TESTS and EXAMPLE TESTS ALWAYS use Option 1 (file-based approach)** as they test complete workflows and need comprehensive project structures.
 
 **Use input-##.json for:**
 - Small unit test cases (< 50 lines of C code total)
 - Multiple test scenarios in one test file
 - Tests requiring different inputs per method
 
-**Use explicit files for:**
+**Use file-based approach for:**
 - Feature tests (ALWAYS)
 - Example tests (ALWAYS)
 - Large test cases (> 50 lines of C code)
@@ -453,10 +453,10 @@ test_temp_*
 class TestStructParsing(UnifiedTestCase):
     """Example showing comprehensive framework usage"""
     
-    def test_simple_struct_explicit_files(self):
-        """Example using explicit files approach (feature tests)"""
-        # Load explicit files (feature test approach)
-        input_path, config_path = self.input_factory.load_explicit_files(self.test_name)
+    def test_simple_struct_file_based(self):
+        """Example using file-based approach (feature tests)"""
+        # Load test files (feature test approach)
+        input_path, config_path = self.input_factory.load_test_files(self.test_name)
         
         # Get output directory next to test file (e.g., test_struct/output/)
         output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name)
@@ -549,7 +549,7 @@ class TestStructParsing(UnifiedTestCase):
         
     def test_performance_monitoring(self):
         """Example with performance testing"""
-        input_path, config_path = self.input_factory.load_explicit_files(self.test_name)
+        input_path, config_path = self.input_factory.load_test_files(self.test_name)
         
         # Execute with timing
         output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name)
@@ -561,7 +561,7 @@ class TestStructParsing(UnifiedTestCase):
         
     def test_complex_validation_with_custom_logic(self):
         """Example showing custom validation combined with framework"""
-        input_path, config_path = self.input_factory.load_explicit_files(self.test_name)
+        input_path, config_path = self.input_factory.load_test_files(self.test_name)
         
         output_dir = self.input_factory.get_output_dir_for_scenario(self.test_name)
         result = self.executor.run_full_pipeline(input_path, config_path, output_dir)

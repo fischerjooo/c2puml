@@ -7,7 +7,7 @@ This document provides comprehensive analysis and specific recommendations for m
 **Key Findings:**
 - **50 test files analyzed** across unit, feature, and integration categories
 - **42 files (84%)** require input-##.json strategy due to multiple input needs
-- **8 files (16%)** can use explicit files strategy
+- **8 files (16%)** can use file-based strategy
 - **3 critical files** must be split due to excessive size (80, 41, 36 methods)
 - **All files** currently use internal APIs and need CLI-only conversion
 
@@ -36,8 +36,8 @@ This document provides comprehensive analysis and specific recommendations for m
 
 The progress tracking includes:
 - **37 Unit Tests** - With detailed input-###.json naming strategies
-- **9 Feature Tests** - Using explicit files (no splits needed)
-- **2 Integration Tests** - Using explicit files (no splits needed)  
+- **9 Feature Tests** - Using file-based approach (no splits needed)
+- **2 Integration Tests** - Using file-based approach (no splits needed)  
 - **1 Special Feature Test** - Error handling test
 - **1 Example Test** - Preserved as-is
 
@@ -52,13 +52,13 @@ The progress tracking includes:
 
 ### The Core Rule
 
-**Feature tests and example tests ALWAYS use explicit files** as they test complete workflows and need comprehensive project structures.
+**Feature tests and example tests ALWAYS use file-based approach** as they test complete workflows and need comprehensive project structures.
 
 **Unit tests with multiple test methods requiring different inputs MUST use input-##.json approach.**
 
 ### Critical Insight: Feature Tests Generally Do NOT Need Splitting
 
-**Since feature tests can only use explicit files (config.json + source files), all test methods in a feature test file share the same input project.** This means:
+**Since feature tests can only use file-based approach (config.json + source files), all test methods in a feature test file share the same input project.** This means:
 
 - **Feature tests typically should NOT be split** unless they test completely different features requiring different projects
 - All test methods in a feature test can use the same input/ directory with the same config.json and source files  
@@ -73,7 +73,7 @@ The progress tracking includes:
 - Tests requiring different inputs per method
 - **NEVER for feature tests or example tests**
 
-**Use explicit files for:**
+**Use file-based approach for:**
 - **Feature tests (ALWAYS) - typically NO split needed**
 - **Example tests (ALWAYS) - typically NO split needed**
 - **Integration tests - typically NO split needed**
@@ -86,7 +86,7 @@ The progress tracking includes:
 
 **IMPORTANT DISCOVERY:** Most feature tests do NOT need splitting because:
 
-1. **Explicit Files Constraint**: Feature tests can only use explicit files (config.json + source files)
+1. **File-Based Constraint**: Feature tests can only use file-based approach (config.json + source files)
 2. **Shared Input Project**: All test methods in a feature test file share the same input project structure  
 3. **Different Validation Aspects**: Each test method validates different aspects of the same comprehensive workflow
 4. **Single Output Directory**: All test methods generate output to the same local output/ directory
@@ -195,8 +195,8 @@ The progress tracking includes:
 **Other High Priority Unit Tests:**
 
 **test_include_processing_features.py (12 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
-- **Strategy:** Use explicit files with config.json + source files - single comprehensive test suite
-- **Rationale:** Feature tests can only use explicit files, so all 12 methods share the same input project structure
+- **Strategy:** Use file-based approach with config.json + source files - single comprehensive test suite
+- **Rationale:** Feature tests can only use file-based approach, so all 12 methods share the same input project structure
 - **Input Files:** main.c, utils.h, includes/, config.json - ONE set for all test methods
 - **Progress:** ⏳ Pending - Direct migration without splitting
 
@@ -211,20 +211,20 @@ The progress tracking includes:
 - **Progress:** ⏳ Pending
 
 **test_component_features.py (9 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
-- **Strategy:** Use explicit files for component integration tests - single comprehensive test suite
-- **Rationale:** Feature tests can only use explicit files, so all 9 methods share the same input project
+- **Strategy:** Use file-based approach for component integration tests - single comprehensive test suite
+- **Rationale:** Feature tests can only use file-based approach, so all 9 methods share the same input project
 - **Input Files:** main.c, headers/, config.json, project structure - ONE set for all test methods
 - **Progress:** ⏳ Pending - Direct migration without splitting
 
 **test_transformer_features.py (9 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
-- **Strategy:** Use explicit files for transformer feature testing - single comprehensive test suite
-- **Rationale:** Feature tests can only use explicit files, so all 9 methods share the same transformation config
+- **Strategy:** Use file-based approach for transformer feature testing - single comprehensive test suite
+- **Rationale:** Feature tests can only use file-based approach, so all 9 methods share the same transformation config
 - **Input Files:** source files with transformation config.json - ONE set for all test methods
 - **Progress:** ⏳ Pending - Direct migration without splitting
 
 **test_comprehensive.py (9 methods)** - **INTEGRATION TEST: NO SPLIT NEEDED**
-- **Strategy:** Use explicit files for complete workflows - single comprehensive test suite
-- **Rationale:** Integration tests use explicit files like feature tests, single realistic project for all tests
+- **Strategy:** Use file-based approach for complete workflows - single comprehensive test suite
+- **Rationale:** Integration tests use file-based approach like feature tests, single realistic project for all tests
 - **Input Files:** realistic_project/, config.json - ONE set for all test methods
 - **Progress:** ⏳ Pending - Direct migration without splitting
 
@@ -234,8 +234,8 @@ The progress tracking includes:
 - **Progress:** ⏳ Pending
 
 **test_crypto_filter_usecase.py (8 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
-- **Strategy:** Use explicit files for crypto filtering use cases - single comprehensive test suite
-- **Rationale:** Feature tests can only use explicit files, so all 8 methods share the same crypto project
+- **Strategy:** Use file-based approach for crypto filtering use cases - single comprehensive test suite
+- **Rationale:** Feature tests can only use file-based approach, so all 8 methods share the same crypto project
 - **Input Files:** crypto project structure, config.json with filters - ONE set for all test methods
 - **Progress:** ⏳ Pending - Direct migration without splitting
 
@@ -245,8 +245,8 @@ The progress tracking includes:
 - **Progress:** ⏳ Pending
 
 **test_multiple_source_folders.py (7 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
-- **Strategy:** Use explicit files for multiple folder handling - single comprehensive test suite
-- **Rationale:** Feature tests can only use explicit files, so all 7 methods share the same multi-folder project
+- **Strategy:** Use file-based approach for multiple folder handling - single comprehensive test suite
+- **Rationale:** Feature tests can only use file-based approach, so all 7 methods share the same multi-folder project
 - **Input Files:** folder1/, folder2/, folder3/, config.json - ONE set for all test methods
 - **Progress:** ⏳ Pending - Direct migration without splitting
 
@@ -335,8 +335,8 @@ The progress tracking includes:
 - **Input Files:** input-01.json (class naming), input-02.json (relationship naming), input-03.json (stereotype naming)
 - **Progress:** ⏳ Pending
 
-**test_integration.py (4 methods)** - **FEATURE TEST: Use explicit files**
-- **Strategy:** Use explicit files for integration scenarios
+**test_integration.py (4 methods)** - **FEATURE TEST: Use file-based approach**
+- **Strategy:** Use file-based approach for integration scenarios
 - **Input Files:** integration_project/, config.json
 - **Progress:** ⏳ Pending
 
@@ -364,20 +364,20 @@ The progress tracking includes:
 
 #### CLI Testing Files
 
-**test_cli_modes.py (6 methods)** - **FEATURE TEST: Use explicit files**
-- **Strategy:** Use explicit files - CLI mode switching tests complete workflows
+**test_cli_modes.py (6 methods)** - **FEATURE TEST: Use file-based approach**
+- **Strategy:** Use file-based approach - CLI mode switching tests complete workflows
 - **Input Files:** test_project/, config.json
 - **Progress:** ⏳ Pending
 
-**test_cli_feature.py (5 methods)** - **FEATURE TEST: Use explicit files**
-- **Strategy:** Use explicit files - focused on CLI interface validation
+**test_cli_feature.py (5 methods)** - **FEATURE TEST: Use file-based approach**
+- **Strategy:** Use file-based approach - focused on CLI interface validation
 - **Input Files:** feature_test.c, feature_config.json, test_project/
 - **Progress:** ⏳ Pending
 
-#### Simple Unit Tests (Can use input-##.json or explicit files)
+#### Simple Unit Tests (Can use input-##.json or file-based approach)
 
 **test_generator_duplicate_includes.py (2 methods)** - Include duplication handling
-- **Strategy:** Use explicit files - simple duplication scenario
+- **Strategy:** Use file-based approach - simple duplication scenario
 - **Input Files:** duplicate_test.c, duplicate_includes.h, config.json
 - **Progress:** ⏳ Pending
 
@@ -386,8 +386,8 @@ The progress tracking includes:
 - **Input Files:** input-01.json (basic format), input-02.json (advanced format)
 - **Progress:** ⏳ Pending
 
-**test_new_formatting_comprehensive.py (2 methods)** - **INTEGRATION TEST: Use explicit files**
-- **Strategy:** Use explicit files for formatting integration tests
+**test_new_formatting_comprehensive.py (2 methods)** - **INTEGRATION TEST: Use file-based approach**
+- **Strategy:** Use file-based approach for formatting integration tests
 - **Input Files:** comprehensive_project/, config.json
 - **Progress:** ⏳ Pending
 
@@ -404,27 +404,27 @@ The progress tracking includes:
 #### Debug Files (Minimal priority)
 
 **test_debug_actual_parsing.py (1 method)** - Debug functionality
-- **Strategy:** Use explicit files - simple debug test
+- **Strategy:** Use file-based approach - simple debug test
 - **Input Files:** debug_simple.c, debug_config.json
 - **Progress:** ⏳ Pending
 
 **test_debug_field_parsing.py (1 method)** - Debug functionality
-- **Strategy:** Use explicit files - field parsing debug
+- **Strategy:** Use file-based approach - field parsing debug
 - **Input Files:** debug_fields.c, debug_config.json
 - **Progress:** ⏳ Pending
 
 **test_debug_field_processing.py (1 method)** - Debug functionality
-- **Strategy:** Use explicit files - field processing debug
+- **Strategy:** Use file-based approach - field processing debug
 - **Input Files:** debug_processing.c, debug_config.json
 - **Progress:** ⏳ Pending
 
 **test_debug_tokens.py (1 method)** - Debug functionality
-- **Strategy:** Use explicit files - token debug
+- **Strategy:** Use file-based approach - token debug
 - **Input Files:** debug_tokens.c, debug_config.json
 - **Progress:** ⏳ Pending
 
 **test_debug_field_parsing_detailed.py (0 methods)** - Debug functionality
-- **Strategy:** Use explicit files - detailed debug (may need investigation)
+- **Strategy:** Use file-based approach - detailed debug (may need investigation)
 - **Input Files:** debug_detailed.c, debug_config.json
 - **Progress:** ⏳ Pending - Investigate if this file has actual tests
 
@@ -506,19 +506,19 @@ test_parser_filtering/
     └── input-mixed_filters.json    # Self-contained: config + source + expected results
 ```
 
-### Feature Test (Explicit Files Strategy)
+### Feature Test (File-Based Strategy)
 ```
 test_include_processing_features/
 ├── test_include_processing_features.py
 ├── input/
-│   ├── config.json     # Required for explicit files approach
+│   ├── config.json     # Required for file-based approach
 │   ├── main.c
 │   ├── utils.h
 │   ├── includes/
 │   │   ├── level1.h
 │   │   └── level2.h
 │   └── types.h
-└── assertions.json     # Required for Option 1 (explicit files approach)
+└── assertions.json     # Required for Option 1 (file-based approach)
 ```
 
 ### Split Large Test Example
@@ -590,9 +590,9 @@ class TestExecutor:
 
 # Test Data Management
 class TestInputFactory:
-    """Unified factory for managing all test input data (both explicit files and input-###.json)"""
+    """Unified factory for managing all test input data (both file-based and input-###.json)"""
     
-    # Core Input Loading (Explicit Files Only)
+    # Core Input Loading (File-Based Only)
     def load_test_input(self, test_name: str) -> str
     def load_test_config(self, test_name: str) -> str
     def load_test_assertions(self, test_name: str) -> dict
@@ -885,7 +885,7 @@ test_temp_*
 **Priority: CRITICAL**
 
 1. **Implement TestInputFactory for Unified Input Management**
-   - `load_explicit_files(test_name)` - Load explicit files (feature/example tests)
+   - `load_test_files(test_name)` - Load test files (feature/example tests)
    - `load_input_json_scenario(test_name, input_file)` - Load input-###.json scenarios (unit tests)
    - `list_input_json_files(test_name)` - Discover available input-###.json files
    - `get_output_dir_for_scenario(test_name, scenario_name)` - Get output directory management
@@ -949,7 +949,7 @@ Start with smallest files and progress to larger ones:
 Focus on configuration, generator, and parser-specific files.
 
 ### Phase 5: Low Priority (Weeks 11-12)
-**8 files - Mix of explicit files and input-##.json strategies**
+**8 files - Mix of file-based and input-##.json strategies**
 
 Complete remaining files, including debug files and feature tests.
 
@@ -1019,10 +1019,10 @@ Complete remaining files, including debug files and feature tests.
 This migration plan provides a comprehensive roadmap for transforming all 50 test files from internal API usage to a unified, maintainable, CLI-only testing framework. The analysis identifies specific strategies for each file, provides concrete examples of input structures and folder layouts, and establishes clear implementation phases.
 
 **Key Success Factors:**
-1. **Follow the strategy rule**: Feature tests = explicit files, Unit tests with multiple inputs = input-##.json
+1. **Follow the strategy rule**: Feature tests = file-based approach, Unit tests with multiple inputs = input-##.json
 2. **Split large files early**: Don't attempt to migrate 80-method files as-is
 3. **Implement framework first**: TestInputFactory and validation tools are critical
 4. **Verify continuously**: Run full test suite after each migration
 5. **Track progress**: Update todo.md with migration status
 
-The detailed recommendations ensure that the migration will result in a robust, maintainable test suite that validates public API behavior while remaining flexible to internal implementation changes. Feature tests and example tests will always use explicit files to support comprehensive workflow testing, while unit tests can leverage input-##.json files for multiple test scenarios.
+The detailed recommendations ensure that the migration will result in a robust, maintainable test suite that validates public API behavior while remaining flexible to internal implementation changes. Feature tests and example tests will always use file-based approach to support comprehensive workflow testing, while unit tests can leverage input-##.json files for multiple test scenarios.
