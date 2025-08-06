@@ -541,37 +541,266 @@ test_enum_parsing/
     └── input-typedef_enum.json      # Typedef enum parsing
 ```
 
-## Extended TestDataFactory Requirements
+## Test Framework Public APIs
 
-The TestDataFactory must support the following functionality for the input-##.json approach:
+The unified test framework provides comprehensive public APIs for all testing scenarios. Here are the complete APIs organized by component:
 
-### Core Methods
+### Core Framework Classes
 
 ```python
+# Base Test Class
+class UnifiedTestCase(unittest.TestCase, TestAssertionMixin):
+    """Base class for all c2puml tests with built-in validation helpers"""
+    
+    def setUp(self) -> None
+    def tearDown(self) -> None
+    def create_temp_dir(self) -> str
+
+# CLI Execution Engine  
+class TestExecutor:
+    """Executes c2puml through CLI interface only"""
+    
+    # Core Pipeline Execution
+    def run_full_pipeline(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
+    def run_parse_only(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
+    def run_transform_only(self, config_path: str, output_dir: str) -> CLIResult  
+    def run_generate_only(self, config_path: str, output_dir: str) -> CLIResult
+    
+    # Advanced Execution
+    def run_with_verbose(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
+    def run_with_timeout(self, input_path: str, config_path: str, output_dir: str, timeout: int) -> CLIResult
+    def run_expecting_failure(self, input_path: str, config_path: str, output_dir: str) -> CLIResult
+    def run_with_timing(self, input_path: str, config_path: str, output_dir: str) -> TimedCLIResult
+    def run_with_memory_tracking(self, input_path: str, config_path: str, output_dir: str) -> MemoryCLIResult
+
+# Test Data Management
 class TestDataFactory:
-    def load_test_input(self, test_name: str) -> str:
-        """Returns path to test_<n>/input/ directory for CLI execution"""
+    """Manages test input data - supports both explicit files and JSON input approaches"""
     
-    def load_test_config(self, test_name: str, input_file: str = None) -> str:
-        """Returns path to config.json (explicit) or extracts config from input_file for CLI execution"""
+    # Core Input Loading
+    def load_test_input(self, test_name: str) -> str
+    def load_test_config(self, test_name: str, input_file: str = None) -> str
+    def load_test_assertions(self, test_name: str, input_file: str = None) -> dict
+    def load_test_config_dict(self, test_name: str) -> dict
     
-    def load_test_input_json(self, test_name: str, input_file: str = "input-01.json") -> dict:
-        """Loads input-##.json from test_<n>/input/<input_file> and returns parsed content"""
+    # Input JSON Support  
+    def load_test_input_json(self, test_name: str, input_file: str) -> dict
+    def has_input_json(self, test_name: str, input_file: str) -> bool
+    def list_input_json_files(self, test_name: str) -> List[str]
     
-    def generate_source_files_from_input(self, test_name: str, input_file: str = "input-01.json") -> str:
-        """Generates source files from 'source_files' section and returns input path for CLI"""
+    # Dynamic Content Generation
+    def generate_source_files_from_input(self, test_name: str, input_file: str, data: dict = None) -> str
+    def generate_model_from_input(self, test_name: str, input_file: str, data: dict = None) -> str
+    def generate_config_from_input(self, test_name: str, input_file: str, data: dict = None) -> str
     
-    def generate_model_from_input(self, test_name: str, input_file: str = "input-01.json") -> str:
-        """Generates model.json from 'input_model' section and returns input path for CLI"""
+    # Project Building
+    def create_temp_project(self, files: Dict[str, str], config: dict = None) -> str
+    def create_project_from_template(self, template_name: str, variables: dict = None) -> str
+    def create_nested_project(self, structure: dict) -> str
     
-    def has_input_json(self, test_name: str, input_file: str = "input-01.json") -> bool:
-        """Returns True if test_<n>/input/<input_file> exists"""
+    # Utility Methods
+    def get_test_data_path(self, test_name: str, subpath: str = "") -> str
+    def copy_test_files(self, source_path: str, dest_path: str) -> None
+    def merge_configs(self, base_config: dict, override_config: dict) -> dict
+```
+
+### Validation Framework APIs
+
+```python
+# Model Validation
+class ModelValidator:
+    """Validates c2puml generated model.json files and content"""
     
-    def list_input_json_files(self, test_name: str) -> list:
-        """Returns list of all input-##.json files in test_<n>/input/ directory"""
+    # Core Structure Validation
+    def assert_model_structure_valid(self, model: dict) -> None
+    def assert_model_schema_compliant(self, model: dict) -> None
+    def assert_model_project_name(self, model: dict, expected_name: str) -> None
+    def assert_model_file_count(self, model: dict, expected_count: int) -> None
+    def assert_model_files_parsed(self, model: dict, expected_files: List[str]) -> None
     
-    def extract_config_from_input(self, test_name: str, input_file: str) -> str:
-        """Extracts 'c2puml_config' section from input_file and creates temp config.json for CLI execution"""
+    # Element Existence Validation
+    def assert_model_function_exists(self, model: dict, func_name: str) -> None
+    def assert_model_function_not_exists(self, model: dict, func_name: str) -> None
+    def assert_model_struct_exists(self, model: dict, struct_name: str) -> None
+    def assert_model_struct_not_exists(self, model: dict, struct_name: str) -> None
+    def assert_model_enum_exists(self, model: dict, enum_name: str) -> None
+    def assert_model_typedef_exists(self, model: dict, typedef_name: str) -> None
+    def assert_model_global_exists(self, model: dict, global_name: str) -> None
+    def assert_model_macro_exists(self, model: dict, macro_name: str) -> None
+    
+    # Include and Relationship Validation
+    def assert_model_includes_exist(self, model: dict, expected_includes: List[str]) -> None
+    def assert_model_include_exists(self, model: dict, include_name: str) -> None
+    def assert_model_include_relationship(self, model: dict, source: str, target: str) -> None
+    def assert_model_include_relationships_exist(self, model: dict, expected_relations: List[dict]) -> None
+    
+    # Advanced Element Validation
+    def assert_model_function_signature(self, model: dict, func_name: str, return_type: str, params: List[str]) -> None
+    def assert_model_struct_fields(self, model: dict, struct_name: str, expected_fields: List[str]) -> None
+    def assert_model_enum_values(self, model: dict, enum_name: str, expected_values: List[str]) -> None
+    def assert_model_macro_definition(self, model: dict, macro_name: str, expected_value: str) -> None
+    
+    # Pattern Matching and Advanced Validation
+    def assert_model_functions_match_pattern(self, model: dict, pattern: str) -> List[str]
+    def assert_model_structs_match_pattern(self, model: dict, pattern: str) -> List[str]
+    def assert_model_includes_match_pattern(self, model: dict, pattern: str) -> List[str]
+    def assert_model_element_count(self, model: dict, element_type: str, expected_count: int) -> None
+    def assert_model_json_syntax_valid(self, model_file_path: str) -> None
+
+# PlantUML Validation
+class PlantUMLValidator:
+    """Validates generated PlantUML files and diagram content"""
+    
+    # File Structure Validation
+    def assert_puml_file_exists(self, output_dir: str, filename: str) -> None
+    def assert_puml_file_count(self, output_dir: str, expected_count: int) -> None
+    def assert_puml_file_syntax_valid(self, puml_content: str) -> None
+    def assert_puml_start_end_tags(self, puml_content: str) -> None
+    
+    # Content Validation
+    def assert_puml_contains(self, puml_content: str, expected_text: str) -> None
+    def assert_puml_not_contains(self, puml_content: str, forbidden_text: str) -> None
+    def assert_puml_contains_lines(self, puml_content: str, expected_lines: List[str]) -> None
+    def assert_puml_line_count(self, puml_content: str, expected_count: int) -> None
+    
+    # Element Validation
+    def assert_puml_class_exists(self, puml_content: str, class_name: str, stereotype: str = None) -> None
+    def assert_puml_class_count(self, puml_content: str, expected_count: int) -> None
+    def assert_puml_method_exists(self, puml_content: str, class_name: str, method_name: str) -> None
+    def assert_puml_field_exists(self, puml_content: str, class_name: str, field_name: str) -> None
+    
+    # Relationship Validation
+    def assert_puml_relationship(self, puml_content: str, source: str, target: str, rel_type: str) -> None
+    def assert_puml_relationship_count(self, puml_content: str, expected_count: int) -> None
+    def assert_puml_includes_arrow(self, puml_content: str, source: str, target: str) -> None
+    def assert_puml_no_duplicate_relationships(self, puml_content: str) -> None
+    
+    # Formatting and Style Validation
+    def assert_puml_formatting_compliant(self, puml_content: str) -> None
+    def assert_puml_proper_stereotypes(self, puml_content: str) -> None
+    def assert_puml_color_scheme(self, puml_content: str, expected_colors: dict) -> None
+    def assert_puml_no_duplicate_elements(self, puml_content: str) -> None
+
+# Output and File Validation
+class OutputValidator:
+    """Validates general output files, directories, and content"""
+    
+    # Directory and File System Validation
+    def assert_output_dir_exists(self, output_path: str) -> None
+    def assert_output_dir_structure(self, output_path: str, expected_structure: dict) -> None
+    def assert_file_exists(self, file_path: str) -> None
+    def assert_file_not_exists(self, file_path: str) -> None
+    def assert_directory_empty(self, dir_path: str) -> None
+    
+    # File Content Validation
+    def assert_file_contains(self, file_path: str, expected_text: str) -> None
+    def assert_file_not_contains(self, file_path: str, forbidden_text: str) -> None
+    def assert_file_contains_lines(self, file_path: str, expected_lines: List[str]) -> None
+    def assert_file_line_count(self, file_path: str, expected_count: int) -> None
+    def assert_file_empty(self, file_path: str) -> None
+    def assert_file_size_under(self, file_path: str, max_size: int) -> None
+    
+    # Log and Output Validation
+    def assert_log_contains(self, log_content: str, expected_message: str) -> None
+    def assert_log_no_errors(self, log_content: str) -> None
+    def assert_log_no_warnings(self, log_content: str) -> None
+    def assert_log_error_count(self, log_content: str, expected_count: int) -> None
+    def assert_log_execution_time(self, log_content: str, max_seconds: int) -> None
+
+# Advanced File Operations
+class FileValidator:
+    """Advanced file validation and manipulation utilities"""
+    
+    # File Comparison and JSON Validation
+    def assert_files_equal(self, file1_path: str, file2_path: str) -> None
+    def assert_json_valid(self, json_file_path: str) -> None
+    def assert_json_schema_valid(self, json_file_path: str, schema: dict) -> None
+    def assert_json_contains_key(self, json_file_path: str, key_path: str) -> None
+    
+    # Advanced Content Validation
+    def assert_file_valid_utf8(self, file_path: str) -> None
+    def assert_file_no_trailing_whitespace(self, file_path: str) -> None
+    def assert_file_unix_line_endings(self, file_path: str) -> None
+    
+    # Performance Validation
+    def assert_execution_time_under(self, actual_time: float, max_time: float) -> None
+    def assert_memory_usage_under(self, actual_memory: int, max_memory: int) -> None
+
+# Configuration Validation
+class ConfigValidator:
+    """Validates c2puml configuration files and settings"""
+    
+    def assert_config_file_exists(self, config_path: str) -> None
+    def assert_config_json_valid(self, config_content: str) -> None
+    def assert_config_schema_valid(self, config: dict) -> None
+    def assert_config_project_name(self, config: dict, expected_name: str) -> None
+    def assert_config_source_folders(self, config: dict, expected_folders: List[str]) -> None
+    def assert_config_transformations(self, config: dict, expected_transformations: dict) -> None
+```
+
+### Helper Classes and Mixins
+
+```python
+# Common Test Assertion Patterns
+class TestAssertionMixin:
+    """Common assertion patterns for c2puml tests"""
+    
+    def assertCLISuccess(self, result: CLIResult, message: str = None) -> None
+    def assertCLIFailure(self, result: CLIResult, expected_error: str = None) -> None
+    def assertFilesGenerated(self, output_dir: str, expected_files: List[str]) -> None
+    def assertValidModelGenerated(self, output_dir: str) -> dict
+    def assertValidPlantUMLGenerated(self, output_dir: str) -> List[str]
+
+# Test Data Builder Pattern
+class TestDataBuilder:
+    """Builder pattern for creating test data structures"""
+    
+    def reset(self) -> 'TestDataBuilder'
+    def with_metadata(self, description: str, test_type: str = "unit", expected_duration: str = "fast") -> 'TestDataBuilder'
+    def with_config(self, project_name: str, **config_options) -> 'TestDataBuilder'
+    def with_source_file(self, filename: str, content: str) -> 'TestDataBuilder'
+    def with_expected_structs(self, *struct_names) -> 'TestDataBuilder'
+    def with_expected_functions(self, *function_names) -> 'TestDataBuilder'
+    def build(self) -> dict
+
+# Common Project Templates
+class ProjectTemplates:
+    """Common project templates for test data generation"""
+    
+    @staticmethod
+    def simple_struct_project(struct_name: str = "Point") -> dict
+    
+    @staticmethod
+    def enum_project(enum_name: str = "Color") -> dict
+    
+    @staticmethod
+    def include_hierarchy_project() -> dict
+
+# Result Types
+@dataclass
+class CLIResult:
+    """Standard result from CLI execution"""
+    exit_code: int
+    stdout: str
+    stderr: str
+    execution_time: float
+    command: List[str]
+    working_dir: str
+
+@dataclass  
+class TimedCLIResult(CLIResult):
+    """CLI result with detailed timing information"""
+    parse_time: float
+    transform_time: float  
+    generate_time: float
+    total_time: float
+
+@dataclass
+class MemoryCLIResult(CLIResult):
+    """CLI result with memory usage tracking"""
+    peak_memory_mb: int
+    memory_samples: List[int]
+    memory_timeline: List[tuple]
 ```
 
 ### Input-##.json Structure Definition
