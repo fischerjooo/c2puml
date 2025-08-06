@@ -78,7 +78,6 @@ class UnifiedTestCase(unittest.TestCase):
         self.puml_validator = PlantUMLValidator()
         self.output_validator = OutputValidator()
         self.file_validator = FileValidator()
-        self.config_validator = ConfigValidator()
         self.test_name = self.__class__.__name__.lower().replace('test', 'test_')
         self.output_dir = tempfile.mkdtemp()
         self.temp_dirs = []  # Track temporary directories for cleanup
@@ -741,10 +740,14 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
         self.file_validator.assert_file_valid_utf8(model_file)
         self.file_validator.assert_file_no_trailing_whitespace(model_file)
         
-        # Configuration validation
-        config = self.data_factory.load_test_config_dict(self.test_name)
-        self.config_validator.assert_config_schema_valid(config)
-        self.config_validator.assert_config_project_name(config, "expected_project_name")
+        # Test configuration behavior instead of structure
+        # Example: Test that file filtering configuration works
+        config_with_filters = {
+            "project_name": "test_filters",
+            "source_folders": ["."],
+            "file_filters": {"exclude": ["*.test.c"]}
+        }
+        self.assertConfigBehavior(config_with_filters, {"file_count": 2})  # Should exclude test files
         
     def _validate_specific_business_logic(self, model: dict, puml_contents: List[str]):
         """Custom validation for complex scenarios"""
@@ -971,28 +974,42 @@ class FileValidator:
     def assert_file_creation_time_recent(self, file_path: str, max_age_seconds: int) -> None
 ```
 
-##### ConfigValidator - Configuration File Validation
+##### CLI Behavior Validation
 ```python
-class ConfigValidator:
-    """Validates c2puml configuration files and settings"""
+# Instead of validating config structure, we test c2puml's behavior with different configs
+
+class TestAssertionMixin:
+    """Extended with configuration behavior testing"""
     
-    # Configuration Structure Validation
-    def assert_config_file_exists(self, config_path: str) -> None
-    def assert_config_json_valid(self, config_content: str) -> None
-    def assert_config_schema_valid(self, config: dict) -> None
-    def assert_config_required_fields(self, config: dict, required_fields: List[str]) -> None
+    def assertConfigurationRejected(self, config_data: dict, expected_error: str = None) -> None:
+        """Test that c2puml rejects invalid configuration gracefully"""
+        temp_dir = self.create_temp_dir()
+        config_path = self.input_factory.create_temp_config_file({"c2puml_config": config_data}, temp_dir)
+        
+        result = self.executor.run_expecting_failure(".", config_path, self.create_temp_dir())
+        self.assertCLIFailure(result, expected_error)
     
-    # Configuration Content Validation
-    def assert_config_project_name(self, config: dict, expected_name: str) -> None
-    def assert_config_source_folders(self, config: dict, expected_folders: List[str]) -> None
-    def assert_config_output_dir(self, config: dict, expected_dir: str) -> None
-    def assert_config_transformations(self, config: dict, expected_transformations: dict) -> None
+    def assertConfigurationAccepted(self, config_data: dict) -> CLIResult:
+        """Test that c2puml accepts valid configuration and runs successfully"""
+        temp_dir = self.create_temp_dir()
+        config_path = self.input_factory.create_temp_config_file({"c2puml_config": config_data}, temp_dir)
+        
+        result = self.executor.run_full_pipeline(".", config_path, self.create_temp_dir())
+        self.assertCLISuccess(result)
+        return result
     
-    # Advanced Configuration Validation
-    def assert_config_file_filters(self, config: dict, expected_filters: dict) -> None
-    def assert_config_include_depth(self, config: dict, expected_depth: int) -> None
-    def assert_config_file_specific_settings(self, config: dict, file_name: str, expected_settings: dict) -> None
-    def assert_config_merge_result(self, base_config: dict, override_config: dict, expected_result: dict) -> None
+    def assertConfigBehavior(self, config_data: dict, expected_model_properties: dict) -> None:
+        """Test that specific configuration produces expected behavior in the output"""
+        result = self.assertConfigurationAccepted(config_data)
+        model = self.assertValidModelGenerated(result.working_dir)
+        
+        # Validate that config influenced the output as expected
+        for property_name, expected_value in expected_model_properties.items():
+            if property_name == "file_count":
+                self.model_validator.assert_model_file_count(model, expected_value)
+            elif property_name == "parsed_files":
+                self.model_validator.assert_model_files_parsed(model, expected_value)
+            # Add more property checks as needed
 ```
 
 ### 5. Test Organization and Refactoring

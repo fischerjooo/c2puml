@@ -599,7 +599,10 @@ class UnifiedTestCase(unittest.TestCase, TestAssertionMixin):
         self.data_factory = TestDataFactory()  # For explicit files
         self.input_factory = InputFactory()    # For input-###.json files
         self.model_validator = ModelValidator()
-        # ... other validators
+        self.puml_validator = PlantUMLValidator()
+        self.output_validator = OutputValidator()
+        self.file_validator = FileValidator()
+        # Note: No ConfigValidator - we test c2puml's behavior with configs, not config structure
         
     def tearDown(self) -> None
     def create_temp_dir(self) -> str
@@ -787,16 +790,9 @@ class FileValidator:
     def assert_execution_time_under(self, actual_time: float, max_time: float) -> None
     def assert_memory_usage_under(self, actual_memory: int, max_memory: int) -> None
 
-# Configuration Validation
-class ConfigValidator:
-    """Validates c2puml configuration files and settings"""
-    
-    def assert_config_file_exists(self, config_path: str) -> None
-    def assert_config_json_valid(self, config_content: str) -> None
-    def assert_config_schema_valid(self, config: dict) -> None
-    def assert_config_project_name(self, config: dict, expected_name: str) -> None
-    def assert_config_source_folders(self, config: dict, expected_folders: List[str]) -> None
-    def assert_config_transformations(self, config: dict, expected_transformations: dict) -> None
+# Configuration Behavior Testing (not structure validation)
+# Note: We test c2puml's behavior with different configs, not the config structure itself
+# c2puml validates its own configuration - we test the resulting behavior
 ```
 
 ### Helper Classes and Mixins
@@ -812,6 +808,9 @@ class TestAssertionMixin:
     def assertValidModelGenerated(self, output_dir: str) -> dict
     def assertValidPlantUMLGenerated(self, output_dir: str) -> List[str]
     def loadInputJsonAndValidate(self, input_file_path: str) -> dict  # Load and validate input-###.json
+    def assertConfigurationRejected(self, config_data: dict, expected_error: str = None) -> None  # Test invalid config handling
+    def assertConfigurationAccepted(self, config_data: dict) -> CLIResult  # Test valid config acceptance
+    def assertConfigBehavior(self, config_data: dict, expected_model_properties: dict) -> None  # Test config behavior
 
 # Input JSON Factory
 class InputFactory:
@@ -990,6 +989,8 @@ test_temp_*
    - `ModelValidator` - Model structure and content validation
    - `PlantUMLValidator` - PlantUML file validation
    - `OutputValidator` - General output file validation
+   - `FileValidator` - Advanced file operations and validation
+   - **Note**: No ConfigValidator - c2puml validates its own configuration
 
 4. **Establish Baseline**
    - Run `./run_all.sh > baseline_results.log`
