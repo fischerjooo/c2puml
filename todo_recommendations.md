@@ -101,19 +101,54 @@ This document provides comprehensive analysis and specific recommendations for m
 
 **Unit tests with multiple test methods requiring different inputs MUST use input-##.json approach.**
 
+### Critical Insight: Feature Tests Generally Do NOT Need Splitting
+
+**Since feature tests can only use explicit files (config.json + source files), all test methods in a feature test file share the same input project.** This means:
+
+- **Feature tests typically should NOT be split** unless they test completely different features requiring different projects
+- All test methods in a feature test can use the same input/ directory with the same config.json and source files  
+- Each test method validates different aspects of the same comprehensive workflow
+- Splitting would only be needed if the feature test file covers multiple unrelated features that require completely different project structures
+
 ### Input Strategy Guidelines
 
 **Use input-##.json for:**
 - Small unit test cases (< 50 lines of C code total)
 - Multiple test scenarios in one test file
 - Tests requiring different inputs per method
+- **NEVER for feature tests or example tests**
 
 **Use explicit files for:**
-- **Feature tests (ALWAYS)**
-- **Example tests (ALWAYS)**
+- **Feature tests (ALWAYS) - typically NO split needed**
+- **Example tests (ALWAYS) - typically NO split needed**
+- **Integration tests - typically NO split needed**
 - Large test cases (> 50 lines of C code)
 - Complex project structures
-- Integration tests with multiple dependencies
+
+## Key Migration Insights
+
+### Feature Test Splitting Analysis
+
+**IMPORTANT DISCOVERY:** Most feature tests do NOT need splitting because:
+
+1. **Explicit Files Constraint**: Feature tests can only use explicit files (config.json + source files)
+2. **Shared Input Project**: All test methods in a feature test file share the same input project structure  
+3. **Different Validation Aspects**: Each test method validates different aspects of the same comprehensive workflow
+4. **Single Output Directory**: All test methods generate output to the same local output/ directory
+
+**When Feature Tests SHOULD Be Split:**
+- Only when they test completely different features requiring entirely different project structures
+- When the feature test file covers multiple unrelated features (rare)
+
+**When Feature Tests Should NOT Be Split (Most Cases):**
+- When all test methods validate different aspects of the same feature
+- When all test methods can share the same input project structure
+- When test methods validate different pipeline stages (parse, transform, generate) of the same feature
+
+**Migration Impact:**
+- **10 feature tests** → **Direct migration without splitting** (vs. previous assumption of potential splits)
+- **2 integration tests** → **Direct migration without splitting**
+- **Reduced complexity** → Focus splits only on unit tests that actually benefit from input-##.json approach
 
 ## Detailed File-by-File Analysis
 
@@ -204,10 +239,11 @@ This document provides comprehensive analysis and specific recommendations for m
 
 **Other High Priority Unit Tests:**
 
-**test_include_processing_features.py (12 methods)** - **FEATURE TEST: Use explicit files**
-- **Strategy:** Use explicit files with config.json + source files
-- **Input Files:** main.c, utils.h, includes/, config.json
-- **Progress:** ⏳ Pending
+**test_include_processing_features.py (12 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
+- **Strategy:** Use explicit files with config.json + source files - single comprehensive test suite
+- **Rationale:** Feature tests can only use explicit files, so all 12 methods share the same input project structure
+- **Input Files:** main.c, utils.h, includes/, config.json - ONE set for all test methods
+- **Progress:** ⏳ Pending - Direct migration without splitting
 
 **test_parser.py (10 methods)** - Core parser functionality
 - **Strategy:** Use input-##.json for different parsing scenarios
@@ -219,40 +255,45 @@ This document provides comprehensive analysis and specific recommendations for m
 - **Input Files:** input-simple_globals.json, input-complex_globals.json, input-initialized_globals.json
 - **Progress:** ⏳ Pending
 
-**test_component_features.py (9 methods)** - **FEATURE TEST: Use explicit files**
-- **Strategy:** Use explicit files for component integration tests
-- **Input Files:** main.c, headers/, config.json, project structure
-- **Progress:** ⏳ Pending
+**test_component_features.py (9 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
+- **Strategy:** Use explicit files for component integration tests - single comprehensive test suite
+- **Rationale:** Feature tests can only use explicit files, so all 9 methods share the same input project
+- **Input Files:** main.c, headers/, config.json, project structure - ONE set for all test methods
+- **Progress:** ⏳ Pending - Direct migration without splitting
 
-**test_transformer_features.py (9 methods)** - **FEATURE TEST: Use explicit files**
-- **Strategy:** Use explicit files for transformer feature testing
-- **Input Files:** source files with transformation config.json
-- **Progress:** ⏳ Pending
+**test_transformer_features.py (9 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
+- **Strategy:** Use explicit files for transformer feature testing - single comprehensive test suite
+- **Rationale:** Feature tests can only use explicit files, so all 9 methods share the same transformation config
+- **Input Files:** source files with transformation config.json - ONE set for all test methods
+- **Progress:** ⏳ Pending - Direct migration without splitting
 
-**test_comprehensive.py (9 methods)** - **INTEGRATION TEST: Use explicit files**
-- **Strategy:** Use explicit files for complete workflows
-- **Input Files:** realistic_project/, config.json
-- **Progress:** ⏳ Pending
+**test_comprehensive.py (9 methods)** - **INTEGRATION TEST: NO SPLIT NEEDED**
+- **Strategy:** Use explicit files for complete workflows - single comprehensive test suite
+- **Rationale:** Integration tests use explicit files like feature tests, single realistic project for all tests
+- **Input Files:** realistic_project/, config.json - ONE set for all test methods
+- **Progress:** ⏳ Pending - Direct migration without splitting
 
 **test_multi_pass_anonymous_processing.py (8 methods)** - Multi-pass processing
 - **Strategy:** Use input-##.json for multi-pass scenarios
 - **Input Files:** input-simple_multipass.json, input-complex_multipass.json, input-nested_multipass.json
 - **Progress:** ⏳ Pending
 
-**test_crypto_filter_usecase.py (8 methods)** - **FEATURE TEST: Use explicit files**
-- **Strategy:** Use explicit files for crypto filtering use cases
-- **Input Files:** crypto project structure, config.json with filters
-- **Progress:** ⏳ Pending
+**test_crypto_filter_usecase.py (8 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
+- **Strategy:** Use explicit files for crypto filtering use cases - single comprehensive test suite
+- **Rationale:** Feature tests can only use explicit files, so all 8 methods share the same crypto project
+- **Input Files:** crypto project structure, config.json with filters - ONE set for all test methods
+- **Progress:** ⏳ Pending - Direct migration without splitting
 
 **test_parser_filtering.py (8 methods)** - Parser filtering logic
 - **Strategy:** Use input-##.json for different filtering patterns
 - **Input Files:** input-include_filters.json, input-exclude_filters.json, input-mixed_filters.json
 - **Progress:** ⏳ Pending
 
-**test_multiple_source_folders.py (7 methods)** - **FEATURE TEST: Use explicit files**
-- **Strategy:** Use explicit files for multiple folder handling
-- **Input Files:** folder1/, folder2/, folder3/, config.json
-- **Progress:** ⏳ Pending
+**test_multiple_source_folders.py (7 methods)** - **FEATURE TEST: NO SPLIT NEEDED**
+- **Strategy:** Use explicit files for multiple folder handling - single comprehensive test suite
+- **Rationale:** Feature tests can only use explicit files, so all 7 methods share the same multi-folder project
+- **Input Files:** folder1/, folder2/, folder3/, config.json - ONE set for all test methods
+- **Progress:** ⏳ Pending - Direct migration without splitting
 
 **test_generator_new_formatting.py (7 methods)** - New formatting features
 - **Strategy:** Use input-##.json for formatting tests

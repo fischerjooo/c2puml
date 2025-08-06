@@ -981,6 +981,7 @@ tests/
 - **ALWAYS use Option 1 (explicit files)** - Feature and example tests require comprehensive project structures
 - **No input-##.json files** for feature or example tests - they test complete workflows
 - All feature and example test files use single `input/` folder with config.json and source files
+- **Generally NO SPLITTING NEEDED** - since all test methods share the same input project, splitting is rarely necessary unless testing completely different features
 
 **Unit Tests Strategy:**
 - Use input-##.json for multiple test scenarios
@@ -1044,27 +1045,28 @@ tests/
 | `test_utils.py` | ⏳ | Low | input-utils_*.json | Utility function testing |
 | `test_verifier.py` | ⏳ | Medium | input-verify_*.json | Model verification logic |
 
-### Feature Tests Progress Tracking (12 files)
+### Feature Tests Progress Tracking (10 files) - NO SPLITS NEEDED
 
-| Test File | Status | Priority | Input Strategy | Notes |
-|-----------|--------|----------|----------------|-------|
-| `test_cli_feature.py` | ⏳ | Low | Explicit files | CLI interface testing |
-| `test_cli_modes.py` | ⏳ | Low | Explicit files | CLI mode switching |
-| `test_component_features.py` | ⏳ | High | Explicit files | Component integration features |
-| `test_crypto_filter_pattern.py` | ⏳ | Medium | Explicit files | Crypto filtering patterns |
-| `test_crypto_filter_usecase.py` | ⏳ | High | Explicit files | Crypto filtering use cases |
-| `test_include_processing_features.py` | ⏳ | High | Explicit files | Include processing features |
-| `test_integration.py` | ⏳ | Medium | Explicit files | Feature integration testing |
-| `test_invalid_source_paths.py` | ⏳ | High | Explicit files | Error handling for invalid paths |
-| `test_multiple_source_folders.py` | ⏳ | High | Explicit files | Multiple source folder handling |
-| `test_transformer_features.py` | ⏳ | High | Explicit files | Transformer feature testing |
+| Test File | Status | Priority | Input Strategy | Split Needed? | Notes |
+|-----------|--------|----------|----------------|---------------|-------|
+| `test_cli_feature.py` | ⏳ | Low | Explicit files | ❌ NO | CLI interface testing - single CLI project |
+| `test_cli_modes.py` | ⏳ | Low | Explicit files | ❌ NO | CLI mode switching - single CLI project |
+| `test_component_features.py` | ⏳ | High | Explicit files | ❌ NO | Component integration - single project structure |
+| `test_crypto_filter_pattern.py` | ⏳ | Medium | Explicit files | ❌ NO | Crypto filtering - single crypto project |
+| `test_crypto_filter_usecase.py` | ⏳ | High | Explicit files | ❌ NO | Crypto use cases - single crypto project |
+| `test_include_processing_features.py` | ⏳ | High | Explicit files | ❌ NO | Include processing - single project with includes |
+| `test_integration.py` | ⏳ | Medium | Explicit files | ❌ NO | Integration testing - single integration project |
+| `test_multiple_source_folders.py` | ⏳ | High | Explicit files | ❌ NO | Multi-folder handling - single multi-folder project |
+| `test_transformer_features.py` | ⏳ | High | Explicit files | ❌ NO | Transformer features - single project with transformations |
 
-### Integration Tests Progress Tracking (2 files)
+**Key Insight:** Feature tests use explicit files, so all test methods share the same input project. No splitting needed unless testing completely different features requiring different projects.
 
-| Test File | Status | Priority | Input Strategy | Notes |
-|-----------|--------|----------|----------------|-------|
-| `test_comprehensive.py` | ⏳ | High | Explicit files | Comprehensive end-to-end testing |
-| `test_new_formatting_comprehensive.py` | ⏳ | Low | Explicit files | New formatting integration |
+### Integration Tests Progress Tracking (2 files) - NO SPLITS NEEDED
+
+| Test File | Status | Priority | Input Strategy | Split Needed? | Notes |
+|-----------|--------|----------|----------------|---------------|-------|
+| `test_comprehensive.py` | ⏳ | High | Explicit files | ❌ NO | Comprehensive testing - single realistic project |
+| `test_new_formatting_comprehensive.py` | ⏳ | Low | Explicit files | ❌ NO | Formatting integration - single project |
 
 ### Example Tests Progress Tracking (1 file)
 
