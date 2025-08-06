@@ -812,30 +812,31 @@ class TestAssertionMixin:
     def assertValidModelGenerated(self, output_dir: str) -> dict
     def assertValidPlantUMLGenerated(self, output_dir: str) -> List[str]
 
-# Test Data Builder Pattern
-class TestDataBuilder:
-    """Builder pattern for creating test data structures"""
+# Input JSON Factory
+class InputFactory:
+    """Factory for loading and processing input-###.json files"""
     
-    def reset(self) -> 'TestDataBuilder'
-    def with_metadata(self, description: str, test_type: str = "unit", expected_duration: str = "fast") -> 'TestDataBuilder'
-    def with_config(self, project_name: str, **config_options) -> 'TestDataBuilder'
-    def with_source_file(self, filename: str, content: str) -> 'TestDataBuilder'
-    def with_expected_structs(self, *struct_names) -> 'TestDataBuilder'
-    def with_expected_functions(self, *function_names) -> 'TestDataBuilder'
-    def build(self) -> dict
+    def load_input_json(self, input_file_path: str) -> dict
+    def extract_config(self, input_data: dict) -> dict
+    def extract_source_files(self, input_data: dict) -> Dict[str, str]
+    def extract_expected_results(self, input_data: dict) -> dict
+    def extract_test_metadata(self, input_data: dict) -> dict
+    def create_temp_config_file(self, input_data: dict, temp_dir: str) -> str
+    def create_temp_source_files(self, input_data: dict, temp_dir: str) -> str
+    def validate_input_json_structure(self, input_data: dict) -> bool
 
-# Common Project Templates
+# Project Templates for Input JSON
 class ProjectTemplates:
-    """Common project templates for test data generation"""
+    """Pre-built input-###.json templates for common test scenarios"""
     
     @staticmethod
-    def simple_struct_project(struct_name: str = "Point") -> dict
+    def simple_struct_template(struct_name: str = "Point") -> dict
     
     @staticmethod
-    def enum_project(enum_name: str = "Color") -> dict
+    def enum_template(enum_name: str = "Color") -> dict
     
     @staticmethod
-    def include_hierarchy_project() -> dict
+    def include_hierarchy_template() -> dict
 
 # Result Types
 @dataclass

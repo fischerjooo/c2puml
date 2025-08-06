@@ -73,6 +73,7 @@ class UnifiedTestCase(unittest.TestCase):
     def setUp(self):
         self.executor = TestExecutor()
         self.data_factory = TestDataFactory()
+        self.input_factory = InputFactory()  # For processing input-###.json files
         self.model_validator = ModelValidator()
         self.puml_validator = PlantUMLValidator()
         self.output_validator = OutputValidator()
@@ -130,27 +131,17 @@ class TestExecutor:
         """Marks output directory to be preserved for manual review"""
 ```
 
-##### TestDataFactory - Input Management
+##### TestDataFactory - Input Management (Explicit Files)
 ```python
 class TestDataFactory:
-    """Manages test input data - supports both explicit files and JSON input approaches"""
+    """Manages test input data for explicit files approach (feature/example tests)"""
     
-    # Core Input Loading
+    # Core Input Loading (Explicit Files)
     def load_test_input(self, test_name: str) -> str
-    def load_test_config(self, test_name: str, input_file: str = None) -> str
-    def load_test_assertions(self, test_name: str, input_file: str = None) -> dict
+    def load_test_config(self, test_name: str) -> str
+    def load_test_assertions(self, test_name: str) -> dict
     
-    # Input JSON Support  
-    def load_test_input_json(self, test_name: str, input_file: str) -> dict
-    def has_input_json(self, test_name: str, input_file: str) -> bool
-    def list_input_json_files(self, test_name: str) -> List[str]
-    
-    # Dynamic Content Generation
-    def generate_source_files_from_input(self, test_name: str, input_file: str) -> str
-    def generate_model_from_input(self, test_name: str, input_file: str) -> str
-    def generate_config_from_input(self, test_name: str, input_file: str) -> str
-    
-    # Project Building
+    # Project Building (Explicit Files)
     def create_temp_project(self, files: Dict[str, str], config: dict = None) -> str
     def create_project_from_template(self, template_name: str, variables: dict = None) -> str
     def create_nested_project(self, structure: dict) -> str
@@ -159,6 +150,7 @@ class TestDataFactory:
     def get_test_data_path(self, test_name: str, subpath: str = "") -> str
     def copy_test_files(self, source_path: str, dest_path: str) -> None
     def merge_configs(self, base_config: dict, override_config: dict) -> dict
+    def list_input_json_files(self, test_name: str) -> List[str]  # For finding available input-###.json files
     
     # Output Directory Management
     def get_output_dir_for_scenario(self, test_name: str, input_file: str = None) -> str:
@@ -169,6 +161,53 @@ class TestDataFactory:
     
     def ensure_output_dir_clean(self, output_dir: str) -> None:
         """Ensures output directory exists and is clean before test execution"""
+```
+
+##### InputFactory - Input JSON Management (Unit Tests)
+```python
+class InputFactory:
+    """Factory for loading and processing input-###.json files (unit tests only)"""
+    
+    # Core Input JSON Processing
+    def load_input_json(self, input_file_path: str) -> dict:
+        """Load and parse input-###.json file from filesystem"""
+    
+    def validate_input_json_structure(self, input_data: dict) -> bool:
+        """Validate that input-###.json has required sections: test_metadata, c2puml_config, source_files"""
+    
+    # Section Extraction
+    def extract_config(self, input_data: dict) -> dict:
+        """Extract c2puml_config section from input-###.json"""
+    
+    def extract_source_files(self, input_data: dict) -> Dict[str, str]:
+        """Extract source_files section from input-###.json"""
+    
+    def extract_expected_results(self, input_data: dict) -> dict:
+        """Extract expected_results section from input-###.json"""
+    
+    def extract_test_metadata(self, input_data: dict) -> dict:
+        """Extract test_metadata section from input-###.json"""
+    
+    # Temporary File Creation
+    def create_temp_config_file(self, input_data: dict, temp_dir: str) -> str:
+        """Create temporary config.json from input-###.json c2puml_config section"""
+    
+    def create_temp_source_files(self, input_data: dict, temp_dir: str) -> str:
+        """Create temporary source files from input-###.json source_files section"""
+```
+
+**Key Usage Pattern:**
+```python
+# For Unit Tests with input-###.json files:
+input_factory = InputFactory()
+input_data = input_factory.load_input_json("test_struct/input/input-simple_struct.json")
+temp_dir = self.create_temp_dir()
+input_path = input_factory.create_temp_source_files(input_data, temp_dir)
+config_path = input_factory.create_temp_config_file(input_data, temp_dir)
+
+# For Feature Tests with explicit files:
+input_path = self.data_factory.load_test_input(self.test_name)  # Returns test_struct/input/
+config_path = self.data_factory.load_test_config(self.test_name)  # Returns test_struct/input/config.json
 ```
 
 ### 2. Public API Testing Strategy
@@ -263,69 +302,88 @@ class TestAssertionMixin:
             contents.append(content)
         
         return contents
+    
+    def loadInputJsonAndValidate(self, input_file_path: str) -> dict:
+        """Load and validate input-###.json file structure"""
+        input_factory = InputFactory()
+        input_data = input_factory.load_input_json(input_file_path)
+        self.assertTrue(
+            input_factory.validate_input_json_structure(input_data),
+            f"Invalid input-###.json structure in {input_file_path}"
+        )
+        return input_data
 
-class TestDataBuilder:
-    """Builder pattern for creating test data structures"""
+class InputFactory:
+    """Factory for loading and processing input-###.json files"""
     
     def __init__(self):
-        self.reset()
+        pass
     
-    def reset(self) -> 'TestDataBuilder':
-        self._data = {
-            "test_metadata": {},
-            "c2puml_config": {},
-            "source_files": {},
-            "expected_results": {}
-        }
-        return self
+    def load_input_json(self, input_file_path: str) -> dict:
+        """Load and parse input-###.json file"""
+        with open(input_file_path, 'r') as f:
+            return json.load(f)
     
-    def with_metadata(self, description: str, test_type: str = "unit", 
-                     expected_duration: str = "fast") -> 'TestDataBuilder':
-        self._data["test_metadata"] = {
-            "description": description,
-            "test_type": test_type,
-            "expected_duration": expected_duration
-        }
-        return self
+    def extract_config(self, input_data: dict) -> dict:
+        """Extract c2puml_config section from input-###.json"""
+        return input_data.get("c2puml_config", {})
     
-    def with_config(self, project_name: str, **config_options) -> 'TestDataBuilder':
-        self._data["c2puml_config"] = {
-            "project_name": project_name,
-            "source_folders": ["."],
-            "output_dir": "./output",
-            **config_options
-        }
-        return self
+    def extract_source_files(self, input_data: dict) -> Dict[str, str]:
+        """Extract source_files section from input-###.json"""
+        return input_data.get("source_files", {})
     
-    def with_source_file(self, filename: str, content: str) -> 'TestDataBuilder':
-        self._data["source_files"][filename] = content
-        return self
+    def extract_expected_results(self, input_data: dict) -> dict:
+        """Extract expected_results section from input-###.json"""
+        return input_data.get("expected_results", {})
     
-    def with_expected_structs(self, *struct_names) -> 'TestDataBuilder':
-        if "model_elements" not in self._data["expected_results"]:
-            self._data["expected_results"]["model_elements"] = {}
-        self._data["expected_results"]["model_elements"]["structs"] = list(struct_names)
-        return self
+    def extract_test_metadata(self, input_data: dict) -> dict:
+        """Extract test_metadata section from input-###.json"""
+        return input_data.get("test_metadata", {})
     
-    def with_expected_functions(self, *function_names) -> 'TestDataBuilder':
-        if "model_elements" not in self._data["expected_results"]:
-            self._data["expected_results"]["model_elements"] = {}
-        self._data["expected_results"]["model_elements"]["functions"] = list(function_names)
-        return self
+    def create_temp_config_file(self, input_data: dict, temp_dir: str) -> str:
+        """Create temporary config.json from input-###.json data"""
+        config = self.extract_config(input_data)
+        config_path = os.path.join(temp_dir, "config.json")
+        with open(config_path, 'w') as f:
+            json.dump(config, f, indent=2)
+        return config_path
     
-    def build(self) -> dict:
-        return copy.deepcopy(self._data)
+    def create_temp_source_files(self, input_data: dict, temp_dir: str) -> str:
+        """Create temporary source files from input-###.json data"""
+        source_files = self.extract_source_files(input_data)
+        for filename, content in source_files.items():
+            file_path = os.path.join(temp_dir, filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            with open(file_path, 'w') as f:
+                f.write(content)
+        return temp_dir
+    
+    def validate_input_json_structure(self, input_data: dict) -> bool:
+        """Validate that input-###.json has required structure"""
+        required_sections = ["test_metadata", "c2puml_config", "source_files"]
+        return all(section in input_data for section in required_sections)
 
 class ProjectTemplates:
-    """Common project templates for test data generation"""
+    """Pre-built input-###.json templates for common test scenarios"""
     
     @staticmethod
-    def simple_struct_project(struct_name: str = "Point") -> dict:
-        return TestDataBuilder() \
-            .with_metadata(f"Simple {struct_name} struct test") \
-            .with_config(f"test_{struct_name.lower()}") \
-            .with_source_file("main.c", f"""
-#include <stdio.h>
+    def simple_struct_template(struct_name: str = "Point") -> dict:
+        """Creates input-simple_struct.json template"""
+        return {
+            "test_metadata": {
+                "description": f"Simple {struct_name} struct test",
+                "test_type": "unit",
+                "expected_duration": "fast"
+            },
+            "c2puml_config": {
+                "project_name": f"test_{struct_name.lower()}",
+                "source_folders": ["."],
+                "output_dir": "./output",
+                "recursive_search": True,
+                "file_extensions": [".c", ".h"]
+            },
+            "source_files": {
+                "main.c": f"""#include <stdio.h>
 
 struct {struct_name} {{
     int x;
@@ -335,18 +393,37 @@ struct {struct_name} {{
 int main() {{
     struct {struct_name} p = {{10, 20}};
     return 0;
-}}""") \
-            .with_expected_structs(struct_name) \
-            .with_expected_functions("main") \
-            .build()
+}}"""
+            },
+            "expected_results": {
+                "model_elements": {
+                    "structs": [struct_name],
+                    "functions": ["main"]
+                },
+                "plantuml_elements": {
+                    "classes": [struct_name]
+                }
+            }
+        }
     
     @staticmethod
-    def enum_project(enum_name: str = "Color") -> dict:
-        return TestDataBuilder() \
-            .with_metadata(f"Simple {enum_name} enum test") \
-            .with_config(f"test_{enum_name.lower()}") \
-            .with_source_file("main.c", f"""
-#include <stdio.h>
+    def enum_template(enum_name: str = "Color") -> dict:
+        """Creates input-enum_test.json template"""
+        return {
+            "test_metadata": {
+                "description": f"Simple {enum_name} enum test", 
+                "test_type": "unit",
+                "expected_duration": "fast"
+            },
+            "c2puml_config": {
+                "project_name": f"test_{enum_name.lower()}",
+                "source_folders": ["."],
+                "output_dir": "./output",
+                "recursive_search": True,
+                "file_extensions": [".c", ".h"]
+            },
+            "source_files": {
+                "main.c": f"""#include <stdio.h>
 
 enum {enum_name} {{
     RED,
@@ -357,43 +434,74 @@ enum {enum_name} {{
 int main() {{
     enum {enum_name} c = RED;
     return 0;
-}}""") \
-            .with_expected_functions("main") \
-            .build()
+}}"""
+            },
+            "expected_results": {
+                "model_elements": {
+                    "enums": [enum_name],
+                    "functions": ["main"]
+                },
+                "plantuml_elements": {
+                    "enums": [enum_name]
+                }
+            }
+        }
     
     @staticmethod
-    def include_hierarchy_project() -> dict:
-        return TestDataBuilder() \
-            .with_metadata("Include hierarchy test") \
-            .with_config("test_includes") \
-            .with_source_file("main.c", """
-#include <stdio.h>
+    def include_hierarchy_template() -> dict:
+        """Creates input-include_hierarchy.json template"""
+        return {
+            "test_metadata": {
+                "description": "Include hierarchy test",
+                "test_type": "unit", 
+                "expected_duration": "fast"
+            },
+            "c2puml_config": {
+                "project_name": "test_includes",
+                "source_folders": ["."],
+                "output_dir": "./output",
+                "recursive_search": True,
+                "file_extensions": [".c", ".h"]
+            },
+            "source_files": {
+                "main.c": """#include <stdio.h>
 #include "utils.h"
 
 int main() {
     return process_data();
-}""") \
-            .with_source_file("utils.h", """
-#ifndef UTILS_H
+}""",
+                "utils.h": """#ifndef UTILS_H
 #define UTILS_H
 
 #include "types.h"
 
 int process_data();
 
-#endif""") \
-            .with_source_file("types.h", """
-#ifndef TYPES_H  
+#endif""",
+                "types.h": """#ifndef TYPES_H  
 #define TYPES_H
 
 typedef struct {
     int value;
 } Data;
 
-#endif""") \
-            .with_expected_structs("Data") \
-            .with_expected_functions("main", "process_data") \
-            .build()
+#endif"""
+            },
+            "expected_results": {
+                "model_elements": {
+                    "structs": ["Data"],
+                    "functions": ["main", "process_data"],
+                    "includes": ["stdio.h", "utils.h", "types.h"]
+                },
+                "plantuml_elements": {
+                    "classes": ["Data"],
+                    "relationships": [
+                        {"from": "main.c", "to": "utils.h", "type": "include"},
+                        {"from": "utils.h", "to": "types.h", "type": "include"}
+                    ]
+                }
+            }
+        }
 ```
 
 #### 3.2 Test Folder Structure and Output Management
@@ -561,27 +669,20 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
         
     def test_multiple_structs_with_input_json(self):
         """Example using input JSON approach (unit tests with multiple scenarios)"""
-        # Generate test data using builder pattern
-        test_data = TestDataBuilder() \
-            .with_metadata("Multiple struct parsing test") \
-            .with_config("test_multiple_structs") \
-            .with_source_file("main.c", """
-struct Point { int x, y; };
-struct Rectangle { int width, height; };
-int main() { return 0; }
-            """) \
-            .with_expected_structs("Point", "Rectangle") \
-            .with_expected_functions("main") \
-            .build()
+        # Load input-###.json file using InputFactory
+        input_file_path = self.data_factory.get_test_data_path(
+            self.test_name, "input/input-multiple_structs.json"
+        )
         
-        # Create input JSON file
-        input_file = "input-multiple_structs.json"
-        input_path = self.data_factory.generate_source_files_from_input(
-            self.test_name, input_file, test_data
-        )
-        config_path = self.data_factory.generate_config_from_input(
-            self.test_name, input_file
-        )
+        # Use InputFactory to process the input-###.json file
+        input_factory = InputFactory()
+        input_data = input_factory.load_input_json(input_file_path)
+        input_factory.validate_input_json_structure(input_data)
+        
+        # Create temporary files from input-###.json data
+        temp_dir = self.create_temp_dir()
+        input_path = input_factory.create_temp_source_files(input_data, temp_dir)
+        config_path = input_factory.create_temp_config_file(input_data, temp_dir)
         
         # Execute and validate
         result = self.executor.run_full_pipeline(input_path, config_path, self.output_dir)
@@ -594,15 +695,14 @@ int main() { return 0; }
     def test_error_handling_scenario(self):
         """Example testing error conditions"""
         # Create invalid source using project template
-        invalid_data = ProjectTemplates.simple_struct_project("InvalidStruct")
+        invalid_data = ProjectTemplates.simple_struct_template("InvalidStruct")
         invalid_data["source_files"]["main.c"] = "invalid C syntax here"
         
-        input_path = self.data_factory.generate_source_files_from_input(
-            self.test_name, "input-invalid_syntax.json", invalid_data
-        )
-        config_path = self.data_factory.generate_config_from_input(
-            self.test_name, "input-invalid_syntax.json"
-        )
+        # Use InputFactory to create temporary files
+        input_factory = InputFactory()
+        temp_dir = self.create_temp_dir()
+        input_path = input_factory.create_temp_source_files(invalid_data, temp_dir)
+        config_path = input_factory.create_temp_config_file(invalid_data, temp_dir)
         
         # Execute expecting failure
         result = self.executor.run_expecting_failure(input_path, config_path, self.output_dir)
