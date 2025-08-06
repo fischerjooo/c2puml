@@ -325,6 +325,8 @@ class IntegrationMetaTest(MetaTest):
 
 **Standard Assertion Structure (`assertions.json` or `assert-###.json`):**
 
+**Note**: Transformation verification is handled through standard `model_validation` assertions (e.g., `required_functions`, `forbidden_functions`, `required_structs`, etc.) rather than separate transformation validation sections.
+
 ```json
 {
   "cli_execution": {
