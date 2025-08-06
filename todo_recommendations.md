@@ -34,7 +34,7 @@ This document provides comprehensive analysis and specific recommendations for m
 
 ### The Core Rule
 
-**Feature tests ALWAYS use explicit files** as they test complete workflows and need comprehensive project structures.
+**Feature tests and example tests ALWAYS use explicit files** as they test complete workflows and need comprehensive project structures.
 
 **Unit tests with multiple test methods requiring different inputs MUST use input-##.json approach.**
 
@@ -47,6 +47,7 @@ This document provides comprehensive analysis and specific recommendations for m
 
 **Use explicit files for:**
 - **Feature tests (ALWAYS)**
+- **Example tests (ALWAYS)**
 - Large test cases (> 50 lines of C code)
 - Complex project structures
 - Integration tests with multiple dependencies
@@ -700,4 +701,4 @@ This migration plan provides a comprehensive roadmap for transforming all 50 tes
 4. **Verify continuously**: Run full test suite after each migration
 5. **Track progress**: Update todo.md with migration status
 
-The detailed recommendations ensure that the migration will result in a robust, maintainable test suite that validates public API behavior while remaining flexible to internal implementation changes.
+The detailed recommendations ensure that the migration will result in a robust, maintainable test suite that validates public API behavior while remaining flexible to internal implementation changes. Feature tests and example tests will always use explicit files to support comprehensive workflow testing, while unit tests can leverage input-##.json files for multiple test scenarios.

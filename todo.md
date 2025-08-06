@@ -169,7 +169,7 @@ test_<n>/
 
 **Input Strategy Guidelines:**
 
-**FEATURE TESTS ALWAYS use Option 1 (explicit files)** as they test complete workflows and need comprehensive project structures.
+**FEATURE TESTS and EXAMPLE TESTS ALWAYS use Option 1 (explicit files)** as they test complete workflows and need comprehensive project structures.
 
 **Use input-##.json for:**
 - Small unit test cases (< 50 lines of C code total)
@@ -178,6 +178,7 @@ test_<n>/
 
 **Use explicit files for:**
 - Feature tests (ALWAYS)
+- Example tests (ALWAYS)
 - Large test cases (> 50 lines of C code)
 - Complex project structures
 - Real-world code examples
@@ -317,10 +318,10 @@ tests/
 
 ### Key Migration Constraints
 
-**Feature Tests Strategy:**
-- **ALWAYS use Option 1 (explicit files)** - Feature tests require comprehensive project structures
-- **No input-##.json files** for feature tests - they test complete workflows
-- All feature test files use single `input/` folder with config.json and source files
+**Feature Tests and Example Tests Strategy:**
+- **ALWAYS use Option 1 (explicit files)** - Feature and example tests require comprehensive project structures
+- **No input-##.json files** for feature or example tests - they test complete workflows
+- All feature and example test files use single `input/` folder with config.json and source files
 
 **Unit Tests Strategy:**
 - Use input-##.json for multiple test scenarios
@@ -350,4 +351,4 @@ tests/
 3. **Start with pilot migration** of 5-10 representative test files
 4. **Execute full migration** following the phase plan
 
-This unified testing approach ensures that c2puml remains flexible to internal changes while providing comprehensive validation of its public API functionality. Feature tests will always use explicit files to support comprehensive workflow testing, while unit tests can leverage input-##.json files for multiple test scenarios.
+This unified testing approach ensures that c2puml remains flexible to internal changes while providing comprehensive validation of its public API functionality. Feature tests and example tests will always use explicit files to support comprehensive workflow testing, while unit tests can leverage input-##.json files for multiple test scenarios.
