@@ -774,19 +774,19 @@ class TestStructParsing(UnifiedTestCase, TestAssertionMixin):
                 output_dir = self.data_factory.get_output_dir_for_scenario(self.test_name, input_file)
                 self.data_factory.ensure_output_dir_clean(output_dir)
                 
-                input_path = self.data_factory.generate_source_files_from_input(
-                    self.test_name, input_file
-                )
-                config_path = self.data_factory.generate_config_from_input(
-                    self.test_name, input_file
-                )
+                # Load input-###.json file and create temporary files
+                input_file_path = self.data_factory.get_test_data_path(self.test_name, f"input/{input_file}")
+                input_data = self.input_factory.load_input_json(input_file_path)
+                
+                temp_dir = self.create_temp_dir()
+                input_path = self.input_factory.create_temp_source_files(input_data, temp_dir)
+                config_path = self.input_factory.create_temp_config_file(input_data, temp_dir)
                 
                 result = self.executor.run_full_pipeline(input_path, config_path, output_dir)
                 self.assertCLISuccess(result, f"Failed for scenario: {input_file}")
                 
                 # Scenario-specific validation based on input file data
-                test_data = self.data_factory.load_test_input_json(self.test_name, input_file)
-                expected_results = test_data.get("expected_results", {})
+                expected_results = self.input_factory.extract_expected_results(input_data)
                 
                 if "model_elements" in expected_results:
                     model = self.assertValidModelGenerated(output_dir)

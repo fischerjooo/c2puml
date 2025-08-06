@@ -593,7 +593,14 @@ The unified test framework provides comprehensive public APIs for all testing sc
 class UnifiedTestCase(unittest.TestCase, TestAssertionMixin):
     """Base class for all c2puml tests with built-in validation helpers"""
     
-    def setUp(self) -> None
+    def setUp(self) -> None:
+        # Initialize all framework components
+        self.executor = TestExecutor()
+        self.data_factory = TestDataFactory()  # For explicit files
+        self.input_factory = InputFactory()    # For input-###.json files
+        self.model_validator = ModelValidator()
+        # ... other validators
+        
     def tearDown(self) -> None
     def create_temp_dir(self) -> str
 
@@ -626,23 +633,16 @@ class TestExecutor:
 
 # Test Data Management
 class TestDataFactory:
-    """Manages test input data - supports both explicit files and JSON input approaches"""
+    """Manages test input data for explicit files approach (feature/example tests only)"""
     
-    # Core Input Loading
+    # Core Input Loading (Explicit Files Only)
     def load_test_input(self, test_name: str) -> str
-    def load_test_config(self, test_name: str, input_file: str = None) -> str
-    def load_test_assertions(self, test_name: str, input_file: str = None) -> dict
+    def load_test_config(self, test_name: str) -> str
+    def load_test_assertions(self, test_name: str) -> dict
     def load_test_config_dict(self, test_name: str) -> dict
     
-    # Input JSON Support  
-    def load_test_input_json(self, test_name: str, input_file: str) -> dict
-    def has_input_json(self, test_name: str, input_file: str) -> bool
-    def list_input_json_files(self, test_name: str) -> List[str]
-    
-    # Dynamic Content Generation
-    def generate_source_files_from_input(self, test_name: str, input_file: str, data: dict = None) -> str
-    def generate_model_from_input(self, test_name: str, input_file: str, data: dict = None) -> str
-    def generate_config_from_input(self, test_name: str, input_file: str, data: dict = None) -> str
+    # Input JSON File Discovery  
+    def list_input_json_files(self, test_name: str) -> List[str]  # For finding available input-###.json files
     
     # Project Building
     def create_temp_project(self, files: Dict[str, str], config: dict = None) -> str
@@ -811,6 +811,7 @@ class TestAssertionMixin:
     def assertFilesGenerated(self, output_dir: str, expected_files: List[str]) -> None
     def assertValidModelGenerated(self, output_dir: str) -> dict
     def assertValidPlantUMLGenerated(self, output_dir: str) -> List[str]
+    def loadInputJsonAndValidate(self, input_file_path: str) -> dict  # Load and validate input-###.json
 
 # Input JSON Factory
 class InputFactory:
@@ -966,20 +967,26 @@ test_temp_*
 ### Phase 1: Framework Foundation (Weeks 1-2)
 **Priority: CRITICAL**
 
-1. **Implement Extended TestDataFactory**
-   - `load_test_input_json(test_name, input_file)` - Load specific input files
-   - `generate_source_files_from_input(test_name, input_file)` - Generate source files from input-##.json
-   - `generate_model_from_input(test_name, input_file)` - Generate model.json from input-##.json
-   - `has_input_json(test_name, input_file)` - Check if input files exist
-   - `list_input_json_files(test_name)` - List all input files for a test
+1. **Implement InputFactory for Input JSON Processing**
+   - `load_input_json(input_file_path)` - Load and parse input-###.json files
+   - `validate_input_json_structure(input_data)` - Validate input-###.json structure
+   - `extract_config(input_data)` - Extract c2puml_config section
+   - `extract_source_files(input_data)` - Extract source_files section
+   - `create_temp_config_file(input_data, temp_dir)` - Create temporary config.json
+   - `create_temp_source_files(input_data, temp_dir)` - Create temporary source files
 
-2. **Implement TestExecutor for CLI-Only Interface**
+2. **Implement TestDataFactory for Explicit Files**
+   - `load_test_input(test_name)` - Load explicit files directory
+   - `load_test_config(test_name)` - Load explicit config.json
+   - `list_input_json_files(test_name)` - Discover available input-###.json files
+
+3. **Implement TestExecutor for CLI-Only Interface**
    - `run_full_pipeline(input_path, config_path, output_dir)` - Complete workflow
    - `run_parse_only(input_path, config_path, output_dir)` - Parse step only
    - `run_transform_only(config_path, output_dir)` - Transform step only
    - `run_generate_only(config_path, output_dir)` - Generate step only
 
-3. **Create Validation Framework**
+4. **Create Validation Framework**
    - `ModelValidator` - Model structure and content validation
    - `PlantUMLValidator` - PlantUML file validation
    - `OutputValidator` - General output file validation
