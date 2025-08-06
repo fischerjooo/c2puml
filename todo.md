@@ -183,16 +183,17 @@ test_<n>/
 - Complex project structures
 - Real-world code examples
 
-**Input-##.json Structure:**
+**Input JSON Structure (meaningful names):**
 ```json
+// Example: input-simple_struct.json
 {
   "test_metadata": {
-    "description": "Test description",
-    "test_type": "unit|integration|feature",
-    "expected_duration": "fast|medium|slow"
+    "description": "Basic struct parsing test",
+    "test_type": "unit",
+    "expected_duration": "fast"
   },
   "c2puml_config": {
-    "project_name": "test_project",
+    "project_name": "test_struct_parsing",
     "source_folders": ["."],
     "output_dir": "./output"
   },
@@ -211,6 +212,14 @@ test_<n>/
   }
 }
 ```
+
+**Meaningful Input File Naming Examples:**
+- `input-simple_struct.json` - Basic structure parsing
+- `input-nested_struct.json` - Nested structure handling
+- `input-basic_generation.json` - Simple PlantUML generation
+- `input-complex_filters.json` - Complex filtering scenarios
+- `input-error_handling.json` - Error condition testing
+- `input-multipass_anonymous.json` - Multi-pass anonymous processing
 
 ### 4. Result Validation Framework
 
@@ -341,6 +350,77 @@ tests/
 - **Low Priority**: 8 files
 - **Input JSON Strategy**: 42 files (unit tests only)
 - **Explicit Files Strategy**: 8 files (includes all feature tests)
+
+### Unit Tests Progress Tracking (37 files)
+
+| Test File | Status | Priority | Input Strategy | Notes |
+|-----------|--------|----------|----------------|-------|
+| `test_absolute_path_bug_detection.py` | ⏳ | Medium | input-path_*.json | Path handling validation |
+| `test_anonymous_processor_extended.py` | ⏳ | High | input-anonymous_*.json | Core anonymous structure processing |
+| `test_anonymous_structure_handling.py` | ⏳ | Medium | input-anonymous_*.json | Anonymous structure handling |
+| `test_config.py` | ⏳ | Medium | input-config_*.json | Configuration loading/validation |
+| `test_debug_actual_parsing.py` | ⏳ | Low | Explicit files | Debug functionality |
+| `test_debug_field_parsing.py` | ⏳ | Low | Explicit files | Debug functionality |
+| `test_debug_field_parsing_detailed.py` | ⏳ | Low | Explicit files | Debug functionality |
+| `test_debug_field_processing.py` | ⏳ | Low | Explicit files | Debug functionality |
+| `test_debug_tokens.py` | ⏳ | Low | Explicit files | Debug functionality |
+| `test_file_specific_configuration.py` | ⏳ | Medium | input-fileconfig_*.json | File-specific config handling |
+| `test_function_parameters.py` | ⏳ | Medium | input-params_*.json | Function parameter parsing |
+| `test_generator.py` | ⏳ | High | input-generation_*.json | Core PlantUML generation |
+| `test_generator_duplicate_includes.py` | ⏳ | Low | Explicit files | Include duplication handling |
+| `test_generator_exact_format.py` | ⏳ | Low | input-format_*.json | PlantUML formatting validation |
+| `test_generator_grouping.py` | ⏳ | Medium | input-grouping_*.json | Element grouping in output |
+| `test_generator_include_tree_bug.py` | ⏳ | Medium | input-tree_*.json | Include tree validation |
+| `test_generator_naming_conventions.py` | ⏳ | Medium | input-naming_*.json | Naming convention compliance |
+| `test_generator_new_formatting.py` | ⏳ | Medium | input-newformat_*.json | New formatting features |
+| `test_generator_visibility_logic.py` | ⏳ | Medium | input-visibility_*.json | Visibility detection logic |
+| `test_global_parsing.py` | ⏳ | High | input-globals_*.json | Global variable parsing |
+| `test_include_filtering_bugs.py` | ⏳ | Medium | input-filterbug_*.json | Include filtering edge cases |
+| `test_include_processing.py` | ⏳ | Medium | input-includes_*.json | Include processing logic |
+| `test_multi_pass_anonymous_processing.py` | ⏳ | High | input-multipass_*.json | Multi-pass anonymous processing |
+| `test_parser.py` | ⏳ | High | input-parsing_*.json | Core parser functionality |
+| `test_parser_comprehensive.py` | ⏳ | High | **SPLIT REQUIRED** | Split into 7 files by C construct |
+| `test_parser_filtering.py` | ⏳ | High | input-filter_*.json | Parser filtering logic |
+| `test_parser_function_params.py` | ⏳ | Low | input-funcparams_*.json | Function parameter parsing |
+| `test_parser_macro_duplicates.py` | ⏳ | Low | input-macrodup_*.json | Macro duplication handling |
+| `test_parser_nested_structures.py` | ⏳ | Medium | input-nested_*.json | Nested structure parsing |
+| `test_parser_struct_order.py` | ⏳ | Medium | input-structorder_*.json | Struct field order preservation |
+| `test_preprocessor_bug.py` | ⏳ | High | input-prepbug_*.json | Preprocessor bug fixes |
+| `test_preprocessor_handling.py` | ⏳ | High | input-preproc_*.json | Core preprocessor functionality |
+| `test_tokenizer.py` | ⏳ | High | **SPLIT REQUIRED** | Split into 4 files by token category |
+| `test_transformation_system.py` | ⏳ | Medium | input-transsys_*.json | Transformation system |
+| `test_transformer.py` | ⏳ | High | **SPLIT REQUIRED** | Split into 9 files by transformation type |
+| `test_typedef_extraction.py` | ⏳ | Medium | input-typedef_*.json | Typedef extraction logic |
+| `test_utils.py` | ⏳ | Low | input-utils_*.json | Utility function testing |
+| `test_verifier.py` | ⏳ | Medium | input-verify_*.json | Model verification logic |
+
+### Feature Tests Progress Tracking (12 files)
+
+| Test File | Status | Priority | Input Strategy | Notes |
+|-----------|--------|----------|----------------|-------|
+| `test_cli_feature.py` | ⏳ | Low | Explicit files | CLI interface testing |
+| `test_cli_modes.py` | ⏳ | Low | Explicit files | CLI mode switching |
+| `test_component_features.py` | ⏳ | High | Explicit files | Component integration features |
+| `test_crypto_filter_pattern.py` | ⏳ | Medium | Explicit files | Crypto filtering patterns |
+| `test_crypto_filter_usecase.py` | ⏳ | High | Explicit files | Crypto filtering use cases |
+| `test_include_processing_features.py` | ⏳ | High | Explicit files | Include processing features |
+| `test_integration.py` | ⏳ | Medium | Explicit files | Feature integration testing |
+| `test_invalid_source_paths.py` | ⏳ | High | Explicit files | Error handling for invalid paths |
+| `test_multiple_source_folders.py` | ⏳ | High | Explicit files | Multiple source folder handling |
+| `test_transformer_features.py` | ⏳ | High | Explicit files | Transformer feature testing |
+
+### Integration Tests Progress Tracking (2 files)
+
+| Test File | Status | Priority | Input Strategy | Notes |
+|-----------|--------|----------|----------------|-------|
+| `test_comprehensive.py` | ⏳ | High | Explicit files | Comprehensive end-to-end testing |
+| `test_new_formatting_comprehensive.py` | ⏳ | Low | Explicit files | New formatting integration |
+
+### Example Tests Progress Tracking (1 file)
+
+| Test File | Status | Priority | Input Strategy | Notes |
+|-----------|--------|----------|----------------|-------|
+| `test-example.py` | 🚫 | N/A | Explicit files | Preserved as-is with existing structure |
 
 ---
 

@@ -30,6 +30,69 @@ This document provides comprehensive analysis and specific recommendations for m
 ### Update Instructions
 **Important:** Update progress markers from ⏳ to 🔄 when starting work, and to ✅ when completed. Update `todo.md` to reference any changes in this file.
 
+### Complete Migration Progress Tracking
+
+| Test File | Category | Status | Priority | Input Strategy | Meaningful Input Names | Notes |
+|-----------|----------|--------|----------|----------------|----------------------|-------|
+| `test_absolute_path_bug_detection.py` | Unit | ⏳ | Medium | input-path_*.json | input-absolute_paths.json, input-relative_paths.json, input-invalid_paths.json | Path handling validation |
+| `test_anonymous_processor_extended.py` | Unit | ⏳ | High | input-anonymous_*.json | input-basic_anonymous.json, input-nested_anonymous.json, input-complex_hierarchies.json | Core anonymous structure processing |
+| `test_anonymous_structure_handling.py` | Unit | ⏳ | Medium | input-anonymous_*.json | input-simple_anonymous.json, input-nested_anonymous.json, input-complex_anonymous.json | Anonymous structure handling |
+| `test_cli_feature.py` | Feature | ⏳ | Low | Explicit files | feature_test.c, feature_config.json, test_project/ | CLI interface testing |
+| `test_cli_modes.py` | Feature | ⏳ | Low | Explicit files | test_project/, config.json | CLI mode switching |
+| `test_component_features.py` | Feature | ⏳ | High | Explicit files | main.c, headers/, config.json, project structure | Component integration features |
+| `test_comprehensive.py` | Integration | ⏳ | High | Explicit files | realistic_project/, config.json | Comprehensive end-to-end testing |
+| `test_config.py` | Unit | ⏳ | Medium | input-config_*.json | input-basic_config.json, input-advanced_config.json, input-invalid_config.json, input-file_specific_config.json | Configuration loading/validation |
+| `test_crypto_filter_pattern.py` | Feature | ⏳ | Medium | Explicit files | crypto patterns project/, config.json | Crypto filtering patterns |
+| `test_crypto_filter_usecase.py` | Feature | ⏳ | High | Explicit files | crypto project structure, config.json with filters | Crypto filtering use cases |
+| `test_debug_actual_parsing.py` | Unit | ⏳ | Low | Explicit files | debug_simple.c, debug_config.json | Debug functionality |
+| `test_debug_field_parsing.py` | Unit | ⏳ | Low | Explicit files | debug_fields.c, debug_config.json | Debug functionality |
+| `test_debug_field_parsing_detailed.py` | Unit | ⏳ | Low | Explicit files | debug_detailed.c, debug_config.json | Debug functionality |
+| `test_debug_field_processing.py` | Unit | ⏳ | Low | Explicit files | debug_processing.c, debug_config.json | Debug functionality |
+| `test_debug_tokens.py` | Unit | ⏳ | Low | Explicit files | debug_tokens.c, debug_config.json | Debug functionality |
+| `test_file_specific_configuration.py` | Unit | ⏳ | Medium | input-fileconfig_*.json | input-single_file_config.json, input-multiple_file_config.json, input-override_config.json | File-specific config handling |
+| `test_function_parameters.py` | Unit | ⏳ | Medium | input-params_*.json | input-simple_params.json, input-complex_params.json, input-variadic_params.json | Function parameter parsing |
+| `test_generator.py` | Unit | ⏳ | High | input-generation_*.json | input-simple_generation.json, input-complex_diagrams.json, input-format_compliance.json, input-relationship_generation.json | Core PlantUML generation |
+| `test_generator_duplicate_includes.py` | Unit | ⏳ | Low | Explicit files | duplicate_test.c, duplicate_includes.h, config.json | Include duplication handling |
+| `test_generator_exact_format.py` | Unit | ⏳ | Low | input-format_*.json | input-basic_format.json, input-advanced_format.json | PlantUML formatting validation |
+| `test_generator_grouping.py` | Unit | ⏳ | Medium | input-grouping_*.json | input-public_private_grouping.json, input-element_grouping.json, input-visibility_grouping.json | Element grouping in output |
+| `test_generator_include_tree_bug.py` | Unit | ⏳ | Medium | input-tree_*.json | input-simple_tree.json, input-complex_tree.json, input-circular_tree.json | Include tree validation |
+| `test_generator_naming_conventions.py` | Unit | ⏳ | Medium | input-naming_*.json | input-class_naming.json, input-relationship_naming.json, input-stereotype_naming.json | Naming convention compliance |
+| `test_generator_new_formatting.py` | Unit | ⏳ | Medium | input-newformat_*.json | input-new_stereotypes.json, input-visibility_formatting.json, input-relationship_formatting.json | New formatting features |
+| `test_generator_visibility_logic.py` | Unit | ⏳ | Medium | input-visibility_*.json | input-public_private.json, input-header_detection.json, input-visibility_edge_cases.json | Visibility detection logic |
+| `test_global_parsing.py` | Unit | ⏳ | High | input-globals_*.json | input-simple_globals.json, input-complex_globals.json, input-initialized_globals.json | Global variable parsing |
+| `test_include_filtering_bugs.py` | Unit | ⏳ | Medium | input-filterbug_*.json | input-filter_edge_cases.json, input-regex_patterns.json, input-performance_issues.json | Include filtering edge cases |
+| `test_include_processing.py` | Unit | ⏳ | Medium | input-includes_*.json | input-basic_includes.json, input-nested_includes.json, input-depth_includes.json | Include processing logic |
+| `test_include_processing_features.py` | Feature | ⏳ | High | Explicit files | main.c, utils.h, includes/, config.json | Include processing features |
+| `test_integration.py` | Feature | ⏳ | Medium | Explicit files | integration_project/, config.json | Feature integration testing |
+| `test_invalid_source_paths.py` | Feature | ⏳ | High | Explicit files | Missing/invalid source project structures | Error handling for invalid paths |
+| `test_multi_pass_anonymous_processing.py` | Unit | ⏳ | High | input-multipass_*.json | input-simple_multipass.json, input-complex_multipass.json, input-nested_multipass.json | Multi-pass anonymous processing |
+| `test_multiple_source_folders.py` | Feature | ⏳ | High | Explicit files | folder1/, folder2/, folder3/, config.json | Multiple source folder handling |
+| `test_new_formatting_comprehensive.py` | Integration | ⏳ | Low | Explicit files | comprehensive_project/, config.json | New formatting integration |
+| `test_parser.py` | Unit | ⏳ | High | input-parsing_*.json | input-basic_parsing.json, input-complex_parsing.json, input-error_handling.json | Core parser functionality |
+| `test_parser_comprehensive.py` | Unit | ⏳ | High | **SPLIT REQUIRED** | Split into 7 files by C construct | Comprehensive parser testing |
+| `test_parser_filtering.py` | Unit | ⏳ | High | input-filter_*.json | input-include_filters.json, input-exclude_filters.json, input-mixed_filters.json | Parser filtering logic |
+| `test_parser_function_params.py` | Unit | ⏳ | Low | input-funcparams_*.json | input-simple_params.json, input-complex_params.json | Function parameter parsing |
+| `test_parser_macro_duplicates.py` | Unit | ⏳ | Low | input-macrodup_*.json | input-simple_duplicates.json, input-complex_duplicates.json | Macro duplication handling |
+| `test_parser_nested_structures.py` | Unit | ⏳ | Medium | input-nested_*.json | input-simple_nested.json, input-deep_nested.json, input-complex_nested.json | Nested structure parsing |
+| `test_parser_struct_order.py` | Unit | ⏳ | Medium | input-structorder_*.json | input-simple_order.json, input-complex_order.json, input-mixed_order.json | Struct field order preservation |
+| `test_preprocessor_bug.py` | Unit | ⏳ | High | input-prepbug_*.json | input-ifdef_testing.json, input-define_macros.json, input-include_directives.json, input-conditional_compilation.json | Preprocessor bug fixes |
+| `test_preprocessor_handling.py` | Unit | ⏳ | High | input-preproc_*.json | input-conditional_compilation.json, input-macro_expansion.json | Core preprocessor functionality |
+| `test_tokenizer.py` | Unit | ⏳ | High | **SPLIT REQUIRED** | Split into 4 files by token category | Core tokenizer functionality |
+| `test_transformation_system.py` | Unit | ⏳ | Medium | input-transsys_*.json | input-system_config.json, input-system_validation.json, input-system_integration.json | Transformation system |
+| `test_transformer.py` | Unit | ⏳ | High | **SPLIT REQUIRED** | Split into 9 files by transformation type | Core transformer functionality |
+| `test_transformer_features.py` | Feature | ⏳ | High | Explicit files | source files with transformation config.json | Transformer feature testing |
+| `test_typedef_extraction.py` | Unit | ⏳ | Medium | input-typedef_*.json | input-simple_typedefs.json, input-complex_typedefs.json, input-nested_typedefs.json | Typedef extraction logic |
+| `test_utils.py` | Unit | ⏳ | Low | input-utils_*.json | input-file_utils.json, input-string_utils.json, input-path_utils.json | Utility function testing |
+| `test_verifier.py` | Unit | ⏳ | Medium | input-verify_*.json | input-valid_models.json, input-invalid_models.json, input-edge_case_models.json | Model verification logic |
+| `test-example.py` | Example | 🚫 | N/A | Explicit files | source/, config.json (preserved as-is) | Preserved example test |
+
+**Legend:**
+- ⏳ **Pending** - Not yet started
+- 🔄 **In Progress** - Currently being worked on  
+- ✅ **Completed** - Migrated and verified
+- 🚫 **Preserved** - Kept as-is
+- **SPLIT REQUIRED** - File must be split before migration
+
 ## Input Strategy Guidelines
 
 ### The Core Rule
@@ -70,7 +133,7 @@ This document provides comprehensive analysis and specific recommendations for m
   - `test_transformation_edge_cases.py` - Edge cases and complex scenarios - **Progress:** ⏳ Pending
   - `test_transformation_integration.py` - End-to-end transformation workflows - **Progress:** ⏳ Pending
 - **Input Strategy:** input-##.json for each transformation type
-- **Input Files Needed:** input-01.json (rename functions), input-02.json (remove elements), input-03.json (add elements), etc.
+- **Input Files Needed:** input-rename_functions.json, input-remove_elements.json, input-add_elements.json, input-file_selection.json, input-config_validation.json, input-error_scenarios.json, input-edge_cases.json, input-integration_workflow.json
 - **Overall Progress:** ⏳ Pending - Requires planning phase first
 
 **2. test_tokenizer.py (41 methods)** 🚨 CRITICAL SPLIT REQUIRED
@@ -80,7 +143,7 @@ This document provides comprehensive analysis and specific recommendations for m
   - `test_tokenizer_operators.py` - Operators and punctuation - **Progress:** ⏳ Pending
   - `test_tokenizer_complex.py` - Complex tokenization scenarios - **Progress:** ⏳ Pending
 - **Input Strategy:** input-##.json for each token category
-- **Input Files Needed:** input-01.json (keywords), input-02.json (identifiers), input-03.json (operators), input-04.json (complex tokens)
+- **Input Files Needed:** input-keywords.json, input-identifiers.json, input-operators.json, input-complex_tokens.json
 - **Overall Progress:** ⏳ Pending - Requires planning phase first
 
 **3. test_parser_comprehensive.py (36 methods)** 🚨 CRITICAL SPLIT REQUIRED
@@ -93,7 +156,7 @@ This document provides comprehensive analysis and specific recommendations for m
   - `test_parser_macro.py` - Macro processing - **Progress:** ⏳ Pending
   - `test_parser_typedef.py` - Typedef processing - **Progress:** ⏳ Pending
 - **Input Strategy:** input-##.json for each language construct
-- **Input Files Needed:** input-01.json (simple struct), input-02.json (nested struct), input-03.json (anonymous struct), etc.
+- **Input Files Needed:** input-simple_struct.json, input-nested_struct.json, input-anonymous_struct.json, input-simple_enum.json, input-function_decl.json, input-global_vars.json, input-include_processing.json, input-macro_processing.json, input-typedef_processing.json
 - **Overall Progress:** ⏳ Pending - Requires planning phase first
 
 #### High Priority Unit Tests Using Input JSON Strategy (21 files)
@@ -101,42 +164,42 @@ This document provides comprehensive analysis and specific recommendations for m
 **test_generator.py (20 methods)**
 - **Strategy:** Use input-##.json for different output scenarios
 - **Recommended Input Files:**
-  - input-01.json - Simple PlantUML generation
-  - input-02.json - Complex diagrams with relationships
-  - input-03.json - Formatting compliance tests
-  - input-04.json - Include/typedef relationships
+  - input-simple_generation.json - Simple PlantUML generation
+  - input-complex_diagrams.json - Complex diagrams with relationships
+  - input-format_compliance.json - Formatting compliance tests
+  - input-relationship_generation.json - Include/typedef relationships
 - **Progress:** ⏳ Pending
 
 **test_preprocessor_bug.py (19 methods)**
 - **Strategy:** Use input-##.json for different directive types
 - **Recommended Input Files:**
-  - input-01.json - #ifdef/#ifndef testing
-  - input-02.json - #define macro testing
-  - input-03.json - #include directive testing
-  - input-04.json - Complex conditional compilation
+  - input-ifdef_testing.json - #ifdef/#ifndef testing
+  - input-define_macros.json - #define macro testing
+  - input-include_directives.json - #include directive testing
+  - input-conditional_compilation.json - Complex conditional compilation
 - **Progress:** ⏳ Pending
 
 **test_invalid_source_paths.py (17 methods)**
 - **Strategy:** Use input-##.json for different error scenarios
 - **Recommended Input Files:**
-  - input-01.json - Missing source files
-  - input-02.json - Invalid path formats
-  - input-03.json - Permission-related errors
+  - input-missing_files.json - Missing source files
+  - input-invalid_paths.json - Invalid path formats
+  - input-permission_errors.json - Permission-related errors
 - **Progress:** ⏳ Pending
 
 **test_anonymous_processor_extended.py (14 methods)**
 - **Strategy:** Use input-##.json for complexity levels
 - **Recommended Input Files:**
-  - input-01.json - Basic anonymous structures
-  - input-02.json - Nested anonymous structures
-  - input-03.json - Complex hierarchies
+  - input-basic_anonymous.json - Basic anonymous structures
+  - input-nested_anonymous.json - Nested anonymous structures
+  - input-complex_hierarchies.json - Complex hierarchies
 - **Progress:** ⏳ Pending
 
 **test_preprocessor_handling.py (14 methods)**
 - **Strategy:** Use input-##.json by directive type
 - **Recommended Input Files:**
-  - input-01.json - Conditional compilation testing
-  - input-02.json - Macro expansion scenarios
+  - input-conditional_compilation.json - Conditional compilation testing
+  - input-macro_expansion.json - Macro expansion scenarios
 - **Progress:** ⏳ Pending
 
 **Other High Priority Unit Tests:**
@@ -148,12 +211,12 @@ This document provides comprehensive analysis and specific recommendations for m
 
 **test_parser.py (10 methods)** - Core parser functionality
 - **Strategy:** Use input-##.json for different parsing scenarios
-- **Input Files:** input-01.json (basic parsing), input-02.json (complex parsing), input-03.json (error handling)
+- **Input Files:** input-basic_parsing.json, input-complex_parsing.json, input-error_handling.json
 - **Progress:** ⏳ Pending
 
 **test_global_parsing.py (9 methods)** - Global variable parsing
 - **Strategy:** Use input-##.json for different global variable scenarios
-- **Input Files:** input-01.json (simple globals), input-02.json (complex globals), input-03.json (initialized globals)
+- **Input Files:** input-simple_globals.json, input-complex_globals.json, input-initialized_globals.json
 - **Progress:** ⏳ Pending
 
 **test_component_features.py (9 methods)** - **FEATURE TEST: Use explicit files**
@@ -173,7 +236,7 @@ This document provides comprehensive analysis and specific recommendations for m
 
 **test_multi_pass_anonymous_processing.py (8 methods)** - Multi-pass processing
 - **Strategy:** Use input-##.json for multi-pass scenarios
-- **Input Files:** input-01.json (simple), input-02.json (complex), input-03.json (nested)
+- **Input Files:** input-simple_multipass.json, input-complex_multipass.json, input-nested_multipass.json
 - **Progress:** ⏳ Pending
 
 **test_crypto_filter_usecase.py (8 methods)** - **FEATURE TEST: Use explicit files**
@@ -183,7 +246,7 @@ This document provides comprehensive analysis and specific recommendations for m
 
 **test_parser_filtering.py (8 methods)** - Parser filtering logic
 - **Strategy:** Use input-##.json for different filtering patterns
-- **Input Files:** input-01.json (include filters), input-02.json (exclude filters), input-03.json (mixed filters)
+- **Input Files:** input-include_filters.json, input-exclude_filters.json, input-mixed_filters.json
 - **Progress:** ⏳ Pending
 
 **test_multiple_source_folders.py (7 methods)** - **FEATURE TEST: Use explicit files**
@@ -193,12 +256,12 @@ This document provides comprehensive analysis and specific recommendations for m
 
 **test_generator_new_formatting.py (7 methods)** - New formatting features
 - **Strategy:** Use input-##.json for formatting tests
-- **Input Files:** input-01.json (new stereotypes), input-02.json (visibility formatting), input-03.json (relationship formatting)
+- **Input Files:** input-new_stereotypes.json, input-visibility_formatting.json, input-relationship_formatting.json
 - **Progress:** ⏳ Pending
 
 **test_generator_visibility_logic.py (6 methods)** - Visibility detection logic
 - **Strategy:** Use input-##.json for visibility tests
-- **Input Files:** input-01.json (public/private), input-02.json (header detection), input-03.json (visibility edge cases)
+- **Input Files:** input-public_private.json, input-header_detection.json, input-visibility_edge_cases.json
 - **Progress:** ⏳ Pending
 
 ### Medium Priority Files (18 files)
@@ -372,7 +435,7 @@ This document provides comprehensive analysis and specific recommendations for m
 ## Input JSON File Examples
 
 ### Simple Struct Parsing Example
-**File:** `input-01.json`
+**File:** `input-simple_struct.json`
 ```json
 {
   "test_metadata": {
@@ -406,7 +469,7 @@ This document provides comprehensive analysis and specific recommendations for m
 ```
 
 ### Preprocessor Conditional Example
-**File:** `input-02.json`
+**File:** `input-conditional_compilation.json`
 ```json
 {
   "test_metadata": {
@@ -442,9 +505,9 @@ This document provides comprehensive analysis and specific recommendations for m
 test_parser_filtering/
 ├── test_parser_filtering.py
 └── input/
-    ├── input-01.json  # Self-contained: config + source + expected results
-    ├── input-02.json  # Self-contained: config + source + expected results
-    └── input-03.json  # Self-contained: config + source + expected results
+    ├── input-include_filters.json  # Self-contained: config + source + expected results
+    ├── input-exclude_filters.json  # Self-contained: config + source + expected results
+    └── input-mixed_filters.json    # Self-contained: config + source + expected results
 ```
 
 ### Feature Test (Explicit Files Strategy)
@@ -467,15 +530,15 @@ test_include_processing_features/
 test_struct_parsing/
 ├── test_struct_parsing.py
 └── input/
-    ├── input-01.json     # Simple struct parsing
-    ├── input-02.json     # Nested struct parsing
-    └── input-03.json     # Anonymous struct parsing
+    ├── input-simple_struct.json     # Simple struct parsing
+    ├── input-nested_struct.json     # Nested struct parsing
+    └── input-anonymous_struct.json  # Anonymous struct parsing
 
 test_enum_parsing/
 ├── test_enum_parsing.py
 └── input/
-    ├── input-01.json       # Simple enum parsing
-    └── input-02.json       # Typedef enum parsing
+    ├── input-simple_enum.json       # Simple enum parsing
+    └── input-typedef_enum.json      # Typedef enum parsing
 ```
 
 ## Extended TestDataFactory Requirements
