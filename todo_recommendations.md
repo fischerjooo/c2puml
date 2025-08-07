@@ -174,7 +174,7 @@ source_dir, config_path = self.data_loader.create_temp_files(test_data, "simple_
 # For example tests, no temp files are created - use external files
 ```
 
-### AssertionProcessor
+### ValidatorsProcessor
 **Purpose**: Process assertions from YAML data
 **Key Methods**:
 - `process_assertions(assertions, model_data, puml_content, result, test_case)`: Process all assertions
@@ -421,7 +421,7 @@ if __name__ == "__main__":
 4. **Extract model template** (optional): Create model.json document for complex validation
 5. **Extract assertions**: Move assertions to assertions document
 6. **Create YAML file**: Create test_<meaningful_name>.yml with all documents
-7. **Update test file**: Convert to use TestDataLoader and AssertionProcessor
+7. **Update test file**: Convert to use TestDataLoader and ValidatorsProcessor
 8. **Verify functionality**: Ensure test still validates the same functionality
 
 ### YAML Best Practices

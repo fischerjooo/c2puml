@@ -216,7 +216,7 @@ tests/example/test-<test_id>/
   - Standard tests: Creates test-specific temp folders in `tests/*/test-<id>/`
   - Example tests: Creates only output folder in `tests/example/test-<id>/`
 
-### AssertionProcessor
+### ValidatorsProcessor
 - Processes assertions from YAML data
 - Validates model content
 - Validates PlantUML output
@@ -309,7 +309,7 @@ if __name__ == "__main__":
 ### Phase 1: Foundation ✅
 - [x] Create framework components
 - [x] Implement TestDataLoader with multi-document support
-- [x] Implement AssertionProcessor
+- [x] Implement ValidatorsProcessor
 - [x] Implement TestExecutor
 - [x] Create UnifiedTestCase base class
 - [x] Remove old input_factory and references
@@ -468,7 +468,7 @@ self.validate_test_output(result)
 4. **Extract model template** (optional): Create model.json document for complex validation
 5. **Extract assertions**: Move assertions to assertions document
 6. **Create YAML file**: Create test_<meaningful_name>.yml with all documents
-7. **Update test file**: Convert to use TestDataLoader and AssertionProcessor
+7. **Update test file**: Convert to use TestDataLoader and ValidatorsProcessor
 8. **Verify functionality**: Ensure test still validates the same functionality
 
 ### YAML Best Practices

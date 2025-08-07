@@ -10,8 +10,8 @@ tests/framework/
 ├── base.py                  # Enhanced base class with high-level methods
 ├── data_loader.py           # YAML loading and file creation with schema validation
 ├── executor.py              # CLI execution
-├── validators.py            # Unified validation with enhanced error handling
-├── assertion_processor.py   # Assertion processing
+├── validators.py            # Individual validator classes for specific validation tasks
+├── validators_processor.py  # Coordinates execution of validators from validators.py
 └── README.md               # This file
 ```
 
@@ -50,7 +50,7 @@ Executes C2PUML via CLI interface:
 - **Working directory management** for proper file resolution
 
 ### Validators (validators.py)
-Comprehensive validation framework with enhanced error handling:
+Individual validator classes for specific validation tasks:
 - **TestError class** for context-rich error messages
 - **CLIValidator** for execution-related assertions
 - **OutputValidator** for file existence and content validation
@@ -58,12 +58,13 @@ Comprehensive validation framework with enhanced error handling:
 - **PlantUMLValidator** for PlantUML diagram validation
 - **FileValidator** for general file operations
 
-### AssertionProcessor (assertion_processor.py)
-Processes assertions from YAML data:
-- **JSON/YAML assertion processing** with flexible structure
-- **Model content validation** against expected structures
-- **PlantUML content validation** for diagram elements
-- **Execution validation** for CLI results
+### ValidatorsProcessor (validators_processor.py)
+Coordinates the execution of validators from validators.py:
+- **Orchestrates validation process** by delegating to appropriate validators
+- **Processes assertions from YAML** using the correct validator for each type
+- **Handles execution assertions** using CLIValidator
+- **Handles model assertions** using ModelValidator
+- **Handles PlantUML assertions** using PlantUMLValidator
 
 ## Test Types and Structures
 
@@ -168,8 +169,8 @@ class TestBasicExample(UnifiedTestCase):
         with open(puml_files[0], 'r') as f:
             puml_content = f.read()
         
-        # Process assertions from YAML
-        self.assertion_processor.process_assertions(
+        # Process assertions from YAML using ValidatorsProcessor
+        self.validators_processor.process_assertions(
             test_data["assertions"], model_data, puml_content, result, self
         )
 ```
@@ -196,6 +197,13 @@ The framework supports both standard tests (with embedded data) and example test
 ### Git Integration
 Temporary test folders are automatically ignored by Git, keeping the repository clean while preserving test outputs for debugging.
 
+### Validator Coordination
+The ValidatorsProcessor orchestrates the validation process by:
+1. **Analyzing YAML assertions** to determine what needs validation
+2. **Delegating to appropriate validators** from validators.py
+3. **Coordinating the validation flow** to ensure all assertions are processed
+4. **Providing consistent error handling** across all validation types
+
 ## Error Handling
 
 The framework provides enhanced error handling through the `TestError` class, which includes:
@@ -206,7 +214,7 @@ The framework provides enhanced error handling through the `TestError` class, wh
 ## Schema Validation
 
 The framework validates YAML test data against a defined schema:
-- **Required sections**: source_files, config
+- **Required sections**: source_files
 - **Optional sections**: model, assertions
 - **Type validation**: Ensures correct data types for each section
 - **Structure validation**: Validates nested structures and relationships

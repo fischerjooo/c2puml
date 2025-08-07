@@ -16,7 +16,7 @@ from typing import Dict, Any, List
 
 from .executor import TestExecutor, CLIResult
 from .data_loader import TestDataLoader
-from .assertion_processor import AssertionProcessor
+from .validators_processor import ValidatorsProcessor
 from .validators import ModelValidator, PlantUMLValidator, OutputValidator, FileValidator, CLIValidator
 
 
@@ -47,7 +47,7 @@ class UnifiedTestCase(unittest.TestCase):
         # Initialize framework components
         self.executor = TestExecutor()
         self.data_loader = TestDataLoader()
-        self.assertion_processor = AssertionProcessor()
+        self.validators_processor = ValidatorsProcessor()
         
         # Initialize validators
         self.model_validator = ModelValidator()
@@ -136,6 +136,6 @@ class UnifiedTestCase(unittest.TestCase):
             puml_content = f.read()
         
         # Process assertions from YAML
-        self.assertion_processor.process_assertions(
+        self.validators_processor.process_assertions(
             test_data["assertions"], model_data, puml_content, result.cli_result, self
         )
