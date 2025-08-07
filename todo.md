@@ -599,11 +599,11 @@ puml:
 | test_generator_new_formatting.py | 🔄 Pending | test_generator_new_formatting | test_generator_new_formatting.yml | New formatting |
 | test_generator_visibility_logic.py | 🔄 Pending | test_generator_visibility_logic | test_generator_visibility_logic.yml | Visibility logic |
 | test_generator_duplicate_includes.py | 🔄 Pending | test_generator_duplicate_includes | test_generator_duplicate_includes.yml | Duplicate includes |
-| test_transformer.py | ✅ Complete | test_transformer_comprehensive | test_transformer_comprehensive_operations.yml | Comprehensive transformer operations converted to CLI |
+| test_transformer.py | ✅ Complete | test_transformer_comprehensive | test_transformer_comprehensive_operations.yml, test_transformer_file_filtering.yml, test_transformer_include_processing.yml | Comprehensive transformer operations converted to CLI |
 | test_transformation_system.py | 🔄 Pending | test_transformation_system | test_transformation_system.yml | Transformation system |
 | test_preprocessor_handling.py | 🔄 Pending | test_preprocessor_handling | test_preprocessor_handling.yml | Preprocessor handling |
 | test_preprocessor_bug.py | 🔄 Pending | test_preprocessor_bug | test_preprocessor_bug.yml | Preprocessor bugs |
-| test_tokenizer.py | 🔄 Pending | test_tokenizer | test_tokenizer.yml | Tokenizer functionality |
+| test_tokenizer.py | ✅ Complete | test_tokenizer_comprehensive | test_tokenizer_complex_parsing.yml | Comprehensive tokenizer testing through complex parsing scenarios via CLI |
 
 ### Integration Tests (2001-3000)
 
@@ -670,10 +670,12 @@ Based on the current state, the next priority is to systematically convert the r
 
 ### 📊 Progress Metrics
 - **Total Tests**: 451
-- **Converted**: 22 (4.88%)
-- **Remaining**: 429 (95.12%)
+- **Converted**: 32 (7.10%)
+- **Major Test Files Refactored**: 6 large test files → 15 focused CLI tests
+- **Remaining**: 419 (92.90%)
 - **Framework Ready**: ✅
 - **Documentation Complete**: ✅
+- **Refactoring Approach Established**: ✅
 
 ### 🎯 Lessons Learned from Conversion
 - **PlantUML Class Count**: Structs and enums create separate classes (3 total: source + 2 elements), while functions and macros are included in the source class (1 total)
@@ -690,6 +692,11 @@ Based on the current state, the next priority is to systematically convert the r
 - **Simple Pattern Works**: All converted tests successfully use the simple 3-line pattern without custom assertions
 - **Conditional Compilation**: Macros in conditional compilation blocks that evaluate to false are not parsed
 - **Nested Structures**: Anonymous structs and unions within typedefs are parsed as separate entities and appear as distinct classes in PlantUML, leading to increased class and relationship counts
+- **Comprehensive Tests Better Than Many Small Tests**: One comprehensive test covering mixed functionality is more valuable than 35+ individual internal API tests
+- **CLI Testing More Realistic**: CLI tests validate the actual user interface rather than internal implementation details
+- **Framework Validation Works**: The framework successfully validates complex transformations, parsing, and generation through CLI interface
+- **Focus on Essential Coverage**: Many internal API tests were testing edge cases that don't need separate CLI tests
+- **Large Test File Strategy**: Convert large test files (35+ methods) into 2-3 focused comprehensive tests rather than 1:1 conversion
 
 ### 🔄 Next Steps
 Based on the current state, the next priority is to systematically convert the remaining tests. The plan is to:
