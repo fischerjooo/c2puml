@@ -1,0 +1,105 @@
+# Test metadata
+test:
+  name: "Mixed Content Parsing"
+  description: "Test parsing a complex file with mixed C language features"
+  category: "unit"
+  id: "2004"
+
+---
+# Source files
+source_files:
+  mixed.c: |
+    #include <stdio.h>
+    #include <stdlib.h>
+    
+    #define MAX_SIZE 100
+    #define MIN(a, b) ((a) < (b) ? (a) : (b))
+    
+    typedef struct {
+        int x;
+        int y;
+        char label[32];
+    } Point;
+    
+    typedef enum {
+        ACTIVE,
+        INACTIVE,
+        PENDING
+    } Status;
+    
+    typedef union {
+        int intVal;
+        float floatVal;
+        char charVal;
+    } Value;
+    
+    extern int global_counter;
+    static const char* app_name = "TestApp";
+    
+    Point* create_point(int x, int y);
+    Status get_status(void);
+    void set_value(Value* val, int type);
+    
+    Point* create_point(int x, int y) {
+        Point* p = malloc(sizeof(Point));
+        if (p) {
+            p->x = x;
+            p->y = y;
+            strcpy(p->label, "Default");
+        }
+        return p;
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_parser_mixed_content",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "mixed.puml"]
+  
+  model:
+    files:
+      mixed.c:
+        structs:
+          Point:
+            fields: ["x", "y", "label"]
+        enums:
+          Status:
+            values: ["ACTIVE", "INACTIVE", "PENDING"]
+        unions:
+          Value:
+            fields: ["intVal", "floatVal", "charVal"]
+        functions: ["create_point", "get_status", "set_value"]
+        globals: ["global_counter", "app_name"]
+        includes: ["stdio.h", "stdlib.h"]
+        macros: ["MAX_SIZE", "MIN"]
+    element_counts:
+      structs: 1
+      enums: 1
+      unions: 1
+      functions: 4
+      globals: 2
+      includes: 2
+      macros: 2
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      mixed.puml:
+        contains_elements: ["Point", "Status", "Value", "create_point"]
+        contains_lines: ["class \"Point\" as TYPEDEF_POINT", "class \"Status\" as TYPEDEF_STATUS", "class \"Value\" as TYPEDEF_VALUE"]
+        class_count: 4
+        relationship_count: 3
