@@ -53,7 +53,39 @@ config.json: |
     "project_name": "test_parser_simple",
     "source_folders": ["."],
     "output_dir": "./output",
-    "recursive_search": true
+    "recursive_search": true,
+    "include_patterns": ["*.c", "*.h"],
+    "exclude_patterns": ["*_test.c"]
+  }
+
+---
+# Model template (optional)
+model.json: |
+  {
+    "files": {
+      "simple.c": {
+        "structs": {
+          "Person": {
+            "fields": ["name", "age"]
+          }
+        },
+        "enums": {
+          "Status": {
+            "values": ["OK", "ERROR"]
+          }
+        },
+        "functions": ["main"],
+        "globals": ["global_var"],
+        "includes": ["stdio.h"]
+      }
+    },
+    "element_counts": {
+      "structs": 1,
+      "enums": 1,
+      "functions": 1,
+      "globals": 1,
+      "includes": 1
+    }
   }
 
 ---
@@ -62,6 +94,8 @@ assertions:
   execution:
     exit_code: 0
     output_files: ["model.json", "model_transformed.json", "simple.puml"]
+    stdout_contains: "Parsing complete"
+    max_execution_time: 30.0
   
   model:
     files:
@@ -75,6 +109,31 @@ assertions:
         functions: ["main"]
         globals: ["global_var"]
         includes: ["stdio.h"]
+    element_counts:
+      structs: 1
+      enums: 1
+      functions: 1
+      globals: 1
+      includes: 1
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      simple.puml:
+        contains_elements: ["Person", "Status", "main", "global_var"]
+        contains_lines: ["class \"Person\" as TYPEDEF_PERSON", "int main()"]
+        class_count: 3
+        relationship_count: 2
+        classes:
+          Person:
+            fields: ["name", "age"]
+        relationships:
+          - type: "composition"
+            from: "main"
+            to: "Person"
 ```
 
 #### **Example Tests** (Special Structure)
@@ -94,6 +153,8 @@ assertions:
   execution:
     exit_code: 0
     output_files: ["model.json", "model_transformed.json", "example.puml"]
+    stdout_contains: "Parsing complete"
+    max_execution_time: 30.0
   
   model:
     files:
@@ -103,6 +164,10 @@ assertions:
             fields: ["value", "name"]
         functions: ["main", "helper_function"]
         includes: ["header.h"]
+    element_counts:
+      structs: 1
+      functions: 2
+      includes: 1
   
   puml:
     # Global PlantUML assertions (applied to all files)
@@ -111,16 +176,52 @@ assertions:
     # Per-file PlantUML assertions
     files:
       example.puml:
-        contains_elements: ["ExampleStruct", "main"]
-        contains_lines: ["class \"ExampleStruct\"", "int main()"]
-        class_count: 2
-        relationship_count: 0
+        contains_elements: ["ExampleStruct", "main", "helper_function"]
+        contains_lines: ["class \"ExampleStruct\" as TYPEDEF_EXAMPLESTRUCT", "int main()"]
+        class_count: 3
+        relationship_count: 1
+        classes:
+          ExampleStruct:
+            fields: ["value", "name"]
+        relationships:
+          - type: "composition"
+            from: "main"
+            to: "ExampleStruct"
 ```
 
 ### Test Category Determination
 The framework automatically determines test categories based on:
 - **Test ID**: Numeric ranges (0001-1000: unit, 1001-2000: feature, 2001-3000: integration, 3001-4000: example)
 - **Test Name**: Pattern matching (starts with "test_example_": example, contains "feature"/"integration": feature)
+
+### Assertion Types and Structure
+The framework supports comprehensive validation through three main assertion types:
+
+#### Execution Assertions
+- `exit_code`: Expected CLI exit code (0 for success)
+- `output_files`: List of expected output files
+- `stdout_contains`: Text that must appear in stdout
+- `stderr_contains`: Text that must appear in stderr
+- `max_execution_time`: Maximum allowed execution time in seconds
+
+#### Model Assertions
+- `files`: Per-file model validation
+  - `structs`: Expected struct definitions with fields
+  - `enums`: Expected enum definitions with values
+  - `functions`: Expected function names
+  - `globals`: Expected global variable names
+  - `includes`: Expected include statements
+- `element_counts`: Expected counts of different element types across all files
+
+#### PlantUML Assertions
+- `syntax_valid`: Global syntax validation for all PlantUML files
+- `files`: Per-file PlantUML validation
+  - `contains_elements`: Elements that must appear in the diagram
+  - `contains_lines`: Specific lines that must appear
+  - `class_count`: Expected number of classes
+  - `relationship_count`: Expected number of relationships
+  - `classes`: Detailed class structure validation
+  - `relationships`: Specific relationship validation
 
 ### Test Folder Structures
 
