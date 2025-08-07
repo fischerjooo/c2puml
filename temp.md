@@ -16,18 +16,31 @@ tests/
 │   ├── test_simple_c_file_parsing.yml   # Test data and assertions
 │   ├── test_complex_struct_parsing.py
 │   ├── test_complex_struct_parsing.yml
+│   ├── temp/                             # Temporary files (git ignored)
+│   │   ├── test_simple_c_file_parsing/
+│   │   │   ├── config.json
+│   │   │   ├── src/
+│   │   │   │   └── simple.c
+│   │   │   └── output/
+│   │   │       ├── model.json
+│   │   │       ├── model_transformed.json
+│   │   │       └── simple.puml
+│   │   └── test_complex_struct_parsing/
 │   └── ...
 ├── feature/
 │   ├── test_multi_file_project.py
 │   ├── test_multi_file_project.yml
+│   ├── temp/
 │   └── ...
 ├── integration/
 │   ├── test_end_to_end_pipeline.py
 │   ├── test_end_to_end_pipeline.yml
+│   ├── temp/
 │   └── ...
 └── example/
     ├── test_basic_example.py
     ├── test_basic_example.yml
+    ├── temp/
     └── ...
 ```
 
@@ -144,12 +157,28 @@ Each YAML file contains up to 5 separate documents:
 4. **Model Template** (optional): Expected model.json structure for complex validation
 5. **Assertions**: Test assertions and validation criteria
 
+### Temporary File Structure
+Each test creates a temporary directory structure:
+
+```
+tests/<category>/temp/test_<test_id>/
+├── config.json              # Configuration file
+├── src/                     # Source files directory
+│   ├── simple.c
+│   └── other_files.c
+└── output/                  # Generated output files
+    ├── model.json
+    ├── model_transformed.json
+    └── simple.puml
+```
+
 ## Framework Components
 
 ### 1. TestDataLoader
 - **Purpose**: Load and parse multi-document YAML test files
-- **Methods**: `load_test_data(test_id)`, `create_temp_files(test_data)`, `_parse_yaml_documents(documents)`
+- **Methods**: `load_test_data(test_id)`, `create_temp_files(test_data, test_id)`, `_parse_yaml_documents(documents)`
 - **Features**: Multi-document YAML parsing, temporary file creation, meaningful test ID support
+- **Temp Management**: Creates test-specific temp folders in `tests/*/temp/test_<id>/`
 
 ### 2. AssertionProcessor
 - **Purpose**: Process assertions from YAML data
@@ -160,6 +189,7 @@ Each YAML file contains up to 5 separate documents:
 - **Purpose**: Execute c2puml via CLI interface
 - **Methods**: `run_full_pipeline(config_path, working_dir)`
 - **Interface**: CLI-only, no internal API access
+- **Working Directory**: Uses temp directory as working directory for proper file resolution
 
 ### 4. Validators
 - **ModelValidator**: Validate model.json content
@@ -198,16 +228,22 @@ class TestSimpleCFileParsing(UnifiedTestCase):
         test_data = self.data_loader.load_test_data("simple_c_file_parsing")
         
         # Create temporary files
-        source_dir, config_path = self.data_loader.create_temp_files(test_data)
+        source_dir, config_path = self.data_loader.create_temp_files(test_data, "simple_c_file_parsing")
         
-        # Execute c2puml
-        result = self.executor.run_full_pipeline(config_path, source_dir)
+        # Get the temp directory (parent of source_dir)
+        temp_dir = os.path.dirname(source_dir)
+        
+        # Make config path relative to working directory
+        config_filename = os.path.basename(config_path)
+        
+        # Execute c2puml with temp directory as working directory
+        result = self.executor.run_full_pipeline(config_filename, temp_dir)
         
         # Validate execution
         self.assert_c2puml_success(result)
         
-        # Load output files
-        output_dir = os.path.join(source_dir, "output")
+        # Load output files (output is created in temp directory, not src)
+        output_dir = os.path.join(temp_dir, "output")
         model_file = os.path.join(output_dir, "model.json")
         puml_files = self.assert_puml_files_exist(output_dir)
         
@@ -238,6 +274,8 @@ if __name__ == "__main__":
 6. **Version Control**: Clear diffs when individual sections change
 7. **Meaningful Names**: Test files have descriptive names that explain their purpose
 8. **Direct JSON**: Config and model files are included as direct JSON text for better readability
+9. **Test Isolation**: Each test has its own temp folder for complete isolation
+10. **Git Integration**: Temp folders are properly ignored, keeping repository clean
 
 ## Test Naming Convention
 
@@ -245,6 +283,18 @@ if __name__ == "__main__":
 - **Feature Tests**: test_multi_file_project.py, test_recursive_search.py, etc.
 - **Integration Tests**: test_end_to_end_pipeline.py, test_error_handling.py, etc.
 - **Example Tests**: test_basic_example.py, test_advanced_example.py, etc.
+
+## Git Integration
+
+### Ignored Files
+- `tests/*/temp/` - All temporary test folders
+- `tests/*/output/` - Test output directories
+- `tests/*/assert-*.json` - Old assertion files (no longer used)
+- `tests/*/input-*.json` - Old input files (no longer used)
+
+### Tracked Files
+- `tests/*/test_*.yml` - YAML test data files
+- `tests/*/test_*.py` - Test implementation files
 
 ## Migration Guidelines
 
@@ -275,5 +325,6 @@ The first test demonstrates this new approach:
 
 - **test_simple_c_file_parsing.py**: Simple test implementation using the framework
 - **test_simple_c_file_parsing.yml**: Contains all test data and assertions in multiple documents
+- **temp/test_simple_c_file_parsing/**: Temporary files created during test execution (git ignored)
 
-This new approach makes the testing framework much more maintainable and easier to understand while providing all the benefits of data-driven testing with clear separation of concerns.
+This new approach makes the testing framework much more maintainable and easier to understand while providing all the benefits of data-driven testing with clear separation of concerns and proper git integration.
