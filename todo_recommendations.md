@@ -22,7 +22,7 @@ test:
   name: "Simple C File Parsing"
   description: "Test parsing a simple C file with struct, enum, function, global, and include"
   category: "unit"
-  id: "001"
+  id: "0001"
 
 ---
 # Source files
@@ -86,7 +86,7 @@ test:
   name: "Basic Example"
   description: "Test basic example with external source folder and config"
   category: "example"
-  id: "001"
+  id: "3001"
 
 ---
 # Assertions only (no source_files or config.json sections)
@@ -119,7 +119,7 @@ assertions:
 
 ### Test Category Determination
 The framework automatically determines test categories based on:
-- **Test ID**: Numeric ranges (001-050: unit, 051-150: feature, 151-250: integration, 251+: example)
+- **Test ID**: Numeric ranges (0001-1000: unit, 1001-2000: feature, 2001-3000: integration, 3001-4000: example)
 - **Test Name**: Pattern matching (starts with "test_example_": example, contains "feature"/"integration": feature)
 
 ### Test Folder Structures

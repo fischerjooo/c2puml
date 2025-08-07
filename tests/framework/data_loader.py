@@ -170,18 +170,18 @@ class TestDataLoader:
         Determine test category based on test ID
         
         Args:
-            test_id: Test ID (e.g., "001", "101", "201")
+            test_id: Test ID (e.g., "0001", "1001", "2001")
             
         Returns:
             Test category (unit, feature, integration, example)
         """
         test_num = int(test_id)
         
-        if test_num <= 50:
+        if test_num <= 1000:
             return "unit"
-        elif test_num <= 150:
+        elif test_num <= 2000:
             return "feature"
-        elif test_num <= 250:
+        elif test_num <= 3000:
             return "integration"
         else:
             return "example"

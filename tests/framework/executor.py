@@ -311,7 +311,9 @@ class TestExecutor:
         """
         if test_name.startswith("test_example_"):
             return "example"
-        elif "feature" in test_name or "integration" in test_name or "comprehensive" in test_name:
+        elif "integration" in test_name:
+            return "integration"
+        elif "feature" in test_name or "comprehensive" in test_name:
             return "feature"
         else:
             return "unit"

@@ -3,7 +3,7 @@ test:
   name: "Simple C File Parsing"
   description: "Test parsing a simple C file with struct, enum, function, global, and include"
   category: "unit"
-  id: "001"
+  id: "0001"
 
 ---
 # Source files

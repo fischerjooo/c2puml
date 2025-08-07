@@ -6,10 +6,10 @@ This directory contains the comprehensive test suite for the C2PUML tool, organi
 
 Tests are organized into four categories:
 
-- **Unit Tests** (`tests/unit/`): Test ID 001-050, focused on individual components
-- **Feature Tests** (`tests/feature/`): Test ID 051-150, focused on feature functionality  
-- **Integration Tests** (`tests/integration/`): Test ID 151-250, focused on end-to-end workflows
-- **Example Tests** (`tests/example/`): Test ID 251+, focused on real-world usage examples
+- **Unit Tests** (`tests/unit/`): Test ID 0001-1000, focused on individual components
+- **Feature Tests** (`tests/feature/`): Test ID 1001-2000, focused on feature functionality  
+- **Integration Tests** (`tests/integration/`): Test ID 2001-3000, focused on end-to-end workflows
+- **Example Tests** (`tests/example/`): Test ID 3001-4000, focused on real-world usage examples
 
 ## Test File Structure
 
@@ -27,7 +27,7 @@ test:
   name: "Test Name"
   description: "Detailed test description"
   category: "unit|feature|integration|example"
-  id: "001"
+  id: "0001"
 ```
 
 ### 2. Source Files Document
@@ -181,7 +181,7 @@ test:
   name: "My Test"
   description: "Test description"
   category: "unit"
-  id: "001"
+  id: "0001"
 
 ---
 source_files:
@@ -216,7 +216,7 @@ test:
   name: "Example Test"
   description: "Example test using external files"
   category: "example"
-  id: "251"
+  id: "3001"
 
 ---
 assertions:
