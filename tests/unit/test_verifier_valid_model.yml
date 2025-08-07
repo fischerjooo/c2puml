@@ -1,0 +1,89 @@
+# Test metadata
+test:
+  name: "Valid Model Verification"
+  description: "Test that valid models pass verification without warnings through the CLI"
+  category: "unit"
+  id: "2060"
+
+---
+# Source files
+source_files:
+  valid.c: |
+    #include <stdio.h>
+    
+    struct ValidStruct {
+        int valid_field;
+        char* valid_string;
+        float valid_number;
+    };
+    
+    enum ValidEnum {
+        VALID_OPTION_1,
+        VALID_OPTION_2,
+        VALID_OPTION_3
+    };
+    
+    union ValidUnion {
+        int int_value;
+        float float_value;
+        char char_value;
+    };
+    
+    int valid_global = 42;
+    char* valid_string_global = "valid";
+    
+    int valid_function(int param1, char* param2) {
+        return param1 + 1;
+    }
+    
+    void another_valid_function(void) {
+        printf("This is valid\n");
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_verifier_valid_model",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "valid.puml"]
+  
+  model:
+    files:
+      valid.c:
+        structs:
+          ValidStruct:
+            fields: ["valid_field", "valid_string", "valid_number"]
+        enums:
+          ValidEnum:
+            values: ["VALID_OPTION_1", "VALID_OPTION_2", "VALID_OPTION_3"]
+        unions:
+          ValidUnion:
+            fields: ["int_value", "float_value", "char_value"]
+        functions: ["valid_function", "another_valid_function"]
+        globals: ["valid_global", "valid_string_global"]
+        includes: ["stdio.h"]
+    element_counts:
+      structs: 1
+      enums: 1
+      unions: 1
+      functions: 2
+      globals: 2
+  
+  puml:
+    syntax_valid: true
+    files:
+      valid.puml:
+        contains_elements: ["ValidStruct", "ValidEnum", "ValidUnion", "valid"]
+        contains_lines: ["class \"ValidStruct\" as TYPEDEF_VALIDSTRUCT", "class \"ValidEnum\" as TYPEDEF_VALIDENUM"]
+        class_count: 4
+        relationship_count: 3
