@@ -27,7 +27,7 @@ class ValidatorsProcessor:
         self.cli_validator = CLIValidator()
     
     def process_assertions(self, assertions: Dict[str, Any], model_data: Dict, 
-                          puml_content: str, cli_result: CLIResult, test_case) -> None:
+                          puml_files: Dict[str, str], cli_result: CLIResult, test_case) -> None:
         """
         Process assertions from YAML data using appropriate validators
         
@@ -39,7 +39,7 @@ class ValidatorsProcessor:
         Args:
             assertions: Dictionary containing assertions from YAML
             model_data: Parsed model.json content
-            puml_content: PlantUML file content
+            puml_files: Dictionary mapping PlantUML filenames to their content
             cli_result: CLI execution result
             test_case: Test case instance for assertions
         """
@@ -53,7 +53,7 @@ class ValidatorsProcessor:
         
         # Process PlantUML assertions
         if "puml" in assertions:
-            self._process_puml_assertions(assertions["puml"], puml_content, test_case)
+            self._process_puml_assertions(assertions["puml"], puml_files, test_case)
     
     def _process_execution_assertions(self, execution_assertions: Dict, 
                                     cli_result: CLIResult, test_case) -> None:
@@ -150,45 +150,45 @@ class ValidatorsProcessor:
                 )
     
     def _process_puml_assertions(self, puml_assertions: Dict, 
-                               puml_content: str, test_case) -> None:
+                               puml_files: Dict[str, str], test_case) -> None:
         """
         Process PlantUML-related assertions using PlantUMLValidator
         
         Args:
             puml_assertions: PlantUML assertions from YAML
-            puml_content: PlantUML file content
+            puml_files: Dictionary mapping PlantUML filenames to their content
             test_case: Test case instance for assertions
         """
         # Check syntax validity
         if puml_assertions.get("syntax_valid", False):
-            self.puml_validator.assert_puml_start_end_tags(puml_content)
+            self.puml_validator.assert_puml_start_end_tags_multi(puml_files)
         
         # Check for specific elements
         if "contains_elements" in puml_assertions:
             for element_name in puml_assertions["contains_elements"]:
-                self.puml_validator.assert_puml_contains(puml_content, element_name)
+                self.puml_validator.assert_puml_contains_multi(puml_files, element_name)
         
         # Check for forbidden elements
         if "not_contains_elements" in puml_assertions:
             for element_name in puml_assertions["not_contains_elements"]:
-                self.puml_validator.assert_puml_not_contains(puml_content, element_name)
+                self.puml_validator.assert_puml_not_contains_multi(puml_files, element_name)
         
         # Check specific lines
         if "contains_lines" in puml_assertions:
             expected_lines = puml_assertions["contains_lines"]
-            self.puml_validator.assert_puml_contains_lines(puml_content, expected_lines)
+            self.puml_validator.assert_puml_contains_lines_multi(puml_files, expected_lines)
         
         # Check line count
         if "line_count" in puml_assertions:
             expected_count = puml_assertions["line_count"]
-            self.puml_validator.assert_puml_line_count(puml_content, expected_count)
+            self.puml_validator.assert_puml_line_count_multi(puml_files, expected_count)
         
         # Check class count
         if "class_count" in puml_assertions:
             expected_count = puml_assertions["class_count"]
-            self.puml_validator.assert_puml_class_count(puml_content, expected_count)
+            self.puml_validator.assert_puml_class_count_multi(puml_files, expected_count)
         
         # Check relationship count
         if "relationship_count" in puml_assertions:
             expected_count = puml_assertions["relationship_count"]
-            self.puml_validator.assert_puml_relationship_count(puml_content, expected_count)
+            self.puml_validator.assert_puml_relationship_count_multi(puml_files, expected_count)

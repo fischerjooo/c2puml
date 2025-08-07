@@ -135,12 +135,16 @@ class UnifiedTestCase(unittest.TestCase):
         with open(result.model_file, 'r') as f:
             model_data = json.load(f)
         
-        with open(result.puml_files[0], 'r') as f:
-            puml_content = f.read()
+        # Load all PlantUML files into a dictionary
+        puml_files = {}
+        for puml_file_path in result.puml_files:
+            filename = os.path.basename(puml_file_path)
+            with open(puml_file_path, 'r') as f:
+                puml_files[filename] = f.read()
         
         # Process assertions from YAML
         self.validators_processor.process_assertions(
-            test_data["assertions"], model_data, puml_content, result.cli_result, self
+            test_data["assertions"], model_data, puml_files, result.cli_result, self
         )
 
     def _cleanup_existing_test_folders(self):

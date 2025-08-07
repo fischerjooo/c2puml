@@ -224,15 +224,36 @@ class PlantUMLValidator:
         if "@enduml" not in puml_content:
             raise AssertionError("PlantUML content missing @enduml tag")
     
+    def assert_puml_start_end_tags_multi(self, puml_files: Dict[str, str]) -> None:
+        """Assert that all PlantUML files have proper start/end tags"""
+        for filename, content in puml_files.items():
+            try:
+                self.assert_puml_start_end_tags(content)
+            except AssertionError as e:
+                raise AssertionError(f"File {filename}: {str(e)}")
+    
     def assert_puml_contains(self, puml_content: str, expected_text: str) -> None:
         """Assert that PlantUML content contains specific text"""
         if expected_text not in puml_content:
             raise AssertionError(f"PlantUML content missing expected text: '{expected_text}'")
     
+    def assert_puml_contains_multi(self, puml_files: Dict[str, str], expected_text: str) -> None:
+        """Assert that at least one PlantUML file contains specific text"""
+        for filename, content in puml_files.items():
+            if expected_text in content:
+                return  # Found in at least one file
+        raise AssertionError(f"Expected text '{expected_text}' not found in any PlantUML file")
+    
     def assert_puml_not_contains(self, puml_content: str, forbidden_text: str) -> None:
         """Assert that PlantUML content does not contain specific text"""
         if forbidden_text in puml_content:
             raise AssertionError(f"PlantUML content contains forbidden text: '{forbidden_text}'")
+    
+    def assert_puml_not_contains_multi(self, puml_files: Dict[str, str], forbidden_text: str) -> None:
+        """Assert that no PlantUML file contains specific text"""
+        for filename, content in puml_files.items():
+            if forbidden_text in content:
+                raise AssertionError(f"File {filename} contains forbidden text: '{forbidden_text}'")
     
     def assert_puml_contains_lines(self, puml_content: str, expected_lines: List[str]) -> None:
         """Assert that PlantUML content contains specific lines"""
@@ -240,11 +261,27 @@ class PlantUMLValidator:
             if expected_line not in puml_content:
                 raise AssertionError(f"PlantUML content missing expected line: '{expected_line}'")
     
+    def assert_puml_contains_lines_multi(self, puml_files: Dict[str, str], expected_lines: List[str]) -> None:
+        """Assert that at least one PlantUML file contains all specific lines"""
+        for filename, content in puml_files.items():
+            try:
+                self.assert_puml_contains_lines(content, expected_lines)
+                return  # Found in this file
+            except AssertionError:
+                continue  # Try next file
+        raise AssertionError(f"Expected lines not found in any PlantUML file: {expected_lines}")
+    
     def assert_puml_line_count(self, puml_content: str, expected_count: int) -> None:
         """Assert that PlantUML content has expected number of lines"""
         actual_count = len(puml_content.splitlines())
         if actual_count != expected_count:
             raise AssertionError(f"Expected {expected_count} lines, got {actual_count}")
+    
+    def assert_puml_line_count_multi(self, puml_files: Dict[str, str], expected_count: int) -> None:
+        """Assert that total lines across all PlantUML files equals expected count"""
+        total_lines = sum(len(content.splitlines()) for content in puml_files.values())
+        if total_lines != expected_count:
+            raise AssertionError(f"Expected {expected_count} total lines across all files, got {total_lines}")
     
     def assert_puml_class_exists(self, puml_content: str, class_name: str, stereotype: str = None) -> None:
         """Assert that a class exists in PlantUML content"""
@@ -257,6 +294,16 @@ class PlantUMLValidator:
             if not re.search(stereotype_pattern, puml_content, re.IGNORECASE):
                 raise AssertionError(f"Class '{class_name}' missing stereotype '{stereotype}'")
     
+    def assert_puml_class_exists_multi(self, puml_files: Dict[str, str], class_name: str, stereotype: str = None) -> None:
+        """Assert that a class exists in at least one PlantUML file"""
+        for filename, content in puml_files.items():
+            try:
+                self.assert_puml_class_exists(content, class_name, stereotype)
+                return  # Found in this file
+            except AssertionError:
+                continue  # Try next file
+        raise AssertionError(f"Class '{class_name}' not found in any PlantUML file")
+    
     def assert_puml_class_count(self, puml_content: str, expected_count: int) -> None:
         """Assert that PlantUML content has expected number of classes"""
         class_matches = re.findall(r'class\s+"[^"]*"\s+as\s+\w+', puml_content, re.IGNORECASE)
@@ -264,11 +311,31 @@ class PlantUMLValidator:
         if actual_count != expected_count:
             raise AssertionError(f"Expected {expected_count} classes, got {actual_count}")
     
+    def assert_puml_class_count_multi(self, puml_files: Dict[str, str], expected_count: int) -> None:
+        """Assert that total classes across all PlantUML files equals expected count"""
+        total_classes = 0
+        for content in puml_files.values():
+            class_matches = re.findall(r'class\s+"[^"]*"\s+as\s+\w+', content, re.IGNORECASE)
+            total_classes += len(class_matches)
+        
+        if total_classes != expected_count:
+            raise AssertionError(f"Expected {expected_count} total classes across all files, got {total_classes}")
+    
     def assert_puml_relationship(self, puml_content: str, source: str, target: str, rel_type: str) -> None:
         """Assert that a relationship exists in PlantUML content"""
         rel_pattern = rf'{re.escape(source)}\s+{re.escape(rel_type)}\s+{re.escape(target)}'
         if not re.search(rel_pattern, puml_content, re.IGNORECASE):
             raise AssertionError(f"Relationship '{source} {rel_type} {target}' not found in PlantUML content")
+    
+    def assert_puml_relationship_multi(self, puml_files: Dict[str, str], source: str, target: str, rel_type: str) -> None:
+        """Assert that a relationship exists in at least one PlantUML file"""
+        for filename, content in puml_files.items():
+            try:
+                self.assert_puml_relationship(content, source, target, rel_type)
+                return  # Found in this file
+            except AssertionError:
+                continue  # Try next file
+        raise AssertionError(f"Relationship '{source} {rel_type} {target}' not found in any PlantUML file")
     
     def assert_puml_relationship_count(self, puml_content: str, expected_count: int) -> None:
         """Assert that PlantUML content has expected number of relationships"""
@@ -287,6 +354,24 @@ class PlantUMLValidator:
         
         if total_relationships != expected_count:
             raise AssertionError(f"Expected {expected_count} relationships, got {total_relationships}")
+    
+    def assert_puml_relationship_count_multi(self, puml_files: Dict[str, str], expected_count: int) -> None:
+        """Assert that total relationships across all PlantUML files equals expected count"""
+        total_relationships = 0
+        rel_patterns = [
+            r'\w+\s+-->\s+\w+',  # arrows
+            r'\w+\s+\.\.>\s+\w+',  # dotted arrows
+            r'\w+\s+\*--\s+\w+',  # composition
+            r'\w+\s+o--\s+\w+',   # aggregation
+        ]
+        
+        for content in puml_files.values():
+            for pattern in rel_patterns:
+                matches = re.findall(pattern, content, re.IGNORECASE)
+                total_relationships += len(matches)
+        
+        if total_relationships != expected_count:
+            raise AssertionError(f"Expected {expected_count} total relationships across all files, got {total_relationships}")
 
 
 class OutputValidator:
