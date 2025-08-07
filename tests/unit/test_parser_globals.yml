@@ -1,0 +1,55 @@
+# Test metadata
+test:
+  name: "Parser Globals"
+  description: "Test parsing global variables with different types"
+  category: "unit"
+  id: "0008"
+
+---
+# Source files
+source_files:
+  globals.c: |
+    int global_int = 42;
+    float global_float = 3.14f;
+    char* global_string = "hello";
+    static int static_var = 10;
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_parser_globals",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "globals.puml"]
+  
+  model:
+    files:
+      globals.c:
+        globals: ["global_int", "global_float", "global_string", "static_var"]
+    element_counts:
+      structs: 0
+      enums: 0
+      functions: 0
+      globals: 4
+      includes: 0
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      globals.puml:
+        contains_elements: ["global_int", "global_float", "global_string", "static_var"]
+        contains_lines: ["float global_float", "int global_int", "char * global_string", "int static_var"]
+        class_count: 1
+        relationship_count: 0
