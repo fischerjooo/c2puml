@@ -30,7 +30,7 @@ class TestDataLoader:
         Load test data from test-###.yml file
         
         Args:
-            test_id: Test ID (e.g., "001", "101", "201")
+            test_id: Test ID (e.g., "simple_c_file_parsing", "complex_struct_parsing")
             
         Returns:
             Dictionary containing test data from YAML file
@@ -39,22 +39,38 @@ class TestDataLoader:
             FileNotFoundError: If YAML file doesn't exist
             yaml.YAMLError: If YAML file is invalid
         """
-        # Determine test category based on ID
-        category = self._get_test_category(test_id)
+        # Try to find the YAML file in different test categories
+        test_categories = ["unit", "feature", "integration", "example"]
         
-        # Construct YAML file path
-        yaml_file = f"tests/{category}/test-{test_id}.yml"
+        for category in test_categories:
+            yaml_file = f"tests/{category}/test_{test_id}.yml"
+            if os.path.exists(yaml_file):
+                with open(yaml_file, 'r') as f:
+                    test_data = yaml.safe_load(f)
+                
+                # Validate YAML structure
+                self._validate_test_data(test_data)
+                
+                return test_data
         
-        if not os.path.exists(yaml_file):
-            raise FileNotFoundError(f"Test data file not found: {yaml_file}")
+        # If not found, try with the old numeric format
+        try:
+            test_num = int(test_id)
+            category = self._get_test_category(test_id)
+            yaml_file = f"tests/{category}/test-{test_id:03d}.yml"
+            
+            if os.path.exists(yaml_file):
+                with open(yaml_file, 'r') as f:
+                    test_data = yaml.safe_load(f)
+                
+                # Validate YAML structure
+                self._validate_test_data(test_data)
+                
+                return test_data
+        except ValueError:
+            pass
         
-        with open(yaml_file, 'r') as f:
-            test_data = yaml.safe_load(f)
-        
-        # Validate YAML structure
-        self._validate_test_data(test_data)
-        
-        return test_data
+        raise FileNotFoundError(f"Test data file not found for test ID: {test_id}")
     
     def create_temp_files(self, test_data: Dict) -> Tuple[str, str]:
         """
@@ -127,8 +143,10 @@ class TestDataLoader:
         if "source_files" not in inputs_section:
             raise ValueError("Missing source_files in inputs section")
         
-        if "config" not in inputs_section:
-            raise ValueError("Missing config in inputs section")
+        # Check that config.json is included in source_files
+        source_files = inputs_section["source_files"]
+        if "config.json" not in source_files:
+            raise ValueError("Missing config.json in source_files")
         
         # Validate assertions section
         assertions_section = test_data["assertions"]
@@ -152,8 +170,11 @@ class TestDataLoader:
         source_dir = os.path.join(temp_dir, "src")
         os.makedirs(source_dir, exist_ok=True)
         
-        # Create each source file
+        # Create each source file (excluding config.json which is handled separately)
         for filename, content in source_files.items():
+            if filename == "config.json":
+                continue  # Skip config.json as it's handled separately
+            
             file_path = os.path.join(source_dir, filename)
             
             # Ensure directory exists for nested files
@@ -175,7 +196,19 @@ class TestDataLoader:
         Returns:
             Path to the created config file
         """
-        config = test_data["inputs"]["config"]
+        source_files = test_data["inputs"]["source_files"]
+        
+        # Extract config.json content
+        if "config.json" not in source_files:
+            raise ValueError("Missing config.json in source_files")
+        
+        config_content = source_files["config.json"]
+        
+        # Parse JSON to validate it
+        try:
+            config = json.loads(config_content)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid JSON in config.json: {e}")
         
         # Ensure required config fields are present
         if "source_folders" not in config:

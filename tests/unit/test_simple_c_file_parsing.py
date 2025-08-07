@@ -17,13 +17,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 
-class Test001(UnifiedTestCase):
+class TestSimpleCFileParsing(UnifiedTestCase):
     """Test Simple C File Parsing"""
 
     def test_simple_c_file_parsing(self):
         """Test parsing a simple C file through the CLI interface"""
         # Load test data from YAML
-        test_data = self.data_loader.load_test_data("001")
+        test_data = self.data_loader.load_test_data("simple_c_file_parsing")
         
         # Create temporary files
         source_dir, config_path = self.data_loader.create_temp_files(test_data)
