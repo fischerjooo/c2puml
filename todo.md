@@ -560,8 +560,9 @@ puml:
 | test_parser_struct_order.py | ✅ Complete | test_struct_order_preservation | test_struct_order_preservation.yml | Struct field order preservation test |
 | test_parser_struct_order.py | ✅ Complete | test_struct_order_puml | test_struct_order_puml.yml | Struct field order in PlantUML test |
 | test_parser_struct_order.py | ✅ Complete | test_struct_order_complex | test_struct_order_complex.yml | Complex struct field order test |
-| test_parser_comprehensive.py | 🔄 Pending | test_parser_comprehensive | test_parser_comprehensive.yml | Complex parser test |
-| test_parser_comprehensive.py | 🔄 Pending | test_parser_comprehensive | test_parser_comprehensive.yml | Comprehensive parsing |
+| test_parser_comprehensive.py | ✅ Complete | test_parser_enum_comprehensive | test_parser_enum_simple.yml, test_parser_enum_typedef.yml | Enum parsing tests converted to CLI |
+| test_parser_comprehensive.py | ✅ Complete | test_parser_function_comprehensive | test_parser_function_declarations.yml, test_parser_function_definitions.yml, test_parser_function_modifiers.yml | Function parsing tests converted to CLI |
+| test_parser_comprehensive.py | ✅ Complete | test_parser_mixed_comprehensive | test_parser_mixed_content.yml | Mixed language features test converted to CLI |
 | test_parser_filtering.py | 🔄 Pending | test_parser_filtering | test_parser_filtering.yml | Filtering functionality |
 | test_parser_function_params.py | 🔄 Pending | test_parser_function_params | test_parser_function_params.yml | Function parameters |
 | test_parser_macro_duplicates.py | 🔄 Pending | test_parser_macro_duplicates | test_parser_macro_duplicates.yml | Macro handling |
@@ -598,7 +599,7 @@ puml:
 | test_generator_new_formatting.py | 🔄 Pending | test_generator_new_formatting | test_generator_new_formatting.yml | New formatting |
 | test_generator_visibility_logic.py | 🔄 Pending | test_generator_visibility_logic | test_generator_visibility_logic.yml | Visibility logic |
 | test_generator_duplicate_includes.py | 🔄 Pending | test_generator_duplicate_includes | test_generator_duplicate_includes.yml | Duplicate includes |
-| test_transformer.py | 🔄 Pending | test_transformer | test_transformer.yml | Main transformer test |
+| test_transformer.py | ✅ Complete | test_transformer_comprehensive | test_transformer_comprehensive_operations.yml | Comprehensive transformer operations converted to CLI |
 | test_transformation_system.py | 🔄 Pending | test_transformation_system | test_transformation_system.yml | Transformation system |
 | test_preprocessor_handling.py | 🔄 Pending | test_preprocessor_handling | test_preprocessor_handling.yml | Preprocessor handling |
 | test_preprocessor_bug.py | 🔄 Pending | test_preprocessor_bug | test_preprocessor_bug.yml | Preprocessor bugs |
