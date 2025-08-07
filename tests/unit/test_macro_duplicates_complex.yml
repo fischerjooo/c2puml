@@ -1,0 +1,69 @@
+# Test metadata
+test:
+  name: "Macro Duplicates Complex"
+  description: "Test complex macro definitions with multiple conditions"
+  category: "unit"
+  id: "0017"
+
+---
+# Source files
+source_files:
+  macro_complex.c: |
+    #if 1
+        #define LOG_LEVEL 3
+        #define DEBUG_PRINT(x) printf("DEBUG: %s\\n", x)
+    #else
+        #define LOG_LEVEL 1
+        #define DEBUG_PRINT(x) ((void)0)
+    #endif
+    
+    #if 1
+        #define PLATFORM "Windows"
+    #elif 0
+        #define PLATFORM "Linux"
+    #else
+        #define PLATFORM "Unknown"
+    #endif
+    
+    #define VERSION "1.0.0"
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_macro_duplicates_complex",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "macro_complex.puml"]
+  
+  model:
+    files:
+      macro_complex.c:
+        macros: ["LOG_LEVEL", "DEBUG_PRINT", "VERSION"]
+    element_counts:
+      structs: 0
+      enums: 0
+      functions: 0
+      globals: 0
+      includes: 0
+      macros: 3
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      macro_complex.puml:
+        contains_elements: []
+        contains_lines: []
+        class_count: 1
+        relationship_count: 0
