@@ -37,13 +37,13 @@ class TestSimpleCFileParsing(UnifiedTestCase):
         # Execute c2puml with temp directory as working directory
         result = self.executor.run_full_pipeline(config_filename, temp_dir)
         
-        # Validate execution
-        self.assert_c2puml_success(result)
+        # Validate execution using CLI validator
+        self.cli_validator.assert_cli_success(result)
         
         # Load output files (output is created in temp directory, not src)
         output_dir = os.path.join(temp_dir, "output")
-        model_file = os.path.join(output_dir, "model.json")
-        puml_files = self.assert_puml_files_exist(output_dir)
+        model_file = self.output_validator.assert_model_file_exists(output_dir)
+        puml_files = self.output_validator.assert_puml_files_exist(output_dir)
         
         # Load content for validation
         with open(model_file, 'r') as f:

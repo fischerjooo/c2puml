@@ -5,24 +5,19 @@ This document outlines the responsibilities of each component in the unified tes
 ## Framework Components
 
 ### 1. `base.py` - UnifiedTestCase Base Class
-**Primary Responsibility**: Test setup, teardown, and basic assertions
+**Primary Responsibility**: Test setup, teardown, and component initialization
 
 **Responsibilities**:
 - ✅ Initialize framework components (executor, data_loader, assertion_processor, validators)
 - ✅ Create temporary directories for test execution
-- ✅ Provide basic assertion methods for common scenarios:
-  - `assert_c2puml_success()` - Verify successful execution
-  - `assert_c2puml_failure()` - Verify expected failures
-  - `assert_model_file_exists()` - Check for model.json
-  - `assert_transformed_model_file_exists()` - Check for model_transformed.json
-  - `assert_puml_files_exist()` - Check for .puml files
-  - `assert_puml_contains_syntax()` - Validate PlantUML syntax
+- ✅ Provide component access to all validators and framework components
 
 **What it does NOT do**:
 - ❌ Create test files (handled by `data_loader.py`)
 - ❌ Process complex assertions (handled by `assertion_processor.py`)
 - ❌ Execute c2puml (handled by `executor.py`)
 - ❌ Validate specific content (handled by `validators.py`)
+- ❌ Provide assertion methods (handled by validators)
 
 ### 2. `data_loader.py` - TestDataLoader
 **Primary Responsibility**: Load test data from YAML and create temporary files
@@ -75,7 +70,7 @@ This document outlines the responsibilities of each component in the unified tes
 **What it does NOT do**:
 - ❌ Load test data (handled by `data_loader.py`)
 - ❌ Execute c2puml (handled by `executor.py`)
-- ❌ Provide basic assertions (handled by `base.py`)
+- ✅ Provide basic assertions (handled by validators)
 - ❌ Validate specific content (handled by `validators.py`)
 
 ### 5. `validators.py` - Validation Classes
@@ -97,17 +92,28 @@ This document outlines the responsibilities of each component in the unified tes
   - File existence and content
   - Directory structure
   - Log validation
+  - **C2PUML-specific output validation**:
+    - `assert_model_file_exists()` - Check for model.json
+    - `assert_transformed_model_file_exists()` - Check for model_transformed.json
+    - `assert_puml_files_exist()` - Check for .puml files
 - ✅ **FileValidator**: Advanced file operations
   - File comparison
   - JSON validation
   - UTF-8 validation
   - Whitespace validation
+- ✅ **CLIValidator**: Validate CLI execution results
+  - `assert_cli_success()` - Verify successful execution
+  - `assert_cli_failure()` - Verify expected failures
+  - `assert_cli_exit_code()` - Check specific exit codes
+  - `assert_cli_stdout_contains()` - Check stdout content
+  - `assert_cli_stderr_contains()` - Check stderr content
+  - `assert_cli_execution_time_under()` - Check execution time
 
 **What it does NOT do**:
 - ❌ Load test data (handled by `data_loader.py`)
 - ❌ Execute c2puml (handled by `executor.py`)
 - ❌ Process assertions (handled by `assertion_processor.py`)
-- ❌ Provide basic assertions (handled by `base.py`)
+- ❌ Provide test setup (handled by `base.py`)
 
 ### 6. `__init__.py` - Package Initialization
 **Primary Responsibility**: Package setup and exports
@@ -130,13 +136,13 @@ This document outlines the responsibilities of each component in the unified tes
 - **Assertion Processing**: Only `assertion_processor.py` processes complex assertions
 - **Execution**: Only `executor.py` executes c2puml
 - **Validation**: Only `validators.py` validates specific content
-- **Test Setup**: Only `base.py` handles test setup and basic assertions
+- **Test Setup**: Only `base.py` handles test setup and component initialization
 
 ### 🔄 **Data Flow**
 ```
 Test Class
     ↓
-base.py (setup) → data_loader.py (load data) → executor.py (execute) → assertion_processor.py (validate) → validators.py (specific validation)
+base.py (setup) → data_loader.py (load data) → executor.py (execute) → validators.py (validate) → assertion_processor.py (process assertions)
 ```
 
 ## Usage Pattern
@@ -151,17 +157,51 @@ class TestExample(UnifiedTestCase):
         # 2. Execute c2puml (executor.py responsibility)
         result = self.executor.run_full_pipeline(config_filename, temp_dir)
         
-        # 3. Basic assertions (base.py responsibility)
-        self.assert_c2puml_success(result)
+        # 3. Basic CLI validation (CLIValidator responsibility)
+        self.cli_validator.assert_cli_success(result)
         
-        # 4. Load output for validation
+        # 4. Load output for validation (OutputValidator responsibility)
+        model_file = self.output_validator.assert_model_file_exists(output_dir)
+        puml_files = self.output_validator.assert_puml_files_exist(output_dir)
+        
+        # 5. Load content for validation
         model_data = json.load(open(model_file))
-        puml_content = open(puml_file).read()
+        puml_content = open(puml_files[0]).read()
         
-        # 5. Process assertions (assertion_processor.py responsibility)
+        # 6. Process assertions (assertion_processor.py responsibility)
         self.assertion_processor.process_assertions(
             test_data["assertions"], model_data, puml_content, result, self
         )
+```
+
+## Validator Usage Examples
+
+### CLIValidator
+```python
+# Check successful execution
+self.cli_validator.assert_cli_success(result)
+
+# Check expected failure
+self.cli_validator.assert_cli_failure(result, expected_error="Config file not found")
+
+# Check specific exit code
+self.cli_validator.assert_cli_exit_code(result, 1)
+
+# Check stdout/stderr content
+self.cli_validator.assert_cli_stdout_contains(result, "Processing complete")
+self.cli_validator.assert_cli_stderr_contains(result, "Warning")
+```
+
+### OutputValidator
+```python
+# Check C2PUML output files
+model_file = self.output_validator.assert_model_file_exists(output_dir)
+transformed_file = self.output_validator.assert_transformed_model_file_exists(output_dir)
+puml_files = self.output_validator.assert_puml_files_exist(output_dir, min_count=2)
+
+# Check general files
+self.output_validator.assert_file_exists("some_file.txt")
+self.output_validator.assert_file_contains("log.txt", "Success")
 ```
 
 This clear separation ensures maintainability, testability, and prevents duplication of responsibilities across the framework.

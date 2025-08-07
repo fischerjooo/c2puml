@@ -6,6 +6,7 @@ This module provides comprehensive validation classes for testing c2puml outputs
 - PlantUMLValidator: Validates PlantUML files and diagram content  
 - OutputValidator: Validates general output files and directories
 - FileValidator: Advanced file operations and validation
+- CLIValidator: Validates CLI execution results
 """
 
 import os
@@ -13,6 +14,7 @@ import json
 import re
 import glob
 from typing import List, Dict, Optional
+from .executor import CLIResult
 
 
 class ModelValidator:
@@ -402,9 +404,61 @@ class OutputValidator:
                 raise AssertionError(f"Log contains error pattern: '{pattern}'")
     
     def assert_log_no_warnings(self, log_content: str) -> None:
-        """Assert that log content contains no warning messages"""
-        if "WARNING" in log_content:
-            raise AssertionError("Log contains warning messages")
+        """Assert that log content contains no warnings"""
+        warning_patterns = [r'WARNING', r'Warning', r'warning']
+        for pattern in warning_patterns:
+            if re.search(pattern, log_content):
+                raise AssertionError(f"Log contains warnings: {log_content}")
+    
+    # === C2PUML Output Specific Assertions ===
+    
+    def assert_model_file_exists(self, output_dir: str) -> str:
+        """
+        Assert that model.json file exists and return its path
+        
+        Args:
+            output_dir: Output directory to check
+            
+        Returns:
+            Path to the model.json file
+        """
+        model_file = os.path.join(output_dir, "model.json")
+        self.assert_file_exists(model_file)
+        return model_file
+    
+    def assert_transformed_model_file_exists(self, output_dir: str) -> str:
+        """
+        Assert that model_transformed.json file exists and return its path
+        
+        Args:
+            output_dir: Output directory to check
+            
+        Returns:
+            Path to the model_transformed.json file
+        """
+        transformed_model_file = os.path.join(output_dir, "model_transformed.json")
+        self.assert_file_exists(transformed_model_file)
+        return transformed_model_file
+    
+    def assert_puml_files_exist(self, output_dir: str, min_count: int = 1) -> list:
+        """
+        Assert that PlantUML files exist and return their paths
+        
+        Args:
+            output_dir: Output directory to check
+            min_count: Minimum number of .puml files expected
+            
+        Returns:
+            List of paths to .puml files
+        """
+        if not os.path.exists(output_dir):
+            raise AssertionError(f"Output directory does not exist: {output_dir}")
+        
+        puml_files = [f for f in os.listdir(output_dir) if f.endswith('.puml')]
+        if len(puml_files) < min_count:
+            raise AssertionError(f"Expected at least {min_count} .puml files, found {len(puml_files)}")
+        
+        return [os.path.join(output_dir, f) for f in puml_files]
 
 
 class FileValidator:
@@ -459,6 +513,63 @@ class FileValidator:
                 raise AssertionError(f"File '{file_path}' line {i} has trailing whitespace")
     
     def assert_execution_time_under(self, actual_time: float, max_time: float) -> None:
-        """Assert that execution time is under maximum"""
+        """Assert that execution time is under the specified maximum"""
         if actual_time > max_time:
             raise AssertionError(f"Execution time {actual_time:.2f}s exceeds maximum {max_time:.2f}s")
+
+
+class CLIValidator:
+    """Validates CLI execution results and behavior"""
+    
+    def assert_cli_success(self, result: CLIResult, message: str = None) -> None:
+        """
+        Assert that CLI execution was successful
+        
+        Args:
+            result: CLIResult from CLI execution
+            message: Optional custom error message
+        """
+        if message is None:
+            message = f"CLI execution failed with exit code {result.exit_code}"
+        
+        if result.exit_code != 0:
+            raise AssertionError(f"{message}\nstdout: {result.stdout}\nstderr: {result.stderr}")
+    
+    def assert_cli_failure(self, result: CLIResult, expected_error: str = None, message: str = None) -> None:
+        """
+        Assert that CLI execution failed
+        
+        Args:
+            result: CLIResult from CLI execution
+            expected_error: Optional expected error message to check for
+            message: Optional custom error message
+        """
+        if message is None:
+            message = "Expected CLI to fail but it succeeded"
+        
+        if result.exit_code == 0:
+            raise AssertionError(message)
+        
+        if expected_error:
+            if expected_error not in result.stderr:
+                raise AssertionError(f"Expected error '{expected_error}' not found in stderr: {result.stderr}")
+    
+    def assert_cli_exit_code(self, result: CLIResult, expected_exit_code: int) -> None:
+        """Assert that CLI execution returned expected exit code"""
+        if result.exit_code != expected_exit_code:
+            raise AssertionError(f"Expected exit code {expected_exit_code}, got {result.exit_code}")
+    
+    def assert_cli_stdout_contains(self, result: CLIResult, expected_text: str) -> None:
+        """Assert that CLI stdout contains expected text"""
+        if expected_text not in result.stdout:
+            raise AssertionError(f"Expected text '{expected_text}' not found in stdout: {result.stdout}")
+    
+    def assert_cli_stderr_contains(self, result: CLIResult, expected_text: str) -> None:
+        """Assert that CLI stderr contains expected text"""
+        if expected_text not in result.stderr:
+            raise AssertionError(f"Expected text '{expected_text}' not found in stderr: {result.stderr}")
+    
+    def assert_cli_execution_time_under(self, result: CLIResult, max_time: float) -> None:
+        """Assert that CLI execution time is under the specified maximum"""
+        if result.execution_time > max_time:
+            raise AssertionError(f"Execution time {result.execution_time:.2f}s exceeds maximum {max_time:.2f}s")

@@ -7,7 +7,7 @@ to c2puml functionality, ensuring tests validate the actual user interface.
 """
 
 from .executor import TestExecutor, CLIResult
-from .validators import ModelValidator, PlantUMLValidator, OutputValidator, FileValidator
+from .validators import ModelValidator, PlantUMLValidator, OutputValidator, FileValidator, CLIValidator
 from .base import UnifiedTestCase
 from .data_loader import TestDataLoader
 from .assertion_processor import AssertionProcessor
@@ -19,6 +19,7 @@ __all__ = [
     'PlantUMLValidator',
     'OutputValidator',
     'FileValidator',
+    'CLIValidator',
     'UnifiedTestCase',
     'TestDataLoader',
     'AssertionProcessor',
