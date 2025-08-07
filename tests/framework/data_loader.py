@@ -194,48 +194,54 @@ class TestDataLoader:
     
     def _validate_test_data(self, test_data: Dict) -> None:
         """
-        Validate test data structure
+        Validate test data structure against schema
         
         Args:
-            test_data: Test data to validate
+            test_data: Test data dictionary to validate
             
         Raises:
-            ValueError: If test data structure is invalid
+            ValueError: If test data doesn't match expected schema
         """
-        required_sections = ["test", "inputs", "assertions"]
+        # Define required sections
+        required_sections = ["source_files", "config"]
+        optional_sections = ["model", "assertions"]
         
+        # Check required sections
         for section in required_sections:
             if section not in test_data:
-                raise ValueError(f"Missing required section in test data: {section}")
+                raise ValueError(f"Missing required section '{section}' in test data")
         
-        # Validate test section
-        test_section = test_data["test"]
-        required_test_fields = ["name", "description", "category", "id"]
+        # Validate source_files section
+        if not isinstance(test_data["source_files"], dict):
+            raise ValueError("'source_files' must be a dictionary")
         
-        for field in required_test_fields:
-            if field not in test_section:
-                raise ValueError(f"Missing required field in test section: {field}")
+        if not test_data["source_files"]:
+            raise ValueError("'source_files' cannot be empty")
         
-        # Validate inputs section
-        inputs_section = test_data["inputs"]
-        if "source_files" not in inputs_section:
-            raise ValueError("Missing source_files in inputs section")
+        # Validate config section
+        if not isinstance(test_data["config"], dict):
+            raise ValueError("'config' must be a dictionary")
         
-        # Check that config.json is included in source_files (optional)
-        source_files = inputs_section["source_files"]
-        if "config.json" not in source_files:
-            # Add default config if not provided
-            inputs_section["source_files"]["config.json"] = json.dumps({
-                "project_name": f"test_{test_data['test']['id']}",
-                "source_folders": ["."],
-                "output_dir": "../output",
-                "recursive_search": True
-            }, indent=2)
+        required_config_keys = ["project_name", "source_folders", "output_dir"]
+        for key in required_config_keys:
+            if key not in test_data["config"]:
+                raise ValueError(f"Missing required config key '{key}'")
         
-        # Validate assertions section
-        assertions_section = test_data["assertions"]
-        if not isinstance(assertions_section, dict):
-            raise ValueError("Assertions section must be a dictionary")
+        # Validate assertions section if present
+        if "assertions" in test_data:
+            if not isinstance(test_data["assertions"], dict):
+                raise ValueError("'assertions' must be a dictionary")
+            
+            # Validate assertion structure
+            valid_assertion_keys = ["execution", "model", "puml"]
+            for key in test_data["assertions"]:
+                if key not in valid_assertion_keys:
+                    raise ValueError(f"Invalid assertion key '{key}'. Valid keys: {valid_assertion_keys}")
+        
+        # Validate model section if present
+        if "model" in test_data:
+            if not isinstance(test_data["model"], dict):
+                raise ValueError("'model' must be a dictionary")
     
     def _create_source_files(self, test_data: Dict, temp_dir: str) -> str:
         """

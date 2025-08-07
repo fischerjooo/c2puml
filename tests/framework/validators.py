@@ -1,20 +1,24 @@
+#!/usr/bin/env python3
 """
-Validation Framework for C2PUML Tests
+Validators for the unified testing framework
 
-This module provides comprehensive validation classes for testing c2puml outputs:
-- ModelValidator: Validates model.json files and content
-- PlantUMLValidator: Validates PlantUML files and diagram content  
-- OutputValidator: Validates general output files and directories
-- FileValidator: Advanced file operations and validation
-- CLIValidator: Validates CLI execution results
+This module provides various validator classes for validating different
+aspects of test outputs and CLI results.
 """
 
 import os
-import json
 import re
-import glob
-from typing import List, Dict, Optional
+import json
+from typing import Dict, List, Any, Optional
 from .executor import CLIResult
+
+
+class TestError(Exception):
+    """Enhanced exception class for test framework errors with context"""
+    def __init__(self, message: str, test_id: str = None, context: Dict = None):
+        self.test_id = test_id
+        self.context = context or {}
+        super().__init__(f"Test '{test_id}' failed: {message}" if test_id else message)
 
 
 class ModelValidator:
@@ -529,11 +533,11 @@ class CLIValidator:
             result: CLIResult from CLI execution
             message: Optional custom error message
         """
-        if message is None:
-            message = f"CLI execution failed with exit code {result.exit_code}"
-        
         if result.exit_code != 0:
-            raise AssertionError(f"{message}\nstdout: {result.stdout}\nstderr: {result.stderr}")
+            error_msg = message or f"CLI execution failed with exit code {result.exit_code}"
+            if result.stderr:
+                error_msg += f"\nStderr: {result.stderr}"
+            raise TestError(error_msg, context={"exit_code": result.exit_code, "stderr": result.stderr})
     
     def assert_cli_failure(self, result: CLIResult, expected_error: str = None, message: str = None) -> None:
         """
@@ -544,32 +548,34 @@ class CLIValidator:
             expected_error: Optional expected error message to check for
             message: Optional custom error message
         """
-        if message is None:
-            message = "Expected CLI to fail but it succeeded"
-        
         if result.exit_code == 0:
-            raise AssertionError(message)
+            error_msg = message or "CLI execution succeeded when failure was expected"
+            raise TestError(error_msg, context={"exit_code": result.exit_code, "stdout": result.stdout})
         
-        if expected_error:
-            if expected_error not in result.stderr:
-                raise AssertionError(f"Expected error '{expected_error}' not found in stderr: {result.stderr}")
+        if expected_error and expected_error not in result.stderr:
+            error_msg = f"Expected error '{expected_error}' not found in stderr: {result.stderr}"
+            raise TestError(error_msg, context={"exit_code": result.exit_code, "stderr": result.stderr})
     
     def assert_cli_exit_code(self, result: CLIResult, expected_exit_code: int) -> None:
         """Assert that CLI execution returned expected exit code"""
         if result.exit_code != expected_exit_code:
-            raise AssertionError(f"Expected exit code {expected_exit_code}, got {result.exit_code}")
+            raise TestError(f"Expected exit code {expected_exit_code}, got {result.exit_code}", 
+                          context={"exit_code": result.exit_code, "expected_exit_code": expected_exit_code})
     
     def assert_cli_stdout_contains(self, result: CLIResult, expected_text: str) -> None:
         """Assert that CLI stdout contains expected text"""
         if expected_text not in result.stdout:
-            raise AssertionError(f"Expected text '{expected_text}' not found in stdout: {result.stdout}")
+            raise TestError(f"Expected text '{expected_text}' not found in stdout: {result.stdout}",
+                          context={"stdout": result.stdout, "expected_text": expected_text})
     
     def assert_cli_stderr_contains(self, result: CLIResult, expected_text: str) -> None:
         """Assert that CLI stderr contains expected text"""
         if expected_text not in result.stderr:
-            raise AssertionError(f"Expected text '{expected_text}' not found in stderr: {result.stderr}")
+            raise TestError(f"Expected text '{expected_text}' not found in stderr: {result.stderr}",
+                          context={"stderr": result.stderr, "expected_text": expected_text})
     
     def assert_cli_execution_time_under(self, result: CLIResult, max_time: float) -> None:
         """Assert that CLI execution time is under the specified maximum"""
         if result.execution_time > max_time:
-            raise AssertionError(f"Execution time {result.execution_time:.2f}s exceeds maximum {max_time:.2f}s")
+            raise TestError(f"Execution time {result.execution_time:.2f}s exceeds maximum {max_time:.2f}s",
+                          context={"execution_time": result.execution_time, "max_time": max_time})
