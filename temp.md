@@ -12,27 +12,27 @@ The new unified testing framework uses a **single YAML file per test** that cont
 ```
 tests/
 ├── unit/
-│   ├── test-001.py          # Test implementation
-│   ├── test-001.yml         # Test data and assertions
-│   ├── test-002.py
-│   ├── test-002.yml
+│   ├── test_simple_c_file_parsing.py    # Test implementation
+│   ├── test_simple_c_file_parsing.yml   # Test data and assertions
+│   ├── test_complex_struct_parsing.py
+│   ├── test_complex_struct_parsing.yml
 │   └── ...
 ├── feature/
-│   ├── test-101.py
-│   ├── test-101.yml
+│   ├── test_multi_file_project.py
+│   ├── test_multi_file_project.yml
 │   └── ...
 ├── integration/
-│   ├── test-201.py
-│   ├── test-201.yml
+│   ├── test_end_to_end_pipeline.py
+│   ├── test_end_to_end_pipeline.yml
 │   └── ...
 └── example/
-    ├── test-301.py
-    ├── test-301.yml
+    ├── test_basic_example.py
+    ├── test_basic_example.yml
     └── ...
 ```
 
 ### YAML File Structure
-Each `test-###.yml` file contains:
+Each `test_<meaningful_name>.yml` file contains:
 
 ```yaml
 test:
@@ -62,11 +62,13 @@ inputs:
       
       int global_var;
 
-  config:
-    project_name: "test_parser_simple"
-    source_folders: ["."]
-    output_dir: "./output"
-    recursive_search: true
+    config.json: |
+      {
+        "project_name": "test_parser_simple",
+        "source_folders": ["."],
+        "output_dir": "./output",
+        "recursive_search": true
+      }
 
 assertions:
   execution:
@@ -102,7 +104,7 @@ assertions:
 ### 1. TestDataLoader
 - **Purpose**: Load and parse YAML test files
 - **Methods**: `load_test_data(test_id)`, `create_temp_files(test_data)`
-- **Features**: YAML parsing, temporary file creation
+- **Features**: YAML parsing, temporary file creation, meaningful test ID support
 
 ### 2. AssertionProcessor
 - **Purpose**: Process assertions from YAML data
@@ -129,7 +131,7 @@ assertions:
 ```python
 #!/usr/bin/env python3
 """
-Unit test for [specific functionality]
+Unit test for Simple C File Parsing
 """
 
 import os
@@ -142,13 +144,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 
-class Test001(UnifiedTestCase):
-    """Test [specific functionality]"""
+class TestSimpleCFileParsing(UnifiedTestCase):
+    """Test Simple C File Parsing"""
 
-    def test_functionality(self):
-        """Test [specific functionality]"""
+    def test_simple_c_file_parsing(self):
+        """Test parsing a simple C file through the CLI interface"""
         # Load test data from YAML
-        test_data = self.data_loader.load_test_data("001")
+        test_data = self.data_loader.load_test_data("simple_c_file_parsing")
         
         # Create temporary files
         source_dir, config_path = self.data_loader.create_temp_files(test_data)
@@ -189,37 +191,41 @@ if __name__ == "__main__":
 4. **Standardization**: All tests follow the same structure
 5. **Version Control**: YAML files are easily tracked and diffed
 6. **Flexibility**: Easy to add new test scenarios
+7. **Meaningful Names**: Test files have descriptive names that explain their purpose
+8. **Direct JSON**: Config files are included as direct JSON text for better readability
 
 ## Test Naming Convention
 
-- **Unit Tests**: test-001.py to test-050.yml
-- **Feature Tests**: test-101.py to test-150.yml
-- **Integration Tests**: test-201.py to test-250.yml
-- **Example Tests**: test-301.py to test-350.yml
+- **Unit Tests**: test_simple_c_file_parsing.py, test_complex_struct_parsing.py, etc.
+- **Feature Tests**: test_multi_file_project.py, test_recursive_search.py, etc.
+- **Integration Tests**: test_end_to_end_pipeline.py, test_error_handling.py, etc.
+- **Example Tests**: test_basic_example.py, test_advanced_example.py, etc.
 
 ## Migration Guidelines
 
 ### Converting Existing Tests
 
 1. **Extract test data**: Move hardcoded C code to YAML source_files section
-2. **Extract assertions**: Move hardcoded assertions to YAML assertions section
-3. **Create YAML file**: Create test-###.yml with extracted data
-4. **Update test file**: Convert to use TestDataLoader and AssertionProcessor
-5. **Verify functionality**: Ensure test still validates the same functionality
+2. **Extract config**: Move config to config.json as direct JSON text
+3. **Extract assertions**: Move hardcoded assertions to YAML assertions section
+4. **Create YAML file**: Create test_<meaningful_name>.yml with extracted data
+5. **Update test file**: Convert to use TestDataLoader and AssertionProcessor
+6. **Verify functionality**: Ensure test still validates the same functionality
 
 ### YAML Best Practices
 
-1. **Use meaningful test names**: Descriptive test names in YAML
+1. **Use meaningful test names**: Descriptive test names that explain functionality
 2. **Organize assertions logically**: Group by execution, model, puml
 3. **Use consistent formatting**: Follow YAML formatting standards
 4. **Document complex scenarios**: Add comments for complex test cases
 5. **Keep files focused**: One main test scenario per YAML file
+6. **Direct JSON for config**: Include config.json as direct JSON text for readability
 
 ## Example Implementation
 
-The first test (test-001) demonstrates this new approach:
+The first test demonstrates this new approach:
 
-- **test-001.py**: Simple test implementation using the framework
-- **test-001.yml**: Contains all test data and assertions in a single file
+- **test_simple_c_file_parsing.py**: Simple test implementation using the framework
+- **test_simple_c_file_parsing.yml**: Contains all test data and assertions in a single file
 
 This new approach makes the testing framework much more maintainable and easier to understand while providing all the benefits of data-driven testing.
