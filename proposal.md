@@ -50,52 +50,9 @@ self.assert_test_success(result)
 self.validate_test_output(result)
 ```
 
-## 2. **YAML Structure Inconsistencies**
 
-### **Problem**: Inconsistent YAML Structure
-The current YAML has redundant sections:
 
-```yaml
-# Current - redundant model.json and assertions
-model.json: |
-  {
-    "files": {
-      "simple.c": {
-        "structs": { "Person": { "fields": ["name", "age"] } }
-      }
-    }
-  }
-
----
-assertions:
-  model:
-    files:
-      simple.c:
-        structs:
-          Person:
-            fields: ["name", "age"]
-```
-
-### **Proposal**: Simplify YAML Structure
-```yaml
-# Proposed - single assertions section
-assertions:
-  execution:
-    exit_code: 0
-  model:
-    files:
-      simple.c:
-        structs:
-          Person:
-            fields: ["name", "age"]
-        enums:
-          Status:
-            values: ["OK", "ERROR"]
-  puml:
-    contains_elements: ["Person", "Status"]
-```
-
-## 3. **Framework Component Over-Engineering**
+## 2. **Framework Component Over-Engineering**
 
 ### **Problem**: Too Many Components
 Current framework has 6+ components that could be simplified:
@@ -121,7 +78,7 @@ class UnifiedTestCase:
         """Validate all test outputs"""
 ```
 
-## 4. **Path Management Complexity**
+## 3. **Path Management Complexity**
 
 ### **Problem**: Complex Path Calculations
 The current implementation requires manual path calculations:
@@ -144,7 +101,7 @@ class TestPaths:
         self.config_file = f"{self.input_dir}/config.json"
 ```
 
-## 5. **Validation Framework Complexity**
+## 4. **Validation Framework Complexity**
 
 ### **Problem**: Too Many Validator Classes
 Current validation is split across 5 classes with overlapping responsibilities:
@@ -169,7 +126,7 @@ class TestValidator:
         """Validate PlantUML content"""
 ```
 
-## 6. **Error Handling and Debugging**
+## 5. **Error Handling and Debugging**
 
 ### **Problem**: Poor Error Messages
 Current error messages don't provide enough context for debugging.
@@ -184,7 +141,7 @@ class TestError(Exception):
         super().__init__(f"Test '{test_id}' failed: {message}")
 ```
 
-## 7. **YAML Schema Validation**
+## 6. **YAML Schema Validation**
 
 ### **Problem**: No Schema Validation
 The current framework doesn't validate YAML structure against a schema.
@@ -200,7 +157,7 @@ schema:
     optional: ["model", "puml"]
 ```
 
-## 8. **Test Discovery and Organization**
+## 7. **Test Discovery and Organization**
 
 ### **Problem**: Manual Test ID Management
 Test IDs are manually managed and can conflict.
