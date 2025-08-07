@@ -10,6 +10,7 @@ from .input_factory import TestInputFactory
 from .validators import ModelValidator, PlantUMLValidator, OutputValidator, FileValidator
 from .base import UnifiedTestCase
 from .assertion_processor import AssertionProcessor
+from .data_loader import TestDataLoader
 
 __all__ = [
     'TestExecutor',
@@ -20,5 +21,6 @@ __all__ = [
     'OutputValidator',
     'FileValidator',
     'UnifiedTestCase',
-    'AssertionProcessor'
+    'AssertionProcessor',
+    'TestDataLoader'
 ]

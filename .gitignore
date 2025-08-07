@@ -69,9 +69,15 @@ Thumbs.db
 !artifacts/output_example/*.json
 !tests/unit/*/input/*.json
 !tests/unit/*/assert-*.json
+!tests/unit/test-*.yml
+!tests/feature/test-*.yml
+!tests/integration/test-*.yml
+!tests/example/test-*.yml
 test_*.json
 final_*.json
 cleanup_*.json
+.dmypy.json
+dmypy.json
 
 # Coverage and test reports
 .coverage

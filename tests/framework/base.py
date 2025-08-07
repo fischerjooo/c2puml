@@ -1,19 +1,22 @@
+#!/usr/bin/env python3
 """
-UnifiedTestCase - Base Class for C2PUML Unified Testing Framework
+Unified Test Case Base Class
 
-This module provides the UnifiedTestCase base class that all tests using the
-unified testing framework should inherit from. It provides common setup,
-teardown, and utility methods for working with the TestExecutor and TestInputFactory.
+This module provides the UnifiedTestCase base class that all c2puml tests
+should inherit from, providing common setup, teardown, and utility methods.
 """
 
 import os
-import tempfile
+import sys
 import unittest
-from typing import Optional, Dict, Any, List
+import tempfile
 import json
+import shutil
+from typing import Dict, Any, List
 
 from .executor import TestExecutor, CLIResult
-from .input_factory import TestInputFactory
+from .data_loader import TestDataLoader
+from .assertion_processor import AssertionProcessor
 from .validators import ModelValidator, PlantUMLValidator, OutputValidator, FileValidator
 
 
@@ -29,12 +32,11 @@ class UnifiedTestCase(unittest.TestCase):
     """
     
     def setUp(self):
-        """Set up test environment with framework components"""
-        super().setUp()
-        
+        """Set up test environment"""
         # Initialize framework components
         self.executor = TestExecutor()
-        self.input_factory = TestInputFactory()
+        self.data_loader = TestDataLoader()
+        self.assertion_processor = AssertionProcessor()
         
         # Initialize validators
         self.model_validator = ModelValidator()
