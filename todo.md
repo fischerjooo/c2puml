@@ -544,6 +544,11 @@ puml:
 | test_parser.py | ✅ Complete | test_parser_enums | test_parser_enums.yml | Enum parsing test |
 | test_parser.py | ✅ Complete | test_parser_functions | test_parser_functions.yml | Function parsing test |
 | test_parser.py | ✅ Complete | test_parser_macros | test_parser_macros.yml | Macro parsing test |
+| test_parser.py | ✅ Complete | test_parser_includes | test_parser_includes.yml | Include parsing test |
+| test_parser.py | ✅ Complete | test_parser_globals | test_parser_globals.yml | Global variable parsing test |
+| test_parser.py | ✅ Complete | test_parser_typedefs | test_parser_typedefs.yml | Typedef parsing test |
+| test_parser.py | ✅ Complete | test_parser_encoding | test_parser_encoding.yml | Encoding detection test |
+| test_parser.py | ✅ Complete | test_parser_complete | test_parser_complete.yml | Complete file parsing test |
 | test_parser_comprehensive.py | 🔄 Pending | test_parser_comprehensive | test_parser_comprehensive.yml | Complex parser test |
 | test_parser_comprehensive.py | 🔄 Pending | test_parser_comprehensive | test_parser_comprehensive.yml | Comprehensive parsing |
 | test_parser_filtering.py | 🔄 Pending | test_parser_filtering | test_parser_filtering.yml | Filtering functionality |
@@ -652,9 +657,9 @@ Based on the current state, the next priority is to systematically convert the r
 4. **Convert example tests** using the special external file structure
 
 ### 📊 Progress Metrics
-- **Total Tests**: 456
-- **Converted**: 6 (1.32%)
-- **Remaining**: 450 (98.68%)
+- **Total Tests**: 451
+- **Converted**: 11 (2.44%)
+- **Remaining**: 440 (97.56%)
 - **Framework Ready**: ✅
 - **Documentation Complete**: ✅
 
@@ -663,6 +668,11 @@ Based on the current state, the next priority is to systematically convert the r
 - **PlantUML Relationship Count**: Structs and enums create 2 relationships (declaration relationships), while functions and macros create 0 relationships
 - **Function Signatures**: PlantUML shows full function signatures with parameters, not just function names
 - **Macro Definitions**: PlantUML shows macro definitions with parameters for function-like macros
+- **Typedefs**: Typedefs create separate classes (5 total: source + 4 typedef classes) with 4 relationships (declaration relationships)
+- **Includes**: Include statements are not shown as separate elements in PlantUML, only in the source class
+- **Globals**: Global variables are shown in the source class with their types and values
+- **Anonymous Structs**: Anonymous structs in typedefs are parsed as separate struct classes
+- **Model Field Names**: The model uses "aliases" field for typedefs, not "typedefs"
 - **Simple Pattern Works**: All converted tests successfully use the simple 3-line pattern without custom assertions
 
 ### 🔄 Next Steps
@@ -674,9 +684,9 @@ Based on the current state, the next priority is to systematically convert the r
 4. **Convert example tests** using the special external file structure
 
 ### 📊 Progress Metrics
-- **Total Tests**: 456
-- **Converted**: 6 (1.32%)
-- **Remaining**: 450 (98.68%)
+- **Total Tests**: 451
+- **Converted**: 11 (2.44%)
+- **Remaining**: 440 (97.56%)
 - **Framework Ready**: ✅
 - **Documentation Complete**: ✅
 
