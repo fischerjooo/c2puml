@@ -42,13 +42,15 @@ self.assertion_processor.process_assertions(
 )
 ```
 
-### **Proposal**: Create High-Level Test Runner
+### **Proposal**: Merge High-Level Methods into base.py
 ```python
 # Proposed simplified implementation - 3 lines
 result = self.run_test("simple_c_file_parsing")
 self.assert_test_success(result)
 self.validate_test_output(result)
 ```
+
+The high-level methods (`run_test`, `assert_test_success`, `validate_test_output`) should be added directly to the existing `UnifiedTestCase` class in `base.py`, not as a separate component.
 
 
 
@@ -64,10 +66,12 @@ Current framework has 6+ components that could be simplified:
 - `validators.py` - 5 different validator classes
 - `__init__.py` - Just imports
 
-### **Proposal**: Consolidate Components
+### **Proposal**: Enhance Existing base.py
 ```python
-# Proposed simplified structure
+# Proposed enhanced UnifiedTestCase in base.py
 class UnifiedTestCase:
+    # Existing setup methods...
+    
     def run_test(self, test_id: str) -> TestResult:
         """Run a complete test and return results"""
         
@@ -77,6 +81,8 @@ class UnifiedTestCase:
     def validate_test_output(self, result: TestResult):
         """Validate all test outputs"""
 ```
+
+Instead of creating new components, enhance the existing `UnifiedTestCase` class with high-level convenience methods that encapsulate the common test patterns.
 
 ## 3. **Path Management Complexity**
 
@@ -175,16 +181,16 @@ class TestDiscovery:
 
 ## Proposed Simplified Framework
 
-### **New Architecture**
+### **Enhanced Architecture**
 
 ```
 tests/framework/
 ├── __init__.py
-├── test_runner.py      # Main test execution logic
-├── test_validator.py   # Unified validation
-├── test_paths.py       # Path management
-├── yaml_loader.py      # YAML loading and validation
-└── base.py            # Simplified base class
+├── data_loader.py      # YAML loading and file creation
+├── executor.py         # CLI execution
+├── validators.py       # Unified validation
+├── assertion_processor.py # Assertion processing
+└── base.py            # Enhanced base class with high-level methods
 ```
 
 ### **Simplified Test Implementation**
@@ -235,11 +241,11 @@ assertions:
 
 ## Implementation Plan
 
-### **Phase 1: Framework Simplification**
-1. Create simplified `TestRunner` class
-2. Consolidate validation logic
-3. Simplify path management
-4. Add schema validation
+### **Phase 1: Framework Enhancement**
+1. Add high-level methods to `UnifiedTestCase` in `base.py`
+2. Consolidate validation logic in `validators.py`
+3. Simplify path management in `data_loader.py`
+4. Add schema validation to `data_loader.py`
 
 ### **Phase 2: Migration Tools**
 1. Create YAML migration script
