@@ -46,7 +46,11 @@ class TestDataLoader:
             yaml_file = f"tests/{category}/test_{test_id}.yml"
             if os.path.exists(yaml_file):
                 with open(yaml_file, 'r') as f:
-                    test_data = yaml.safe_load(f)
+                    # Load all YAML documents
+                    documents = list(yaml.safe_load_all(f))
+                
+                # Parse documents into structured test data
+                test_data = self._parse_yaml_documents(documents)
                 
                 # Validate YAML structure
                 self._validate_test_data(test_data)
@@ -61,7 +65,11 @@ class TestDataLoader:
             
             if os.path.exists(yaml_file):
                 with open(yaml_file, 'r') as f:
-                    test_data = yaml.safe_load(f)
+                    # Load all YAML documents
+                    documents = list(yaml.safe_load_all(f))
+                
+                # Parse documents into structured test data
+                test_data = self._parse_yaml_documents(documents)
                 
                 # Validate YAML structure
                 self._validate_test_data(test_data)
@@ -71,6 +79,50 @@ class TestDataLoader:
             pass
         
         raise FileNotFoundError(f"Test data file not found for test ID: {test_id}")
+
+    def _parse_yaml_documents(self, documents: list) -> Dict:
+        """
+        Parse multiple YAML documents into structured test data
+        
+        Args:
+            documents: List of YAML documents
+            
+        Returns:
+            Structured test data dictionary
+        """
+        test_data = {}
+        
+        for doc in documents:
+            if not doc:  # Skip empty documents
+                continue
+                
+            # Test metadata
+            if "test" in doc:
+                test_data["test"] = doc["test"]
+            
+            # Source files
+            if "source_files" in doc:
+                if "inputs" not in test_data:
+                    test_data["inputs"] = {}
+                test_data["inputs"]["source_files"] = doc["source_files"]
+            
+            # Config file
+            if "config.json" in doc:
+                if "inputs" not in test_data:
+                    test_data["inputs"] = {}
+                if "source_files" not in test_data["inputs"]:
+                    test_data["inputs"]["source_files"] = {}
+                test_data["inputs"]["source_files"]["config.json"] = doc["config.json"]
+            
+            # Model template
+            if "model.json" in doc:
+                test_data["model_template"] = doc["model.json"]
+            
+            # Assertions
+            if "assertions" in doc:
+                test_data["assertions"] = doc["assertions"]
+        
+        return test_data
     
     def create_temp_files(self, test_data: Dict) -> Tuple[str, str]:
         """
@@ -143,10 +195,16 @@ class TestDataLoader:
         if "source_files" not in inputs_section:
             raise ValueError("Missing source_files in inputs section")
         
-        # Check that config.json is included in source_files
+        # Check that config.json is included in source_files (optional)
         source_files = inputs_section["source_files"]
         if "config.json" not in source_files:
-            raise ValueError("Missing config.json in source_files")
+            # Add default config if not provided
+            inputs_section["source_files"]["config.json"] = json.dumps({
+                "project_name": f"test_{test_data['test']['id']}",
+                "source_folders": ["."],
+                "output_dir": "./output",
+                "recursive_search": True
+            }, indent=2)
         
         # Validate assertions section
         assertions_section = test_data["assertions"]

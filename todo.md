@@ -2,89 +2,116 @@
 
 ## Overview
 
-This document outlines the refactoring of the c2puml test suite to use a unified testing framework that enforces CLI-only access to c2puml functionality, ensuring tests validate the actual user interface.
+This document outlines the refactoring of the C2PUML test suite to use a unified, CLI-only, public API testing framework with multi-document YAML files.
 
 ## Current Test Structure
 
-The current test suite has several issues:
-- Direct internal API usage in tests
-- Inconsistent test patterns
+The current test suite has inconsistent patterns:
+- Direct internal API imports in tests
 - Mixed testing approaches (unit, integration, feature)
-- No clear separation between test logic and test data
+- Hardcoded test data scattered throughout test files
+- No standardized input/output validation
 
 ## New Unified Testing Framework
 
-### Core Principles
-
-1. **CLI-Only Access**: Tests can only interact with c2puml through its public CLI interface
-2. **No Internal API Imports**: Tests are forbidden from importing internal c2puml modules
-3. **Data-Driven Testing**: Test data and assertions are externalized to YAML files
-4. **Standardized Structure**: All tests follow the same pattern
-
 ### Test Structure
-
-Each test follows this standardized structure:
-
 ```
 tests/
 ├── unit/
-│   ├── test-001.py          # Test implementation
-│   ├── test-001.yml         # Test data and assertions
-│   ├── test-002.py
-│   ├── test-002.yml
+│   ├── test_simple_c_file_parsing.py
+│   ├── test_simple_c_file_parsing.yml
+│   ├── test_complex_struct_parsing.py
+│   ├── test_complex_struct_parsing.yml
 │   └── ...
 ├── feature/
-│   ├── test-101.py
-│   ├── test-101.yml
+│   ├── test_multi_file_project.py
+│   ├── test_multi_file_project.yml
 │   └── ...
 ├── integration/
-│   ├── test-201.py
-│   ├── test-201.yml
+│   ├── test_end_to_end_pipeline.py
+│   ├── test_end_to_end_pipeline.yml
 │   └── ...
 └── example/
-    ├── test-301.py
-    ├── test-301.yml
+    ├── test_basic_example.py
+    ├── test_basic_example.yml
     └── ...
 ```
 
 ### YAML File Structure
-
-Each `test-###.yml` file contains:
+Each test uses a single YAML file with multiple documents separated by `---`:
 
 ```yaml
+# Test metadata
 test:
   name: "Simple C File Parsing"
   description: "Test parsing a simple C file with struct, enum, function, global, and include"
   category: "unit"
   id: "001"
 
-inputs:
-  source_files:
-    simple.c: |
-      #include <stdio.h>
-      
-      struct Person {
-          char name[50];
-          int age;
-      };
-      
-      enum Status {
-          OK,
-          ERROR
-      };
-      
-      int main() {
-          return 0;
+---
+# Source files
+source_files:
+  simple.c: |
+    #include <stdio.h>
+    
+    struct Person {
+        char name[50];
+        int age;
+    };
+    
+    enum Status {
+        OK,
+        ERROR
+    };
+    
+    int main() {
+        return 0;
+    }
+    
+    int global_var;
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_parser_simple",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Model template (optional - for complex model validation)
+model.json: |
+  {
+    "files": {
+      "simple.c": {
+        "structs": {
+          "Person": {
+            "fields": ["name", "age"]
+          }
+        },
+        "enums": {
+          "Status": {
+            "values": ["OK", "ERROR"]
+          }
+        },
+        "functions": ["main"],
+        "globals": ["global_var"],
+        "includes": ["stdio.h"]
       }
-      
-      int global_var;
+    },
+    "element_counts": {
+      "structs": 1,
+      "enums": 1,
+      "functions": 1,
+      "globals": 1,
+      "includes": 1
+    }
+  }
 
-  config:
-    project_name: "test_parser_simple"
-    source_folders: ["."]
-    output_dir: "./output"
-    recursive_search: true
-
+---
+# Assertions
 assertions:
   execution:
     exit_code: 0
@@ -114,80 +141,123 @@ assertions:
     syntax_valid: true
 ```
 
+### Document Structure
+Each YAML file contains up to 5 separate documents:
+
+1. **Test Metadata**: Basic test information (name, description, category, id)
+2. **Source Files**: C/C++ source files with their content
+3. **Configuration**: config.json as direct JSON text
+4. **Model Template** (optional): Expected model.json structure for complex validation
+5. **Assertions**: Test assertions and validation criteria
+
 ## Framework Components
 
-### 1. TestExecutor
-- **Purpose**: Execute c2puml via CLI interface
-- **Methods**: `run_full_pipeline()`, `run_parse_only()`, `run_transform_only()`, `run_generate_only()`
-- **Interface**: CLI-only, no internal API access
+### TestDataLoader
+- Loads multi-document YAML files
+- Creates temporary source and config files
+- Supports meaningful test IDs
+- Handles optional model templates
 
-### 2. TestDataLoader
-- **Purpose**: Load test data from YAML files
-- **Methods**: `load_test_data(test_id)`, `create_temp_files(test_data)`
-- **Features**: YAML parsing, temporary file creation
+### AssertionProcessor
+- Processes assertions from YAML data
+- Validates model content
+- Validates PlantUML output
+- Validates execution results
 
-### 3. AssertionProcessor
-- **Purpose**: Process assertions from YAML data
-- **Methods**: `process_assertions(assertions, model_data, puml_content, result)`
-- **Features**: Model validation, PlantUML validation, execution validation
+### TestExecutor
+- Executes c2puml via CLI interface only
+- No direct internal API access
+- Supports verbose output and error handling
 
-### 4. Validators
-- **ModelValidator**: Validate model.json content
-- **PlantUMLValidator**: Validate .puml file content
-- **OutputValidator**: Validate file existence and structure
+### Validators
+- ModelValidator: Validates model.json structure and content
+- PlantUMLValidator: Validates .puml file syntax and content
+- OutputValidator: Validates file existence and structure
 
-### 5. UnifiedTestCase
-- **Purpose**: Base class for all tests
-- **Features**: Setup/teardown, component initialization, basic utilities
+### UnifiedTestCase
+- Base class for all tests
+- Provides common setup/teardown
+- Initializes framework components
 
 ## Implementation Plan
 
-### Phase 1: Framework Foundation ✅
-- [x] Create TestExecutor for CLI execution
-- [x] Create TestDataLoader for YAML file loading
-- [x] Create AssertionProcessor for assertion processing
-- [x] Create Validators for output validation
+### Phase 1: Foundation ✅
+- [x] Create framework components
+- [x] Implement TestDataLoader with multi-document support
+- [x] Implement AssertionProcessor
+- [x] Implement TestExecutor
 - [x] Create UnifiedTestCase base class
 
-### Phase 2: Pilot Migration
-- [x] Convert first test (test-001: Simple C File Parsing)
-- [ ] Validate framework with first test
-- [ ] Refine framework based on pilot experience
+### Phase 2: Pilot ✅
+- [x] Convert first unit test (test_simple_c_file_parsing)
+- [x] Validate framework functionality
+- [x] Document approach and patterns
 
 ### Phase 3: Systematic Migration
-- [ ] Convert unit tests (test-002 to test-050)
-- [ ] Convert feature tests (test-101 to test-150)
-- [ ] Convert integration tests (test-201 to test-250)
-- [ ] Convert example tests (test-301 to test-350)
+- [ ] Convert remaining unit tests
+- [ ] Convert feature tests
+- [ ] Convert integration tests
+- [ ] Convert example tests
 
-### Phase 4: Framework Cleanup
+### Phase 4: Cleanup
 - [ ] Remove old framework files
-- [ ] Update documentation
-- [ ] Clean up .gitignore
-- [ ] Remove conftest.py dependencies
+- [ ] Update .gitignore
+- [ ] Clean up conftest.py dependencies
 
 ## Migration Tracking
 
-### Completed Tests
-- [x] test-001: Simple C File Parsing (unit)
-
-### Pending Tests
-- [ ] test-002: Complex Struct Parsing (unit)
-- [ ] test-003: Enum with Values (unit)
-- [ ] test-004: Function Parameters (unit)
-- [ ] test-005: Include Dependencies (unit)
-- [ ] test-101: Multi-file Project (feature)
-- [ ] test-102: Recursive Directory Search (feature)
-- [ ] test-201: End-to-End Pipeline (integration)
-- [ ] test-202: Error Handling (integration)
-- [ ] test-301: Basic Example (example)
-- [ ] test-302: Advanced Example (example)
+| Test Category | Status | Notes |
+|---------------|--------|-------|
+| test_simple_c_file_parsing | ✅ Complete | First pilot test with multi-document YAML |
+| Unit Tests (001-050) | 🔄 Pending | |
+| Feature Tests (101-150) | 🔄 Pending | |
+| Integration Tests (201-250) | 🔄 Pending | |
+| Example Tests (301-350) | 🔄 Pending | |
 
 ## Benefits
 
-1. **Standardization**: All tests follow the same structure
-2. **Maintainability**: Test data is separate from test logic
-3. **Readability**: YAML files are human-readable and self-documenting
-4. **Flexibility**: Easy to modify test data without touching code
-5. **CLI Compliance**: Enforces testing of the actual user interface
-6. **Framework Independence**: Tests are not tied to internal implementation details
+1. **Clear Separation**: Each document has a specific purpose and is clearly separated
+2. **Readability**: Easy to read and understand each section independently
+3. **Maintainability**: Easy to modify specific sections without affecting others
+4. **Flexibility**: Optional sections (like model templates) can be included as needed
+5. **Natural Formats**: Each section uses its most natural format (JSON for config, YAML for assertions)
+6. **Version Control**: Clear diffs when individual sections change
+7. **Meaningful Names**: Test files have descriptive names that explain their purpose
+8. **Direct JSON**: Config and model files are included as direct text for better readability
+
+## Test Naming Convention
+
+- **Unit Tests**: test_simple_c_file_parsing.py, test_complex_struct_parsing.py, etc.
+- **Feature Tests**: test_multi_file_project.py, test_recursive_search.py, etc.
+- **Integration Tests**: test_end_to_end_pipeline.py, test_error_handling.py, etc.
+- **Example Tests**: test_basic_example.py, test_advanced_example.py, etc.
+
+## YAML File Naming Convention
+
+- **Unit Tests**: test_simple_c_file_parsing.yml, test_complex_struct_parsing.yml, etc.
+- **Feature Tests**: test_multi_file_project.yml, test_recursive_search.yml, etc.
+- **Integration Tests**: test_end_to_end_pipeline.yml, test_error_handling.yml, etc.
+- **Example Tests**: test_basic_example.yml, test_advanced_example.yml, etc.
+
+## Migration Guidelines
+
+### Converting Existing Tests
+
+1. **Extract test metadata**: Create test section with name, description, category, id
+2. **Extract source files**: Move C code to source_files document
+3. **Extract config**: Move config to config.json document as direct JSON
+4. **Extract model template** (optional): Create model.json document for complex validation
+5. **Extract assertions**: Move assertions to assertions document
+6. **Create YAML file**: Create test_<meaningful_name>.yml with all documents
+7. **Update test file**: Convert to use TestDataLoader and AssertionProcessor
+8. **Verify functionality**: Ensure test still validates the same functionality
+
+### YAML Best Practices
+
+1. **Use meaningful test names**: Descriptive test names that explain functionality
+2. **Separate documents clearly**: Use `---` to separate different sections
+3. **Add comments**: Use comments to describe each document's purpose
+4. **Use consistent formatting**: Follow YAML formatting standards
+5. **Keep documents focused**: Each document should have a single purpose
+6. **Direct JSON for config/model**: Include JSON files as direct text for readability
+7. **Optional sections**: Only include model templates when needed for complex validation

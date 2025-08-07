@@ -1,10 +1,10 @@
 # Test Refactoring: New YAML-Based Unified Testing Framework
 
-This document describes the new unified testing framework approach using YAML files for test data and assertions.
+This document describes the new unified testing framework approach using YAML files with document separators for test data and assertions.
 
 ## Overview
 
-The new unified testing framework uses a **single YAML file per test** that contains both inputs and assertions, making the testing approach much simpler and more maintainable.
+The new unified testing framework uses a **single YAML file per test** with multiple documents separated by `---` that contains test metadata, source files, configuration, model templates, and assertions, making the testing approach much simpler and more maintainable.
 
 ## New Test Structure
 
@@ -32,44 +32,80 @@ tests/
 ```
 
 ### YAML File Structure
-Each `test_<meaningful_name>.yml` file contains:
+Each `test_<meaningful_name>.yml` file contains multiple YAML documents separated by `---`:
 
 ```yaml
+# Test metadata
 test:
   name: "Simple C File Parsing"
   description: "Test parsing a simple C file with struct, enum, function, global, and include"
   category: "unit"
   id: "001"
 
-inputs:
-  source_files:
-    simple.c: |
-      #include <stdio.h>
-      
-      struct Person {
-          char name[50];
-          int age;
-      };
-      
-      enum Status {
-          OK,
-          ERROR
-      };
-      
-      int main() {
-          return 0;
-      }
-      
-      int global_var;
+---
+# Source files
+source_files:
+  simple.c: |
+    #include <stdio.h>
+    
+    struct Person {
+        char name[50];
+        int age;
+    };
+    
+    enum Status {
+        OK,
+        ERROR
+    };
+    
+    int main() {
+        return 0;
+    }
+    
+    int global_var;
 
-    config.json: |
-      {
-        "project_name": "test_parser_simple",
-        "source_folders": ["."],
-        "output_dir": "./output",
-        "recursive_search": true
-      }
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_parser_simple",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
 
+---
+# Model template (optional - for complex model validation)
+model.json: |
+  {
+    "files": {
+      "simple.c": {
+        "structs": {
+          "Person": {
+            "fields": ["name", "age"]
+          }
+        },
+        "enums": {
+          "Status": {
+            "values": ["OK", "ERROR"]
+          }
+        },
+        "functions": ["main"],
+        "globals": ["global_var"],
+        "includes": ["stdio.h"]
+      }
+    },
+    "element_counts": {
+      "structs": 1,
+      "enums": 1,
+      "functions": 1,
+      "globals": 1,
+      "includes": 1
+    }
+  }
+
+---
+# Assertions
 assertions:
   execution:
     exit_code: 0
@@ -99,12 +135,21 @@ assertions:
     syntax_valid: true
 ```
 
+### Document Structure
+Each YAML file contains up to 5 separate documents:
+
+1. **Test Metadata**: Basic test information (name, description, category, id)
+2. **Source Files**: C/C++ source files with their content
+3. **Configuration**: config.json as direct JSON text
+4. **Model Template** (optional): Expected model.json structure for complex validation
+5. **Assertions**: Test assertions and validation criteria
+
 ## Framework Components
 
 ### 1. TestDataLoader
-- **Purpose**: Load and parse YAML test files
-- **Methods**: `load_test_data(test_id)`, `create_temp_files(test_data)`
-- **Features**: YAML parsing, temporary file creation, meaningful test ID support
+- **Purpose**: Load and parse multi-document YAML test files
+- **Methods**: `load_test_data(test_id)`, `create_temp_files(test_data)`, `_parse_yaml_documents(documents)`
+- **Features**: Multi-document YAML parsing, temporary file creation, meaningful test ID support
 
 ### 2. AssertionProcessor
 - **Purpose**: Process assertions from YAML data
@@ -183,16 +228,16 @@ if __name__ == "__main__":
     unittest.main()
 ```
 
-## Benefits of YAML Approach
+## Benefits of Multi-Document YAML Approach
 
-1. **Simplicity**: Single file contains both inputs and assertions
-2. **Readability**: YAML is human-readable and self-documenting
-3. **Maintainability**: Easy to modify test data without touching code
-4. **Standardization**: All tests follow the same structure
-5. **Version Control**: YAML files are easily tracked and diffed
-6. **Flexibility**: Easy to add new test scenarios
+1. **Clear Separation**: Each document has a specific purpose and is clearly separated
+2. **Readability**: Easy to read and understand each section independently
+3. **Maintainability**: Easy to modify specific sections without affecting others
+4. **Flexibility**: Optional sections (like model templates) can be included as needed
+5. **Natural Formats**: Each section uses its most natural format (JSON for config, YAML for assertions)
+6. **Version Control**: Clear diffs when individual sections change
 7. **Meaningful Names**: Test files have descriptive names that explain their purpose
-8. **Direct JSON**: Config files are included as direct JSON text for better readability
+8. **Direct JSON**: Config and model files are included as direct JSON text for better readability
 
 ## Test Naming Convention
 
@@ -205,27 +250,30 @@ if __name__ == "__main__":
 
 ### Converting Existing Tests
 
-1. **Extract test data**: Move hardcoded C code to YAML source_files section
-2. **Extract config**: Move config to config.json as direct JSON text
-3. **Extract assertions**: Move hardcoded assertions to YAML assertions section
-4. **Create YAML file**: Create test_<meaningful_name>.yml with extracted data
-5. **Update test file**: Convert to use TestDataLoader and AssertionProcessor
-6. **Verify functionality**: Ensure test still validates the same functionality
+1. **Extract test metadata**: Create test section with name, description, category, id
+2. **Extract source files**: Move C code to source_files document
+3. **Extract config**: Move config to config.json document as direct JSON
+4. **Extract model template** (optional): Create model.json document for complex validation
+5. **Extract assertions**: Move assertions to assertions document
+6. **Create YAML file**: Create test_<meaningful_name>.yml with all documents
+7. **Update test file**: Convert to use TestDataLoader and AssertionProcessor
+8. **Verify functionality**: Ensure test still validates the same functionality
 
 ### YAML Best Practices
 
 1. **Use meaningful test names**: Descriptive test names that explain functionality
-2. **Organize assertions logically**: Group by execution, model, puml
-3. **Use consistent formatting**: Follow YAML formatting standards
-4. **Document complex scenarios**: Add comments for complex test cases
-5. **Keep files focused**: One main test scenario per YAML file
-6. **Direct JSON for config**: Include config.json as direct JSON text for readability
+2. **Separate documents clearly**: Use `---` to separate different sections
+3. **Add comments**: Use comments to describe each document's purpose
+4. **Use consistent formatting**: Follow YAML formatting standards
+5. **Keep documents focused**: Each document should have a single purpose
+6. **Direct JSON for config/model**: Include JSON files as direct text for readability
+7. **Optional sections**: Only include model templates when needed for complex validation
 
 ## Example Implementation
 
 The first test demonstrates this new approach:
 
 - **test_simple_c_file_parsing.py**: Simple test implementation using the framework
-- **test_simple_c_file_parsing.yml**: Contains all test data and assertions in a single file
+- **test_simple_c_file_parsing.yml**: Contains all test data and assertions in multiple documents
 
-This new approach makes the testing framework much more maintainable and easier to understand while providing all the benefits of data-driven testing.
+This new approach makes the testing framework much more maintainable and easier to understand while providing all the benefits of data-driven testing with clear separation of concerns.

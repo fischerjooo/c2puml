@@ -1,38 +1,74 @@
+# Test metadata
 test:
   name: "Simple C File Parsing"
   description: "Test parsing a simple C file with struct, enum, function, global, and include"
   category: "unit"
   id: "001"
 
-inputs:
-  source_files:
-    simple.c: |
-      #include <stdio.h>
-      
-      struct Person {
-          char name[50];
-          int age;
-      };
-      
-      enum Status {
-          OK,
-          ERROR
-      };
-      
-      int main() {
-          return 0;
-      }
-      
-      int global_var;
+---
+# Source files
+source_files:
+  simple.c: |
+    #include <stdio.h>
+    
+    struct Person {
+        char name[50];
+        int age;
+    };
+    
+    enum Status {
+        OK,
+        ERROR
+    };
+    
+    int main() {
+        return 0;
+    }
+    
+    int global_var;
 
-    config.json: |
-      {
-        "project_name": "test_parser_simple",
-        "source_folders": ["."],
-        "output_dir": "./output",
-        "recursive_search": true
-      }
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_parser_simple",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
 
+---
+# Model template (optional - for complex model validation)
+model.json: |
+  {
+    "files": {
+      "simple.c": {
+        "structs": {
+          "Person": {
+            "fields": ["name", "age"]
+          }
+        },
+        "enums": {
+          "Status": {
+            "values": ["OK", "ERROR"]
+          }
+        },
+        "functions": ["main"],
+        "globals": ["global_var"],
+        "includes": ["stdio.h"]
+      }
+    },
+    "element_counts": {
+      "structs": 1,
+      "enums": 1,
+      "functions": 1,
+      "globals": 1,
+      "includes": 1
+    }
+  }
+
+---
+# Assertions
 assertions:
   execution:
     exit_code: 0
