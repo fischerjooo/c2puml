@@ -142,24 +142,6 @@ class TestExecutor:
         command = self._build_command(["--config", config_path, "--verbose"])
         return self._execute_command(command, working_dir)
     
-    def run_with_timeout(self, config_path: str, timeout: int, working_dir: str = None) -> CLIResult:
-        """
-        Run with timeout protection
-        
-        Args:
-            config_path: Path to config.json file or config directory
-            timeout: Timeout in seconds
-            working_dir: Working directory for execution (defaults to config directory)
-            
-        Returns:
-            CLIResult with execution details
-        """
-        if working_dir is None:
-            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
-        
-        command = self._build_command(["--config", config_path])
-        return self._execute_command(command, working_dir, timeout=timeout)
-    
     def run_with_env_vars(self, config_path: str, env: dict, working_dir: str = None) -> CLIResult:
         """
         Run with custom environment variables
