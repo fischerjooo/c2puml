@@ -52,77 +52,9 @@ class UnifiedTestCase(unittest.TestCase):
         self.test_method = self._testMethodName
     
     def tearDown(self):
-        """Clean up test environment"""
-        # Note: We don't automatically clean up temp_dir to preserve output for debugging
-        # Tests can override this method if they need specific cleanup
-        super().tearDown()
-    
-    # === Test Execution Helpers ===
-    
-    def run_c2puml_full_pipeline(self, config_path: str, working_dir: str = None) -> CLIResult:
-        """
-        Run the complete c2puml pipeline and return the result
-        
-        Args:
-            config_path: Path to config.json file or config directory
-            working_dir: Working directory for execution (defaults to config directory)
-            
-        Returns:
-            CLIResult with execution details
-        """
-        return self.executor.run_full_pipeline(config_path, working_dir)
-    
-    def run_c2puml_parse_only(self, config_path: str, working_dir: str = None) -> CLIResult:
-        """
-        Run only the parse step and return the result
-        
-        Args:
-            config_path: Path to config.json file or config directory
-            working_dir: Working directory for execution (defaults to config directory)
-            
-        Returns:
-            CLIResult with execution details
-        """
-        return self.executor.run_parse_only(config_path, working_dir)
-    
-    def run_c2puml_transform_only(self, config_path: str, working_dir: str = None) -> CLIResult:
-        """
-        Run only the transform step and return the result
-        
-        Args:
-            config_path: Path to config.json file or config directory
-            working_dir: Working directory for execution (defaults to config directory)
-            
-        Returns:
-            CLIResult with execution details
-        """
-        return self.executor.run_transform_only(config_path, working_dir)
-    
-    def run_c2puml_generate_only(self, config_path: str, working_dir: str = None) -> CLIResult:
-        """
-        Run only the generate step and return the result
-        
-        Args:
-            config_path: Path to config.json file or config directory
-            working_dir: Working directory for execution (defaults to config directory)
-            
-        Returns:
-            CLIResult with execution details
-        """
-        return self.executor.run_generate_only(config_path, working_dir)
-    
-    def run_c2puml_with_verbose(self, config_path: str, working_dir: str = None) -> CLIResult:
-        """
-        Run c2puml with verbose output for debugging
-        
-        Args:
-            config_path: Path to config.json file or config directory
-            working_dir: Working directory for execution (defaults to config directory)
-            
-        Returns:
-            CLIResult with execution details
-        """
-        return self.executor.run_with_verbose(config_path, working_dir)
+        """Clean up after each test"""
+        # Note: temp_dir is NOT automatically cleaned to preserve output for debugging
+        pass
     
     # === Input Factory Helpers ===
     
@@ -218,31 +150,6 @@ class UnifiedTestCase(unittest.TestCase):
             "c2puml_config": config,
             "source_files": source_files
         }
-    
-    # === Output Management Helpers ===
-    
-    def get_test_output_dir(self, scenario: str = None) -> str:
-        """
-        Get output directory for this test
-        
-        Args:
-            scenario: Optional scenario name
-            
-        Returns:
-            Path to the output directory
-        """
-        return self.executor.get_test_output_dir(self.test_name, scenario)
-    
-    def cleanup_output_dir(self, output_dir: str = None) -> None:
-        """
-        Clean up output directory before test execution
-        
-        Args:
-            output_dir: Output directory to clean (defaults to self.output_dir)
-        """
-        if output_dir is None:
-            output_dir = self.output_dir
-        self.executor.cleanup_output_dir(output_dir)
     
     # === Validation Helpers ===
     

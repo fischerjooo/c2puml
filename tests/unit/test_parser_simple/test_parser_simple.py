@@ -47,7 +47,7 @@ class TestParserSimple(UnifiedTestCase):
         )
 
         # Execute c2puml through CLI using framework
-        result = self.run_c2puml_full_pipeline(config_path, input_path)
+        result = self.executor.run_full_pipeline(config_path, input_path)
 
         # Validate execution success
         self.assert_c2puml_success(result)

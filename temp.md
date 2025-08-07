@@ -85,6 +85,14 @@ The framework now properly separates responsibilities:
 
 This ensures that each component has a single, well-defined responsibility and makes the framework more maintainable and extensible.
 
+### Direct Component Usage
+Tests now use framework components directly instead of through unnecessary wrapper methods:
+
+- **Before**: `self.run_c2puml_full_pipeline(config_path, input_path)`
+- **After**: `self.executor.run_full_pipeline(config_path, input_path)`
+
+This eliminates code duplication and unnecessary indirection, making the framework cleaner and more transparent.
+
 ## Code Comparison
 
 ### Before (Direct API Usage)
@@ -99,8 +107,8 @@ self.assertIn("Person", result.structs)
 ```python
 # Framework-based CLI execution
 input_path, config_path = self.input_factory.load_input_json_scenario(...)
-result = self.run_c2puml_full_pipeline(config_path, input_path)
-self.process_assertions(assertions, model_data, puml_content, result)
+result = self.executor.run_full_pipeline(config_path, input_path)
+self.assertion_processor.process_assertions(assertions, model_data, puml_content, result, self)
 ```
 
 ## Output Structure
