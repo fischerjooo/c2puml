@@ -1,0 +1,57 @@
+# Test metadata
+test:
+  name: "Struct Order PUML"
+  description: "Test that generated PlantUML preserves field order"
+  category: "unit"
+  id: "0021"
+
+---
+# Source files
+source_files:
+  struct_order_puml.c: |
+    typedef struct triangle_tag {
+        point_t vertices[3];
+        char label[MAX_LABEL_LEN];
+    } triangle_t;
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_struct_order_puml",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "struct_order_puml.puml"]
+  
+  model:
+    files:
+      struct_order_puml.c:
+        structs:
+          triangle_t:
+            fields: ["vertices", "label"]
+    element_counts:
+      structs: 1
+      enums: 0
+      functions: 0
+      globals: 0
+      includes: 0
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      struct_order_puml.puml:
+        contains_elements: ["triangle_t"]
+        contains_lines: ["class \"triangle_t\" as TYPEDEF_TRIANGLE_T", "+ point_t[3] vertices", "+ char[MAX_LABEL_LEN] label"]
+        class_count: 2
+        relationship_count: 1

@@ -1,0 +1,60 @@
+# Test metadata
+test:
+  name: "Macro Duplicates Simple"
+  description: "Test that same macro name doesn't appear twice"
+  category: "unit"
+  id: "0016"
+
+---
+# Source files
+source_files:
+  macro_duplicates.c: |
+    #if 1
+        #define DEPRECATED __attribute__((deprecated))
+    #else
+        #define DEPRECATED
+    #endif
+    
+    #define MAX_SIZE 100
+    #define MIN_SIZE 10
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_macro_duplicates_simple",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "macro_duplicates.puml"]
+  
+  model:
+    files:
+      macro_duplicates.c:
+        macros: ["DEPRECATED", "MAX_SIZE", "MIN_SIZE"]
+    element_counts:
+      structs: 0
+      enums: 0
+      functions: 0
+      globals: 0
+      includes: 0
+      macros: 3
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      macro_duplicates.puml:
+        contains_elements: []
+        contains_lines: []
+        class_count: 1
+        relationship_count: 0
