@@ -264,6 +264,18 @@ class TestInputFactory:
             Path to the created config.json file
         """
         config = input_data.get("c2puml_config", {})
+        
+        # Ensure the config has the required fields for CLI
+        if "source_folders" not in config:
+            config["source_folders"] = ["."]
+        
+        if "output_dir" not in config:
+            config["output_dir"] = "./output"
+        
+        # Ensure project_name is set
+        if "project_name" not in config:
+            config["project_name"] = "test_project"
+        
         config_path = os.path.join(temp_dir, "config.json")
         with open(config_path, 'w') as f:
             json.dump(config, f, indent=2)

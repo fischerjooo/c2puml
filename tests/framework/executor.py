@@ -11,7 +11,12 @@ import time
 import shutil
 from dataclasses import dataclass
 from typing import List, Dict, Optional
-import psutil
+
+try:
+    import psutil
+    PSUTIL_AVAILABLE = True
+except ImportError:
+    PSUTIL_AVAILABLE = False
 
 
 @dataclass
@@ -49,53 +54,54 @@ class TestExecutor:
     This class provides methods to execute c2puml through the command line
     interface, ensuring that tests only interact with the public API and
     maintain clear boundaries between test and application code.
+    
+    The correct c2puml CLI interface is:
+    - c2puml --config config.json [parse|transform|generate]
+    - c2puml config_folder [parse|transform|generate]  
+    - c2puml [parse|transform|generate]  # Uses current directory as config folder
+    - c2puml              # Full workflow (parse, transform, generate)
     """
     
     def __init__(self):
         """Initialize the TestExecutor"""
-        self.python_executable = "python3"
-        self.main_script = "main.py"
+        # Try to use the installed c2puml command first
+        self.c2puml_command = "c2puml"
+        self.python_module_command = ["python3", "-m", "c2puml.main"]
+        self.main_script_command = ["python3", "main.py"]
         
     def run_full_pipeline(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
         """
         Run the complete c2puml pipeline (parse → transform → generate)
         
         Args:
-            input_path: Path to input directory or file
+            input_path: Path to input directory or file (not used in CLI, config contains source_folders)
             config_path: Path to config.json file
-            output_dir: Path to output directory
+            output_dir: Path to output directory (should be in config, but can override)
             
         Returns:
             CLIResult with execution details
         """
-        command = [
-            self.python_executable, self.main_script,
-            "--config", config_path,
-            "--output-dir", output_dir
-        ]
+        # The CLI uses the config file to determine source folders and output directory
+        # The input_path parameter is kept for compatibility but not used in CLI calls
+        command = self._build_command(["--config", config_path])
         
-        return self._execute_command(command, input_path)
+        return self._execute_command(command, os.path.dirname(config_path))
     
     def run_parse_only(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
         """
         Run only the parse step
         
         Args:
-            input_path: Path to input directory or file
+            input_path: Path to input directory or file (not used in CLI)
             config_path: Path to config.json file
-            output_dir: Path to output directory
+            output_dir: Path to output directory (should be in config)
             
         Returns:
             CLIResult with execution details
         """
-        command = [
-            self.python_executable, self.main_script,
-            "--config", config_path,
-            "--output-dir", output_dir,
-            "parse"
-        ]
+        command = self._build_command(["--config", config_path, "parse"])
         
-        return self._execute_command(command, input_path)
+        return self._execute_command(command, os.path.dirname(config_path))
     
     def run_transform_only(self, config_path: str, output_dir: str) -> CLIResult:
         """
@@ -103,19 +109,14 @@ class TestExecutor:
         
         Args:
             config_path: Path to config.json file
-            output_dir: Path to output directory
+            output_dir: Path to output directory (should be in config)
             
         Returns:
             CLIResult with execution details
         """
-        command = [
-            self.python_executable, self.main_script,
-            "--config", config_path,
-            "--output-dir", output_dir,
-            "transform"
-        ]
+        command = self._build_command(["--config", config_path, "transform"])
         
-        return self._execute_command(command, output_dir)
+        return self._execute_command(command, os.path.dirname(config_path))
     
     def run_generate_only(self, config_path: str, output_dir: str) -> CLIResult:
         """
@@ -123,131 +124,105 @@ class TestExecutor:
         
         Args:
             config_path: Path to config.json file
-            output_dir: Path to output directory
+            output_dir: Path to output directory (should be in config)
             
         Returns:
             CLIResult with execution details
         """
-        command = [
-            self.python_executable, self.main_script,
-            "--config", config_path,
-            "--output-dir", output_dir,
-            "generate"
-        ]
+        command = self._build_command(["--config", config_path, "generate"])
         
-        return self._execute_command(command, output_dir)
+        return self._execute_command(command, os.path.dirname(config_path))
     
     def run_with_verbose(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
         """
         Run with verbose output for debugging
         
         Args:
-            input_path: Path to input directory or file
+            input_path: Path to input directory or file (not used in CLI)
             config_path: Path to config.json file
-            output_dir: Path to output directory
+            output_dir: Path to output directory (should be in config)
             
         Returns:
             CLIResult with execution details
         """
-        command = [
-            self.python_executable, self.main_script,
-            "--config", config_path,
-            "--output-dir", output_dir,
-            "--verbose"
-        ]
+        command = self._build_command(["--config", config_path, "--verbose"])
         
-        return self._execute_command(command, input_path)
+        return self._execute_command(command, os.path.dirname(config_path))
     
     def run_with_timeout(self, input_path: str, config_path: str, output_dir: str, timeout: int) -> CLIResult:
         """
         Run with timeout protection
         
         Args:
-            input_path: Path to input directory or file
+            input_path: Path to input directory or file (not used in CLI)
             config_path: Path to config.json file
-            output_dir: Path to output directory
+            output_dir: Path to output directory (should be in config)
             timeout: Timeout in seconds
             
         Returns:
             CLIResult with execution details
         """
-        command = [
-            self.python_executable, self.main_script,
-            "--config", config_path,
-            "--output-dir", output_dir
-        ]
+        command = self._build_command(["--config", config_path])
         
-        return self._execute_command(command, input_path, timeout=timeout)
+        return self._execute_command(command, os.path.dirname(config_path), timeout=timeout)
     
     def run_with_env_vars(self, input_path: str, config_path: str, output_dir: str, env: dict) -> CLIResult:
         """
         Run with custom environment variables
         
         Args:
-            input_path: Path to input directory or file
+            input_path: Path to input directory or file (not used in CLI)
             config_path: Path to config.json file
-            output_dir: Path to output directory
+            output_dir: Path to output directory (should be in config)
             env: Dictionary of environment variables
             
         Returns:
             CLIResult with execution details
         """
-        command = [
-            self.python_executable, self.main_script,
-            "--config", config_path,
-            "--output-dir", output_dir
-        ]
+        command = self._build_command(["--config", config_path])
         
-        return self._execute_command(command, input_path, env=env)
+        return self._execute_command(command, os.path.dirname(config_path), env=env)
     
     def run_expecting_failure(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
         """
         Run expecting the command to fail (for error testing)
         
         Args:
-            input_path: Path to input directory or file
+            input_path: Path to input directory or file (not used in CLI)
             config_path: Path to config.json file
-            output_dir: Path to output directory
+            output_dir: Path to output directory (should be in config)
             
         Returns:
             CLIResult with execution details
         """
-        command = [
-            self.python_executable, self.main_script,
-            "--config", config_path,
-            "--output-dir", output_dir
-        ]
+        command = self._build_command(["--config", config_path])
         
-        return self._execute_command(command, input_path)
+        return self._execute_command(command, os.path.dirname(config_path))
     
     def run_and_capture_stderr(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
         """
         Run and capture stderr for error analysis
         
         Args:
-            input_path: Path to input directory or file
+            input_path: Path to input directory or file (not used in CLI)
             config_path: Path to config.json file
-            output_dir: Path to output directory
+            output_dir: Path to output directory (should be in config)
             
         Returns:
             CLIResult with execution details including stderr
         """
-        command = [
-            self.python_executable, self.main_script,
-            "--config", config_path,
-            "--output-dir", output_dir
-        ]
+        command = self._build_command(["--config", config_path])
         
-        return self._execute_command(command, input_path)
+        return self._execute_command(command, os.path.dirname(config_path))
     
     def run_with_timing(self, input_path: str, config_path: str, output_dir: str) -> TimedCLIResult:
         """
         Run with detailed timing information
         
         Args:
-            input_path: Path to input directory or file
+            input_path: Path to input directory or file (not used in CLI)
             config_path: Path to config.json file
-            output_dir: Path to output directory
+            output_dir: Path to output directory (should be in config)
             
         Returns:
             TimedCLIResult with detailed timing information
@@ -290,31 +265,31 @@ class TestExecutor:
         Run with memory usage tracking
         
         Args:
-            input_path: Path to input directory or file
+            input_path: Path to input directory or file (not used in CLI)
             config_path: Path to config.json file
-            output_dir: Path to output directory
+            output_dir: Path to output directory (should be in config)
             
         Returns:
             MemoryCLIResult with memory usage information
         """
-        command = [
-            self.python_executable, self.main_script,
-            "--config", config_path,
-            "--output-dir", output_dir
-        ]
+        command = self._build_command(["--config", config_path])
         
         # Start memory monitoring
-        process = psutil.Process()
         memory_samples = []
         memory_timeline = []
+        peak_memory_mb = 0
+        
+        if PSUTIL_AVAILABLE:
+            process = psutil.Process()
         
         start_time = time.time()
         
         # Execute command
-        result = self._execute_command(command, input_path)
+        result = self._execute_command(command, os.path.dirname(config_path))
         
-        # Get peak memory usage
-        peak_memory_mb = process.memory_info().rss / 1024 / 1024
+        # Get peak memory usage if psutil is available
+        if PSUTIL_AVAILABLE:
+            peak_memory_mb = process.memory_info().rss / 1024 / 1024
         
         return MemoryCLIResult(
             exit_code=result.exit_code,
@@ -372,6 +347,27 @@ class TestExecutor:
     
     # === Private Methods ===
     
+    def _build_command(self, args: List[str]) -> List[str]:
+        """
+        Build the command to execute c2puml
+        
+        Args:
+            args: Additional arguments to pass to c2puml
+            
+        Returns:
+            Complete command list
+        """
+        # Try different ways to run c2puml
+        commands_to_try = [
+            [self.c2puml_command] + args,  # Try installed c2puml command
+            self.python_module_command + args,  # Try python -m c2puml.main
+            self.main_script_command + args,  # Try python main.py
+        ]
+        
+        # Return the first command that should work
+        # The actual command validation happens in _execute_command
+        return commands_to_try[0]
+    
     def _execute_command(self, command: List[str], working_dir: str, 
                         timeout: Optional[int] = None, env: Optional[Dict[str, str]] = None) -> CLIResult:
         """
@@ -388,35 +384,58 @@ class TestExecutor:
         """
         start_time = time.time()
         
-        try:
-            # Prepare environment
-            process_env = os.environ.copy()
-            if env:
-                process_env.update(env)
-            
-            # Execute command
-            result = subprocess.run(
-                command,
-                cwd=working_dir,
-                env=process_env,
-                capture_output=True,
-                text=True,
-                timeout=timeout
-            )
-            
-            execution_time = time.time() - start_time
-            
-            return CLIResult(
-                exit_code=result.returncode,
-                stdout=result.stdout,
-                stderr=result.stderr,
-                execution_time=execution_time,
-                command=command,
-                working_dir=working_dir
-            )
-            
-        except subprocess.TimeoutExpired:
-            execution_time = time.time() - start_time
+        # Try different command variations if the first one fails
+        commands_to_try = [
+            command,
+            self.python_module_command + command[1:] if command[0] == self.c2puml_command else command,
+            self.main_script_command + command[1:] if command[0] == self.c2puml_command else command,
+        ]
+        
+        last_error = None
+        
+        for cmd in commands_to_try:
+            try:
+                # Prepare environment
+                process_env = os.environ.copy()
+                if env:
+                    process_env.update(env)
+                
+                # Execute command
+                result = subprocess.run(
+                    cmd,
+                    cwd=working_dir,
+                    env=process_env,
+                    capture_output=True,
+                    text=True,
+                    timeout=timeout
+                )
+                
+                execution_time = time.time() - start_time
+                
+                return CLIResult(
+                    exit_code=result.returncode,
+                    stdout=result.stdout,
+                    stderr=result.stderr,
+                    execution_time=execution_time,
+                    command=cmd,
+                    working_dir=working_dir
+                )
+                
+            except subprocess.TimeoutExpired as e:
+                execution_time = time.time() - start_time
+                last_error = e
+                continue
+            except FileNotFoundError as e:
+                last_error = e
+                continue
+            except Exception as e:
+                last_error = e
+                continue
+        
+        # If all commands failed, return error result
+        execution_time = time.time() - start_time
+        
+        if isinstance(last_error, subprocess.TimeoutExpired):
             return CLIResult(
                 exit_code=-1,
                 stdout="",
@@ -425,12 +444,11 @@ class TestExecutor:
                 command=command,
                 working_dir=working_dir
             )
-        except Exception as e:
-            execution_time = time.time() - start_time
+        else:
             return CLIResult(
                 exit_code=-1,
                 stdout="",
-                stderr=str(e),
+                stderr=f"All command variations failed: {last_error}",
                 execution_time=execution_time,
                 command=command,
                 working_dir=working_dir
