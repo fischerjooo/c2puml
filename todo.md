@@ -25,8 +25,7 @@ tests/
 │   └── test-simple_c_file_parsing/      # Generated during test execution
 │       ├── input/
 │       │   ├── config.json
-│       │   └── src/
-│       │       └── simple.c
+│       │   └── simple.c
 │       └── output/
 │           ├── model.json
 │           ├── model_transformed.json
@@ -413,6 +412,11 @@ The framework has been enhanced with the following improvements:
 - **`run_test(test_id)`**: Encapsulates the complete test execution pattern
 - **`validate_execution_success(result)`**: Validates CLI execution success
 - **`validate_test_output(result)`**: Processes all assertions from YAML
+
+### Test Category Determination
+The framework automatically determines test categories based on:
+- **Test ID**: Numeric ranges (001-050: unit, 051-150: feature, 151-250: integration, 251+: example)
+- **Test Name**: Pattern matching (starts with "test_example_": example, contains "feature"/"integration": feature)
 
 ### Enhanced Error Handling
 - **`TestError` class**: Provides context-rich error messages with test metadata

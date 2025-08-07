@@ -117,6 +117,11 @@ assertions:
         relationship_count: 0
 ```
 
+### Test Category Determination
+The framework automatically determines test categories based on:
+- **Test ID**: Numeric ranges (001-050: unit, 051-150: feature, 151-250: integration, 251+: example)
+- **Test Name**: Pattern matching (starts with "test_example_": example, contains "feature"/"integration": feature)
+
 ### Test Folder Structures
 
 #### **Standard Tests** (Unit, Feature, Integration):
@@ -127,8 +132,7 @@ tests/unit/
 └── test-simple_c_file_parsing/          # Generated during test execution
     ├── input/
     │   ├── config.json
-    │   └── src/
-    │       └── simple.c
+    │   └── simple.c
     └── output/
         ├── model.json
         ├── model_transformed.json
