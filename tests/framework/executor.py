@@ -208,18 +208,6 @@ class TestExecutor:
             shutil.rmtree(output_dir)
         os.makedirs(output_dir, exist_ok=True)
     
-    def preserve_output_for_review(self, output_dir: str) -> None:
-        """
-        Marks output directory to be preserved for manual review
-        
-        Args:
-            output_dir: Path to the output directory
-        """
-        # Create a marker file to indicate this output should be preserved
-        marker_file = os.path.join(output_dir, ".preserve_for_review")
-        with open(marker_file, 'w') as f:
-            f.write(f"Preserved for review at {time.time()}\n")
-    
     # === Private Methods ===
     
     def _build_command(self, args: List[str]) -> List[str]:
