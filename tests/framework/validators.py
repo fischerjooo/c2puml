@@ -79,36 +79,39 @@ class ModelValidator:
     def assert_model_struct_exists(self, model: dict, struct_name: str) -> None:
         """Assert that a struct exists in the model"""
         for file_data in model.get("files", {}).values():
-            structs = file_data.get("structs", [])
-            for struct in structs:
-                if struct.get("name") == struct_name:
-                    return
+            structs = file_data.get("structs", {})
+            if struct_name in structs:
+                return
         raise AssertionError(f"Struct '{struct_name}' not found in model")
     
     def assert_model_struct_not_exists(self, model: dict, struct_name: str) -> None:
         """Assert that a struct does not exist in the model"""
         for file_data in model.get("files", {}).values():
-            structs = file_data.get("structs", [])
-            for struct in structs:
-                if struct.get("name") == struct_name:
-                    raise AssertionError(f"Struct '{struct_name}' found in model but should not exist")
+            structs = file_data.get("structs", {})
+            if struct_name in structs:
+                raise AssertionError(f"Struct '{struct_name}' found in model but should not exist")
     
     def assert_model_enum_exists(self, model: dict, enum_name: str) -> None:
         """Assert that an enum exists in the model"""
         for file_data in model.get("files", {}).values():
-            enums = file_data.get("enums", [])
-            for enum in enums:
-                if enum.get("name") == enum_name:
-                    return
+            enums = file_data.get("enums", {})
+            if enum_name in enums:
+                return
         raise AssertionError(f"Enum '{enum_name}' not found in model")
+    
+    def assert_model_enum_not_exists(self, model: dict, enum_name: str) -> None:
+        """Assert that an enum does not exist in the model"""
+        for file_data in model.get("files", {}).values():
+            enums = file_data.get("enums", {})
+            if enum_name in enums:
+                raise AssertionError(f"Enum '{enum_name}' found in model but should not exist")
     
     def assert_model_typedef_exists(self, model: dict, typedef_name: str) -> None:
         """Assert that a typedef exists in the model"""
         for file_data in model.get("files", {}).values():
-            typedefs = file_data.get("typedefs", [])
-            for typedef in typedefs:
-                if typedef.get("name") == typedef_name:
-                    return
+            typedefs = file_data.get("typedefs", {})
+            if typedef_name in typedefs:
+                return
         raise AssertionError(f"Typedef '{typedef_name}' not found in model")
     
     def assert_model_global_exists(self, model: dict, global_name: str) -> None:
@@ -125,48 +128,68 @@ class ModelValidator:
         for file_data in model.get("files", {}).values():
             macros = file_data.get("macros", [])
             for macro in macros:
-                if macro.get("name") == macro_name:
+                if macro_name in macro:  # Macros might be stored with full definition
                     return
         raise AssertionError(f"Macro '{macro_name}' not found in model")
     
     def assert_model_includes_exist(self, model: dict, expected_includes: List[str]) -> None:
         """Assert that specific includes exist in the model"""
-        all_includes = []
         for file_data in model.get("files", {}).values():
             includes = file_data.get("includes", [])
-            all_includes.extend(includes)
-        
-        for expected_include in expected_includes:
-            if expected_include not in all_includes:
-                raise AssertionError(f"Expected include '{expected_include}' not found in model")
+            for expected_include in expected_includes:
+                if expected_include not in includes:
+                    raise AssertionError(f"Include '{expected_include}' not found in model")
+            return
+        raise AssertionError("No files found in model")
     
     def assert_model_include_exists(self, model: dict, include_name: str) -> None:
         """Assert that a specific include exists in the model"""
-        for file_data in model.get("files", {}).values():
-            includes = file_data.get("includes", [])
-            if include_name in includes:
-                return
-        raise AssertionError(f"Include '{include_name}' not found in model")
+        self.assert_model_includes_exist(model, [include_name])
     
     def assert_model_struct_fields(self, model: dict, struct_name: str, expected_fields: List[str]) -> None:
         """Assert that a struct has specific fields"""
         for file_data in model.get("files", {}).values():
-            structs = file_data.get("structs", [])
-            for struct in structs:
-                if struct.get("name") == struct_name:
-                    actual_fields = [field.get("name") for field in struct.get("fields", [])]
-                    for expected_field in expected_fields:
-                        if expected_field not in actual_fields:
-                            raise AssertionError(f"Struct '{struct_name}' missing field '{expected_field}'")
-                    return
+            structs = file_data.get("structs", {})
+            if struct_name in structs:
+                struct = structs[struct_name]
+                fields = struct.get("fields", [])
+                actual_field_names = [field.get("name") for field in fields]
+                for expected_field in expected_fields:
+                    if expected_field not in actual_field_names:
+                        raise AssertionError(f"Field '{expected_field}' not found in struct '{struct_name}'")
+                return
         raise AssertionError(f"Struct '{struct_name}' not found in model")
     
+    def assert_model_enum_values(self, model: dict, enum_name: str, expected_values: List[str]) -> None:
+        """Assert that an enum has specific values"""
+        for file_data in model.get("files", {}).values():
+            enums = file_data.get("enums", {})
+            if enum_name in enums:
+                enum = enums[enum_name]
+                values = enum.get("values", [])
+                actual_value_names = [value.get("name") for value in values]
+                for expected_value in expected_values:
+                    if expected_value not in actual_value_names:
+                        raise AssertionError(f"Value '{expected_value}' not found in enum '{enum_name}'")
+                return
+        raise AssertionError(f"Enum '{enum_name}' not found in model")
+    
     def assert_model_element_count(self, model: dict, element_type: str, expected_count: int) -> None:
-        """Assert that model has expected count of specific element type"""
+        """Assert that a specific element type has expected count across all files"""
         total_count = 0
         for file_data in model.get("files", {}).values():
-            elements = file_data.get(element_type, [])
-            total_count += len(elements)
+            if element_type == "functions":
+                total_count += len(file_data.get("functions", []))
+            elif element_type == "structs":
+                total_count += len(file_data.get("structs", {}))
+            elif element_type == "enums":
+                total_count += len(file_data.get("enums", {}))
+            elif element_type == "globals":
+                total_count += len(file_data.get("globals", []))
+            elif element_type == "includes":
+                total_count += len(file_data.get("includes", []))
+            elif element_type == "macros":
+                total_count += len(file_data.get("macros", []))
         
         if total_count != expected_count:
             raise AssertionError(f"Expected {expected_count} {element_type}, got {total_count}")

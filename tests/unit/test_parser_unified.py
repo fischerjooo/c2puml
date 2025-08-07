@@ -6,7 +6,6 @@ This test demonstrates how to convert existing tests to use the unified framewor
 that enforces CLI-only access to c2puml functionality.
 """
 
-import json
 import os
 import sys
 import unittest
@@ -69,102 +68,29 @@ int global_var;
         self.assert_c2puml_success(result)
         
         # Validate output files were created
-        model_file = self.assert_model_file_exists()
-        transformed_model_file = self.assert_transformed_model_file_exists()
-        puml_files = self.assert_puml_files_exist()
+        self.assert_model_file_exists()
+        self.assert_transformed_model_file_exists()
+        self.assert_puml_files_exist()
         
-        # Load and validate the model.json content
-        with open(model_file, 'r') as f:
-            model_data = json.load(f)
+        # Validate model content using framework helpers
+        self.assert_model_contains_struct("Person", ["name", "age"])
+        self.assert_model_contains_enum("Status", ["OK", "ERROR"])
+        self.assert_model_contains_function("main")
+        self.assert_model_contains_global("global_var")
+        self.assert_model_contains_include("stdio.h")
         
-        # Verify the model structure
-        self.assertIn("files", model_data)
-        self.assertGreater(len(model_data["files"]), 0)
+        # Validate element counts
+        self.assert_model_element_count("structs", 1)
+        self.assert_model_element_count("enums", 1)
+        self.assert_model_element_count("functions", 1)
+        self.assert_model_element_count("globals", 1)
+        self.assert_model_element_count("includes", 1)
         
-        # Find our simple.c file in the model
-        simple_c_file = model_data["files"].get("simple.c")
-        self.assertIsNotNone(simple_c_file, "simple.c should be in the model")
-        
-        # Validate struct parsing
-        structs = simple_c_file.get("structs", {})
-        self.assertGreater(len(structs), 0, "Should find at least one struct")
-        
-        # Find Person struct
-        person_struct = structs.get("Person")
-        self.assertIsNotNone(person_struct, "Person struct should be found")
-        
-        # Validate Person struct fields
-        fields = person_struct.get("fields", [])
-        self.assertEqual(len(fields), 2, "Person struct should have 2 fields")
-        
-        field_names = [field.get("name") for field in fields]
-        self.assertIn("name", field_names)
-        self.assertIn("age", field_names)
-        
-        # Validate enum parsing
-        enums = simple_c_file.get("enums", {})
-        self.assertGreater(len(enums), 0, "Should find at least one enum")
-        
-        # Find Status enum
-        status_enum = enums.get("Status")
-        self.assertIsNotNone(status_enum, "Status enum should be found")
-        
-        # Validate Status enum values
-        values = status_enum.get("values", [])
-        self.assertEqual(len(values), 2, "Status enum should have 2 values")
-        
-        value_names = [value.get("name") for value in values]
-        self.assertIn("OK", value_names)
-        self.assertIn("ERROR", value_names)
-        
-        # Validate function parsing
-        functions = simple_c_file.get("functions", [])
-        self.assertGreater(len(functions), 0, "Should find at least one function")
-        
-        # Find main function
-        main_function = None
-        for func in functions:
-            if func.get("name") == "main":
-                main_function = func
-                break
-        
-        self.assertIsNotNone(main_function, "main function should be found")
-        
-        # Validate global variable parsing
-        globals_list = simple_c_file.get("globals", [])
-        self.assertGreater(len(globals_list), 0, "Should find at least one global variable")
-        
-        # Find global_var
-        global_var_found = False
-        for global_var in globals_list:
-            if global_var.get("name") == "global_var":
-                global_var_found = True
-                break
-        
-        self.assertTrue(global_var_found, "global_var should be found")
-        
-        # Validate include parsing
-        includes = simple_c_file.get("includes", [])
-        self.assertGreater(len(includes), 0, "Should find at least one include")
-        
-        # Check for stdio.h include
-        self.assertIn("stdio.h", includes, "stdio.h include should be found")
-        
-        # Validate PlantUML file content
-        self.assertGreater(len(puml_files), 0, "Should have at least one .puml file")
-        
-        # Check that the first .puml file contains expected content
-        with open(puml_files[0], 'r') as f:
-            puml_content = f.read()
-        
-        # Verify PlantUML contains our struct and enum
-        self.assertIn("Person", puml_content, "PlantUML should contain Person struct")
-        self.assertIn("Status", puml_content, "PlantUML should contain Status enum")
-        self.assertIn("main", puml_content, "PlantUML should contain main function")
-        
-        # Verify PlantUML syntax
-        self.assertIn("@startuml", puml_content, "PlantUML should start with @startuml")
-        self.assertIn("@enduml", puml_content, "PlantUML should end with @enduml")
+        # Validate PlantUML output using framework helpers
+        self.assert_puml_contains_element("Person")
+        self.assert_puml_contains_element("Status")
+        self.assert_puml_contains_element("main")
+        self.assert_puml_contains_syntax()
 
 
 if __name__ == "__main__":

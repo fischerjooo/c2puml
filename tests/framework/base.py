@@ -9,7 +9,7 @@ teardown, and utility methods for working with the TestExecutor and TestInputFac
 import os
 import tempfile
 import unittest
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 import json
 
 from .executor import TestExecutor, CLIResult
@@ -331,6 +331,123 @@ class UnifiedTestCase(unittest.TestCase):
                                f"Expected at least {min_count} .puml files, found {len(puml_files)}")
         
         return [os.path.join(output_dir, f) for f in puml_files]
+    
+    def assert_model_contains_struct(self, struct_name: str, expected_fields: List[str] = None) -> None:
+        """
+        Assert that the model contains a struct with the given name and optionally specific fields
+        
+        Args:
+            struct_name: Name of the struct to find
+            expected_fields: Optional list of field names that should be present
+        """
+        model_file = self.assert_model_file_exists()
+        with open(model_file, 'r') as f:
+            model_data = json.load(f)
+        
+        self.model_validator.assert_model_struct_exists(model_data, struct_name)
+        
+        if expected_fields:
+            self.model_validator.assert_model_struct_fields(model_data, struct_name, expected_fields)
+    
+    def assert_model_contains_enum(self, enum_name: str, expected_values: List[str] = None) -> None:
+        """
+        Assert that the model contains an enum with the given name and optionally specific values
+        
+        Args:
+            enum_name: Name of the enum to find
+            expected_values: Optional list of value names that should be present
+        """
+        model_file = self.assert_model_file_exists()
+        with open(model_file, 'r') as f:
+            model_data = json.load(f)
+        
+        self.model_validator.assert_model_enum_exists(model_data, enum_name)
+        
+        if expected_values:
+            self.model_validator.assert_model_enum_values(model_data, enum_name, expected_values)
+    
+    def assert_model_contains_function(self, function_name: str) -> None:
+        """
+        Assert that the model contains a function with the given name
+        
+        Args:
+            function_name: Name of the function to find
+        """
+        model_file = self.assert_model_file_exists()
+        with open(model_file, 'r') as f:
+            model_data = json.load(f)
+        
+        self.model_validator.assert_model_function_exists(model_data, function_name)
+    
+    def assert_model_contains_global(self, global_name: str) -> None:
+        """
+        Assert that the model contains a global variable with the given name
+        
+        Args:
+            global_name: Name of the global variable to find
+        """
+        model_file = self.assert_model_file_exists()
+        with open(model_file, 'r') as f:
+            model_data = json.load(f)
+        
+        self.model_validator.assert_model_global_exists(model_data, global_name)
+    
+    def assert_model_contains_include(self, include_name: str) -> None:
+        """
+        Assert that the model contains an include with the given name
+        
+        Args:
+            include_name: Name of the include to find
+        """
+        model_file = self.assert_model_file_exists()
+        with open(model_file, 'r') as f:
+            model_data = json.load(f)
+        
+        self.model_validator.assert_model_include_exists(model_data, include_name)
+    
+    def assert_model_element_count(self, element_type: str, expected_count: int) -> None:
+        """
+        Assert that the model has the expected count of a specific element type
+        
+        Args:
+            element_type: Type of element to count (functions, structs, enums, globals, includes, macros)
+            expected_count: Expected number of elements
+        """
+        model_file = self.assert_model_file_exists()
+        with open(model_file, 'r') as f:
+            model_data = json.load(f)
+        
+        self.model_validator.assert_model_element_count(model_data, element_type, expected_count)
+    
+    def assert_puml_contains_element(self, element_name: str, element_type: str = None) -> None:
+        """
+        Assert that the PlantUML output contains a specific element
+        
+        Args:
+            element_name: Name of the element to find
+            element_type: Optional type of element (class, enum, etc.)
+        """
+        puml_files = self.assert_puml_files_exist()
+        
+        # Check the first .puml file
+        with open(puml_files[0], 'r') as f:
+            puml_content = f.read()
+        
+        self.puml_validator.assert_puml_contains(puml_content, element_name)
+        
+        if element_type:
+            # For more specific validation, we could add element type checking
+            pass
+    
+    def assert_puml_contains_syntax(self) -> None:
+        """Assert that the PlantUML output contains proper syntax"""
+        puml_files = self.assert_puml_files_exist()
+        
+        # Check the first .puml file
+        with open(puml_files[0], 'r') as f:
+            puml_content = f.read()
+        
+        self.puml_validator.assert_puml_start_end_tags(puml_content)
     
     # === Utility Methods ===
     
