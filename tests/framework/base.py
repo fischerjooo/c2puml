@@ -25,7 +25,7 @@ class UnifiedTestCase(unittest.TestCase):
     Base class for all tests using the unified testing framework.
     
     This class provides:
-    - Automatic setup of TestExecutor, TestInputFactory, and validators
+    - Automatic setup of TestExecutor, TestDataLoader, and validators
     - Common test utilities and helper methods
     - Standardized test output management
     - Integration with the unified testing framework components
@@ -87,7 +87,7 @@ class UnifiedTestCase(unittest.TestCase):
         if "recursive_search" not in config:
             config["recursive_search"] = True
         
-        # Create the config file directly without going through input_factory
+        # Create the config file directly
         config_path = os.path.join(temp_dir, "config.json")
         with open(config_path, 'w') as f:
             json.dump(config, f, indent=2)
@@ -107,20 +107,21 @@ class UnifiedTestCase(unittest.TestCase):
         if temp_dir is None:
             temp_dir = self.temp_dir
         
-        input_data = {
-            "test_metadata": {
-                "description": f"Test {self.test_name}.{self.test_method}",
-                "test_type": "unit"
-            },
-            "c2puml_config": {
-                "project_name": f"{self.test_name}_{self.test_method}",
-                "source_folders": ["."],
-                "output_dir": self.output_dir
-            },
-            "source_files": source_files
-        }
+        # Create source directory
+        source_dir = os.path.join(temp_dir, "src")
+        os.makedirs(source_dir, exist_ok=True)
         
-        return self.input_factory._create_temp_source_files(input_data, temp_dir)
+        # Create each source file
+        for filename, content in source_files.items():
+            file_path = os.path.join(source_dir, filename)
+            
+            # Ensure directory exists for nested files
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            
+            with open(file_path, 'w') as f:
+                f.write(content)
+        
+        return source_dir
     
     def create_test_input_data(self, source_files: Dict[str, str], 
                               config_overrides: Dict[str, Any] = None) -> Dict[str, Any]:
