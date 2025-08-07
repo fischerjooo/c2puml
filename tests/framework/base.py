@@ -449,6 +449,85 @@ class UnifiedTestCase(unittest.TestCase):
         
         self.puml_validator.assert_puml_start_end_tags(puml_content)
     
+    def process_assertions(self, assertions: dict, model_data: dict = None, puml_content: str = None, result: CLIResult = None) -> None:
+        """
+        Process assertions from the JSON file and apply them to test results
+        
+        Args:
+            assertions: Dictionary loaded from assert-###.json file
+            model_data: Optional model data from model.json
+            puml_content: Optional PlantUML content
+            result: Optional CLIResult from execution
+        """
+        if not assertions or "expected_results" not in assertions:
+            return
+        
+        expected = assertions["expected_results"]
+        
+        # Process execution assertions
+        if "execution" in expected and result:
+            execution_expected = expected["execution"]
+            if "exit_code" in execution_expected:
+                self.assertEqual(result.exit_code, execution_expected["exit_code"], 
+                               f"Expected exit code {execution_expected['exit_code']}, got {result.exit_code}")
+        
+        # Process model validation assertions
+        if "model_validation" in expected and model_data:
+            model_expected = expected["model_validation"]
+            
+            # Process file-specific assertions
+            if "files" in model_expected:
+                for filename, file_expected in model_expected["files"].items():
+                    if filename in model_data.get("files", {}):
+                        file_data = model_data["files"][filename]
+                        
+                        # Validate structs
+                        if "structs" in file_expected:
+                            for struct_name, struct_expected in file_expected["structs"].items():
+                                self.model_validator.assert_model_struct_exists(model_data, struct_name)
+                                if "fields" in struct_expected:
+                                    self.model_validator.assert_model_struct_fields(model_data, struct_name, struct_expected["fields"])
+                        
+                        # Validate enums
+                        if "enums" in file_expected:
+                            for enum_name, enum_expected in file_expected["enums"].items():
+                                self.model_validator.assert_model_enum_exists(model_data, enum_name)
+                                if "values" in enum_expected:
+                                    self.model_validator.assert_model_enum_values(model_data, enum_name, enum_expected["values"])
+                        
+                        # Validate functions
+                        if "functions" in file_expected:
+                            for func_name in file_expected["functions"]:
+                                self.model_validator.assert_model_function_exists(model_data, func_name)
+                        
+                        # Validate globals
+                        if "globals" in file_expected:
+                            for global_name in file_expected["globals"]:
+                                self.model_validator.assert_model_global_exists(model_data, global_name)
+                        
+                        # Validate includes
+                        if "includes" in file_expected:
+                            for include_name in file_expected["includes"]:
+                                self.model_validator.assert_model_include_exists(model_data, include_name)
+            
+            # Process element count assertions
+            if "element_counts" in model_expected:
+                for element_type, expected_count in model_expected["element_counts"].items():
+                    self.model_validator.assert_model_element_count(model_data, element_type, expected_count)
+        
+        # Process PlantUML validation assertions
+        if "puml_validation" in expected and puml_content:
+            puml_expected = expected["puml_validation"]
+            
+            # Validate required elements
+            if "contains_elements" in puml_expected:
+                for element_name in puml_expected["contains_elements"]:
+                    self.puml_validator.assert_puml_contains(puml_content, element_name)
+            
+            # Validate syntax
+            if puml_expected.get("syntax_valid", False):
+                self.puml_validator.assert_puml_start_end_tags(puml_content)
+    
     # === Utility Methods ===
     
     def create_simple_c_struct_test(self, struct_name: str = "TestStruct", 

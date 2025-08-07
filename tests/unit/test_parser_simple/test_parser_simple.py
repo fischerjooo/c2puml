@@ -58,47 +58,18 @@ class TestParserSimple(UnifiedTestCase):
         self.assert_transformed_model_file_exists(actual_output_dir)
         self.assert_puml_files_exist(actual_output_dir)
         
-        # Validate model content using framework helpers
-        # We need to pass the actual output directory to the helper methods
+        # Load model data for assertion processing
         model_file = os.path.join(actual_output_dir, "model.json")
         with open(model_file, 'r') as f:
             model_data = json.load(f)
         
-        # Validate struct
-        self.model_validator.assert_model_struct_exists(model_data, "Person")
-        self.model_validator.assert_model_struct_fields(model_data, "Person", ["name", "age"])
-        
-        # Validate enum
-        self.model_validator.assert_model_enum_exists(model_data, "Status")
-        self.model_validator.assert_model_enum_values(model_data, "Status", ["OK", "ERROR"])
-        
-        # Validate function
-        self.model_validator.assert_model_function_exists(model_data, "main")
-        
-        # Validate global
-        self.model_validator.assert_model_global_exists(model_data, "global_var")
-        
-        # Validate include
-        self.model_validator.assert_model_include_exists(model_data, "stdio.h")
-        
-        # Validate element counts
-        self.model_validator.assert_model_element_count(model_data, "structs", 1)
-        self.model_validator.assert_model_element_count(model_data, "enums", 1)
-        self.model_validator.assert_model_element_count(model_data, "functions", 1)
-        self.model_validator.assert_model_element_count(model_data, "globals", 1)
-        self.model_validator.assert_model_element_count(model_data, "includes", 1)
-        
-        # Validate PlantUML output using framework helpers
+        # Load PlantUML content for assertion processing
         puml_files = self.assert_puml_files_exist(actual_output_dir)
-        
-        # Check the first .puml file
         with open(puml_files[0], 'r') as f:
             puml_content = f.read()
         
-        self.puml_validator.assert_puml_contains(puml_content, "Person")
-        self.puml_validator.assert_puml_contains(puml_content, "Status")
-        self.puml_validator.assert_puml_contains(puml_content, "main")
-        self.puml_validator.assert_puml_start_end_tags(puml_content)
+        # Process assertions from the JSON file
+        self.process_assertions(assertions, model_data, puml_content, result)
 
 
 if __name__ == "__main__":

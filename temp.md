@@ -446,69 +446,116 @@ self.assert_puml_files_exist(actual_output_dir)
 
 #### 8.4 Model Content Validation (Direct Validator Usage)
 ```python
-# We need to pass the actual output directory to the helper methods
+# Load model data for assertion processing
 model_file = os.path.join(actual_output_dir, "model.json")
 with open(model_file, 'r') as f:
     model_data = json.load(f)
 
-# Validate struct
-self.model_validator.assert_model_struct_exists(model_data, "Person")
-self.model_validator.assert_model_struct_fields(model_data, "Person", ["name", "age"])
+# Load PlantUML content for assertion processing
+puml_files = self.assert_puml_files_exist(actual_output_dir)
+with open(puml_files[0], 'r') as f:
+    puml_content = f.read()
 
-# Validate enum
-self.model_validator.assert_model_enum_exists(model_data, "Status")
-self.model_validator.assert_model_enum_values(model_data, "Status", ["OK", "ERROR"])
-
-# Validate function
-self.model_validator.assert_model_function_exists(model_data, "main")
-
-# Validate global
-self.model_validator.assert_model_global_exists(model_data, "global_var")
-
-# Validate include
-self.model_validator.assert_model_include_exists(model_data, "stdio.h")
-
-# Validate element counts
-self.model_validator.assert_model_element_count(model_data, "structs", 1)
-self.model_validator.assert_model_element_count(model_data, "enums", 1)
-self.model_validator.assert_model_element_count(model_data, "functions", 1)
-self.model_validator.assert_model_element_count(model_data, "globals", 1)
-self.model_validator.assert_model_element_count(model_data, "includes", 1)
+# Process assertions from the JSON file
+self.process_assertions(assertions, model_data, puml_content, result)
 ```
 
 **Functions called**:
 - `open()` - Open model.json file
 - `json.load()` - Parse JSON content
-- `self.model_validator.assert_model_struct_exists()` - Validates struct exists
-- `self.model_validator.assert_model_struct_fields()` - Validates struct fields
-- `self.model_validator.assert_model_enum_exists()` - Validates enum exists
-- `self.model_validator.assert_model_enum_values()` - Validates enum values
-- `self.model_validator.assert_model_function_exists()` - Validates function exists
-- `self.model_validator.assert_model_global_exists()` - Validates global variable exists
-- `self.model_validator.assert_model_include_exists()` - Validates include exists
-- `self.model_validator.assert_model_element_count()` - Validates element counts
+- `self.assert_puml_files_exist()` - Get PlantUML files
+- `open()` - Open .puml file
+- `f.read()` - Read PlantUML content
+- `self.process_assertions()` - Process assertions from JSON file
 
-#### 8.5 PlantUML Validation (Direct Validator Usage)
+#### 8.5 Assertion Processing (NEW - Using JSON Assertions)
+
+**Location**: `tests/framework/base.py` (lines 470-540)
+
+**What happens**:
 ```python
-# Validate PlantUML output using framework helpers
-puml_files = self.assert_puml_files_exist(actual_output_dir)
-
-# Check the first .puml file
-with open(puml_files[0], 'r') as f:
-    puml_content = f.read()
-
-self.puml_validator.assert_puml_contains(puml_content, "Person")
-self.puml_validator.assert_puml_contains(puml_content, "Status")
-self.puml_validator.assert_puml_contains(puml_content, "main")
-self.puml_validator.assert_puml_start_end_tags(puml_content)
+def process_assertions(self, assertions: dict, model_data: dict = None, puml_content: str = None, result: CLIResult = None) -> None:
+    if not assertions or "expected_results" not in assertions:
+        return
+    
+    expected = assertions["expected_results"]
+    
+    # Process execution assertions
+    if "execution" in expected and result:
+        execution_expected = expected["execution"]
+        if "exit_code" in execution_expected:
+            self.assertEqual(result.exit_code, execution_expected["exit_code"])
+    
+    # Process model validation assertions
+    if "model_validation" in expected and model_data:
+        model_expected = expected["model_validation"]
+        
+        # Process file-specific assertions
+        if "files" in model_expected:
+            for filename, file_expected in model_expected["files"].items():
+                if filename in model_data.get("files", {}):
+                    file_data = model_data["files"][filename]
+                    
+                    # Validate structs
+                    if "structs" in file_expected:
+                        for struct_name, struct_expected in file_expected["structs"].items():
+                            self.model_validator.assert_model_struct_exists(model_data, struct_name)
+                            if "fields" in struct_expected:
+                                self.model_validator.assert_model_struct_fields(model_data, struct_name, struct_expected["fields"])
+                    
+                    # Validate enums
+                    if "enums" in file_expected:
+                        for enum_name, enum_expected in file_expected["enums"].items():
+                            self.model_validator.assert_model_enum_exists(model_data, enum_name)
+                            if "values" in enum_expected:
+                                self.model_validator.assert_model_enum_values(model_data, enum_name, enum_expected["values"])
+                    
+                    # Validate functions
+                    if "functions" in file_expected:
+                        for func_name in file_expected["functions"]:
+                            self.model_validator.assert_model_function_exists(model_data, func_name)
+                    
+                    # Validate globals
+                    if "globals" in file_expected:
+                        for global_name in file_expected["globals"]:
+                            self.model_validator.assert_model_global_exists(model_data, global_name)
+                    
+                    # Validate includes
+                    if "includes" in file_expected:
+                        for include_name in file_expected["includes"]:
+                            self.model_validator.assert_model_include_exists(model_data, include_name)
+        
+        # Process element count assertions
+        if "element_counts" in model_expected:
+            for element_type, expected_count in model_expected["element_counts"].items():
+                self.model_validator.assert_model_element_count(model_data, element_type, expected_count)
+    
+    # Process PlantUML validation assertions
+    if "puml_validation" in expected and puml_content:
+        puml_expected = expected["puml_validation"]
+        
+        # Validate required elements
+        if "contains_elements" in puml_expected:
+            for element_name in puml_expected["contains_elements"]:
+                self.puml_validator.assert_puml_contains(puml_content, element_name)
+        
+        # Validate syntax
+        if puml_expected.get("syntax_valid", False):
+            self.puml_validator.assert_puml_start_end_tags(puml_content)
 ```
 
 **Functions called**:
-- `self.assert_puml_files_exist()` - Validates .puml files exist
-- `open()` - Open .puml file
-- `f.read()` - Read PlantUML content
-- `self.puml_validator.assert_puml_contains()` - Validates content contains elements
-- `self.puml_validator.assert_puml_start_end_tags()` - Validates PlantUML syntax
+- `self.assertEqual()` - Validate exit code
+- `self.model_validator.assert_model_struct_exists()` - Validate struct exists
+- `self.model_validator.assert_model_struct_fields()` - Validate struct fields
+- `self.model_validator.assert_model_enum_exists()` - Validate enum exists
+- `self.model_validator.assert_model_enum_values()` - Validate enum values
+- `self.model_validator.assert_model_function_exists()` - Validate function exists
+- `self.model_validator.assert_model_global_exists()` - Validate global variable exists
+- `self.model_validator.assert_model_include_exists()` - Validate include exists
+- `self.model_validator.assert_model_element_count()` - Validate element counts
+- `self.puml_validator.assert_puml_contains()` - Validate PlantUML content
+- `self.puml_validator.assert_puml_start_end_tags()` - Validate PlantUML syntax
 
 ## Key Differences from Original Test
 
@@ -557,6 +604,8 @@ self.model_validator.assert_model_enum_values(model_data, "Status", ["OK", "ERRO
 8. **Input-###.json Approach** - Uses the recommended approach for unit tests
 9. **Separate Assertions** - Assertions are in separate files as specified
 10. **Maintainable** - Changes to model structure only require framework updates
+11. **Data-Driven Testing** - Assertions are processed from JSON files, not hardcoded
+12. **Flexible Validation** - Easy to modify test expectations by changing JSON files
 
 ## Code Comparison
 
@@ -601,40 +650,16 @@ model_file = os.path.join(actual_output_dir, "model.json")
 with open(model_file, 'r') as f:
     model_data = json.load(f)
 
-# Validate struct
-self.model_validator.assert_model_struct_exists(model_data, "Person")
-self.model_validator.assert_model_struct_fields(model_data, "Person", ["name", "age"])
-
-# Validate enum
-self.model_validator.assert_model_enum_exists(model_data, "Status")
-self.model_validator.assert_model_enum_values(model_data, "Status", ["OK", "ERROR"])
-
-# Validate function
-self.model_validator.assert_model_function_exists(model_data, "main")
-
-# Validate global
-self.model_validator.assert_model_global_exists(model_data, "global_var")
-
-# Validate include
-self.model_validator.assert_model_include_exists(model_data, "stdio.h")
-
-# Validate element counts
-self.model_validator.assert_model_element_count(model_data, "structs", 1)
-self.model_validator.assert_model_element_count(model_data, "enums", 1)
-self.model_validator.assert_model_element_count(model_data, "functions", 1)
-self.model_validator.assert_model_element_count(model_data, "globals", 1)
-self.model_validator.assert_model_element_count(model_data, "includes", 1)
-
-# Validate PlantUML output
+# Load PlantUML content for assertion processing
 puml_files = self.assert_puml_files_exist(actual_output_dir)
 with open(puml_files[0], 'r') as f:
     puml_content = f.read()
 
-self.puml_validator.assert_puml_contains(puml_content, "Person")
-self.puml_validator.assert_puml_contains(puml_content, "Status")
-self.puml_validator.assert_puml_contains(puml_content, "main")
-self.puml_validator.assert_puml_start_end_tags(puml_content)
+# Process assertions from the JSON file
+self.process_assertions(assertions, model_data, puml_content, result)
 ```
+
+**Key Improvement**: The test now processes assertions from the JSON file instead of hardcoding them, making it truly data-driven and maintainable.
 
 ## Framework Helper Methods Used
 
@@ -748,5 +773,7 @@ The proper implementation demonstrates the true power of the unified testing fra
 5. **Correct Output Handling**: Properly handles the output directory structure
 6. **Comprehensive**: Tests the complete pipeline and validates all outputs
 7. **Maintainable**: Changes to model structure only require framework updates
+8. **Data-Driven**: Assertions are processed from JSON files, making tests truly data-driven
+9. **Flexible**: Easy to modify test expectations by changing JSON files without touching code
 
 This proper implementation serves as the ideal template for converting all remaining tests to use the unified framework effectively according to the specifications.
