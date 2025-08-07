@@ -67,9 +67,15 @@ Thumbs.db
 !test_model.json
 !tests/example/config.json
 !artifacts/output_example/*.json
+!tests/unit/test_*.yml
+!tests/feature/test_*.yml
+!tests/integration/test_*.yml
+!tests/example/test_*.yml
 test_*.json
 final_*.json
 cleanup_*.json
+.dmypy.json
+dmypy.json
 
 # Coverage and test reports
 .coverage
@@ -163,3 +169,8 @@ plantuml.jar
 !artifacts/
 !artifacts/**
 scripts/plantuml.jar
+
+# Test framework temporary files
+tests/*/test-*/
+tests/*/temp/
+tests/*/output/
