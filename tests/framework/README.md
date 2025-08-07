@@ -2,6 +2,33 @@
 
 This directory contains the unified testing framework for C2PUML tests. The framework provides a standardized approach to testing the C2PUML tool through its CLI interface, ensuring consistent, maintainable, and comprehensive test coverage.
 
+## **Important: Test Implementation Priority**
+
+**When creating new tests, ALWAYS try to use the simple pattern first:**
+
+```python
+class TestSimpleCFileParsing(UnifiedTestCase):
+    """Test parsing a simple C file through the CLI interface"""
+    
+    def test_simple_c_file_parsing(self):
+        """Test parsing a simple C file through the CLI interface"""
+        # Run the complete test using high-level methods
+        result = self.run_test("simple_c_file_parsing")
+        
+        # Validate results
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+```
+
+**This simple pattern:**
+- Uses the base class's high-level methods (`run_test`, `validate_execution_success`, `validate_test_output`)
+- Handles all generic assertions through the framework
+- Requires only the test name and YAML file
+- Minimizes boilerplate code
+- Ensures consistent test patterns
+
+**Only use the detailed custom pattern when you need assertions or behavior not supported by the simple pattern.**
+
 ## Framework Structure
 
 ```
