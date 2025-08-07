@@ -102,7 +102,45 @@ class ValidatorsProcessor:
         if "files" in model_assertions:
             for filename, file_assertions in model_assertions["files"].items():
                 if filename in model_data.get("files", {}):
-                    self._process_file_assertions(file_assertions, model_data, test_case)
+                    # Process file-specific assertions directly
+                    # Check structs
+                    if "structs" in file_assertions:
+                        for struct_name, struct_assertions in file_assertions["structs"].items():
+                            self.model_validator.assert_model_struct_exists(model_data, struct_name)
+                            
+                            # Check struct fields
+                            if "fields" in struct_assertions:
+                                expected_fields = struct_assertions["fields"]
+                                self.model_validator.assert_model_struct_fields(
+                                    model_data, struct_name, expected_fields
+                                )
+                    
+                    # Check enums
+                    if "enums" in file_assertions:
+                        for enum_name, enum_assertions in file_assertions["enums"].items():
+                            self.model_validator.assert_model_enum_exists(model_data, enum_name)
+                            
+                            # Check enum values
+                            if "values" in enum_assertions:
+                                expected_values = enum_assertions["values"]
+                                self.model_validator.assert_model_enum_values(
+                                    model_data, enum_name, expected_values
+                                )
+                    
+                    # Check functions
+                    if "functions" in file_assertions:
+                        for func_name in file_assertions["functions"]:
+                            self.model_validator.assert_model_function_exists(model_data, func_name)
+                    
+                    # Check globals
+                    if "globals" in file_assertions:
+                        for global_name in file_assertions["globals"]:
+                            self.model_validator.assert_model_global_exists(model_data, global_name)
+                    
+                    # Check includes
+                    if "includes" in file_assertions:
+                        for include_name in file_assertions["includes"]:
+                            self.model_validator.assert_model_include_exists(model_data, include_name)
         
         # Check element counts
         if "element_counts" in model_assertions:
@@ -110,55 +148,6 @@ class ValidatorsProcessor:
                 self.model_validator.assert_model_element_count(
                     model_data, element_type, expected_count
                 )
-    
-    def _process_file_assertions(self, file_assertions: Dict, 
-                               model_data: Dict, test_case) -> None:
-        """
-        Process assertions for a specific file using ModelValidator
-        
-        Args:
-            file_assertions: File-specific assertions from YAML
-            model_data: Complete model data
-            test_case: Test case instance for assertions
-        """
-        # Check structs
-        if "structs" in file_assertions:
-            for struct_name, struct_assertions in file_assertions["structs"].items():
-                self.model_validator.assert_model_struct_exists(model_data, struct_name)
-                
-                # Check struct fields
-                if "fields" in struct_assertions:
-                    expected_fields = struct_assertions["fields"]
-                    self.model_validator.assert_model_struct_fields(
-                        model_data, struct_name, expected_fields
-                    )
-        
-        # Check enums
-        if "enums" in file_assertions:
-            for enum_name, enum_assertions in file_assertions["enums"].items():
-                self.model_validator.assert_model_enum_exists(model_data, enum_name)
-                
-                # Check enum values
-                if "values" in enum_assertions:
-                    expected_values = enum_assertions["values"]
-                    self.model_validator.assert_model_enum_values(
-                        model_data, enum_name, expected_values
-                    )
-        
-        # Check functions
-        if "functions" in file_assertions:
-            for func_name in file_assertions["functions"]:
-                self.model_validator.assert_model_function_exists(model_data, func_name)
-        
-        # Check globals
-        if "globals" in file_assertions:
-            for global_name in file_assertions["globals"]:
-                self.model_validator.assert_model_global_exists(model_data, global_name)
-        
-        # Check includes
-        if "includes" in file_assertions:
-            for include_name in file_assertions["includes"]:
-                self.model_validator.assert_model_include_exists(model_data, include_name)
     
     def _process_puml_assertions(self, puml_assertions: Dict, 
                                puml_content: str, test_case) -> None:
