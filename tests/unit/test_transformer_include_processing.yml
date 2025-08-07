@@ -1,0 +1,109 @@
+# Test metadata
+test:
+  name: "Transformer Include Processing"
+  description: "Test transformer include processing with depth control"
+  category: "unit"
+  id: "2012"
+
+---
+# Source files
+source_files:
+  main.c: |
+    #include <stdio.h>
+    #include "utils.h"
+    #include "deep/nested.h"
+    
+    struct MainData {
+        int value;
+        char name[20];
+    };
+    
+    void main_function() {
+        printf("Main function\n");
+    }
+
+  utils.h: |
+    #include <stdlib.h>
+    #include "deep/nested.h"
+    
+    struct UtilData {
+        int id;
+        float rate;
+    };
+    
+    void utility_function();
+
+  deep/nested.h: |
+    #include <string.h>
+    
+    struct NestedData {
+        char data[100];
+    };
+    
+    void nested_function();
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_transformer_include_processing",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "transformations": {
+      "include_depth": 2,
+      "include_filters": {
+        "depth": 1,
+        "file_specific": {
+          "main.c": {
+            "include_depth": 2
+          }
+        }
+      },
+      "rename": {
+        "structs": {
+          "MainData": "ProcessedMainData"
+        }
+      }
+    }
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "main.puml"]
+  
+  model:
+    files:
+      main.c:
+        structs:
+          ProcessedMainData:
+            fields: ["value", "name"]
+        functions: ["main_function"]
+      utils.h:
+        structs:
+          UtilData:
+            fields: ["id", "rate"]
+        functions: ["utility_function"]
+      nested.h:
+        structs:
+          NestedData:
+            fields: ["data"]
+        functions: ["nested_function"]
+    element_counts:
+      structs: 3
+      functions: 3
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      main.puml:
+        contains_elements: ["ProcessedMainData", "NestedData", "UtilData", "main", "nested", "utils"]
+        contains_lines: ["class \"ProcessedMainData\" as TYPEDEF_PROCESSEDMAINDATA", "class \"NestedData\" as TYPEDEF_NESTEDDATA", "class \"UtilData\" as TYPEDEF_UTILDATA"]
+        class_count: 6
+        relationship_count: 5

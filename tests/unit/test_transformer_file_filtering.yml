@@ -74,7 +74,7 @@ config.json: |
 assertions:
   execution:
     exit_code: 0
-    output_files: ["model.json", "model_transformed.json", "main.puml", "utils.puml"]
+    output_files: ["model.json", "model_transformed.json", "main.puml", "utils.puml", "temp.puml"]
   
   model:
     files:
@@ -90,9 +90,14 @@ assertions:
             fields: ["value", "rate"]
         functions: ["utility_function"]
         globals: ["util_global"]
+      temp.c:
+        structs:
+          TempStruct:
+            fields: ["temp_id"]
+        functions: ["temp_function"]
     element_counts:
-      structs: 2
-      functions: 2
+      structs: 3
+      functions: 3
       globals: 2
   
   puml:
@@ -109,5 +114,10 @@ assertions:
       utils.puml:
         contains_elements: ["UtilStruct", "utils"]
         contains_lines: ["class \"UtilStruct\" as TYPEDEF_UTILSTRUCT"]
+        class_count: 2
+        relationship_count: 1
+      temp.puml:
+        contains_elements: ["TempStruct", "temp"]
+        contains_lines: ["class \"TempStruct\" as TYPEDEF_TEMPSTRUCT"]
         class_count: 2
         relationship_count: 1
