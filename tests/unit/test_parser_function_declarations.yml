@@ -1,0 +1,50 @@
+# Test metadata
+test:
+  name: "Function Declarations Parsing"
+  description: "Test parsing function declarations with different return types and parameters"
+  category: "unit"
+  id: "2003"
+
+---
+# Source files
+source_files:
+  functions.c: |
+    int calculate_sum(int a, int b);
+    void process_data(char* data);
+    point_t* create_point(int x, int y);
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_parser_function_declarations",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "functions.puml"]
+  
+  model:
+    files:
+      functions.c:
+        functions: ["calculate_sum", "process_data", "create_point"]
+    element_counts:
+      functions: 3
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      functions.puml:
+        contains_elements: ["functions"]
+        contains_lines: ["class \"functions\" as FUNCTIONS"]
+        class_count: 1
+        relationship_count: 0

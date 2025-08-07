@@ -1,0 +1,129 @@
+# Test metadata
+test:
+  name: "Complex Tokenizer Parsing"
+  description: "Test tokenizer with complex C constructs including nested structures, function pointers, complex expressions"
+  category: "unit"
+  id: "2020"
+
+---
+# Source files
+source_files:
+  complex.c: |
+    #include <stdio.h>
+    #include <stdlib.h>
+    
+    // Complex typedefs with function pointers
+    typedef struct Node {
+        int data;
+        struct Node* next;
+        int (*compare)(const void* a, const void* b);
+        void (*callback)(struct Node* self, void* context);
+    } Node;
+    
+    // Complex enum with explicit values
+    typedef enum {
+        STATE_INIT = 0x01,
+        STATE_RUNNING = 0x02,
+        STATE_PAUSED = 0x04,
+        STATE_STOPPED = 0x08,
+        STATE_ERROR = 0xFF
+    } SystemState;
+    
+    // Complex union with nested structs
+    typedef union {
+        struct {
+            uint8_t r, g, b, a;
+        } color;
+        uint32_t value;
+        struct {
+            uint16_t high;
+            uint16_t low;
+        } words;
+    } ColorUnion;
+    
+    // Complex function with multiple pointer levels
+    int** allocate_matrix(size_t rows, size_t cols);
+    
+    // Function with complex parameter types
+    void process_data(
+        const Node* const * nodes,
+        size_t count,
+        int (*processor)(const Node*, void*),
+        void* context
+    );
+    
+    // Simple global variable
+    static int global_counter = 0;
+    
+    // Complex macro with multi-line definition
+    #define SAFE_FREE(ptr) do { \
+        if ((ptr) != NULL) { \
+            free(ptr); \
+            (ptr) = NULL; \
+        } \
+    } while(0)
+    
+    // Function with complex body that tests expression parsing
+    Node* create_node(int data) {
+        Node* node = (Node*)malloc(sizeof(Node));
+        if (node != NULL) {
+            node->data = data;
+            node->next = NULL;
+            node->compare = NULL;
+            node->callback = NULL;
+        }
+        return node;
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_tokenizer_complex_parsing",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "complex.puml"]
+  
+  model:
+    files:
+      complex.c:
+        structs:
+          Node:
+            fields: ["data", "next", "compare", "callback"]
+        enums:
+          SystemState:
+            values: ["STATE_INIT", "STATE_RUNNING", "STATE_PAUSED", "STATE_STOPPED", "STATE_ERROR"]
+        unions:
+          ColorUnion:
+            fields: ["color", "value", "words"]
+        functions: ["allocate_matrix", "process_data", "create_node"]
+        globals: ["global_counter"]
+        macros: ["SAFE_FREE"]
+        includes: ["stdio.h", "stdlib.h"]
+    element_counts:
+      structs: 4
+      enums: 1
+      unions: 1
+      functions: 3
+      globals: 1
+      macros: 1
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      complex.puml:
+        contains_elements: ["Node", "SystemState", "ColorUnion", "complex"]
+        contains_lines: ["class \"Node\" as TYPEDEF_NODE", "class \"SystemState\" as TYPEDEF_SYSTEMSTATE", "class \"ColorUnion\" as TYPEDEF_COLORUNION"]
+        class_count: 7
+        relationship_count: 5

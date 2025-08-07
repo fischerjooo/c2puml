@@ -1,0 +1,86 @@
+# Test metadata
+test:
+  name: "Tokenizer Keywords"
+  description: "Test tokenizer recognition of C keywords through parsing structs, enums, etc."
+  category: "unit"
+  id: "1004"
+
+---
+# Source files
+source_files:
+  keywords.c: |
+    struct DataStruct {
+        int value;
+        const char* name;
+    };
+    
+    enum DataEnum {
+        OPTION_A,
+        OPTION_B
+    };
+    
+    union DataUnion {
+        int intVal;
+        float floatVal;
+    };
+    
+    static int static_var = 10;
+    extern int extern_var;
+    
+    inline void inline_func() {
+        // inline function
+    }
+    
+    void regular_func(const void* ptr) {
+        // regular function
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_tokenizer_keywords",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "keywords.puml"]
+  
+  model:
+    files:
+      keywords.c:
+        structs:
+          DataStruct:
+            fields: ["value", "name"]
+        enums:
+          DataEnum:
+            values: ["OPTION_A", "OPTION_B"]
+        unions:
+          DataUnion:
+            fields: ["intVal", "floatVal"]
+        functions: ["inline_func", "regular_func"]
+        globals: ["static_var", "extern_var"]
+    element_counts:
+      structs: 1
+      enums: 1
+      unions: 1
+      functions: 2
+      globals: 2
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      keywords.puml:
+        contains_elements: ["DataStruct", "DataEnum", "DataUnion"]
+        contains_lines: ["class \"DataStruct\" as TYPEDEF_DATASTRUCT", "class \"DataEnum\" as TYPEDEF_DATAENUM"]
+        class_count: 4
+        relationship_count: 3

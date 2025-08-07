@@ -1,0 +1,139 @@
+# Test metadata
+test:
+  name: "Tokenizer Preprocessor Handling"
+  description: "Test tokenizer with complex preprocessor constructs"
+  category: "unit"
+  id: "2022"
+
+---
+# Source files
+source_files:
+  preprocessor.c: |
+    #include <stdio.h>
+    #include <stdlib.h>
+    
+    // Complex conditional compilation
+    #ifdef DEBUG
+        #define LOG(msg) printf("DEBUG: %s\n", msg)
+        #define DEBUG_ONLY(code) code
+    #else
+        #define LOG(msg) 
+        #define DEBUG_ONLY(code)
+    #endif
+    
+    // Multi-level nested preprocessor conditions
+    #if defined(FEATURE_A) && !defined(FEATURE_B)
+        #ifdef PLATFORM_LINUX
+            #define PLATFORM_SPECIFIC_FUNC linux_func
+        #elif defined(PLATFORM_WINDOWS)
+            #define PLATFORM_SPECIFIC_FUNC windows_func
+        #else
+            #define PLATFORM_SPECIFIC_FUNC generic_func
+        #endif
+    #else
+        #define PLATFORM_SPECIFIC_FUNC default_func
+    #endif
+    
+    // Preprocessor with complex expressions
+    #define MAX(a, b) ((a) > (b) ? (a) : (b))
+    #define MIN(a, b) ((a) < (b) ? (a) : (b))
+    #define CLAMP(x, min, max) MIN(MAX(x, min), max)
+    
+    // Macro with stringification and token pasting
+    #define DECLARE_FUNC(name) \
+        void name##_init(void); \
+        void name##_cleanup(void); \
+        const char* name##_get_name(void) { return #name; }
+    
+    // Conditional struct definition
+    struct Config {
+        int base_value;
+    #ifdef EXTENDED_CONFIG
+        int extended_value;
+        char* description;
+    #endif
+    #if MAX_FEATURES > 10
+        int feature_flags[MAX_FEATURES];
+    #else
+        int feature_flags[10];
+    #endif
+    };
+    
+    // Function with preprocessor conditionals
+    int calculate_result(int input) {
+        int result = input;
+        
+    #ifdef APPLY_MULTIPLIER
+        result *= 2;
+    #endif
+        
+    #ifndef DISABLE_BOUNDS_CHECK
+        if (result < 0) result = 0;
+        if (result > 1000) result = 1000;
+    #endif
+        
+        DEBUG_ONLY(LOG("Result calculated"));
+        
+        return result;
+    }
+    
+    // Preprocessor with line continuation
+    #define COMPLEX_OPERATION(x, y, z) \
+        do { \
+            int temp1 = (x) + (y); \
+            int temp2 = temp1 * (z); \
+            printf("Operation: %d + %d = %d, * %d = %d\n", \
+                   (x), (y), temp1, (z), temp2); \
+        } while(0)
+    
+    // Generate function declarations using macros
+    DECLARE_FUNC(module_a)
+    DECLARE_FUNC(module_b)
+    
+    // Preprocessor arithmetic
+    #if (defined(VERSION_MAJOR) && VERSION_MAJOR >= 2) || defined(FORCE_NEW_API)
+        void new_api_function(void);
+    #endif
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_tokenizer_preprocessor_handling",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "preprocessor.puml"]
+  
+  model:
+    files:
+      preprocessor.c:
+        structs:
+          Config:
+            fields: ["base_value"]
+        functions: ["calculate_result"]
+        macros: ["CLAMP", "COMPLEX_OPERATION", "DECLARE_FUNC", "MAX", "MIN", "PLATFORM_SPECIFIC_FUNC"]
+        includes: ["stdio.h", "stdlib.h"]
+    element_counts:
+      structs: 1
+      functions: 1
+      macros: 6
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      preprocessor.puml:
+        contains_elements: ["Config", "preprocessor"]
+        contains_lines: ["class \"Config\" as TYPEDEF_CONFIG"]
+        class_count: 2
+        relationship_count: 1

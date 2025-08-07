@@ -1,0 +1,53 @@
+# Test metadata
+test:
+  name: "Typedef Struct Parsing"
+  description: "Test parsing typedef struct definitions with tagged and untagged variants"
+  category: "unit"
+  id: "1002"
+
+---
+# Source files
+source_files:
+  point_typedef.c: |
+    typedef struct point_tag {
+        int x;
+        int y;
+    } point_t;
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_parser_typedef_struct",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "point_typedef.puml"]
+  
+  model:
+    files:
+      point_typedef.c:
+        structs:
+          point_t:
+            fields: ["x", "y"]
+    element_counts:
+      structs: 1
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      point_typedef.puml:
+        contains_elements: ["point_t"]
+        contains_lines: ["class \"point_t\" as TYPEDEF_POINT_T"]
+        class_count: 2
+        relationship_count: 1
