@@ -94,5 +94,13 @@ assertions:
       includes: 1
   
   puml:
-    contains_elements: ["Person", "Status", "main"]
+    # Global PlantUML assertions (applied to all files)
     syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      simple.puml:
+        contains_elements: ["Person", "Status", "main", "global_var"]
+        contains_lines: ["class \"Person\" as TYPEDEF_PERSON", "class \"Status\" as TYPEDEF_STATUS", "int main()", "int global_var"]
+        class_count: 3
+        relationship_count: 2

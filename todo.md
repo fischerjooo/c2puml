@@ -147,8 +147,16 @@ assertions:
         includes: ["header.h"]
   
   puml:
-    contains_elements: ["ExampleStruct", "main"]
+    # Global PlantUML assertions (applied to all files)
     syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      example.puml:
+        contains_elements: ["ExampleStruct", "main"]
+        contains_lines: ["class \"ExampleStruct\"", "int main()"]
+        class_count: 2
+        relationship_count: 0
 ```
 
 **Example Test Structure**:
