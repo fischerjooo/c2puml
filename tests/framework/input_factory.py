@@ -267,14 +267,20 @@ class TestInputFactory:
         
         # Ensure the config has the required fields for CLI
         if "source_folders" not in config:
+            # Default to current directory if no source folders specified
             config["source_folders"] = ["."]
         
         if "output_dir" not in config:
+            # Default to ./output if no output directory specified
             config["output_dir"] = "./output"
         
         # Ensure project_name is set
         if "project_name" not in config:
             config["project_name"] = "test_project"
+        
+        # Ensure recursive_search is set (default to True)
+        if "recursive_search" not in config:
+            config["recursive_search"] = True
         
         config_path = os.path.join(temp_dir, "config.json")
         with open(config_path, 'w') as f:
@@ -290,13 +296,22 @@ class TestInputFactory:
             temp_dir: Temporary directory path
             
         Returns:
-            Path to the temporary directory containing source files
+            Path to the directory containing source files
         """
         source_files = input_data.get("source_files", {})
+        
+        # Create source directory
+        source_dir = os.path.join(temp_dir, "src")
+        os.makedirs(source_dir, exist_ok=True)
+        
+        # Create each source file
         for filename, content in source_files.items():
-            file_path = os.path.join(temp_dir, filename)
+            file_path = os.path.join(source_dir, filename)
+            
             # Ensure directory exists for nested files
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            
             with open(file_path, 'w') as f:
                 f.write(content)
-        return temp_dir
+        
+        return source_dir

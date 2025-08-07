@@ -3,6 +3,18 @@ TestExecutor - CLI-Only Execution Engine for C2PUML Tests
 
 This module provides the TestExecutor class that executes c2puml through
 the CLI interface only, ensuring no internal API access during testing.
+
+The actual c2puml CLI interface is:
+- c2puml --config config.json [parse|transform|generate]
+- c2puml config_folder [parse|transform|generate]  
+- c2puml [parse|transform|generate]  # Uses current directory as config folder
+- c2puml              # Full workflow (parse, transform, generate)
+
+Key points:
+- No --output-dir parameter - output directory is in config
+- No --input-path parameter - source folders are in config
+- Config can be file or directory (directory merges all .json files)
+- Working directory matters for relative paths
 """
 
 import os
@@ -54,194 +66,204 @@ class TestExecutor:
     This class provides methods to execute c2puml through the command line
     interface, ensuring that tests only interact with the public API and
     maintain clear boundaries between test and application code.
-    
-    The correct c2puml CLI interface is:
-    - c2puml --config config.json [parse|transform|generate]
-    - c2puml config_folder [parse|transform|generate]  
-    - c2puml [parse|transform|generate]  # Uses current directory as config folder
-    - c2puml              # Full workflow (parse, transform, generate)
     """
     
     def __init__(self):
         """Initialize the TestExecutor"""
-        # Try to use the installed c2puml command first
+        # Try different ways to run c2puml
         self.c2puml_command = "c2puml"
         self.python_module_command = ["python3", "-m", "c2puml.main"]
-        self.main_script_command = ["python3", "main.py"]
         
-    def run_full_pipeline(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
+        # Use absolute path to main.py
+        # __file__ is tests/framework/executor.py, so go up 2 levels to workspace root
+        workspace_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        main_script_path = os.path.join(workspace_root, "main.py")
+        self.main_script_command = ["python3", main_script_path]
+    
+    def run_full_pipeline(self, config_path: str, working_dir: str = None) -> CLIResult:
         """
         Run the complete c2puml pipeline (parse → transform → generate)
         
         Args:
-            input_path: Path to input directory or file (not used in CLI, config contains source_folders)
-            config_path: Path to config.json file
-            output_dir: Path to output directory (should be in config, but can override)
+            config_path: Path to config.json file or config directory
+            working_dir: Working directory for execution (defaults to config directory)
             
         Returns:
             CLIResult with execution details
         """
-        # The CLI uses the config file to determine source folders and output directory
-        # The input_path parameter is kept for compatibility but not used in CLI calls
-        command = self._build_command(["--config", config_path])
+        if working_dir is None:
+            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
         
-        return self._execute_command(command, os.path.dirname(config_path))
+        command = self._build_command(["--config", config_path])
+        return self._execute_command(command, working_dir)
     
-    def run_parse_only(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
+    def run_parse_only(self, config_path: str, working_dir: str = None) -> CLIResult:
         """
         Run only the parse step
         
         Args:
-            input_path: Path to input directory or file (not used in CLI)
-            config_path: Path to config.json file
-            output_dir: Path to output directory (should be in config)
+            config_path: Path to config.json file or config directory
+            working_dir: Working directory for execution (defaults to config directory)
             
         Returns:
             CLIResult with execution details
         """
-        command = self._build_command(["--config", config_path, "parse"])
+        if working_dir is None:
+            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
         
-        return self._execute_command(command, os.path.dirname(config_path))
+        command = self._build_command(["--config", config_path, "parse"])
+        return self._execute_command(command, working_dir)
     
-    def run_transform_only(self, config_path: str, output_dir: str) -> CLIResult:
+    def run_transform_only(self, config_path: str, working_dir: str = None) -> CLIResult:
         """
         Run only the transform step (requires existing model.json)
         
         Args:
-            config_path: Path to config.json file
-            output_dir: Path to output directory (should be in config)
+            config_path: Path to config.json file or config directory
+            working_dir: Working directory for execution (defaults to config directory)
             
         Returns:
             CLIResult with execution details
         """
-        command = self._build_command(["--config", config_path, "transform"])
+        if working_dir is None:
+            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
         
-        return self._execute_command(command, os.path.dirname(config_path))
+        command = self._build_command(["--config", config_path, "transform"])
+        return self._execute_command(command, working_dir)
     
-    def run_generate_only(self, config_path: str, output_dir: str) -> CLIResult:
+    def run_generate_only(self, config_path: str, working_dir: str = None) -> CLIResult:
         """
         Run only the generate step (requires existing model.json)
         
         Args:
-            config_path: Path to config.json file
-            output_dir: Path to output directory (should be in config)
+            config_path: Path to config.json file or config directory
+            working_dir: Working directory for execution (defaults to config directory)
             
         Returns:
             CLIResult with execution details
         """
-        command = self._build_command(["--config", config_path, "generate"])
+        if working_dir is None:
+            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
         
-        return self._execute_command(command, os.path.dirname(config_path))
+        command = self._build_command(["--config", config_path, "generate"])
+        return self._execute_command(command, working_dir)
     
-    def run_with_verbose(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
+    def run_with_verbose(self, config_path: str, working_dir: str = None) -> CLIResult:
         """
         Run with verbose output for debugging
         
         Args:
-            input_path: Path to input directory or file (not used in CLI)
-            config_path: Path to config.json file
-            output_dir: Path to output directory (should be in config)
+            config_path: Path to config.json file or config directory
+            working_dir: Working directory for execution (defaults to config directory)
             
         Returns:
             CLIResult with execution details
         """
-        command = self._build_command(["--config", config_path, "--verbose"])
+        if working_dir is None:
+            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
         
-        return self._execute_command(command, os.path.dirname(config_path))
+        command = self._build_command(["--config", config_path, "--verbose"])
+        return self._execute_command(command, working_dir)
     
-    def run_with_timeout(self, input_path: str, config_path: str, output_dir: str, timeout: int) -> CLIResult:
+    def run_with_timeout(self, config_path: str, timeout: int, working_dir: str = None) -> CLIResult:
         """
         Run with timeout protection
         
         Args:
-            input_path: Path to input directory or file (not used in CLI)
-            config_path: Path to config.json file
-            output_dir: Path to output directory (should be in config)
+            config_path: Path to config.json file or config directory
             timeout: Timeout in seconds
+            working_dir: Working directory for execution (defaults to config directory)
             
         Returns:
             CLIResult with execution details
         """
-        command = self._build_command(["--config", config_path])
+        if working_dir is None:
+            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
         
-        return self._execute_command(command, os.path.dirname(config_path), timeout=timeout)
+        command = self._build_command(["--config", config_path])
+        return self._execute_command(command, working_dir, timeout=timeout)
     
-    def run_with_env_vars(self, input_path: str, config_path: str, output_dir: str, env: dict) -> CLIResult:
+    def run_with_env_vars(self, config_path: str, env: dict, working_dir: str = None) -> CLIResult:
         """
         Run with custom environment variables
         
         Args:
-            input_path: Path to input directory or file (not used in CLI)
-            config_path: Path to config.json file
-            output_dir: Path to output directory (should be in config)
+            config_path: Path to config.json file or config directory
             env: Dictionary of environment variables
+            working_dir: Working directory for execution (defaults to config directory)
             
         Returns:
             CLIResult with execution details
         """
-        command = self._build_command(["--config", config_path])
+        if working_dir is None:
+            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
         
-        return self._execute_command(command, os.path.dirname(config_path), env=env)
+        command = self._build_command(["--config", config_path])
+        return self._execute_command(command, working_dir, env=env)
     
-    def run_expecting_failure(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
+    def run_expecting_failure(self, config_path: str, working_dir: str = None) -> CLIResult:
         """
         Run expecting the command to fail (for error testing)
         
         Args:
-            input_path: Path to input directory or file (not used in CLI)
-            config_path: Path to config.json file
-            output_dir: Path to output directory (should be in config)
+            config_path: Path to config.json file or config directory
+            working_dir: Working directory for execution (defaults to config directory)
             
         Returns:
             CLIResult with execution details
         """
-        command = self._build_command(["--config", config_path])
+        if working_dir is None:
+            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
         
-        return self._execute_command(command, os.path.dirname(config_path))
+        command = self._build_command(["--config", config_path])
+        return self._execute_command(command, working_dir)
     
-    def run_and_capture_stderr(self, input_path: str, config_path: str, output_dir: str) -> CLIResult:
+    def run_and_capture_stderr(self, config_path: str, working_dir: str = None) -> CLIResult:
         """
         Run and capture stderr for error analysis
         
         Args:
-            input_path: Path to input directory or file (not used in CLI)
-            config_path: Path to config.json file
-            output_dir: Path to output directory (should be in config)
+            config_path: Path to config.json file or config directory
+            working_dir: Working directory for execution (defaults to config directory)
             
         Returns:
             CLIResult with execution details including stderr
         """
-        command = self._build_command(["--config", config_path])
+        if working_dir is None:
+            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
         
-        return self._execute_command(command, os.path.dirname(config_path))
+        command = self._build_command(["--config", config_path])
+        return self._execute_command(command, working_dir)
     
-    def run_with_timing(self, input_path: str, config_path: str, output_dir: str) -> TimedCLIResult:
+    def run_with_timing(self, config_path: str, working_dir: str = None) -> TimedCLIResult:
         """
         Run with detailed timing information
         
         Args:
-            input_path: Path to input directory or file (not used in CLI)
-            config_path: Path to config.json file
-            output_dir: Path to output directory (should be in config)
+            config_path: Path to config.json file or config directory
+            working_dir: Working directory for execution (defaults to config directory)
             
         Returns:
             TimedCLIResult with detailed timing information
         """
+        if working_dir is None:
+            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
+        
         start_time = time.time()
         
         # Run parse step
         parse_start = time.time()
-        parse_result = self.run_parse_only(input_path, config_path, output_dir)
+        parse_result = self.run_parse_only(config_path, working_dir)
         parse_time = time.time() - parse_start
         
         # Run transform step
         transform_start = time.time()
-        transform_result = self.run_transform_only(config_path, output_dir)
+        transform_result = self.run_transform_only(config_path, working_dir)
         transform_time = time.time() - transform_start
         
         # Run generate step
         generate_start = time.time()
-        generate_result = self.run_generate_only(config_path, output_dir)
+        generate_result = self.run_generate_only(config_path, working_dir)
         generate_time = time.time() - generate_start
         
         total_time = time.time() - start_time
@@ -260,18 +282,20 @@ class TestExecutor:
             total_time=total_time
         )
     
-    def run_with_memory_tracking(self, input_path: str, config_path: str, output_dir: str) -> MemoryCLIResult:
+    def run_with_memory_tracking(self, config_path: str, working_dir: str = None) -> MemoryCLIResult:
         """
         Run with memory usage tracking
         
         Args:
-            input_path: Path to input directory or file (not used in CLI)
-            config_path: Path to config.json file
-            output_dir: Path to output directory (should be in config)
+            config_path: Path to config.json file or config directory
+            working_dir: Working directory for execution (defaults to config directory)
             
         Returns:
             MemoryCLIResult with memory usage information
         """
+        if working_dir is None:
+            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
+        
         command = self._build_command(["--config", config_path])
         
         # Start memory monitoring
@@ -285,7 +309,7 @@ class TestExecutor:
         start_time = time.time()
         
         # Execute command
-        result = self._execute_command(command, os.path.dirname(config_path))
+        result = self._execute_command(command, working_dir)
         
         # Get peak memory usage if psutil is available
         if PSUTIL_AVAILABLE:
@@ -359,9 +383,9 @@ class TestExecutor:
         """
         # Try different ways to run c2puml
         commands_to_try = [
+            self.main_script_command + args,  # Try python main.py first (most reliable)
             [self.c2puml_command] + args,  # Try installed c2puml command
             self.python_module_command + args,  # Try python -m c2puml.main
-            self.main_script_command + args,  # Try python main.py
         ]
         
         # Return the first command that should work
@@ -387,8 +411,8 @@ class TestExecutor:
         # Try different command variations if the first one fails
         commands_to_try = [
             command,
-            self.python_module_command + command[1:] if command[0] == self.c2puml_command else command,
             self.main_script_command + command[1:] if command[0] == self.c2puml_command else command,
+            self.python_module_command + command[1:] if command[0] == self.c2puml_command else command,
         ]
         
         last_error = None

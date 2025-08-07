@@ -9,17 +9,15 @@ between test and application code.
 from .executor import TestExecutor, CLIResult, TimedCLIResult, MemoryCLIResult
 from .input_factory import TestInputFactory
 from .validators import ModelValidator, PlantUMLValidator, OutputValidator, FileValidator
-from .base import UnifiedTestCase
 
 __all__ = [
     'TestExecutor',
-    'CLIResult', 
+    'CLIResult',
     'TimedCLIResult',
     'MemoryCLIResult',
     'TestInputFactory',
     'ModelValidator',
-    'PlantUMLValidator', 
+    'PlantUMLValidator',
     'OutputValidator',
-    'FileValidator',
-    'UnifiedTestCase'
+    'FileValidator'
 ]
