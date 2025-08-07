@@ -9,6 +9,7 @@ pytest-cov>=4.0.0
 pytest-xdist>=3.0.0  # For parallel test execution
 pytest-mock>=3.10.0  # For enhanced mocking capabilities
 coverage>=7.0.0
+PyYAML>=6.0  # For YAML test data loading
 
 # Performance and quality analysis
 pytest-benchmark>=4.0.0  # For performance testing
