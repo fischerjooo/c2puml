@@ -483,6 +483,12 @@ class TestCustomImplementation(UnifiedTestCase):
         # **ADD CUSTOM ASSERTIONS HERE ONLY IF NEEDED**
         # Example: Custom validation not covered by YAML assertions
         # self.assert_something_specific(model_data)
+        
+        # **IMPORTANT**: Before adding custom assertions, consider:
+        # 1. Could this assertion be useful for other tests?
+        # 2. Can it be expressed in YAML format?
+        # 3. Should it be added to the framework instead?
+        # 4. Check existing validators in validators.py first
 
 
 if __name__ == "__main__":
@@ -494,6 +500,108 @@ if __name__ == "__main__":
 - You need special setup/teardown logic
 - You need to modify test behavior based on runtime conditions
 - You need to test framework internals (not recommended)
+
+## **Extending the Framework vs Test-Specific Assertions**
+
+### **Framework Extension Priority**
+
+**When you need new assertions, always consider extending the framework first:**
+
+1. **Check existing validators**: Look in `validators.py` for existing validation methods
+2. **Extend ValidatorsProcessor**: Add new assertion types to `validators_processor.py` if they can be reused
+3. **Extend Validators**: Add new validation methods to appropriate validator classes in `validators.py`
+4. **Update YAML schema**: Add new assertion types to the YAML structure documentation
+
+### **When to Extend the Framework**
+
+**Extend the framework when:**
+- The assertion could be useful for multiple tests
+- It's a common validation pattern (file content, structure, syntax, etc.)
+- It follows existing validation patterns
+- It can be expressed in YAML format
+
+**Examples of framework-worthy extensions:**
+- New PlantUML validation patterns
+- Additional model validation checks
+- File content validation methods
+- Performance or timing validations
+- Error message validation patterns
+
+### **When to Keep Test-Specific**
+
+**Keep assertions test-specific when:**
+- The validation is truly unique to one test
+- It's testing framework internals (not recommended)
+- It requires complex setup that can't be expressed in YAML
+- It's a one-off validation that won't be reused
+
+### **Framework Extension Process**
+
+1. **Identify the need**: Determine if the assertion could be reused
+2. **Check existing methods**: Look for similar functionality in validators
+3. **Extend appropriate validator**: Add method to `ModelValidator`, `PlantUMLValidator`, etc.
+4. **Update ValidatorsProcessor**: Add processing logic for new assertion type
+5. **Update documentation**: Add new assertion type to YAML schema docs
+6. **Update tests**: Use the new framework feature instead of custom code
+
+### **Practical Example: Extending the Framework**
+
+**Scenario**: You need to validate that a PlantUML file contains specific relationship types.
+
+**Step 1: Check existing validators**
+```python
+# Look in validators.py - PlantUMLValidator class
+# Found: assert_puml_contains, assert_puml_contains_lines
+# But no specific relationship validation
+```
+
+**Step 2: Extend PlantUMLValidator**
+```python
+# In validators.py - PlantUMLValidator class
+def assert_puml_contains_relationship(self, content: str, relationship_type: str, from_class: str, to_class: str) -> None:
+    """Assert that PlantUML contains specific relationship"""
+    expected = f"{from_class} --> {to_class}"
+    if relationship_type == "composition":
+        expected = f"{from_class} *-- {to_class}"
+    elif relationship_type == "aggregation":
+        expected = f"{from_class} o-- {to_class}"
+    
+    if expected not in content:
+        raise AssertionError(f"Expected relationship '{expected}' not found in PlantUML")
+```
+
+**Step 3: Extend ValidatorsProcessor**
+```python
+# In validators_processor.py - _process_puml_assertions method
+if "relationships" in puml_assertions:
+    for rel in puml_assertions["relationships"]:
+        self.puml_validator.assert_puml_contains_relationship(
+            puml_content, rel["type"], rel["from"], rel["to"]
+        )
+```
+
+**Step 4: Update YAML schema documentation**
+```yaml
+# In tests/README.md - PlantUML Assertions section
+relationships:
+  - type: "composition"
+    from: "ClassA"
+    to: "ClassB"
+```
+
+**Step 5: Use in tests**
+```yaml
+# In test YAML file
+puml:
+  files:
+    diagram.puml:
+      relationships:
+        - type: "composition"
+          from: "Person"
+          to: "Address"
+```
+
+**Result**: The new validation is now available to all tests through the framework!
 
 ### **Example Test Structure (Special Case)**
 
