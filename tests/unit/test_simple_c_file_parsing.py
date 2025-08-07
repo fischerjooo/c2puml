@@ -24,7 +24,7 @@ class TestSimpleCFileParsing(UnifiedTestCase):
         result = self.run_test("simple_c_file_parsing")
         
         # Validate results
-        self.assert_test_success(result)
+        self.validate_execution_success(result)
         self.validate_test_output(result)
 
 

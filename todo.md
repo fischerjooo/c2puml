@@ -411,7 +411,7 @@ The framework has been enhanced with the following improvements:
 
 ### High-Level Test Methods
 - **`run_test(test_id)`**: Encapsulates the complete test execution pattern
-- **`assert_test_success(result)`**: Validates CLI execution success
+- **`validate_execution_success(result)`**: Validates CLI execution success
 - **`validate_test_output(result)`**: Processes all assertions from YAML
 
 ### Enhanced Error Handling
@@ -427,7 +427,7 @@ The framework has been enhanced with the following improvements:
 The first test (`test_simple_c_file_parsing.py`) now uses the simplified 3-line pattern:
 ```python
 result = self.run_test("simple_c_file_parsing")
-self.assert_test_success(result)
+self.validate_execution_success(result)
 self.validate_test_output(result)
 ```
 

@@ -29,7 +29,7 @@ The base class for all tests, providing:
 def run_test(self, test_id: str) -> TestResult:
     """Run a complete test and return results"""
     
-def assert_test_success(self, result: TestResult):
+def validate_execution_success(self, result: TestResult):
     """Assert test execution was successful"""
     
 def validate_test_output(self, result: TestResult):
@@ -136,7 +136,7 @@ class TestSimpleCFileParsing(UnifiedTestCase):
         result = self.run_test("simple_c_file_parsing")
         
         # Validate results
-        self.assert_test_success(result)
+        self.validate_execution_success(result)
         self.validate_test_output(result)
 ```
 

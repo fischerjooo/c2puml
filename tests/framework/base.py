@@ -111,7 +111,7 @@ class UnifiedTestCase(unittest.TestCase):
         
         return TestResult(result, test_dir, output_dir, model_file, puml_files)
 
-    def assert_test_success(self, result: TestResult):
+    def validate_execution_success(self, result: TestResult):
         """
         Assert that test execution was successful.
         
