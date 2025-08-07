@@ -3,7 +3,7 @@
 Assertion Processor for the unified testing framework
 
 This module provides the AssertionProcessor class that handles processing
-of JSON-based assertions from assert-###.json files.
+of assertions from YAML test data.
 """
 
 from typing import Dict, Optional
@@ -13,10 +13,10 @@ from .executor import CLIResult
 
 class AssertionProcessor:
     """
-    Processes assertions from JSON files and applies them to test results
+    Processes assertions from YAML data and applies them to test results
     
-    This class handles the processing of assertions defined in assert-###.json
-    files and applies them to actual test results using the appropriate validators.
+    This class handles the processing of assertions defined in YAML test files
+    and applies them to actual test results using the appropriate validators.
     """
     
     def __init__(self):
@@ -28,31 +28,29 @@ class AssertionProcessor:
                           puml_content: Optional[str] = None, result: Optional[CLIResult] = None,
                           test_case=None) -> None:
         """
-        Process assertions from the JSON file and apply them to test results
+        Process assertions from YAML data and apply them to test results
         
         Args:
-            assertions: Dictionary loaded from assert-###.json file
+            assertions: Dictionary loaded from YAML assertions section
             model_data: Optional model data from model.json
             puml_content: Optional PlantUML content
             result: Optional CLIResult from execution
             test_case: Optional test case instance for assertions (unittest.TestCase)
         """
-        if not assertions or "expected_results" not in assertions:
+        if not assertions:
             return
         
-        expected = assertions["expected_results"]
-        
         # Process execution assertions
-        if "execution" in expected and result and test_case:
-            self._process_execution_assertions(expected["execution"], result, test_case)
+        if "execution" in assertions and result and test_case:
+            self._process_execution_assertions(assertions["execution"], result, test_case)
         
         # Process model validation assertions
-        if "model_validation" in expected and model_data and test_case:
-            self._process_model_assertions(expected["model_validation"], model_data, test_case)
+        if "model" in assertions and model_data and test_case:
+            self._process_model_assertions(assertions["model"], model_data, test_case)
         
         # Process PlantUML validation assertions
-        if "puml_validation" in expected and puml_content and test_case:
-            self._process_puml_assertions(expected["puml_validation"], puml_content, test_case)
+        if "puml" in assertions and puml_content and test_case:
+            self._process_puml_assertions(assertions["puml"], puml_content, test_case)
     
     def _process_execution_assertions(self, execution_expected: Dict, result: CLIResult, test_case) -> None:
         """Process execution-related assertions"""

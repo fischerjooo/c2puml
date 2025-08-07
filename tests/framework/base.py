@@ -3,7 +3,7 @@
 Unified Test Case Base Class
 
 This module provides the UnifiedTestCase base class that all c2puml tests
-should inherit from, providing common setup, teardown, and utility methods.
+should inherit from, providing common setup, teardown, and basic assertion methods.
 """
 
 import os
@@ -26,7 +26,7 @@ class UnifiedTestCase(unittest.TestCase):
     
     This class provides:
     - Automatic setup of TestExecutor, TestDataLoader, and validators
-    - Common test utilities and helper methods
+    - Basic assertion methods for common test scenarios
     - Standardized test output management
     - Integration with the unified testing framework components
     """
@@ -58,103 +58,7 @@ class UnifiedTestCase(unittest.TestCase):
         # Note: temp_dir is NOT automatically cleaned to preserve output for debugging
         pass
     
-    # === Input Factory Helpers ===
-    
-    def create_test_config(self, config_data: Dict[str, Any], temp_dir: str = None) -> str:
-        """
-        Create a test configuration file
-        
-        Args:
-            config_data: Configuration data dictionary
-            temp_dir: Temporary directory (defaults to self.temp_dir)
-            
-        Returns:
-            Path to the created config.json file
-        """
-        if temp_dir is None:
-            temp_dir = self.temp_dir
-        
-        # Create a copy to avoid modifying the original
-        config = config_data.copy()
-        
-        # Ensure required fields are present (only if not already provided)
-        if "source_folders" not in config:
-            config["source_folders"] = ["."]
-        if "output_dir" not in config:
-            config["output_dir"] = self.output_dir
-        if "project_name" not in config:
-            config["project_name"] = f"{self.test_name}_{self.test_method}"
-        if "recursive_search" not in config:
-            config["recursive_search"] = True
-        
-        # Create the config file directly
-        config_path = os.path.join(temp_dir, "config.json")
-        with open(config_path, 'w') as f:
-            json.dump(config, f, indent=2)
-        return config_path
-    
-    def create_test_source_files(self, source_files: Dict[str, str], temp_dir: str = None) -> str:
-        """
-        Create test source files
-        
-        Args:
-            source_files: Dictionary mapping filenames to content
-            temp_dir: Temporary directory (defaults to self.temp_dir)
-            
-        Returns:
-            Path to the directory containing source files
-        """
-        if temp_dir is None:
-            temp_dir = self.temp_dir
-        
-        # Create source directory
-        source_dir = os.path.join(temp_dir, "src")
-        os.makedirs(source_dir, exist_ok=True)
-        
-        # Create each source file
-        for filename, content in source_files.items():
-            file_path = os.path.join(source_dir, filename)
-            
-            # Ensure directory exists for nested files
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            
-            with open(file_path, 'w') as f:
-                f.write(content)
-        
-        return source_dir
-    
-    def create_test_input_data(self, source_files: Dict[str, str], 
-                              config_overrides: Dict[str, Any] = None) -> Dict[str, Any]:
-        """
-        Create complete test input data structure
-        
-        Args:
-            source_files: Dictionary mapping filenames to content
-            config_overrides: Optional configuration overrides
-            
-        Returns:
-            Complete input data dictionary
-        """
-        config = {
-            "project_name": f"{self.test_name}_{self.test_method}",
-            "source_folders": ["."],
-            "output_dir": self.output_dir,
-            "recursive_search": True
-        }
-        
-        if config_overrides:
-            config.update(config_overrides)
-        
-        return {
-            "test_metadata": {
-                "description": f"Test {self.test_name}.{self.test_method}",
-                "test_type": "unit"
-            },
-            "c2puml_config": config,
-            "source_files": source_files
-        }
-    
-    # === Validation Helpers ===
+    # === Basic Assertion Methods ===
     
     def assert_c2puml_success(self, result: CLIResult, message: str = None) -> None:
         """
@@ -251,58 +155,3 @@ class UnifiedTestCase(unittest.TestCase):
             puml_content = f.read()
         
         self.puml_validator.assert_puml_start_end_tags(puml_content)
-    
-    # === Utility Methods ===
-    
-    def create_simple_c_struct_test(self, struct_name: str = "TestStruct", 
-                                   fields: Dict[str, str] = None) -> str:
-        """
-        Create a simple C source file with a struct for testing
-        
-        Args:
-            struct_name: Name of the struct
-            fields: Dictionary mapping field names to types
-            
-        Returns:
-            C source code string
-        """
-        if fields is None:
-            fields = {"value": "int"}
-        
-        field_declarations = []
-        for field_name, field_type in fields.items():
-            field_declarations.append(f"            {field_type} {field_name};")
-        
-        return f"""
-        struct {struct_name} {{
-{chr(10).join(field_declarations)}
-        }};
-        """
-    
-    def create_simple_c_enum_test(self, enum_name: str = "TestEnum", 
-                                 values: list = None) -> str:
-        """
-        Create a simple C source file with an enum for testing
-        
-        Args:
-            enum_name: Name of the enum
-            values: List of enum values
-            
-        Returns:
-            C source code string
-        """
-        if values is None:
-            values = ["VALUE1", "VALUE2", "VALUE3"]
-        
-        value_declarations = []
-        for i, value in enumerate(values):
-            if i == 0:
-                value_declarations.append(f"            {value} = 0")
-            else:
-                value_declarations.append(f"            {value}")
-        
-        return f"""
-        enum {enum_name} {{
-{chr(10).join(value_declarations)}
-        }};
-        """
