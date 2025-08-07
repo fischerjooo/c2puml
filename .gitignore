@@ -171,3 +171,15 @@ plantuml.jar
 !artifacts/
 !artifacts/**
 scripts/plantuml.jar
+
+# Test outputs and temporary files
+tests/*/output/
+tests/*/temp/
+tests/*/assert-*.json
+tests/*/input-*.json
+
+# Include YAML test files
+!tests/unit/test-*.yml
+!tests/feature/test-*.yml
+!tests/integration/test-*.yml
+!tests/example/test-*.yml

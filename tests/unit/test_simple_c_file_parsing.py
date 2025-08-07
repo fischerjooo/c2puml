@@ -26,16 +26,22 @@ class TestSimpleCFileParsing(UnifiedTestCase):
         test_data = self.data_loader.load_test_data("simple_c_file_parsing")
         
         # Create temporary files
-        source_dir, config_path = self.data_loader.create_temp_files(test_data)
+        source_dir, config_path = self.data_loader.create_temp_files(test_data, "simple_c_file_parsing")
         
-        # Execute c2puml
-        result = self.executor.run_full_pipeline(config_path, source_dir)
+        # Get the temp directory (parent of source_dir)
+        temp_dir = os.path.dirname(source_dir)
+        
+        # Make config path relative to working directory
+        config_filename = os.path.basename(config_path)
+        
+        # Execute c2puml with temp directory as working directory
+        result = self.executor.run_full_pipeline(config_filename, temp_dir)
         
         # Validate execution
         self.assert_c2puml_success(result)
         
-        # Load output files
-        output_dir = os.path.join(source_dir, "output")
+        # Load output files (output is created in temp directory, not src)
+        output_dir = os.path.join(temp_dir, "output")
         model_file = os.path.join(output_dir, "model.json")
         puml_files = self.assert_puml_files_exist(output_dir)
         

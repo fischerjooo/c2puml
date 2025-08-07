@@ -124,24 +124,42 @@ class TestDataLoader:
         
         return test_data
     
-    def create_temp_files(self, test_data: Dict) -> Tuple[str, str]:
+    def create_temp_files(self, test_data: Dict, test_id: str) -> Tuple[str, str]:
         """
         Create temporary source files and config from YAML data
         
         Args:
             test_data: Test data loaded from YAML file
+            test_id: Test ID for creating test-specific temp directory
             
         Returns:
             Tuple of (source_dir_path, config_file_path)
         """
-        # Create temporary directory
-        temp_dir = tempfile.mkdtemp()
+        # Create temp directory within the test case folder
+        test_categories = ["unit", "feature", "integration", "example"]
+        temp_dir = None
+        
+        for category in test_categories:
+            test_dir = f"tests/{category}"
+            if os.path.exists(test_dir):
+                temp_dir = os.path.join(test_dir, "temp")
+                break
+        
+        if not temp_dir:
+            raise ValueError(f"Could not find test directory for test ID: {test_id}")
+        
+        # Create temp directory if it doesn't exist
+        os.makedirs(temp_dir, exist_ok=True)
+        
+        # Create test-specific temp directory
+        test_temp_dir = os.path.join(temp_dir, f"test_{test_id}")
+        os.makedirs(test_temp_dir, exist_ok=True)
         
         # Create source files
-        source_dir = self._create_source_files(test_data, temp_dir)
+        source_dir = self._create_source_files(test_data, test_temp_dir)
         
         # Create config file
-        config_path = self._create_config_file(test_data, temp_dir)
+        config_path = self._create_config_file(test_data, test_temp_dir)
         
         return source_dir, config_path
     
