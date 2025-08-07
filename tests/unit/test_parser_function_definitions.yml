@@ -1,0 +1,54 @@
+# Test metadata
+test:
+  name: "Function Definitions Parsing"
+  description: "Test parsing function definitions with function bodies"
+  category: "unit"
+  id: "2005"
+
+---
+# Source files
+source_files:
+  functions.c: |
+    int calculate_sum(int a, int b) {
+        return a + b;
+    }
+    
+    void process_data(char* data) {
+        printf("%s", data);
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_parser_function_definitions",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "functions.puml"]
+  
+  model:
+    files:
+      functions.c:
+        functions: ["calculate_sum", "process_data"]
+    element_counts:
+      functions: 2
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      functions.puml:
+        contains_elements: ["functions"]
+        contains_lines: ["class \"functions\" as FUNCTIONS"]
+        class_count: 1
+        relationship_count: 0

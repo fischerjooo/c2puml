@@ -196,6 +196,10 @@ class ModelValidator:
                 total_count += len(file_data.get("includes", []))
             elif element_type == "macros":
                 total_count += len(file_data.get("macros", []))
+            elif element_type == "unions":
+                total_count += len(file_data.get("unions", {}))
+            elif element_type == "aliases":
+                total_count += len(file_data.get("aliases", {}))
         
         if total_count != expected_count:
             raise AssertionError(f"Expected {expected_count} {element_type}, got {total_count}")
@@ -503,15 +507,22 @@ class OutputValidator:
     
     def assert_model_file_exists(self, output_dir: str) -> str:
         """
-        Assert that model.json file exists and return its path
+        Assert that model.json file exists and return its path.
+        Prefers model_transformed.json if it exists, otherwise uses model.json
         
         Args:
             output_dir: Output directory to check
             
         Returns:
-            Path to the model.json file
+            Path to the model.json or model_transformed.json file
         """
-        model_file = os.path.join(output_dir, "model.json")
+        # Check for transformed model first (for tests that use transformations)
+        transformed_model_file = os.path.join(output_dir, "model_transformed.json")
+        if os.path.exists(transformed_model_file):
+            model_file = transformed_model_file
+        else:
+            model_file = os.path.join(output_dir, "model.json")
+        
         self.assert_file_exists(model_file)
         return model_file
     

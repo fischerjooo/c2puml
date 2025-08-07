@@ -1,0 +1,54 @@
+# Test metadata
+test:
+  name: "Simple Enum Parsing"
+  description: "Test parsing simple enum definitions with explicit values"
+  category: "unit"
+  id: "2001"
+
+---
+# Source files
+source_files:
+  status.c: |
+    enum Status {
+        OK = 0,
+        ERROR = 1,
+        PENDING = 2
+    };
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_parser_enum_simple",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "status.puml"]
+  
+  model:
+    files:
+      status.c:
+        enums:
+          Status:
+            values: ["OK", "ERROR", "PENDING"]
+    element_counts:
+      enums: 1
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      status.puml:
+        contains_elements: ["Status"]
+        contains_lines: ["class \"Status\" as TYPEDEF_STATUS", "OK", "ERROR", "PENDING"]
+        class_count: 2
+        relationship_count: 1
