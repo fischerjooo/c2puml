@@ -532,6 +532,32 @@ puml:
 - [ ] Update .gitignore
 - [ ] Clean up conftest.py dependencies
 
+## 🚨 **CORRECTIVE APPROACH - CRITICAL INSTRUCTIONS**
+
+### ⚠️ **NO DELETION WITHOUT CLI REFACTORING PAIRS**
+**RULE**: Never delete any test file without creating a proper CLI-based refactored version first.
+
+### 🔄 **Proper Refactoring Workflow**
+1. **PRESERVE**: Keep all original internal API tests running
+2. **CREATE**: Build comprehensive CLI-based test that covers ALL functionality from original
+3. **VALIDATE**: Ensure new CLI test has equal or better coverage
+4. **VERIFY**: Run both old and new tests to confirm functionality parity
+5. **ONLY THEN**: Consider removing the internal API version after CLI coverage is proven
+
+### 🎯 **Current Priority: Restore and Refactor**
+All previously deleted files have been restored and marked for proper CLI refactoring:
+- 8 major test files restored (454 tests total, 100% passing)
+- Each needs comprehensive CLI-based replacement
+- Focus on maintaining 100% functionality coverage through CLI interface
+
+### 📋 **Restoration Status (Completed)**
+✅ **CORRECTIVE ACTION COMPLETED**:
+- Restored 8 deleted test files from previous commits
+- Updated todo.md to mark all restored files as 'Needs CLI Refactoring'
+- **454 tests now running** (back to full test suite - up from 347)
+- **100% test success rate** maintained
+- Proper systematic refactoring approach established
+
 ## Migration Tracking
 
 ### Unit Tests (0001-1000)
@@ -669,15 +695,16 @@ Based on the current state, the next priority is to systematically convert the r
 4. **Convert example tests** using the special external file structure
 
 ### 📊 Progress Metrics
-- **Total Tests**: 450+ (restored deleted files - back to full suite)
-- **Converted**: 42 (9.33%)
-- **Major Test Files Refactored**: 10 large test files → 20 focused CLI tests
-- **Restored Files Needing Refactoring**: 8 large internal API test files
-- **Remaining**: 408+ (90.67%)
+- **Total Tests**: 454 (confirmed count after restoration)
+- **CLI Tests Created**: 42 (9.25% of total) ✅
+- **Major Test Files Converted**: 10 large test files → 20 focused CLI tests ✅
+- **Files Needing CLI Refactoring**: 8 large internal API test files (171 methods total)
+- **Remaining for Conversion**: 412 (90.75%)
 - **Framework Ready**: ✅
 - **Documentation Complete**: ✅
-- **Refactoring Approach Established**: ✅
-- **Status**: Files restored - now need proper CLI refactoring instead of deletion
+- **Corrective Approach Established**: ✅
+- **Test Success Rate**: 100% (454/454 passing) ✅
+- **Current Status**: All files preserved, systematic CLI refactoring in progress
 
 ### 🎯 Lessons Learned from Conversion
 - **PlantUML Class Count**: Structs and enums create separate classes (3 total: source + 2 elements), while functions and macros are included in the source class (1 total)
@@ -699,6 +726,16 @@ Based on the current state, the next priority is to systematically convert the r
 - **Framework Validation Works**: The framework successfully validates complex transformations, parsing, and generation through CLI interface
 - **Focus on Essential Coverage**: Many internal API tests were testing edge cases that don't need separate CLI tests
 - **Large Test File Strategy**: Convert large test files (35+ methods) into 2-3 focused comprehensive tests rather than 1:1 conversion
+
+### 🚨 Critical Lessons from Correction
+- **Never Delete Without Refactoring**: Deletion of tests without proper CLI replacements risks losing test coverage and functionality validation
+- **Preserve All Functionality**: Every internal API test method represents important functionality that must be preserved in CLI form
+- **Systematic Approach Required**: Each large test file (like `test_generator.py` with 67 methods) needs comprehensive CLI replacement, not assumptions about coverage
+- **Test Count Matters**: Going from 454 to 347 tests was a red flag indicating lost coverage
+- **User Feedback is Critical**: The correction highlighted the importance of the user's guidance on preservation vs. deletion strategy
+- **Documentation Must Reflect Reality**: Todo status must accurately represent what files exist and their refactoring status
+- **Validation Before Action**: Always run tests and verify coverage before making deletion decisions
+- **Restoration is Possible**: Git history allows recovery of deleted files, but prevention is better than restoration
 
 ### 🔄 Next Steps
 Based on the current state, the next priority is to systematically convert the remaining tests. The plan is to:
