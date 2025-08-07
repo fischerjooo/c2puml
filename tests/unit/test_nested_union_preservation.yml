@@ -1,0 +1,65 @@
+# Test metadata
+test:
+  name: "Nested Union Preservation"
+  description: "Test that nested unions maintain their structure"
+  category: "unit"
+  id: "0023"
+
+---
+# Source files
+source_files:
+  nested_union.c: |
+    typedef union {
+        int primary_int;
+        union {
+            float nested_float;
+            double nested_double;
+            union {
+                char deep_char;
+                short deep_short;
+            } deep_union;
+        } nested_union;
+        char primary_bytes[32];
+    } union_with_union_t;
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_nested_union_preservation",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "nested_union.puml"]
+  
+  model:
+    files:
+      nested_union.c:
+        unions:
+          union_with_union_t:
+            fields: ["primary_int", "nested_union", "primary_bytes"]
+    element_counts:
+      structs: 0
+      enums: 0
+      functions: 0
+      globals: 0
+      includes: 0
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      nested_union.puml:
+        contains_elements: ["union_with_union_t"]
+        contains_lines: ["class \"union_with_union_t\" as TYPEDEF_UNION_WITH_UNION_T"]
+        class_count: 3
+        relationship_count: 2
