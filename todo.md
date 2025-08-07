@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the refactoring of the C2PUML test suite to use a unified, CLI-only, public API testing framework with multi-document YAML files.
+This document outlines the refactoring of the C2PUML test suite to use a unified, CLI-only, public API testing framework with multi-document YAML files. The new framework provides comprehensive guidance for test developers and ensures consistent, maintainable test patterns.
 
 ## Current Test Structure
 
@@ -18,22 +18,35 @@ The current test suite has inconsistent patterns:
 ```
 tests/
 ├── unit/
-│   ├── test_simple_c_file_parsing.py
-│   ├── test_simple_c_file_parsing.yml
+│   ├── test_simple_c_file_parsing.py    # Test implementation
+│   ├── test_simple_c_file_parsing.yml   # Test data and assertions
 │   ├── test_complex_struct_parsing.py
 │   ├── test_complex_struct_parsing.yml
+│   ├── temp/                             # Temporary files (git ignored)
+│   │   ├── test_simple_c_file_parsing/
+│   │   │   ├── config.json
+│   │   │   ├── src/
+│   │   │   │   └── simple.c
+│   │   │   └── output/
+│   │   │       ├── model.json
+│   │   │       ├── model_transformed.json
+│   │   │       └── simple.puml
+│   │   └── test_complex_struct_parsing/
 │   └── ...
 ├── feature/
 │   ├── test_multi_file_project.py
 │   ├── test_multi_file_project.yml
+│   ├── temp/
 │   └── ...
 ├── integration/
 │   ├── test_end_to_end_pipeline.py
 │   ├── test_end_to_end_pipeline.yml
+│   ├── temp/
 │   └── ...
 └── example/
     ├── test_basic_example.py
     ├── test_basic_example.yml
+    ├── temp/
     └── ...
 ```
 
@@ -150,13 +163,29 @@ Each YAML file contains up to 5 separate documents:
 4. **Model Template** (optional): Expected model.json structure for complex validation
 5. **Assertions**: Test assertions and validation criteria
 
+### Temporary File Structure
+Each test creates a temporary directory structure:
+
+```
+tests/<category>/temp/test_<test_id>/
+├── config.json              # Configuration file
+├── src/                     # Source files directory
+│   ├── simple.c
+│   └── other_files.c
+└── output/                  # Generated output files
+    ├── model.json
+    ├── model_transformed.json
+    └── simple.puml
+```
+
 ## Framework Components
 
 ### TestDataLoader
-- Loads multi-document YAML files
+- Loads multi-document YAML test files
 - Creates temporary source and config files
 - Supports meaningful test IDs
 - Handles optional model templates
+- **Temp Management**: Creates test-specific temp folders in `tests/*/temp/test_<id>/`
 
 ### AssertionProcessor
 - Processes assertions from YAML data
@@ -168,6 +197,7 @@ Each YAML file contains up to 5 separate documents:
 - Executes c2puml via CLI interface only
 - No direct internal API access
 - Supports verbose output and error handling
+- **Working Directory**: Uses temp directory as working directory for proper file resolution
 
 ### Validators
 - ModelValidator: Validates model.json structure and content
@@ -179,6 +209,70 @@ Each YAML file contains up to 5 separate documents:
 - Provides common setup/teardown
 - Initializes framework components
 
+## Test Implementation Pattern
+
+### Standard Test Structure
+```python
+#!/usr/bin/env python3
+"""
+Unit test for Simple C File Parsing
+"""
+
+import os
+import sys
+import unittest
+import json
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
+from tests.framework import UnifiedTestCase
+
+
+class TestSimpleCFileParsing(UnifiedTestCase):
+    """Test Simple C File Parsing"""
+
+    def test_simple_c_file_parsing(self):
+        """Test parsing a simple C file through the CLI interface"""
+        # Load test data from YAML
+        test_data = self.data_loader.load_test_data("simple_c_file_parsing")
+        
+        # Create temporary files
+        source_dir, config_path = self.data_loader.create_temp_files(test_data, "simple_c_file_parsing")
+        
+        # Get the temp directory (parent of source_dir)
+        temp_dir = os.path.dirname(source_dir)
+        
+        # Make config path relative to working directory
+        config_filename = os.path.basename(config_path)
+        
+        # Execute c2puml with temp directory as working directory
+        result = self.executor.run_full_pipeline(config_filename, temp_dir)
+        
+        # Validate execution
+        self.assert_c2puml_success(result)
+        
+        # Load output files (output is created in temp directory, not src)
+        output_dir = os.path.join(temp_dir, "output")
+        model_file = os.path.join(output_dir, "model.json")
+        puml_files = self.assert_puml_files_exist(output_dir)
+        
+        # Load content for validation
+        with open(model_file, 'r') as f:
+            model_data = json.load(f)
+        
+        with open(puml_files[0], 'r') as f:
+            puml_content = f.read()
+        
+        # Process assertions from YAML
+        self.assertion_processor.process_assertions(
+            test_data["assertions"], model_data, puml_content, result, self
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()
+```
+
 ## Implementation Plan
 
 ### Phase 1: Foundation ✅
@@ -187,6 +281,7 @@ Each YAML file contains up to 5 separate documents:
 - [x] Implement AssertionProcessor
 - [x] Implement TestExecutor
 - [x] Create UnifiedTestCase base class
+- [x] Remove old input_factory and references
 
 ### Phase 2: Pilot ✅
 - [x] Convert first unit test (test_simple_c_file_parsing)
@@ -206,13 +301,68 @@ Each YAML file contains up to 5 separate documents:
 
 ## Migration Tracking
 
-| Test Category | Status | Notes |
-|---------------|--------|-------|
-| test_simple_c_file_parsing | ✅ Complete | First pilot test with multi-document YAML |
-| Unit Tests (001-050) | 🔄 Pending | |
-| Feature Tests (101-150) | 🔄 Pending | |
-| Integration Tests (201-250) | 🔄 Pending | |
-| Example Tests (301-350) | 🔄 Pending | |
+### Unit Tests (001-050)
+
+| Test File | Status | New Name | YAML File | Notes |
+|-----------|--------|----------|-----------|-------|
+| test_simple_c_file_parsing.py | ✅ Complete | test_simple_c_file_parsing | test_simple_c_file_parsing.yml | First pilot test |
+| test_parser.py | 🔄 Pending | test_parser_comprehensive | test_parser_comprehensive.yml | Complex parser test |
+| test_parser_comprehensive.py | 🔄 Pending | test_parser_comprehensive | test_parser_comprehensive.yml | Comprehensive parsing |
+| test_parser_filtering.py | 🔄 Pending | test_parser_filtering | test_parser_filtering.yml | Filtering functionality |
+| test_parser_function_params.py | 🔄 Pending | test_parser_function_params | test_parser_function_params.yml | Function parameters |
+| test_parser_macro_duplicates.py | 🔄 Pending | test_parser_macro_duplicates | test_parser_macro_duplicates.yml | Macro handling |
+| test_parser_nested_structures.py | 🔄 Pending | test_parser_nested_structures | test_parser_nested_structures.yml | Nested structures |
+| test_parser_struct_order.py | 🔄 Pending | test_parser_struct_order | test_parser_struct_order.yml | Struct ordering |
+| test_global_parsing.py | 🔄 Pending | test_global_parsing | test_global_parsing.yml | Global variable parsing |
+| test_include_processing.py | 🔄 Pending | test_include_processing | test_include_processing.yml | Include processing |
+| test_include_filtering_bugs.py | 🔄 Pending | test_include_filtering_bugs | test_include_filtering_bugs.yml | Include filtering |
+| test_function_parameters.py | 🔄 Pending | test_function_parameters | test_function_parameters.yml | Function parameters |
+| test_typedef_extraction.py | 🔄 Pending | test_typedef_extraction | test_typedef_extraction.yml | Typedef extraction |
+| test_anonymous_structure_handling.py | 🔄 Pending | test_anonymous_structure_handling | test_anonymous_structure_handling.yml | Anonymous structures |
+| test_anonymous_processor_extended.py | 🔄 Pending | test_anonymous_processor_extended | test_anonymous_processor_extended.yml | Extended anonymous processing |
+| test_multi_pass_anonymous_processing.py | 🔄 Pending | test_multi_pass_anonymous_processing | test_multi_pass_anonymous_processing.yml | Multi-pass processing |
+| test_debug_actual_parsing.py | 🔄 Pending | test_debug_actual_parsing | test_debug_actual_parsing.yml | Debug parsing |
+| test_debug_field_parsing.py | 🔄 Pending | test_debug_field_parsing | test_debug_field_parsing.yml | Field parsing debug |
+| test_debug_field_parsing_detailed.py | 🔄 Pending | test_debug_field_parsing_detailed | test_debug_field_parsing_detailed.yml | Detailed field parsing |
+| test_debug_field_processing.py | 🔄 Pending | test_debug_field_processing | test_debug_field_processing.yml | Field processing debug |
+| test_debug_tokens.py | 🔄 Pending | test_debug_tokens | test_debug_tokens.yml | Token debugging |
+| test_absolute_path_bug_detection.py | 🔄 Pending | test_absolute_path_bug_detection | test_absolute_path_bug_detection.yml | Absolute path bugs |
+| test_config.py | 🔄 Pending | test_config | test_config.yml | Configuration handling |
+| test_file_specific_configuration.py | 🔄 Pending | test_file_specific_configuration | test_file_specific_configuration.yml | File-specific config |
+| test_utils.py | 🔄 Pending | test_utils | test_utils.yml | Utility functions |
+| test_verifier.py | 🔄 Pending | test_verifier | test_verifier.yml | Verification logic |
+
+### Feature Tests (101-150)
+
+| Test File | Status | New Name | YAML File | Notes |
+|-----------|--------|----------|-----------|-------|
+| test_generator.py | 🔄 Pending | test_generator | test_generator.yml | Main generator test |
+| test_generator_exact_format.py | 🔄 Pending | test_generator_exact_format | test_generator_exact_format.yml | Exact format generation |
+| test_generator_grouping.py | 🔄 Pending | test_generator_grouping | test_generator_grouping.yml | Grouping functionality |
+| test_generator_include_tree_bug.py | 🔄 Pending | test_generator_include_tree_bug | test_generator_include_tree_bug.yml | Include tree bugs |
+| test_generator_naming_conventions.py | 🔄 Pending | test_generator_naming_conventions | test_generator_naming_conventions.yml | Naming conventions |
+| test_generator_new_formatting.py | 🔄 Pending | test_generator_new_formatting | test_generator_new_formatting.yml | New formatting |
+| test_generator_visibility_logic.py | 🔄 Pending | test_generator_visibility_logic | test_generator_visibility_logic.yml | Visibility logic |
+| test_generator_duplicate_includes.py | 🔄 Pending | test_generator_duplicate_includes | test_generator_duplicate_includes.yml | Duplicate includes |
+| test_transformer.py | 🔄 Pending | test_transformer | test_transformer.yml | Main transformer test |
+| test_transformation_system.py | 🔄 Pending | test_transformation_system | test_transformation_system.yml | Transformation system |
+| test_preprocessor_handling.py | 🔄 Pending | test_preprocessor_handling | test_preprocessor_handling.yml | Preprocessor handling |
+| test_preprocessor_bug.py | 🔄 Pending | test_preprocessor_bug | test_preprocessor_bug.yml | Preprocessor bugs |
+| test_tokenizer.py | 🔄 Pending | test_tokenizer | test_tokenizer.yml | Tokenizer functionality |
+
+### Integration Tests (201-250)
+
+| Test File | Status | New Name | YAML File | Notes |
+|-----------|--------|----------|-----------|-------|
+| test_end_to_end_pipeline.py | 🔄 Pending | test_end_to_end_pipeline | test_end_to_end_pipeline.yml | End-to-end pipeline |
+| test_error_handling.py | 🔄 Pending | test_error_handling | test_error_handling.yml | Error handling |
+
+### Example Tests (301-350)
+
+| Test File | Status | New Name | YAML File | Notes |
+|-----------|--------|----------|-----------|-------|
+| test_basic_example.py | 🔄 Pending | test_basic_example | test_basic_example.yml | Basic example |
+| test_advanced_example.py | 🔄 Pending | test_advanced_example | test_advanced_example.yml | Advanced example |
 
 ## Benefits
 
@@ -223,7 +373,9 @@ Each YAML file contains up to 5 separate documents:
 5. **Natural Formats**: Each section uses its most natural format (JSON for config, YAML for assertions)
 6. **Version Control**: Clear diffs when individual sections change
 7. **Meaningful Names**: Test files have descriptive names that explain their purpose
-8. **Direct JSON**: Config and model files are included as direct text for better readability
+8. **Direct JSON**: Config and model files are included as direct JSON text for better readability
+9. **Test Isolation**: Each test has its own temp folder for complete isolation
+10. **Git Integration**: Temp folders are properly ignored, keeping repository clean
 
 ## Test Naming Convention
 
@@ -238,6 +390,18 @@ Each YAML file contains up to 5 separate documents:
 - **Feature Tests**: test_multi_file_project.yml, test_recursive_search.yml, etc.
 - **Integration Tests**: test_end_to_end_pipeline.yml, test_error_handling.yml, etc.
 - **Example Tests**: test_basic_example.yml, test_advanced_example.yml, etc.
+
+## Git Integration
+
+### Ignored Files
+- `tests/*/temp/` - All temporary test folders
+- `tests/*/output/` - Test output directories
+- `tests/*/assert-*.json` - Old assertion files (no longer used)
+- `tests/*/input-*.json` - Old input files (no longer used)
+
+### Tracked Files
+- `tests/*/test_*.yml` - YAML test data files
+- `tests/*/test_*.py` - Test implementation files
 
 ## Migration Guidelines
 
@@ -261,3 +425,13 @@ Each YAML file contains up to 5 separate documents:
 5. **Keep documents focused**: Each document should have a single purpose
 6. **Direct JSON for config/model**: Include JSON files as direct text for readability
 7. **Optional sections**: Only include model templates when needed for complex validation
+
+## Example Implementation
+
+The first test demonstrates this new approach:
+
+- **test_simple_c_file_parsing.py**: Simple test implementation using the framework
+- **test_simple_c_file_parsing.yml**: Contains all test data and assertions in multiple documents
+- **temp/test_simple_c_file_parsing/**: Temporary files created during test execution (git ignored)
+
+This new approach makes the testing framework much more maintainable and easier to understand while providing all the benefits of data-driven testing with clear separation of concerns and proper git integration.
