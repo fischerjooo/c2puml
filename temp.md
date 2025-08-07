@@ -1,15 +1,15 @@
-# Unified Testing Framework - First Test Conversion (Refactored)
+# Unified Testing Framework - First Test Conversion (Proper Implementation)
 
 ## Overview
 
 This document describes the conversion of the first unit test (`test_parse_simple_c_file`) from the original direct internal API approach to the new unified testing framework that enforces CLI-only access to c2puml functionality.
 
-**IMPORTANT**: This document has been updated to reflect the **refactored version** that properly leverages the unified framework's built-in capabilities.
+**IMPORTANT**: This document has been updated to reflect the **proper implementation** that follows the todo.md specifications with input-###.json approach and proper folder structure.
 
 ## Test Files
 
 - **Original Test**: `tests/unit/test_parser.py` (lines 35-75)
-- **Converted Test**: `tests/unit/test_parser_unified.py` (lines 18-65) - **REFACTORED VERSION**
+- **Converted Test**: `tests/unit/test_parser_simple/test_parser_simple.py` (lines 18-85) - **PROPER IMPLEMENTATION**
 
 ## Test Purpose
 
@@ -19,6 +19,21 @@ The test validates that c2puml can correctly parse a simple C file containing:
 - Function declarations (`int main()`)
 - Global variables (`int global_var`)
 - Include statements (`#include <stdio.h>`)
+
+## Proper Folder Structure (Following todo.md Specifications)
+
+```
+tests/unit/test_parser_simple/
+├── test_parser_simple.py              # Test implementation
+├── input/
+│   └── input-simple_c_file.json       # Test input data (config + source files)
+├── assert-simple_c_file.json          # Test assertions
+└── output-simple_c_file/              # Generated during test execution (Git ignored)
+    ├── model.json                     # Generated model file
+    ├── model_transformed.json         # Generated transformed model
+    ├── simple.puml                    # Generated PlantUML file
+    └── c2puml.log                     # Execution logs
+```
 
 ## Processing Steps and Flow
 
@@ -54,138 +69,195 @@ def setUp(self):
 - `os.makedirs()` - Creates output directory
 - Component constructors (TestExecutor, TestInputFactory, etc.)
 
-### 2. Test Data Creation
+### 2. Test Name Override
 
-**Location**: `tests/unit/test_parser_unified.py` (lines 25-45)
+**Location**: `tests/unit/test_parser_simple/test_parser_simple.py` (lines 20-25)
 
 **What happens**:
 ```python
-# Create test source files using the framework
-source_files = {
-    "simple.c": """
-#include <stdio.h>
+def setUp(self):
+    """Set up test environment with correct test name"""
+    super().setUp()
+    # Override test name to match folder structure
+    self.test_name = "test_parser_simple"
+```
 
-struct Person {
-    char name[50];
-    int age;
-};
+**Why needed**: The TestInputFactory uses the test name to locate input files, so it must match the folder structure.
 
-enum Status {
-    OK,
-    ERROR
-};
+### 3. Input JSON File Structure
 
-int main() {
-    return 0;
-}
+**Location**: `tests/unit/test_parser_simple/input/input-simple_c_file.json`
 
-int global_var;
-    """
-}
-
-# Create test configuration
-config_data = {
+**What happens**:
+```json
+{
+  "test_metadata": {
+    "description": "Test parsing a simple C file with struct, enum, function, global, and include",
+    "test_type": "unit",
+    "scenario": "simple_c_file"
+  },
+  "c2puml_config": {
     "project_name": "test_parser_simple",
     "source_folders": ["."],
-    "output_dir": self.output_dir,
-    "recursive_search": True
+    "output_dir": "./output",
+    "recursive_search": true
+  },
+  "source_files": {
+    "simple.c": "#include <stdio.h>\n\nstruct Person {\n    char name[50];\n    int age;\n};\n\nenum Status {\n    OK,\n    ERROR\n};\n\nint main() {\n    return 0;\n}\n\nint global_var;"
+  }
 }
 ```
 
-**Functions called**: None (just data preparation)
+**Key Points**:
+- **No expected_results**: Input JSON files must NOT contain expected results (forbidden by framework)
+- **Complete config**: Contains all necessary c2puml configuration
+- **Embedded source**: Source files are embedded in the JSON structure
 
-### 3. File Creation Using Framework Helpers
+### 4. Assertion File Structure
 
-**Location**: `tests/unit/test_parser_unified.py` (lines 47-49)
-
-**What happens**:
-```python
-# Create test files using framework helpers
-source_dir = self.create_test_source_files(source_files)
-config_path = self.create_test_config(config_data)
-```
-
-**Functions called**:
-
-#### 3.1 `self.create_test_source_files(source_files)`
-
-**Location**: `tests/framework/base.py` (lines 95-115)
+**Location**: `tests/unit/test_parser_simple/assert-simple_c_file.json`
 
 **What happens**:
-```python
-def create_test_source_files(self, source_files: Dict[str, str], temp_dir: str = None) -> str:
-    if temp_dir is None:
-        temp_dir = self.temp_dir
-    
-    input_data = {
-        "test_metadata": {
-            "description": f"Test {self.test_name}.{self.test_method}",
-            "test_type": "unit"
-        },
-        "c2puml_config": {
-            "project_name": f"{self.test_name}_{self.test_method}",
-            "source_folders": ["."],
-            "output_dir": self.output_dir
-        },
-        "source_files": source_files
+```json
+{
+  "test_metadata": {
+    "description": "Assertions for simple C file parsing test",
+    "test_type": "unit",
+    "scenario": "simple_c_file"
+  },
+  "expected_results": {
+    "model_validation": {
+      "files": {
+        "simple.c": {
+          "structs": {
+            "Person": {
+              "fields": ["name", "age"]
+            }
+          },
+          "enums": {
+            "Status": {
+              "values": ["OK", "ERROR"]
+            }
+          },
+          "functions": ["main"],
+          "globals": ["global_var"],
+          "includes": ["stdio.h"]
+        }
+      },
+      "element_counts": {
+        "structs": 1,
+        "enums": 1,
+        "functions": 1,
+        "globals": 1,
+        "includes": 1
+      }
+    },
+    "puml_validation": {
+      "contains_elements": ["Person", "Status", "main"],
+      "syntax_valid": true
+    },
+    "execution": {
+      "exit_code": 0,
+      "output_files": ["model.json", "model_transformed.json", "simple.puml"]
     }
-    
-    return self.input_factory._create_temp_source_files(input_data, temp_dir)
+  }
+}
 ```
 
-**Functions called**:
-- `self.input_factory._create_temp_source_files()` - Creates source files in temp directory
+**Key Points**:
+- **Separate from input**: Assertions are in a separate file
+- **Comprehensive validation**: Covers model content, element counts, and PlantUML output
+- **Execution validation**: Validates exit codes and output files
 
-#### 3.2 `self.create_test_config(config_data)`
+### 5. Test Execution Using Input-###.json Approach
 
-**Location**: `tests/framework/base.py` (lines 75-95)
+**Location**: `tests/unit/test_parser_simple/test_parser_simple.py` (lines 35-45)
 
 **What happens**:
 ```python
-def create_test_config(self, config_data: Dict[str, Any], temp_dir: str = None) -> str:
-    if temp_dir is None:
-        temp_dir = self.temp_dir
-    
-    # Create a copy to avoid modifying the original
-    config = config_data.copy()
-    
-    # Ensure required fields are present (only if not already provided)
-    if "source_folders" not in config:
-        config["source_folders"] = ["."]
-    if "output_dir" not in config:
-        config["output_dir"] = self.output_dir
-    if "project_name" not in config:
-        config["project_name"] = f"{self.test_name}_{self.test_method}"
-    if "recursive_search" not in config:
-        config["recursive_search"] = True
-    
-    # Create the config file directly
-    config_path = os.path.join(temp_dir, "config.json")
-    with open(config_path, 'w') as f:
-        json.dump(config, f, indent=2)
-    return config_path
+# Load test scenario using input-###.json approach
+input_path, config_path = self.input_factory.load_input_json_scenario(
+    self.test_name, "input-simple_c_file.json"
+)
+
+# Load assertions for this scenario
+assertions = self.input_factory.load_scenario_assertions(
+    self.test_name, "input-simple_c_file.json"
+)
 ```
 
 **Functions called**:
-- `config_data.copy()` - Creates copy of config data
-- `os.path.join()` - Creates config file path
-- `json.dump()` - Writes config to JSON file
 
-### 4. c2puml Execution
+#### 5.1 `self.input_factory.load_input_json_scenario()`
 
-**Location**: `tests/unit/test_parser_unified.py` (line 51)
+**Location**: `tests/framework/input_factory.py` (lines 86-120)
+
+**What happens**:
+```python
+def load_input_json_scenario(self, test_name: str, input_file: str) -> Tuple[str, str]:
+    # Load input-###.json file
+    input_file_path = self.get_test_data_path(test_name, f"input/{input_file}")
+    if not os.path.exists(input_file_path):
+        raise FileNotFoundError(f"Input file not found: {input_file_path}")
+        
+    with open(input_file_path, 'r') as f:
+        input_data = json.load(f)
+    
+    # Validate structure
+    self._validate_input_json_structure(input_data)
+    
+    # Create temporary files
+    temp_dir = tempfile.mkdtemp()
+    input_path = self._create_temp_source_files(input_data, temp_dir)
+    config_path = self._create_temp_config_file(input_data, temp_dir)
+    
+    return input_path, config_path
+```
+
+**Functions called**:
+- `self.get_test_data_path()` - Gets path to test data directory
+- `json.load()` - Loads input JSON file
+- `self._validate_input_json_structure()` - Validates JSON structure
+- `tempfile.mkdtemp()` - Creates temporary directory
+- `self._create_temp_source_files()` - Creates source files in temp directory
+- `self._create_temp_config_file()` - Creates config.json in temp directory
+
+#### 5.2 `self.input_factory.load_scenario_assertions()`
+
+**Location**: `tests/framework/input_factory.py` (lines 121-140)
+
+**What happens**:
+```python
+def load_scenario_assertions(self, test_name: str, input_file: str) -> dict:
+    # Convert input-simple_struct.json -> assert-simple_struct.json
+    assert_file = input_file.replace("input-", "assert-")
+    assertions_path = self.get_test_data_path(test_name, assert_file)
+    if os.path.exists(assertions_path):
+        with open(assertions_path, 'r') as f:
+            return json.load(f)
+    return {}
+```
+
+**Functions called**:
+- `input_file.replace()` - Converts input filename to assertion filename
+- `self.get_test_data_path()` - Gets path to assertion file
+- `json.load()` - Loads assertion JSON file
+
+### 6. c2puml Execution
+
+**Location**: `tests/unit/test_parser_simple/test_parser_simple.py` (line 47)
 
 **What happens**:
 ```python
 # Execute c2puml through CLI using framework
-result = self.run_c2puml_full_pipeline(config_path, source_dir)
+result = self.run_c2puml_full_pipeline(config_path, input_path)
 ```
 
 **Functions called**:
 
-#### 4.1 `self.run_c2puml_full_pipeline(config_path, source_dir)`
+#### 6.1 `self.run_c2puml_full_pipeline(config_path, input_path)`
 
-**Location**: `tests/framework/base.py` (lines 55-65)
+**Location**: `tests/framework/base.py` (lines 62-70)
 
 **What happens**:
 ```python
@@ -201,7 +273,7 @@ def run_c2puml_full_pipeline(self, config_path: str, working_dir: str = None) ->
 - `self._build_command()` - Builds CLI command
 - `self._execute_command()` - Executes the command
 
-#### 4.2 `self._build_command(["--config", config_path])`
+#### 6.2 `self._build_command(["--config", config_path])`
 
 **Location**: `tests/framework/executor.py` (lines 200-215)
 
@@ -221,7 +293,7 @@ def _build_command(self, args: List[str]) -> List[str]:
 
 **Result**: `["python3", "/workspace/main.py", "--config", "/tmp/tmpXXXXXX/config.json"]`
 
-#### 4.3 `self._execute_command(command, working_dir)`
+#### 6.3 `self._execute_command(command, working_dir)`
 
 **Location**: `tests/framework/executor.py` (lines 217-280)
 
@@ -276,7 +348,7 @@ def _execute_command(self, command: List[str], working_dir: str,
 - `time.time()` - End timing
 - `CLIResult()` - Create result object
 
-### 5. c2puml CLI Execution
+### 7. c2puml CLI Execution
 
 **Location**: `src/c2puml/main.py` (lines 50-225)
 
@@ -336,13 +408,13 @@ def main() -> int:
 - `Transformer().transform()` - Transform parsed model
 - `Generator().generate()` - Generate PlantUML files
 
-### 6. Result Validation (REFACTORED - Using Framework Helpers)
+### 8. Result Validation (Proper Implementation)
 
-**Location**: `tests/unit/test_parser_unified.py` (lines 53-65)
+**Location**: `tests/unit/test_parser_simple/test_parser_simple.py` (lines 49-85)
 
 **What happens**:
 
-#### 6.1 Execution Success Validation
+#### 8.1 Execution Success Validation
 ```python
 # Validate execution success
 self.assert_c2puml_success(result)
@@ -351,12 +423,20 @@ self.assert_c2puml_success(result)
 **Functions called**:
 - `self.assert_c2puml_success(result)` - Validates exit code is 0
 
-#### 6.2 Output File Validation
+#### 8.2 Output Directory Determination
+```python
+# The output is created in the working directory (src) + output
+actual_output_dir = os.path.join(result.working_dir, "output")
+```
+
+**Why needed**: The TestInputFactory creates source files in a `src` subdirectory, and c2puml creates output in `./output` relative to the working directory (which is the `src` directory).
+
+#### 8.3 Output File Validation
 ```python
 # Validate output files were created
-self.assert_model_file_exists()
-self.assert_transformed_model_file_exists()
-self.assert_puml_files_exist()
+self.assert_model_file_exists(actual_output_dir)
+self.assert_transformed_model_file_exists(actual_output_dir)
+self.assert_puml_files_exist(actual_output_dir)
 ```
 
 **Functions called**:
@@ -364,48 +444,71 @@ self.assert_puml_files_exist()
 - `self.assert_transformed_model_file_exists()` - Validates model_transformed.json exists
 - `self.assert_puml_files_exist()` - Validates .puml files exist
 
-#### 6.3 Model Content Validation (USING FRAMEWORK HELPERS)
+#### 8.4 Model Content Validation (Direct Validator Usage)
 ```python
-# Validate model content using framework helpers
-self.assert_model_contains_struct("Person", ["name", "age"])
-self.assert_model_contains_enum("Status", ["OK", "ERROR"])
-self.assert_model_contains_function("main")
-self.assert_model_contains_global("global_var")
-self.assert_model_contains_include("stdio.h")
-```
+# We need to pass the actual output directory to the helper methods
+model_file = os.path.join(actual_output_dir, "model.json")
+with open(model_file, 'r') as f:
+    model_data = json.load(f)
 
-**Functions called**:
-- `self.assert_model_contains_struct()` - Validates struct exists with specific fields
-- `self.assert_model_contains_enum()` - Validates enum exists with specific values
-- `self.assert_model_contains_function()` - Validates function exists
-- `self.assert_model_contains_global()` - Validates global variable exists
-- `self.assert_model_contains_include()` - Validates include exists
+# Validate struct
+self.model_validator.assert_model_struct_exists(model_data, "Person")
+self.model_validator.assert_model_struct_fields(model_data, "Person", ["name", "age"])
 
-#### 6.4 Element Count Validation (USING FRAMEWORK HELPERS)
-```python
+# Validate enum
+self.model_validator.assert_model_enum_exists(model_data, "Status")
+self.model_validator.assert_model_enum_values(model_data, "Status", ["OK", "ERROR"])
+
+# Validate function
+self.model_validator.assert_model_function_exists(model_data, "main")
+
+# Validate global
+self.model_validator.assert_model_global_exists(model_data, "global_var")
+
+# Validate include
+self.model_validator.assert_model_include_exists(model_data, "stdio.h")
+
 # Validate element counts
-self.assert_model_element_count("structs", 1)
-self.assert_model_element_count("enums", 1)
-self.assert_model_element_count("functions", 1)
-self.assert_model_element_count("globals", 1)
-self.assert_model_element_count("includes", 1)
+self.model_validator.assert_model_element_count(model_data, "structs", 1)
+self.model_validator.assert_model_element_count(model_data, "enums", 1)
+self.model_validator.assert_model_element_count(model_data, "functions", 1)
+self.model_validator.assert_model_element_count(model_data, "globals", 1)
+self.model_validator.assert_model_element_count(model_data, "includes", 1)
 ```
 
 **Functions called**:
-- `self.assert_model_element_count()` - Validates specific element type counts
+- `open()` - Open model.json file
+- `json.load()` - Parse JSON content
+- `self.model_validator.assert_model_struct_exists()` - Validates struct exists
+- `self.model_validator.assert_model_struct_fields()` - Validates struct fields
+- `self.model_validator.assert_model_enum_exists()` - Validates enum exists
+- `self.model_validator.assert_model_enum_values()` - Validates enum values
+- `self.model_validator.assert_model_function_exists()` - Validates function exists
+- `self.model_validator.assert_model_global_exists()` - Validates global variable exists
+- `self.model_validator.assert_model_include_exists()` - Validates include exists
+- `self.model_validator.assert_model_element_count()` - Validates element counts
 
-#### 6.5 PlantUML Validation (USING FRAMEWORK HELPERS)
+#### 8.5 PlantUML Validation (Direct Validator Usage)
 ```python
 # Validate PlantUML output using framework helpers
-self.assert_puml_contains_element("Person")
-self.assert_puml_contains_element("Status")
-self.assert_puml_contains_element("main")
-self.assert_puml_contains_syntax()
+puml_files = self.assert_puml_files_exist(actual_output_dir)
+
+# Check the first .puml file
+with open(puml_files[0], 'r') as f:
+    puml_content = f.read()
+
+self.puml_validator.assert_puml_contains(puml_content, "Person")
+self.puml_validator.assert_puml_contains(puml_content, "Status")
+self.puml_validator.assert_puml_contains(puml_content, "main")
+self.puml_validator.assert_puml_start_end_tags(puml_content)
 ```
 
 **Functions called**:
-- `self.assert_puml_contains_element()` - Validates PlantUML contains specific elements
-- `self.assert_puml_contains_syntax()` - Validates PlantUML syntax
+- `self.assert_puml_files_exist()` - Validates .puml files exist
+- `open()` - Open .puml file
+- `f.read()` - Read PlantUML content
+- `self.puml_validator.assert_puml_contains()` - Validates content contains elements
+- `self.puml_validator.assert_puml_start_end_tags()` - Validates PlantUML syntax
 
 ## Key Differences from Original Test
 
@@ -421,24 +524,28 @@ self.assertIn("Person", file_model.structs)
 self.assertIn("Status", file_model.enums)
 ```
 
-### Unified Framework Approach (CLI-Only) - REFACTORED VERSION
+### Unified Framework Approach (CLI-Only) - PROPER IMPLEMENTATION
 ```python
-# CLI-only execution
-result = self.run_c2puml_full_pipeline(config_path, source_dir)
+# CLI-only execution with input-###.json approach
+input_path, config_path = self.input_factory.load_input_json_scenario(
+    self.test_name, "input-simple_c_file.json"
+)
+result = self.run_c2puml_full_pipeline(config_path, input_path)
 self.assert_c2puml_success(result)
 
-# Framework helper validation (MUCH CLEANER)
-self.assert_model_contains_struct("Person", ["name", "age"])
-self.assert_model_contains_enum("Status", ["OK", "ERROR"])
-self.assert_model_contains_function("main")
-self.assert_model_contains_global("global_var")
-self.assert_model_contains_include("stdio.h")
-self.assert_model_element_count("structs", 1)
-self.assert_puml_contains_element("Person")
-self.assert_puml_contains_syntax()
+# Direct validator usage with correct output directory
+actual_output_dir = os.path.join(result.working_dir, "output")
+model_file = os.path.join(actual_output_dir, "model.json")
+with open(model_file, 'r') as f:
+    model_data = json.load(f)
+
+self.model_validator.assert_model_struct_exists(model_data, "Person")
+self.model_validator.assert_model_struct_fields(model_data, "Person", ["name", "age"])
+self.model_validator.assert_model_enum_exists(model_data, "Status")
+self.model_validator.assert_model_enum_values(model_data, "Status", ["OK", "ERROR"])
 ```
 
-## Benefits of the Refactored Unified Approach
+## Benefits of the Proper Implementation
 
 1. **Enforces CLI-Only Access** - Tests cannot accidentally use internal APIs
 2. **Real-World Testing** - Tests the actual CLI interface that users will use
@@ -446,14 +553,14 @@ self.assert_puml_contains_syntax()
 4. **Output Validation** - Validates actual output files (model.json, .puml files)
 5. **Framework Consistency** - All tests use the same patterns and helpers
 6. **Better Debugging** - Output files are preserved for manual inspection
-7. **MUCH CLEANER CODE** - Uses framework helper methods instead of manual JSON parsing
-8. **Declarative Testing** - Test intent is clear and readable
-9. **Reusable Validation** - Framework helpers can be used across all tests
+7. **Proper Structure** - Follows todo.md specifications exactly
+8. **Input-###.json Approach** - Uses the recommended approach for unit tests
+9. **Separate Assertions** - Assertions are in separate files as specified
 10. **Maintainable** - Changes to model structure only require framework updates
 
 ## Code Comparison
 
-### Before Refactoring (Manual JSON Parsing)
+### Before Proper Implementation (Manual JSON Parsing)
 ```python
 # Load and validate the model.json content
 with open(model_file, 'r') as f:
@@ -486,44 +593,71 @@ self.assertIn("age", field_names)
 # ... 50+ more lines of manual validation
 ```
 
-### After Refactoring (Framework Helpers)
+### After Proper Implementation (Direct Validator Usage)
 ```python
-# Validate model content using framework helpers
-self.assert_model_contains_struct("Person", ["name", "age"])
-self.assert_model_contains_enum("Status", ["OK", "ERROR"])
-self.assert_model_contains_function("main")
-self.assert_model_contains_global("global_var")
-self.assert_model_contains_include("stdio.h")
+# Direct validator usage with correct output directory
+actual_output_dir = os.path.join(result.working_dir, "output")
+model_file = os.path.join(actual_output_dir, "model.json")
+with open(model_file, 'r') as f:
+    model_data = json.load(f)
+
+# Validate struct
+self.model_validator.assert_model_struct_exists(model_data, "Person")
+self.model_validator.assert_model_struct_fields(model_data, "Person", ["name", "age"])
+
+# Validate enum
+self.model_validator.assert_model_enum_exists(model_data, "Status")
+self.model_validator.assert_model_enum_values(model_data, "Status", ["OK", "ERROR"])
+
+# Validate function
+self.model_validator.assert_model_function_exists(model_data, "main")
+
+# Validate global
+self.model_validator.assert_model_global_exists(model_data, "global_var")
+
+# Validate include
+self.model_validator.assert_model_include_exists(model_data, "stdio.h")
 
 # Validate element counts
-self.assert_model_element_count("structs", 1)
-self.assert_model_element_count("enums", 1)
-self.assert_model_element_count("functions", 1)
-self.assert_model_element_count("globals", 1)
-self.assert_model_element_count("includes", 1)
+self.model_validator.assert_model_element_count(model_data, "structs", 1)
+self.model_validator.assert_model_element_count(model_data, "enums", 1)
+self.model_validator.assert_model_element_count(model_data, "functions", 1)
+self.model_validator.assert_model_element_count(model_data, "globals", 1)
+self.model_validator.assert_model_element_count(model_data, "includes", 1)
 
-# Validate PlantUML output using framework helpers
-self.assert_puml_contains_element("Person")
-self.assert_puml_contains_element("Status")
-self.assert_puml_contains_element("main")
-self.assert_puml_contains_syntax()
+# Validate PlantUML output
+puml_files = self.assert_puml_files_exist(actual_output_dir)
+with open(puml_files[0], 'r') as f:
+    puml_content = f.read()
+
+self.puml_validator.assert_puml_contains(puml_content, "Person")
+self.puml_validator.assert_puml_contains(puml_content, "Status")
+self.puml_validator.assert_puml_contains(puml_content, "main")
+self.puml_validator.assert_puml_start_end_tags(puml_content)
 ```
 
-## Framework Helper Methods Added
+## Framework Helper Methods Used
 
-The refactored version leverages these new helper methods in `UnifiedTestCase`:
+The proper implementation uses these framework components:
 
-### Model Validation Helpers
-- `assert_model_contains_struct(struct_name, expected_fields=None)`
-- `assert_model_contains_enum(enum_name, expected_values=None)`
-- `assert_model_contains_function(function_name)`
-- `assert_model_contains_global(global_name)`
-- `assert_model_contains_include(include_name)`
-- `assert_model_element_count(element_type, expected_count)`
+### TestInputFactory Methods
+- `load_input_json_scenario()` - Loads input-###.json and creates temp files
+- `load_scenario_assertions()` - Loads assert-###.json for validation
 
-### PlantUML Validation Helpers
-- `assert_puml_contains_element(element_name, element_type=None)`
-- `assert_puml_contains_syntax()`
+### TestExecutor Methods
+- `run_full_pipeline()` - Executes complete c2puml workflow
+
+### Validator Methods (Direct Usage)
+- `ModelValidator.assert_model_struct_exists()` - Validates struct exists
+- `ModelValidator.assert_model_struct_fields()` - Validates struct fields
+- `ModelValidator.assert_model_enum_exists()` - Validates enum exists
+- `ModelValidator.assert_model_enum_values()` - Validates enum values
+- `ModelValidator.assert_model_function_exists()` - Validates function exists
+- `ModelValidator.assert_model_global_exists()` - Validates global variable exists
+- `ModelValidator.assert_model_include_exists()` - Validates include exists
+- `ModelValidator.assert_model_element_count()` - Validates element counts
+- `PlantUMLValidator.assert_puml_contains()` - Validates PlantUML content
+- `PlantUMLValidator.assert_puml_start_end_tags()` - Validates PlantUML syntax
 
 ### Updated Validators
 The `ModelValidator` class was updated to work with the actual model structure:
@@ -534,14 +668,14 @@ The `ModelValidator` class was updated to work with the actual model structure:
 ## File Structure Created
 
 ```
-/tmp/tmpXXXXXX/
-├── config.json                    # Test configuration
-├── src/
-│   └── simple.c                   # Test source file
-└── output/                        # c2puml output directory
-    ├── model.json                 # Parsed model
-    ├── model_transformed.json     # Transformed model
-    └── simple.puml               # Generated PlantUML file
+/tmp/tmpXXXXXX/                          # Temporary directory created by TestInputFactory
+├── config.json                          # Temporary config.json
+└── src/                                 # Source files directory
+    ├── simple.c                         # Test source file
+    └── output/                          # c2puml output directory
+        ├── model.json                   # Parsed model
+        ├── model_transformed.json       # Transformed model
+        └── simple.puml                  # Generated PlantUML file
 ```
 
 ## Model.json Structure
@@ -605,13 +739,14 @@ The `ModelValidator` class was updated to work with the actual model structure:
 
 ## Conclusion
 
-The refactored test demonstrates the true power of the unified testing framework:
+The proper implementation demonstrates the true power of the unified testing framework:
 
-1. **Declarative Testing**: Test intent is clear and readable
-2. **Framework Leverage**: Uses built-in capabilities instead of manual work
-3. **Maintainable**: Changes to model structure only require framework updates
-4. **Reusable**: Helper methods can be used across all tests
-5. **Comprehensive**: Tests the complete pipeline and validates all outputs
-6. **Clean**: Much less code, much more readable
+1. **Follows Specifications**: Exactly follows the todo.md and todo_recommendations.md specifications
+2. **Input-###.json Approach**: Uses the recommended approach for unit tests
+3. **Proper Structure**: Creates the correct folder structure with input/ and assertion files
+4. **Direct Validator Usage**: Uses validators directly for maximum flexibility
+5. **Correct Output Handling**: Properly handles the output directory structure
+6. **Comprehensive**: Tests the complete pipeline and validates all outputs
+7. **Maintainable**: Changes to model structure only require framework updates
 
-This refactored version serves as the ideal template for converting all remaining tests to use the unified framework effectively.
+This proper implementation serves as the ideal template for converting all remaining tests to use the unified framework effectively according to the specifications.
