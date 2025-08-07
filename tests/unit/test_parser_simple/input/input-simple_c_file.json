@@ -1,0 +1,16 @@
+{
+  "test_metadata": {
+    "description": "Test parsing a simple C file with struct, enum, function, global, and include",
+    "test_type": "unit",
+    "scenario": "simple_c_file"
+  },
+  "c2puml_config": {
+    "project_name": "test_parser_simple",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  },
+  "source_files": {
+    "simple.c": "#include <stdio.h>\n\nstruct Person {\n    char name[50];\n    int age;\n};\n\nenum Status {\n    OK,\n    ERROR\n};\n\nint main() {\n    return 0;\n}\n\nint global_var;"
+  }
+}

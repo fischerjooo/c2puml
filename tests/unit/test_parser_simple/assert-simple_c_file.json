@@ -1,0 +1,43 @@
+{
+  "test_metadata": {
+    "description": "Assertions for simple C file parsing test",
+    "test_type": "unit",
+    "scenario": "simple_c_file"
+  },
+  "expected_results": {
+    "model_validation": {
+      "files": {
+        "simple.c": {
+          "structs": {
+            "Person": {
+              "fields": ["name", "age"]
+            }
+          },
+          "enums": {
+            "Status": {
+              "values": ["OK", "ERROR"]
+            }
+          },
+          "functions": ["main"],
+          "globals": ["global_var"],
+          "includes": ["stdio.h"]
+        }
+      },
+      "element_counts": {
+        "structs": 1,
+        "enums": 1,
+        "functions": 1,
+        "globals": 1,
+        "includes": 1
+      }
+    },
+    "puml_validation": {
+      "contains_elements": ["Person", "Status", "main"],
+      "syntax_valid": true
+    },
+    "execution": {
+      "exit_code": 0,
+      "output_files": ["model.json", "model_transformed.json", "simple.puml"]
+    }
+  }
+}

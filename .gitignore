@@ -67,6 +67,8 @@ Thumbs.db
 !test_model.json
 !tests/example/config.json
 !artifacts/output_example/*.json
+!tests/unit/*/input/*.json
+!tests/unit/*/assert-*.json
 test_*.json
 final_*.json
 cleanup_*.json
