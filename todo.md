@@ -208,7 +208,7 @@ tests/example/test-<test_id>/
 
 ### TestDataLoader
 - Loads multi-document YAML test files
-- **Standard Tests**: Creates temporary source and config files from YAML content
+- **Standard Tests**: Creates temporary source and config files from YAML content (after cleanup by setUp)
 - **Example Tests**: Uses external config.json and source/ folder (no temp files created)
 - Supports meaningful test IDs
 - Handles optional model templates
@@ -237,7 +237,9 @@ tests/example/test-<test_id>/
 
 ### UnifiedTestCase
 - Base class for all tests
-- Provides common setup/teardown
+- Provides common setup/teardown with complete cleanup
+- **setUp()**: Cleans up any existing test-* folders before creating new ones
+- **tearDown()**: Preserves output for debugging (no automatic cleanup)
 - Initializes framework components
 
 ## Test Implementation Pattern

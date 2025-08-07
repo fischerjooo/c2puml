@@ -56,6 +56,9 @@ class UnifiedTestCase(unittest.TestCase):
         self.file_validator = FileValidator()
         self.cli_validator = CLIValidator()
         
+        # Clean up any existing test folders to ensure clean slate
+        self._cleanup_existing_test_folders()
+        
         # Create temporary directories
         self.temp_dir = tempfile.mkdtemp()
         self.output_dir = os.path.join(self.temp_dir, "output")
@@ -139,3 +142,20 @@ class UnifiedTestCase(unittest.TestCase):
         self.validators_processor.process_assertions(
             test_data["assertions"], model_data, puml_content, result.cli_result, self
         )
+
+    def _cleanup_existing_test_folders(self):
+        """Clean up any existing test-* folders in test directories"""
+        test_categories = ['unit', 'feature', 'integration', 'example']
+        
+        for category in test_categories:
+            category_path = os.path.join(os.path.dirname(__file__), '..', category)
+            if os.path.exists(category_path):
+                for item in os.listdir(category_path):
+                    item_path = os.path.join(category_path, item)
+                    if os.path.isdir(item_path) and item.startswith('test-'):
+                        try:
+                            import shutil
+                            shutil.rmtree(item_path)
+                        except Exception as e:
+                            # Log warning but don't fail the test
+                            print(f"Warning: Could not clean up {item_path}: {e}")

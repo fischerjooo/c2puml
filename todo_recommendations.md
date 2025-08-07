@@ -228,7 +228,8 @@ result = self.executor.run_full_pipeline("config.json", example_dir)
 **Purpose**: Base class for all tests
 **Features**:
 - Automatic component initialization
-- Common setup/teardown
+- Complete cleanup of existing test folders in setUp()
+- Common setup/teardown with output preservation
 - Utility methods for assertions
 - Standardized test output management
 

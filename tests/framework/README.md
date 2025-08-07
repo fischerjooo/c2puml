@@ -178,7 +178,11 @@ class TestBasicExample(UnifiedTestCase):
 ## Key Concepts
 
 ### Test Isolation
-Each test creates its own temporary folder structure:
+Each test creates its own temporary folder structure with complete cleanup:
+- **setUp()**: Cleans up any existing test-* folders before creating new ones
+- **Test Execution**: Creates fresh test-specific folder structure
+- **tearDown()**: Preserves output for debugging (no automatic cleanup)
+
 ```
 tests/unit/test-simple_c_file_parsing/
 ├── input/

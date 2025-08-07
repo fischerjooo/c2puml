@@ -145,10 +145,8 @@ class TestDataLoader:
         if not test_dir:
             raise ValueError(f"Could not find test directory for test ID: {test_id}")
         
-        # Clean up existing test folder if it exists
-        if os.path.exists(test_dir):
-            import shutil
-            shutil.rmtree(test_dir)
+        # Test folder should already be cleaned up by setUp() method
+        # Just ensure it exists
         
         # Create test-specific folder structure
         os.makedirs(test_dir, exist_ok=True)
