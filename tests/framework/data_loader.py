@@ -242,8 +242,14 @@ class TestDataLoader:
         
         # Validate model section if present
         if "model" in test_data:
-            if not isinstance(test_data["model"], dict):
-                raise ValueError("'model' must be a dictionary")
+            if not isinstance(test_data["model"], str):
+                raise ValueError("'model' must be a string (JSON content)")
+            
+            # Validate that model contains valid JSON
+            try:
+                json.loads(test_data["model"])
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Invalid JSON in model: {e}")
     
     def _create_source_files(self, test_data: Dict, temp_dir: str) -> str:
         """
