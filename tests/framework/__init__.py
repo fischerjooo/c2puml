@@ -1,23 +1,24 @@
 """
-C2PUML Unified Testing Framework
+Unified Testing Framework for c2puml
 
-This package provides a unified testing framework for c2puml that ensures
-all tests use only the public CLI interface, maintaining clear boundaries
-between test and application code.
+This package provides a unified testing framework that enforces CLI-only access
+to c2puml functionality, ensuring tests validate the actual user interface.
 """
 
 from .executor import TestExecutor, CLIResult
 from .input_factory import TestInputFactory
 from .validators import ModelValidator, PlantUMLValidator, OutputValidator, FileValidator
 from .base import UnifiedTestCase
+from .assertion_processor import AssertionProcessor
 
 __all__ = [
     'TestExecutor',
-    'CLIResult',
+    'CLIResult', 
     'TestInputFactory',
     'ModelValidator',
     'PlantUMLValidator',
     'OutputValidator',
     'FileValidator',
-    'UnifiedTestCase'
+    'UnifiedTestCase',
+    'AssertionProcessor'
 ]

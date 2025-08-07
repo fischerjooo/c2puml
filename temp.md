@@ -40,11 +40,11 @@ tests/unit/test_parser_simple/
 
 ## Processing Flow
 
-1. **Setup**: Initialize framework components (executor, input factory, validators)
+1. **Setup**: Initialize framework components (executor, input factory, validators, assertion processor)
 2. **Input Loading**: Load test scenario and assertions from JSON files
 3. **Execution**: Run c2puml via CLI with temporary files
 4. **Output Validation**: Verify output files exist (model.json, .puml files)
-5. **Content Validation**: Process assertions from JSON file against actual results
+5. **Content Validation**: Process assertions from JSON file against actual results using AssertionProcessor
 6. **Cleanup**: Preserve output for debugging (no automatic cleanup)
 
 ## Framework Components Used
@@ -53,6 +53,7 @@ tests/unit/test_parser_simple/
 - **TestInputFactory**: JSON file loading and temporary file creation
 - **ModelValidator**: Validation of model.json content
 - **PlantUMLValidator**: Validation of .puml file content
+- **AssertionProcessor**: Processing of JSON-based assertions from assert-###.json files
 - **UnifiedTestCase**: Base class providing common setup and helpers
 
 ## Benefits
@@ -69,6 +70,20 @@ tests/unit/test_parser_simple/
 10. **Maintainable** - Changes to model structure only require framework updates
 11. **Data-Driven Testing** - Assertions are processed from JSON files, not hardcoded
 12. **Flexible Validation** - Easy to modify test expectations by changing JSON files
+13. **Proper Separation of Concerns** - Assertion processing is separated from test base class
+
+## Architectural Improvements
+
+### Separation of Concerns
+The framework now properly separates responsibilities:
+
+- **UnifiedTestCase**: Test setup, teardown, and basic utilities
+- **AssertionProcessor**: JSON-based assertion processing logic
+- **Validators**: Specific validation logic for different output types
+- **TestExecutor**: CLI execution and result handling
+- **TestInputFactory**: Input data management and file creation
+
+This ensures that each component has a single, well-defined responsibility and makes the framework more maintainable and extensible.
 
 ## Code Comparison
 
