@@ -2,6 +2,48 @@
 
 This document outlines the responsibilities of each component in the unified testing framework to ensure clear separation of concerns and avoid duplication.
 
+## Test Folder Structure
+
+### New Test Organization
+Each test creates a dedicated folder structure for isolation and clarity:
+
+```
+tests/
+├── unit/
+│   ├── test_simple_c_file_parsing.py
+│   ├── test_simple_c_file_parsing.yml
+│   └── test-simple_c_file_parsing/          # Generated during test execution
+│       ├── input/
+│       │   ├── config.json
+│       │   └── src/
+│       │       └── simple.c
+│       └── output/
+│           ├── model.json
+│           ├── model_transformed.json
+│           └── simple.puml
+├── feature/
+│   └── test-###/                            # Similar structure for each test
+├── integration/
+│   └── test-###/                            # Similar structure for each test
+└── example/
+    └── test-###/                            # Similar structure for each test
+```
+
+### Folder Structure Details
+- **`test-###/`**: Test-specific folder created during execution (git-ignored)
+  - **`input/`**: Contains all input files for the test
+    - `config.json`: c2puml configuration
+    - `src/`: Source files (C, H files)
+  - **`output/`**: Contains all generated output files
+    - `model.json`: Parsed model
+    - `model_transformed.json`: Transformed model
+    - `*.puml`: PlantUML diagram files
+
+### Git Integration
+- **Ignored**: All `test-###/` folders (generated during test execution)
+- **Tracked**: Test files (`test_*.py`, `test_*.yml`)
+- **Cleanup**: Existing test folders are automatically deleted before each test run
+
 ## Framework Components
 
 ### 1. `base.py` - UnifiedTestCase Base Class
@@ -154,21 +196,27 @@ class TestExample(UnifiedTestCase):
         test_data = self.data_loader.load_test_data("test_id")
         source_dir, config_path = self.data_loader.create_temp_files(test_data, "test_id")
         
-        # 2. Execute c2puml (executor.py responsibility)
-        result = self.executor.run_full_pipeline(config_filename, temp_dir)
+        # 2. Get folder structure
+        test_folder = os.path.dirname(source_dir)  # input/ folder
+        test_dir = os.path.dirname(test_folder)    # test-###/ folder
         
-        # 3. Basic CLI validation (CLIValidator responsibility)
+        # 3. Execute c2puml (executor.py responsibility)
+        config_filename = os.path.basename(config_path)
+        result = self.executor.run_full_pipeline(config_filename, test_folder)
+        
+        # 4. Basic CLI validation (CLIValidator responsibility)
         self.cli_validator.assert_cli_success(result)
         
-        # 4. Load output for validation (OutputValidator responsibility)
+        # 5. Load output for validation (OutputValidator responsibility)
+        output_dir = os.path.join(test_dir, "output")
         model_file = self.output_validator.assert_model_file_exists(output_dir)
         puml_files = self.output_validator.assert_puml_files_exist(output_dir)
         
-        # 5. Load content for validation
+        # 6. Load content for validation
         model_data = json.load(open(model_file))
         puml_content = open(puml_files[0]).read()
         
-        # 6. Process assertions (assertion_processor.py responsibility)
+        # 7. Process assertions (assertion_processor.py responsibility)
         self.assertion_processor.process_assertions(
             test_data["assertions"], model_data, puml_content, result, self
         )

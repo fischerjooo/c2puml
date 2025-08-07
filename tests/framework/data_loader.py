@@ -135,31 +135,39 @@ class TestDataLoader:
         Returns:
             Tuple of (source_dir_path, config_file_path)
         """
-        # Create temp directory within the test case folder
+        # Find the test category and create test-specific folder
         test_categories = ["unit", "feature", "integration", "example"]
-        temp_dir = None
+        test_dir = None
         
         for category in test_categories:
-            test_dir = f"tests/{category}"
-            if os.path.exists(test_dir):
-                temp_dir = os.path.join(test_dir, "temp")
+            category_dir = f"tests/{category}"
+            if os.path.exists(category_dir):
+                # Create test-specific folder: tests/unit/test-001/
+                test_dir = os.path.join(category_dir, f"test-{test_id}")
                 break
         
-        if not temp_dir:
+        if not test_dir:
             raise ValueError(f"Could not find test directory for test ID: {test_id}")
         
-        # Create temp directory if it doesn't exist
-        os.makedirs(temp_dir, exist_ok=True)
+        # Clean up existing test folder if it exists
+        if os.path.exists(test_dir):
+            import shutil
+            shutil.rmtree(test_dir)
         
-        # Create test-specific temp directory
-        test_temp_dir = os.path.join(temp_dir, f"test_{test_id}")
-        os.makedirs(test_temp_dir, exist_ok=True)
+        # Create test-specific folder structure
+        os.makedirs(test_dir, exist_ok=True)
         
-        # Create source files
-        source_dir = self._create_source_files(test_data, test_temp_dir)
+        # Create input and output subfolders
+        input_dir = os.path.join(test_dir, "input")
+        output_dir = os.path.join(test_dir, "output")
+        os.makedirs(input_dir, exist_ok=True)
+        os.makedirs(output_dir, exist_ok=True)
         
-        # Create config file
-        config_path = self._create_config_file(test_data, test_temp_dir)
+        # Create source files in input directory
+        source_dir = self._create_source_files(test_data, input_dir)
+        
+        # Create config file in input directory
+        config_path = self._create_config_file(test_data, input_dir)
         
         return source_dir, config_path
     
@@ -220,7 +228,7 @@ class TestDataLoader:
             inputs_section["source_files"]["config.json"] = json.dumps({
                 "project_name": f"test_{test_data['test']['id']}",
                 "source_folders": ["."],
-                "output_dir": "./output",
+                "output_dir": "../output",
                 "recursive_search": True
             }, indent=2)
         
@@ -290,8 +298,9 @@ class TestDataLoader:
         if "source_folders" not in config:
             config["source_folders"] = ["."]
         
-        if "output_dir" not in config:
-            config["output_dir"] = "./output"
+        # Set output_dir to point to the output subfolder in the test directory
+        # temp_dir is the input/ folder, so output is ../output/
+        config["output_dir"] = "../output"
         
         if "project_name" not in config:
             config["project_name"] = f"test_{test_data['test']['id']}"

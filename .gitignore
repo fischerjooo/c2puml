@@ -67,12 +67,10 @@ Thumbs.db
 !test_model.json
 !tests/example/config.json
 !artifacts/output_example/*.json
-!tests/unit/*/input/*.json
-!tests/unit/*/assert-*.json
-!tests/unit/test-*.yml
-!tests/feature/test-*.yml
-!tests/integration/test-*.yml
-!tests/example/test-*.yml
+!tests/unit/test_*.yml
+!tests/feature/test_*.yml
+!tests/integration/test_*.yml
+!tests/example/test_*.yml
 test_*.json
 final_*.json
 cleanup_*.json
@@ -172,14 +170,7 @@ plantuml.jar
 !artifacts/**
 scripts/plantuml.jar
 
-# Test outputs and temporary files
-tests/*/output/
+# Test framework temporary files
+tests/*/test-*/
 tests/*/temp/
-tests/*/assert-*.json
-tests/*/input-*.json
-
-# Include YAML test files
-!tests/unit/test-*.yml
-!tests/feature/test-*.yml
-!tests/integration/test-*.yml
-!tests/example/test-*.yml
+tests/*/output/
