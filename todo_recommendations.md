@@ -4,6 +4,33 @@
 
 This document provides detailed recommendations and guidance for test developers working with the new unified testing framework. It includes practical examples, best practices, and step-by-step instructions for creating and maintaining tests.
 
+## **Important: Test Implementation Priority**
+
+**When creating new tests, ALWAYS try to use the simple pattern first:**
+
+```python
+class TestSimpleCFileParsing(UnifiedTestCase):
+    """Test parsing a simple C file through the CLI interface"""
+    
+    def test_simple_c_file_parsing(self):
+        """Test parsing a simple C file through the CLI interface"""
+        # Run the complete test using high-level methods
+        result = self.run_test("simple_c_file_parsing")
+        
+        # Validate results
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+```
+
+**This simple pattern:**
+- Uses the base class's high-level methods (`run_test`, `validate_execution_success`, `validate_test_output`)
+- Handles all generic assertions through the framework
+- Requires only the test name and YAML file
+- Minimizes boilerplate code
+- Ensures consistent test patterns
+
+**Only use the detailed custom pattern when you need assertions or behavior not supported by the simple pattern.**
+
 ## New Unified Testing Approach
 
 ### Core Concept
@@ -348,11 +375,56 @@ result = self.executor.run_full_pipeline("config.json", example_dir)
 
 ## Test Implementation Pattern
 
-### Standard Test Structure
+### **Recommended: Simple Test Pattern (Reuse When Possible)**
+
+**Always try to use this simple pattern first - it covers most test scenarios:**
+
 ```python
 #!/usr/bin/env python3
 """
-Unit test for Simple C File Parsing
+Test Simple C File Parsing
+"""
+
+import os
+import sys
+import unittest
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+from tests.framework import UnifiedTestCase
+
+
+class TestSimpleCFileParsing(UnifiedTestCase):
+    """Test parsing a simple C file through the CLI interface"""
+    
+    def test_simple_c_file_parsing(self):
+        """Test parsing a simple C file through the CLI interface"""
+        # Run the complete test using high-level methods
+        result = self.run_test("simple_c_file_parsing")
+        
+        # Validate results
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+
+
+if __name__ == "__main__":
+    unittest.main()
+```
+
+**This pattern:**
+- Uses the base class's high-level methods (`run_test`, `validate_execution_success`, `validate_test_output`)
+- Handles all generic assertions through the framework
+- Requires only the test name and YAML file
+- Minimizes boilerplate code
+- Ensures consistent test patterns
+
+### **Custom Test Pattern (Use Only When Needed)**
+
+Only use this detailed pattern when you need custom assertions or special handling that cannot be covered by the simple pattern:
+
+```python
+#!/usr/bin/env python3
+"""
+Custom Test Implementation (Use only when simple pattern is insufficient)
 """
 
 import os
@@ -361,20 +433,19 @@ import unittest
 import json
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
-
 from tests.framework import UnifiedTestCase
 
 
-class TestSimpleCFileParsing(UnifiedTestCase):
-    """Test Simple C File Parsing"""
+class TestCustomImplementation(UnifiedTestCase):
+    """Custom test with specific assertions"""
 
-    def test_simple_c_file_parsing(self):
-        """Test parsing a simple C file through the CLI interface"""
+    def test_custom_implementation(self):
+        """Test with custom assertions not covered by framework"""
         # Load test data from YAML
-        test_data = self.data_loader.load_test_data("simple_c_file_parsing")
+        test_data = self.data_loader.load_test_data("custom_test")
         
         # Create temporary files
-        source_dir, config_path = self.data_loader.create_temp_files(test_data, "simple_c_file_parsing")
+        source_dir, config_path = self.data_loader.create_temp_files(test_data, "custom_test")
         
         # Get the temp directory (parent of source_dir)
         temp_dir = os.path.dirname(source_dir)
@@ -386,9 +457,9 @@ class TestSimpleCFileParsing(UnifiedTestCase):
         result = self.executor.run_full_pipeline(config_filename, temp_dir)
         
         # Validate execution
-        self.assert_c2puml_success(result)
+        self.validate_execution_success(result)
         
-        # Load output files (output is created in temp directory, not src)
+        # Load output files
         output_dir = os.path.join(temp_dir, "output")
         model_file = os.path.join(output_dir, "model.json")
         puml_files = self.assert_puml_files_exist(output_dir)
@@ -397,20 +468,37 @@ class TestSimpleCFileParsing(UnifiedTestCase):
         with open(model_file, 'r') as f:
             model_data = json.load(f)
         
-        with open(puml_files[0], 'r') as f:
-            puml_content = f.read()
+        # Load all PlantUML files into a dictionary
+        puml_files_dict = {}
+        for puml_file_path in puml_files:
+            filename = os.path.basename(puml_file_path)
+            with open(puml_file_path, 'r') as f:
+                puml_files_dict[filename] = puml_content = f.read()
         
         # Process assertions from YAML
-        self.assertion_processor.process_assertions(
-            test_data["assertions"], model_data, puml_content, result, self
+        self.validators_processor.process_assertions(
+            test_data["assertions"], model_data, puml_files_dict, result, self
         )
+        
+        # **ADD CUSTOM ASSERTIONS HERE ONLY IF NEEDED**
+        # Example: Custom validation not covered by YAML assertions
+        # self.assert_something_specific(model_data)
 
 
 if __name__ == "__main__":
     unittest.main()
 ```
 
-### Example Test Structure
+**Use custom pattern only when:**
+- You need assertions not supported by the YAML framework
+- You need special setup/teardown logic
+- You need to modify test behavior based on runtime conditions
+- You need to test framework internals (not recommended)
+
+### **Example Test Structure (Special Case)**
+
+**For example tests, use this pattern which leverages external files:**
+
 ```python
 #!/usr/bin/env python3
 """
@@ -420,10 +508,8 @@ Example test for Basic Example
 import os
 import sys
 import unittest
-import json
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
-
 from tests.framework import UnifiedTestCase
 
 
@@ -432,35 +518,12 @@ class TestBasicExample(UnifiedTestCase):
 
     def test_basic_example(self):
         """Test basic example using external source folder and config"""
-        # Load test data from YAML (contains only assertions)
-        test_data = self.data_loader.load_test_data("basic_example")
+        # Run the complete test using high-level methods
+        result = self.run_test("basic_example")
         
-        # Get the example directory (where config.json and source/ are located)
-        example_dir = os.path.dirname(__file__)
-        
-        # Execute c2puml with example directory as working directory
-        result = self.executor.run_full_pipeline("config.json", example_dir)
-        
-        # Validate execution
-        self.cli_validator.assert_cli_success(result)
-        
-        # Load output files (output is created in test-specific folder)
-        test_dir = os.path.join(example_dir, "test-basic_example")
-        output_dir = os.path.join(test_dir, "output")
-        model_file = self.output_validator.assert_model_file_exists(output_dir)
-        puml_files = self.output_validator.assert_puml_files_exist(output_dir)
-        
-        # Load content for validation
-        with open(model_file, 'r') as f:
-            model_data = json.load(f)
-        
-        with open(puml_files[0], 'r') as f:
-            puml_content = f.read()
-        
-        # Process assertions from YAML
-        self.assertion_processor.process_assertions(
-            test_data["assertions"], model_data, puml_content, result, self
-        )
+        # Validate results
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
 
 
 if __name__ == "__main__":
@@ -473,6 +536,7 @@ if __name__ == "__main__":
 3. **YAML content**: Contains only test metadata and assertions
 4. **Output location**: Generated in test-specific output folder
 5. **External files**: config.json and source/ folder are tracked by git
+6. **Same simple pattern**: Uses the same high-level methods as standard tests
 
 ## Migration Strategy
 
