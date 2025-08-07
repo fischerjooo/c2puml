@@ -669,8 +669,8 @@ Based on the current state, the next priority is to systematically convert the r
 
 ### 📊 Progress Metrics
 - **Total Tests**: 451
-- **Converted**: 11 (2.44%)
-- **Remaining**: 440 (97.56%)
+- **Converted**: 22 (4.88%)
+- **Remaining**: 429 (95.12%)
 - **Framework Ready**: ✅
 - **Documentation Complete**: ✅
 
@@ -687,6 +687,8 @@ Based on the current state, the next priority is to systematically convert the r
 - **Function Declarations**: Function declarations are not shown in PlantUML, only function definitions
 - **Anonymous Structs/Unions**: Anonymous structs and unions in complex typedefs create multiple separate classes
 - **Simple Pattern Works**: All converted tests successfully use the simple 3-line pattern without custom assertions
+- **Conditional Compilation**: Macros in conditional compilation blocks that evaluate to false are not parsed
+- **Nested Structures**: Anonymous structs and unions within typedefs are parsed as separate entities and appear as distinct classes in PlantUML, leading to increased class and relationship counts
 
 ### 🔄 Next Steps
 Based on the current state, the next priority is to systematically convert the remaining tests. The plan is to:
@@ -695,13 +697,6 @@ Based on the current state, the next priority is to systematically convert the r
 2. **Move to more complex tests** that may need custom patterns
 3. **Convert feature and integration tests** last
 4. **Convert example tests** using the special external file structure
-
-### 📊 Progress Metrics
-- **Total Tests**: 451
-- **Converted**: 22 (4.88%)
-- **Remaining**: 429 (95.12%)
-- **Framework Ready**: ✅
-- **Documentation Complete**: ✅
 
 ## Benefits
 2. **Readability**: Easy to read and understand each section independently
