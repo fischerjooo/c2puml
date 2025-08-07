@@ -102,21 +102,17 @@ class TestDataLoader:
             
             # Source files
             if "source_files" in doc:
-                if "inputs" not in test_data:
-                    test_data["inputs"] = {}
-                test_data["inputs"]["source_files"] = doc["source_files"]
+                test_data["source_files"] = doc["source_files"]
             
             # Config file
             if "config.json" in doc:
-                if "inputs" not in test_data:
-                    test_data["inputs"] = {}
-                if "source_files" not in test_data["inputs"]:
-                    test_data["inputs"]["source_files"] = {}
-                test_data["inputs"]["source_files"]["config.json"] = doc["config.json"]
+                if "source_files" not in test_data:
+                    test_data["source_files"] = {}
+                test_data["source_files"]["config.json"] = doc["config.json"]
             
             # Model template
             if "model.json" in doc:
-                test_data["model_template"] = doc["model.json"]
+                test_data["model"] = doc["model.json"]
             
             # Assertions
             if "assertions" in doc:
@@ -203,7 +199,7 @@ class TestDataLoader:
             ValueError: If test data doesn't match expected schema
         """
         # Define required sections
-        required_sections = ["source_files", "config"]
+        required_sections = ["source_files"]
         optional_sections = ["model", "assertions"]
         
         # Check required sections
@@ -218,14 +214,20 @@ class TestDataLoader:
         if not test_data["source_files"]:
             raise ValueError("'source_files' cannot be empty")
         
-        # Validate config section
-        if not isinstance(test_data["config"], dict):
-            raise ValueError("'config' must be a dictionary")
+        # Validate config.json in source_files
+        if "config.json" not in test_data["source_files"]:
+            raise ValueError("Missing config.json in source_files")
+        
+        # Validate that config.json contains valid JSON
+        try:
+            config = json.loads(test_data["source_files"]["config.json"])
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid JSON in config.json: {e}")
         
         required_config_keys = ["project_name", "source_folders", "output_dir"]
         for key in required_config_keys:
-            if key not in test_data["config"]:
-                raise ValueError(f"Missing required config key '{key}'")
+            if key not in config:
+                raise ValueError(f"Missing required config key '{key}' in config.json")
         
         # Validate assertions section if present
         if "assertions" in test_data:
@@ -254,7 +256,7 @@ class TestDataLoader:
         Returns:
             Path to directory containing source files
         """
-        source_files = test_data["inputs"]["source_files"]
+        source_files = test_data["source_files"]
         
         # Create source directory
         source_dir = os.path.join(temp_dir, "src")
@@ -286,7 +288,7 @@ class TestDataLoader:
         Returns:
             Path to the created config file
         """
-        source_files = test_data["inputs"]["source_files"]
+        source_files = test_data["source_files"]
         
         # Extract config.json content
         if "config.json" not in source_files:
