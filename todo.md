@@ -549,6 +549,17 @@ puml:
 | test_parser.py | ✅ Complete | test_parser_typedefs | test_parser_typedefs.yml | Typedef parsing test |
 | test_parser.py | ✅ Complete | test_parser_encoding | test_parser_encoding.yml | Encoding detection test |
 | test_parser.py | ✅ Complete | test_parser_complete | test_parser_complete.yml | Complete file parsing test |
+| test_function_parameters.py | ✅ Complete | test_function_parameters_parsing | test_function_parameters_parsing.yml | Function parameter parsing test |
+| test_function_parameters.py | ✅ Complete | test_function_parameters_display | test_function_parameters_display.yml | Function parameter display test |
+| test_function_parameters.py | ✅ Complete | test_function_parameters_empty | test_function_parameters_empty.yml | Empty parameter list test |
+| test_function_parameters.py | ✅ Complete | test_function_parameters_complex | test_function_parameters_complex.yml | Complex parameter types test |
+| test_parser_macro_duplicates.py | ✅ Complete | test_macro_duplicates_simple | test_macro_duplicates_simple.yml | Simple macro duplicates test |
+| test_parser_macro_duplicates.py | ✅ Complete | test_macro_duplicates_complex | test_macro_duplicates_complex.yml | Complex macro duplicates test |
+| test_parser_function_params.py | ✅ Complete | test_function_params_parsing | test_function_params_parsing.yml | Function params parsing test |
+| test_parser_function_params.py | ✅ Complete | test_function_params_complex | test_function_params_complex.yml | Complex function params test |
+| test_parser_struct_order.py | ✅ Complete | test_struct_order_preservation | test_struct_order_preservation.yml | Struct field order preservation test |
+| test_parser_struct_order.py | ✅ Complete | test_struct_order_puml | test_struct_order_puml.yml | Struct field order in PlantUML test |
+| test_parser_struct_order.py | ✅ Complete | test_struct_order_complex | test_struct_order_complex.yml | Complex struct field order test |
 | test_parser_comprehensive.py | 🔄 Pending | test_parser_comprehensive | test_parser_comprehensive.yml | Complex parser test |
 | test_parser_comprehensive.py | 🔄 Pending | test_parser_comprehensive | test_parser_comprehensive.yml | Comprehensive parsing |
 | test_parser_filtering.py | 🔄 Pending | test_parser_filtering | test_parser_filtering.yml | Filtering functionality |
@@ -673,6 +684,8 @@ Based on the current state, the next priority is to systematically convert the r
 - **Globals**: Global variables are shown in the source class with their types and values
 - **Anonymous Structs**: Anonymous structs in typedefs are parsed as separate struct classes
 - **Model Field Names**: The model uses "aliases" field for typedefs, not "typedefs"
+- **Function Declarations**: Function declarations are not shown in PlantUML, only function definitions
+- **Anonymous Structs/Unions**: Anonymous structs and unions in complex typedefs create multiple separate classes
 - **Simple Pattern Works**: All converted tests successfully use the simple 3-line pattern without custom assertions
 
 ### 🔄 Next Steps
@@ -685,8 +698,8 @@ Based on the current state, the next priority is to systematically convert the r
 
 ### 📊 Progress Metrics
 - **Total Tests**: 451
-- **Converted**: 11 (2.44%)
-- **Remaining**: 440 (97.56%)
+- **Converted**: 22 (4.88%)
+- **Remaining**: 429 (95.12%)
 - **Framework Ready**: ✅
 - **Documentation Complete**: ✅
 
