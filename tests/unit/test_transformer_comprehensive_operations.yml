@@ -1,0 +1,153 @@
+# Test metadata
+test:
+  name: "Comprehensive Transformer Operations"
+  description: "Test all major transformer operations: remove, rename, add, file filtering"
+  category: "unit"
+  id: "2010"
+
+---
+# Source files
+source_files:
+  main.c: |
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include "internal.h"
+    
+    #define DEBUG_MODE 1
+    #define MAX_ITEMS 100
+    #define UNUSED_MACRO 99
+    
+    typedef struct {
+        int id;
+        char name[50];
+        float value;
+    } DataItem;
+    
+    typedef struct {
+        int temp_id;
+        char temp_name[20];
+    } TempItem;
+    
+    enum Status {
+        STATUS_OK,
+        STATUS_ERROR,
+        STATUS_TEMP
+    };
+    
+    enum TempStatus {
+        TEMP_OK,
+        TEMP_ERROR
+    };
+    
+    int global_counter = 0;
+    static int internal_counter = 0;
+    extern int external_counter;
+    int temp_global = 42;
+    
+    void process_data(DataItem* item);
+    void helper_function(void);
+    void temp_function(void);
+    static void internal_helper(void);
+    
+    void process_data(DataItem* item) {
+        item->value *= 2.0;
+    }
+
+  helper.c: |
+    #include "internal.h"
+    
+    void helper_function(void) {
+        // Helper implementation
+    }
+    
+    void temp_function(void) {
+        // Temp implementation
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_transformer_comprehensive",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "transformations": {
+      "remove": {
+        "structs": ["^Temp.*"],
+        "enums": ["TempStatus"],
+        "functions": ["temp_.*"],
+        "globals": ["temp_.*"],
+        "macros": ["UNUSED_.*"]
+      },
+      "rename": {
+        "structs": {
+          "DataItem": "ProcessedItem"
+        },
+        "enums": {
+          "Status": "ProcessStatus"
+        },
+        "functions": {
+          "process_data": "transform_data"
+        },
+        "globals": {
+          "global_counter": "item_counter"
+        },
+        "macros": {
+          "DEBUG_MODE": "TRACE_MODE"
+        }
+      },
+      "file_selection": ["main.c"]
+    }
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "main.puml", "helper.puml"]
+  
+  model:
+    files:
+      main.c:
+        # After transformations: TempItem removed, DataItem renamed to ProcessedItem
+        structs:
+          ProcessedItem:
+            fields: ["id", "name", "value"]
+        # After transformations: TempStatus removed, Status renamed to ProcessStatus  
+        enums:
+          ProcessStatus:
+            values: ["STATUS_OK", "STATUS_ERROR", "STATUS_TEMP"]
+        # After transformations: temp_function removed, process_data renamed to transform_data
+        functions: ["transform_data", "helper_function", "internal_helper"]
+        # After transformations: temp_global removed, global_counter renamed to item_counter
+        globals: ["item_counter", "internal_counter", "external_counter"]
+        # After transformations: UNUSED_MACRO removed, DEBUG_MODE renamed to TRACE_MODE
+        macros: ["TRACE_MODE", "MAX_ITEMS"]
+      helper.c:
+        # helper.c should not be affected by file_selection transformations
+        functions: ["helper_function", "temp_function"]
+    element_counts:
+      structs: 1
+      enums: 1
+      functions: 5
+      globals: 3
+      macros: 2
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      main.puml:
+        contains_elements: ["ProcessedItem", "ProcessStatus", "main"]
+        contains_lines: ["class \"ProcessedItem\" as TYPEDEF_PROCESSEDITEM", "class \"ProcessStatus\" as TYPEDEF_PROCESSSTATUS", "class \"main\" as MAIN"]
+        class_count: 3
+        relationship_count: 2
+      helper.puml:
+        contains_elements: ["helper"]
+        contains_lines: ["class \"helper\" as HELPER"]
+        class_count: 1
+        relationship_count: 0
