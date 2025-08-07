@@ -1,0 +1,65 @@
+# Test metadata
+test:
+  name: "Parser Enums"
+  description: "Test parsing enum definitions with multiple enums"
+  category: "unit"
+  id: "0004"
+
+---
+# Source files
+source_files:
+  enums.c: |
+    enum Color {
+        RED,
+        GREEN,
+        BLUE
+    };
+
+    enum Status {
+        RUNNING,
+        STOPPED
+    };
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_parser_enums",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "enums.puml"]
+  
+  model:
+    files:
+      enums.c:
+        enums:
+          Color:
+            values: ["RED", "GREEN", "BLUE"]
+          Status:
+            values: ["RUNNING", "STOPPED"]
+    element_counts:
+      structs: 0
+      enums: 2
+      functions: 0
+      globals: 0
+      includes: 0
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      enums.puml:
+        contains_elements: ["Color", "Status"]
+        contains_lines: ["class \"Color\" as TYPEDEF_COLOR", "class \"Status\" as TYPEDEF_STATUS"]
+        class_count: 3
+        relationship_count: 2
