@@ -22,36 +22,41 @@ tests/
 │   ├── test_simple_c_file_parsing.yml   # Test data and assertions
 │   ├── test_complex_struct_parsing.py
 │   ├── test_complex_struct_parsing.yml
-│   ├── temp/                             # Temporary files (git ignored)
-│   │   ├── test_simple_c_file_parsing/
-│   │   │   ├── config.json
-│   │   │   ├── src/
-│   │   │   │   └── simple.c
-│   │   │   └── output/
-│   │   │       ├── model.json
-│   │   │       ├── model_transformed.json
-│   │   │       └── simple.puml
-│   │   └── test_complex_struct_parsing/
-│   └── ...
+│   └── test-simple_c_file_parsing/      # Generated during test execution
+│       ├── input/
+│       │   ├── config.json
+│       │   └── src/
+│       │       └── simple.c
+│       └── output/
+│           ├── model.json
+│           ├── model_transformed.json
+│           └── simple.puml
 ├── feature/
 │   ├── test_multi_file_project.py
 │   ├── test_multi_file_project.yml
-│   ├── temp/
-│   └── ...
+│   └── test-multi_file_project/         # Generated during test execution
+│       ├── input/
+│       └── output/
 ├── integration/
 │   ├── test_end_to_end_pipeline.py
 │   ├── test_end_to_end_pipeline.yml
-│   ├── temp/
-│   └── ...
+│   └── test-end_to_end_pipeline/        # Generated during test execution
+│       ├── input/
+│       └── output/
 └── example/
     ├── test_basic_example.py
-    ├── test_basic_example.yml
-    ├── temp/
-    └── ...
+    ├── test_basic_example.yml           # Contains ONLY assertions
+    ├── config.json                      # External config file
+    └── source/                          # External source folder
+        ├── main.c
+        ├── header.h
+        └── other_files.c
 ```
 
-### YAML File Structure
-Each test uses a single YAML file with multiple documents separated by `---`:
+### Test Types and Structures
+
+#### **Unit, Feature, Integration Tests** (Standard Structure)
+These tests use the complete YAML structure with embedded source files and config:
 
 ```yaml
 # Test metadata
@@ -94,36 +99,6 @@ config.json: |
   }
 
 ---
-# Model template (optional - for complex model validation)
-model.json: |
-  {
-    "files": {
-      "simple.c": {
-        "structs": {
-          "Person": {
-            "fields": ["name", "age"]
-          }
-        },
-        "enums": {
-          "Status": {
-            "values": ["OK", "ERROR"]
-          }
-        },
-        "functions": ["main"],
-        "globals": ["global_var"],
-        "includes": ["stdio.h"]
-      }
-    },
-    "element_counts": {
-      "structs": 1,
-      "enums": 1,
-      "functions": 1,
-      "globals": 1,
-      "includes": 1
-    }
-  }
-
----
 # Assertions
 assertions:
   execution:
@@ -142,50 +117,104 @@ assertions:
         functions: ["main"]
         globals: ["global_var"]
         includes: ["stdio.h"]
-    element_counts:
-      structs: 1
-      enums: 1
-      functions: 1
-      globals: 1
-      includes: 1
+```
+
+#### **Example Tests** (Special Structure)
+Example tests use external source folders and config files, with YAML containing ONLY assertions:
+
+```yaml
+# Test metadata
+test:
+  name: "Basic Example"
+  description: "Test basic example with external source folder and config"
+  category: "example"
+  id: "001"
+
+---
+# Assertions only (no source_files or config.json sections)
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "example.puml"]
+  
+  model:
+    files:
+      main.c:
+        structs:
+          ExampleStruct:
+            fields: ["value", "name"]
+        functions: ["main", "helper_function"]
+        includes: ["header.h"]
   
   puml:
-    contains_elements: ["Person", "Status", "main"]
+    contains_elements: ["ExampleStruct", "main"]
     syntax_valid: true
 ```
 
-### Document Structure
-Each YAML file contains up to 5 separate documents:
+**Example Test Structure**:
+```
+tests/example/
+├── test_basic_example.py
+├── test_basic_example.yml           # Contains ONLY assertions
+├── config.json                      # External config file (tracked by git)
+└── source/                          # External source folder (tracked by git)
+    ├── main.c
+    ├── header.h
+    └── other_files.c
+```
 
+### Document Structure
+Each YAML file contains different documents based on test type:
+
+#### **Standard Tests** (Unit, Feature, Integration):
 1. **Test Metadata**: Basic test information (name, description, category, id)
 2. **Source Files**: C/C++ source files with their content
 3. **Configuration**: config.json as direct JSON text
 4. **Model Template** (optional): Expected model.json structure for complex validation
 5. **Assertions**: Test assertions and validation criteria
 
-### Temporary File Structure
-Each test creates a temporary directory structure:
+#### **Example Tests**:
+1. **Test Metadata**: Basic test information (name, description, category, id)
+2. **Assertions**: Test assertions and validation criteria only
 
+### Temporary File Structure
+
+#### **Standard Tests** (Unit, Feature, Integration):
 ```
-tests/<category>/temp/test_<test_id>/
-├── config.json              # Configuration file
-├── src/                     # Source files directory
-│   ├── simple.c
-│   └── other_files.c
-└── output/                  # Generated output files
+tests/<category>/test-<test_id>/
+├── input/
+│   ├── config.json              # Configuration file
+│   └── src/                     # Source files directory
+│       ├── simple.c
+│       └── other_files.c
+└── output/                      # Generated output files
     ├── model.json
     ├── model_transformed.json
     └── simple.puml
 ```
 
+#### **Example Tests**:
+```
+tests/example/test-<test_id>/
+└── output/                      # Generated output files only
+    ├── model.json
+    ├── model_transformed.json
+    └── example.puml
+```
+
+**Note**: Example tests use external `config.json` and `source/` folder, so no temporary input files are created.
+
 ## Framework Components
 
 ### TestDataLoader
 - Loads multi-document YAML test files
-- Creates temporary source and config files
+- **Standard Tests**: Creates temporary source and config files from YAML content
+- **Example Tests**: Uses external config.json and source/ folder (no temp files created)
 - Supports meaningful test IDs
 - Handles optional model templates
-- **Temp Management**: Creates test-specific temp folders in `tests/*/temp/test_<id>/`
+- **Temp Management**: 
+  - Standard tests: Creates test-specific temp folders in `tests/*/test-<id>/`
+  - Example tests: Creates only output folder in `tests/example/test-<id>/`
 
 ### AssertionProcessor
 - Processes assertions from YAML data
@@ -197,7 +226,9 @@ tests/<category>/temp/test_<test_id>/
 - Executes c2puml via CLI interface only
 - No direct internal API access
 - Supports verbose output and error handling
-- **Working Directory**: Uses temp directory as working directory for proper file resolution
+- **Working Directory**: 
+  - Standard tests: Uses temp input directory as working directory
+  - Example tests: Uses example directory (where config.json is located)
 
 ### Validators
 - ModelValidator: Validates model.json structure and content

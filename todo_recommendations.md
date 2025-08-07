@@ -9,8 +9,12 @@ This document provides detailed recommendations and guidance for test developers
 ### Core Concept
 The new framework uses **single YAML files with multiple documents** to define complete test scenarios. Each test file contains all necessary data: source files, configuration, and assertions, making tests self-contained and easy to understand.
 
-### YAML File Structure
-Each `test_<meaningful_name>.yml` file contains multiple documents separated by `---`:
+**Note**: Example tests have a special structure that uses external source folders and config files, with YAML containing only assertions.
+
+### Test Types and YAML Structures
+
+#### **Standard Tests** (Unit, Feature, Integration)
+These tests use the complete YAML structure with embedded source files and config:
 
 ```yaml
 # Test metadata
@@ -53,36 +57,6 @@ config.json: |
   }
 
 ---
-# Model template (optional - for complex model validation)
-model.json: |
-  {
-    "files": {
-      "simple.c": {
-        "structs": {
-          "Person": {
-            "fields": ["name", "age"]
-          }
-        },
-        "enums": {
-          "Status": {
-            "values": ["OK", "ERROR"]
-          }
-        },
-        "functions": ["main"],
-        "globals": ["global_var"],
-        "includes": ["stdio.h"]
-      }
-    },
-    "element_counts": {
-      "structs": 1,
-      "enums": 1,
-      "functions": 1,
-      "globals": 1,
-      "includes": 1
-    }
-  }
-
----
 # Assertions
 assertions:
   execution:
@@ -101,17 +75,75 @@ assertions:
         functions: ["main"]
         globals: ["global_var"]
         includes: ["stdio.h"]
-    element_counts:
-      structs: 1
-      enums: 1
-      functions: 1
-      globals: 1
-      includes: 1
+```
+
+#### **Example Tests** (Special Structure)
+Example tests use external source folders and config files, with YAML containing ONLY assertions:
+
+```yaml
+# Test metadata
+test:
+  name: "Basic Example"
+  description: "Test basic example with external source folder and config"
+  category: "example"
+  id: "001"
+
+---
+# Assertions only (no source_files or config.json sections)
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "example.puml"]
+  
+  model:
+    files:
+      main.c:
+        structs:
+          ExampleStruct:
+            fields: ["value", "name"]
+        functions: ["main", "helper_function"]
+        includes: ["header.h"]
   
   puml:
-    contains_elements: ["Person", "Status", "main"]
+    contains_elements: ["ExampleStruct", "main"]
     syntax_valid: true
 ```
+
+### Test Folder Structures
+
+#### **Standard Tests** (Unit, Feature, Integration):
+```
+tests/unit/
+├── test_simple_c_file_parsing.py
+├── test_simple_c_file_parsing.yml
+└── test-simple_c_file_parsing/          # Generated during test execution
+    ├── input/
+    │   ├── config.json
+    │   └── src/
+    │       └── simple.c
+    └── output/
+        ├── model.json
+        ├── model_transformed.json
+        └── simple.puml
+```
+
+#### **Example Tests**:
+```
+tests/example/
+├── test_basic_example.py
+├── test_basic_example.yml           # Contains ONLY assertions
+├── config.json                      # External config file (tracked by git)
+└── source/                          # External source folder (tracked by git)
+    ├── main.c
+    ├── header.h
+    └── other_files.c
+```
+
+**Key Differences**:
+- **Standard Tests**: Create temporary input files from YAML content
+- **Example Tests**: Use external config.json and source/ folder (no temp input files)
+- **Standard Tests**: YAML contains source_files and config.json sections
+- **Example Tests**: YAML contains only test metadata and assertions
 
 ## Framework Components
 
@@ -124,17 +156,22 @@ assertions:
 
 **Features**:
 - Multi-document YAML parsing
-- Temporary file creation
+- **Standard Tests**: Temporary file creation from YAML content
+- **Example Tests**: Uses external config.json and source/ folder (no temp files)
 - Meaningful test ID support
-- Test-specific temp folders in `tests/*/temp/test_<id>/`
+- **Temp Management**:
+  - Standard tests: `tests/*/test-<id>/` with input/ and output/ folders
+  - Example tests: `tests/example/test-<id>/` with output/ folder only
 
 **Example Usage**:
 ```python
 # Load test data
 test_data = self.data_loader.load_test_data("simple_c_file_parsing")
 
-# Create temporary files
+# Create temporary files (standard tests)
 source_dir, config_path = self.data_loader.create_temp_files(test_data, "simple_c_file_parsing")
+
+# For example tests, no temp files are created - use external files
 ```
 
 ### AssertionProcessor
@@ -167,13 +204,18 @@ self.assertion_processor.process_assertions(
 **Features**:
 - CLI-only execution
 - No internal API access
-- Proper working directory management
+- **Working Directory Management**:
+  - Standard tests: Uses temp input directory as working directory
+  - Example tests: Uses example directory (where config.json is located)
 - Error handling and timeout support
 
 **Example Usage**:
 ```python
-# Execute c2puml with temp directory as working directory
+# Standard tests: Execute with temp directory as working directory
 result = self.executor.run_full_pipeline(config_filename, temp_dir)
+
+# Example tests: Execute with example directory as working directory
+result = self.executor.run_full_pipeline("config.json", example_dir)
 ```
 
 ### Validators
@@ -253,6 +295,70 @@ class TestSimpleCFileParsing(UnifiedTestCase):
 if __name__ == "__main__":
     unittest.main()
 ```
+
+### Example Test Structure
+```python
+#!/usr/bin/env python3
+"""
+Example test for Basic Example
+"""
+
+import os
+import sys
+import unittest
+import json
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
+from tests.framework import UnifiedTestCase
+
+
+class TestBasicExample(UnifiedTestCase):
+    """Test Basic Example with External Source Files"""
+
+    def test_basic_example(self):
+        """Test basic example using external source folder and config"""
+        # Load test data from YAML (contains only assertions)
+        test_data = self.data_loader.load_test_data("basic_example")
+        
+        # Get the example directory (where config.json and source/ are located)
+        example_dir = os.path.dirname(__file__)
+        
+        # Execute c2puml with example directory as working directory
+        result = self.executor.run_full_pipeline("config.json", example_dir)
+        
+        # Validate execution
+        self.cli_validator.assert_cli_success(result)
+        
+        # Load output files (output is created in test-specific folder)
+        test_dir = os.path.join(example_dir, "test-basic_example")
+        output_dir = os.path.join(test_dir, "output")
+        model_file = self.output_validator.assert_model_file_exists(output_dir)
+        puml_files = self.output_validator.assert_puml_files_exist(output_dir)
+        
+        # Load content for validation
+        with open(model_file, 'r') as f:
+            model_data = json.load(f)
+        
+        with open(puml_files[0], 'r') as f:
+            puml_content = f.read()
+        
+        # Process assertions from YAML
+        self.assertion_processor.process_assertions(
+            test_data["assertions"], model_data, puml_content, result, self
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()
+```
+
+**Key Differences for Example Tests**:
+1. **No temp file creation**: Uses external config.json and source/ folder
+2. **Working directory**: Uses example directory where config.json is located
+3. **YAML content**: Contains only test metadata and assertions
+4. **Output location**: Generated in test-specific output folder
+5. **External files**: config.json and source/ folder are tracked by git
 
 ## Migration Strategy
 
