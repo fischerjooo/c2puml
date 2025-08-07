@@ -1,140 +1,225 @@
-# Test Refactoring: First Unit Test Conversion
+# Test Refactoring: New YAML-Based Unified Testing Framework
 
-This document describes the conversion of the first unit test (`test_parser.py`) to use the unified testing framework, following the specifications in `todo.md` and `todo_recommendations.md`.
+This document describes the new unified testing framework approach using YAML files for test data and assertions.
 
 ## Overview
 
-The original test directly imported and used internal APIs of the c2puml application. The converted test now uses only the public CLI interface, making it a true integration test that validates the complete pipeline.
+The new unified testing framework uses a **single YAML file per test** that contains both inputs and assertions, making the testing approach much simpler and more maintainable.
 
-## Key Changes
+## New Test Structure
 
-### 1. Test Structure
-- **Before**: Single file with hardcoded test data
-- **After**: Dedicated folder structure with separate input and assertion files
-
-### 2. Input Data Management
-- **Before**: C code embedded in test file
-- **After**: JSON-based input files (`input-simple_c_file.json`) containing source code and configuration
-
-### 3. Assertions
-- **Before**: Hardcoded validation in test code
-- **After**: JSON-based assertion files (`assert-simple_c_file.json`) processed by framework
-
-### 4. Execution Method
-- **Before**: Direct internal API calls
-- **After**: CLI execution via `subprocess` using `python3 main.py`
-
-### 5. Validation
-- **Before**: Direct model inspection
-- **After**: Framework validators processing JSON assertions
-
-## File Structure
-
+### File Structure
 ```
-tests/unit/test_parser_simple/
-├── input/
-│   └── input-simple_c_file.json    # Test input data
-├── assert-simple_c_file.json       # Expected results
-└── test_parser_simple.py           # Test implementation
+tests/
+├── unit/
+│   ├── test-001.py          # Test implementation
+│   ├── test-001.yml         # Test data and assertions
+│   ├── test-002.py
+│   ├── test-002.yml
+│   └── ...
+├── feature/
+│   ├── test-101.py
+│   ├── test-101.yml
+│   └── ...
+├── integration/
+│   ├── test-201.py
+│   ├── test-201.yml
+│   └── ...
+└── example/
+    ├── test-301.py
+    ├── test-301.yml
+    └── ...
 ```
 
-## Processing Flow
+### YAML File Structure
+Each `test-###.yml` file contains:
 
-1. **Setup**: Initialize framework components (executor, input factory, validators, assertion processor)
-2. **Input Loading**: Load test scenario and assertions from JSON files
-3. **Execution**: Run c2puml via CLI with temporary files
-4. **Output Validation**: Verify output files exist (model.json, .puml files)
-5. **Content Validation**: Process assertions from JSON file against actual results using AssertionProcessor
-6. **Cleanup**: Preserve output for debugging (no automatic cleanup)
+```yaml
+test:
+  name: "Simple C File Parsing"
+  description: "Test parsing a simple C file with struct, enum, function, global, and include"
+  category: "unit"
+  id: "001"
 
-## Framework Components Used
+inputs:
+  source_files:
+    simple.c: |
+      #include <stdio.h>
+      
+      struct Person {
+          char name[50];
+          int age;
+      };
+      
+      enum Status {
+          OK,
+          ERROR
+      };
+      
+      int main() {
+          return 0;
+      }
+      
+      int global_var;
 
-- **TestExecutor**: CLI execution via `python3 main.py`
-- **TestInputFactory**: JSON file loading and temporary file creation
-- **ModelValidator**: Validation of model.json content
-- **PlantUMLValidator**: Validation of .puml file content
-- **AssertionProcessor**: Processing of JSON-based assertions from assert-###.json files
-- **UnifiedTestCase**: Base class providing common setup and helpers
+  config:
+    project_name: "test_parser_simple"
+    source_folders: ["."]
+    output_dir: "./output"
+    recursive_search: true
 
-## Benefits
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "simple.puml"]
+  
+  model:
+    files:
+      simple.c:
+        structs:
+          Person:
+            fields: ["name", "age"]
+        enums:
+          Status:
+            values: ["OK", "ERROR"]
+        functions: ["main"]
+        globals: ["global_var"]
+        includes: ["stdio.h"]
+    element_counts:
+      structs: 1
+      enums: 1
+      functions: 1
+      globals: 1
+      includes: 1
+  
+  puml:
+    contains_elements: ["Person", "Status", "main"]
+    syntax_valid: true
+```
 
-1. **Enforces CLI-Only Access** - Tests cannot accidentally use internal APIs
-2. **Real-World Testing** - Tests the actual CLI interface that users will use
-3. **Comprehensive Validation** - Tests the complete pipeline (parse → transform → generate)
-4. **Output Validation** - Validates actual output files (model.json, .puml files)
-5. **Framework Consistency** - All tests use the same patterns and helpers
-6. **Better Debugging** - Output files are preserved for manual inspection
-7. **Proper Structure** - Follows todo.md specifications exactly
-8. **Input-###.json Approach** - Uses the recommended approach for unit tests
-9. **Separate Assertions** - Assertions are in separate files as specified
-10. **Maintainable** - Changes to model structure only require framework updates
-11. **Data-Driven Testing** - Assertions are processed from JSON files, not hardcoded
-12. **Flexible Validation** - Easy to modify test expectations by changing JSON files
-13. **Proper Separation of Concerns** - Assertion processing is separated from test base class
+## Framework Components
 
-## Architectural Improvements
+### 1. TestDataLoader
+- **Purpose**: Load and parse YAML test files
+- **Methods**: `load_test_data(test_id)`, `create_temp_files(test_data)`
+- **Features**: YAML parsing, temporary file creation
 
-### Separation of Concerns
-The framework now properly separates responsibilities:
+### 2. AssertionProcessor
+- **Purpose**: Process assertions from YAML data
+- **Methods**: `process_assertions(assertions, model_data, puml_content, result, test_case)`
+- **Features**: Model validation, PlantUML validation, execution validation
 
-- **UnifiedTestCase**: Test setup, teardown, and basic utilities
-- **AssertionProcessor**: JSON-based assertion processing logic
-- **Validators**: Specific validation logic for different output types
-- **TestExecutor**: CLI execution and result handling
-- **TestInputFactory**: Input data management and file creation
+### 3. TestExecutor
+- **Purpose**: Execute c2puml via CLI interface
+- **Methods**: `run_full_pipeline(config_path, working_dir)`
+- **Interface**: CLI-only, no internal API access
 
-This ensures that each component has a single, well-defined responsibility and makes the framework more maintainable and extensible.
+### 4. Validators
+- **ModelValidator**: Validate model.json content
+- **PlantUMLValidator**: Validate .puml file content
+- **OutputValidator**: Validate file existence and structure
 
-### Direct Component Usage
-Tests now use framework components directly instead of through unnecessary wrapper methods:
+### 5. UnifiedTestCase
+- **Purpose**: Base class for all tests
+- **Features**: Setup/teardown, component initialization, basic utilities
 
-- **Before**: `self.run_c2puml_full_pipeline(config_path, input_path)`
-- **After**: `self.executor.run_full_pipeline(config_path, input_path)`
+## Test Implementation Pattern
 
-This eliminates code duplication and unnecessary indirection, making the framework cleaner and more transparent.
-
-## Code Comparison
-
-### Before (Direct API Usage)
+### Standard Test Structure
 ```python
-# Direct internal API usage
-parser = CParser()
-result = parser.parse(c_code)
-self.assertIn("Person", result.structs)
+#!/usr/bin/env python3
+"""
+Unit test for [specific functionality]
+"""
+
+import os
+import sys
+import unittest
+import json
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
+from tests.framework import UnifiedTestCase
+
+
+class Test001(UnifiedTestCase):
+    """Test [specific functionality]"""
+
+    def test_functionality(self):
+        """Test [specific functionality]"""
+        # Load test data from YAML
+        test_data = self.data_loader.load_test_data("001")
+        
+        # Create temporary files
+        source_dir, config_path = self.data_loader.create_temp_files(test_data)
+        
+        # Execute c2puml
+        result = self.executor.run_full_pipeline(config_path, source_dir)
+        
+        # Validate execution
+        self.assert_c2puml_success(result)
+        
+        # Load output files
+        output_dir = os.path.join(source_dir, "output")
+        model_file = os.path.join(output_dir, "model.json")
+        puml_files = self.assert_puml_files_exist(output_dir)
+        
+        # Load content for validation
+        with open(model_file, 'r') as f:
+            model_data = json.load(f)
+        
+        with open(puml_files[0], 'r') as f:
+            puml_content = f.read()
+        
+        # Process assertions from YAML
+        self.assertion_processor.process_assertions(
+            test_data["assertions"], model_data, puml_content, result, self
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()
 ```
 
-### After (CLI-Only with Framework)
-```python
-# Framework-based CLI execution
-input_path, config_path = self.input_factory.load_input_json_scenario(...)
-result = self.executor.run_full_pipeline(config_path, input_path)
-self.assertion_processor.process_assertions(assertions, model_data, puml_content, result, self)
-```
+## Benefits of YAML Approach
 
-## Output Structure
+1. **Simplicity**: Single file contains both inputs and assertions
+2. **Readability**: YAML is human-readable and self-documenting
+3. **Maintainability**: Easy to modify test data without touching code
+4. **Standardization**: All tests follow the same structure
+5. **Version Control**: YAML files are easily tracked and diffed
+6. **Flexibility**: Easy to add new test scenarios
 
-```
-/tmp/tmpXXXXXX/
-├── src/
-│   ├── simple.c                    # Source file
-│   └── output/
-│       ├── model.json              # Parsed model
-│       ├── model_transformed.json  # Transformed model
-│       └── simple.puml             # Generated PlantUML file
-```
+## Test Naming Convention
 
-## Conclusion
+- **Unit Tests**: test-001.py to test-050.yml
+- **Feature Tests**: test-101.py to test-150.yml
+- **Integration Tests**: test-201.py to test-250.yml
+- **Example Tests**: test-301.py to test-350.yml
 
-The proper implementation demonstrates the true power of the unified testing framework:
+## Migration Guidelines
 
-1. **Follows Specifications**: Exactly follows the todo.md and todo_recommendations.md specifications
-2. **Input-###.json Approach**: Uses the recommended approach for unit tests
-3. **Proper Structure**: Creates the correct folder structure with input/ and assertion files
-4. **Direct Validator Usage**: Uses validators directly for maximum flexibility
-5. **Correct Output Handling**: Properly handles the output directory structure
-6. **Comprehensive**: Tests the complete pipeline and validates all outputs
-7. **Maintainable**: Changes to model structure only require framework updates
-8. **Data-Driven**: Assertions are processed from JSON files, making tests truly data-driven
-9. **Flexible**: Easy to modify test expectations by changing JSON files without touching code
+### Converting Existing Tests
 
-This proper implementation serves as the ideal template for converting all remaining tests to use the unified framework effectively according to the specifications.
+1. **Extract test data**: Move hardcoded C code to YAML source_files section
+2. **Extract assertions**: Move hardcoded assertions to YAML assertions section
+3. **Create YAML file**: Create test-###.yml with extracted data
+4. **Update test file**: Convert to use TestDataLoader and AssertionProcessor
+5. **Verify functionality**: Ensure test still validates the same functionality
+
+### YAML Best Practices
+
+1. **Use meaningful test names**: Descriptive test names in YAML
+2. **Organize assertions logically**: Group by execution, model, puml
+3. **Use consistent formatting**: Follow YAML formatting standards
+4. **Document complex scenarios**: Add comments for complex test cases
+5. **Keep files focused**: One main test scenario per YAML file
+
+## Example Implementation
+
+The first test (test-001) demonstrates this new approach:
+
+- **test-001.py**: Simple test implementation using the framework
+- **test-001.yml**: Contains all test data and assertions in a single file
+
+This new approach makes the testing framework much more maintainable and easier to understand while providing all the benefits of data-driven testing.
