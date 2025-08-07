@@ -1,0 +1,56 @@
+# Test metadata
+test:
+  name: "Parser Macros"
+  description: "Test parsing macro definitions including simple macros and function-like macros"
+  category: "unit"
+  id: "0006"
+
+---
+# Source files
+source_files:
+  macros.c: |
+    #define MAX_SIZE 100
+    #define PI 3.14159
+    #define VERSION "1.0.0"
+    #define MIN(a, b) ((a) < (b) ? (a) : (b))
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_parser_macros",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "macros.puml"]
+  
+  model:
+    files:
+      macros.c:
+        macros: ["MAX_SIZE", "PI", "VERSION", "MIN"]
+    element_counts:
+      structs: 0
+      enums: 0
+      functions: 0
+      globals: 0
+      includes: 0
+      macros: 4
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      macros.puml:
+        contains_elements: ["MAX_SIZE", "PI", "VERSION", "MIN"]
+        contains_lines: ["#define MAX_SIZE", "#define MIN(a, b)", "#define PI", "#define VERSION"]
+        class_count: 1
+        relationship_count: 0

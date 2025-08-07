@@ -1,0 +1,64 @@
+# Test metadata
+test:
+  name: "Parser Structs"
+  description: "Test parsing struct definitions with multiple structs"
+  category: "unit"
+  id: "0003"
+
+---
+# Source files
+source_files:
+  structs.c: |
+    struct Point {
+        int x;
+        int y;
+    };
+
+    struct Rectangle {
+        int width;
+        int height;
+    };
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_parser_structs",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "structs.puml"]
+  
+  model:
+    files:
+      structs.c:
+        structs:
+          Point:
+            fields: ["x", "y"]
+          Rectangle:
+            fields: ["width", "height"]
+    element_counts:
+      structs: 2
+      enums: 0
+      functions: 0
+      globals: 0
+      includes: 0
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      structs.puml:
+        contains_elements: ["Point", "Rectangle"]
+        contains_lines: ["class \"Point\" as TYPEDEF_POINT", "class \"Rectangle\" as TYPEDEF_RECTANGLE"]
+        class_count: 3
+        relationship_count: 2
