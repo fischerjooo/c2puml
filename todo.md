@@ -534,7 +534,7 @@ puml:
 
 ## Migration Tracking
 
-### Unit Tests (001-050)
+### Unit Tests (0001-1000)
 
 | Test File | Status | New Name | YAML File | Notes |
 |-----------|--------|----------|-----------|-------|
@@ -565,7 +565,7 @@ puml:
 | test_utils.py | 🔄 Pending | test_utils | test_utils.yml | Utility functions |
 | test_verifier.py | 🔄 Pending | test_verifier | test_verifier.yml | Verification logic |
 
-### Feature Tests (101-150)
+### Feature Tests (1001-2000)
 
 | Test File | Status | New Name | YAML File | Notes |
 |-----------|--------|----------|-----------|-------|
@@ -583,14 +583,14 @@ puml:
 | test_preprocessor_bug.py | 🔄 Pending | test_preprocessor_bug | test_preprocessor_bug.yml | Preprocessor bugs |
 | test_tokenizer.py | 🔄 Pending | test_tokenizer | test_tokenizer.yml | Tokenizer functionality |
 
-### Integration Tests (201-250)
+### Integration Tests (2001-3000)
 
 | Test File | Status | New Name | YAML File | Notes |
 |-----------|--------|----------|-----------|-------|
 | test_end_to_end_pipeline.py | 🔄 Pending | test_end_to_end_pipeline | test_end_to_end_pipeline.yml | End-to-end pipeline |
 | test_error_handling.py | 🔄 Pending | test_error_handling | test_error_handling.yml | Error handling |
 
-### Example Tests (301-350)
+### Example Tests (3001-4000)
 
 | Test File | Status | New Name | YAML File | Notes |
 |-----------|--------|----------|-----------|-------|

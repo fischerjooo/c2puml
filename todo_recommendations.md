@@ -328,7 +328,7 @@ source_dir, config_path = self.data_loader.create_temp_files(test_data, "simple_
 **Example Usage**:
 ```python
 # Process assertions from YAML
-self.assertion_processor.process_assertions(
+self.validators_processor.process_assertions(
     test_data["assertions"], model_data, puml_content, result, self
 )
 ```
@@ -660,10 +660,10 @@ if __name__ == "__main__":
 - Documentation completed
 
 ### Phase 3: Systematic Migration
-- Convert unit tests (001-050)
-- Convert feature tests (101-150)
-- Convert integration tests (201-250)
-- Convert example tests (301-350)
+- Convert unit tests (0001-1000)
+- Convert feature tests (1001-2000)
+- Convert integration tests (2001-3000)
+- Convert example tests (3001-4000)
 
 ### Phase 4: Cleanup
 - Remove old framework files
