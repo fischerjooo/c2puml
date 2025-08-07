@@ -568,30 +568,30 @@ puml:
 | test_parser_macro_duplicates.py | 🔄 Pending | test_parser_macro_duplicates | test_parser_macro_duplicates.yml | Macro handling |
 | test_parser_nested_structures.py | 🔄 Pending | test_parser_nested_structures | test_parser_nested_structures.yml | Nested structures |
 | test_parser_struct_order.py | 🔄 Pending | test_parser_struct_order | test_parser_struct_order.yml | Struct ordering |
-| test_global_parsing.py | ✅ Complete | test_global_parsing_comprehensive | test_global_variables_basic.yml | Comprehensive global variable parsing through CLI |
+| test_global_parsing.py | 🔄 Restored - Needs CLI Refactoring | test_global_parsing_comprehensive | test_global_parsing_comprehensive.yml | Original test restored, needs proper CLI refactoring |
 | test_include_processing.py | 🔄 Pending | test_include_processing | test_include_processing.yml | Include processing |
-| test_include_filtering_bugs.py | ✅ Deleted | - | - | Include filtering covered by transformer tests |
+| test_include_filtering_bugs.py | 🔄 Restored - Needs CLI Refactoring | test_include_filtering_comprehensive | test_include_filtering_comprehensive.yml | Original test restored, needs proper CLI refactoring |
 | test_function_parameters.py | 🔄 Pending | test_function_parameters | test_function_parameters.yml | Function parameters |
 | test_typedef_extraction.py | 🔄 Pending | test_typedef_extraction | test_typedef_extraction.yml | Typedef extraction |
 | test_anonymous_structure_handling.py | 🔄 Pending | test_anonymous_structure_handling | test_anonymous_structure_handling.yml | Anonymous structures |
 | test_anonymous_processor_extended.py | 🔄 Pending | test_anonymous_processor_extended | test_anonymous_processor_extended.yml | Extended anonymous processing |
-| test_multi_pass_anonymous_processing.py | ✅ Deleted | - | - | Complex internal API test - functionality covered by parser tests |
+| test_multi_pass_anonymous_processing.py | 🔄 Restored - Needs CLI Refactoring | test_multi_pass_anonymous_comprehensive | test_multi_pass_anonymous_comprehensive.yml | Original test restored, needs proper CLI refactoring |
 | test_debug_actual_parsing.py | 🔄 Pending | test_debug_actual_parsing | test_debug_actual_parsing.yml | Debug parsing |
 | test_debug_field_parsing.py | 🔄 Pending | test_debug_field_parsing | test_debug_field_parsing.yml | Field parsing debug |
 | test_debug_field_parsing_detailed.py | 🔄 Pending | test_debug_field_parsing_detailed | test_debug_field_parsing_detailed.yml | Detailed field parsing |
 | test_debug_field_processing.py | 🔄 Pending | test_debug_field_processing | test_debug_field_processing.yml | Field processing debug |
 | test_debug_tokens.py | 🔄 Pending | test_debug_tokens | test_debug_tokens.yml | Token debugging |
 | test_absolute_path_bug_detection.py | 🔄 Pending | test_absolute_path_bug_detection | test_absolute_path_bug_detection.yml | Absolute path bugs |
-| test_config.py | ✅ Deleted | - | - | Configuration tested through CLI tests |
+| test_config.py | 🔄 Restored - Needs CLI Refactoring | test_config_comprehensive | test_config_comprehensive.yml | Configuration handling needs proper CLI test replacement |
 | test_file_specific_configuration.py | 🔄 Pending | test_file_specific_configuration | test_file_specific_configuration.yml | File-specific config |
 | test_utils.py | 🔄 Pending | test_utils | test_utils.yml | Utility functions |
-| test_verifier.py | ✅ Complete | test_verifier_comprehensive | test_verifier_valid_model.yml | Comprehensive verifier testing through CLI |
+| test_verifier.py | 🔄 Restored - Needs CLI Refactoring | test_verifier_comprehensive | test_verifier_comprehensive.yml | Original test restored, needs proper CLI refactoring alongside existing CLI version |
 
 ### Feature Tests (1001-2000)
 
 | Test File | Status | New Name | YAML File | Notes |
 |-----------|--------|----------|-----------|-------|
-| test_generator.py | ✅ Complete | test_generator_comprehensive | test_generator_basic_plantuml.yml | Comprehensive PlantUML generation testing through CLI |
+| test_generator.py | 🔄 Restored - Needs CLI Refactoring | test_generator_comprehensive | test_generator_comprehensive.yml | Original test restored, needs proper CLI refactoring alongside existing CLI version |
 | test_generator_exact_format.py | 🔄 Pending | test_generator_exact_format | test_generator_exact_format.yml | Exact format generation |
 | test_generator_grouping.py | 🔄 Pending | test_generator_grouping | test_generator_grouping.yml | Grouping functionality |
 | test_generator_include_tree_bug.py | 🔄 Pending | test_generator_include_tree_bug | test_generator_include_tree_bug.yml | Include tree bugs |
@@ -601,8 +601,8 @@ puml:
 | test_generator_duplicate_includes.py | 🔄 Pending | test_generator_duplicate_includes | test_generator_duplicate_includes.yml | Duplicate includes |
 | test_transformer.py | ✅ Complete | test_transformer_comprehensive | test_transformer_comprehensive_operations.yml, test_transformer_file_filtering.yml, test_transformer_include_processing.yml | Comprehensive transformer operations converted to CLI |
 | test_transformation_system.py | 🔄 Pending | test_transformation_system | test_transformation_system.yml | Transformation system |
-| test_preprocessor_handling.py | ✅ Deleted | - | - | Preprocessor functionality covered by tokenizer tests |
-| test_preprocessor_bug.py | ✅ Deleted | - | - | Preprocessor functionality covered by tokenizer tests |
+| test_preprocessor_handling.py | 🔄 Restored - Needs CLI Refactoring | test_preprocessor_comprehensive | test_preprocessor_comprehensive.yml | Original test restored, needs proper CLI refactoring |
+| test_preprocessor_bug.py | 🔄 Restored - Needs CLI Refactoring | test_preprocessor_bug_comprehensive | test_preprocessor_bug_comprehensive.yml | Original test restored, needs proper CLI refactoring |
 | test_tokenizer.py | ✅ Complete | test_tokenizer_comprehensive | test_tokenizer_complex_parsing.yml | Comprehensive tokenizer testing through complex parsing scenarios via CLI |
 
 ### Integration Tests (2001-3000)
@@ -669,14 +669,15 @@ Based on the current state, the next priority is to systematically convert the r
 4. **Convert example tests** using the special external file structure
 
 ### 📊 Progress Metrics
-- **Total Tests**: 350 (down from original 451 after cleanup)
-- **Converted**: 42 (12.00%)
+- **Total Tests**: 450+ (restored deleted files - back to full suite)
+- **Converted**: 42 (9.33%)
 - **Major Test Files Refactored**: 10 large test files → 20 focused CLI tests
-- **Old Test Files Deleted**: 12 large internal API test files
-- **Remaining**: 308 (88.00%)
+- **Restored Files Needing Refactoring**: 8 large internal API test files
+- **Remaining**: 408+ (90.67%)
 - **Framework Ready**: ✅
 - **Documentation Complete**: ✅
 - **Refactoring Approach Established**: ✅
+- **Status**: Files restored - now need proper CLI refactoring instead of deletion
 
 ### 🎯 Lessons Learned from Conversion
 - **PlantUML Class Count**: Structs and enums create separate classes (3 total: source + 2 elements), while functions and macros are included in the source class (1 total)
