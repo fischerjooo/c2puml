@@ -24,12 +24,6 @@ import shutil
 from dataclasses import dataclass
 from typing import List, Dict, Optional
 
-try:
-    import psutil
-    PSUTIL_AVAILABLE = True
-except ImportError:
-    PSUTIL_AVAILABLE = False
-
 
 @dataclass
 class CLIResult:
@@ -40,23 +34,6 @@ class CLIResult:
     execution_time: float
     command: List[str]
     working_dir: str
-
-
-@dataclass
-class TimedCLIResult(CLIResult):
-    """CLI result with detailed timing information"""
-    parse_time: float
-    transform_time: float
-    generate_time: float
-    total_time: float
-
-
-@dataclass
-class MemoryCLIResult(CLIResult):
-    """CLI result with memory usage tracking"""
-    peak_memory_mb: int
-    memory_samples: List[int]
-    memory_timeline: List[tuple]  # (timestamp, memory_mb)
 
 
 class TestExecutor:
@@ -79,7 +56,7 @@ class TestExecutor:
         workspace_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         main_script_path = os.path.join(workspace_root, "main.py")
         self.main_script_command = ["python3", main_script_path]
-    
+        
     def run_full_pipeline(self, config_path: str, working_dir: str = None) -> CLIResult:
         """
         Run the complete c2puml pipeline (parse → transform → generate)
@@ -200,132 +177,6 @@ class TestExecutor:
         
         command = self._build_command(["--config", config_path])
         return self._execute_command(command, working_dir, env=env)
-    
-    def run_expecting_failure(self, config_path: str, working_dir: str = None) -> CLIResult:
-        """
-        Run expecting the command to fail (for error testing)
-        
-        Args:
-            config_path: Path to config.json file or config directory
-            working_dir: Working directory for execution (defaults to config directory)
-            
-        Returns:
-            CLIResult with execution details
-        """
-        if working_dir is None:
-            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
-        
-        command = self._build_command(["--config", config_path])
-        return self._execute_command(command, working_dir)
-    
-    def run_and_capture_stderr(self, config_path: str, working_dir: str = None) -> CLIResult:
-        """
-        Run and capture stderr for error analysis
-        
-        Args:
-            config_path: Path to config.json file or config directory
-            working_dir: Working directory for execution (defaults to config directory)
-            
-        Returns:
-            CLIResult with execution details including stderr
-        """
-        if working_dir is None:
-            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
-        
-        command = self._build_command(["--config", config_path])
-        return self._execute_command(command, working_dir)
-    
-    def run_with_timing(self, config_path: str, working_dir: str = None) -> TimedCLIResult:
-        """
-        Run with detailed timing information
-        
-        Args:
-            config_path: Path to config.json file or config directory
-            working_dir: Working directory for execution (defaults to config directory)
-            
-        Returns:
-            TimedCLIResult with detailed timing information
-        """
-        if working_dir is None:
-            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
-        
-        start_time = time.time()
-        
-        # Run parse step
-        parse_start = time.time()
-        parse_result = self.run_parse_only(config_path, working_dir)
-        parse_time = time.time() - parse_start
-        
-        # Run transform step
-        transform_start = time.time()
-        transform_result = self.run_transform_only(config_path, working_dir)
-        transform_time = time.time() - transform_start
-        
-        # Run generate step
-        generate_start = time.time()
-        generate_result = self.run_generate_only(config_path, working_dir)
-        generate_time = time.time() - generate_start
-        
-        total_time = time.time() - start_time
-        
-        # Combine results (use the last result for stdout/stderr)
-        return TimedCLIResult(
-            exit_code=generate_result.exit_code,
-            stdout=generate_result.stdout,
-            stderr=generate_result.stderr,
-            execution_time=total_time,
-            command=generate_result.command,
-            working_dir=generate_result.working_dir,
-            parse_time=parse_time,
-            transform_time=transform_time,
-            generate_time=generate_time,
-            total_time=total_time
-        )
-    
-    def run_with_memory_tracking(self, config_path: str, working_dir: str = None) -> MemoryCLIResult:
-        """
-        Run with memory usage tracking
-        
-        Args:
-            config_path: Path to config.json file or config directory
-            working_dir: Working directory for execution (defaults to config directory)
-            
-        Returns:
-            MemoryCLIResult with memory usage information
-        """
-        if working_dir is None:
-            working_dir = os.path.dirname(config_path) if os.path.isfile(config_path) else config_path
-        
-        command = self._build_command(["--config", config_path])
-        
-        # Start memory monitoring
-        memory_samples = []
-        memory_timeline = []
-        peak_memory_mb = 0
-        
-        if PSUTIL_AVAILABLE:
-            process = psutil.Process()
-        
-        start_time = time.time()
-        
-        # Execute command
-        result = self._execute_command(command, working_dir)
-        
-        # Get peak memory usage if psutil is available
-        if PSUTIL_AVAILABLE:
-            peak_memory_mb = process.memory_info().rss / 1024 / 1024
-        
-        return MemoryCLIResult(
-            exit_code=result.exit_code,
-            stdout=result.stdout,
-            stderr=result.stderr,
-            execution_time=result.execution_time,
-            command=result.command,
-            working_dir=result.working_dir,
-            peak_memory_mb=int(peak_memory_mb),
-            memory_samples=memory_samples,
-            memory_timeline=memory_timeline
-        )
     
     # === Output Management ===
     
