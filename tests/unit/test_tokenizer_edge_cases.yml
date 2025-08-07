@@ -1,0 +1,116 @@
+# Test metadata
+test:
+  name: "Tokenizer Edge Cases"
+  description: "Test tokenizer with edge cases like comments, strings, complex expressions"
+  category: "unit"
+  id: "2021"
+
+---
+# Source files
+source_files:
+  edge_cases.c: |
+    #include <stdio.h>
+    #include <string.h>
+    
+    /* Multi-line comment with
+       complex content like:
+       struct fake { int x; };
+       This should be ignored */
+    
+    // Single line comment with code: int y = 5;
+    
+    struct EdgeCase {
+        char string_with_quotes[50];  // "embedded quotes"
+        char escaped_chars[20];       // contains \n, \t, \\, \"
+        int complex_expr;             // result of (a * b + c) / d
+    };
+    
+    // String literals with special content
+    const char* test_strings[] = {
+        "Simple string",
+        "String with \"escaped quotes\"",
+        "String with \\ backslash",
+        "String with \n newline",
+        "Multi line string",
+        ""  // Empty string
+    };
+    
+    // Complex expressions with multiple operators
+    int complex_calculation() {
+        int a = 10, b = 20, c = 30;
+        
+        // Complex arithmetic with parentheses
+        int result1 = ((a + b) * c - (a / b)) % 7;
+        
+        // Bitwise operations
+        int result2 = (a << 2) | (b >> 1) & ~c;
+        
+        // Conditional expressions
+        int result3 = (a > b) ? (c * 2) : (c / 2);
+        
+        // Function call with complex arguments
+        return strlen("test") + result1 + result2 + result3;
+    }
+    
+    // Macro with complex content
+    #define COMPLEX_MACRO(x, y) \
+        do { \
+            if ((x) > (y)) { \
+                printf("x=%d > y=%d\n", (x), (y)); \
+            } else { \
+                printf("x=%d <= y=%d\n", (x), (y)); \
+            } \
+        } while(0)
+    
+    // Edge case: function with many punctuation marks
+    void punctuation_test(int array[], size_t len, int (*cmp)(const void*, const void*)) {
+        // Comments with punctuation: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+        int* ptr = &array[0];
+        (*ptr)++;
+        array[len-1] = *ptr;
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_tokenizer_edge_cases",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "edge_cases.puml"]
+  
+  model:
+    files:
+      edge_cases.c:
+        structs:
+          EdgeCase:
+            fields: ["string_with_quotes", "escaped_chars", "complex_expr"]
+        functions: ["complex_calculation", "punctuation_test"]
+        globals: ["test_strings"]
+        macros: ["COMPLEX_MACRO"]
+        includes: ["stdio.h", "string.h"]
+    element_counts:
+      structs: 1
+      functions: 2
+      globals: 1
+      macros: 1
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      edge_cases.puml:
+        contains_elements: ["EdgeCase", "edge_cases"]
+        contains_lines: ["class \"EdgeCase\" as TYPEDEF_EDGECASE"]
+        class_count: 2
+        relationship_count: 1
