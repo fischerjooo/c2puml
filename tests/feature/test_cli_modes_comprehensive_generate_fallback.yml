@@ -1,16 +1,16 @@
 # Test metadata
 test:
-  name: "CLI Feature Transform Only Command"
-  description: "Test transform-only command functionality through CLI interface"
+  name: "CLI Modes Generate Fallback"
+  description: "Test generate mode fallback to model.json when no transformed model"
   category: "feature"
-  id: "1002"
+  id: "1013"
 
 ---
-# Source files - need to provide a pre-generated model.json for transform step
+# Source files - only model.json (no model_transformed.json)
 source_files:
   model.json: |
     {
-      "project_name": "cli_test",
+      "project_name": "cli_modes_test",
       "source_folder": ".",
       "files": {
         "test.c": {
@@ -20,7 +20,8 @@ source_files:
             "Point": {
               "name": "Point",
               "fields": [
-                {"name": "x", "type": "int"}
+                {"name": "x", "type": "int"},
+                {"name": "y", "type": "int"}
               ]
             }
           },
@@ -47,7 +48,7 @@ source_files:
 # Configuration
 config.json: |
   {
-    "project_name": "cli_test",
+    "project_name": "cli_modes_test",
     "source_folders": ["."],
     "recursive_search": true,
     "output_dir": "./output"
@@ -59,22 +60,20 @@ assertions:
   execution:
     exit_code: 0
     max_execution_time: 30.0
-    stdout_contains: "Transformed model saved to"
+    stdout_contains: "PlantUML generation complete"
   
-  model:
-    validate_structure: true
-    project_name: "cli_test"
-    expected_files: ["test.c"]
+  puml:
+    syntax_valid: true
+    file_count: 1
+    contains_elements: ["Point", "main"]
+    contains_lines: ["@startuml test", "@enduml"]
     
-    functions_exist: ["main"]
-    structs_exist: ["Point"]
-    
-    element_counts:
-      functions: 1
-      structs: 1
+    files:
+      test.puml:
+        syntax_valid: true
+        contains_elements: ["Point", "main"]
+        not_empty: true
   
   files:
     files_exist:
-      - "./output/model_transformed.json"
-    json_files_valid:
-      - "./output/model_transformed.json"
+      - "./output/test.puml"

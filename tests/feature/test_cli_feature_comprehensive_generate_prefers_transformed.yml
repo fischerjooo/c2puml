@@ -15,6 +15,7 @@ source_files:
       "files": {
         "test.c": {
           "file_path": "test.c",
+          "name": "test.c",
           "structs": {
             "Point": {
               "name": "Point",
@@ -35,9 +36,9 @@ source_files:
           "globals": [],
           "includes": [],
           "macros": [],
-          "typedefs": {},
-          "typedef_relations": [],
-          "include_relations": []
+          "aliases": {},
+          "include_relations": [],
+          "anonymous_relationships": {}
         }
       }
     }
@@ -48,6 +49,7 @@ source_files:
       "files": {
         "test.c": {
           "file_path": "test.c",
+          "name": "test.c",
           "structs": {
             "Point": {
               "name": "Point",
@@ -68,9 +70,9 @@ source_files:
           "globals": [],
           "includes": [],
           "macros": [],
-          "typedefs": {},
-          "typedef_relations": [],
-          "include_relations": []
+          "aliases": {},
+          "include_relations": [],
+          "anonymous_relationships": {}
         }
       }
     }

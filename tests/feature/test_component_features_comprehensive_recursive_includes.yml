@@ -1,0 +1,53 @@
+# Test metadata
+test:
+  name: "Component Features Recursive Includes"
+  description: "Test recursive include handling through the CLI interface"
+  category: "feature"
+  id: "2008"
+
+---
+# Source files
+source_files:
+  main.c: |
+    #include "include1.h"
+    
+    int main() {
+        func1();
+        return 0;
+    }
+  include1.h: |
+    #include "include2.h"
+    void func1();
+  include2.h: |
+    void func2();
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "recursive_includes_test",
+    "source_folders": ["."],
+    "recursive_search": true,
+    "output_dir": "./output"
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+    stdout_contains: "PlantUML generation complete"
+  
+  model:
+    validate_structure: true
+    project_name: "recursive_includes_test"
+    expected_files: ["main.c", "include1.h", "include2.h"]
+    
+    functions_exist: ["main", "func1", "func2"]
+  
+  files:
+    files_exist:
+      - "./output/main.puml"
+      - "./output/include1.puml"
+      - "./output/include2.puml"

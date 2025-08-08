@@ -1,16 +1,16 @@
 # Test metadata
 test:
-  name: "CLI Feature Generate Fallback to Model"
-  description: "Test generate command fallback to model.json when model_transformed.json doesn't exist through CLI interface"
+  name: "CLI Modes Generate Prefers Transformed"
+  description: "Test generate mode prefers transformed model"
   category: "feature"
-  id: "1004"
+  id: "1012"
 
 ---
-# Source files - only provide model.json (no model_transformed.json) for generate step
+# Source files - need both model.json and model_transformed.json
 source_files:
   model.json: |
     {
-      "project_name": "cli_test",
+      "project_name": "cli_modes_test",
       "source_folder": ".",
       "files": {
         "test.c": {
@@ -20,7 +20,43 @@ source_files:
             "Point": {
               "name": "Point",
               "fields": [
-                {"name": "x", "type": "int"}
+                {"name": "x", "type": "int"},
+                {"name": "y", "type": "int"}
+              ]
+            }
+          },
+          "enums": {},
+          "unions": {},
+          "functions": [
+            {
+              "name": "main",
+              "return_type": "int",
+              "parameters": []
+            }
+          ],
+          "globals": [],
+          "includes": [],
+          "macros": [],
+          "aliases": {},
+          "include_relations": [],
+          "anonymous_relationships": {}
+        }
+      }
+    }
+  model_transformed.json: |
+    {
+      "project_name": "cli_modes_test",
+      "source_folder": ".",
+      "files": {
+        "test.c": {
+          "file_path": "test.c",
+          "name": "test.c",
+          "structs": {
+            "Point": {
+              "name": "Point",
+              "fields": [
+                {"name": "x", "type": "int"},
+                {"name": "y", "type": "int"}
               ]
             }
           },
@@ -47,7 +83,7 @@ source_files:
 # Configuration
 config.json: |
   {
-    "project_name": "cli_test",
+    "project_name": "cli_modes_test",
     "source_folders": ["."],
     "recursive_search": true,
     "output_dir": "./output"

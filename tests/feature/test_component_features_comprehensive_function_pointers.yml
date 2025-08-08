@@ -1,0 +1,90 @@
+# Test metadata
+test:
+  name: "Component Features Function Pointers"
+  description: "Test parsing function pointer definitions through the CLI interface"
+  category: "feature"
+  id: "2002"
+
+---
+# Source files
+source_files:
+  test.c: |
+    // Simple function pointer typedef
+    typedef int (*Operation)(int a, int b);
+
+    // Complex function pointer with struct
+    typedef struct {
+        char name[50];
+        int (*execute)(void* data);
+    } Handler;
+
+    // Function pointer array
+    typedef void (*EventCallback[10])(int event_type);
+
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    int execute_operation(Operation op, int x, int y) {
+        return op(x, y);
+    }
+
+    int main() {
+        Operation op = add;
+        Handler h;
+        EventCallback callbacks;
+        return execute_operation(op, 5, 3);
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "function_pointers_test",
+    "source_folders": ["."],
+    "recursive_search": true,
+    "output_dir": "./output"
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+    stdout_contains: "PlantUML generation complete"
+  
+  model:
+    validate_structure: true
+    project_name: "function_pointers_test"
+    expected_files: ["test.c"]
+    
+    functions_exist: ["add", "execute_operation", "main"]
+    structs_exist: ["Handler"]
+    aliases_exist: ["Operation", "EventCallback"]
+    
+    element_counts:
+      functions: 3
+      structs: 1
+      aliases: 2
+  
+  puml:
+    syntax_valid: true
+    file_count: 1
+    contains_elements: ["Operation", "Handler", "add", "execute_operation", "main"]
+    contains_lines: ["@startuml test", "@enduml"]
+    
+    files:
+      test.puml:
+        syntax_valid: true
+        contains_elements: ["Operation", "Handler", "add", "main"]
+        not_empty: true
+  
+  files:
+    files_exist:
+      - "./output/model.json"
+      - "./output/model_transformed.json"
+      - "./output/test.puml"
+    json_files_valid:
+      - "./output/model.json"
+      - "./output/model_transformed.json"

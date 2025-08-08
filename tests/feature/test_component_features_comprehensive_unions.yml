@@ -1,0 +1,80 @@
+# Test metadata
+test:
+  name: "Component Features Unions"
+  description: "Test parsing union definitions through the CLI interface"
+  category: "feature"
+  id: "2001"
+
+---
+# Source files
+source_files:
+  test.c: |
+    union Data {
+        int i;
+        float f;
+        char str[20];
+    };
+
+    typedef union {
+        int value;
+        char bytes[4];
+    } IntBytes;
+
+    int main() {
+        union Data d;
+        IntBytes ib;
+        return 0;
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "unions_test",
+    "source_folders": ["."],
+    "recursive_search": true,
+    "output_dir": "./output"
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+    stdout_contains: "PlantUML generation complete"
+  
+  model:
+    validate_structure: true
+    project_name: "unions_test"
+    expected_files: ["test.c"]
+    
+    functions_exist: ["main"]
+    unions_exist: ["Data"]
+    aliases_exist: ["IntBytes"]
+    
+    element_counts:
+      functions: 1
+      unions: 1
+      aliases: 1
+  
+  puml:
+    syntax_valid: true
+    file_count: 1
+    contains_elements: ["Data", "IntBytes", "main"]
+    contains_lines: ["@startuml test", "@enduml"]
+    
+    files:
+      test.puml:
+        syntax_valid: true
+        contains_elements: ["Data", "IntBytes", "main"]
+        not_empty: true
+  
+  files:
+    files_exist:
+      - "./output/model.json"
+      - "./output/model_transformed.json"
+      - "./output/test.puml"
+    json_files_valid:
+      - "./output/model.json"
+      - "./output/model_transformed.json"

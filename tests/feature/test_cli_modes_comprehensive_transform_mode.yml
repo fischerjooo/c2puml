@@ -1,16 +1,16 @@
 # Test metadata
 test:
-  name: "CLI Feature Transform Only Command"
-  description: "Test transform-only command functionality through CLI interface"
+  name: "CLI Modes Transform Mode"
+  description: "Test transform mode generates model_transformed.json"
   category: "feature"
-  id: "1002"
+  id: "1011"
 
 ---
 # Source files - need to provide a pre-generated model.json for transform step
 source_files:
   model.json: |
     {
-      "project_name": "cli_test",
+      "project_name": "cli_modes_test",
       "source_folder": ".",
       "files": {
         "test.c": {
@@ -20,7 +20,8 @@ source_files:
             "Point": {
               "name": "Point",
               "fields": [
-                {"name": "x", "type": "int"}
+                {"name": "x", "type": "int"},
+                {"name": "y", "type": "int"}
               ]
             }
           },
@@ -47,7 +48,7 @@ source_files:
 # Configuration
 config.json: |
   {
-    "project_name": "cli_test",
+    "project_name": "cli_modes_test",
     "source_folders": ["."],
     "recursive_search": true,
     "output_dir": "./output"
@@ -63,7 +64,7 @@ assertions:
   
   model:
     validate_structure: true
-    project_name: "cli_test"
+    project_name: "cli_modes_test"
     expected_files: ["test.c"]
     
     functions_exist: ["main"]
@@ -76,5 +77,7 @@ assertions:
   files:
     files_exist:
       - "./output/model_transformed.json"
+    files_not_exist:
+      - "./output/test.puml"
     json_files_valid:
       - "./output/model_transformed.json"

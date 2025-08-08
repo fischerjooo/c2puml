@@ -56,6 +56,22 @@ class TestCLIModesComprehensive(UnifiedTestCase):
         if "files" in test_assertions:
             if "output_dir_exists" in test_assertions["files"]:
                 test_assertions["files"]["output_dir_exists"] = output_dir
+            if "files_exist" in test_assertions["files"]:
+                updated_files = []
+                for file_path in test_assertions["files"]["files_exist"]:
+                    if file_path.startswith("./output/"):
+                        updated_files.append(os.path.join(output_dir, file_path[9:]))
+                    else:
+                        updated_files.append(file_path)
+                test_assertions["files"]["files_exist"] = updated_files
+            if "files_not_exist" in test_assertions["files"]:
+                updated_files = []
+                for file_path in test_assertions["files"]["files_not_exist"]:
+                    if file_path.startswith("./output/"):
+                        updated_files.append(os.path.join(output_dir, file_path[9:]))
+                    else:
+                        updated_files.append(file_path)
+                test_assertions["files"]["files_not_exist"] = updated_files
             if "json_files_valid" in test_assertions["files"]:
                 updated_json_files = []
                 for json_file in test_assertions["files"]["json_files_valid"]:
@@ -112,6 +128,22 @@ class TestCLIModesComprehensive(UnifiedTestCase):
         if "files" in test_assertions:
             if "output_dir_exists" in test_assertions["files"]:
                 test_assertions["files"]["output_dir_exists"] = output_dir
+            if "files_exist" in test_assertions["files"]:
+                updated_files = []
+                for file_path in test_assertions["files"]["files_exist"]:
+                    if file_path.startswith("./output/"):
+                        updated_files.append(os.path.join(output_dir, file_path[9:]))
+                    else:
+                        updated_files.append(file_path)
+                test_assertions["files"]["files_exist"] = updated_files
+            if "files_not_exist" in test_assertions["files"]:
+                updated_files = []
+                for file_path in test_assertions["files"]["files_not_exist"]:
+                    if file_path.startswith("./output/"):
+                        updated_files.append(os.path.join(output_dir, file_path[9:]))
+                    else:
+                        updated_files.append(file_path)
+                test_assertions["files"]["files_not_exist"] = updated_files
             if "json_files_valid" in test_assertions["files"]:
                 updated_json_files = []
                 for json_file in test_assertions["files"]["json_files_valid"]:

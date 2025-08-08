@@ -1,0 +1,67 @@
+# Test metadata
+test:
+  name: "Component Features Generator Typedefs"
+  description: "Test PlantUML generation with typedef relationships through the CLI interface"
+  category: "feature"
+  id: "2003"
+
+---
+# Source files
+source_files:
+  test.c: |
+    typedef struct Point {
+        int x;
+        int y;
+    } Point;
+
+    typedef Point* PointPtr;
+    typedef Point PointArray[10];
+
+    int main() {
+        Point p;
+        PointPtr ptr = &p;
+        PointArray arr;
+        return 0;
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "generator_typedefs_test",
+    "source_folders": ["."],
+    "recursive_search": true,
+    "output_dir": "./output"
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+    stdout_contains: "PlantUML generation complete"
+  
+  model:
+    validate_structure: true
+    project_name: "generator_typedefs_test"
+    expected_files: ["test.c"]
+    
+    functions_exist: ["main"]
+    structs_exist: ["Point"]
+    aliases_exist: ["Point", "PointPtr", "PointArray"]
+    
+    element_counts:
+      functions: 1
+      structs: 1
+      aliases: 3
+  
+  puml:
+    syntax_valid: true
+    file_count: 1
+    contains_elements: ["Point", "PointPtr", "PointArray", "main"]
+    contains_lines: ["@startuml test", "@enduml"]
+  
+  files:
+    files_exist:
+      - "./output/test.puml"
