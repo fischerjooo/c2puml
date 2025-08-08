@@ -1,0 +1,150 @@
+---
+description: "Comprehensive verifier functionality test"
+source_files:
+  "verifier_test.c": |
+    #include <stdio.h>
+    #include <stdlib.h>
+    
+    // Valid structs
+    typedef struct {
+        int id;
+        char name[100];
+        float value;
+    } ValidStruct;
+    
+    typedef struct {
+        char* data;
+        size_t length;
+    } DataBuffer;
+    
+    // Valid enums
+    typedef enum {
+        STATUS_OK = 0,
+        STATUS_ERROR = 1,
+        STATUS_PENDING = 2
+    } Status;
+    
+    typedef enum {
+        RED,
+        GREEN,
+        BLUE
+    } Color;
+    
+    // Valid unions
+    typedef union {
+        int i;
+        float f;
+        char c;
+    } Number;
+    
+    // Valid functions
+    int process_data(ValidStruct* data);
+    Status validate_buffer(DataBuffer* buffer);
+    void cleanup_resources(void);
+    
+    // Valid global variables
+    int global_counter = 0;
+    const char* app_version = "1.0.0";
+    ValidStruct default_config = {1, "default", 0.0};
+    
+    // Function implementations
+    int process_data(ValidStruct* data) {
+        if (data == NULL) return -1;
+        return data->id;
+    }
+    
+    Status validate_buffer(DataBuffer* buffer) {
+        if (buffer == NULL || buffer->data == NULL) {
+            return STATUS_ERROR;
+        }
+        return STATUS_OK;
+    }
+    
+    void cleanup_resources(void) {
+        // Cleanup implementation
+    }
+
+  "verifier_header.h": |
+    #ifndef VERIFIER_HEADER_H
+    #define VERIFIER_HEADER_H
+    
+    #include <stddef.h>
+    
+    // Forward declarations
+    typedef struct ValidStruct ValidStruct;
+    typedef struct DataBuffer DataBuffer;
+    typedef enum Status Status;
+    typedef enum Color Color;
+    typedef union Number Number;
+    
+    // Function prototypes
+    int process_data(ValidStruct* data);
+    Status validate_buffer(DataBuffer* buffer);
+    void cleanup_resources(void);
+    
+    // Constants
+    #define MAX_BUFFER_SIZE 1024
+    #define DEFAULT_TIMEOUT 30
+    #define VERSION_STRING "1.0.0"
+    
+    #endif // VERIFIER_HEADER_H
+
+  "config.json": |
+    {
+      "project_name": "VerifierTest",
+      "source_folders": ["."],
+      "output_dir": "output",
+      "recursive_search": true,
+      "include_depth_limit": 2,
+      "model_output_path": "model.json",
+      "model_transformed_output_path": "model_transformed.json"
+    }
+
+assertions:
+  execution:
+    success: true
+  
+  model:
+    files_exist:
+      - "verifier_test.c"
+      - "verifier_header.h"
+    
+    element_counts:
+      files: 2
+    
+    functions_exist:
+      - "process_data"
+      - "validate_buffer" 
+      - "cleanup_resources"
+    
+    structs_exist:
+      - "ValidStruct"
+      - "DataBuffer"
+    
+    enums_exist:
+      - "Status"
+      - "Color"
+    
+    unions_exist:
+      - "Number"
+    
+    globals_exist:
+      - "global_counter"
+      - "app_version"
+      - "default_config"
+  
+  puml:
+    files_exist:
+      - "verifier_test.puml"
+      - "verifier_header.puml"
+    
+    contains_elements:
+      - "ValidStruct"
+      - "DataBuffer"
+      - "Status"
+      - "Color"
+      - "Number"
+      - "process_data"
+      - "validate_buffer"
+      - "cleanup_resources"
+      - "global_counter"

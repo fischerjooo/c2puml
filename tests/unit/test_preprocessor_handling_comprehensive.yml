@@ -1,0 +1,115 @@
+---
+description: "Comprehensive preprocessor handling functionality test"
+source_files:
+  "preprocessor_test.c": |
+    #include <stdio.h>
+    #include <stdlib.h>
+    
+    #define MAX_SIZE 100
+    #define MIN_SIZE 10
+    #define VERSION_STRING "1.0.0"
+    
+    #ifdef DEBUG
+        #define LOG(msg) printf("DEBUG: %s\n", msg)
+    #else
+        #define LOG(msg)
+    #endif
+    
+    typedef struct {
+        int id;
+        char name[MAX_SIZE];
+    } Item;
+    
+    #if defined(FEATURE_A)
+        typedef struct {
+            int feature_a_data;
+        } FeatureA;
+    #endif
+    
+    #ifndef DISABLE_FEATURE_B
+        typedef struct {
+            float feature_b_value;
+        } FeatureB;
+    #endif
+    
+    int process_item(Item* item);
+    void initialize_system(void);
+    
+    int global_items = 0;
+    
+    int process_item(Item* item) {
+        if (item == NULL) return -1;
+        LOG("Processing item");
+        return item->id;
+    }
+    
+    void initialize_system(void) {
+        LOG("System initialized");
+        global_items = 0;
+    }
+
+  "preprocessor_header.h": |
+    #ifndef PREPROCESSOR_HEADER_H
+    #define PREPROCESSOR_HEADER_H
+    
+    #define HEADER_VERSION 2
+    #define API_VERSION "2.1.0"
+    
+    typedef struct Item Item;
+    
+    #ifdef FEATURE_A
+        typedef struct FeatureA FeatureA;
+    #endif
+    
+    #ifndef DISABLE_FEATURE_B
+        typedef struct FeatureB FeatureB;
+    #endif
+    
+    int process_item(Item* item);
+    void initialize_system(void);
+    
+    #endif // PREPROCESSOR_HEADER_H
+
+  "config.json": |
+    {
+      "project_name": "PreprocessorTest",
+      "source_folders": ["."],
+      "output_dir": "output",
+      "recursive_search": true,
+      "include_depth_limit": 2,
+      "model_output_path": "model.json",
+      "model_transformed_output_path": "model_transformed.json"
+    }
+
+assertions:
+  execution:
+    success: true
+  
+  model:
+    files_exist:
+      - "preprocessor_test.c"
+      - "preprocessor_header.h"
+    
+    element_counts:
+      files: 2
+    
+    functions_exist:
+      - "process_item"
+      - "initialize_system"
+    
+    structs_exist:
+      - "Item"
+    
+    globals_exist:
+      - "global_items"
+  
+  puml:
+    files_exist:
+      - "preprocessor_test.puml"
+      - "preprocessor_header.puml"
+    
+    contains_elements:
+      - "Item"
+      - "process_item"
+      - "initialize_system"
+      - "global_items"
