@@ -1,0 +1,118 @@
+# Test metadata
+test:
+  name: "Complex Project Structure"
+  description: "Test complex project structure with multiple layers of includes"
+  category: "feature"
+  id: "1004"
+
+---
+# Source files
+source_files:
+  src/main.c: |
+    #include "core/engine.h"
+    #include "utils/logger.h"
+
+    int main() {
+        Engine* engine = engine_create();
+        log_info("Engine started");
+        return 0;
+    }
+  src/core/engine.h: |
+    #ifndef ENGINE_H
+    #define ENGINE_H
+
+    #include "../utils/memory.h"
+    #include "renderer.h"
+
+    typedef struct Engine Engine;
+
+    Engine* engine_create();
+
+    #endif
+  src/core/renderer.h: |
+    #ifndef RENDERER_H
+    #define RENDERER_H
+
+    #include "../graphics/shader.h"
+
+    typedef struct {
+        int width, height;
+    } Viewport;
+
+    #endif
+  src/graphics/shader.h: |
+    #ifndef SHADER_H
+    #define SHADER_H
+
+    typedef struct {
+        unsigned int program_id;
+        char* vertex_source;
+        char* fragment_source;
+    } Shader;
+
+    #endif
+  src/utils/logger.h: |
+    #ifndef LOGGER_H
+    #define LOGGER_H
+
+    void log_info(const char* message);
+
+    #endif
+  src/utils/memory.h: |
+    #ifndef MEMORY_H
+    #define MEMORY_H
+
+    void* allocate_memory(size_t size);
+    void free_memory(void* ptr);
+
+    #endif
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_complex_project_structure",
+    "source_folders": ["src"],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 4
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 60.0
+  
+  model:
+    validate_structure: true
+    files:
+      src/main.c:
+        functions: ["main"]
+        includes: ["core/engine.h", "utils/logger.h"]
+      src/core/engine.h:
+        functions: ["engine_create"]
+        includes: ["../utils/memory.h", "renderer.h"]
+      src/core/renderer.h:
+        structs:
+          Viewport:
+            fields: ["width", "height"]
+        includes: ["../graphics/shader.h"]
+      src/graphics/shader.h:
+        structs:
+          Shader:
+            fields: ["program_id", "vertex_source", "fragment_source"]
+      src/utils/logger.h:
+        functions: ["log_info"]
+      src/utils/memory.h:
+        functions: ["allocate_memory", "free_memory"]
+    element_counts:
+      functions: 5
+      structs: 2
+  
+  puml:
+    syntax_valid: true
+    contains_elements: ["Engine", "main", "engine_create", "log_info"]
+    class_count: 3
+    relationship_count: 2

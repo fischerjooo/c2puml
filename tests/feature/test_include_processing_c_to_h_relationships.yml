@@ -1,0 +1,87 @@
+# Test metadata
+test:
+  name: "C to H File Relationships"
+  description: "Test feature-level C to H file relationships"
+  category: "feature"
+  id: "1002"
+
+---
+# Source files
+source_files:
+  app.c: |
+    #include "types.h"
+    #include "config.h"
+
+    void app_init() {
+        Config cfg = DEFAULT_CONFIG;
+        Point origin = {0, 0};
+    }
+  types.h: |
+    #ifndef TYPES_H
+    #define TYPES_H
+
+    typedef struct {
+        int x;
+        int y;
+    } Point;
+
+    #endif
+  config.h: |
+    #ifndef CONFIG_H
+    #define CONFIG_H
+
+    #include "types.h"
+
+    typedef struct {
+        Point window_size;
+        int debug_mode;
+    } Config;
+
+    #define DEFAULT_CONFIG {{640, 480}, 0}
+
+    #endif
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_c_to_h_relationships",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 3
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+  
+  model:
+    validate_structure: true
+    files:
+      app.c:
+        functions: ["app_init"]
+        includes: ["types.h", "config.h"]
+      types.h:
+        structs:
+          Point:
+            fields: ["x", "y"]
+      config.h:
+        structs:
+          Config:
+            fields: ["window_size", "debug_mode"]
+        includes: ["types.h"]
+        macros: ["DEFAULT_CONFIG"]
+    element_counts:
+      functions: 1
+      structs: 2
+      macros: 3
+  
+  puml:
+    syntax_valid: true
+    contains_elements: ["Point", "Config", "app_init"]
+    class_count: 5
+    relationship_count: 6
