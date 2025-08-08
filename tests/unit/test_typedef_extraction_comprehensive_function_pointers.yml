@@ -1,0 +1,58 @@
+# Test metadata
+test:
+  name: "Typedef Extraction - Function Pointers"
+  description: "Test extraction of function pointer typedef declarations"
+  category: "unit"
+  id: "0052"
+
+---
+# Source files
+source_files:
+  function_ptr_typedefs.c: |
+    // Function pointer typedef declarations
+    typedef int (*MyCallback)(MyBuffer * buffer);
+    typedef void (*log_callback_t)(log_level_t level, const char * message);
+    typedef int (*complex_callback)(int a, int b, char * str);
+    typedef void (*simple_func_ptr)(void);
+    typedef char * (*string_processor)(const char * input, int len);
+    typedef int (*calculator)(int x, int y);
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_typedef_extraction_function_pointers",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "function_ptr_typedefs.puml"]
+  
+  model:
+    files:
+      function_ptr_typedefs.c:
+        aliases: ["MyCallback", "log_callback_t", "complex_callback", "simple_func_ptr", "string_processor", "calculator"]
+    element_counts:
+      structs: 0
+      enums: 0
+      functions: 0
+      globals: 0
+      includes: 0
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      function_ptr_typedefs.puml:
+        contains_elements: ["MyCallback", "log_callback_t", "complex_callback", "simple_func_ptr", "string_processor", "calculator"]
+        contains_lines: ["class \"MyCallback\" as TYPEDEF_MYCALLBACK", "class \"log_callback_t\" as TYPEDEF_LOG_CALLBACK_T", "class \"complex_callback\" as TYPEDEF_COMPLEX_CALLBACK"]
+        class_count: 7  # 6 function pointer typedefs + 1 source file
+        relationship_count: 6  # Each typedef has relationship to source file
