@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for src/c2puml/core/generator.py: 87%</title>
+    <title>Coverage for src/c2puml/core/generator.py: 86%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>src/c2puml/core/generator.py</b>:
-            <span class="pc_cov">87%</span>
+            <span class="pc_cov">86%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">456 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">398<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">58<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">393<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">63<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_a8b3cb5ca554c7b7_parser_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.2">coverage.py v7.10.2</a>,
-            created at 2025-08-08 17:23 +0000
+            created at 2025-08-08 18:52 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -250,7 +250,7 @@
     <p class="pln"><span class="n"><a id="t168" href="#t168">168</a></span><span class="t">            <span class="com"># Try matching by filename (filenames are guaranteed to be unique)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t169" href="#t169">169</a></span><span class="t">            <span class="nam">filename</span> <span class="op">=</span> <span class="nam">Path</span><span class="op">(</span><span class="nam">file_name</span><span class="op">)</span><span class="op">.</span><span class="nam">name</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t170" href="#t170">170</a></span><span class="t">            <span class="key">if</span> <span class="nam">filename</span> <span class="key">in</span> <span class="nam">project_model</span><span class="op">.</span><span class="nam">files</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t171" href="#t171">171</a></span><span class="t">                <span class="key">return</span> <span class="nam">filename</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t171" href="#t171">171</a></span><span class="t">                <span class="key">return</span> <span class="nam">filename</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t172" href="#t172">172</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t173" href="#t173">173</a></span><span class="t">            <span class="com"># If not found, return the filename (will be handled gracefully)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t174" href="#t174">174</a></span><span class="t">            <span class="key">return</span> <span class="nam">filename</span>&nbsp;</span><span class="r"></span></p>
@@ -534,17 +534,17 @@
     <p class="run"><span class="n"><a id="t452" href="#t452">452</a></span><span class="t">                <span class="nam">formatted_global</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_format_global_variable</span><span class="op">(</span><span class="nam">global_var</span><span class="op">,</span> <span class="nam">prefix</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t453" href="#t453">453</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t454" href="#t454">454</a></span><span class="t">                <span class="key">if</span> <span class="nam">prefix</span> <span class="op">==</span> <span class="str">"+ "</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t455" href="#t455">455</a></span><span class="t">                    <span class="nam">public_globals</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">formatted_global</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t455" href="#t455">455</a></span><span class="t">                    <span class="nam">public_globals</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">formatted_global</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t456" href="#t456">456</a></span><span class="t">                <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t457" href="#t457">457</a></span><span class="t">                    <span class="nam">private_globals</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">formatted_global</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t458" href="#t458">458</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t459" href="#t459">459</a></span><span class="t">            <span class="com"># Add public globals first</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t460" href="#t460">460</a></span><span class="t">            <span class="key">for</span> <span class="nam">global_line</span> <span class="key">in</span> <span class="nam">public_globals</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t461" href="#t461">461</a></span><span class="t">                <span class="nam">lines</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">global_line</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t461" href="#t461">461</a></span><span class="t">                <span class="nam">lines</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">global_line</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t462" href="#t462">462</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t463" href="#t463">463</a></span><span class="t">            <span class="com"># Add empty line between public and private if both exist</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t464" href="#t464">464</a></span><span class="t">            <span class="key">if</span> <span class="nam">public_globals</span> <span class="key">and</span> <span class="nam">private_globals</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t465" href="#t465">465</a></span><span class="t">                <span class="nam">lines</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="str">""</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t465" href="#t465">465</a></span><span class="t">                <span class="nam">lines</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="str">""</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t466" href="#t466">466</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t467" href="#t467">467</a></span><span class="t">            <span class="com"># Add private globals</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t468" href="#t468">468</a></span><span class="t">            <span class="key">for</span> <span class="nam">global_line</span> <span class="key">in</span> <span class="nam">private_globals</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -598,7 +598,7 @@
     <p class="run"><span class="n"><a id="t516" href="#t516">516</a></span><span class="t">            <span class="key">if</span> <span class="nam">filename</span><span class="op">.</span><span class="nam">endswith</span><span class="op">(</span><span class="str">".h"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t517" href="#t517">517</a></span><span class="t">                <span class="key">for</span> <span class="nam">header_global</span> <span class="key">in</span> <span class="nam">file_model</span><span class="op">.</span><span class="nam">globals</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t518" href="#t518">518</a></span><span class="t">                    <span class="key">if</span> <span class="nam">header_global</span><span class="op">.</span><span class="nam">name</span> <span class="op">==</span> <span class="nam">global_var</span><span class="op">.</span><span class="nam">name</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t519" href="#t519">519</a></span><span class="t">                        <span class="key">return</span> <span class="str">"+ "</span>  <span class="com"># Public - present in header</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t519" href="#t519">519</a></span><span class="t">                        <span class="key">return</span> <span class="str">"+ "</span>  <span class="com"># Public - present in header</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t520" href="#t520">520</a></span><span class="t">        <span class="key">return</span> <span class="str">"- "</span>  <span class="com"># Private - not in any header</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t521" href="#t521">521</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t522" href="#t522">522</a></span><span class="t">    <span class="key">def</span> <span class="nam">_get_visibility_prefix_for_function</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">func</span><span class="op">:</span> <span class="nam">Function</span><span class="op">,</span> <span class="nam">project_model</span><span class="op">:</span> <span class="nam">ProjectModel</span><span class="op">)</span> <span class="op">-></span> <span class="nam">str</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -1028,7 +1028,7 @@
             <a class="nav" href="z_a8b3cb5ca554c7b7_parser_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.2">coverage.py v7.10.2</a>,
-            created at 2025-08-08 17:23 +0000
+            created at 2025-08-08 18:52 +0000
         </p>
     </div>
 </footer>
