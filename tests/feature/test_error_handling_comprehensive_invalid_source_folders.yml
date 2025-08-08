@@ -1,0 +1,28 @@
+# Test metadata
+test:
+  name: "Error Handling - Invalid Source Folders"
+  description: "Test CLI error handling for various invalid source folder scenarios"
+  category: "feature"
+  id: "1030"
+
+---
+# Source files - empty since we're testing error conditions
+source_files: {}
+
+---
+# Configuration - using nonexistent source folder to trigger error
+config.json: |
+  {
+    "project_name": "test_error_handling",
+    "source_folders": ["/nonexistent/path/that/does/not/exist"],
+    "output_dir": "output",
+    "recursive_search": true
+  }
+
+---
+# Assertions - expecting CLI to fail with specific error
+assertions:
+  execution:
+    success_expected: false
+    exit_code: 1
+    stdout_contains: "Source folder not found"

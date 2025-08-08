@@ -233,7 +233,7 @@ class TestDataLoader:
                 raise ValueError("'assertions' must be a dictionary")
             
             # Validate assertion structure
-            valid_assertion_keys = ["execution", "model", "puml"]
+            valid_assertion_keys = ["execution", "model", "puml", "files"]
             for key in test_data["assertions"]:
                 if key not in valid_assertion_keys:
                     raise ValueError(f"Invalid assertion key '{key}'. Valid keys: {valid_assertion_keys}")

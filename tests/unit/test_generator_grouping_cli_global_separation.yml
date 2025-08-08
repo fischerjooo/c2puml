@@ -1,0 +1,94 @@
+---
+test:
+  name: "generator_grouping_cli_global_separation"
+  description: "Test that public and private globals are grouped with empty line separation"
+  category: "generator"
+  
+---
+source_files:
+  model.json: |
+    {
+      "project_name": "test_project",
+      "source_folder": "/test",
+      "files": {
+        "module.c": {
+          "file_path": "module.c",
+          "name": "module.c",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [],
+          "globals": [
+            {
+              "name": "api_version",
+              "type": "int"
+            },
+            {
+              "name": "internal_state",
+              "type": "static int"
+            },
+            {
+              "name": "module_name",
+              "type": "char*"
+            },
+            {
+              "name": "debug_flag",
+              "type": "static bool"
+            }
+          ]
+        },
+        "module.h": {
+          "file_path": "module.h",
+          "name": "module.h",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [],
+          "globals": [
+            {
+              "name": "api_version",
+              "type": "extern int"
+            },
+            {
+              "name": "module_name",
+              "type": "extern char*"
+            }
+          ]
+        }
+      },
+      "include_relations": []
+    }
+
+---
+config.json: |
+  {
+    "project_name": "test_project",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "plantuml_jar_path": "/app/tools/plantuml-1.2024.8.jar",
+    "use_short_names": false,
+    "group_by_visibility": true
+  }
+
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    module.c.puml:
+      contains:
+        - "+ int api_version"
+        - "+ char* module_name"
+        - "- static int internal_state"
+        - "- static bool debug_flag"
+        - "-- Global Variables --"
+      # Test for empty line separation between public and private groups
+      regex_matches:
+        - pattern: "\\+[^\\-]*\\n\\s*\\n[^\\+]*\\-"
+          description: "Empty line between public and private global groups"

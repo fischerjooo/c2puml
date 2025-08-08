@@ -1,0 +1,115 @@
+# Test metadata
+test:
+  name: "Generator File Naming Conventions"
+  description: "Test that file UML IDs follow the correct naming conventions (source files: FILENAME, headers: HEADER_FILENAME)"
+  category: "unit"
+  id: "0026"
+
+---
+# Source files
+source_files:
+  model.json: |
+    {
+      "project_name": "test_file_naming",
+      "source_folder": "/tmp",
+      "files": {
+        "main.c": {
+          "file_path": "/tmp/main.c",
+          "aliases": {},
+          "anonymous_relationships": {},
+          "enums": {},
+          "functions": [
+            {
+              "is_declaration": false,
+              "is_static": false,
+              "name": "main",
+              "parameters": [],
+              "return_type": "int"
+            }
+          ],
+          "globals": [],
+          "include_relations": [
+            {
+              "source_file": "main.c",
+              "included_file": "utils.h",
+              "depth": 1
+            }
+          ],
+          "includes": ["utils.h"],
+          "macros": {},
+          "structs": {},
+          "unions": {}
+        },
+        "utils.h": {
+          "file_path": "/tmp/utils.h",
+          "aliases": {},
+          "anonymous_relationships": {},
+          "enums": {},
+          "functions": [
+            {
+              "is_declaration": true,
+              "is_static": false,
+              "name": "helper_function",
+              "parameters": [],
+              "return_type": "void"
+            }
+          ],
+          "globals": [],
+          "include_relations": [],
+          "includes": [],
+          "macros": {},
+          "structs": {},
+          "unions": {}
+        }
+      },
+      "include_relations": [
+        {
+          "source_file": "main.c",
+          "included_file": "utils.h",
+          "depth": 1
+        }
+      ]
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_file_naming",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "recursive_search": false
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    
+  puml:
+    syntax_valid: true
+    
+    # Global PlantUML assertions - validate file naming conventions
+    contains_elements: ["MAIN", "HEADER_UTILS"]
+    
+    # Per-file PlantUML assertions
+    files:
+      main.puml:
+        # Validate specific file class declarations with correct naming
+        contains_lines:
+          - "class \"main.c\" as MAIN"
+          - "class \"utils.h\" as HEADER_UTILS"
+        
+        # Validate file stereotypes
+        contains_elements: ["<<source>>", "<<header>>"]
+        
+        # Validate include relationship
+        contains_lines:
+          - "MAIN --> HEADER_UTILS"
+        
+        # Ensure correct class count (1 source + 1 header)
+        class_count: 2
+        
+        # Ensure correct relationship count (1 include)
+        relationship_count: 1

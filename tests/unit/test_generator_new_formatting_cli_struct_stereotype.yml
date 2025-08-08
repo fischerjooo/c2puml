@@ -1,0 +1,69 @@
+---
+test:
+  name: "generator_new_formatting_cli_struct_stereotype"
+  description: "Test that struct types use <<struct>> stereotype with + prefix for fields"
+  category: "generator"
+  
+---
+source_files:
+  model.json: |
+    {
+      "project_name": "test_project",
+      "source_folder": "/test",
+      "files": {
+        "test.c": {
+          "file_path": "test.c",
+          "name": "test.c",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {
+            "Person": {
+              "name": "Person",
+              "fields": [
+                {
+                  "name": "id",
+                  "type": "int"
+                },
+                {
+                  "name": "name",
+                  "type": "char*"
+                },
+                {
+                  "name": "age",
+                  "type": "int"
+                }
+              ]
+            }
+          },
+          "unions": {},
+          "aliases": {},
+          "functions": [],
+          "globals": []
+        }
+      },
+      "include_relations": []
+    }
+
+---
+config.json: |
+  {
+    "project_name": "test_project",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "plantuml_jar_path": "/app/tools/plantuml-1.2024.8.jar",
+    "use_short_names": false,
+    "group_by_visibility": true
+  }
+
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    test.c.puml:
+      contains:
+        - 'class "Person" as STRUCT_PERSON <<struct>>'
+        - "+ int id"
+        - "+ char* name"
+        - "+ int age"
