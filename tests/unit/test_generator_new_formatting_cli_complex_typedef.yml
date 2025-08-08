@@ -1,0 +1,115 @@
+---
+test:
+  name: "generator_new_formatting_cli_complex_typedef"
+  description: "Test complex combination of struct, enum, union, and typedef in same file"
+  category: "generator"
+  
+---
+source_files:
+  model.json: |
+    {
+      "project_name": "test_project",
+      "source_folder": "/test",
+      "files": {
+        "complex.c": {
+          "file_path": "complex.c",
+          "name": "complex.c",
+          "includes": [],
+          "macros": [],
+          "enums": {
+            "Status": {
+              "name": "Status",
+              "values": [
+                {
+                  "name": "OK",
+                  "value": "0"
+                },
+                {
+                  "name": "ERROR",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "structs": {
+            "Point": {
+              "name": "Point",
+              "fields": [
+                {
+                  "name": "x",
+                  "type": "int"
+                },
+                {
+                  "name": "y",
+                  "type": "int"
+                }
+              ]
+            }
+          },
+          "unions": {
+            "Value": {
+              "name": "Value",
+              "fields": [
+                {
+                  "name": "i",
+                  "type": "int"
+                },
+                {
+                  "name": "f",
+                  "type": "float"
+                }
+              ]
+            }
+          },
+          "aliases": {
+            "Coordinate": {
+              "name": "Coordinate",
+              "original_type": "struct Point"
+            },
+            "StatusCode": {
+              "name": "StatusCode",
+              "original_type": "enum Status"
+            }
+          },
+          "functions": [],
+          "globals": []
+        }
+      },
+      "include_relations": []
+    }
+
+---
+config.json: |
+  {
+    "project_name": "test_project",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "plantuml_jar_path": "/app/tools/plantuml-1.2024.8.jar",
+    "use_short_names": false,
+    "group_by_visibility": true
+  }
+
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    complex.c.puml:
+      contains:
+        # Enum formatting
+        - 'class "Status" as TYPEDEF_STATUS <<enumeration>> #LightYellow'
+        - "OK = 0"
+        - "ERROR = 1"
+        # Struct formatting
+        - 'class "Point" as STRUCT_POINT <<struct>>'
+        - "+ int x"
+        - "+ int y"
+        # Union formatting
+        - 'class "Value" as UNION_VALUE <<union>>'
+        - "+ int i"
+        - "+ float f"
+        # Alias formatting
+        - 'class "Coordinate" as ALIAS_COORDINATE <<typedef>>'
+        - 'class "StatusCode" as ALIAS_STATUSCODE <<typedef>>'
+        - "original_type: struct Point"
+        - "original_type: enum Status"

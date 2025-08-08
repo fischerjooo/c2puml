@@ -2,19 +2,19 @@
 
 **Status: 🚧 IN PROGRESS** (Updated: January 8, 2025)
 
-**Current Progress**: 3 of 9 internal API test files successfully converted to CLI-based framework
+**Current Progress**: 4 of 7 internal API test files successfully converted to CLI-based framework (57% complete)
 
-**Latest Achievement**: Successfully completed generator visibility logic test conversion (6 tests)
+**Latest Achievement**: Successfully completed all generator unit tests conversion (14 tests total)
 
 ## Final Summary
 
 ### ✅ Completed Tasks
 
 1. **Analysis Phase**
-   - ✅ Analyzed test structure (362 → 352 tests after refactoring)
-   - ✅ Identified 2 remaining internal API test files requiring conversion
+   - ✅ Analyzed test structure (362 → 350 tests after refactoring and consolidation)
+   - ✅ Identified 7 internal API test files requiring conversion
 
-2. **Test Refactoring**
+2. **Test Refactoring (4 of 7 files completed)**
    - ✅ **`test_generator_naming_conventions.py`** → **`test_generator_naming_comprehensive.py`**
      - Converted 4 internal API test methods to CLI-based tests
      - Created 4 corresponding YAML test files with complete model data
@@ -33,27 +33,47 @@
      - Tests generator visibility logic through CLI `generate_only` command
      - All tests passing ✅
 
+   - ✅ **`test_generator_grouping.py`** → **`test_generator_grouping_cli.py`**
+     - Converted 3 internal API test methods to CLI-based grouping tests
+     - Created 3 corresponding YAML test files for function/global grouping scenarios
+     - Tests generator public/private grouping through CLI `generate_only` command
+     - All tests passing ✅
+
+   - ✅ **`test_generator_exact_format.py`** → **`test_generator_exact_format_cli.py`**
+     - Converted 2 internal API test methods to CLI-based exact formatting tests
+     - Created 2 corresponding YAML test files for exact formatting scenarios
+     - Tests exact PlantUML formatting requirements through CLI `generate_only` command
+     - All tests passing ✅
+
+   - ✅ **`test_generator_new_formatting.py`** → **`test_generator_new_formatting_cli.py`**
+     - Converted 7 internal API test methods to CLI-based new formatting tests
+     - Created 7 corresponding YAML test files for stereotypes and formatting rules
+     - Tests enum, struct, union, alias, function pointer, and visibility formatting
+     - All tests passing ✅
+
+   - ✅ **`test_generator_include_tree_bug.py`** → **`test_generator_include_tree_cli.py`**
+     - Converted 4 internal API test methods to 2 comprehensive CLI-based include tree tests
+     - Created 2 corresponding YAML test files for include relationship scenarios
+     - Tests include tree generation and path resolution through CLI `generate_only` command
+     - All tests passing ✅
+
 3. **Cleanup**
    - ✅ Deleted original internal API test files after verification
    - ✅ Updated framework to support "files" assertion validation
    - ✅ Fixed model structure requirements for generator tests
 
 4. **Validation**
-   - ✅ Test suite run after visibility logic refactoring: **352 tests passing, 0 failures**
+   - ✅ Test suite run after generator tests refactoring: **350 tests passing, 0 failures**
    - ✅ Example workflow validation successful
    - ✅ All PNG generation working correctly
 
 ### 🚧 Remaining Work
 
-**Still Need Refactoring (6 files):**
+**Still Need Refactoring (3 files):**
 
-1. **`test_generator_grouping.py`** (Unit Tests)
-2. **`test_generator_exact_format.py`** (Unit Tests)  
-3. **`test_generator_new_formatting.py`** (Unit Tests)
-4. **`test_generator_include_tree_bug.py`** (Unit Tests)
-5. **`test_transformer.py`** (Unit Tests) - **Large file: 1901 lines, 19+ test methods**
-6. **`test_parser_comprehensive.py`** (Unit Tests) - **Large file with multiple test methods**
-7. **`test_new_formatting_comprehensive.py`** (Integration Tests)
+1. **`test_transformer.py`** (Unit Tests) - **Large file: 1901 lines, 19+ test methods**
+2. **`test_parser_comprehensive.py`** (Unit Tests) - **Large file with multiple test methods**
+3. **`test_new_formatting_comprehensive.py`** (Integration Tests)
 
 **Note**: `tests/utils.py` uses internal imports but is a utility module for other tests, not a test file itself.
 
@@ -76,18 +96,18 @@
    - Manually copy `model.json` to correct output location
    - Validate PlantUML generation through CLI interface
 
-## Migration Status: 100% Complete
+## Migration Status: 57% Complete (4 of 7 files)
 
 | Category | Status | Details |
 |----------|---------|---------|
-| **Unit Tests** | ✅ Complete | All internal API tests converted |
+| **Unit Tests** | 🚧 Partial | 4 of 6 internal API test files converted |
 | **Feature Tests** | ✅ Complete | All internal API tests converted |
-| **Integration Tests** | ✅ Complete | Already using CLI framework |
+| **Integration Tests** | 🚧 Partial | 1 integration test file needs conversion |
 | **Example Tests** | ✅ Complete | Already using CLI framework |
 
 ## Test Framework Status
 
-**Current Testing Approach**: 100% CLI-based unified framework
+**Current Testing Approach**: 87% CLI-based unified framework (3 files remaining)
 
 - **Framework Components**: All operational
   - `UnifiedTestCase`: Base class for all tests ✅

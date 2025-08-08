@@ -1,0 +1,87 @@
+---
+test:
+  name: "generator_include_tree_cli_absolute_paths"
+  description: "Test that include relationships work correctly with absolute paths"
+  category: "generator"
+  
+---
+source_files:
+  model.json: |
+    {
+      "project_name": "test_project",
+      "source_folder": "/test",
+      "files": {
+        "main.c": {
+          "file_path": "/absolute/path/main.c",
+          "name": "main.c",
+          "includes": ["utils.h"],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "main",
+              "return_type": "int",
+              "is_declaration": false,
+              "parameters": []
+            }
+          ],
+          "globals": []
+        },
+        "utils.h": {
+          "file_path": "/absolute/path/utils.h",
+          "name": "utils.h",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "utility_function",
+              "return_type": "void",
+              "is_declaration": true,
+              "parameters": []
+            }
+          ],
+          "globals": []
+        }
+      },
+      "include_relations": [
+        {
+          "source_file": "main.c",
+          "included_file": "utils.h",
+          "depth": 1
+        }
+      ]
+    }
+
+---
+config.json: |
+  {
+    "project_name": "test_project",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "plantuml_jar_path": "/app/tools/plantuml-1.2024.8.jar",
+    "use_short_names": false,
+    "group_by_visibility": true
+  }
+
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    main.c.puml:
+      contains:
+        - "main.c"
+        - "utils.h" 
+        - "main("
+        - "utility_function"
+        # Test that include relationships are represented in the PlantUML
+      regex_matches:
+        - pattern: "main\\.c.*utils\\.h"
+          description: "Include relationship from main.c to utils.h should be present"
