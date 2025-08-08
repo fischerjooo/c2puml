@@ -1,749 +1,203 @@
+/opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages/coverage/inorout.py:462: CoverageWarning: --include is ignored because --source is set (include-ignored)
+  self.warn("--include is ignored because --source is set", slug="include-ignored")
+============================= test session starts ==============================
+platform linux -- Python 3.9.23, pytest-8.4.1, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.9.23/x64/bin/python3
+cachedir: .pytest_cache
+metadata: {'Python': '3.9.23', 'Platform': 'Linux-6.11.0-1018-azure-x86_64-with-glibc2.39', 'Packages': {'pytest': '8.4.1', 'pluggy': '1.6.0'}, 'Plugins': {'xdist': '3.8.0', 'cov': '6.2.1', 'mock': '3.14.1', 'metadata': '3.1.1', 'html': '4.1.1', 'benchmark': '5.1.0'}, 'CI': 'true', 'JAVA_HOME': '/usr/lib/jvm/temurin-17-jdk-amd64'}
+benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: /home/runner/work/c2puml/c2puml
+configfile: pytest.ini
+plugins: xdist-3.8.0, cov-6.2.1, mock-3.14.1, metadata-3.1.1, html-4.1.1, benchmark-5.1.0
+collecting ... collected 189 items
 
-======================================================================
-                 🧪 C to PlantUML Converter Test Suite                 
-======================================================================
-Working directory: /workspace
-Python version: 3.13.3 (main, Apr  8 2025, 19:55:40) [GCC 14.2.0]
-Project root: /workspace
+tests/feature/test_cli_feature.py::TestCLIFeature::test_generate_command_isolation PASSED [  0%]
+tests/feature/test_cli_feature.py::TestCLIFeature::test_generate_fallback_to_model PASSED [  1%]
+tests/feature/test_cli_feature.py::TestCLIFeature::test_generate_prefers_transformed PASSED [  1%]
+tests/feature/test_cli_feature.py::TestCLIFeature::test_parse_only PASSED [  2%]
+tests/feature/test_cli_feature.py::TestCLIFeature::test_transform_only PASSED [  2%]
+tests/feature/test_cli_modes.py::TestCLIModes::test_full_workflow_default PASSED [  3%]
+tests/feature/test_cli_modes.py::TestCLIModes::test_generate_mode_fallback_to_model PASSED [  3%]
+tests/feature/test_cli_modes.py::TestCLIModes::test_generate_mode_isolation PASSED [  4%]
+tests/feature/test_cli_modes.py::TestCLIModes::test_generate_mode_prefers_transformed PASSED [  4%]
+tests/feature/test_cli_modes.py::TestCLIModes::test_parse_mode PASSED    [  5%]
+tests/feature/test_cli_modes.py::TestCLIModes::test_transform_mode PASSED [  5%]
+tests/feature/test_component_features.py::TestParserComponentFeatures::test_parse_complex_typedefs PASSED [  6%]
+tests/feature/test_component_features.py::TestParserComponentFeatures::test_parse_function_pointers PASSED [  6%]
+tests/feature/test_component_features.py::TestParserComponentFeatures::test_parse_unions PASSED [  7%]
+tests/feature/test_component_features.py::TestGeneratorComponentFeatures::test_generate_with_complex_relationships PASSED [  7%]
+tests/feature/test_component_features.py::TestGeneratorComponentFeatures::test_generate_with_typedefs PASSED [  8%]
+tests/feature/test_component_features.py::TestGeneratorComponentFeatures::test_generate_with_unions PASSED [  8%]
+tests/feature/test_component_features.py::TestProjectAnalysisComponentFeatures::test_cross_file_type_dependencies PASSED [  9%]
+tests/feature/test_component_features.py::TestProjectAnalysisComponentFeatures::test_project_structure_analysis PASSED [ 10%]
+tests/feature/test_component_features.py::TestProjectAnalysisComponentFeatures::test_recursive_include_handling PASSED [ 10%]
+tests/feature/test_crypto_filter_pattern.py::TestCryptoFilterPattern::test_alternative_crypto_filter_patterns PASSED [ 11%]
+tests/feature/test_crypto_filter_pattern.py::TestCryptoFilterPattern::test_broken_crypto_filter_pattern PASSED [ 11%]
+tests/feature/test_crypto_filter_pattern.py::TestCryptoFilterPattern::test_case_insensitive_crypto_filter_pattern PASSED [ 12%]
+tests/feature/test_crypto_filter_pattern.py::TestCryptoFilterPattern::test_fixed_crypto_filter_pattern PASSED [ 12%]
+tests/feature/test_crypto_filter_pattern.py::TestCryptoFilterPattern::test_parser_integration_with_crypto_filter PASSED [ 13%]
+tests/feature/test_crypto_filter_usecase.py::TestCryptoFilterUseCase::test_alternative_crypto_patterns PASSED [ 13%]
+tests/feature/test_crypto_filter_usecase.py::TestCryptoFilterUseCase::test_broken_crypto_filter_pattern PASSED [ 14%]
+tests/feature/test_crypto_filter_usecase.py::TestCryptoFilterUseCase::test_case_insensitive_variations PASSED [ 14%]
+tests/feature/test_crypto_filter_usecase.py::TestCryptoFilterUseCase::test_fixed_crypto_filter_pattern PASSED [ 15%]
+tests/feature/test_crypto_filter_usecase.py::TestCryptoFilterUseCase::test_integration_with_full_workflow PASSED [ 15%]
+tests/feature/test_crypto_filter_usecase.py::TestCryptoFilterUseCase::test_parser_with_crypto_filter PASSED [ 16%]
+tests/feature/test_crypto_filter_usecase.py::TestCryptoFilterUseCase::test_regex_escaping_importance PASSED [ 16%]
+tests/feature/test_crypto_filter_usecase.py::TestCryptoFilterUseCase::test_user_question_scenario PASSED [ 17%]
+tests/feature/test_error_handling_comprehensive.py::TestErrorHandlingComprehensive::test_invalid_config_errors PASSED [ 17%]
+tests/feature/test_error_handling_comprehensive.py::TestErrorHandlingComprehensive::test_invalid_source_folder_errors PASSED [ 18%]
+tests/feature/test_error_handling_comprehensive.py::TestErrorHandlingComprehensive::test_partial_failure_scenarios PASSED [ 19%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingBasicFeaturesCLI::test_basic_include_processing_workflow PASSED [ 19%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingBasicFeaturesCLI::test_c_to_h_relationships PASSED [ 20%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingBasicFeaturesCLI::test_header_to_header_relationships PASSED [ 20%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingComplexFeaturesCLI::test_circular_include_detection PASSED [ 21%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingComplexFeaturesCLI::test_complex_project_structure PASSED [ 21%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingComplexFeaturesCLI::test_nested_directory_structure PASSED [ 22%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingIntegrationCLI::test_full_pipeline_with_includes PASSED [ 22%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingIntegrationCLI::test_include_depth_control PASSED [ 23%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingIntegrationCLI::test_include_filtering PASSED [ 23%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingDependenciesCLI::test_dependency_ordering PASSED [ 24%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingDependenciesCLI::test_missing_dependency_handling PASSED [ 24%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingDependenciesCLI::test_transitive_dependencies PASSED [ 25%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingComprehensiveCLI::test_comprehensive_include_scenario PASSED [ 25%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingComprehensiveCLI::test_macro_propagation_through_includes PASSED [ 26%]
+tests/feature/test_include_processing_features_cli.py::TestIncludeProcessingComprehensiveCLI::test_typedef_relationships_across_files PASSED [ 26%]
+tests/feature/test_integration.py::TestIntegration::test_complete_workflow PASSED [ 27%]
+tests/feature/test_integration.py::TestIntegration::test_configuration_features PASSED [ 28%]
+tests/feature/test_integration.py::TestIntegration::test_error_handling PASSED [ 28%]
+tests/feature/test_integration.py::TestIntegration::test_performance_features PASSED [ 29%]
+tests/feature/test_multiple_source_folders.py::TestMultipleSourceFolders::test_empty_source_folders_error PASSED [ 29%]
+tests/feature/test_multiple_source_folders.py::TestMultipleSourceFolders::test_invalid_source_folder_error PASSED [ 30%]
+tests/feature/test_multiple_source_folders.py::TestMultipleSourceFolders::test_multiple_source_folders_parsing PASSED [ 30%]
+tests/feature/test_multiple_source_folders.py::TestMultipleSourceFolders::test_multiple_source_folders_with_config PASSED [ 31%]
+tests/feature/test_multiple_source_folders.py::TestMultipleSourceFolders::test_parser_multiple_source_folders_method PASSED [ 31%]
+tests/feature/test_multiple_source_folders.py::TestMultipleSourceFolders::test_project_name_from_config PASSED [ 32%]
+tests/feature/test_multiple_source_folders.py::TestMultipleSourceFolders::test_single_source_folder_backward_compatibility PASSED [ 32%]
+tests/feature/test_transformer_features.py::TestTransformerFeatures::test_include_filters_with_filtered_header PASSED [ 33%]
+tests/feature/test_transformer_features.py::TestTransformerFeatures::test_transform_complex_project_with_filters PASSED [ 33%]
+tests/feature/test_transformer_features.py::TestTransformerFeatures::test_transform_complex_regex_patterns PASSED [ 34%]
+tests/feature/test_transformer_features.py::TestTransformerFeatures::test_transform_error_handling PASSED [ 34%]
+tests/feature/test_transformer_features.py::TestTransformerFeatures::test_transform_integration_with_parser_and_generator PASSED [ 35%]
+tests/feature/test_transformer_features.py::TestTransformerFeatures::test_transform_with_additions PASSED [ 35%]
+tests/feature/test_transformer_features.py::TestTransformerFeatures::test_transform_with_include_relations PASSED [ 36%]
+tests/feature/test_transformer_features.py::TestTransformerFeatures::test_transform_with_removals PASSED [ 37%]
+tests/feature/test_transformer_features.py::TestTransformerFeatures::test_transform_with_renaming PASSED [ 37%]
+tests/integration/test_comprehensive.py::TestIncludeProcessingIntegrationComprehensive::test_comprehensive_c_to_h_relationships_integration PASSED [ 38%]
+tests/integration/test_comprehensive.py::TestIncludeProcessingIntegrationComprehensive::test_comprehensive_header_to_header_relationships_integration PASSED [ 38%]
+tests/integration/test_comprehensive.py::TestIncludeProcessingIntegrationComprehensive::test_comprehensive_typedef_relationships_integration PASSED [ 39%]
+tests/integration/test_comprehensive.py::TestParserTokenizerIntegration::test_parser_tokenizer_complex_syntax_integration PASSED [ 39%]
+tests/integration/test_comprehensive.py::TestParserTokenizerIntegration::test_parser_tokenizer_error_handling_integration PASSED [ 40%]
+tests/integration/test_comprehensive.py::TestParserTokenizerIntegration::test_parser_tokenizer_function_parsing_integration PASSED [ 40%]
+tests/integration/test_comprehensive.py::TestParserTokenizerIntegration::test_parser_tokenizer_preprocessor_integration PASSED [ 41%]
+tests/integration/test_comprehensive.py::TestParserTokenizerIntegration::test_parser_tokenizer_struct_parsing_integration PASSED [ 41%]
+tests/integration/test_comprehensive.py::TestEndToEndSystemIntegration::test_complete_system_integration_real_world_project PASSED [ 42%]
+tests/integration/test_new_formatting_comprehensive.py::TestNewFormattingIntegration::test_complete_formatting_integration PASSED [ 42%]
+tests/integration/test_new_formatting_comprehensive.py::TestNewFormattingIntegration::test_mixed_project_comprehensive_formatting PASSED [ 43%]
+tests/unit/test_absolute_path_bug_comprehensive.py::TestAbsolutePathBugComprehensive::test_absolute_vs_relative_path_consistency PASSED [ 43%]
+tests/unit/test_absolute_path_bug_comprehensive.py::TestAbsolutePathBugComprehensive::test_mixed_path_styles_handling PASSED [ 44%]
+tests/unit/test_absolute_path_bug_comprehensive.py::TestAbsolutePathBugComprehensive::test_relative_path_handling_in_include_tree PASSED [ 44%]
+tests/unit/test_absolute_path_bug_comprehensive.py::TestAbsolutePathBugComprehensive::test_subdirectory_includes_path_resolution PASSED [ 45%]
+tests/unit/test_anonymous_processing_comprehensive.py::TestAnonymousProcessingComprehensive::test_anonymous_processing_comprehensive PASSED [ 46%]
+tests/unit/test_anonymous_structure_comprehensive.py::TestAnonymousStructureComprehensive::test_anonymous_struct_in_typedef PASSED [ 46%]
+tests/unit/test_anonymous_structure_comprehensive.py::TestAnonymousStructureComprehensive::test_anonymous_unions_in_structs PASSED [ 47%]
+tests/unit/test_anonymous_structure_comprehensive.py::TestAnonymousStructureComprehensive::test_nested_anonymous_structures PASSED [ 47%]
+tests/unit/test_config_comprehensive.py::TestConfigComprehensive::test_config_comprehensive PASSED [ 48%]
+tests/unit/test_debug_field_parsing_comprehensive.py::TestDebugFieldParsingComprehensive::test_complex_struct_field_processing PASSED [ 48%]
+tests/unit/test_debug_field_parsing_comprehensive.py::TestDebugFieldParsingComprehensive::test_nested_anonymous_structure_fields PASSED [ 49%]
+tests/unit/test_debug_field_parsing_comprehensive.py::TestDebugFieldParsingComprehensive::test_nested_union_field_parsing PASSED [ 49%]
+tests/unit/test_debug_parsing_comprehensive.py::TestDebugParsingComprehensive::test_anonymous_structure_parsing PASSED [ 50%]
+tests/unit/test_debug_parsing_comprehensive.py::TestDebugParsingComprehensive::test_complex_union_parsing PASSED [ 50%]
+tests/unit/test_debug_parsing_comprehensive.py::TestDebugParsingComprehensive::test_nested_struct_parsing PASSED [ 51%]
+tests/unit/test_file_specific_configuration_comprehensive.py::TestFileSpecificConfigurationComprehensive::test_configuration_extraction PASSED [ 51%]
+tests/unit/test_file_specific_configuration_comprehensive.py::TestFileSpecificConfigurationComprehensive::test_file_specific_include_depth PASSED [ 52%]
+tests/unit/test_file_specific_configuration_comprehensive.py::TestFileSpecificConfigurationComprehensive::test_file_specific_include_filter PASSED [ 52%]
+tests/unit/test_file_specific_configuration_comprehensive.py::TestFileSpecificConfigurationComprehensive::test_include_filter_patterns PASSED [ 53%]
+tests/unit/test_function_parameters_complex.py::TestFunctionParametersComplex::test_function_parameters_complex PASSED [ 53%]
+tests/unit/test_function_parameters_display.py::TestFunctionParametersDisplay::test_function_parameters_display PASSED [ 54%]
+tests/unit/test_function_parameters_empty.py::TestFunctionParametersEmpty::test_function_parameters_empty PASSED [ 55%]
+tests/unit/test_function_parameters_parsing.py::TestFunctionParametersParsing::test_function_parameters_parsing PASSED [ 55%]
+tests/unit/test_function_params_complex.py::TestFunctionParamsComplex::test_function_params_complex PASSED [ 56%]
+tests/unit/test_function_params_parsing.py::TestFunctionParamsParsing::test_function_params_parsing PASSED [ 56%]
+tests/unit/test_generator_basic_plantuml.py::TestGeneratorBasicPlantuml::test_generator_basic_plantuml PASSED [ 57%]
+tests/unit/test_generator_comprehensive.py::TestGeneratorComprehensive::test_generator_comprehensive PASSED [ 57%]
+tests/unit/test_generator_exact_format_cli.py::TestGeneratorExactFormatCLI::test_exact_requested_format PASSED [ 58%]
+tests/unit/test_generator_exact_format_cli.py::TestGeneratorExactFormatCLI::test_format_with_parameters PASSED [ 58%]
+tests/unit/test_generator_grouping_cli.py::TestGeneratorGroupingCLI::test_function_grouping_with_empty_line_separation PASSED [ 59%]
+tests/unit/test_generator_grouping_cli.py::TestGeneratorGroupingCLI::test_global_grouping_with_empty_line_separation PASSED [ 59%]
+tests/unit/test_generator_grouping_cli.py::TestGeneratorGroupingCLI::test_mixed_grouping_comprehensive PASSED [ 60%]
+tests/unit/test_generator_include_tree_cli.py::TestGeneratorIncludeTreeCLI::test_include_tree_comprehensive PASSED [ 60%]
+tests/unit/test_generator_include_tree_cli.py::TestGeneratorIncludeTreeCLI::test_include_tree_with_absolute_paths PASSED [ 61%]
+tests/unit/test_generator_includes_comprehensive.py::TestGeneratorIncludesComprehensive::test_duplicate_include_handling PASSED [ 61%]
+tests/unit/test_generator_naming_comprehensive.py::TestGeneratorNamingComprehensive::test_generator_complex_typedef_names PASSED [ 62%]
+tests/unit/test_generator_naming_comprehensive.py::TestGeneratorNamingComprehensive::test_generator_edge_case_names PASSED [ 62%]
+tests/unit/test_generator_naming_comprehensive.py::TestGeneratorNamingComprehensive::test_generator_file_naming_conventions PASSED [ 63%]
+tests/unit/test_generator_naming_comprehensive.py::TestGeneratorNamingComprehensive::test_generator_typedef_naming_conventions PASSED [ 64%]
+tests/unit/test_generator_new_formatting_cli.py::TestGeneratorNewFormattingCLI::test_alias_formatting_with_typedef_stereotype_and_alias_prefix PASSED [ 64%]
+tests/unit/test_generator_new_formatting_cli.py::TestGeneratorNewFormattingCLI::test_complex_typedef_combination PASSED [ 65%]
+tests/unit/test_generator_new_formatting_cli.py::TestGeneratorNewFormattingCLI::test_enum_formatting_with_enumeration_stereotype PASSED [ 65%]
+tests/unit/test_generator_new_formatting_cli.py::TestGeneratorNewFormattingCLI::test_function_pointer_formatting_with_function_pointer_stereotype PASSED [ 66%]
+tests/unit/test_generator_new_formatting_cli.py::TestGeneratorNewFormattingCLI::test_public_private_visibility_logic PASSED [ 66%]
+tests/unit/test_generator_new_formatting_cli.py::TestGeneratorNewFormattingCLI::test_struct_formatting_with_struct_stereotype PASSED [ 67%]
+tests/unit/test_generator_new_formatting_cli.py::TestGeneratorNewFormattingCLI::test_union_formatting_with_union_stereotype PASSED [ 67%]
+tests/unit/test_generator_visibility_logic_cli.py::TestGeneratorVisibilityLogicCLI::test_function_visibility_private_when_not_in_header PASSED [ 68%]
+tests/unit/test_generator_visibility_logic_cli.py::TestGeneratorVisibilityLogicCLI::test_function_visibility_public_when_in_header PASSED [ 68%]
+tests/unit/test_generator_visibility_logic_cli.py::TestGeneratorVisibilityLogicCLI::test_global_visibility_private_when_not_in_header PASSED [ 69%]
+tests/unit/test_generator_visibility_logic_cli.py::TestGeneratorVisibilityLogicCLI::test_global_visibility_public_when_in_header PASSED [ 69%]
+tests/unit/test_generator_visibility_logic_cli.py::TestGeneratorVisibilityLogicCLI::test_mixed_visibility_comprehensive PASSED [ 70%]
+tests/unit/test_generator_visibility_logic_cli.py::TestGeneratorVisibilityLogicCLI::test_no_headers_all_private PASSED [ 70%]
+tests/unit/test_global_parsing_comprehensive.py::TestGlobalParsingComprehensive::test_global_parsing_comprehensive PASSED [ 71%]
+tests/unit/test_include_filtering_comprehensive.py::TestIncludeFilteringComprehensive::test_include_filtering_comprehensive PASSED [ 71%]
+tests/unit/test_include_processing_comprehensive.py::TestIncludeProcessingComprehensive::test_basic_include_processing PASSED [ 72%]
+tests/unit/test_macro_duplicates_complex.py::TestMacroDuplicatesComplex::test_macro_duplicates_complex PASSED [ 73%]
+tests/unit/test_macro_duplicates_simple.py::TestMacroDuplicatesSimple::test_macro_duplicates_simple PASSED [ 73%]
+tests/unit/test_nested_structures_puml.py::TestNestedStructuresPuml::test_nested_structures_puml PASSED [ 74%]
+tests/unit/test_parser_complete.py::TestParserComplete::test_parser_complete PASSED [ 74%]
+tests/unit/test_parser_encoding.py::TestParserEncoding::test_parser_encoding PASSED [ 75%]
+tests/unit/test_parser_enum_comprehensive.py::TestParserEnumComprehensive::test_parser_enum_simple PASSED [ 75%]
+tests/unit/test_parser_enum_comprehensive.py::TestParserEnumComprehensive::test_parser_enum_typedef PASSED [ 76%]
+tests/unit/test_parser_enums.py::TestParserEnums::test_parser_enums PASSED [ 76%]
+tests/unit/test_parser_function_comprehensive.py::TestParserFunctionComprehensive::test_parser_function_declarations PASSED [ 77%]
+tests/unit/test_parser_function_comprehensive.py::TestParserFunctionComprehensive::test_parser_function_definitions PASSED [ 77%]
+tests/unit/test_parser_function_comprehensive.py::TestParserFunctionComprehensive::test_parser_function_modifiers PASSED [ 78%]
+tests/unit/test_parser_functions.py::TestParserFunctions::test_parser_functions PASSED [ 78%]
+tests/unit/test_parser_globals.py::TestParserGlobals::test_parser_globals PASSED [ 79%]
+tests/unit/test_parser_includes.py::TestParserIncludes::test_parser_includes PASSED [ 79%]
+tests/unit/test_parser_macros.py::TestParserMacros::test_parser_macros PASSED [ 80%]
+tests/unit/test_parser_mixed_comprehensive.py::TestParserMixedComprehensive::test_parser_mixed_content PASSED [ 80%]
+tests/unit/test_parser_nested_structures_comprehensive.py::TestParserNestedStructuresComprehensive::test_nested_struct_preservation PASSED [ 81%]
+tests/unit/test_parser_nested_structures_comprehensive.py::TestParserNestedStructuresComprehensive::test_nested_structures_in_generated_puml PASSED [ 82%]
+tests/unit/test_parser_nested_structures_comprehensive.py::TestParserNestedStructuresComprehensive::test_nested_union_preservation PASSED [ 82%]
+tests/unit/test_parser_simple_c_file.py::TestParserSimpleCFile::test_parser_simple_c_file PASSED [ 83%]
+tests/unit/test_parser_simple_struct.py::TestParserSimpleStruct::test_parser_simple_struct PASSED [ 83%]
+tests/unit/test_parser_structs.py::TestParserStructs::test_parser_structs PASSED [ 84%]
+tests/unit/test_parser_typedef_struct.py::TestParserTypedefStruct::test_parser_typedef_struct PASSED [ 84%]
+tests/unit/test_parser_typedefs.py::TestParserTypedefs::test_parser_typedefs PASSED [ 85%]
+tests/unit/test_preprocessor_bug_comprehensive.py::TestPreprocessorBugComprehensive::test_preprocessor_bug_comprehensive PASSED [ 85%]
+tests/unit/test_preprocessor_handling_comprehensive.py::TestPreprocessorHandlingComprehensive::test_preprocessor_handling_comprehensive PASSED [ 86%]
+tests/unit/test_simple_c_file_parsing.py::TestSimpleCFileParsing::test_simple_c_file_parsing PASSED [ 86%]
+tests/unit/test_struct_order_complex.py::TestStructOrderComplex::test_struct_order_complex PASSED [ 87%]
+tests/unit/test_struct_order_preservation.py::TestStructOrderPreservation::test_struct_order_preservation PASSED [ 87%]
+tests/unit/test_struct_order_puml.py::TestStructOrderPuml::test_struct_order_puml PASSED [ 88%]
+tests/unit/test_tokenizer_complex_function_parsing.py::TestTokenizerComplexFunctionParsing::test_tokenizer_complex_function_parsing PASSED [ 88%]
+tests/unit/test_tokenizer_complex_mixed_structures.py::TestTokenizerComplexMixedStructures::test_tokenizer_complex_mixed_structures PASSED [ 89%]
+tests/unit/test_tokenizer_comprehensive.py::TestTokenizerComprehensive::test_tokenizer_complex_parsing PASSED [ 89%]
+tests/unit/test_tokenizer_comprehensive.py::TestTokenizerComprehensive::test_tokenizer_edge_cases PASSED [ 90%]
+tests/unit/test_tokenizer_comprehensive.py::TestTokenizerComprehensive::test_tokenizer_preprocessor_handling PASSED [ 91%]
+tests/unit/test_tokenizer_keywords.py::TestTokenizerKeywords::test_tokenizer_keywords PASSED [ 91%]
+tests/unit/test_tokenizer_validation_comprehensive.py::TestTokenizerValidationComprehensive::test_complex_nested_union_tokenization PASSED [ 92%]
+tests/unit/test_transformer_basic.py::TestTransformerBasic::test_transformer_basic PASSED [ 92%]
+tests/unit/test_transformer_comprehensive.py::TestTransformerComprehensive::test_transformer_comprehensive_operations PASSED [ 93%]
+tests/unit/test_transformer_comprehensive.py::TestTransformerComprehensive::test_transformer_file_filtering PASSED [ 93%]
+tests/unit/test_transformer_comprehensive.py::TestTransformerComprehensive::test_transformer_include_processing PASSED [ 94%]
+tests/unit/test_typedef_extraction.py::TestTypedefExtraction::test_comments_and_whitespace PASSED [ 94%]
+tests/unit/test_typedef_extraction.py::TestTypedefExtraction::test_comprehensive_typedef_extraction PASSED [ 95%]
+tests/unit/test_typedef_extraction.py::TestTypedefExtraction::test_empty_content PASSED [ 95%]
+tests/unit/test_typedef_extraction.py::TestTypedefExtraction::test_enum_typedefs PASSED [ 96%]
+tests/unit/test_typedef_extraction.py::TestTypedefExtraction::test_function_pointer_typedefs PASSED [ 96%]
+tests/unit/test_typedef_extraction.py::TestTypedefExtraction::test_no_typedefs_content PASSED [ 97%]
+tests/unit/test_typedef_extraction.py::TestTypedefExtraction::test_simple_typedefs PASSED [ 97%]
+tests/unit/test_typedef_extraction.py::TestTypedefExtraction::test_struct_typedefs PASSED [ 98%]
+tests/unit/test_typedef_extraction.py::TestTypedefExtraction::test_union_typedefs PASSED [ 98%]
+tests/unit/test_verifier_comprehensive.py::TestVerifierComprehensive::test_verifier_comprehensive PASSED [ 99%]
+tests/unit/test_verifier_valid_model.py::TestVerifierValidModel::test_verifier_valid_model PASSED [100%]
 
---------------------------------------------------
-              Checking Dependencies               
---------------------------------------------------
-❌ pytest is not available
-❌ coverage is not available
-⚠️  Missing dependencies: pytest, coverage
-ℹ️  Install with: pip install pytest coverage
-
---------------------------------------------------
-           Running Tests with unittest            
---------------------------------------------------
-test_generate_command_isolation (feature.test_cli_feature.TestCLIFeature.test_generate_command_isolation)
-Test that generate command works when called independently without model files ... 2025-08-08 14:38:58,139 - root - INFO - Using config: /tmp/tmpa9jk3x9p/config.json
-2025-08-08 14:38:58,139 - root - INFO - Output folder: /tmp/tmpa9jk3x9p/output
-2025-08-08 14:38:58,139 - root - ERROR - No model file found for generation.
-2025-08-08 14:38:58,139 - root - ERROR - Please run the parse step first to generate a model file.
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-ok
-test_generate_fallback_to_model (feature.test_cli_feature.TestCLIFeature.test_generate_fallback_to_model) ... 2025-08-08 14:38:58,188 - root - INFO - Using config: /tmp/tmp_mn8kao0/config.json
-2025-08-08 14:38:58,189 - root - INFO - Output folder: /tmp/tmp_mn8kao0/output
-2025-08-08 14:38:58,189 - c2puml.core.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
-2025-08-08 14:38:58,189 - c2puml.core.parser - INFO - Parsing source folder 1/1: /tmp/tmp_mn8kao0
-2025-08-08 14:38:58,189 - c2puml.core.parser - INFO - Parsing project: /tmp/tmp_mn8kao0
-2025-08-08 14:38:58,190 - c2puml.core.parser - INFO - Found 1 C/C++ files
-2025-08-08 14:38:58,190 - c2puml.core.parser - INFO - After filtering: 1 C/C++ files
-2025-08-08 14:38:58,191 - c2puml.core.parser - INFO - Parsing complete. Parsed 1 files successfully.
-2025-08-08 14:38:58,191 - c2puml.core.parser - INFO - Successfully parsed source folder /tmp/tmp_mn8kao0: 1 files
-2025-08-08 14:38:58,191 - c2puml.core.parser - INFO - Step 1.5: Verifying model sanity...
-2025-08-08 14:38:58,191 - c2puml.core.verifier - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,191 - c2puml.core.parser - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,191 - c2puml.core.parser - INFO - Step 1 complete! Model saved to: /tmp/tmp_mn8kao0/output/model.json
-2025-08-08 14:38:58,191 - c2puml.core.parser - INFO - Found 1 total files across 1 source folder(s)
-2025-08-08 14:38:58,191 - c2puml.core.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
-2025-08-08 14:38:58,191 - root - INFO - Model saved to: /tmp/tmp_mn8kao0/output/model.json
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-2025-08-08 14:38:58,236 - root - INFO - Using config: /tmp/tmp_mn8kao0/config.json
-2025-08-08 14:38:58,236 - root - INFO - Output folder: /tmp/tmp_mn8kao0/output
-2025-08-08 14:38:58,237 - root - INFO - PlantUML generation complete! Output in: /tmp/tmp_mn8kao0/output
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-ok
-test_generate_prefers_transformed (feature.test_cli_feature.TestCLIFeature.test_generate_prefers_transformed) ... 2025-08-08 14:38:58,281 - root - INFO - Using config: /tmp/tmph93r00uh/config.json
-2025-08-08 14:38:58,282 - root - INFO - Output folder: /tmp/tmph93r00uh/output
-2025-08-08 14:38:58,282 - c2puml.core.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
-2025-08-08 14:38:58,282 - c2puml.core.parser - INFO - Parsing source folder 1/1: /tmp/tmph93r00uh
-2025-08-08 14:38:58,282 - c2puml.core.parser - INFO - Parsing project: /tmp/tmph93r00uh
-2025-08-08 14:38:58,283 - c2puml.core.parser - INFO - Found 1 C/C++ files
-2025-08-08 14:38:58,283 - c2puml.core.parser - INFO - After filtering: 1 C/C++ files
-2025-08-08 14:38:58,283 - c2puml.core.parser - INFO - Parsing complete. Parsed 1 files successfully.
-2025-08-08 14:38:58,283 - c2puml.core.parser - INFO - Successfully parsed source folder /tmp/tmph93r00uh: 1 files
-2025-08-08 14:38:58,284 - c2puml.core.parser - INFO - Step 1.5: Verifying model sanity...
-2025-08-08 14:38:58,284 - c2puml.core.verifier - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,284 - c2puml.core.parser - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,284 - c2puml.core.parser - INFO - Step 1 complete! Model saved to: /tmp/tmph93r00uh/output/model.json
-2025-08-08 14:38:58,284 - c2puml.core.parser - INFO - Found 1 total files across 1 source folder(s)
-2025-08-08 14:38:58,284 - c2puml.core.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
-2025-08-08 14:38:58,284 - root - INFO - Model saved to: /tmp/tmph93r00uh/output/model.json
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-2025-08-08 14:38:58,328 - root - INFO - Using config: /tmp/tmph93r00uh/config.json
-2025-08-08 14:38:58,328 - root - INFO - Output folder: /tmp/tmph93r00uh/output
-2025-08-08 14:38:58,328 - c2puml.core.transformer - INFO - Step 2: Transforming model: /tmp/tmph93r00uh/output/model.json
-2025-08-08 14:38:58,328 - c2puml.core.transformer - INFO - Applying transformations to model
-2025-08-08 14:38:58,328 - c2puml.core.transformer - INFO - Discovered 0 transformation containers: []
-2025-08-08 14:38:58,328 - c2puml.core.transformer - INFO - Transformations complete. Model now has 1 files
-2025-08-08 14:38:58,329 - c2puml.core.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmph93r00uh/output/model_transformed.json
-2025-08-08 14:38:58,329 - root - INFO - Transformed model saved to: /tmp/tmph93r00uh/output/model_transformed.json
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-2025-08-08 14:38:58,372 - root - INFO - Using config: /tmp/tmph93r00uh/config.json
-2025-08-08 14:38:58,372 - root - INFO - Output folder: /tmp/tmph93r00uh/output
-2025-08-08 14:38:58,373 - root - INFO - PlantUML generation complete! Output in: /tmp/tmph93r00uh/output
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-ok
-test_parse_only (feature.test_cli_feature.TestCLIFeature.test_parse_only) ... 2025-08-08 14:38:58,421 - root - INFO - Using config: /tmp/tmpmofnwgc4/config.json
-2025-08-08 14:38:58,421 - root - INFO - Output folder: /tmp/tmpmofnwgc4/output
-2025-08-08 14:38:58,422 - c2puml.core.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
-2025-08-08 14:38:58,422 - c2puml.core.parser - INFO - Parsing source folder 1/1: /tmp/tmpmofnwgc4
-2025-08-08 14:38:58,422 - c2puml.core.parser - INFO - Parsing project: /tmp/tmpmofnwgc4
-2025-08-08 14:38:58,422 - c2puml.core.parser - INFO - Found 1 C/C++ files
-2025-08-08 14:38:58,422 - c2puml.core.parser - INFO - After filtering: 1 C/C++ files
-2025-08-08 14:38:58,423 - c2puml.core.parser - INFO - Parsing complete. Parsed 1 files successfully.
-2025-08-08 14:38:58,423 - c2puml.core.parser - INFO - Successfully parsed source folder /tmp/tmpmofnwgc4: 1 files
-2025-08-08 14:38:58,423 - c2puml.core.parser - INFO - Step 1.5: Verifying model sanity...
-2025-08-08 14:38:58,423 - c2puml.core.verifier - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,423 - c2puml.core.parser - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,423 - c2puml.core.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpmofnwgc4/output/model.json
-2025-08-08 14:38:58,423 - c2puml.core.parser - INFO - Found 1 total files across 1 source folder(s)
-2025-08-08 14:38:58,423 - c2puml.core.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
-2025-08-08 14:38:58,423 - root - INFO - Model saved to: /tmp/tmpmofnwgc4/output/model.json
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-ok
-test_transform_only (feature.test_cli_feature.TestCLIFeature.test_transform_only) ... 2025-08-08 14:38:58,468 - root - INFO - Using config: /tmp/tmpwq5ggj78/config.json
-2025-08-08 14:38:58,468 - root - INFO - Output folder: /tmp/tmpwq5ggj78/output
-2025-08-08 14:38:58,469 - c2puml.core.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
-2025-08-08 14:38:58,469 - c2puml.core.parser - INFO - Parsing source folder 1/1: /tmp/tmpwq5ggj78
-2025-08-08 14:38:58,469 - c2puml.core.parser - INFO - Parsing project: /tmp/tmpwq5ggj78
-2025-08-08 14:38:58,470 - c2puml.core.parser - INFO - Found 1 C/C++ files
-2025-08-08 14:38:58,470 - c2puml.core.parser - INFO - After filtering: 1 C/C++ files
-2025-08-08 14:38:58,470 - c2puml.core.parser - INFO - Parsing complete. Parsed 1 files successfully.
-2025-08-08 14:38:58,470 - c2puml.core.parser - INFO - Successfully parsed source folder /tmp/tmpwq5ggj78: 1 files
-2025-08-08 14:38:58,470 - c2puml.core.parser - INFO - Step 1.5: Verifying model sanity...
-2025-08-08 14:38:58,471 - c2puml.core.verifier - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,471 - c2puml.core.parser - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,471 - c2puml.core.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpwq5ggj78/output/model.json
-2025-08-08 14:38:58,471 - c2puml.core.parser - INFO - Found 1 total files across 1 source folder(s)
-2025-08-08 14:38:58,471 - c2puml.core.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
-2025-08-08 14:38:58,471 - root - INFO - Model saved to: /tmp/tmpwq5ggj78/output/model.json
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-2025-08-08 14:38:58,515 - root - INFO - Using config: /tmp/tmpwq5ggj78/config.json
-2025-08-08 14:38:58,515 - root - INFO - Output folder: /tmp/tmpwq5ggj78/output
-2025-08-08 14:38:58,515 - c2puml.core.transformer - INFO - Step 2: Transforming model: /tmp/tmpwq5ggj78/output/model.json
-2025-08-08 14:38:58,515 - c2puml.core.transformer - INFO - Applying transformations to model
-2025-08-08 14:38:58,515 - c2puml.core.transformer - INFO - Discovered 0 transformation containers: []
-2025-08-08 14:38:58,515 - c2puml.core.transformer - INFO - Transformations complete. Model now has 1 files
-2025-08-08 14:38:58,515 - c2puml.core.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmpwq5ggj78/output/model_transformed.json
-2025-08-08 14:38:58,515 - root - INFO - Transformed model saved to: /tmp/tmpwq5ggj78/output/model_transformed.json
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-ok
-test_full_workflow_default (feature.test_cli_modes.TestCLIModes.test_full_workflow_default) ... 2025-08-08 14:38:58,561 - root - INFO - Using config: /tmp/tmphyk9u3mc/config.json
-2025-08-08 14:38:58,561 - root - INFO - Output folder: /tmp/tmphyk9u3mc/output
-2025-08-08 14:38:58,561 - c2puml.core.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
-2025-08-08 14:38:58,561 - c2puml.core.parser - INFO - Parsing source folder 1/1: /tmp/tmphyk9u3mc
-2025-08-08 14:38:58,562 - c2puml.core.parser - INFO - Parsing project: /tmp/tmphyk9u3mc
-2025-08-08 14:38:58,562 - c2puml.core.parser - INFO - Found 1 C/C++ files
-2025-08-08 14:38:58,562 - c2puml.core.parser - INFO - After filtering: 1 C/C++ files
-2025-08-08 14:38:58,563 - c2puml.core.parser - INFO - Parsing complete. Parsed 1 files successfully.
-2025-08-08 14:38:58,563 - c2puml.core.parser - INFO - Successfully parsed source folder /tmp/tmphyk9u3mc: 1 files
-2025-08-08 14:38:58,563 - c2puml.core.parser - INFO - Step 1.5: Verifying model sanity...
-2025-08-08 14:38:58,563 - c2puml.core.verifier - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,563 - c2puml.core.parser - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,563 - c2puml.core.parser - INFO - Step 1 complete! Model saved to: /tmp/tmphyk9u3mc/output/model.json
-2025-08-08 14:38:58,563 - c2puml.core.parser - INFO - Found 1 total files across 1 source folder(s)
-2025-08-08 14:38:58,563 - c2puml.core.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
-2025-08-08 14:38:58,563 - root - INFO - Model saved to: /tmp/tmphyk9u3mc/output/model.json
-2025-08-08 14:38:58,563 - c2puml.core.transformer - INFO - Step 2: Transforming model: /tmp/tmphyk9u3mc/output/model.json
-2025-08-08 14:38:58,563 - c2puml.core.transformer - INFO - Applying transformations to model
-2025-08-08 14:38:58,563 - c2puml.core.transformer - INFO - Discovered 0 transformation containers: []
-2025-08-08 14:38:58,563 - c2puml.core.transformer - INFO - Transformations complete. Model now has 1 files
-2025-08-08 14:38:58,564 - c2puml.core.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmphyk9u3mc/output/model_transformed.json
-2025-08-08 14:38:58,564 - root - INFO - Transformed model saved to: /tmp/tmphyk9u3mc/output/model_transformed.json
-2025-08-08 14:38:58,564 - root - INFO - PlantUML generation complete! Output in: /tmp/tmphyk9u3mc/output
-2025-08-08 14:38:58,564 - root - INFO - Complete workflow finished successfully!
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-ok
-test_generate_mode_fallback_to_model (feature.test_cli_modes.TestCLIModes.test_generate_mode_fallback_to_model) ... 2025-08-08 14:38:58,609 - root - INFO - Using config: /tmp/tmpb9zxih4v/config.json
-2025-08-08 14:38:58,609 - root - INFO - Output folder: /tmp/tmpb9zxih4v/output
-2025-08-08 14:38:58,610 - c2puml.core.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
-2025-08-08 14:38:58,610 - c2puml.core.parser - INFO - Parsing source folder 1/1: /tmp/tmpb9zxih4v
-2025-08-08 14:38:58,610 - c2puml.core.parser - INFO - Parsing project: /tmp/tmpb9zxih4v
-2025-08-08 14:38:58,611 - c2puml.core.parser - INFO - Found 1 C/C++ files
-2025-08-08 14:38:58,611 - c2puml.core.parser - INFO - After filtering: 1 C/C++ files
-2025-08-08 14:38:58,611 - c2puml.core.parser - INFO - Parsing complete. Parsed 1 files successfully.
-2025-08-08 14:38:58,611 - c2puml.core.parser - INFO - Successfully parsed source folder /tmp/tmpb9zxih4v: 1 files
-2025-08-08 14:38:58,611 - c2puml.core.parser - INFO - Step 1.5: Verifying model sanity...
-2025-08-08 14:38:58,612 - c2puml.core.verifier - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,612 - c2puml.core.parser - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,612 - c2puml.core.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpb9zxih4v/output/model.json
-2025-08-08 14:38:58,612 - c2puml.core.parser - INFO - Found 1 total files across 1 source folder(s)
-2025-08-08 14:38:58,612 - c2puml.core.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
-2025-08-08 14:38:58,612 - root - INFO - Model saved to: /tmp/tmpb9zxih4v/output/model.json
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-2025-08-08 14:38:58,656 - root - INFO - Using config: /tmp/tmpb9zxih4v/config.json
-2025-08-08 14:38:58,656 - root - INFO - Output folder: /tmp/tmpb9zxih4v/output
-2025-08-08 14:38:58,656 - root - INFO - PlantUML generation complete! Output in: /tmp/tmpb9zxih4v/output
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-ok
-test_generate_mode_isolation (feature.test_cli_modes.TestCLIModes.test_generate_mode_isolation)
-Test that generate mode works when called independently without model files ... 2025-08-08 14:38:58,701 - root - INFO - Using config: /tmp/tmpa6hugerq/config.json
-2025-08-08 14:38:58,701 - root - INFO - Output folder: /tmp/tmpa6hugerq/output
-2025-08-08 14:38:58,701 - root - ERROR - No model file found for generation.
-2025-08-08 14:38:58,701 - root - ERROR - Please run the parse step first to generate a model file.
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-ok
-test_generate_mode_prefers_transformed (feature.test_cli_modes.TestCLIModes.test_generate_mode_prefers_transformed) ... 2025-08-08 14:38:58,745 - root - INFO - Using config: /tmp/tmptx0qqyyo/config.json
-2025-08-08 14:38:58,745 - root - INFO - Output folder: /tmp/tmptx0qqyyo/output
-2025-08-08 14:38:58,746 - c2puml.core.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
-2025-08-08 14:38:58,746 - c2puml.core.parser - INFO - Parsing source folder 1/1: /tmp/tmptx0qqyyo
-2025-08-08 14:38:58,746 - c2puml.core.parser - INFO - Parsing project: /tmp/tmptx0qqyyo
-2025-08-08 14:38:58,747 - c2puml.core.parser - INFO - Found 1 C/C++ files
-2025-08-08 14:38:58,747 - c2puml.core.parser - INFO - After filtering: 1 C/C++ files
-2025-08-08 14:38:58,747 - c2puml.core.parser - INFO - Parsing complete. Parsed 1 files successfully.
-2025-08-08 14:38:58,747 - c2puml.core.parser - INFO - Successfully parsed source folder /tmp/tmptx0qqyyo: 1 files
-2025-08-08 14:38:58,747 - c2puml.core.parser - INFO - Step 1.5: Verifying model sanity...
-2025-08-08 14:38:58,748 - c2puml.core.verifier - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,748 - c2puml.core.parser - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,748 - c2puml.core.parser - INFO - Step 1 complete! Model saved to: /tmp/tmptx0qqyyo/output/model.json
-2025-08-08 14:38:58,748 - c2puml.core.parser - INFO - Found 1 total files across 1 source folder(s)
-2025-08-08 14:38:58,748 - c2puml.core.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
-2025-08-08 14:38:58,748 - root - INFO - Model saved to: /tmp/tmptx0qqyyo/output/model.json
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-2025-08-08 14:38:58,797 - root - INFO - Using config: /tmp/tmptx0qqyyo/config.json
-2025-08-08 14:38:58,797 - root - INFO - Output folder: /tmp/tmptx0qqyyo/output
-2025-08-08 14:38:58,797 - c2puml.core.transformer - INFO - Step 2: Transforming model: /tmp/tmptx0qqyyo/output/model.json
-2025-08-08 14:38:58,797 - c2puml.core.transformer - INFO - Applying transformations to model
-2025-08-08 14:38:58,797 - c2puml.core.transformer - INFO - Discovered 0 transformation containers: []
-2025-08-08 14:38:58,797 - c2puml.core.transformer - INFO - Transformations complete. Model now has 1 files
-2025-08-08 14:38:58,798 - c2puml.core.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmptx0qqyyo/output/model_transformed.json
-2025-08-08 14:38:58,798 - root - INFO - Transformed model saved to: /tmp/tmptx0qqyyo/output/model_transformed.json
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-2025-08-08 14:38:58,841 - root - INFO - Using config: /tmp/tmptx0qqyyo/config.json
-2025-08-08 14:38:58,842 - root - INFO - Output folder: /tmp/tmptx0qqyyo/output
-2025-08-08 14:38:58,842 - root - INFO - PlantUML generation complete! Output in: /tmp/tmptx0qqyyo/output
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-ok
-test_parse_mode (feature.test_cli_modes.TestCLIModes.test_parse_mode) ... 2025-08-08 14:38:58,886 - root - INFO - Using config: /tmp/tmpwf231n6h/config.json
-2025-08-08 14:38:58,886 - root - INFO - Output folder: /tmp/tmpwf231n6h/output
-2025-08-08 14:38:58,886 - c2puml.core.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
-2025-08-08 14:38:58,887 - c2puml.core.parser - INFO - Parsing source folder 1/1: /tmp/tmpwf231n6h
-2025-08-08 14:38:58,887 - c2puml.core.parser - INFO - Parsing project: /tmp/tmpwf231n6h
-2025-08-08 14:38:58,887 - c2puml.core.parser - INFO - Found 1 C/C++ files
-2025-08-08 14:38:58,887 - c2puml.core.parser - INFO - After filtering: 1 C/C++ files
-2025-08-08 14:38:58,888 - c2puml.core.parser - INFO - Parsing complete. Parsed 1 files successfully.
-2025-08-08 14:38:58,888 - c2puml.core.parser - INFO - Successfully parsed source folder /tmp/tmpwf231n6h: 1 files
-2025-08-08 14:38:58,888 - c2puml.core.parser - INFO - Step 1.5: Verifying model sanity...
-2025-08-08 14:38:58,888 - c2puml.core.verifier - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,888 - c2puml.core.parser - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,888 - c2puml.core.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpwf231n6h/output/model.json
-2025-08-08 14:38:58,888 - c2puml.core.parser - INFO - Found 1 total files across 1 source folder(s)
-2025-08-08 14:38:58,888 - c2puml.core.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
-2025-08-08 14:38:58,888 - root - INFO - Model saved to: /tmp/tmpwf231n6h/output/model.json
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-ok
-test_transform_mode (feature.test_cli_modes.TestCLIModes.test_transform_mode) ... 2025-08-08 14:38:58,933 - root - INFO - Using config: /tmp/tmpfc_i42ts/config.json
-2025-08-08 14:38:58,933 - root - INFO - Output folder: /tmp/tmpfc_i42ts/output
-2025-08-08 14:38:58,934 - c2puml.core.parser - INFO - Step 1: Parsing C/C++ project with 1 source folders
-2025-08-08 14:38:58,934 - c2puml.core.parser - INFO - Parsing source folder 1/1: /tmp/tmpfc_i42ts
-2025-08-08 14:38:58,934 - c2puml.core.parser - INFO - Parsing project: /tmp/tmpfc_i42ts
-2025-08-08 14:38:58,935 - c2puml.core.parser - INFO - Found 1 C/C++ files
-2025-08-08 14:38:58,935 - c2puml.core.parser - INFO - After filtering: 1 C/C++ files
-2025-08-08 14:38:58,935 - c2puml.core.parser - INFO - Parsing complete. Parsed 1 files successfully.
-2025-08-08 14:38:58,935 - c2puml.core.parser - INFO - Successfully parsed source folder /tmp/tmpfc_i42ts: 1 files
-2025-08-08 14:38:58,935 - c2puml.core.parser - INFO - Step 1.5: Verifying model sanity...
-2025-08-08 14:38:58,936 - c2puml.core.verifier - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,936 - c2puml.core.parser - INFO - Model verification passed - all values look sane
-2025-08-08 14:38:58,936 - c2puml.core.parser - INFO - Step 1 complete! Model saved to: /tmp/tmpfc_i42ts/output/model.json
-2025-08-08 14:38:58,936 - c2puml.core.parser - INFO - Found 1 total files across 1 source folder(s)
-2025-08-08 14:38:58,936 - c2puml.core.parser - INFO - Summary: 1 structs, 0 enums, 1 functions
-2025-08-08 14:38:58,936 - root - INFO - Model saved to: /tmp/tmpfc_i42ts/output/model.json
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-2025-08-08 14:38:58,980 - root - INFO - Using config: /tmp/tmpfc_i42ts/config.json
-2025-08-08 14:38:58,980 - root - INFO - Output folder: /tmp/tmpfc_i42ts/output
-2025-08-08 14:38:58,980 - c2puml.core.transformer - INFO - Step 2: Transforming model: /tmp/tmpfc_i42ts/output/model.json
-2025-08-08 14:38:58,981 - c2puml.core.transformer - INFO - Applying transformations to model
-2025-08-08 14:38:58,981 - c2puml.core.transformer - INFO - Discovered 0 transformation containers: []
-2025-08-08 14:38:58,981 - c2puml.core.transformer - INFO - Transformations complete. Model now has 1 files
-2025-08-08 14:38:58,981 - c2puml.core.transformer - INFO - Step 2 complete! Transformed model saved to: /tmp/tmpfc_i42ts/output/model_transformed.json
-2025-08-08 14:38:58,981 - root - INFO - Transformed model saved to: /tmp/tmpfc_i42ts/output/model_transformed.json
-
-<frozen runpy>:128: RuntimeWarning: 'c2puml.main' found in sys.modules after import of package 'c2puml', but prior to execution of 'c2puml.main'; this may result in unpredictable behaviour
-
-ok
-test_generate_with_complex_relationships (feature.test_component_features.TestGeneratorComponentFeatures.test_generate_with_complex_relationships)
-Test PlantUML generation with complex type relationships. ... ok
-test_generate_with_typedefs (feature.test_component_features.TestGeneratorComponentFeatures.test_generate_with_typedefs)
-Test PlantUML generation with typedef relationships. ... ok
-test_generate_with_unions (feature.test_component_features.TestGeneratorComponentFeatures.test_generate_with_unions)
-Test PlantUML generation with union definitions. ... ok
-test_parse_complex_typedefs (feature.test_component_features.TestParserComponentFeatures.test_parse_complex_typedefs)
-Test parsing complex typedef relationships. ... ok
-test_parse_function_pointers (feature.test_component_features.TestParserComponentFeatures.test_parse_function_pointers)
-Test parsing function pointer definitions. ... ok
-test_parse_unions (feature.test_component_features.TestParserComponentFeatures.test_parse_unions)
-Test parsing union definitions. ... ok
-test_cross_file_type_dependencies (feature.test_component_features.TestProjectAnalysisComponentFeatures.test_cross_file_type_dependencies)
-Test analysis of type dependencies across files. ... ok
-test_project_structure_analysis (feature.test_component_features.TestProjectAnalysisComponentFeatures.test_project_structure_analysis)
-Test analysis of project structure and dependencies. ... ok
-test_recursive_include_handling (feature.test_component_features.TestProjectAnalysisComponentFeatures.test_recursive_include_handling)
-Test handling of recursive include relationships. ... ok
-test_alternative_crypto_filter_patterns (feature.test_crypto_filter_pattern.TestCryptoFilterPattern.test_alternative_crypto_filter_patterns)
-Test alternative ways to write crypto filter patterns ... 
-Testing pattern set 1: ['^crypto.*\\.c$', '^crypto.*\\.h$']
-  Crypto_Cfg_Partitions.c: False
-  Crypto_Cfg_JobQueues.c: False
-  Crypto.c: False
-
-Testing pattern set 2: ['^crypto.*cfg.*\\.c$', '^crypto.*cfg.*\\.h$']
-  Crypto_Cfg_Partitions.c: False
-  Crypto_Cfg_JobQueues.c: False
-  Crypto.c: False
-
-Testing pattern set 3: ['(?i)\\bcrypto.*\\.c$', '(?i)\\bcrypto.*\\.h$']
-  Crypto_Cfg_Partitions.c: True
-  Crypto_Cfg_JobQueues.c: True
-  Crypto.c: True
-
-Testing pattern set 4: ['.*crypto.*\\.c$', '.*crypto.*\\.h$']
-  Crypto_Cfg_Partitions.c: False
-  Crypto_Cfg_JobQueues.c: False
-  Crypto.c: False
-ok
-test_broken_crypto_filter_pattern (feature.test_crypto_filter_pattern.TestCryptoFilterPattern.test_broken_crypto_filter_pattern)
-Test the broken filter pattern that doesn't work ... Broken pattern - Crypto_Cfg_Partitions.c: False
-Broken pattern - Crypto_Cfg_JobQueues.c: False
-Broken pattern - Crypto.c: False
-Broken pattern - Crypto.h: False
-Broken pattern - Crypto_Cfg_Partitions.h: False
-Broken pattern - Crypto_Cfg_JobQueues.h: False
-ok
-test_case_insensitive_crypto_filter_pattern (feature.test_crypto_filter_pattern.TestCryptoFilterPattern.test_case_insensitive_crypto_filter_pattern)
-Test case-insensitive crypto filter pattern ... Case-insensitive pattern - crypto.c: True
-Case-insensitive pattern - CRYPTO.c: True
-Case-insensitive pattern - Crypto.c: True
-Case-insensitive pattern - crypto_config.c: True
-Case-insensitive pattern - CRYPTO_CONFIG.c: True
-Case-insensitive pattern - Crypto_Cfg_Partitions.c: True
-ok
-test_fixed_crypto_filter_pattern (feature.test_crypto_filter_pattern.TestCryptoFilterPattern.test_fixed_crypto_filter_pattern)
-Test the corrected filter pattern that should work ... Fixed pattern - Crypto_Cfg_Partitions.c: True
-Fixed pattern - Crypto_Cfg_JobQueues.c: True
-Fixed pattern - Crypto.c: True
-Fixed pattern - Crypto.h: True
-Fixed pattern - Crypto_Cfg_Partitions.h: True
-Fixed pattern - Crypto_Cfg_JobQueues.h: True
-Fixed pattern - main.c: False
-Fixed pattern - utils.c: False
-Fixed pattern - config.h: False
-Fixed pattern - types.h: False
-ok
-test_parser_integration_with_crypto_filter (feature.test_crypto_filter_pattern.TestCryptoFilterPattern.test_parser_integration_with_crypto_filter)
-Test that the parser correctly applies crypto filters ... Parsed files: ['Crypto.c', 'Crypto.h', 'Crypto_Cfg_JobQueues.c', 'Crypto_Cfg_JobQueues.h', 'Crypto_Cfg_Partitions.c', 'Crypto_Cfg_Partitions.h']
-ok
-test_alternative_crypto_patterns (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_alternative_crypto_patterns)
-Test alternative ways to write crypto filter patterns ... ok
-test_broken_crypto_filter_pattern (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_broken_crypto_filter_pattern)
-Test that the broken pattern from user's question doesn't work ... ok
-test_case_insensitive_variations (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_case_insensitive_variations)
-Test different case variations with crypto filter ... ok
-test_fixed_crypto_filter_pattern (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_fixed_crypto_filter_pattern)
-Test that the corrected pattern works correctly ... ok
-test_integration_with_full_workflow (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_integration_with_full_workflow)
-Test crypto filter integration with full parsing workflow ... ok
-test_parser_with_crypto_filter (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_parser_with_crypto_filter)
-Test that the parser correctly applies crypto filters ... ok
-test_regex_escaping_importance (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_regex_escaping_importance)
-Test the importance of proper regex escaping ... ok
-test_user_question_scenario (feature.test_crypto_filter_usecase.TestCryptoFilterUseCase.test_user_question_scenario)
-Test the exact scenario from the user's question ... ok
-test_invalid_config_errors (feature.test_error_handling_comprehensive.TestErrorHandlingComprehensive.test_invalid_config_errors)
-Test various invalid configuration scenarios ... ok
-test_invalid_source_folder_errors (feature.test_error_handling_comprehensive.TestErrorHandlingComprehensive.test_invalid_source_folder_errors)
-Test various invalid source folder scenarios ... ok
-test_partial_failure_scenarios (feature.test_error_handling_comprehensive.TestErrorHandlingComprehensive.test_partial_failure_scenarios)
-Test scenarios where some operations fail but others succeed ... ok
-test_basic_include_processing_workflow (feature.test_include_processing_features_cli.TestIncludeProcessingBasicFeaturesCLI.test_basic_include_processing_workflow)
-Test basic include processing workflow from parsing to generation through CLI. ... ok
-test_c_to_h_relationships (feature.test_include_processing_features_cli.TestIncludeProcessingBasicFeaturesCLI.test_c_to_h_relationships)
-Test feature-level C to H file relationships through CLI. ... ok
-test_header_to_header_relationships (feature.test_include_processing_features_cli.TestIncludeProcessingBasicFeaturesCLI.test_header_to_header_relationships)
-Test feature-level header to header relationships through CLI. ... ok
-test_circular_include_detection (feature.test_include_processing_features_cli.TestIncludeProcessingComplexFeaturesCLI.test_circular_include_detection)
-Test circular include detection and handling through CLI. ... ok
-test_complex_project_structure (feature.test_include_processing_features_cli.TestIncludeProcessingComplexFeaturesCLI.test_complex_project_structure)
-Test complex project structure with multiple layers of includes through CLI. ... ok
-test_nested_directory_structure (feature.test_include_processing_features_cli.TestIncludeProcessingComplexFeaturesCLI.test_nested_directory_structure)
-Test nested directory structure with relative includes through CLI. ... ok
-test_comprehensive_include_scenario (feature.test_include_processing_features_cli.TestIncludeProcessingComprehensiveCLI.test_comprehensive_include_scenario)
-Test comprehensive include processing scenario through CLI. ... ok
-test_macro_propagation_through_includes (feature.test_include_processing_features_cli.TestIncludeProcessingComprehensiveCLI.test_macro_propagation_through_includes)
-Test macro propagation through include relationships through CLI. ... ok
-test_typedef_relationships_across_files (feature.test_include_processing_features_cli.TestIncludeProcessingComprehensiveCLI.test_typedef_relationships_across_files)
-Test typedef relationships across multiple files through CLI. ... ok
-test_dependency_ordering (feature.test_include_processing_features_cli.TestIncludeProcessingDependenciesCLI.test_dependency_ordering)
-Test that dependency ordering is preserved through CLI. ... ok
-test_missing_dependency_handling (feature.test_include_processing_features_cli.TestIncludeProcessingDependenciesCLI.test_missing_dependency_handling)
-Test handling of missing dependencies through CLI. ... ok
-test_transitive_dependencies (feature.test_include_processing_features_cli.TestIncludeProcessingDependenciesCLI.test_transitive_dependencies)
-Test transitive dependency resolution through CLI. ... ok
-test_full_pipeline_with_includes (feature.test_include_processing_features_cli.TestIncludeProcessingIntegrationCLI.test_full_pipeline_with_includes)
-Test full pipeline with complex include relationships through CLI. ... ok
-test_include_depth_control (feature.test_include_processing_features_cli.TestIncludeProcessingIntegrationCLI.test_include_depth_control)
-Test include depth control functionality through CLI. ... ok
-test_include_filtering (feature.test_include_processing_features_cli.TestIncludeProcessingIntegrationCLI.test_include_filtering)
-Test include filtering functionality through CLI. ... ok
-test_complete_workflow (feature.test_integration.TestIntegration.test_complete_workflow)
-Test complete end-to-end workflow from parsing to PlantUML generation ... ok
-test_configuration_features (feature.test_integration.TestIntegration.test_configuration_features)
-Test configuration loading and filtering features ... ok
-test_error_handling (feature.test_integration.TestIntegration.test_error_handling)
-Test error handling for various scenarios ... WARNING:root:Failed to detect encoding for /non/existent/file.c: [Errno 2] No such file or directory: '/non/existent/file.c'
-ok
-test_performance_features (feature.test_integration.TestIntegration.test_performance_features)
-Test performance with larger files ... ok
-test_empty_source_folders_error (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_empty_source_folders_error)
-Test that empty source_folders list raises an error ... ok
-test_invalid_source_folder_error (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_invalid_source_folder_error)
-Test that invalid source folder raises an error ... ERROR:c2puml.core.parser:Failed to parse source folder /nonexistent/path: Source folder not found: /nonexistent/path
-Parent directory does not exist: /nonexistent
-ok
-test_multiple_source_folders_parsing (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_multiple_source_folders_parsing)
-Test that multiple source folders are parsed correctly ... ok
-test_multiple_source_folders_with_config (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_multiple_source_folders_with_config)
-Test multiple source folders with configuration and filters ... WARNING:c2puml.core.verifier:Model verification found 1 issues:
-WARNING:c2puml.core.verifier:  - Invalid field name '30' in struct Person in main.c
-WARNING:c2puml.core.parser:Model verification found 1 issues - model may contain parsing errors
-ok
-test_parser_multiple_source_folders_method (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_parser_multiple_source_folders_method)
-Test the parse method with multiple source folders ... WARNING:c2puml.core.verifier:Model verification found 1 issues:
-WARNING:c2puml.core.verifier:  - Invalid field name '30' in struct Person in main.c
-WARNING:c2puml.core.parser:Model verification found 1 issues - model may contain parsing errors
-ok
-test_project_name_from_config (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_project_name_from_config)
-Test that project name is taken from configuration ... WARNING:c2puml.core.verifier:Model verification found 1 issues:
-WARNING:c2puml.core.verifier:  - Invalid field name '30' in struct Person in main.c
-WARNING:c2puml.core.parser:Model verification found 1 issues - model may contain parsing errors
-ok
-test_single_source_folder_backward_compatibility (feature.test_multiple_source_folders.TestMultipleSourceFolders.test_single_source_folder_backward_compatibility)
-Test that single source folder still works (backward compatibility) ... WARNING:c2puml.core.verifier:Model verification found 1 issues:
-WARNING:c2puml.core.verifier:  - Invalid field name '30' in struct Person in main.c
-WARNING:c2puml.core.parser:Model verification found 1 issues - model may contain parsing errors
-ok
-test_include_filters_with_filtered_header (feature.test_transformer_features.TestTransformerFeatures.test_include_filters_with_filtered_header)
-Test that include_filters preserve includes arrays and only affect include_relations generation ... ok
-test_transform_complex_project_with_filters (feature.test_transformer_features.TestTransformerFeatures.test_transform_complex_project_with_filters)
-Test transforming a complex project with various filters ... ok
-test_transform_complex_regex_patterns (feature.test_transformer_features.TestTransformerFeatures.test_transform_complex_regex_patterns)
-Test transforming with complex regex patterns ... ok
-test_transform_error_handling (feature.test_transformer_features.TestTransformerFeatures.test_transform_error_handling)
-Test transformer error handling with invalid configurations ... ok
-test_transform_integration_with_parser_and_generator (feature.test_transformer_features.TestTransformerFeatures.test_transform_integration_with_parser_and_generator)
-Test full integration: parse -> transform -> generate ... ok
-test_transform_with_additions (feature.test_transformer_features.TestTransformerFeatures.test_transform_with_additions)
-Test transforming with element additions ... ok
-test_transform_with_include_relations (feature.test_transformer_features.TestTransformerFeatures.test_transform_with_include_relations)
-Test transforming with include relation processing ... ok
-test_transform_with_removals (feature.test_transformer_features.TestTransformerFeatures.test_transform_with_removals)
-Test transforming with element removals ... ok
-test_transform_with_renaming (feature.test_transformer_features.TestTransformerFeatures.test_transform_with_renaming)
-Test transforming with element renaming ... ok
-test_complete_system_integration_real_world_project (integration.test_comprehensive.TestEndToEndSystemIntegration.test_complete_system_integration_real_world_project)
-Test complete system integration with realistic project. ... ok
-test_comprehensive_c_to_h_relationships_integration (integration.test_comprehensive.TestIncludeProcessingIntegrationComprehensive.test_comprehensive_c_to_h_relationships_integration)
-Test comprehensive C to H file relationships with full integration. ... ok
-test_comprehensive_header_to_header_relationships_integration (integration.test_comprehensive.TestIncludeProcessingIntegrationComprehensive.test_comprehensive_header_to_header_relationships_integration)
-Test comprehensive header to header relationships integration. ... ok
-test_comprehensive_typedef_relationships_integration (integration.test_comprehensive.TestIncludeProcessingIntegrationComprehensive.test_comprehensive_typedef_relationships_integration)
-Test comprehensive typedef relationships across files integration. ... ok
-test_parser_tokenizer_complex_syntax_integration (integration.test_comprehensive.TestParserTokenizerIntegration.test_parser_tokenizer_complex_syntax_integration)
-Test parser-tokenizer integration with complex C syntax. ... ok
-test_parser_tokenizer_error_handling_integration (integration.test_comprehensive.TestParserTokenizerIntegration.test_parser_tokenizer_error_handling_integration)
-Test that parser gracefully handles tokenizer errors. ... ok
-test_parser_tokenizer_function_parsing_integration (integration.test_comprehensive.TestParserTokenizerIntegration.test_parser_tokenizer_function_parsing_integration)
-Test that parser correctly uses tokenizer for function parsing. ... ok
-test_parser_tokenizer_preprocessor_integration (integration.test_comprehensive.TestParserTokenizerIntegration.test_parser_tokenizer_preprocessor_integration)
-Test that parser handles preprocessor directives through tokenizer. ... ok
-test_parser_tokenizer_struct_parsing_integration (integration.test_comprehensive.TestParserTokenizerIntegration.test_parser_tokenizer_struct_parsing_integration)
-Test that parser correctly uses tokenizer for struct parsing. ... ok
-test_complete_formatting_integration (integration.test_new_formatting_comprehensive.TestNewFormattingIntegration.test_complete_formatting_integration)
-Test all new formatting rules working together in a realistic scenario ... ok
-test_mixed_project_comprehensive_formatting (integration.test_new_formatting_comprehensive.TestNewFormattingIntegration.test_mixed_project_comprehensive_formatting)
-Test formatting in a project with multiple files and cross-references ... ok
-test_absolute_vs_relative_path_consistency (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_absolute_vs_relative_path_consistency)
-Test absolute vs relative path consistency through CLI interface. ... ok
-test_mixed_path_styles_handling (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_mixed_path_styles_handling)
-Test mixed path styles handling through CLI interface. ... ok
-test_relative_path_handling_in_include_tree (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_relative_path_handling_in_include_tree)
-Test that relative paths are handled correctly in include tree building through CLI interface. ... ok
-test_subdirectory_includes_path_resolution (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_subdirectory_includes_path_resolution)
-Test subdirectory includes path resolution through CLI interface. ... ok
-test_anonymous_processing_comprehensive (unit.test_anonymous_processing_comprehensive.TestAnonymousProcessingComprehensive.test_anonymous_processing_comprehensive)
-Test comprehensive anonymous structure processing scenarios through the CLI interface ... ok
-test_anonymous_struct_in_typedef (unit.test_anonymous_structure_comprehensive.TestAnonymousStructureComprehensive.test_anonymous_struct_in_typedef)
-Test that anonymous structs within typedefs are correctly processed through CLI interface. ... ok
-test_anonymous_unions_in_structs (unit.test_anonymous_structure_comprehensive.TestAnonymousStructureComprehensive.test_anonymous_unions_in_structs)
-Test anonymous unions within structs through CLI interface. ... ok
-test_nested_anonymous_structures (unit.test_anonymous_structure_comprehensive.TestAnonymousStructureComprehensive.test_nested_anonymous_structures)
-Test that deeply nested anonymous structures are correctly processed through CLI interface. ... ok
-test_config_comprehensive (unit.test_config_comprehensive.TestConfigComprehensive.test_config_comprehensive)
-Test comprehensive configuration scenarios through the CLI interface ... ok
-test_complex_struct_field_processing (unit.test_debug_field_parsing_comprehensive.TestDebugFieldParsingComprehensive.test_complex_struct_field_processing)
-Test complex struct field processing through CLI interface. ... ok
-test_nested_anonymous_structure_fields (unit.test_debug_field_parsing_comprehensive.TestDebugFieldParsingComprehensive.test_nested_anonymous_structure_fields)
-Test nested anonymous structure field parsing through CLI interface. ... ok
-test_nested_union_field_parsing (unit.test_debug_field_parsing_comprehensive.TestDebugFieldParsingComprehensive.test_nested_union_field_parsing)
-Test nested union field parsing through CLI interface. ... ok
-test_anonymous_structure_parsing (unit.test_debug_parsing_comprehensive.TestDebugParsingComprehensive.test_anonymous_structure_parsing)
-Test parsing anonymous structures in typedefs through CLI interface ... ok
-test_complex_union_parsing (unit.test_debug_parsing_comprehensive.TestDebugParsingComprehensive.test_complex_union_parsing)
-Test parsing complex union with nested structures through CLI interface ... ok
-test_nested_struct_parsing (unit.test_debug_parsing_comprehensive.TestDebugParsingComprehensive.test_nested_struct_parsing)
-Test parsing nested struct definitions through CLI interface ... ok
-test_configuration_extraction (unit.test_file_specific_configuration_comprehensive.TestFileSpecificConfigurationComprehensive.test_configuration_extraction)
-Test configuration extraction functionality through CLI interface. ... ok
-test_file_specific_include_depth (unit.test_file_specific_configuration_comprehensive.TestFileSpecificConfigurationComprehensive.test_file_specific_include_depth)
-Test file-specific include depth configuration through CLI interface. ... ok
-test_file_specific_include_filter (unit.test_file_specific_configuration_comprehensive.TestFileSpecificConfigurationComprehensive.test_file_specific_include_filter)
-Test that file-specific include filters preserve includes arrays correctly through CLI interface. ... ok
-test_include_filter_patterns (unit.test_file_specific_configuration_comprehensive.TestFileSpecificConfigurationComprehensive.test_include_filter_patterns)
-Test include filter patterns validation through CLI interface. ... ok
-test_function_parameters_complex (unit.test_function_parameters_complex.TestFunctionParametersComplex.test_function_parameters_complex)
-Test function parameters complex through the CLI interface ... ok
-test_function_parameters_display (unit.test_function_parameters_display.TestFunctionParametersDisplay.test_function_parameters_display)
-Test function parameter display through the CLI interface ... ok
-test_function_parameters_empty (unit.test_function_parameters_empty.TestFunctionParametersEmpty.test_function_parameters_empty)
-Test function parameters empty through the CLI interface ... ok
-test_function_parameters_parsing (unit.test_function_parameters_parsing.TestFunctionParametersParsing.test_function_parameters_parsing)
-Test function parameter parsing through the CLI interface ... ok
-test_function_params_complex (unit.test_function_params_complex.TestFunctionParamsComplex.test_function_params_complex)
-Test function params complex through the CLI interface ... ok
-test_function_params_parsing (unit.test_function_params_parsing.TestFunctionParamsParsing.test_function_params_parsing)
-Test function params parsing through the CLI interface ... ok
-test_generator_basic_plantuml (unit.test_generator_basic_plantuml.TestGeneratorBasicPlantuml.test_generator_basic_plantuml)
-Run the test_generator_basic_plantuml test through CLI interface. ... ok
-test_generator_comprehensive (unit.test_generator_comprehensive.TestGeneratorComprehensive.test_generator_comprehensive)
-Test comprehensive generator scenarios through the CLI interface ... ok
-test_exact_requested_format (unit.test_generator_exact_format_cli.TestGeneratorExactFormatCLI.test_exact_requested_format)
-Test the exact format requested: public functions, empty line, private functions ... ok
-test_format_with_parameters (unit.test_generator_exact_format_cli.TestGeneratorExactFormatCLI.test_format_with_parameters)
-Test the format works correctly with function parameters ... ok
-test_function_grouping_with_empty_line_separation (unit.test_generator_grouping_cli.TestGeneratorGroupingCLI.test_function_grouping_with_empty_line_separation)
-Test that public and private functions are grouped with empty line separation ... ok
-test_global_grouping_with_empty_line_separation (unit.test_generator_grouping_cli.TestGeneratorGroupingCLI.test_global_grouping_with_empty_line_separation)
-Test that public and private globals are grouped with empty line separation ... ok
-test_mixed_grouping_comprehensive (unit.test_generator_grouping_cli.TestGeneratorGroupingCLI.test_mixed_grouping_comprehensive)
-Test grouping works correctly with both functions and globals ... ok
-test_include_tree_comprehensive (unit.test_generator_include_tree_cli.TestGeneratorIncludeTreeCLI.test_include_tree_comprehensive)
-Test comprehensive include tree generation with multiple files and deep includes ... ok
-test_include_tree_with_absolute_paths (unit.test_generator_include_tree_cli.TestGeneratorIncludeTreeCLI.test_include_tree_with_absolute_paths)
-Test that include relationships work correctly with absolute paths ... ok
-test_duplicate_include_handling (unit.test_generator_includes_comprehensive.TestGeneratorIncludesComprehensive.test_duplicate_include_handling)
-Test handling of duplicate include relationships through CLI interface ... ok
-test_generator_complex_typedef_names (unit.test_generator_naming_comprehensive.TestGeneratorNamingComprehensive.test_generator_complex_typedef_names)
-Test that complex typedef names are handled correctly ... ok
-test_generator_edge_case_names (unit.test_generator_naming_comprehensive.TestGeneratorNamingComprehensive.test_generator_edge_case_names)
-Test edge cases in naming conventions ... ok
-test_generator_file_naming_conventions (unit.test_generator_naming_comprehensive.TestGeneratorNamingComprehensive.test_generator_file_naming_conventions)
-Test that file UML IDs follow the correct naming conventions ... ok
-test_generator_typedef_naming_conventions (unit.test_generator_naming_comprehensive.TestGeneratorNamingComprehensive.test_generator_typedef_naming_conventions)
-Test that typedef UML IDs follow the correct naming conventions ... ok
-test_alias_formatting_with_typedef_stereotype_and_alias_prefix (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_alias_formatting_with_typedef_stereotype_and_alias_prefix)
-Test that typedef aliases use <<typedef>> stereotype with ALIAS_ prefix ... ok
-test_complex_typedef_combination (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_complex_typedef_combination)
-Test complex combination of struct, enum, union, and typedef in same file ... ok
-test_enum_formatting_with_enumeration_stereotype (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_enum_formatting_with_enumeration_stereotype)
-Test that enum types use <<enumeration>> stereotype with #LightYellow ... ok
-test_function_pointer_formatting_with_function_pointer_stereotype (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_function_pointer_formatting_with_function_pointer_stereotype)
-Test that function pointer typedefs use <<function pointer>> stereotype ... ok
-test_public_private_visibility_logic (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_public_private_visibility_logic)
-Test that globals and functions are marked as public if present in headers, private otherwise ... ok
-test_struct_formatting_with_struct_stereotype (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_struct_formatting_with_struct_stereotype)
-Test that struct types use <<struct>> stereotype with + prefix for fields ... ok
-test_union_formatting_with_union_stereotype (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_union_formatting_with_union_stereotype)
-Test that union types use <<union>> stereotype with + prefix for fields ... ok
-test_function_visibility_private_when_not_in_header (unit.test_generator_visibility_logic_cli.TestGeneratorVisibilityLogicCLI.test_function_visibility_private_when_not_in_header)
-Test that functions not present in headers are marked as - (private) ... ok
-test_function_visibility_public_when_in_header (unit.test_generator_visibility_logic_cli.TestGeneratorVisibilityLogicCLI.test_function_visibility_public_when_in_header)
-Test that functions present in headers are marked as + (public) ... ok
-test_global_visibility_private_when_not_in_header (unit.test_generator_visibility_logic_cli.TestGeneratorVisibilityLogicCLI.test_global_visibility_private_when_not_in_header)
-Test that globals not present in headers are marked as - (private) ... ok
-test_global_visibility_public_when_in_header (unit.test_generator_visibility_logic_cli.TestGeneratorVisibilityLogicCLI.test_global_visibility_public_when_in_header)
-Test that globals present in headers are marked as + (public) ... ok
-test_mixed_visibility_comprehensive (unit.test_generator_visibility_logic_cli.TestGeneratorVisibilityLogicCLI.test_mixed_visibility_comprehensive)
-Test mixed visibility scenarios with both public and private elements ... ok
-test_no_headers_all_private (unit.test_generator_visibility_logic_cli.TestGeneratorVisibilityLogicCLI.test_no_headers_all_private)
-Test that without headers, all elements are marked as - (private) ... ok
-test_global_parsing_comprehensive (unit.test_global_parsing_comprehensive.TestGlobalParsingComprehensive.test_global_parsing_comprehensive)
-Test comprehensive global parsing scenarios through the CLI interface ... ok
-test_include_filtering_comprehensive (unit.test_include_filtering_comprehensive.TestIncludeFilteringComprehensive.test_include_filtering_comprehensive)
-Test comprehensive include filtering scenarios through the CLI interface ... ok
-test_basic_include_processing (unit.test_include_processing_comprehensive.TestIncludeProcessingComprehensive.test_basic_include_processing)
-Test basic include file processing through CLI interface ... ok
-test_macro_duplicates_complex (unit.test_macro_duplicates_complex.TestMacroDuplicatesComplex.test_macro_duplicates_complex)
-Test macro duplicates complex through the CLI interface ... ok
-test_macro_duplicates_simple (unit.test_macro_duplicates_simple.TestMacroDuplicatesSimple.test_macro_duplicates_simple)
-Test macro duplicates simple through the CLI interface ... ok
-test_nested_structures_puml (unit.test_nested_structures_puml.TestNestedStructuresPuml.test_nested_structures_puml)
-Test nested structures puml through the CLI interface ... ok
-test_parser_complete (unit.test_parser_complete.TestParserComplete.test_parser_complete)
-Test parsing a complete C file with all elements through the CLI interface ... ok
-test_parser_encoding (unit.test_parser_encoding.TestParserEncoding.test_parser_encoding)
-Test parsing files with various encodings through the CLI interface ... ok
-test_parser_enum_simple (unit.test_parser_enum_comprehensive.TestParserEnumComprehensive.test_parser_enum_simple)
-Test parsing simple enum definitions through the CLI interface ... ok
-test_parser_enum_typedef (unit.test_parser_enum_comprehensive.TestParserEnumComprehensive.test_parser_enum_typedef)
-Test parsing typedef enum definitions through the CLI interface ... ok
-test_parser_enums (unit.test_parser_enums.TestParserEnums.test_parser_enums)
-Test parsing enum definitions through the CLI interface ... ok
-test_parser_function_declarations (unit.test_parser_function_comprehensive.TestParserFunctionComprehensive.test_parser_function_declarations)
-Test parsing function declarations through the CLI interface ... ok
-test_parser_function_definitions (unit.test_parser_function_comprehensive.TestParserFunctionComprehensive.test_parser_function_definitions)
-Test parsing function definitions through the CLI interface ... ok
-test_parser_function_modifiers (unit.test_parser_function_comprehensive.TestParserFunctionComprehensive.test_parser_function_modifiers)
-Test parsing functions with modifiers through the CLI interface ... ok
-test_parser_functions (unit.test_parser_functions.TestParserFunctions.test_parser_functions)
-Test parsing function declarations through the CLI interface ... ok
-test_parser_globals (unit.test_parser_globals.TestParserGlobals.test_parser_globals)
-Test parsing global variables through the CLI interface ... ok
-test_parser_includes (unit.test_parser_includes.TestParserIncludes.test_parser_includes)
-Test parsing include statements through the CLI interface ... ok
-test_parser_macros (unit.test_parser_macros.TestParserMacros.test_parser_macros)
-Test parsing macro definitions through the CLI interface ... ok
-test_parser_mixed_content (unit.test_parser_mixed_comprehensive.TestParserMixedComprehensive.test_parser_mixed_content)
-Test parsing a file with mixed C language features through the CLI interface ... ok
-test_nested_struct_preservation (unit.test_parser_nested_structures_comprehensive.TestParserNestedStructuresComprehensive.test_nested_struct_preservation)
-Test that nested structs maintain their structure through CLI interface. ... ok
-test_nested_structures_in_generated_puml (unit.test_parser_nested_structures_comprehensive.TestParserNestedStructuresComprehensive.test_nested_structures_in_generated_puml)
-Test that nested structures appear correctly in generated PlantUML through CLI interface. ... ok
-test_nested_union_preservation (unit.test_parser_nested_structures_comprehensive.TestParserNestedStructuresComprehensive.test_nested_union_preservation)
-Test that nested unions maintain their structure through CLI interface. ... ok
-test_parser_simple_c_file (unit.test_parser_simple_c_file.TestParserSimpleCFile.test_parser_simple_c_file)
-Test parsing a simple C file through the CLI interface ... ok
-test_parser_simple_struct (unit.test_parser_simple_struct.TestParserSimpleStruct.test_parser_simple_struct)
-Test parsing a simple struct definition through the CLI interface ... ok
-test_parser_structs (unit.test_parser_structs.TestParserStructs.test_parser_structs)
-Test parsing struct definitions through the CLI interface ... ok
-test_parser_typedef_struct (unit.test_parser_typedef_struct.TestParserTypedefStruct.test_parser_typedef_struct)
-Test parsing typedef struct definitions through the CLI interface ... ok
-test_parser_typedefs (unit.test_parser_typedefs.TestParserTypedefs.test_parser_typedefs)
-Test parsing typedef declarations through the CLI interface ... ok
-test_preprocessor_bug_comprehensive (unit.test_preprocessor_bug_comprehensive.TestPreprocessorBugComprehensive.test_preprocessor_bug_comprehensive)
-Test comprehensive preprocessor bug scenarios through the CLI interface ... ok
-test_preprocessor_handling_comprehensive (unit.test_preprocessor_handling_comprehensive.TestPreprocessorHandlingComprehensive.test_preprocessor_handling_comprehensive)
-Test comprehensive preprocessor handling scenarios through the CLI interface ... ok
-test_simple_c_file_parsing (unit.test_simple_c_file_parsing.TestSimpleCFileParsing.test_simple_c_file_parsing)
-Test parsing a simple C file through the CLI interface ... ok
-test_struct_order_complex (unit.test_struct_order_complex.TestStructOrderComplex.test_struct_order_complex)
-Test struct order complex through the CLI interface ... ok
-test_struct_order_preservation (unit.test_struct_order_preservation.TestStructOrderPreservation.test_struct_order_preservation)
-Test struct order preservation through the CLI interface ... ok
-test_struct_order_puml (unit.test_struct_order_puml.TestStructOrderPuml.test_struct_order_puml)
-Test struct order puml through the CLI interface ... ok
-test_tokenizer_complex_function_parsing (unit.test_tokenizer_complex_function_parsing.TestTokenizerComplexFunctionParsing.test_tokenizer_complex_function_parsing)
-Run the test_tokenizer_complex_function_parsing test through CLI interface. ... ok
-test_tokenizer_complex_mixed_structures (unit.test_tokenizer_complex_mixed_structures.TestTokenizerComplexMixedStructures.test_tokenizer_complex_mixed_structures)
-Run the test_tokenizer_complex_mixed_structures test through CLI interface. ... ok
-test_tokenizer_complex_parsing (unit.test_tokenizer_comprehensive.TestTokenizerComprehensive.test_tokenizer_complex_parsing)
-Test tokenizer with complex C constructs that stress tokenization ... ok
-test_tokenizer_edge_cases (unit.test_tokenizer_comprehensive.TestTokenizerComprehensive.test_tokenizer_edge_cases)
-Test tokenizer with edge cases like comments, strings, complex expressions ... ok
-test_tokenizer_preprocessor_handling (unit.test_tokenizer_comprehensive.TestTokenizerComprehensive.test_tokenizer_preprocessor_handling)
-Test tokenizer with complex preprocessor constructs ... ok
-test_tokenizer_keywords (unit.test_tokenizer_keywords.TestTokenizerKeywords.test_tokenizer_keywords)
-Test tokenizer keyword recognition through the CLI interface ... ok
-test_complex_nested_union_tokenization (unit.test_tokenizer_validation_comprehensive.TestTokenizerValidationComprehensive.test_complex_nested_union_tokenization)
-Test tokenization of complex nested unions through CLI interface ... ok
-test_transformer_basic (unit.test_transformer_basic.TestTransformerBasic.test_transformer_basic)
-Test basic transformer functionality through the CLI interface ... ok
-test_transformer_comprehensive_operations (unit.test_transformer_comprehensive.TestTransformerComprehensive.test_transformer_comprehensive_operations)
-Test comprehensive transformer operations including all major transformation types ... ok
-test_transformer_file_filtering (unit.test_transformer_comprehensive.TestTransformerComprehensive.test_transformer_file_filtering)
-Test transformer file filtering capabilities through CLI interface ... ok
-test_transformer_include_processing (unit.test_transformer_comprehensive.TestTransformerComprehensive.test_transformer_include_processing)
-Test transformer include processing and depth control through CLI interface ... ok
-test_comments_and_whitespace (unit.test_typedef_extraction.TestTypedefExtraction.test_comments_and_whitespace)
-Test extraction with comments and whitespace ... ok
-test_comprehensive_typedef_extraction (unit.test_typedef_extraction.TestTypedefExtraction.test_comprehensive_typedef_extraction)
-Test comprehensive typedef extraction with all types ... 
-Extracted 10 typedefs:
-1. typedef uint32_t MyLen;
-2. typedef int32_t MyInt;
-3. typedef char * MyString;
-4. typedef MyComplex * MyComplexPtr;
-5. typedef MyComplexPtr MyComplexArray[10];
-6. typedef int (*MyCallback)(MyBuffer * buffer);
-7. typedef struct MyBuffer_tag
-8. typedef struct MyComplexStruct_tag
-9. typedef enum Color_tag
-10. typedef union Number_tag
-
-Checking expected patterns:
-✅ typedef uint32_t MyLen
-✅ typedef int32_t MyInt
-✅ typedef char * MyString
-✅ typedef struct MyBuffer_tag
-✅ typedef int (*MyCallback)
-✅ typedef struct MyComplexStruct_tag
-✅ typedef MyComplex * MyComplexPtr
-✅ typedef MyComplexPtr MyComplexArray
-✅ typedef enum Color_tag
-✅ typedef union Number_tag
-ok
-test_empty_content (unit.test_typedef_extraction.TestTypedefExtraction.test_empty_content)
-Test extraction with empty content ... ok
-test_enum_typedefs (unit.test_typedef_extraction.TestTypedefExtraction.test_enum_typedefs)
-Test extraction of enum typedefs ... ok
-test_function_pointer_typedefs (unit.test_typedef_extraction.TestTypedefExtraction.test_function_pointer_typedefs)
-Test extraction of function pointer typedefs ... ok
-test_no_typedefs_content (unit.test_typedef_extraction.TestTypedefExtraction.test_no_typedefs_content)
-Test extraction with content that has no typedefs ... ok
-test_simple_typedefs (unit.test_typedef_extraction.TestTypedefExtraction.test_simple_typedefs)
-Test extraction of simple typedefs ... ok
-test_struct_typedefs (unit.test_typedef_extraction.TestTypedefExtraction.test_struct_typedefs)
-Test extraction of struct typedefs ... ok
-test_union_typedefs (unit.test_typedef_extraction.TestTypedefExtraction.test_union_typedefs)
-Test extraction of union typedefs ... ok
-test_verifier_comprehensive (unit.test_verifier_comprehensive.TestVerifierComprehensive.test_verifier_comprehensive)
-Test comprehensive verifier scenarios through the CLI interface ... ok
-test_verifier_valid_model (unit.test_verifier_valid_model.TestVerifierValidModel.test_verifier_valid_model)
-Run the test_verifier_valid_model test through CLI interface. ... ok
-
-----------------------------------------------------------------------
-Ran 189 tests in 7.066s
-
-OK
-
---------------------------------------------------
-                 unittest Summary                 
---------------------------------------------------
-Tests run: 189
-Failures: 0
-Errors: 0
-
-======================================================================
-                       🎯 Test Execution Summary                       
-======================================================================
-Duration: 7.20 seconds
-✅ All tests passed!
+============================= 189 passed in 12.28s =============================
