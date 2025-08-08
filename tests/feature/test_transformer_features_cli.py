@@ -46,9 +46,29 @@ class TestTransformerFeaturesCLI(UnifiedTestCase):
         with open(transformed_model_file, 'r') as f:
             model_data = json.load(f)
 
-        # Process assertions from YAML
+        # Process assertions from YAML (adjust file paths to absolute output_dir)
+        import copy
+        test_assertions = copy.deepcopy(test_data["assertions"])
+        if "files" in test_assertions:
+            if "files_exist" in test_assertions["files"]:
+                updated_files = []
+                for file_path in test_assertions["files"]["files_exist"]:
+                    if file_path.startswith("./output/"):
+                        updated_files.append(os.path.join(output_dir, file_path[9:]))
+                    else:
+                        updated_files.append(file_path)
+                test_assertions["files"]["files_exist"] = updated_files
+            if "json_files_valid" in test_assertions["files"]:
+                updated_json_files = []
+                for json_file in test_assertions["files"]["json_files_valid"]:
+                    if json_file.startswith("./output/"):
+                        updated_json_files.append(os.path.join(output_dir, json_file[9:]))
+                    else:
+                        updated_json_files.append(json_file)
+                test_assertions["files"]["json_files_valid"] = updated_json_files
+
         self.validators_processor.process_assertions(
-            test_data["assertions"], model_data, {}, result, self
+            test_assertions, model_data, {}, result, self
         )
 
 
