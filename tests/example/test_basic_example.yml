@@ -13,21 +13,43 @@ assertions:
   model:
     project_name: "example_project"
     # Spot-check existence of key symbols parsed from the example sources
-    functions_exist: ["calculate_sum", "create_point", "process_point", "triangle_area", "log_message", "set_log_callback", "add"]
-    structs_exist: ["point_t", "triangle_t"]
-    includes_exist: ["stdio.h", "stdlib.h", "string.h"]
+    functions_exist: ["calculate_sum", "create_point", "process_point", "triangle_area", "log_message", "set_log_callback", "add", "keep_this_function", "main"]
+    structs_exist: ["point_t", "triangle_t", "point3d_t"]
+    enums_exist: ["system_state_t", "log_level_t", "status_t"]
+    includes_exist: ["stdio.h", "stdlib.h", "string.h", "geometry.h", "logger.h", "math_utils.h"]
+    
+    # Transformation expectations: removals and renames from transformed.c/.h based on config
+    functions_not_exist: ["test_function_one", "test_function_two", "debug_log", "deprecated_print_info"]
+    structs_not_exist: ["legacy_node", "old_config"]
+    
+    # Detailed checks for preserved/renamed elements
+    struct_details:
+      point_t:
+        fields: ["x", "y", "label"]
+      triangle_t:
+        fields: ["vertices", "label"]
+    enum_details:
+      log_level_t:
+        values: ["LOG_DEBUG", "LOG_INFO", "LOG_WARN", "LOG_ERROR"]
   
   puml:
     syntax_valid: true
     # Ensure important elements appear across generated diagrams
-    contains_elements: ["calculate_sum", "create_point", "process_point", "triangle_area", "log_message", "set_log_callback", "add"]
+    contains_elements: ["calculate_sum", "create_point", "process_point", "triangle_area", "log_message", "set_log_callback", "add", "keep_this_function", "point_t", "triangle_t"]
+    not_contains_elements: ["legacy_node", "old_config"]
     files:
       sample.puml:
-        contains_elements: ["calculate_sum", "create_point", "process_point"]
+        contains_elements: ["calculate_sum", "create_point", "process_point", "point_t"]
+        not_contains_elements: ["filtered_struct_t", "filtered_function1", "filtered_global_var"]
+      sample2.puml:
+        contains_elements: ["filtered_struct_t"]
       geometry.puml:
-        contains_elements: ["create_triangle", "triangle_area"]
+        contains_elements: ["create_triangle", "triangle_area", "triangle_t"]
       logger.puml:
-        contains_elements: ["log_message", "set_log_callback"]
+        contains_elements: ["log_message", "set_log_callback", "log_level_t"]
+      transformed.puml:
+        contains_elements: ["keep_this_function", "main", "point3d_t", "status_t"]
+        not_contains_elements: ["test_function_one", "test_function_two", "legacy_node", "old_config"]
   
   files:
     output_dir_exists: "./artifacts/output_example"
@@ -36,9 +58,11 @@ assertions:
       - "./artifacts/output_example/sample.puml"
       - "./artifacts/output_example/geometry.puml"
       - "./artifacts/output_example/logger.puml"
+      - "./artifacts/output_example/transformed.puml"
     json_files_valid:
       - "./artifacts/output_example/model.json"
     utf8_files:
       - "./artifacts/output_example/sample.puml"
       - "./artifacts/output_example/geometry.puml"
       - "./artifacts/output_example/logger.puml"
+      - "./artifacts/output_example/transformed.puml"
