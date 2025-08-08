@@ -200,4 +200,4 @@ tests/unit/test_typedef_extraction.py::TestTypedefExtraction::test_union_typedef
 tests/unit/test_verifier_comprehensive.py::TestVerifierComprehensive::test_verifier_comprehensive PASSED [ 99%]
 tests/unit/test_verifier_valid_model.py::TestVerifierValidModel::test_verifier_valid_model PASSED [100%]
 
-============================= 189 passed in 12.40s =============================
+============================= 189 passed in 12.13s =============================
