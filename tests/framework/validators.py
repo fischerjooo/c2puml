@@ -41,7 +41,7 @@ class ModelValidator:
                 raise AssertionError(f"File data for {filename} is not a dictionary")
             
             # Check for required file sections
-            required_sections = ["functions", "structs", "enums", "typedefs", "globals", "macros", "includes"]
+            required_sections = ["functions", "structs", "enums", "aliases", "globals", "macros", "includes"]
             for section in required_sections:
                 if section not in file_data:
                     raise AssertionError(f"File {filename} missing required section: {section}")
