@@ -1,22 +1,12 @@
 Test Execution Summary
 =====================
-Generated: 2025-08-08 14:39:05
+Generated: 2025-08-08 14:45:16
 
 Test Results
 ------------
-Ran 189 tests in 7.066s
-Status: OK - All tests passed
+============================= 189 passed in 12.28s =============================
+Status: PASSED - All tests passed
 
-Unittest Summary
-----------------
---------------------------------------------------
-Tests run: 189
-Failures: 0
+Test Collection: collecting ... collected 189 items
 
-Detailed Test Count
--------------------
-Total Tests Run: 189
-Passed: 189
-Failed: 0
-
-Execution Time: 8 seconds
+Execution Time: 24 seconds
