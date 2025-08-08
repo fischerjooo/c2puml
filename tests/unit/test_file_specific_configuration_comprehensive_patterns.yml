@@ -1,0 +1,65 @@
+test:
+  name: "Include Filter Patterns"
+  id: "0114"
+  description: "Test include filter patterns validation through CLI"
+
+---
+source_files:
+  test.c: |
+    #include <stdio.h>
+    #include "local.h"
+    
+    int main() {
+        printf("Include filter patterns test\n");
+        return 0;
+    }
+  
+  local.h: |
+    #ifndef LOCAL_H
+    #define LOCAL_H
+    
+    #define LOCAL_CONSTANT 42
+    
+    #endif
+
+---
+config.json: |
+  {
+    "project_name": "include_filter_patterns",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+cli_execution:
+  steps:
+    - run_full_pipeline
+
+---
+assertions:
+  execution:
+    should_succeed: true
+    
+  model:
+    functions_exist: ["main"]
+    macros_exist: ["LOCAL_CONSTANT"]
+    
+    files:
+      test.c:
+        functions: ["main"]
+      local.h:
+        macros: ["LOCAL_CONSTANT"]
+    
+    element_counts:
+      functions: 1
+      macros: 2  # LOCAL_CONSTANT + LOCAL_H header guard
+      aliases: 0
+      
+  puml:
+    contains_elements: ["main"]
+    contains_lines:
+      - "- int main()"
+    
+    class_count: 2  # source + header
+    relationship_count: 1  # include relationship

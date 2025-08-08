@@ -1,0 +1,110 @@
+test:
+  name: "File Specific Include Filter"
+  id: "0112"
+  description: "Test that file-specific include filters work correctly in configuration and preserve includes as expected"
+
+---
+source_files:
+  sample.c: |
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+    #include "sample.h"
+    #include "math_utils.h"
+    #include "logger.h"
+    #include "geometry.h"
+    #include "filtered_header.h"
+    #include "first_level.h"
+    
+    int main() {
+        printf("Testing file-specific include filter\n");
+        return 0;
+    }
+  
+  sample.h: |
+    #ifndef SAMPLE_H
+    #define SAMPLE_H
+    
+    typedef struct {
+        int id;
+        char name[64];
+    } sample_t;
+    
+    void sample_function(void);
+    
+    #endif
+  
+  math_utils.h: |
+    #ifndef MATH_UTILS_H
+    #define MATH_UTILS_H
+    
+    int add(int a, int b);
+    int multiply(int a, int b);
+    
+    #endif
+
+---
+config.json: |
+  {
+    "project_name": "file_specific_include_filter",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "file_specific": {
+      "sample.c": {
+        "include_filter": [
+          "^stdio\\.h$",
+          "^stdlib\\.h$",
+          "^string\\.h$",
+          "^sample\\.h$",
+          "^math_utils\\.h$",
+          "^logger\\.h$",
+          "^geometry\\.h$",
+          "^config\\.h$"
+        ],
+        "include_depth": 3
+      }
+    }
+  }
+
+---
+cli_execution:
+  steps:
+    - run_full_pipeline
+
+---
+assertions:
+  execution:
+    should_succeed: true
+    
+  model:
+    structs_exist: ["sample_t"]
+    functions_exist: ["main", "sample_function", "add", "multiply"]
+    
+    # Validate that the file-specific configuration was processed and files are parsed correctly
+    files:
+      sample.c:
+        functions: ["main"]
+      sample.h:
+        structs:
+          sample_t:
+            fields: ["id", "name"]
+        functions: ["sample_function"]
+      math_utils.h:
+        functions: ["add", "multiply"]
+    
+    element_counts:
+      structs: 1
+      functions: 4
+      aliases: 0
+      
+  puml:
+    contains_elements: ["sample_t", "main", "sample_function"]
+    contains_lines:
+      - "- int main()"
+      - "+ void sample_function()"
+      - "+ int add(int a, int b)"
+      - "+ int multiply(int a, int b)"
+    
+    class_count: 4  # source + 2 headers + struct  
+    relationship_count: 3  # 2 include + 1 declaration relationships

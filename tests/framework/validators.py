@@ -115,8 +115,8 @@ class ModelValidator:
     def assert_model_typedef_exists(self, model: dict, typedef_name: str) -> None:
         """Assert that a typedef exists in the model"""
         for file_data in model.get("files", {}).values():
-            typedefs = file_data.get("typedefs", {})
-            if typedef_name in typedefs:
+            aliases = file_data.get("aliases", {})
+            if typedef_name in aliases:
                 return
         raise AssertionError(f"Typedef '{typedef_name}' not found in model")
     

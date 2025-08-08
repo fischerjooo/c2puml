@@ -20,7 +20,7 @@ class TestParserFunctionComprehensive(UnifiedTestCase):
     def test_parser_function_declarations(self):
         """Test parsing function declarations through the CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("parser_function_declarations")
+        result = self.run_test("parser_function_comprehensive_declarations")
         
         # Validate results
         self.validate_execution_success(result)
@@ -29,7 +29,7 @@ class TestParserFunctionComprehensive(UnifiedTestCase):
     def test_parser_function_definitions(self):
         """Test parsing function definitions through the CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("parser_function_definitions")
+        result = self.run_test("parser_function_comprehensive_definitions")
         
         # Validate results
         self.validate_execution_success(result)
@@ -38,7 +38,7 @@ class TestParserFunctionComprehensive(UnifiedTestCase):
     def test_parser_function_modifiers(self):
         """Test parsing functions with modifiers through the CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("parser_function_modifiers")
+        result = self.run_test("parser_function_comprehensive_modifiers")
         
         # Validate results
         self.validate_execution_success(result)

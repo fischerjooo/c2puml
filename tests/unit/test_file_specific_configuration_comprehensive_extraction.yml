@@ -1,0 +1,69 @@
+test:
+  name: "Configuration Extraction"
+  id: "0115"
+  description: "Test configuration extraction functionality through CLI"
+
+---
+source_files:
+  config_test.c: |
+    #include "config.h"
+    
+    int main() {
+        return CONFIG_VALUE;
+    }
+  
+  config.h: |
+    #ifndef CONFIG_H
+    #define CONFIG_H
+    
+    #define CONFIG_VALUE 100
+    
+    extern int global_config;
+    
+    #endif
+
+---
+config.json: |
+  {
+    "project_name": "configuration_extraction",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+cli_execution:
+  steps:
+    - run_full_pipeline
+
+---
+assertions:
+  execution:
+    should_succeed: true
+    
+  model:
+    functions_exist: ["main"]
+    macros_exist: ["CONFIG_VALUE"]
+    globals_exist: ["global_config"]
+    
+    files:
+      config_test.c:
+        functions: ["main"]
+      config.h:
+        macros: ["CONFIG_VALUE"]
+        globals: ["global_config"]
+    
+    element_counts:
+      functions: 1
+      macros: 2  # CONFIG_VALUE + CONFIG_H header guard
+      globals: 1
+      aliases: 0
+      
+  puml:
+    contains_elements: ["main", "global_config"]
+    contains_lines:
+      - "- int main()"
+      - "int global_config"
+    
+    class_count: 2  # source + header
+    relationship_count: 1  # include relationship
