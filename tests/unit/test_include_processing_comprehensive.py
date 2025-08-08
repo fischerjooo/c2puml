@@ -17,7 +17,7 @@ class TestIncludeProcessingComprehensive(UnifiedTestCase):
     def test_basic_include_processing(self):
         """Test basic include file processing through CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("include_processing_basic")
+        result = self.run_test("include_processing_comprehensive")
         
         # Validate results
         self.validate_execution_success(result)

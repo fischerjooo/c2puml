@@ -20,7 +20,7 @@ class TestTokenizerComprehensive(UnifiedTestCase):
     def test_tokenizer_complex_parsing(self):
         """Test tokenizer with complex C constructs that stress tokenization"""
         # Run the complete test using high-level methods
-        result = self.run_test("tokenizer_complex_parsing")
+        result = self.run_test("tokenizer_comprehensive_parsing")
         
         # Validate results
         self.validate_execution_success(result)
@@ -29,7 +29,7 @@ class TestTokenizerComprehensive(UnifiedTestCase):
     def test_tokenizer_edge_cases(self):
         """Test tokenizer with edge cases like comments, strings, complex expressions"""
         # Run the complete test using high-level methods
-        result = self.run_test("tokenizer_edge_cases")
+        result = self.run_test("tokenizer_comprehensive_edge_cases")
         
         # Validate results
         self.validate_execution_success(result)
@@ -38,7 +38,7 @@ class TestTokenizerComprehensive(UnifiedTestCase):
     def test_tokenizer_preprocessor_handling(self):
         """Test tokenizer with complex preprocessor constructs"""
         # Run the complete test using high-level methods
-        result = self.run_test("tokenizer_preprocessor_handling")
+        result = self.run_test("tokenizer_comprehensive_preprocessor")
         
         # Validate results
         self.validate_execution_success(result)

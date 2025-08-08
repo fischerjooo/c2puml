@@ -17,7 +17,7 @@ class TestTokenizerValidationComprehensive(UnifiedTestCase):
     def test_complex_nested_union_tokenization(self):
         """Test tokenization of complex nested unions through CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("tokenizer_complex_nested_union")
+        result = self.run_test("tokenizer_validation_comprehensive")
         
         # Validate results
         self.validate_execution_success(result)

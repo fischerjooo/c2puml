@@ -20,19 +20,19 @@ class TestParserNestedStructuresComprehensive(UnifiedTestCase):
 
     def test_nested_union_preservation(self):
         """Test that nested unions maintain their structure through CLI interface."""
-        result = self.run_test("nested_union_preservation")
+        result = self.run_test("parser_nested_structures_comprehensive_union")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_nested_struct_preservation(self):
         """Test that nested structs maintain their structure through CLI interface."""
-        result = self.run_test("nested_struct_preservation")
+        result = self.run_test("parser_nested_structures_comprehensive_struct")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_nested_structures_in_generated_puml(self):
         """Test that nested structures appear correctly in generated PlantUML through CLI interface."""
-        result = self.run_test("nested_structures_in_generated_puml")
+        result = self.run_test("parser_nested_structures_comprehensive_puml")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

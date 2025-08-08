@@ -20,7 +20,7 @@ class TestParserEnumComprehensive(UnifiedTestCase):
     def test_parser_enum_simple(self):
         """Test parsing simple enum definitions through the CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("parser_enum_simple")
+        result = self.run_test("parser_enum_comprehensive_simple")
         
         # Validate results
         self.validate_execution_success(result)
@@ -29,7 +29,7 @@ class TestParserEnumComprehensive(UnifiedTestCase):
     def test_parser_enum_typedef(self):
         """Test parsing typedef enum definitions through the CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("parser_enum_typedef")
+        result = self.run_test("parser_enum_comprehensive_typedef")
         
         # Validate results
         self.validate_execution_success(result)

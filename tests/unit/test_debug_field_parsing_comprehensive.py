@@ -17,19 +17,19 @@ class TestDebugFieldParsingComprehensive(UnifiedTestCase):
 
     def test_nested_union_field_parsing(self):
         """Test nested union field parsing through CLI interface."""
-        result = self.run_test("debug_nested_union_field_parsing")
+        result = self.run_test("debug_field_parsing_comprehensive_union")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_complex_struct_field_processing(self):
         """Test complex struct field processing through CLI interface."""
-        result = self.run_test("debug_complex_struct_field_processing") 
+        result = self.run_test("debug_field_parsing_comprehensive_struct") 
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_nested_anonymous_structure_fields(self):
         """Test nested anonymous structure field parsing through CLI interface."""
-        result = self.run_test("debug_nested_anonymous_structure_fields")
+        result = self.run_test("debug_field_parsing_comprehensive_anonymous")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

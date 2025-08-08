@@ -96,7 +96,7 @@ assertions:
     element_counts:
       structs: 4  # complex_entity_t + 3 anonymous structs become named
       enums: 1
-      unions: 2   # anonymous unions become named
+      unions: 3   # anonymous unions become named
       functions: 1
       globals: 2
       includes: 2

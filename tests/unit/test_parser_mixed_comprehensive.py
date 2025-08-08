@@ -20,7 +20,7 @@ class TestParserMixedComprehensive(UnifiedTestCase):
     def test_parser_mixed_content(self):
         """Test parsing a file with mixed C language features through the CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("parser_mixed_content")
+        result = self.run_test("parser_mixed_comprehensive")
         
         # Validate results
         self.validate_execution_success(result)

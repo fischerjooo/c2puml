@@ -17,7 +17,7 @@ class TestGeneratorIncludesComprehensive(UnifiedTestCase):
     def test_duplicate_include_handling(self):
         """Test handling of duplicate include relationships through CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("generator_duplicate_include_handling")
+        result = self.run_test("generator_includes_comprehensive")
         
         # Validate results
         self.validate_execution_success(result)

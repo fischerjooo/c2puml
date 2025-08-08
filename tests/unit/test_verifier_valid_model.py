@@ -17,7 +17,7 @@ class TestVerifierValidModel(UnifiedTestCase):
 
     def test_verifier_valid_model(self):
         """Run the test_verifier_valid_model test through CLI interface."""
-        result = self.run_test("test_verifier_valid_model")
+        result = self.run_test("verifier_valid_model")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

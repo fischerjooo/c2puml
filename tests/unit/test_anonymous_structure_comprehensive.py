@@ -17,19 +17,19 @@ class TestAnonymousStructureComprehensive(UnifiedTestCase):
 
     def test_anonymous_struct_in_typedef(self):
         """Test that anonymous structs within typedefs are correctly processed through CLI interface."""
-        result = self.run_test("anonymous_struct_in_typedef")
+        result = self.run_test("anonymous_structure_comprehensive_typedef")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_nested_anonymous_structures(self):
         """Test that deeply nested anonymous structures are correctly processed through CLI interface."""
-        result = self.run_test("nested_anonymous_structures")
+        result = self.run_test("anonymous_structure_comprehensive_nested")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_anonymous_unions_in_structs(self):
         """Test anonymous unions within structs through CLI interface."""
-        result = self.run_test("anonymous_unions_in_structs")
+        result = self.run_test("anonymous_structure_comprehensive_unions")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

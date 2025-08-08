@@ -17,7 +17,7 @@ class TestDebugParsingComprehensive(UnifiedTestCase):
     def test_complex_union_parsing(self):
         """Test parsing complex union with nested structures through CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("debug_complex_union_parsing")
+        result = self.run_test("debug_parsing_comprehensive_union")
         
         # Validate results
         self.validate_execution_success(result)
@@ -26,7 +26,7 @@ class TestDebugParsingComprehensive(UnifiedTestCase):
     def test_nested_struct_parsing(self):
         """Test parsing nested struct definitions through CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("debug_nested_struct_parsing")
+        result = self.run_test("debug_parsing_comprehensive_struct")
         
         # Validate results
         self.validate_execution_success(result)
@@ -35,7 +35,7 @@ class TestDebugParsingComprehensive(UnifiedTestCase):
     def test_anonymous_structure_parsing(self):
         """Test parsing anonymous structures in typedefs through CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("debug_anonymous_structure_parsing")
+        result = self.run_test("debug_parsing_comprehensive_anonymous")
         
         # Validate results
         self.validate_execution_success(result)

@@ -17,7 +17,7 @@ class TestGeneratorBasicPlantuml(UnifiedTestCase):
 
     def test_generator_basic_plantuml(self):
         """Run the test_generator_basic_plantuml test through CLI interface."""
-        result = self.run_test("test_generator_basic_plantuml")
+        result = self.run_test("generator_basic_plantuml")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

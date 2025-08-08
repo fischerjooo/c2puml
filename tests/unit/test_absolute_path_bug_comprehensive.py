@@ -19,25 +19,25 @@ class TestAbsolutePathBugComprehensive(UnifiedTestCase):
 
     def test_relative_path_handling_in_include_tree(self):
         """Test that relative paths are handled correctly in include tree building through CLI interface."""
-        result = self.run_test("relative_path_handling_in_include_tree")
+        result = self.run_test("absolute_path_bug_comprehensive_relative_path")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_subdirectory_includes_path_resolution(self):
         """Test subdirectory includes path resolution through CLI interface."""
-        result = self.run_test("subdirectory_includes_path_resolution")
+        result = self.run_test("absolute_path_bug_comprehensive_subdirectory")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_mixed_path_styles_handling(self):
         """Test mixed path styles handling through CLI interface."""
-        result = self.run_test("mixed_path_styles_handling")
+        result = self.run_test("absolute_path_bug_comprehensive_mixed_paths")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_absolute_vs_relative_path_consistency(self):
         """Test absolute vs relative path consistency through CLI interface."""
-        result = self.run_test("absolute_vs_relative_path_consistency")
+        result = self.run_test("absolute_path_bug_comprehensive_consistency")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
