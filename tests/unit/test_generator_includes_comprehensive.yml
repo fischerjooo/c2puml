@@ -1,0 +1,101 @@
+# Test metadata
+test:
+  name: "Generator Duplicate Include Handling"
+  description: "Test handling of duplicate include relationships in PlantUML generation"
+  category: "unit"
+  id: "0098"
+
+---
+# Source files
+source_files:
+  main.c: |
+    #include "utils.h"
+    #include "config.h"  // Direct include to config.h
+    
+    int main() {
+        int result = add_numbers(5, 3);
+        int config_val = get_config_value();
+        return result + config_val;
+    }
+  
+  utils.h: |
+    #ifndef UTILS_H
+    #define UTILS_H
+    
+    #include "config.h"  // Indirect include to config.h
+    
+    int add_numbers(int a, int b);
+    int process_with_config(int value);
+    
+    #endif // UTILS_H
+  
+  config.h: |
+    #ifndef CONFIG_H
+    #define CONFIG_H
+    
+    #define DEFAULT_VALUE 42
+    #define MAX_ITEMS 100
+    
+    extern int global_config;
+    
+    int get_config_value(void);
+    
+    #endif // CONFIG_H
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "generator_duplicate_include_handling",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 3
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "main.puml"]
+  
+  model:
+    validate_structure: true
+    project_name: "generator_duplicate_include_handling"
+    expected_files: ["main.c", "utils.h", "config.h"]
+    
+    # Validate parsing results
+    functions_exist: ["main", "add_numbers", "process_with_config", "get_config_value"]
+    macros_exist: ["DEFAULT_VALUE", "MAX_ITEMS", "CONFIG_H", "UTILS_H"]
+    globals_exist: ["global_config"]
+    
+    # Validate file-specific content
+    files:
+      main.c:
+        functions: ["main"]
+      utils.h:
+        functions: ["add_numbers", "process_with_config"]
+      config.h:
+        functions: ["get_config_value"]
+        macros: ["DEFAULT_VALUE", "MAX_ITEMS"]
+        globals: ["global_config"]
+    
+    # Validate element counts
+    element_counts:
+      functions: 4
+      includes: 3  # main.c: 2, utils.h: 1, config.h: 0
+      macros: 4    # DEFAULT_VALUE, MAX_ITEMS, UTILS_H, CONFIG_H
+      globals: 1
+      aliases: 0
+  
+  puml:
+    syntax_valid: true
+    file_count: 1
+    
+    files:
+      main.puml:
+        contains_elements: ["main", "add_numbers", "get_config_value", "DEFAULT_VALUE"]
+        contains_lines: ["int main()", "+ int add_numbers(int a, int b)", "+ int get_config_value()"]
+        class_count: 3  # source + 2 headers
+        relationship_count: 2  # include relationships (main->utils, main->config)

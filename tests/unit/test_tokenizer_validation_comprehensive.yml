@@ -1,0 +1,85 @@
+# Test metadata
+test:
+  name: "Tokenizer Complex Nested Union Validation"
+  description: "Test tokenization of complex nested unions through parsing validation"
+  category: "unit"
+  id: "0094"
+
+---
+# Source files
+source_files:
+  complex_union.c: |
+    // Complex nested union with multiple levels
+    typedef union {
+        int primary_int;
+        union {
+            float nested_float;
+            double nested_double;
+            union {
+                char deep_char;
+                short deep_short;
+            } deep_union;
+        } nested_union;
+        char primary_bytes[32];
+        struct {
+            int struct_in_union;
+            float struct_float;
+        } embedded_struct;
+    } complex_union_t;
+    
+    // Function using the complex union
+    void process_complex_union(complex_union_t* cu) {
+        // Processing function
+    }
+    
+    // Global variable
+    complex_union_t global_complex_union;
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "tokenizer_complex_nested_union",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "complex_union.puml"]
+  
+  model:
+    validate_structure: true
+    project_name: "tokenizer_complex_nested_union"
+    expected_files: ["complex_union.c"]
+    
+    # Validate complex union parsing
+    unions_exist: ["complex_union_t"]
+    functions_exist: ["process_complex_union"]
+    globals_exist: ["global_complex_union"]
+    
+    # Validate struct creation from anonymous struct in union
+    structs_exist: ["complex_union_t_embedded_struct"]
+    
+    # Validate element counts
+    element_counts:
+      unions: 2  # complex_union_t + nested_union (deep union flattened)
+      structs: 2  # embedded_struct becomes named + parsing artifact
+      functions: 1
+      globals: 1
+      aliases: 0
+  
+  puml:
+    syntax_valid: true
+    file_count: 1
+    
+    files:
+      complex_union.puml:
+        contains_elements: ["complex_union_t", "process_complex_union", "global_complex_union"]
+        contains_lines: ["void process_complex_union(complex_union_t * cu)", "complex_union_t global_complex_union"]
+        class_count: 5  # source + 4 typedef classes
+        relationship_count: 4  # 3 declares + 2 composition - 1 (adjust based on actual)

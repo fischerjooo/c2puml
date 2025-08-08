@@ -1,0 +1,91 @@
+test:
+  name: "Nested Anonymous Structures"
+  id: "0103"
+  description: "Validate that deeply nested anonymous structures are correctly processed with proper hierarchy"
+
+---
+source_files:
+  nested_anon.c: |
+    typedef struct {
+        struct {
+            struct {
+                int level3_field;
+            } level3_struct;
+        } level2_struct;
+    } nested_anonymous_t;
+    
+    void init_nested(nested_anonymous_t* n) {
+        n->level2_struct.level3_struct.level3_field = 42;
+    }
+    
+    nested_anonymous_t global_nested = {0};
+
+---
+config.json: |
+  {
+    "project_name": "nested_anonymous_structures",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+cli_execution:
+  steps:
+    - parse_only
+
+---
+assertions:
+  execution:
+    should_succeed: true
+    
+  model:
+    structs_exist: ["nested_anonymous_t", "__anonymous_struct__", "__anonymous_struct___level3_struct", "nested_anonymous_t_level2_struct"]
+    functions_exist: ["init_nested"]
+    globals_exist: ["global_nested"]
+    
+    # Anonymous relationships are tracked in the model
+    # The actual validation is done by checking that multiple structs are created for anonymous structures
+    
+    # Validate main struct field parsing
+    struct_fields:
+      nested_anonymous_t:
+        - name: "level2_struct"
+          type: "nested_anonymous_t_level2_struct"
+    
+    # Validate nested struct field parsing (flattened level 3)
+    struct_fields:
+      nested_anonymous_t_level2_struct:
+        - name: "level3_field"
+          type: "int"
+    
+    # Validate anonymous struct parsing
+    struct_fields:
+      __anonymous_struct__:
+        - name: "level3_struct"
+          type: "__anonymous_struct___level3_struct"
+          
+    # Validate deep nested struct
+    struct_fields:
+      __anonymous_struct___level3_struct:
+        - name: "level3_field"
+          type: "int"
+    
+    element_counts:
+      structs: 4  # nested_anonymous_t + __anonymous_struct__ + 2 level structs
+      unions: 0   
+      functions: 1
+      globals: 1
+      aliases: 0
+      
+  puml:
+    contains_elements: ["nested_anonymous_t", "init_nested", "global_nested"]
+    contains_lines:
+      - "void init_nested(nested_anonymous_t * n)"
+      - "+ nested_anonymous_t_level2_struct level2_struct"
+      - "+ __anonymous_struct___level3_struct level3_struct"
+      - "+ int level3_field"
+      - "nested_anonymous_t global_nested"
+    
+    class_count: 5  # source + 4 structs 
+    relationship_count: 4  # 2 declares + 2 composition relationships

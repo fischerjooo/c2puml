@@ -1132,6 +1132,152 @@ if __name__ == "__main__":
 - **Integration Tests**: test_end_to_end_pipeline.yml, test_error_handling.yml, etc.
 - **Example Tests**: test_basic_example.yml, test_advanced_example.yml, etc.
 
+## File Pairing Requirements and Naming Conventions
+
+### **CRITICAL REQUIREMENT: 1:1 Python-YAML Pairing**
+
+Every test file must follow strict pairing requirements to ensure the framework works correctly:
+
+**Rule**: Every Python test file (`.py`) MUST have a corresponding YAML file (`.yml`) with the same base name.
+
+### **Single YAML per Python File**
+
+For tests that use only one YAML file:
+
+```
+test_simple_c_file_parsing.py    ←→    test_simple_c_file_parsing.yml
+test_complex_struct_parsing.py   ←→    test_complex_struct_parsing.yml
+test_enum_validation.py          ←→    test_enum_validation.yml
+```
+
+**Implementation**:
+```python
+class TestSimpleCFileParsing(UnifiedTestCase):
+    def test_simple_c_file_parsing(self):
+        # Framework automatically finds test_simple_c_file_parsing.yml
+        result = self.run_test("simple_c_file_parsing")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+```
+
+### **Multiple YAMLs per Python File**
+
+For comprehensive tests that use multiple YAML files, use **suffix-based naming**:
+
+```
+test_absolute_path_bug_comprehensive.py  ←→  test_absolute_path_bug_comprehensive_relative_path.yml
+                                         ←→  test_absolute_path_bug_comprehensive_subdirectory.yml
+                                         ←→  test_absolute_path_bug_comprehensive_mixed_paths.yml
+                                         ←→  test_absolute_path_bug_comprehensive_consistency.yml
+
+test_parser_function_comprehensive.py    ←→  test_parser_function_comprehensive_declarations.yml
+                                         ←→  test_parser_function_comprehensive_definitions.yml
+                                         ←→  test_parser_function_comprehensive_modifiers.yml
+```
+
+**Implementation**:
+```python
+class TestAbsolutePathBugComprehensive(UnifiedTestCase):
+    def test_relative_path_handling_in_include_tree(self):
+        # Framework finds test_absolute_path_bug_comprehensive_relative_path.yml
+        result = self.run_test("absolute_path_bug_comprehensive_relative_path")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+    
+    def test_subdirectory_includes_path_resolution(self):
+        # Framework finds test_absolute_path_bug_comprehensive_subdirectory.yml
+        result = self.run_test("absolute_path_bug_comprehensive_subdirectory")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+    
+    def test_mixed_path_styles_handling(self):
+        # Framework finds test_absolute_path_bug_comprehensive_mixed_paths.yml
+        result = self.run_test("absolute_path_bug_comprehensive_mixed_paths")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+    
+    def test_absolute_vs_relative_path_consistency(self):
+        # Framework finds test_absolute_path_bug_comprehensive_consistency.yml
+        result = self.run_test("absolute_path_bug_comprehensive_consistency")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+```
+
+### **Naming Convention Rules**
+
+1. **Base Name**: Python file name without `.py` extension
+2. **YAML Suffix**: Descriptive suffix that explains the specific test case
+3. **Underscores**: Use underscores to separate words in suffixes
+4. **Descriptive**: Suffix should clearly indicate what aspect is being tested
+
+### **Common Suffix Patterns**
+
+| **Test Category** | **Suffix Examples** | **Purpose** |
+|------------------|-------------------|-------------|
+| **Path Handling** | `_relative_path`, `_absolute_path`, `_mixed_paths`, `_consistency` | Different path resolution scenarios |
+| **Parser Features** | `_declarations`, `_definitions`, `_modifiers`, `_simple`, `_typedef` | Different parsing aspects |
+| **Field Processing** | `_union`, `_struct`, `_anonymous`, `_nested` | Different field types |
+| **Configuration** | `_filter`, `_depth`, `_patterns`, `_extraction` | Different config options |
+| **Transformations** | `_operations`, `_filtering`, `_includes` | Different transformation types |
+| **Edge Cases** | `_edge_cases`, `_preprocessor`, `_complex` | Special scenarios |
+
+### **Framework Data Loader Behavior**
+
+The `TestDataLoader` searches for YAML files using this pattern:
+```python
+# For run_test("simple_c_file_parsing")
+# Searches: tests/{category}/test_simple_c_file_parsing.yml
+
+# For run_test("absolute_path_bug_comprehensive_relative_path") 
+# Searches: tests/{category}/test_absolute_path_bug_comprehensive_relative_path.yml
+```
+
+### **Benefits of This Approach**
+
+1. **Clear Organization**: Related test cases are grouped under one Python file
+2. **Maintainability**: Easy to find and modify related test scenarios
+3. **Scalability**: Can add new test cases by adding new YAML files with suffixes
+4. **Framework Compatibility**: Works seamlessly with the unified testing framework
+5. **Logical Grouping**: Tests that belong together conceptually are kept together
+6. **Reduced Boilerplate**: Single Python class can handle multiple related scenarios
+
+### **Migration Example**
+
+**Before** (Individual files with poor pairing):
+```
+test_relative_path_handling.py           test_relative_path_handling.yml
+test_subdirectory_resolution.py          test_subdirectory_resolution.yml  
+test_mixed_path_styles.py                test_mixed_path_styles.yml
+test_path_consistency.py                 test_path_consistency.yml
+```
+
+**After** (Comprehensive file with proper pairing):
+```
+test_absolute_path_bug_comprehensive.py  test_absolute_path_bug_comprehensive_relative_path.yml
+                                         test_absolute_path_bug_comprehensive_subdirectory.yml
+                                         test_absolute_path_bug_comprehensive_mixed_paths.yml
+                                         test_absolute_path_bug_comprehensive_consistency.yml
+```
+
+### **Validation Tools**
+
+To ensure proper pairing, you can use analysis scripts to detect orphan files:
+
+```python
+# Find orphan YAML files (YAML without corresponding Python)
+# Find orphan Python files (Python without corresponding YAML)
+# Validate naming convention compliance
+```
+
+### **Best Practices**
+
+1. **Always maintain 1:1 base name matching** between Python and YAML files
+2. **Use descriptive suffixes** that clearly indicate the test scenario
+3. **Group related tests** under comprehensive Python files when logical
+4. **Keep suffixes concise** but meaningful (prefer `_union` over `_union_field_parsing_test`)
+5. **Follow existing patterns** in the codebase for consistency
+6. **Test the pairing** after creating new files to ensure framework compatibility
+
 ## Migration Guidelines
 
 ### Converting Existing Tests

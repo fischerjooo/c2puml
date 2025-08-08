@@ -29,7 +29,7 @@ class TestTransformerComprehensive(UnifiedTestCase):
     def test_transformer_file_filtering(self):
         """Test transformer file filtering capabilities through CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("transformer_file_filtering")
+        result = self.run_test("transformer_comprehensive_filtering")
         
         # Validate results
         self.validate_execution_success(result)
@@ -38,7 +38,7 @@ class TestTransformerComprehensive(UnifiedTestCase):
     def test_transformer_include_processing(self):
         """Test transformer include processing and depth control through CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("transformer_include_processing")
+        result = self.run_test("transformer_comprehensive_includes")
         
         # Validate results
         self.validate_execution_success(result)

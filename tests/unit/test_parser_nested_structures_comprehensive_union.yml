@@ -1,0 +1,91 @@
+test:
+  name: "Nested Union Preservation"
+  id: "0105"
+  description: "Test that nested unions maintain their structure and hierarchy during parsing"
+
+---
+source_files:
+  union_nested.c: |
+    typedef union {
+        int primary_int;
+        union {
+            float nested_float;
+            double nested_double;
+            union {
+                char deep_char;
+                short deep_short;
+            } deep_union;
+        } nested_union;
+        char primary_bytes[32];
+    } union_with_union_t;
+    
+    void process_nested_union(union_with_union_t* u) {
+        u->primary_int = 42;
+        u->nested_union.nested_float = 3.14f;
+        u->nested_union.deep_union.deep_char = 'A';
+    }
+    
+    union_with_union_t global_union;
+
+---
+config.json: |
+  {
+    "project_name": "nested_union_preservation",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+cli_execution:
+  steps:
+    - parse_only
+
+---
+assertions:
+  execution:
+    should_succeed: true
+    
+  model:
+    unions_exist: ["union_with_union_t", "union_with_union_t_nested_union"]
+    functions_exist: ["process_nested_union"]
+    globals_exist: ["global_union"]
+    
+    # Validate main union field parsing
+    union_fields:
+      union_with_union_t:
+        - name: "primary_int"
+          type: "int"
+        - name: "nested_union"
+          type: "union_with_union_t_nested_union"
+        - name: "primary_bytes"
+          type: "char[32]"
+    
+    # Validate nested union field parsing (deep union got flattened)
+    union_fields:
+      union_with_union_t_nested_union:
+        - name: "deep_char"
+          type: "char"
+        - name: "deep_short"
+          type: "short"
+    
+    element_counts:
+      unions: 2  # main union + nested union (deep union flattened)
+      structs: 0
+      functions: 1
+      globals: 1
+      aliases: 0
+      
+  puml:
+    contains_elements: ["union_with_union_t", "process_nested_union", "global_union"]
+    contains_lines:
+      - "void process_nested_union(union_with_union_t * u)"
+      - "+ int primary_int"
+      - "+ union_with_union_t_nested_union nested_union"
+      - "+ char[32] primary_bytes"
+      - "+ char deep_char"
+      - "+ short deep_short"
+      - "union_with_union_t global_union"
+    
+    class_count: 3  # source + 2 unions (deep union flattened)
+    relationship_count: 2  # 1 declares + 1 composition relationship

@@ -1,0 +1,88 @@
+test:
+  name: "Nested Structures in Generated PlantUML"
+  id: "0107"
+  description: "Test that nested structures appear correctly in generated PlantUML with proper relationships"
+
+---
+source_files:
+  puml_nested.c: |
+    typedef union {
+        int primary_int;
+        union {
+            float nested_float;
+            double nested_double;
+        } nested_union;
+        char primary_bytes[32];
+    } test_union_t;
+    
+    void validate_union(test_union_t* tu) {
+        tu->primary_int = 100;
+        tu->nested_union.nested_float = 2.718f;
+    }
+    
+    test_union_t global_test_union;
+
+---
+config.json: |
+  {
+    "project_name": "nested_structures_in_generated_puml",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+cli_execution:
+  steps:
+    - run_full_pipeline
+
+---
+assertions:
+  execution:
+    should_succeed: true
+    
+  model:
+    unions_exist: ["test_union_t", "test_union_t_nested_union"]
+    functions_exist: ["validate_union"]
+    globals_exist: ["global_test_union"]
+    
+    # Validate main union field parsing
+    union_fields:
+      test_union_t:
+        - name: "primary_int"
+          type: "int"
+        - name: "nested_union"
+          type: "test_union_t_nested_union"
+        - name: "primary_bytes"
+          type: "char[32]"
+    
+    # Validate nested union field parsing
+    union_fields:
+      test_union_t_nested_union:
+        - name: "nested_float"
+          type: "float"
+        - name: "nested_double"
+          type: "double"
+    
+    element_counts:
+      unions: 2  # main union + nested union
+      structs: 0
+      functions: 1
+      globals: 1
+      aliases: 0
+      
+  puml:
+    contains_elements: ["test_union_t", "validate_union", "global_test_union"]
+    contains_lines:
+      - "void validate_union(test_union_t * tu)"
+      - "+ int primary_int"
+      - "+ test_union_t_nested_union nested_union"
+      - "+ char[32] primary_bytes"
+      - "+ float nested_float"
+      - "+ double nested_double"
+      - "test_union_t global_test_union"
+    
+    # Validate PlantUML structure and hierarchy preservation - using basic supported assertions
+    
+    class_count: 3  # source + 2 nested unions
+    relationship_count: 2  # 1 declares + 1 composition relationship
