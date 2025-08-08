@@ -140,13 +140,17 @@ class ModelValidator:
     
     def assert_model_includes_exist(self, model: dict, expected_includes: List[str]) -> None:
         """Assert that specific includes exist in the model"""
-        for file_data in model.get("files", {}).values():
+        all_includes = []
+        for filename, file_data in model.get("files", {}).items():
             includes = file_data.get("includes", [])
-            for expected_include in expected_includes:
-                if expected_include not in includes:
-                    raise AssertionError(f"Include '{expected_include}' not found in model")
-            return
-        raise AssertionError("No files found in model")
+            all_includes.extend(includes)
+        
+        for expected_include in expected_includes:
+            if expected_include not in all_includes:
+                raise AssertionError(f"Include '{expected_include}' not found in model")
+        
+        if not model.get("files", {}):
+            raise AssertionError("No files found in model")
     
     def assert_model_include_exists(self, model: dict, include_name: str) -> None:
         """Assert that a specific include exists in the model"""
@@ -186,23 +190,31 @@ class ModelValidator:
             total_count = len(model.get("files", {}))
         else:
             total_count = 0
-            for file_data in model.get("files", {}).values():
+            file_details = {}
+            for filename, file_data in model.get("files", {}).items():
+                file_count = 0
                 if element_type == "functions":
-                    total_count += len(file_data.get("functions", []))
+                    file_count = len(file_data.get("functions", []))
                 elif element_type == "structs":
-                    total_count += len(file_data.get("structs", {}))
+                    file_count = len(file_data.get("structs", {}))
                 elif element_type == "enums":
-                    total_count += len(file_data.get("enums", {}))
+                    file_count = len(file_data.get("enums", {}))
                 elif element_type == "globals":
-                    total_count += len(file_data.get("globals", []))
+                    file_count = len(file_data.get("globals", []))
                 elif element_type == "includes":
-                    total_count += len(file_data.get("includes", []))
+                    file_count = len(file_data.get("includes", []))
                 elif element_type == "macros":
-                    total_count += len(file_data.get("macros", []))
+                    file_count = len(file_data.get("macros", []))
                 elif element_type == "unions":
-                    total_count += len(file_data.get("unions", {}))
+                    file_count = len(file_data.get("unions", {}))
                 elif element_type == "aliases":
-                    total_count += len(file_data.get("aliases", {}))
+                    file_count = len(file_data.get("aliases", {}))
+                elif element_type == "typedefs":
+                    file_count = len(file_data.get("typedefs", {}))
+                
+                total_count += file_count
+                if file_count > 0:
+                    file_details[filename] = file_count
         
         if total_count != expected_count:
             raise AssertionError(f"Expected {expected_count} {element_type}, got {total_count}")

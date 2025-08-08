@@ -1,0 +1,228 @@
+# Test metadata
+test:
+  name: "Complete System Integration"
+  description: "Test complete system integration with a realistic multi-module game project structure"
+  category: "integration"
+  id: "2005"
+
+---
+# Source files
+source_files:
+  src/main.c: |
+    #include "game/game.h"
+    #include "platform/platform.h"
+
+    int main(int argc, char** argv) {
+        Platform platform;
+        Game game;
+
+        if (!platform_init(&platform)) {
+            return -1;
+        }
+
+        if (!game_init(&game, &platform)) {
+            platform_shutdown(&platform);
+            return -1;
+        }
+
+        while (platform_is_running(&platform)) {
+            platform_update(&platform);
+            game_update(&game, platform_get_delta_time(&platform));
+            game_render(&game);
+        }
+
+        game_shutdown(&game);
+        platform_shutdown(&platform);
+
+        return 0;
+    }
+
+  src/game/game.h: |
+    #ifndef GAME_H
+    #define GAME_H
+
+    #include "../platform/platform.h"
+    #include "entities/player.h"
+    #include "world/level.h"
+    #include "rendering/renderer.h"
+
+    typedef struct {
+        Platform* platform;
+        Player player;
+        Level current_level;
+        Renderer renderer;
+        double total_time;
+    } Game;
+
+    int game_init(Game* game, Platform* platform);
+    void game_update(Game* game, double delta_time);
+    void game_render(Game* game);
+    void game_shutdown(Game* game);
+
+    #endif
+
+  src/game/entities/player.h: |
+    #ifndef PLAYER_H
+    #define PLAYER_H
+
+    #include "../../math/vector.h"
+    #include "../../physics/rigidbody.h"
+
+    typedef struct {
+        Vector3 position;
+        Vector3 velocity;
+        RigidBody physics;
+        float health;
+        int score;
+    } Player;
+
+    #endif
+
+  src/game/world/level.h: |
+    #ifndef LEVEL_H
+    #define LEVEL_H
+
+    #include "../entities/player.h"
+    #include "../../graphics/mesh.h"
+
+    typedef struct {
+        Mesh* geometry;
+        Player* players;
+        int player_count;
+        char* name;
+    } Level;
+
+    #endif
+
+  src/game/rendering/renderer.h: |
+    #ifndef RENDERER_H
+    #define RENDERER_H
+
+    #include "../../graphics/context.h"
+    #include "../../graphics/shader.h"
+
+    typedef struct {
+        GraphicsContext context;
+        Shader* active_shader;
+        int frame_count;
+    } Renderer;
+
+    #endif
+
+  src/platform/platform.h: |
+    #ifndef PLATFORM_H
+    #define PLATFORM_H
+
+    typedef struct {
+        void* window_handle;
+        int window_width;
+        int window_height;
+        double last_frame_time;
+    } Platform;
+
+    int platform_init(Platform* platform);
+    void platform_update(Platform* platform);
+    int platform_is_running(Platform* platform);
+    double platform_get_delta_time(Platform* platform);
+    void platform_shutdown(Platform* platform);
+
+    #endif
+
+  src/math/vector.h: |
+    #ifndef VECTOR_H
+    #define VECTOR_H
+
+    typedef struct {
+        float x, y, z;
+    } Vector3;
+
+    Vector3 vector_add(Vector3 a, Vector3 b);
+    Vector3 vector_scale(Vector3 v, float scalar);
+
+    #endif
+
+  src/physics/rigidbody.h: |
+    #ifndef RIGIDBODY_H
+    #define RIGIDBODY_H
+
+    #include "../math/vector.h"
+
+    typedef struct {
+        Vector3 position;
+        Vector3 velocity;
+        Vector3 acceleration;
+        float mass;
+    } RigidBody;
+
+    #endif
+
+  src/graphics/context.h: |
+    #ifndef CONTEXT_H
+    #define CONTEXT_H
+
+    typedef struct {
+        void* api_context;
+        int api_version;
+    } GraphicsContext;
+
+    #endif
+
+  src/graphics/shader.h: |
+    #ifndef SHADER_H
+    #define SHADER_H
+
+    typedef struct {
+        unsigned int program_id;
+        char* source_code;
+    } Shader;
+
+    #endif
+
+  src/graphics/mesh.h: |
+    #ifndef MESH_H
+    #define MESH_H
+
+    typedef struct {
+        float* vertices;
+        unsigned int* indices;
+        int vertex_count;
+        int index_count;
+    } Mesh;
+
+    #endif
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "complete_system_integration_test",
+    "source_folders": ["src"],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 5,
+    "file_filters": {
+      "include": ["*.c", "*.h"],
+      "exclude": []
+    }
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "main.puml"]
+    max_execution_time: 60.0
+  
+  model:
+    validate_structure: true
+    expected_files: ["main.c", "game.h", "player.h", "level.h", "renderer.h", "platform.h", "vector.h", "rigidbody.h", "context.h", "shader.h", "mesh.h"]
+    
+    # Verify core element counts (simplified for robustness)
+    element_counts:
+      functions: 12       # actual count: game.h:4 + main.c:1 + platform.h:5 + vector.h:2
+      structs: 10         # actual count found by the parser
+  
+  puml:
+    syntax_valid: true
+    file_count: 1
