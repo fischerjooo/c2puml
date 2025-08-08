@@ -324,18 +324,5 @@ class TestDataLoader:
         config_path = os.path.join(temp_dir, "config.json")
         with open(config_path, 'w') as f:
             json.dump(config, f, indent=2)
-            f.flush()  # Ensure all data is written
-            os.fsync(f.fileno())  # Force write to disk
-        
-        # Verify the file was written correctly
-        with open(config_path, 'r') as f:
-            written_content = f.read()
-            try:
-                json.loads(written_content)
-            except json.JSONDecodeError as e:
-                print(f"ERROR: Invalid JSON written to {config_path}")
-                print(f"Content: {repr(written_content)}")
-                print(f"Expected: {repr(json.dumps(config, indent=2))}")
-                raise ValueError(f"Failed to write valid JSON: {e}")
         
         return config_path
