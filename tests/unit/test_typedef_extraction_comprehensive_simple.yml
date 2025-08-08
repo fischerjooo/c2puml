@@ -1,0 +1,60 @@
+# Test metadata
+test:
+  name: "Typedef Extraction - Simple Types"
+  description: "Test extraction of simple typedef declarations (basic type aliases)"
+  category: "unit"
+  id: "0051"
+
+---
+# Source files
+source_files:
+  simple_typedefs.c: |
+    // Simple typedef declarations
+    typedef uint32_t MyLen;
+    typedef int32_t MyInt;
+    typedef char * MyString;
+    typedef MyComplex * MyComplexPtr;
+    typedef MyComplexPtr MyComplexArray[10];
+    typedef unsigned long long ULongLong;
+    typedef const char * ConstString;
+    typedef volatile int VolatileInt;
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_typedef_extraction_simple",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "simple_typedefs.puml"]
+  
+  model:
+    files:
+      simple_typedefs.c:
+        aliases: ["MyLen", "MyInt", "MyString", "MyComplexPtr", "MyComplexArray", "ULongLong", "ConstString", "VolatileInt"]
+    element_counts:
+      structs: 0
+      enums: 0
+      functions: 0
+      globals: 0
+      includes: 0
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      simple_typedefs.puml:
+        contains_elements: ["MyLen", "MyInt", "MyString", "MyComplexPtr", "MyComplexArray", "ULongLong", "ConstString", "VolatileInt"]
+        contains_lines: ["class \"MyLen\" as TYPEDEF_MYLEN", "class \"MyInt\" as TYPEDEF_MYINT", "class \"MyString\" as TYPEDEF_MYSTRING"]
+        class_count: 9  # 8 typedefs + 1 source file  
+        relationship_count: 9  # 8 declares + 1 uses relationship
