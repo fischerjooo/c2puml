@@ -1,0 +1,75 @@
+# Test metadata
+test:
+  name: "Simple Integration Test"
+  description: "Test basic integration functionality through CLI"
+  category: "integration"
+  id: "2102"
+
+---
+# Source files
+source_files:
+  main.c: |
+    #include "utils.h"
+    #include <stdio.h>
+    
+    int main() {
+        printf("Hello World\n");
+        helper_function();
+        return 0;
+    }
+
+  utils.h: |
+    #ifndef UTILS_H
+    #define UTILS_H
+    
+    typedef struct {
+        int value;
+        char name[32];
+    } SimpleStruct;
+    
+    void helper_function(void);
+    
+    #endif // UTILS_H
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "simple_integration_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 2,
+    "include_patterns": ["*.c", "*.h"],
+    "exclude_patterns": ["*_test.c"]
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+  
+  model:
+    validate_structure: true
+    expected_files: ["main.c", "utils.h"]
+    functions_exist: ["main", "helper_function"]
+    structs_exist: ["SimpleStruct"]
+    
+    element_counts:
+      functions: 2
+      structs: 1
+
+  puml:
+    syntax_valid: true
+    file_count: 1
+    
+    files:
+      main.puml:
+        contains_elements: ["main", "helper_function", "SimpleStruct"]
+        contains_lines: [
+          "class \"main\" as MAIN <<source>> #LightBlue",
+          "class \"utils\" as HEADER_UTILS <<header>> #LightGreen",
+          "class \"SimpleStruct\" as TYPEDEF_SIMPLESTRUCT <<struct>> #LightYellow"
+        ]
