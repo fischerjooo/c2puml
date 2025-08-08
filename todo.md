@@ -1,8 +1,10 @@
-# CLI Refactoring Completion Summary
+# CLI Refactoring Progress Summary
 
-**Status: ✅ COMPLETE** (Updated: January 8, 2025)
+**Status: 🚧 IN PROGRESS** (Updated: January 8, 2025)
 
-All major internal API tests have been successfully converted to the new CLI-based unified testing framework. The refactoring effort is now complete.
+**Current Progress**: 3 of 9 internal API test files successfully converted to CLI-based framework
+
+**Latest Achievement**: Successfully completed generator visibility logic test conversion (6 tests)
 
 ## Final Summary
 
@@ -24,6 +26,12 @@ All major internal API tests have been successfully converted to the new CLI-bas
      - Created 3 corresponding YAML test files for different error scenarios
      - Tests CLI error handling through `run_full_pipeline` command
      - All tests passing ✅
+   
+   - ✅ **`test_generator_visibility_logic.py`** → **`test_generator_visibility_logic_cli.py`**
+     - Converted 6 internal API test methods to CLI-based visibility tests
+     - Created 6 corresponding YAML test files for different visibility scenarios
+     - Tests generator visibility logic through CLI `generate_only` command
+     - All tests passing ✅
 
 3. **Cleanup**
    - ✅ Deleted original internal API test files after verification
@@ -31,9 +39,23 @@ All major internal API tests have been successfully converted to the new CLI-bas
    - ✅ Fixed model structure requirements for generator tests
 
 4. **Validation**
-   - ✅ Final test suite run: **352 tests passing, 0 failures**
+   - ✅ Test suite run after visibility logic refactoring: **352 tests passing, 0 failures**
    - ✅ Example workflow validation successful
    - ✅ All PNG generation working correctly
+
+### 🚧 Remaining Work
+
+**Still Need Refactoring (6 files):**
+
+1. **`test_generator_grouping.py`** (Unit Tests)
+2. **`test_generator_exact_format.py`** (Unit Tests)  
+3. **`test_generator_new_formatting.py`** (Unit Tests)
+4. **`test_generator_include_tree_bug.py`** (Unit Tests)
+5. **`test_transformer.py`** (Unit Tests) - **Large file: 1901 lines, 19+ test methods**
+6. **`test_parser_comprehensive.py`** (Unit Tests) - **Large file with multiple test methods**
+7. **`test_new_formatting_comprehensive.py`** (Integration Tests)
+
+**Note**: `tests/utils.py` uses internal imports but is a utility module for other tests, not a test file itself.
 
 ### 🎯 Framework Enhancements Made
 
