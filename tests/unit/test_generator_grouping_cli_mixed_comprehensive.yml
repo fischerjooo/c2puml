@@ -1,0 +1,99 @@
+---
+test:
+  name: "generator_grouping_cli_mixed_comprehensive"
+  description: "Test grouping works correctly with both functions and globals"
+  category: "generator"
+  
+---
+source_files:
+  model.json: |
+    {
+      "project_name": "test_project",
+      "source_folder": "/test",
+      "files": {
+        "processor.c": {
+          "file_path": "processor.c",
+          "name": "processor.c",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "ProcessData",
+              "return_type": "int",
+              "is_declaration": false,
+              "parameters": []
+            },
+            {
+              "name": "ValidateInput",
+              "return_type": "static bool",
+              "is_declaration": false,
+              "parameters": []
+            }
+          ],
+          "globals": [
+            {
+              "name": "error_count",
+              "type": "int"
+            },
+            {
+              "name": "buffer_size",
+              "type": "static size_t"
+            }
+          ]
+        },
+        "processor.h": {
+          "file_path": "processor.h",
+          "name": "processor.h",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "ProcessData",
+              "return_type": "int",
+              "is_declaration": true,
+              "parameters": []
+            }
+          ],
+          "globals": [
+            {
+              "name": "error_count",
+              "type": "extern int"
+            }
+          ]
+        }
+      },
+      "include_relations": []
+    }
+
+---
+config.json: |
+  {
+    "project_name": "test_project",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "plantuml_jar_path": "/app/tools/plantuml-1.2024.8.jar",
+    "use_short_names": false,
+    "group_by_visibility": true
+  }
+
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    processor.c.puml:
+      contains:
+        - "+ int error_count"
+        - "+ int ProcessData"
+        - "- static size_t buffer_size"
+        - "- static bool ValidateInput"
+        - "-- Global Variables --"
+        - "-- Functions --"

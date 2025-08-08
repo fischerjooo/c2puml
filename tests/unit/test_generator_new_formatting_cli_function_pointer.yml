@@ -1,0 +1,60 @@
+---
+test:
+  name: "generator_new_formatting_cli_function_pointer"
+  description: "Test that function pointer typedefs use <<function pointer>> stereotype"
+  category: "generator"
+  
+---
+source_files:
+  model.json: |
+    {
+      "project_name": "test_project",
+      "source_folder": "/test",
+      "files": {
+        "test.c": {
+          "file_path": "test.c",
+          "name": "test.c",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {
+            "callback_t": {
+              "name": "callback_t",
+              "original_type": "int(* callback_t)(int, int)"
+            },
+            "log_callback_t": {
+              "name": "log_callback_t",
+              "original_type": "void(* log_callback_t)(const char*)"
+            }
+          },
+          "functions": [],
+          "globals": []
+        }
+      },
+      "include_relations": []
+    }
+
+---
+config.json: |
+  {
+    "project_name": "test_project",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "plantuml_jar_path": "/app/tools/plantuml-1.2024.8.jar",
+    "use_short_names": false,
+    "group_by_visibility": true
+  }
+
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    test.c.puml:
+      contains:
+        - 'class "callback_t" as TYPEDEF_CALLBACK_T <<function pointer>> #LightYellow'
+        - 'class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<function pointer>> #LightYellow'
+        - "alias of int(* callback_t)(int, int)"
+        - "alias of void(* log_callback_t)(const char*)"

@@ -1,0 +1,28 @@
+# Test metadata
+test:
+  name: "Error Handling - Invalid Configuration"
+  description: "Test CLI error handling for various invalid configuration scenarios"
+  category: "feature"
+  id: "1031"
+
+---
+# Source files - empty since we're testing error conditions
+source_files: {}
+
+---
+# Configuration - using empty source_folders to trigger error
+config.json: |
+  {
+    "project_name": "test_error_handling",
+    "source_folders": [],
+    "output_dir": "output",
+    "recursive_search": true
+  }
+
+---
+# Assertions - expecting CLI to fail with specific error
+assertions:
+  execution:
+    success_expected: false
+    exit_code: 1
+    stdout_contains: "At least one source folder must be provided"

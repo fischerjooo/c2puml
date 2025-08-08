@@ -1,0 +1,71 @@
+---
+test:
+  name: "generator_visibility_logic_public_globals"
+  description: "Test that globals present in headers are marked as + (public)"
+  cli_step: "generate_only"
+  timeout: 30
+
+---
+source_files:
+  model.json: |
+    {
+      "project_name": "test_project",
+      "source_folder": "/test",
+      "files": {
+        "config.c": {
+          "file_path": "config.c",
+          "aliases": {},
+          "anonymous_relationships": {},
+          "enums": {},
+          "functions": [],
+          "globals": [
+            {
+              "name": "global_config",
+              "type": "int"
+            }
+          ],
+          "include_relations": [],
+          "includes": [],
+          "macros": {},
+          "structs": {},
+          "unions": {}
+        },
+        "config.h": {
+          "file_path": "config.h",
+          "aliases": {},
+          "anonymous_relationships": {},
+          "enums": {},
+          "functions": [],
+          "globals": [
+            {
+              "name": "global_config",
+              "type": "int"
+            }
+          ],
+          "include_relations": [],
+          "includes": [],
+          "macros": {},
+          "structs": {},
+          "unions": {}
+        }
+      },
+      "include_relations": []
+    }
+
+---
+config.json: |
+  {
+    "project_name": "test_project",
+    "output_dir": "output",
+    "source_folders": ["src"]
+  }
+
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    contains:
+      - "+ int global_config"
+    not_contains:
+      - "- int global_config"
