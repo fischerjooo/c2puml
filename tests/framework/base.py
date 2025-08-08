@@ -40,6 +40,7 @@ class UnifiedTestCase(unittest.TestCase):
     - Standardized test output management
     - Integration with the unified testing framework components
     - High-level convenience methods for common test patterns
+    - Enhanced validator access with meaningful names organized by validation type
     """
     
     def setUp(self):
@@ -146,6 +147,8 @@ class UnifiedTestCase(unittest.TestCase):
         self.validators_processor.process_assertions(
             test_data["assertions"], model_data, puml_files, result.cli_result, self
         )
+
+
 
     def _cleanup_existing_test_folders(self):
         """Clean up any existing test-* folders in test directories"""

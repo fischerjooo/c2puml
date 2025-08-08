@@ -4,12 +4,15 @@ Validators Processor for the unified testing framework
 
 This module provides the ValidatorsProcessor class that coordinates the execution
 of various validators from validators.py to process assertions from YAML data.
+Enhanced with comprehensive internal processing methods for all validator capabilities.
 """
 
 import json
-from typing import Dict, Any
+import glob
+import os
+from typing import Dict, Any, List
 from .executor import CLIResult
-from .validators import ModelValidator, PlantUMLValidator, CLIValidator
+from .validators import ModelValidator, PlantUMLValidator, CLIValidator, OutputValidator, FileValidator
 
 
 class ValidatorsProcessor:
@@ -18,6 +21,9 @@ class ValidatorsProcessor:
     
     This class orchestrates the validation process by delegating specific validation
     tasks to the appropriate validator classes from validators.py.
+    
+    Enhanced with comprehensive internal processing methods that provide access to
+    all validator capabilities through the existing YAML-based assertion framework.
     """
     
     def __init__(self):
@@ -25,16 +31,19 @@ class ValidatorsProcessor:
         self.model_validator = ModelValidator()
         self.puml_validator = PlantUMLValidator()
         self.cli_validator = CLIValidator()
+        self.output_validator = OutputValidator()
+        self.file_validator = FileValidator()
     
     def process_assertions(self, assertions: Dict[str, Any], model_data: Dict, 
                           puml_files: Dict[str, str], cli_result: CLIResult, test_case) -> None:
         """
-        Process assertions from YAML data using appropriate validators
-        
-        This method coordinates the validation process by:
-        1. Processing execution assertions using CLIValidator
-        2. Processing model assertions using ModelValidator  
-        3. Processing PlantUML assertions using PlantUMLValidator
+           Process assertions from YAML data using appropriate validators
+   
+   This method coordinates the validation process by:
+   1. Processing execution assertions using CLIValidator
+   2. Processing model assertions using ModelValidator  
+   3. Processing PlantUML assertions using PlantUMLValidator
+   4. Processing file system assertions using OutputValidator and FileValidator
         
         Args:
             assertions: Dictionary containing assertions from YAML
@@ -47,18 +56,23 @@ class ValidatorsProcessor:
         if "execution" in assertions:
             self._process_execution_assertions(assertions["execution"], cli_result, test_case)
         
-        # Process model assertions
+        # Process model assertions (enhanced)
         if "model" in assertions:
             self._process_model_assertions(assertions["model"], model_data, test_case)
         
-        # Process PlantUML assertions
+        # Process PlantUML assertions (enhanced)
         if "puml" in assertions:
             self._process_puml_assertions(assertions["puml"], puml_files, test_case)
-    
+        
+                # Process file system assertions
+        if "files" in assertions:
+            self._process_file_assertions(assertions["files"], test_case)
+
     def _process_execution_assertions(self, execution_assertions: Dict, 
                                     cli_result: CLIResult, test_case) -> None:
         """
         Process execution-related assertions using CLIValidator
+        Enhanced with comprehensive CLI validation capabilities.
         
         Args:
             execution_assertions: Execution assertions from YAML
@@ -87,18 +101,98 @@ class ValidatorsProcessor:
         if "max_execution_time" in execution_assertions:
             max_time = execution_assertions["max_execution_time"]
             self.cli_validator.assert_cli_execution_time_under(cli_result, max_time)
-    
+        
+        # Enhanced execution validations
+        if "success_expected" in execution_assertions:
+            if execution_assertions["success_expected"]:
+                self.cli_validator.assert_cli_success(cli_result)
+            else:
+                expected_error = execution_assertions.get("expected_error")
+                self.cli_validator.assert_cli_failure(cli_result, expected_error)
+
     def _process_model_assertions(self, model_assertions: Dict, 
                                 model_data: Dict, test_case) -> None:
         """
         Process model-related assertions using ModelValidator
+        Enhanced with comprehensive model validation capabilities.
         
         Args:
             model_assertions: Model assertions from YAML
             model_data: Parsed model.json content
             test_case: Test case instance for assertions
         """
-        # Check files
+        # Basic model structure validation
+        if "validate_structure" in model_assertions and model_assertions["validate_structure"]:
+            self.model_validator.assert_model_structure_valid(model_data)
+            self.model_validator.assert_model_schema_compliant(model_data)
+        
+        # Project-level assertions
+        if "project_name" in model_assertions:
+            self.model_validator.assert_model_project_name(model_data, model_assertions["project_name"])
+        
+        if "file_count" in model_assertions:
+            self.model_validator.assert_model_file_count(model_data, model_assertions["file_count"])
+        
+        if "expected_files" in model_assertions:
+            self.model_validator.assert_model_files_parsed(model_data, model_assertions["expected_files"])
+        
+        # Enhanced element existence checks
+        if "functions_exist" in model_assertions:
+            for func_name in model_assertions["functions_exist"]:
+                self.model_validator.assert_model_function_exists(model_data, func_name)
+        
+        if "functions_not_exist" in model_assertions:
+            for func_name in model_assertions["functions_not_exist"]:
+                self.model_validator.assert_model_function_not_exists(model_data, func_name)
+        
+        if "structs_exist" in model_assertions:
+            for struct_name in model_assertions["structs_exist"]:
+                self.model_validator.assert_model_struct_exists(model_data, struct_name)
+        
+        if "structs_not_exist" in model_assertions:
+            for struct_name in model_assertions["structs_not_exist"]:
+                self.model_validator.assert_model_struct_not_exists(model_data, struct_name)
+        
+        if "enums_exist" in model_assertions:
+            for enum_name in model_assertions["enums_exist"]:
+                self.model_validator.assert_model_enum_exists(model_data, enum_name)
+        
+        if "enums_not_exist" in model_assertions:
+            for enum_name in model_assertions["enums_not_exist"]:
+                self.model_validator.assert_model_enum_not_exists(model_data, enum_name)
+        
+        if "typedefs_exist" in model_assertions:
+            for typedef_name in model_assertions["typedefs_exist"]:
+                self.model_validator.assert_model_typedef_exists(model_data, typedef_name)
+        
+        if "globals_exist" in model_assertions:
+            for global_name in model_assertions["globals_exist"]:
+                self.model_validator.assert_model_global_exists(model_data, global_name)
+        
+        if "macros_exist" in model_assertions:
+            for macro_name in model_assertions["macros_exist"]:
+                self.model_validator.assert_model_macro_exists(model_data, macro_name)
+        
+        if "includes_exist" in model_assertions:
+            for include_name in model_assertions["includes_exist"]:
+                self.model_validator.assert_model_include_exists(model_data, include_name)
+        
+        # Enhanced struct and enum detail validation
+        if "struct_details" in model_assertions:
+            for struct_name, struct_details in model_assertions["struct_details"].items():
+                if "fields" in struct_details:
+                    self.model_validator.assert_model_struct_fields(
+                        model_data, struct_name, struct_details["fields"]
+                    )
+        
+        if "enum_details" in model_assertions:
+            for enum_name, enum_details in model_assertions["enum_details"].items():
+                if "values" in enum_details:
+                    self.model_validator.assert_model_enum_values(
+                        model_data, enum_name, enum_details["values"]
+                    )
+        
+        # Check files (existing functionality preserved)
         if "files" in model_assertions:
             for filename, file_assertions in model_assertions["files"].items():
                 if filename in model_data.get("files", {}):
@@ -148,11 +242,12 @@ class ValidatorsProcessor:
                 self.model_validator.assert_model_element_count(
                     model_data, element_type, expected_count
                 )
-    
+
     def _process_puml_assertions(self, puml_assertions: Dict, 
                                 puml_files: Dict[str, str], test_case) -> None:
         """
         Process PlantUML-related assertions using PlantUMLValidator
+        Enhanced with comprehensive PlantUML validation capabilities.
         
         Args:
             puml_assertions: PlantUML assertions from YAML
@@ -162,6 +257,13 @@ class ValidatorsProcessor:
         # Process global PlantUML assertions (applied to all files)
         if puml_assertions.get("syntax_valid", False):
             self.puml_validator.assert_puml_start_end_tags_multi(puml_files)
+        
+        # Enhanced global assertions
+        if "file_count" in puml_assertions:
+            expected_count = puml_assertions["file_count"]
+            actual_count = len(puml_files)
+            if actual_count != expected_count:
+                raise AssertionError(f"Expected {expected_count} PlantUML files, got {actual_count}")
         
         # Process global contains assertions (at least one file must contain)
         if "contains_elements" in puml_assertions:
@@ -177,6 +279,26 @@ class ValidatorsProcessor:
         if "contains_lines" in puml_assertions:
             expected_lines = puml_assertions["contains_lines"]
             self.puml_validator.assert_puml_contains_lines_multi(puml_files, expected_lines)
+        
+        # Enhanced class validation
+        if "classes_exist" in puml_assertions:
+            for class_info in puml_assertions["classes_exist"]:
+                if isinstance(class_info, str):
+                    class_name = class_info
+                    stereotype = None
+                else:
+                    class_name = class_info.get("name")
+                    stereotype = class_info.get("stereotype")
+                self.puml_validator.assert_puml_class_exists_multi(puml_files, class_name, stereotype)
+        
+        # Enhanced relationship validation
+        if "relationships_exist" in puml_assertions:
+            for rel_info in puml_assertions["relationships_exist"]:
+                source = rel_info.get("source")
+                target = rel_info.get("target")
+                rel_type = rel_info.get("type")
+                if source and target and rel_type:
+                    self.puml_validator.assert_puml_relationship_multi(puml_files, source, target, rel_type)
         
         # Process global count assertions (total across all files)
         if "line_count" in puml_assertions:
@@ -198,11 +320,12 @@ class ValidatorsProcessor:
                     self._process_single_puml_file_assertions(
                         filename, puml_files[filename], file_assertions, test_case
                     )
-    
+
     def _process_single_puml_file_assertions(self, filename: str, puml_content: str, 
                                            file_assertions: Dict, test_case) -> None:
         """
         Process assertions for a single PlantUML file
+        Enhanced with comprehensive single-file validation capabilities.
         
         Args:
             filename: Name of the PlantUML file
@@ -210,6 +333,10 @@ class ValidatorsProcessor:
             file_assertions: Assertions specific to this file
             test_case: Test case instance for assertions
         """
+        # Basic syntax validation
+        if file_assertions.get("syntax_valid", False):
+            self.puml_validator.assert_puml_start_end_tags(puml_content)
+        
         # Check for specific elements in this file
         if "contains_elements" in file_assertions:
             for element_name in file_assertions["contains_elements"]:
@@ -224,6 +351,12 @@ class ValidatorsProcessor:
         if "contains_lines" in file_assertions:
             expected_lines = file_assertions["contains_lines"]
             self.puml_validator.assert_puml_contains_lines(puml_content, expected_lines)
+        
+        # Check forbidden lines in this file
+        if "not_contains_lines" in file_assertions:
+            forbidden_lines = file_assertions["not_contains_lines"]
+            for forbidden_line in forbidden_lines:
+                self.puml_validator.assert_puml_not_contains(puml_content, forbidden_line)
         
         # Check line count for this file
         if "line_count" in file_assertions:
@@ -246,6 +379,17 @@ class ValidatorsProcessor:
                 stereotype = class_assertions.get("stereotype")
                 self.puml_validator.assert_puml_class_exists(puml_content, class_name, stereotype)
         
+        # Enhanced class validation
+        if "classes_exist" in file_assertions:
+            for class_info in file_assertions["classes_exist"]:
+                if isinstance(class_info, str):
+                    class_name = class_info
+                    stereotype = None
+                else:
+                    class_name = class_info.get("name")
+                    stereotype = class_info.get("stereotype")
+                self.puml_validator.assert_puml_class_exists(puml_content, class_name, stereotype)
+        
         # Check for specific relationships in this file
         if "relationships" in file_assertions:
             for rel_name, rel_assertions in file_assertions["relationships"].items():
@@ -254,3 +398,73 @@ class ValidatorsProcessor:
                 rel_type = rel_assertions.get("type")
                 if source and target and rel_type:
                     self.puml_validator.assert_puml_relationship(puml_content, source, target, rel_type)
+        
+        # Enhanced relationship validation
+        if "relationships_exist" in file_assertions:
+            for rel_info in file_assertions["relationships_exist"]:
+                source = rel_info.get("source")
+                target = rel_info.get("target")
+                rel_type = rel_info.get("type")
+                if source and target and rel_type:
+                    self.puml_validator.assert_puml_relationship(puml_content, source, target, rel_type)
+
+    def _process_file_assertions(self, file_assertions: Dict, test_case) -> None:
+        """
+        Process file system-related assertions using OutputValidator and FileValidator
+        New functionality for comprehensive file system validation.
+        
+        Args:
+            file_assertions: File assertions from YAML
+            test_case: Test case instance for assertions
+        """
+        # Check output directory existence
+        if "output_dir_exists" in file_assertions:
+            output_dir = file_assertions["output_dir_exists"]
+            self.output_validator.assert_output_dir_exists(output_dir)
+        
+        # Check specific files exist
+        if "files_exist" in file_assertions:
+            for file_path in file_assertions["files_exist"]:
+                self.output_validator.assert_file_exists(file_path)
+        
+        # Check specific files don't exist
+        if "files_not_exist" in file_assertions:
+            for file_path in file_assertions["files_not_exist"]:
+                self.output_validator.assert_file_not_exists(file_path)
+        
+        # Validate JSON files
+        if "json_files_valid" in file_assertions:
+            for json_file in file_assertions["json_files_valid"]:
+                self.file_validator.assert_json_valid(json_file)
+        
+        # Validate file encoding
+        if "utf8_files" in file_assertions:
+            for file_path in file_assertions["utf8_files"]:
+                self.file_validator.assert_file_valid_utf8(file_path)
+        
+        # Check file content
+        if "file_content" in file_assertions:
+            for file_path, content_assertions in file_assertions["file_content"].items():
+                if "contains" in content_assertions:
+                    for expected_text in content_assertions["contains"]:
+                        self.output_validator.assert_file_contains(file_path, expected_text)
+                
+                if "not_contains" in content_assertions:
+                    for forbidden_text in content_assertions["not_contains"]:
+                        self.output_validator.assert_file_not_contains(file_path, forbidden_text)
+                
+                if "contains_lines" in content_assertions:
+                    self.output_validator.assert_file_contains_lines(
+                        file_path, content_assertions["contains_lines"]
+                    )
+                
+                if "line_count" in content_assertions:
+                    self.output_validator.assert_file_line_count(
+                        file_path, content_assertions["line_count"]
+                    )
+                
+                if "empty" in content_assertions and content_assertions["empty"]:
+                    self.output_validator.assert_file_empty(file_path)
+                
+                if "not_empty" in content_assertions and content_assertions["not_empty"]:
+                    self.output_validator.assert_file_not_empty(file_path)
