@@ -31,6 +31,366 @@ class TestSimpleCFileParsing(UnifiedTestCase):
 
 **Only use the detailed custom pattern when you need assertions or behavior not supported by the simple pattern.**
 
+## Enhanced Validation Framework
+
+### Overview
+
+The validation framework has been enhanced to provide comprehensive access to all validator methods through YAML assertions. This approach provides:
+
+- **Consistent interface**: All validation is done through YAML assertions
+- **Comprehensive coverage**: Access to all validator capabilities without new public methods
+- **Test-specific patterns**: Specialized validation for parser, transformer, and generator tests
+- **Workflow validation**: Complete workflow testing capabilities
+
+### Validation Types and YAML Patterns
+
+#### **Parser Validation** (For parser-only tests)
+
+Parser tests should focus on validating that C/C++ code is correctly parsed into the model.json file. Use these YAML patterns:
+
+```yaml
+assertions:
+  # Basic execution validation
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+  
+  # Enhanced model validation for parser tests
+  model:
+    # Validate basic structure
+    validate_structure: true
+    project_name: "test_parser_simple"
+    expected_files: ["simple.c"]
+    
+    # Validate specific elements exist
+    functions_exist: ["main", "helper_function"]
+    structs_exist: ["Person", "Rectangle"]
+    enums_exist: ["Status", "Priority"]
+    typedefs_exist: ["MyInt", "StringPtr"]
+    globals_exist: ["global_var", "config"]
+    macros_exist: ["MAX_SIZE", "DEBUG_MODE"]
+    includes_exist: ["stdio.h", "stdlib.h"]
+    
+    # Validate elements don't exist (for transformation tests)
+    functions_not_exist: ["deprecated_function"]
+    structs_not_exist: ["OldStruct"]
+    
+    # Detailed structure validation
+    struct_details:
+      Person:
+        fields: ["name", "age", "id"]
+      Rectangle:
+        fields: ["width", "height", "x", "y"]
+    
+    enum_details:
+      Status:
+        values: ["OK", "ERROR", "PENDING"]
+      Priority:
+        values: ["LOW", "MEDIUM", "HIGH"]
+    
+    # Element count validation
+    element_counts:
+      functions: 2
+      structs: 2
+      enums: 2
+      globals: 2
+      includes: 2
+      macros: 2
+  
+  # Workflow validation for parser
+  workflow:
+    parser_workflow:
+      output_exists: true
+      expected_elements:
+        functions: ["main", "helper_function"]
+        structs: ["Person", "Rectangle"]
+        enums: ["Status", "Priority"]
+```
+
+**Recommendation**: Parser tests should only verify that model.json is generated correctly. They should not test transformation or PlantUML generation.
+
+#### **Transformer Validation** (For transformer-only tests)
+
+Transformer tests should validate that the model.json is correctly transformed based on configuration. Use these YAML patterns:
+
+```yaml
+assertions:
+  execution:
+    exit_code: 0
+  
+  model:
+    # Validate transformation results
+    functions_not_exist: ["debug_function", "test_helper"]  # Removed functions
+    structs_not_exist: ["TempStruct", "LegacyStruct"]       # Removed structs
+    
+    functions_exist: ["main", "core_function"]              # Preserved functions
+    structs_exist: ["Person", "Rectangle"]                  # Preserved structs
+    
+    # Validate renamed elements (check for new names)
+    functions_exist: ["legacy_print_info"]  # Renamed from deprecated_print_info
+    typedefs_exist: ["config_t"]            # Renamed from old_config_t
+  
+  workflow:
+    transformer_workflow:
+      elements_removed:
+        functions: ["debug_function", "test_helper"]
+        structs: ["TempStruct"]
+      elements_preserved:
+        functions: ["main", "core_function"]
+        structs: ["Person", "Rectangle"]
+```
+
+**Recommendation**: Transformer tests should verify both element removal and preservation. Test that unwanted elements are gone and important elements remain.
+
+#### **Generator Validation** (For generator/PlantUML tests)
+
+Generator tests should validate that PlantUML files are correctly generated from the model. Use these YAML patterns:
+
+```yaml
+assertions:
+  execution:
+    exit_code: 0
+  
+  puml:
+    # Basic PlantUML validation
+    syntax_valid: true
+    file_count: 1
+    
+    # Global content validation (across all PlantUML files)
+    contains_elements: ["Person", "main", "global_var"]
+    not_contains_elements: ["DebugStruct", "test_function"]
+    contains_lines: ["class \"Person\" as TYPEDEF_PERSON", "int main()"]
+    
+    # Enhanced class validation
+    classes_exist:
+      - name: "MAIN"
+        stereotype: "source"
+      - name: "TYPEDEF_PERSON"
+        stereotype: "struct"
+    
+    # Enhanced relationship validation
+    relationships_exist:
+      - source: "MAIN"
+        target: "HEADER_STDIO"
+        type: "-->"
+      - source: "TYPEDEF_PERSON"
+        target: "MAIN"
+        type: "..>"
+    
+    # Count validation
+    class_count: 3
+    relationship_count: 2
+    
+    # Per-file validation
+    files:
+      main.puml:
+        syntax_valid: true
+        contains_elements: ["Person", "main"]
+        not_contains_lines: ["#include <stdio.h>"]  # Should be arrows, not lines
+        class_count: 3
+        relationship_count: 2
+  
+  workflow:
+    generator_workflow:
+      output_exists: true
+      syntax_valid: true
+      expected_elements: ["Person", "main", "global_var"]
+```
+
+**Recommendation**: Generator tests should verify both PlantUML syntax validity and content accuracy. Test that all expected elements appear in diagrams and unwanted elements are excluded.
+
+#### **File System Validation** (For all test types)
+
+File system validation ensures that expected files are created with correct content:
+
+```yaml
+assertions:
+  # File system validation
+  files:
+    output_dir_exists: "./output"
+    files_exist:
+      - "./output/model.json"
+      - "./output/model_transformed.json"
+      - "./output/main.puml"
+    files_not_exist:
+      - "./output/debug.puml"
+      - "./output/temp.json"
+    
+    json_files_valid:
+      - "./output/model.json"
+      - "./output/model_transformed.json"
+    
+    utf8_files:
+      - "./output/main.puml"
+    
+    file_content:
+      "./output/main.puml":
+        contains: ["@startuml", "@enduml", "class"]
+        not_contains: ["ERROR", "FAILED"]
+        contains_lines: ["@startuml main", "@enduml"]
+        not_empty: true
+```
+
+#### **Complete Workflow Validation** (For integration tests)
+
+For comprehensive end-to-end tests that run the complete parse → transform → generate workflow:
+
+```yaml
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 60.0
+  
+  model:
+    validate_structure: true
+    functions_exist: ["main"]
+    structs_exist: ["Person"]
+  
+  puml:
+    syntax_valid: true
+    contains_elements: ["Person", "main"]
+    class_count: 3
+  
+  files:
+    files_exist: ["./output/model.json", "./output/model_transformed.json", "./output/main.puml"]
+    json_files_valid: ["./output/model.json", "./output/model_transformed.json"]
+  
+  workflow:
+    parser_workflow:
+      expected_elements:
+        functions: ["main"]
+        structs: ["Person"]
+    transformer_workflow:
+      elements_preserved:
+        functions: ["main"]
+        structs: ["Person"]
+    generator_workflow:
+      output_exists: true
+      syntax_valid: true
+      expected_elements: ["Person", "main"]
+    performance:
+      max_execution_time: 60.0
+```
+
+### Advanced Validation Patterns
+
+#### **Error Handling Tests**
+
+For tests that expect failures:
+
+```yaml
+assertions:
+  execution:
+    success_expected: false
+    expected_error: "Invalid source path"
+    exit_code: 1
+    stderr_contains: "Error: File not found"
+```
+
+#### **Performance Tests**
+
+For tests that validate execution performance:
+
+```yaml
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 10.0
+  
+  workflow:
+    performance:
+      max_execution_time: 10.0
+```
+
+#### **Complex Model Validation**
+
+For tests that need detailed model structure validation:
+
+```yaml
+assertions:
+  model:
+    files:
+      complex.c:
+        structs:
+          ComplexStruct:
+            fields: ["field1", "field2", "nested"]
+        enums:
+          ComplexEnum:
+            values: ["VALUE1", "VALUE2", "VALUE3"]
+        functions: ["complex_function", "helper"]
+        globals: ["complex_global"]
+        includes: ["complex.h"]
+    
+    struct_details:
+      ComplexStruct:
+        fields: ["field1", "field2", "nested"]
+    
+    enum_details:
+      ComplexEnum:
+        values: ["VALUE1", "VALUE2", "VALUE3"]
+```
+
+## Test Development Recommendations
+
+### **For Parser Tests**
+
+1. **Focus on parsing accuracy**: Verify that all C/C++ elements are correctly extracted
+2. **Test edge cases**: Include tests for complex C constructs, nested structures, function pointers
+3. **Validate structure**: Always use `validate_structure: true` for parser tests
+4. **Use element existence checks**: Prefer `functions_exist`, `structs_exist` over detailed file assertions
+5. **Test element counts**: Use `element_counts` to verify parsing completeness
+
+**Recommendation**: Parser tests should only run the parsing step and verify model.json generation.
+
+### **For Transformer Tests**
+
+1. **Test removal and preservation**: Always test both what should be removed and what should be preserved
+2. **Validate transformations**: Test element renaming by checking for new names and absence of old names
+3. **Use workflow assertions**: Leverage `transformer_workflow` for comprehensive validation
+4. **Test configuration variations**: Create separate tests for different transformation configurations
+
+**Recommendation**: Transformer tests should only verify the transformed model.json, not PlantUML generation.
+
+### **For Generator Tests**
+
+1. **Validate syntax first**: Always include `syntax_valid: true`
+2. **Test content accuracy**: Verify that expected elements appear in PlantUML diagrams
+3. **Validate relationships**: Test that include relationships and typedef relationships are correctly generated
+4. **Test exclusions**: Verify that unwanted elements don't appear in diagrams
+5. **Use count validation**: Validate class and relationship counts for structural accuracy
+
+**Recommendation**: Generator tests should only verify PlantUML generation from existing model files.
+
+### **General Best Practices**
+
+1. **Use meaningful test names**: Test names should clearly indicate what is being tested
+2. **Start with simple patterns**: Always try the simple 3-line test pattern first
+3. **Leverage YAML assertions**: Use the comprehensive YAML assertion capabilities instead of custom code
+4. **Focus on one concern**: Parser tests test parsing, transformer tests test transformation, etc.
+5. **Use workflow assertions**: For integration tests, use workflow assertions to validate complete pipelines
+
+## Migration from Internal API Tests
+
+When migrating existing internal API tests to the new framework:
+
+1. **Identify the test purpose**: Determine if it's testing parsing, transformation, or generation
+2. **Convert assertions to YAML**: Map internal API assertions to YAML assertion patterns
+3. **Use appropriate validation type**: Choose parser, transformer, or generator validation patterns
+4. **Simplify test code**: Use the simple 3-line pattern whenever possible
+5. **Enhance with new capabilities**: Take advantage of new validation features not available in internal API tests
+
+## Validation Framework Benefits
+
+The enhanced validation framework provides:
+
+- **Comprehensive coverage**: Access to all validator methods through YAML
+- **Test-specific patterns**: Specialized validation for different test types
+- **Consistent interface**: All validation through standardized YAML assertions
+- **Better maintainability**: Changes to validation logic don't require test code changes
+- **Enhanced capabilities**: New validation features like workflow validation and file system validation
+
+By following these recommendations and using the enhanced YAML assertion patterns, tests become more maintainable, comprehensive, and easier to understand.
+
 ## New Unified Testing Approach
 
 ### Core Concept
@@ -214,6 +574,18 @@ assertions:
           - type: "composition"
             from: "main"
             to: "ExampleStruct"
+```
+
+**Example Test Structure**:
+```
+tests/example/
+├── test_basic_example.py
+├── test_basic_example.yml           # Contains ONLY assertions
+├── config.json                      # External config file (tracked by git)
+└── source/                          # External source folder (tracked by git)
+    ├── main.c
+    ├── header.h
+    └── other_files.c
 ```
 
 ### Test Category Determination
