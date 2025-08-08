@@ -1,0 +1,83 @@
+# Test metadata
+test:
+  name: "Circular Include Detection"
+  description: "Test circular include detection and handling"
+  category: "feature"
+  id: "1006"
+
+---
+# Source files
+source_files:
+  main.c: |
+    #include "header_a.h"
+
+    int main() {
+        A a;
+        B b;
+        return 0;
+    }
+  header_a.h: |
+    #ifndef HEADER_A_H
+    #define HEADER_A_H
+
+    #include "header_b.h"
+
+    typedef struct {
+        int value_a;
+        B* ref_b;
+    } A;
+
+    #endif
+  header_b.h: |
+    #ifndef HEADER_B_H
+    #define HEADER_B_H
+
+    #include "header_a.h"
+
+    typedef struct {
+        int value_b;
+        A* ref_a;
+    } B;
+
+    #endif
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_circular_include_detection",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 3
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+  
+  model:
+    validate_structure: true
+    files:
+      main.c:
+        functions: ["main"]
+      header_a.h:
+        structs:
+          A:
+            fields: ["value_a", "ref_b"]
+      header_b.h:
+        structs:
+          B:
+            fields: ["value_b", "ref_a"]
+    element_counts:
+      functions: 1
+      structs: 2
+  
+  puml:
+    syntax_valid: true
+    contains_elements: ["A", "B", "main"]
+    class_count: 5
+    relationship_count: 4

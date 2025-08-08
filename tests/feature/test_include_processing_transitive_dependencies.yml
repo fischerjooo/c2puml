@@ -1,0 +1,48 @@
+# Test metadata
+test:
+  name: "Transitive Dependencies"
+  description: "Test transitive dependency resolution"
+  category: "feature"
+  id: "1010"
+
+---
+# Source files
+source_files:
+  main.c: |
+    #include "a.h"
+    int main() { return 0; }
+  a.h: |
+    #ifndef A_H
+    #define A_H
+    #include "b.h"
+    typedef struct { B b; } A;
+    #endif
+  b.h: |
+    #ifndef B_H
+    #define B_H
+    typedef struct { int val; } B;
+    #endif
+
+---
+# Configuration  
+config.json: |
+  {
+    "project_name": "test_transitive_dependencies",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 3
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+  model:
+    validate_structure: true
+    element_counts:
+      functions: 1
+      structs: 2
+  puml:
+    syntax_valid: true
