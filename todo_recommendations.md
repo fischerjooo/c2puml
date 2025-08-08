@@ -100,7 +100,7 @@ assertions:
   
 ```
 
-**Recommendation**: Parser tests should only verify that model.json is generated correctly. They should not test transformation or PlantUML generation.
+**Recommendation**: Parser tests should only run the parsing step and verify that model.json is generated correctly. Use CLI step: `parse_only`. Input: C/C++ source files. Output validation: model.json structure and content.
 
 #### **Transformer Validation** (For transformer-only tests)
 
@@ -126,7 +126,7 @@ assertions:
   
 ```
 
-**Recommendation**: Transformer tests should verify both element removal and preservation. Test that unwanted elements are gone and important elements remain.
+**Recommendation**: Transformer tests should only run the transformation step and verify both element removal and preservation. Use CLI step: `transform_only`. Input: Pre-generated model.json file. Output validation: transformed model.json structure and content.
 
 #### **Generator Validation** (For generator/PlantUML tests)
 
@@ -179,7 +179,7 @@ assertions:
   
 ```
 
-**Recommendation**: Generator tests should verify both PlantUML syntax validity and content accuracy. Test that all expected elements appear in diagrams and unwanted elements are excluded.
+**Recommendation**: Generator tests should only run the generation step and verify both PlantUML syntax validity and content accuracy. Use CLI step: `generate_only`. Input: Pre-generated model.json file (or model_transformed.json). Output validation: PlantUML file syntax and content.
 
 #### **File System Validation** (For all test types)
 
@@ -292,36 +292,134 @@ assertions:
         values: ["VALUE1", "VALUE2", "VALUE3"]
 ```
 
+## CLI Step Selection and Input File Requirements
+
+### **Choose the Right CLI Step for Your Test Type**
+
+The C2PlantUML tool supports running individual pipeline steps for focused testing:
+
+1. **`run_parse_only()`**: Runs only the parsing step (C/C++ → model.json)
+2. **`run_transform_only()`**: Runs only the transformation step (model.json → model_transformed.json)
+3. **`run_generate_only()`**: Runs only the generation step (model.json → .puml files)
+4. **`run_full_pipeline()`**: Runs all steps (parse → transform → generate)
+
+### **Input File Requirements by Test Type**
+
+#### **Parser Tests** - Use `run_parse_only()`
+```yaml
+# source_files section should contain C/C++ files
+source_files:
+  main.c: |
+    #include <stdio.h>
+    struct Person { char name[50]; int age; };
+    int main() { return 0; }
+  header.h: |
+    #define MAX_SIZE 100
+    extern int global_var;
+```
+**Input**: C/C++ source files only  
+**Output**: model.json  
+**Purpose**: Test parsing accuracy and completeness
+
+#### **Transformer Tests** - Use `run_transform_only()`
+```yaml
+# source_files section should contain pre-generated model.json
+source_files:
+  model.json: |
+    {
+      "files": {
+        "main.c": {
+          "functions": ["main", "debug_function"],
+          "structs": {"Person": {"fields": ["name", "age"]}},
+          "globals": ["global_var"]
+        }
+      }
+    }
+```
+**Input**: Pre-generated model.json file only  
+**Output**: model_transformed.json  
+**Purpose**: Test transformation rules and element filtering
+
+#### **Generator Tests** - Use `run_generate_only()`
+```yaml
+# source_files section should contain model.json or model_transformed.json
+source_files:
+  model.json: |
+    {
+      "files": {
+        "main.c": {
+          "functions": ["main"],
+          "structs": {"Person": {"fields": ["name", "age"]}},
+          "includes": ["stdio.h"]
+        }
+      }
+    }
+```
+**Input**: Pre-generated model.json or model_transformed.json file only  
+**Output**: .puml files  
+**Purpose**: Test PlantUML generation and formatting
+
+#### **Integration Tests** - Use `run_full_pipeline()`
+```yaml
+# source_files section should contain complete C/C++ project
+source_files:
+  main.c: |
+    #include "header.h"
+    int main() { return 0; }
+  header.h: |
+    struct Person { char name[50]; int age; };
+    extern int global_var;
+```
+**Input**: Complete C/C++ source files  
+**Output**: model.json, model_transformed.json, .puml files  
+**Purpose**: Test complete end-to-end pipeline
+
+### **Benefits of Focused Testing**
+
+1. **Faster execution**: Only run the step you're testing
+2. **Clearer failures**: Isolate failures to specific pipeline components
+3. **Simpler input**: Provide only the files needed for your test
+4. **Better debugging**: Focus on one transformation at a time
+5. **Modular testing**: Test each component independently
+
 ## Test Development Recommendations
 
 ### **For Parser Tests**
 
-1. **Focus on parsing accuracy**: Verify that all C/C++ elements are correctly extracted
-2. **Test edge cases**: Include tests for complex C constructs, nested structures, function pointers
-3. **Validate structure**: Always use `validate_structure: true` for parser tests
-4. **Use element existence checks**: Prefer `functions_exist`, `structs_exist` over detailed file assertions
-5. **Test element counts**: Use `element_counts` to verify parsing completeness
+1. **Run parsing step only**: Use `run_parse_only()` method to test only the C/C++ parsing functionality
+2. **Input files**: Provide only C/C++ source files (`.c`, `.h`, `.cpp`, `.hpp`) as input
+3. **Focus on parsing accuracy**: Verify that all C/C++ elements are correctly extracted
+4. **Test edge cases**: Include tests for complex C constructs, nested structures, function pointers
+5. **Validate structure**: Always use `validate_structure: true` for parser tests
+6. **Use element existence checks**: Prefer `functions_exist`, `structs_exist` over detailed file assertions
+7. **Test element counts**: Use `element_counts` to verify parsing completeness
 
-**Recommendation**: Parser tests should only run the parsing step and verify model.json generation.
+**Recommendation**: Parser tests should only run the parsing step and verify model.json generation. No transformation or PlantUML generation needed.
 
 ### **For Transformer Tests**
 
-1. **Test removal and preservation**: Always test both what should be removed and what should be preserved
-2. **Validate transformations**: Test element renaming by checking for new names and absence of old names
-3. **Use element existence checks**: Use `functions_exist`, `functions_not_exist`, etc. for comprehensive validation
-4. **Test configuration variations**: Create separate tests for different transformation configurations
+1. **Run transformation step only**: Use `run_transform_only()` method to test only the model transformation functionality
+2. **Input files**: Provide only a pre-generated `model.json` file as input (no C/C++ source files needed)
+3. **Test removal and preservation**: Always test both what should be removed and what should be preserved
+4. **Validate transformations**: Test element renaming by checking for new names and absence of old names
+5. **Use element existence checks**: Use `functions_exist`, `functions_not_exist`, etc. for comprehensive validation
+6. **Test configuration variations**: Create separate tests for different transformation configurations
+7. **Focus on element changes**: Verify that transformation rules are correctly applied
 
-**Recommendation**: Transformer tests should only verify the transformed model.json, not PlantUML generation.
+**Recommendation**: Transformer tests should only run the transformation step and verify the transformed model.json. No parsing or PlantUML generation needed.
 
 ### **For Generator Tests**
 
-1. **Validate syntax first**: Always include `syntax_valid: true`
-2. **Test content accuracy**: Verify that expected elements appear in PlantUML diagrams
-3. **Validate relationships**: Test that include relationships and typedef relationships are correctly generated
-4. **Test exclusions**: Verify that unwanted elements don't appear in diagrams
-5. **Use count validation**: Validate class and relationship counts for structural accuracy
+1. **Run generation step only**: Use `run_generate_only()` method to test only the PlantUML generation functionality
+2. **Input files**: Provide only a pre-generated `model.json` or `model_transformed.json` file as input (no C/C++ source files needed)
+3. **Validate syntax first**: Always include `syntax_valid: true`
+4. **Test content accuracy**: Verify that expected elements appear in PlantUML diagrams
+5. **Validate relationships**: Test that include relationships and typedef relationships are correctly generated
+6. **Test exclusions**: Verify that unwanted elements don't appear in diagrams
+7. **Use count validation**: Validate class and relationship counts for structural accuracy
+8. **Test diagram formatting**: Verify PlantUML-specific formatting and structure
 
-**Recommendation**: Generator tests should only verify PlantUML generation from existing model files.
+**Recommendation**: Generator tests should only run the generation step and verify PlantUML generation from existing model files. No parsing or transformation needed.
 
 ### **General Best Practices**
 
@@ -337,9 +435,11 @@ When migrating existing internal API tests to the new framework:
 
 1. **Identify the test purpose**: Determine if it's testing parsing, transformation, or generation
 2. **Convert assertions to YAML**: Map internal API assertions to YAML assertion patterns
-3. **Use appropriate validation type**: Choose parser, transformer, or generator validation patterns
-4. **Simplify test code**: Use the simple 3-line pattern whenever possible
-5. **Enhance with new capabilities**: Take advantage of new validation features not available in internal API tests
+3. **Choose appropriate CLI step**: Use `run_parse_only()`, `run_transform_only()`, or `run_generate_only()` based on test purpose
+4. **Use appropriate validation type**: Choose parser, transformer, or generator validation patterns  
+5. **Provide minimal input**: Include only the input files needed for your specific CLI step
+6. **Simplify test code**: Use the simple 3-line pattern whenever possible
+7. **Enhance with new capabilities**: Take advantage of new validation features not available in internal API tests
 
 ## Validation Framework Benefits
 
