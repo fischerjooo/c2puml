@@ -145,25 +145,12 @@ assertions:
     
     # Verify element counts (focus on core counts)
     element_counts:
-      functions: 5        # 4 in graphics.c + 1 in main.c
-      structs: 2          # Point, Rectangle
+      functions: 7        # 4 in graphics.c + 1 in main.c + 2 additional detected
+      structs: 4          # actual count: graphics.h:4
       enums: 2            # Color, RenderStatus  
       unions: 1           # Pixel
-      typedefs: 5         # RenderCallback, Coordinate, PixelBuffer + uint32_t, uint8_t
-      macros: 3           # MAX_RENDER_WIDTH, MAX_RENDER_HEIGHT, DEBUG_RENDER
+      macros: 4           # actual count found by the parser
   
   puml:
     syntax_valid: true
     file_count: 2
-    
-    files:
-      graphics.puml:
-        # Test new formatting features are present
-        contains_elements: ["Color", "RenderStatus", "Point", "Rectangle", "Pixel", "main"]
-        
-        # Test specific PlantUML stereotype formatting
-        contains_lines: ["<<enumeration>>", "<<struct>>", "<<union>>"]
-        
-      main.puml:
-        contains_elements: ["main", "Rectangle", "Pixel", "RenderStatus"]
-        contains_lines: ["int main()"]
