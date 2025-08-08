@@ -1,0 +1,75 @@
+# Test metadata
+test:
+  name: "Typedef Extraction - Union Typedefs"
+  description: "Test extraction of union typedef declarations"
+  category: "unit"
+  id: "0055"
+
+---
+# Source files
+source_files:
+  union_typedefs.c: |
+    // Union typedef declarations
+    typedef union Number_tag {
+        int i;
+        float f;
+        double d;
+    } Number_t;
+    
+    typedef union NamedUnion_tag {
+        char c;
+        int i;
+        short s;
+    } NamedUnion_t;
+    
+    typedef union Value {
+        int integer_value;
+        float float_value;
+        char string_value[32];
+    } Value_t;
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_typedef_extraction_unions",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "union_typedefs.puml"]
+  
+  model:
+    files:
+      union_typedefs.c:
+        unions:
+          Number_t:
+            fields: ["i", "f", "d"]
+          NamedUnion_t:
+            fields: ["c", "i", "s"]
+          Value_t:
+            fields: ["integer_value", "float_value", "string_value"]
+    element_counts:
+      structs: 0
+      enums: 0
+      functions: 0
+      globals: 0
+      includes: 0
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      union_typedefs.puml:
+        contains_elements: ["Number_t", "NamedUnion_t", "Value_t"]
+        contains_lines: ["class \"Number_t\" as TYPEDEF_NUMBER_T", "class \"NamedUnion_t\" as TYPEDEF_NAMEDUNION_T", "class \"Value_t\" as TYPEDEF_VALUE_T"]
+        class_count: 4  # 3 union typedefs + 1 source file
+        relationship_count: 3  # Each union typedef has relationship to source file

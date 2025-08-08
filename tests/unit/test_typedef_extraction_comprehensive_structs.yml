@@ -1,0 +1,82 @@
+# Test metadata
+test:
+  name: "Typedef Extraction - Struct Typedefs"
+  description: "Test extraction of struct typedef declarations"
+  category: "unit"
+  id: "0053"
+
+---
+# Source files
+source_files:
+  struct_typedefs.c: |
+    // Struct typedef declarations
+    typedef struct MyBuffer_tag {
+        MyLen length;
+        MyString data;
+    } MyBuffer;
+    
+    typedef struct MyComplexStruct_tag {
+        MyLen id;
+        MyString name;
+        MyCallback callback;
+        log_level_t log_level;
+    } MyComplex;
+    
+    typedef struct point_tag {
+        int x;
+        int y;
+    } point_t;
+    
+    typedef struct Person {
+        char name[50];
+        int age;
+        char *address;
+    } Person_t;
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_typedef_extraction_structs",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "struct_typedefs.puml"]
+  
+  model:
+    files:
+      struct_typedefs.c:
+        structs:
+          MyBuffer:
+            fields: ["length", "data"]
+          MyComplex:
+            fields: ["id", "name", "callback", "log_level"]
+          point_t:
+            fields: ["x", "y"]
+          Person_t:
+            fields: ["name", "age", "address"]
+    element_counts:
+      structs: 4
+      enums: 0
+      functions: 0
+      globals: 0
+      includes: 0
+  
+  puml:
+    # Global PlantUML assertions (applied to all files)
+    syntax_valid: true
+    
+    # Per-file PlantUML assertions
+    files:
+      struct_typedefs.puml:
+        contains_elements: ["MyBuffer", "MyComplex", "point_t", "Person_t"]
+        contains_lines: ["class \"MyBuffer\" as TYPEDEF_MYBUFFER", "class \"MyComplex\" as TYPEDEF_MYCOMPLEX", "class \"point_t\" as TYPEDEF_POINT_T"]
+        class_count: 5  # 4 struct typedefs + 1 source file
+        relationship_count: 4  # Each struct typedef has relationship to source file
