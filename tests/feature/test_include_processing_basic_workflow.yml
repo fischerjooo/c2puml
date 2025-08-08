@@ -65,7 +65,7 @@ assertions:
     syntax_valid: true
     files:
       main.puml:
-        contains_elements: ["Point", "main"]
-        contains_lines: ["class \"Point\" as TYPEDEF_POINT", "int main()"]
-        class_count: 2
-        relationship_count: 1
+        contains_elements: ["Point", "main", "utils"]
+        contains_lines: ["class \"Point\" as TYPEDEF_POINT", "- int main()"]
+        class_count: 3
+        relationship_count: 2

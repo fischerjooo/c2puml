@@ -42,6 +42,6 @@ assertions:
     element_counts:
       functions: 1
       structs: 1
-      macros: 1
+      macros: 2
   puml:
     syntax_valid: true

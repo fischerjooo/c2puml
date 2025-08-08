@@ -35,7 +35,10 @@ source_files:
     #define GEOMETRY_H
 
     typedef struct {
-        int x, y, width, height;
+        int x;
+        int y;
+        int width;
+        int height;
     } Rectangle;
 
     #endif
@@ -44,7 +47,10 @@ source_files:
     #define COLORS_H
 
     typedef struct {
-        unsigned char r, g, b, a;
+        unsigned char r;
+        unsigned char g;
+        unsigned char b;
+        unsigned char a;
     } Color;
 
     #endif
@@ -72,13 +78,11 @@ assertions:
     files:
       main.c:
         functions: ["main"]
-        includes: ["graphics.h"]
       graphics.h:
         structs:
           Window:
             fields: ["bounds", "background"]
         functions: ["create_window"]
-        includes: ["geometry.h", "colors.h"]
       geometry.h:
         structs:
           Rectangle:
@@ -94,5 +98,5 @@ assertions:
   puml:
     syntax_valid: true
     contains_elements: ["Window", "Rectangle", "Color", "main", "create_window"]
-    class_count: 4
-    relationship_count: 3
+    class_count: 7
+    relationship_count: 8

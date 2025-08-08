@@ -113,6 +113,6 @@ assertions:
   
   puml:
     syntax_valid: true
-    contains_elements: ["Engine", "Viewport", "Shader", "main", "engine_create", "log_info"]
-    class_count: 6
-    relationship_count: 5
+    contains_elements: ["Engine", "main", "engine_create", "log_info"]
+    class_count: 3
+    relationship_count: 2

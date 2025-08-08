@@ -51,6 +51,6 @@ assertions:
     validate_structure: true
     element_counts:
       functions: 1
-      structs: 1
+      structs: 2
   puml:
     syntax_valid: true

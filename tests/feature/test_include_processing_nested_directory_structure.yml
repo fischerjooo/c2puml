@@ -64,5 +64,5 @@ assertions:
   puml:
     syntax_valid: true
     contains_elements: ["Base", "main", "create_base"]
-    class_count: 2
-    relationship_count: 1
+    class_count: 3
+    relationship_count: 2

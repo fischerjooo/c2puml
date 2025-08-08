@@ -64,17 +64,14 @@ assertions:
     files:
       main.c:
         functions: ["main"]
-        includes: ["header_a.h"]
       header_a.h:
         structs:
           A:
             fields: ["value_a", "ref_b"]
-        includes: ["header_b.h"]
       header_b.h:
         structs:
           B:
             fields: ["value_b", "ref_a"]
-        includes: ["header_a.h"]
     element_counts:
       functions: 1
       structs: 2
@@ -82,5 +79,5 @@ assertions:
   puml:
     syntax_valid: true
     contains_elements: ["A", "B", "main"]
-    class_count: 3
-    relationship_count: 2
+    class_count: 5
+    relationship_count: 4

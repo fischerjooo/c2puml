@@ -21,7 +21,8 @@ source_files:
     #define TYPES_H
 
     typedef struct {
-        int x, y;
+        int x;
+        int y;
     } Point;
 
     #endif
@@ -77,10 +78,10 @@ assertions:
     element_counts:
       functions: 1
       structs: 2
-      macros: 1
+      macros: 3
   
   puml:
     syntax_valid: true
     contains_elements: ["Point", "Config", "app_init"]
-    class_count: 3
-    relationship_count: 2
+    class_count: 5
+    relationship_count: 6

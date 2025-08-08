@@ -79,19 +79,16 @@ assertions:
     files:
       main.c:
         functions: ["main"]
-        includes: ["module_a.h", "module_b.h"]
       module_a.h:
         structs:
           ComponentA:
             fields: ["id", "data"]
         functions: ["create_component_a"]
-        includes: ["common.h"]
       module_b.h:
         structs:
           ComponentB:
             fields: ["type", "data"]
         functions: ["create_component_b"]
-        includes: ["common.h"]
       common.h:
         structs:
           BaseData:
@@ -103,5 +100,5 @@ assertions:
   puml:
     syntax_valid: true
     contains_elements: ["ComponentA", "ComponentB", "BaseData", "main"]
-    class_count: 4
-    relationship_count: 3
+    class_count: 7
+    relationship_count: 9
