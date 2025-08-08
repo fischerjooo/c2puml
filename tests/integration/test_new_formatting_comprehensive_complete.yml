@@ -1,0 +1,200 @@
+# Test metadata
+test:
+  name: "Complete New Formatting Integration"
+  description: "Test all new PlantUML formatting rules working together in a realistic scenario"
+  category: "integration"
+  id: "2001"
+
+---
+# Source files (pre-generated model.json for generator test)
+source_files:
+  model.json: |
+    {
+      "project_name": "comprehensive_test",
+      "source_folder": "/test",
+      "files": {
+        "graphics.c": {
+          "file_path": "graphics.c",
+          "name": "graphics.c",
+          "includes": [],
+          "macros": [
+            "#define MAX_RENDER_WIDTH 1920",
+            "#define MAX_RENDER_HEIGHT 1080", 
+            "#define DEBUG_RENDER"
+          ],
+          "enums": {
+            "Color": {
+              "name": "Color",
+              "values": [
+                {"name": "RED", "value": "0xFF0000"},
+                {"name": "GREEN", "value": "0x00FF00"},
+                {"name": "BLUE", "value": "0x0000FF"},
+                {"name": "ALPHA"}
+              ]
+            },
+            "RenderStatus": {
+              "name": "RenderStatus",
+              "values": [
+                {"name": "RENDER_OK"},
+                {"name": "RENDER_ERROR"},
+                {"name": "RENDER_PENDING"}
+              ]
+            }
+          },
+          "structs": {
+            "Point": {
+              "name": "Point",
+              "fields": [
+                {"name": "x", "type": "float"},
+                {"name": "y", "type": "float"},
+                {"name": "z", "type": "float"}
+              ]
+            },
+            "Rectangle": {
+              "name": "Rectangle",
+              "fields": [
+                {"name": "top_left", "type": "Point"},
+                {"name": "width", "type": "int"},
+                {"name": "height", "type": "int"},
+                {"name": "color", "type": "Color"}
+              ]
+            }
+          },
+          "unions": {
+            "Pixel": {
+              "name": "Pixel",
+              "fields": [
+                {"name": "rgba", "type": "uint32_t"},
+                {"name": "components", "type": "struct { uint8_t r, g, b, a; }"}
+              ]
+            }
+          },
+          "aliases": {
+            "Coordinate": {"name": "Coordinate", "original_type": "float"},
+            "RenderCallback": {"name": "RenderCallback", "original_type": "void (*)(Rectangle*)"},
+            "PixelBuffer": {"name": "PixelBuffer", "original_type": "Pixel*"}
+          },
+          "functions": [
+            {
+              "name": "render_rectangle",
+              "return_type": "RenderStatus",
+              "is_declaration": false,
+              "parameters": []
+            },
+            {
+              "name": "calculate_pixel_offset",
+              "return_type": "int",
+              "is_declaration": false,
+              "parameters": []
+            },
+            {
+              "name": "set_pixel_color",
+              "return_type": "void",
+              "is_declaration": false,
+              "parameters": []
+            },
+            {
+              "name": "optimize_render_buffer",
+              "return_type": "void",
+              "is_declaration": false,
+              "parameters": []
+            }
+          ],
+          "globals": [
+            {"name": "default_background", "type": "Color"},
+            {"name": "render_cache_size", "type": "static int"},
+            {"name": "max_texture_size", "type": "int"},
+            {"name": "last_render_time", "type": "static uint64_t"}
+          ]
+        },
+        "graphics.h": {
+          "file_path": "graphics.h",
+          "name": "graphics.h",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "render_rectangle",
+              "return_type": "RenderStatus",
+              "is_declaration": true,
+              "parameters": []
+            },
+            {
+              "name": "set_pixel_color",
+              "return_type": "void",
+              "is_declaration": true,
+              "parameters": []
+            }
+          ],
+          "globals": [
+            {"name": "default_background", "type": "extern Color"},
+            {"name": "max_texture_size", "type": "extern int"}
+          ]
+        }
+      },
+      "include_relations": [],
+      "created_at": "2023-01-01T00:00:00"
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "comprehensive_test",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "use_short_names": false,
+    "group_by_visibility": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+  
+  puml:
+    graphics.puml:
+      contains:
+        - "<<enumeration>>"
+        - "<<struct>>"
+        - "<<union>>"
+        - "<<typedef>>"
+        - "<<function pointer>>"
+        - "class \"Color\" as TYPEDEF_COLOR <<enumeration>> #LightYellow"
+        - "class \"RenderStatus\" as TYPEDEF_RENDERSTATUS <<enumeration>> #LightYellow"
+        - "class \"Point\" as TYPEDEF_POINT <<struct>> #LightYellow"
+        - "class \"Rectangle\" as TYPEDEF_RECTANGLE <<struct>> #LightYellow"
+        - "class \"Pixel\" as TYPEDEF_PIXEL <<union>> #LightYellow"
+        - "class \"Coordinate\" as TYPEDEF_COORDINATE <<typedef>> #LightYellow"
+        - "class \"RenderCallback\" as TYPEDEF_RENDERCALLBACK <<function pointer>> #LightYellow"
+        - "class \"PixelBuffer\" as TYPEDEF_PIXELBUFFER <<typedef>> #LightYellow"
+        - "RED = 0xFF0000"
+        - "ALPHA"
+        - "RENDER_OK"
+        - "+ float x"
+        - "+ float y"
+        - "+ int width"
+        - "+ Color color"
+        - "+ uint32_t rgba"
+        - "+ RenderStatus render_rectangle"
+        - "+ void set_pixel_color"
+        - "- int calculate_pixel_offset"
+        - "- void optimize_render_buffer"
+        - "+ Color default_background"
+        - "+ int max_texture_size"
+        - "- static int render_cache_size"
+        - "- static uint64_t last_render_time"
+        - "alias of float"
+        - "alias of void (*)(Rectangle*)"
+        - "alias of Pixel*"
+      not_contains:
+        - "class \"Color\" as TYPEDEF_COLOR <<typedef>>"
+        - "class \"RenderStatus\" as TYPEDEF_RENDERSTATUS <<typedef>>"
+        - "class \"Point\" as TYPEDEF_POINT <<typedef>>"
+        - "class \"Rectangle\" as TYPEDEF_RECTANGLE <<typedef>>"
+        - "class \"Pixel\" as TYPEDEF_PIXEL <<typedef>>"

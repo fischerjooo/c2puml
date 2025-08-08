@@ -1,0 +1,153 @@
+# Test metadata
+test:
+  name: "Mixed Project Comprehensive Formatting"
+  description: "Test formatting in a project with multiple files and cross-references"
+  category: "integration"
+  id: "2002"
+
+---
+# Source files (pre-generated model.json for generator test)
+source_files:
+  model.json: |
+    {
+      "project_name": "multi_file_test",
+      "source_folder": "/test",
+      "files": {
+        "main.c": {
+          "file_path": "main.c",
+          "name": "main.c",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "main",
+              "return_type": "int",
+              "is_declaration": false,
+              "parameters": []
+            },
+            {
+              "name": "internal_main_helper",
+              "return_type": "void",
+              "is_declaration": false,
+              "parameters": []
+            }
+          ],
+          "globals": [
+            {"name": "program_name", "type": "char*"},
+            {"name": "debug_mode", "type": "static int"}
+          ]
+        },
+        "utils.c": {
+          "file_path": "utils.c",
+          "name": "utils.c",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "utility_function",
+              "return_type": "void",
+              "is_declaration": false,
+              "parameters": []
+            },
+            {
+              "name": "internal_utils_helper",
+              "return_type": "int",
+              "is_declaration": false,
+              "parameters": []
+            }
+          ],
+          "globals": [
+            {"name": "utils_initialized", "type": "int"},
+            {"name": "private_cache", "type": "static void*"}
+          ]
+        },
+        "main.h": {
+          "file_path": "main.h",
+          "name": "main.h",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "main",
+              "return_type": "int",
+              "is_declaration": true,
+              "parameters": []
+            }
+          ],
+          "globals": [
+            {"name": "program_name", "type": "extern char*"}
+          ]
+        },
+        "utils.h": {
+          "file_path": "utils.h",
+          "name": "utils.h",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "utility_function",
+              "return_type": "void",
+              "is_declaration": true,
+              "parameters": []
+            }
+          ],
+          "globals": [
+            {"name": "utils_initialized", "type": "extern int"}
+          ]
+        }
+      },
+      "include_relations": [],
+      "created_at": "2023-01-01T00:00:00"
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "multi_file_test",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "use_short_names": false,
+    "group_by_visibility": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+  
+  puml:
+    main.puml:
+      contains:
+        - "class \"main\" as MAIN <<source>> #LightBlue"
+        - "class \"main\" as HEADER_MAIN <<header>> #LightGreen"
+        - "+ int main"
+        - "- void internal_main_helper"
+        - "+ char* program_name"
+        - "- static int debug_mode"
+        
+    utils.puml:
+      contains:
+        - "class \"utils\" as UTILS <<source>> #LightBlue"
+        - "class \"utils\" as HEADER_UTILS <<header>> #LightGreen"
+        - "+ void utility_function"
+        - "- int internal_utils_helper"
+        - "+ int utils_initialized"
+        - "- static void* private_cache"
