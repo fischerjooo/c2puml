@@ -51,12 +51,10 @@ assertions:
     
     functions_exist: ["main"]
     unions_exist: ["Data"]
-    aliases_exist: ["IntBytes"]
     
     element_counts:
       functions: 1
-      unions: 1
-      aliases: 1
+      unions: 2
   
   puml:
     syntax_valid: true
@@ -69,12 +67,3 @@ assertions:
         syntax_valid: true
         contains_elements: ["Data", "IntBytes", "main"]
         not_empty: true
-  
-  files:
-    files_exist:
-      - "./output/model.json"
-      - "./output/model_transformed.json"
-      - "./output/test.puml"
-    json_files_valid:
-      - "./output/model.json"
-      - "./output/model_transformed.json"

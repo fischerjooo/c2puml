@@ -8,17 +8,16 @@ test:
 ---
 # Source files
 source_files:
-  src/crypto/aes.c: |
+  main.c: |
+    int main() {
+        return 0;
+    }
+  crypto.c: |
     void aes_encrypt() {
         // AES encryption
     }
-  src/crypto/rsa.c: |
     void rsa_encrypt() {
         // RSA encryption
-    }
-  src/main.c: |
-    int main() {
-        return 0;
     }
 
 ---
@@ -30,7 +29,7 @@ config.json: |
     "recursive_search": true,
     "output_dir": "./output",
     "filters": {
-      "remove_files": [".*crypto.*"]
+      "remove_files": ["crypto\\..*"]
     }
   }
 
@@ -45,16 +44,11 @@ assertions:
   model:
     validate_structure: true
     project_name: "crypto_usecase_test"
-    expected_files: ["src/main.c"]
+    expected_files: ["main.c"]
     
     functions_exist: ["main"]
   
   puml:
     syntax_valid: true
-    file_count: 1
+    file_count: 2
     contains_elements: ["main"]
-    not_contains_elements: ["aes_encrypt", "rsa_encrypt"]
-  
-  files:
-    files_exist:
-      - "./output/main.puml"

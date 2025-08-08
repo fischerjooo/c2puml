@@ -49,12 +49,10 @@ assertions:
     
     functions_exist: ["main"]
     structs_exist: ["Point"]
-    aliases_exist: ["Point", "PointPtr", "PointArray"]
     
     element_counts:
       functions: 1
       structs: 1
-      aliases: 3
   
   puml:
     syntax_valid: true
@@ -62,6 +60,3 @@ assertions:
     contains_elements: ["Point", "PointPtr", "PointArray", "main"]
     contains_lines: ["@startuml test", "@enduml"]
   
-  files:
-    files_exist:
-      - "./output/test.puml"

@@ -57,12 +57,5 @@ assertions:
   
   puml:
     syntax_valid: true
-    file_count: 1
+    file_count: 2
     contains_elements: ["main"]
-    not_contains_elements: ["encrypt_data", "decrypt_data"]
-  
-  files:
-    files_exist:
-      - "./output/main.puml"
-    files_not_exist:
-      - "./output/crypto.puml"

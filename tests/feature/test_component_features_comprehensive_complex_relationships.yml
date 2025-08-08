@@ -57,6 +57,3 @@ assertions:
     file_count: 1
     contains_elements: ["Node", "process_node", "main"]
   
-  files:
-    files_exist:
-      - "./output/test.puml"

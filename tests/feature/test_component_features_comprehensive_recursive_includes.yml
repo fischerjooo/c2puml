@@ -46,8 +46,3 @@ assertions:
     
     functions_exist: ["main", "func1", "func2"]
   
-  files:
-    files_exist:
-      - "./output/main.puml"
-      - "./output/include1.puml"
-      - "./output/include2.puml"

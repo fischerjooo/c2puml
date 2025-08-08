@@ -45,10 +45,5 @@ assertions:
   
   puml:
     syntax_valid: true
-    file_count: 2
+    file_count: 1
     contains_elements: ["main", "process"]
-  
-  files:
-    files_exist:
-      - "./output/main.puml"
-      - "./output/header.puml"

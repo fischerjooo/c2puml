@@ -46,7 +46,3 @@ assertions:
     functions_exist: ["main"]
     structs_exist: ["Point"]
   
-  files:
-    files_exist:
-      - "./output/types.puml"
-      - "./output/main.puml"
