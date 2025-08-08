@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for src/c2puml/core/parser.py: 80%</title>
+    <title>Coverage for src/c2puml/core/parser.py: 79%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>src/c2puml/core/parser.py</b>:
-            <span class="pc_cov">80%</span>
+            <span class="pc_cov">79%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">905 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">726<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">179<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">711<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">194<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.2">coverage.py v7.10.2</a>,
-            created at 2025-08-08 20:09 +0000
+            created at 2025-08-08 20:37 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -131,17 +131,17 @@
     <p class="pln"><span class="n"><a id="t49" href="#t49">49</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t50" href="#t50">50</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">source_folder_path</span><span class="op">.</span><span class="nam">exists</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t51" href="#t51">51</a></span><span class="t">            <span class="com"># Provide helpful error message with suggestions</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t52" href="#t52">52</a></span><span class="t">            <span class="nam">error_msg</span> <span class="op">=</span> <span class="str">f"Source folder not found: {source_folder_path}"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t52" href="#t52">52</a></span><span class="t">            <span class="nam">error_msg</span> <span class="op">=</span> <span class="str">f"Source folder not found: {source_folder_path}"</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t53" href="#t53">53</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t54" href="#t54">54</a></span><span class="t">            <span class="com"># Check if it's a relative path issue</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t55" href="#t55">55</a></span><span class="t">            <span class="key">if</span> <span class="key">not</span> <span class="nam">Path</span><span class="op">(</span><span class="nam">source_folder</span><span class="op">)</span><span class="op">.</span><span class="nam">is_absolute</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t55" href="#t55">55</a></span><span class="t">            <span class="key">if</span> <span class="key">not</span> <span class="nam">Path</span><span class="op">(</span><span class="nam">source_folder</span><span class="op">)</span><span class="op">.</span><span class="nam">is_absolute</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t56" href="#t56">56</a></span><span class="t">                <span class="nam">current_dir</span> <span class="op">=</span> <span class="nam">Path</span><span class="op">.</span><span class="nam">cwd</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t57" href="#t57">57</a></span><span class="t">                <span class="nam">error_msg</span> <span class="op">+=</span> <span class="str">f"\nCurrent working directory: {current_dir}"</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t58" href="#t58">58</a></span><span class="t">                <span class="nam">error_msg</span> <span class="op">+=</span> <span class="str">f"\nTried to resolve relative path: {source_folder}"</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t59" href="#t59">59</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t60" href="#t60">60</a></span><span class="t">            <span class="com"># Check if parent directory exists</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t61" href="#t61">61</a></span><span class="t">            <span class="nam">parent_dir</span> <span class="op">=</span> <span class="nam">source_folder_path</span><span class="op">.</span><span class="nam">parent</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t62" href="#t62">62</a></span><span class="t">            <span class="key">if</span> <span class="nam">parent_dir</span><span class="op">.</span><span class="nam">exists</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t61" href="#t61">61</a></span><span class="t">            <span class="nam">parent_dir</span> <span class="op">=</span> <span class="nam">source_folder_path</span><span class="op">.</span><span class="nam">parent</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t62" href="#t62">62</a></span><span class="t">            <span class="key">if</span> <span class="nam">parent_dir</span><span class="op">.</span><span class="nam">exists</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t63" href="#t63">63</a></span><span class="t">                <span class="nam">error_msg</span> <span class="op">+=</span> <span class="str">f"\nParent directory exists: {parent_dir}"</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t64" href="#t64">64</a></span><span class="t">                <span class="com"># List contents of parent directory</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t65" href="#t65">65</a></span><span class="t">                <span class="key">try</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -153,9 +153,9 @@
     <p class="mis show_mis"><span class="n"><a id="t71" href="#t71">71</a></span><span class="t">                <span class="key">except</span> <span class="op">(</span><span class="nam">OSError</span><span class="op">,</span> <span class="nam">PermissionError</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t72" href="#t72">72</a></span><span class="t">                    <span class="nam">error_msg</span> <span class="op">+=</span> <span class="str">"\nCannot list parent directory contents (permission denied)"</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t73" href="#t73">73</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t74" href="#t74">74</a></span><span class="t">                <span class="nam">error_msg</span> <span class="op">+=</span> <span class="str">f"\nParent directory does not exist: {parent_dir}"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t74" href="#t74">74</a></span><span class="t">                <span class="nam">error_msg</span> <span class="op">+=</span> <span class="str">f"\nParent directory does not exist: {parent_dir}"</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t75" href="#t75">75</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t76" href="#t76">76</a></span><span class="t">            <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="nam">error_msg</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t76" href="#t76">76</a></span><span class="t">            <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="nam">error_msg</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t77" href="#t77">77</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t78" href="#t78">78</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">source_folder_path</span><span class="op">.</span><span class="nam">is_dir</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t79" href="#t79">79</a></span><span class="t">            <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="str">f"Source folder must be a directory, got: {source_folder_path} (is_file: {source_folder_path.is_file()})"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -192,7 +192,7 @@
     <p class="mis mis2 show_mis"><span class="n"><a id="t110" href="#t110">110</a></span><span class="t">                        <span class="str">"Excluded file after filtering: %s"</span><span class="op">,</span> <span class="nam">file_path</span><span class="op">.</span><span class="nam">name</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis mis2 show_mis"><span class="n"><a id="t111" href="#t111">111</a></span><span class="t">                    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">            <span class="nam">c_files</span> <span class="op">=</span> <span class="nam">all_c_files</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">            <span class="nam">c_files</span> <span class="op">=</span> <span class="nam">all_c_files</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t114" href="#t114">114</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">logger</span><span class="op">.</span><span class="nam">info</span><span class="op">(</span><span class="str">"After filtering: %d C/C++ files"</span><span class="op">,</span> <span class="nam">len</span><span class="op">(</span><span class="nam">c_files</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t116" href="#t116">116</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -852,7 +852,7 @@
     <p class="run"><span class="n"><a id="t770" href="#t770">770</a></span><span class="t">    <span class="key">def</span> <span class="nam">_find_original_token_pos</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">all_tokens</span><span class="op">,</span> <span class="nam">filtered_tokens</span><span class="op">,</span> <span class="nam">filtered_pos</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t771" href="#t771">771</a></span><span class="t">        <span class="str">"""Find the position in all_tokens that corresponds to filtered_tokens[filtered_pos]"""</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t772" href="#t772">772</a></span><span class="t">        <span class="key">if</span> <span class="nam">filtered_pos</span> <span class="op">>=</span> <span class="nam">len</span><span class="op">(</span><span class="nam">filtered_tokens</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t773" href="#t773">773</a></span><span class="t">            <span class="key">return</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t773" href="#t773">773</a></span><span class="t">            <span class="key">return</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t774" href="#t774">774</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t775" href="#t775">775</a></span><span class="t">        <span class="nam">target_token</span> <span class="op">=</span> <span class="nam">filtered_tokens</span><span class="op">[</span><span class="nam">filtered_pos</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t776" href="#t776">776</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -1191,7 +1191,7 @@
     <p class="run"><span class="n"><a id="t1109" href="#t1109">1109</a></span><span class="t">                <span class="key">return</span> <span class="nam">i</span> <span class="op">+</span> <span class="num">1</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1110" href="#t1110">1110</a></span><span class="t">            <span class="nam">i</span> <span class="op">+=</span> <span class="num">1</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1111" href="#t1111">1111</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1112" href="#t1112">1112</a></span><span class="t">        <span class="key">return</span> <span class="nam">i</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t1112" href="#t1112">1112</a></span><span class="t">        <span class="key">return</span> <span class="nam">i</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1113" href="#t1113">1113</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1114" href="#t1114">1114</a></span><span class="t">    <span class="key">def</span> <span class="nam">_skip_structure_definition</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">tokens</span><span class="op">,</span> <span class="nam">start_pos</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1115" href="#t1115">1115</a></span><span class="t">        <span class="str">"""Skip over struct/enum/union/typedef definition"""</span>&nbsp;</span><span class="r"></span></p>
@@ -1728,7 +1728,7 @@
     <p class="mis show_mis"><span class="n"><a id="t1646" href="#t1646">1646</a></span><span class="t">            <span class="key">raise</span> <span class="nam">TypeError</span><span class="op">(</span><span class="str">f"source_folders must be a list of strings, got: {type(source_folders)}"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1647" href="#t1647">1647</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1648" href="#t1648">1648</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">source_folders</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1649" href="#t1649">1649</a></span><span class="t">            <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="str">"At least one source folder must be provided"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t1649" href="#t1649">1649</a></span><span class="t">            <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="str">"At least one source folder must be provided"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1650" href="#t1650">1650</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1651" href="#t1651">1651</a></span><span class="t">        <span class="com"># Validate all items are strings and not empty</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1652" href="#t1652">1652</a></span><span class="t">        <span class="key">for</span> <span class="nam">i</span><span class="op">,</span> <span class="nam">folder</span> <span class="key">in</span> <span class="nam">enumerate</span><span class="op">(</span><span class="nam">source_folders</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -1775,15 +1775,15 @@
     <p class="run run2"><span class="n"><a id="t1693" href="#t1693">1693</a></span><span class="t">                    <span class="str">f"Successfully parsed source folder {source_folder}: {len(model.files)} files"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t1694" href="#t1694">1694</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1695" href="#t1695">1695</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1696" href="#t1696">1696</a></span><span class="t">            <span class="key">except</span> <span class="nam">Exception</span> <span class="key">as</span> <span class="nam">e</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1697" href="#t1697">1697</a></span><span class="t">                <span class="nam">self</span><span class="op">.</span><span class="nam">logger</span><span class="op">.</span><span class="nam">error</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t1698" href="#t1698">1698</a></span><span class="t">                    <span class="str">"Failed to parse source folder %s: %s"</span><span class="op">,</span> <span class="nam">source_folder</span><span class="op">,</span> <span class="nam">e</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t1699" href="#t1699">1699</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1700" href="#t1700">1700</a></span><span class="t">                <span class="nam">failed_folders</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="op">(</span><span class="nam">source_folder</span><span class="op">,</span> <span class="nam">str</span><span class="op">(</span><span class="nam">e</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t1696" href="#t1696">1696</a></span><span class="t">            <span class="key">except</span> <span class="nam">Exception</span> <span class="key">as</span> <span class="nam">e</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t1697" href="#t1697">1697</a></span><span class="t">                <span class="nam">self</span><span class="op">.</span><span class="nam">logger</span><span class="op">.</span><span class="nam">error</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t1698" href="#t1698">1698</a></span><span class="t">                    <span class="str">"Failed to parse source folder %s: %s"</span><span class="op">,</span> <span class="nam">source_folder</span><span class="op">,</span> <span class="nam">e</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t1699" href="#t1699">1699</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t1700" href="#t1700">1700</a></span><span class="t">                <span class="nam">failed_folders</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="op">(</span><span class="nam">source_folder</span><span class="op">,</span> <span class="nam">str</span><span class="op">(</span><span class="nam">e</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1701" href="#t1701">1701</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1702" href="#t1702">1702</a></span><span class="t">                <span class="com"># If this is the only source folder, re-raise the error</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1703" href="#t1703">1703</a></span><span class="t">                <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">source_folders</span><span class="op">)</span> <span class="op">==</span> <span class="num">1</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1704" href="#t1704">1704</a></span><span class="t">                    <span class="key">raise</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t1703" href="#t1703">1703</a></span><span class="t">                <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">source_folders</span><span class="op">)</span> <span class="op">==</span> <span class="num">1</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t1704" href="#t1704">1704</a></span><span class="t">                    <span class="key">raise</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1705" href="#t1705">1705</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1706" href="#t1706">1706</a></span><span class="t">                <span class="com"># For multiple source folders, continue with others but log the failure</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t1707" href="#t1707">1707</a></span><span class="t">                <span class="nam">self</span><span class="op">.</span><span class="nam">logger</span><span class="op">.</span><span class="nam">warning</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
@@ -1859,7 +1859,7 @@
             <a class="nav" href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.2">coverage.py v7.10.2</a>,
-            created at 2025-08-08 20:09 +0000
+            created at 2025-08-08 20:37 +0000
         </p>
     </div>
 </footer>
