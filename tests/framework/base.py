@@ -40,7 +40,7 @@ class UnifiedTestCase(unittest.TestCase):
     - Standardized test output management
     - Integration with the unified testing framework components
     - High-level convenience methods for common test patterns
-
+    - Enhanced validator access with meaningful names organized by validation type
     """
     
     def setUp(self):
@@ -99,22 +99,22 @@ class UnifiedTestCase(unittest.TestCase):
         
         # Calculate paths
         test_folder = os.path.dirname(source_dir)  # input/ folder
-        test_dir = os.path.dirname(test_folder)    # test-###/ folder
+        temp_dir = os.path.dirname(test_folder)    # test-name/ folder
         config_filename = os.path.basename(config_path)
         
-        # Execute c2puml
-        result = self.executor.run_full_pipeline(config_filename, test_folder)
+        # Execute c2puml with temp directory as working directory
+        result = self.executor.run_full_pipeline(config_filename, temp_dir)
         
-        # Validate outputs
-        output_dir = os.path.join(test_dir, "output")
+        # Load output files
+        output_dir = os.path.join(temp_dir, "output")
         model_file = self.output_validator.assert_model_file_exists(output_dir)
         puml_files = self.output_validator.assert_puml_files_exist(output_dir)
         
-        return TestResult(result, test_dir, output_dir, model_file, puml_files)
+        return TestResult(result, temp_dir, output_dir, model_file, puml_files)
 
     def validate_execution_success(self, result: TestResult):
         """
-        Assert that test execution was successful.
+        Assert test execution was successful.
         
         Args:
             result: TestResult object from run_test()
