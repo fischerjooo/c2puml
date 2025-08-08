@@ -165,6 +165,10 @@ class ValidatorsProcessor:
             for typedef_name in model_assertions["typedefs_exist"]:
                 self.model_validator.assert_model_typedef_exists(model_data, typedef_name)
         
+        if "aliases_exist" in model_assertions:
+            for alias_name in model_assertions["aliases_exist"]:
+                self.model_validator.assert_model_typedef_exists(model_data, alias_name)
+        
         if "globals_exist" in model_assertions:
             for global_name in model_assertions["globals_exist"]:
                 self.model_validator.assert_model_global_exists(model_data, global_name)

@@ -1,0 +1,121 @@
+# Test metadata
+test:
+  name: "Tokenizer Complex Function Parsing Validation"
+  description: "Test tokenization of complex function definitions through parsing validation"
+  category: "unit"
+  id: "0096"
+
+---
+# Source files
+source_files:
+  complex_functions.c: |
+    #include <stdarg.h>
+    
+    // Forward declarations
+    struct complex_struct;
+    typedef struct complex_struct complex_t;
+    
+    // Function pointer types
+    typedef void (*callback_t)(int result, void* user_data);
+    typedef int (*comparator_t)(const void* a, const void* b);
+    
+    // Complex function with multiple parameter types
+    int complex_function(
+        const char* name,
+        complex_t* data,
+        callback_t callback,
+        void* user_data,
+        int flags,
+        ...  // variadic parameters
+    );
+    
+    // Static function with complex return type
+    static complex_t* create_complex(
+        const char* name,
+        size_t name_len,
+        int initial_value
+    ) {
+        // Implementation would go here
+        return NULL;
+    }
+    
+    // Function with function pointer parameter and return
+    comparator_t get_comparator(
+        const char* type,
+        int (*custom_compare)(const void*, const void*)
+    );
+    
+    // Inline function with complex logic
+    inline void process_array(
+        complex_t** array,
+        size_t count,
+        void (*processor)(complex_t*, int index)
+    ) {
+        // Processing logic
+    }
+    
+    // Variadic function
+    void log_message(int level, const char* format, ...);
+    
+    // Function with const and volatile qualifiers
+    const volatile int* get_status_pointer(void);
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "tokenizer_complex_function_parsing",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "complex_functions.puml"]
+  
+  model:
+    validate_structure: true
+    project_name: "tokenizer_complex_function_parsing"
+    expected_files: ["complex_functions.c"]
+    
+    # Validate complex function parsing
+    functions_exist: ["complex_function", "create_complex", "get_comparator", "process_array", "log_message", "get_status_pointer"]
+    aliases_exist: ["complex_t", "callback_t", "comparator_t"]
+    includes_exist: ["stdarg.h"]
+    
+    # Validate function details - checking they parse with parameters
+    function_details:
+      complex_function:
+        return_type: "int"
+        has_parameters: true
+      create_complex:
+        return_type: "complex_t *"
+        has_parameters: true
+      get_status_pointer:
+        return_type: "const volatile int *"
+        has_parameters: false
+    
+    # Validate element counts
+    element_counts:
+      functions: 6
+      aliases: 3  # typedef aliases for function pointers and struct
+      includes: 1
+      structs: 0
+      enums: 0
+      unions: 0
+      globals: 0
+  
+  puml:
+    syntax_valid: true
+    file_count: 1
+    
+    files:
+      complex_functions.puml:
+        contains_elements: ["complex_function", "create_complex", "callback_t", "comparator_t"]
+        contains_lines: ["int complex_function(", "complex_t * create_complex("]
+        class_count: 4  # source + 3 typedef classes  
+        relationship_count: 3  # declares relationships
