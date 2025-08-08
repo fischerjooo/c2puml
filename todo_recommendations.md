@@ -97,14 +97,7 @@ assertions:
       includes: 2
       macros: 2
   
-  # Workflow validation for parser
-  workflow:
-    parser_workflow:
-      output_exists: true
-      expected_elements:
-        functions: ["main", "helper_function"]
-        structs: ["Person", "Rectangle"]
-        enums: ["Status", "Priority"]
+  
 ```
 
 **Recommendation**: Parser tests should only verify that model.json is generated correctly. They should not test transformation or PlantUML generation.
@@ -130,14 +123,7 @@ assertions:
     functions_exist: ["legacy_print_info"]  # Renamed from deprecated_print_info
     typedefs_exist: ["config_t"]            # Renamed from old_config_t
   
-  workflow:
-    transformer_workflow:
-      elements_removed:
-        functions: ["debug_function", "test_helper"]
-        structs: ["TempStruct"]
-      elements_preserved:
-        functions: ["main", "core_function"]
-        structs: ["Person", "Rectangle"]
+  
 ```
 
 **Recommendation**: Transformer tests should verify both element removal and preservation. Test that unwanted elements are gone and important elements remain.
@@ -190,11 +176,7 @@ assertions:
         class_count: 3
         relationship_count: 2
   
-  workflow:
-    generator_workflow:
-      output_exists: true
-      syntax_valid: true
-      expected_elements: ["Person", "main", "global_var"]
+  
 ```
 
 **Recommendation**: Generator tests should verify both PlantUML syntax validity and content accuracy. Test that all expected elements appear in diagrams and unwanted elements are excluded.
@@ -231,7 +213,7 @@ assertions:
         not_empty: true
 ```
 
-#### **Complete Workflow Validation** (For integration tests)
+#### **Complete Integration Testing** (For integration tests)
 
 For comprehensive end-to-end tests that run the complete parse → transform → generate workflow:
 
@@ -254,22 +236,6 @@ assertions:
   files:
     files_exist: ["./output/model.json", "./output/model_transformed.json", "./output/main.puml"]
     json_files_valid: ["./output/model.json", "./output/model_transformed.json"]
-  
-  workflow:
-    parser_workflow:
-      expected_elements:
-        functions: ["main"]
-        structs: ["Person"]
-    transformer_workflow:
-      elements_preserved:
-        functions: ["main"]
-        structs: ["Person"]
-    generator_workflow:
-      output_exists: true
-      syntax_valid: true
-      expected_elements: ["Person", "main"]
-    performance:
-      max_execution_time: 60.0
 ```
 
 ### Advanced Validation Patterns
@@ -296,10 +262,6 @@ assertions:
   execution:
     exit_code: 0
     max_execution_time: 10.0
-  
-  workflow:
-    performance:
-      max_execution_time: 10.0
 ```
 
 #### **Complex Model Validation**
@@ -346,7 +308,7 @@ assertions:
 
 1. **Test removal and preservation**: Always test both what should be removed and what should be preserved
 2. **Validate transformations**: Test element renaming by checking for new names and absence of old names
-3. **Use workflow assertions**: Leverage `transformer_workflow` for comprehensive validation
+3. **Use element existence checks**: Use `functions_exist`, `functions_not_exist`, etc. for comprehensive validation
 4. **Test configuration variations**: Create separate tests for different transformation configurations
 
 **Recommendation**: Transformer tests should only verify the transformed model.json, not PlantUML generation.
@@ -367,7 +329,7 @@ assertions:
 2. **Start with simple patterns**: Always try the simple 3-line test pattern first
 3. **Leverage YAML assertions**: Use the comprehensive YAML assertion capabilities instead of custom code
 4. **Focus on one concern**: Parser tests test parsing, transformer tests test transformation, etc.
-5. **Use workflow assertions**: For integration tests, use workflow assertions to validate complete pipelines
+5. **Combine assertion types**: For integration tests, combine execution, model, puml, and files assertions to validate complete pipelines
 
 ## Migration from Internal API Tests
 
@@ -387,7 +349,8 @@ The enhanced validation framework provides:
 - **Test-specific patterns**: Specialized validation for different test types
 - **Consistent interface**: All validation through standardized YAML assertions
 - **Better maintainability**: Changes to validation logic don't require test code changes
-- **Enhanced capabilities**: New validation features like workflow validation and file system validation
+- **Enhanced capabilities**: New validation features like file system validation and performance testing
+- **No redundancy**: Clean separation between execution, model, puml, and files validation
 
 By following these recommendations and using the enhanced YAML assertion patterns, tests become more maintainable, comprehensive, and easier to understand.
 

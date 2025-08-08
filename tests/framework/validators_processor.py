@@ -37,13 +37,13 @@ class ValidatorsProcessor:
     def process_assertions(self, assertions: Dict[str, Any], model_data: Dict, 
                           puml_files: Dict[str, str], cli_result: CLIResult, test_case) -> None:
         """
-        Process assertions from YAML data using appropriate validators
-        
-        This method coordinates the validation process by:
-        1. Processing execution assertions using CLIValidator
-        2. Processing model assertions using ModelValidator  
-        3. Processing PlantUML assertions using PlantUMLValidator
-        4. Processing file system assertions using OutputValidator and FileValidator
+           Process assertions from YAML data using appropriate validators
+   
+   This method coordinates the validation process by:
+   1. Processing execution assertions using CLIValidator
+   2. Processing model assertions using ModelValidator  
+   3. Processing PlantUML assertions using PlantUMLValidator
+   4. Processing file system assertions using OutputValidator and FileValidator
         
         Args:
             assertions: Dictionary containing assertions from YAML
@@ -64,13 +64,9 @@ class ValidatorsProcessor:
         if "puml" in assertions:
             self._process_puml_assertions(assertions["puml"], puml_files, test_case)
         
-        # Process file system assertions (new)
+                # Process file system assertions
         if "files" in assertions:
             self._process_file_assertions(assertions["files"], test_case)
-        
-        # Process validation workflow assertions (new)
-        if "workflow" in assertions:
-            self._process_workflow_assertions(assertions["workflow"], model_data, puml_files, cli_result, test_case)
 
     def _process_execution_assertions(self, execution_assertions: Dict, 
                                     cli_result: CLIResult, test_case) -> None:
@@ -472,95 +468,3 @@ class ValidatorsProcessor:
                 
                 if "not_empty" in content_assertions and content_assertions["not_empty"]:
                     self.output_validator.assert_file_not_empty(file_path)
-
-    def _process_workflow_assertions(self, workflow_assertions: Dict, model_data: Dict,
-                                   puml_files: Dict[str, str], cli_result: CLIResult, test_case) -> None:
-        """
-        Process workflow-related assertions for comprehensive testing scenarios
-        New functionality for validating complete workflows and test patterns.
-        
-        Args:
-            workflow_assertions: Workflow assertions from YAML
-            model_data: Parsed model.json content
-            puml_files: Dictionary mapping PlantUML filenames to their content
-            cli_result: CLI execution result
-            test_case: Test case instance for assertions
-        """
-        # Parser workflow validation
-        if "parser_workflow" in workflow_assertions:
-            parser_workflow = workflow_assertions["parser_workflow"]
-            
-            # Validate parser output exists
-            if "output_exists" in parser_workflow and parser_workflow["output_exists"]:
-                # This is implicit - model_data being passed means model.json was loaded
-                pass
-            
-            # Validate parsing completeness
-            if "expected_elements" in parser_workflow:
-                expected_elements = parser_workflow["expected_elements"]
-                
-                if "functions" in expected_elements:
-                    for func_name in expected_elements["functions"]:
-                        self.model_validator.assert_model_function_exists(model_data, func_name)
-                
-                if "structs" in expected_elements:
-                    for struct_name in expected_elements["structs"]:
-                        self.model_validator.assert_model_struct_exists(model_data, struct_name)
-                
-                if "enums" in expected_elements:
-                    for enum_name in expected_elements["enums"]:
-                        self.model_validator.assert_model_enum_exists(model_data, enum_name)
-        
-        # Transformer workflow validation
-        if "transformer_workflow" in workflow_assertions:
-            transformer_workflow = workflow_assertions["transformer_workflow"]
-            
-            # Validate elements were removed
-            if "elements_removed" in transformer_workflow:
-                removed = transformer_workflow["elements_removed"]
-                
-                if "functions" in removed:
-                    for func_name in removed["functions"]:
-                        self.model_validator.assert_model_function_not_exists(model_data, func_name)
-                
-                if "structs" in removed:
-                    for struct_name in removed["structs"]:
-                        self.model_validator.assert_model_struct_not_exists(model_data, struct_name)
-            
-            # Validate elements were preserved
-            if "elements_preserved" in transformer_workflow:
-                preserved = transformer_workflow["elements_preserved"]
-                
-                if "functions" in preserved:
-                    for func_name in preserved["functions"]:
-                        self.model_validator.assert_model_function_exists(model_data, func_name)
-                
-                if "structs" in preserved:
-                    for struct_name in preserved["structs"]:
-                        self.model_validator.assert_model_struct_exists(model_data, struct_name)
-        
-        # Generator workflow validation
-        if "generator_workflow" in workflow_assertions:
-            generator_workflow = workflow_assertions["generator_workflow"]
-            
-            # Validate PlantUML output exists
-            if "output_exists" in generator_workflow and generator_workflow["output_exists"]:
-                if not puml_files:
-                    raise AssertionError("Expected PlantUML files but none were found")
-            
-            # Validate syntax
-            if "syntax_valid" in generator_workflow and generator_workflow["syntax_valid"]:
-                self.puml_validator.assert_puml_start_end_tags_multi(puml_files)
-            
-            # Validate content elements
-            if "expected_elements" in generator_workflow:
-                for element in generator_workflow["expected_elements"]:
-                    self.puml_validator.assert_puml_contains_multi(puml_files, element)
-        
-        # Performance validation
-        if "performance" in workflow_assertions:
-            performance = workflow_assertions["performance"]
-            
-            if "max_execution_time" in performance:
-                max_time = performance["max_execution_time"]
-                self.cli_validator.assert_cli_execution_time_under(cli_result, max_time)
