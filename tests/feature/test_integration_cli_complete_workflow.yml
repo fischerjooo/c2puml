@@ -1,0 +1,85 @@
+# Test metadata
+test:
+  name: "Integration CLI Complete Workflow"
+  description: "End-to-end parse → transform → generate with simple project"
+  category: "feature"
+  id: "integration_cli_complete_workflow"
+
+---
+# Source files
+source_files:
+  main.c: |
+    #include <stdio.h>
+    #include "config.h"
+
+    #define MAX_SIZE 100
+
+    typedef struct Person {
+        char name[50];
+        int age;
+    } Person;
+
+    enum Status {
+        OK,
+        ERROR
+    };
+
+    int global_var = 42;
+
+    int main() {
+        printf("Hello, World!\n");
+        return 0;
+    }
+
+    void process_data(void* data) { }
+
+  config.h: |
+    #ifndef CONFIG_H
+    #define CONFIG_H
+
+    #define CONFIG_VERSION "1.0.0"
+
+    typedef struct {
+        int id;
+        char name[100];
+    } User;
+
+    enum Color {
+        RED,
+        GREEN,
+        BLUE
+    };
+
+    void init_config(void);
+
+    #endif
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "integration_cli_project",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 2
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 60.0
+
+  model:
+    validate_structure: true
+    expected_files: ["main.c", "config.h"]
+    functions_exist: ["main"]
+    structs_exist: ["Person", "User"]
+    enums_exist: ["Status", "Color"]
+    macros_exist: ["MAX_SIZE", "CONFIG_VERSION"]
+    includes_exist: ["stdio.h", "config.h"]
+
+  puml:
+    syntax_valid: true
