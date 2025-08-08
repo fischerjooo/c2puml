@@ -1,0 +1,119 @@
+---
+description: "Comprehensive configuration functionality test"
+source_files:
+  "config_test.c": |
+      #include <stdio.h>
+      #include <stdlib.h>
+      
+      // Test struct for filtering
+      typedef struct {
+          int id;
+          char name[50];
+      } UserData;
+      
+      // Test enum
+      typedef enum {
+          STATUS_OK,
+          STATUS_ERROR,
+          STATUS_PENDING
+      } Status;
+      
+      // Global variables
+      int global_counter = 0;
+      const char* app_name = "ConfigTest";
+      
+      // Test functions
+      int initialize_system(void);
+      void cleanup_system(void);
+      Status process_data(UserData* data);
+      
+      // Implementation
+      int initialize_system(void) {
+          global_counter = 1;
+          return 0;
+      }
+      
+      void cleanup_system(void) {
+          global_counter = 0;
+      }
+      
+      Status process_data(UserData* data) {
+          if (data == NULL) return STATUS_ERROR;
+          return STATUS_OK;
+      }
+
+  "config_header.h": |
+      #ifndef CONFIG_HEADER_H
+      #define CONFIG_HEADER_H
+      
+      #define MAX_USERS 100
+      #define DEFAULT_TIMEOUT 30
+      
+      // Forward declarations
+      typedef struct UserData UserData;
+      typedef enum Status Status;
+      
+      // Function prototypes
+      int initialize_system(void);
+      void cleanup_system(void);
+      Status process_data(UserData* data);
+      
+      #endif // CONFIG_HEADER_H
+
+  "config.json": |
+    {
+      "project_name": "ConfigTest",
+      "source_folders": ["."],
+      "output_dir": "output",
+      "recursive_search": true,
+      "include_depth_limit": 3,
+      "model_output_path": "model.json",
+      "model_transformed_output_path": "model_transformed.json",
+      "filters": {}
+    }
+
+assertions:
+  execution:
+    success: true
+  
+    model:
+    files_exist:
+      - "config_test.c"
+      - "config_header.h"
+    
+    element_counts:
+      files: 2
+      functions: 3  # initialize_system, process_data, cleanup_system
+      structs: 1    # UserData
+      enums: 1      # Status
+      macros: 3     # CONFIG_HEADER_H, MAX_USERS, DEFAULT_TIMEOUT
+      includes: 2   # stdio.h, stdlib.h
+      globals: 2    # global_counter, app_name
+    
+    functions_exist:
+      - "initialize_system"
+      - "process_data"
+      - "cleanup_system"
+    
+    structs_exist:
+      - "UserData"
+    
+    enums_exist:
+      - "Status"
+    
+    globals_exist:
+      - "global_counter"
+      - "app_name"
+  
+  puml:
+    files_exist:
+      - "config_test.puml"
+      - "config_header.puml"
+    
+    contains_elements:
+      - "UserData"
+      - "Status"
+      - "initialize_system"
+      - "process_data"
+      - "cleanup_system"
+      - "global_counter"

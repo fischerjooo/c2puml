@@ -41,7 +41,7 @@ class ModelValidator:
                 raise AssertionError(f"File data for {filename} is not a dictionary")
             
             # Check for required file sections
-            required_sections = ["functions", "structs", "enums", "typedefs", "globals", "macros", "includes"]
+            required_sections = ["functions", "structs", "enums", "aliases", "globals", "macros", "includes"]
             for section in required_sections:
                 if section not in file_data:
                     raise AssertionError(f"File {filename} missing required section: {section}")
@@ -182,24 +182,27 @@ class ModelValidator:
     
     def assert_model_element_count(self, model: dict, element_type: str, expected_count: int) -> None:
         """Assert that a specific element type has expected count across all files"""
-        total_count = 0
-        for file_data in model.get("files", {}).values():
-            if element_type == "functions":
-                total_count += len(file_data.get("functions", []))
-            elif element_type == "structs":
-                total_count += len(file_data.get("structs", {}))
-            elif element_type == "enums":
-                total_count += len(file_data.get("enums", {}))
-            elif element_type == "globals":
-                total_count += len(file_data.get("globals", []))
-            elif element_type == "includes":
-                total_count += len(file_data.get("includes", []))
-            elif element_type == "macros":
-                total_count += len(file_data.get("macros", []))
-            elif element_type == "unions":
-                total_count += len(file_data.get("unions", {}))
-            elif element_type == "aliases":
-                total_count += len(file_data.get("aliases", {}))
+        if element_type == "files":
+            total_count = len(model.get("files", {}))
+        else:
+            total_count = 0
+            for file_data in model.get("files", {}).values():
+                if element_type == "functions":
+                    total_count += len(file_data.get("functions", []))
+                elif element_type == "structs":
+                    total_count += len(file_data.get("structs", {}))
+                elif element_type == "enums":
+                    total_count += len(file_data.get("enums", {}))
+                elif element_type == "globals":
+                    total_count += len(file_data.get("globals", []))
+                elif element_type == "includes":
+                    total_count += len(file_data.get("includes", []))
+                elif element_type == "macros":
+                    total_count += len(file_data.get("macros", []))
+                elif element_type == "unions":
+                    total_count += len(file_data.get("unions", {}))
+                elif element_type == "aliases":
+                    total_count += len(file_data.get("aliases", {}))
         
         if total_count != expected_count:
             raise AssertionError(f"Expected {expected_count} {element_type}, got {total_count}")

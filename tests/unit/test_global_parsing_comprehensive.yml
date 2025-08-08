@@ -1,0 +1,175 @@
+# Test metadata
+test:
+  name: "Global Parsing Comprehensive"
+  description: "Comprehensive test for global variable parsing with complex scenarios"
+  category: "unit"
+  id: "0501"
+
+---
+# Source files
+source_files:
+  globals_test.c: |
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include "globals_header.h"
+    
+    // Global variables - should be detected
+    int global_counter = 0;
+    static double global_value = 3.14;
+    char * global_string = "hello";
+    const int GLOBAL_CONST = 42;
+    extern int external_var;
+    
+    // Static variables - should be detected as globals
+    static int static_global = 100;
+    static char static_array[256];
+    
+    // Complex array initialization - should be detected as global
+    int complex_array[] = {1, 2, 3, 4, 5};
+    char *string_array[] = {"hello", "world", NULL};
+    
+    // Simple typedef structures - should parse correctly
+    typedef struct {
+        int x;
+        int y;
+    } Point;
+    
+    // Global variable using typedef
+    Point global_point = {10, 20};
+    
+    // Function with local variables - locals should NOT be detected as globals
+    int add(int a, int b)
+    {
+        int local_sum = a + b;  // This should NOT be in globals
+        static int call_count = 0;  // This should NOT be in globals (function-local static)
+        return local_sum;
+    }
+    
+    // Function with complex body - internal variables should be ignored
+    void complex_function()
+    {
+        int i, j, k;  // Local variables - should NOT be globals
+        char buffer[1024];  // Local array - should NOT be global
+        
+        for (i = 0; i < 10; i++) {
+            int temp = i * 2;  // Loop variable - should NOT be global
+        }
+        
+        if (global_counter > 0) {
+            double ratio = global_value / global_counter;  // Local - should NOT be global
+        }
+    }
+    
+
+
+  globals_header.h: |
+    #ifndef GLOBALS_HEADER_H
+    #define GLOBALS_HEADER_H
+    
+    // Header declarations - should be detected
+    extern int header_global;
+    extern const char* header_string;
+    
+    // Macro definitions
+    #define MAX_SIZE 1024
+    #define MIN_VALUE 0
+    
+    // Function declarations
+    int add(int a, int b);
+    void complex_function(void);
+    
+    #endif
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_global_parsing",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 2
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "globals_test.puml"]
+  
+  model:
+    validate_structure: true
+    project_name: "test_global_parsing"
+    expected_files: ["globals_test.c", "globals_header.h"]
+    
+    # Test that actual global variables are detected per file
+    files:
+      globals_test.c:
+        globals_exist: [
+          "global_counter", "global_value", "global_string", "GLOBAL_CONST", 
+          "external_var", "static_global", "static_array", "complex_array", 
+          "string_array", "global_point"
+        ]
+      globals_header.h:
+        globals_exist: ["header_global", "header_string"]
+    
+        # Test that function-local variables are NOT detected as globals
+        globals_not_exist: [
+          "local_sum", "call_count", "i", "j", "k", "buffer", "temp", "ratio"
+        ]
+        functions_exist: ["add", "complex_function"]
+        includes_exist: ["stdio.h", "stdlib.h", "globals_header.h"]
+      globals_header.h:
+        functions_exist: ["add", "complex_function"]
+        macros_exist: ["MAX_SIZE", "MIN_VALUE", "GLOBALS_HEADER_H"]
+    
+    # Detailed structure validation
+    struct_details:
+      Point:
+        fields: ["x", "y"]
+    
+    # Element counts validation (across all files)
+    element_counts:
+      globals: 12  # All actual global variables from both files
+      structs: 1   # Point only
+      functions: 4 # add, complex_function (2x - once in .c, once in .h)
+      includes: 3  # stdio.h, stdlib.h, globals_header.h
+      macros: 3    # MAX_SIZE, MIN_VALUE, GLOBALS_HEADER_H
+  
+  puml:
+    syntax_valid: true
+    file_count: 1
+    
+    # Test that global variables appear in PlantUML
+    contains_elements: [
+      "global_counter", "global_value", "global_string", "Point", 
+      "add", "complex_function"
+    ]
+    
+    # Test that function-local variables do NOT appear in PlantUML
+    not_contains_elements: [
+      "local_sum", "call_count", "buffer", "temp"
+    ]
+    
+    # Test PlantUML structure
+    files:
+      globals_test.puml:
+        syntax_valid: true
+        contains_elements: ["Point"]
+        contains_lines: [
+          "int global_counter",
+          "double global_value", 
+          "char * global_string",
+          "class \"Point\" as TYPEDEF_POINT",
+          "int add(int a, int b)",
+          "void complex_function()"
+        ]
+        not_contains_lines: [
+          "int local_sum",
+          "int call_count", 
+          "char buffer",
+          "int temp"
+        ]
+        class_count: 3  # globals_test + header + 1 typedef class
+        relationship_count: 2  # include + 1 declaration relationship
