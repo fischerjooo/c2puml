@@ -1,0 +1,44 @@
+test:
+  name: "Basic Example"
+  description: "Validate example project end-to-end via CLI using external config and sources"
+  category: "example"
+  id: "3001"
+
+---
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 120.0
+  
+  model:
+    project_name: "example_project"
+    # Spot-check existence of key symbols parsed from the example sources
+    functions_exist: ["calculate_sum", "create_point", "process_point", "triangle_area", "log_message", "set_log_callback", "add"]
+    structs_exist: ["point_t", "triangle_t"]
+    includes_exist: ["stdio.h", "stdlib.h", "string.h"]
+  
+  puml:
+    syntax_valid: true
+    # Ensure important elements appear across generated diagrams
+    contains_elements: ["calculate_sum", "create_point", "process_point", "triangle_area", "log_message", "set_log_callback", "add"]
+    files:
+      sample.puml:
+        contains_elements: ["calculate_sum", "create_point", "process_point"]
+      geometry.puml:
+        contains_elements: ["create_triangle", "triangle_area"]
+      logger.puml:
+        contains_elements: ["log_message", "set_log_callback"]
+  
+  files:
+    output_dir_exists: "./artifacts/output_example"
+    files_exist:
+      - "./artifacts/output_example/model.json"
+      - "./artifacts/output_example/sample.puml"
+      - "./artifacts/output_example/geometry.puml"
+      - "./artifacts/output_example/logger.puml"
+    json_files_valid:
+      - "./artifacts/output_example/model.json"
+    utf8_files:
+      - "./artifacts/output_example/sample.puml"
+      - "./artifacts/output_example/geometry.puml"
+      - "./artifacts/output_example/logger.puml"

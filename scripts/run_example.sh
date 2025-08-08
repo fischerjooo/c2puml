@@ -14,6 +14,6 @@ python3 main.py --config tests/example/config.json
 
 echo "PlantUML diagrams generated in: ./artifacts/output_example (see config.json)"
 
-# Run assertions to validate the generated PUML files
-echo "Running assertions to validate generated PUML files..."
-cd tests/example && python3 test-example.py
+# Run example tests via pytest
+echo "Running example tests with pytest..."
+python3 -m pytest tests/example -q | cat
