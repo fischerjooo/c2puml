@@ -1,0 +1,77 @@
+# Test metadata
+test:
+  name: "CLI Feature Generate Fallback to Model"
+  description: "Test generate command fallback to model.json when model_transformed.json doesn't exist through CLI interface"
+  category: "feature"
+  id: "1004"
+
+---
+# Source files - only provide model.json (no model_transformed.json) for generate step
+source_files:
+  model.json: |
+    {
+      "project_name": "cli_test",
+      "source_folder": ".",
+      "files": {
+        "test.c": {
+          "file_path": "test.c",
+          "structs": {
+            "Point": {
+              "name": "Point",
+              "fields": [
+                {"name": "x", "type": "int"}
+              ]
+            }
+          },
+          "enums": {},
+          "unions": {},
+          "functions": [
+            {
+              "name": "main",
+              "return_type": "int",
+              "parameters": []
+            }
+          ],
+          "globals": [],
+          "includes": [],
+          "macros": [],
+          "typedefs": {},
+          "typedef_relations": [],
+          "include_relations": []
+        }
+      }
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "cli_test",
+    "source_folders": ["."],
+    "recursive_search": true,
+    "output_dir": "./output"
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+    stdout_contains: "PlantUML generation complete"
+  
+  puml:
+    syntax_valid: true
+    file_count: 1
+    contains_elements: ["Point", "main"]
+    contains_lines: ["@startuml test", "@enduml"]
+    
+    files:
+      test.puml:
+        syntax_valid: true
+        contains_elements: ["Point", "main"]
+        not_empty: true
+  
+  files:
+    files_exist:
+      - "./output/test.puml"
