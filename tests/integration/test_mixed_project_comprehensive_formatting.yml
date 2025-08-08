@@ -1,0 +1,167 @@
+# Test metadata
+test:
+  name: "Mixed Project Comprehensive Formatting"
+  description: "Test comprehensive formatting in a project with multiple files and cross-file visibility detection"
+  category: "integration"
+  id: "2102"
+
+---
+# Source files
+source_files:
+  main.c: |
+    #include "main.h"
+    #include "utils.h"
+
+    // Global variables
+    char* program_name = "TestApp";
+    static int debug_mode = 0;
+
+    // Public function (declared in main.h)
+    int main(int argc, char** argv) {
+        program_name = (argc > 0) ? argv[0] : "unknown";
+        
+        utility_function();
+        internal_main_helper();
+        
+        return 0;
+    }
+
+    // Private function (not declared in any header)
+    static void internal_main_helper(void) {
+        debug_mode = 1;
+    }
+
+  utils.c: |
+    #include "utils.h"
+    #include "main.h"
+
+    // Global variables
+    int utils_initialized = 0;
+    static void* private_cache = NULL;
+
+    // Public function (declared in utils.h)
+    void utility_function(void) {
+        if (!utils_initialized) {
+            utils_initialized = 1;
+            internal_utils_helper();
+        }
+    }
+
+    // Private function (not declared in any header)
+    static int internal_utils_helper(void) {
+        private_cache = malloc(1024);
+        return (private_cache != NULL) ? 1 : 0;
+    }
+
+  main.h: |
+    #ifndef MAIN_H
+    #define MAIN_H
+
+    // Public declarations from main.c
+    extern char* program_name;
+    int main(int argc, char** argv);
+
+    #endif
+
+  utils.h: |
+    #ifndef UTILS_H
+    #define UTILS_H
+
+    #include <stdlib.h>
+
+    // Public declarations from utils.c
+    extern int utils_initialized;
+    void utility_function(void);
+
+    #endif
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "mixed_project_formatting_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 2,
+    "file_filters": {
+      "include": ["*.c", "*.h"],
+      "exclude": []
+    }
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "main.puml", "utils.puml"]
+    max_execution_time: 45.0
+  
+  model:
+    validate_structure: true
+    expected_files: ["main.c", "utils.c", "main.h", "utils.h"]
+    
+    # Verify specific files and their cross-references
+    files:
+      main.c:
+        functions: ["main", "internal_main_helper"]
+        globals: ["program_name", "debug_mode"]
+        includes: ["main.h", "utils.h"]
+      
+      utils.c:
+        functions: ["utility_function", "internal_utils_helper"]
+        globals: ["utils_initialized", "private_cache"]
+        includes: ["utils.h", "main.h"]
+      
+      main.h:
+        functions: ["main"]
+        globals: ["program_name"]
+      
+      utils.h:
+        functions: ["utility_function"]
+        globals: ["utils_initialized"]
+        includes: ["stdlib.h"]
+    
+    # Verify element counts across the multi-file project
+    element_counts:
+      functions: 4        # main, internal_main_helper, utility_function, internal_utils_helper
+      globals: 4          # program_name, debug_mode, utils_initialized, private_cache
+      includes: 4         # main.h, utils.h (in sources), stdlib.h (in header)
+  
+  puml:
+    syntax_valid: true
+    file_count: 2
+    
+    files:
+      main.puml:
+        # Test cross-file visibility - main() is declared in main.h, so it should be public
+        contains_elements: ["+ int main"]
+        
+        # Test cross-file visibility - internal_main_helper() is not declared in any header, so it should be private
+        contains_elements: ["- void internal_main_helper"]
+        
+        # Test cross-file visibility - program_name is declared in main.h, so it should be public
+        contains_elements: ["+ char* program_name"]
+        
+        # Test cross-file visibility - debug_mode is static/not declared in any header, so it should be private
+        contains_elements: ["- static int debug_mode"]
+        
+        class_count: 5      # main.c + main.h + utils.h + additional classes
+        relationship_count: 2 # Include relationships to main.h and utils.h
+        
+      utils.puml:
+        # Test cross-file visibility - utility_function() is declared in utils.h, so it should be public
+        contains_elements: ["+ void utility_function"]
+        
+        # Test cross-file visibility - internal_utils_helper() is not declared in any header, so it should be private
+        contains_elements: ["- int internal_utils_helper"]
+        
+        # Test cross-file visibility - utils_initialized is declared in utils.h, so it should be public
+        contains_elements: ["+ int utils_initialized"]
+        
+        # Test cross-file visibility - private_cache is static/not declared in any header, so it should be private
+        contains_elements: ["- static void* private_cache"]
+        
+        class_count: 6      # utils.c + utils.h + main.h + additional classes
+        relationship_count: 2 # Include relationships to utils.h and main.h

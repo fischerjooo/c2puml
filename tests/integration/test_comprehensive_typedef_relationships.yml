@@ -1,0 +1,168 @@
+# Test metadata
+test:
+  name: "Comprehensive Typedef Relationships Integration"
+  description: "Test comprehensive typedef relationships across files with complex type dependencies"
+  category: "integration"
+  id: "2003"
+
+---
+# Source files
+source_files:
+  main.c: |
+    #include "database/models.h"
+
+    int main() {
+        User user = create_user("john", 25);
+        Product product = create_product("laptop", 999.99);
+        Order order = create_order(&user, &product);
+        return 0;
+    }
+
+  database/models.h: |
+    #ifndef MODELS_H
+    #define MODELS_H
+
+    #include "types.h"
+    #include "relationships.h"
+
+    typedef struct {
+        UserId id;
+        UserName name;
+        Age age;
+        Address address;
+    } User;
+
+    typedef struct {
+        ProductId id;
+        ProductName name;
+        Price price;
+        Category category;
+    } Product;
+
+    User create_user(const char* name, int age);
+    Product create_product(const char* name, double price);
+
+    #endif
+
+  database/types.h: |
+    #ifndef TYPES_H
+    #define TYPES_H
+
+    typedef unsigned int UserId;
+    typedef unsigned int ProductId;
+    typedef unsigned int OrderId;
+    typedef char* UserName;
+    typedef char* ProductName;
+    typedef double Price;
+    typedef int Age;
+
+    typedef enum {
+        ELECTRONICS,
+        CLOTHING,
+        BOOKS,
+        OTHER
+    } Category;
+
+    typedef struct {
+        char* street;
+        char* city;
+        char* zip_code;
+    } Address;
+
+    #endif
+
+  database/relationships.h: |
+    #ifndef RELATIONSHIPS_H
+    #define RELATIONSHIPS_H
+
+    #include "types.h"
+
+    typedef struct {
+        OrderId id;
+        UserId user_id;
+        ProductId product_id;
+        int quantity;
+        Price total_price;
+    } Order;
+
+    Order create_order(void* user, void* product);
+
+    #endif
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "typedef_relationships_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 3,
+    "file_filters": {
+      "include": ["*.c", "*.h"],
+      "exclude": []
+    }
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "main.puml"]
+    max_execution_time: 45.0
+  
+  model:
+    validate_structure: true
+    expected_files: ["main.c", "database/models.h", "database/types.h", "database/relationships.h"]
+    
+    # Verify specific files and their contents
+    files:
+      main.c:
+        functions: ["main"]
+        includes: ["database/models.h"]
+      
+      database/models.h:
+        structs:
+          User:
+            fields: ["id", "name", "age", "address"]
+          Product:
+            fields: ["id", "name", "price", "category"]
+        functions: ["create_user", "create_product"]
+        includes: ["types.h", "relationships.h"]
+      
+      database/types.h:
+        # Primitive typedefs
+        typedefs_exist: ["UserId", "ProductId", "OrderId", "UserName", "ProductName", "Price", "Age"]
+        enums:
+          Category:
+            values: ["ELECTRONICS", "CLOTHING", "BOOKS", "OTHER"]
+        structs:
+          Address:
+            fields: ["street", "city", "zip_code"]
+      
+      database/relationships.h:
+        structs:
+          Order:
+            fields: ["id", "user_id", "product_id", "quantity", "total_price"]
+        functions: ["create_order"]
+        includes: ["types.h"]
+    
+    # Verify element counts
+    element_counts:
+      functions: 4        # main, create_user, create_product, create_order
+      structs: 4          # User, Product, Address, Order
+      enums: 1            # Category
+      typedefs: 7         # Various primitive typedefs
+      includes: 4         # Various includes across files
+  
+  puml:
+    syntax_valid: true
+    file_count: 1
+    
+    files:
+      main.puml:
+        contains_elements: ["User", "Product", "Address", "Order", "Category", "main"]
+        contains_lines: ["class \"User\" as TYPEDEF_USER", "class \"Product\" as TYPEDEF_PRODUCT", "class \"Address\" as TYPEDEF_ADDRESS", "class \"Order\" as TYPEDEF_ORDER", "class \"Category\" as TYPEDEF_CATEGORY"]
+        class_count: 13     # 4 files + 5 typedef classes (User, Product, Address, Order, Category) + primitive typedef classes
+        relationship_count: 4  # Include relationships

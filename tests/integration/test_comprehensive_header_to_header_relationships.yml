@@ -1,0 +1,149 @@
+# Test metadata
+test:
+  name: "Comprehensive Header to Header Relationships Integration"
+  description: "Test comprehensive header-to-header relationships with include chains and complex dependencies"
+  category: "integration"
+  id: "2002"
+
+---
+# Source files
+source_files:
+  math/vector.h: |
+    #ifndef VECTOR_H
+    #define VECTOR_H
+
+    typedef struct {
+        float x, y, z;
+    } Vector3;
+
+    Vector3 vector_add(Vector3 a, Vector3 b);
+
+    #endif
+
+  math/matrix.h: |
+    #ifndef MATRIX_H
+    #define MATRIX_H
+
+    #include "vector.h"
+
+    typedef struct {
+        float m[16];
+    } Matrix4;
+
+    Matrix4 matrix_translate(Vector3 translation);
+
+    #endif
+
+  graphics/transform.h: |
+    #ifndef TRANSFORM_H
+    #define TRANSFORM_H
+
+    #include "../math/matrix.h"
+    #include "../math/vector.h"
+
+    typedef struct {
+        Vector3 position;
+        Vector3 rotation;
+        Vector3 scale;
+        Matrix4 world_matrix;
+    } Transform;
+
+    #endif
+
+  graphics/camera.h: |
+    #ifndef CAMERA_H
+    #define CAMERA_H
+
+    #include "transform.h"
+
+    typedef struct {
+        Transform transform;
+        Matrix4 view_matrix;
+        Matrix4 projection_matrix;
+        float fov;
+    } Camera;
+
+    #endif
+
+  main.c: |
+    #include "graphics/camera.h"
+
+    int main() {
+        Camera camera;
+        return 0;
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "header_relationships_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 4,
+    "file_filters": {
+      "include": ["*.c", "*.h"],
+      "exclude": []
+    }
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "main.puml"]
+    max_execution_time: 45.0
+  
+  model:
+    validate_structure: true
+    expected_files: ["main.c", "math/vector.h", "math/matrix.h", "graphics/transform.h", "graphics/camera.h"]
+    
+    # Verify specific files and their contents
+    files:
+      main.c:
+        functions: ["main"]
+        includes: ["graphics/camera.h"]
+      
+      math/vector.h:
+        structs:
+          Vector3:
+            fields: ["x", "y", "z"]
+        functions: ["vector_add"]
+      
+      math/matrix.h:
+        structs:
+          Matrix4:
+            fields: ["m"]
+        functions: ["matrix_translate"]
+        includes: ["vector.h"]
+      
+      graphics/transform.h:
+        structs:
+          Transform:
+            fields: ["position", "rotation", "scale", "world_matrix"]
+        includes: ["../math/matrix.h", "../math/vector.h"]
+      
+      graphics/camera.h:
+        structs:
+          Camera:
+            fields: ["transform", "view_matrix", "projection_matrix", "fov"]
+        includes: ["transform.h"]
+    
+    # Verify element counts
+    element_counts:
+      functions: 3   # main, vector_add, matrix_translate
+      structs: 4     # Vector3, Matrix4, Transform, Camera
+      includes: 5    # Various includes across files
+  
+  puml:
+    syntax_valid: true
+    file_count: 1
+    
+    files:
+      main.puml:
+        contains_elements: ["Vector3", "Matrix4", "Transform", "Camera", "main"]
+        contains_lines: ["class \"Vector3\" as TYPEDEF_VECTOR3", "class \"Matrix4\" as TYPEDEF_MATRIX4", "class \"Transform\" as TYPEDEF_TRANSFORM", "class \"Camera\" as TYPEDEF_CAMERA"]
+        class_count: 9   # 5 files + 4 typedef classes
+        relationship_count: 5  # Include relationships

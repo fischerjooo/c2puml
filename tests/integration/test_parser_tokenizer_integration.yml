@@ -1,0 +1,150 @@
+# Test metadata
+test:
+  name: "Parser-Tokenizer Integration"
+  description: "Test comprehensive parser-tokenizer integration with complex structures, functions, and preprocessor directives"
+  category: "integration"
+  id: "2004"
+
+---
+# Source files
+source_files:
+  complex.h: |
+    #define MAX_SIZE 1024
+    #define STRINGIFY(x) #x
+    #define CONCAT(a, b) a ## b
+
+    #ifdef DEBUG
+        #define LOG(msg) printf("DEBUG: %s\n", msg)
+    #else
+        #define LOG(msg)
+    #endif
+
+    typedef struct ComplexStruct {
+        int field1;
+        char* field2;
+        struct {
+            float nested_field1;
+            double nested_field2;
+        } nested_struct;
+        enum {
+            OPTION_A,
+            OPTION_B = 5,
+            OPTION_C
+        } options;
+    } ComplexStruct;
+
+    typedef struct {
+        char buffer[MAX_SIZE];
+        int size;
+    } Buffer;
+
+    #if defined(WINDOWS)
+        typedef void* Handle;
+    #elif defined(LINUX)
+        typedef int Handle;
+    #else
+        typedef void* Handle;
+    #endif
+
+  functions.h: |
+    #include "complex.h"
+
+    int simple_function(void);
+
+    static inline double complex_function(
+        const char* input,
+        size_t input_length,
+        void (*callback)(int, char*),
+        struct {
+            int option1;
+            float option2;
+        } config
+    ) {
+        return 0.0;
+    }
+
+    extern void* variadic_function(int count, ...);
+
+    Buffer* create_buffer(int size);
+    void destroy_buffer(Buffer* buffer);
+
+  main.c: |
+    #include "functions.h"
+    #include "complex.h"
+
+    int main() {
+        ComplexStruct cs;
+        Buffer* buf = create_buffer(1024);
+        
+        simple_function();
+        complex_function("test", 4, NULL, (struct {int option1; float option2;}){1, 2.0});
+        
+        destroy_buffer(buf);
+        return 0;
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "parser_tokenizer_integration_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 2,
+    "file_filters": {
+      "include": ["*.c", "*.h"],
+      "exclude": []
+    }
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "main.puml"]
+    max_execution_time: 45.0
+  
+  model:
+    validate_structure: true
+    expected_files: ["main.c", "complex.h", "functions.h"]
+    
+    # Verify specific files and their contents
+    files:
+      main.c:
+        functions: ["main"]
+        includes: ["functions.h", "complex.h"]
+      
+      complex.h:
+        structs:
+          ComplexStruct:
+            fields: ["field1", "field2", "nested_struct", "options"]
+          Buffer:
+            fields: ["buffer", "size"]
+        # Handle typedef should also be present (conditional compilation)
+        typedefs_exist: ["Handle"]
+        macros_exist: ["MAX_SIZE", "STRINGIFY", "CONCAT", "LOG"]
+      
+      functions.h:
+        functions: ["simple_function", "complex_function", "variadic_function", "create_buffer", "destroy_buffer"]
+        includes: ["complex.h"]
+    
+    # Verify element counts - parser-tokenizer should handle complex structures correctly
+    element_counts:
+      functions: 6        # main + 5 from functions.h
+      structs: 2          # ComplexStruct, Buffer (+ anonymous structs may be extracted)
+      typedefs: 1         # Handle (conditional)
+      macros: 4           # MAX_SIZE, STRINGIFY, CONCAT, LOG
+      includes: 3         # Various includes
+  
+  puml:
+    syntax_valid: true
+    file_count: 1
+    
+    files:
+      main.puml:
+        contains_elements: ["ComplexStruct", "Buffer", "main", "simple_function", "complex_function"]
+        contains_lines: ["class \"ComplexStruct\" as TYPEDEF_COMPLEXSTRUCT", "class \"Buffer\" as TYPEDEF_BUFFER"]
+        class_count: 8      # 3 files + typedef classes + anonymous extractions
+        relationship_count: 2  # Include relationships
