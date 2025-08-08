@@ -1,0 +1,48 @@
+# Test metadata
+test:
+  name: "Component Features Cross File Dependencies"
+  description: "Test cross-file type dependencies through the CLI interface"
+  category: "feature"
+  id: "2007"
+
+---
+# Source files
+source_files:
+  types.h: |
+    typedef struct Point {
+        int x, y;
+    } Point;
+  main.c: |
+    #include "types.h"
+    
+    int main() {
+        Point p;
+        return 0;
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "cross_file_test",
+    "source_folders": ["."],
+    "recursive_search": true,
+    "output_dir": "./output"
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+    stdout_contains: "PlantUML generation complete"
+  
+  model:
+    validate_structure: true
+    project_name: "cross_file_test"
+    expected_files: ["types.h", "main.c"]
+    
+    functions_exist: ["main"]
+    structs_exist: ["Point"]
+  

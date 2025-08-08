@@ -1,0 +1,52 @@
+# Test metadata
+test:
+  name: "Component Features Generator Unions"
+  description: "Test PlantUML generation with union definitions through the CLI interface"
+  category: "feature"
+  id: "2004"
+
+---
+# Source files
+source_files:
+  test.c: |
+    union Value {
+        int i;
+        float f;
+    };
+
+    int main() {
+        union Value v;
+        return 0;
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "generator_unions_test",
+    "source_folders": ["."],
+    "recursive_search": true,
+    "output_dir": "./output"
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+    stdout_contains: "PlantUML generation complete"
+  
+  model:
+    validate_structure: true
+    project_name: "generator_unions_test"
+    expected_files: ["test.c"]
+    
+    functions_exist: ["main"]
+    unions_exist: ["Value"]
+  
+  puml:
+    syntax_valid: true
+    file_count: 1
+    contains_elements: ["Value", "main"]
+  

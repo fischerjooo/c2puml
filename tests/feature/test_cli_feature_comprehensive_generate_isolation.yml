@@ -1,0 +1,34 @@
+# Test metadata
+test:
+  name: "CLI Feature Generate Command Isolation Error Handling"
+  description: "Test generate command isolation when no model files exist through CLI interface"
+  category: "feature"
+  id: "1005"
+
+---
+# Source files - empty, no model files to test error handling
+source_files:
+  dummy.txt: |
+    # This file exists only to create the directory structure
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "cli_test",
+    "source_folders": ["."],
+    "recursive_search": true,
+    "output_dir": "./output"
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 1
+    max_execution_time: 30.0
+    stdout_contains: "No model file found for generation"
+  
+  files:
+    files_not_exist:
+      - "./output/test.puml"
