@@ -1,0 +1,80 @@
+# Test metadata
+test:
+  name: "Component Features - Complex Typedefs"
+  description: "Test parsing complex typedef relationships through CLI interface"
+  category: "feature"
+  id: "2000"
+
+---
+# Source files
+source_files:
+  main.c: |
+    #include <stdio.h>
+    
+    // Complex typedef chains
+    typedef struct {
+        int id;
+        char name[50];
+    } BaseStruct;
+    
+    typedef BaseStruct* BaseStructPtr;
+    typedef BaseStructPtr BaseStructPtrArray[10];
+    
+    // Function pointer typedef
+    typedef int (*ProcessorFunc)(BaseStruct* data);
+    
+    // Recursive typedef
+    typedef struct Node {
+        int value;
+        struct Node* next;
+    } Node;
+    
+    typedef Node* NodePtr;
+    
+    int main() {
+        BaseStruct data = {1, "test"};
+        return 0;
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "component_features_typedefs",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 2
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+  
+  model:
+    validate_structure: true
+    expected_files: ["main.c"]
+    
+    # Validate complex typedef structures
+    structs_exist: ["BaseStruct", "Node"]
+    functions_exist: ["main"]
+    
+    element_counts:
+      structs: 2
+      functions: 1
+
+  puml:
+    syntax_valid: true
+    file_count: 1
+    
+    files:
+      main.puml:
+        contains_elements: ["BaseStruct", "Node", "main"]
+        contains_lines: [
+          "class \"BaseStruct\" as TYPEDEF_BASESTRUCT <<struct>> #LightYellow",
+          "class \"Node\" as TYPEDEF_NODE <<struct>> #LightYellow",
+          "+ int main"
+        ]
