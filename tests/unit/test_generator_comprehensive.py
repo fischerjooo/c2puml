@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Test Comprehensive Generator Functionality
-
-This test verifies that the c2puml PlantUML generator works correctly by testing
-complex scenarios through the CLI interface that would fail if generation was broken.
+Test Generator Comprehensive
+Comprehensive test for PlantUML generator functionality through CLI interface
+This replaces the internal API test_generator.py with CLI-based testing
 """
 
 import os
@@ -17,16 +16,14 @@ from tests.framework import UnifiedTestCase
 class TestGeneratorComprehensive(UnifiedTestCase):
     """Test comprehensive generator functionality through the CLI interface"""
     
-    def test_generator_basic_plantuml(self):
-        """Test basic PlantUML generation with all major C constructs"""
+    def test_generator_comprehensive(self):
+        """Test comprehensive generator scenarios through the CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("generator_basic_plantuml")
+        result = self.run_test("generator_comprehensive")
         
         # Validate results
         self.validate_execution_success(result)
         self.validate_test_output(result)
-
-
 
 
 if __name__ == "__main__":

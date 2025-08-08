@@ -1,0 +1,105 @@
+---
+description: "Comprehensive preprocessor bug handling test"
+source_files:
+  "preprocessor_bug_test.c": |
+    #include <stdio.h>
+    #include <stdlib.h>
+    
+    #define COMPLEX_MACRO(x, y) ((x) + (y) * 2)
+    #define STRINGIFY(x) #x
+    #define CONCAT(a, b) a##b
+    
+    typedef struct {
+        int CONCAT(field, _id);
+        char data[COMPLEX_MACRO(10, 5)];
+    } ComplexStruct;
+    
+    #if defined(__GNUC__) && (__GNUC__ >= 4)
+        #define FORCE_INLINE __attribute__((always_inline)) inline
+    #elif defined(_MSC_VER)
+        #define FORCE_INLINE __forceinline
+    #else
+        #define FORCE_INLINE inline
+    #endif
+    
+    FORCE_INLINE int calculate_value(int base) {
+        return COMPLEX_MACRO(base, 3);
+    }
+    
+    #ifdef ENABLE_FEATURE
+        typedef enum {
+            FEATURE_MODE_A,
+            FEATURE_MODE_B
+        } FeatureMode;
+    #endif
+    
+    int process_complex(ComplexStruct* data);
+    
+    int global_value = 25;
+    
+    int process_complex(ComplexStruct* data) {
+        if (data == NULL) return -1;
+        return calculate_value(data->field_id);
+    }
+
+  "preprocessor_bug_header.h": |
+    #ifndef PREPROCESSOR_BUG_HEADER_H
+    #define PREPROCESSOR_BUG_HEADER_H
+    
+    #define HEADER_MAGIC 0x12345678
+    #define API_CALL __cdecl
+    
+    typedef struct ComplexStruct ComplexStruct;
+    
+    #ifdef ENABLE_FEATURE
+        typedef enum FeatureMode FeatureMode;
+    #endif
+    
+    int API_CALL process_complex(ComplexStruct* data);
+    int calculate_value(int base);
+    
+    #endif // PREPROCESSOR_BUG_HEADER_H
+
+  "config.json": |
+    {
+      "project_name": "PreprocessorBugTest",
+      "source_folders": ["."],
+      "output_dir": "output",
+      "recursive_search": true,
+      "include_depth_limit": 2,
+      "model_output_path": "model.json",
+      "model_transformed_output_path": "model_transformed.json"
+    }
+
+assertions:
+  execution:
+    success: true
+  
+  model:
+    files_exist:
+      - "preprocessor_bug_test.c"
+      - "preprocessor_bug_header.h"
+    
+    element_counts:
+      files: 2
+    
+    functions_exist:
+      - "process_complex"
+      - "calculate_value"
+    
+    structs_exist:
+      - "ComplexStruct"
+    
+    globals_exist:
+      - "global_value"
+  
+  puml:
+    files_exist:
+      - "preprocessor_bug_test.puml"
+      - "preprocessor_bug_header.puml"
+    
+    contains_elements:
+      - "ComplexStruct"
+      - "process_complex"
+      - "calculate_value"
+      - "global_value"

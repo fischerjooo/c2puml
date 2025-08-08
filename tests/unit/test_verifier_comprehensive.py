@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Test Comprehensive Model Verifier
-
-This test verifies that the model verifier works correctly through the CLI interface
-by testing both valid models (that should pass) and invalid models (that should show warnings).
+Test Verifier Comprehensive
+Comprehensive test for model verification functionality through CLI interface
+This replaces the internal API test_verifier.py with CLI-based testing
 """
 
 import os
@@ -15,12 +14,12 @@ from tests.framework import UnifiedTestCase
 
 
 class TestVerifierComprehensive(UnifiedTestCase):
-    """Test comprehensive model verifier functionality through the CLI interface"""
+    """Test comprehensive verifier functionality through the CLI interface"""
     
-    def test_verifier_valid_model(self):
-        """Test that valid models pass verification without warnings"""
+    def test_verifier_comprehensive(self):
+        """Test comprehensive verifier scenarios through the CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("verifier_valid_model")
+        result = self.run_test("verifier_comprehensive")
         
         # Validate results
         self.validate_execution_success(result)
