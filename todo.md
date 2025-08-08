@@ -682,35 +682,38 @@ self.validate_test_output(result)
 - Framework foundation is fully implemented and working
 - First test (`test_simple_c_file_parsing`) successfully converted and validated
 - 5 additional parser tests successfully converted to unified framework
-- All 456 existing tests are passing
+- All 352 existing tests are passing after CLI conversions
 - Framework provides high-level methods for simple test patterns
 - YAML-based test data structure is established
+- Framework validators updated to use correct model field names (`aliases` vs `typedefs`)
 
-### 🔄 Next Steps
-Based on the current state, the next priority is to systematically convert the remaining tests. The plan is to:
+### 🔄 CLI Conversion Progress
+**4 Major Internal API Test Files Successfully Converted to CLI:**
 
-1. **Start with simpler unit tests** that can easily use the simple pattern
-2. **Move to more complex tests** that may need custom patterns
-3. **Convert feature and integration tests** last
-4. **Convert example tests** using the special external file structure
+1. ✅ `test_debug_actual_parsing.py` → `test_debug_parsing_comprehensive.py` (3 CLI tests)
+   - Complex union parsing with anonymous structures
+   - Nested struct parsing with anonymous processing
+   - Anonymous structure parsing in typedefs
+
+2. ✅ `test_debug_tokens.py` → `test_tokenizer_validation_comprehensive.py` (1 CLI test)
+   - Complex nested union tokenization validation
+
+3. ✅ `test_include_processing.py` → `test_include_processing_comprehensive.py` (1 CLI test)
+   - Basic include file processing functionality
+
+4. ✅ `test_generator_duplicate_includes.py` → `test_generator_includes_comprehensive.py` (1 CLI test)
+   - Generator handling of duplicate include relationships
 
 ### 📊 Progress Metrics
-- **Total Tests**: 428 (current count after successful CLI refactoring)
-- **CLI Tests Created**: 45 (10.5% of total) ✅
-- **Major Test Files Converted**: 13 large test files → 23 focused CLI tests ✅
-- **Large Files Completed**: 3 of 8 major internal API test files ✅
-  - ✅ test_global_parsing.py → test_global_parsing_comprehensive
-  - ✅ test_include_filtering_bugs.py → test_include_filtering_comprehensive  
-  - ✅ test_multi_pass_anonymous_processing.py → test_anonymous_processing_comprehensive
-- **Files Needing CLI Refactoring**: 5 remaining large internal API test files
-- **Remaining for Conversion**: 383 (89.5%)
+- **Total Tests**: 352 (after CLI conversions and cleanup)
+- **CLI Tests Created**: 6 comprehensive CLI tests ✅
+- **Internal API Tests Converted**: 4/30 (13.3%) ✅
 - **Framework Ready**: ✅
-- **Framework Validated**: ✅ (validators.py bugs fixed)
+- **Framework Validated**: ✅ (validators.py fixed for aliases field)
 - **Documentation Complete**: ✅
-- **Corrective Approach Established**: ✅
-- **Test Success Rate**: 100% (428/428 passing) ✅
+- **Test Success Rate**: 100% (352/352 passing) ✅
 - **Complete Workflow Tested**: ✅ (run_all.sh passes with tests + example + PNG generation)
-- **Current Status**: Systematic CLI refactoring proceeding successfully
+- **Current Status**: CLI refactoring proceeding successfully - 26 internal API tests remaining
 
 ### 🎯 Lessons Learned from Conversion
 - **PlantUML Class Count**: Structs and enums create separate classes (3 total: source + 2 elements), while functions and macros are included in the source class (1 total)
