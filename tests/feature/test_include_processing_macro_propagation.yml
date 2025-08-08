@@ -1,0 +1,47 @@
+# Test metadata
+test:
+  name: "Macro Propagation"
+  description: "Test macro propagation through include relationships"
+  category: "feature"
+  id: "1015"
+
+---
+# Source files
+source_files:
+  main.c: |
+    #include "macros.h"
+    int main() {
+        int size = MAX_SIZE;
+        return 0;
+    }
+  macros.h: |
+    #ifndef MACROS_H
+    #define MACROS_H
+    #define MAX_SIZE 100
+    typedef struct { int val; } MacroType;
+    #endif
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_macro_propagation",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 2
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+  model:
+    validate_structure: true
+    element_counts:
+      functions: 1
+      structs: 1
+      macros: 1
+  puml:
+    syntax_valid: true

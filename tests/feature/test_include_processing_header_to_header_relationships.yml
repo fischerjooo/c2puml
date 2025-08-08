@@ -1,0 +1,98 @@
+# Test metadata
+test:
+  name: "Header to Header Relationships"
+  description: "Test feature-level header to header relationships"
+  category: "feature"
+  id: "1003"
+
+---
+# Source files
+source_files:
+  main.c: |
+    #include "graphics.h"
+
+    int main() {
+        Window win = create_window();
+        return 0;
+    }
+  graphics.h: |
+    #ifndef GRAPHICS_H
+    #define GRAPHICS_H
+
+    #include "geometry.h"
+    #include "colors.h"
+
+    typedef struct {
+        Rectangle bounds;
+        Color background;
+    } Window;
+
+    Window create_window();
+
+    #endif
+  geometry.h: |
+    #ifndef GEOMETRY_H
+    #define GEOMETRY_H
+
+    typedef struct {
+        int x, y, width, height;
+    } Rectangle;
+
+    #endif
+  colors.h: |
+    #ifndef COLORS_H
+    #define COLORS_H
+
+    typedef struct {
+        unsigned char r, g, b, a;
+    } Color;
+
+    #endif
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_header_to_header_relationships",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 3
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+  
+  model:
+    validate_structure: true
+    files:
+      main.c:
+        functions: ["main"]
+        includes: ["graphics.h"]
+      graphics.h:
+        structs:
+          Window:
+            fields: ["bounds", "background"]
+        functions: ["create_window"]
+        includes: ["geometry.h", "colors.h"]
+      geometry.h:
+        structs:
+          Rectangle:
+            fields: ["x", "y", "width", "height"]
+      colors.h:
+        structs:
+          Color:
+            fields: ["r", "g", "b", "a"]
+    element_counts:
+      functions: 2
+      structs: 3
+  
+  puml:
+    syntax_valid: true
+    contains_elements: ["Window", "Rectangle", "Color", "main", "create_window"]
+    class_count: 4
+    relationship_count: 3
