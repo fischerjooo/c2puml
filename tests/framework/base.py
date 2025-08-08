@@ -40,6 +40,7 @@ class UnifiedTestCase(unittest.TestCase):
     - Standardized test output management
     - Integration with the unified testing framework components
     - High-level convenience methods for common test patterns
+    - Enhanced validator access with meaningful names organized by validation type
     """
     
     def setUp(self):
@@ -98,22 +99,22 @@ class UnifiedTestCase(unittest.TestCase):
         
         # Calculate paths
         test_folder = os.path.dirname(source_dir)  # input/ folder
-        test_dir = os.path.dirname(test_folder)    # test-###/ folder
+        temp_dir = os.path.dirname(test_folder)    # test-name/ folder
         config_filename = os.path.basename(config_path)
         
-        # Execute c2puml
-        result = self.executor.run_full_pipeline(config_filename, test_folder)
+        # Execute c2puml with temp directory as working directory
+        result = self.executor.run_full_pipeline(config_filename, temp_dir)
         
-        # Validate outputs
-        output_dir = os.path.join(test_dir, "output")
+        # Load output files
+        output_dir = os.path.join(temp_dir, "output")
         model_file = self.output_validator.assert_model_file_exists(output_dir)
         puml_files = self.output_validator.assert_puml_files_exist(output_dir)
         
-        return TestResult(result, test_dir, output_dir, model_file, puml_files)
+        return TestResult(result, temp_dir, output_dir, model_file, puml_files)
 
     def validate_execution_success(self, result: TestResult):
         """
-        Assert that test execution was successful.
+        Assert test execution was successful.
         
         Args:
             result: TestResult object from run_test()
@@ -145,6 +146,166 @@ class UnifiedTestCase(unittest.TestCase):
         # Process assertions from YAML
         self.validators_processor.process_assertions(
             test_data["assertions"], model_data, puml_files, result.cli_result, self
+        )
+
+    # =====================================================
+    # ENHANCED VALIDATOR ACCESS METHODS
+    # =====================================================
+    # These methods provide convenient access to the enhanced validation framework
+    # with meaningful names, organized by validation type for improved test development.
+    
+    # Parser Validation Methods
+    def validate_parser_output_exists(self, output_dir: str) -> str:
+        """Validate that parser generated a model.json file"""
+        return self.validators_processor.validate_parser_output_exists(output_dir)
+    
+    def validate_parser_project_structure(self, model_data: Dict, project_name: str = None, 
+                                        expected_files: List[str] = None) -> None:
+        """Validate basic parser output structure"""
+        return self.validators_processor.validate_parser_project_structure(
+            model_data, project_name, expected_files
+        )
+    
+    def validate_c_structures_parsed(self, model_data: Dict, structs: List[str] = None, 
+                                   enums: List[str] = None, unions: List[str] = None,
+                                   typedefs: List[str] = None) -> None:
+        """Validate that C structures were correctly parsed"""
+        return self.validators_processor.validate_c_structures_parsed(
+            model_data, structs, enums, unions, typedefs
+        )
+    
+    def validate_c_functions_parsed(self, model_data: Dict, functions: List[str]) -> None:
+        """Validate that C functions were correctly parsed"""
+        return self.validators_processor.validate_c_functions_parsed(model_data, functions)
+    
+    def validate_c_globals_parsed(self, model_data: Dict, globals_list: List[str]) -> None:
+        """Validate that global variables were correctly parsed"""
+        return self.validators_processor.validate_c_globals_parsed(model_data, globals_list)
+    
+    def validate_c_includes_parsed(self, model_data: Dict, includes: List[str]) -> None:
+        """Validate that include statements were correctly parsed"""
+        return self.validators_processor.validate_c_includes_parsed(model_data, includes)
+    
+    def validate_c_macros_parsed(self, model_data: Dict, macros: List[str]) -> None:
+        """Validate that macros were correctly parsed"""
+        return self.validators_processor.validate_c_macros_parsed(model_data, macros)
+    
+    def validate_struct_details(self, model_data: Dict, struct_name: str, expected_fields: List[str]) -> None:
+        """Validate detailed structure of a parsed struct"""
+        return self.validators_processor.validate_struct_details(model_data, struct_name, expected_fields)
+    
+    def validate_enum_details(self, model_data: Dict, enum_name: str, expected_values: List[str]) -> None:
+        """Validate detailed structure of a parsed enum"""
+        return self.validators_processor.validate_enum_details(model_data, enum_name, expected_values)
+    
+    def validate_parsing_element_counts(self, model_data: Dict, expected_counts: Dict[str, int]) -> None:
+        """Validate element counts across all parsed files"""
+        return self.validators_processor.validate_parsing_element_counts(model_data, expected_counts)
+    
+    # Transformer Validation Methods
+    def validate_transformer_output_exists(self, output_dir: str) -> str:
+        """Validate that transformer generated a model_transformed.json file"""
+        return self.validators_processor.validate_transformer_output_exists(output_dir)
+    
+    def validate_elements_removed(self, model_data: Dict, removed_functions: List[str] = None,
+                                removed_structs: List[str] = None, removed_enums: List[str] = None) -> None:
+        """Validate that specific elements were removed during transformation"""
+        return self.validators_processor.validate_elements_removed(
+            model_data, removed_functions, removed_structs, removed_enums
+        )
+    
+    def validate_elements_preserved(self, model_data: Dict, preserved_functions: List[str] = None,
+                                  preserved_structs: List[str] = None, preserved_enums: List[str] = None) -> None:
+        """Validate that specific elements were preserved during transformation"""
+        return self.validators_processor.validate_elements_preserved(
+            model_data, preserved_functions, preserved_structs, preserved_enums
+        )
+    
+    def validate_transformation_counts(self, original_model: Dict, transformed_model: Dict,
+                                     expected_reductions: Dict[str, int] = None) -> None:
+        """Validate that element counts changed as expected during transformation"""
+        return self.validators_processor.validate_transformation_counts(
+            original_model, transformed_model, expected_reductions
+        )
+    
+    # Generator Validation Methods
+    def validate_generator_output_exists(self, output_dir: str, min_puml_files: int = 1) -> List[str]:
+        """Validate that generator created PlantUML files"""
+        return self.validators_processor.validate_generator_output_exists(output_dir, min_puml_files)
+    
+    def validate_plantuml_syntax(self, puml_files: Dict[str, str]) -> None:
+        """Validate that all PlantUML files have valid syntax"""
+        return self.validators_processor.validate_plantuml_syntax(puml_files)
+    
+    def validate_plantuml_contains_elements(self, puml_files: Dict[str, str], elements: List[str]) -> None:
+        """Validate that PlantUML files contain expected elements"""
+        return self.validators_processor.validate_plantuml_contains_elements(puml_files, elements)
+    
+    def validate_plantuml_excludes_elements(self, puml_files: Dict[str, str], forbidden_elements: List[str]) -> None:
+        """Validate that PlantUML files don't contain forbidden elements"""
+        return self.validators_processor.validate_plantuml_excludes_elements(puml_files, forbidden_elements)
+    
+    def validate_plantuml_classes(self, puml_files: Dict[str, str], expected_classes: List[str],
+                                expected_total_classes: int = None) -> None:
+        """Validate PlantUML class definitions"""
+        return self.validators_processor.validate_plantuml_classes(
+            puml_files, expected_classes, expected_total_classes
+        )
+    
+    def validate_plantuml_relationships(self, puml_files: Dict[str, str], expected_relationships: List[Dict],
+                                      expected_total_relationships: int = None) -> None:
+        """Validate PlantUML relationships"""
+        return self.validators_processor.validate_plantuml_relationships(
+            puml_files, expected_relationships, expected_total_relationships
+        )
+    
+    def validate_plantuml_file_content(self, puml_content: str, expected_lines: List[str] = None,
+                                     forbidden_lines: List[str] = None) -> None:
+        """Validate specific content in a single PlantUML file"""
+        return self.validators_processor.validate_plantuml_file_content(
+            puml_content, expected_lines, forbidden_lines
+        )
+    
+    # CLI Execution Validation Methods
+    def validate_successful_execution(self, cli_result: CLIResult, expected_stdout: str = None) -> None:
+        """Validate that CLI execution was successful"""
+        return self.validators_processor.validate_successful_execution(cli_result, expected_stdout)
+    
+    def validate_failed_execution(self, cli_result: CLIResult, expected_error: str = None) -> None:
+        """Validate that CLI execution failed as expected"""
+        return self.validators_processor.validate_failed_execution(cli_result, expected_error)
+    
+    def validate_execution_performance(self, cli_result: CLIResult, max_time: float) -> None:
+        """Validate that CLI execution completed within time limit"""
+        return self.validators_processor.validate_execution_performance(cli_result, max_time)
+    
+    # File System Validation Methods
+    def validate_output_files_exist(self, output_dir: str, expected_files: List[str]) -> None:
+        """Validate that expected output files were created"""
+        return self.validators_processor.validate_output_files_exist(output_dir, expected_files)
+    
+    def validate_json_files_valid(self, output_dir: str, json_files: List[str] = None) -> None:
+        """Validate that JSON files contain valid JSON"""
+        return self.validators_processor.validate_json_files_valid(output_dir, json_files)
+    
+    def validate_file_encoding(self, file_path: str) -> None:
+        """Validate that a file has valid UTF-8 encoding"""
+        return self.validators_processor.validate_file_encoding(file_path)
+    
+    # Comprehensive Validation Methods
+    def validate_complete_parsing_workflow(self, output_dir: str, model_data: Dict, 
+                                        expected_files: List[str], expected_elements: Dict[str, List[str]]) -> None:
+        """Validate complete parsing workflow from input to model output"""
+        return self.validators_processor.validate_complete_parsing_workflow(
+            output_dir, model_data, expected_files, expected_elements
+        )
+    
+    def validate_complete_generation_workflow(self, output_dir: str, puml_files: Dict[str, str],
+                                           expected_elements: List[str], expected_classes: int = None,
+                                           expected_relationships: int = None) -> None:
+        """Validate complete generation workflow from model to PlantUML output"""
+        return self.validators_processor.validate_complete_generation_workflow(
+            output_dir, puml_files, expected_elements, expected_classes, expected_relationships
         )
 
     def _cleanup_existing_test_folders(self):

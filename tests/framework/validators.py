@@ -9,6 +9,7 @@ aspects of test outputs and CLI results.
 import os
 import re
 import json
+import glob
 from typing import Dict, List, Any, Optional
 from .executor import CLIResult
 
