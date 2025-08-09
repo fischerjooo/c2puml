@@ -12,7 +12,7 @@ import unittest
 import tempfile
 import json
 import shutil
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Tuple
 
 from .executor import TestExecutor, CLIResult
 from .data_loader import TestDataLoader
@@ -148,6 +148,55 @@ class UnifiedTestCase(unittest.TestCase):
             test_data["assertions"], model_data, puml_files, result.cli_result, self
         )
 
+    # --- Helper methods to reduce duplication in CLI feature/mode tests ---
+
+    def prepare_test_environment(self, test_id: str) -> Tuple[Dict[str, Any], str, str, str, str, str]:
+        """Load YAML, create files, and return handy paths.
+        
+        Returns tuple: (test_data, source_dir, config_filename, test_folder, test_dir, output_dir)
+        """
+        test_data = self.data_loader.load_test_data(test_id)
+        source_dir, config_path = self.data_loader.create_temp_files(test_data, test_id)
+        test_folder = os.path.dirname(source_dir)
+        test_dir = os.path.dirname(test_folder)
+        config_filename = os.path.basename(config_path)
+        output_dir = os.path.join(test_dir, "output")
+        os.makedirs(output_dir, exist_ok=True)
+        return test_data, source_dir, config_filename, test_folder, test_dir, output_dir
+
+    def normalize_file_assertions_paths(self, assertions: Dict[str, Any], output_dir: str) -> Dict[str, Any]:
+        """Convert relative ./output paths in file assertions to absolute paths under output_dir."""
+        if not assertions:
+            return {}
+        # Deep copy without importing copy at top-level each time
+        import copy as _copy
+        normalized = _copy.deepcopy(assertions)
+        files_section = normalized.get("files")
+        if not files_section:
+            return normalized
+        
+        def _fix_path(path: str) -> str:
+            if isinstance(path, str) and path.startswith("./output/"):
+                return os.path.join(output_dir, path[len("./output/"):])
+            return path
+        
+        # Keys containing lists of paths
+        for key in ("files_exist", "files_not_exist", "json_files_valid", "utf8_files"):
+            if key in files_section and isinstance(files_section[key], list):
+                files_section[key] = [_fix_path(p) for p in files_section[key]]
+        
+        # Single path fields
+        if "output_dir_exists" in files_section:
+            files_section["output_dir_exists"] = _fix_path(files_section["output_dir_exists"]) or output_dir
+        
+        # file_content maps file->assertions; rewrite keys
+        if "file_content" in files_section and isinstance(files_section["file_content"], dict):
+            new_map = {}
+            for file_path, content_assertions in files_section["file_content"].items():
+                new_map[_fix_path(file_path)] = content_assertions
+            files_section["file_content"] = new_map
+        
+        return normalized
 
 
     def _cleanup_existing_test_folders(self):
