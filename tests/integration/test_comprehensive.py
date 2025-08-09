@@ -40,14 +40,14 @@ class TestComprehensiveIntegrationCLI(UnifiedTestCase):
 
     def test_parser_tokenizer_integration(self):
         """Test parser-tokenizer integration with complex structures"""
-        result = self.run_test("parser_tokenizer_integration")
+        result = self.run_test("comprehensive_parser_tokenizer_integration")
         
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_complete_system_integration(self):
         """Test complete system integration with real-world project structure"""
-        result = self.run_test("complete_system_integration")
+        result = self.run_test("comprehensive_complete_system_integration")
         
         self.validate_execution_success(result)
         self.validate_test_output(result)
