@@ -148,8 +148,6 @@ class UnifiedTestCase(unittest.TestCase):
             test_data["assertions"], model_data, puml_files, result.cli_result, self
         )
 
-
-
     def _cleanup_existing_test_folders(self):
         """Clean up any existing test-* folders in test directories"""
         test_categories = ['unit', 'feature', 'integration', 'example']

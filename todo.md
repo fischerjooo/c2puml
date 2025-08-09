@@ -128,6 +128,7 @@
    - ✅ Deleted original feature test files after verification (January 15, 2025)
    - ✅ Updated framework to support "files" assertion validation
    - ✅ Fixed model structure requirements for generator tests
+   - ✅ Removed legacy `tests/utils.py` and `tests/conftest.py` after CLI migration
 
 6. **Validation**
    - ✅ Final test suite run after all refactoring: **205 tests running, with only 1 failure and 17 errors (mostly missing YAML files)**
