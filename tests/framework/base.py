@@ -176,7 +176,11 @@ class UnifiedTestCase(unittest.TestCase):
             return normalized
         
         def _fix_path(path: str) -> str:
-            if isinstance(path, str) and path.startswith("./output/"):
+            if not isinstance(path, str):
+                return path
+            if path == "./output" or path == "./output/":
+                return output_dir
+            if path.startswith("./output/"):
                 return os.path.join(output_dir, path[len("./output/"):])
             return path
         
