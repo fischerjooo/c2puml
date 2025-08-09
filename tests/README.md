@@ -273,3 +273,99 @@ During test execution, temporary files are created in:
 - `tests/<category>/test-<name>/output/`: Generated model and PlantUML files
 
 These directories are automatically cleaned up between test runs and are ignored by git.
+
+---
+
+## Quick Guidelines
+- Prefer the simple pattern: `result = self.run_test("<id>"); self.validate_execution_success(result); self.validate_test_output(result)`
+- Use CLI-only via TestExecutor methods: `run_parse_only`, `run_transform_only`, `run_generate_only`, `run_full_pipeline`.
+- Keep YAML as the source of truth for assertions; avoid custom asserts unless necessary.
+- For file path assertions in YAML, use `./output/...`; paths are normalized by the framework.
+- Maintain 1:1 pairing: every `test_*.py` has a matching `test_*.yml`.
+- For transform/generate-only tests, copy required `model.json`/`model_transformed.json` into `./output/` before invoking the step.
+- Organize by category and IDs: unit (0001-1000), feature (1001-2000), integration (2001-3000), example (3001-4000).
+- Default performance budget: 30s for unit/feature tests unless a test requires more.
+
+## Simple Test Pattern (Recommended)
+```python
+from tests.framework import UnifiedTestCase
+
+class TestSimpleCFileParsing(UnifiedTestCase):
+    def test_simple_c_file_parsing(self):
+        result = self.run_test("simple_c_file_parsing")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+```
+
+## CLI Steps and Inputs
+- `run_parse_only(config_path, working_dir)`: input C/C++ sources → outputs `model.json`.
+- `run_transform_only(config_path, working_dir)`: input `model.json` → outputs `model_transformed.json`.
+- `run_generate_only(config_path, working_dir)`: input `model.json` or `model_transformed.json` → outputs `.puml` files.
+- `run_full_pipeline(config_path, working_dir)`: parse → transform → generate.
+
+## Pairing Rules and Multiple YAMLs
+- 1:1 base-name pairing is required: `test_foo.py` ↔ `test_foo.yml`.
+- For multiple scenarios in one Python file, use suffixes in YAML names and call by suffix id:
+  - Python: `test_absolute_path_bug_comprehensive.py`
+  - YAMLs: `test_absolute_path_bug_comprehensive_relative_path.yml`, `..._subdirectory.yml`, `..._mixed_paths.yml`, `..._consistency.yml`
+  - Calls: `self.run_test("absolute_path_bug_comprehensive_relative_path")`, etc.
+
+## Additional Assertion Patterns (Useful Snippets)
+
+### File system assertions
+```yaml
+assertions:
+  files:
+    output_dir_exists: "./output"
+    files_exist:
+      - "./output/model.json"
+      - "./output/main.puml"
+    files_not_exist:
+      - "./output/debug.puml"
+    json_files_valid:
+      - "./output/model.json"
+    utf8_files:
+      - "./output/main.puml"
+    file_content:
+      "./output/main.puml":
+        contains: ["@startuml", "@enduml"]
+        not_contains: ["ERROR"]
+        contains_lines: ["@startuml main", "@enduml"]
+        not_empty: true
+```
+
+### Parser/Transformer/Generator highlights
+```yaml
+assertions:
+  model:
+    functions_exist: ["main"]
+    structs_exist: ["Person"]
+    enums_exist: ["Status"]
+    functions_not_exist: ["deprecated_function"]
+    element_counts:
+      functions: 1
+  puml:
+    syntax_valid: true
+    contains_elements: ["Person", "main"]
+    class_count: 3
+    relationships_exist:
+      - source: "MAIN"
+        target: "HEADER_STDIO"
+        type: "-->"
+```
+
+### Error handling and performance
+```yaml
+assertions:
+  execution:
+    success_expected: false
+    expected_error: "Invalid source path"
+    exit_code: 1
+    stderr_contains: "Error: File not found"
+    max_execution_time: 10.0
+```
+
+## Example Tests (Special Structure)
+- YAML contains ONLY `test` and `assertions`; sources and `config.json` live beside the test and are tracked in git.
+- Working directory is the example folder where `config.json` resides.
+- Output is still written to a test-specific `output/` directory.
