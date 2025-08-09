@@ -1,5 +1,18 @@
 # C2PUML Test Refactoring - Recommendations
 
+## Quick Guidelines (Concise)
+
+- Prefer the simple pattern: `result = self.run_test("<id>"); self.validate_execution_success(result); self.validate_test_output(result)`
+- Use CLI-only via `TestExecutor` methods: `run_parse_only`, `run_transform_only`, `run_generate_only`, `run_full_pipeline`.
+- Keep YAML as source of truth for assertions; avoid custom asserts unless necessary.
+- For file path assertions in YAML, use `./output/...` and let tests normalize with `normalize_file_assertions_paths`.
+- Maintain 1:1 pairing: every `test_*.py` has a `test_*.yml`.
+- For transform/generate-only tests, copy required model files into `output/` before invoking the step.
+- Organize by category and IDs: unit (0001-1000), feature (1001-2000), integration (2001-3000), example (3001-4000).
+- Validate performance only when necessary; default to max 30s for feature/unit.
+
+---
+
 ## Overview
 
 This document provides detailed recommendations and guidance for test developers working with the new unified testing framework. It includes practical examples, best practices, and step-by-step instructions for creating and maintaining tests.
@@ -96,8 +109,6 @@ assertions:
       globals: 2
       includes: 2
       macros: 2
-  
-  
 ```
 
 **Recommendation**: Parser tests should only run the parsing step and verify that model.json is generated correctly. Use CLI step: `parse_only`. Input: C/C++ source files. Output validation: model.json structure and content.
