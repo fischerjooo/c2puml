@@ -19,14 +19,14 @@ class TestNewFormattingComprehensiveCLI(UnifiedTestCase):
 
     def test_complete_formatting_integration(self):
         """Test all new formatting rules working together in a realistic scenario"""
-        result = self.run_test("complete_formatting_integration")
+        result = self.run_test("new_formatting_comprehensive_complete_formatting_integration")
         
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_mixed_project_comprehensive_formatting(self):
         """Test formatting in a project with multiple files and cross-references"""
-        result = self.run_test("mixed_project_comprehensive_formatting")
+        result = self.run_test("new_formatting_comprehensive_mixed_project_comprehensive_formatting")
         
         self.validate_execution_success(result)
         self.validate_test_output(result)
