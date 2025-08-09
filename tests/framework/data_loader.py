@@ -196,37 +196,37 @@ class TestDataLoader:
         Raises:
             ValueError: If test data doesn't match expected schema
         """
-        # Define required sections
-        required_sections = ["source_files"]
-        optional_sections = ["model", "assertions"]
-        
-        # Check required sections
-        for section in required_sections:
-            if section not in test_data:
-                raise ValueError(f"Missing required section '{section}' in test data")
-        
-        # Validate source_files section
-        if not isinstance(test_data["source_files"], dict):
-            raise ValueError("'source_files' must be a dictionary")
-        
-        if not test_data["source_files"]:
-            raise ValueError("'source_files' cannot be empty")
-        
-        # Validate config.json in source_files
-        if "config.json" not in test_data["source_files"]:
-            raise ValueError("Missing config.json in source_files")
-        
-        # Validate that config.json contains valid JSON
-        try:
-            config = json.loads(test_data["source_files"]["config.json"])
-        except json.JSONDecodeError as e:
-            raise ValueError(f"Invalid JSON in config.json: {e}")
-        
-        required_config_keys = ["project_name", "source_folders", "output_dir"]
-        for key in required_config_keys:
-            if key not in config:
-                raise ValueError(f"Missing required config key '{key}' in config.json")
-        
+        # Example tests may provide only assertions (use external config and sources)
+        has_source_files = "source_files" in test_data
+        has_assertions_only = (not has_source_files) and ("assertions" in test_data)
+
+        if not has_source_files and not has_assertions_only:
+            # Neither source files nor assertions present → invalid
+            raise ValueError("Test data must include 'source_files' or at least 'assertions' for example tests")
+
+        if has_source_files:
+            # Validate source_files section
+            if not isinstance(test_data["source_files"], dict):
+                raise ValueError("'source_files' must be a dictionary")
+            
+            if not test_data["source_files"]:
+                raise ValueError("'source_files' cannot be empty")
+            
+            # Validate config.json in source_files
+            if "config.json" not in test_data["source_files"]:
+                raise ValueError("Missing config.json in source_files")
+            
+            # Validate that config.json contains valid JSON
+            try:
+                config = json.loads(test_data["source_files"]["config.json"])
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Invalid JSON in config.json: {e}")
+            
+            required_config_keys = ["project_name", "source_folders", "output_dir"]
+            for key in required_config_keys:
+                if key not in config:
+                    raise ValueError(f"Missing required config key '{key}' in config.json")
+
         # Validate assertions section if present
         if "assertions" in test_data:
             if not isinstance(test_data["assertions"], dict):

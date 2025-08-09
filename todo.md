@@ -225,3 +225,12 @@
 **Achievement**: Successfully completed the comprehensive refactoring of ALL internal API, integration, AND feature tests to modern CLI-based framework, maintaining 100% functionality while improving maintainability and consistency.
 
 **Latest Milestone (January 15, 2025)**: Feature test refactoring completed, bringing the total scope of refactoring to include all major test categories in the codebase.
+
+## Additional Progress (August 8, 2025)
+
+- Migrated legacy `tests/example/test-example.py` to unified CLI-based framework
+  - Added `tests/example/test_basic_example.py` using `UnifiedTestCase`
+  - Added `tests/example/test_basic_example.yml` with assertions-only for example tests
+  - Updated `tests/framework/data_loader.py` to allow example YAML without `source_files`
+  - Updated `scripts/run_example.sh` to run example tests via pytest if available, otherwise unittest
+- Verified with `./scripts/run_all.sh`: all tests pass; example workflow and PNG generation succeed
