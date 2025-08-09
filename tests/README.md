@@ -13,9 +13,17 @@ Tests are organized into four categories:
 
 ## Test File Structure
 
-Each test consists of two files:
+Each test module pairs 1:1 by base name with at least one YAML file:
 - `test_<name>.py`: Test implementation using the unified framework
-- `test_<name>.yml`: Test data and assertions in YAML format
+- `test_<name>.yml`: Primary YAML test data and assertions
+
+A single Python test may drive multiple YAML scenarios by adding suffixes to the YAML filenames:
+- `test_<name>_<scenario>.yml`, `test_<name>_<another_scenario>.yml`, ...
+Call them with `self.run_test("<name>_<scenario>")` from the Python test.
+
+Example:
+- Python: `tests/unit/test_absolute_path_bug_comprehensive.py`
+- YAML: `tests/unit/test_absolute_path_bug_comprehensive_relative_path.yml`, `..._subdirectory.yml`, `..._mixed_paths.yml`, `..._consistency.yml`
 
 ## YAML Test Data Structure
 
