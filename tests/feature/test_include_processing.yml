@@ -1,0 +1,209 @@
+scenarios:
+  - id: "basic_workflow"
+    test: { name: "Include Processing - Basic Workflow", category: "feature", id: "1001" }
+    source_files:
+      main.c: |
+        #include <stdio.h>
+        #include "utils.h"
+        int main(){return 0;}
+      utils.h: |
+        typedef struct { int x; int y; } Point;
+    config.json: |
+      {"project_name":"inc_basic","source_folders":["."],"output_dir":"./output","include_depth":2}
+    assertions:
+      execution: { exit_code: 0 }
+      puml: { file_count: 1 }
+
+  - id: "c_to_h_relationships"
+    test: { name: "Include Processing - C to H", category: "feature", id: "1002" }
+    source_files:
+      a.c: |
+        #include "a.h"
+      a.h: |
+        void f();
+    config.json: |
+      {"project_name":"inc_c2h","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+      puml: { files: { a.puml: { contains_lines: ["A --> HEADER_A : <<include>>"] } } }
+
+  - id: "header_to_header_relationships"
+    test: { name: "Include Processing - H to H", category: "feature", id: "1003" }
+    source_files:
+      a.c: |
+        #include "a.h"
+      a.h: |
+        #include "b.h"
+      b.h: |
+        void g();
+    config.json: |
+      {"project_name":"inc_h2h","source_folders":["."],"output_dir":"./output","include_depth":3}
+    assertions:
+      execution: { exit_code: 0 }
+      puml: { files: { a.puml: { contains_elements: ["HEADER_A","HEADER_B"] } } }
+
+  - id: "complex_project_structure"
+    test: { name: "Include Processing - Complex Project", category: "feature", id: "1004" }
+    source_files:
+      src/app.c: |
+        #include "include/app.h"
+        int main(){return 0;}
+      include/app.h: |
+        #include "lib/comp.h"
+      lib/comp.h: |
+        typedef struct { int id; } Comp;
+    config.json: |
+      {"project_name":"inc_complex","source_folders":["src","include","lib"],"output_dir":"./output","recursive_search":true,"include_depth":3}
+    assertions:
+      execution: { exit_code: 0 }
+
+  - id: "nested_directory_structure"
+    test: { name: "Include Processing - Nested", category: "feature", id: "1005" }
+    source_files:
+      src/main.c: |
+        #include "a/b/c.h"
+      a/b/c.h: |
+        void z();
+    config.json: |
+      {"project_name":"inc_nested","source_folders":["."],"output_dir":"./output","recursive_search":true}
+    assertions:
+      execution: { exit_code: 0 }
+
+  - id: "circular_include_detection"
+    test: { name: "Include Processing - Circular", category: "feature", id: "1006" }
+    source_files:
+      a.c: |
+        #include "a.h"
+      a.h: |
+        #include "b.h"
+      b.h: |
+        #include "a.h"
+    config.json: |
+      {"project_name":"inc_circular","source_folders":["."],"output_dir":"./output","include_depth":5}
+    assertions:
+      execution: { exit_code: 0 }
+
+  - id: "full_pipeline_integration"
+    test: { name: "Include Processing - Full Pipeline", category: "feature", id: "1007" }
+    source_files:
+      main.c: |
+        #include "h.h"
+        int main(){return 0;}
+      h.h: |
+        typedef int X;
+    config.json: |
+      {"project_name":"inc_full","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+      puml: { file_count: 1 }
+
+  - id: "include_depth_control"
+    test: { name: "Include Processing - Depth", category: "feature", id: "1008" }
+    source_files:
+      a.c: |
+        #include "a.h"
+      a.h: |
+        #include "b.h"
+      b.h: |
+        #include "c.h"
+      c.h: |
+        int c;
+    config.json: |
+      {"project_name":"inc_depth","source_folders":["."],"output_dir":"./output","include_depth":2}
+    assertions:
+      execution: { exit_code: 0 }
+
+  - id: "include_filtering"
+    test: { name: "Include Processing - Filtering", category: "feature", id: "1009" }
+    source_files:
+      main.c: |
+        #include "a.h"
+        #include "b.h"
+        int main(){return 0;}
+      a.h: |
+        int a;
+      b.h: |
+        int b;
+    config.json: |
+      {"project_name":"inc_filter","source_folders":["."],"output_dir":"./output","file_specific":{"main.c":{"include_filter":["^a\\.h$"]}}}
+    assertions:
+      execution: { exit_code: 0 }
+
+  - id: "transitive_dependencies"
+    test: { name: "Include Processing - Transitive", category: "feature", id: "1015" }
+    source_files:
+      main.c: |
+        #include "a.h"
+      a.h: |
+        #include "b.h"
+      b.h: |
+        void b();
+    config.json: |
+      {"project_name":"inc_transitive","source_folders":["."],"output_dir":"./output","include_depth":3}
+    assertions:
+      execution: { exit_code: 0 }
+
+  - id: "dependency_ordering"
+    test: { name: "Include Processing - Ordering", category: "feature", id: "1016" }
+    source_files:
+      main.c: |
+        #include "z.h"
+        #include "a.h"
+      a.h: |
+        void a();
+      z.h: |
+        void z();
+    config.json: |
+      {"project_name":"inc_order","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+
+  - id: "missing_dependency_handling"
+    test: { name: "Include Processing - Missing Dep", category: "feature", id: "1017" }
+    source_files:
+      main.c: |
+        #include "missing.h"
+        int main(){return 0;}
+    config.json: |
+      {"project_name":"inc_missing","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+
+  - id: "comprehensive_scenario"
+    test: { name: "Include Processing - Comprehensive", category: "feature", id: "1018" }
+    source_files:
+      src/main.c: |
+        #include "util.h"
+        int main(){return 0;}
+      src/util.h: |
+        #include "common.h"
+      src/common.h: |
+        typedef struct { int v; } S;
+    config.json: |
+      {"project_name":"inc_comprehensive","source_folders":["."],"output_dir":"./output","include_depth":3}
+    assertions:
+      execution: { exit_code: 0 }
+
+  - id: "typedef_relationships"
+    test: { name: "Include Processing - Typedef Relationships", category: "feature", id: "1019" }
+    source_files:
+      main.c: |
+        #include "types.h"
+      types.h: |
+        typedef struct { int x; } A; typedef A B;
+    config.json: |
+      {"project_name":"inc_typedefs","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+
+  - id: "macro_propagation"
+    test: { name: "Include Processing - Macro Propagation", category: "feature", id: "1020" }
+    source_files:
+      main.c: |
+        #include "m.h"
+      m.h: |
+        #define X(N) (N)
+    config.json: |
+      {"project_name":"inc_macros","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }

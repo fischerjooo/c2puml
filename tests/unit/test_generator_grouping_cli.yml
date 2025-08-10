@@ -1,0 +1,28 @@
+scenarios:
+  - id: "function_separation"
+    test: { name: "Grouping - Function Separation", category: "unit", id: "0090", mode: "generate" }
+    source_files:
+      model.json: |
+        {"project_name":"grp","source_folder":".","files":{"a.c":{"file_path":"a.c","name":"a.c","functions":[{"name":"pub","return_type":"void","parameters":[],"is_declaration":false}],"globals":[],"includes":["a.h"],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}} ,"a.h":{"file_path":"a.h","name":"a.h","functions":[{"name":"pub","return_type":"void","parameters":[],"is_declaration":true}],"globals":[],"includes":[],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}}}}
+    config.json: |
+      {"project_name":"grp","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "global_separation"
+    test: { name: "Grouping - Global Separation", category: "unit", id: "0091", mode: "generate" }
+    source_files:
+      model.json: |
+        {"project_name":"grp","source_folder":".","files":{"a.c":{"file_path":"a.c","name":"a.c","functions":[],"globals":[{"name":"pubg","type":"int"}],"includes":["a.h"],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}} ,"a.h":{"file_path":"a.h","name":"a.h","functions":[],"globals":[{"name":"pubg","type":"int"}],"includes":[],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}}}}
+    config.json: |
+      {"project_name":"grp","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "mixed_comprehensive"
+    test: { name: "Grouping - Mixed", category: "unit", id: "0092", mode: "generate" }
+    source_files:
+      model.json: |
+        {"project_name":"grp","source_folder":".","files":{"a.c":{"file_path":"a.c","name":"a.c","functions":[{"name":"pub","return_type":"void","parameters":[],"is_declaration":false},{"name":"priv","return_type":"void","parameters":[],"is_declaration":false}],"globals":[{"name":"pubg","type":"int"},{"name":"privg","type":"int"}],"includes":["a.h"],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}} ,"a.h":{"file_path":"a.h","name":"a.h","functions":[{"name":"pub","return_type":"void","parameters":[],"is_declaration":true}],"globals":[{"name":"pubg","type":"int"}],"includes":[],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}}}}
+    config.json: |
+      {"project_name":"grp","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }

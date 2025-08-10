@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Parser Functions (single-scenario files)
+Test Parser Functions (bundled scenarios)
 """
 import os
 import sys
@@ -10,24 +10,24 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 
-class TestParserFunctionsComprehensive(UnifiedTestCase):
+class TestParserFunctions(UnifiedTestCase):
     def test_functions(self):
-        r = self.run_test("parser_functions_comprehensive_functions")
+        r = self.run_test("parser_functions_comprehensive::functions")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_declarations(self):
-        r = self.run_test("parser_functions_comprehensive_declarations")
+        r = self.run_test("parser_functions_comprehensive::declarations")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_definitions(self):
-        r = self.run_test("parser_functions_comprehensive_definitions")
+        r = self.run_test("parser_functions_comprehensive::definitions")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_modifiers(self):
-        r = self.run_test("parser_functions_comprehensive_modifiers")
+        r = self.run_test("parser_functions_comprehensive::modifiers")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 

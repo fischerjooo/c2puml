@@ -1,0 +1,55 @@
+scenarios:
+  - id: "public_functions"
+    test: { name: "Visibility - Public Functions", category: "unit", id: "0030", mode: "generate" }
+    source_files:
+      model.json: |
+        {"project_name":"vis","source_folder":".","files":{"a.c":{"file_path":"a.c","name":"a.c","functions":[{"name":"f","return_type":"int","parameters":[],"is_declaration":false}],"globals":[],"includes":["a.h"],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}} ,"a.h":{"file_path":"a.h","name":"a.h","functions":[{"name":"f","return_type":"int","parameters":[],"is_declaration":true}],"globals":[],"includes":[],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}}}}
+    config.json: |
+      {"project_name":"vis","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "private_functions"
+    test: { name: "Visibility - Private Functions", category: "unit", id: "0031", mode: "generate" }
+    source_files:
+      model.json: |
+        {"project_name":"vis","source_folder":".","files":{"a.c":{"file_path":"a.c","name":"a.c","functions":[{"name":"f","return_type":"int","parameters":[],"is_declaration":false}],"globals":[],"includes":[],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}}}}
+    config.json: |
+      {"project_name":"vis","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "public_globals"
+    test: { name: "Visibility - Public Globals", category: "unit", id: "0032", mode: "generate" }
+    source_files:
+      model.json: |
+        {"project_name":"vis","source_folder":".","files":{"a.c":{"file_path":"a.c","name":"a.c","functions":[],"globals":[{"name":"g","type":"int"}],"includes":["a.h"],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}} ,"a.h":{"file_path":"a.h","name":"a.h","functions":[],"globals":[{"name":"g","type":"int"}],"includes":[],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}}}}
+    config.json: |
+      {"project_name":"vis","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "private_globals"
+    test: { name: "Visibility - Private Globals", category: "unit", id: "0033", mode: "generate" }
+    source_files:
+      model.json: |
+        {"project_name":"vis","source_folder":".","files":{"a.c":{"file_path":"a.c","name":"a.c","functions":[],"globals":[{"name":"g","type":"int"}],"includes":[],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}}}}
+    config.json: |
+      {"project_name":"vis","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "mixed_visibility"
+    test: { name: "Visibility - Mixed", category: "unit", id: "0034", mode: "generate" }
+    source_files:
+      model.json: |
+        {"project_name":"vis","source_folder":".","files":{"a.c":{"file_path":"a.c","name":"a.c","functions":[{"name":"f","return_type":"int","parameters":[],"is_declaration":false}],"globals":[{"name":"g","type":"int"}],"includes":["a.h"],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}} ,"a.h":{"file_path":"a.h","name":"a.h","functions":[{"name":"f","return_type":"int","parameters":[],"is_declaration":true}],"globals":[],"includes":[],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}}}}
+    config.json: |
+      {"project_name":"vis","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "no_headers"
+    test: { name: "Visibility - No Headers", category: "unit", id: "0035", mode: "generate" }
+    source_files:
+      model.json: |
+        {"project_name":"vis","source_folder":".","files":{"a.c":{"file_path":"a.c","name":"a.c","functions":[{"name":"f","return_type":"int","parameters":[],"is_declaration":false}],"globals":[{"name":"g","type":"int"}],"includes":[],"macros":[],"aliases":{},"structs":{},"enums":{},"unions":{},"include_relations":[],"anonymous_relationships":{}}}}
+    config.json: |
+      {"project_name":"vis","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }

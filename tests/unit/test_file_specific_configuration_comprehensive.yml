@@ -1,0 +1,50 @@
+scenarios:
+  - id: "filter"
+    test: { name: "File-specific Include Filter", category: "unit", id: "0020" }
+    source_files:
+      main.c: |
+        #include "a.h"
+        #include "b.h"
+      a.h: |
+        int a;
+      b.h: |
+        int b;
+    config.json: |
+      {"project_name":"fspec","source_folders":["."],"output_dir":"./output","file_specific":{"main.c":{"include_filter":["^a\\.h$"]}}}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "depth"
+    test: { name: "File-specific Include Depth", category: "unit", id: "0021" }
+    source_files:
+      main.c: |
+        #include "a.h"
+      a.h: |
+        #include "b.h"
+      b.h: |
+        #include "c.h"
+      c.h: |
+        int c;
+    config.json: |
+      {"project_name":"fspec","source_folders":["."],"output_dir":"./output","file_specific":{"main.c":{"include_depth":2}}}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "patterns"
+    test: { name: "Include Filter Patterns", category: "unit", id: "0022" }
+    source_files:
+      main.c: |
+        #include "x.h"
+      x.h: |
+        int x;
+    config.json: |
+      {"project_name":"fspec","source_folders":["."],"output_dir":"./output","file_specific":{"main.c":{"include_filter":["^x\\.h$"]}}}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "extraction"
+    test: { name: "Configuration Extraction", category: "unit", id: "0023" }
+    source_files:
+      main.c: |
+        int main(){return 0;}
+    config.json: |
+      {"project_name":"fspec","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
