@@ -1,0 +1,28 @@
+scenarios:
+  - id: "operations"
+    test: { name: "Transformer - Operations", category: "unit", id: "0010", mode: "transform" }
+    source_files:
+      model.json: |
+        {"project_name":"x","source_folder":".","files":{"a.c":{"file_path":"a.c","name":"a.c","structs":{},"enums":{},"unions":{},"functions":[],"globals":[],"includes":[],"macros":[],"aliases":{},"include_relations":[],"anonymous_relationships":{}}}}
+    config.json: |
+      {"project_name":"x","source_folders":["."],"output_dir":"./output","transformations_00_default":{}}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "filtering"
+    test: { name: "Transformer - Filtering", category: "unit", id: "0011", mode: "transform" }
+    source_files:
+      model.json: |
+        {"project_name":"x","source_folder":".","files":{"a.c":{"file_path":"a.c","name":"a.c","structs":{},"enums":{},"unions":{},"functions":[],"globals":[],"includes":["b.h"],"macros":[],"aliases":{},"include_relations":[],"anonymous_relationships":{}},"b.h":{"file_path":"b.h","name":"b.h","structs":{},"enums":{},"unions":{},"functions":[],"globals":[],"includes":[],"macros":[],"aliases":{},"include_relations":[],"anonymous_relationships":{}}}}
+    config.json: |
+      {"project_name":"x","source_folders":["."],"output_dir":"./output","transformations_00_default":{"file_selection":[]}}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "includes"
+    test: { name: "Transformer - Includes", category: "unit", id: "0012", mode: "transform" }
+    source_files:
+      model.json: |
+        {"project_name":"x","source_folder":".","files":{"a.c":{"file_path":"a.c","name":"a.c","structs":{},"enums":{},"unions":{},"functions":[],"globals":[],"includes":["b.h"],"macros":[],"aliases":{},"include_relations":[],"anonymous_relationships":{}},"b.h":{"file_path":"b.h","name":"b.h","structs":{},"enums":{},"unions":{},"functions":[],"globals":[],"includes":["c.h"],"macros":[],"aliases":{},"include_relations":[],"anonymous_relationships":{}},"c.h":{"file_path":"c.h","name":"c.h","structs":{},"enums":{},"unions":{},"functions":[],"globals":[],"includes":[],"macros":[],"aliases":{},"include_relations":[],"anonymous_relationships":{}}}}
+    config.json: |
+      {"project_name":"x","source_folders":["."],"output_dir":"./output","include_depth":2}
+    assertions:
+      execution: { exit_code: 0 }

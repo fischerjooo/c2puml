@@ -55,7 +55,7 @@
 
 - **Feature: CLI Modes**
   - Merge into `tests/feature/test_cli_modes_comprehensive.yml`
-  - Scenarios: `parse_only`, `transform_only`, `generate_only`, `generate_isolation`, `generate_prefers_transformed`, `generate_fallback`, `parse_mode`, `transform_mode`, `full_workflow`
+  - Scenarios: `parse_only`, `transform_only`, `generate_only`, `generate_prefers_transformed`, `generate_fallback`, `full_workflow`
   - Expected reduction: 9 → 1 file
 
 - **Feature: Component Features**
@@ -75,51 +75,35 @@
 - **Unit: Generator Visibility Logic**
   - Merge into `tests/unit/test_generator_visibility_logic.yml`
   - Scenarios: `public_functions`, `private_functions`, `public_globals`, `private_globals`, `mixed_visibility`, `no_headers`
-  - Expected reduction: 6 → 1 file
 
 - **Unit: Parser Functions Comprehensive**
-  - Merge into `tests/unit/test_parser_functions_comprehensive.yml`
-  - Scenarios: `declarations`, `definitions`, `modifiers`, and keep minimal `functions` coverage
-  - Expected reduction: 4 → 1 file
+  - Merge into `tests/unit/test_parser_functions_comprehensive.yml` (TBD)
 
 - **Unit: Typedef Extraction**
-  - Merge into `tests/unit/test_typedef_extraction_comprehensive.yml`
-  - Scenarios: `simple`, `structs`, `enums`, `unions`, `function_pointers`, `mixed`, `edge_cases`
-  - Expected reduction: 7 → 1 file
+  - Merge into `tests/unit/test_typedef_extraction_comprehensive.yml` (TBD)
 
 - **Unit: Absolute Path Bug**
-  - Merge into `tests/unit/test_absolute_path_bug_comprehensive.yml`
-  - Scenarios: `relative_path`, `subdirectory`, `mixed_paths`, `consistency`
-  - Expected reduction: 4 → 1 file
+  - Merge into `tests/unit/test_absolute_path_bug_comprehensive.yml` (TBD)
 
 - **Unit: Tokenizer**
-  - Merge into `tests/unit/test_tokenizer_comprehensive.yml`
-  - Scenarios: `complex_parsing`, `edge_cases`, `preprocessor`, `keywords`, `complex_function_parsing`, `complex_mixed_structures`, `comprehensive_parsing`
-  - Expected reduction: 7+ → 1 file
+  - Merge into `tests/unit/test_tokenizer_comprehensive.yml` (DONE)
 
 - **Unit: Debug and Anonymous Structures**
-  - Merge into `tests/unit/test_anonymous_structures_and_debug.yml`
-  - Scenarios: `anonymous_processing`, `anonymous_struct`, `anonymous_union`, `nested_anonymous`, `debug_parsing_struct`, `debug_parsing_union`, `debug_parsing_anonymous`, `debug_field_parsing_struct`, `debug_field_parsing_union`, `debug_field_parsing_anonymous`
-  - Expected reduction: 9+ → 1 file
+  - Merge into `tests/unit/test_anonymous_structures_and_debug.yml` (TBD)
 
 - **Unit: Generator Naming & Grouping & New Formatting**
-  - Merge naming into `tests/unit/test_generator_naming_comprehensive.yml` (scenarios: `typedef_conventions`, `file_conventions`, `complex_names`, `edge_cases`)
-  - Merge grouping into `tests/unit/test_generator_grouping_cli.yml` (scenarios: `function_separation`, `global_separation`, `mixed_comprehensive`)
-  - Merge new formatting into `tests/unit/test_generator_new_formatting_cli.yml` (scenarios: `enum_stereotype`, `struct_stereotype`, `union_stereotype`, `function_pointer`, `alias`, `complex_typedef`)
-  - Expected reduction: 6+ → 3 files
+  - Merge naming into `tests/unit/test_generator_naming_comprehensive.yml` (DONE)
+  - Merge grouping into `tests/unit/test_generator_grouping_cli.yml` (TBD)
+  - Merge new formatting into `tests/unit/test_generator_new_formatting_cli.yml` (TBD)
 
 - **Unit: Transformer**
-  - Merge into `tests/unit/test_transformer_comprehensive.yml` (scenarios: `basic`, `operations`, `filtering`, `includes`)
-  - Expected reduction: 4 → 1 file
+  - Merge into `tests/unit/test_transformer_comprehensive.yml` (DONE)
 
 - **Unit: File-specific Configuration**
-  - Merge into `tests/unit/test_file_specific_configuration_comprehensive.yml` (scenarios: `patterns`, `filter`, `depth`, `extraction`)
-  - Expected reduction: 4 → 1 file
+  - Merge into `tests/unit/test_file_specific_configuration_comprehensive.yml` (DONE)
 
 - **Integration: Comprehensive**
-  - Merge into `tests/integration/test_comprehensive.yml`
-  - Scenarios: `c_to_h_relationships`, `header_to_header_relationships`, `typedef_relationships`, `parser_tokenizer_integration`, `complete_system_integration`, `new_formatting_complete`, `new_formatting_mixed_project`
-  - Expected reduction: 7 → 1 file
+  - Merge into `tests/integration/test_comprehensive.yml` (TBD)
 
 
 ### Estimated Impact
@@ -146,62 +130,25 @@
 
 ### Migration Plan (Phase 2)
 
-- [x] Create bundled YAML for CLI modes: `tests/feature/test_cli_modes_comprehensive.yml` with scenarios `parse_only`, `transform_only`, `generate_prefers_transformed`, `generate_fallback`, `full_workflow`.
-- [x] Update Python test `tests/feature/test_cli_modes_comprehensive.py` to use bundle scenarios.
-- [x] Create bundled YAML for Include Processing: `tests/feature/test_include_processing.yml` with 15 scenarios covering existing spread.
-- [x] Update Python test `tests/feature/test_include_processing.py` to call bundle scenarios.
-- [ ] Consolidate remaining target bundles (unit/integration) as listed above.
-- [ ] Move old single-scenario YAMLs under `tests/feature/_deprecated/` temporarily (final removal after CI green).
+- [x] Create bundled YAML for CLI modes and update Python.
+- [x] Create bundled YAML for Include Processing and update Python.
+- [x] Create bundled YAML for Tokenizer and update Python.
+- [x] Create bundled YAML for Transformer and update Python.
+- [x] Create bundled YAML for File-specific Configuration and update Python.
+- [x] Create bundled YAML for Generator Visibility Logic and update Python.
+- [x] Create bundled YAML for Generator Naming and update Python.
+- [ ] Consolidate remaining unit bundles (parser functions, typedef extraction, absolute path bug, anonymous structures, grouping, new formatting) and integration comprehensive.
+- [ ] Move old single-scenario YAMLs under `tests/_deprecated/` temporarily (final removal after CI green).
 
 
-### Risk Mitigation
+### Status
 
-- Keep a 1:1 mapping from old scenarios to new scenario IDs and maintain a temporary index mapping for quick lookup.
-- Validate equivalence by running both old and new suites in CI during a transition branch; compare counts and key assertions.
-- Ensure deterministic temp folder naming includes both bundle and scenario to avoid collisions.
-
-
-### Quick Wins (No Framework Change, Optional)
-
-If framework changes are postponed, we can still reduce noise by:
-- [ ] Collapsing multiple Python test modules into one per domain (already done in many places like `tests/feature/test_include_processing.py`).
-- [ ] Removing narrow tests fully covered by comprehensive scenarios (only if entirely redundant):
-  - [ ] Example: feature include `basic_workflow`, `include_depth_control` potentially covered by `comprehensive_scenario` and `full_pipeline_integration`.
-  - [ ] Keep at least one narrow sanity test per domain as a smoke check.
+- All new bundles pass: `python3 -m unittest -q` → OK.
+- Framework supports per-scenario execution modes and correct setup for parse/transform/generate/full.
+- Documentation updated.
 
 
-### Acceptance Criteria
+### Next Steps
 
-- [ ] CI green after framework extension (no test regressions).
-- [ ] 50% reduction in YAML file count in first pass; 80–90% after full migration.
-- [ ] Documentation updated with clear examples for multi-scenario YAMLs.
-- [ ] Developers can run a whole domain with a single bundled YAML, or target a specific scenario via `bundle::scenario`.
-
-
-### Appendix: Example Multi-Scenario YAML Sketch
-
-```yaml
-# tests/feature/test_cli_modes_comprehensive.yml
-scenarios:
-  - id: "parse_only"
-    test:
-      name: "CLI parse-only"
-      category: "feature"
-      id: "1010"
-    source_files:
-      main.c: |
-        int main(){return 0;}
-    config.json: |
-      { "project_name": "cli_parse", "source_folders": ["."], "output_dir": "./output" }
-    assertions:
-      execution:
-        exit_code: 0
-      puml:
-        file_count: 1
-  - id: "transform_only"
-    test: {...}
-    source_files: {...}
-    config.json: |
-      { "project_name": "cli_transform", ... }
-    assertions: {...}
-```
+- Complete remaining consolidations (unit/integration) following the same pattern.
+- Deprecate and remove old single-scenario YAMLs after validating coverage parity.
