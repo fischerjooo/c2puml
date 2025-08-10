@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive test for debugging parsing functionality through CLI interface
+Comprehensive test for debugging parsing functionality through CLI interface (bundled scenarios)
 """
 
 import os
@@ -12,34 +12,20 @@ from tests.framework import UnifiedTestCase
 
 
 class TestDebugParsingComprehensive(UnifiedTestCase):
-    """Test debugging parsing functionality through CLI interface"""
-    
     def test_complex_union_parsing(self):
-        """Test parsing complex union with nested structures through CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("debug_parsing_comprehensive_union")
-        
-        # Validate results
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
+        r = self.run_test("anonymous_structures_and_debug::debug_parsing_union")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
 
     def test_nested_struct_parsing(self):
-        """Test parsing nested struct definitions through CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("debug_parsing_comprehensive_struct")
-        
-        # Validate results
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
+        r = self.run_test("anonymous_structures_and_debug::debug_parsing_struct")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
 
     def test_anonymous_structure_parsing(self):
-        """Test parsing anonymous structures in typedefs through CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("debug_parsing_comprehensive_anonymous")
-        
-        # Validate results
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
+        r = self.run_test("anonymous_structures_and_debug::debug_parsing_anonymous")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
 
 
 if __name__ == "__main__":

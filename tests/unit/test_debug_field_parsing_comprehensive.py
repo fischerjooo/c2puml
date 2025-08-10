@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive debug field parsing tests using CLI interface.
-Replaces test_debug_field_parsing.py, test_debug_field_processing.py, and test_debug_field_parsing_detailed.py
+Comprehensive debug field parsing tests using CLI interface (bundled scenarios).
 """
 
 import os
@@ -13,25 +12,20 @@ from tests.framework import UnifiedTestCase
 
 
 class TestDebugFieldParsingComprehensive(UnifiedTestCase):
-    """Comprehensive CLI-based debug field parsing tests."""
-
     def test_nested_union_field_parsing(self):
-        """Test nested union field parsing through CLI interface."""
-        result = self.run_test("debug_field_parsing_comprehensive_union")
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
+        r = self.run_test("anonymous_structures_and_debug::debug_field_parsing_union")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
 
     def test_complex_struct_field_processing(self):
-        """Test complex struct field processing through CLI interface."""
-        result = self.run_test("debug_field_parsing_comprehensive_struct") 
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
+        r = self.run_test("anonymous_structures_and_debug::debug_field_parsing_struct")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
 
     def test_nested_anonymous_structure_fields(self):
-        """Test nested anonymous structure field parsing through CLI interface."""
-        result = self.run_test("debug_field_parsing_comprehensive_anonymous")
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
+        r = self.run_test("anonymous_structures_and_debug::debug_field_parsing_anonymous")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
 
 
 if __name__ == "__main__":

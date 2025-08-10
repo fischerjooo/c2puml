@@ -149,12 +149,13 @@
   - Feature: CLI modes, include processing bundle.
   - Integration: consolidated to `tests/integration/test_comprehensive.yml`, updated Python tests to use `comprehensive::<scenario>`.
 
-### Remaining cleanup
+### Cleanup
 
-- Remove/deprecate old single-scenario YAMLs superseded by bundles after a final parity review. No behavior regressions observed; suite green.
+- Removed superseded single-scenario YAMLs across unit, feature, and integration per consolidation plan.
+- Updated lingering Python tests to reference bundled scenarios.
+- Test suite remains green after cleanup.
 
 
 ### Next Steps
 
-- Integration: consolidate to `tests/integration/test_comprehensive.yml` (c_to_h, header_to_header, typedef relationships, parser_tokenizer_integration, complete_system_integration, new_formatting complete, new_formatting mixed project).
-- Deprecate and remove old single-scenario YAMLs after validating coverage parity.
+- Integration: consolidate to `
