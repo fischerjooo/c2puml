@@ -148,10 +148,11 @@
 - Documentation updated.
 - Completed additional consolidations:
   - Parser functions → `tests/unit/test_parser_functions_comprehensive.yml` + refactor.
-  - Kept suite green (now 157 tests executed via unittest discovery).
+  - Typedef extraction → `tests/unit/test_typedef_extraction_comprehensive.yml` + refactor.
+  - Kept suite green (157 tests executed via unittest discovery).
 
 
 ### Next Steps
 
-- Complete remaining consolidations (typedef extraction, absolute path bug, anonymous structures, grouping, new formatting) and integration comprehensive.
+- Complete remaining consolidations (absolute path bug, anonymous structures, grouping, new formatting) and integration comprehensive.
 - Deprecate and remove old single-scenario YAMLs after validating coverage parity.
