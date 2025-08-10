@@ -154,18 +154,6 @@ test_file_specific_include_filter (unit.test_file_specific_configuration_compreh
 Test that file-specific include filters preserve includes arrays correctly through CLI interface. ... ok
 test_include_filter_patterns (unit.test_file_specific_configuration_comprehensive.TestFileSpecificConfigurationComprehensive.test_include_filter_patterns)
 Test include filter patterns validation through CLI interface. ... ok
-test_function_parameters_complex (unit.test_function_parameters_complex.TestFunctionParametersComplex.test_function_parameters_complex)
-Test function parameters complex through the CLI interface ... ok
-test_function_parameters_display (unit.test_function_parameters_display.TestFunctionParametersDisplay.test_function_parameters_display)
-Test function parameter display through the CLI interface ... ok
-test_function_parameters_empty (unit.test_function_parameters_empty.TestFunctionParametersEmpty.test_function_parameters_empty)
-Test function parameters empty through the CLI interface ... ok
-test_function_parameters_parsing (unit.test_function_parameters_parsing.TestFunctionParametersParsing.test_function_parameters_parsing)
-Test function parameter parsing through the CLI interface ... ok
-test_function_params_complex (unit.test_function_params_complex.TestFunctionParamsComplex.test_function_params_complex)
-Test function params complex through the CLI interface ... ok
-test_function_params_parsing (unit.test_function_params_parsing.TestFunctionParamsParsing.test_function_params_parsing)
-Test function params parsing through the CLI interface ... ok
 test_generator_basic_plantuml (unit.test_generator_basic_plantuml.TestGeneratorBasicPlantuml.test_generator_basic_plantuml)
 Run the test_generator_basic_plantuml test through CLI interface. ... ok
 test_generator_comprehensive (unit.test_generator_comprehensive.TestGeneratorComprehensive.test_generator_comprehensive)
@@ -238,12 +226,7 @@ test_parser_enum_typedef (unit.test_parser_enum_comprehensive.TestParserEnumComp
 Test parsing typedef enum definitions through the CLI interface ... ok
 test_parser_enums (unit.test_parser_enums.TestParserEnums.test_parser_enums)
 Test parsing enum definitions through the CLI interface ... ok
-test_parser_function_declarations (unit.test_parser_function_comprehensive.TestParserFunctionComprehensive.test_parser_function_declarations)
-Test parsing function declarations through the CLI interface ... ok
-test_parser_function_definitions (unit.test_parser_function_comprehensive.TestParserFunctionComprehensive.test_parser_function_definitions)
-Test parsing function definitions through the CLI interface ... ok
-test_parser_function_modifiers (unit.test_parser_function_comprehensive.TestParserFunctionComprehensive.test_parser_function_modifiers)
-Test parsing functions with modifiers through the CLI interface ... ok
+test_parser_functions_and_parameters_comprehensive (unit.test_parser_function_comprehensive.TestParserFunctionComprehensive.test_parser_functions_and_parameters_comprehensive) ... ok
 test_parser_functions (unit.test_parser_functions.TestParserFunctions.test_parser_functions)
 Test parsing function declarations through the CLI interface ... ok
 test_parser_globals (unit.test_parser_globals.TestParserGlobals.test_parser_globals)
@@ -300,19 +283,19 @@ test_verifier_valid_model (unit.test_verifier_valid_model.TestVerifierValidModel
 Run the test_verifier_valid_model test through CLI interface. ... ok
 
 ----------------------------------------------------------------------
-Ran 141 tests in 8.597s
+Ran 133 tests in 6.993s
 
 OK
 
 --------------------------------------------------
                  unittest Summary                 
 --------------------------------------------------
-Tests run: 141
+Tests run: 133
 Failures: 0
 Errors: 0
 
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 8.63 seconds
+Duration: 7.02 seconds
 ✅ All tests passed!
