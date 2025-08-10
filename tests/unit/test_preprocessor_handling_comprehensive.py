@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
 Test Preprocessor Handling Comprehensive
-Comprehensive test for preprocessor handling functionality through CLI interface
-This replaces the internal API test_preprocessor_handling.py with CLI-based testing
+Consolidated test for preprocessor handling and macros through CLI interface
 """
 
 import os
@@ -15,13 +14,10 @@ from tests.framework import UnifiedTestCase
 
 class TestPreprocessorHandlingComprehensive(UnifiedTestCase):
     """Test comprehensive preprocessor handling functionality through the CLI interface"""
-    
-    def test_preprocessor_handling_comprehensive(self):
-        """Test comprehensive preprocessor handling scenarios through the CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("preprocessor_handling_comprehensive")
-        
-        # Validate results
+
+    def test_preprocessor_and_macros_comprehensive(self):
+        """Run the consolidated preprocessor and macros scenario"""
+        result = self.run_test("preprocessor_and_macros_comprehensive")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

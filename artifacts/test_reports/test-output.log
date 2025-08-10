@@ -226,10 +226,6 @@ test_include_filtering_comprehensive (unit.test_include_filtering_comprehensive.
 Test comprehensive include filtering scenarios through the CLI interface ... ok
 test_basic_include_processing (unit.test_include_processing_comprehensive.TestIncludeProcessingComprehensive.test_basic_include_processing)
 Test basic include file processing through CLI interface ... ok
-test_macro_duplicates_complex (unit.test_macro_duplicates_complex.TestMacroDuplicatesComplex.test_macro_duplicates_complex)
-Test macro duplicates complex through the CLI interface ... ok
-test_macro_duplicates_simple (unit.test_macro_duplicates_simple.TestMacroDuplicatesSimple.test_macro_duplicates_simple)
-Test macro duplicates simple through the CLI interface ... ok
 test_nested_structures_puml (unit.test_nested_structures_puml.TestNestedStructuresPuml.test_nested_structures_puml)
 Test nested structures puml through the CLI interface ... ok
 test_parser_complete (unit.test_parser_complete.TestParserComplete.test_parser_complete)
@@ -274,10 +270,8 @@ test_parser_typedef_struct (unit.test_parser_typedef_struct.TestParserTypedefStr
 Test parsing typedef struct definitions through the CLI interface ... ok
 test_parser_typedefs (unit.test_parser_typedefs.TestParserTypedefs.test_parser_typedefs)
 Test parsing typedef declarations through the CLI interface ... ok
-test_preprocessor_bug_comprehensive (unit.test_preprocessor_bug_comprehensive.TestPreprocessorBugComprehensive.test_preprocessor_bug_comprehensive)
-Test comprehensive preprocessor bug scenarios through the CLI interface ... ok
-test_preprocessor_handling_comprehensive (unit.test_preprocessor_handling_comprehensive.TestPreprocessorHandlingComprehensive.test_preprocessor_handling_comprehensive)
-Test comprehensive preprocessor handling scenarios through the CLI interface ... ok
+test_preprocessor_and_macros_comprehensive (unit.test_preprocessor_handling_comprehensive.TestPreprocessorHandlingComprehensive.test_preprocessor_and_macros_comprehensive)
+Run the consolidated preprocessor and macros scenario ... ok
 test_simple_c_file_parsing (unit.test_simple_c_file_parsing.TestSimpleCFileParsing.test_simple_c_file_parsing)
 Test parsing a simple C file through the CLI interface ... ok
 test_struct_order_complex (unit.test_struct_order_complex.TestStructOrderComplex.test_struct_order_complex)
@@ -306,19 +300,19 @@ test_verifier_valid_model (unit.test_verifier_valid_model.TestVerifierValidModel
 Run the test_verifier_valid_model test through CLI interface. ... ok
 
 ----------------------------------------------------------------------
-Ran 144 tests in 7.559s
+Ran 141 tests in 8.597s
 
 OK
 
 --------------------------------------------------
                  unittest Summary                 
 --------------------------------------------------
-Tests run: 144
+Tests run: 141
 Failures: 0
 Errors: 0
 
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 7.59 seconds
+Duration: 8.63 seconds
 ✅ All tests passed!

@@ -1,22 +1,22 @@
 Test Execution Summary
 =====================
-Generated: 2025-08-10 17:33:34
+Generated: 2025-08-10 17:54:37
 
 Test Results
 ------------
-Ran 144 tests in 7.559s
+Ran 141 tests in 8.597s
 Status: OK - All tests passed
 
 Unittest Summary
 ----------------
 --------------------------------------------------
-Tests run: 144
+Tests run: 141
 Failures: 0
 
 Detailed Test Count
 -------------------
-Total Tests Run: 144
-Passed: 144
+Total Tests Run: 141
+Passed: 141
 Failed: 0
 
-Execution Time: 8 seconds
+Execution Time: 9 seconds
