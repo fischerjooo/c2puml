@@ -1,0 +1,170 @@
+# Test metadata
+test:
+  name: "Typedef Extraction - Comprehensive"
+  description: "Comprehensive extraction of aliases, function pointers, structs, enums, unions, and edge cases"
+  category: "unit"
+  id: "0050"
+
+---
+# Source files
+source_files:
+  typedefs_all.c: |
+    // Simple typedefs
+    typedef uint32_t MyLen;
+    typedef int32_t MyInt;
+    typedef char * MyString;
+    typedef unsigned long long ULongLong;
+    typedef const char * ConstString;
+    typedef volatile int VolatileInt;
+
+    // Function pointer typedefs
+    typedef int (*MyCallback)(struct MyBuffer_tag * buffer);
+    typedef void (*log_callback_t)(enum log_level_tag level, const char * message);
+    typedef int (*complex_callback)(int a, int b, char * str);
+    typedef void (*simple_func_ptr)(void);
+    typedef char * (*string_processor)(const char * input, int len);
+    typedef int (*calculator)(int x, int y);
+
+    // Struct typedefs
+    typedef struct MyBuffer_tag {
+        MyLen length;
+        MyString data;
+    } MyBuffer;
+
+    typedef struct MyComplexStruct_tag {
+        MyLen id;
+        MyString name;
+        MyCallback callback;
+        enum log_level_tag log_level;
+    } MyComplex;
+
+    typedef struct point_tag {
+        int x;
+        int y;
+    } point_t;
+
+    typedef struct Person {
+        char name[50];
+        int age;
+        char *address;
+    } Person_t;
+
+    // Enum typedefs
+    typedef enum Color_tag {
+        COLOR_RED,
+        COLOR_GREEN,
+        COLOR_BLUE
+    } Color_t;
+
+    typedef enum log_level_tag {
+        LOG_DEBUG,
+        LOG_INFO,
+        LOG_WARN,
+        LOG_ERROR
+    } log_level_t;
+
+    typedef enum Status_tag {
+        STATUS_OK,
+        STATUS_ERROR,
+        STATUS_PENDING
+    } Status_t;
+
+    // Union typedefs
+    typedef union Number_tag {
+        int i;
+        float f;
+        double d;
+    } Number_t;
+
+    typedef union NamedUnion_tag {
+        char c;
+        int i;
+        short s;
+    } NamedUnion_t;
+
+    typedef union Value {
+        int integer_value;
+        float float_value;
+        char string_value[32];
+    } Value_t;
+
+    // Pointers and arrays of typedefs
+    typedef MyComplex * MyComplexPtr;
+    typedef MyComplexPtr MyComplexArray[10];
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_typedef_extraction_comprehensive",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "typedefs_all.puml"]
+
+  model:
+    files:
+      typedefs_all.c:
+        aliases: [
+          "MyLen", "MyInt", "MyString", "ULongLong", "ConstString", "VolatileInt",
+          "MyCallback", "log_callback_t", "complex_callback", "simple_func_ptr", "string_processor", "calculator",
+          "MyComplexPtr", "MyComplexArray"
+        ]
+        structs:
+          MyBuffer:
+            fields: ["length", "data"]
+          MyComplex:
+            fields: ["id", "name", "callback", "log_level"]
+          point_t:
+            fields: ["x", "y"]
+          Person_t:
+            fields: ["name", "age", "address"]
+        enums:
+          Color_t:
+            values: ["COLOR_RED", "COLOR_GREEN", "COLOR_BLUE"]
+          log_level_t:
+            values: ["LOG_DEBUG", "LOG_INFO", "LOG_WARN", "LOG_ERROR"]
+          Status_t:
+            values: ["STATUS_OK", "STATUS_ERROR", "STATUS_PENDING"]
+        unions:
+          Number_t:
+            fields: ["i", "f", "d"]
+          NamedUnion_t:
+            fields: ["c", "i", "s"]
+          Value_t:
+            fields: ["integer_value", "float_value", "string_value"]
+    element_counts:
+      # 4 structs + 3 enums + 3 unions, functions 0, globals 0, includes 0
+      structs: 4
+      enums: 3
+      unions: 3
+      functions: 0
+      globals: 0
+      includes: 0
+
+  puml:
+    syntax_valid: true
+    files:
+      typedefs_all.puml:
+        contains_elements: [
+          "MyBuffer", "MyComplex", "point_t", "Person_t",
+          "Color_t", "log_level_t", "Status_t",
+          "Number_t", "NamedUnion_t", "Value_t",
+          "MyLen", "MyInt", "MyString", "ULongLong", "ConstString", "VolatileInt",
+          "MyCallback", "log_callback_t", "complex_callback", "simple_func_ptr", "string_processor", "calculator",
+          "MyComplexPtr", "MyComplexArray"
+        ]
+        contains_lines: [
+          "class \"MyBuffer\" as TYPEDEF_MYBUFFER",
+          "class \"MyComplex\" as TYPEDEF_MYCOMPLEX",
+          "class \"Color_t\" as TYPEDEF_COLOR_T",
+          "class \"Number_t\" as TYPEDEF_NUMBER_T",
+          "class \"MyLen\" as TYPEDEF_MYLEN"
+        ]
