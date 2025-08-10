@@ -286,20 +286,10 @@ test_struct_order_preservation (unit.test_struct_order_preservation.TestStructOr
 Test struct order preservation through the CLI interface ... ok
 test_struct_order_puml (unit.test_struct_order_puml.TestStructOrderPuml.test_struct_order_puml)
 Test struct order puml through the CLI interface ... ok
-test_tokenizer_complex_function_parsing (unit.test_tokenizer_complex_function_parsing.TestTokenizerComplexFunctionParsing.test_tokenizer_complex_function_parsing)
-Run the test_tokenizer_complex_function_parsing test through CLI interface. ... ok
-test_tokenizer_complex_mixed_structures (unit.test_tokenizer_complex_mixed_structures.TestTokenizerComplexMixedStructures.test_tokenizer_complex_mixed_structures)
-Run the test_tokenizer_complex_mixed_structures test through CLI interface. ... ok
-test_tokenizer_complex_parsing (unit.test_tokenizer_comprehensive.TestTokenizerComprehensive.test_tokenizer_complex_parsing)
-Test tokenizer with complex C constructs that stress tokenization ... ok
-test_tokenizer_edge_cases (unit.test_tokenizer_comprehensive.TestTokenizerComprehensive.test_tokenizer_edge_cases)
-Test tokenizer with edge cases like comments, strings, complex expressions ... ok
-test_tokenizer_preprocessor_handling (unit.test_tokenizer_comprehensive.TestTokenizerComprehensive.test_tokenizer_preprocessor_handling)
-Test tokenizer with complex preprocessor constructs ... ok
+test_tokenizer_comprehensive (unit.test_tokenizer_comprehensive.TestTokenizerComprehensive.test_tokenizer_comprehensive)
+Run the consolidated tokenizer scenario ... ok
 test_tokenizer_keywords (unit.test_tokenizer_keywords.TestTokenizerKeywords.test_tokenizer_keywords)
 Test tokenizer keyword recognition through the CLI interface ... ok
-test_complex_nested_union_tokenization (unit.test_tokenizer_validation_comprehensive.TestTokenizerValidationComprehensive.test_complex_nested_union_tokenization)
-Test tokenization of complex nested unions through CLI interface ... ok
 test_transformer_basic (unit.test_transformer_basic.TestTransformerBasic.test_transformer_basic)
 Test basic transformer functionality through the CLI interface ... ok
 test_transformer_comprehensive_operations (unit.test_transformer_comprehensive.TestTransformerComprehensive.test_transformer_comprehensive_operations)
@@ -308,39 +298,27 @@ test_transformer_file_filtering (unit.test_transformer_comprehensive.TestTransfo
 Test transformer file filtering capabilities through CLI interface ... ok
 test_transformer_include_processing (unit.test_transformer_comprehensive.TestTransformerComprehensive.test_transformer_include_processing)
 Test transformer include processing and depth control through CLI interface ... ok
-test_comprehensive_mixed_typedefs_extraction (unit.test_typedef_extraction_comprehensive.TestTypedefExtractionComprehensive.test_comprehensive_mixed_typedefs_extraction)
-Test extraction of all typedef types in a comprehensive scenario ... ok
-test_edge_cases_typedefs_extraction (unit.test_typedef_extraction_comprehensive.TestTypedefExtractionComprehensive.test_edge_cases_typedefs_extraction)
-Test typedef extraction with edge cases (comments, whitespace, etc.) ... ok
-test_enum_typedefs_extraction (unit.test_typedef_extraction_comprehensive.TestTypedefExtractionComprehensive.test_enum_typedefs_extraction)
-Test extraction of enum typedefs ... ok
-test_function_pointer_typedefs_extraction (unit.test_typedef_extraction_comprehensive.TestTypedefExtractionComprehensive.test_function_pointer_typedefs_extraction)
-Test extraction of function pointer typedefs ... ok
-test_simple_typedefs_extraction (unit.test_typedef_extraction_comprehensive.TestTypedefExtractionComprehensive.test_simple_typedefs_extraction)
-Test extraction of simple typedefs (basic type aliases) ... ok
-test_struct_typedefs_extraction (unit.test_typedef_extraction_comprehensive.TestTypedefExtractionComprehensive.test_struct_typedefs_extraction)
-Test extraction of struct typedefs ... ok
-test_union_typedefs_extraction (unit.test_typedef_extraction_comprehensive.TestTypedefExtractionComprehensive.test_union_typedefs_extraction)
-Test extraction of union typedefs ... ok
+test_typedef_extraction_comprehensive (unit.test_typedef_extraction_comprehensive.TestTypedefExtractionComprehensive.test_typedef_extraction_comprehensive)
+Run the consolidated typedef extraction scenario ... ok
 test_verifier_comprehensive (unit.test_verifier_comprehensive.TestVerifierComprehensive.test_verifier_comprehensive)
 Test comprehensive verifier scenarios through the CLI interface ... ok
 test_verifier_valid_model (unit.test_verifier_valid_model.TestVerifierValidModel.test_verifier_valid_model)
 Run the test_verifier_valid_model test through CLI interface. ... ok
 
 ----------------------------------------------------------------------
-Ran 155 tests in 8.247s
+Ran 144 tests in 7.559s
 
 OK
 
 --------------------------------------------------
                  unittest Summary                 
 --------------------------------------------------
-Tests run: 155
+Tests run: 144
 Failures: 0
 Errors: 0
 
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 8.31 seconds
+Duration: 7.59 seconds
 ✅ All tests passed!
