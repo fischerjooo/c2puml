@@ -257,12 +257,7 @@ test_preprocessor_and_macros_comprehensive (unit.test_preprocessor_handling_comp
 Run the consolidated preprocessor and macros scenario ... ok
 test_simple_c_file_parsing (unit.test_simple_c_file_parsing.TestSimpleCFileParsing.test_simple_c_file_parsing)
 Test parsing a simple C file through the CLI interface ... ok
-test_struct_order_complex (unit.test_struct_order_complex.TestStructOrderComplex.test_struct_order_complex)
-Test struct order complex through the CLI interface ... ok
-test_struct_order_preservation (unit.test_struct_order_preservation.TestStructOrderPreservation.test_struct_order_preservation)
-Test struct order preservation through the CLI interface ... ok
-test_struct_order_puml (unit.test_struct_order_puml.TestStructOrderPuml.test_struct_order_puml)
-Test struct order puml through the CLI interface ... ok
+test_struct_and_nested_ordering_comprehensive (unit.test_struct_order_puml.TestStructOrderPuml.test_struct_and_nested_ordering_comprehensive) ... ok
 test_tokenizer_comprehensive (unit.test_tokenizer_comprehensive.TestTokenizerComprehensive.test_tokenizer_comprehensive)
 Run the consolidated tokenizer scenario ... ok
 test_tokenizer_keywords (unit.test_tokenizer_keywords.TestTokenizerKeywords.test_tokenizer_keywords)
@@ -283,19 +278,19 @@ test_verifier_valid_model (unit.test_verifier_valid_model.TestVerifierValidModel
 Run the test_verifier_valid_model test through CLI interface. ... ok
 
 ----------------------------------------------------------------------
-Ran 133 tests in 6.993s
+Ran 131 tests in 6.898s
 
 OK
 
 --------------------------------------------------
                  unittest Summary                 
 --------------------------------------------------
-Tests run: 133
+Tests run: 131
 Failures: 0
 Errors: 0
 
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 7.02 seconds
+Duration: 6.93 seconds
 ✅ All tests passed!

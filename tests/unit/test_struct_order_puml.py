@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Test Struct Order PUML
+Test Struct and Nested Ordering – Comprehensive
 
-This test verifies that the c2puml tool can preserve struct field order in PlantUML correctly and generate
-the expected model and PlantUML output through the CLI interface.
+Consolidated struct order and PUML field order validation through CLI interface
 """
 
 import os
@@ -15,14 +14,10 @@ from tests.framework import UnifiedTestCase
 
 
 class TestStructOrderPuml(UnifiedTestCase):
-    """Test struct order puml through the CLI interface"""
-    
-    def test_struct_order_puml(self):
-        """Test struct order puml through the CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("struct_order_puml")
-        
-        # Validate results
+    """Test struct and nested ordering comprehensive through the CLI interface"""
+
+    def test_struct_and_nested_ordering_comprehensive(self):
+        result = self.run_test("struct_and_nested_ordering_comprehensive")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
