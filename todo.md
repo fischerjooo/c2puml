@@ -149,10 +149,14 @@
 - Completed additional consolidations:
   - Parser functions → `tests/unit/test_parser_functions_comprehensive.yml` + refactor.
   - Typedef extraction → `tests/unit/test_typedef_extraction_comprehensive.yml` + refactor.
+  - Absolute path bug → `tests/unit/test_absolute_path_bug_comprehensive.yml` + refactor.
+  - Anonymous structures & debug → `tests/unit/test_anonymous_structures_and_debug.yml` + refactors.
+  - Generator grouping → `tests/unit/test_generator_grouping_cli.yml` + refactor.
+  - New formatting → `tests/unit/test_generator_new_formatting_cli.yml` + refactor.
   - Kept suite green (157 tests executed via unittest discovery).
 
 
 ### Next Steps
 
-- Complete remaining consolidations (absolute path bug, anonymous structures, grouping, new formatting) and integration comprehensive.
+- Integration: consolidate to `tests/integration/test_comprehensive.yml` (c_to_h, header_to_header, typedef relationships, parser_tokenizer_integration, complete_system_integration, new_formatting complete, new_formatting mixed project).
 - Deprecate and remove old single-scenario YAMLs after validating coverage parity.

@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """
-Test Anonymous Processing Comprehensive
-Comprehensive test for multi-pass anonymous structure processing through CLI interface
-This replaces the internal API test_multi_pass_anonymous_processing.py with CLI-based testing
+Test Anonymous Processing Comprehensive (bundled scenarios)
 """
 
 import os
@@ -14,16 +12,10 @@ from tests.framework import UnifiedTestCase
 
 
 class TestAnonymousProcessingComprehensive(UnifiedTestCase):
-    """Test comprehensive anonymous structure processing through the CLI interface"""
-    
     def test_anonymous_processing_comprehensive(self):
-        """Test comprehensive anonymous structure processing scenarios through the CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("anonymous_processing_comprehensive")
-        
-        # Validate results
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
+        r = self.run_test("anonymous_structures_and_debug::debug_parsing_anonymous")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
 
 
 if __name__ == "__main__":

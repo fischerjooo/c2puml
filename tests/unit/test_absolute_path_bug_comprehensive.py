@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive absolute path bug detection tests using CLI interface.
-Replaces test_absolute_path_bug_detection.py
-
-Tests for absolute path bug detection in include tree building.
+Comprehensive absolute path bug detection tests using CLI interface (bundled scenarios).
 """
 
 import os
@@ -15,31 +12,25 @@ from tests.framework import UnifiedTestCase
 
 
 class TestAbsolutePathBugComprehensive(UnifiedTestCase):
-    """Comprehensive CLI-based absolute path bug detection tests."""
-
     def test_relative_path_handling_in_include_tree(self):
-        """Test that relative paths are handled correctly in include tree building through CLI interface."""
-        result = self.run_test("absolute_path_bug_comprehensive_relative_path")
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
+        r = self.run_test("absolute_path_bug_comprehensive::relative_path")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
 
     def test_subdirectory_includes_path_resolution(self):
-        """Test subdirectory includes path resolution through CLI interface."""
-        result = self.run_test("absolute_path_bug_comprehensive_subdirectory")
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
+        r = self.run_test("absolute_path_bug_comprehensive::subdirectory")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
 
     def test_mixed_path_styles_handling(self):
-        """Test mixed path styles handling through CLI interface."""
-        result = self.run_test("absolute_path_bug_comprehensive_mixed_paths")
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
+        r = self.run_test("absolute_path_bug_comprehensive::mixed_paths")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
 
     def test_absolute_vs_relative_path_consistency(self):
-        """Test absolute vs relative path consistency through CLI interface."""
-        result = self.run_test("absolute_path_bug_comprehensive_consistency")
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
+        r = self.run_test("absolute_path_bug_comprehensive::consistency")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
 
 
 if __name__ == "__main__":

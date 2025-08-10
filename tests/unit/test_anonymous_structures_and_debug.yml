@@ -1,0 +1,82 @@
+scenarios:
+  - id: "anonymous_struct"
+    test: { name: "Anonymous Struct", category: "unit", id: "0080" }
+    source_files:
+      t.c: |
+        typedef struct { int x; struct { int y; } inner; } S;
+    config.json: |
+      {"project_name":"anon","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "anonymous_union"
+    test: { name: "Anonymous Union", category: "unit", id: "0081" }
+    source_files:
+      t.c: |
+        typedef struct { union { int i; float f; } u; } SU;
+    config.json: |
+      {"project_name":"anon","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "nested_anonymous"
+    test: { name: "Nested Anonymous", category: "unit", id: "0082" }
+    source_files:
+      t.c: |
+        typedef struct { struct { union { int v; } u; } n; } SN;
+    config.json: |
+      {"project_name":"anon","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "debug_parsing_struct"
+    test: { name: "Debug Parsing Struct", category: "unit", id: "0083" }
+    source_files:
+      t.c: |
+        struct A { int x; };
+    config.json: |
+      {"project_name":"dbg","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "debug_parsing_union"
+    test: { name: "Debug Parsing Union", category: "unit", id: "0084" }
+    source_files:
+      t.c: |
+        union U { int i; float f; };
+    config.json: |
+      {"project_name":"dbg","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "debug_parsing_anonymous"
+    test: { name: "Debug Parsing Anonymous", category: "unit", id: "0085" }
+    source_files:
+      t.c: |
+        typedef struct { int x; } S;
+    config.json: |
+      {"project_name":"dbg","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "debug_field_parsing_struct"
+    test: { name: "Debug Field Parsing Struct", category: "unit", id: "0086" }
+    source_files:
+      t.c: |
+        struct B { int x; int y; };
+    config.json: |
+      {"project_name":"dbg","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "debug_field_parsing_union"
+    test: { name: "Debug Field Parsing Union", category: "unit", id: "0087" }
+    source_files:
+      t.c: |
+        union V { int i; float f; };
+    config.json: |
+      {"project_name":"dbg","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
+  - id: "debug_field_parsing_anonymous"
+    test: { name: "Debug Field Parsing Anonymous", category: "unit", id: "0088" }
+    source_files:
+      t.c: |
+        typedef struct { struct { int y; } inner; } S2;
+    config.json: |
+      {"project_name":"dbg","source_folders":["."],"output_dir":"./output"}
+    assertions:
+      execution: { exit_code: 0 }
