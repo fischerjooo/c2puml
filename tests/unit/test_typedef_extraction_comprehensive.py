@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-Test Typedef Extraction Comprehensive (bundled scenarios)
+Typedef Extraction Comprehensive (single-scenario files)
 """
-
 import os
 import sys
 import unittest
@@ -13,37 +12,37 @@ from tests.framework import UnifiedTestCase
 
 class TestTypedefExtractionComprehensive(UnifiedTestCase):
     def test_simple(self):
-        r = self.run_test("typedef_extraction_comprehensive::simple")
+        r = self.run_test("typedef_extraction_comprehensive_simple")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_function_pointers(self):
-        r = self.run_test("typedef_extraction_comprehensive::function_pointers")
+        r = self.run_test("typedef_extraction_comprehensive_function_pointers")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_structs(self):
-        r = self.run_test("typedef_extraction_comprehensive::structs")
+        r = self.run_test("typedef_extraction_comprehensive_structs")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_enums(self):
-        r = self.run_test("typedef_extraction_comprehensive::enums")
+        r = self.run_test("typedef_extraction_comprehensive_enums")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_unions(self):
-        r = self.run_test("typedef_extraction_comprehensive::unions")
+        r = self.run_test("typedef_extraction_comprehensive_unions")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_mixed(self):
-        r = self.run_test("typedef_extraction_comprehensive::mixed")
+        r = self.run_test("typedef_extraction_comprehensive_mixed")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_edge_cases(self):
-        r = self.run_test("typedef_extraction_comprehensive::edge_cases")
+        r = self.run_test("typedef_extraction_comprehensive_edge_cases")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 

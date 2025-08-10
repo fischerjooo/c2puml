@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test CLI Modes Comprehensive (bundled scenarios)
+Test CLI Modes Comprehensive (single-scenario files)
 """
 
 import os
@@ -12,30 +12,28 @@ from tests.framework import UnifiedTestCase
 
 
 class TestCLIModesComprehensive(UnifiedTestCase):
-    """Test CLI modes functionality using bundled YAML scenarios"""
-
     def test_parse_only(self):
-        result = self.run_test("cli_modes_comprehensive::parse_only")
+        result = self.run_test("cli_modes_comprehensive_parse_only")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_transform_only(self):
-        result = self.run_test("cli_modes_comprehensive::transform_only")
+        result = self.run_test("cli_modes_comprehensive_transform_only")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_generate_prefers_transformed(self):
-        result = self.run_test("cli_modes_comprehensive::generate_prefers_transformed")
+        result = self.run_test("cli_modes_comprehensive_generate_prefers_transformed")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_generate_fallback(self):
-        result = self.run_test("cli_modes_comprehensive::generate_fallback")
+        result = self.run_test("cli_modes_comprehensive_generate_fallback")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_full_workflow(self):
-        result = self.run_test("cli_modes_comprehensive::full_workflow")
+        result = self.run_test("cli_modes_comprehensive_full_workflow")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

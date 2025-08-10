@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test Anonymous Processing Comprehensive (bundled scenarios)
+Anonymous Processing Comprehensive (single-scenario file)
 """
 
 import os
@@ -13,7 +13,7 @@ from tests.framework import UnifiedTestCase
 
 class TestAnonymousProcessingComprehensive(UnifiedTestCase):
     def test_anonymous_processing_comprehensive(self):
-        r = self.run_test("anonymous_structures_and_debug::debug_parsing_anonymous")
+        r = self.run_test("anonymous_structures_and_debug_debug_parsing_anonymous")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 

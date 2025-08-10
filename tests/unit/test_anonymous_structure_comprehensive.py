@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive anonymous structure handling tests using CLI interface (bundled scenarios).
+Anonymous Structure Comprehensive (single-scenario files)
 """
 
 import os
@@ -13,17 +13,17 @@ from tests.framework import UnifiedTestCase
 
 class TestAnonymousStructureComprehensive(UnifiedTestCase):
     def test_anonymous_struct_in_typedef(self):
-        r = self.run_test("anonymous_structures_and_debug::anonymous_struct")
+        r = self.run_test("anonymous_structures_and_debug_anonymous_struct")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_nested_anonymous_structures(self):
-        r = self.run_test("anonymous_structures_and_debug::nested_anonymous")
+        r = self.run_test("anonymous_structures_and_debug_nested_anonymous")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_anonymous_unions_in_structs(self):
-        r = self.run_test("anonymous_structures_and_debug::anonymous_union")
+        r = self.run_test("anonymous_structures_and_debug_anonymous_union")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 

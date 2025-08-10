@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive Integration Tests - CLI-based (bundled scenarios)
+Comprehensive Integration Tests - single-scenario files
 """
 
 import os
@@ -13,27 +13,27 @@ from tests.framework import UnifiedTestCase
 
 class TestComprehensiveIntegrationCLI(UnifiedTestCase):
     def test_comprehensive_c_to_h_relationships(self):
-        r = self.run_test("comprehensive::c_to_h_relationships")
+        r = self.run_test("comprehensive_c_to_h_relationships")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_comprehensive_header_to_header_relationships(self):
-        r = self.run_test("comprehensive::header_to_header_relationships")
+        r = self.run_test("comprehensive_header_to_header_relationships")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_comprehensive_typedef_relationships(self):
-        r = self.run_test("comprehensive::typedef_relationships")
+        r = self.run_test("comprehensive_typedef_relationships")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_parser_tokenizer_integration(self):
-        r = self.run_test("comprehensive::parser_tokenizer_integration")
+        r = self.run_test("comprehensive_parser_tokenizer_integration")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_complete_system_integration(self):
-        r = self.run_test("comprehensive::complete_system_integration")
+        r = self.run_test("comprehensive_complete_system_integration")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 

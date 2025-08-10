@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-Test Generator Naming Conventions Through CLI Interface (bundled scenarios)
+Generator Naming Comprehensive (single-scenario files)
 """
-
 import os
 import sys
 import unittest
@@ -13,22 +12,22 @@ from tests.framework import UnifiedTestCase
 
 class TestGeneratorNamingComprehensive(UnifiedTestCase):
     def test_typedef_conventions(self):
-        r = self.run_test("generator_naming_comprehensive::typedef_conventions")
+        r = self.run_test("generator_naming_comprehensive_typedef_conventions")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_file_conventions(self):
-        r = self.run_test("generator_naming_comprehensive::file_conventions")
+        r = self.run_test("generator_naming_comprehensive_file_conventions")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_complex_names(self):
-        r = self.run_test("generator_naming_comprehensive::complex_names")
+        r = self.run_test("generator_naming_comprehensive_complex_names")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 
     def test_edge_cases(self):
-        r = self.run_test("generator_naming_comprehensive::edge_cases")
+        r = self.run_test("generator_naming_comprehensive_edge_cases")
         self.validate_execution_success(r)
         self.validate_test_output(r)
 

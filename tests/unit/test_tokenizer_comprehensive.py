@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-Test Comprehensive Tokenizer Functionality (bundled scenarios)
+Tokenizer Comprehensive (single-scenario files)
 """
-
 import os
 import sys
 import unittest
@@ -13,17 +12,17 @@ from tests.framework import UnifiedTestCase
 
 class TestTokenizerComprehensive(UnifiedTestCase):
     def test_complex_parsing(self):
-        result = self.run_test("tokenizer_comprehensive::complex_parsing")
+        result = self.run_test("tokenizer_comprehensive_complex_parsing")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_edge_cases(self):
-        result = self.run_test("tokenizer_comprehensive::edge_cases")
+        result = self.run_test("tokenizer_comprehensive_edge_cases")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_preprocessor(self):
-        result = self.run_test("tokenizer_comprehensive::preprocessor")
+        result = self.run_test("tokenizer_comprehensive_preprocessor")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
