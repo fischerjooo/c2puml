@@ -182,20 +182,7 @@ test_generator_file_naming_conventions (unit.test_generator_naming_comprehensive
 Test that file UML IDs follow the correct naming conventions ... ok
 test_generator_typedef_naming_conventions (unit.test_generator_naming_comprehensive.TestGeneratorNamingComprehensive.test_generator_typedef_naming_conventions)
 Test that typedef UML IDs follow the correct naming conventions ... ok
-test_alias_formatting_with_typedef_stereotype_and_alias_prefix (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_alias_formatting_with_typedef_stereotype_and_alias_prefix)
-Test that typedef aliases use <<typedef>> stereotype with ALIAS_ prefix ... ok
-test_complex_typedef_combination (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_complex_typedef_combination)
-Test complex combination of struct, enum, union, and typedef in same file ... ok
-test_enum_formatting_with_enumeration_stereotype (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_enum_formatting_with_enumeration_stereotype)
-Test that enum types use <<enumeration>> stereotype with #LightYellow ... ok
-test_function_pointer_formatting_with_function_pointer_stereotype (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_function_pointer_formatting_with_function_pointer_stereotype)
-Test that function pointer typedefs use <<function pointer>> stereotype ... ok
-test_public_private_visibility_logic (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_public_private_visibility_logic)
-Test that globals and functions are marked as public if present in headers, private otherwise ... ok
-test_struct_formatting_with_struct_stereotype (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_struct_formatting_with_struct_stereotype)
-Test that struct types use <<struct>> stereotype with + prefix for fields ... ok
-test_union_formatting_with_union_stereotype (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_union_formatting_with_union_stereotype)
-Test that union types use <<union>> stereotype with + prefix for fields ... ok
+test_generator_new_formatting_stereotypes_comprehensive (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_generator_new_formatting_stereotypes_comprehensive) ... ok
 test_function_visibility_private_when_not_in_header (unit.test_generator_visibility_logic.TestGeneratorVisibilityLogicCLI.test_function_visibility_private_when_not_in_header)
 Test that functions not present in headers are marked as - (private) ... ok
 test_function_visibility_public_when_in_header (unit.test_generator_visibility_logic.TestGeneratorVisibilityLogicCLI.test_function_visibility_public_when_in_header)
@@ -277,19 +264,19 @@ test_verifier_valid_model (unit.test_verifier_valid_model.TestVerifierValidModel
 Run the test_verifier_valid_model test through CLI interface. ... ok
 
 ----------------------------------------------------------------------
-Ran 131 tests in 6.917s
+Ran 125 tests in 6.633s
 
 OK
 
 --------------------------------------------------
                  unittest Summary                 
 --------------------------------------------------
-Tests run: 131
+Tests run: 125
 Failures: 0
 Errors: 0
 
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 6.95 seconds
+Duration: 6.66 seconds
 ✅ All tests passed!

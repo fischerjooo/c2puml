@@ -231,24 +231,23 @@ Example
 Refactoring tasks per merged test (tracking)
 
 Tokenizer/Preprocessor
-- [ ] tests/unit/test_tokenizer_comprehensive.yml
-  - [ ] Merge inputs/assertions from listed tokenizer YAMLs
-  - [ ] Remove old YAMLs and update `test_tokenizer*.py` callers
-- [ ] tests/unit/test_preprocessor_and_macros_comprehensive.yml
-  - [ ] Merge preprocessor + macro duplicate scenarios
-  - [ ] Remove old YAMLs and update Python tests
+- [x] tests/unit/test_tokenizer_comprehensive.yml
+  - [x] Merge inputs/assertions from listed tokenizer YAMLs
+  - [x] Remove old YAMLs and update `test_tokenizer*.py` callers
+- [x] tests/unit/test_preprocessor_and_macros_comprehensive.yml
+  - [x] Merge preprocessor + macro duplicate scenarios
+  - [x] Remove old YAMLs and update Python tests
 
 Parser
-- [ ] tests/unit/test_parser_comprehensive_basics.yml
+- [x] tests/unit/test_parser_functions_and_parameters_comprehensive.yml
+- [x] tests/unit/test_struct_and_nested_ordering_comprehensive.yml
+- [x] tests/unit/test_parser_includes_comprehensive.yml
 - [ ] tests/unit/test_parser_elements_comprehensive.yml
 - [ ] tests/unit/test_parser_typedefs_comprehensive.yml
-- [ ] tests/unit/test_parser_nested_structures_comprehensive.yml
-- [ ] tests/unit/test_parser_functions_and_parameters_comprehensive.yml
-- [ ] tests/unit/test_parser_includes_comprehensive.yml
 - [ ] Confirm whether to keep `test_parser_encoding.yml` standalone or fold
 
 Typedef extraction
-- [ ] tests/unit/test_typedef_extraction_comprehensive.yml
+- [x] tests/unit/test_typedef_extraction_comprehensive.yml
 
 Anonymous structures
 - [ ] tests/unit/test_anonymous_structures_and_unions_comprehensive.yml
@@ -287,13 +286,13 @@ Integration
 - [ ] Keep tests/integration/test_comprehensive_complete_system_integration.yml
 
 De-duplication/renames
-- [ ] Unify `function_params_*` and `function_parameters_*` under the new functions/parameters comprehensive test
-- [ ] Remove overlapping unit vs feature duplicates (e.g., include filtering) by keeping the consolidated version in the most appropriate category
+- [x] Unify `function_params_*` and `function_parameters_*` under the new functions/parameters comprehensive test
+- [x] Remove overlapping unit vs feature duplicates (e.g., include filtering) by keeping the consolidated version in the most appropriate category (unit includes consolidated; feature workflows to be consolidated next)
 
 Validation checklist
-- [ ] Run full suite after each merged YAML creation (update Python `self.run_test("<name>")` targets)
-- [ ] Ensure each merged YAML uses a single scenario with multi-assertions
-- [ ] Preserve IDs where feasible or reassign consistently per category ranges
+- [x] Run full suite after each merged YAML creation (update Python `self.run_test("<name>")` targets)
+- [x] Ensure each merged YAML uses a single scenario with multi-assertions
+- [x] Preserve IDs where feasible or reassign consistently per category ranges
 - [ ] Update `tests/README.md` if naming or examples change
 - [ ] Update CI if any path-based selection depends on old names
 
