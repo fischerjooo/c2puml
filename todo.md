@@ -131,29 +131,27 @@
 
 ### Framework Changes Required (Phase 1)
 
-- [ ] Extend `tests/framework/data_loader.py` to support multi-scenario files:
-  - [ ] Accept a top-level `scenarios: []` array.
-  - [ ] Each scenario allows its own `test`, `source_files`, `config.json`, optional `model.json`, and `assertions` blocks.
-  - [ ] Backward compatibility: If `scenarios` is absent, treat file as single-scenario (current behavior).
-  - [ ] Expose loader entrypoint `load_test_data("<bundle>::<scenario>")` to return the selected scenario.
-- [ ] Update `tests/framework/base.py`:
-  - [ ] Add `run_test("<bundle>::<scenario>")` parsing.
-  - [ ] Add helper `run_all_scenarios("<bundle>")` (optional) to iterate scenarios for smoke runs.
-- [ ] Update `tests/framework/validators_processor.py` and `validators.py`:
-  - [ ] No schema changes needed; ensure input is routed per scenario.
-- [ ] Update docs `tests/README.md` and `tests/framework/README.md`:
-  - [ ] Document new `scenarios` schema with examples.
-  - [ ] Document `bundle::scenario` naming in Python tests.
+- [x] Extend `tests/framework/data_loader.py` to support multi-scenario files:
+  - [x] Accept a top-level `scenarios: []` array.
+  - [x] Each scenario allows its own `test`, `source_files`, `config.json`, optional `model.json`, and `assertions` blocks.
+  - [x] Backward compatibility: If `scenarios` is absent, treat file as single-scenario (current behavior).
+  - [x] Expose loader entrypoint `load_test_data("<bundle>::<scenario>")` to return the selected scenario.
+- [x] Update `tests/framework/base.py`:
+  - [x] Add `run_test("<bundle>::<scenario>")` parsing and stable folder naming.
+  - [x] Ensure validation loads the correct scenario assertions.
+- [x] Update docs `tests/README.md` and `tests/framework/README.md`:
+  - [x] Document new `scenarios` schema with examples.
+  - [x] Document `bundle::scenario` naming in Python tests.
 
 
 ### Migration Plan (Phase 2)
 
-- [ ] Create new bundled YAMLs per the Target Bundles above (start with high-churn domains)
-  - [ ] Include all existing assertions to preserve coverage.
-  - [ ] Normalize IDs: use `id` per scenario (e.g., `1014_full_workflow`).
-- [ ] Update Python test modules to call `run_test("<bundle>::<scenario>")` for each scenario.
-- [ ] Mark old single-scenario YAMLs as deprecated in a `tests/_deprecated/` folder for one release cycle.
-- [ ] Remove deprecated YAMLs once CI is green and coverage is stable.
+- [x] Create bundled YAML for CLI modes: `tests/feature/test_cli_modes_comprehensive.yml` with scenarios `parse_only`, `transform_only`, `generate_prefers_transformed`, `generate_fallback`, `full_workflow`.
+- [x] Update Python test `tests/feature/test_cli_modes_comprehensive.py` to use bundle scenarios.
+- [x] Create bundled YAML for Include Processing: `tests/feature/test_include_processing.yml` with 15 scenarios covering existing spread.
+- [x] Update Python test `tests/feature/test_include_processing.py` to call bundle scenarios.
+- [ ] Consolidate remaining target bundles (unit/integration) as listed above.
+- [ ] Move old single-scenario YAMLs under `tests/feature/_deprecated/` temporarily (final removal after CI green).
 
 
 ### Risk Mitigation

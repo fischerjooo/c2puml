@@ -6,10 +6,10 @@ This directory contains the comprehensive test suite for the C2PUML tool, organi
 
 Tests are organized into four categories:
 
-- **Unit Tests** (`tests/unit/`): Test ID 0001-1000, focused on individual components
-- **Feature Tests** (`tests/feature/`): Test ID 1001-2000, focused on feature functionality  
-- **Integration Tests** (`tests/integration/`): Test ID 2001-3000, focused on end-to-end workflows
-- **Example Tests** (`tests/example/`): Test ID 3001-4000, focused on real-world usage examples
+- **Unit** (`tests/unit/`): Test ID 0001-1000, focused on individual components
+- **Feature** (`tests/feature/`): Test ID 1001-2000, focused on feature functionality  
+- **Integration** (`tests/integration/`): Test ID 2001-3000, focused on end-to-end workflows
+- **Example** (`tests/example/`): Test ID 3001-4000, focused on real-world usage examples
 
 ## Test File Structure
 
@@ -19,15 +19,46 @@ Each test module pairs 1:1 by base name with at least one YAML file:
 
 A single Python test may drive multiple YAML scenarios by adding suffixes to the YAML filenames:
 - `test_<name>_<scenario>.yml`, `test_<name>_<another_scenario>.yml`, ...
-Call them with `self.run_test("<name>_<scenario>")` from the Python test.
+- Call them with `self.run_test("<name>_<scenario>")` from the Python test.
 
 Example:
 - Python: `tests/unit/test_absolute_path_bug_comprehensive.py`
 - YAML: `tests/unit/test_absolute_path_bug_comprehensive_relative_path.yml`, `..._subdirectory.yml`, `..._mixed_paths.yml`, `..._consistency.yml`
 
+## Multi-Scenario Bundles (New)
+
+Large families of closely related scenarios can be consolidated into a single bundled YAML using a `scenarios` array. Address scenarios via `bundle::scenario` from Python.
+
+- File: `tests/<category>/test_<bundle>.yml`
+- Structure:
+
+```yaml
+scenarios:
+  - id: "scenario_a"
+    test:
+      name: "..."
+      description: "..."
+      category: "unit|feature|integration|example"
+      id: "0001"  # optional, recommended
+    source_files: { ... }
+    config.json: |
+      { ...json... }
+    model.json: |
+      { ...json... }
+    assertions: { ... }
+  - id: "scenario_b"
+    ...
+```
+
+- Usage from Python:
+  - `self.run_test("<bundle>::scenario_a")`
+  - Test folders are created as `tests/<category>/test-<bundle>::scenario` to ensure isolation.
+
+Backward compatibility: Single-scenario YAML files remain supported. If a YAML contains a `scenarios` array, you must address a specific scenario with `bundle::scenario`.
+
 ## YAML Test Data Structure
 
-The YAML files use a multi-document format separated by `---` to organize different types of data:
+The single-scenario YAML format (legacy and still supported) uses a multi-document file separated by `---`:
 
 ### 1. Test Metadata Document
 ```yaml
@@ -82,74 +113,22 @@ config.json: |
 ### 4. Model Template Document (Optional)
 ```yaml
 model.json: |
-  {
-    "files": {
-      "filename.c": {
-        "structs": {
-          "MyStruct": {
-            "fields": ["field1", "field2"]
-          }
-        },
-        "functions": ["main"],
-        "globals": ["global_var"],
-        "includes": ["stdio.h"]
-      }
-    },
-    "element_counts": {
-      "structs": 1,
-      "functions": 1,
-      "globals": 1,
-      "includes": 1
-    }
-  }
+  { ... }
 ```
 
 ### 5. Assertions Document
 ```yaml
 assertions:
-  # Execution assertions
   execution:
     exit_code: 0
     output_files: ["model.json", "model_transformed.json", "filename.puml"]
     stdout_contains: "Parsing complete"
     stderr_contains: ""
     max_execution_time: 30.0
-  
-  # Model validation assertions
   model:
-    files:
-      filename.c:
-        structs:
-          MyStruct:
-            fields: ["field1", "field2"]
-        functions: ["main"]
-        globals: ["global_var"]
-        includes: ["stdio.h"]
-    element_counts:
-      structs: 1
-      functions: 1
-      globals: 1
-      includes: 1
-  
-  # PlantUML validation assertions
+    ...
   puml:
-    # Global assertions (applied to all PlantUML files)
-    syntax_valid: true
-    
-    # Per-file assertions
-    files:
-      filename.puml:
-        contains_elements: ["MyStruct", "main", "global_var"]
-        contains_lines: ["class \"MyStruct\" as TYPEDEF_MYSTRUCT", "int main()"]
-        class_count: 3
-        relationship_count: 2
-        classes:
-          MyStruct:
-            fields: ["field1", "field2"]
-        relationships:
-          - type: "composition"
-            from: "main"
-            to: "MyStruct"
+    ...
 ```
 
 ## Assertion Types

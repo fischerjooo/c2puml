@@ -29,6 +29,16 @@ class TestSimpleCFileParsing(UnifiedTestCase):
 
 **Only use the detailed custom pattern when you need assertions or behavior not supported by the simple pattern.**
 
+## Multi-Scenario Bundles (New)
+
+For large families of scenarios, define multiple scenarios in a single YAML using a `scenarios` array. Reference scenarios via `bundle::scenario`.
+
+- YAML: `tests/<category>/test_<bundle>.yml`
+- Python usage:
+  - `result = self.run_test("<bundle>::<scenario_id>")`
+  - Subsequent validations: `self.validate_execution_success(result)` + `self.validate_test_output(result)`
+- Backward compatibility: Single-scenario YAMLs remain supported. If a file contains `scenarios`, a specific scenario id is required.
+
 ## **Extending the Framework vs Test-Specific Assertions**
 
 ### **Framework Extension Priority**

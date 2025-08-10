@@ -1,0 +1,37 @@
+scenarios:
+  - id: "complex_parsing"
+    test: { name: "Tokenizer - Complex Parsing", category: "unit", id: "0001" }
+    source_files:
+      a.c: |
+        struct A { int x; }; enum E { V=1 }; union U { int a; float b; };
+    config.json: |
+      {"project_name": "tok_complex", "source_folders": ["."], "output_dir": "./output"}
+    assertions:
+      execution: { exit_code: 0 }
+      model:
+        element_counts: { structs: 1, enums: 1, unions: 1 }
+
+  - id: "edge_cases"
+    test: { name: "Tokenizer - Edge Cases", category: "unit", id: "0002" }
+    source_files:
+      a.c: |
+        // comment
+        char * s = "string with ) and ( and ;";
+        int x = 1 + (2 * 3) - 4;
+    config.json: |
+      {"project_name": "tok_edge", "source_folders": ["."], "output_dir": "./output"}
+    assertions:
+      execution: { exit_code: 0 }
+
+  - id: "preprocessor"
+    test: { name: "Tokenizer - Preprocessor", category: "unit", id: "0003" }
+    source_files:
+      a.c: |
+        #define X 1
+        #if X
+        int ok(){return 0;}
+        #endif
+    config.json: |
+      {"project_name": "tok_pp", "source_folders": ["."], "output_dir": "./output"}
+    assertions:
+      execution: { exit_code: 0 }

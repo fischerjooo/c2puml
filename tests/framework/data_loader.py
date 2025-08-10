@@ -10,7 +10,7 @@ import os
 import yaml
 import tempfile
 import json
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, List
 
 
 class TestDataLoader:
@@ -30,7 +30,7 @@ class TestDataLoader:
         Load test data from test-###.yml file
         
         Args:
-            test_id: Test ID (e.g., "simple_c_file_parsing", "complex_struct_parsing")
+            test_id: Test ID (e.g., "simple_c_file_parsing", "complex_struct_parsing" or "bundle::scenario")
             
         Returns:
             Dictionary containing test data from YAML file
@@ -39,6 +39,11 @@ class TestDataLoader:
             FileNotFoundError: If YAML file doesn't exist
             yaml.YAMLError: If YAML file is invalid
         """
+        # Support bundle::scenario addressing for multi-scenario YAMLs
+        if "::" in test_id:
+            bundle_id, scenario_id = test_id.split("::", 1)
+            return self._load_bundle_scenario(bundle_id, scenario_id)
+        
         # Try to find the YAML file in different test categories
         test_categories = ["unit", "feature", "integration", "example"]
         
@@ -48,6 +53,14 @@ class TestDataLoader:
                 with open(yaml_file, 'r') as f:
                     # Load all YAML documents
                     documents = list(yaml.safe_load_all(f))
+                
+                # Detect if this file is a bundle with scenarios and no explicit scenario was given
+                for doc in documents:
+                    if isinstance(doc, dict) and "scenarios" in doc:
+                        raise ValueError(
+                            f"YAML file tests/{category}/test_{test_id}.yml contains multiple scenarios. "
+                            f"Address a specific scenario using '{test_id}::<scenario_id>'."
+                        )
                 
                 # Parse documents into structured test data
                 test_data = self._parse_yaml_documents(documents)
@@ -80,6 +93,73 @@ class TestDataLoader:
         
         raise FileNotFoundError(f"Test data file not found for test ID: {test_id}")
 
+    def _load_bundle_scenario(self, bundle_id: str, scenario_id: str) -> Dict:
+        """
+        Load a specific scenario from a multi-scenario YAML bundle.
+        
+        Searches across categories for tests/<category>/test_<bundle_id>.yml and
+        extracts the scenario with matching id.
+        """
+        test_categories = ["unit", "feature", "integration", "example"]
+        last_error: Optional[Exception] = None
+        for category in test_categories:
+            yaml_file = f"tests/{category}/test_{bundle_id}.yml"
+            if not os.path.exists(yaml_file):
+                continue
+            try:
+                with open(yaml_file, 'r') as f:
+                    documents = list(yaml.safe_load_all(f))
+                
+                # Find a document with 'scenarios'
+                scenario_doc = None
+                for doc in documents:
+                    if isinstance(doc, dict) and "scenarios" in doc:
+                        scenario_doc = doc
+                        break
+                if scenario_doc is None:
+                    raise ValueError(f"Bundle file found but no 'scenarios' key present: {yaml_file}")
+                
+                scenarios: List[dict] = scenario_doc.get("scenarios", [])
+                for scenario in scenarios:
+                    if scenario.get("id") == scenario_id:
+                        # Build standard test_data dict from scenario
+                        test_data: Dict = {}
+                        if "test" in scenario:
+                            test_data["test"] = scenario["test"]
+                        if "source_files" in scenario:
+                            test_data["source_files"] = scenario["source_files"]
+                        if "config.json" in scenario:
+                            # Embed config.json content into source_files
+                            if "source_files" not in test_data:
+                                test_data["source_files"] = {}
+                            test_data["source_files"]["config.json"] = scenario["config.json"]
+                        if "model.json" in scenario:
+                            test_data["model"] = scenario["model.json"]
+                        if "assertions" in scenario:
+                            test_data["assertions"] = scenario["assertions"]
+                        # Optional execution mode
+                        if "mode" in scenario:
+                            test_data["mode"] = scenario["mode"]
+                        elif "test" in scenario and isinstance(scenario["test"], dict) and "mode" in scenario["test"]:
+                            test_data["mode"] = scenario["test"]["mode"]
+                        
+                        # Validate and return
+                        self._validate_test_data(test_data)
+                        return test_data
+                
+                raise FileNotFoundError(
+                    f"Scenario '{scenario_id}' not found in bundle '{yaml_file}'."
+                )
+            except Exception as e:
+                last_error = e
+                continue
+        
+        if last_error:
+            raise last_error
+        raise FileNotFoundError(
+            f"Bundle test file not found for bundle id '{bundle_id}' in any category."
+        )
+
     def _parse_yaml_documents(self, documents: list) -> Dict:
         """
         Parse multiple YAML documents into structured test data
@@ -94,6 +174,11 @@ class TestDataLoader:
         
         for doc in documents:
             if not doc:  # Skip empty documents
+                continue
+                
+            # If a scenarios document is present in a non-bundle context, ignore here
+            if "scenarios" in doc:
+                # Handled by _load_bundle_scenario
                 continue
                 
             # Test metadata
@@ -139,6 +224,7 @@ class TestDataLoader:
             category_dir = f"tests/{category}"
             if os.path.exists(category_dir):
                 # Create test-specific folder: tests/unit/test-001/
+                # Keep '::' in folder names for determinism across bundle scenarios
                 test_dir = os.path.join(category_dir, f"test-{test_id}")
                 break
         
@@ -315,7 +401,9 @@ class TestDataLoader:
         config["output_dir"] = "../output"
         
         if "project_name" not in config:
-            config["project_name"] = f"test_{test_data['test']['id']}"
+            # If test metadata exists, try to use its id; otherwise, use the path name
+            default_project_name = f"test_{os.path.basename(os.path.dirname(temp_dir)).replace('test-', '')}"
+            config["project_name"] = default_project_name
         
         if "recursive_search" not in config:
             config["recursive_search"] = True

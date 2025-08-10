@@ -86,7 +86,7 @@ class UnifiedTestCase(unittest.TestCase):
         5. Return comprehensive results
         
         Args:
-            test_id: The test identifier (used for YAML file name and temp folder)
+            test_id: The test identifier (used for YAML file name and temp folder). Supports 'bundle::scenario'.
             
         Returns:
             TestResult: Object containing all test execution results and metadata
@@ -94,21 +94,51 @@ class UnifiedTestCase(unittest.TestCase):
         # Load test data from YAML
         test_data = self.data_loader.load_test_data(test_id)
         
+        # Use a stable folder name for bundle scenarios
+        folder_id = test_id.replace("::", "__")
+        
         # Create temporary files
-        source_dir, config_path = self.data_loader.create_temp_files(test_data, test_id)
+        source_dir, config_path = self.data_loader.create_temp_files(test_data, folder_id)
         
         # Calculate paths
         test_folder = os.path.dirname(source_dir)  # input/ folder
         test_dir = os.path.dirname(test_folder)    # test-###/ folder
         config_filename = os.path.basename(config_path)
-        
-        # Execute c2puml
-        result = self.executor.run_full_pipeline(config_filename, test_folder)
-        
-        # Validate outputs
         output_dir = os.path.join(test_dir, "output")
+        
+        # Determine execution mode
+        mode = (test_data.get("mode") or "full").lower()
+        
+        # For transform/generate modes, prepare required model files in output_dir
+        if mode in ("transform", "generate"):
+            os.makedirs(output_dir, exist_ok=True)
+            # Copy model.json if provided
+            model_source = os.path.join(source_dir, "model.json")
+            if os.path.exists(model_source):
+                shutil.copy2(model_source, os.path.join(output_dir, "model.json"))
+            # Copy model_transformed.json if provided (used by generate-prefers-transformed)
+            model_transformed_source = os.path.join(source_dir, "model_transformed.json")
+            if os.path.exists(model_transformed_source):
+                shutil.copy2(model_transformed_source, os.path.join(output_dir, "model_transformed.json"))
+        
+        # Execute c2puml based on mode
+        if mode == "parse":
+            result = self.executor.run_parse_only(config_filename, test_folder)
+        elif mode == "transform":
+            result = self.executor.run_transform_only(config_filename, test_folder)
+        elif mode == "generate":
+            result = self.executor.run_generate_only(config_filename, test_folder)
+        else:
+            result = self.executor.run_full_pipeline(config_filename, test_folder)
+        
+        # Always locate model file (prefers transformed if present)
         model_file = self.output_validator.assert_model_file_exists(output_dir)
-        puml_files = self.output_validator.assert_puml_files_exist(output_dir)
+        
+        # Only expect puml files for 'generate' and 'full' modes
+        if mode in ("generate", "full"):
+            puml_files = self.output_validator.assert_puml_files_exist(output_dir)
+        else:
+            puml_files = []
         
         return TestResult(result, test_dir, output_dir, model_file, puml_files)
 
@@ -130,6 +160,8 @@ class UnifiedTestCase(unittest.TestCase):
         """
         # Load test data to get assertions
         test_id = os.path.basename(result.test_dir).replace('test-', '')
+        # For bundle scenarios, the stored folder_id used '__' instead of '::'
+        test_id = test_id.replace('__', '::')
         test_data = self.data_loader.load_test_data(test_id)
         
         # Load content for validation

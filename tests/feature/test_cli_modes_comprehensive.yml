@@ -1,0 +1,206 @@
+scenarios:
+  - id: "parse_only"
+    test:
+      name: "CLI Modes - Parse Only"
+      description: "parse step only generates model.json"
+      category: "feature"
+      id: "1010"
+      mode: "parse"
+    source_files:
+      main.c: |
+        int main(){return 0;}
+    config.json: |
+      {
+        "project_name": "cli_modes_parse_only",
+        "source_folders": ["."],
+        "output_dir": "./output",
+        "recursive_search": true
+      }
+    assertions:
+      execution:
+        exit_code: 0
+      files:
+        files_not_exist:
+          - "./output/model_transformed.json"
+  
+  - id: "transform_only"
+    test:
+      name: "CLI Modes - Transform Only"
+      description: "transform step generates model_transformed.json"
+      category: "feature"
+      id: "1011"
+      mode: "transform"
+    source_files:
+      model.json: |
+        {
+          "project_name": "cli_modes_test",
+          "source_folder": ".",
+          "files": {
+            "test.c": {
+              "file_path": "test.c",
+              "name": "test.c",
+              "structs": {},
+              "enums": {},
+              "unions": {},
+              "functions": [],
+              "globals": [],
+              "includes": [],
+              "macros": [],
+              "aliases": {},
+              "include_relations": [],
+              "anonymous_relationships": {}
+            }
+          }
+        }
+    config.json: |
+      {
+        "project_name": "cli_modes_transform_only",
+        "source_folders": ["."],
+        "output_dir": "./output",
+        "transformations_00_stub": {}
+      }
+    assertions:
+      execution:
+        exit_code: 0
+  
+  - id: "generate_prefers_transformed"
+    test:
+      name: "CLI Modes - Generate Prefers Transformed"
+      description: "generate step uses model_transformed.json when present"
+      category: "feature"
+      id: "1012"
+      mode: "generate"
+    source_files:
+      model.json: |
+        {
+          "project_name": "cli_modes_test",
+          "source_folder": ".",
+          "files": {
+            "test.c": {
+              "file_path": "test.c",
+              "name": "test.c",
+              "structs": {
+                "Point": {"name": "Point", "fields": [{"name": "x", "type": "int"}, {"name": "y", "type": "int"}]}
+              },
+              "enums": {},
+              "unions": {},
+              "functions": [{"name": "main", "return_type": "int", "parameters": []}],
+              "globals": [],
+              "includes": [],
+              "macros": [],
+              "aliases": {},
+              "include_relations": [],
+              "anonymous_relationships": {}
+            }
+          }
+        }
+      model_transformed.json: |
+        {
+          "project_name": "cli_modes_test",
+          "source_folder": ".",
+          "files": {
+            "test.c": {
+              "file_path": "test.c",
+              "name": "test.c",
+              "structs": {
+                "Point": {"name": "Point", "fields": [{"name": "x", "type": "int"}, {"name": "y", "type": "int"}]}
+              },
+              "enums": {},
+              "unions": {},
+              "functions": [{"name": "main", "return_type": "int", "parameters": []}],
+              "globals": [],
+              "includes": [],
+              "macros": [],
+              "aliases": {},
+              "include_relations": [],
+              "anonymous_relationships": {}
+            }
+          }
+        }
+    config.json: |
+      {
+        "project_name": "cli_modes_generate_prefers_transformed",
+        "source_folders": ["."],
+        "output_dir": "./output"
+      }
+    assertions:
+      execution:
+        exit_code: 0
+      puml:
+        syntax_valid: true
+        file_count: 1
+        files:
+          test.puml:
+            syntax_valid: true
+  
+  - id: "generate_fallback"
+    test:
+      name: "CLI Modes - Generate Fallback"
+      description: "generate step falls back to model.json when transformed is absent"
+      category: "feature"
+      id: "1013"
+      mode: "generate"
+    source_files:
+      model.json: |
+        {
+          "project_name": "cli_modes_test",
+          "source_folder": ".",
+          "files": {
+            "test.c": {
+              "file_path": "test.c",
+              "name": "test.c",
+              "structs": {
+                "Point": {"name": "Point", "fields": [{"name": "x", "type": "int"}, {"name": "y", "type": "int"}]}
+              },
+              "enums": {},
+              "unions": {},
+              "functions": [{"name": "main", "return_type": "int", "parameters": []}],
+              "globals": [],
+              "includes": [],
+              "macros": [],
+              "aliases": {},
+              "include_relations": [],
+              "anonymous_relationships": {}
+            }
+          }
+        }
+    config.json: |
+      {
+        "project_name": "cli_modes_generate_fallback",
+        "source_folders": ["."],
+        "output_dir": "./output"
+      }
+    assertions:
+      execution:
+        exit_code: 0
+      puml:
+        syntax_valid: true
+        file_count: 1
+        files:
+          test.puml:
+            syntax_valid: true
+  
+  - id: "full_workflow"
+    test:
+      name: "CLI Modes - Full Workflow"
+      description: "default mode runs parse + transform + generate"
+      category: "feature"
+      id: "1014"
+      mode: "full"
+    source_files:
+      test.c: |
+        typedef struct { int x; int y; } Point; int main(){return 0;}
+    config.json: |
+      {
+        "project_name": "cli_modes_full_workflow",
+        "source_folders": ["."],
+        "recursive_search": true,
+        "output_dir": "./output"
+      }
+    assertions:
+      execution:
+        exit_code: 0
+      model:
+        validate_structure: true
+      puml:
+        file_count: 1
