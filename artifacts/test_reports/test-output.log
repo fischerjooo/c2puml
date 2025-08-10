@@ -231,8 +231,7 @@ test_parser_functions (unit.test_parser_functions.TestParserFunctions.test_parse
 Test parsing function declarations through the CLI interface ... ok
 test_parser_globals (unit.test_parser_globals.TestParserGlobals.test_parser_globals)
 Test parsing global variables through the CLI interface ... ok
-test_parser_includes (unit.test_parser_includes.TestParserIncludes.test_parser_includes)
-Test parsing include statements through the CLI interface ... ok
+test_parser_includes_comprehensive (unit.test_parser_includes.TestParserIncludes.test_parser_includes_comprehensive) ... ok
 test_parser_macros (unit.test_parser_macros.TestParserMacros.test_parser_macros)
 Test parsing macro definitions through the CLI interface ... ok
 test_parser_mixed_content (unit.test_parser_mixed_comprehensive.TestParserMixedComprehensive.test_parser_mixed_content)
@@ -278,7 +277,7 @@ test_verifier_valid_model (unit.test_verifier_valid_model.TestVerifierValidModel
 Run the test_verifier_valid_model test through CLI interface. ... ok
 
 ----------------------------------------------------------------------
-Ran 131 tests in 6.898s
+Ran 131 tests in 6.917s
 
 OK
 
@@ -292,5 +291,5 @@ Errors: 0
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 6.93 seconds
+Duration: 6.95 seconds
 ✅ All tests passed!
