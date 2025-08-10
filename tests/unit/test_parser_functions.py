@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
-Test Parser Functions
-
-This test verifies that the c2puml tool can parse function declarations and generate
-the expected model and PlantUML output through the CLI interface.
+Test Parser Functions (bundled scenarios)
 """
 
 import os
@@ -15,16 +12,25 @@ from tests.framework import UnifiedTestCase
 
 
 class TestParserFunctions(UnifiedTestCase):
-    """Test parsing function declarations through the CLI interface"""
-    
-    def test_parser_functions(self):
-        """Test parsing function declarations through the CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("parser_functions")
-        
-        # Validate results
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
+    def test_functions(self):
+        r = self.run_test("parser_functions_comprehensive::functions")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
+
+    def test_declarations(self):
+        r = self.run_test("parser_functions_comprehensive::declarations")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
+
+    def test_definitions(self):
+        r = self.run_test("parser_functions_comprehensive::definitions")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
+
+    def test_modifiers(self):
+        r = self.run_test("parser_functions_comprehensive::modifiers")
+        self.validate_execution_success(r)
+        self.validate_test_output(r)
 
 
 if __name__ == "__main__":

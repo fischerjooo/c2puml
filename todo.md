@@ -146,9 +146,12 @@
 - All new bundles pass: `python3 -m unittest -q` → OK.
 - Framework supports per-scenario execution modes and correct setup for parse/transform/generate/full.
 - Documentation updated.
+- Completed additional consolidations:
+  - Parser functions → `tests/unit/test_parser_functions_comprehensive.yml` + refactor.
+  - Kept suite green (now 157 tests executed via unittest discovery).
 
 
 ### Next Steps
 
-- Complete remaining consolidations (unit/integration) following the same pattern.
+- Complete remaining consolidations (typedef extraction, absolute path bug, anonymous structures, grouping, new formatting) and integration comprehensive.
 - Deprecate and remove old single-scenario YAMLs after validating coverage parity.
