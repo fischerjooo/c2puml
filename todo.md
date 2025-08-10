@@ -143,17 +143,15 @@
 
 ### Status
 
-- All new bundles pass: `python3 -m unittest -q` → OK.
-- Framework supports per-scenario execution modes and correct setup for parse/transform/generate/full.
-- Documentation updated.
-- Completed additional consolidations:
-  - Parser functions → `tests/unit/test_parser_functions_comprehensive.yml` + refactor.
-  - Typedef extraction → `tests/unit/test_typedef_extraction_comprehensive.yml` + refactor.
-  - Absolute path bug → `tests/unit/test_absolute_path_bug_comprehensive.yml` + refactor.
-  - Anonymous structures & debug → `tests/unit/test_anonymous_structures_and_debug.yml` + refactors.
-  - Generator grouping → `tests/unit/test_generator_grouping_cli.yml` + refactor.
-  - New formatting → `tests/unit/test_generator_new_formatting_cli.yml` + refactor.
-  - Kept suite green (157 tests executed via unittest discovery).
+- All unit and integration bundles complete and passing (`python3 -m unittest -q`).
+- New/updated bundles:
+  - Unit: parser functions, typedef extraction, absolute path bug, anonymous structures & debug, generator grouping, new formatting, tokenizer, transformer, file-specific config, visibility logic, naming.
+  - Feature: CLI modes, include processing bundle.
+  - Integration: consolidated to `tests/integration/test_comprehensive.yml`, updated Python tests to use `comprehensive::<scenario>`.
+
+### Remaining cleanup
+
+- Remove/deprecate old single-scenario YAMLs superseded by bundles after a final parity review. No behavior regressions observed; suite green.
 
 
 ### Next Steps
