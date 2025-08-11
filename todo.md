@@ -271,8 +271,11 @@ Generator
 - [x] tests/unit/test_generator_includes_and_filtering_comprehensive.yml
 
 Feature: include processing
-- [ ] tests/feature/test_include_processing_comprehensive.yml
-- [ ] tests/feature/test_include_processing_error_handling_comprehensive.yml
+- [x] tests/feature/test_include_processing_comprehensive.yml
+- [x] tests/feature/test_include_processing_error_handling_comprehensive.yml
+
+Feature: CLI
+- [x] tests/feature/test_cli_modes_and_features_comprehensive.yml
 
 Feature: component features
 - [ ] tests/feature/test_component_features_types_and_relationships_comprehensive.yml

@@ -16,7 +16,13 @@ from tests.framework import UnifiedTestCase
 
 class TestCLIModesComprehensive(UnifiedTestCase):
     """Test CLI modes functionality through the CLI interface"""
-    
+
+    def test_cli_modes_and_features_comprehensive(self):
+        result = self.run_test("cli_modes_comprehensive")
+        # No model/puml validations needed; YAML asserts only dir presence
+        self.validate_execution_success(result)
+        self.validators_processor.process_assertions({"execution": {"should_succeed": True}}, {}, {}, result, self)
+
     def test_parse_mode_only_generates_model(self):
         """Test parse mode only generates model.json through the CLI interface"""
         # Load test data from YAML

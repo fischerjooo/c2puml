@@ -17,6 +17,7 @@ Project root: /workspace
 --------------------------------------------------
            Running Tests with unittest            
 --------------------------------------------------
+test_cli_modes_and_features_consolidated (feature.test_cli_feature_comprehensive.TestCLIFeatureComprehensive.test_cli_modes_and_features_consolidated) ... ok
 test_generate_command_isolation_error_handling (feature.test_cli_feature_comprehensive.TestCLIFeatureComprehensive.test_generate_command_isolation_error_handling)
 Test generate command isolation error handling through the CLI interface ... ok
 test_generate_fallback_to_model (feature.test_cli_feature_comprehensive.TestCLIFeatureComprehensive.test_generate_fallback_to_model)
@@ -27,6 +28,7 @@ test_parse_only_command (feature.test_cli_feature_comprehensive.TestCLIFeatureCo
 Test parse-only command through the CLI interface ... ok
 test_transform_only_command (feature.test_cli_feature_comprehensive.TestCLIFeatureComprehensive.test_transform_only_command)
 Test transform-only command through the CLI interface ... ok
+test_cli_modes_and_features_comprehensive (feature.test_cli_modes_comprehensive.TestCLIModesComprehensive.test_cli_modes_and_features_comprehensive) ... ok
 test_full_workflow_default_mode (feature.test_cli_modes_comprehensive.TestCLIModesComprehensive.test_full_workflow_default_mode)
 Test full workflow default mode through the CLI interface ... ok
 test_generate_mode_fallback_to_model (feature.test_cli_modes_comprehensive.TestCLIModesComprehensive.test_generate_mode_fallback_to_model)
@@ -202,19 +204,19 @@ test_verifier_comprehensive (unit.test_verifier_comprehensive.TestVerifierCompre
 Test comprehensive verifier scenarios through the CLI interface ... ok
 
 ----------------------------------------------------------------------
-Ran 104 tests in 5.541s
+Ran 106 tests in 5.584s
 
 OK
 
 --------------------------------------------------
                  unittest Summary                 
 --------------------------------------------------
-Tests run: 104
+Tests run: 106
 Failures: 0
 Errors: 0
 
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 5.57 seconds
+Duration: 5.61 seconds
 ✅ All tests passed!

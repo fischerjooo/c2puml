@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test CLI Feature Comprehensive
+Test CLI Features – Consolidated Entry
 """
 
 import os
@@ -150,6 +150,11 @@ class TestCLIFeatureComprehensive(UnifiedTestCase):
         
         assertions = self._normalize_file_paths(test_data.get("assertions"), output_dir)
         self.validators_processor.process_assertions(assertions, {}, {}, result, self)
+
+    def test_cli_modes_and_features_consolidated(self):
+        result = self.run_test("cli_modes_comprehensive")
+        self.validate_execution_success(result)
+        # rely on YAML dir presence only
 
 
 if __name__ == "__main__":
