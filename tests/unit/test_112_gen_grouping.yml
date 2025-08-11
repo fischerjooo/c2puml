@@ -9,7 +9,14 @@ test:
 source_files:
   model.json: "{\n  \"project_name\": \"grouping_project\",\n  \"source_folder\": \"/test\"\n    ,\n  \"files\": {\n    \"math.c\": {\n      \"file_path\": \"math.c\"\n    ,\n      \"name\": \"math.c\",\n      \"includes\": [],\n      \"macros\": [],\n      \n      \"enums\": {},\n      \"structs\": {},\n      \"unions\": {},\n      \"aliases\": {},\n      \"functions\": [\n        {\"name\": \"Init\", \"return_type\"\n      : \"void\", \"is_declaration\": false, \"parameters\": []},\n        {\"name\"\n      : \"HelperFunction\", \"return_type\": \"void\", \"is_declaration\": false, \"\n      parameters\": []},\n        {\"name\": \"Calculate\", \"return_type\": \"int\"\n      , \"is_declaration\": false, \"parameters\": []},\n        {\"name\": \"InternalComputation\"\n      , \"return_type\": \"static int\", \"is_declaration\": false, \"parameters\":\n       []},\n        {\"name\": \"Shutdown\", \"return_type\": \"void\", \"is_declaration\"\n      : false, \"parameters\": []}\n      ],\n      \"globals\": []\n    },\n    \"\n    module.c\": {\n      \"file_path\": \"module.c\",\n      \"name\": \"module.c\"\n    ,\n      \"includes\": [],\n      \"macros\": [],\n      \"enums\": {},\n    \n    \  \"structs\": {},\n      \"unions\": {},\n      \"aliases\": {},\n      \"functions\"\n    : [],\n      \"globals\": [\n        {\"name\": \"api_version\", \"type\": \"\n    int\"},\n        {\"name\": \"internal_state\", \"type\": \"static int\"},\n \n    \       {\"name\": \"module_name\", \"type\": \"char*\"},\n        {\"name\":\n    \"debug_flag\", \"type\": \"static bool\"}\n      ]\n    },\n    \"processor.c\"\n    : {\n      \"file_path\": \"processor.c\",\n      \"name\": \"processor.c\",\n\n    \      \"includes\": [],\n      \"macros\": [],\n      \"enums\": {},\n      \"\n    structs\": {},\n      \"unions\": {},\n      \"aliases\": {},\n      \"functions\"\n    : [\n        {\"name\": \"ProcessData\", \"return_type\": \"int\", \"is_declaration\"\n    : false, \"parameters\": []},\n        {\"name\": \"ValidateInput\", \"return_type\"\n    : \"static bool\", \"is_declaration\": false, \"parameters\": []}\n      ],\n\n    \      \"globals\": [\n        {\"name\": \"error_count\", \"type\": \"int\"},\n\n    \        {\"name\": \"buffer_size\", \"type\": \"static size_t\"}\n      ]\n \n    \   }\n  },\n  \"include_relations\": []\n}\n"
 ---
-config.json: "{\n  \"project_name\": \"grouping_project\",\n  \"source_folders\":\n  \ [\"src\"],\n  \"output_dir\": \"output\",\n  \"plantuml_jar_path\": \"/app/tools/plantuml-1.2024.8.jar\"\n  ,\n  \"use_short_names\": false,\n  \"group_by_visibility\": true\n}\n"
+config.json: |
+  {
+    "project_name": "grouping_project",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "use_short_names": false,
+    "group_by_visibility": true
+  }
 ---
 assertions:
   execution:
@@ -26,7 +33,7 @@ assertions:
         - '- static int InternalComputation'
         - -- Functions --
         regex_matches:
-        - pattern: \+[^\-]*\n\s*\n[^\+]*\-
+        - pattern: \+[^-]*\n\s*\n[^+]*-
           description: Empty line between public and private function groups
       module.c.puml:
         contains:
@@ -36,7 +43,7 @@ assertions:
         - '- static bool debug_flag'
         - -- Global Variables --
         regex_matches:
-        - pattern: \+[^\-]*\n\s*\n[^\+]*\-
+        - pattern: \+[^-]*\n\s*\n[^+]*-
           description: Empty line between public and private global groups
       processor.c.puml:
         contains:
