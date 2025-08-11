@@ -50,3 +50,4 @@ This project is a Python tool that converts C/C++ codebases into PlantUML diagra
 - Keep output diagrams consistent with PlantUML template and spec in docs/
 - Always validate changes by running ./scripts/run_all.sh after any development or modification; it must be green before commit/merge
 - Any temporary/worker scripts must live in scripts/ and be named like temp_###.py (these are gitignored)
+- Before starting work or making changes, read README.md (repo root) and tests/README.md to align with project behavior and the test framework
