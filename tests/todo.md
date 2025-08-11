@@ -32,3 +32,11 @@
 - Add per-file puml.files.contains_lines to more unit tests (e.g., 109, 111, 122)
 - Introduce relationships_exist in integration 301 when patterns are stable
 - Add model.project_name + file_count across remaining unit tests
+- unit/test_111_gen_exact_requested.yml
+  - Added puml.syntax_valid; moved per-file assertions under puml.files; added files assertions
+- unit/test_111_gen_exact_params.yml
+  - Added puml.syntax_valid; converted contains to contains_lines; added files assertions
+
+## Next Up (additions)
+- unit/test_122_gen_includes.yml: add per-file contains_lines for includes section and files assertions
+- unit/test_113_gen_inctree*.yml: add model.project_name and element_counts, per-file contains_lines
