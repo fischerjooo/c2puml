@@ -37,12 +37,10 @@ source_files:
 config.json: |
   {
     "project_name": "include_processing_basic",
-    "source_folders"\
-    : ["."],
+    "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true,
-    "\
-    include_depth": 2
+    "include_depth": 2
   }
   
 ---

@@ -173,17 +173,13 @@ source_files:
 config.json: |
   {
     "project_name": "generator_includes_and_filtering",
-    "source_folders"\
-    : ["."],
+    "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true,
-    "\
-    include_depth": 3,
+    "include_depth": 3,
     "file_specific": {
       "processor.c": {
-        "include_filter"\
-    : ["^api\\\\.h$", "^worker\\\\.h$", "^types\\\\.h$", "^platform\\\\.h$"\
-    ],
+        "include_filter": ["^api\\\\.h$", "^worker\\\\.h$", "^types\\\\.h$", "^platform\\\\.h$"],
         "include_depth": 2
       }
     }

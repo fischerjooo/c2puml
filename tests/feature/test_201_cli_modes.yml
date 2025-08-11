@@ -24,8 +24,7 @@ source_files:
 config.json: |
   {
     "project_name": "cli_modes_and_features",
-    "source_folders"\
-    : ["."],
+    "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true
   }

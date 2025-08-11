@@ -72,8 +72,7 @@ source_files:
 config.json: |
   {
     "project_name": "path_resolution_and_include_tree",
-    "source_folders"\
-    : ["."],
+    "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true
   }

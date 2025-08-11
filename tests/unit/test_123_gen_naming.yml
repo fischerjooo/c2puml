@@ -99,8 +99,7 @@ source_files:
 config.json: |
   {
     "project_name": "naming_conventions_project",
-    "source_folders"\
-    : ["src"],
+    "source_folders": ["src"],
     "output_dir": "output",
     "recursive_search": false
   }

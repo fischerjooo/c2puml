@@ -14,8 +14,7 @@ source_files:
 config.json: |
   {
     "project_name": "test_parser_encoding",
-    "source_folders"\
-    : ["."],
+    "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true
   }

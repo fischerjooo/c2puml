@@ -70,15 +70,12 @@ source_files:
 config.json: |
   {
     "project_name": "include_processing_all",
-    "source_folders"\
-    : ["."],
+    "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true,
-    "\
-    include_depth": 3,
+    "include_depth": 3,
     "file_specific": {"main.c": {"include_depth": 2}}
-  \
-    }
+  }
   
 ---
 cli_execution:

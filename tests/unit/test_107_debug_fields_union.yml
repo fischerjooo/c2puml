@@ -28,8 +28,7 @@ source_files:
 config.json: |
   {
     "project_name": "debug_nested_union_field_parsing",
-    "source_folders"\
-    : ["."],
+    "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true
   }

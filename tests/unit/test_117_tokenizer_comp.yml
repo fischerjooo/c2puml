@@ -259,8 +259,7 @@ source_files:
 config.json: |
   {
     "project_name": "test_tokenizer_comprehensive",
-    "source_folders"\
-    : ["."],
+    "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true
   }

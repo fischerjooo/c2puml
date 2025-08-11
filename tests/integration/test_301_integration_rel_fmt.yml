@@ -37,8 +37,7 @@ source_files:
 config.json: |
   {
     "project_name": "integration_rel_format",
-    "source_folders"\
-    : ["."],
+    "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true
   }

@@ -82,47 +82,34 @@ source_files:
 config.json: |
   {
     "project_name": "transformer_consolidated",
-    "source_folders"\
-    : ["."],
+    "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true,
-    "\
-    transformations": {
+    "transformations": {
       "remove": {
         "structs": ["^Temp.*"],
-     \
-    \   "enums": ["TempStatus"],
+     \   "enums": ["TempStatus"],
         "functions": ["temp_.*"],
-        "\
-    globals": ["temp_.*"],
+        "globals": ["temp_.*"],
         "macros": ["UNUSED_.*"]
       },
-      "rename"\
-    : {
-        "structs": {"DataItem": "ProcessedItem", "MainData": "ProcessedMainData"\
-    },
+      "rename": {
+        "structs": {"DataItem": "ProcessedItem", "MainData": "ProcessedMainData"},
         "enums": {"Status": "ProcessStatus"},
-        "functions": {"\
-    process_data": "transform_data", "main_function": "processed_main_function"\
-    },
+        "functions": {"process_data": "transform_data", "main_function": "processed_main_function"},
         "globals": {"global_counter": "item_counter"},
-        "macros"\
-    : {"DEBUG_MODE": "TRACE_MODE"}
+        "macros": {"DEBUG_MODE": "TRACE_MODE"}
       },
       "file_filters": {
-        "include_patterns"\
-    : ["main.*", "utils.*"],
+        "include_patterns": ["main.*", "utils.*"],
         "exclude_patterns": ["temp.*"]
       },
-  \
-    \    "include_depth": 2,
+  \    "include_depth": 2,
       "include_filters": {
         "depth": 1,
-    \
     \    "file_specific": {"main.c": {"include_depth": 2}}
       },
-      "file_selection"\
-    : ["main.c"]
+      "file_selection": ["main.c"]
     }
   }
   

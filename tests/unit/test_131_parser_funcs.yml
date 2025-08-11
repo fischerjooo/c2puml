@@ -45,12 +45,10 @@ source_files:
 ---
 config.json: |
   {
-    "project_name": "parser_functions_and_parameters_comprehensive"\
-    ,
+    "project_name": "parser_functions_and_parameters_comprehensive",
     "source_folders": ["."],
     "output_dir": "./output",
-    "recursive_search"\
-    : true
+    "recursive_search": true
   }
   
 ---

@@ -108,12 +108,10 @@ source_files:
 config.json: |
   {
     "project_name": "test_anonymous_processing",
-    "source_folders"\
-    : ["."],
+    "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true,
-    "\
-    include_depth": 1
+    "include_depth": 1
   }
   
 ---

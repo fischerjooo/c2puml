@@ -84,10 +84,8 @@ source_files:
 config.json: |
   {
     "project_name": "multi_source_test",
-    "source_folders"\
-    : ["./src/src1", "./src/src2", "./src/src3"],
-    "output_dir": "./output"\
-    ,
+    "source_folders": ["./src/src1", "./src/src2", "./src/src3"],
+    "output_dir": "./output",
     "recursive_search": true,
     "include_depth": 1
   }

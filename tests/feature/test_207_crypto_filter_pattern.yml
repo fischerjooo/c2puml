@@ -33,12 +33,10 @@ source_files:
 config.json: |
   {
     "project_name": "crypto_filter_test",
-    "source_folders"\
-    : ["."],
+    "source_folders": ["."],
     "recursive_search": true,
     "output_dir": "./output",
-    "\
-    filters": {
+    "filters": {
       "remove_files": ["crypto\\\\..*"]
     }
   }

@@ -225,15 +225,12 @@ source_files:
 config.json: |
   {
     "project_name": "complete_system_integration_test",
-    "source_folders"\
-    : ["src"],
+    "source_folders": ["src"],
     "output_dir": "./output",
     "recursive_search": true,
-   \
-    \ "include_depth": 5,
+   \ "include_depth": 5,
     "file_filters": {
-      "include": ["*.c", "*.h"\
-    ],
+      "include": ["*.c", "*.h"],
       "exclude": []
     }
   }

@@ -13,11 +13,9 @@ source_files:
 config.json: |
   {
     "project_name": "test_partial_failures",
-    "source_folders"\
-    : ["src", "/nonexistent/path"],
+    "source_folders": ["src", "/nonexistent/path"],
     "output_dir": "output",
-    "recursive_search"\
-    : true
+    "recursive_search": true
   }
   
 ---

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import sys
+import re
 from pathlib import Path
 from typing import List, Tuple
 
@@ -48,6 +49,9 @@ def rewrite_to_block_scalar(indent: str, key: str, raw_value: str) -> str | None
 
     # Replace escaped quote sequences with normal quotes for block content
     text = raw_value.replace('\\"', '"')
+    # Replace YAML line-continuations: backslash at end-of-line meaning join lines
+    # These appear in the captured text as "\\\n[spaces]"
+    text = re.sub(r"\\\r?\n[ \t]*", "", text)
     # Replace literal backslash-n with real newlines
     text = text.replace('\\n', '\n')
 

@@ -100,7 +100,7 @@ config.json: |
     "use_short_names": false,
     "group_by_visibility": true
   }
-
+  
 ---
 assertions:
   execution:

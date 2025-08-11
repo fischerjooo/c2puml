@@ -53,8 +53,7 @@ source_files:
 config.json: |
   {
     "project_name": "visibility_project",
-    "output_dir": "\
-    output",
+    "output_dir": "output",
     "source_folders": ["src"]
   }
   

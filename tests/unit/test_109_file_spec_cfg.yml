@@ -98,23 +98,17 @@ source_files:
 ---
 config.json: |
   {
-    "project_name": "file_specific_configuration_comprehensive"\
-    ,
+    "project_name": "file_specific_configuration_comprehensive",
     "source_folders": ["."],
     "output_dir": "./output",
-    "recursive_search"\
-    : true,
+    "recursive_search": true,
     "include_depth": 10,
     "file_specific": {
-      "main.c": { "\
-    include_depth": 3 },
+      "main.c": { "include_depth": 3 },
       "sample.c": {
         "include_filter": [
-        \
-    \  "^stdio\\\\.h$", "^stdlib\\\\.h$", "^string\\\\.h$", "^sample\\\\.h$"\
-    ,
-          "^math_utils\\\\.h$", "^logger\\\\.h$", "^geometry\\\\.h$", "\
-    ^config\\\\.h$"
+        \  "^stdio\\\\.h$", "^stdlib\\\\.h$", "^string\\\\.h$", "^sample\\\\.h$",
+          "^math_utils\\\\.h$", "^logger\\\\.h$", "^geometry\\\\.h$", "^config\\\\.h$"
         ],
         "include_depth": 3
       }

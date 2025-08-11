@@ -41,12 +41,10 @@ source_files:
 ---
 config.json: |
   {
-    "project_name": "struct_and_nested_ordering_comprehensive"\
-    ,
+    "project_name": "struct_and_nested_ordering_comprehensive",
     "source_folders": ["."],
     "output_dir": "./output",
-    "recursive_search"\
-    : true
+    "recursive_search": true
   }
   
 ---
