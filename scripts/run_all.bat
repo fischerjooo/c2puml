@@ -4,13 +4,30 @@ setlocal enabledelayedexpansion
 REM Complete workflow script that chains together: run_all_tests -> run_example -> picgen
 REM This script simply calls the other batch files in sequence
 
+set SCRIPT_DIR=%~dp0
+set PROJECT_ROOT=%SCRIPT_DIR%..
+
 echo 🚀 Starting complete workflow...
 echo ==================================
+
+REM Step 0: Validate tests mapping rules
+echo 🔎 Pre-check: Validating tests mapping rules...
+pushd "%PROJECT_ROOT%"
+python scripts\check_tests_mapping.py
+if not %errorlevel%==0 (
+    echo ❌ Test mapping validation failed. Aborting.
+    popd
+    exit /b 1
+)
+popd
+echo ✅ Test mapping validation passed!
+
+echo.
 
 REM Step 1: Run all tests
 echo 📋 Step 1: Running all tests...
 echo ----------------------------------------
-call "%~dp0run_all_tests.bat"
+call "%SCRIPT_DIR%run_all_tests.bat"
 echo ✅ All tests passed!
 
 echo.
@@ -18,7 +35,7 @@ echo.
 REM Step 2: Run example
 echo 📋 Step 2: Running example...
 echo ----------------------------------------
-call "%~dp0run_example.bat"
+call "%SCRIPT_DIR%run_example.bat"
 echo ✅ Example completed successfully!
 
 echo.
@@ -30,10 +47,10 @@ REM Use PlantUML JAR path from command line argument (optional)
 if not "%~1"=="" (
     set "PLANTUML_JAR=%~1"
     echo 📦 Using PlantUML JAR from command line: !PLANTUML_JAR!
-    call "%~dp0picgen.bat" "!PLANTUML_JAR!"
+    call "%SCRIPT_DIR%picgen.bat" "%PLANTUML_JAR%"
 ) else (
     echo 📦 No PlantUML JAR path provided, using picgen.bat default behavior
-    call "%~dp0picgen.bat"
+    call "%SCRIPT_DIR%picgen.bat"
 )
 echo ✅ PNG generation completed successfully!
 
