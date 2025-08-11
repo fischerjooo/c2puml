@@ -1,0 +1,80 @@
+test:
+  name: Debug Complex Struct Field Processing
+  id: '107'
+  description: Validate complex struct field processing with nested structures and
+    arrays
+---
+source_files:
+  complex_struct.c: "typedef struct {\n    int base_id;\n    struct {\n        char\
+    \ name[64];\n        float value;\n        struct {\n            int x, y, z;\n\
+    \        } coordinates;\n    } metadata;\n    union {\n        long long_value;\n\
+    \        double double_value;\n    } data_variant;\n    char buffer[256];\n} complex_struct_t;\n\
+    \nvoid init_complex_struct(complex_struct_t* cs) {\n    cs->base_id = 0;\n   \
+    \ cs->metadata.value = 0.0f;\n}\n\ncomplex_struct_t global_complex;\n"
+---
+config.json: "{\n  \"project_name\": \"debug_complex_struct_field_processing\",\n\
+  \  \"source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
+  : true\n}\n"
+---
+cli_execution:
+  steps:
+  - parse_only
+---
+assertions:
+  execution:
+    should_succeed: true
+  model:
+    structs_exist:
+    - complex_struct_t
+    - complex_struct_t_metadata
+    - __anonymous_struct__
+    - __anonymous_struct___coordinates
+    unions_exist:
+    - complex_struct_t_data_variant
+    - data_variant
+    functions_exist:
+    - init_complex_struct
+    globals_exist:
+    - global_complex
+    struct_fields:
+      __anonymous_struct___coordinates:
+      - name: x
+        type: int
+      - name: y
+        type: int
+      - name: z
+        type: int
+    union_fields:
+      data_variant:
+      - name: long_value
+        type: long
+      - name: double_value
+        type: double
+    element_counts:
+      structs: 4
+      unions: 2
+      functions: 1
+      globals: 1
+      aliases: 0
+  puml:
+    contains_elements:
+    - complex_struct_t
+    - init_complex_struct
+    - global_complex
+    contains_lines:
+    - void init_complex_struct(complex_struct_t * cs)
+    - + int base_id
+    - + complex_struct_t_metadata metadata
+    - + data_variant data_variant
+    - + char[256] buffer
+    - + char[64] name
+    - + float value
+    - + __anonymous_struct___coordinates coordinates
+    - + int x
+    - + int y
+    - + int z
+    - + long long_value
+    - + double double_value
+    - complex_struct_t global_complex
+    class_count: 7
+    relationship_count: 6

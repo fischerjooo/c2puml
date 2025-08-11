@@ -136,6 +136,10 @@ class UnifiedTestCase(unittest.TestCase):
         with open(result.model_file, 'r') as f:
             model_data = json.load(f)
         
+        # Expose paths for validators to normalize relative file assertions
+        self.current_validation_base_dir = result.test_dir
+        self.current_validation_output_dir = result.output_dir
+
         # Load all PlantUML files into a dictionary
         puml_files = {}
         for puml_file_path in result.puml_files:

@@ -1,0 +1,45 @@
+test:
+  name: Transformer Features - Renaming (CLI)
+  description: Validate renaming of structs, enums, and functions via transform-only
+  category: feature
+  id: '206'
+---
+source_files:
+  model.json: "{\n  \"project_name\": \"transformer_test\",\n  \"source_folder\":\
+    \ \".\",\n  \"files\": {\n    \"test.c\": {\n      \"file_path\": \"test.c\",\n\
+    \      \"name\": \"test.c\",\n      \"structs\": {\n        \"OldStruct\": {\n\
+    \          \"name\": \"OldStruct\",\n          \"fields\": [\n            {\"\
+    name\": \"x\", \"type\": \"int\"}\n          ]\n        }\n      },\n      \"\
+    enums\": {\n        \"OldEnum\": {\n          \"name\": \"OldEnum\",\n       \
+    \   \"values\": [\n            {\"name\": \"OLD_VALUE1\"},\n            {\"name\"\
+    : \"OLD_VALUE2\"}\n          ]\n        }\n      },\n      \"unions\": {},\n \
+    \     \"functions\": [\n        {\"name\": \"old_function\", \"return_type\":\
+    \ \"int\", \"parameters\": []}\n      ],\n      \"globals\": [],\n      \"includes\"\
+    : [],\n      \"macros\": [],\n      \"aliases\": {},\n      \"include_relations\"\
+    : [],\n      \"anonymous_relationships\": {}\n    }\n  }\n}\n"
+---
+config.json: "{\n  \"project_name\": \"transformer_test\",\n  \"source_folders\":\
+  \ [\".\"],\n  \"recursive_search\": true,\n  \"output_dir\": \"./output\",\n  \"\
+  transformations\": {\n    \"rename\": {\n      \"structs\": {\"OldStruct\": \"NewStruct\"\
+  },\n      \"enums\": {\"OldEnum\": \"NewEnum\"},\n      \"functions\": {\"old_function\"\
+  : \"new_function\"}\n    }\n  }\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    stdout_contains: Transformed model saved
+  model:
+    validate_structure: true
+    expected_files:
+    - test.c
+    structs_exist:
+    - NewStruct
+    enums_exist:
+    - NewEnum
+    functions_exist:
+    - new_function
+  files:
+    files_exist:
+    - ./output/model_transformed.json
+    json_files_valid:
+    - ./output/model_transformed.json

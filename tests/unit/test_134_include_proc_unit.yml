@@ -1,0 +1,95 @@
+test:
+  name: Include Processing Basic
+  description: Test basic include file processing functionality
+  category: unit
+  id: '134'
+---
+source_files:
+  main.c: "#include \"utils.h\"\n#include <stdio.h>\n\nint main() {\n    printf(\"\
+    Hello from main\\n\");\n    int result = add_numbers(5, 3);\n    return result;\n\
+    }\n"
+  utils.h: '#ifndef UTILS_H
+
+    #define UTILS_H
+
+
+    // Function declaration
+
+    int add_numbers(int a, int b);
+
+
+    // Macro definition
+
+    #define MAX_SIZE 100
+
+
+    // Global variable declaration
+
+    extern int global_counter;
+
+
+    #endif // UTILS_H
+
+    '
+---
+config.json: "{\n  \"project_name\": \"include_processing_basic\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true,\n  \"\
+  include_depth\": 2\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - main.puml
+  model:
+    validate_structure: true
+    project_name: include_processing_basic
+    expected_files:
+    - main.c
+    - utils.h
+    functions_exist:
+    - main
+    - add_numbers
+    includes_exist:
+    - stdio.h
+    macros_exist:
+    - MAX_SIZE
+    globals_exist:
+    - global_counter
+    files:
+      main.c:
+        functions:
+        - main
+        includes:
+        - utils.h
+        - stdio.h
+      utils.h:
+        functions:
+        - add_numbers
+        macros:
+        - MAX_SIZE
+        globals:
+        - global_counter
+    element_counts:
+      functions: 2
+      includes: 2
+      macros: 2
+      globals: 1
+      aliases: 0
+  puml:
+    syntax_valid: true
+    file_count: 1
+    files:
+      main.puml:
+        contains_elements:
+        - main
+        - add_numbers
+        - MAX_SIZE
+        - global_counter
+        contains_lines:
+        - int main()
+        - + int add_numbers(int a, int b)
+        class_count: 2
+        relationship_count: 1

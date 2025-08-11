@@ -1,0 +1,40 @@
+test:
+  name: Simple Struct Parsing
+  description: Test parsing a simple struct definition with multiple fields
+  category: unit
+  id: '128'
+---
+source_files:
+  point.c: "struct Point {\n    int x;\n    int y;\n    char label[32];\n};\n"
+---
+config.json: "{\n  \"project_name\": \"test_parser_simple_struct\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - point.puml
+  model:
+    files:
+      point.c:
+        structs:
+          Point:
+            fields:
+            - x
+            - y
+            - label
+    element_counts:
+      structs: 1
+  puml:
+    syntax_valid: true
+    files:
+      point.puml:
+        contains_elements:
+        - Point
+        contains_lines:
+        - class "Point" as TYPEDEF_POINT
+        class_count: 2
+        relationship_count: 1

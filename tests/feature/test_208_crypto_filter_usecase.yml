@@ -1,0 +1,32 @@
+test:
+  name: Crypto Filter Usecase Functionality
+  description: Test crypto filter usecase functionality through the CLI interface
+  category: feature
+  id: '208'
+---
+source_files:
+  main.c: "int main() {\n    return 0;\n}\n"
+  crypto.c: "void aes_encrypt() {\n    // AES encryption\n}\nvoid rsa_encrypt() {\n\
+    \    // RSA encryption\n}\n"
+---
+config.json: "{\n  \"project_name\": \"crypto_usecase_test\",\n  \"source_folders\"\
+  : [\".\"],\n  \"recursive_search\": true,\n  \"output_dir\": \"./output\",\n  \"\
+  filters\": {\n    \"remove_files\": [\"crypto\\\\..*\"]\n  }\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+    stdout_contains: PlantUML generation complete
+  model:
+    validate_structure: true
+    project_name: crypto_usecase_test
+    expected_files:
+    - main.c
+    functions_exist:
+    - main
+  puml:
+    syntax_valid: true
+    file_count: 2
+    contains_elements:
+    - main

@@ -1,0 +1,63 @@
+test:
+  name: Parser Simple C File
+  description: Test parsing a simple C file with struct, enum, function, and global
+    variable
+  category: unit
+  id: '127'
+---
+source_files:
+  simple.c: "#include <stdio.h>\n\nstruct Person {\n    char name[50];\n    int age;\n\
+    };\n\nenum Status {\n    OK,\n    ERROR\n};\n\nint main() {\n    return 0;\n}\n\
+    \nint global_var;\n"
+---
+config.json: "{\n  \"project_name\": \"test_parser_simple\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - simple.puml
+  model:
+    files:
+      simple.c:
+        structs:
+          Person:
+            fields:
+            - name
+            - age
+        enums:
+          Status:
+            values:
+            - OK
+            - ERROR
+        functions:
+        - main
+        globals:
+        - global_var
+        includes:
+        - stdio.h
+    element_counts:
+      structs: 1
+      enums: 1
+      functions: 1
+      globals: 1
+      includes: 1
+  puml:
+    syntax_valid: true
+    files:
+      simple.puml:
+        contains_elements:
+        - Person
+        - Status
+        - main
+        - global_var
+        contains_lines:
+        - class "Person" as TYPEDEF_PERSON
+        - class "Status" as TYPEDEF_STATUS
+        - int main()
+        - int global_var
+        class_count: 3
+        relationship_count: 2

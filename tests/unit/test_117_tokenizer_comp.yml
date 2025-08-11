@@ -1,0 +1,308 @@
+test:
+  name: "Tokenizer \u2013 Comprehensive"
+  description: Consolidated tokenizer validation across complex parsing, edge cases,
+    preprocessor, functions, mixed structures, nested unions, and keyword handling
+  category: unit
+  id: '117'
+---
+source_files:
+  complex.c: "#include <stdio.h>\n#include <stdlib.h>\n\n// Complex typedefs with\
+    \ function pointers\ntypedef struct Node {\n    int data;\n    struct Node* next;\n\
+    \    int (*compare)(const void* a, const void* b);\n    void (*callback)(struct\
+    \ Node* self, void* context);\n} Node;\n\n// Complex enum with explicit values\n\
+    typedef enum {\n    STATE_INIT = 0x01,\n    STATE_RUNNING = 0x02,\n    STATE_PAUSED\
+    \ = 0x04,\n    STATE_STOPPED = 0x08,\n    STATE_ERROR = 0xFF\n} SystemState;\n\
+    \n// Complex union with nested structs\ntypedef union {\n    struct {\n      \
+    \  uint8_t r, g, b, a;\n    } color;\n    uint32_t value;\n    struct {\n    \
+    \    uint16_t high;\n        uint16_t low;\n    } words;\n} ColorUnion;\n\n//\
+    \ Complex function with multiple pointer levels\nint** allocate_matrix(size_t\
+    \ rows, size_t cols);\n\n// Function with complex parameter types\nvoid process_data(\n\
+    \    const Node* const * nodes,\n    size_t count,\n    int (*processor)(const\
+    \ Node*, void*),\n    void* context\n);\n\n// Simple global variable\nstatic int\
+    \ global_counter = 0;\n\n// Complex macro with multi-line definition\n#define\
+    \ SAFE_FREE(ptr) do { \\\n    if ((ptr) != NULL) { \\\n        free(ptr); \\\n\
+    \        (ptr) = NULL; \\\n    } \\\n} while(0)\n\n// Function with complex body\
+    \ that tests expression parsing\nNode* create_node(int data) {\n    Node* node\
+    \ = (Node*)malloc(sizeof(Node));\n    if (node != NULL) {\n        node->data\
+    \ = data;\n        node->next = NULL;\n        node->compare = NULL;\n       \
+    \ node->callback = NULL;\n    }\n    return node;\n}\n"
+  edge_cases.c: "#include <stdio.h>\n#include <string.h>\n\n/* Multi-line comment\
+    \ with\n   complex content like:\n   struct fake { int x; };\n   This should be\
+    \ ignored */\n\n// Single line comment with code: int y = 5;\n\nstruct EdgeCase\
+    \ {\n    char string_with_quotes[50];  // \"embedded quotes\"\n    char escaped_chars[20];\
+    \       // contains \\n, \\t, \\\\, \\\"\n    int complex_expr;             //\
+    \ result of (a * b + c) / d\n};\n\n// String literals with special content\nconst\
+    \ char* test_strings[] = {\n    \"Simple string\",\n    \"String with \\\"escaped\
+    \ quotes\\\"\",\n    \"String with \\\\ backslash\",\n    \"String with \\n newline\"\
+    ,\n    \"Multi line string\",\n    \"\"  // Empty string\n};\n\n// Complex expressions\
+    \ with multiple operators\nint complex_calculation() {\n    int a = 10, b = 20,\
+    \ c = 30;\n    int result1 = ((a + b) * c - (a / b)) % 7;\n    int result2 = (a\
+    \ << 2) | (b >> 1) & ~c;\n    int result3 = (a > b) ? (c * 2) : (c / 2);\n   \
+    \ return strlen(\"test\") + result1 + result2 + result3;\n}\n\n// Macro with complex\
+    \ content\n#define COMPLEX_MACRO(x, y) \\\n    do { \\\n        if ((x) > (y))\
+    \ { \\\n            printf(\"x=%d > y=%d\\n\", (x), (y)); \\\n        } else {\
+    \ \\\n            printf(\"x=%d <= y=%d\\n\", (x), (y)); \\\n        } \\\n  \
+    \  } while(0)\n\n// Edge case: function with many punctuation marks\nvoid punctuation_test(int\
+    \ array[], size_t len, int (*cmp)(const void*, const void*)) {\n    int* ptr =\
+    \ &array[0];\n    (*ptr)++;\n    array[len-1] = *ptr;\n}\n"
+  preprocessor.c: "#include <stdio.h>\n#include <stdlib.h>\n\n// Complex conditional\
+    \ compilation\n#ifdef DEBUG\n    #define LOG(msg) printf(\"DEBUG: %s\\n\", msg)\n\
+    \    #define DEBUG_ONLY(code) code\n#else\n    #define LOG(msg) \n    #define\
+    \ DEBUG_ONLY(code)\n#endif\n\n// Multi-level nested preprocessor conditions\n\
+    #if defined(FEATURE_A) && !defined(FEATURE_B)\n    #ifdef PLATFORM_LINUX\n   \
+    \     #define PLATFORM_SPECIFIC_FUNC linux_func\n    #elif defined(PLATFORM_WINDOWS)\n\
+    \        #define PLATFORM_SPECIFIC_FUNC windows_func\n    #else\n        #define\
+    \ PLATFORM_SPECIFIC_FUNC generic_func\n    #endif\n#else\n    #define PLATFORM_SPECIFIC_FUNC\
+    \ default_func\n#endif\n\n// Preprocessor with complex expressions\n#define MAX(a,\
+    \ b) ((a) > (b) ? (a) : (b))\n#define MIN(a, b) ((a) < (b) ? (a) : (b))\n#define\
+    \ CLAMP(x, min, max) MIN(MAX(x, min), max)\n\n// Macro with stringification and\
+    \ token pasting\n#define DECLARE_FUNC(name) \\\n    void name##_init(void); \\\
+    \n    void name##_cleanup(void); \\\n    const char* name##_get_name(void) { return\
+    \ #name; }\n\nstruct Config {\n    int base_value;\n#ifdef EXTENDED_CONFIG\n \
+    \   int extended_value;\n    char* description;\n#endif\n#if MAX_FEATURES > 10\n\
+    \    int feature_flags[MAX_FEATURES];\n#else\n    int feature_flags[10];\n#endif\n\
+    };\n\nint calculate_result(int input) {\n    int result = input;\n#ifdef APPLY_MULTIPLIER\n\
+    \    result *= 2;\n#endif\n#ifndef DISABLE_BOUNDS_CHECK\n    if (result < 0) result\
+    \ = 0;\n    if (result > 1000) result = 1000;\n#endif\n    DEBUG_ONLY(LOG(\"Result\
+    \ calculated\"));\n    return result;\n}\n\n#define COMPLEX_OPERATION(x, y, z)\
+    \ \\\n    do { \\\n        int temp1 = (x) + (y); \\\n        int temp2 = temp1\
+    \ * (z); \\\n        printf(\"Operation: %d + %d = %d, * %d = %d\\n\", \\\n  \
+    \             (x), (y), temp1, (z), temp2); \\\n    } while(0)\n\nDECLARE_FUNC(module_a)\n\
+    DECLARE_FUNC(module_b)\n"
+  complex_functions.c: "#include <stdarg.h>\n\nstruct complex_struct;\ntypedef struct\
+    \ complex_struct complex_t;\n\ntypedef void (*callback_t)(int result, void* user_data);\n\
+    typedef int (*comparator_t)(const void* a, const void* b);\n\nint complex_function(\n\
+    \    const char* name,\n    complex_t* data,\n    callback_t callback,\n    void*\
+    \ user_data,\n    int flags,\n    ...  // variadic parameters\n);\n\nstatic complex_t*\
+    \ create_complex(\n    const char* name,\n    size_t name_len,\n    int initial_value\n\
+    ) {\n    return NULL;\n}\n\ncomparator_t get_comparator(\n    const char* type,\n\
+    \    int (*custom_compare)(const void*, const void*)\n);\n\ninline void process_array(\n\
+    \    complex_t** array,\n    size_t count,\n    void (*processor)(complex_t*,\
+    \ int index)\n) {}\n\nvoid log_message(int level, const char* format, ...);\n\
+    const volatile int* get_status_pointer(void);\n"
+  mixed_structures.c: "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef enum {\n\
+    \    STATE_IDLE = 0,\n    STATE_RUNNING = 1,\n    STATE_PAUSED = 2,\n    STATE_ERROR\
+    \ = -1\n} state_t;\n\ntypedef struct {\n    char name[64];\n    state_t current_state;\n\
+    \    struct {\n        int x, y, z;\n        union {\n            float as_float[3];\n\
+    \            int as_int[3];\n        } coordinates;\n    } position;\n    union\
+    \ {\n        struct {\n            char type;\n            int value;\n      \
+    \  } typed_data;\n        float raw_float;\n        int raw_int;\n    } data;\n\
+    } complex_entity_t;\n\ntypedef int (*process_func_t)(complex_entity_t*, state_t);\n\
+    \nint process_entity(complex_entity_t* entity, state_t new_state) {\n    if (entity\
+    \ && new_state >= STATE_IDLE) {\n        entity->current_state = new_state;\n\
+    \        return 1;\n    }\n    return 0;\n}\n\ncomplex_entity_t global_entity;\n\
+    process_func_t global_processor = process_entity;\n"
+  complex_union.c: "typedef union {\n    int primary_int;\n    union {\n        float\
+    \ nested_float;\n        double nested_double;\n        union {\n            char\
+    \ deep_char;\n            short deep_short;\n        } deep_union;\n    } nested_union;\n\
+    \    char primary_bytes[32];\n    struct {\n        int struct_in_union;\n   \
+    \     float struct_float;\n    } embedded_struct;\n} complex_union_t;\n\nvoid\
+    \ process_complex_union(complex_union_t* cu) {}\ncomplex_union_t global_complex_union;\n"
+  keywords.c: "struct DataStruct {\n    int value;\n    const char* name;\n};\n\n\
+    enum DataEnum {\n    OPTION_A,\n    OPTION_B\n};\n\nunion DataUnion {\n    int\
+    \ intVal;\n    float floatVal;\n};\n\nstatic int static_var = 10;\nextern int\
+    \ extern_var;\n\ninline void inline_func() {}\nvoid regular_func(const void* ptr)\
+    \ {}\n"
+---
+config.json: "{\n  \"project_name\": \"test_tokenizer_comprehensive\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - complex.puml
+    - edge_cases.puml
+    - preprocessor.puml
+    - complex_functions.puml
+    - mixed_structures.puml
+    - complex_union.puml
+    - keywords.puml
+  model:
+    files:
+      complex.c:
+        structs:
+          Node:
+            fields:
+            - data
+            - next
+            - compare
+            - callback
+        enums:
+          SystemState:
+            values:
+            - STATE_INIT
+            - STATE_RUNNING
+            - STATE_PAUSED
+            - STATE_STOPPED
+            - STATE_ERROR
+        unions:
+          ColorUnion:
+            fields:
+            - color
+            - value
+            - words
+        functions:
+        - allocate_matrix
+        - process_data
+        - create_node
+        globals:
+        - global_counter
+        macros:
+        - SAFE_FREE
+        includes:
+        - stdio.h
+        - stdlib.h
+      edge_cases.c:
+        structs:
+          EdgeCase:
+            fields:
+            - string_with_quotes
+            - escaped_chars
+            - complex_expr
+        functions:
+        - complex_calculation
+        - punctuation_test
+        globals:
+        - test_strings
+        macros:
+        - COMPLEX_MACRO
+        includes:
+        - stdio.h
+        - string.h
+      preprocessor.c:
+        structs:
+          Config:
+            fields:
+            - base_value
+        functions:
+        - calculate_result
+        macros:
+        - CLAMP
+        - COMPLEX_OPERATION
+        - DECLARE_FUNC
+        - MAX
+        - MIN
+        - PLATFORM_SPECIFIC_FUNC
+        includes:
+        - stdio.h
+        - stdlib.h
+      complex_functions.c:
+        functions_exist:
+        - complex_function
+        - create_complex
+        - get_comparator
+        - process_array
+        - log_message
+        - get_status_pointer
+        aliases_exist:
+        - callback_t
+        - comparator_t
+        includes_exist:
+        - stdarg.h
+      mixed_structures.c:
+        structs_exist:
+        - complex_entity_t
+        enums_exist:
+        - state_t
+        functions_exist:
+        - process_entity
+        globals_exist:
+        - global_entity
+        - global_processor
+        includes_exist:
+        - stdio.h
+        - stdlib.h
+        aliases_exist:
+        - process_func_t
+      complex_union.c:
+        unions_exist:
+        - complex_union_t
+        functions_exist:
+        - process_complex_union
+        globals_exist:
+        - global_complex_union
+        structs_exist:
+        - complex_union_t_embedded_struct
+      keywords.c:
+        structs:
+          DataStruct:
+            fields:
+            - value
+            - name
+        enums:
+          DataEnum:
+            values:
+            - OPTION_A
+            - OPTION_B
+        unions:
+          DataUnion:
+            fields:
+            - intVal
+            - floatVal
+        functions:
+        - inline_func
+        - regular_func
+        globals:
+        - static_var
+        - extern_var
+  puml:
+    syntax_valid: true
+    files:
+      complex.puml:
+        contains_elements:
+        - Node
+        - SystemState
+        - ColorUnion
+        - complex
+        contains_lines:
+        - class "Node" as TYPEDEF_NODE
+        - class "SystemState" as TYPEDEF_SYSTEMSTATE
+        - class "ColorUnion" as TYPEDEF_COLORUNION
+      edge_cases.puml:
+        contains_elements:
+        - EdgeCase
+        - edge_cases
+        contains_lines:
+        - class "EdgeCase" as TYPEDEF_EDGECASE
+      preprocessor.puml:
+        contains_elements:
+        - Config
+        - preprocessor
+        contains_lines:
+        - class "Config" as TYPEDEF_CONFIG
+      complex_functions.puml:
+        contains_elements:
+        - complex_function
+        - create_complex
+        - callback_t
+        - comparator_t
+        contains_lines:
+        - complex_function
+        - create_complex(
+      mixed_structures.puml:
+        contains_elements:
+        - complex_entity_t
+        - state_t
+        - process_entity
+        - global_entity
+        contains_lines:
+        - int process_entity(complex_entity_t * entity, state_t new_state)
+      complex_union.puml:
+        contains_elements:
+        - complex_union_t
+        - process_complex_union
+        - global_complex_union
+        contains_lines:
+        - void process_complex_union(complex_union_t * cu)
+        - complex_union_t global_complex_union
+      keywords.puml:
+        contains_elements:
+        - DataStruct
+        - DataEnum
+        - DataUnion
+        contains_lines:
+        - class "DataStruct" as TYPEDEF_DATASTRUCT
+        - class "DataEnum" as TYPEDEF_DATAENUM

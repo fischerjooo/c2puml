@@ -1,0 +1,57 @@
+test:
+  name: Debug Complex Union Parsing
+  description: Test parsing complex union with nested structures for debugging purposes
+  category: unit
+  id: '108'
+---
+source_files:
+  test_union.c: "typedef union {\n    int primary_int;\n    union {\n        float\
+    \ nested_float;\n        double nested_double;\n    } nested_union;\n    char\
+    \ primary_bytes[32];\n} test_union_t;\n\ntypedef struct {\n    test_union_t data;\n\
+    \    char label[16];\n} container_t;\n"
+---
+config.json: "{\n  \"project_name\": \"debug_complex_union_parsing\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - test_union.puml
+  model:
+    validate_structure: true
+    project_name: debug_complex_union_parsing
+    expected_files:
+    - test_union.c
+    unions_exist:
+    - test_union_t
+    structs_exist:
+    - container_t
+    union_details:
+      test_union_t:
+        fields:
+        - primary_int
+        - nested_union
+        - primary_bytes
+    struct_details:
+      container_t:
+        fields:
+        - data
+        - label
+    element_counts:
+      unions: 2
+      structs: 1
+      aliases: 0
+  puml:
+    syntax_valid: true
+    file_count: 1
+    files:
+      test_union.puml:
+        contains_elements:
+        - test_union_t
+        - container_t
+        - nested_union
+        class_count: 4
+        relationship_count: 4

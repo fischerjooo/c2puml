@@ -1,0 +1,165 @@
+test:
+  name: "Transformer \u2013 Comprehensive"
+  description: 'Consolidated transformer operations: rename/remove, file filtering,
+    include depth/filters'
+  category: unit
+  id: '119'
+---
+source_files:
+  main.c: '#include <stdio.h>
+
+    #include <stdlib.h>
+
+    #include "internal.h"
+
+    #include "utils.h"
+
+
+    #define DEBUG_MODE 1
+
+    #define MAX_ITEMS 100
+
+    #define UNUSED_MACRO 99
+
+
+    typedef struct { int id; char name[50]; float value; } DataItem;
+
+    struct MainData { int value; char name[20]; };
+
+    typedef struct { int temp_id; char temp_name[20]; } TempItem;
+
+    enum Status { STATUS_OK, STATUS_ERROR, STATUS_TEMP };
+
+    enum TempStatus { TEMP_OK, TEMP_ERROR };
+
+
+    int global_counter = 0; static int internal_counter = 0; extern int external_counter;
+    int temp_global = 42;
+
+
+    void process_data(DataItem* item);
+
+    void helper_function(void);
+
+    void temp_function(void);
+
+    static void internal_helper(void);
+
+
+    void process_data(DataItem* item) { item->value *= 2.0; }
+
+    '
+  utils.c: '#include <string.h>
+
+    struct UtilStruct { int value; float rate; };
+
+    void utility_function() {}
+
+    int util_global = 200;
+
+    '
+  deep/nested.h: '#ifndef NESTED_H
+
+    #define NESTED_H
+
+    struct NestedData { char data[100]; };
+
+    void nested_function();
+
+    #endif
+
+    '
+  utils.h: '#include <stdlib.h>
+
+    #include "deep/nested.h"
+
+    struct UtilData { int id; float rate; };
+
+    void utility_function();
+
+    '
+---
+config.json: "{\n  \"project_name\": \"transformer_consolidated\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true,\n  \"\
+  transformations\": {\n    \"remove\": {\n      \"structs\": [\"^Temp.*\"],\n   \
+  \   \"enums\": [\"TempStatus\"],\n      \"functions\": [\"temp_.*\"],\n      \"\
+  globals\": [\"temp_.*\"],\n      \"macros\": [\"UNUSED_.*\"]\n    },\n    \"rename\"\
+  : {\n      \"structs\": {\"DataItem\": \"ProcessedItem\", \"MainData\": \"ProcessedMainData\"\
+  },\n      \"enums\": {\"Status\": \"ProcessStatus\"},\n      \"functions\": {\"\
+  process_data\": \"transform_data\", \"main_function\": \"processed_main_function\"\
+  },\n      \"globals\": {\"global_counter\": \"item_counter\"},\n      \"macros\"\
+  : {\"DEBUG_MODE\": \"TRACE_MODE\"}\n    },\n    \"file_filters\": {\n      \"include_patterns\"\
+  : [\"main.*\", \"utils.*\"],\n      \"exclude_patterns\": [\"temp.*\"]\n    },\n\
+  \    \"include_depth\": 2,\n    \"include_filters\": {\n      \"depth\": 1,\n  \
+  \    \"file_specific\": {\"main.c\": {\"include_depth\": 2}}\n    },\n    \"file_selection\"\
+  : [\"main.c\"]\n  }\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - main.puml
+    - utils.puml
+  model:
+    files:
+      main.c:
+        structs:
+          ProcessedItem:
+            fields:
+            - id
+            - name
+            - value
+          ProcessedMainData:
+            fields:
+            - value
+            - name
+        enums:
+          ProcessStatus:
+            values:
+            - STATUS_OK
+            - STATUS_ERROR
+            - STATUS_TEMP
+        functions:
+        - transform_data
+        - helper_function
+        - internal_helper
+        globals:
+        - item_counter
+        - internal_counter
+        - external_counter
+        macros:
+        - TRACE_MODE
+        - MAX_ITEMS
+      utils.c:
+        structs:
+          UtilStruct:
+            fields:
+            - value
+            - rate
+        functions:
+        - utility_function
+        globals:
+        - util_global
+      nested.h:
+        structs:
+          NestedData:
+            fields:
+            - data
+        functions:
+        - nested_function
+  puml:
+    syntax_valid: true
+    files:
+      main.puml:
+        contains_elements:
+        - ProcessedItem
+        - ProcessStatus
+        - ProcessedMainData
+        - main
+        - utils
+      utils.puml:
+        contains_elements:
+        - UtilStruct
+        - utils

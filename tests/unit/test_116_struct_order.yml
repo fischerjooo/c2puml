@@ -1,0 +1,68 @@
+test:
+  name: "Struct and Nested Ordering \u2013 Comprehensive"
+  description: Preserve field order in simple and complex structs, including nested
+    structs and unions; verify PUML order
+  category: unit
+  id: '116'
+---
+source_files:
+  struct_order.c: "typedef struct triangle_tag {\n    point_t vertices[3];\n    char\
+    \ label[MAX_LABEL_LEN];\n} triangle_t;\n"
+  struct_order_puml.c: "typedef struct triangle_tag {\n    point_t vertices[3];\n\
+    \    char label[MAX_LABEL_LEN];\n} triangle_t;\n"
+  struct_order_complex.c: "typedef struct complex_struct {\n    int id;\n    char\
+    \ name[32];\n    float value;\n    struct {\n        int x;\n        int y;\n\
+    \    } position;\n    union {\n        int int_data;\n        float float_data;\n\
+    \    } data;\n} complex_struct_t;\n"
+---
+config.json: "{\n  \"project_name\": \"struct_and_nested_ordering_comprehensive\"\
+  ,\n  \"source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
+  : true\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - struct_order.puml
+    - struct_order_puml.puml
+    - struct_order_complex.puml
+  model:
+    files:
+      struct_order.c:
+        structs:
+          triangle_t:
+            fields:
+            - vertices
+            - label
+      struct_order_puml.c:
+        structs:
+          triangle_t:
+            fields:
+            - vertices
+            - label
+      struct_order_complex.c:
+        structs:
+          complex_struct_t:
+            fields:
+            - id
+            - name
+            - value
+            - position
+            - data
+  puml:
+    syntax_valid: true
+    files:
+      struct_order_puml.puml:
+        contains_elements:
+        - triangle_t
+        contains_lines:
+        - class "triangle_t" as TYPEDEF_TRIANGLE_T
+        - + point_t[3] vertices
+        - + char[MAX_LABEL_LEN] label
+      struct_order_complex.puml:
+        contains_elements:
+        - complex_struct_t
+        contains_lines:
+        - class "complex_struct_t" as TYPEDEF_COMPLEX_STRUCT_T

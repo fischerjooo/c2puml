@@ -1,0 +1,46 @@
+test:
+  name: Nested Structures PUML
+  description: Test that generated PlantUML preserves nested structure hierarchy
+  category: unit
+  id: '135'
+---
+source_files:
+  nested_structures_puml.c: "typedef union {\n    int primary_int;\n    union {\n\
+    \        float nested_float;\n        double nested_double;\n    } nested_union;\n\
+    \    char primary_bytes[32];\n} test_union_t;\n"
+---
+config.json: "{\n  \"project_name\": \"test_nested_structures_puml\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - nested_structures_puml.puml
+  model:
+    files:
+      nested_structures_puml.c:
+        unions:
+          test_union_t:
+            fields:
+            - primary_int
+            - nested_union
+            - primary_bytes
+    element_counts:
+      structs: 0
+      enums: 0
+      functions: 0
+      globals: 0
+      includes: 0
+  puml:
+    syntax_valid: true
+    files:
+      nested_structures_puml.puml:
+        contains_elements:
+        - test_union_t
+        contains_lines:
+        - class "test_union_t" as TYPEDEF_TEST_UNION_T
+        class_count: 3
+        relationship_count: 2

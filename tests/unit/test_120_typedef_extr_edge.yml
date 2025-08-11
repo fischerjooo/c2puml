@@ -1,0 +1,66 @@
+test:
+  name: Typedef Extraction - Edge Cases
+  description: Test typedef extraction with edge cases (comments, whitespace, etc.)
+  category: unit
+  id: '120'
+---
+source_files:
+  edge_cases_typedefs.c: "// Edge cases for typedef extraction\n\n// This is a comment\n\
+    typedef uint32_t MyLen;  // Another comment\n\n/* Multi-line comment\n   about\
+    \ typedefs */\ntypedef int32_t MyInt;\n\ntypedef char * MyString; /* Inline comment\
+    \ */\n\n// Typedef with extra whitespace\ntypedef  unsigned   long   long    ULongLong\
+    \  ;\n\n// Typedef with const and volatile\ntypedef const char * ConstString;\n\
+    typedef volatile int VolatileInt;\n\n/* Complex typedef with nested comments */\n\
+    typedef struct /* comment */ Point_tag {\n    int x; // X coordinate\n    int\
+    \ y; /* Y coordinate */\n} Point_t;\n"
+---
+config.json: "{\n  \"project_name\": \"test_typedef_extraction_edge_cases\",\n  \"\
+  source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
+  : true\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - edge_cases_typedefs.puml
+  model:
+    files:
+      edge_cases_typedefs.c:
+        aliases:
+        - MyLen
+        - MyInt
+        - MyString
+        - ULongLong
+        - ConstString
+        - VolatileInt
+        structs:
+          Point_t:
+            fields:
+            - x
+            - y
+    element_counts:
+      structs: 1
+      enums: 0
+      functions: 0
+      globals: 0
+      includes: 0
+  puml:
+    syntax_valid: true
+    files:
+      edge_cases_typedefs.puml:
+        contains_elements:
+        - MyLen
+        - MyInt
+        - MyString
+        - ULongLong
+        - ConstString
+        - VolatileInt
+        - Point_t
+        contains_lines:
+        - class "MyLen" as TYPEDEF_MYLEN
+        - class "MyInt" as TYPEDEF_MYINT
+        - class "Point_t" as TYPEDEF_POINT_T
+        class_count: 8
+        relationship_count: 7
