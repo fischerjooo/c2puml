@@ -1,144 +1,87 @@
+/opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages/coverage/inorout.py:469: CoverageWarning: --include is ignored because --source is set (include-ignored)
+  self.warn("--include is ignored because --source is set", slug="include-ignored")
+============================= test session starts ==============================
+platform linux -- Python 3.9.23, pytest-8.4.1, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.9.23/x64/bin/python3
+cachedir: .pytest_cache
+metadata: {'Python': '3.9.23', 'Platform': 'Linux-6.11.0-1018-azure-x86_64-with-glibc2.39', 'Packages': {'pytest': '8.4.1', 'pluggy': '1.6.0'}, 'Plugins': {'xdist': '3.8.0', 'cov': '6.2.1', 'mock': '3.14.1', 'metadata': '3.1.1', 'html': '4.1.1', 'benchmark': '5.1.0'}, 'CI': 'true', 'JAVA_HOME': '/usr/lib/jvm/temurin-17-jdk-amd64'}
+benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: /home/runner/work/c2puml/c2puml
+configfile: pytest.ini
+plugins: xdist-3.8.0, cov-6.2.1, mock-3.14.1, metadata-3.1.1, html-4.1.1, benchmark-5.1.0
+collecting ... collected 71 items
 
-======================================================================
-                 🧪 C to PlantUML Converter Test Suite                 
-======================================================================
-Working directory: /workspace
-Python version: 3.13.3 (main, Apr  8 2025, 19:55:40) [GCC 14.2.0]
-Project root: /workspace
+tests/example/test_basic_example.py::TestBasicExample::test_basic_example PASSED [  1%]
+tests/feature/test_cli_modes_comprehensive.py::TestCLIModesComprehensive::test_cli_modes_and_features_comprehensive PASSED [  2%]
+tests/feature/test_component_features_comprehensive.py::TestComponentFeaturesConsolidated::test_component_features_types_and_relationships_comprehensive PASSED [  4%]
+tests/feature/test_component_features_types_and_relationships_comprehensive.py::TestComponentFeaturesTypesAndRelationshipsConsolidated::test_component_features_types_and_relationships_comprehensive PASSED [  5%]
+tests/feature/test_crypto_filter_pattern_comprehensive.py::TestCryptoFilterPatternComprehensive::test_crypto_filter_pattern_functionality PASSED [  7%]
+tests/feature/test_crypto_filter_usecase_comprehensive.py::TestCryptoFilterUsecaseComprehensive::test_crypto_filter_usecase_functionality PASSED [  8%]
+tests/feature/test_error_handling_comprehensive.py::TestErrorHandlingComprehensive::test_invalid_config_errors PASSED [  9%]
+tests/feature/test_error_handling_comprehensive.py::TestErrorHandlingComprehensive::test_invalid_source_folder_errors PASSED [ 11%]
+tests/feature/test_error_handling_comprehensive.py::TestErrorHandlingComprehensive::test_partial_failure_scenarios PASSED [ 12%]
+tests/feature/test_include_processing.py::TestIncludeProcessingConsolidated::test_include_processing_consolidated PASSED [ 14%]
+tests/feature/test_include_processing.py::TestIncludeProcessingConsolidated::test_include_processing_error_handling_consolidated PASSED [ 15%]
+tests/feature/test_integration_cli.py::TestIntegrationCLI::test_complete_workflow PASSED [ 16%]
+tests/feature/test_multiple_source_folders_cli.py::TestMultipleSourceFoldersCLI::test_multiple_source_folders PASSED [ 18%]
+tests/feature/test_transformer_features_cli.py::TestTransformerFeaturesCLI::test_transform_renaming PASSED [ 19%]
+tests/integration/test_comprehensive.py::TestComprehensiveIntegrationCLI::test_complete_system_integration PASSED [ 21%]
+tests/integration/test_comprehensive.py::TestComprehensiveIntegrationCLI::test_integration_relationships_and_formatting_comprehensive PASSED [ 22%]
+tests/integration/test_new_formatting_comprehensive.py::TestNewFormattingComprehensiveCLI::test_integration_relationships_and_formatting_comprehensive PASSED [ 23%]
+tests/unit/test_absolute_path_bug_comprehensive.py::TestAbsolutePathBugComprehensive::test_absolute_vs_relative_path_consistency PASSED [ 25%]
+tests/unit/test_absolute_path_bug_comprehensive.py::TestAbsolutePathBugComprehensive::test_mixed_path_styles_handling PASSED [ 26%]
+tests/unit/test_absolute_path_bug_comprehensive.py::TestAbsolutePathBugComprehensive::test_path_resolution_and_include_tree_comprehensive PASSED [ 28%]
+tests/unit/test_absolute_path_bug_comprehensive.py::TestAbsolutePathBugComprehensive::test_relative_path_handling_in_include_tree PASSED [ 29%]
+tests/unit/test_absolute_path_bug_comprehensive.py::TestAbsolutePathBugComprehensive::test_subdirectory_includes_path_resolution PASSED [ 30%]
+tests/unit/test_anonymous_processing_comprehensive.py::TestAnonymousProcessingComprehensive::test_anonymous_processing_comprehensive PASSED [ 32%]
+tests/unit/test_anonymous_structure_comprehensive.py::TestAnonymousStructureComprehensive::test_anonymous_structures_and_unions_comprehensive PASSED [ 33%]
+tests/unit/test_config_comprehensive.py::TestConfigComprehensive::test_config_comprehensive PASSED [ 35%]
+tests/unit/test_debug_field_parsing_comprehensive.py::TestDebugFieldParsingComprehensive::test_complex_struct_field_processing PASSED [ 36%]
+tests/unit/test_debug_field_parsing_comprehensive.py::TestDebugFieldParsingComprehensive::test_nested_anonymous_structure_fields PASSED [ 38%]
+tests/unit/test_debug_field_parsing_comprehensive.py::TestDebugFieldParsingComprehensive::test_nested_union_field_parsing PASSED [ 39%]
+tests/unit/test_debug_parsing_comprehensive.py::TestDebugParsingComprehensive::test_anonymous_structure_parsing PASSED [ 40%]
+tests/unit/test_debug_parsing_comprehensive.py::TestDebugParsingComprehensive::test_complex_union_parsing PASSED [ 42%]
+tests/unit/test_debug_parsing_comprehensive.py::TestDebugParsingComprehensive::test_nested_struct_parsing PASSED [ 43%]
+tests/unit/test_file_specific_configuration_comprehensive.py::TestFileSpecificConfigurationComprehensive::test_file_specific_configuration_comprehensive PASSED [ 45%]
+tests/unit/test_generator_basic_plantuml.py::TestGeneratorBasicPlantuml::test_generator_basic_plantuml PASSED [ 46%]
+tests/unit/test_generator_comprehensive.py::TestGeneratorComprehensive::test_generator_comprehensive PASSED [ 47%]
+tests/unit/test_generator_exact_format_cli.py::TestGeneratorExactFormatCLI::test_exact_requested_format PASSED [ 49%]
+tests/unit/test_generator_exact_format_cli.py::TestGeneratorExactFormatCLI::test_format_with_parameters PASSED [ 50%]
+tests/unit/test_generator_grouping_cli.py::TestGeneratorGroupingCLI::test_generator_grouping_comprehensive PASSED [ 52%]
+tests/unit/test_generator_include_tree_cli.py::TestGeneratorIncludeTreeCLI::test_include_tree_comprehensive PASSED [ 53%]
+tests/unit/test_generator_include_tree_cli.py::TestGeneratorIncludeTreeCLI::test_include_tree_with_absolute_paths PASSED [ 54%]
+tests/unit/test_generator_includes_comprehensive.py::TestGeneratorIncludesComprehensive::test_generator_includes_and_filtering_comprehensive PASSED [ 56%]
+tests/unit/test_generator_naming_comprehensive.py::TestGeneratorNamingComprehensive::test_generator_naming_conventions_comprehensive PASSED [ 57%]
+tests/unit/test_generator_new_formatting_cli.py::TestGeneratorNewFormattingCLI::test_generator_new_formatting_stereotypes_comprehensive PASSED [ 59%]
+tests/unit/test_generator_visibility_logic.py::TestGeneratorVisibilityLogicCLI::test_generator_visibility_logic_comprehensive PASSED [ 60%]
+tests/unit/test_global_parsing_comprehensive.py::TestGlobalParsingComprehensive::test_global_parsing_comprehensive PASSED [ 61%]
+tests/unit/test_include_filtering_comprehensive.py::TestIncludeFilteringComprehensive::test_include_filtering_comprehensive PASSED [ 63%]
+tests/unit/test_include_processing_comprehensive.py::TestIncludeProcessingComprehensive::test_basic_include_processing PASSED [ 64%]
+tests/unit/test_nested_structures_puml.py::TestNestedStructuresPuml::test_nested_structures_puml PASSED [ 66%]
+tests/unit/test_parser_complete.py::TestParserComplete::test_parser_comprehensive_basics PASSED [ 67%]
+tests/unit/test_parser_encoding.py::TestParserEncoding::test_parser_encoding PASSED [ 69%]
+tests/unit/test_parser_enum_comprehensive.py::TestParserEnumComprehensive::test_parser_typedefs_comprehensive_enums PASSED [ 70%]
+tests/unit/test_parser_enums.py::TestParserElementsConsolidated::test_parser_elements_comprehensive PASSED [ 71%]
+tests/unit/test_parser_function_comprehensive.py::TestParserFunctionComprehensive::test_parser_functions_and_parameters_comprehensive PASSED [ 73%]
+tests/unit/test_parser_functions.py::TestParserFunctions::test_parser_functions_and_parameters_comprehensive PASSED [ 74%]
+tests/unit/test_parser_globals.py::TestParserGlobals::test_parser_elements_comprehensive PASSED [ 76%]
+tests/unit/test_parser_includes.py::TestParserIncludes::test_parser_includes_comprehensive PASSED [ 77%]
+tests/unit/test_parser_macros.py::TestParserMacros::test_parser_elements_comprehensive PASSED [ 78%]
+tests/unit/test_parser_nested_structures_comprehensive.py::TestParserNestedStructuresComprehensive::test_struct_and_nested_ordering_comprehensive PASSED [ 80%]
+tests/unit/test_parser_simple_c_file.py::TestParserSimpleCFile::test_parser_simple_c_file PASSED [ 81%]
+tests/unit/test_parser_simple_struct.py::TestParserSimpleStruct::test_parser_simple_struct PASSED [ 83%]
+tests/unit/test_parser_structs.py::TestParserStructs::test_parser_elements_comprehensive PASSED [ 84%]
+tests/unit/test_parser_typedef_struct.py::TestParserTypedefStruct::test_parser_typedefs_comprehensive PASSED [ 85%]
+tests/unit/test_parser_typedefs.py::TestParserTypedefsConsolidated::test_parser_typedefs_comprehensive PASSED [ 87%]
+tests/unit/test_preprocessor_handling_comprehensive.py::TestPreprocessorHandlingComprehensive::test_preprocessor_and_macros_comprehensive PASSED [ 88%]
+tests/unit/test_simple_c_file_parsing.py::TestParserComprehensiveBasics::test_parser_comprehensive_basics PASSED [ 90%]
+tests/unit/test_struct_order_puml.py::TestStructOrderPuml::test_struct_and_nested_ordering_comprehensive PASSED [ 91%]
+tests/unit/test_tokenizer_comprehensive.py::TestTokenizerComprehensive::test_tokenizer_comprehensive PASSED [ 92%]
+tests/unit/test_tokenizer_keywords.py::TestTokenizerKeywords::test_tokenizer_keywords PASSED [ 94%]
+tests/unit/test_transformer_basic.py::TestTransformerBasic::test_transformer_basic PASSED [ 95%]
+tests/unit/test_transformer_comprehensive.py::TestTransformerComprehensive::test_transformer_comprehensive PASSED [ 97%]
+tests/unit/test_typedef_extraction_comprehensive.py::TestTypedefExtractionComprehensive::test_typedef_extraction_comprehensive PASSED [ 98%]
+tests/unit/test_verifier_comprehensive.py::TestVerifierComprehensive::test_verifier_comprehensive PASSED [100%]
 
---------------------------------------------------
-              Checking Dependencies               
---------------------------------------------------
-❌ pytest is not available
-❌ coverage is not available
-⚠️  Missing dependencies: pytest, coverage
-ℹ️  Install with: pip install pytest coverage
-
---------------------------------------------------
-           Running Tests with unittest            
---------------------------------------------------
-test_cli_modes_and_features_comprehensive (feature.test_cli_modes_comprehensive.TestCLIModesComprehensive.test_cli_modes_and_features_comprehensive) ... ok
-test_component_features_types_and_relationships_comprehensive (feature.test_component_features_comprehensive.TestComponentFeaturesConsolidated.test_component_features_types_and_relationships_comprehensive) ... ok
-test_component_features_types_and_relationships_comprehensive (feature.test_component_features_types_and_relationships_comprehensive.TestComponentFeaturesTypesAndRelationshipsConsolidated.test_component_features_types_and_relationships_comprehensive) ... ok
-test_crypto_filter_pattern_functionality (feature.test_crypto_filter_pattern_comprehensive.TestCryptoFilterPatternComprehensive.test_crypto_filter_pattern_functionality)
-Test crypto filter pattern functionality through the CLI interface ... ok
-test_crypto_filter_usecase_functionality (feature.test_crypto_filter_usecase_comprehensive.TestCryptoFilterUsecaseComprehensive.test_crypto_filter_usecase_functionality)
-Test crypto filter usecase functionality through the CLI interface ... ok
-test_invalid_config_errors (feature.test_error_handling_comprehensive.TestErrorHandlingComprehensive.test_invalid_config_errors)
-Test various invalid configuration scenarios ... ok
-test_invalid_source_folder_errors (feature.test_error_handling_comprehensive.TestErrorHandlingComprehensive.test_invalid_source_folder_errors)
-Test various invalid source folder scenarios ... ok
-test_partial_failure_scenarios (feature.test_error_handling_comprehensive.TestErrorHandlingComprehensive.test_partial_failure_scenarios)
-Test scenarios where some operations fail but others succeed ... ok
-test_include_processing_consolidated (feature.test_include_processing.TestIncludeProcessingConsolidated.test_include_processing_consolidated) ... ok
-test_include_processing_error_handling_consolidated (feature.test_include_processing.TestIncludeProcessingConsolidated.test_include_processing_error_handling_consolidated) ... ok
-test_complete_workflow (feature.test_integration_cli.TestIntegrationCLI.test_complete_workflow)
-End-to-end parse → transform → generate workflow ... ok
-test_multiple_source_folders (feature.test_multiple_source_folders_cli.TestMultipleSourceFoldersCLI.test_multiple_source_folders) ... ok
-test_transform_renaming (feature.test_transformer_features_cli.TestTransformerFeaturesCLI.test_transform_renaming)
-Validate renaming transformations using transform-only ... ok
-test_complete_system_integration (integration.test_comprehensive.TestComprehensiveIntegrationCLI.test_complete_system_integration) ... ok
-test_integration_relationships_and_formatting_comprehensive (integration.test_comprehensive.TestComprehensiveIntegrationCLI.test_integration_relationships_and_formatting_comprehensive) ... ok
-test_integration_relationships_and_formatting_comprehensive (integration.test_new_formatting_comprehensive.TestNewFormattingComprehensiveCLI.test_integration_relationships_and_formatting_comprehensive) ... ok
-test_absolute_vs_relative_path_consistency (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_absolute_vs_relative_path_consistency)
-Test absolute vs relative path consistency through CLI interface. ... ok
-test_mixed_path_styles_handling (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_mixed_path_styles_handling)
-Test mixed path styles handling through CLI interface. ... ok
-test_path_resolution_and_include_tree_comprehensive (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_path_resolution_and_include_tree_comprehensive) ... ok
-test_relative_path_handling_in_include_tree (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_relative_path_handling_in_include_tree)
-Test that relative paths are handled correctly in include tree building through CLI interface. ... ok
-test_subdirectory_includes_path_resolution (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_subdirectory_includes_path_resolution)
-Test subdirectory includes path resolution through CLI interface. ... ok
-test_anonymous_processing_comprehensive (unit.test_anonymous_processing_comprehensive.TestAnonymousProcessingComprehensive.test_anonymous_processing_comprehensive)
-Test comprehensive anonymous structure processing scenarios through the CLI interface ... ok
-test_anonymous_structures_and_unions_comprehensive (unit.test_anonymous_structure_comprehensive.TestAnonymousStructureComprehensive.test_anonymous_structures_and_unions_comprehensive) ... ok
-test_config_comprehensive (unit.test_config_comprehensive.TestConfigComprehensive.test_config_comprehensive)
-Test comprehensive configuration scenarios through the CLI interface ... ok
-test_complex_struct_field_processing (unit.test_debug_field_parsing_comprehensive.TestDebugFieldParsingComprehensive.test_complex_struct_field_processing)
-Test complex struct field processing through CLI interface. ... ok
-test_nested_anonymous_structure_fields (unit.test_debug_field_parsing_comprehensive.TestDebugFieldParsingComprehensive.test_nested_anonymous_structure_fields)
-Test nested anonymous structure field parsing through CLI interface. ... ok
-test_nested_union_field_parsing (unit.test_debug_field_parsing_comprehensive.TestDebugFieldParsingComprehensive.test_nested_union_field_parsing)
-Test nested union field parsing through CLI interface. ... ok
-test_anonymous_structure_parsing (unit.test_debug_parsing_comprehensive.TestDebugParsingComprehensive.test_anonymous_structure_parsing)
-Test parsing anonymous structures in typedefs through CLI interface ... ok
-test_complex_union_parsing (unit.test_debug_parsing_comprehensive.TestDebugParsingComprehensive.test_complex_union_parsing)
-Test parsing complex union with nested structures through CLI interface ... ok
-test_nested_struct_parsing (unit.test_debug_parsing_comprehensive.TestDebugParsingComprehensive.test_nested_struct_parsing)
-Test parsing nested struct definitions through CLI interface ... ok
-test_file_specific_configuration_comprehensive (unit.test_file_specific_configuration_comprehensive.TestFileSpecificConfigurationComprehensive.test_file_specific_configuration_comprehensive) ... ok
-test_generator_basic_plantuml (unit.test_generator_basic_plantuml.TestGeneratorBasicPlantuml.test_generator_basic_plantuml)
-Run the test_generator_basic_plantuml test through CLI interface. ... ok
-test_generator_comprehensive (unit.test_generator_comprehensive.TestGeneratorComprehensive.test_generator_comprehensive)
-Test comprehensive generator scenarios through the CLI interface ... ok
-test_exact_requested_format (unit.test_generator_exact_format_cli.TestGeneratorExactFormatCLI.test_exact_requested_format)
-Test the exact format requested: public functions, empty line, private functions ... ok
-test_format_with_parameters (unit.test_generator_exact_format_cli.TestGeneratorExactFormatCLI.test_format_with_parameters)
-Test the format works correctly with function parameters ... ok
-test_generator_grouping_comprehensive (unit.test_generator_grouping_cli.TestGeneratorGroupingCLI.test_generator_grouping_comprehensive) ... ok
-test_include_tree_comprehensive (unit.test_generator_include_tree_cli.TestGeneratorIncludeTreeCLI.test_include_tree_comprehensive)
-Test comprehensive include tree generation with multiple files and deep includes ... ok
-test_include_tree_with_absolute_paths (unit.test_generator_include_tree_cli.TestGeneratorIncludeTreeCLI.test_include_tree_with_absolute_paths)
-Test that include relationships work correctly with absolute paths ... ok
-test_generator_includes_and_filtering_comprehensive (unit.test_generator_includes_comprehensive.TestGeneratorIncludesComprehensive.test_generator_includes_and_filtering_comprehensive) ... ok
-test_generator_naming_conventions_comprehensive (unit.test_generator_naming_comprehensive.TestGeneratorNamingComprehensive.test_generator_naming_conventions_comprehensive) ... ok
-test_generator_new_formatting_stereotypes_comprehensive (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_generator_new_formatting_stereotypes_comprehensive) ... ok
-test_generator_visibility_logic_comprehensive (unit.test_generator_visibility_logic.TestGeneratorVisibilityLogicCLI.test_generator_visibility_logic_comprehensive) ... ok
-test_global_parsing_comprehensive (unit.test_global_parsing_comprehensive.TestGlobalParsingComprehensive.test_global_parsing_comprehensive) ... ok
-test_include_filtering_comprehensive (unit.test_include_filtering_comprehensive.TestIncludeFilteringComprehensive.test_include_filtering_comprehensive)
-Test comprehensive include filtering scenarios through the CLI interface ... ok
-test_basic_include_processing (unit.test_include_processing_comprehensive.TestIncludeProcessingComprehensive.test_basic_include_processing)
-Test basic include file processing through CLI interface ... ok
-test_nested_structures_puml (unit.test_nested_structures_puml.TestNestedStructuresPuml.test_nested_structures_puml)
-Test nested structures puml through the CLI interface ... ok
-test_parser_comprehensive_basics (unit.test_parser_complete.TestParserComplete.test_parser_comprehensive_basics) ... ok
-test_parser_encoding (unit.test_parser_encoding.TestParserEncoding.test_parser_encoding)
-Test parsing files with various encodings through the CLI interface ... ok
-test_parser_typedefs_comprehensive_enums (unit.test_parser_enum_comprehensive.TestParserEnumComprehensive.test_parser_typedefs_comprehensive_enums) ... ok
-test_parser_elements_comprehensive (unit.test_parser_enums.TestParserElementsConsolidated.test_parser_elements_comprehensive) ... ok
-test_parser_functions_and_parameters_comprehensive (unit.test_parser_function_comprehensive.TestParserFunctionComprehensive.test_parser_functions_and_parameters_comprehensive) ... ok
-test_parser_functions_and_parameters_comprehensive (unit.test_parser_functions.TestParserFunctions.test_parser_functions_and_parameters_comprehensive) ... ok
-test_parser_elements_comprehensive (unit.test_parser_globals.TestParserGlobals.test_parser_elements_comprehensive) ... ok
-test_parser_includes_comprehensive (unit.test_parser_includes.TestParserIncludes.test_parser_includes_comprehensive) ... ok
-test_parser_elements_comprehensive (unit.test_parser_macros.TestParserMacros.test_parser_elements_comprehensive) ... ok
-test_struct_and_nested_ordering_comprehensive (unit.test_parser_nested_structures_comprehensive.TestParserNestedStructuresComprehensive.test_struct_and_nested_ordering_comprehensive) ... ok
-test_parser_simple_c_file (unit.test_parser_simple_c_file.TestParserSimpleCFile.test_parser_simple_c_file)
-Test parsing a simple C file through the CLI interface ... ok
-test_parser_simple_struct (unit.test_parser_simple_struct.TestParserSimpleStruct.test_parser_simple_struct)
-Test parsing a simple struct definition through the CLI interface ... ok
-test_parser_elements_comprehensive (unit.test_parser_structs.TestParserStructs.test_parser_elements_comprehensive) ... ok
-test_parser_typedefs_comprehensive (unit.test_parser_typedef_struct.TestParserTypedefStruct.test_parser_typedefs_comprehensive) ... ok
-test_parser_typedefs_comprehensive (unit.test_parser_typedefs.TestParserTypedefsConsolidated.test_parser_typedefs_comprehensive) ... ok
-test_preprocessor_and_macros_comprehensive (unit.test_preprocessor_handling_comprehensive.TestPreprocessorHandlingComprehensive.test_preprocessor_and_macros_comprehensive)
-Run the consolidated preprocessor and macros scenario ... ok
-test_parser_comprehensive_basics (unit.test_simple_c_file_parsing.TestParserComprehensiveBasics.test_parser_comprehensive_basics) ... ok
-test_struct_and_nested_ordering_comprehensive (unit.test_struct_order_puml.TestStructOrderPuml.test_struct_and_nested_ordering_comprehensive) ... ok
-test_tokenizer_comprehensive (unit.test_tokenizer_comprehensive.TestTokenizerComprehensive.test_tokenizer_comprehensive)
-Run the consolidated tokenizer scenario ... ok
-test_tokenizer_keywords (unit.test_tokenizer_keywords.TestTokenizerKeywords.test_tokenizer_keywords)
-Test tokenizer keyword recognition through the CLI interface ... ok
-test_transformer_basic (unit.test_transformer_basic.TestTransformerBasic.test_transformer_basic)
-Test basic transformer functionality through the CLI interface ... ok
-test_transformer_comprehensive (unit.test_transformer_comprehensive.TestTransformerComprehensive.test_transformer_comprehensive) ... ok
-test_typedef_extraction_comprehensive (unit.test_typedef_extraction_comprehensive.TestTypedefExtractionComprehensive.test_typedef_extraction_comprehensive)
-Run the consolidated typedef extraction scenario ... ok
-test_verifier_comprehensive (unit.test_verifier_comprehensive.TestVerifierComprehensive.test_verifier_comprehensive)
-Test comprehensive verifier scenarios through the CLI interface ... ok
-
-----------------------------------------------------------------------
-Ran 70 tests in 3.882s
-
-OK
-
---------------------------------------------------
-                 unittest Summary                 
---------------------------------------------------
-Tests run: 70
-Failures: 0
-Errors: 0
-
-======================================================================
-                       🎯 Test Execution Summary                       
-======================================================================
-Duration: 3.92 seconds
-✅ All tests passed!
+============================== 71 passed in 7.87s ==============================
+/opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages/coverage/control.py:943: CoverageWarning: No data was collected. (no-data-collected)
+  self._warn("No data was collected.", slug="no-data-collected")
