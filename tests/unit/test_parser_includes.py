@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Test Parser Includes
+Test Parser Includes – Comprehensive
 
-This test verifies that the c2puml tool can parse include statements and generate
-the expected model and PlantUML output through the CLI interface.
+Consolidated basic includes and include filtering/depth validation
 """
 
 import os
@@ -16,13 +15,9 @@ from tests.framework import UnifiedTestCase
 
 class TestParserIncludes(UnifiedTestCase):
     """Test parsing include statements through the CLI interface"""
-    
-    def test_parser_includes(self):
-        """Test parsing include statements through the CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("parser_includes")
-        
-        # Validate results
+
+    def test_parser_includes_comprehensive(self):
+        result = self.run_test("parser_includes_comprehensive")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

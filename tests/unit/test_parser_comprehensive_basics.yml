@@ -1,0 +1,60 @@
+# Test metadata
+test:
+  name: "Parser – Comprehensive Basics"
+  description: "Consolidated basic/mixed parsing including globals, simple structs/enums/macros/functions in one file"
+  category: "unit"
+  id: "0030"
+
+---
+# Source files
+source_files:
+  complete.c: |
+    #include <stdio.h>
+    #define VERSION "1.0.0"
+
+    typedef struct User {
+        int id;
+        const char * name;
+    } User;
+
+    enum Mode { MODE_A, MODE_B };
+
+    int global_counter = 0;
+
+    static int helper(int x) { return x + 1; }
+    int add(int a, int b) { return a + b; }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "test_parser_comprehensive_basics",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "complete.puml"]
+
+  model:
+    files:
+      complete.c:
+        structs:
+          User:
+            fields: ["id", "name"]
+        enums:
+          Mode:
+            values: ["MODE_A", "MODE_B"]
+        globals: ["global_counter"]
+        functions: ["helper", "add"]
+
+  puml:
+    syntax_valid: true
+    files:
+      complete.puml:
+        contains_elements: ["User", "Mode", "global_counter", "helper", "add"]
