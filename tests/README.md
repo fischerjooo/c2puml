@@ -238,6 +238,21 @@ assertions:
     syntax_valid: true
 ```
 
+## Consolidated test scenarios
+
+- Feature:
+  - `test_cli_modes_and_features_comprehensive.yml`
+  - `test_include_processing_comprehensive.yml`
+  - `test_include_processing_error_handling_comprehensive.yml`
+  - `test_component_features_types_and_relationships_comprehensive.yml`
+- Integration:
+  - `test_integration_relationships_and_formatting_comprehensive.yml`
+  - `test_comprehensive_complete_system_integration.yml` (kept)
+- Unit:
+  - Parser, tokenizer, typedefs, transformer, generator, verifier consolidated under `*_comprehensive.yml` files as visible in `tests/unit/`.
+
+Each consolidated YAML contains a single scenario with richer inputs and multi-assertions to keep coverage while reducing scenario count.
+
 ## Running Tests
 
 ### Individual Test

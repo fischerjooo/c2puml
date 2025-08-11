@@ -18,24 +18,8 @@ Project root: /workspace
            Running Tests with unittest            
 --------------------------------------------------
 test_cli_modes_and_features_comprehensive (feature.test_cli_modes_comprehensive.TestCLIModesComprehensive.test_cli_modes_and_features_comprehensive) ... ok
-test_cross_file_type_dependencies (feature.test_component_features_comprehensive.TestComponentFeaturesComprehensive.test_cross_file_type_dependencies)
-Test cross-file type dependencies through the CLI interface ... ok
-test_generator_complex_relationships (feature.test_component_features_comprehensive.TestComponentFeaturesComprehensive.test_generator_complex_relationships)
-Test PlantUML generation with complex relationships through the CLI interface ... ok
-test_generator_typedef_relationships (feature.test_component_features_comprehensive.TestComponentFeaturesComprehensive.test_generator_typedef_relationships)
-Test PlantUML generation with typedef relationships through the CLI interface ... ok
-test_generator_union_support (feature.test_component_features_comprehensive.TestComponentFeaturesComprehensive.test_generator_union_support)
-Test PlantUML generation with union definitions through the CLI interface ... ok
-test_parser_complex_typedefs_parsing (feature.test_component_features_comprehensive.TestComponentFeaturesComprehensive.test_parser_complex_typedefs_parsing)
-Test parsing complex typedef relationships through the CLI interface ... ok
-test_parser_function_pointers_parsing (feature.test_component_features_comprehensive.TestComponentFeaturesComprehensive.test_parser_function_pointers_parsing)
-Test parsing function pointer definitions through the CLI interface ... ok
-test_parser_unions_parsing (feature.test_component_features_comprehensive.TestComponentFeaturesComprehensive.test_parser_unions_parsing)
-Test parsing union definitions through the CLI interface ... ok
-test_project_structure_analysis (feature.test_component_features_comprehensive.TestComponentFeaturesComprehensive.test_project_structure_analysis)
-Test project structure analysis through the CLI interface ... ok
-test_recursive_include_handling (feature.test_component_features_comprehensive.TestComponentFeaturesComprehensive.test_recursive_include_handling)
-Test recursive include handling through the CLI interface ... ok
+test_component_features_types_and_relationships_comprehensive (feature.test_component_features_comprehensive.TestComponentFeaturesConsolidated.test_component_features_types_and_relationships_comprehensive) ... ok
+test_component_features_types_and_relationships_comprehensive (feature.test_component_features_types_and_relationships_comprehensive.TestComponentFeaturesTypesAndRelationshipsConsolidated.test_component_features_types_and_relationships_comprehensive) ... ok
 test_crypto_filter_pattern_functionality (feature.test_crypto_filter_pattern_comprehensive.TestCryptoFilterPatternComprehensive.test_crypto_filter_pattern_functionality)
 Test crypto filter pattern functionality through the CLI interface ... ok
 test_crypto_filter_usecase_functionality (feature.test_crypto_filter_usecase_comprehensive.TestCryptoFilterUsecaseComprehensive.test_crypto_filter_usecase_functionality)
@@ -53,20 +37,9 @@ End-to-end parse → transform → generate workflow ... ok
 test_multiple_source_folders (feature.test_multiple_source_folders_cli.TestMultipleSourceFoldersCLI.test_multiple_source_folders) ... ok
 test_transform_renaming (feature.test_transformer_features_cli.TestTransformerFeaturesCLI.test_transform_renaming)
 Validate renaming transformations using transform-only ... ok
-test_complete_system_integration (integration.test_comprehensive.TestComprehensiveIntegrationCLI.test_complete_system_integration)
-Test complete system integration with real-world project structure ... ok
-test_comprehensive_c_to_h_relationships (integration.test_comprehensive.TestComprehensiveIntegrationCLI.test_comprehensive_c_to_h_relationships)
-Test comprehensive C to H file relationships with full integration ... ok
-test_comprehensive_header_to_header_relationships (integration.test_comprehensive.TestComprehensiveIntegrationCLI.test_comprehensive_header_to_header_relationships)
-Test comprehensive header-to-header relationships integration ... ok
-test_comprehensive_typedef_relationships (integration.test_comprehensive.TestComprehensiveIntegrationCLI.test_comprehensive_typedef_relationships)
-Test comprehensive typedef relationships integration ... ok
-test_parser_tokenizer_integration (integration.test_comprehensive.TestComprehensiveIntegrationCLI.test_parser_tokenizer_integration)
-Test parser-tokenizer integration with complex structures ... ok
-test_complete_formatting_integration (integration.test_new_formatting_comprehensive.TestNewFormattingComprehensiveCLI.test_complete_formatting_integration)
-Test all new formatting rules working together in a realistic scenario ... ok
-test_mixed_project_comprehensive_formatting (integration.test_new_formatting_comprehensive.TestNewFormattingComprehensiveCLI.test_mixed_project_comprehensive_formatting)
-Test formatting in a project with multiple files and cross-references ... ok
+test_complete_system_integration (integration.test_comprehensive.TestComprehensiveIntegrationCLI.test_complete_system_integration) ... ok
+test_integration_relationships_and_formatting_comprehensive (integration.test_comprehensive.TestComprehensiveIntegrationCLI.test_integration_relationships_and_formatting_comprehensive) ... ok
+test_integration_relationships_and_formatting_comprehensive (integration.test_new_formatting_comprehensive.TestNewFormattingComprehensiveCLI.test_integration_relationships_and_formatting_comprehensive) ... ok
 test_absolute_vs_relative_path_consistency (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_absolute_vs_relative_path_consistency)
 Test absolute vs relative path consistency through CLI interface. ... ok
 test_mixed_path_styles_handling (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_mixed_path_styles_handling)
@@ -153,19 +126,19 @@ test_verifier_comprehensive (unit.test_verifier_comprehensive.TestVerifierCompre
 Test comprehensive verifier scenarios through the CLI interface ... ok
 
 ----------------------------------------------------------------------
-Ran 81 tests in 4.418s
+Ran 70 tests in 3.882s
 
 OK
 
 --------------------------------------------------
                  unittest Summary                 
 --------------------------------------------------
-Tests run: 81
+Tests run: 70
 Failures: 0
 Errors: 0
 
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 4.44 seconds
+Duration: 3.92 seconds
 ✅ All tests passed!
