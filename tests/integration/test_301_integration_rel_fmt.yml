@@ -1,6 +1,6 @@
 test:
   name: Integration – Relationships and Formatting (Comprehensive)
-  description: Combines parser-tokenizer integration, relationships (C↔H, H↔H, typedefs), and formatting checks
+  description: Validate parsing across multiple headers and a C file, ensuring typedefs/enums/functions appear and PlantUML is syntactically valid
   category: integration
   id: '301'
 ---
@@ -29,12 +29,28 @@ config.json: |
     "recursive_search": true
   }
 ---
-cli_execution:
-  steps:
-  - run_full_pipeline
----
 assertions:
   execution:
-    should_succeed: true
+    exit_code: 0
+    max_execution_time: 45.0
+  model:
+    validate_structure: true
+    expected_files:
+      - a.h
+      - b.h
+      - c.c
+    structs_exist:
+      - A
+    enums_exist:
+      - B
+    functions_exist:
+      - f
+    includes_exist:
+      - a.h
+      - b.h
   puml:
     syntax_valid: true
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json

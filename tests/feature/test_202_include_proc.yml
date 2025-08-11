@@ -1,6 +1,6 @@
 test:
   name: Include Processing – Comprehensive
-  description: 'Consolidated workflows: basic, complex structures, dependencies, integration, relationships'
+  description: Validate include graph resolution across multiple headers, presence of prototypes/globals, and successful end-to-end generation
   category: feature
   id: '202'
 ---
@@ -49,17 +49,36 @@ config.json: |
     "file_specific": {"main.c": {"include_depth": 2}}
   }
 ---
-cli_execution:
-  steps:
-  - run_full_pipeline
----
 assertions:
   execution:
-    should_succeed: true
+    exit_code: 0
+    max_execution_time: 30.0
+  model:
+    validate_structure: true
+    expected_files:
+      - main.c
+      - api.h
+      - worker.h
+      - types.h
+      - validation.h
+      - extra.h
+    functions_exist:
+      - main
+      - api_function
+      - worker_function
+      - validate_input
+    globals_exist:
+      - api_global
+      - worker_global
+    includes_exist:
+      - api.h
+      - worker.h
+      - types.h
+      - validation.h
   puml:
     syntax_valid: true
   files:
     output_dir_exists: ./output
     files_exist:
-    - ./output/model.json
-    - ./output/model_transformed.json
+      - ./output/model.json
+      - ./output/model_transformed.json

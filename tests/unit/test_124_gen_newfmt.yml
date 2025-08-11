@@ -1,7 +1,6 @@
 test:
   name: "Generator – New Formatting Stereotypes Comprehensive"
-  description: Validate stereotypes and content for enums, structs, unions, function
-    pointers, and aliases
+  description: Validate stereotypes and content for enums, structs, unions, function pointers, and aliases
   category: unit
   id: '124'
   steps: ["generate"]
@@ -73,25 +72,27 @@ assertions:
   execution:
     exit_code: 0
   puml:
-    test.c.puml:
-      contains:
-      - 'class "Color" as TYPEDEF_COLOR <<enumeration>> #LightYellow'
-      - RED = 0
-      - GREEN = 1
-      - BLUE = 2
-      - class "Person" as STRUCT_PERSON <<struct>>
-      - + int id
-      - + char* name
-      - + int age
-      - class "Data" as UNION_DATA <<union>>
-      - + int as_int
-      - + float as_float
-      - + char as_char
-      - 'class "callback_t" as TYPEDEF_CALLBACK_T <<function pointer>> #LightYellow'
-      - 'class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<function pointer>> #LightYellow'
-      - alias of int(* callback_t)(int, int)
-      - alias of void(* log_callback_t)(const char*)
-      - class "String" as ALIAS_STRING <<typedef>>
-      - class "Integer" as ALIAS_INTEGER <<typedef>>
-      - 'original_type: char*'
-      - 'original_type: int'
+    syntax_valid: true
+    files:
+      test.c.puml:
+        contains_lines:
+          - 'class "Color" as TYPEDEF_COLOR <<enumeration>> #LightYellow'
+          - 'RED = 0'
+          - 'GREEN = 1'
+          - 'BLUE = 2'
+          - 'class "Person" as STRUCT_PERSON <<struct>>'
+          - '+ int id'
+          - '+ char* name'
+          - '+ int age'
+          - 'class "Data" as UNION_DATA <<union>>'
+          - '+ int as_int'
+          - '+ float as_float'
+          - '+ char as_char'
+          - 'class "callback_t" as TYPEDEF_CALLBACK_T <<function pointer>> #LightYellow'
+          - 'class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<function pointer>> #LightYellow'
+          - 'alias of int(* callback_t)(int, int)'
+          - 'alias of void(* log_callback_t)(const char*)'
+          - 'class "String" as ALIAS_STRING <<typedef>>'
+          - 'class "Integer" as ALIAS_INTEGER <<typedef>>'
+          - 'original_type: char*'
+          - 'original_type: int'
