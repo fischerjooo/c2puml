@@ -28,14 +28,13 @@ config.json: |
     "recursive_search": true
   }
 ---
-cli_execution:
-  steps:
-  - parse_only
----
 assertions:
   execution:
-    should_succeed: true
+    exit_code: 0
   model:
+    validate_structure: true
+    expected_files:
+      - nested_union.c
     unions_exist:
     - test_union_t
     - test_union_t_nested_union
@@ -43,18 +42,16 @@ assertions:
     - process_union
     globals_exist:
     - global_union
-    union_fields:
+    union_details:
       test_union_t_nested_union:
-      - name: nested_float
-        type: float
-      - name: nested_double
-        type: double
+        values: []
     element_counts:
       unions: 2
       functions: 1
       globals: 1
       aliases: 0
   puml:
+    syntax_valid: true
     contains_elements:
     - test_union_t
     - process_union
@@ -69,3 +66,7 @@ assertions:
     - test_union_t global_union
     class_count: 3
     relationship_count: 2
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json

@@ -55,7 +55,7 @@ config.json: |
 ---
 assertions:
   execution:
-    should_succeed: true
+    exit_code: 0
   model:
     files:
       geometry.c:
@@ -104,6 +104,10 @@ assertions:
         - graphics_render
   puml:
     syntax_valid: true
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
 ---
 source_files_generate_only:
   model.json: |
@@ -125,22 +129,18 @@ source_files_generate_only:
       ]
     }
 ---
-cli_execution:
-  steps:
-  - run_full_pipeline
-  - generate_only_from_model
----
 assertions_generate_only:
   puml:
-    main.c.puml:
-      contains:
-      - main.c
-      - app.h
-      - utils.h
-      - config.h
-      - types.h
-      - main(
-      - app_init
-      - utility_function
-      - CONFIG_VALUE
-      - class "Point" as STRUCT_POINT <<struct>>
+    files:
+      main.c.puml:
+        contains_lines:
+        - main.c
+        - app.h
+        - utils.h
+        - config.h
+        - types.h
+        - main(
+        - app_init
+        - utility_function
+        - CONFIG_VALUE
+        - 'class "Point" as STRUCT_POINT <<struct>>'
