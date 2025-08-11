@@ -8,26 +8,28 @@ source_files:
   main.c: |
     #include <stdio.h>
     #include "config.h"
-    #define MAX_SIZE 100nntypedef
-         struct Person {
+
+    #define MAX_SIZE 100
+
+    typedef struct Person {
         char name[50];
         int age;
     } Person;
     
-    enum Status
-         {
-        OK,n    ERROR
+    enum Status {
+        OK,
+        ERROR
     };
     
     int global_var = 42;
     
     int main() {
-        printf("
-        Hello, World!
-    ";
+        printf("Hello, World!\n");
         return 0;
     }
-    void process_data(void* data) { }n
+    
+    void process_data(void* data) { }
+
   config.h: |
     #ifndef CONFIG_H
     #define CONFIG_H
