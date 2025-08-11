@@ -9,43 +9,43 @@ source_files:
         int id;
         struct {
             char label[32];
-        \        union {
+    union {
                 int int_val;
                 float float_val;
-        \     };  // Anonymous union within anonymous struct
+    };  // Anonymous union within anonymous struct
             double precision;
-        \    } config;  // Named anonymous struct field
+    } config;  // Named anonymous struct field
         union {
             struct {
-        \            int width;
+    int width;
                 int height;
             } dimensions;  // Named
-        \ struct within anonymous union
+    struct within anonymous union
             long area;
         };  // Anonymous unio
     } container_t;
     
     void setup_container(container_t* c) {
         c->id = 1;
-        \ c->config.precision = 1.0;
+    c->config.precision = 1.0;
         c->dimensions.width = 800;
     }
     
     container_t
-        \ global_container = {0};
+    global_container = {0};
     
-config.json: |
-  {
-    "project_name": "debug_nested_anonymous_structure_fields",
-  \  "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 cli_execution:
   steps:
   - parse_only
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
 ---
 assertions:
   execution:

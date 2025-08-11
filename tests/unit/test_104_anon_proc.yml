@@ -9,13 +9,13 @@ source_files:
   anonymous_test.c: |
     // Test multi-level nested anonymous structures
     typedef struct
-        \ {
+    {
         int level1_id;
         struct {                        
             int level2_id;
-        \        union {                     
+    union {                     
                 int level3_int;
-        \   float level3_float;
+    float level3_float;
             } level3_union;
         } level2_struct;
     } moderately_nested_t;
@@ -23,17 +23,17 @@ source_files:
     // Test deeper nesting (level 4)
     typedef struct {
         char root_marker;
-        \    struct {
+    struct {
             int level2_value;
             struct {
                 float
-        \ level3_value;
+    level3_value;
                 union {
                     char level4_char;
-        \            int level4_int;
+    int level4_int;
                 } level4_data;
             } level3_struct;
-        \    } level2_container;
+    } level2_container;
     } deeply_nested_t;
     
     // Test mixed structure types
@@ -41,27 +41,27 @@ source_files:
         int base_id;
         union {
             struct {
-        \  int struct_in_union;
+    int struct_in_union;
                 char struct_char;
             } inner_struct;
-        \        int direct_int;
+    int direct_int;
         } mixed_union;
     } mixed_types_t;
     
     // Test multiple
-        \ siblings at same level
+    siblings at same level
     typedef struct {
         int parent_id;
         struct {
-        \        int sibling1_value;
+    int sibling1_value;
         } sibling1;
         struct {
             float sibling2_value;
-        \    } sibling2;
+    } sibling2;
         union {
             char sibling3_char;
             int sibling3_int;
-        \    } sibling3;
+    } sibling3;
     } multiple_siblings_t;
     
     // Global variables using the typedefs
@@ -72,7 +72,7 @@ source_files:
     
     // Functions that use these types
     void process_moderate(moderately_nested_t*
-        \ ptr) {
+    ptr) {
         ptr->level1_id = 1;
         ptr->level2_struct.level2_id = 2;
     }
@@ -84,19 +84,9 @@ source_files:
         int main() {
         process_moderate(&moderate_var);
         process_deep(&deep_var);
-        \    return 0;
+    return 0;
     }
     
-config.json: |
-  {
-    "project_name": "test_anonymous_processing",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true,
-    "include_depth": 1
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -156,3 +146,12 @@ assertions:
         - moderately_nested_t
         - deeply_nested_t
         - mixed_types_t
+
+---
+config.json: |
+  {
+    "project_name": "test_anonymous_processing",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

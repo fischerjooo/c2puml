@@ -11,7 +11,7 @@ source_files:
     
     typedef struct {
         float
-        \ x, y, z;
+    x, y, z;
     } vector3_t;
     
     #endif
@@ -20,22 +20,22 @@ source_files:
     #include "include/types.h"
     
     vector3_t normalize(vector3_t v) {
-        \    // Implementation here
+    // Implementation here
         return v;
     }
     
-config.json: |
-  {
-    "project_name": "subdirectory_includes_path_resolution",
-  \  "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 cli_execution:
   steps:
   - run_full_pipeline
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
 ---
 assertions:
   execution:

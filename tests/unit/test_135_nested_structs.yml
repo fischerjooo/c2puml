@@ -9,21 +9,12 @@ source_files:
     typedef union {
         int primary_int;
         union {
-        \        float nested_float;
+    float nested_float;
             double nested_double;
         } nested_union;
-        \    char primary_bytes[32];
+    char primary_bytes[32];
     } test_union_t;
     
-config.json: |
-  {
-    "project_name": "test_nested_structures_puml",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -56,3 +47,12 @@ assertions:
         - class "test_union_t" as TYPEDEF_TEST_UNION_T
         class_count: 3
         relationship_count: 2
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

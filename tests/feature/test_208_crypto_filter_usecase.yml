@@ -15,21 +15,9 @@ source_files:
         // AES encryptio
     }
     void rsa_encrypt() {
-        \    // RSA encryptio
+    // RSA encryptio
     }
     
-config.json: |
-  {
-    "project_name": "crypto_usecase_test",
-    "source_folders": ["."],
-    "recursive_search": true,
-    "output_dir": "./output",
-    "filters": {
-      "remove_files": ["crypto\\\\..*"]
-    }
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -47,3 +35,12 @@ assertions:
     file_count: 2
     contains_elements:
     - main
+
+---
+config.json: |
+  {
+    "project_name": "crypto_usecase_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

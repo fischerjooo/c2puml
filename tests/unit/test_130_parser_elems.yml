@@ -13,7 +13,7 @@ source_files:
     };
     
     struct Rectangle {
-        \   int width;
+    int width;
         int height;
     };
     
@@ -25,19 +25,10 @@ source_files:
     };
     
     enum Status {
-        \  RUNNING,
+    RUNNING,
         STOPPED
     };
     
-config.json: |
-  {
-    "project_name": "test_parser_elements_comprehensive",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -106,3 +97,12 @@ assertions:
         - '#define MIN(a, b)'
         - '#define PI'
         - '#define VERSION'
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

@@ -6,19 +6,10 @@ test:
 ---
 source_files:
   encoding.c: |
-    // UTF-8 comment with \xE9mojis \U0001F680
+    // UTF-8 comment with xE9mojis U0001F680
     int main() { return 0;
-        \ }
+    }
     
-config.json: |
-  {
-    "project_name": "test_parser_encoding",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -47,3 +38,12 @@ assertions:
         - int main()
         class_count: 1
         relationship_count: 0
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

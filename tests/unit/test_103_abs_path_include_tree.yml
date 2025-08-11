@@ -11,7 +11,7 @@ source_files:
     #define TYPES_H
     typedef struct {
         float
-        \ x, y, z;
+    x, y, z;
     } vector3_t;
     #endif
     
@@ -21,20 +21,11 @@ source_files:
     typedef struct {
         int id;
         char
-        \ name[32];
+    name[32];
     } util_data_t;
     void init_utils(void);
     #endif
     
-config.json: |
-  {
-    "project_name": "path_resolution_and_include_tree",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     should_succeed: true
@@ -86,6 +77,15 @@ assertions:
         - graphics_render
   puml:
     syntax_valid: true
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
 ---
 source_files_generate_only:
   model.json: |

@@ -10,30 +10,21 @@ source_files:
         int outer_id;
         struct {
             char
-        \ name[32];
+    name[32];
             struct {
                 float x, y, z;
             } position;
-        \    } inner_data;
+    } inner_data;
         double outer_value;
     } nested_struct_t;
     
     // Function
-        \ using the nested struct
+    using the nested struct
     void process_nested(nested_struct_t* ns) {
         //
-        \ Processing functio
+    Processing functio
     }
     
-config.json: |
-  {
-    "project_name": "debug_nested_struct_parsing",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -77,3 +68,12 @@ assertions:
         - void process_nested(nested_struct_t * ns)
         class_count: 5
         relationship_count: 4
+
+---
+config.json: |
+  {
+    "project_name": "debug_nested_struct_parsing",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

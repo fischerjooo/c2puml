@@ -13,15 +13,15 @@ source_files:
     
     /* Multi-line comment
        about
-        \ typedefs */
+    typedefs */
     typedef int32_t MyInt;
     
     typedef char * MyString; /* Inline comment
-        \ */
+    */
     
     // Typedef with extra whitespace
     typedef  unsigned   long   long    ULongLong
-        \  ;
+    ;
     
     // Typedef with const and volatile
     typedef const char * ConstString;
@@ -31,18 +31,9 @@ source_files:
         typedef struct /* comment */ Point_tag {
         int x; // X coordinate
         int
-        \ y; /* Y coordinate */
+    y; /* Y coordinate */
     } Point_t;
     
-config.json: |
-  {
-    "project_name": "test_typedef_extraction_edge_cases",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -89,3 +80,12 @@ assertions:
         - class "Point_t" as TYPEDEF_POINT_T
         class_count: 8
         relationship_count: 7
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

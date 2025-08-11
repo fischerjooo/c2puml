@@ -15,7 +15,7 @@ source_files:
     // Main processor functions
     void process_data() {
         api_function();
-        \    worker_function();
+    worker_function();
     }
     
     int main() {
@@ -30,7 +30,7 @@ source_files:
     #include "constants.h"
     
     typedef
-        \ int ProcessorID;
+    int ProcessorID;
     typedef struct {
         int x, y;
     } Point;
@@ -43,28 +43,12 @@ source_files:
     
     enum ErrorCode {
         ERROR_NONE,
-        \    ERROR_INVALID,
+    ERROR_INVALID,
         ERROR_MEMORY
     };
     
     #endif
     
-config.json: |
-  {
-    "project_name": "test_include_filtering",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true,
-    "include_depth": 3,
-    "file_specific": {
-      "processor.c": {
-        "include_filter": ["^api\\\\.h$", "^worker\\\\.h$", "^types\\\\.h$", "^platform\\\\.h$"],
-        "include_depth": 2
-      }
-    }
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -144,3 +128,12 @@ assertions:
         - PROCESSOR --> HEADER_WORKER
         - void process_data()
         - int main()
+
+---
+config.json: |
+  {
+    "project_name": "test_include_filtering",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

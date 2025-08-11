@@ -13,58 +13,58 @@ source_files:
         typedef char * MyString;
     typedef unsigned long long ULongLong;
     typedef const
-        \ char * ConstString;
+    char * ConstString;
     typedef volatile int VolatileInt;
     
     // Function pointer
-        \ typedefs
+    typedefs
     typedef int (*MyCallback)(struct MyBuffer_tag * buffer);
     typedef
-        \ void (*log_callback_t)(enum log_level_tag level, const char * message);
+    void (*log_callback_t)(enum log_level_tag level, const char * message);
     typedef
-        \ int (*complex_callback)(int a, int b, char * str);
+    int (*complex_callback)(int a, int b, char * str);
     typedef void (*simple_func_ptr)(void);
         typedef char * (*string_processor)(const char * input, int len);
     typedef int
-        \ (*calculator)(int x, int y);
+    (*calculator)(int x, int y);
     
     // Struct typedefs
     typedef struct MyBuffer_tag
-        \ {
+    {
         MyLen length;
         MyString data;
     } MyBuffer;
     
     typedef struct MyComplexStruct_tag
-        \ {
+    {
         MyLen id;
         MyString name;
         MyCallback callback;
         enum log_level_tag
-        \ log_level;
+    log_level;
     } MyComplex;
     
     typedef struct point_tag {
         int x;
         int
-        \ y;
+    y;
     } point_t;
     
     typedef struct Person {
         char name[50];
         int age;
-        \    char *address;
+    char *address;
     } Person_t;
     
     // Enum typedefs
     typedef enum Color_tag {
-        \    COLOR_RED,
+    COLOR_RED,
         COLOR_GREEN,
         COLOR_BLUE
     } Color_t;
     
     typedef enum
-        \ log_level_tag {
+    log_level_tag {
         LOG_DEBUG,
         LOG_INFO,
         LOG_WARN,
@@ -74,26 +74,26 @@ source_files:
     typedef enum Status_tag {
         STATUS_OK,
         STATUS_ERROR,
-        \    STATUS_PENDING
+    STATUS_PENDING
     } Status_t;
     
     // Union typedefs
     typedef union Number_tag
-        \ {
+    {
         int i;
         float f;
         double d;
     } Number_t;
     
     typedef union NamedUnion_tag
-        \ {
+    {
         char c;
         int i;
         short s;
     } NamedUnion_t;
     
     typedef union Value
-        \ {
+    {
         int integer_value;
         float float_value;
         char string_value[32];
@@ -103,15 +103,6 @@ source_files:
     typedef MyComplex * MyComplexPtr;
         typedef MyComplexPtr MyComplexArray[10];
     
-config.json: |
-  {
-    "project_name": "test_typedef_extraction_comprehensive",
-  \  "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -225,3 +216,12 @@ assertions:
         - class "Color_t" as TYPEDEF_COLOR_T
         - class "Number_t" as TYPEDEF_NUMBER_T
         - class "MyLen" as TYPEDEF_MYLEN
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

@@ -117,15 +117,15 @@ assertions:
       # Test for exact sequence: public functions, empty line, private functions
       regex_matches:
         - pattern: |
-          \+[^\-]*
-          \s*
-          [^\+]*\-
+            \+[^\-]*
+            \s*
+            [^\+]*\-
           description: "Empty line between public and private function groups"
       # Test that no private functions appear before empty line and no public after
       regex_not_matches:
         - pattern: |
-          \-[^
-          ]*
-          [^
-          ]*\+
+            \-[^
+            ]*
+            [^
+            ]*\+
           description: "Should not have private function followed by public function"

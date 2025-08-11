@@ -10,32 +10,32 @@ source_files:
         int primary_int;
         union {
             float
-        \ nested_float;
+    nested_float;
             double nested_double;
         } nested_union;
         char
-        \ primary_bytes[32];
+    primary_bytes[32];
     } test_union_t;
     
     void process_union(test_union_t* tu)
-        \ {
+    {
         tu->primary_int = 42;
     }
     
     test_union_t global_union;
     
+cli_execution:
+  steps:
+  - parse_only
+---
 config.json: |
   {
-    "project_name": "debug_nested_union_field_parsing",
+    "project_name": "auto_test",
     "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true
   }
-  
----
-cli_execution:
-  steps:
-  - parse_only
+
 ---
 assertions:
   execution:

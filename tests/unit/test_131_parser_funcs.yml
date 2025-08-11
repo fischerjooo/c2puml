@@ -11,25 +11,25 @@ source_files:
     
     // Declarations
     int decl_add(int a, int
-        \ b);
+    b);
     void decl_process_point(point_t * p);
     real_t decl_average(const int *
-        \ arr, size_t len);
+    arr, size_t len);
     
     // Definitions
     int def_add(int a, int b) { return a +
-        \ b; }
+    b; }
     inline void def_inline_process(point_t * p) { (void)p; }
     static int def_static_helper(const
-        \ char * s) { return (int)(s ? *s : 0); }
+    char * s) { return (int)(s ? *s : 0); }
     
     // Complex params
     int callback(void
-        \ * data, void * user_data) { return 0; }
+    * data, void * user_data) { return 0; }
     void array_func(int arr[10], size_t
-        \ size) { (void)arr; (void)size; }
+    size) { (void)arr; (void)size; }
     const char * const_func(const char * str)
-        \ { return str; }
+    { return str; }
     
     // Empty params
     void init(void) {}
@@ -38,18 +38,9 @@ source_files:
     // Variadic
     int log_message(int level, const char * fmt, ...) {
       va_list
-        \ args; va_start(args, fmt); va_end(args); (void)level; return 0;
+    args; va_start(args, fmt); va_end(args); (void)level; return 0;
     }
     
-config.json: |
-  {
-    "project_name": "parser_functions_and_parameters_comprehensive",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -84,3 +75,12 @@ assertions:
         - init
         - cleanup
         - log_message
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

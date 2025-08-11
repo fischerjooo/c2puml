@@ -22,7 +22,7 @@ source_files:
           "structs": {},
           "unions": {},
           "aliases": {},
-        \      "functions": [{"name": "main", "return_type": "int", "is_declaration"
+    "functions": [{"name": "main", "return_type": "int", "is_declaration"
         : false, "parameters": []}],
           "globals": []
         },
@@ -39,7 +39,7 @@ source_files:
           "aliases": {},
           "functions": [{"name": "helper_function"
         , "return_type": "void", "is_declaration": true, "parameters": []}],
-        \      "globals": []
+    "globals": []
         },
         "test.c": {
           "file_path": "/tmp/test.c"
@@ -47,20 +47,20 @@ source_files:
           "includes": [],
           "macros": {},
           "enums": {
-        \  "Color": {"values": ["RED", "GREEN", "BLUE"]},
+    "Color": {"values": ["RED", "GREEN", "BLUE"]},
             "LOG_LEVEL_T"
         : {"values": ["DEBUG", "INFO", "WARNING", "ERROR"]},
             "_private"
         : {"values": ["OPTION1", "OPTION2"]}
           },
           "structs": {
-        \       "MyBuffer": {"fields": [{"name": "data", "type": "char*"},
-        \ {"name": "size", "type": "size_t"}]},
+    "MyBuffer": {"fields": [{"name": "data", "type": "char*"},
+    {"name": "size", "type": "size_t"}]},
             "complex_naming_test_t"
         : {"fields": [{"name": "field1", "type": "int"}, {"name": "field2"
         , "type": "char*"}]},
             "a": {"fields": [{"name": "value",
-        \ "type": "int"}]}
+    "type": "int"}]}
           },
           "unions": {
             "Value": {"
@@ -84,21 +84,12 @@ source_files:
           "globals": []
         }
       },
-        \  "include_relations": [
+    "include_relations": [
         {"source_file": "main.c", "included_file"
         : "utils.h", "depth": 1}
       ]
     }
     
-config.json: |
-  {
-    "project_name": "naming_conventions_project",
-    "source_folders": ["src"],
-    "output_dir": "output",
-    "recursive_search": false
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -138,3 +129,12 @@ assertions:
         - class "_private" as TYPEDEF__PRIVATE
         - class "123invalid" as TYPEDEF_123INVALID
         - class "UPPERCASE" as TYPEDEF_UPPERCASE
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

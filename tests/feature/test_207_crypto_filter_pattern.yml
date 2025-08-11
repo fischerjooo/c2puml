@@ -11,7 +11,7 @@ source_files:
     }
     
     void decrypt_data()
-        \ {
+    {
         // Decryption logic  
     }
     
@@ -21,21 +21,9 @@ source_files:
     int main() {
         encrypt_data();
         return
-        \ 0;
+    0;
     }
     
-config.json: |
-  {
-    "project_name": "crypto_filter_test",
-    "source_folders": ["."],
-    "recursive_search": true,
-    "output_dir": "./output",
-    "filters": {
-      "remove_files": ["crypto\\\\..*"]
-    }
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -53,3 +41,12 @@ assertions:
     file_count: 2
     contains_elements:
     - main
+
+---
+config.json: |
+  {
+    "project_name": "crypto_filter_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

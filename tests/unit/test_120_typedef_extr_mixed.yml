@@ -9,7 +9,7 @@ source_files:
     // Comprehensive typedef extraction test
     
     // Simple
-        \ typedefs
+    typedefs
     typedef uint32_t MyLen;
     typedef int32_t MyInt;
     typedef char * MyString;
@@ -18,12 +18,12 @@ source_files:
     typedef struct MyBuffer_tag {
         MyLen length;
         MyString
-        \ data;
+    data;
     } MyBuffer;
     
     typedef struct MyComplexStruct_tag {
         MyLen id;
-        \    MyString name;
+    MyString name;
         MyCallback callback;
         log_level_t log_level;
     } MyComplex;
@@ -33,7 +33,7 @@ source_files:
         typedef void (*log_callback_t)(log_level_t level, const char * message);
     
     //
-        \ Pointer typedefs
+    Pointer typedefs
     typedef MyComplex * MyComplexPtr;
     typedef MyComplexPtr MyComplexArray[10];
         
@@ -41,24 +41,15 @@ source_files:
     typedef enum Color_tag {
         COLOR_RED,
         COLOR_GREEN,
-        \    COLOR_BLUE
+    COLOR_BLUE
     } Color_t;
     
     // Union typedefs
     typedef union Number_tag {
-        \    int i;
+    int i;
         float f;
     } Number_t;
     
-config.json: |
-  {
-    "project_name": "test_typedef_extraction_comprehensive",
-  \  "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -128,3 +119,12 @@ assertions:
         - class "Number_t" as TYPEDEF_NUMBER_T
         class_count: 12
         relationship_count: 19
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

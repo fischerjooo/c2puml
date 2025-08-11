@@ -28,16 +28,27 @@ REPAIRS: List[tuple[re.Pattern, str]] = [
 
 # Remove EOL backslash (likely from broken continuations)
 EOL_BACKSLASH = re.compile(r'[ \t]*\\\r?$')
+# Remove stray backslashes that start a line (indent + \\ + optional spaces)
+LEADING_BSLASH = re.compile(r'^\s*\\\s*')
+# Remove inline stray backslashes after whitespace
+INLINE_BSLASH = re.compile(r'(\s)\\\s*')
 
 
 def fix_content(text: str) -> str:
     # Remove lines that are just backslash or whitespace + backslash
     lines = text.split('\n')
-    cleaned_lines = [ln for ln in lines if not ln.strip() == '\\']
-    text = '\n'.join(cleaned_lines)
-
-    # Remove end-of-line backslashes
-    text = '\n'.join(EOL_BACKSLASH.sub('', ln) for ln in text.split('\n'))
+    normalized_lines = []
+    for ln in lines:
+        if ln.strip() == '\\':
+            continue
+        # Remove end-of-line backslashes
+        ln = EOL_BACKSLASH.sub('', ln)
+        # Remove leading stray backslashes
+        ln = LEADING_BSLASH.sub('', ln)
+        # Remove inline stray backslashes after whitespace
+        ln = INLINE_BSLASH.sub(r'\1', ln)
+        normalized_lines.append(ln)
+    text = '\n'.join(normalized_lines)
 
     # Apply repairs
     for pat, repl in REPAIRS:

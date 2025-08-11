@@ -10,38 +10,38 @@ source_files:
         int base_id;
         struct {
             char
-        \ name[64];
+    name[64];
             float value;
             struct {
                 int x, y, z;
-        \        } coordinates;
+    } coordinates;
         } metadata;
         union {
             long long_value;
-        \        double double_value;
+    double double_value;
         } data_variant;
         char buffer[256];
     } complex_struct_t;
         
     void init_complex_struct(complex_struct_t* cs) {
         cs->base_id = 0;
-        \ cs->metadata.value = 0.0f;
+    cs->metadata.value = 0.0f;
     }
     
     complex_struct_t global_complex;
     
-config.json: |
-  {
-    "project_name": "debug_complex_struct_field_processing",
-  \  "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 cli_execution:
   steps:
   - parse_only
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
 ---
 assertions:
   execution:

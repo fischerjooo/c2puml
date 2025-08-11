@@ -19,27 +19,11 @@ source_files:
     };
     
     void process_data() {
-        \    printf("Processing data");
+    printf("Processing data");
     }
     
     int global_counter;
     
-config.json: |
-  {
-    "project_name": "test_transformer_basic",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true,
-    "transformations": {
-      "rename": {
-        "functions": {
-          "process_data": "handle_data"
-        }
-      }
-    }
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -86,3 +70,12 @@ assertions:
         - void handle_data()
         class_count: 3
         relationship_count: 2
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

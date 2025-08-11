@@ -63,32 +63,23 @@ source_files:
     #define API_VERSION "2.1.0"
     
     typedef struct Item
-        \ Item;
+    Item;
     
     #ifdef FEATURE_A
       typedef struct FeatureA FeatureA;
     #endif
     
     #ifndef
-        \ DISABLE_FEATURE_B
+    DISABLE_FEATURE_B
       typedef struct FeatureB FeatureB;
     #endif
     
     int process_item(Item*
-        \ item);
+    item);
     void initialize_system(void);
     
     #endif // PREPROCESSOR_HEADER_H
     
-config.json: |
-  {
-    "project_name": "preprocessor_and_macros_comprehensive",
-  \  "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -128,3 +119,12 @@ assertions:
         - process_item
         - initialize_system
         - global_items
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

@@ -11,7 +11,7 @@ source_files:
     
     typedef struct {
         int id;
-        \  char name[32];
+    char name[32];
     } util_data_t;
     
     void init_utils(void);
@@ -24,21 +24,21 @@ source_files:
     int main() {
         util_data_t data;
         init_utils();
-        \    return 0;
+    return 0;
     }
     
-config.json: |
-  {
-    "project_name": "relative_path_handling_in_include_tree",
-  \  "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 cli_execution:
   steps:
   - run_full_pipeline
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
 ---
 assertions:
   execution:

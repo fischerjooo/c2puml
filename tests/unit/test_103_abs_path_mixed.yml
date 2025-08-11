@@ -11,7 +11,7 @@ source_files:
     
     typedef struct {
         int base_id;
-        \    char base_name[64];
+    char base_name[64];
     } base_t;
     
     void base_init(base_t* b);
@@ -40,25 +40,25 @@ source_files:
     #include "modules/graphics.h"
     
     int main()
-        \ {
+    {
         graphics_t gfx;
         base_init(&gfx.base);
         graphics_render(&gfx);
-        \    return 0;
+    return 0;
     }
     
+cli_execution:
+  steps:
+  - run_full_pipeline
+---
 config.json: |
   {
-    "project_name": "mixed_path_styles_handling",
+    "project_name": "auto_test",
     "source_folders": ["."],
     "output_dir": "./output",
     "recursive_search": true
   }
-  
----
-cli_execution:
-  steps:
-  - run_full_pipeline
+
 ---
 assertions:
   execution:

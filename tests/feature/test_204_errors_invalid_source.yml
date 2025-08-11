@@ -11,7 +11,7 @@ config.json: |
     "project_name": "test_error_handling",
     "source_folders": ["/nonexistent/path/that/does/not/exist"],
     "output_dir": "output",
-  \  "recursive_search": true
+  "recursive_search": true
   }
   
 ---

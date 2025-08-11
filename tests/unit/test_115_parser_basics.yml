@@ -11,28 +11,19 @@ source_files:
     #define VERSION "1.0.0"
     
     typedef struct User
-        \ {
+    {
         int id;
         const char * name;
     } User;
     
     enum Mode { MODE_A, MODE_B
-        \ };
+    };
     
     int global_counter = 0;
     
     static int helper(int x) { return x + 1; }
         int add(int a, int b) { return a + b; }
     
-config.json: |
-  {
-    "project_name": "test_parser_comprehensive_basics",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -68,3 +59,12 @@ assertions:
         - global_counter
         - helper
         - add
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

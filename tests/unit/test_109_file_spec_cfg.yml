@@ -107,7 +107,7 @@ config.json: |
       "main.c": { "include_depth": 3 },
       "sample.c": {
         "include_filter": [
-        \  "^stdio\\\\.h$", "^stdlib\\\\.h$", "^string\\\\.h$", "^sample\\\\.h$",
+        "^stdio\\\\.h$", "^stdlib\\\\.h$", "^string\\\\.h$", "^sample\\\\.h$",
           "^math_utils\\\\.h$", "^logger\\\\.h$", "^geometry\\\\.h$", "^config\\\\.h$"
         ],
         "include_depth": 3

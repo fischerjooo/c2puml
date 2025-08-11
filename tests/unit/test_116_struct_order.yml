@@ -10,40 +10,31 @@ source_files:
     typedef struct triangle_tag {
         point_t vertices[3];
         char
-        \ label[MAX_LABEL_LEN];
+    label[MAX_LABEL_LEN];
     } triangle_t;
     
   struct_order_puml.c: |
     typedef struct triangle_tag {
         point_t vertices[3];
-        \    char label[MAX_LABEL_LEN];
+    char label[MAX_LABEL_LEN];
     } triangle_t;
     
   struct_order_complex.c: |
     typedef struct complex_struct {
         int id;
         char
-        \ name[32];
+    name[32];
         float value;
         struct {
             int x;
             int y;
-        \    } position;
+    } position;
         union {
             int int_data;
             float float_data;
-        \    } data;
+    } data;
     } complex_struct_t;
     
-config.json: |
-  {
-    "project_name": "struct_and_nested_ordering_comprehensive",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -91,3 +82,12 @@ assertions:
         - complex_struct_t
         contains_lines:
         - class "complex_struct_t" as TYPEDEF_COMPLEX_STRUCT_T
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

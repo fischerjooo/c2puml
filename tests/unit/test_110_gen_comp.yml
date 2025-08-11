@@ -177,3 +177,11 @@ assertions:
       - "get_random_color"
       - "global_counter"
       - "app_name"
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

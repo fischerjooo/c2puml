@@ -11,25 +11,25 @@ source_files:
     #include "platform/platform.h"
     
     int main(int
-        \ argc, char** argv) {
+    argc, char** argv) {
         Platform platform;
         Game game;
     
         if (!platform_init(&platform))
-        \ {
+    {
             return -1;
         }
     
         if (!game_init(&game, &platform)) {
-        \      platform_shutdown(&platform);
+    platform_shutdown(&platform);
             return -1;
         }
     
         while (platform_is_running(&platform))
-        \ {
+    {
             platform_update(&platform);
             game_update(&game, platform_get_delta_time(&platform));
-        \        game_render(&game);
+    game_render(&game);
         }
     
         game_shutdown(&game);
@@ -53,12 +53,12 @@ source_files:
         Platform* platform;
         Player player;
         Level current_level;
-        \    Renderer renderer;
+    Renderer renderer;
         double total_time;
     } Game;
     
     int game_init(Game*
-        \ game, Platform* platform);
+    game, Platform* platform);
     void game_update(Game* game, double delta_time);
         void game_render(Game* game);
     void game_shutdown(Game* game);
@@ -75,7 +75,7 @@ source_files:
     
     typedef struct {
         Vector3 position;
-        \    Vector3 velocity;
+    Vector3 velocity;
         RigidBody physics;
         float health;
         int score;
@@ -93,7 +93,7 @@ source_files:
     
     typedef struct {
         Mesh* geometry;
-        \    Player* players;
+    Player* players;
         int player_count;
         char* name;
     } Level;
@@ -105,15 +105,15 @@ source_files:
     #define RENDERER_H
     
     #include
-        \ "../../graphics/context.h"
+    "../../graphics/context.h"
     #include "../../graphics/shader.h"
     
     typedef
-        \ struct {
+    struct {
         GraphicsContext context;
         Shader* active_shader;
         int
-        \ frame_count;
+    frame_count;
     } Renderer;
     
     #endif
@@ -123,11 +123,11 @@ source_files:
     #define PLATFORM_H
     
     typedef struct
-        \ {
+    {
         void* window_handle;
         int window_width;
         int window_height;
-        \    double last_frame_time;
+    double last_frame_time;
     } Platform;
     
     int platform_init(Platform* platform);
@@ -135,7 +135,7 @@ source_files:
     int platform_is_running(Platform* platform);
         double platform_get_delta_time(Platform* platform);
     void platform_shutdown(Platform*
-        \ platform);
+    platform);
     
     #endif
     
@@ -144,12 +144,12 @@ source_files:
     #define VECTOR_H
     
     typedef struct {
-        \ float x, y, z;
+    float x, y, z;
     } Vector3;
     
     Vector3 vector_add(Vector3 a, Vector3 b);
     Vector3
-        \ vector_scale(Vector3 v, float scalar);
+    vector_scale(Vector3 v, float scalar);
     
     #endif
     
@@ -163,7 +163,7 @@ source_files:
     typedef struct {
         Vector3 position;
         Vector3 velocity;
-        \    Vector3 acceleration;
+    Vector3 acceleration;
         float mass;
     } RigidBody;
     
@@ -174,7 +174,7 @@ source_files:
     #define CONTEXT_H
     
     typedef struct
-        \ {
+    {
         void* api_context;
         int api_version;
     } GraphicsContext;
@@ -186,7 +186,7 @@ source_files:
     #define SHADER_H
     
     typedef struct {
-        \    unsigned int program_id;
+    unsigned int program_id;
         char* source_code;
     } Shader;
     
@@ -198,7 +198,7 @@ source_files:
     
     typedef struct {
         float*
-        \ vertices;
+    vertices;
         unsigned int* indices;
         int vertex_count;
         int index_count;
@@ -206,20 +206,6 @@ source_files:
     
     #endif
     
-config.json: |
-  {
-    "project_name": "complete_system_integration_test",
-    "source_folders": ["src"],
-    "output_dir": "./output",
-    "recursive_search": true,
-   \ "include_depth": 5,
-    "file_filters": {
-      "include": ["*.c", "*.h"],
-      "exclude": []
-    }
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -248,3 +234,12 @@ assertions:
   puml:
     syntax_valid: true
     file_count: 1
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

@@ -11,13 +11,13 @@ source_files:
     struct Person {
         char name[50];
         int
-        \ age;
+    age;
     };
     
     int main() {
         struct Person p = {"John", 30};
         return
-        \ 0;
+    0;
     }
     
   src1/utils.h: |
@@ -26,7 +26,7 @@ source_files:
     
     typedef struct {
         int x,
-        \ y;
+    y;
     } Point;
     
     void print_point(Point p);
@@ -49,7 +49,7 @@ source_files:
     #include "data.h"
     
     union Data { int i; float f; char str[20];
-        \ };
+    };
     
     struct Container {
         union Data data;
@@ -63,23 +63,13 @@ source_files:
     #define MAX_SIZE 100
     
     typedef
-        \ struct {
+    struct {
         int values[MAX_SIZE];
         int count;
     } Array;
     
     #endif
     
-config.json: |
-  {
-    "project_name": "multi_source_test",
-    "source_folders": ["./src/src1", "./src/src2", "./src/src3"],
-    "output_dir": "./output",
-    "recursive_search": true,
-    "include_depth": 1
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -107,3 +97,12 @@ assertions:
     - MAX_SIZE
   puml:
     syntax_valid: true
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

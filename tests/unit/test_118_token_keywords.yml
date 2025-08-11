@@ -19,32 +19,23 @@ source_files:
     
     union DataUnion {
         int
-        \ intVal;
+    intVal;
         float floatVal;
     };
     
     static int static_var = 10;
     extern int
-        \ extern_var;
+    extern_var;
     
     inline void inline_func() {
         // inline functio
     }
     
     void
-        \ regular_func(const void* ptr) {
+    regular_func(const void* ptr) {
         // regular functio
     }
     
-config.json: |
-  {
-    "project_name": "test_tokenizer_keywords",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -95,3 +86,12 @@ assertions:
         - class "DataEnum" as TYPEDEF_DATAENUM
         class_count: 4
         relationship_count: 3
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

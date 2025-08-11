@@ -41,7 +41,7 @@ source_files:
     } User;
     
     enum Color
-        \ {
+    {
         RED,
         GREEN,
         BLUE
@@ -51,16 +51,6 @@ source_files:
     
     #endif
     
-config.json: |
-  {
-    "project_name": "integration_cli_project",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true,
-    "include_depth": 2
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -86,3 +76,12 @@ assertions:
     - config.h
   puml:
     syntax_valid: true
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

@@ -192,3 +192,11 @@ assertions:
       - "ValidUnion2"
       - "valid_function"
       - "another_valid_function"
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

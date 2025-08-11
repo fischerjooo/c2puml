@@ -12,71 +12,62 @@ source_files:
         int count;
         struct {
             int item_id;
-        \ char item_name[32];
+    char item_name[32];
             union {
                 int int_data;
-        \  float float_data;
+    float float_data;
                 struct { int x, y; } point_data;
             }
-        \ item_value;
+    item_value;
         } items[10];
     } array_of_anon_structs_t;
     
     void process_array(array_of_anon_structs_t*
-        \ arr) {
+    arr) {
         arr->count = 5;
         arr->items[0].item_id = 1;
     }
     
     array_of_anon_structs_t
-        \ global_array;
+    global_array;
     
     // Deeply nested anonymous structures
     typedef struct {
-        \   struct {
+    struct {
             struct { int level3_field; } level3_struct;
         } level2_struct;
         } nested_anonymous_t;
     
     void init_nested(nested_anonymous_t* n) {
     ->level2_struct.level3_struct.level3_field
-        \ = 42; }
+    = 42; }
     nested_anonymous_t global_nested = {0};
     
     // Anonymous union within
-        \ struct
+    struct
     typedef struct {
         int type_id;
         union {
             int int_value;
-        \        float float_value;
+    float float_value;
             char string_value[64];
             struct {
-        \ int x, y, z; } point_value;
+    int x, y, z; } point_value;
         } data_union;
         int checksum;
     } struct_with_union_t;
         
     void set_union_data(struct_with_union_t* s, int type) {
         s->type_id = type;
-        \    if (type == 1) { s->data_union.int_value = 42; }
+    if (type == 1) { s->data_union.int_value = 42; }
         else if (type == 2)
-        \ { s->data_union.point_value.x = 10; }
+    { s->data_union.point_value.x = 10; }
         s->checksum = 0xFF;
     }
     
     struct_with_union_t
-        \ global_struct;
+    global_struct;
     
-config.json: |
-  {
-    "project_name": "anonymous_structures_and_unions",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -152,3 +143,12 @@ assertions:
         - + int x
         - + int y
         - + int z
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

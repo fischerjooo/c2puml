@@ -88,7 +88,7 @@ config.json: |
     "transformations": {
       "remove": {
         "structs": ["^Temp.*"],
-     \   "enums": ["TempStatus"],
+     "enums": ["TempStatus"],
         "functions": ["temp_.*"],
         "globals": ["temp_.*"],
         "macros": ["UNUSED_.*"]
@@ -104,10 +104,10 @@ config.json: |
         "include_patterns": ["main.*", "utils.*"],
         "exclude_patterns": ["temp.*"]
       },
-  \    "include_depth": 2,
+  "include_depth": 2,
       "include_filters": {
         "depth": 1,
-    \    "file_specific": {"main.c": {"include_depth": 2}}
+    "file_specific": {"main.c": {"include_depth": 2}}
       },
       "file_selection": ["main.c"]
     }

@@ -11,7 +11,7 @@ source_files:
     
     int main() {
         Point p =
-        \ {0, 0};
+    {0, 0};
         return 0;
     }
     
@@ -21,21 +21,11 @@ source_files:
     
     typedef struct {
         int x;
-        \ int y;
+    int y;
     } Point;
     
     #endif
     
-config.json: |
-  {
-    "project_name": "test_include_processing_basic",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true,
-    "include_depth": 2
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -76,3 +66,12 @@ assertions:
         - '- int main()'
         class_count: 3
         relationship_count: 2
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }

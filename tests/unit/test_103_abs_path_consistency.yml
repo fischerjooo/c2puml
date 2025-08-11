@@ -10,13 +10,13 @@ source_files:
     #define CONFIG_H
     
     #define MAX_BUFFER_SIZE
-        \ 1024
+    1024
     #define DEFAULT_TIMEOUT 30
     
     typedef struct {
         int port;
         char
-        \ host[256];
+    host[256];
         int timeout;
     } config_t;
     
@@ -31,23 +31,23 @@ source_files:
     #include "../shared/config.h"
     
     config_t global_config = {8080,
-        \ "localhost", DEFAULT_TIMEOUT};
+    "localhost", DEFAULT_TIMEOUT};
     
     void network_connect(void) {
         // Connect
-        \ using global_config
+    using global_config
         config_load("network.conf");
     }
     
     void network_disconnect(void)
-        \ {
+    {
         config_save("network.conf");
     }
     
   main.c: |
     #include "shared/config.h"
     #include "core/network.c"  // Direct include
-        \ for testing path consistency
+    for testing path consistency
     
     int main() {
         config_load("main.conf"
@@ -57,18 +57,18 @@ source_files:
         return 0;
     }
     
-config.json: |
-  {
-    "project_name": "absolute_vs_relative_path_consistency",
-  \  "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 cli_execution:
   steps:
   - run_full_pipeline
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
 ---
 assertions:
   execution:

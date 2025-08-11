@@ -17,13 +17,12 @@ source_files:
         void (*callback)(struct
          Node* self, void* context);
     } Node;
-    n// Complex enum with explicit valuesn
+    // Complex enum with explicit valuesn
         typedef enum {
         STATE_INIT = 0x01,n    STATE_RUNNING = 0x02,n    STATE_PAUSED
          = 0x04,n    STATE_STOPPED = 0x08,n    STATE_ERROR = 0xFF
     } SystemState;
-    
-        n// Complex union with nested structsntypedef union {
+    // Complex union with nested structsntypedef union {
         struct {
           
           uint8_t r, g, b, a;
@@ -35,18 +34,18 @@ source_files:
             uint16_t low;
         } words;
     } ColorUnion;
-    n//
+    //
          Complex function with multiple pointer levels
     int** allocate_matrix(size_t
          rows, size_t cols);
-    n// Function with complex parameter types
+    // Function with complex parameter types
     void process_data(
             const Node* const * nodes,n    size_t count,n    int (*processor)(const
          Node*, void*),n    void* contextn);
-    n// Simple global variable
+    // Simple global variable
     static int
          global_counter = 0;
-    n// Complex macro with multi-line definition
+    // Complex macro with multi-line definition
     #define
          SAFE_FREE(ptr) do { 
         if ((ptr) != NULL) { 
@@ -55,17 +54,16 @@ source_files:
                 (ptr) = NULL; 
         } 
     } while(0)
-    n// Function with complex body
+    // Function with complex body
          that tests expression parsingnNode* create_node(int data) {
         Node* node
          = (Node*)malloc(sizeof(Node));
         if (node != NULL) {
-            node->data
+    ode->data
          = data;
-            node->next = NULL;
-            node->compare = NULL;
-           
-         node->callback = NULL;
+    ode->next = NULL;
+    ode->compare = NULL;
+    ode->callback = NULL;
         }n    return node;
     }n
   edge_cases.c: |
@@ -79,17 +77,17 @@ source_files:
          {
         char string_with_quotes[50];  // "embedded quotes"n    char escaped_chars[20];
                // contains 
-    , \t, \\, "n    int complex_expr;             //
+    , t, \, "n    int complex_expr;             //
          result of (a * b + c) / d
     };
-    n// String literals with special contentnconst
+    // String literals with special contentnconst
          char* test_strings[] = {
         "Simple string",n    "String with "escaped
-         quotes"",n    "String with \\ backslash",n    "String with 
+         quotes"",n    "String with \ backslash",n    "String with 
      newline"
         ,n    "Multi line string",n    ""  // Empty string
     };
-    n// Complex expressions
+    // Complex expressions
          with multiple operators
     int complex_calculation() {
         int a = 10, b = 20,
@@ -115,7 +113,7 @@ source_files:
             } 
       
           } while(0)
-    n// Edge case: function with many punctuation marks
+    // Edge case: function with many punctuation marks
     void punctuation_test(int
          array[], size_t len, int (*cmp)(const void*, const void*)) {
         int* ptr =
@@ -149,7 +147,7 @@ source_files:
     #define MIN(a, b) ((a) < (b) ? (a) : (b))
     #define
          CLAMP(x, min, max) MIN(MAX(x, min), max)
-    n// Macro with stringification and
+    // Macro with stringification and
          token pasting
     #define DECLARE_FUNC(name) 
         void name##_init(void);
@@ -191,7 +189,7 @@ source_files:
       
                      (x), (y), temp1, (z), temp2); 
         } while(0)
-    nDECLARE_FUNC(module_a)
+    DECLARE_FUNC(module_a)
     
         DECLARE_FUNC(module_b)
     
@@ -200,23 +198,23 @@ source_files:
     
     struct complex_struct;
     typedef struct
-        \ complex_struct complex_t;
+    complex_struct complex_t;
     
     typedef void (*callback_t)(int result, void* user_data);
         typedef int (*comparator_t)(const void* a, const void* b);
     
     int complex_function(
-        \    const char* name,
+    const char* name,
         complex_t* data,
         callback_t callback,
         void*
-        \ user_data,
+    user_data,
         int flags,
         ...  // variadic parameters
     );
     
     static complex_t*
-        \ create_complex(
+    create_complex(
         const char* name,
         size_t name_len,
         int initial_value
@@ -226,14 +224,14 @@ source_files:
     
     comparator_t get_comparator(
         const char* type,
-        \    int (*custom_compare)(const void*, const void*)
+    int (*custom_compare)(const void*, const void*)
     );
     
     inline void process_array(
-        \    complex_t** array,
+    complex_t** array,
         size_t count,
         void (*processor)(complex_t*,
-        \ int index)
+    int index)
     ) {}
     
     void log_message(int level, const char* format, ...);
@@ -244,29 +242,29 @@ source_files:
     #include <stdlib.h>
     
     typedef enum {
-        \    STATE_IDLE = 0,
+    STATE_IDLE = 0,
         STATE_RUNNING = 1,
         STATE_PAUSED = 2,
         STATE_ERROR
-        \ = -1
+    = -1
     } state_t;
     
     typedef struct {
         char name[64];
         state_t current_state;
-        \    struct {
+    struct {
             int x, y, z;
             union {
                 float as_float[3];
-        \            int as_int[3];
+    int as_int[3];
             } coordinates;
         } position;
         union
-        \ {
+    {
             struct {
                 char type;
                 int value;
-        \  } typed_data;
+    } typed_data;
             float raw_float;
             int raw_int;
         } data;
@@ -276,9 +274,9 @@ source_files:
         
     int process_entity(complex_entity_t* entity, state_t new_state) {
         if (entity
-        \ && new_state >= STATE_IDLE) {
+    && new_state >= STATE_IDLE) {
             entity->current_state = new_state;
-        \        return 1;
+    return 1;
         }
         return 0;
     }
@@ -291,23 +289,23 @@ source_files:
         int primary_int;
         union {
             float
-        \ nested_float;
+    nested_float;
             double nested_double;
             union {
                 char
-        \ deep_char;
+    deep_char;
                 short deep_short;
             } deep_union;
         } nested_union;
-        \    char primary_bytes[32];
+    char primary_bytes[32];
         struct {
             int struct_in_union;
-        \     float struct_float;
+    float struct_float;
         } embedded_struct;
     } complex_union_t;
     
     void
-        \ process_complex_union(complex_union_t* cu) {}
+    process_complex_union(complex_union_t* cu) {}
     complex_union_t global_complex_union;
     
   keywords.c: |
@@ -323,27 +321,18 @@ source_files:
     
     union DataUnion {
         int
-        \ intVal;
+    intVal;
         float floatVal;
     };
     
     static int static_var = 10;
     extern int
-        \ extern_var;
+    extern_var;
     
     inline void inline_func() {}
     void regular_func(const void* ptr)
-        \ {}
+    {}
     
-config.json: |
-  {
-    "project_name": "test_tokenizer_comprehensive",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-  
----
 assertions:
   execution:
     exit_code: 0
@@ -543,3 +532,12 @@ assertions:
         contains_lines:
         - class "DataStruct" as TYPEDEF_DATASTRUCT
         - class "DataEnum" as TYPEDEF_DATAENUM
+
+---
+config.json: |
+  {
+    "project_name": "auto_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
