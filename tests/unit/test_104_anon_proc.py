@@ -19,7 +19,7 @@ class TestAnonymousProcessingComprehensive(UnifiedTestCase):
     def test_anonymous_processing_comprehensive(self):
         """Test comprehensive anonymous structure processing scenarios through the CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("anonymous_processing_comprehensive")
+        result = self.run_test("104_anon_proc")
         
         # Validate results
         self.validate_execution_success(result)

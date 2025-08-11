@@ -13,7 +13,7 @@ from tests.framework import UnifiedTestCase
 
 class TestAnonymousStructureComprehensive(UnifiedTestCase):
     def test_anonymous_structures_and_unions_comprehensive(self):
-        result = self.run_test("anonymous_structures_and_unions_comprehensive")
+        result = self.run_test("105_anon_structs")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
