@@ -19,7 +19,7 @@ class TestTransformerFeaturesCLI(UnifiedTestCase):
     def test_transform_renaming(self):
         """Validate renaming transformations using transform-only"""
         # Load test data from YAML
-        test_id = "transformer_features_cli_renaming"
+        test_id = "206_trans_features_renaming"
         test_data = self.data_loader.load_test_data(test_id)
 
         # Create temporary files

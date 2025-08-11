@@ -1,159 +1,94 @@
-# Test metadata
 test:
-  name: "Anonymous Processing Comprehensive"
-  description: "Comprehensive test for multi-pass anonymous structure processing with nested levels"
-  category: "unit"
-  id: "0503"
-
+  name: Anonymous Processing Comprehensive
+  description: Comprehensive test for multi-pass anonymous structure processing with
+    nested levels
+  category: unit
+  id: '104'
 ---
-# Source files
 source_files:
-  anonymous_test.c: |
-    // Test multi-level nested anonymous structures
-    typedef struct {
-        int level1_id;
-        struct {                        
-            int level2_id;
-            union {                     
-                int level3_int;
-                float level3_float;
-            } level3_union;
-        } level2_struct;
-    } moderately_nested_t;
-    
-    // Test deeper nesting (level 4)
-    typedef struct {
-        char root_marker;
-        struct {
-            int level2_value;
-            struct {
-                float level3_value;
-                union {
-                    char level4_char;
-                    int level4_int;
-                } level4_data;
-            } level3_struct;
-        } level2_container;
-    } deeply_nested_t;
-    
-    // Test mixed structure types
-    typedef struct {
-        int base_id;
-        union {
-            struct {
-                int struct_in_union;
-                char struct_char;
-            } inner_struct;
-            int direct_int;
-        } mixed_union;
-    } mixed_types_t;
-    
-    // Test multiple siblings at same level
-    typedef struct {
-        int parent_id;
-        struct {
-            int sibling1_value;
-        } sibling1;
-        struct {
-            float sibling2_value;
-        } sibling2;
-        union {
-            char sibling3_char;
-            int sibling3_int;
-        } sibling3;
-    } multiple_siblings_t;
-    
-    // Global variables using the typedefs
-    moderately_nested_t moderate_var;
-    deeply_nested_t deep_var;
-    mixed_types_t mixed_var;
-    multiple_siblings_t siblings_var;
-    
-    // Functions that use these types
-    void process_moderate(moderately_nested_t* ptr) {
-        ptr->level1_id = 1;
-        ptr->level2_struct.level2_id = 2;
-    }
-    
-    void process_deep(deeply_nested_t* ptr) {
-        ptr->root_marker = 'A';
-    }
-    
-    int main() {
-        process_moderate(&moderate_var);
-        process_deep(&deep_var);
-        return 0;
-    }
-
+  anonymous_test.c: "// Test multi-level nested anonymous structures\ntypedef struct\
+    \ {\n    int level1_id;\n    struct {                        \n        int level2_id;\n\
+    \        union {                     \n            int level3_int;\n         \
+    \   float level3_float;\n        } level3_union;\n    } level2_struct;\n} moderately_nested_t;\n\
+    \n// Test deeper nesting (level 4)\ntypedef struct {\n    char root_marker;\n\
+    \    struct {\n        int level2_value;\n        struct {\n            float\
+    \ level3_value;\n            union {\n                char level4_char;\n    \
+    \            int level4_int;\n            } level4_data;\n        } level3_struct;\n\
+    \    } level2_container;\n} deeply_nested_t;\n\n// Test mixed structure types\n\
+    typedef struct {\n    int base_id;\n    union {\n        struct {\n          \
+    \  int struct_in_union;\n            char struct_char;\n        } inner_struct;\n\
+    \        int direct_int;\n    } mixed_union;\n} mixed_types_t;\n\n// Test multiple\
+    \ siblings at same level\ntypedef struct {\n    int parent_id;\n    struct {\n\
+    \        int sibling1_value;\n    } sibling1;\n    struct {\n        float sibling2_value;\n\
+    \    } sibling2;\n    union {\n        char sibling3_char;\n        int sibling3_int;\n\
+    \    } sibling3;\n} multiple_siblings_t;\n\n// Global variables using the typedefs\n\
+    moderately_nested_t moderate_var;\ndeeply_nested_t deep_var;\nmixed_types_t mixed_var;\n\
+    multiple_siblings_t siblings_var;\n\n// Functions that use these types\nvoid process_moderate(moderately_nested_t*\
+    \ ptr) {\n    ptr->level1_id = 1;\n    ptr->level2_struct.level2_id = 2;\n}\n\n\
+    void process_deep(deeply_nested_t* ptr) {\n    ptr->root_marker = 'A';\n}\n\n\
+    int main() {\n    process_moderate(&moderate_var);\n    process_deep(&deep_var);\n\
+    \    return 0;\n}\n"
 ---
-# Configuration
-config.json: |
-  {
-    "project_name": "test_anonymous_processing",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true,
-    "include_depth": 1
-  }
-
+config.json: "{\n  \"project_name\": \"test_anonymous_processing\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true,\n  \"\
+  include_depth\": 1\n}\n"
 ---
-# Assertions
 assertions:
   execution:
     exit_code: 0
-    output_files: ["model.json", "model_transformed.json", "anonymous_test.puml"]
-  
+    output_files:
+    - model.json
+    - model_transformed.json
+    - anonymous_test.puml
   model:
     validate_structure: true
-    project_name: "test_anonymous_processing"
-    expected_files: ["anonymous_test.c"]
-    
-    # Test that original typedefs are present
+    project_name: test_anonymous_processing
+    expected_files:
+    - anonymous_test.c
     files:
       anonymous_test.c:
-        structs_exist: [
-          "moderately_nested_t", "deeply_nested_t", "mixed_types_t", "multiple_siblings_t"
-        ]
-        functions_exist: ["process_moderate", "process_deep", "main"]
-        globals_exist: ["moderate_var", "deep_var", "mixed_var", "siblings_var"]
-    
-    # Test that anonymous structures are extracted as separate entities
-    # The exact names depend on the implementation but should follow patterns like:
-    # - ParentType_fieldName for extracted anonymous structures
-    structs_exist: [
-      "moderately_nested_t", "deeply_nested_t", "mixed_types_t", "multiple_siblings_t"
-    ]
-    
-    # Anonymous processing creates additional structures from nested definitions
-    # Focus on core functionality rather than exact counts which depend on implementation details
-  
+        structs_exist:
+        - moderately_nested_t
+        - deeply_nested_t
+        - mixed_types_t
+        - multiple_siblings_t
+        functions_exist:
+        - process_moderate
+        - process_deep
+        - main
+        globals_exist:
+        - moderate_var
+        - deep_var
+        - mixed_var
+        - siblings_var
+    structs_exist:
+    - moderately_nested_t
+    - deeply_nested_t
+    - mixed_types_t
+    - multiple_siblings_t
   puml:
     syntax_valid: true
     file_count: 1
-    
-    # Test that main typedefs appear in PlantUML
-    contains_elements: [
-      "moderately_nested_t", "deeply_nested_t", "mixed_types_t", "multiple_siblings_t",
-      "process_moderate", "process_deep", "main"
-    ]
-    
+    contains_elements:
+    - moderately_nested_t
+    - deeply_nested_t
+    - mixed_types_t
+    - multiple_siblings_t
+    - process_moderate
+    - process_deep
+    - main
     files:
       anonymous_test.puml:
         syntax_valid: true
-        
-        # Test that typedef classes are generated
-        contains_lines: [
-          "class \"moderately_nested_t\" as TYPEDEF_MODERATELY_NESTED_T",
-          "class \"deeply_nested_t\" as TYPEDEF_DEEPLY_NESTED_T",
-          "class \"mixed_types_t\" as TYPEDEF_MIXED_TYPES_T",
-          "class \"multiple_siblings_t\" as TYPEDEF_MULTIPLE_SIBLINGS_T",
-          "void process_moderate(",
-          "void process_deep(",
-          "int main()"
-        ]
-        
-        # Test that function signatures include parameters
-        contains_elements: ["moderately_nested_t", "deeply_nested_t", "mixed_types_t"]
-        
-        # Focus on presence of key elements rather than exact counts
-        # as anonymous processing creates additional structures
+        contains_lines:
+        - class "moderately_nested_t" as TYPEDEF_MODERATELY_NESTED_T
+        - class "deeply_nested_t" as TYPEDEF_DEEPLY_NESTED_T
+        - class "mixed_types_t" as TYPEDEF_MIXED_TYPES_T
+        - class "multiple_siblings_t" as TYPEDEF_MULTIPLE_SIBLINGS_T
+        - void process_moderate(
+        - void process_deep(
+        - int main()
+        contains_elements:
+        - moderately_nested_t
+        - deeply_nested_t
+        - mixed_types_t

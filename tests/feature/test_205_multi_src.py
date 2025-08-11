@@ -15,7 +15,7 @@ class TestMultipleSourceFoldersCLI(UnifiedTestCase):
     """Validate parsing with multiple source folders using CLI"""
 
     def test_multiple_source_folders(self):
-        result = self.run_test("multiple_source_folders_cli")
+        result = self.run_test("205_multi_src")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

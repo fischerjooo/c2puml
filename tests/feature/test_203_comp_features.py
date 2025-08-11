@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Integration Feature Tests via CLI
+Test Component Features – Consolidated
 """
 
 import os
@@ -11,12 +11,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 
-class TestIntegrationCLI(UnifiedTestCase):
-    """Integration tests using the CLI interface"""
-
-    def test_complete_workflow(self):
-        """End-to-end parse → transform → generate workflow"""
-        result = self.run_test("integration_cli_complete_workflow")
+class TestComponentFeaturesConsolidated(UnifiedTestCase):
+    def test_component_features_types_and_relationships_comprehensive(self):
+        result = self.run_test("203_comp_features")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

@@ -18,10 +18,10 @@ class TestErrorHandlingComprehensive(UnifiedTestCase):
     def test_invalid_source_folder_errors(self):
         """Test various invalid source folder scenarios"""
         # Load test data from YAML
-        test_data = self.data_loader.load_test_data("error_handling_comprehensive_invalid_source_folders")
+        test_data = self.data_loader.load_test_data("204_errors_invalid_source")
         
         # Create temporary files
-        source_dir, config_path = self.data_loader.create_temp_files(test_data, "error_handling_comprehensive_invalid_source_folders")
+        source_dir, config_path = self.data_loader.create_temp_files(test_data, "204_errors_invalid_source")
         
         # Get the temp directory (parent of source_dir)
         temp_dir = os.path.dirname(source_dir)
@@ -40,10 +40,10 @@ class TestErrorHandlingComprehensive(UnifiedTestCase):
     def test_invalid_config_errors(self):
         """Test various invalid configuration scenarios"""
         # Load test data from YAML
-        test_data = self.data_loader.load_test_data("error_handling_comprehensive_invalid_config")
+        test_data = self.data_loader.load_test_data("204_errors_invalid_config")
         
         # Create temporary files
-        source_dir, config_path = self.data_loader.create_temp_files(test_data, "error_handling_comprehensive_invalid_config")
+        source_dir, config_path = self.data_loader.create_temp_files(test_data, "204_errors_invalid_config")
         
         # Get the temp directory (parent of source_dir)
         temp_dir = os.path.dirname(source_dir)
@@ -62,10 +62,10 @@ class TestErrorHandlingComprehensive(UnifiedTestCase):
     def test_partial_failure_scenarios(self):
         """Test scenarios where some operations fail but others succeed"""
         # Load test data from YAML
-        test_data = self.data_loader.load_test_data("error_handling_comprehensive_partial_failures")
+        test_data = self.data_loader.load_test_data("204_errors_partial")
         
         # Create temporary files
-        source_dir, config_path = self.data_loader.create_temp_files(test_data, "error_handling_comprehensive_partial_failures")
+        source_dir, config_path = self.data_loader.create_temp_files(test_data, "204_errors_partial")
         
         # Get the temp directory (parent of source_dir)
         temp_dir = os.path.dirname(source_dir)

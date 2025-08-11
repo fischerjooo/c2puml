@@ -1,129 +1,165 @@
-# Test metadata
 test:
-  name: "File-specific Configuration – Comprehensive"
-  description: "Consolidated extraction, include depth, include filter, and pattern validations"
-  category: "unit"
-  id: "0111"
-
+  name: "File-specific Configuration \u2013 Comprehensive"
+  description: Consolidated extraction, include depth, include filter, and pattern
+    validations
+  category: unit
+  id: '109'
 ---
-# Source files
 source_files:
-  config_test.c: |
-    #include "config.h"
+  config_test.c: '#include "config.h"
+
     int main() { return CONFIG_VALUE; }
-  
-  config.h: |
-    #ifndef CONFIG_H
+
+    '
+  config.h: '#ifndef CONFIG_H
+
     #define CONFIG_H
+
     #define CONFIG_VALUE 100
+
     extern int global_config;
+
     #endif
 
-  main.c: |
-    #include "utils.h"
+    '
+  main.c: '#include "utils.h"
+
     int main2() { util_function(); return 0; }
-  
-  utils.h: |
-    #ifndef UTILS_H
+
+    '
+  utils.h: '#ifndef UTILS_H
+
     #define UTILS_H
+
     void util_function(void);
+
     #endif
 
-  sample.c: |
-    #include <stdio.h>
+    '
+  sample.c: '#include <stdio.h>
+
     #include <stdlib.h>
+
     #include <string.h>
+
     #include "sample.h"
+
     #include "math_utils.h"
+
     #include "logger.h"
+
     #include "geometry.h"
+
     #include "filtered_header.h"
+
     #include "first_level.h"
+
     int main3() { return 0; }
-  
-  sample.h: |
-    #ifndef SAMPLE_H
+
+    '
+  sample.h: '#ifndef SAMPLE_H
+
     #define SAMPLE_H
+
     typedef struct { int id; char name[64]; } sample_t;
+
     void sample_function(void);
+
     #endif
-  
-  math_utils.h: |
-    #ifndef MATH_UTILS_H
+
+    '
+  math_utils.h: '#ifndef MATH_UTILS_H
+
     #define MATH_UTILS_H
+
     int add(int a, int b);
+
     int multiply(int a, int b);
+
     #endif
-  
-  test.c: |
-    #include <stdio.h>
+
+    '
+  test.c: '#include <stdio.h>
+
     #include "local.h"
+
     int main4() { return 0; }
-  
-  local.h: |
-    #ifndef LOCAL_H
+
+    '
+  local.h: '#ifndef LOCAL_H
+
     #define LOCAL_H
+
     #define LOCAL_CONSTANT 42
+
     #endif
 
+    '
 ---
-config.json: |
-  {
-    "project_name": "file_specific_configuration_comprehensive",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true,
-    "include_depth": 10,
-    "file_specific": {
-      "main.c": { "include_depth": 3 },
-      "sample.c": {
-        "include_filter": [
-          "^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$", "^sample\\.h$",
-          "^math_utils\\.h$", "^logger\\.h$", "^geometry\\.h$", "^config\\.h$"
-        ],
-        "include_depth": 3
-      }
-    }
-  }
-
+config.json: "{\n  \"project_name\": \"file_specific_configuration_comprehensive\"\
+  ,\n  \"source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
+  : true,\n  \"include_depth\": 10,\n  \"file_specific\": {\n    \"main.c\": { \"\
+  include_depth\": 3 },\n    \"sample.c\": {\n      \"include_filter\": [\n      \
+  \  \"^stdio\\\\.h$\", \"^stdlib\\\\.h$\", \"^string\\\\.h$\", \"^sample\\\\.h$\"\
+  ,\n        \"^math_utils\\\\.h$\", \"^logger\\\\.h$\", \"^geometry\\\\.h$\", \"\
+  ^config\\\\.h$\"\n      ],\n      \"include_depth\": 3\n    }\n  }\n}\n"
 ---
 cli_execution:
   steps:
-    - run_full_pipeline
-
+  - run_full_pipeline
 ---
 assertions:
   execution:
     should_succeed: true
-  
   model:
-    functions_exist: ["main", "main2", "main3", "main4", "util_function", "add", "multiply"]
-    macros_exist: ["CONFIG_VALUE", "LOCAL_CONSTANT"]
-    globals_exist: ["global_config"]
-    
+    functions_exist:
+    - main
+    - main2
+    - main3
+    - main4
+    - util_function
+    - add
+    - multiply
+    macros_exist:
+    - CONFIG_VALUE
+    - LOCAL_CONSTANT
+    globals_exist:
+    - global_config
     files:
       config_test.c:
-        functions: ["main"]
+        functions:
+        - main
       config.h:
-        macros: ["CONFIG_VALUE"]
-        globals: ["global_config"]
+        macros:
+        - CONFIG_VALUE
+        globals:
+        - global_config
       main.c:
-        functions: ["main2"]
+        functions:
+        - main2
       utils.h:
-        functions: ["util_function"]
+        functions:
+        - util_function
       sample.c:
-        functions: ["main3"]
+        functions:
+        - main3
       sample.h:
         structs:
           sample_t:
-            fields: ["id", "name"]
-        functions: ["sample_function"]
+            fields:
+            - id
+            - name
+        functions:
+        - sample_function
       math_utils.h:
-        functions: ["add", "multiply"]
+        functions:
+        - add
+        - multiply
       test.c:
-        functions: ["main4"]
+        functions:
+        - main4
       local.h:
-        macros: ["LOCAL_CONSTANT"]
-    
+        macros:
+        - LOCAL_CONSTANT
   puml:
     syntax_valid: true

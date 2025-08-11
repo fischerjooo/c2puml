@@ -1,48 +1,40 @@
-# Test metadata
 test:
-  name: "CLI Modes and Features – Comprehensive"
-  description: "Single scenario covering parse-only, transform-only, generate-only (prefer/fallback/isolation), and full workflow"
-  category: "feature"
-  id: "F1001"
-
+  name: "CLI Modes and Features \u2013 Comprehensive"
+  description: Single scenario covering parse-only, transform-only, generate-only
+    (prefer/fallback/isolation), and full workflow
+  category: feature
+  id: '201'
 ---
-# Source files
 source_files:
-  a.c: |
-    #include "a.h"
+  a.c: '#include "a.h"
+
     int main() { return 0; }
-  a.h: |
-    #ifndef A_H
+
+    '
+  a.h: '#ifndef A_H
+
     #define A_H
+
     int foo(void);
+
     #endif
 
+    '
 ---
-# Configuration
-config.json: |
-  {
-    "project_name": "cli_modes_and_features",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-
+config.json: "{\n  \"project_name\": \"cli_modes_and_features\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
 ---
-# CLI execution steps
 cli_execution:
   steps:
-    - parse_only
-    - transform_only
-    - generate_only_prefer_transformed
-    - generate_only_fallback_to_model
-    - generate_only_isolation_error
-    - run_full_pipeline
-
+  - parse_only
+  - transform_only
+  - generate_only_prefer_transformed
+  - generate_only_fallback_to_model
+  - generate_only_isolation_error
+  - run_full_pipeline
 ---
-# Assertions
 assertions:
   execution:
     should_succeed: true
-
   files:
-    output_dir_exists: "output"
+    output_dir_exists: output

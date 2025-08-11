@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test Crypto Filter Usecase Comprehensive
+Test Crypto Filter Pattern Comprehensive
 """
 
 import os
@@ -11,13 +11,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 
-class TestCryptoFilterUsecaseComprehensive(UnifiedTestCase):
-    """Test crypto filter usecase functionality through the CLI interface"""
+class TestCryptoFilterPatternComprehensive(UnifiedTestCase):
+    """Test crypto filter pattern functionality through the CLI interface"""
     
-    def test_crypto_filter_usecase_functionality(self):
-        """Test crypto filter usecase functionality through the CLI interface"""
+    def test_crypto_filter_pattern_functionality(self):
+        """Test crypto filter pattern functionality through the CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("crypto_filter_usecase_comprehensive_functionality")
+        result = self.run_test("207_crypto_filter_pattern")
         
         # Validate results
         self.validate_execution_success(result)

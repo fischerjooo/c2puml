@@ -1,95 +1,103 @@
-# Test metadata
 test:
-  name: "Parser – Elements Comprehensive"
-  description: "Consolidated parsing of structs, enums, globals, and macros in a single scenario"
-  category: "unit"
-  id: "0035"
-
+  name: "Parser \u2013 Elements Comprehensive"
+  description: Consolidated parsing of structs, enums, globals, and macros in a single
+    scenario
+  category: unit
+  id: '130'
 ---
-# Source files
 source_files:
-  structs.c: |
-    struct Point {
-        int x;
-        int y;
-    };
+  structs.c: "struct Point {\n    int x;\n    int y;\n};\n\nstruct Rectangle {\n \
+    \   int width;\n    int height;\n};\n"
+  enums.c: "enum Color {\n    RED,\n    GREEN,\n    BLUE\n};\n\nenum Status {\n  \
+    \  RUNNING,\n    STOPPED\n};\n"
+  globals.c: 'int global_int = 42;
 
-    struct Rectangle {
-        int width;
-        int height;
-    };
-
-  enums.c: |
-    enum Color {
-        RED,
-        GREEN,
-        BLUE
-    };
-
-    enum Status {
-        RUNNING,
-        STOPPED
-    };
-
-  globals.c: |
-    int global_int = 42;
     float global_float = 3.14f;
+
     char* global_string = "hello";
+
     static int static_var = 10;
 
-  macros.c: |
-    #define MAX_SIZE 100
+    '
+  macros.c: '#define MAX_SIZE 100
+
     #define PI 3.14159
+
     #define VERSION "1.0.0"
+
     #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+    '
 ---
-# Configuration
-config.json: |
-  {
-    "project_name": "test_parser_elements_comprehensive",
-    "source_folders": ["."],
-    "output_dir": "./output",
-    "recursive_search": true
-  }
-
+config.json: "{\n  \"project_name\": \"test_parser_elements_comprehensive\",\n  \"\
+  source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
+  : true\n}\n"
 ---
-# Assertions
 assertions:
   execution:
     exit_code: 0
-    output_files: [
-      "model.json", "model_transformed.json",
-      "structs.puml", "enums.puml", "globals.puml", "macros.puml"
-    ]
-  
+    output_files:
+    - model.json
+    - model_transformed.json
+    - structs.puml
+    - enums.puml
+    - globals.puml
+    - macros.puml
   model:
     files:
       structs.c:
         structs:
           Point:
-            fields: ["x", "y"]
+            fields:
+            - x
+            - y
           Rectangle:
-            fields: ["width", "height"]
+            fields:
+            - width
+            - height
       enums.c:
         enums:
           Color:
-            values: ["RED", "GREEN", "BLUE"]
+            values:
+            - RED
+            - GREEN
+            - BLUE
           Status:
-            values: ["RUNNING", "STOPPED"]
+            values:
+            - RUNNING
+            - STOPPED
       globals.c:
-        globals: ["global_int", "global_float", "global_string", "static_var"]
+        globals:
+        - global_int
+        - global_float
+        - global_string
+        - static_var
       macros.c:
-        macros: ["MAX_SIZE", "PI", "VERSION", "MIN"]
-
+        macros:
+        - MAX_SIZE
+        - PI
+        - VERSION
+        - MIN
   puml:
     syntax_valid: true
     files:
       structs.puml:
-        contains_elements: ["Point", "Rectangle"]
+        contains_elements:
+        - Point
+        - Rectangle
       enums.puml:
-        contains_elements: ["Color", "Status"]
+        contains_elements:
+        - Color
+        - Status
       globals.puml:
-        contains_lines: ["float global_float", "int global_int", "char * global_string", "int static_var"]
+        contains_lines:
+        - float global_float
+        - int global_int
+        - char * global_string
+        - int static_var
       macros.puml:
-        contains_lines: ["#define MAX_SIZE", "#define MIN(a, b)", "#define PI", "#define VERSION"]
+        contains_lines:
+        - '#define MAX_SIZE'
+        - '#define MIN(a, b)'
+        - '#define PI'
+        - '#define VERSION'
