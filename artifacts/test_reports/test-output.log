@@ -204,7 +204,7 @@ test_verifier_comprehensive (unit.test_verifier_comprehensive.TestVerifierCompre
 Test comprehensive verifier scenarios through the CLI interface ... ok
 
 ----------------------------------------------------------------------
-Ran 106 tests in 5.584s
+Ran 106 tests in 5.596s
 
 OK
 
@@ -218,5 +218,5 @@ Errors: 0
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 5.61 seconds
+Duration: 5.62 seconds
 ✅ All tests passed!
