@@ -1,43 +1,82 @@
 test:
-  name: "Generator Grouping \u2013 Comprehensive"
+  name: "Generator – Comprehensive"
   description: Validate grouping with empty line separation for functions and globals,
     plus mixed cases
   category: unit
   id: '112'
+  steps: ["generate"]
 ---
 source_files:
-  model.json: "{\n  \"project_name\": \"grouping_project\",\n  \"source_folder\":\
-    \ \"/test\",\n  \"files\": {\n    \"math.c\": {\n      \"file_path\": \"math.c\"\
-    ,\n      \"name\": \"math.c\",\n      \"includes\": [],\n      \"macros\": [],\n\
-    \      \"enums\": {},\n      \"structs\": {},\n      \"unions\": {},\n      \"\
-    aliases\": {},\n      \"functions\": [\n        {\"name\": \"Init\", \"return_type\"\
-    : \"void\", \"is_declaration\": false, \"parameters\": []},\n        {\"name\"\
-    : \"HelperFunction\", \"return_type\": \"void\", \"is_declaration\": false, \"\
-    parameters\": []},\n        {\"name\": \"Calculate\", \"return_type\": \"int\"\
-    , \"is_declaration\": false, \"parameters\": []},\n        {\"name\": \"InternalComputation\"\
-    , \"return_type\": \"static int\", \"is_declaration\": false, \"parameters\":\
-    \ []},\n        {\"name\": \"Shutdown\", \"return_type\": \"void\", \"is_declaration\"\
-    : false, \"parameters\": []}\n      ],\n      \"globals\": []\n    },\n    \"\
-    module.c\": {\n      \"file_path\": \"module.c\",\n      \"name\": \"module.c\"\
-    ,\n      \"includes\": [],\n      \"macros\": [],\n      \"enums\": {},\n    \
-    \  \"structs\": {},\n      \"unions\": {},\n      \"aliases\": {},\n      \"functions\"\
-    : [],\n      \"globals\": [\n        {\"name\": \"api_version\", \"type\": \"\
-    int\"},\n        {\"name\": \"internal_state\", \"type\": \"static int\"},\n \
-    \       {\"name\": \"module_name\", \"type\": \"char*\"},\n        {\"name\":\
-    \ \"debug_flag\", \"type\": \"static bool\"}\n      ]\n    },\n    \"processor.c\"\
-    : {\n      \"file_path\": \"processor.c\",\n      \"name\": \"processor.c\",\n\
-    \      \"includes\": [],\n      \"macros\": [],\n      \"enums\": {},\n      \"\
-    structs\": {},\n      \"unions\": {},\n      \"aliases\": {},\n      \"functions\"\
-    : [\n        {\"name\": \"ProcessData\", \"return_type\": \"int\", \"is_declaration\"\
-    : false, \"parameters\": []},\n        {\"name\": \"ValidateInput\", \"return_type\"\
-    : \"static bool\", \"is_declaration\": false, \"parameters\": []}\n      ],\n\
-    \      \"globals\": [\n        {\"name\": \"error_count\", \"type\": \"int\"},\n\
-    \        {\"name\": \"buffer_size\", \"type\": \"static size_t\"}\n      ]\n \
-    \   }\n  },\n  \"include_relations\": []\n}\n"
+  model.json: |
+    {
+      "project_name": "grouping_project",
+      "source_folder": "/test",
+      "files": {
+        "math.c": {
+          "file_path": "math.c",
+          "name": "math.c",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {"name": "Init", "return_type": "void", "is_declaration": false, "parameters": []},
+            {"name": "HelperFunction", "return_type": "void", "is_declaration": false, "parameters": []},
+            {"name": "Calculate", "return_type": "int", "is_declaration": false, "parameters": []},
+            {"name": "InternalComputation", "return_type": "static int", "is_declaration": false, "parameters": []},
+            {"name": "Shutdown", "return_type": "void", "is_declaration": false, "parameters": []}
+          ],
+          "globals": []
+        },
+        "module.c": {
+          "file_path": "module.c",
+          "name": "module.c",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [],
+          "globals": [
+            {"name": "api_version", "type": "int"},
+            {"name": "internal_state", "type": "static int"},
+            {"name": "module_name", "type": "char*"},
+            {"name": "debug_flag", "type": "static bool"}
+          ]
+        },
+        "processor.c": {
+          "file_path": "processor.c",
+          "name": "processor.c",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {"name": "ProcessData", "return_type": "int", "is_declaration": false, "parameters": []},
+            {"name": "ValidateInput", "return_type": "static bool", "is_declaration": false, "parameters": []}
+          ],
+          "globals": [
+            {"name": "error_count", "type": "int"},
+            {"name": "buffer_size", "type": "static size_t"}
+          ]
+        }
+      },
+      "include_relations": []
+    }
 ---
-config.json: "{\n  \"project_name\": \"grouping_project\",\n  \"source_folders\":\
-  \ [\"src\"],\n  \"output_dir\": \"output\",\n  \"plantuml_jar_path\": \"/app/tools/plantuml-1.2024.8.jar\"\
-  ,\n  \"use_short_names\": false,\n  \"group_by_visibility\": true\n}\n"
+config.json: |
+  {
+    "project_name": "grouping_project",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "use_short_names": false,
+    "group_by_visibility": true
+  }
 ---
 assertions:
   execution:
@@ -54,7 +93,7 @@ assertions:
         - '- static int InternalComputation'
         - -- Functions --
         regex_matches:
-        - pattern: \+[^\-]*\n\s*\n[^\+]*\-
+        - pattern: \+[^-]*\n\s*\n[^+]*-
           description: Empty line between public and private function groups
       module.c.puml:
         contains:
@@ -64,7 +103,7 @@ assertions:
         - '- static bool debug_flag'
         - -- Global Variables --
         regex_matches:
-        - pattern: \+[^\-]*\n\s*\n[^\+]*\-
+        - pattern: \+[^-]*\n\s*\n[^+]*-
           description: Empty line between public and private global groups
       processor.c.puml:
         contains:

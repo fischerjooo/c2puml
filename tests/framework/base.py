@@ -74,25 +74,38 @@ class UnifiedTestCase(unittest.TestCase):
         # Note: temp_dir is NOT automatically cleaned to preserve output for debugging
         pass
 
+    def _get_steps_from_metadata(self, test_data: Dict[str, Any]) -> List[str]:
+        meta = test_data.get("test", {}) or {}
+        steps = meta.get("steps")
+        if steps:
+            # Normalize to list of lower-case strings
+            steps = [str(s).strip().lower() for s in steps]
+        else:
+            steps = ["parse", "transform", "generate"]
+        # Basic validation
+        valid = {"parse", "transform", "generate"}
+        if any(s not in valid for s in steps):
+            raise ValueError(f"Unsupported steps in test metadata: {steps}")
+        return steps
+
+    def _ensure_model_for_partial_pipeline(self, source_dir: str, output_dir: str) -> None:
+        os.makedirs(output_dir, exist_ok=True)
+        src_model = os.path.join(source_dir, "model.json")
+        dst_model = os.path.join(output_dir, "model.json")
+        if os.path.exists(src_model):
+            shutil.copy2(src_model, dst_model)
+
     def run_test(self, test_id: str) -> TestResult:
         """
-        Run a complete test and return results.
+        Run a test according to YAML metadata and return results.
         
-        This high-level method encapsulates the common test pattern:
-        1. Load test data from YAML
-        2. Create temporary files
-        3. Execute c2puml
-        4. Validate outputs
-        5. Return comprehensive results
-        
-        Args:
-            test_id: The test identifier (used for YAML file name and temp folder)
-            
-        Returns:
-            TestResult: Object containing all test execution results and metadata
+        This method now supports partial pipelines defined in YAML metadata:
+        test.steps: ["parse"|"transform"|"generate" ...]
+        Defaults to full pipeline [parse, transform, generate].
         """
         # Load test data from YAML
         test_data = self.data_loader.load_test_data(test_id)
+        steps = self._get_steps_from_metadata(test_data)
         
         # Create temporary files
         source_dir, config_path = self.data_loader.create_temp_files(test_data, test_id)
@@ -100,17 +113,52 @@ class UnifiedTestCase(unittest.TestCase):
         # Calculate paths
         test_folder = os.path.dirname(source_dir)  # input/ folder
         test_dir = os.path.dirname(test_folder)    # test-###/ folder
+        output_dir = os.path.join(test_dir, "output")
+        os.makedirs(output_dir, exist_ok=True)
         config_filename = os.path.basename(config_path)
         
-        # Execute c2puml
-        result = self.executor.run_full_pipeline(config_filename, test_folder)
+        # Execute according to steps
+        cli_result: CLIResult
+        if steps == ["parse", "transform", "generate"]:
+            cli_result = self.executor.run_full_pipeline(config_filename, test_folder)
+        elif steps == ["parse"]:
+            cli_result = self.executor.run_parse_only(config_filename, test_folder)
+        elif steps == ["transform"]:
+            self._ensure_model_for_partial_pipeline(source_dir, output_dir)
+            cli_result = self.executor.run_transform_only(config_filename, test_folder)
+        elif steps == ["generate"]:
+            self._ensure_model_for_partial_pipeline(source_dir, output_dir)
+            cli_result = self.executor.run_generate_only(config_filename, test_folder)
+        elif steps == ["parse", "transform"]:
+            r1 = self.executor.run_parse_only(config_filename, test_folder)
+            self.cli_validator.assert_cli_success(r1)
+            cli_result = self.executor.run_transform_only(config_filename, test_folder)
+        elif steps == ["transform", "generate"]:
+            self._ensure_model_for_partial_pipeline(source_dir, output_dir)
+            r1 = self.executor.run_transform_only(config_filename, test_folder)
+            self.cli_validator.assert_cli_success(r1)
+            cli_result = self.executor.run_generate_only(config_filename, test_folder)
+        else:
+            raise ValueError(f"Unsupported steps sequence: {steps}")
         
-        # Validate outputs
-        output_dir = os.path.join(test_dir, "output")
-        model_file = self.output_validator.assert_model_file_exists(output_dir)
-        puml_files = self.output_validator.assert_puml_files_exist(output_dir)
+        # Collect outputs based on last step
+        last = steps[-1]
+        model_file = None
+        puml_files: List[str] = []
+        if last == "generate":
+            # Generate produces PUML files; also ensure model.json is available for validation
+            model_file = os.path.join(output_dir, "model.json")
+            if os.path.exists(model_file):
+                self.output_validator.assert_file_exists(model_file)
+            puml_files = self.output_validator.assert_puml_files_exist(output_dir)
+        elif last == "transform":
+            model_file = os.path.join(output_dir, "model_transformed.json")
+            self.output_validator.assert_file_exists(model_file)
+        elif last == "parse":
+            model_file = os.path.join(output_dir, "model.json")
+            self.output_validator.assert_file_exists(model_file)
         
-        return TestResult(result, test_dir, output_dir, model_file, puml_files)
+        return TestResult(cli_result, test_dir, output_dir, model_file, puml_files)
 
     def validate_execution_success(self, result: TestResult):
         """
@@ -131,17 +179,29 @@ class UnifiedTestCase(unittest.TestCase):
         # Load test data to get assertions
         test_id = os.path.basename(result.test_dir).replace('test-', '')
         test_data = self.data_loader.load_test_data(test_id)
+        meta = test_data.get("test", {}) or {}
+        steps = meta.get("steps") or ["parse", "transform", "generate"]
+        last = steps[-1] if steps else "generate"
         
         # Load content for validation
-        with open(result.model_file, 'r') as f:
-            model_data = json.load(f)
+        model_data: Dict[str, Any] = {}
+        # Prefer transformed model if present when validating
+        transformed_path = os.path.join(result.output_dir, "model_transformed.json")
+        candidate_model = None
+        if os.path.exists(transformed_path):
+            candidate_model = transformed_path
+        elif result.model_file and os.path.exists(result.model_file):
+            candidate_model = result.model_file
+        if candidate_model:
+            with open(candidate_model, 'r') as f:
+                model_data = json.load(f)
         
         # Expose paths for validators to normalize relative file assertions
         self.current_validation_base_dir = result.test_dir
         self.current_validation_output_dir = result.output_dir
 
         # Load all PlantUML files into a dictionary
-        puml_files = {}
+        puml_files: Dict[str, str] = {}
         for puml_file_path in result.puml_files:
             filename = os.path.basename(puml_file_path)
             with open(puml_file_path, 'r') as f:

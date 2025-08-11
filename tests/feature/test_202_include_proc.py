@@ -24,6 +24,11 @@ class TestIncludeProcessingConsolidated(UnifiedTestCase):
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
+    def test_include_processing_basic_consolidated(self):
+        result = self.run_test("202_include_proc_basic")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+
 
 if __name__ == "__main__":
     unittest.main()

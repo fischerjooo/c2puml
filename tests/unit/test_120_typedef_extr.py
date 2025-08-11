@@ -24,6 +24,26 @@ class TestTypedefExtractionComprehensive(UnifiedTestCase):
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
+    def test_typedef_extraction_edge(self):
+        result = self.run_test("120_typedef_extr_edge")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+
+    def test_typedef_extraction_enums(self):
+        result = self.run_test("120_typedef_extr_enums")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+
+    def test_typedef_extraction_mixed(self):
+        result = self.run_test("120_typedef_extr_mixed")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+
+    def test_typedef_extraction_unions(self):
+        result = self.run_test("120_typedef_extr_unions")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+
 
 if __name__ == "__main__":
     unittest.main()
