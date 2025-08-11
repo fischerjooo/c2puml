@@ -174,3 +174,6 @@ scripts/plantuml.jar
 tests/*/test-*/
 tests/*/temp/
 tests/*/output/
+
+# Local temporary helper scripts
+.tmp_map_tests.py
