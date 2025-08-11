@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive parser nested structures – Repointed
+Test Global Parsing – Repointed to consolidated elements
 """
 
 import os
@@ -11,9 +11,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 
-class TestParserNestedStructuresComprehensive(UnifiedTestCase):
-    def test_struct_and_nested_ordering_comprehensive(self):
-        result = self.run_test("116_struct_order")
+class TestGlobalParsingComprehensive(UnifiedTestCase):
+    def test_global_parsing_comprehensive(self):
+        result = self.run_test("130_parser_elems")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive parser nested structures – Repointed
+Transformer – Consolidated
 """
 
 import os
@@ -11,9 +11,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 
-class TestParserNestedStructuresComprehensive(UnifiedTestCase):
-    def test_struct_and_nested_ordering_comprehensive(self):
-        result = self.run_test("116_struct_order")
+class TestTransformerComprehensive(UnifiedTestCase):
+    def test_transformer_comprehensive(self):
+        result = self.run_test("119_trans_comp")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Test Parser Elements – Consolidated (replaces parser_globals)
+Test Parser Elements – Consolidated
+
+This replaces separate enums/structs/globals/macros tests with a single scenario
 """
 
 import os
@@ -11,7 +13,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 
-class TestParserGlobals(UnifiedTestCase):
+class TestParserElementsConsolidated(UnifiedTestCase):
+    """Test consolidated parser elements through the CLI interface"""
+
     def test_parser_elements_comprehensive(self):
         result = self.run_test("130_parser_elems")
         self.validate_execution_success(result)

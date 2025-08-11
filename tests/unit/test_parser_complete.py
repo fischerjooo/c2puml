@@ -13,7 +13,7 @@ from tests.framework import UnifiedTestCase
 
 class TestParserComplete(UnifiedTestCase):
     def test_parser_comprehensive_basics(self):
-        result = self.run_test("parser_comprehensive_basics")
+        result = self.run_test("115_parser_basics")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

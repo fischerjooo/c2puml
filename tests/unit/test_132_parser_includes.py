@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Comprehensive parser nested structures – Repointed
+Test Parser Includes – Comprehensive
+
+Consolidated basic includes and include filtering/depth validation
 """
 
 import os
@@ -11,9 +13,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 
-class TestParserNestedStructuresComprehensive(UnifiedTestCase):
-    def test_struct_and_nested_ordering_comprehensive(self):
-        result = self.run_test("116_struct_order")
+class TestParserIncludes(UnifiedTestCase):
+    """Test parsing include statements through the CLI interface"""
+
+    def test_parser_includes_comprehensive(self):
+        result = self.run_test("132_parser_includes")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

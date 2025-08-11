@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Comprehensive parser nested structures – Repointed
+Test Struct and Nested Ordering – Comprehensive
+
+Consolidated struct order and PUML field order validation through CLI interface
 """
 
 import os
@@ -11,7 +13,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 
-class TestParserNestedStructuresComprehensive(UnifiedTestCase):
+class TestStructOrderPuml(UnifiedTestCase):
+    """Test struct and nested ordering comprehensive through the CLI interface"""
+
     def test_struct_and_nested_ordering_comprehensive(self):
         result = self.run_test("116_struct_order")
         self.validate_execution_success(result)
