@@ -1,0 +1,62 @@
+test:
+  name: Typedef Extraction - Union Typedefs
+  description: Test extraction of union typedef declarations
+  category: unit
+  id: '120'
+---
+source_files:
+  union_typedefs.c: "// Union typedef declarations\ntypedef union Number_tag {\n \
+    \   int i;\n    float f;\n    double d;\n} Number_t;\n\ntypedef union NamedUnion_tag\
+    \ {\n    char c;\n    int i;\n    short s;\n} NamedUnion_t;\n\ntypedef union Value\
+    \ {\n    int integer_value;\n    float float_value;\n    char string_value[32];\n\
+    } Value_t;\n"
+---
+config.json: "{\n  \"project_name\": \"test_typedef_extraction_unions\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - union_typedefs.puml
+  model:
+    files:
+      union_typedefs.c:
+        unions:
+          Number_t:
+            fields:
+            - i
+            - f
+            - d
+          NamedUnion_t:
+            fields:
+            - c
+            - i
+            - s
+          Value_t:
+            fields:
+            - integer_value
+            - float_value
+            - string_value
+    element_counts:
+      structs: 0
+      enums: 0
+      functions: 0
+      globals: 0
+      includes: 0
+  puml:
+    syntax_valid: true
+    files:
+      union_typedefs.puml:
+        contains_elements:
+        - Number_t
+        - NamedUnion_t
+        - Value_t
+        contains_lines:
+        - class "Number_t" as TYPEDEF_NUMBER_T
+        - class "NamedUnion_t" as TYPEDEF_NAMEDUNION_T
+        - class "Value_t" as TYPEDEF_VALUE_T
+        class_count: 4
+        relationship_count: 3

@@ -1,0 +1,157 @@
+test:
+  name: "Path Resolution and Include Tree \u2013 Comprehensive"
+  description: Consolidated absolute/relative/mixed path resolution and include tree
+    generation
+  category: unit
+  id: '103'
+---
+source_files:
+  include/types.h: "#ifndef TYPES_H\n#define TYPES_H\ntypedef struct {\n    float\
+    \ x, y, z;\n} vector3_t;\n#endif\n"
+  utils.h: "#ifndef UTILS_H\n#define UTILS_H\ntypedef struct {\n    int id;\n    char\
+    \ name[32];\n} util_data_t;\nvoid init_utils(void);\n#endif\n"
+  geometry.c: '#include "include/types.h"
+
+    vector3_t normalize(vector3_t v) { return v; }
+
+    '
+  main.c: '#include "utils.h"
+
+    int main() { util_data_t data; init_utils(); return 0; }
+
+    '
+  common/base.h: '#ifndef BASE_H
+
+    #define BASE_H
+
+    typedef struct { int base_id; char base_name[64]; } base_t;
+
+    void base_init(base_t* b);
+
+    #endif
+
+    '
+  modules/graphics.h: '#ifndef GRAPHICS_H
+
+    #define GRAPHICS_H
+
+    #include "../common/base.h"
+
+    typedef struct { base_t base; int width; int height; } graphics_t;
+
+    void graphics_render(graphics_t* g);
+
+    #endif
+
+    '
+  app.c: '#include "common/base.h"
+
+    #include "modules/graphics.h"
+
+    int app(void) { graphics_t gfx; base_init(&gfx.base); graphics_render(&gfx); return
+    0; }
+
+    '
+---
+config.json: "{\n  \"project_name\": \"path_resolution_and_include_tree\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+---
+assertions:
+  execution:
+    should_succeed: true
+  model:
+    files:
+      geometry.c:
+        includes:
+        - include/types.h
+        functions:
+        - normalize
+      types.h:
+        structs:
+          vector3_t:
+            fields:
+            - z
+      main.c:
+        includes:
+        - utils.h
+        functions:
+        - main
+      utils.h:
+        structs:
+          util_data_t:
+            fields:
+            - id
+            - name
+        functions:
+        - init_utils
+      app.c:
+        includes:
+        - common/base.h
+        - modules/graphics.h
+      base.h:
+        structs:
+          base_t:
+            fields:
+            - base_id
+            - base_name
+        functions:
+        - base_init
+      graphics.h:
+        structs:
+          graphics_t:
+            fields:
+            - base
+            - width
+            - height
+        functions:
+        - graphics_render
+  puml:
+    syntax_valid: true
+---
+source_files_generate_only:
+  model.json: "{\n  \"project_name\": \"test_project\",\n  \"source_folder\": \"/test\"\
+    ,\n  \"files\": {\n    \"main.c\": {\"file_path\": \"main.c\", \"name\": \"main.c\"\
+    , \"includes\": [\"app.h\"], \"macros\": [], \"enums\": {}, \"structs\": {}, \"\
+    unions\": {}, \"aliases\": {}, \"functions\": [{\"name\": \"main\", \"return_type\"\
+    : \"int\", \"is_declaration\": false, \"parameters\": []}], \"globals\": []},\n\
+    \    \"app.h\": {\"file_path\": \"app.h\", \"name\": \"app.h\", \"includes\":\
+    \ [\"utils.h\", \"config.h\"], \"macros\": [], \"enums\": {}, \"structs\": {},\
+    \ \"unions\": {}, \"aliases\": {}, \"functions\": [{\"name\": \"app_init\", \"\
+    return_type\": \"void\", \"is_declaration\": true, \"parameters\": []}], \"globals\"\
+    : []},\n    \"utils.h\": {\"file_path\": \"utils.h\", \"name\": \"utils.h\", \"\
+    includes\": [\"types.h\"], \"macros\": [], \"enums\": {}, \"structs\": {}, \"\
+    unions\": {}, \"aliases\": {}, \"functions\": [{\"name\": \"utility_function\"\
+    , \"return_type\": \"void\", \"is_declaration\": true, \"parameters\": []}], \"\
+    globals\": []},\n    \"config.h\": {\"file_path\": \"config.h\", \"name\": \"\
+    config.h\", \"includes\": [], \"macros\": [], \"enums\": {}, \"structs\": {},\
+    \ \"unions\": {}, \"aliases\": {}, \"functions\": [], \"globals\": [{\"name\"\
+    : \"CONFIG_VALUE\", \"type\": \"extern int\"}]},\n    \"types.h\": {\"file_path\"\
+    : \"types.h\", \"name\": \"types.h\", \"includes\": [], \"macros\": [], \"enums\"\
+    : {}, \"structs\": {\"Point\": {\"name\": \"Point\", \"fields\": [{\"name\": \"\
+    x\", \"type\": \"int\"}, {\"name\": \"y\", \"type\": \"int\"}]}}, \"unions\":\
+    \ {}, \"aliases\": {}, \"functions\": [], \"globals\": []}\n  },\n  \"include_relations\"\
+    : [\n    {\"source_file\": \"main.c\", \"included_file\": \"app.h\", \"depth\"\
+    : 1},\n    {\"source_file\": \"app.h\", \"included_file\": \"utils.h\", \"depth\"\
+    : 1},\n    {\"source_file\": \"app.h\", \"included_file\": \"config.h\", \"depth\"\
+    : 1},\n    {\"source_file\": \"utils.h\", \"included_file\": \"types.h\", \"depth\"\
+    : 1}\n  ]\n}\n"
+---
+cli_execution:
+  steps:
+  - run_full_pipeline
+  - generate_only_from_model
+---
+assertions_generate_only:
+  puml:
+    main.c.puml:
+      contains:
+      - main.c
+      - app.h
+      - utils.h
+      - config.h
+      - types.h
+      - main(
+      - app_init
+      - utility_function
+      - CONFIG_VALUE
+      - class "Point" as STRUCT_POINT <<struct>>

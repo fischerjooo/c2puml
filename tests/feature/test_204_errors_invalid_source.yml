@@ -1,0 +1,17 @@
+test:
+  name: Error Handling - Invalid Source Folders
+  description: Test CLI error handling for various invalid source folder scenarios
+  category: feature
+  id: '204'
+---
+source_files: {}
+---
+config.json: "{\n  \"project_name\": \"test_error_handling\",\n  \"source_folders\"\
+  : [\"/nonexistent/path/that/does/not/exist\"],\n  \"output_dir\": \"output\",\n\
+  \  \"recursive_search\": true\n}\n"
+---
+assertions:
+  execution:
+    success_expected: false
+    exit_code: 1
+    stdout_contains: Source folder not found

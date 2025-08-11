@@ -1,0 +1,76 @@
+test:
+  name: Debug Anonymous Structure Parsing
+  description: Test parsing anonymous structures in typedefs for debugging purposes
+  category: unit
+  id: '108'
+---
+source_files:
+  anonymous_struct.c: "// Anonymous struct in typedef\ntypedef struct {\n    int id;\n\
+    \    struct {\n        float x, y;\n    } position;\n    struct {\n        char\
+    \ r, g, b;\n    } color;\n} point_t;\n\n// Anonymous union in typedef\ntypedef\
+    \ struct {\n    int type;\n    union {\n        int int_value;\n        float\
+    \ float_value;\n        char string_value[16];\n    } data;\n} variant_t;\n\n\
+    // Global variable using the types\npoint_t global_point;\nvariant_t global_variant;\n"
+---
+config.json: "{\n  \"project_name\": \"debug_anonymous_structure_parsing\",\n  \"\
+  source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
+  : true\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - anonymous_struct.puml
+  model:
+    validate_structure: true
+    project_name: debug_anonymous_structure_parsing
+    expected_files:
+    - anonymous_struct.c
+    structs_exist:
+    - point_t
+    - variant_t
+    unions_exist:
+    - variant_t_data
+    - data
+    globals_exist:
+    - global_point
+    - global_variant
+    struct_details:
+      point_t:
+        fields:
+        - id
+        - position
+        - color
+      variant_t:
+        fields:
+        - type
+        - data
+    union_details:
+      variant_t_data:
+        fields:
+        - int_value
+        - float_value
+        - string_value
+    element_counts:
+      structs: 5
+      unions: 2
+      globals: 2
+      aliases: 0
+  puml:
+    syntax_valid: true
+    file_count: 1
+    files:
+      anonymous_struct.puml:
+        contains_elements:
+        - point_t
+        - variant_t
+        - global_point
+        - global_variant
+        - data
+        contains_lines:
+        - point_t global_point
+        - variant_t global_variant
+        class_count: 8
+        relationship_count: 8

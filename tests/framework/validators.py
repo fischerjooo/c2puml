@@ -396,108 +396,133 @@ class PlantUMLValidator:
 class OutputValidator:
     """Validates general output files, directories, and content"""
     
+    def _normalize_path(self, path: str) -> str:
+        """Normalize a possibly relative path to an absolute path based on current test context."""
+        # If already absolute, return as is
+        if os.path.isabs(path):
+            return path
+        # Use context if available on the calling test case (set in base.run_test)
+        try:
+            import inspect
+            # Walk the call stack to find a frame with 'self' as a unittest TestCase
+            for frame_info in inspect.stack():
+                self_obj = frame_info.frame.f_locals.get('self')
+                # Check for attributes set in UnifiedTestCase
+                if hasattr(self_obj, 'current_validation_base_dir'):
+                    base_dir = getattr(self_obj, 'current_validation_base_dir')
+                    return os.path.normpath(os.path.join(base_dir, path))
+        except Exception:
+            pass
+        # Fallback to cwd
+        return os.path.normpath(path)
+
     def assert_output_dir_exists(self, output_path: str) -> None:
         """Assert that output directory exists"""
-        if not os.path.exists(output_path):
-            raise AssertionError(f"Output directory does not exist: {output_path}")
-        if not os.path.isdir(output_path):
-            raise AssertionError(f"Output path is not a directory: {output_path}")
+        resolved = self._normalize_path(output_path)
+        if not os.path.exists(resolved):
+            raise AssertionError(f"Output directory does not exist: {resolved}")
+        if not os.path.isdir(resolved):
+            raise AssertionError(f"Output path is not a directory: {resolved}")
     
     def assert_file_exists(self, file_path: str) -> None:
         """Assert that a file exists"""
-        if not os.path.exists(file_path):
-            raise AssertionError(f"File does not exist: {file_path}")
+        resolved = self._normalize_path(file_path)
+        if not os.path.exists(resolved):
+            raise AssertionError(f"File does not exist: {resolved}")
     
     def assert_file_not_exists(self, file_path: str) -> None:
         """Assert that a file does not exist"""
-        if os.path.exists(file_path):
-            raise AssertionError(f"File exists but should not: {file_path}")
+        resolved = self._normalize_path(file_path)
+        if os.path.exists(resolved):
+            raise AssertionError(f"File exists but should not: {resolved}")
     
     def assert_directory_empty(self, dir_path: str) -> None:
         """Assert that a directory is empty"""
-        if not os.path.exists(dir_path):
-            raise AssertionError(f"Directory does not exist: {dir_path}")
+        resolved = self._normalize_path(dir_path)
+        if not os.path.exists(resolved):
+            raise AssertionError(f"Directory does not exist: {resolved}")
         
-        files = os.listdir(dir_path)
+        files = os.listdir(resolved)
         if files:
-            raise AssertionError(f"Directory is not empty: {dir_path} contains {files}")
+            raise AssertionError(f"Directory is not empty: {resolved} contains {files}")
     
     def assert_directory_not_empty(self, dir_path: str) -> None:
         """Assert that a directory is not empty"""
-        if not os.path.exists(dir_path):
-            raise AssertionError(f"Directory does not exist: {dir_path}")
+        resolved = self._normalize_path(dir_path)
+        if not os.path.exists(resolved):
+            raise AssertionError(f"Directory does not exist: {resolved}")
         
-        files = os.listdir(dir_path)
+        files = os.listdir(resolved)
         if not files:
-            raise AssertionError(f"Directory is empty: {dir_path}")
+            raise AssertionError(f"Directory is empty: {resolved}")
     
     def assert_file_contains(self, file_path: str, expected_text: str) -> None:
         """Assert that a file contains specific text"""
-        if not os.path.exists(file_path):
-            raise AssertionError(f"File does not exist: {file_path}")
+        resolved = self._normalize_path(file_path)
+        if not os.path.exists(resolved):
+            raise AssertionError(f"File does not exist: {resolved}")
         
-        with open(file_path, 'r') as f:
+        with open(resolved, 'r') as f:
             content = f.read()
         
         if expected_text not in content:
-            raise AssertionError(f"File '{file_path}' missing expected text: '{expected_text}'")
+            raise AssertionError(f"File '{resolved}' missing expected text: '{expected_text}'")
     
     def assert_file_not_contains(self, file_path: str, forbidden_text: str) -> None:
         """Assert that a file does not contain specific text"""
-        if not os.path.exists(file_path):
-            raise AssertionError(f"File does not exist: {file_path}")
+        resolved = self._normalize_path(file_path)
+        if not os.path.exists(resolved):
+            raise AssertionError(f"File does not exist: {resolved}")
         
-        with open(file_path, 'r') as f:
+        with open(resolved, 'r') as f:
             content = f.read()
         
         if forbidden_text in content:
-            raise AssertionError(f"File '{file_path}' contains forbidden text: '{forbidden_text}'")
+            raise AssertionError(f"File '{resolved}' contains forbidden text: '{forbidden_text}'")
     
     def assert_file_contains_lines(self, file_path: str, expected_lines: List[str]) -> None:
         """Assert that a file contains specific lines"""
-        if not os.path.exists(file_path):
-            raise AssertionError(f"File does not exist: {file_path}")
+        resolved = self._normalize_path(file_path)
+        if not os.path.exists(resolved):
+            raise AssertionError(f"File does not exist: {resolved}")
         
-        with open(file_path, 'r') as f:
+        with open(resolved, 'r') as f:
             content = f.read()
         
-        for expected_line in expected_lines:
-            if expected_line not in content:
-                raise AssertionError(f"File '{file_path}' missing expected line: '{expected_line}'")
+        for line in expected_lines:
+            if line not in content:
+                raise AssertionError(f"File '{resolved}' missing expected line: '{line}'")
     
     def assert_file_line_count(self, file_path: str, expected_count: int) -> None:
         """Assert that a file has expected number of lines"""
-        if not os.path.exists(file_path):
-            raise AssertionError(f"File does not exist: {file_path}")
+        resolved = self._normalize_path(file_path)
+        if not os.path.exists(resolved):
+            raise AssertionError(f"File does not exist: {resolved}")
         
-        with open(file_path, 'r') as f:
+        with open(resolved, 'r') as f:
             lines = f.readlines()
         
         actual_count = len(lines)
         if actual_count != expected_count:
-            raise AssertionError(f"File '{file_path}' expected {expected_count} lines, got {actual_count}")
+            raise AssertionError(f"File '{resolved}' expected {expected_count} lines, got {actual_count}")
     
     def assert_file_empty(self, file_path: str) -> None:
         """Assert that a file is empty"""
-        if not os.path.exists(file_path):
-            raise AssertionError(f"File does not exist: {file_path}")
+        resolved = self._normalize_path(file_path)
+        if not os.path.exists(resolved):
+            raise AssertionError(f"File does not exist: {resolved}")
         
-        with open(file_path, 'r') as f:
-            content = f.read()
-        
-        if content.strip():
-            raise AssertionError(f"File '{file_path}' is not empty")
+        if os.path.getsize(resolved) != 0:
+            raise AssertionError(f"File is not empty: {resolved}")
     
     def assert_file_not_empty(self, file_path: str) -> None:
         """Assert that a file is not empty"""
-        if not os.path.exists(file_path):
-            raise AssertionError(f"File does not exist: {file_path}")
+        resolved = self._normalize_path(file_path)
+        if not os.path.exists(resolved):
+            raise AssertionError(f"File does not exist: {resolved}")
         
-        with open(file_path, 'r') as f:
-            content = f.read()
-        
-        if not content.strip():
-            raise AssertionError(f"File '{file_path}' is empty")
+        if os.path.getsize(resolved) == 0:
+            raise AssertionError(f"File is empty: {resolved}")
     
     def assert_log_contains(self, log_content: str, expected_message: str) -> None:
         """Assert that log content contains specific message"""

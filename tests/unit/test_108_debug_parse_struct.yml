@@ -1,0 +1,59 @@
+test:
+  name: Debug Nested Struct Parsing
+  description: Test parsing nested struct definitions for debugging purposes
+  category: unit
+  id: '108'
+---
+source_files:
+  nested_struct.c: "typedef struct {\n    int outer_id;\n    struct {\n        char\
+    \ name[32];\n        struct {\n            float x, y, z;\n        } position;\n\
+    \    } inner_data;\n    double outer_value;\n} nested_struct_t;\n\n// Function\
+    \ using the nested struct\nvoid process_nested(nested_struct_t* ns) {\n    //\
+    \ Processing function\n}\n"
+---
+config.json: "{\n  \"project_name\": \"debug_nested_struct_parsing\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - nested_struct.puml
+  model:
+    validate_structure: true
+    project_name: debug_nested_struct_parsing
+    expected_files:
+    - nested_struct.c
+    structs_exist:
+    - nested_struct_t
+    functions_exist:
+    - process_nested
+    struct_details:
+      nested_struct_t:
+        fields:
+        - outer_id
+        - inner_data
+        - outer_value
+    function_details:
+      process_nested:
+        return_type: void
+        parameters:
+        - nested_struct_t*
+    element_counts:
+      structs: 4
+      functions: 1
+      aliases: 0
+  puml:
+    syntax_valid: true
+    file_count: 1
+    files:
+      nested_struct.puml:
+        contains_elements:
+        - nested_struct_t
+        - process_nested
+        contains_lines:
+        - void process_nested(nested_struct_t * ns)
+        class_count: 5
+        relationship_count: 4

@@ -1,0 +1,67 @@
+test:
+  name: Tokenizer Keywords
+  description: Test tokenizer recognition of C keywords through parsing structs, enums,
+    etc.
+  category: unit
+  id: '118'
+---
+source_files:
+  keywords.c: "struct DataStruct {\n    int value;\n    const char* name;\n};\n\n\
+    enum DataEnum {\n    OPTION_A,\n    OPTION_B\n};\n\nunion DataUnion {\n    int\
+    \ intVal;\n    float floatVal;\n};\n\nstatic int static_var = 10;\nextern int\
+    \ extern_var;\n\ninline void inline_func() {\n    // inline function\n}\n\nvoid\
+    \ regular_func(const void* ptr) {\n    // regular function\n}\n"
+---
+config.json: "{\n  \"project_name\": \"test_tokenizer_keywords\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - keywords.puml
+  model:
+    files:
+      keywords.c:
+        structs:
+          DataStruct:
+            fields:
+            - value
+            - name
+        enums:
+          DataEnum:
+            values:
+            - OPTION_A
+            - OPTION_B
+        unions:
+          DataUnion:
+            fields:
+            - intVal
+            - floatVal
+        functions:
+        - inline_func
+        - regular_func
+        globals:
+        - static_var
+        - extern_var
+    element_counts:
+      structs: 1
+      enums: 1
+      unions: 1
+      functions: 2
+      globals: 2
+  puml:
+    syntax_valid: true
+    files:
+      keywords.puml:
+        contains_elements:
+        - DataStruct
+        - DataEnum
+        - DataUnion
+        contains_lines:
+        - class "DataStruct" as TYPEDEF_DATASTRUCT
+        - class "DataEnum" as TYPEDEF_DATAENUM
+        class_count: 4
+        relationship_count: 3

@@ -1,0 +1,78 @@
+test:
+  name: "Parser \u2013 Typedefs Comprehensive"
+  description: Consolidated parsing of typedef aliases, function pointers, typedef
+    struct, and simple/typedef enums
+  category: unit
+  id: '126'
+---
+source_files:
+  typedefs.c: "typedef int Integer;\ntypedef char* String;\ntypedef void (*Callback)(int);\n\
+    typedef struct {\n    int x;\n    int y;\n} Point;\n"
+  point_typedef.c: "typedef struct point_tag {\n    int x;\n    int y;\n} point_t;\n"
+  status.c: "enum Status {\n    OK = 0,\n    ERROR = 1,\n    PENDING = 2\n};\n"
+  color.c: "typedef enum {\n    RED,\n    GREEN,\n    BLUE\n} Color;\n"
+---
+config.json: "{\n  \"project_name\": \"test_parser_typedefs_comprehensive\",\n  \"\
+  source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
+  : true\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - typedefs.puml
+    - point_typedef.puml
+    - status.puml
+    - color.puml
+  model:
+    files:
+      typedefs.c:
+        aliases:
+        - Integer
+        - String
+        - Callback
+        structs:
+          Point:
+            fields:
+            - x
+            - y
+      point_typedef.c:
+        structs:
+          point_t:
+            fields:
+            - x
+            - y
+      status.c:
+        enums:
+          Status:
+            values:
+            - OK
+            - ERROR
+            - PENDING
+      color.c:
+        enums:
+          Color:
+            values:
+            - RED
+            - GREEN
+            - BLUE
+  puml:
+    syntax_valid: true
+    files:
+      typedefs.puml:
+        contains_elements:
+        - Integer
+        - String
+        - Callback
+        - Point
+      point_typedef.puml:
+        contains_elements:
+        - point_t
+      status.puml:
+        contains_elements:
+        - Status
+      color.puml:
+        contains_elements:
+        - Color

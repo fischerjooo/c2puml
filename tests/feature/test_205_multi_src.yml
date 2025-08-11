@@ -1,0 +1,59 @@
+test:
+  name: Multiple Source Folders CLI
+  description: Verify parsing across multiple source folders
+  category: feature
+  id: '205'
+---
+source_files:
+  src1/main.c: "#include \"utils.h\"\n\nstruct Person {\n    char name[50];\n    int\
+    \ age;\n};\n\nint main() {\n    struct Person p = {\"John\", 30};\n    return\
+    \ 0;\n}\n"
+  src1/utils.h: "#ifndef UTILS_H\n#define UTILS_H\n\ntypedef struct {\n    int x,\
+    \ y;\n} Point;\n\nvoid print_point(Point p);\n\n#endif\n"
+  src2/app.c: '#include "types.h"
+
+
+    enum Color { RED, GREEN, BLUE };
+
+
+    void process_color(enum Color c) {}
+
+    '
+  src2/types.h: "#ifndef TYPES_H\n#define TYPES_H\n\ntypedef unsigned int uint32_t;\n\
+    typedef struct {\n    uint32_t id;\n    char name[100];\n} Item;\n\n#endif\n"
+  src3/complex.c: "#include \"data.h\"\n\nunion Data { int i; float f; char str[20];\
+    \ };\n\nstruct Container {\n    union Data data;\n    int type;\n};\n"
+  src3/data.h: "#ifndef DATA_H\n#define DATA_H\n\n#define MAX_SIZE 100\n\ntypedef\
+    \ struct {\n    int values[MAX_SIZE];\n    int count;\n} Array;\n\n#endif\n"
+---
+config.json: "{\n  \"project_name\": \"multi_source_test\",\n  \"source_folders\"\
+  : [\"./src/src1\", \"./src/src2\", \"./src/src3\"],\n  \"output_dir\": \"./output\"\
+  ,\n  \"recursive_search\": true,\n  \"include_depth\": 1\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 60.0
+  model:
+    validate_structure: true
+    expected_files:
+    - main.c
+    - app.c
+    - complex.c
+    - utils.h
+    - types.h
+    - data.h
+    functions_exist:
+    - main
+    - process_color
+    structs_exist:
+    - Person
+    - Item
+    - Container
+    - Array
+    enums_exist:
+    - Color
+    macros_exist:
+    - MAX_SIZE
+  puml:
+    syntax_valid: true

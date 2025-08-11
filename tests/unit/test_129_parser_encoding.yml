@@ -1,0 +1,41 @@
+test:
+  name: Parser Encoding
+  description: Test that files with various encodings can be parsed correctly
+  category: unit
+  id: '129'
+---
+source_files:
+  encoding.c: "// UTF-8 comment with \xE9mojis \U0001F680\nint main() { return 0;\
+    \ }\n"
+---
+config.json: "{\n  \"project_name\": \"test_parser_encoding\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - encoding.puml
+  model:
+    files:
+      encoding.c:
+        functions:
+        - main
+    element_counts:
+      structs: 0
+      enums: 0
+      functions: 1
+      globals: 0
+      includes: 0
+  puml:
+    syntax_valid: true
+    files:
+      encoding.puml:
+        contains_elements:
+        - main
+        contains_lines:
+        - int main()
+        class_count: 1
+        relationship_count: 0

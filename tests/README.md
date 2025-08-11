@@ -13,17 +13,17 @@ Tests are organized into four categories:
 
 ## Test File Structure
 
-Each test module pairs 1:1 by base name with at least one YAML file:
-- `test_<name>.py`: Test implementation using the unified framework
-- `test_<name>.yml`: Primary YAML test data and assertions
+Each test module pairs 1:1 by base name with at least one YAML file using a 3-digit ID and a short name (1–2 words):
+- `test_<3-digit>_<short>.py`: Test implementation using the unified framework
+- `test_<3-digit>_<short>.yml`: Primary YAML test data and assertions
 
 A single Python test may drive multiple YAML scenarios by adding suffixes to the YAML filenames:
-- `test_<name>_<scenario>.yml`, `test_<name>_<another_scenario>.yml`, ...
-Call them with `self.run_test("<name>_<scenario>")` from the Python test.
+- `test_<3-digit>_<short>_<suffix>.yml`, `test_<3-digit>_<short>_<another_suffix>.yml`, ...
+Call them with `self.run_test("<3-digit>_<short>_<suffix>")` from the Python test.
 
 Example:
-- Python: `tests/unit/test_absolute_path_bug_comprehensive.py`
-- YAML: `tests/unit/test_absolute_path_bug_comprehensive_relative_path.yml`, `..._subdirectory.yml`, `..._mixed_paths.yml`, `..._consistency.yml`
+- Python: `tests/feature/test_202_include_proc.py`
+- YAML: `tests/feature/test_202_include_proc.yml`, `tests/feature/test_202_include_proc_error.yml`
 
 ## YAML Test Data Structure
 
@@ -283,11 +283,12 @@ python3 -m pytest tests/example/
 
 ## Test Development Guidelines
 
-1. **Use meaningful test names**: `test_simple_c_file_parsing` not `test_001`
-2. **Organize by category**: Place tests in appropriate directories
-3. **Use YAML for data**: Keep test data separate from test logic
-4. **Validate comprehensively**: Include execution, model, and PlantUML assertions
-5. **Follow naming conventions**: Use consistent file and test naming patterns
+1. **Use the new ID+short-name pattern**: `test_123_shortname`, keep shortname to 1–2 words
+2. **Keep Python/YAML base consistent**: `test_123_shortname.py` ↔ `test_123_shortname.yml`
+3. **For multiple YAMLs**: use suffixes only in YAML and in `run_test` IDs, e.g., `test_123_shortname_extra.yml` and `self.run_test("123_shortname_extra")`
+4. **Organize by category**: Place tests in appropriate directories
+5. **Use YAML for data**: Keep test data separate from test logic
+6. **Validate comprehensively**: Include execution, model, and PlantUML assertions
 
 ## Temporary File Management
 

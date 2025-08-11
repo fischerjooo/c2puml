@@ -1,0 +1,80 @@
+test:
+  name: Mixed Path Styles Handling
+  id: '103'
+  description: Test mixed path styles handling to ensure consistency between forward
+    and backward slashes
+---
+source_files:
+  common/base.h: "#ifndef BASE_H\n#define BASE_H\n\ntypedef struct {\n    int base_id;\n\
+    \    char base_name[64];\n} base_t;\n\nvoid base_init(base_t* b);\n\n#endif\n"
+  modules/graphics.h: "#ifndef GRAPHICS_H\n#define GRAPHICS_H\n\n#include \"../common/base.h\"\
+    \n\ntypedef struct {\n    base_t base;\n    int width;\n    int height;\n} graphics_t;\n\
+    \nvoid graphics_render(graphics_t* g);\n\n#endif\n"
+  app.c: "#include \"common/base.h\"\n#include \"modules/graphics.h\"\n\nint main()\
+    \ {\n    graphics_t gfx;\n    base_init(&gfx.base);\n    graphics_render(&gfx);\n\
+    \    return 0;\n}\n"
+---
+config.json: "{\n  \"project_name\": \"mixed_path_styles_handling\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+---
+cli_execution:
+  steps:
+  - run_full_pipeline
+---
+assertions:
+  execution:
+    should_succeed: true
+  model:
+    structs_exist:
+    - base_t
+    - graphics_t
+    functions_exist:
+    - main
+    - base_init
+    - graphics_render
+    files:
+      app.c:
+        includes:
+        - common/base.h
+        - modules/graphics.h
+        functions:
+        - main
+      base.h:
+        structs:
+          base_t:
+            fields:
+            - base_id
+            - base_name
+        functions:
+        - base_init
+      graphics.h:
+        structs:
+          graphics_t:
+            fields:
+            - base
+            - width
+            - height
+        functions:
+        - graphics_render
+    element_counts:
+      structs: 2
+      functions: 3
+      aliases: 0
+  puml:
+    contains_elements:
+    - base_t
+    - graphics_t
+    - main
+    - base_init
+    - graphics_render
+    contains_lines:
+    - int main()
+    - + void base_init(base_t * b)
+    - + void graphics_render(graphics_t * g)
+    - + int base_id
+    - + char[64] base_name
+    - + base_t base
+    - + int width
+    - + int height
+    class_count: 5
+    relationship_count: 5

@@ -1,0 +1,56 @@
+test:
+  name: Debug Nested Union Field Parsing
+  id: '107'
+  description: Validate that nested unions within typedefs are correctly parsed and
+    field structures are preserved
+---
+source_files:
+  nested_union.c: "typedef union {\n    int primary_int;\n    union {\n        float\
+    \ nested_float;\n        double nested_double;\n    } nested_union;\n    char\
+    \ primary_bytes[32];\n} test_union_t;\n\nvoid process_union(test_union_t* tu)\
+    \ {\n    tu->primary_int = 42;\n}\n\ntest_union_t global_union;\n"
+---
+config.json: "{\n  \"project_name\": \"debug_nested_union_field_parsing\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+---
+cli_execution:
+  steps:
+  - parse_only
+---
+assertions:
+  execution:
+    should_succeed: true
+  model:
+    unions_exist:
+    - test_union_t
+    - test_union_t_nested_union
+    functions_exist:
+    - process_union
+    globals_exist:
+    - global_union
+    union_fields:
+      test_union_t_nested_union:
+      - name: nested_float
+        type: float
+      - name: nested_double
+        type: double
+    element_counts:
+      unions: 2
+      functions: 1
+      globals: 1
+      aliases: 0
+  puml:
+    contains_elements:
+    - test_union_t
+    - process_union
+    - global_union
+    contains_lines:
+    - void process_union(test_union_t * tu)
+    - + int primary_int
+    - + test_union_t_nested_union nested_union
+    - + char[32] primary_bytes
+    - + float nested_float
+    - + double nested_double
+    - test_union_t global_union
+    class_count: 3
+    relationship_count: 2

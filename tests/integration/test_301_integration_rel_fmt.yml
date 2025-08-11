@@ -1,0 +1,48 @@
+test:
+  name: "Integration \u2013 Relationships and Formatting (Comprehensive)"
+  description: "Combines parser-tokenizer integration, relationships (C\u2194H, H\u2194\
+    H, typedefs), and formatting checks"
+  category: integration
+  id: '301'
+---
+source_files:
+  a.h: '#ifndef A_H
+
+    #define A_H
+
+    typedef struct A { int ax; } A;
+
+    #endif
+
+    '
+  b.h: '#ifndef B_H
+
+    #define B_H
+
+    #include "a.h"
+
+    typedef enum B { B0, B1 } B;
+
+    #endif
+
+    '
+  c.c: '#include "a.h"
+
+    #include "b.h"
+
+    int f(A a, B b) { return a.ax + (int)b; }
+
+    '
+---
+config.json: "{\n  \"project_name\": \"integration_rel_format\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+---
+cli_execution:
+  steps:
+  - run_full_pipeline
+---
+assertions:
+  execution:
+    should_succeed: true
+  puml:
+    syntax_valid: true

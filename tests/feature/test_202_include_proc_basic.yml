@@ -1,0 +1,56 @@
+test:
+  name: Basic Include Processing Workflow
+  description: Test basic include processing workflow from parsing to generation
+  category: feature
+  id: '202'
+---
+source_files:
+  main.c: "#include <stdio.h>\n#include \"utils.h\"\n\nint main() {\n    Point p =\
+    \ {0, 0};\n    return 0;\n}\n"
+  utils.h: "#ifndef UTILS_H\n#define UTILS_H\n\ntypedef struct {\n    int x;\n   \
+    \ int y;\n} Point;\n\n#endif\n"
+---
+config.json: "{\n  \"project_name\": \"test_include_processing_basic\",\n  \"source_folders\"\
+  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true,\n  \"\
+  include_depth\": 2\n}\n"
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - main.puml
+    max_execution_time: 30.0
+  model:
+    validate_structure: true
+    files:
+      main.c:
+        functions:
+        - main
+        includes:
+        - stdio.h
+        - utils.h
+      utils.h:
+        structs:
+          Point:
+            fields:
+            - x
+            - y
+    element_counts:
+      functions: 1
+      structs: 1
+      includes: 2
+  puml:
+    syntax_valid: true
+    files:
+      main.puml:
+        contains_elements:
+        - Point
+        - main
+        - utils
+        contains_lines:
+        - class "Point" as TYPEDEF_POINT
+        - '- int main()'
+        class_count: 3
+        relationship_count: 2
