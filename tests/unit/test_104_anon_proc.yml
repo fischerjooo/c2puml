@@ -1,37 +1,21 @@
 test:
   name: Anonymous Processing Comprehensive
-  description: Comprehensive test for multi-pass anonymous structure processing with
-    nested levels
+  description: Comprehensive test for multi-pass anonymous structure processing with nested levels
   category: unit
   id: '104'
 ---
 source_files:
-  anonymous_test.c: "// Test multi-level nested anonymous structures\ntypedef struct\
-    \ {\n    int level1_id;\n    struct {                        \n        int level2_id;\n\
-    \        union {                     \n            int level3_int;\n         \
-    \   float level3_float;\n        } level3_union;\n    } level2_struct;\n} moderately_nested_t;\n\
-    \n// Test deeper nesting (level 4)\ntypedef struct {\n    char root_marker;\n\
-    \    struct {\n        int level2_value;\n        struct {\n            float\
-    \ level3_value;\n            union {\n                char level4_char;\n    \
-    \            int level4_int;\n            } level4_data;\n        } level3_struct;\n\
-    \    } level2_container;\n} deeply_nested_t;\n\n// Test mixed structure types\n\
-    typedef struct {\n    int base_id;\n    union {\n        struct {\n          \
-    \  int struct_in_union;\n            char struct_char;\n        } inner_struct;\n\
-    \        int direct_int;\n    } mixed_union;\n} mixed_types_t;\n\n// Test multiple\
-    \ siblings at same level\ntypedef struct {\n    int parent_id;\n    struct {\n\
-    \        int sibling1_value;\n    } sibling1;\n    struct {\n        float sibling2_value;\n\
-    \    } sibling2;\n    union {\n        char sibling3_char;\n        int sibling3_int;\n\
-    \    } sibling3;\n} multiple_siblings_t;\n\n// Global variables using the typedefs\n\
-    moderately_nested_t moderate_var;\ndeeply_nested_t deep_var;\nmixed_types_t mixed_var;\n\
-    multiple_siblings_t siblings_var;\n\n// Functions that use these types\nvoid process_moderate(moderately_nested_t*\
-    \ ptr) {\n    ptr->level1_id = 1;\n    ptr->level2_struct.level2_id = 2;\n}\n\n\
-    void process_deep(deeply_nested_t* ptr) {\n    ptr->root_marker = 'A';\n}\n\n\
-    int main() {\n    process_moderate(&moderate_var);\n    process_deep(&deep_var);\n\
-    \    return 0;\n}\n"
+  anonymous_test.c: "// Test multi-level nested anonymous structures\ntypedef struct {\n    int level1_id;\n    struct {                        \n        int level2_id;\n        union {                     \n            int level3_int;\n            float level3_float;\n        } level3_union;\n    } level2_struct;\n} moderately_nested_t;\n\n// Test deeper nesting (level 4)\ntypedef struct {\n    char root_marker;\n    struct {\n        int level2_value;\n        struct {\n            float level3_value;\n            union {\n                char level4_char;\n                int level4_int;\n            } level4_data;\n        } level3_struct;\n    } level2_container;\n} deeply_nested_t;\n\n// Test mixed structure types\ntypedef struct {\n    int base_id;\n    union {\n        struct {\n            int struct_in_union;\n            char struct_char;\n        } inner_struct;\n        int direct_int;\n    } mixed_union;\n} mixed_types_t;\n\n// Test multiple siblings at same level\ntypedef\
+    \ struct {\n    int parent_id;\n    struct {\n        int sibling1_value;\n    } sibling1;\n    struct {\n        float sibling2_value;\n    } sibling2;\n    union {\n        char sibling3_char;\n        int sibling3_int;\n    } sibling3;\n} multiple_siblings_t;\n\n// Global variables using the typedefs\nmoderately_nested_t moderate_var;\ndeeply_nested_t deep_var;\nmixed_types_t mixed_var;\nmultiple_siblings_t siblings_var;\n\n// Functions that use these types\nvoid process_moderate(moderately_nested_t* ptr) {\n    ptr->level1_id = 1;\n    ptr->level2_struct.level2_id = 2;\n}\n\nvoid process_deep(deeply_nested_t* ptr) {\n    ptr->root_marker = 'A';\n}\n\nint main() {\n    process_moderate(&moderate_var);\n    process_deep(&deep_var);\n    return 0;\n}\n"
 ---
-config.json: "{\n  \"project_name\": \"test_anonymous_processing\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true,\n  \"\
-  include_depth\": 1\n}\n"
+config.json: |
+  {
+    "project_name": "test_anonymous_processing",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 1
+  }
 ---
 assertions:
   execution:

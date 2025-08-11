@@ -5,36 +5,38 @@ test:
   id: '134'
 ---
 source_files:
-  main.c: "#include \"utils.h\"\n#include <stdio.h>\n\nint main() {\n    printf(\"\
-    Hello from main\\n\");\n    int result = add_numbers(5, 3);\n    return result;\n\
-    }\n"
-  utils.h: '#ifndef UTILS_H
+  main.c: |
+    #include "utils.h"
+    #include <stdio.h>
 
+    int main() {
+        printf("Hello from main\n");
+        int result = add_numbers(5, 3);
+        return result;
+    }
+  utils.h: |
+    #ifndef UTILS_H
     #define UTILS_H
 
-
     // Function declaration
-
     int add_numbers(int a, int b);
 
-
     // Macro definition
-
     #define MAX_SIZE 100
 
-
     // Global variable declaration
-
     extern int global_counter;
 
-
     #endif // UTILS_H
-
-    '
 ---
-config.json: "{\n  \"project_name\": \"include_processing_basic\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true,\n  \"\
-  include_depth\": 2\n}\n"
+config.json: |
+  {
+    "project_name": "include_processing_basic",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 2
+  }
 ---
 assertions:
   execution:

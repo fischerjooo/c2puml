@@ -5,13 +5,28 @@ test:
   id: '208'
 ---
 source_files:
-  main.c: "int main() {\n    return 0;\n}\n"
-  crypto.c: "void aes_encrypt() {\n    // AES encryption\n}\nvoid rsa_encrypt() {\n\
-    \    // RSA encryption\n}\n"
+  main.c: |
+    int main() {
+        return 0;
+    }
+  crypto.c: |
+    void aes_encrypt() {
+        // AES encryption
+    }
+    void rsa_encrypt() {
+        // RSA encryption
+    }
 ---
-config.json: "{\n  \"project_name\": \"crypto_usecase_test\",\n  \"source_folders\"\
-  : [\".\"],\n  \"recursive_search\": true,\n  \"output_dir\": \"./output\",\n  \"\
-  filters\": {\n    \"remove_files\": [\"crypto\\\\..*\"]\n  }\n}\n"
+config.json: |
+  {
+    "project_name": "crypto_usecase_test",
+    "source_folders": ["."],
+    "recursive_search": true,
+    "output_dir": "./output",
+    "filters": {
+      "remove_files": ["crypto\\..*"]
+    }
+  }
 ---
 assertions:
   execution:

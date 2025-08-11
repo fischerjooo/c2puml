@@ -1,37 +1,101 @@
 test:
   name: Typedef Extraction - Comprehensive
-  description: Comprehensive extraction of aliases, function pointers, structs, enums,
-    unions, and edge cases
+  description: Comprehensive extraction of aliases, function pointers, structs, enums, unions, and edge cases
   category: unit
   id: '120'
 ---
 source_files:
-  typedefs_all.c: "// Simple typedefs\ntypedef uint32_t MyLen;\ntypedef int32_t MyInt;\n\
-    typedef char * MyString;\ntypedef unsigned long long ULongLong;\ntypedef const\
-    \ char * ConstString;\ntypedef volatile int VolatileInt;\n\n// Function pointer\
-    \ typedefs\ntypedef int (*MyCallback)(struct MyBuffer_tag * buffer);\ntypedef\
-    \ void (*log_callback_t)(enum log_level_tag level, const char * message);\ntypedef\
-    \ int (*complex_callback)(int a, int b, char * str);\ntypedef void (*simple_func_ptr)(void);\n\
-    typedef char * (*string_processor)(const char * input, int len);\ntypedef int\
-    \ (*calculator)(int x, int y);\n\n// Struct typedefs\ntypedef struct MyBuffer_tag\
-    \ {\n    MyLen length;\n    MyString data;\n} MyBuffer;\n\ntypedef struct MyComplexStruct_tag\
-    \ {\n    MyLen id;\n    MyString name;\n    MyCallback callback;\n    enum log_level_tag\
-    \ log_level;\n} MyComplex;\n\ntypedef struct point_tag {\n    int x;\n    int\
-    \ y;\n} point_t;\n\ntypedef struct Person {\n    char name[50];\n    int age;\n\
-    \    char *address;\n} Person_t;\n\n// Enum typedefs\ntypedef enum Color_tag {\n\
-    \    COLOR_RED,\n    COLOR_GREEN,\n    COLOR_BLUE\n} Color_t;\n\ntypedef enum\
-    \ log_level_tag {\n    LOG_DEBUG,\n    LOG_INFO,\n    LOG_WARN,\n    LOG_ERROR\n\
-    } log_level_t;\n\ntypedef enum Status_tag {\n    STATUS_OK,\n    STATUS_ERROR,\n\
-    \    STATUS_PENDING\n} Status_t;\n\n// Union typedefs\ntypedef union Number_tag\
-    \ {\n    int i;\n    float f;\n    double d;\n} Number_t;\n\ntypedef union NamedUnion_tag\
-    \ {\n    char c;\n    int i;\n    short s;\n} NamedUnion_t;\n\ntypedef union Value\
-    \ {\n    int integer_value;\n    float float_value;\n    char string_value[32];\n\
-    } Value_t;\n\n// Pointers and arrays of typedefs\ntypedef MyComplex * MyComplexPtr;\n\
-    typedef MyComplexPtr MyComplexArray[10];\n"
+  typedefs_all.c: |
+    // Simple typedefs
+    typedef uint32_t MyLen;
+    typedef int32_t MyInt;
+    typedef char * MyString;
+    typedef unsigned long long ULongLong;
+    typedef const char * ConstString;
+    typedef volatile int VolatileInt;
+
+    // Function pointer typedefs
+    typedef int (*MyCallback)(struct MyBuffer_tag * buffer);
+    typedef void (*log_callback_t)(enum log_level_tag level, const char * message);
+    typedef int (*complex_callback)(int a, int b, char * str);
+    typedef void (*simple_func_ptr)(void);
+    typedef char * (*string_processor)(const char * input, int len);
+    typedef int (*calculator)(int x, int y);
+
+    // Struct typedefs
+    typedef struct MyBuffer_tag {
+        MyLen length;
+        MyString data;
+    } MyBuffer;
+
+    typedef struct MyComplexStruct_tag {
+        MyLen id;
+        MyString name;
+        MyCallback callback;
+        enum log_level_tag log_level;
+    } MyComplex;
+
+    typedef struct point_tag {
+        int x;
+        int y;
+    } point_t;
+
+    typedef struct Person {
+        char name[50];
+        int age;
+        char *address;
+    } Person_t;
+
+    // Enum typedefs
+    typedef enum Color_tag {
+        COLOR_RED,
+        COLOR_GREEN,
+        COLOR_BLUE
+    } Color_t;
+
+    typedef enum log_level_tag {
+        LOG_DEBUG,
+        LOG_INFO,
+        LOG_WARN,
+        LOG_ERROR
+    } log_level_t;
+
+    typedef enum Status_tag {
+        STATUS_OK,
+        STATUS_ERROR,
+        STATUS_PENDING
+    } Status_t;
+
+    // Union typedefs
+    typedef union Number_tag {
+        int i;
+        float f;
+        double d;
+    } Number_t;
+
+    typedef union NamedUnion_tag {
+        char c;
+        int i;
+        short s;
+    } NamedUnion_t;
+
+    typedef union Value {
+        int integer_value;
+        float float_value;
+        char string_value[32];
+    } Value_t;
+
+    // Pointers and arrays of typedefs
+    typedef MyComplex * MyComplexPtr;
+    typedef MyComplexPtr MyComplexArray[10];
 ---
-config.json: "{\n  \"project_name\": \"test_typedef_extraction_comprehensive\",\n\
-  \  \"source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
-  : true\n}\n"
+config.json: |
+  {
+    "project_name": "test_typedef_extraction_comprehensive",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
 ---
 assertions:
   execution:

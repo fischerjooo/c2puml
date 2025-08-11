@@ -4,19 +4,41 @@ test:
   description: Validate nested anonymous structure field parsing and naming conventions
 ---
 source_files:
-  anonymous_fields.c: "typedef struct {\n    int id;\n    struct {\n        char label[32];\n\
-    \        union {\n            int int_val;\n            float float_val;\n   \
-    \     };  // Anonymous union within anonymous struct\n        double precision;\n\
-    \    } config;  // Named anonymous struct field\n    union {\n        struct {\n\
-    \            int width;\n            int height;\n        } dimensions;  // Named\
-    \ struct within anonymous union\n        long area;\n    };  // Anonymous union\n\
-    } container_t;\n\nvoid setup_container(container_t* c) {\n    c->id = 1;\n   \
-    \ c->config.precision = 1.0;\n    c->dimensions.width = 800;\n}\n\ncontainer_t\
-    \ global_container = {0};\n"
+  anonymous_fields.c: |
+    typedef struct {
+        int id;
+        struct {
+            char label[32];
+            union {
+                int int_val;
+                float float_val;
+            };  // Anonymous union within anonymous struct
+            double precision;
+        } config;  // Named anonymous struct field
+        union {
+            struct {
+                int width;
+                int height;
+            } dimensions;  // Named struct within anonymous union
+            long area;
+        };  // Anonymous union
+    } container_t;
+
+    void setup_container(container_t* c) {
+        c->id = 1;
+        c->config.precision = 1.0;
+        c->dimensions.width = 800;
+    }
+
+    container_t global_container = {0};
 ---
-config.json: "{\n  \"project_name\": \"debug_nested_anonymous_structure_fields\",\n\
-  \  \"source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
-  : true\n}\n"
+config.json: |
+  {
+    "project_name": "debug_nested_anonymous_structure_fields",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
 ---
 cli_execution:
   steps:

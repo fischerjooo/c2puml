@@ -177,3 +177,6 @@ tests/*/output/
 
 # Local temporary helper scripts
 .tmp_map_tests.py
+
+# Ignore temporary helper Python scripts at repository root
+/temp_*.py

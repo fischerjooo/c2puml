@@ -5,16 +5,39 @@ test:
   id: '108'
 ---
 source_files:
-  anonymous_struct.c: "// Anonymous struct in typedef\ntypedef struct {\n    int id;\n\
-    \    struct {\n        float x, y;\n    } position;\n    struct {\n        char\
-    \ r, g, b;\n    } color;\n} point_t;\n\n// Anonymous union in typedef\ntypedef\
-    \ struct {\n    int type;\n    union {\n        int int_value;\n        float\
-    \ float_value;\n        char string_value[16];\n    } data;\n} variant_t;\n\n\
-    // Global variable using the types\npoint_t global_point;\nvariant_t global_variant;\n"
+  anonymous_struct.c: |
+    // Anonymous struct in typedef
+    typedef struct {
+        int id;
+        struct {
+            float x, y;
+        } position;
+        struct {
+            char r, g, b;
+        } color;
+    } point_t;
+
+    // Anonymous union in typedef
+    typedef struct {
+        int type;
+        union {
+            int int_value;
+            float float_value;
+            char string_value[16];
+        } data;
+    } variant_t;
+
+    // Global variable using the types
+    point_t global_point;
+    variant_t global_variant;
 ---
-config.json: "{\n  \"project_name\": \"debug_anonymous_structure_parsing\",\n  \"\
-  source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
-  : true\n}\n"
+config.json: |
+  {
+    "project_name": "debug_anonymous_structure_parsing",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
 ---
 assertions:
   execution:

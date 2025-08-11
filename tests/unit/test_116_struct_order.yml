@@ -1,23 +1,42 @@
 test:
-  name: "Struct and Nested Ordering \u2013 Comprehensive"
-  description: Preserve field order in simple and complex structs, including nested
-    structs and unions; verify PUML order
+  name: Struct and Nested Ordering – Comprehensive
+  description: Preserve field order in simple and complex structs, including nested structs and unions; verify PUML order
   category: unit
   id: '116'
 ---
 source_files:
-  struct_order.c: "typedef struct triangle_tag {\n    point_t vertices[3];\n    char\
-    \ label[MAX_LABEL_LEN];\n} triangle_t;\n"
-  struct_order_puml.c: "typedef struct triangle_tag {\n    point_t vertices[3];\n\
-    \    char label[MAX_LABEL_LEN];\n} triangle_t;\n"
-  struct_order_complex.c: "typedef struct complex_struct {\n    int id;\n    char\
-    \ name[32];\n    float value;\n    struct {\n        int x;\n        int y;\n\
-    \    } position;\n    union {\n        int int_data;\n        float float_data;\n\
-    \    } data;\n} complex_struct_t;\n"
+  struct_order.c: |
+    typedef struct triangle_tag {
+        point_t vertices[3];
+        char label[MAX_LABEL_LEN];
+    } triangle_t;
+  struct_order_puml.c: |
+    typedef struct triangle_tag {
+        point_t vertices[3];
+        char label[MAX_LABEL_LEN];
+    } triangle_t;
+  struct_order_complex.c: |
+    typedef struct complex_struct {
+        int id;
+        char name[32];
+        float value;
+        struct {
+            int x;
+            int y;
+        } position;
+        union {
+            int int_data;
+            float float_data;
+        } data;
+    } complex_struct_t;
 ---
-config.json: "{\n  \"project_name\": \"struct_and_nested_ordering_comprehensive\"\
-  ,\n  \"source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
-  : true\n}\n"
+config.json: |
+  {
+    "project_name": "struct_and_nested_ordering_comprehensive",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
 ---
 assertions:
   execution:

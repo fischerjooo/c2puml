@@ -5,14 +5,30 @@ test:
   id: '108'
 ---
 source_files:
-  nested_struct.c: "typedef struct {\n    int outer_id;\n    struct {\n        char\
-    \ name[32];\n        struct {\n            float x, y, z;\n        } position;\n\
-    \    } inner_data;\n    double outer_value;\n} nested_struct_t;\n\n// Function\
-    \ using the nested struct\nvoid process_nested(nested_struct_t* ns) {\n    //\
-    \ Processing function\n}\n"
+  nested_struct.c: |
+    typedef struct {
+        int outer_id;
+        struct {
+            char name[32];
+            struct {
+                float x, y, z;
+            } position;
+        } inner_data;
+        double outer_value;
+    } nested_struct_t;
+
+    // Function using the nested struct
+    void process_nested(nested_struct_t* ns) {
+        // Processing function
+    }
 ---
-config.json: "{\n  \"project_name\": \"debug_nested_struct_parsing\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "debug_nested_struct_parsing",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
 ---
 assertions:
   execution:

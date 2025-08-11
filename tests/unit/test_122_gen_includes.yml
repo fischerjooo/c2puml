@@ -1,180 +1,113 @@
 test:
-  name: "Generator Includes and Filtering \u2013 Comprehensive"
-  description: Consolidated duplicate include handling with include filtering and
-    depth control
+  name: Generator Includes and Filtering – Comprehensive
+  description: Consolidated duplicate include handling with include filtering and depth control
   category: unit
   id: '122'
 ---
 source_files:
-  main.c: '#include "utils.h"
-
+  main.c: |
+    #include "utils.h"
     #include "config.h"
-
-    int main() { int r = add_numbers(5,3); int v = get_config_value(); return r +
-    v; }
-
-    '
-  utils.h: '#ifndef UTILS_H
-
+    int main() { int r = add_numbers(5,3); int v = get_config_value(); return r + v; }
+  utils.h: |
+    #ifndef UTILS_H
     #define UTILS_H
-
     #include "config.h"
-
     int add_numbers(int a, int b);
-
     int process_with_config(int value);
-
     #endif
-
-    '
-  config.h: '#ifndef CONFIG_H
-
+  config.h: |
+    #ifndef CONFIG_H
     #define CONFIG_H
-
     #define DEFAULT_VALUE 42
-
     #define MAX_ITEMS 100
-
     extern int global_config;
-
     int get_config_value(void);
-
     #endif
-
-    '
-  processor.c: '#include "api.h"
-
+  processor.c: |
+    #include "api.h"
     #include "worker.h"
-
     #include "private_worker.h"
-
     void process_data() { api_function(); worker_function(); }
-
     int app_main() { process_data(); return 0; }
-
-    '
-  api.h: '#ifndef API_H
-
+  api.h: |
+    #ifndef API_H
     #define API_H
-
     #include "types.h"
-
     #include "platform.h"
-
     #include "memory.h"
-
     void api_function(void);
-
     extern int api_global;
-
     #endif
-
-    '
-  worker.h: '#ifndef WORKER_H
-
+  worker.h: |
+    #ifndef WORKER_H
     #define WORKER_H
-
     #include "validation.h"
-
     #include "errors.h"
-
     void worker_function(void);
-
     extern int worker_global;
-
     #endif
-
-    '
-  private_worker.h: '#ifndef PRIVATE_WORKER_H
-
+  private_worker.h: |
+    #ifndef PRIVATE_WORKER_H
     #define PRIVATE_WORKER_H
-
     #include "internal.h"
-
     void private_worker_function(void);
-
     #endif
-
-    '
-  types.h: '#ifndef TYPES_H
-
+  types.h: |
+    #ifndef TYPES_H
     #define TYPES_H
-
     #include "constants.h"
-
     typedef int ProcessorID;
-
     typedef struct { int x, y; } Point;
-
     #endif
-
-    '
-  platform.h: '#ifndef PLATFORM_H
-
+  platform.h: |
+    #ifndef PLATFORM_H
     #define PLATFORM_H
-
     #define PLATFORM_LINUX
-
     #define MAX_THREADS 16
-
     #endif
-
-    '
-  memory.h: '#ifndef MEMORY_H
-
+  memory.h: |
+    #ifndef MEMORY_H
     #define MEMORY_H
-
     void* allocate_memory(size_t size);
-
     void free_memory(void* ptr);
-
     #endif
-
-    '
-  validation.h: '#ifndef VALIDATION_H
-
+  validation.h: |
+    #ifndef VALIDATION_H
     #define VALIDATION_H
-
     int validate_input(int value);
-
     #endif
-
-    '
-  errors.h: '#ifndef ERRORS_H
-
+  errors.h: |
+    #ifndef ERRORS_H
     #define ERRORS_H
-
     enum ErrorCode { ERROR_NONE, ERROR_INVALID, ERROR_MEMORY };
-
     #endif
-
-    '
-  constants.h: '#ifndef CONSTANTS_H
-
+  constants.h: |
+    #ifndef CONSTANTS_H
     #define CONSTANTS_H
-
     #define MAX_BUFFER_SIZE 1024
-
     #define DEFAULT_TIMEOUT 5000
-
     #endif
-
-    '
-  internal.h: '#ifndef INTERNAL_H
-
+  internal.h: |
+    #ifndef INTERNAL_H
     #define INTERNAL_H
-
     void internal_function(void);
-
     #endif
-
-    '
 ---
-config.json: "{\n  \"project_name\": \"generator_includes_and_filtering\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true,\n  \"\
-  include_depth\": 3,\n  \"file_specific\": {\n    \"processor.c\": {\n      \"include_filter\"\
-  : [\"^api\\\\.h$\", \"^worker\\\\.h$\", \"^types\\\\.h$\", \"^platform\\\\.h$\"\
-  ],\n      \"include_depth\": 2\n    }\n  }\n}\n"
+config.json: |
+  {
+    "project_name": "generator_includes_and_filtering",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 3,
+    "file_specific": {
+      "processor.c": {
+        "include_filter": ["^api\\.h$", "^worker\\.h$", "^types\\.h$", "^platform\\.h$"],
+        "include_depth": 2
+      }
+    }
+  }
 ---
 assertions:
   execution:
