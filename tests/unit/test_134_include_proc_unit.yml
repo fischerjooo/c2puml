@@ -6,34 +6,16 @@ test:
 ---
 source_files:
   main.c: |
-    #include "utils.h"n#include <stdio.h>nnint main() {n    printf("
+    #include "utils.h"
+    #include <stdio.h>
+    int main() {
+        printf("
         Hello from main
-    ");n    int result = add_numbers(5, 3);n    return result;n
+    ";
+        int result = add_numbers(5, 3);
+        return result;
+    
         }n
-  utils.h: '#ifndef UTILS_H
-
-    #define UTILS_H
-
-
-    // Function declaration
-
-    int add_numbers(int a, int b);
-
-
-    // Macro definition
-
-    #define MAX_SIZE 100
-
-
-    // Global variable declaration
-
-    extern int global_counter;
-
-
-    #endif // UTILS_H
-
-    '
----
 config.json: |
   {
     "project_name": "include_processing_basic",

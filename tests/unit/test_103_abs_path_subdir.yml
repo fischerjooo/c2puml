@@ -10,7 +10,7 @@ source_files:
     #define TYPES_H
     
     typedef struct {
-        float\
+        float
         \ x, y, z;
     } vector3_t;
     
@@ -20,12 +20,10 @@ source_files:
     #include "include/types.h"
     
     vector3_t normalize(vector3_t v) {
-    \
         \    // Implementation here
         return v;
     }
     
----
 config.json: |
   {
     "project_name": "subdirectory_includes_path_resolution",

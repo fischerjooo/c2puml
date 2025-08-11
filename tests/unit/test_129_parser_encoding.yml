@@ -7,10 +7,9 @@ test:
 source_files:
   encoding.c: |
     // UTF-8 comment with \xE9mojis \U0001F680
-    int main() { return 0;\
+    int main() { return 0;
         \ }
     
----
 config.json: |
   {
     "project_name": "test_parser_encoding",

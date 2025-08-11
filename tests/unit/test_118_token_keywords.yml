@@ -12,32 +12,30 @@ source_files:
         const char* name;
     };
     
-    \
         enum DataEnum {
         OPTION_A,
         OPTION_B
     };
     
     union DataUnion {
-        int\
+        int
         \ intVal;
         float floatVal;
     };
     
     static int static_var = 10;
-    extern int\
+    extern int
         \ extern_var;
     
     inline void inline_func() {
-        // inline function
+        // inline functio
     }
     
-    void\
+    void
         \ regular_func(const void* ptr) {
-        // regular function
+        // regular functio
     }
     
----
 config.json: |
   {
     "project_name": "test_tokenizer_keywords",

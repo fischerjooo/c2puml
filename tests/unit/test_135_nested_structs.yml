@@ -9,15 +9,12 @@ source_files:
     typedef union {
         int primary_int;
         union {
-    \
         \        float nested_float;
             double nested_double;
         } nested_union;
-    \
         \    char primary_bytes[32];
     } test_union_t;
     
----
 config.json: |
   {
     "project_name": "test_nested_structures_puml",

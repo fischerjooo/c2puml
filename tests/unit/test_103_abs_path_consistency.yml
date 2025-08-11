@@ -9,57 +9,54 @@ source_files:
     #ifndef CONFIG_H
     #define CONFIG_H
     
-    #define MAX_BUFFER_SIZE\
+    #define MAX_BUFFER_SIZE
         \ 1024
     #define DEFAULT_TIMEOUT 30
     
     typedef struct {
         int port;
-        char\
+        char
         \ host[256];
         int timeout;
     } config_t;
     
     extern config_t global_config;
-    \
         
     void config_load(const char* filename);
     void config_save(const char* filename);
-    \
         
     #endif
     
   core/network.c: |
     #include "../shared/config.h"
     
-    config_t global_config = {8080,\
+    config_t global_config = {8080,
         \ "localhost", DEFAULT_TIMEOUT};
     
     void network_connect(void) {
-        // Connect\
+        // Connect
         \ using global_config
         config_load("network.conf");
     }
     
-    void network_disconnect(void)\
+    void network_disconnect(void)
         \ {
         config_save("network.conf");
     }
     
   main.c: |
     #include "shared/config.h"
-    #include "core/network.c"  // Direct include\
+    #include "core/network.c"  // Direct include
         \ for testing path consistency
     
     int main() {
-        config_load("main.conf"\
+        config_load("main.conf"
         );
-        network_connect();
-        network_disconnect();
+    etwork_connect();
+    etwork_disconnect();
         return 0;
     }
     
----
 config.json: |
   {
     "project_name": "absolute_vs_relative_path_consistency",

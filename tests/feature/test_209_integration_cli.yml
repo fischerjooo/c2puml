@@ -6,16 +6,33 @@ test:
 ---
 source_files:
   main.c: |
-    #include <stdio.h>n#include "config.h"nn#define MAX_SIZE 100nntypedef
-         struct Person {n    char name[50];n    int age;n} Person;nnenum Status
-         {n    OK,n    ERRORn};nnint global_var = 42;nnint main() {n    printf("
+    #include <stdio.h>
+    #include "config.h"
+    #define MAX_SIZE 100nntypedef
+         struct Person {
+        char name[50];
+        int age;
+    } Person;
+    
+    enum Status
+         {
+        OK,n    ERROR
+    };
+    
+    int global_var = 42;
+    
+    int main() {
+        printf("
         Hello, World!
-    ");n    return 0;n}nnvoid process_data(void* data) { }n
+    ";
+        return 0;
+    }
+    void process_data(void* data) { }n
   config.h: |
     #ifndef CONFIG_H
     #define CONFIG_H
     
-    #define CONFIG_VERSION "1.0.0"\
+    #define CONFIG_VERSION "1.0.0"
         
     
     typedef struct {
@@ -23,7 +40,7 @@ source_files:
         char name[100];
     } User;
     
-    enum Color\
+    enum Color
         \ {
         RED,
         GREEN,
@@ -34,7 +51,6 @@ source_files:
     
     #endif
     
----
 config.json: |
   {
     "project_name": "integration_cli_project",

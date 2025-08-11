@@ -9,36 +9,32 @@ source_files:
   struct_order.c: |
     typedef struct triangle_tag {
         point_t vertices[3];
-        char\
+        char
         \ label[MAX_LABEL_LEN];
     } triangle_t;
     
   struct_order_puml.c: |
     typedef struct triangle_tag {
         point_t vertices[3];
-    \
         \    char label[MAX_LABEL_LEN];
     } triangle_t;
     
   struct_order_complex.c: |
     typedef struct complex_struct {
         int id;
-        char\
+        char
         \ name[32];
         float value;
         struct {
             int x;
             int y;
-    \
         \    } position;
         union {
             int int_data;
             float float_data;
-    \
         \    } data;
     } complex_struct_t;
     
----
 config.json: |
   {
     "project_name": "struct_and_nested_ordering_comprehensive",

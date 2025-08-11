@@ -9,93 +9,87 @@ source_files:
   model.json: |
     {
       "project_name": "naming_conventions_project",
-      "source_folder"\
+      "source_folder"
         : "/tmp",
       "files": {
         "main.c": {
-          "file_path": "/tmp/main.c"\
+          "file_path": "/tmp/main.c"
         ,
           "includes": ["utils.h"],
           "macros": {},
-          "enums"\
+          "enums"
         : {},
           "structs": {},
           "unions": {},
           "aliases": {},
-    \
-        \      "functions": [{"name": "main", "return_type": "int", "is_declaration"\
+        \      "functions": [{"name": "main", "return_type": "int", "is_declaration"
         : false, "parameters": []}],
           "globals": []
         },
-        "utils.h"\
+        "utils.h"
         : {
           "file_path": "/tmp/utils.h",
           "includes": [],
-          "\
+          "
         macros": {},
           "enums": {},
           "structs": {},
-          "unions"\
+          "unions"
         : {},
           "aliases": {},
-          "functions": [{"name": "helper_function"\
+          "functions": [{"name": "helper_function"
         , "return_type": "void", "is_declaration": true, "parameters": []}],
-    \
         \      "globals": []
         },
         "test.c": {
-          "file_path": "/tmp/test.c"\
+          "file_path": "/tmp/test.c"
         ,
           "includes": [],
           "macros": {},
           "enums": {
-          \
         \  "Color": {"values": ["RED", "GREEN", "BLUE"]},
-            "LOG_LEVEL_T"\
+            "LOG_LEVEL_T"
         : {"values": ["DEBUG", "INFO", "WARNING", "ERROR"]},
-            "_private"\
+            "_private"
         : {"values": ["OPTION1", "OPTION2"]}
           },
           "structs": {
-     \
-        \       "MyBuffer": {"fields": [{"name": "data", "type": "char*"},\
+        \       "MyBuffer": {"fields": [{"name": "data", "type": "char*"},
         \ {"name": "size", "type": "size_t"}]},
-            "complex_naming_test_t"\
-        : {"fields": [{"name": "field1", "type": "int"}, {"name": "field2"\
+            "complex_naming_test_t"
+        : {"fields": [{"name": "field1", "type": "int"}, {"name": "field2"
         , "type": "char*"}]},
-            "a": {"fields": [{"name": "value",\
+            "a": {"fields": [{"name": "value",
         \ "type": "int"}]}
           },
           "unions": {
-            "Value": {"\
-        fields": [{"name": "integer", "type": "int"}, {"name": "decimal"\
+            "Value": {"
+        fields": [{"name": "integer", "type": "int"}, {"name": "decimal"
         , "type": "float"}]},
-            "callback_function_t": {"fields": [{"\
-        name": "ptr", "type": "void*"}, {"name": "value", "type": "int"\
+            "callback_function_t": {"fields": [{"
+        name": "ptr", "type": "void*"}, {"name": "value", "type": "int"
         }]},
-            "123invalid": {"fields": [{"name": "number", "type": "\
+            "123invalid": {"fields": [{"name": "number", "type": "
         int"}, {"name": "letter", "type": "char"}]}
           },
-          "aliases"\
+          "aliases"
         : {
             "Integer": {"original_type": "int"},
-            "pointer_to_int"\
+            "pointer_to_int"
         : {"original_type": "int*"},
-            "UPPERCASE": {"original_type": "\
+            "UPPERCASE": {"original_type": "
         int"}
           },
           "functions": [],
           "globals": []
         }
       },
-    \
         \  "include_relations": [
-        {"source_file": "main.c", "included_file"\
+        {"source_file": "main.c", "included_file"
         : "utils.h", "depth": 1}
       ]
     }
     
----
 config.json: |
   {
     "project_name": "naming_conventions_project",

@@ -9,87 +9,27 @@ source_files:
   processor.c: |
     #include "api.h"
     #include "worker.h"
-    #include "private_worker.h"\
+    #include "private_worker.h"
         
     
     // Main processor functions
     void process_data() {
         api_function();
-    \
         \    worker_function();
     }
     
     int main() {
         process_data();
         return 0;
-    \
         }
     
-  api.h: '#ifndef API_H
-
-    #define API_H
-
-
-    #include "types.h"
-
-    #include "platform.h"
-
-    #include "memory.h"
-
-
-    // Public API functions
-
-    void api_function(void);
-
-    extern int api_global;
-
-
-    #endif
-
-    '
-  worker.h: '#ifndef WORKER_H
-
-    #define WORKER_H
-
-
-    #include "validation.h"
-
-    #include "errors.h"
-
-
-    // Worker functions
-
-    void worker_function(void);
-
-    extern int worker_global;
-
-
-    #endif
-
-    '
-  private_worker.h: '#ifndef PRIVATE_WORKER_H
-
-    #define PRIVATE_WORKER_H
-
-
-    #include "internal.h"
-
-
-    // Private worker functions
-
-    void private_worker_function(void);
-
-
-    #endif
-
-    '
   types.h: |
     #ifndef TYPES_H
     #define TYPES_H
     
     #include "constants.h"
     
-    typedef\
+    typedef
         \ int ProcessorID;
     typedef struct {
         int x, y;
@@ -97,81 +37,18 @@ source_files:
     
     #endif
     
-  platform.h: '#ifndef PLATFORM_H
-
-    #define PLATFORM_H
-
-
-    #define PLATFORM_LINUX
-
-    #define MAX_THREADS 16
-
-
-    #endif
-
-    '
-  memory.h: '#ifndef MEMORY_H
-
-    #define MEMORY_H
-
-
-    void* allocate_memory(size_t size);
-
-    void free_memory(void* ptr);
-
-
-    #endif
-
-    '
-  validation.h: '#ifndef VALIDATION_H
-
-    #define VALIDATION_H
-
-
-    int validate_input(int value);
-
-
-    #endif
-
-    '
   errors.h: |
     #ifndef ERRORS_H
     #define ERRORS_H
     
     enum ErrorCode {
         ERROR_NONE,
-    \
         \    ERROR_INVALID,
         ERROR_MEMORY
     };
     
     #endif
     
-  constants.h: '#ifndef CONSTANTS_H
-
-    #define CONSTANTS_H
-
-
-    #define MAX_BUFFER_SIZE 1024
-
-    #define DEFAULT_TIMEOUT 5000
-
-
-    #endif
-
-    '
-  internal.h: '#ifndef INTERNAL_H
-
-    #define INTERNAL_H
-
-
-    void internal_function(void);
-
-
-    #endif
-
-    '
----
 config.json: |
   {
     "project_name": "test_include_filtering",

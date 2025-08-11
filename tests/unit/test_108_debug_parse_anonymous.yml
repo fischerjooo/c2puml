@@ -9,34 +9,31 @@ source_files:
     // Anonymous struct in typedef
     typedef struct {
         int id;
-    \
         \    struct {
             float x, y;
         } position;
         struct {
-            char\
+            char
         \ r, g, b;
         } color;
     } point_t;
     
     // Anonymous union in typedef
-    typedef\
+    typedef
         \ struct {
         int type;
         union {
             int int_value;
-            float\
+            float
         \ float_value;
             char string_value[16];
         } data;
     } variant_t;
     
-    \
         // Global variable using the types
     point_t global_point;
     variant_t global_variant;
     
----
 config.json: |
   {
     "project_name": "debug_anonymous_structure_parsing",

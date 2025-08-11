@@ -10,13 +10,13 @@ source_files:
     
     struct Person {
         char name[50];
-        int\
+        int
         \ age;
     };
     
     int main() {
         struct Person p = {"John", 30};
-        return\
+        return
         \ 0;
     }
     
@@ -25,7 +25,7 @@ source_files:
     #define UTILS_H
     
     typedef struct {
-        int x,\
+        int x,
         \ y;
     } Point;
     
@@ -33,21 +33,11 @@ source_files:
     
     #endif
     
-  src2/app.c: '#include "types.h"
-
-
-    enum Color { RED, GREEN, BLUE };
-
-
-    void process_color(enum Color c) {}
-
-    '
   src2/types.h: |
     #ifndef TYPES_H
     #define TYPES_H
     
     typedef unsigned int uint32_t;
-    \
         typedef struct {
         uint32_t id;
         char name[100];
@@ -58,7 +48,7 @@ source_files:
   src3/complex.c: |
     #include "data.h"
     
-    union Data { int i; float f; char str[20];\
+    union Data { int i; float f; char str[20];
         \ };
     
     struct Container {
@@ -72,7 +62,7 @@ source_files:
     
     #define MAX_SIZE 100
     
-    typedef\
+    typedef
         \ struct {
         int values[MAX_SIZE];
         int count;
@@ -80,7 +70,6 @@ source_files:
     
     #endif
     
----
 config.json: |
   {
     "project_name": "multi_source_test",

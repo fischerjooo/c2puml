@@ -10,39 +10,37 @@ source_files:
     #include <stdarg.h>
     
     // Declarations
-    int decl_add(int a, int\
+    int decl_add(int a, int
         \ b);
     void decl_process_point(point_t * p);
-    real_t decl_average(const int *\
+    real_t decl_average(const int *
         \ arr, size_t len);
     
     // Definitions
-    int def_add(int a, int b) { return a +\
+    int def_add(int a, int b) { return a +
         \ b; }
     inline void def_inline_process(point_t * p) { (void)p; }
-    static int def_static_helper(const\
+    static int def_static_helper(const
         \ char * s) { return (int)(s ? *s : 0); }
     
     // Complex params
-    int callback(void\
+    int callback(void
         \ * data, void * user_data) { return 0; }
-    void array_func(int arr[10], size_t\
+    void array_func(int arr[10], size_t
         \ size) { (void)arr; (void)size; }
-    const char * const_func(const char * str)\
+    const char * const_func(const char * str)
         \ { return str; }
     
     // Empty params
     void init(void) {}
     void cleanup(void) {}
-    \
         
     // Variadic
     int log_message(int level, const char * fmt, ...) {
-      va_list\
+      va_list
         \ args; va_start(args, fmt); va_end(args); (void)level; return 0;
     }
     
----
 config.json: |
   {
     "project_name": "parser_functions_and_parameters_comprehensive",

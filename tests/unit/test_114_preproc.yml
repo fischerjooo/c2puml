@@ -7,47 +7,79 @@ test:
 ---
 source_files:
   preproc_all.c: |
-    #include <stdio.h>n#include <stdlib.h>n#include "preproc_header.h"
-        nn// Duplicate macro name under conditional branchesn#if 1n  #define DEPRECATED
-         __attribute__((deprecated))n#elsen  #define DEPRECATEDn#endifnn// Basic
-         macrosn#define MAX_SIZE 100n#define MIN_SIZE 10n#define VERSION_STRING "
-        1.0.0"nn// Conditional logging macron#ifdef DEBUGn  #define LOG(msg) printf("
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include "preproc_header.h"
+        nn// Duplicate macro name under conditional branches
+    #if 1n  #define DEPRECATED
+         __attribute__((deprecated))
+    #elsen  #define DEPRECATED
+    #endifnn// Basic
+         macros
+    #define MAX_SIZE 100
+    #define MIN_SIZE 10
+    #define VERSION_STRING "
+        1.0.0"nn// Conditional logging macro
+    #ifdef DEBUGn  #define LOG(msg) printf("
         DEBUG: %s
-    ", msg)n#elsen  #define LOG(msg)n#endifnntypedef struct {n
-          int id;n  char name[MAX_SIZE];n} Item;nn#if defined(FEATURE_A)n  typedef
-         struct { int feature_a_data; } FeatureA;n#endifnn#ifndef DISABLE_FEATURE_Bn
-          typedef struct { float feature_b_value; } FeatureB;n#endifnnint process_item(Item*
-         item);nvoid initialize_system(void);nnint global_items = 0;nnint process_item(Item*
-         item) {n  if (item == NULL) return -1;n  LOG("Processing item");n  return
-         item->id;n}nnvoid initialize_system(void) {n  LOG("System initialized"
-        );n  global_items = 0;n}n
+    ", msg)
+    #elsen  #define LOG(msg)
+    #endifnntypedef struct {
+    
+          int id;
+      char name[MAX_SIZE];
+    } Item;
+    
+    #if defined(FEATURE_A)
+      typedef
+         struct { int feature_a_data; } FeatureA;
+    #endifn
+    #ifndef DISABLE_FEATURE_Bn
+          typedef struct { float feature_b_value; } FeatureB;
+    #endifn
+    int process_item(Item*
+         item);
+    void initialize_system(void);
+    
+    int global_items = 0;
+    
+    int process_item(Item*
+         item) {
+      if (item == NULL) return -1;
+      LOG("Processing item";
+      return
+         item->id;
+    }
+    void initialize_system(void) {
+      LOG("System initialized"
+        );
+      global_items = 0;
+    }n
   preproc_header.h: |
     #ifndef PREPROCESSOR_HEADER_H
     #define PREPROCESSOR_HEADER_H
-    \
         
     #define HEADER_VERSION 2
     #define API_VERSION "2.1.0"
     
-    typedef struct Item\
+    typedef struct Item
         \ Item;
     
     #ifdef FEATURE_A
       typedef struct FeatureA FeatureA;
     #endif
     
-    #ifndef\
+    #ifndef
         \ DISABLE_FEATURE_B
       typedef struct FeatureB FeatureB;
     #endif
     
-    int process_item(Item*\
+    int process_item(Item*
         \ item);
     void initialize_system(void);
     
     #endif // PREPROCESSOR_HEADER_H
     
----
 config.json: |
   {
     "project_name": "preprocessor_and_macros_comprehensive",

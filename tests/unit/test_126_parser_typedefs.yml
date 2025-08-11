@@ -10,7 +10,6 @@ source_files:
     typedef int Integer;
     typedef char* String;
     typedef void (*Callback)(int);
-    \
         typedef struct {
         int x;
         int y;
@@ -36,7 +35,6 @@ source_files:
         BLUE
     } Color;
     
----
 config.json: |
   {
     "project_name": "test_parser_typedefs_comprehensive",

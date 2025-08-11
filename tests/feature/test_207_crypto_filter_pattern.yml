@@ -10,7 +10,7 @@ source_files:
         // Encryption logic
     }
     
-    void decrypt_data()\
+    void decrypt_data()
         \ {
         // Decryption logic  
     }
@@ -20,16 +20,10 @@ source_files:
     
     int main() {
         encrypt_data();
-        return\
+        return
         \ 0;
     }
     
-  crypto.h: 'void encrypt_data();
-
-    void decrypt_data();
-
-    '
----
 config.json: |
   {
     "project_name": "crypto_filter_test",

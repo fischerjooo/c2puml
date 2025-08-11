@@ -12,14 +12,12 @@ source_files:
     
   crypto.c: |
     void aes_encrypt() {
-        // AES encryption
+        // AES encryptio
     }
     void rsa_encrypt() {
-    \
-        \    // RSA encryption
+        \    // RSA encryptio
     }
     
----
 config.json: |
   {
     "project_name": "crypto_usecase_test",

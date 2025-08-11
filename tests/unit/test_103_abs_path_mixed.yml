@@ -11,7 +11,6 @@ source_files:
     
     typedef struct {
         int base_id;
-    \
         \    char base_name[64];
     } base_t;
     
@@ -23,7 +22,7 @@ source_files:
     #ifndef GRAPHICS_H
     #define GRAPHICS_H
     
-    #include "../common/base.h"\
+    #include "../common/base.h"
         
     
     typedef struct {
@@ -31,7 +30,6 @@ source_files:
         int width;
         int height;
     } graphics_t;
-    \
         
     void graphics_render(graphics_t* g);
     
@@ -41,16 +39,14 @@ source_files:
     #include "common/base.h"
     #include "modules/graphics.h"
     
-    int main()\
+    int main()
         \ {
         graphics_t gfx;
         base_init(&gfx.base);
         graphics_render(&gfx);
-    \
         \    return 0;
     }
     
----
 config.json: |
   {
     "project_name": "mixed_path_styles_handling",

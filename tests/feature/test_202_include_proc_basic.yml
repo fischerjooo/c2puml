@@ -10,7 +10,7 @@ source_files:
     #include "utils.h"
     
     int main() {
-        Point p =\
+        Point p =
         \ {0, 0};
         return 0;
     }
@@ -21,13 +21,11 @@ source_files:
     
     typedef struct {
         int x;
-       \
         \ int y;
     } Point;
     
     #endif
     
----
 config.json: |
   {
     "project_name": "test_include_processing_basic",

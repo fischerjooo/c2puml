@@ -8,56 +8,48 @@ source_files:
   comprehensive_typedefs.c: |
     // Comprehensive typedef extraction test
     
-    // Simple\
+    // Simple
         \ typedefs
     typedef uint32_t MyLen;
     typedef int32_t MyInt;
     typedef char * MyString;
-    \
         
     // Struct typedefs
     typedef struct MyBuffer_tag {
         MyLen length;
-        MyString\
+        MyString
         \ data;
     } MyBuffer;
     
     typedef struct MyComplexStruct_tag {
         MyLen id;
-    \
         \    MyString name;
         MyCallback callback;
         log_level_t log_level;
     } MyComplex;
-    \
         
     // Function pointer typedefs
     typedef int (*MyCallback)(MyBuffer * buffer);
-    \
         typedef void (*log_callback_t)(log_level_t level, const char * message);
     
-    //\
+    //
         \ Pointer typedefs
     typedef MyComplex * MyComplexPtr;
     typedef MyComplexPtr MyComplexArray[10];
-    \
         
     // Enum typedefs
     typedef enum Color_tag {
         COLOR_RED,
         COLOR_GREEN,
-    \
         \    COLOR_BLUE
     } Color_t;
     
     // Union typedefs
     typedef union Number_tag {
-    \
         \    int i;
         float f;
     } Number_t;
     
----
 config.json: |
   {
     "project_name": "test_typedef_extraction_comprehensive",

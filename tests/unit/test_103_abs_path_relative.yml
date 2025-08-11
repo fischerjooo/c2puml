@@ -11,7 +11,6 @@ source_files:
     
     typedef struct {
         int id;
-      \
         \  char name[32];
     } util_data_t;
     
@@ -25,11 +24,9 @@ source_files:
     int main() {
         util_data_t data;
         init_utils();
-    \
         \    return 0;
     }
     
----
 config.json: |
   {
     "project_name": "relative_path_handling_in_include_tree",

@@ -9,22 +9,21 @@ source_files:
     typedef union {
         int primary_int;
         union {
-            float\
+            float
         \ nested_float;
             double nested_double;
         } nested_union;
-        char\
+        char
         \ primary_bytes[32];
     } test_union_t;
     
-    void process_union(test_union_t* tu)\
+    void process_union(test_union_t* tu)
         \ {
         tu->primary_int = 42;
     }
     
     test_union_t global_union;
     
----
 config.json: |
   {
     "project_name": "debug_nested_union_field_parsing",

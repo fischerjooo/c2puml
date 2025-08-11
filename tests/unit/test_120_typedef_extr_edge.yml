@@ -9,35 +9,31 @@ source_files:
     // Edge cases for typedef extraction
     
     // This is a comment
-    \
         typedef uint32_t MyLen;  // Another comment
     
     /* Multi-line comment
-       about\
+       about
         \ typedefs */
     typedef int32_t MyInt;
     
-    typedef char * MyString; /* Inline comment\
+    typedef char * MyString; /* Inline comment
         \ */
     
     // Typedef with extra whitespace
-    typedef  unsigned   long   long    ULongLong\
+    typedef  unsigned   long   long    ULongLong
         \  ;
     
     // Typedef with const and volatile
     typedef const char * ConstString;
-    \
         typedef volatile int VolatileInt;
     
     /* Complex typedef with nested comments */
-    \
         typedef struct /* comment */ Point_tag {
         int x; // X coordinate
-        int\
+        int
         \ y; /* Y coordinate */
     } Point_t;
     
----
 config.json: |
   {
     "project_name": "test_typedef_extraction_edge_cases",

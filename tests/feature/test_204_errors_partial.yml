@@ -6,10 +6,13 @@ test:
 ---
 source_files:
   test.c: |
-    #include <stdio.h>nnint main() {n    printf("Hello, World!
-    ");n
-            return 0;n}n
----
+    #include <stdio.h>
+    int main() {
+        printf("Hello, World!
+    ";
+    
+            return 0;
+    }n
 config.json: |
   {
     "project_name": "test_partial_failures",

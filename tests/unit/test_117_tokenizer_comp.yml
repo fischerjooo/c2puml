@@ -7,48 +7,102 @@ test:
 ---
 source_files:
   complex.c: |
-    #include <stdio.h>n#include <stdlib.h>nn// Complex typedefs with
-         function pointersntypedef struct Node {n    int data;n    struct Node* next;n
-            int (*compare)(const void* a, const void* b);n    void (*callback)(struct
-         Node* self, void* context);n} Node;nn// Complex enum with explicit valuesn
-        typedef enum {n    STATE_INIT = 0x01,n    STATE_RUNNING = 0x02,n    STATE_PAUSED
-         = 0x04,n    STATE_STOPPED = 0x08,n    STATE_ERROR = 0xFFn} SystemState;n
-        n// Complex union with nested structsntypedef union {n    struct {n      
-          uint8_t r, g, b, a;n    } color;n    uint32_t value;n    struct {n    
-            uint16_t high;n        uint16_t low;n    } words;n} ColorUnion;nn//
-         Complex function with multiple pointer levelsnint** allocate_matrix(size_t
-         rows, size_t cols);nn// Function with complex parameter typesnvoid process_data(n
+    #include <stdio.h>
+    #include <stdlib.h>nn// Complex typedefs with
+         function pointersntypedef struct Node {
+        int data;
+        struct Node* next;
+    
+            int (*compare)(const void* a, const void* b);
+        void (*callback)(struct
+         Node* self, void* context);
+    } Node;
+    n// Complex enum with explicit valuesn
+        typedef enum {
+        STATE_INIT = 0x01,n    STATE_RUNNING = 0x02,n    STATE_PAUSED
+         = 0x04,n    STATE_STOPPED = 0x08,n    STATE_ERROR = 0xFF
+    } SystemState;
+    
+        n// Complex union with nested structsntypedef union {
+        struct {
+          
+          uint8_t r, g, b, a;
+        } color;
+        uint32_t value;
+        struct {
+        
+            uint16_t high;
+            uint16_t low;
+        } words;
+    } ColorUnion;
+    n//
+         Complex function with multiple pointer levels
+    int** allocate_matrix(size_t
+         rows, size_t cols);
+    n// Function with complex parameter types
+    void process_data(
             const Node* const * nodes,n    size_t count,n    int (*processor)(const
-         Node*, void*),n    void* contextn);nn// Simple global variablenstatic int
-         global_counter = 0;nn// Complex macro with multi-line definitionn#define
+         Node*, void*),n    void* contextn);
+    n// Simple global variable
+    static int
+         global_counter = 0;
+    n// Complex macro with multi-line definition
+    #define
          SAFE_FREE(ptr) do { 
         if ((ptr) != NULL) { 
             free(ptr); 
     
                 (ptr) = NULL; 
         } 
-    } while(0)nn// Function with complex body
-         that tests expression parsingnNode* create_node(int data) {n    Node* node
-         = (Node*)malloc(sizeof(Node));n    if (node != NULL) {n        node->data
-         = data;n        node->next = NULL;n        node->compare = NULL;n       
-         node->callback = NULL;n    }n    return node;n}n
+    } while(0)
+    n// Function with complex body
+         that tests expression parsingnNode* create_node(int data) {
+        Node* node
+         = (Node*)malloc(sizeof(Node));
+        if (node != NULL) {
+            node->data
+         = data;
+            node->next = NULL;
+            node->compare = NULL;
+           
+         node->callback = NULL;
+        }n    return node;
+    }n
   edge_cases.c: |
-    #include <stdio.h>n#include <string.h>nn/* Multi-line comment
-         withn   complex content like:n   struct fake { int x; };n   This should be
-         ignored */nn// Single line comment with code: int y = 5;nnstruct EdgeCase
-         {n    char string_with_quotes[50];  // "embedded quotes"n    char escaped_chars[20];
+    #include <stdio.h>
+    #include <string.h>nn/* Multi-line comment
+         withn   complex content like:n   struct fake { int x; };
+       This should be
+         ignored */nn// Single line comment with code: int y = 5;
+    
+    struct EdgeCase
+         {
+        char string_with_quotes[50];  // "embedded quotes"n    char escaped_chars[20];
                // contains 
     , \t, \\, "n    int complex_expr;             //
-         result of (a * b + c) / dn};nn// String literals with special contentnconst
-         char* test_strings[] = {n    "Simple string",n    "String with "escaped
+         result of (a * b + c) / d
+    };
+    n// String literals with special contentnconst
+         char* test_strings[] = {
+        "Simple string",n    "String with "escaped
          quotes"",n    "String with \\ backslash",n    "String with 
      newline"
-        ,n    "Multi line string",n    ""  // Empty stringn};nn// Complex expressions
-         with multiple operatorsnint complex_calculation() {n    int a = 10, b = 20,
-         c = 30;n    int result1 = ((a + b) * c - (a / b)) % 7;n    int result2 = (a
-         << 2) | (b >> 1) & ~c;n    int result3 = (a > b) ? (c * 2) : (c / 2);n   
-         return strlen("test") + result1 + result2 + result3;n}nn// Macro with complex
-         contentn#define COMPLEX_MACRO(x, y) 
+        ,n    "Multi line string",n    ""  // Empty string
+    };
+    n// Complex expressions
+         with multiple operators
+    int complex_calculation() {
+        int a = 10, b = 20,
+         c = 30;
+        int result1 = ((a + b) * c - (a / b)) % 7;
+        int result2 = (a
+         << 2) | (b >> 1) & ~c;
+        int result3 = (a > b) ? (c * 2) : (c / 2);
+       
+         return strlen("test") + result1 + result2 + result3;
+    }nn// Macro with complex
+         content
+    #define COMPLEX_MACRO(x, y) 
         do { 
             if ((x) > (y))
          { 
@@ -60,33 +114,73 @@ source_files:
     ", (x), (y)); 
             } 
       
-          } while(0)nn// Edge case: function with many punctuation marksnvoid punctuation_test(int
-         array[], size_t len, int (*cmp)(const void*, const void*)) {n    int* ptr =
-         &array[0];n    (*ptr)++;n    array[len-1] = *ptr;n}n
+          } while(0)
+    n// Edge case: function with many punctuation marks
+    void punctuation_test(int
+         array[], size_t len, int (*cmp)(const void*, const void*)) {
+        int* ptr =
+         &array[0];
+        (*ptr)++;
+        array[len-1] = *ptr;
+    }n
   preprocessor.c: |
-    #include <stdio.h>n#include <stdlib.h>nn// Complex conditional
-         compilationn#ifdef DEBUGn    #define LOG(msg) printf("DEBUG: %s
-    ", msg)n
-            #define DEBUG_ONLY(code) coden#elsen    #define LOG(msg) n    #define
-         DEBUG_ONLY(code)n#endifnn// Multi-level nested preprocessor conditionsn
-        #if defined(FEATURE_A) && !defined(FEATURE_B)n    #ifdef PLATFORM_LINUXn   
-             #define PLATFORM_SPECIFIC_FUNC linux_funcn    #elif defined(PLATFORM_WINDOWS)n
+    #include <stdio.h>
+    #include <stdlib.h>nn// Complex conditional
+         compilation
+    #ifdef DEBUGn    #define LOG(msg) printf("DEBUG: %s
+    ", msg)
+    
+            #define DEBUG_ONLY(code) code
+    #elsen    #define LOG(msg)
+        #define
+         DEBUG_ONLY(code)
+    #endifnn// Multi-level nested preprocessor conditionsn
+        #if defined(FEATURE_A) && !defined(FEATURE_B)
+        #ifdef PLATFORM_LINUXn   
+             #define PLATFORM_SPECIFIC_FUNC linux_funcn    #elif defined(PLATFORM_WINDOWS)
+    
                 #define PLATFORM_SPECIFIC_FUNC windows_funcn    #elsen        #define
-         PLATFORM_SPECIFIC_FUNC generic_funcn    #endifn#elsen    #define PLATFORM_SPECIFIC_FUNC
-         default_funcn#endifnn// Preprocessor with complex expressionsn#define MAX(a,
-         b) ((a) > (b) ? (a) : (b))n#define MIN(a, b) ((a) < (b) ? (a) : (b))n#define
-         CLAMP(x, min, max) MIN(MAX(x, min), max)nn// Macro with stringification and
-         token pastingn#define DECLARE_FUNC(name) 
-        void name##_init(void); \
-        n    void name##_cleanup(void); 
+         PLATFORM_SPECIFIC_FUNC generic_funcn    #endif
+    #elsen    #define PLATFORM_SPECIFIC_FUNC
+         default_func
+    #endifnn// Preprocessor with complex expressions
+    #define MAX(a,
+         b) ((a) > (b) ? (a) : (b))
+    #define MIN(a, b) ((a) < (b) ? (a) : (b))
+    #define
+         CLAMP(x, min, max) MIN(MAX(x, min), max)
+    n// Macro with stringification and
+         token pasting
+    #define DECLARE_FUNC(name) 
+        void name##_init(void);
+        void name##_cleanup(void); 
         const char* name##_get_name(void) { return
-         #name; }nnstruct Config {n    int base_value;n#ifdef EXTENDED_CONFIGn 
-           int extended_value;n    char* description;n#endifn#if MAX_FEATURES > 10n
-            int feature_flags[MAX_FEATURES];n#elsen    int feature_flags[10];n#endifn
-        };nnint calculate_result(int input) {n    int result = input;n#ifdef APPLY_MULTIPLIERn
-            result *= 2;n#endifn#ifndef DISABLE_BOUNDS_CHECKn    if (result < 0) result
-         = 0;n    if (result > 1000) result = 1000;n#endifn    DEBUG_ONLY(LOG("Result
-         calculated"));n    return result;n}nn#define COMPLEX_OPERATION(x, y, z)
+         #name; }
+    struct Config {
+        int base_value;
+    #ifdef EXTENDED_CONFIGn 
+           int extended_value;
+        char* description;
+    #endif
+    #if MAX_FEATURES > 10n
+            int feature_flags[MAX_FEATURES];
+    #elsen    int feature_flags[10];
+    #endif
+    };
+    
+    int calculate_result(int input) {
+        int result = input;
+    #ifdef APPLY_MULTIPLIERn
+            result *= 2;
+    #endif
+    #ifndef DISABLE_BOUNDS_CHECKn    if (result < 0) result
+         = 0;
+        if (result > 1000) result = 1000;
+    #endifn    DEBUG_ONLY(LOG("Result
+         calculated"));
+        return result;
+    }
+    #define COMPLEX_OPERATION(x, y, z)
          
         do { 
             int temp1 = (x) + (y); 
@@ -96,56 +190,53 @@ source_files:
     ", 
       
                      (x), (y), temp1, (z), temp2); 
-        } while(0)nnDECLARE_FUNC(module_a)n
-        DECLARE_FUNC(module_b)n
+        } while(0)
+    nDECLARE_FUNC(module_a)
+    
+        DECLARE_FUNC(module_b)
+    
   complex_functions.c: |
     #include <stdarg.h>
     
     struct complex_struct;
-    typedef struct\
+    typedef struct
         \ complex_struct complex_t;
     
     typedef void (*callback_t)(int result, void* user_data);
-    \
         typedef int (*comparator_t)(const void* a, const void* b);
     
     int complex_function(
-    \
         \    const char* name,
         complex_t* data,
         callback_t callback,
-        void*\
+        void*
         \ user_data,
         int flags,
         ...  // variadic parameters
     );
     
-    static complex_t*\
+    static complex_t*
         \ create_complex(
         const char* name,
         size_t name_len,
         int initial_value
-    \
         ) {
         return NULL;
     }
     
     comparator_t get_comparator(
         const char* type,
-    \
         \    int (*custom_compare)(const void*, const void*)
     );
     
     inline void process_array(
-    \
         \    complex_t** array,
         size_t count,
-        void (*processor)(complex_t*,\
+        void (*processor)(complex_t*,
         \ int index)
     ) {}
     
     void log_message(int level, const char* format, ...);
-    \
         const volatile int* get_status_pointer(void);
     
   mixed_structures.c: |
@@ -153,79 +244,69 @@ source_files:
     #include <stdlib.h>
     
     typedef enum {
-    \
         \    STATE_IDLE = 0,
         STATE_RUNNING = 1,
         STATE_PAUSED = 2,
-        STATE_ERROR\
+        STATE_ERROR
         \ = -1
     } state_t;
     
     typedef struct {
         char name[64];
         state_t current_state;
-    \
         \    struct {
             int x, y, z;
             union {
                 float as_float[3];
-    \
         \            int as_int[3];
             } coordinates;
         } position;
-        union\
+        union
         \ {
             struct {
                 char type;
                 int value;
-          \
         \  } typed_data;
             float raw_float;
             int raw_int;
         } data;
-    \
         } complex_entity_t;
     
     typedef int (*process_func_t)(complex_entity_t*, state_t);
-    \
         
     int process_entity(complex_entity_t* entity, state_t new_state) {
-        if (entity\
+        if (entity
         \ && new_state >= STATE_IDLE) {
             entity->current_state = new_state;
-    \
         \        return 1;
         }
         return 0;
     }
     
     complex_entity_t global_entity;
-    \
         process_func_t global_processor = process_entity;
     
   complex_union.c: |
     typedef union {
         int primary_int;
         union {
-            float\
+            float
         \ nested_float;
             double nested_double;
             union {
-                char\
+                char
         \ deep_char;
                 short deep_short;
             } deep_union;
         } nested_union;
-    \
         \    char primary_bytes[32];
         struct {
             int struct_in_union;
-       \
         \     float struct_float;
         } embedded_struct;
     } complex_union_t;
     
-    void\
+    void
         \ process_complex_union(complex_union_t* cu) {}
     complex_union_t global_complex_union;
     
@@ -235,27 +316,25 @@ source_files:
         const char* name;
     };
     
-    \
         enum DataEnum {
         OPTION_A,
         OPTION_B
     };
     
     union DataUnion {
-        int\
+        int
         \ intVal;
         float floatVal;
     };
     
     static int static_var = 10;
-    extern int\
+    extern int
         \ extern_var;
     
     inline void inline_func() {}
-    void regular_func(const void* ptr)\
+    void regular_func(const void* ptr)
         \ {}
     
----
 config.json: |
   {
     "project_name": "test_tokenizer_comprehensive",

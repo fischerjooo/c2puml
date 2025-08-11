@@ -9,21 +9,19 @@ source_files:
     typedef union {
         int primary_int;
         union {
-            float\
+            float
         \ nested_float;
             double nested_double;
         } nested_union;
-        char\
+        char
         \ primary_bytes[32];
     } test_union_t;
     
     typedef struct {
         test_union_t data;
-    \
         \    char label[16];
     } container_t;
     
----
 config.json: |
   {
     "project_name": "debug_complex_union_parsing",

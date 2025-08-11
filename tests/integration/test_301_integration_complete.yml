@@ -10,33 +10,30 @@ source_files:
     #include "game/game.h"
     #include "platform/platform.h"
     
-    int main(int\
+    int main(int
         \ argc, char** argv) {
         Platform platform;
         Game game;
     
-        if (!platform_init(&platform))\
+        if (!platform_init(&platform))
         \ {
             return -1;
         }
     
         if (!game_init(&game, &platform)) {
-      \
         \      platform_shutdown(&platform);
             return -1;
         }
     
-        while (platform_is_running(&platform))\
+        while (platform_is_running(&platform))
         \ {
             platform_update(&platform);
             game_update(&game, platform_get_delta_time(&platform));
-    \
         \        game_render(&game);
         }
     
         game_shutdown(&game);
         platform_shutdown(&platform);
-    \
         
         return 0;
     }
@@ -45,26 +42,24 @@ source_files:
     #ifndef GAME_H
     #define GAME_H
     
-    #include "../platform/platform.h"\
+    #include "../platform/platform.h"
         
     #include "entities/player.h"
     #include "world/level.h"
-    #include "rendering/renderer.h"\
+    #include "rendering/renderer.h"
         
     
     typedef struct {
         Platform* platform;
         Player player;
         Level current_level;
-    \
         \    Renderer renderer;
         double total_time;
     } Game;
     
-    int game_init(Game*\
+    int game_init(Game*
         \ game, Platform* platform);
     void game_update(Game* game, double delta_time);
-    \
         void game_render(Game* game);
     void game_shutdown(Game* game);
     
@@ -74,18 +69,16 @@ source_files:
     #ifndef PLAYER_H
     #define PLAYER_H
     
-    #include "../../math/vector.h"\
+    #include "../../math/vector.h"
         
     #include "../../physics/rigidbody.h"
     
     typedef struct {
         Vector3 position;
-    \
         \    Vector3 velocity;
         RigidBody physics;
         float health;
         int score;
-    \
         } Player;
     
     #endif
@@ -94,13 +87,12 @@ source_files:
     #ifndef LEVEL_H
     #define LEVEL_H
     
-    #include "../entities/player.h"\
+    #include "../entities/player.h"
         
     #include "../../graphics/mesh.h"
     
     typedef struct {
         Mesh* geometry;
-    \
         \    Player* players;
         int player_count;
         char* name;
@@ -112,15 +104,15 @@ source_files:
     #ifndef RENDERER_H
     #define RENDERER_H
     
-    #include\
+    #include
         \ "../../graphics/context.h"
     #include "../../graphics/shader.h"
     
-    typedef\
+    typedef
         \ struct {
         GraphicsContext context;
         Shader* active_shader;
-        int\
+        int
         \ frame_count;
     } Renderer;
     
@@ -130,22 +122,19 @@ source_files:
     #ifndef PLATFORM_H
     #define PLATFORM_H
     
-    typedef struct\
+    typedef struct
         \ {
         void* window_handle;
         int window_width;
         int window_height;
-    \
         \    double last_frame_time;
     } Platform;
     
     int platform_init(Platform* platform);
-    \
         void platform_update(Platform* platform);
     int platform_is_running(Platform* platform);
-    \
         double platform_get_delta_time(Platform* platform);
-    void platform_shutdown(Platform*\
+    void platform_shutdown(Platform*
         \ platform);
     
     #endif
@@ -155,12 +144,11 @@ source_files:
     #define VECTOR_H
     
     typedef struct {
-       \
         \ float x, y, z;
     } Vector3;
     
     Vector3 vector_add(Vector3 a, Vector3 b);
-    Vector3\
+    Vector3
         \ vector_scale(Vector3 v, float scalar);
     
     #endif
@@ -169,13 +157,12 @@ source_files:
     #ifndef RIGIDBODY_H
     #define RIGIDBODY_H
     
-    #include "\
+    #include "
         ../math/vector.h"
     
     typedef struct {
         Vector3 position;
         Vector3 velocity;
-    \
         \    Vector3 acceleration;
         float mass;
     } RigidBody;
@@ -186,7 +173,7 @@ source_files:
     #ifndef CONTEXT_H
     #define CONTEXT_H
     
-    typedef struct\
+    typedef struct
         \ {
         void* api_context;
         int api_version;
@@ -199,7 +186,6 @@ source_files:
     #define SHADER_H
     
     typedef struct {
-    \
         \    unsigned int program_id;
         char* source_code;
     } Shader;
@@ -211,17 +197,15 @@ source_files:
     #define MESH_H
     
     typedef struct {
-        float*\
+        float*
         \ vertices;
         unsigned int* indices;
         int vertex_count;
         int index_count;
-    \
         } Mesh;
     
     #endif
     
----
 config.json: |
   {
     "project_name": "complete_system_integration_test",

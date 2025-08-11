@@ -9,24 +9,22 @@ source_files:
     typedef struct {
         int outer_id;
         struct {
-            char\
+            char
         \ name[32];
             struct {
                 float x, y, z;
             } position;
-    \
         \    } inner_data;
         double outer_value;
     } nested_struct_t;
     
-    // Function\
+    // Function
         \ using the nested struct
     void process_nested(nested_struct_t* ns) {
-        //\
-        \ Processing function
+        //
+        \ Processing functio
     }
     
----
 config.json: |
   {
     "project_name": "debug_nested_struct_parsing",
