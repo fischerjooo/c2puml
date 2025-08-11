@@ -17,7 +17,7 @@ class TestParserTypedefsConsolidated(UnifiedTestCase):
     """Test consolidated parser typedefs through the CLI interface"""
 
     def test_parser_typedefs_comprehensive(self):
-        result = self.run_test("parser_typedefs_comprehensive")
+        result = self.run_test("126_parser_typedefs")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
