@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
-Test Parser Complete
-
-This test verifies that the c2puml tool can parse a complete C file with all elements and generate
-the expected model and PlantUML output through the CLI interface.
+Test Parser Comprehensive Basics (replaces parser_complete)
 """
 
 import os
@@ -15,14 +12,8 @@ from tests.framework import UnifiedTestCase
 
 
 class TestParserComplete(UnifiedTestCase):
-    """Test parsing a complete C file with all elements through the CLI interface"""
-    
-    def test_parser_complete(self):
-        """Test parsing a complete C file with all elements through the CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("parser_complete")
-        
-        # Validate results
+    def test_parser_comprehensive_basics(self):
+        result = self.run_test("parser_comprehensive_basics")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
-Test Parser Globals
-
-This test verifies that the c2puml tool can parse global variables and generate
-the expected model and PlantUML output through the CLI interface.
+Test Parser Elements – Consolidated (replaces parser_globals)
 """
 
 import os
@@ -15,14 +12,8 @@ from tests.framework import UnifiedTestCase
 
 
 class TestParserGlobals(UnifiedTestCase):
-    """Test parsing global variables through the CLI interface"""
-    
-    def test_parser_globals(self):
-        """Test parsing global variables through the CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("parser_globals")
-        
-        # Validate results
+    def test_parser_elements_comprehensive(self):
+        result = self.run_test("parser_elements_comprehensive")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

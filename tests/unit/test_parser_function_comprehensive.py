@@ -2,8 +2,7 @@
 """
 Test Comprehensive Function Parsing
 
-This test verifies that the c2puml tool can parse various function definitions
-and declarations through the CLI interface.
+Consolidated functions and parameters parsing through the CLI interface
 """
 
 import os
@@ -16,31 +15,9 @@ from tests.framework import UnifiedTestCase
 
 class TestParserFunctionComprehensive(UnifiedTestCase):
     """Test comprehensive function parsing through the CLI interface"""
-    
-    def test_parser_function_declarations(self):
-        """Test parsing function declarations through the CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("parser_function_comprehensive_declarations")
-        
-        # Validate results
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
 
-    def test_parser_function_definitions(self):
-        """Test parsing function definitions through the CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("parser_function_comprehensive_definitions")
-        
-        # Validate results
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
-
-    def test_parser_function_modifiers(self):
-        """Test parsing functions with modifiers through the CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("parser_function_comprehensive_modifiers")
-        
-        # Validate results
+    def test_parser_functions_and_parameters_comprehensive(self):
+        result = self.run_test("parser_functions_and_parameters_comprehensive")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

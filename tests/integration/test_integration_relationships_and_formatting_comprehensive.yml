@@ -1,0 +1,51 @@
+# Test metadata
+test:
+  name: "Integration – Relationships and Formatting (Comprehensive)"
+  description: "Combines parser-tokenizer integration, relationships (C↔H, H↔H, typedefs), and formatting checks"
+  category: "integration"
+  id: "I2000"
+
+---
+# Source files (representative integration project)
+source_files:
+  a.h: |
+    #ifndef A_H
+    #define A_H
+    typedef struct A { int ax; } A;
+    #endif
+
+  b.h: |
+    #ifndef B_H
+    #define B_H
+    #include "a.h"
+    typedef enum B { B0, B1 } B;
+    #endif
+
+  c.c: |
+    #include "a.h"
+    #include "b.h"
+    int f(A a, B b) { return a.ax + (int)b; }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "integration_rel_format",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+
+---
+# CLI execution
+cli_execution:
+  steps:
+    - run_full_pipeline
+
+---
+# Assertions
+assertions:
+  execution:
+    should_succeed: true
+  puml:
+    syntax_valid: true
