@@ -1,59 +1,195 @@
 test:
   name: Complete System Integration
-  description: Test complete system integration with a realistic multi-module game
-    project structure
+  description: Test complete system integration with a realistic multi-module game project structure
   category: integration
   id: '301'
 ---
 source_files:
-  src/main.c: "#include \"game/game.h\"\n#include \"platform/platform.h\"\n\nint main(int\
-    \ argc, char** argv) {\n    Platform platform;\n    Game game;\n\n    if (!platform_init(&platform))\
-    \ {\n        return -1;\n    }\n\n    if (!game_init(&game, &platform)) {\n  \
-    \      platform_shutdown(&platform);\n        return -1;\n    }\n\n    while (platform_is_running(&platform))\
-    \ {\n        platform_update(&platform);\n        game_update(&game, platform_get_delta_time(&platform));\n\
-    \        game_render(&game);\n    }\n\n    game_shutdown(&game);\n    platform_shutdown(&platform);\n\
-    \n    return 0;\n}\n"
-  src/game/game.h: "#ifndef GAME_H\n#define GAME_H\n\n#include \"../platform/platform.h\"\
-    \n#include \"entities/player.h\"\n#include \"world/level.h\"\n#include \"rendering/renderer.h\"\
-    \n\ntypedef struct {\n    Platform* platform;\n    Player player;\n    Level current_level;\n\
-    \    Renderer renderer;\n    double total_time;\n} Game;\n\nint game_init(Game*\
-    \ game, Platform* platform);\nvoid game_update(Game* game, double delta_time);\n\
-    void game_render(Game* game);\nvoid game_shutdown(Game* game);\n\n#endif\n"
-  src/game/entities/player.h: "#ifndef PLAYER_H\n#define PLAYER_H\n\n#include \"../../math/vector.h\"\
-    \n#include \"../../physics/rigidbody.h\"\n\ntypedef struct {\n    Vector3 position;\n\
-    \    Vector3 velocity;\n    RigidBody physics;\n    float health;\n    int score;\n\
-    } Player;\n\n#endif\n"
-  src/game/world/level.h: "#ifndef LEVEL_H\n#define LEVEL_H\n\n#include \"../entities/player.h\"\
-    \n#include \"../../graphics/mesh.h\"\n\ntypedef struct {\n    Mesh* geometry;\n\
-    \    Player* players;\n    int player_count;\n    char* name;\n} Level;\n\n#endif\n"
-  src/game/rendering/renderer.h: "#ifndef RENDERER_H\n#define RENDERER_H\n\n#include\
-    \ \"../../graphics/context.h\"\n#include \"../../graphics/shader.h\"\n\ntypedef\
-    \ struct {\n    GraphicsContext context;\n    Shader* active_shader;\n    int\
-    \ frame_count;\n} Renderer;\n\n#endif\n"
-  src/platform/platform.h: "#ifndef PLATFORM_H\n#define PLATFORM_H\n\ntypedef struct\
-    \ {\n    void* window_handle;\n    int window_width;\n    int window_height;\n\
-    \    double last_frame_time;\n} Platform;\n\nint platform_init(Platform* platform);\n\
-    void platform_update(Platform* platform);\nint platform_is_running(Platform* platform);\n\
-    double platform_get_delta_time(Platform* platform);\nvoid platform_shutdown(Platform*\
-    \ platform);\n\n#endif\n"
-  src/math/vector.h: "#ifndef VECTOR_H\n#define VECTOR_H\n\ntypedef struct {\n   \
-    \ float x, y, z;\n} Vector3;\n\nVector3 vector_add(Vector3 a, Vector3 b);\nVector3\
-    \ vector_scale(Vector3 v, float scalar);\n\n#endif\n"
-  src/physics/rigidbody.h: "#ifndef RIGIDBODY_H\n#define RIGIDBODY_H\n\n#include \"\
-    ../math/vector.h\"\n\ntypedef struct {\n    Vector3 position;\n    Vector3 velocity;\n\
-    \    Vector3 acceleration;\n    float mass;\n} RigidBody;\n\n#endif\n"
-  src/graphics/context.h: "#ifndef CONTEXT_H\n#define CONTEXT_H\n\ntypedef struct\
-    \ {\n    void* api_context;\n    int api_version;\n} GraphicsContext;\n\n#endif\n"
-  src/graphics/shader.h: "#ifndef SHADER_H\n#define SHADER_H\n\ntypedef struct {\n\
-    \    unsigned int program_id;\n    char* source_code;\n} Shader;\n\n#endif\n"
-  src/graphics/mesh.h: "#ifndef MESH_H\n#define MESH_H\n\ntypedef struct {\n    float*\
-    \ vertices;\n    unsigned int* indices;\n    int vertex_count;\n    int index_count;\n\
-    } Mesh;\n\n#endif\n"
+  src/main.c: |
+    #include "game/game.h"
+    #include "platform/platform.h"
+
+    int main(int argc, char** argv) {
+        Platform platform;
+        Game game;
+
+        if (!platform_init(&platform)) {
+            return -1;
+        }
+
+        if (!game_init(&game, &platform)) {
+            platform_shutdown(&platform);
+            return -1;
+        }
+
+        while (platform_is_running(&platform)) {
+            platform_update(&platform);
+            game_update(&game, platform_get_delta_time(&platform));
+            game_render(&game);
+        }
+
+        game_shutdown(&game);
+        platform_shutdown(&platform);
+
+        return 0;
+    }
+  src/game/game.h: |
+    #ifndef GAME_H
+    #define GAME_H
+
+    #include "../platform/platform.h"
+    #include "entities/player.h"
+    #include "world/level.h"
+    #include "rendering/renderer.h"
+
+    typedef struct {
+        Platform* platform;
+        Player player;
+        Level current_level;
+        Renderer renderer;
+        double total_time;
+    } Game;
+
+    int game_init(Game* game, Platform* platform);
+    void game_update(Game* game, double delta_time);
+    void game_render(Game* game);
+    void game_shutdown(Game* game);
+
+    #endif
+  src/game/entities/player.h: |
+    #ifndef PLAYER_H
+    #define PLAYER_H
+
+    #include "../../math/vector.h"
+    #include "../../physics/rigidbody.h"
+
+    typedef struct {
+        Vector3 position;
+        Vector3 velocity;
+        RigidBody physics;
+        float health;
+        int score;
+    } Player;
+
+    #endif
+  src/game/world/level.h: |
+    #ifndef LEVEL_H
+    #define LEVEL_H
+
+    #include "../entities/player.h"
+    #include "../../graphics/mesh.h"
+
+    typedef struct {
+        Mesh* geometry;
+        Player* players;
+        int player_count;
+        char* name;
+    } Level;
+
+    #endif
+  src/game/rendering/renderer.h: |
+    #ifndef RENDERER_H
+    #define RENDERER_H
+
+    #include "../../graphics/context.h"
+    #include "../../graphics/shader.h"
+
+    typedef struct {
+        GraphicsContext context;
+        Shader* active_shader;
+        int frame_count;
+    } Renderer;
+
+    #endif
+  src/platform/platform.h: |
+    #ifndef PLATFORM_H
+    #define PLATFORM_H
+
+    typedef struct {
+        void* window_handle;
+        int window_width;
+        int window_height;
+        double last_frame_time;
+    } Platform;
+
+    int platform_init(Platform* platform);
+    void platform_update(Platform* platform);
+    int platform_is_running(Platform* platform);
+    double platform_get_delta_time(Platform* platform);
+    void platform_shutdown(Platform* platform);
+
+    #endif
+  src/math/vector.h: |
+    #ifndef VECTOR_H
+    #define VECTOR_H
+
+    typedef struct {
+        float x, y, z;
+    } Vector3;
+
+    Vector3 vector_add(Vector3 a, Vector3 b);
+    Vector3 vector_scale(Vector3 v, float scalar);
+
+    #endif
+  src/physics/rigidbody.h: |
+    #ifndef RIGIDBODY_H
+    #define RIGIDBODY_H
+
+    #include "../math/vector.h"
+
+    typedef struct {
+        Vector3 position;
+        Vector3 velocity;
+        Vector3 acceleration;
+        float mass;
+    } RigidBody;
+
+    #endif
+  src/graphics/context.h: |
+    #ifndef CONTEXT_H
+    #define CONTEXT_H
+
+    typedef struct {
+        void* api_context;
+        int api_version;
+    } GraphicsContext;
+
+    #endif
+  src/graphics/shader.h: |
+    #ifndef SHADER_H
+    #define SHADER_H
+
+    typedef struct {
+        unsigned int program_id;
+        char* source_code;
+    } Shader;
+
+    #endif
+  src/graphics/mesh.h: |
+    #ifndef MESH_H
+    #define MESH_H
+
+    typedef struct {
+        float* vertices;
+        unsigned int* indices;
+        int vertex_count;
+        int index_count;
+    } Mesh;
+
+    #endif
 ---
-config.json: "{\n  \"project_name\": \"complete_system_integration_test\",\n  \"source_folders\"\
-  : [\"src\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true,\n \
-  \ \"include_depth\": 5,\n  \"file_filters\": {\n    \"include\": [\"*.c\", \"*.h\"\
-  ],\n    \"exclude\": []\n  }\n}\n"
+config.json: |
+  {
+    "project_name": "complete_system_integration_test",
+    "source_folders": ["src"],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 5,
+    "file_filters": {
+      "include": ["*.c", "*.h"],
+      "exclude": []
+    }
+  }
 ---
 assertions:
   execution:

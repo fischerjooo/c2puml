@@ -5,14 +5,33 @@ test:
   id: '120'
 ---
 source_files:
-  union_typedefs.c: "// Union typedef declarations\ntypedef union Number_tag {\n \
-    \   int i;\n    float f;\n    double d;\n} Number_t;\n\ntypedef union NamedUnion_tag\
-    \ {\n    char c;\n    int i;\n    short s;\n} NamedUnion_t;\n\ntypedef union Value\
-    \ {\n    int integer_value;\n    float float_value;\n    char string_value[32];\n\
-    } Value_t;\n"
+  union_typedefs.c: |
+    // Union typedef declarations
+    typedef union Number_tag {
+        int i;
+        float f;
+        double d;
+    } Number_t;
+
+    typedef union NamedUnion_tag {
+        char c;
+        int i;
+        short s;
+    } NamedUnion_t;
+
+    typedef union Value {
+        int integer_value;
+        float float_value;
+        char string_value[32];
+    } Value_t;
 ---
-config.json: "{\n  \"project_name\": \"test_typedef_extraction_unions\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "test_typedef_extraction_unions",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
 ---
 assertions:
   execution:

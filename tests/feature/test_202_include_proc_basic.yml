@@ -5,14 +5,33 @@ test:
   id: '202'
 ---
 source_files:
-  main.c: "#include <stdio.h>\n#include \"utils.h\"\n\nint main() {\n    Point p =\
-    \ {0, 0};\n    return 0;\n}\n"
-  utils.h: "#ifndef UTILS_H\n#define UTILS_H\n\ntypedef struct {\n    int x;\n   \
-    \ int y;\n} Point;\n\n#endif\n"
+  main.c: |
+    #include <stdio.h>
+    #include "utils.h"
+
+    int main() {
+        Point p = {0, 0};
+        return 0;
+    }
+  utils.h: |
+    #ifndef UTILS_H
+    #define UTILS_H
+
+    typedef struct {
+        int x;
+        int y;
+    } Point;
+
+    #endif
 ---
-config.json: "{\n  \"project_name\": \"test_include_processing_basic\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true,\n  \"\
-  include_depth\": 2\n}\n"
+config.json: |
+  {
+    "project_name": "test_include_processing_basic",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 2
+  }
 ---
 assertions:
   execution:

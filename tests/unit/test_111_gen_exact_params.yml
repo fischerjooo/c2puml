@@ -1,10 +1,9 @@
----
 test:
-  name: "generator_exact_format_cli_with_parameters"
-  description: "Test the format works correctly with function parameters"
-  category: "generator"
-  steps: ["generate"]
-  
+  name: generator_exact_format_cli_with_parameters
+  description: Test the format works correctly with function parameters
+  category: generator
+  steps:
+  - generate
 ---
 source_files:
   model.json: |
@@ -69,7 +68,6 @@ source_files:
       },
       "include_relations": []
     }
-
 ---
 config.json: |
   {
@@ -80,7 +78,6 @@ config.json: |
     "use_short_names": false,
     "group_by_visibility": true
   }
-
 ---
 assertions:
   execution:
@@ -88,10 +85,9 @@ assertions:
   puml:
     calc.c.puml:
       contains:
-        - "+ int Calculate(int value)"
-        - "- void HelperFunction()"
-        - "-- Functions --"
-      # Test that grouping still works with parameters: public function, empty line, private function
+      - + int Calculate(int value)
+      - '- void HelperFunction()'
+      - -- Functions --
       regex_matches:
-        - pattern: "\\+ int Calculate.*\\n\\s*\\n.*\\- void HelperFunction"
-          description: "Public function with parameters, empty line, private function sequence"
+      - pattern: \+ int Calculate.*\n\s*\n.*\- void HelperFunction
+        description: Public function with parameters, empty line, private function sequence

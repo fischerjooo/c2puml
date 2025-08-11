@@ -1,10 +1,10 @@
 test:
-  name: "Generator – Comprehensive"
-  description: Validate grouping with empty line separation for functions and globals,
-    plus mixed cases
+  name: Generator – Comprehensive
+  description: Validate grouping with empty line separation for functions and globals, plus mixed cases
   category: unit
   id: '112'
-  steps: ["generate"]
+  steps:
+  - generate
 ---
 source_files:
   model.json: |

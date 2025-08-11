@@ -5,21 +5,55 @@ test:
   id: '120'
 ---
 source_files:
-  comprehensive_typedefs.c: "// Comprehensive typedef extraction test\n\n// Simple\
-    \ typedefs\ntypedef uint32_t MyLen;\ntypedef int32_t MyInt;\ntypedef char * MyString;\n\
-    \n// Struct typedefs\ntypedef struct MyBuffer_tag {\n    MyLen length;\n    MyString\
-    \ data;\n} MyBuffer;\n\ntypedef struct MyComplexStruct_tag {\n    MyLen id;\n\
-    \    MyString name;\n    MyCallback callback;\n    log_level_t log_level;\n} MyComplex;\n\
-    \n// Function pointer typedefs\ntypedef int (*MyCallback)(MyBuffer * buffer);\n\
-    typedef void (*log_callback_t)(log_level_t level, const char * message);\n\n//\
-    \ Pointer typedefs\ntypedef MyComplex * MyComplexPtr;\ntypedef MyComplexPtr MyComplexArray[10];\n\
-    \n// Enum typedefs\ntypedef enum Color_tag {\n    COLOR_RED,\n    COLOR_GREEN,\n\
-    \    COLOR_BLUE\n} Color_t;\n\n// Union typedefs\ntypedef union Number_tag {\n\
-    \    int i;\n    float f;\n} Number_t;\n"
+  comprehensive_typedefs.c: |
+    // Comprehensive typedef extraction test
+
+    // Simple typedefs
+    typedef uint32_t MyLen;
+    typedef int32_t MyInt;
+    typedef char * MyString;
+
+    // Struct typedefs
+    typedef struct MyBuffer_tag {
+        MyLen length;
+        MyString data;
+    } MyBuffer;
+
+    typedef struct MyComplexStruct_tag {
+        MyLen id;
+        MyString name;
+        MyCallback callback;
+        log_level_t log_level;
+    } MyComplex;
+
+    // Function pointer typedefs
+    typedef int (*MyCallback)(MyBuffer * buffer);
+    typedef void (*log_callback_t)(log_level_t level, const char * message);
+
+    // Pointer typedefs
+    typedef MyComplex * MyComplexPtr;
+    typedef MyComplexPtr MyComplexArray[10];
+
+    // Enum typedefs
+    typedef enum Color_tag {
+        COLOR_RED,
+        COLOR_GREEN,
+        COLOR_BLUE
+    } Color_t;
+
+    // Union typedefs
+    typedef union Number_tag {
+        int i;
+        float f;
+    } Number_t;
 ---
-config.json: "{\n  \"project_name\": \"test_typedef_extraction_comprehensive\",\n\
-  \  \"source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
-  : true\n}\n"
+config.json: |
+  {
+    "project_name": "test_typedef_extraction_comprehensive",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
 ---
 assertions:
   execution:
