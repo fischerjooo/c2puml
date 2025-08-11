@@ -28,6 +28,34 @@ Purpose: Track progress while cleaning up, enriching, and standardizing YAML-bas
 - Many tests lack model.element_counts and PUML-level per-file assertions
 - Some feature/integration tests could benefit from relationships_exist and class/relationship counts once generator patterns are stabilized
 
+## Proposed assertion keys to use more broadly (from validators_processor)
+- Execution
+  - exit_code, max_execution_time, success_expected (only for explicit failure cases), stdout_contains/stderr_contains sparingly
+- Model
+  - validate_structure, project_name, expected_files, file_count
+  - functions_exist / functions_not_exist
+  - structs_exist / structs_not_exist
+  - enums_exist / enums_not_exist
+  - typedefs_exist / aliases_exist
+  - globals_exist, macros_exist, includes_exist
+  - element_counts: { files, functions, structs, enums, globals, includes, macros, unions, aliases }
+  - struct_details: per-struct fields; enum_details: per-enum values
+  - files: { <file>: { structs/enums/functions/globals/includes with details } }
+- PlantUML
+  - syntax_valid (global and per-file)
+  - file_count (when deterministic)
+  - contains_elements / not_contains_elements (global and per-file)
+  - contains_lines / not_contains_lines (prefer per-file)
+  - classes_exist: [{ name, stereotype }] for typed class checks
+  - relationships_exist: [{ source, target, type }]
+  - line_count, class_count, relationship_count (when stable)
+
+## Targets to enrich next
+- Add project_name, expected_files, file_count, and element_counts across more unit and feature tests
+- Add per-file puml.files contains_lines with stable identifiers (class headers, function signatures)
+- Introduce relationships_exist where generator output is stable (include relationships, compositions)
+- Expand negative assertions: functions_not_exist / structs_not_exist in example and feature tests
+
 ## Next Up
 - Review and standardize remaining files with deprecated keys:
   - unit/test_103_abs_path_relative.yml

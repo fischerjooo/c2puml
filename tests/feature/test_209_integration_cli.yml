@@ -84,3 +84,17 @@ assertions:
     - config.h
   puml:
     syntax_valid: true
+    files:
+      main.puml:
+        contains_elements:
+          - main
+          - Person
+      config.puml:
+        contains_elements:
+          - User
+          - Color
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json
