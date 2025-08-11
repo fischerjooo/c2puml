@@ -15,6 +15,7 @@ Purpose: Track progress while cleaning up, enriching, and standardizing YAML-bas
   - Removed unsupported keys; added model checks for structs/enums/functions/includes; syntax validation
 - unit/test_106_config.yml
   - Fixed invalid nesting; replaced unsupported execution key; added element counts and per-file PUML checks
+  - Adjusted element_counts.functions from 3 to 9 to match actual parsed functions across headers and C file
 - unit/test_121_verifier.yml
   - Replaced unsupported execution key; added expected_files and counts; ensured output files asserted
 - unit/test_124_gen_newfmt.yml
@@ -47,4 +48,4 @@ Purpose: Track progress while cleaning up, enriching, and standardizing YAML-bas
 - Prefer model.validate_structure + expected_files + specific existence checks over only syntax validation
 - Use puml.syntax_valid and per-file contains_lines for the most stable diagram assertions
 
-Last updated: YYYY-MM-DD
+Last updated: 2025-08-11

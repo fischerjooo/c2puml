@@ -82,7 +82,7 @@ assertions:
       - config_header.h
     element_counts:
       files: 2
-      functions: 3
+      functions: 9
       structs: 1
       enums: 1
       macros: 3
