@@ -1,10 +1,9 @@
----
 test:
-  name: "generator_exact_format_cli_requested_format"
-  description: "Test the exact format requested: public functions, empty line, private functions"
-  category: "generator"
-  steps: ["generate"]
-  
+  name: generator_exact_format_cli_requested_format
+  description: 'Test the exact format requested: public functions, empty line, private functions'
+  category: generator
+  steps:
+  - generate
 ---
 source_files:
   model.json: |
@@ -89,7 +88,6 @@ source_files:
       },
       "include_relations": []
     }
-
 ---
 config.json: |
   {
@@ -100,7 +98,6 @@ config.json: |
     "use_short_names": false,
     "group_by_visibility": true
   }
-
 ---
 assertions:
   execution:
@@ -108,17 +105,15 @@ assertions:
   puml:
     example.c.puml:
       contains:
-        - "+ void Init()"
-        - "+ int Calculate()"
-        - "+ void Shutdown()"
-        - "- void HelperFunction()"
-        - "- static int InternalComputation()"
-        - "-- Functions --"
-      # Test for exact sequence: public functions, empty line, private functions
+      - + void Init()
+      - + int Calculate()
+      - + void Shutdown()
+      - '- void HelperFunction()'
+      - '- static int InternalComputation()'
+      - -- Functions --
       regex_matches:
-        - pattern: "\\+[^\\-]*\\n\\s*\\n[^\\+]*\\-"
-          description: "Empty line between public and private function groups"
-      # Test that no private functions appear before empty line and no public after
+      - pattern: \+[^\-]*\n\s*\n[^\+]*\-
+        description: Empty line between public and private function groups
       regex_not_matches:
-        - pattern: "\\-[^\\n]*\\n[^\\n]*\\+"
-          description: "Should not have private function followed by public function"
+      - pattern: \-[^\n]*\n[^\n]*\+
+        description: Should not have private function followed by public function

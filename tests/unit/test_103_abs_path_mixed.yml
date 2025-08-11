@@ -1,21 +1,54 @@
 test:
   name: Mixed Path Styles Handling
   id: '103'
-  description: Test mixed path styles handling to ensure consistency between forward
-    and backward slashes
+  description: Test mixed path styles handling to ensure consistency between forward and backward slashes
 ---
 source_files:
-  common/base.h: "#ifndef BASE_H\n#define BASE_H\n\ntypedef struct {\n    int base_id;\n\
-    \    char base_name[64];\n} base_t;\n\nvoid base_init(base_t* b);\n\n#endif\n"
-  modules/graphics.h: "#ifndef GRAPHICS_H\n#define GRAPHICS_H\n\n#include \"../common/base.h\"\
-    \n\ntypedef struct {\n    base_t base;\n    int width;\n    int height;\n} graphics_t;\n\
-    \nvoid graphics_render(graphics_t* g);\n\n#endif\n"
-  app.c: "#include \"common/base.h\"\n#include \"modules/graphics.h\"\n\nint main()\
-    \ {\n    graphics_t gfx;\n    base_init(&gfx.base);\n    graphics_render(&gfx);\n\
-    \    return 0;\n}\n"
+  common/base.h: |
+    #ifndef BASE_H
+    #define BASE_H
+
+    typedef struct {
+        int base_id;
+        char base_name[64];
+    } base_t;
+
+    void base_init(base_t* b);
+
+    #endif
+  modules/graphics.h: |
+    #ifndef GRAPHICS_H
+    #define GRAPHICS_H
+
+    #include "../common/base.h"
+
+    typedef struct {
+        base_t base;
+        int width;
+        int height;
+    } graphics_t;
+
+    void graphics_render(graphics_t* g);
+
+    #endif
+  app.c: |
+    #include "common/base.h"
+    #include "modules/graphics.h"
+
+    int main() {
+        graphics_t gfx;
+        base_init(&gfx.base);
+        graphics_render(&gfx);
+        return 0;
+    }
 ---
-config.json: "{\n  \"project_name\": \"mixed_path_styles_handling\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "mixed_path_styles_handling",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
 ---
 cli_execution:
   steps:

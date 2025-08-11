@@ -1,18 +1,37 @@
 test:
   name: Relative Path Handling in Include Tree
   id: '103'
-  description: Test that relative paths are handled correctly in include tree building
-    without absolute path bugs
+  description: Test that relative paths are handled correctly in include tree building without absolute path bugs
 ---
 source_files:
-  utils.h: "#ifndef UTILS_H\n#define UTILS_H\n\ntypedef struct {\n    int id;\n  \
-    \  char name[32];\n} util_data_t;\n\nvoid init_utils(void);\n\n#endif\n"
-  main.c: "#include \"utils.h\"\n\nint main() {\n    util_data_t data;\n    init_utils();\n\
-    \    return 0;\n}\n"
+  utils.h: |
+    #ifndef UTILS_H
+    #define UTILS_H
+
+    typedef struct {
+        int id;
+        char name[32];
+    } util_data_t;
+
+    void init_utils(void);
+
+    #endif
+  main.c: |
+    #include "utils.h"
+
+    int main() {
+        util_data_t data;
+        init_utils();
+        return 0;
+    }
 ---
-config.json: "{\n  \"project_name\": \"relative_path_handling_in_include_tree\",\n\
-  \  \"source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
-  : true\n}\n"
+config.json: |
+  {
+    "project_name": "relative_path_handling_in_include_tree",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
 ---
 cli_execution:
   steps:

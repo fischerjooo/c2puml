@@ -1,19 +1,21 @@
 test:
-  name: "Include Processing \u2013 Error Handling Comprehensive"
-  description: Consolidated missing dependency and generate-only isolation failure
-    checks
+  name: Include Processing – Error Handling Comprehensive
+  description: Consolidated missing dependency and generate-only isolation failure checks
   category: feature
   id: '202'
 ---
 source_files:
-  main.c: '#include "missing.h"
-
+  main.c: |
+    #include "missing.h"
     int main() { return 0; }
-
-    '
 ---
-config.json: "{\n  \"project_name\": \"include_processing_errors\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "include_processing_errors",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
 ---
 cli_execution:
   steps:
