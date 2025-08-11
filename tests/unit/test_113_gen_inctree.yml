@@ -152,15 +152,17 @@ assertions:
   execution:
     exit_code: 0
   puml:
-    main.c.puml:
-      contains:
-        - "main.c"
-        - "app.h"
-        - "utils.h"
-        - "config.h"
-        - "types.h"
-        - "main("
-        - "app_init"
-        - "utility_function"
-        - "CONFIG_VALUE"
-        - 'class "Point" as STRUCT_POINT <<struct>>'
+    syntax_valid: true
+    files:
+      main.c.puml:
+        contains_lines:
+          - "main.c"
+          - "app.h"
+          - "utils.h"
+          - "config.h"
+          - "types.h"
+          - "main("
+          - "app_init"
+          - "utility_function"
+          - "CONFIG_VALUE"
+          - 'class "Point" as STRUCT_POINT <<struct>>'

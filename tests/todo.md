@@ -40,3 +40,11 @@
 ## Next Up (additions)
 - unit/test_122_gen_includes.yml: add per-file contains_lines for includes section and files assertions
 - unit/test_113_gen_inctree*.yml: add model.project_name and element_counts, per-file contains_lines
+- unit/test_122_gen_includes.yml
+  - Added per-file relationships_exist and files assertions for output JSONs
+- unit/test_113_gen_inctree.yml
+  - Added puml.syntax_valid; converted per-file contains to contains_lines
+
+## Next Up (more)
+- unit/test_113_gen_inctree_abs.yml: align assertions schema to contains_lines and add syntax_valid
+- Consider adding relationship_count/class_count where stable in integration tests
