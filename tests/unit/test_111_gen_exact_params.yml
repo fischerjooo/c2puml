@@ -3,6 +3,7 @@ test:
   name: "generator_exact_format_cli_with_parameters"
   description: "Test the format works correctly with function parameters"
   category: "generator"
+  steps: ["generate"]
   
 ---
 source_files:

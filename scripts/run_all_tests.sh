@@ -11,6 +11,11 @@ echo "Script directory: $SCRIPT_DIR"
 # Change to the project root directory (parent of scripts)
 cd "$SCRIPT_DIR/.."
 
+# Run mapping validation first
+echo "🔎 Pre-check: Validating tests mapping rules..."
+python3 scripts/check_tests_mapping.py || { echo "❌ Test mapping validation failed."; exit 1; }
+echo "✅ Test mapping validation passed!"
+
 # Detect Python version
 if command -v python3 &> /dev/null; then
     PYTHON_CMD="python3"
