@@ -5,42 +5,40 @@ from typing import List, Any
 import yaml
 
 
+class BlockStyleDumper(yaml.SafeDumper):
+    pass
+
+
 def str_presenter(dumper: yaml.Dumper, data: str):
-    """Represent strings: use block style '|' for multiline content."""
     style = '|' if ('\n' in data or '\r' in data) else None
     return dumper.represent_scalar('tag:yaml.org,2002:str', data, style=style)
 
 
-yaml.representer.SafeRepresenter.add_representer(str, str_presenter)
+BlockStyleDumper.add_representer(str, str_presenter)
 
 
-def convert_document(doc: Any) -> Any:
-    """Walk the loaded YAML document and normalize multiline strings.
-
-    For our use-case, simply returning the same structure is fine since
-    the representer ensures block scalars for multiline strings on dump.
-    """
-    return doc
+def convert_node(node: Any) -> Any:
+    if isinstance(node, list):
+        return [convert_node(x) for x in node]
+    if isinstance(node, dict):
+        return {k: convert_node(v) for k, v in node.items()}
+    return node
 
 
 def convert_file(path: str) -> bool:
     with open(path, 'r', encoding='utf-8') as f:
         original = f.read()
 
-    # Load all YAML documents
     docs = list(yaml.safe_load_all(original))
+    converted_docs = [convert_node(d) for d in docs]
 
-    # Convert documents (no structural change; representer handles style)
-    converted_docs = [convert_document(d) for d in docs]
-
-    # Dump back to YAML with block scalars for multiline strings
     new_content = yaml.dump_all(
         converted_docs,
-        Dumper=yaml.SafeDumper,
+        Dumper=BlockStyleDumper,
         default_flow_style=False,
         sort_keys=False,
         allow_unicode=True,
-        width=1000,  # avoid wrapping lines unnecessarily
+        width=1000,
     )
 
     if new_content != original:

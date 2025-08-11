@@ -5,10 +5,17 @@ test:
   id: '207'
 ---
 source_files:
-  crypto.c: "void encrypt_data() {\n    // Encryption logic\n}\n\nvoid decrypt_data() {\n    // Decryption logic  \n}\n"
+  crypto.c: |
+    void encrypt_data() {
+        // Encryption logic
+    }
+    
+    void decrypt_data() {
+        // Decryption logic  
+    }
   main.c: |
     #include "crypto.h"
-
+    
     int main() {
         encrypt_data();
         return 0;
