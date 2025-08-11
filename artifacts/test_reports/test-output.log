@@ -177,12 +177,7 @@ test_parser_functions_and_parameters_comprehensive (unit.test_parser_functions.T
 test_parser_elements_comprehensive (unit.test_parser_globals.TestParserGlobals.test_parser_elements_comprehensive) ... ok
 test_parser_includes_comprehensive (unit.test_parser_includes.TestParserIncludes.test_parser_includes_comprehensive) ... ok
 test_parser_elements_comprehensive (unit.test_parser_macros.TestParserMacros.test_parser_elements_comprehensive) ... ok
-test_nested_struct_preservation (unit.test_parser_nested_structures_comprehensive.TestParserNestedStructuresComprehensive.test_nested_struct_preservation)
-Test that nested structs maintain their structure through CLI interface. ... ok
-test_nested_structures_in_generated_puml (unit.test_parser_nested_structures_comprehensive.TestParserNestedStructuresComprehensive.test_nested_structures_in_generated_puml)
-Test that nested structures appear correctly in generated PlantUML through CLI interface. ... ok
-test_nested_union_preservation (unit.test_parser_nested_structures_comprehensive.TestParserNestedStructuresComprehensive.test_nested_union_preservation)
-Test that nested unions maintain their structure through CLI interface. ... ok
+test_struct_and_nested_ordering_comprehensive (unit.test_parser_nested_structures_comprehensive.TestParserNestedStructuresComprehensive.test_struct_and_nested_ordering_comprehensive) ... ok
 test_parser_simple_c_file (unit.test_parser_simple_c_file.TestParserSimpleCFile.test_parser_simple_c_file)
 Test parsing a simple C file through the CLI interface ... ok
 test_parser_simple_struct (unit.test_parser_simple_struct.TestParserSimpleStruct.test_parser_simple_struct)
@@ -207,19 +202,19 @@ test_verifier_comprehensive (unit.test_verifier_comprehensive.TestVerifierCompre
 Test comprehensive verifier scenarios through the CLI interface ... ok
 
 ----------------------------------------------------------------------
-Ran 106 tests in 5.636s
+Ran 104 tests in 5.541s
 
 OK
 
 --------------------------------------------------
                  unittest Summary                 
 --------------------------------------------------
-Tests run: 106
+Tests run: 104
 Failures: 0
 Errors: 0
 
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 5.66 seconds
+Duration: 5.57 seconds
 ✅ All tests passed!
