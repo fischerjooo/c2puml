@@ -185,8 +185,15 @@ class UnifiedTestCase(unittest.TestCase):
         
         # Load content for validation
         model_data: Dict[str, Any] = {}
-        if result.model_file and os.path.exists(result.model_file):
-            with open(result.model_file, 'r') as f:
+        # Prefer transformed model if present when validating
+        transformed_path = os.path.join(result.output_dir, "model_transformed.json")
+        candidate_model = None
+        if os.path.exists(transformed_path):
+            candidate_model = transformed_path
+        elif result.model_file and os.path.exists(result.model_file):
+            candidate_model = result.model_file
+        if candidate_model:
+            with open(candidate_model, 'r') as f:
                 model_data = json.load(f)
         
         # Expose paths for validators to normalize relative file assertions
