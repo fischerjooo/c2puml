@@ -6,13 +6,59 @@ test:
   steps: ["transform"]
 ---
 source_files:
-  model.json: "{\n  \"project_name\": \"transformer_test\",\n  \"source_folder\": \n    \ \".\",\n  \"files\": {\n    \"test.c\": {\n      \"file_path\": \"test.c\",\n     \      \"name\": \"test.c\",\n      \"structs\": {\n        \"OldStruct\": {\n\n          \"name\": \"OldStruct\",\n          \"fields\": [\n            {\"\n    name\": \"x\", \"type\": \"int\"}\n          ]\n        }\n      },\n      \"\n     enums\": {\n        \"OldEnum\": {\n          \"name\": \"OldEnum\",\n       \n        \   \"values\": [\n            {\"name\": \"OLD_VALUE1\"},\n            {\"name\"\n     : \"OLD_VALUE2\"}\n          ]\n        }\n      },\n      \"unions\": {},\n \n      \     \"functions\": [\n        {\"name\": \"old_function\", \"return_type\":\n     \ \"int\", \"parameters\": []}\n      ],\n      \"globals\": [],\n      \"includes\"\n     : [],\n      \"macros\": [],\n      \"aliases\": {},\n      \"include_relations\"\n     : [],\n      \"anonymous_relationships\": {}\n    }\n  }\n}\n"
+  model.json: |
+    {
+      "project_name": "transformer_test",
+      "source_folder": ".",
+      "files": {
+        "test.c": {
+          "file_path": "test.c",
+          "name": "test.c",
+          "structs": {
+            "OldStruct": {
+              "name": "OldStruct",
+              "fields": [
+                {"name": "x", "type": "int"}
+              ]
+            }
+          },
+          "enums": {
+            "OldEnum": {
+              "name": "OldEnum",
+              "values": [
+                {"name": "OLD_VALUE1"},
+                {"name": "OLD_VALUE2"}
+              ]
+            }
+          },
+          "unions": {},
+          "functions": [
+            {"name": "old_function", "return_type": "int", "parameters": []}
+          ],
+          "globals": [],
+          "includes": [],
+          "macros": [],
+          "aliases": {},
+          "include_relations": [],
+          "anonymous_relationships": {}
+        }
+      }
+    }
 ---
-config.json: "{\n  \"project_name\": \"transformer_test\",\n  \"source_folders\":\
-  \ [\".\"],\n  \"recursive_search\": true,\n  \"output_dir\": \"./output\",\n  \"\
-  transformations\": {\n    \"rename\": {\n      \"structs\": {\"OldStruct\": \"NewStruct\"\
-  },\n      \"enums\": {\"OldEnum\": \"NewEnum\"},\n      \"functions\": {\"old_function\"\
-  : \"new_function\"}\n    }\n  }\n}\n"
+config.json: |
+  {
+    "project_name": "transformer_test",
+    "source_folders": ["."],
+    "recursive_search": true,
+    "output_dir": "./output",
+    "transformations": {
+      "rename": {
+        "structs": {"OldStruct": "NewStruct"},
+        "enums": {"OldEnum": "NewEnum"},
+        "functions": {"old_function": "new_function"}
+      }
+    }
+  }
 ---
 assertions:
   execution:
