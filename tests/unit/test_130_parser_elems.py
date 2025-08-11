@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-Test Parser Elements – Consolidated (replaces parser_macros)
+Test Parser Elements – Consolidated
 """
-
 import os
 import sys
 import unittest
@@ -11,8 +10,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 
-class TestParserMacros(UnifiedTestCase):
-    def test_parser_elements_comprehensive(self):
+class TestParserElementsConsolidated(UnifiedTestCase):
+    def test_parser_elements_consolidated(self):
         result = self.run_test("130_parser_elems")
         self.validate_execution_success(result)
         self.validate_test_output(result)
