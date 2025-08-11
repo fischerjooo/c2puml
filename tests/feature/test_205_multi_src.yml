@@ -10,14 +10,12 @@ source_files:
     
     struct Person {
         char name[50];
-        int
-    age;
+        int age;
     };
     
     int main() {
         struct Person p = {"John", 30};
-        return
-    0;
+        return 0;
     }
     
   src1/utils.h: |
@@ -25,8 +23,7 @@ source_files:
     #define UTILS_H
     
     typedef struct {
-        int x,
-    y;
+        int x, y;
     } Point;
     
     void print_point(Point p);
@@ -38,7 +35,7 @@ source_files:
     #define TYPES_H
     
     typedef unsigned int uint32_t;
-        typedef struct {
+    typedef struct {
         uint32_t id;
         char name[100];
     } Item;
@@ -48,8 +45,7 @@ source_files:
   src3/complex.c: |
     #include "data.h"
     
-    union Data { int i; float f; char str[20];
-    };
+    union Data { int i; float f; char str[20]; };
     
     struct Container {
         union Data data;
@@ -62,8 +58,7 @@ source_files:
     
     #define MAX_SIZE 100
     
-    typedef
-    struct {
+    typedef struct {
         int values[MAX_SIZE];
         int count;
     } Array;
