@@ -1,0 +1,108 @@
+# Test metadata
+test:
+  name: "Generator Naming Conventions – Comprehensive"
+  description: "Validate file UML IDs and typedef/class UML IDs across simple, complex, and edge cases"
+  category: "unit"
+  id: "0720"
+
+---
+# Source files (pre-baked model for generate-only)
+source_files:
+  model.json: |
+    {
+      "project_name": "naming_conventions_project",
+      "source_folder": "/tmp",
+      "files": {
+        "main.c": {
+          "file_path": "/tmp/main.c",
+          "includes": ["utils.h"],
+          "macros": {},
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [{"name": "main", "return_type": "int", "is_declaration": false, "parameters": []}],
+          "globals": []
+        },
+        "utils.h": {
+          "file_path": "/tmp/utils.h",
+          "includes": [],
+          "macros": {},
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [{"name": "helper_function", "return_type": "void", "is_declaration": true, "parameters": []}],
+          "globals": []
+        },
+        "test.c": {
+          "file_path": "/tmp/test.c",
+          "includes": [],
+          "macros": {},
+          "enums": {
+            "Color": {"values": ["RED", "GREEN", "BLUE"]},
+            "LOG_LEVEL_T": {"values": ["DEBUG", "INFO", "WARNING", "ERROR"]},
+            "_private": {"values": ["OPTION1", "OPTION2"]}
+          },
+          "structs": {
+            "MyBuffer": {"fields": [{"name": "data", "type": "char*"}, {"name": "size", "type": "size_t"}]},
+            "complex_naming_test_t": {"fields": [{"name": "field1", "type": "int"}, {"name": "field2", "type": "char*"}]},
+            "a": {"fields": [{"name": "value", "type": "int"}]}
+          },
+          "unions": {
+            "Value": {"fields": [{"name": "integer", "type": "int"}, {"name": "decimal", "type": "float"}]},
+            "callback_function_t": {"fields": [{"name": "ptr", "type": "void*"}, {"name": "value", "type": "int"}]},
+            "123invalid": {"fields": [{"name": "number", "type": "int"}, {"name": "letter", "type": "char"}]}
+          },
+          "aliases": {
+            "Integer": {"original_type": "int"},
+            "pointer_to_int": {"original_type": "int*"},
+            "UPPERCASE": {"original_type": "int"}
+          },
+          "functions": [],
+          "globals": []
+        }
+      },
+      "include_relations": [
+        {"source_file": "main.c", "included_file": "utils.h", "depth": 1}
+      ]
+    }
+
+---
+# Configuration
+config.json: |
+  {
+    "project_name": "naming_conventions_project",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "recursive_search": false
+  }
+
+---
+# Assertions
+assertions:
+  execution:
+    exit_code: 0
+
+  puml:
+    syntax_valid: true
+    contains_elements: ["MAIN", "HEADER_UTILS", "TYPEDEF_MYBUFFER", "TYPEDEF_COLOR", "TYPEDEF_VALUE", "TYPEDEF_INTEGER", "TYPEDEF_COMPLEX_NAMING_TEST_T", "TYPEDEF_LOG_LEVEL_T", "TYPEDEF_CALLBACK_FUNCTION_T", "TYPEDEF_POINTER_TO_INT", "TYPEDEF_A", "TYPEDEF__PRIVATE", "TYPEDEF_123INVALID", "TYPEDEF_UPPERCASE"]
+    files:
+      main.puml:
+        contains:
+          - MAIN
+          - HEADER_UTILS
+      test.puml:
+        contains_lines:
+          - "class \"MyBuffer\" as TYPEDEF_MYBUFFER"
+          - "class \"Color\" as TYPEDEF_COLOR"
+          - "class \"Value\" as TYPEDEF_VALUE"
+          - "class \"Integer\" as TYPEDEF_INTEGER"
+          - "class \"complex_naming_test_t\" as TYPEDEF_COMPLEX_NAMING_TEST_T"
+          - "class \"LOG_LEVEL_T\" as TYPEDEF_LOG_LEVEL_T"
+          - "class \"callback_function_t\" as TYPEDEF_CALLBACK_FUNCTION_T"
+          - "class \"pointer_to_int\" as TYPEDEF_POINTER_TO_INT"
+          - "class \"a\" as TYPEDEF_A"
+          - "class \"_private\" as TYPEDEF__PRIVATE"
+          - "class \"123invalid\" as TYPEDEF_123INVALID"
+          - "class \"UPPERCASE\" as TYPEDEF_UPPERCASE"

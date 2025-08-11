@@ -156,39 +156,15 @@ test_exact_requested_format (unit.test_generator_exact_format_cli.TestGeneratorE
 Test the exact format requested: public functions, empty line, private functions ... ok
 test_format_with_parameters (unit.test_generator_exact_format_cli.TestGeneratorExactFormatCLI.test_format_with_parameters)
 Test the format works correctly with function parameters ... ok
-test_function_grouping_with_empty_line_separation (unit.test_generator_grouping_cli.TestGeneratorGroupingCLI.test_function_grouping_with_empty_line_separation)
-Test that public and private functions are grouped with empty line separation ... ok
-test_global_grouping_with_empty_line_separation (unit.test_generator_grouping_cli.TestGeneratorGroupingCLI.test_global_grouping_with_empty_line_separation)
-Test that public and private globals are grouped with empty line separation ... ok
-test_mixed_grouping_comprehensive (unit.test_generator_grouping_cli.TestGeneratorGroupingCLI.test_mixed_grouping_comprehensive)
-Test grouping works correctly with both functions and globals ... ok
+test_generator_grouping_comprehensive (unit.test_generator_grouping_cli.TestGeneratorGroupingCLI.test_generator_grouping_comprehensive) ... ok
 test_include_tree_comprehensive (unit.test_generator_include_tree_cli.TestGeneratorIncludeTreeCLI.test_include_tree_comprehensive)
 Test comprehensive include tree generation with multiple files and deep includes ... ok
 test_include_tree_with_absolute_paths (unit.test_generator_include_tree_cli.TestGeneratorIncludeTreeCLI.test_include_tree_with_absolute_paths)
 Test that include relationships work correctly with absolute paths ... ok
-test_duplicate_include_handling (unit.test_generator_includes_comprehensive.TestGeneratorIncludesComprehensive.test_duplicate_include_handling)
-Test handling of duplicate include relationships through CLI interface ... ok
-test_generator_complex_typedef_names (unit.test_generator_naming_comprehensive.TestGeneratorNamingComprehensive.test_generator_complex_typedef_names)
-Test that complex typedef names are handled correctly ... ok
-test_generator_edge_case_names (unit.test_generator_naming_comprehensive.TestGeneratorNamingComprehensive.test_generator_edge_case_names)
-Test edge cases in naming conventions ... ok
-test_generator_file_naming_conventions (unit.test_generator_naming_comprehensive.TestGeneratorNamingComprehensive.test_generator_file_naming_conventions)
-Test that file UML IDs follow the correct naming conventions ... ok
-test_generator_typedef_naming_conventions (unit.test_generator_naming_comprehensive.TestGeneratorNamingComprehensive.test_generator_typedef_naming_conventions)
-Test that typedef UML IDs follow the correct naming conventions ... ok
+test_generator_includes_and_filtering_comprehensive (unit.test_generator_includes_comprehensive.TestGeneratorIncludesComprehensive.test_generator_includes_and_filtering_comprehensive) ... ok
+test_generator_naming_conventions_comprehensive (unit.test_generator_naming_comprehensive.TestGeneratorNamingComprehensive.test_generator_naming_conventions_comprehensive) ... ok
 test_generator_new_formatting_stereotypes_comprehensive (unit.test_generator_new_formatting_cli.TestGeneratorNewFormattingCLI.test_generator_new_formatting_stereotypes_comprehensive) ... ok
-test_function_visibility_private_when_not_in_header (unit.test_generator_visibility_logic.TestGeneratorVisibilityLogicCLI.test_function_visibility_private_when_not_in_header)
-Test that functions not present in headers are marked as - (private) ... ok
-test_function_visibility_public_when_in_header (unit.test_generator_visibility_logic.TestGeneratorVisibilityLogicCLI.test_function_visibility_public_when_in_header)
-Test that functions present in headers are marked as + (public) ... ok
-test_global_visibility_private_when_not_in_header (unit.test_generator_visibility_logic.TestGeneratorVisibilityLogicCLI.test_global_visibility_private_when_not_in_header)
-Test that globals not present in headers are marked as - (private) ... ok
-test_global_visibility_public_when_in_header (unit.test_generator_visibility_logic.TestGeneratorVisibilityLogicCLI.test_global_visibility_public_when_in_header)
-Test that globals present in headers are marked as + (public) ... ok
-test_mixed_visibility_comprehensive (unit.test_generator_visibility_logic.TestGeneratorVisibilityLogicCLI.test_mixed_visibility_comprehensive)
-Test mixed visibility scenarios with both public and private elements ... ok
-test_no_headers_all_private (unit.test_generator_visibility_logic.TestGeneratorVisibilityLogicCLI.test_no_headers_all_private)
-Test that without headers, all elements are marked as - (private) ... ok
+test_generator_visibility_logic_comprehensive (unit.test_generator_visibility_logic.TestGeneratorVisibilityLogicCLI.test_generator_visibility_logic_comprehensive) ... ok
 test_global_parsing_comprehensive (unit.test_global_parsing_comprehensive.TestGlobalParsingComprehensive.test_global_parsing_comprehensive) ... ok
 test_include_filtering_comprehensive (unit.test_include_filtering_comprehensive.TestIncludeFilteringComprehensive.test_include_filtering_comprehensive)
 Test comprehensive include filtering scenarios through the CLI interface ... ok
@@ -241,19 +217,19 @@ test_verifier_comprehensive (unit.test_verifier_comprehensive.TestVerifierCompre
 Test comprehensive verifier scenarios through the CLI interface ... ok
 
 ----------------------------------------------------------------------
-Ran 120 tests in 6.376s
+Ran 110 tests in 5.847s
 
 OK
 
 --------------------------------------------------
                  unittest Summary                 
 --------------------------------------------------
-Tests run: 120
+Tests run: 110
 Failures: 0
 Errors: 0
 
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 6.40 seconds
+Duration: 5.88 seconds
 ✅ All tests passed!

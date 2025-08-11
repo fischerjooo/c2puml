@@ -262,10 +262,10 @@ Verifier
 - [x] tests/unit/test_verifier_comprehensive.yml (folded valid model)
 
 Generator
-- [ ] tests/unit/test_generator_naming_conventions_comprehensive.yml
-- [ ] tests/unit/test_generator_grouping_comprehensive.yml
-- [ ] tests/unit/test_generator_visibility_logic_comprehensive.yml
-- [ ] tests/unit/test_generator_includes_and_filtering_comprehensive.yml
+- [x] tests/unit/test_generator_naming_conventions_comprehensive.yml
+- [x] tests/unit/test_generator_grouping_comprehensive.yml
+- [x] tests/unit/test_generator_visibility_logic_comprehensive.yml
+- [x] tests/unit/test_generator_includes_and_filtering_comprehensive.yml
 
 Feature: include processing
 - [ ] tests/feature/test_include_processing_comprehensive.yml
