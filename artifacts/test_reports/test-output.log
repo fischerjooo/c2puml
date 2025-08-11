@@ -127,12 +127,7 @@ test_subdirectory_includes_path_resolution (unit.test_absolute_path_bug_comprehe
 Test subdirectory includes path resolution through CLI interface. ... ok
 test_anonymous_processing_comprehensive (unit.test_anonymous_processing_comprehensive.TestAnonymousProcessingComprehensive.test_anonymous_processing_comprehensive)
 Test comprehensive anonymous structure processing scenarios through the CLI interface ... ok
-test_anonymous_struct_in_typedef (unit.test_anonymous_structure_comprehensive.TestAnonymousStructureComprehensive.test_anonymous_struct_in_typedef)
-Test that anonymous structs within typedefs are correctly processed through CLI interface. ... ok
-test_anonymous_unions_in_structs (unit.test_anonymous_structure_comprehensive.TestAnonymousStructureComprehensive.test_anonymous_unions_in_structs)
-Test anonymous unions within structs through CLI interface. ... ok
-test_nested_anonymous_structures (unit.test_anonymous_structure_comprehensive.TestAnonymousStructureComprehensive.test_nested_anonymous_structures)
-Test that deeply nested anonymous structures are correctly processed through CLI interface. ... ok
+test_anonymous_structures_and_unions_comprehensive (unit.test_anonymous_structure_comprehensive.TestAnonymousStructureComprehensive.test_anonymous_structures_and_unions_comprehensive) ... ok
 test_config_comprehensive (unit.test_config_comprehensive.TestConfigComprehensive.test_config_comprehensive)
 Test comprehensive configuration scenarios through the CLI interface ... ok
 test_complex_struct_field_processing (unit.test_debug_field_parsing_comprehensive.TestDebugFieldParsingComprehensive.test_complex_struct_field_processing)
@@ -205,31 +200,26 @@ test_tokenizer_keywords (unit.test_tokenizer_keywords.TestTokenizerKeywords.test
 Test tokenizer keyword recognition through the CLI interface ... ok
 test_transformer_basic (unit.test_transformer_basic.TestTransformerBasic.test_transformer_basic)
 Test basic transformer functionality through the CLI interface ... ok
-test_transformer_comprehensive_operations (unit.test_transformer_comprehensive.TestTransformerComprehensive.test_transformer_comprehensive_operations)
-Test comprehensive transformer operations including all major transformation types ... ok
-test_transformer_file_filtering (unit.test_transformer_comprehensive.TestTransformerComprehensive.test_transformer_file_filtering)
-Test transformer file filtering capabilities through CLI interface ... ok
-test_transformer_include_processing (unit.test_transformer_comprehensive.TestTransformerComprehensive.test_transformer_include_processing)
-Test transformer include processing and depth control through CLI interface ... ok
+test_transformer_comprehensive (unit.test_transformer_comprehensive.TestTransformerComprehensive.test_transformer_comprehensive) ... ok
 test_typedef_extraction_comprehensive (unit.test_typedef_extraction_comprehensive.TestTypedefExtractionComprehensive.test_typedef_extraction_comprehensive)
 Run the consolidated typedef extraction scenario ... ok
 test_verifier_comprehensive (unit.test_verifier_comprehensive.TestVerifierComprehensive.test_verifier_comprehensive)
 Test comprehensive verifier scenarios through the CLI interface ... ok
 
 ----------------------------------------------------------------------
-Ran 110 tests in 5.847s
+Ran 106 tests in 5.636s
 
 OK
 
 --------------------------------------------------
                  unittest Summary                 
 --------------------------------------------------
-Tests run: 110
+Tests run: 106
 Failures: 0
 Errors: 0
 
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 5.88 seconds
+Duration: 5.66 seconds
 ✅ All tests passed!

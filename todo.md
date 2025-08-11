@@ -250,7 +250,10 @@ Typedef extraction
 - [x] tests/unit/test_typedef_extraction_comprehensive.yml
 
 Anonymous structures
-- [ ] tests/unit/test_anonymous_structures_and_unions_comprehensive.yml
+- [x] tests/unit/test_anonymous_structures_and_unions_comprehensive.yml
+
+Transformer
+- [x] tests/unit/test_transformer_comprehensive.yml
 
 Path/Include tree
 - [x] tests/unit/test_path_resolution_and_include_tree_comprehensive.yml
