@@ -6,39 +6,105 @@ test:
   id: '123'
 ---
 source_files:
-  model.json: "{\n  \"project_name\": \"naming_conventions_project\",\n  \"source_folder\"\
-    : \"/tmp\",\n  \"files\": {\n    \"main.c\": {\n      \"file_path\": \"/tmp/main.c\"\
-    ,\n      \"includes\": [\"utils.h\"],\n      \"macros\": {},\n      \"enums\"\
-    : {},\n      \"structs\": {},\n      \"unions\": {},\n      \"aliases\": {},\n\
-    \      \"functions\": [{\"name\": \"main\", \"return_type\": \"int\", \"is_declaration\"\
-    : false, \"parameters\": []}],\n      \"globals\": []\n    },\n    \"utils.h\"\
-    : {\n      \"file_path\": \"/tmp/utils.h\",\n      \"includes\": [],\n      \"\
-    macros\": {},\n      \"enums\": {},\n      \"structs\": {},\n      \"unions\"\
-    : {},\n      \"aliases\": {},\n      \"functions\": [{\"name\": \"helper_function\"\
-    , \"return_type\": \"void\", \"is_declaration\": true, \"parameters\": []}],\n\
-    \      \"globals\": []\n    },\n    \"test.c\": {\n      \"file_path\": \"/tmp/test.c\"\
-    ,\n      \"includes\": [],\n      \"macros\": {},\n      \"enums\": {\n      \
-    \  \"Color\": {\"values\": [\"RED\", \"GREEN\", \"BLUE\"]},\n        \"LOG_LEVEL_T\"\
-    : {\"values\": [\"DEBUG\", \"INFO\", \"WARNING\", \"ERROR\"]},\n        \"_private\"\
-    : {\"values\": [\"OPTION1\", \"OPTION2\"]}\n      },\n      \"structs\": {\n \
-    \       \"MyBuffer\": {\"fields\": [{\"name\": \"data\", \"type\": \"char*\"},\
-    \ {\"name\": \"size\", \"type\": \"size_t\"}]},\n        \"complex_naming_test_t\"\
-    : {\"fields\": [{\"name\": \"field1\", \"type\": \"int\"}, {\"name\": \"field2\"\
-    , \"type\": \"char*\"}]},\n        \"a\": {\"fields\": [{\"name\": \"value\",\
-    \ \"type\": \"int\"}]}\n      },\n      \"unions\": {\n        \"Value\": {\"\
-    fields\": [{\"name\": \"integer\", \"type\": \"int\"}, {\"name\": \"decimal\"\
-    , \"type\": \"float\"}]},\n        \"callback_function_t\": {\"fields\": [{\"\
-    name\": \"ptr\", \"type\": \"void*\"}, {\"name\": \"value\", \"type\": \"int\"\
-    }]},\n        \"123invalid\": {\"fields\": [{\"name\": \"number\", \"type\": \"\
-    int\"}, {\"name\": \"letter\", \"type\": \"char\"}]}\n      },\n      \"aliases\"\
-    : {\n        \"Integer\": {\"original_type\": \"int\"},\n        \"pointer_to_int\"\
-    : {\"original_type\": \"int*\"},\n        \"UPPERCASE\": {\"original_type\": \"\
-    int\"}\n      },\n      \"functions\": [],\n      \"globals\": []\n    }\n  },\n\
-    \  \"include_relations\": [\n    {\"source_file\": \"main.c\", \"included_file\"\
-    : \"utils.h\", \"depth\": 1}\n  ]\n}\n"
+  model.json: |
+    {
+      "project_name": "naming_conventions_project",
+      "source_folder"\
+        : "/tmp",
+      "files": {
+        "main.c": {
+          "file_path": "/tmp/main.c"\
+        ,
+          "includes": ["utils.h"],
+          "macros": {},
+          "enums"\
+        : {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+    \
+        \      "functions": [{"name": "main", "return_type": "int", "is_declaration"\
+        : false, "parameters": []}],
+          "globals": []
+        },
+        "utils.h"\
+        : {
+          "file_path": "/tmp/utils.h",
+          "includes": [],
+          "\
+        macros": {},
+          "enums": {},
+          "structs": {},
+          "unions"\
+        : {},
+          "aliases": {},
+          "functions": [{"name": "helper_function"\
+        , "return_type": "void", "is_declaration": true, "parameters": []}],
+    \
+        \      "globals": []
+        },
+        "test.c": {
+          "file_path": "/tmp/test.c"\
+        ,
+          "includes": [],
+          "macros": {},
+          "enums": {
+          \
+        \  "Color": {"values": ["RED", "GREEN", "BLUE"]},
+            "LOG_LEVEL_T"\
+        : {"values": ["DEBUG", "INFO", "WARNING", "ERROR"]},
+            "_private"\
+        : {"values": ["OPTION1", "OPTION2"]}
+          },
+          "structs": {
+     \
+        \       "MyBuffer": {"fields": [{"name": "data", "type": "char*"},\
+        \ {"name": "size", "type": "size_t"}]},
+            "complex_naming_test_t"\
+        : {"fields": [{"name": "field1", "type": "int"}, {"name": "field2"\
+        , "type": "char*"}]},
+            "a": {"fields": [{"name": "value",\
+        \ "type": "int"}]}
+          },
+          "unions": {
+            "Value": {"\
+        fields": [{"name": "integer", "type": "int"}, {"name": "decimal"\
+        , "type": "float"}]},
+            "callback_function_t": {"fields": [{"\
+        name": "ptr", "type": "void*"}, {"name": "value", "type": "int"\
+        }]},
+            "123invalid": {"fields": [{"name": "number", "type": "\
+        int"}, {"name": "letter", "type": "char"}]}
+          },
+          "aliases"\
+        : {
+            "Integer": {"original_type": "int"},
+            "pointer_to_int"\
+        : {"original_type": "int*"},
+            "UPPERCASE": {"original_type": "\
+        int"}
+          },
+          "functions": [],
+          "globals": []
+        }
+      },
+    \
+        \  "include_relations": [
+        {"source_file": "main.c", "included_file"\
+        : "utils.h", "depth": 1}
+      ]
+    }
+    
 ---
-config.json: "{\n  \"project_name\": \"naming_conventions_project\",\n  \"source_folders\"\
-  : [\"src\"],\n  \"output_dir\": \"output\",\n  \"recursive_search\": false\n}\n"
+config.json: |
+  {
+    "project_name": "naming_conventions_project",
+    "source_folders"\
+    : ["src"],
+    "output_dir": "output",
+    "recursive_search": false
+  }
+  
 ---
 assertions:
   execution:

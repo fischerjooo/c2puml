@@ -5,13 +5,34 @@ test:
   id: '108'
 ---
 source_files:
-  test_union.c: "typedef union {\n    int primary_int;\n    union {\n        float\
-    \ nested_float;\n        double nested_double;\n    } nested_union;\n    char\
-    \ primary_bytes[32];\n} test_union_t;\n\ntypedef struct {\n    test_union_t data;\n\
-    \    char label[16];\n} container_t;\n"
+  test_union.c: |
+    typedef union {
+        int primary_int;
+        union {
+            float\
+        \ nested_float;
+            double nested_double;
+        } nested_union;
+        char\
+        \ primary_bytes[32];
+    } test_union_t;
+    
+    typedef struct {
+        test_union_t data;
+    \
+        \    char label[16];
+    } container_t;
+    
 ---
-config.json: "{\n  \"project_name\": \"debug_complex_union_parsing\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "debug_complex_union_parsing",
+    "source_folders"\
+    : ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+  
 ---
 assertions:
   execution:

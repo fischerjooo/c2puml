@@ -5,14 +5,41 @@ test:
   id: '120'
 ---
 source_files:
-  enum_typedefs.c: "// Enum typedef declarations\ntypedef enum Color_tag {\n    COLOR_RED,\n\
-    \    COLOR_GREEN,\n    COLOR_BLUE\n} Color_t;\n\ntypedef enum log_level_tag {\n\
-    \    LOG_DEBUG,\n    LOG_INFO,\n    LOG_WARN,\n    LOG_ERROR\n} log_level_t;\n\
-    \ntypedef enum Status {\n    STATUS_OK,\n    STATUS_ERROR,\n    STATUS_PENDING\n\
-    } Status_t;\n"
+  enum_typedefs.c: |
+    // Enum typedef declarations
+    typedef enum Color_tag {
+        COLOR_RED,
+    \
+        \    COLOR_GREEN,
+        COLOR_BLUE
+    } Color_t;
+    
+    typedef enum log_level_tag {
+    \
+        \    LOG_DEBUG,
+        LOG_INFO,
+        LOG_WARN,
+        LOG_ERROR
+    } log_level_t;
+    \
+        
+    typedef enum Status {
+        STATUS_OK,
+        STATUS_ERROR,
+        STATUS_PENDING
+    \
+        } Status_t;
+    
 ---
-config.json: "{\n  \"project_name\": \"test_typedef_extraction_enums\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "test_typedef_extraction_enums",
+    "source_folders"\
+    : ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+  
 ---
 assertions:
   execution:

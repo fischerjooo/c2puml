@@ -6,15 +6,47 @@ test:
   id: '126'
 ---
 source_files:
-  typedefs.c: "typedef int Integer;\ntypedef char* String;\ntypedef void (*Callback)(int);\n\
-    typedef struct {\n    int x;\n    int y;\n} Point;\n"
-  point_typedef.c: "typedef struct point_tag {\n    int x;\n    int y;\n} point_t;\n"
-  status.c: "enum Status {\n    OK = 0,\n    ERROR = 1,\n    PENDING = 2\n};\n"
-  color.c: "typedef enum {\n    RED,\n    GREEN,\n    BLUE\n} Color;\n"
+  typedefs.c: |
+    typedef int Integer;
+    typedef char* String;
+    typedef void (*Callback)(int);
+    \
+        typedef struct {
+        int x;
+        int y;
+    } Point;
+    
+  point_typedef.c: |
+    typedef struct point_tag {
+        int x;
+        int y;
+    } point_t;
+    
+  status.c: |
+    enum Status {
+        OK = 0,
+        ERROR = 1,
+        PENDING = 2
+    };
+    
+  color.c: |
+    typedef enum {
+        RED,
+        GREEN,
+        BLUE
+    } Color;
+    
 ---
-config.json: "{\n  \"project_name\": \"test_parser_typedefs_comprehensive\",\n  \"\
-  source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
-  : true\n}\n"
+config.json: |
+  {
+    "project_name": "test_parser_typedefs_comprehensive",
+    "\
+    source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search"\
+    : true
+  }
+  
 ---
 assertions:
   execution:

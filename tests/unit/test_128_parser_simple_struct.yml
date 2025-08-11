@@ -5,10 +5,23 @@ test:
   id: '128'
 ---
 source_files:
-  point.c: "struct Point {\n    int x;\n    int y;\n    char label[32];\n};\n"
+  point.c: |
+    struct Point {
+        int x;
+        int y;
+        char label[32];
+    };
+    
 ---
-config.json: "{\n  \"project_name\": \"test_parser_simple_struct\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "test_parser_simple_struct",
+    "source_folders"\
+    : ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+  
 ---
 assertions:
   execution:

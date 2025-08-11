@@ -5,12 +5,21 @@ test:
   id: '204'
 ---
 source_files:
-  test.c: "#include <stdio.h>\n\nint main() {\n    printf(\"Hello, World!\\n\");\n\
-    \    return 0;\n}\n"
+  test.c: |
+    #include <stdio.h>nnint main() {n    printf("Hello, World!
+    ");n
+            return 0;n}n
 ---
-config.json: "{\n  \"project_name\": \"test_partial_failures\",\n  \"source_folders\"\
-  : [\"src\", \"/nonexistent/path\"],\n  \"output_dir\": \"output\",\n  \"recursive_search\"\
-  : true\n}\n"
+config.json: |
+  {
+    "project_name": "test_partial_failures",
+    "source_folders"\
+    : ["src", "/nonexistent/path"],
+    "output_dir": "output",
+    "recursive_search"\
+    : true
+  }
+  
 ---
 assertions:
   execution:

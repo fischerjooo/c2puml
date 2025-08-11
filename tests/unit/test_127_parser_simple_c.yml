@@ -6,12 +6,37 @@ test:
   id: '127'
 ---
 source_files:
-  simple.c: "#include <stdio.h>\n\nstruct Person {\n    char name[50];\n    int age;\n\
-    };\n\nenum Status {\n    OK,\n    ERROR\n};\n\nint main() {\n    return 0;\n}\n\
-    \nint global_var;\n"
+  simple.c: |
+    #include <stdio.h>
+    
+    struct Person {
+        char name[50];
+        int age;
+    \
+        };
+    
+    enum Status {
+        OK,
+        ERROR
+    };
+    
+    int main() {
+        return 0;
+    }
+    \
+        
+    int global_var;
+    
 ---
-config.json: "{\n  \"project_name\": \"test_parser_simple\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "test_parser_simple",
+    "source_folders"\
+    : ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+  
 ---
 assertions:
   execution:

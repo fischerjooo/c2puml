@@ -6,28 +6,58 @@ test:
   id: '114'
 ---
 source_files:
-  preproc_all.c: "#include <stdio.h>\n#include <stdlib.h>\n#include \"preproc_header.h\"\
-    \n\n// Duplicate macro name under conditional branches\n#if 1\n  #define DEPRECATED\
-    \ __attribute__((deprecated))\n#else\n  #define DEPRECATED\n#endif\n\n// Basic\
-    \ macros\n#define MAX_SIZE 100\n#define MIN_SIZE 10\n#define VERSION_STRING \"\
-    1.0.0\"\n\n// Conditional logging macro\n#ifdef DEBUG\n  #define LOG(msg) printf(\"\
-    DEBUG: %s\\n\", msg)\n#else\n  #define LOG(msg)\n#endif\n\ntypedef struct {\n\
-    \  int id;\n  char name[MAX_SIZE];\n} Item;\n\n#if defined(FEATURE_A)\n  typedef\
-    \ struct { int feature_a_data; } FeatureA;\n#endif\n\n#ifndef DISABLE_FEATURE_B\n\
-    \  typedef struct { float feature_b_value; } FeatureB;\n#endif\n\nint process_item(Item*\
-    \ item);\nvoid initialize_system(void);\n\nint global_items = 0;\n\nint process_item(Item*\
-    \ item) {\n  if (item == NULL) return -1;\n  LOG(\"Processing item\");\n  return\
-    \ item->id;\n}\n\nvoid initialize_system(void) {\n  LOG(\"System initialized\"\
-    );\n  global_items = 0;\n}\n"
-  preproc_header.h: "#ifndef PREPROCESSOR_HEADER_H\n#define PREPROCESSOR_HEADER_H\n\
-    \n#define HEADER_VERSION 2\n#define API_VERSION \"2.1.0\"\n\ntypedef struct Item\
-    \ Item;\n\n#ifdef FEATURE_A\n  typedef struct FeatureA FeatureA;\n#endif\n\n#ifndef\
-    \ DISABLE_FEATURE_B\n  typedef struct FeatureB FeatureB;\n#endif\n\nint process_item(Item*\
-    \ item);\nvoid initialize_system(void);\n\n#endif // PREPROCESSOR_HEADER_H\n"
+  preproc_all.c: |
+    #include <stdio.h>n#include <stdlib.h>n#include "preproc_header.h"
+        nn// Duplicate macro name under conditional branchesn#if 1n  #define DEPRECATED
+         __attribute__((deprecated))n#elsen  #define DEPRECATEDn#endifnn// Basic
+         macrosn#define MAX_SIZE 100n#define MIN_SIZE 10n#define VERSION_STRING "
+        1.0.0"nn// Conditional logging macron#ifdef DEBUGn  #define LOG(msg) printf("
+        DEBUG: %s
+    ", msg)n#elsen  #define LOG(msg)n#endifnntypedef struct {n
+          int id;n  char name[MAX_SIZE];n} Item;nn#if defined(FEATURE_A)n  typedef
+         struct { int feature_a_data; } FeatureA;n#endifnn#ifndef DISABLE_FEATURE_Bn
+          typedef struct { float feature_b_value; } FeatureB;n#endifnnint process_item(Item*
+         item);nvoid initialize_system(void);nnint global_items = 0;nnint process_item(Item*
+         item) {n  if (item == NULL) return -1;n  LOG("Processing item");n  return
+         item->id;n}nnvoid initialize_system(void) {n  LOG("System initialized"
+        );n  global_items = 0;n}n
+  preproc_header.h: |
+    #ifndef PREPROCESSOR_HEADER_H
+    #define PREPROCESSOR_HEADER_H
+    \
+        
+    #define HEADER_VERSION 2
+    #define API_VERSION "2.1.0"
+    
+    typedef struct Item\
+        \ Item;
+    
+    #ifdef FEATURE_A
+      typedef struct FeatureA FeatureA;
+    #endif
+    
+    #ifndef\
+        \ DISABLE_FEATURE_B
+      typedef struct FeatureB FeatureB;
+    #endif
+    
+    int process_item(Item*\
+        \ item);
+    void initialize_system(void);
+    
+    #endif // PREPROCESSOR_HEADER_H
+    
 ---
-config.json: "{\n  \"project_name\": \"preprocessor_and_macros_comprehensive\",\n\
-  \  \"source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
-  : true\n}\n"
+config.json: |
+  {
+    "project_name": "preprocessor_and_macros_comprehensive",
+  \
+    \  "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search"\
+    : true
+  }
+  
 ---
 assertions:
   execution:

@@ -5,16 +5,46 @@ test:
     arrays
 ---
 source_files:
-  complex_struct.c: "typedef struct {\n    int base_id;\n    struct {\n        char\
-    \ name[64];\n        float value;\n        struct {\n            int x, y, z;\n\
-    \        } coordinates;\n    } metadata;\n    union {\n        long long_value;\n\
-    \        double double_value;\n    } data_variant;\n    char buffer[256];\n} complex_struct_t;\n\
-    \nvoid init_complex_struct(complex_struct_t* cs) {\n    cs->base_id = 0;\n   \
-    \ cs->metadata.value = 0.0f;\n}\n\ncomplex_struct_t global_complex;\n"
+  complex_struct.c: |
+    typedef struct {
+        int base_id;
+        struct {
+            char\
+        \ name[64];
+            float value;
+            struct {
+                int x, y, z;
+    \
+        \        } coordinates;
+        } metadata;
+        union {
+            long long_value;
+    \
+        \        double double_value;
+        } data_variant;
+        char buffer[256];
+    } complex_struct_t;
+    \
+        
+    void init_complex_struct(complex_struct_t* cs) {
+        cs->base_id = 0;
+       \
+        \ cs->metadata.value = 0.0f;
+    }
+    
+    complex_struct_t global_complex;
+    
 ---
-config.json: "{\n  \"project_name\": \"debug_complex_struct_field_processing\",\n\
-  \  \"source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
-  : true\n}\n"
+config.json: |
+  {
+    "project_name": "debug_complex_struct_field_processing",
+  \
+    \  "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search"\
+    : true
+  }
+  
 ---
 cli_execution:
   steps:

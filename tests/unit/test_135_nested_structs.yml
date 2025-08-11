@@ -5,12 +5,28 @@ test:
   id: '135'
 ---
 source_files:
-  nested_structures_puml.c: "typedef union {\n    int primary_int;\n    union {\n\
-    \        float nested_float;\n        double nested_double;\n    } nested_union;\n\
-    \    char primary_bytes[32];\n} test_union_t;\n"
+  nested_structures_puml.c: |
+    typedef union {
+        int primary_int;
+        union {
+    \
+        \        float nested_float;
+            double nested_double;
+        } nested_union;
+    \
+        \    char primary_bytes[32];
+    } test_union_t;
+    
 ---
-config.json: "{\n  \"project_name\": \"test_nested_structures_puml\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "test_nested_structures_puml",
+    "source_folders"\
+    : ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+  
 ---
 assertions:
   execution:

@@ -5,13 +5,35 @@ test:
     field structures are preserved
 ---
 source_files:
-  nested_union.c: "typedef union {\n    int primary_int;\n    union {\n        float\
-    \ nested_float;\n        double nested_double;\n    } nested_union;\n    char\
-    \ primary_bytes[32];\n} test_union_t;\n\nvoid process_union(test_union_t* tu)\
-    \ {\n    tu->primary_int = 42;\n}\n\ntest_union_t global_union;\n"
+  nested_union.c: |
+    typedef union {
+        int primary_int;
+        union {
+            float\
+        \ nested_float;
+            double nested_double;
+        } nested_union;
+        char\
+        \ primary_bytes[32];
+    } test_union_t;
+    
+    void process_union(test_union_t* tu)\
+        \ {
+        tu->primary_int = 42;
+    }
+    
+    test_union_t global_union;
+    
 ---
-config.json: "{\n  \"project_name\": \"debug_nested_union_field_parsing\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "debug_nested_union_field_parsing",
+    "source_folders"\
+    : ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+  
 ---
 cli_execution:
   steps:

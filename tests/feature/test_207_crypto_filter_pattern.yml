@@ -5,19 +5,44 @@ test:
   id: '207'
 ---
 source_files:
-  crypto.c: "void encrypt_data() {\n    // Encryption logic\n}\n\nvoid decrypt_data()\
-    \ {\n    // Decryption logic  \n}\n"
-  main.c: "#include \"crypto.h\"\n\nint main() {\n    encrypt_data();\n    return\
-    \ 0;\n}\n"
+  crypto.c: |
+    void encrypt_data() {
+        // Encryption logic
+    }
+    
+    void decrypt_data()\
+        \ {
+        // Decryption logic  
+    }
+    
+  main.c: |
+    #include "crypto.h"
+    
+    int main() {
+        encrypt_data();
+        return\
+        \ 0;
+    }
+    
   crypto.h: 'void encrypt_data();
 
     void decrypt_data();
 
     '
 ---
-config.json: "{\n  \"project_name\": \"crypto_filter_test\",\n  \"source_folders\"\
-  : [\".\"],\n  \"recursive_search\": true,\n  \"output_dir\": \"./output\",\n  \"\
-  filters\": {\n    \"remove_files\": [\"crypto\\\\..*\"]\n  }\n}\n"
+config.json: |
+  {
+    "project_name": "crypto_filter_test",
+    "source_folders"\
+    : ["."],
+    "recursive_search": true,
+    "output_dir": "./output",
+    "\
+    filters": {
+      "remove_files": ["crypto\\\\..*"]
+    }
+  }
+  
 ---
 assertions:
   execution:

@@ -6,26 +6,85 @@ test:
   id: '105'
 ---
 source_files:
-  anon_all.c: "// Anonymous struct within typedef with nested union and inner struct\n\
-    typedef struct {\n    int count;\n    struct {\n        int item_id;\n       \
-    \ char item_name[32];\n        union {\n            int int_data;\n          \
-    \  float float_data;\n            struct { int x, y; } point_data;\n        }\
-    \ item_value;\n    } items[10];\n} array_of_anon_structs_t;\n\nvoid process_array(array_of_anon_structs_t*\
-    \ arr) {\n    arr->count = 5;\n    arr->items[0].item_id = 1;\n}\n\narray_of_anon_structs_t\
-    \ global_array;\n\n// Deeply nested anonymous structures\ntypedef struct {\n \
-    \   struct {\n        struct { int level3_field; } level3_struct;\n    } level2_struct;\n\
-    } nested_anonymous_t;\n\nvoid init_nested(nested_anonymous_t* n) { n->level2_struct.level3_struct.level3_field\
-    \ = 42; }\nnested_anonymous_t global_nested = {0};\n\n// Anonymous union within\
-    \ struct\ntypedef struct {\n    int type_id;\n    union {\n        int int_value;\n\
-    \        float float_value;\n        char string_value[64];\n        struct {\
-    \ int x, y, z; } point_value;\n    } data_union;\n    int checksum;\n} struct_with_union_t;\n\
-    \nvoid set_union_data(struct_with_union_t* s, int type) {\n    s->type_id = type;\n\
-    \    if (type == 1) { s->data_union.int_value = 42; }\n    else if (type == 2)\
-    \ { s->data_union.point_value.x = 10; }\n    s->checksum = 0xFF;\n}\n\nstruct_with_union_t\
-    \ global_struct;\n"
+  anon_all.c: |
+    // Anonymous struct within typedef with nested union and inner struct
+    \
+        typedef struct {
+        int count;
+        struct {
+            int item_id;
+           \
+        \ char item_name[32];
+            union {
+                int int_data;
+              \
+        \  float float_data;
+                struct { int x, y; } point_data;
+            }\
+        \ item_value;
+        } items[10];
+    } array_of_anon_structs_t;
+    
+    void process_array(array_of_anon_structs_t*\
+        \ arr) {
+        arr->count = 5;
+        arr->items[0].item_id = 1;
+    }
+    
+    array_of_anon_structs_t\
+        \ global_array;
+    
+    // Deeply nested anonymous structures
+    typedef struct {
+     \
+        \   struct {
+            struct { int level3_field; } level3_struct;
+        } level2_struct;
+    \
+        } nested_anonymous_t;
+    
+    void init_nested(nested_anonymous_t* n) { n->level2_struct.level3_struct.level3_field\
+        \ = 42; }
+    nested_anonymous_t global_nested = {0};
+    
+    // Anonymous union within\
+        \ struct
+    typedef struct {
+        int type_id;
+        union {
+            int int_value;
+    \
+        \        float float_value;
+            char string_value[64];
+            struct {\
+        \ int x, y, z; } point_value;
+        } data_union;
+        int checksum;
+    } struct_with_union_t;
+    \
+        
+    void set_union_data(struct_with_union_t* s, int type) {
+        s->type_id = type;
+    \
+        \    if (type == 1) { s->data_union.int_value = 42; }
+        else if (type == 2)\
+        \ { s->data_union.point_value.x = 10; }
+        s->checksum = 0xFF;
+    }
+    
+    struct_with_union_t\
+        \ global_struct;
+    
 ---
-config.json: "{\n  \"project_name\": \"anonymous_structures_and_unions\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "anonymous_structures_and_unions",
+    "source_folders"\
+    : ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+  
 ---
 assertions:
   execution:

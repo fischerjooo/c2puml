@@ -93,5 +93,8 @@ assertions:
         - "-- Functions --"
       # Test that grouping still works with parameters: public function, empty line, private function
       regex_matches:
-        - pattern: "\\+ int Calculate.*\\n\\s*\\n.*\\- void HelperFunction"
+        - pattern: |
+          \+ int Calculate.*
+          \s*
+          .*\- void HelperFunction
           description: "Public function with parameters, empty line, private function sequence"

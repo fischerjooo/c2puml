@@ -51,8 +51,15 @@ source_files:
 
     '
 ---
-config.json: "{\n  \"project_name\": \"component_features\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "component_features",
+    "source_folders"\
+    : ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+  
 ---
 cli_execution:
   steps:

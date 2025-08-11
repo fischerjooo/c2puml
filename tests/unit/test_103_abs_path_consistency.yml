@@ -5,22 +5,71 @@ test:
     regardless of path style
 ---
 source_files:
-  shared/config.h: "#ifndef CONFIG_H\n#define CONFIG_H\n\n#define MAX_BUFFER_SIZE\
-    \ 1024\n#define DEFAULT_TIMEOUT 30\n\ntypedef struct {\n    int port;\n    char\
-    \ host[256];\n    int timeout;\n} config_t;\n\nextern config_t global_config;\n\
-    \nvoid config_load(const char* filename);\nvoid config_save(const char* filename);\n\
-    \n#endif\n"
-  core/network.c: "#include \"../shared/config.h\"\n\nconfig_t global_config = {8080,\
-    \ \"localhost\", DEFAULT_TIMEOUT};\n\nvoid network_connect(void) {\n    // Connect\
-    \ using global_config\n    config_load(\"network.conf\");\n}\n\nvoid network_disconnect(void)\
-    \ {\n    config_save(\"network.conf\");\n}\n"
-  main.c: "#include \"shared/config.h\"\n#include \"core/network.c\"  // Direct include\
-    \ for testing path consistency\n\nint main() {\n    config_load(\"main.conf\"\
-    );\n    network_connect();\n    network_disconnect();\n    return 0;\n}\n"
+  shared/config.h: |
+    #ifndef CONFIG_H
+    #define CONFIG_H
+    
+    #define MAX_BUFFER_SIZE\
+        \ 1024
+    #define DEFAULT_TIMEOUT 30
+    
+    typedef struct {
+        int port;
+        char\
+        \ host[256];
+        int timeout;
+    } config_t;
+    
+    extern config_t global_config;
+    \
+        
+    void config_load(const char* filename);
+    void config_save(const char* filename);
+    \
+        
+    #endif
+    
+  core/network.c: |
+    #include "../shared/config.h"
+    
+    config_t global_config = {8080,\
+        \ "localhost", DEFAULT_TIMEOUT};
+    
+    void network_connect(void) {
+        // Connect\
+        \ using global_config
+        config_load("network.conf");
+    }
+    
+    void network_disconnect(void)\
+        \ {
+        config_save("network.conf");
+    }
+    
+  main.c: |
+    #include "shared/config.h"
+    #include "core/network.c"  // Direct include\
+        \ for testing path consistency
+    
+    int main() {
+        config_load("main.conf"\
+        );
+        network_connect();
+        network_disconnect();
+        return 0;
+    }
+    
 ---
-config.json: "{\n  \"project_name\": \"absolute_vs_relative_path_consistency\",\n\
-  \  \"source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
-  : true\n}\n"
+config.json: |
+  {
+    "project_name": "absolute_vs_relative_path_consistency",
+  \
+    \  "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search"\
+    : true
+  }
+  
 ---
 cli_execution:
   steps:

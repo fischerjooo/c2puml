@@ -6,10 +6,31 @@ test:
   id: '130'
 ---
 source_files:
-  structs.c: "struct Point {\n    int x;\n    int y;\n};\n\nstruct Rectangle {\n \
-    \   int width;\n    int height;\n};\n"
-  enums.c: "enum Color {\n    RED,\n    GREEN,\n    BLUE\n};\n\nenum Status {\n  \
-    \  RUNNING,\n    STOPPED\n};\n"
+  structs.c: |
+    struct Point {
+        int x;
+        int y;
+    };
+    
+    struct Rectangle {
+     \
+        \   int width;
+        int height;
+    };
+    
+  enums.c: |
+    enum Color {
+        RED,
+        GREEN,
+        BLUE
+    };
+    
+    enum Status {
+      \
+        \  RUNNING,
+        STOPPED
+    };
+    
   globals.c: 'int global_int = 42;
 
     float global_float = 3.14f;
@@ -29,9 +50,16 @@ source_files:
 
     '
 ---
-config.json: "{\n  \"project_name\": \"test_parser_elements_comprehensive\",\n  \"\
-  source_folders\": [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\"\
-  : true\n}\n"
+config.json: |
+  {
+    "project_name": "test_parser_elements_comprehensive",
+    "\
+    source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search"\
+    : true
+  }
+  
 ---
 assertions:
   execution:

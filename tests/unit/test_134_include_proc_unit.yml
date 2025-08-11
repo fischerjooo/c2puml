@@ -5,9 +5,11 @@ test:
   id: '134'
 ---
 source_files:
-  main.c: "#include \"utils.h\"\n#include <stdio.h>\n\nint main() {\n    printf(\"\
-    Hello from main\\n\");\n    int result = add_numbers(5, 3);\n    return result;\n\
-    }\n"
+  main.c: |
+    #include "utils.h"n#include <stdio.h>nnint main() {n    printf("
+        Hello from main
+    ");n    int result = add_numbers(5, 3);n    return result;n
+        }n
   utils.h: '#ifndef UTILS_H
 
     #define UTILS_H
@@ -32,9 +34,17 @@ source_files:
 
     '
 ---
-config.json: "{\n  \"project_name\": \"include_processing_basic\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true,\n  \"\
-  include_depth\": 2\n}\n"
+config.json: |
+  {
+    "project_name": "include_processing_basic",
+    "source_folders"\
+    : ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "\
+    include_depth": 2
+  }
+  
 ---
 assertions:
   execution:

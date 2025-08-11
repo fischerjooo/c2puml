@@ -5,11 +5,34 @@ test:
   id: '205'
 ---
 source_files:
-  src1/main.c: "#include \"utils.h\"\n\nstruct Person {\n    char name[50];\n    int\
-    \ age;\n};\n\nint main() {\n    struct Person p = {\"John\", 30};\n    return\
-    \ 0;\n}\n"
-  src1/utils.h: "#ifndef UTILS_H\n#define UTILS_H\n\ntypedef struct {\n    int x,\
-    \ y;\n} Point;\n\nvoid print_point(Point p);\n\n#endif\n"
+  src1/main.c: |
+    #include "utils.h"
+    
+    struct Person {
+        char name[50];
+        int\
+        \ age;
+    };
+    
+    int main() {
+        struct Person p = {"John", 30};
+        return\
+        \ 0;
+    }
+    
+  src1/utils.h: |
+    #ifndef UTILS_H
+    #define UTILS_H
+    
+    typedef struct {
+        int x,\
+        \ y;
+    } Point;
+    
+    void print_point(Point p);
+    
+    #endif
+    
   src2/app.c: '#include "types.h"
 
 
@@ -19,16 +42,56 @@ source_files:
     void process_color(enum Color c) {}
 
     '
-  src2/types.h: "#ifndef TYPES_H\n#define TYPES_H\n\ntypedef unsigned int uint32_t;\n\
-    typedef struct {\n    uint32_t id;\n    char name[100];\n} Item;\n\n#endif\n"
-  src3/complex.c: "#include \"data.h\"\n\nunion Data { int i; float f; char str[20];\
-    \ };\n\nstruct Container {\n    union Data data;\n    int type;\n};\n"
-  src3/data.h: "#ifndef DATA_H\n#define DATA_H\n\n#define MAX_SIZE 100\n\ntypedef\
-    \ struct {\n    int values[MAX_SIZE];\n    int count;\n} Array;\n\n#endif\n"
+  src2/types.h: |
+    #ifndef TYPES_H
+    #define TYPES_H
+    
+    typedef unsigned int uint32_t;
+    \
+        typedef struct {
+        uint32_t id;
+        char name[100];
+    } Item;
+    
+    #endif
+    
+  src3/complex.c: |
+    #include "data.h"
+    
+    union Data { int i; float f; char str[20];\
+        \ };
+    
+    struct Container {
+        union Data data;
+        int type;
+    };
+    
+  src3/data.h: |
+    #ifndef DATA_H
+    #define DATA_H
+    
+    #define MAX_SIZE 100
+    
+    typedef\
+        \ struct {
+        int values[MAX_SIZE];
+        int count;
+    } Array;
+    
+    #endif
+    
 ---
-config.json: "{\n  \"project_name\": \"multi_source_test\",\n  \"source_folders\"\
-  : [\"./src/src1\", \"./src/src2\", \"./src/src3\"],\n  \"output_dir\": \"./output\"\
-  ,\n  \"recursive_search\": true,\n  \"include_depth\": 1\n}\n"
+config.json: |
+  {
+    "project_name": "multi_source_test",
+    "source_folders"\
+    : ["./src/src1", "./src/src2", "./src/src3"],
+    "output_dir": "./output"\
+    ,
+    "recursive_search": true,
+    "include_depth": 1
+  }
+  
 ---
 assertions:
   execution:

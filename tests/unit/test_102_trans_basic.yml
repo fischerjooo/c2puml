@@ -5,14 +5,46 @@ test:
   id: '102'
 ---
 source_files:
-  sample.c: "#include <stdio.h>\n\nstruct MyStruct {\n    int value;\n    char name[50];\n\
-    };\n\nenum Status {\n    ACTIVE,\n    INACTIVE\n};\n\nvoid process_data() {\n\
-    \    printf(\"Processing data\");\n}\n\nint global_counter;\n"
+  sample.c: |
+    #include <stdio.h>
+    
+    struct MyStruct {
+        int value;
+        char name[50];
+    \
+        };
+    
+    enum Status {
+        ACTIVE,
+        INACTIVE
+    };
+    
+    void process_data() {
+    \
+        \    printf("Processing data");
+    }
+    
+    int global_counter;
+    
 ---
-config.json: "{\n  \"project_name\": \"test_transformer_basic\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true,\n  \"\
-  transformations\": {\n    \"rename\": {\n      \"functions\": {\n        \"process_data\"\
-  : \"handle_data\"\n      }\n    }\n  }\n}\n"
+config.json: |
+  {
+    "project_name": "test_transformer_basic",
+    "source_folders"\
+    : ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "\
+    transformations": {
+      "rename": {
+        "functions": {
+          "process_data"\
+    : "handle_data"
+        }
+      }
+    }
+  }
+  
 ---
 assertions:
   execution:

@@ -6,8 +6,15 @@ test:
 ---
 source_files: {}
 ---
-config.json: "{\n  \"project_name\": \"test_error_handling\",\n  \"source_folders\"\
-  : [],\n  \"output_dir\": \"output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "test_error_handling",
+    "source_folders"\
+    : [],
+    "output_dir": "output",
+    "recursive_search": true
+  }
+  
 ---
 assertions:
   execution:

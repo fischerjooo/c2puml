@@ -6,19 +6,82 @@ test:
   id: '101'
 ---
 source_files:
-  main.c: "#include <stdio.h>\n#include <stdlib.h>\n#include \"local.h\"\n\n#define\
-    \ MAX_SIZE 100\n#define DEBUG_MODE 1\n#define VERSION \"1.0\"\n\ntypedef int Integer;\n\
-    typedef char* String;\ntypedef void (*Callback)(int);\n\nstruct Person {\n   \
-    \ char* name;\n    int age;\n    float height;\n};\n\nstruct Config {\n    int\
-    \ max_users;\n    int timeout;\n};\n\nenum Status {\n    OK,\n    ERROR,\n   \
-    \ PENDING\n};\n\nenum Color {\n    RED,\n    GREEN,\n    BLUE\n};\n\nunion Data\
-    \ {\n    int integer_value;\n    float float_value;\n    char* string_value;\n\
-    };\n\nint global_var = 42;\nchar* global_string = \"test\";\n\nint main() {\n\
-    \    return 0;\n}\n\nvoid process_data(void* data) {\n    // Process data\n}\n\
-    \nfloat calculate(float a, float b) {\n    return a + b;\n}\n"
+  main.c: |
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include "local.h"
+    
+    #define\
+        \ MAX_SIZE 100
+    #define DEBUG_MODE 1
+    #define VERSION "1.0"
+    
+    typedef int Integer;
+    \
+        typedef char* String;
+    typedef void (*Callback)(int);
+    
+    struct Person {
+       \
+        \ char* name;
+        int age;
+        float height;
+    };
+    
+    struct Config {
+        int\
+        \ max_users;
+        int timeout;
+    };
+    
+    enum Status {
+        OK,
+        ERROR,
+       \
+        \ PENDING
+    };
+    
+    enum Color {
+        RED,
+        GREEN,
+        BLUE
+    };
+    
+    union Data\
+        \ {
+        int integer_value;
+        float float_value;
+        char* string_value;
+    \
+        };
+    
+    int global_var = 42;
+    char* global_string = "test";
+    
+    int main() {
+    \
+        \    return 0;
+    }
+    
+    void process_data(void* data) {
+        // Process data
+    }
+    \
+        
+    float calculate(float a, float b) {
+        return a + b;
+    }
+    
 ---
-config.json: "{\n  \"project_name\": \"test_generator_basic_plantuml\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true\n}\n"
+config.json: |
+  {
+    "project_name": "test_generator_basic_plantuml",
+    "source_folders"\
+    : ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+  
 ---
 assertions:
   execution:

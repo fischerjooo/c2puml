@@ -6,37 +6,58 @@ test:
   id: '125'
 ---
 source_files:
-  model.json: "{\n  \"project_name\": \"visibility_project\",\n  \"source_folder\"\
-    : \"/test\",\n  \"files\": {\n    \"math.c\": {\"file_path\": \"math.c\", \"functions\"\
-    : [{\"name\": \"calculate\", \"return_type\": \"int\", \"is_declaration\": false,\
-    \ \"parameters\": []}], \"globals\": [], \"includes\": [], \"macros\": {}, \"\
-    enums\": {}, \"structs\": {}, \"unions\": {}, \"aliases\": {}},\n    \"math.h\"\
-    : {\"file_path\": \"math.h\", \"functions\": [{\"name\": \"calculate\", \"return_type\"\
-    : \"int\", \"is_declaration\": true, \"parameters\": []}], \"globals\": [], \"\
-    includes\": [], \"macros\": {}, \"enums\": {}, \"structs\": {}, \"unions\": {},\
-    \ \"aliases\": {}},\n    \"utils.c\": {\"file_path\": \"utils.c\", \"functions\"\
-    : [{\"name\": \"internal_helper\", \"return_type\": \"void\", \"is_declaration\"\
-    : false, \"parameters\": []}], \"globals\": [], \"includes\": [], \"macros\":\
-    \ {}, \"enums\": {}, \"structs\": {}, \"unions\": {}, \"aliases\": {}},\n    \"\
-    config.c\": {\"file_path\": \"config.c\", \"functions\": [], \"globals\": [{\"\
-    name\": \"global_config\", \"type\": \"int\"}], \"includes\": [], \"macros\":\
-    \ {}, \"enums\": {}, \"structs\": {}, \"unions\": {}, \"aliases\": {}},\n    \"\
-    config.h\": {\"file_path\": \"config.h\", \"functions\": [], \"globals\": [{\"\
-    name\": \"global_config\", \"type\": \"int\"}], \"includes\": [], \"macros\":\
-    \ {}, \"enums\": {}, \"structs\": {}, \"unions\": {}, \"aliases\": {}},\n    \"\
-    internal.c\": {\"file_path\": \"internal.c\", \"functions\": [], \"globals\":\
-    \ [{\"name\": \"internal_state\", \"type\": \"static int\"}], \"includes\": [],\
-    \ \"macros\": {}, \"enums\": {}, \"structs\": {}, \"unions\": {}, \"aliases\"\
-    : {}},\n    \"standalone.c\": {\"file_path\": \"standalone.c\", \"functions\"\
-    : [{\"name\": \"function_one\", \"return_type\": \"int\", \"is_declaration\":\
-    \ false, \"parameters\": []}, {\"name\": \"function_two\", \"return_type\": \"\
-    void\", \"is_declaration\": false, \"parameters\": []}], \"globals\": [{\"name\"\
-    : \"global_one\", \"type\": \"int\"}, {\"name\": \"global_two\", \"type\": \"\
-    char*\"}], \"includes\": [], \"macros\": {}, \"enums\": {}, \"structs\": {}, \"\
-    unions\": {}, \"aliases\": {}}\n  },\n  \"include_relations\": []\n}\n"
+  model.json: |
+    {
+      "project_name": "visibility_project",
+      "source_folder"\
+        : "/test",
+      "files": {
+        "math.c": {"file_path": "math.c", "functions"\
+        : [{"name": "calculate", "return_type": "int", "is_declaration": false,\
+        \ "parameters": []}], "globals": [], "includes": [], "macros": {}, "\
+        enums": {}, "structs": {}, "unions": {}, "aliases": {}},
+        "math.h"\
+        : {"file_path": "math.h", "functions": [{"name": "calculate", "return_type"\
+        : "int", "is_declaration": true, "parameters": []}], "globals": [], "\
+        includes": [], "macros": {}, "enums": {}, "structs": {}, "unions": {},\
+        \ "aliases": {}},
+        "utils.c": {"file_path": "utils.c", "functions"\
+        : [{"name": "internal_helper", "return_type": "void", "is_declaration"\
+        : false, "parameters": []}], "globals": [], "includes": [], "macros":\
+        \ {}, "enums": {}, "structs": {}, "unions": {}, "aliases": {}},
+        "\
+        config.c": {"file_path": "config.c", "functions": [], "globals": [{"\
+        name": "global_config", "type": "int"}], "includes": [], "macros":\
+        \ {}, "enums": {}, "structs": {}, "unions": {}, "aliases": {}},
+        "\
+        config.h": {"file_path": "config.h", "functions": [], "globals": [{"\
+        name": "global_config", "type": "int"}], "includes": [], "macros":\
+        \ {}, "enums": {}, "structs": {}, "unions": {}, "aliases": {}},
+        "\
+        internal.c": {"file_path": "internal.c", "functions": [], "globals":\
+        \ [{"name": "internal_state", "type": "static int"}], "includes": [],\
+        \ "macros": {}, "enums": {}, "structs": {}, "unions": {}, "aliases"\
+        : {}},
+        "standalone.c": {"file_path": "standalone.c", "functions"\
+        : [{"name": "function_one", "return_type": "int", "is_declaration":\
+        \ false, "parameters": []}, {"name": "function_two", "return_type": "\
+        void", "is_declaration": false, "parameters": []}], "globals": [{"name"\
+        : "global_one", "type": "int"}, {"name": "global_two", "type": "\
+        char*"}], "includes": [], "macros": {}, "enums": {}, "structs": {}, "\
+        unions": {}, "aliases": {}}
+      },
+      "include_relations": []
+    }
+    
 ---
-config.json: "{\n  \"project_name\": \"visibility_project\",\n  \"output_dir\": \"\
-  output\",\n  \"source_folders\": [\"src\"]\n}\n"
+config.json: |
+  {
+    "project_name": "visibility_project",
+    "output_dir": "\
+    output",
+    "source_folders": ["src"]
+  }
+  
 ---
 assertions:
   execution:

@@ -6,10 +6,25 @@ test:
   id: '133'
 ---
 source_files:
-  processor.c: "#include \"api.h\"\n#include \"worker.h\"\n#include \"private_worker.h\"\
-    \n\n// Main processor functions\nvoid process_data() {\n    api_function();\n\
-    \    worker_function();\n}\n\nint main() {\n    process_data();\n    return 0;\n\
-    }\n"
+  processor.c: |
+    #include "api.h"
+    #include "worker.h"
+    #include "private_worker.h"\
+        
+    
+    // Main processor functions
+    void process_data() {
+        api_function();
+    \
+        \    worker_function();
+    }
+    
+    int main() {
+        process_data();
+        return 0;
+    \
+        }
+    
   api.h: '#ifndef API_H
 
     #define API_H
@@ -68,8 +83,20 @@ source_files:
     #endif
 
     '
-  types.h: "#ifndef TYPES_H\n#define TYPES_H\n\n#include \"constants.h\"\n\ntypedef\
-    \ int ProcessorID;\ntypedef struct {\n    int x, y;\n} Point;\n\n#endif\n"
+  types.h: |
+    #ifndef TYPES_H
+    #define TYPES_H
+    
+    #include "constants.h"
+    
+    typedef\
+        \ int ProcessorID;
+    typedef struct {
+        int x, y;
+    } Point;
+    
+    #endif
+    
   platform.h: '#ifndef PLATFORM_H
 
     #define PLATFORM_H
@@ -107,8 +134,19 @@ source_files:
     #endif
 
     '
-  errors.h: "#ifndef ERRORS_H\n#define ERRORS_H\n\nenum ErrorCode {\n    ERROR_NONE,\n\
-    \    ERROR_INVALID,\n    ERROR_MEMORY\n};\n\n#endif\n"
+  errors.h: |
+    #ifndef ERRORS_H
+    #define ERRORS_H
+    
+    enum ErrorCode {
+        ERROR_NONE,
+    \
+        \    ERROR_INVALID,
+        ERROR_MEMORY
+    };
+    
+    #endif
+    
   constants.h: '#ifndef CONSTANTS_H
 
     #define CONSTANTS_H
@@ -134,11 +172,25 @@ source_files:
 
     '
 ---
-config.json: "{\n  \"project_name\": \"test_include_filtering\",\n  \"source_folders\"\
-  : [\".\"],\n  \"output_dir\": \"./output\",\n  \"recursive_search\": true,\n  \"\
-  include_depth\": 3,\n  \"file_specific\": {\n    \"processor.c\": {\n      \"include_filter\"\
-  : [\"^api\\\\.h$\", \"^worker\\\\.h$\", \"^types\\\\.h$\", \"^platform\\\\.h$\"\
-  ],\n      \"include_depth\": 2\n    }\n  }\n}\n"
+config.json: |
+  {
+    "project_name": "test_include_filtering",
+    "source_folders"\
+    : ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "\
+    include_depth": 3,
+    "file_specific": {
+      "processor.c": {
+        "include_filter"\
+    : ["^api\\\\.h$", "^worker\\\\.h$", "^types\\\\.h$", "^platform\\\\.h$"\
+    ],
+        "include_depth": 2
+      }
+    }
+  }
+  
 ---
 assertions:
   execution:
