@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Test Parser Enums
+Test Parser Elements – Consolidated
 
-This test verifies that the c2puml tool can parse enum definitions and generate
-the expected model and PlantUML output through the CLI interface.
+This replaces separate enums/structs/globals/macros tests with a single scenario
 """
 
 import os
@@ -14,15 +13,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 
-class TestParserEnums(UnifiedTestCase):
-    """Test parsing enum definitions through the CLI interface"""
-    
-    def test_parser_enums(self):
-        """Test parsing enum definitions through the CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("parser_enums")
-        
-        # Validate results
+class TestParserElementsConsolidated(UnifiedTestCase):
+    """Test consolidated parser elements through the CLI interface"""
+
+    def test_parser_elements_comprehensive(self):
+        result = self.run_test("parser_elements_comprehensive")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

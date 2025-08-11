@@ -242,8 +242,8 @@ Parser
 - [x] tests/unit/test_parser_functions_and_parameters_comprehensive.yml
 - [x] tests/unit/test_struct_and_nested_ordering_comprehensive.yml
 - [x] tests/unit/test_parser_includes_comprehensive.yml
-- [ ] tests/unit/test_parser_elements_comprehensive.yml
-- [ ] tests/unit/test_parser_typedefs_comprehensive.yml
+- [x] tests/unit/test_parser_elements_comprehensive.yml
+- [x] tests/unit/test_parser_typedefs_comprehensive.yml
 - [ ] Confirm whether to keep `test_parser_encoding.yml` standalone or fold
 
 Typedef extraction
@@ -253,23 +253,19 @@ Anonymous structures
 - [ ] tests/unit/test_anonymous_structures_and_unions_comprehensive.yml
 
 Path/Include tree
-- [ ] tests/unit/test_path_resolution_and_include_tree_comprehensive.yml
+- [x] tests/unit/test_path_resolution_and_include_tree_comprehensive.yml
 
 File-specific configuration
-- [ ] tests/unit/test_file_specific_configuration_comprehensive.yml
+- [x] tests/unit/test_file_specific_configuration_comprehensive.yml
 
-Transformer
-- [ ] tests/unit/test_transformer_comprehensive.yml
+Verifier
+- [x] tests/unit/test_verifier_comprehensive.yml (folded valid model)
 
 Generator
-- [ ] tests/unit/test_generator_formatting_and_stereotypes_comprehensive.yml
 - [ ] tests/unit/test_generator_naming_conventions_comprehensive.yml
 - [ ] tests/unit/test_generator_grouping_comprehensive.yml
 - [ ] tests/unit/test_generator_visibility_logic_comprehensive.yml
 - [ ] tests/unit/test_generator_includes_and_filtering_comprehensive.yml
-
-Verifier
-- [ ] tests/unit/test_verifier_comprehensive.yml (fold valid model assertions)
 
 Feature: include processing
 - [ ] tests/feature/test_include_processing_comprehensive.yml
@@ -288,6 +284,7 @@ Integration
 De-duplication/renames
 - [x] Unify `function_params_*` and `function_parameters_*` under the new functions/parameters comprehensive test
 - [x] Remove overlapping unit vs feature duplicates (e.g., include filtering) by keeping the consolidated version in the most appropriate category (unit includes consolidated; feature workflows to be consolidated next)
+- [x] Collapse parser basics/mixed/complete/globals into `test_parser_comprehensive_basics.yml` and `test_parser_elements_comprehensive.yml`
 
 Validation checklist
 - [x] Run full suite after each merged YAML creation (update Python `self.run_test("<name>")` targets)

@@ -120,6 +120,7 @@ test_absolute_vs_relative_path_consistency (unit.test_absolute_path_bug_comprehe
 Test absolute vs relative path consistency through CLI interface. ... ok
 test_mixed_path_styles_handling (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_mixed_path_styles_handling)
 Test mixed path styles handling through CLI interface. ... ok
+test_path_resolution_and_include_tree_comprehensive (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_path_resolution_and_include_tree_comprehensive) ... ok
 test_relative_path_handling_in_include_tree (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_relative_path_handling_in_include_tree)
 Test that relative paths are handled correctly in include tree building through CLI interface. ... ok
 test_subdirectory_includes_path_resolution (unit.test_absolute_path_bug_comprehensive.TestAbsolutePathBugComprehensive.test_subdirectory_includes_path_resolution)
@@ -146,14 +147,7 @@ test_complex_union_parsing (unit.test_debug_parsing_comprehensive.TestDebugParsi
 Test parsing complex union with nested structures through CLI interface ... ok
 test_nested_struct_parsing (unit.test_debug_parsing_comprehensive.TestDebugParsingComprehensive.test_nested_struct_parsing)
 Test parsing nested struct definitions through CLI interface ... ok
-test_configuration_extraction (unit.test_file_specific_configuration_comprehensive.TestFileSpecificConfigurationComprehensive.test_configuration_extraction)
-Test configuration extraction functionality through CLI interface. ... ok
-test_file_specific_include_depth (unit.test_file_specific_configuration_comprehensive.TestFileSpecificConfigurationComprehensive.test_file_specific_include_depth)
-Test file-specific include depth configuration through CLI interface. ... ok
-test_file_specific_include_filter (unit.test_file_specific_configuration_comprehensive.TestFileSpecificConfigurationComprehensive.test_file_specific_include_filter)
-Test that file-specific include filters preserve includes arrays correctly through CLI interface. ... ok
-test_include_filter_patterns (unit.test_file_specific_configuration_comprehensive.TestFileSpecificConfigurationComprehensive.test_include_filter_patterns)
-Test include filter patterns validation through CLI interface. ... ok
+test_file_specific_configuration_comprehensive (unit.test_file_specific_configuration_comprehensive.TestFileSpecificConfigurationComprehensive.test_file_specific_configuration_comprehensive) ... ok
 test_generator_basic_plantuml (unit.test_generator_basic_plantuml.TestGeneratorBasicPlantuml.test_generator_basic_plantuml)
 Run the test_generator_basic_plantuml test through CLI interface. ... ok
 test_generator_comprehensive (unit.test_generator_comprehensive.TestGeneratorComprehensive.test_generator_comprehensive)
@@ -195,34 +189,23 @@ test_mixed_visibility_comprehensive (unit.test_generator_visibility_logic.TestGe
 Test mixed visibility scenarios with both public and private elements ... ok
 test_no_headers_all_private (unit.test_generator_visibility_logic.TestGeneratorVisibilityLogicCLI.test_no_headers_all_private)
 Test that without headers, all elements are marked as - (private) ... ok
-test_global_parsing_comprehensive (unit.test_global_parsing_comprehensive.TestGlobalParsingComprehensive.test_global_parsing_comprehensive)
-Test comprehensive global parsing scenarios through the CLI interface ... ok
+test_global_parsing_comprehensive (unit.test_global_parsing_comprehensive.TestGlobalParsingComprehensive.test_global_parsing_comprehensive) ... ok
 test_include_filtering_comprehensive (unit.test_include_filtering_comprehensive.TestIncludeFilteringComprehensive.test_include_filtering_comprehensive)
 Test comprehensive include filtering scenarios through the CLI interface ... ok
 test_basic_include_processing (unit.test_include_processing_comprehensive.TestIncludeProcessingComprehensive.test_basic_include_processing)
 Test basic include file processing through CLI interface ... ok
 test_nested_structures_puml (unit.test_nested_structures_puml.TestNestedStructuresPuml.test_nested_structures_puml)
 Test nested structures puml through the CLI interface ... ok
-test_parser_complete (unit.test_parser_complete.TestParserComplete.test_parser_complete)
-Test parsing a complete C file with all elements through the CLI interface ... ok
+test_parser_comprehensive_basics (unit.test_parser_complete.TestParserComplete.test_parser_comprehensive_basics) ... ok
 test_parser_encoding (unit.test_parser_encoding.TestParserEncoding.test_parser_encoding)
 Test parsing files with various encodings through the CLI interface ... ok
-test_parser_enum_simple (unit.test_parser_enum_comprehensive.TestParserEnumComprehensive.test_parser_enum_simple)
-Test parsing simple enum definitions through the CLI interface ... ok
-test_parser_enum_typedef (unit.test_parser_enum_comprehensive.TestParserEnumComprehensive.test_parser_enum_typedef)
-Test parsing typedef enum definitions through the CLI interface ... ok
-test_parser_enums (unit.test_parser_enums.TestParserEnums.test_parser_enums)
-Test parsing enum definitions through the CLI interface ... ok
+test_parser_typedefs_comprehensive_enums (unit.test_parser_enum_comprehensive.TestParserEnumComprehensive.test_parser_typedefs_comprehensive_enums) ... ok
+test_parser_elements_comprehensive (unit.test_parser_enums.TestParserElementsConsolidated.test_parser_elements_comprehensive) ... ok
 test_parser_functions_and_parameters_comprehensive (unit.test_parser_function_comprehensive.TestParserFunctionComprehensive.test_parser_functions_and_parameters_comprehensive) ... ok
-test_parser_functions (unit.test_parser_functions.TestParserFunctions.test_parser_functions)
-Test parsing function declarations through the CLI interface ... ok
-test_parser_globals (unit.test_parser_globals.TestParserGlobals.test_parser_globals)
-Test parsing global variables through the CLI interface ... ok
+test_parser_functions_and_parameters_comprehensive (unit.test_parser_functions.TestParserFunctions.test_parser_functions_and_parameters_comprehensive) ... ok
+test_parser_elements_comprehensive (unit.test_parser_globals.TestParserGlobals.test_parser_elements_comprehensive) ... ok
 test_parser_includes_comprehensive (unit.test_parser_includes.TestParserIncludes.test_parser_includes_comprehensive) ... ok
-test_parser_macros (unit.test_parser_macros.TestParserMacros.test_parser_macros)
-Test parsing macro definitions through the CLI interface ... ok
-test_parser_mixed_content (unit.test_parser_mixed_comprehensive.TestParserMixedComprehensive.test_parser_mixed_content)
-Test parsing a file with mixed C language features through the CLI interface ... ok
+test_parser_elements_comprehensive (unit.test_parser_macros.TestParserMacros.test_parser_elements_comprehensive) ... ok
 test_nested_struct_preservation (unit.test_parser_nested_structures_comprehensive.TestParserNestedStructuresComprehensive.test_nested_struct_preservation)
 Test that nested structs maintain their structure through CLI interface. ... ok
 test_nested_structures_in_generated_puml (unit.test_parser_nested_structures_comprehensive.TestParserNestedStructuresComprehensive.test_nested_structures_in_generated_puml)
@@ -233,16 +216,12 @@ test_parser_simple_c_file (unit.test_parser_simple_c_file.TestParserSimpleCFile.
 Test parsing a simple C file through the CLI interface ... ok
 test_parser_simple_struct (unit.test_parser_simple_struct.TestParserSimpleStruct.test_parser_simple_struct)
 Test parsing a simple struct definition through the CLI interface ... ok
-test_parser_structs (unit.test_parser_structs.TestParserStructs.test_parser_structs)
-Test parsing struct definitions through the CLI interface ... ok
-test_parser_typedef_struct (unit.test_parser_typedef_struct.TestParserTypedefStruct.test_parser_typedef_struct)
-Test parsing typedef struct definitions through the CLI interface ... ok
-test_parser_typedefs (unit.test_parser_typedefs.TestParserTypedefs.test_parser_typedefs)
-Test parsing typedef declarations through the CLI interface ... ok
+test_parser_elements_comprehensive (unit.test_parser_structs.TestParserStructs.test_parser_elements_comprehensive) ... ok
+test_parser_typedefs_comprehensive (unit.test_parser_typedef_struct.TestParserTypedefStruct.test_parser_typedefs_comprehensive) ... ok
+test_parser_typedefs_comprehensive (unit.test_parser_typedefs.TestParserTypedefsConsolidated.test_parser_typedefs_comprehensive) ... ok
 test_preprocessor_and_macros_comprehensive (unit.test_preprocessor_handling_comprehensive.TestPreprocessorHandlingComprehensive.test_preprocessor_and_macros_comprehensive)
 Run the consolidated preprocessor and macros scenario ... ok
-test_simple_c_file_parsing (unit.test_simple_c_file_parsing.TestSimpleCFileParsing.test_simple_c_file_parsing)
-Test parsing a simple C file through the CLI interface ... ok
+test_parser_comprehensive_basics (unit.test_simple_c_file_parsing.TestParserComprehensiveBasics.test_parser_comprehensive_basics) ... ok
 test_struct_and_nested_ordering_comprehensive (unit.test_struct_order_puml.TestStructOrderPuml.test_struct_and_nested_ordering_comprehensive) ... ok
 test_tokenizer_comprehensive (unit.test_tokenizer_comprehensive.TestTokenizerComprehensive.test_tokenizer_comprehensive)
 Run the consolidated tokenizer scenario ... ok
@@ -260,23 +239,21 @@ test_typedef_extraction_comprehensive (unit.test_typedef_extraction_comprehensiv
 Run the consolidated typedef extraction scenario ... ok
 test_verifier_comprehensive (unit.test_verifier_comprehensive.TestVerifierComprehensive.test_verifier_comprehensive)
 Test comprehensive verifier scenarios through the CLI interface ... ok
-test_verifier_valid_model (unit.test_verifier_valid_model.TestVerifierValidModel.test_verifier_valid_model)
-Run the test_verifier_valid_model test through CLI interface. ... ok
 
 ----------------------------------------------------------------------
-Ran 125 tests in 6.633s
+Ran 120 tests in 6.376s
 
 OK
 
 --------------------------------------------------
                  unittest Summary                 
 --------------------------------------------------
-Tests run: 125
+Tests run: 120
 Failures: 0
 Errors: 0
 
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 6.66 seconds
+Duration: 6.40 seconds
 ✅ All tests passed!

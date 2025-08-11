@@ -12,14 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 
-class TestVerifierValidModel(UnifiedTestCase):
-    """Test class for test_verifier_valid_model"""
-
-    def test_verifier_valid_model(self):
-        """Run the test_verifier_valid_model test through CLI interface."""
-        result = self.run_test("verifier_valid_model")
-        self.validate_execution_success(result)
-        self.validate_test_output(result)
+# Removed: folded into test_verifier_comprehensive.yml
 
 
 if __name__ == "__main__":

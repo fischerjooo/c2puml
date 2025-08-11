@@ -1,5 +1,5 @@
 ---
-description: "Comprehensive verifier functionality test"
+description: "Comprehensive verifier functionality test (includes valid model checks)"
 source_files:
   "verifier_test.c": |
     #include <stdio.h>
@@ -61,7 +61,6 @@ source_files:
     }
     
     void cleanup_resources(void) {
-        // Cleanup implementation
     }
 
   "verifier_header.h": |
@@ -89,6 +88,37 @@ source_files:
     
     #endif // VERIFIER_HEADER_H
 
+  "valid.c": |
+    #include <stdio.h>
+    
+    struct ValidStruct2 {
+        int valid_field;
+        char* valid_string;
+        float valid_number;
+    };
+    
+    enum ValidEnum2 {
+        VALID_OPTION_1,
+        VALID_OPTION_2,
+        VALID_OPTION_3
+    };
+    
+    union ValidUnion2 {
+        int int_value;
+        float float_value;
+        char char_value;
+    };
+    
+    int valid_global = 42;
+    char* valid_string_global = "valid";
+    
+    int valid_function(int param1, char* param2) {
+        return param1 + 1;
+    }
+    
+    void another_valid_function(void) {
+    }
+
   "config.json": |
     {
       "project_name": "VerifierTest",
@@ -108,35 +138,44 @@ assertions:
     files_exist:
       - "verifier_test.c"
       - "verifier_header.h"
+      - "valid.c"
     
     element_counts:
-      files: 2
+      files: 3
     
     functions_exist:
       - "process_data"
       - "validate_buffer" 
       - "cleanup_resources"
+      - "valid_function"
+      - "another_valid_function"
     
     structs_exist:
       - "ValidStruct"
       - "DataBuffer"
+      - "ValidStruct2"
     
     enums_exist:
       - "Status"
       - "Color"
+      - "ValidEnum2"
     
     unions_exist:
       - "Number"
+      - "ValidUnion2"
     
     globals_exist:
       - "global_counter"
       - "app_version"
       - "default_config"
+      - "valid_global"
+      - "valid_string_global"
   
   puml:
     files_exist:
       - "verifier_test.puml"
       - "verifier_header.puml"
+      - "valid.puml"
     
     contains_elements:
       - "ValidStruct"
@@ -148,3 +187,8 @@ assertions:
       - "validate_buffer"
       - "cleanup_resources"
       - "global_counter"
+      - "ValidStruct2"
+      - "ValidEnum2"
+      - "ValidUnion2"
+      - "valid_function"
+      - "another_valid_function"

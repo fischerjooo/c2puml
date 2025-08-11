@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
-Test Typedef Struct Parsing
-
-This test verifies that the c2puml tool can parse typedef struct definitions
-and generate the expected model and PlantUML output through the CLI interface.
+Test Typedef Struct Parsing – Repointed to consolidated typedefs
 """
 
 import os
@@ -15,14 +12,8 @@ from tests.framework import UnifiedTestCase
 
 
 class TestParserTypedefStruct(UnifiedTestCase):
-    """Test parsing typedef struct definitions through the CLI interface"""
-    
-    def test_parser_typedef_struct(self):
-        """Test parsing typedef struct definitions through the CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("parser_typedef_struct")
-        
-        # Validate results
+    def test_parser_typedefs_comprehensive(self):
+        result = self.run_test("parser_typedefs_comprehensive")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 

@@ -41,6 +41,11 @@ class TestAbsolutePathBugComprehensive(UnifiedTestCase):
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
+    def test_path_resolution_and_include_tree_comprehensive(self):
+        result = self.run_test("path_resolution_and_include_tree_comprehensive")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+
 
 if __name__ == "__main__":
     unittest.main()

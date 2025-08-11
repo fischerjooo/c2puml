@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
-Test Parser Macros
-
-This test verifies that the c2puml tool can parse macro definitions and generate
-the expected model and PlantUML output through the CLI interface.
+Test Parser Elements – Consolidated (replaces parser_macros)
 """
 
 import os
@@ -15,14 +12,8 @@ from tests.framework import UnifiedTestCase
 
 
 class TestParserMacros(UnifiedTestCase):
-    """Test parsing macro definitions through the CLI interface"""
-    
-    def test_parser_macros(self):
-        """Test parsing macro definitions through the CLI interface"""
-        # Run the complete test using high-level methods
-        result = self.run_test("parser_macros")
-        
-        # Validate results
+    def test_parser_elements_comprehensive(self):
+        result = self.run_test("parser_elements_comprehensive")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
