@@ -77,5 +77,12 @@ config.json: |
     "project_name": "auto_test",
     "source_folders": ["."],
     "output_dir": "./output",
-    "recursive_search": true
+    "recursive_search": true,
+    "transformations": {
+      "rename": {
+        "functions": {
+          "process_data": "handle_data"
+        }
+      }
+    }
   }

@@ -35,7 +35,7 @@ source_files:
     enum Status {
         OK,
         ERROR,
-    PENDING
+        PENDING
     };
     
     enum Color {
