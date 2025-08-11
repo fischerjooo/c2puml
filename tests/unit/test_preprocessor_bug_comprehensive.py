@@ -1,1 +1,0 @@
-# Removed: consolidated into test_preprocessor_and_macros_comprehensive.yml and handled by TestPreprocessorHandlingComprehensive
