@@ -1,37 +1,15 @@
 test:
-  name: "Generator \u2013 New Formatting Stereotypes Comprehensive"
+  name: "Generator – New Formatting Stereotypes Comprehensive"
   description: Validate stereotypes and content for enums, structs, unions, function
     pointers, and aliases
   category: unit
   id: '124'
+  steps: ["generate"]
 ---
 source_files:
-  model.json: "{\n  \"project_name\": \"test_project\",\n  \"source_folder\": \"/test\"\
-    ,\n  \"files\": {\n    \"test.c\": {\n      \"file_path\": \"test.c\",\n     \
-    \ \"name\": \"test.c\",\n      \"includes\": [],\n      \"macros\": [],\n    \
-    \  \"enums\": {\n        \"Color\": {\n          \"name\": \"Color\",\n      \
-    \    \"values\": [\n            {\"name\": \"RED\", \"value\": \"0\"},\n     \
-    \       {\"name\": \"GREEN\", \"value\": \"1\"},\n            {\"name\": \"BLUE\"\
-    , \"value\": \"2\"}\n          ]\n        }\n      },\n      \"structs\": {\n\
-    \        \"Person\": {\n          \"name\": \"Person\",\n          \"fields\"\
-    : [\n            {\"name\": \"id\", \"type\": \"int\"},\n            {\"name\"\
-    : \"name\", \"type\": \"char*\"},\n            {\"name\": \"age\", \"type\": \"\
-    int\"}\n          ]\n        }\n      },\n      \"unions\": {\n        \"Data\"\
-    : {\n          \"name\": \"Data\",\n          \"fields\": [\n            {\"name\"\
-    : \"as_int\", \"type\": \"int\"},\n            {\"name\": \"as_float\", \"type\"\
-    : \"float\"},\n            {\"name\": \"as_char\", \"type\": \"char\"}\n     \
-    \     ]\n        }\n      },\n      \"aliases\": {\n        \"callback_t\": {\n\
-    \          \"name\": \"callback_t\",\n          \"original_type\": \"int(* callback_t)(int,\
-    \ int)\"\n        },\n        \"log_callback_t\": {\n          \"name\": \"log_callback_t\"\
-    ,\n          \"original_type\": \"void(* log_callback_t)(const char*)\"\n    \
-    \    },\n        \"String\": {\"name\": \"String\", \"original_type\": \"char*\"\
-    },\n        \"Integer\": {\"name\": \"Integer\", \"original_type\": \"int\"}\n\
-    \      },\n      \"functions\": [],\n      \"globals\": []\n    }\n  },\n  \"\
-    include_relations\": []\n}\n"
+  model.json: "{\n  \"project_name\": \"test_project\",\n  \"source_folder\": \"/test\"\n    ,\n  \"files\": {\n    \"test.c\": {\n      \"file_path\": \"test.c\",\n     \     \ "name\": \"test.c\",\n      \"includes\": [],\n      \"macros\": [],\n      \"enums\": {\n        \"Color\": {\n          \"name\": \"Color\",\n          \"values\": [\n            {\"name\": \"RED\", \"value\": \"0\"},\n            {\"name\": \"GREEN\", \"value\": \"1\"},\n            {\"name\": \"BLUE\"\n     , \"value\": \"2\"}\n          ]\n        }\n      },\n      \"structs\": {\n        \"Person\": {\n          \"name\": \"Person\",\n          \"fields\"\n    : [\n            {\"name\": \"id\", \"type\": \"int\"},\n            {\"name\"\n    : \"name\", \"type\": \"char*\"},\n            {\"name\": \"age\", \"type\": \"\n    int\"}\n          ]\n        }\n      },\n      \"unions\": {\n        \"Data\"\n    : {\n          \"name\": \"Data\",\n          \"fields\": [\n            {\"name\"\n    : \"as_int\", \"type\": \"int\"},\n            {\"name\": \"as_float\", \"type\"\n    : \"float\"},\n            {\"name\": \"as_char\", \"type\": \"char\"}\n          \n    ]\n        }\n      },\n      \"aliases\": {\n        \"callback_t\": {\n          \"name\": \"callback_t\",\n          \"original_type\": \"int(* callback_t)(int,\n    \ int)\"\n        },\n        \"log_callback_t\": {\n          \"name\": \"log_callback_t\"\n    ,\n          \"original_type\": \"void(* log_callback_t)(const char*)\"\n        \n    },\n        \"String\": {\"name\": \"String\", \"original_type\": \"char*\"\n     },\n        \"Integer\": {\"name\": \"Integer\", \"original_type\": \"int\"}\n      \n    },\n      \"functions\": [],\n      \"globals\": []\n    }\n  },\n  \"\n     include_relations\": []\n}\n"
 ---
-config.json: "{\n  \"project_name\": \"test_project\",\n  \"source_folders\": [\"\
-  src\"],\n  \"output_dir\": \"output\",\n  \"use_short_names\": false,\n  \"group_by_visibility\"\
-  : true\n}\n"
+config.json: "{\n  \"project_name\": \"test_project\",\n  \"source_folders\": [\"\n  src\"],\n  \"output_dir\": \"output\",\n  \"use_short_names\": false,\n  \"group_by_visibility\"\n  : true\n}\n"
 ---
 assertions:
   execution:

@@ -3,20 +3,10 @@ test:
   description: Validate renaming of structs, enums, and functions via transform-only
   category: feature
   id: '206'
+  steps: ["transform"]
 ---
 source_files:
-  model.json: "{\n  \"project_name\": \"transformer_test\",\n  \"source_folder\":\
-    \ \".\",\n  \"files\": {\n    \"test.c\": {\n      \"file_path\": \"test.c\",\n\
-    \      \"name\": \"test.c\",\n      \"structs\": {\n        \"OldStruct\": {\n\
-    \          \"name\": \"OldStruct\",\n          \"fields\": [\n            {\"\
-    name\": \"x\", \"type\": \"int\"}\n          ]\n        }\n      },\n      \"\
-    enums\": {\n        \"OldEnum\": {\n          \"name\": \"OldEnum\",\n       \
-    \   \"values\": [\n            {\"name\": \"OLD_VALUE1\"},\n            {\"name\"\
-    : \"OLD_VALUE2\"}\n          ]\n        }\n      },\n      \"unions\": {},\n \
-    \     \"functions\": [\n        {\"name\": \"old_function\", \"return_type\":\
-    \ \"int\", \"parameters\": []}\n      ],\n      \"globals\": [],\n      \"includes\"\
-    : [],\n      \"macros\": [],\n      \"aliases\": {},\n      \"include_relations\"\
-    : [],\n      \"anonymous_relationships\": {}\n    }\n  }\n}\n"
+  model.json: "{\n  \"project_name\": \"transformer_test\",\n  \"source_folder\": \n    \ \".\",\n  \"files\": {\n    \"test.c\": {\n      \"file_path\": \"test.c\",\n     \      \"name\": \"test.c\",\n      \"structs\": {\n        \"OldStruct\": {\n\n          \"name\": \"OldStruct\",\n          \"fields\": [\n            {\"\n    name\": \"x\", \"type\": \"int\"}\n          ]\n        }\n      },\n      \"\n     enums\": {\n        \"OldEnum\": {\n          \"name\": \"OldEnum\",\n       \n        \   \"values\": [\n            {\"name\": \"OLD_VALUE1\"},\n            {\"name\"\n     : \"OLD_VALUE2\"}\n          ]\n        }\n      },\n      \"unions\": {},\n \n      \     \"functions\": [\n        {\"name\": \"old_function\", \"return_type\":\n     \ \"int\", \"parameters\": []}\n      ],\n      \"globals\": [],\n      \"includes\"\n     : [],\n      \"macros\": [],\n      \"aliases\": {},\n      \"include_relations\"\n     : [],\n      \"anonymous_relationships\": {}\n    }\n  }\n}\n"
 ---
 config.json: "{\n  \"project_name\": \"transformer_test\",\n  \"source_folders\":\
   \ [\".\"],\n  \"recursive_search\": true,\n  \"output_dir\": \"./output\",\n  \"\

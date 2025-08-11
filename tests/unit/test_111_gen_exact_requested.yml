@@ -3,6 +3,7 @@ test:
   name: "generator_exact_format_cli_requested_format"
   description: "Test the exact format requested: public functions, empty line, private functions"
   category: "generator"
+  steps: ["generate"]
   
 ---
 source_files:
