@@ -17,30 +17,7 @@ Project root: /workspace
 --------------------------------------------------
            Running Tests with unittest            
 --------------------------------------------------
-test_cli_modes_and_features_consolidated (feature.test_cli_feature_comprehensive.TestCLIFeatureComprehensive.test_cli_modes_and_features_consolidated) ... ok
-test_generate_command_isolation_error_handling (feature.test_cli_feature_comprehensive.TestCLIFeatureComprehensive.test_generate_command_isolation_error_handling)
-Test generate command isolation error handling through the CLI interface ... ok
-test_generate_fallback_to_model (feature.test_cli_feature_comprehensive.TestCLIFeatureComprehensive.test_generate_fallback_to_model)
-Test generate command fallback to model.json through the CLI interface ... ok
-test_generate_prefers_transformed_model (feature.test_cli_feature_comprehensive.TestCLIFeatureComprehensive.test_generate_prefers_transformed_model)
-Test generate command preferring transformed model through the CLI interface ... ok
-test_parse_only_command (feature.test_cli_feature_comprehensive.TestCLIFeatureComprehensive.test_parse_only_command)
-Test parse-only command through the CLI interface ... ok
-test_transform_only_command (feature.test_cli_feature_comprehensive.TestCLIFeatureComprehensive.test_transform_only_command)
-Test transform-only command through the CLI interface ... ok
 test_cli_modes_and_features_comprehensive (feature.test_cli_modes_comprehensive.TestCLIModesComprehensive.test_cli_modes_and_features_comprehensive) ... ok
-test_full_workflow_default_mode (feature.test_cli_modes_comprehensive.TestCLIModesComprehensive.test_full_workflow_default_mode)
-Test full workflow default mode through the CLI interface ... ok
-test_generate_mode_fallback_to_model (feature.test_cli_modes_comprehensive.TestCLIModesComprehensive.test_generate_mode_fallback_to_model)
-Test generate mode fallback to model.json through the CLI interface ... ok
-test_generate_mode_isolation_error_handling (feature.test_cli_modes_comprehensive.TestCLIModesComprehensive.test_generate_mode_isolation_error_handling)
-Test generate mode isolation error handling through the CLI interface ... ok
-test_generate_mode_prefers_transformed_model (feature.test_cli_modes_comprehensive.TestCLIModesComprehensive.test_generate_mode_prefers_transformed_model)
-Test generate mode prefers transformed model through the CLI interface ... ok
-test_parse_mode_only_generates_model (feature.test_cli_modes_comprehensive.TestCLIModesComprehensive.test_parse_mode_only_generates_model)
-Test parse mode only generates model.json through the CLI interface ... ok
-test_transform_mode_generates_transformed_model (feature.test_cli_modes_comprehensive.TestCLIModesComprehensive.test_transform_mode_generates_transformed_model)
-Test transform mode generates model_transformed.json through the CLI interface ... ok
 test_cross_file_type_dependencies (feature.test_component_features_comprehensive.TestComponentFeaturesComprehensive.test_cross_file_type_dependencies)
 Test cross-file type dependencies through the CLI interface ... ok
 test_generator_complex_relationships (feature.test_component_features_comprehensive.TestComponentFeaturesComprehensive.test_generator_complex_relationships)
@@ -69,36 +46,8 @@ test_invalid_source_folder_errors (feature.test_error_handling_comprehensive.Tes
 Test various invalid source folder scenarios ... ok
 test_partial_failure_scenarios (feature.test_error_handling_comprehensive.TestErrorHandlingComprehensive.test_partial_failure_scenarios)
 Test scenarios where some operations fail but others succeed ... ok
-test_basic_include_processing_workflow (feature.test_include_processing.TestIncludeProcessingBasicFeaturesCLI.test_basic_include_processing_workflow)
-Test basic include processing workflow from parsing to generation through CLI. ... ok
-test_c_to_h_relationships (feature.test_include_processing.TestIncludeProcessingBasicFeaturesCLI.test_c_to_h_relationships)
-Test feature-level C to H file relationships through CLI. ... ok
-test_header_to_header_relationships (feature.test_include_processing.TestIncludeProcessingBasicFeaturesCLI.test_header_to_header_relationships)
-Test feature-level header to header relationships through CLI. ... ok
-test_circular_include_detection (feature.test_include_processing.TestIncludeProcessingComplexFeaturesCLI.test_circular_include_detection)
-Test circular include detection and handling through CLI. ... ok
-test_complex_project_structure (feature.test_include_processing.TestIncludeProcessingComplexFeaturesCLI.test_complex_project_structure)
-Test complex project structure with multiple layers of includes through CLI. ... ok
-test_nested_directory_structure (feature.test_include_processing.TestIncludeProcessingComplexFeaturesCLI.test_nested_directory_structure)
-Test nested directory structure with relative includes through CLI. ... ok
-test_comprehensive_include_scenario (feature.test_include_processing.TestIncludeProcessingComprehensiveCLI.test_comprehensive_include_scenario)
-Test comprehensive include processing scenario through CLI. ... ok
-test_macro_propagation_through_includes (feature.test_include_processing.TestIncludeProcessingComprehensiveCLI.test_macro_propagation_through_includes)
-Test macro propagation through include relationships through CLI. ... ok
-test_typedef_relationships_across_files (feature.test_include_processing.TestIncludeProcessingComprehensiveCLI.test_typedef_relationships_across_files)
-Test typedef relationships across multiple files through CLI. ... ok
-test_dependency_ordering (feature.test_include_processing.TestIncludeProcessingDependenciesCLI.test_dependency_ordering)
-Test that dependency ordering is preserved through CLI. ... ok
-test_missing_dependency_handling (feature.test_include_processing.TestIncludeProcessingDependenciesCLI.test_missing_dependency_handling)
-Test handling of missing dependencies through CLI. ... ok
-test_transitive_dependencies (feature.test_include_processing.TestIncludeProcessingDependenciesCLI.test_transitive_dependencies)
-Test transitive dependency resolution through CLI. ... ok
-test_full_pipeline_with_includes (feature.test_include_processing.TestIncludeProcessingIntegrationCLI.test_full_pipeline_with_includes)
-Test full pipeline with complex include relationships through CLI. ... ok
-test_include_depth_control (feature.test_include_processing.TestIncludeProcessingIntegrationCLI.test_include_depth_control)
-Test include depth control functionality through CLI. ... ok
-test_include_filtering (feature.test_include_processing.TestIncludeProcessingIntegrationCLI.test_include_filtering)
-Test include filtering functionality through CLI. ... ok
+test_include_processing_consolidated (feature.test_include_processing.TestIncludeProcessingConsolidated.test_include_processing_consolidated) ... ok
+test_include_processing_error_handling_consolidated (feature.test_include_processing.TestIncludeProcessingConsolidated.test_include_processing_error_handling_consolidated) ... ok
 test_complete_workflow (feature.test_integration_cli.TestIntegrationCLI.test_complete_workflow)
 End-to-end parse → transform → generate workflow ... ok
 test_multiple_source_folders (feature.test_multiple_source_folders_cli.TestMultipleSourceFoldersCLI.test_multiple_source_folders) ... ok
@@ -204,19 +153,19 @@ test_verifier_comprehensive (unit.test_verifier_comprehensive.TestVerifierCompre
 Test comprehensive verifier scenarios through the CLI interface ... ok
 
 ----------------------------------------------------------------------
-Ran 106 tests in 5.596s
+Ran 81 tests in 4.418s
 
 OK
 
 --------------------------------------------------
                  unittest Summary                 
 --------------------------------------------------
-Tests run: 106
+Tests run: 81
 Failures: 0
 Errors: 0
 
 ======================================================================
                        🎯 Test Execution Summary                       
 ======================================================================
-Duration: 5.62 seconds
+Duration: 4.44 seconds
 ✅ All tests passed!

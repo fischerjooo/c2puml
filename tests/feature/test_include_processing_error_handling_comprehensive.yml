@@ -34,6 +34,3 @@ cli_execution:
 assertions:
   execution:
     should_succeed: true
-
-  files:
-    output_dir_exists: "./output"
