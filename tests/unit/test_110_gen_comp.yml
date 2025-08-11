@@ -127,7 +127,7 @@ source_files:
 
 assertions:
   execution:
-    success: true
+    exit_code: 0
   
   model:
     files_exist:
@@ -161,6 +161,7 @@ assertions:
       - "active_buffer"
   
   puml:
+    syntax_valid: true
     files_exist:
       - "generator_test.puml"
       - "generator_header.puml"
@@ -177,3 +178,8 @@ assertions:
       - "get_random_color"
       - "global_counter"
       - "app_name"
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

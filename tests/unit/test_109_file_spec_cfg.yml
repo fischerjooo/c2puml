@@ -74,13 +74,9 @@ config.json: |
     }
   }
 ---
-cli_execution:
-  steps:
-  - run_full_pipeline
----
 assertions:
   execution:
-    should_succeed: true
+    exit_code: 0
   model:
     functions_exist:
     - main
@@ -133,3 +129,7 @@ assertions:
         - LOCAL_CONSTANT
   puml:
     syntax_valid: true
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json

@@ -55,13 +55,9 @@ config.json: |
     "recursive_search": true
   }
 ---
-cli_execution:
-  steps:
-  - run_full_pipeline
----
 assertions:
   execution:
-    should_succeed: true
+    exit_code: 0
   model:
     structs_exist:
     - config_t
@@ -109,6 +105,7 @@ assertions:
       macros: 3
       aliases: 0
   puml:
+    syntax_valid: true
     contains_elements:
     - config_t
     - main
@@ -122,3 +119,7 @@ assertions:
     - '- void network_disconnect()'
     class_count: 7
     relationship_count: 6
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
