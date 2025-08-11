@@ -20,7 +20,7 @@ class TestTransformerBasic(UnifiedTestCase):
     def test_transformer_basic(self):
         """Test basic transformer functionality through the CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("transformer_basic")
+        result = self.run_test("102_trans_basic")
         
         # Validate results
         self.validate_execution_success(result)

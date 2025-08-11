@@ -18,7 +18,7 @@ class TestBasicExample(UnifiedTestCase):
     def test_basic_example(self):
         """Run full pipeline on example project and validate outputs"""
         # Load assertions from YAML (assertions-only for example tests)
-        test_data = self.data_loader.load_test_data("basic_example")
+        test_data = self.data_loader.load_test_data("901_basic_example")
 
         # Determine workspace root (two levels up from this file)
         workspace_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))

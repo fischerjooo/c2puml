@@ -167,6 +167,7 @@ def validate_test_output(self, result: TestResult):
 
 ### TestDataLoader (data_loader.py)
 Handles loading test data from YAML files and creating temporary files:
+- **Filename pattern**: `tests/<category>/test_<3-digit>_<short>[optional_suffix].yml`
 - **Multi-document YAML parsing** with `---` separators
 - **Schema validation** for test data structure
 - **Temporary file creation** in test-specific folders
@@ -260,9 +261,8 @@ assertions:
 ```python
 class TestSimpleCFileParsing(UnifiedTestCase):
     def test_simple_c_file_parsing(self):
-        """Test parsing a simple C file through the CLI interface"""
         # Run the complete test using high-level methods
-        result = self.run_test("simple_c_file_parsing")
+        result = self.run_test("101_gen_basic")
         
         # Validate results
         self.validate_execution_success(result)

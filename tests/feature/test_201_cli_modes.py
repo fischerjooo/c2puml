@@ -15,7 +15,7 @@ class TestCLIModesComprehensive(UnifiedTestCase):
     """Test CLI modes functionality through the CLI interface (single scenario)"""
 
     def test_cli_modes_and_features_comprehensive(self):
-        result = self.run_test("cli_modes_comprehensive")
+        result = self.run_test("201_cli_modes")
         self.validate_execution_success(result)
         # Assertions are handled in YAML; only success required here
 

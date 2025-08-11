@@ -15,12 +15,12 @@ from tests.framework import UnifiedTestCase
 
 class TestIncludeProcessingConsolidated(UnifiedTestCase):
     def test_include_processing_consolidated(self):
-        result = self.run_test("include_processing_comprehensive")
+        result = self.run_test("202_include_proc")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_include_processing_error_handling_consolidated(self):
-        result = self.run_test("include_processing_error_handling_comprehensive")
+        result = self.run_test("202_include_proc_error")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
