@@ -1,0 +1,2 @@
+# Ignore temporary helper Python scripts in this directory
+temp_*.py
