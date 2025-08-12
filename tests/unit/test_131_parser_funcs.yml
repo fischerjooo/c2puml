@@ -74,3 +74,18 @@ assertions:
         - init
         - cleanup
         - log_message
+        contains_lines:
+        - def_add(
+        - def_inline_process(
+        - def_static_helper(
+        - callback(
+        - array_func(
+        - const_func(
+        - void init(
+        - void cleanup(
+        - log_message(
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

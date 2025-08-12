@@ -83,11 +83,13 @@ assertions:
   execution:
     exit_code: 0
   puml:
-    calc.c.puml:
-      contains:
-      - + int Calculate(int value)
-      - '- void HelperFunction()'
-      - -- Functions --
-      regex_matches:
-      - pattern: \+ int Calculate.*\n\s*\n.*\- void HelperFunction
-        description: Public function with parameters, empty line, private function sequence
+    syntax_valid: true
+    files:
+      calc.c.puml:
+        contains_lines:
+        - '+ int Calculate(int value)'
+        - "- void HelperFunction()"
+        - '-- Functions --'
+        regex_matches:
+        - pattern: \+ int Calculate.*\n\s*\n.*\- void HelperFunction
+          description: Public function with parameters, empty line, private function sequence

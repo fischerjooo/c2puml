@@ -1,6 +1,6 @@
 test:
   name: Component Features – Types and Relationships (Comprehensive)
-  description: Consolidates typedefs, unions, function pointers, cross-file deps, recursive includes, and complex relationships
+  description: Validate typedefs, unions, function pointers, cross-file dependencies, and recursive includes; ensure model captures aliases and relationships
   category: feature
   id: '203'
 ---
@@ -38,12 +38,36 @@ config.json: |
     "recursive_search": true
   }
 ---
-cli_execution:
-  steps:
-  - run_full_pipeline
----
 assertions:
   execution:
-    should_succeed: true
+    exit_code: 0
+    max_execution_time: 30.0
+  model:
+    validate_structure: true
+    project_name: component_features
+    expected_files:
+      - main.c
+      - api.h
+      - types.h
+      - util.h
+    functions_exist:
+      - main
+      - add
+    structs_exist:
+      - Point
+    enums_exist: []
+    unions_exist:
+      - Value
+    aliases_exist:
+      - callback_t
+    includes_exist:
+      - api.h
+      - types.h
+      - util.h
   puml:
     syntax_valid: true
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

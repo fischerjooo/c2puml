@@ -78,6 +78,8 @@ assertions:
     - model_transformed.json
     - main.puml
   model:
+    validate_structure: true
+    project_name: test_generator_basic_plantuml
     files:
       main.c:
         structs:
@@ -151,3 +153,8 @@ assertions:
         - class "Status" as TYPEDEF_STATUS
         class_count: 9
         relationship_count: 8
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

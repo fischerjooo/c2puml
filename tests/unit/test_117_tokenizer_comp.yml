@@ -456,3 +456,8 @@ assertions:
         contains_lines:
         - class "DataStruct" as TYPEDEF_DATASTRUCT
         - class "DataEnum" as TYPEDEF_DATAENUM
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

@@ -95,7 +95,7 @@ assertions:
     - TYPEDEF_UPPERCASE
     files:
       main.puml:
-        contains:
+        contains_lines:
         - MAIN
         - HEADER_UTILS
       test.puml:

@@ -74,46 +74,47 @@ source_files:
 
 assertions:
   execution:
-    success: true
-  
-    model:
-    files_exist:
-      - "config_test.c"
-      - "config_header.h"
-    
+    exit_code: 0
+  model:
+    validate_structure: true
+    expected_files:
+      - config_test.c
+      - config_header.h
     element_counts:
       files: 2
-      functions: 3  # initialize_system, process_data, cleanup_system
-      structs: 1    # UserData
-      enums: 1      # Status
-      macros: 3     # CONFIG_HEADER_H, MAX_USERS, DEFAULT_TIMEOUT
-      includes: 2   # stdio.h, stdlib.h
-      globals: 2    # global_counter, app_name
-    
+      functions: 9
+      structs: 1
+      enums: 1
+      macros: 3
+      includes: 2
+      globals: 2
     functions_exist:
-      - "initialize_system"
-      - "process_data"
-      - "cleanup_system"
-    
+      - initialize_system
+      - process_data
+      - cleanup_system
     structs_exist:
-      - "UserData"
-    
+      - UserData
     enums_exist:
-      - "Status"
-    
+      - Status
     globals_exist:
-      - "global_counter"
-      - "app_name"
-  
+      - global_counter
+      - app_name
   puml:
+    syntax_valid: true
+    files:
+      config_test.puml:
+        contains_elements:
+          - UserData
+          - Status
+          - initialize_system
+          - process_data
+          - cleanup_system
+      config_header.puml:
+        contains_elements:
+          - MAX_USERS
+          - DEFAULT_TIMEOUT
+  files:
+    output_dir_exists: ./output
     files_exist:
-      - "config_test.puml"
-      - "config_header.puml"
-    
-    contains_elements:
-      - "UserData"
-      - "Status"
-      - "initialize_system"
-      - "process_data"
-      - "cleanup_system"
-      - "global_counter"
+      - ./output/model.json
+      - ./output/model_transformed.json

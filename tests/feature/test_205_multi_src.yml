@@ -82,6 +82,7 @@ assertions:
     max_execution_time: 60.0
   model:
     validate_structure: true
+    project_name: multi_source_test
     expected_files:
     - main.c
     - app.c
@@ -101,5 +102,12 @@ assertions:
     - Color
     macros_exist:
     - MAX_SIZE
+    element_counts:
+      files: 6
   puml:
     syntax_valid: true
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

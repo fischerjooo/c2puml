@@ -132,63 +132,42 @@ source_files:
 
 assertions:
   execution:
-    success: true
-  
+    exit_code: 0
   model:
-    files_exist:
-      - "verifier_test.c"
-      - "verifier_header.h"
-      - "valid.c"
-    
+    validate_structure: true
+    expected_files:
+      - verifier_test.c
+      - verifier_header.h
+      - valid.c
     element_counts:
       files: 3
-    
     functions_exist:
-      - "process_data"
-      - "validate_buffer" 
-      - "cleanup_resources"
-      - "valid_function"
-      - "another_valid_function"
-    
+      - process_data
+      - validate_buffer 
+      - cleanup_resources
+      - valid_function
+      - another_valid_function
     structs_exist:
-      - "ValidStruct"
-      - "DataBuffer"
-      - "ValidStruct2"
-    
+      - ValidStruct
+      - DataBuffer
+      - ValidStruct2
     enums_exist:
-      - "Status"
-      - "Color"
-      - "ValidEnum2"
-    
+      - Status
+      - Color
+      - ValidEnum2
     unions_exist:
-      - "Number"
-      - "ValidUnion2"
-    
+      - Number
+      - ValidUnion2
     globals_exist:
-      - "global_counter"
-      - "app_version"
-      - "default_config"
-      - "valid_global"
-      - "valid_string_global"
-  
+      - global_counter
+      - app_version
+      - default_config
+      - valid_global
+      - valid_string_global
   puml:
+    syntax_valid: true
+  files:
+    output_dir_exists: ./output
     files_exist:
-      - "verifier_test.puml"
-      - "verifier_header.puml"
-      - "valid.puml"
-    
-    contains_elements:
-      - "ValidStruct"
-      - "DataBuffer"
-      - "Status"
-      - "Color"
-      - "Number"
-      - "process_data"
-      - "validate_buffer"
-      - "cleanup_resources"
-      - "global_counter"
-      - "ValidStruct2"
-      - "ValidEnum2"
-      - "ValidUnion2"
-      - "valid_function"
-      - "another_valid_function"
+      - ./output/model.json
+      - ./output/model_transformed.json

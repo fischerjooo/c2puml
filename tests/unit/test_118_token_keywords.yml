@@ -90,3 +90,8 @@ assertions:
         - class "DataEnum" as TYPEDEF_DATAENUM
         class_count: 4
         relationship_count: 3
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

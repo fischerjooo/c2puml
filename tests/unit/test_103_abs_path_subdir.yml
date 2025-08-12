@@ -29,13 +29,9 @@ config.json: |
     "recursive_search": true
   }
 ---
-cli_execution:
-  steps:
-  - run_full_pipeline
----
 assertions:
   execution:
-    should_succeed: true
+    exit_code: 0
   model:
     structs_exist:
     - vector3_t
@@ -57,6 +53,7 @@ assertions:
       functions: 1
       aliases: 0
   puml:
+    syntax_valid: true
     contains_elements:
     - vector3_t
     - normalize
@@ -65,3 +62,8 @@ assertions:
     - + float x , y , z
     class_count: 3
     relationship_count: 2
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

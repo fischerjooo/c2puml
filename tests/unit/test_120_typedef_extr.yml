@@ -105,6 +105,7 @@ assertions:
     - model_transformed.json
     - typedefs_all.puml
   model:
+    project_name: test_typedef_extraction_comprehensive
     files:
       typedefs_all.c:
         aliases:
@@ -210,3 +211,8 @@ assertions:
         - class "Color_t" as TYPEDEF_COLOR_T
         - class "Number_t" as TYPEDEF_NUMBER_T
         - class "MyLen" as TYPEDEF_MYLEN
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json
