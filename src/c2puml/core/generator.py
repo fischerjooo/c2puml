@@ -39,6 +39,10 @@ class Generator:
     - Writing output files to disk
     """
 
+    # Configuration flags (set by main based on Config)
+    enable_signature_param_truncation: bool = False
+    max_function_parameters_shown: int = 0  # 0 or less = unlimited
+
     def _clear_output_folder(self, output_dir: str) -> None:
         """Clear existing .puml and .png files from the output directory"""
         if not os.path.exists(output_dir):
@@ -341,12 +345,20 @@ class Generator:
     def _format_function_signature(self, func, prefix: str = "") -> str:
         """Format a function signature with truncation if needed."""
         params = self._format_function_parameters(func.parameters)
-        param_str = ", ".join(params)
+
+        # Optional: limit the number of shown parameters if configured
+        if self.enable_signature_param_truncation and isinstance(self.max_function_parameters_shown, int) and self.max_function_parameters_shown > 0:
+            shown = params[: self.max_function_parameters_shown]
+            if len(params) > self.max_function_parameters_shown:
+                shown.append("...")
+            param_str = ", ".join(shown)
+        else:
+            param_str = ", ".join(params)
 
         # Remove 'extern' keyword from return type for UML diagrams
         return_type = func.return_type.replace("extern ", "").strip()
 
-        # Always render full signature without truncation (acceptance requires full parameter lists)
+        # Render signature (truncation handled above if enabled)
         return f"{INDENT}{prefix}{return_type} {func.name}({param_str})"
 
     def _format_function_parameters(self, parameters) -> List[str]:
