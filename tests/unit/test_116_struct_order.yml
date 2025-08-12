@@ -48,6 +48,7 @@ assertions:
     - struct_order_puml.puml
     - struct_order_complex.puml
   model:
+    project_name: struct_and_nested_ordering_comprehensive
     files:
       struct_order.c:
         structs:
@@ -70,6 +71,8 @@ assertions:
             - value
             - position
             - data
+    element_counts:
+      files: 3
   puml:
     syntax_valid: true
     files:
@@ -85,3 +88,8 @@ assertions:
         - complex_struct_t
         contains_lines:
         - class "complex_struct_t" as TYPEDEF_COMPLEX_STRUCT_T
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

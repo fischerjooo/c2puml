@@ -37,6 +37,7 @@ assertions:
     - model_transformed.json
     - complete.puml
   model:
+    project_name: test_parser_comprehensive_basics
     files:
       complete.c:
         structs:
@@ -64,3 +65,8 @@ assertions:
         - global_counter
         - helper
         - add
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json
