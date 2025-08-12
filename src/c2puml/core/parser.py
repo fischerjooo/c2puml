@@ -805,8 +805,58 @@ class CParser:
         if pos >= len(tokens):
             return None
 
-        # Check if it's a struct/enum/union typedef (we'll handle these separately)
+        # Check if it's a struct/enum/union typedef
         if tokens[pos].type in [TokenType.STRUCT, TokenType.ENUM, TokenType.UNION]:
+            # Look ahead to see if this complex type is immediately followed by a function-pointer declarator
+            # Pattern to detect: ... } ( * name ) ( ... )
+            look = pos
+            # Find the matching closing brace of the outer struct/union/enum
+            if tokens[look].type in [TokenType.STRUCT, TokenType.ENUM, TokenType.UNION]:
+                # Advance to the opening brace
+                while look < len(tokens) and tokens[look].type != TokenType.LBRACE:
+                    look += 1
+                if look < len(tokens) and tokens[look].type == TokenType.LBRACE:
+                    brace_count = 1
+                    look += 1
+                    while look < len(tokens) and brace_count > 0:
+                        if tokens[look].type == TokenType.LBRACE:
+                            brace_count += 1
+                        elif tokens[look].type == TokenType.RBRACE:
+                            brace_count -= 1
+                        look += 1
+                    # Now 'look' is token after the closing brace
+                    j = look
+                    # Skip whitespace/comments
+                    while j < len(tokens) and tokens[j].type in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                        j += 1
+                    # Detect function-pointer declarator: ( * IDENT ) (
+                    if (
+                        j + 4 < len(tokens)
+                        and tokens[j].type == TokenType.LPAREN
+                        and tokens[j + 1].type == TokenType.ASTERISK
+                        and tokens[j + 2].type == TokenType.IDENTIFIER
+                        and tokens[j + 3].type == TokenType.RPAREN
+                        and tokens[j + 4].type == TokenType.LPAREN
+                    ):
+                        typedef_name = tokens[j + 2].value
+                        # Collect the full typedef original type up to the semicolon, preserving parentheses/brackets spacing
+                        k = pos
+                        formatted: list[str] = []
+                        while k < len(tokens) and tokens[k].type != TokenType.SEMICOLON:
+                            t = tokens[k]
+                            if t.type in [TokenType.LPAREN, TokenType.RPAREN, TokenType.LBRACKET, TokenType.RBRACKET]:
+                                formatted.append(t.value)
+                            elif formatted and formatted[-1] not in ["(", ")", "[", "]"]:
+                                # Prepend space before non-bracket tokens when previous isn't a bracket
+                                formatted.append(" " + t.value)
+                            else:
+                                formatted.append(t.value)
+                            k += 1
+                        original_type = "".join(formatted)
+                        # Clean excessive whitespace inside type
+                        original_type = self._clean_type_string(original_type)
+                        return (typedef_name, original_type)
+            # Fallback to standard complex typedef parsing
             return self._parse_complex_typedef(tokens, pos)
 
         # Collect all non-whitespace/comment tokens until semicolon

@@ -29,8 +29,8 @@ class "logger" as HEADER_LOGGER <<header>> #LightGreen
 
 class "GlobalStatus" as TYPEDEF_GLOBALSTATUS <<enumeration>> #LightYellow
 {
-    GS_ERROR
     GS_OK
+    GS_ERROR
     GS_UNKNOWN
 }
 
@@ -47,9 +47,9 @@ class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<enumeration>> #LightYellow
 {
     LOG_DEBUG = 0
-    LOG_ERROR
     LOG_INFO
     LOG_WARN
+    LOG_ERROR
 }
 
 class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<function pointer>> #LightYellow

@@ -1,0 +1,32 @@
+test:
+  name: Generator Basic PlantUML (with truncation)
+  description: Ensure function signature truncation by character length works
+  category: unit
+  id: '101_gen_basic_trunc'
+---
+source_files:
+  trunc.c: |
+    int foo(int a, int b, int c, int d, int e) { return a+b+c+d+e; }
+---
+config.json: |
+  {
+    "project_name": "gen_basic_trunc",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "max_function_signature_chars": 35
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+      - model.json
+      - model_transformed.json
+      - trunc.puml
+  puml:
+    syntax_valid: true
+    files:
+      trunc.puml:
+        contains_lines:
+          - "- int foo(int a, int b, ...)"

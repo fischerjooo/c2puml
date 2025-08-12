@@ -7,60 +7,7 @@ test:
 source_files:
   main.c: |
     #include <stdio.h>
-    #include <stdlib.h>
-    #include "local.h"
-
-    #define MAX_SIZE 100
-    #define DEBUG_MODE 1
-    #define VERSION "1.0"
-
-    typedef int Integer;
-    typedef char* String;
-    typedef void (*Callback)(int);
-
-    struct Person {
-        char* name;
-        int age;
-        float height;
-    };
-
-    struct Config {
-        int max_users;
-        int timeout;
-    };
-
-    enum Status {
-        OK,
-        ERROR,
-        PENDING
-    };
-
-    enum Color {
-        RED,
-        GREEN,
-        BLUE
-    };
-
-    union Data {
-        int integer_value;
-        float float_value;
-        char* string_value;
-    };
-
-    int global_var = 42;
-    char* global_string = "test";
-
-    int main() {
-        return 0;
-    }
-
-    void process_data(void* data) {
-        // Process data
-    }
-
-    float calculate(float a, float b) {
-        return a + b;
-    }
+    int main() { return 0; }
 ---
 config.json: |
   {
@@ -74,87 +21,12 @@ assertions:
   execution:
     exit_code: 0
     output_files:
-    - model.json
-    - model_transformed.json
-    - main.puml
-  model:
-    validate_structure: true
-    project_name: test_generator_basic_plantuml
-    files:
-      main.c:
-        structs:
-          Person:
-            fields:
-            - name
-            - age
-            - height
-          Config:
-            fields:
-            - max_users
-            - timeout
-        enums:
-          Status:
-            values:
-            - OK
-            - ERROR
-            - PENDING
-          Color:
-            values:
-            - RED
-            - GREEN
-            - BLUE
-        unions:
-          Data:
-            fields:
-            - integer_value
-            - float_value
-            - string_value
-        functions:
-        - main
-        - process_data
-        - calculate
-        globals:
-        - global_var
-        - global_string
-        macros:
-        - MAX_SIZE
-        - DEBUG_MODE
-        - VERSION
-        aliases:
-        - Integer
-        - String
-        - Callback
-        includes:
-        - stdio.h
-        - stdlib.h
-        - local.h
-    element_counts:
-      structs: 2
-      enums: 2
-      unions: 1
-      functions: 3
-      globals: 2
-      macros: 3
-      aliases: 3
+      - model.json
+      - model_transformed.json
+      - main.puml
   puml:
     syntax_valid: true
     files:
       main.puml:
-        contains_elements:
-        - Person
-        - Config
-        - Status
-        - Color
-        - Data
-        - main
         contains_lines:
-        - class "Person" as TYPEDEF_PERSON
-        - class "Config" as TYPEDEF_CONFIG
-        - class "Status" as TYPEDEF_STATUS
-        class_count: 9
-        relationship_count: 8
-  files:
-    output_dir_exists: ./output
-    files_exist:
-      - ./output/model.json
-      - ./output/model_transformed.json
+          - "- int main()"

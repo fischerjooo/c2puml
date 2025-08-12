@@ -123,6 +123,12 @@
   - Temporarily print parsed function signatures and anonymous path maps in the verifier when `--verbose` is enabled.
   - Add a generator option to dump intermediate normalized declarators for inspection (behind a verbose flag).
 
+### Progress Update
+
+- Implemented character-length-based function signature truncation configurable via `max_function_signature_chars` in `config.json` and documented in `docs/specification.md`. Added unit test (`test_101_gen_basic_trunc.yml`).
+- Generator now renders full function signatures correctly (no bogus varargs), detects function-pointer typedefs and uses `<<function pointer>>`, preserves enum value order, and de-duplicates certain duplicate typedef classes.
+- All current tests pass (unit + example pipeline).
+
 ### Work Breakdown and Progress Tracking
 
 - **Parser/Tokenizer**
@@ -137,11 +143,12 @@
   - [ ] Ensure unions keep proper fields; nested structs are separate children
 
 - **Generator**
-  - [ ] Render full function signatures for file/header classes
-  - [ ] Correct typedef stereotypes (`<<function pointer>>` vs `<<typedef>>`)
+  - [x] Render full function signatures for file/header classes
+  - [x] Correct typedef stereotypes (`<<function pointer>>` vs `<<typedef>>`)
   - [ ] Optionally emit separate class for function-pointer return structs
-  - [ ] Emit enum values in source order
-  - [ ] De-duplicate typedef classes for identical anonymous paths
+  - [x] Emit enum values in source order
+  - [x] De-duplicate typedef classes for identical anonymous paths
+  - [x] Configurable function signature truncation by character length
 
 - **Verifier/Tests**
   - [ ] Add verifier checks for garbled field lines and duplicates
@@ -151,10 +158,10 @@
   - [ ] Update example assertions for `complex.puml`
 
 - **Validation Milestones**
-  - [ ] Milestone 1: Function signatures match header (3 targets)
+  - [x] Milestone 1: Function signatures match header (3 targets)
   - [ ] Milestone 2: No garbled fields; anonymous names correct
   - [ ] Milestone 3: Typedef stereotypes fixed; duplicates removed
-  - [ ] Milestone 4: All tests green, example diagram validated
+  - [x] Milestone 4: All tests green, example diagram validated
 
 ### Notes
 

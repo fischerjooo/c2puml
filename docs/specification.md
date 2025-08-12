@@ -777,3 +777,20 @@ Apply transformations to specific files only:
 - **Union support**: Unions are parsed and displayed with their fields
 - **Include depth processing**: Configurable depth for processing include relationships
 
+#### 5.5.5 Function Signature Truncation (Configurable)
+
+Long function signatures can be truncated for readability by limiting the total character length of the rendered signature (including return type, name, and parameters). When truncation is applied, parameters are preserved from the beginning and an ellipsis `...` is appended before the closing parenthesis to indicate omitted parameters.
+
+Configuration (in `config.json`):
+
+```json
+{
+  "max_function_signature_chars": 0
+}
+```
+
+- `max_function_signature_chars`: Integer; when greater than 0, any function signature whose rendered length exceeds this value will be truncated with `...` as described. A value of 0 or less disables truncation (default behavior).
+
+Example behavior:
+- With `max_function_signature_chars: 60`, a signature like `+ int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, void (* pre_process)(int*, int), void (* post_process)(int*, int))` may become `+ int process_with_callbacks(int[] data, int size, math_operation_t[] operations, ...)` depending on the exact threshold.
+

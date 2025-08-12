@@ -29,8 +29,8 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 
 class "GlobalStatus" as TYPEDEF_GLOBALSTATUS <<enumeration>> #LightYellow
 {
-    GS_ERROR
     GS_OK
+    GS_ERROR
     GS_UNKNOWN
 }
 
