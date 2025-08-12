@@ -48,3 +48,8 @@ assertions:
         - class "Point" as TYPEDEF_POINT
         class_count: 2
         relationship_count: 1
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

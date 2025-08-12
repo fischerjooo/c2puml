@@ -80,3 +80,8 @@ assertions:
         - int global_var
         class_count: 3
         relationship_count: 2
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

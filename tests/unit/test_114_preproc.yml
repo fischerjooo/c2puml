@@ -126,3 +126,11 @@ assertions:
         - process_item
         - initialize_system
         - global_items
+        contains_lines:
+        - int process_item(
+        - void initialize_system(
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json
