@@ -42,7 +42,7 @@
         {
           "name": "running",
           "type": "volatile int",
-          "value": null
+          "value": "1"
         }
       ],
       "include_relations": [
@@ -60,6 +60,11 @@
           "depth": 1,
           "included_file": "network.h",
           "source_file": "application.c"
+        },
+        {
+          "depth": 2,
+          "included_file": "common.h",
+          "source_file": "database.h"
         },
         {
           "depth": 2,
@@ -605,12 +610,12 @@
         {
           "name": "Process_Cfg_Process_acpfct",
           "type": "Process_Cfg_Process_acpfct_t",
-          "value": null
+          "value": "{&ProcessorAdapter_Process,&ProcessorService_Process,&ProcessorHardware_Process, }"
         },
         {
           "name": "global_math_ops",
           "type": "math_operation_t[10]",
-          "value": null
+          "value": "{NULL}"
         }
       ],
       "include_relations": [
@@ -3701,7 +3706,7 @@
         {
           "name": "current_cb",
           "type": "log_callback_t",
-          "value": null
+          "value": "NULL"
         }
       ],
       "include_relations": [
@@ -5216,20 +5221,15 @@
         {
           "name": "global_counter",
           "type": "int",
-          "value": null
+          "value": "0"
         },
         {
           "name": "global_ptr",
           "type": "double *",
-          "value": null
+          "value": "NULL"
         }
       ],
       "include_relations": [
-        {
-          "depth": 2,
-          "included_file": "math_utils.h",
-          "source_file": "geometry.h"
-        },
         {
           "depth": 2,
           "included_file": "sample.h",
@@ -5564,20 +5564,15 @@
         {
           "name": "global_counter",
           "type": "int",
-          "value": null
+          "value": "0"
         },
         {
           "name": "global_ptr",
           "type": "double *",
-          "value": null
+          "value": "NULL"
         }
       ],
       "include_relations": [
-        {
-          "depth": 2,
-          "included_file": "math_utils.h",
-          "source_file": "geometry.h"
-        },
         {
           "depth": 2,
           "included_file": "sample.h",
@@ -6458,28 +6453,23 @@
         {
           "name": "global_buffer",
           "type": "MyBuffer",
-          "value": null
+          "value": "{0 U, NULL}"
         },
         {
           "name": "global_complex",
           "type": "MyComplexPtr",
-          "value": null
+          "value": "NULL"
         },
         {
           "name": "global_length",
           "type": "MyLen",
-          "value": null
+          "value": "0 U"
         }
       ],
       "include_relations": [
         {
           "depth": 2,
           "included_file": "config.h",
-          "source_file": "complex_example.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "logger.h",
           "source_file": "complex_example.h"
         },
         {
@@ -6496,6 +6486,11 @@
           "depth": 2,
           "included_file": "config.h",
           "source_file": "logger.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "config.h",
+          "source_file": "sample.h"
         },
         {
           "depth": 1,
@@ -6520,6 +6515,11 @@
         {
           "depth": 2,
           "included_file": "config.h",
+          "source_file": "typedef_test.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "logger.h",
           "source_file": "typedef_test.h"
         },
         {

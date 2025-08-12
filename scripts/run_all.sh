@@ -41,6 +41,48 @@ echo "----------------------------------------"
 echo "✅ PNG generation completed successfully!"
 
 echo ""
+
+# Step 4: Verify artifacts/output_example contents
+echo "📋 Step 4: Verifying generated artifacts..."
+echo "----------------------------------------"
+OUTPUT_DIR="$PROJECT_ROOT/artifacts/output_example"
+
+if [ ! -d "$OUTPUT_DIR" ]; then
+  echo "❌ Output directory not found: $OUTPUT_DIR" >&2
+  exit 1
+fi
+
+required_basenames=(
+  application complex database geometry logger math_utils network preprocessed sample sample2 transformed typedef_test
+)
+
+missing=0
+for base in "${required_basenames[@]}"; do
+  if [ ! -f "$OUTPUT_DIR/${base}.puml" ]; then
+    echo "❌ Missing PUML: ${base}.puml" >&2
+    missing=1
+  fi
+  if [ ! -f "$OUTPUT_DIR/${base}.png" ]; then
+    echo "❌ Missing PNG: ${base}.png" >&2
+    missing=1
+  fi
+done
+
+# Check model files and index
+for f in model.json model_transformed.json diagram_index.html; do
+  if [ ! -f "$OUTPUT_DIR/$f" ]; then
+    echo "❌ Missing file: $f" >&2
+    missing=1
+  fi
+done
+
+if [ $missing -ne 0 ]; then
+  echo "⚠️  Artifact verification failed. See missing items above." >&2
+  exit 1
+fi
+
+echo "✅ All expected artifacts are present in $OUTPUT_DIR"
+
 echo "🎉 Complete workflow finished successfully!"
 echo "=================================="
 echo "📁 Check the output directory for generated files:"

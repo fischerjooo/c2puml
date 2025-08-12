@@ -64,6 +64,12 @@ This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, an
 - [ ] Add a short developer guide snippet in `README.md` about where include processing lives (transformer only) and how visibility is determined in generator.
 - [ ] Consider a feature flag `"debug.verbose_include_processing"` for extra logs gated behind `--verbose`.
 
+### Artifact verification (CI/runtime)
+- [ ] After running the full workflow (`./scripts/run_all.sh` or `./run_runall.sh`), verify that `artifacts/output_example` contains all generated outputs:
+  - Required PUML/PNG pairs: `application`, `complex`, `database`, `geometry`, `logger`, `math_utils`, `network`, `preprocessed`, `sample`, `sample2`, `transformed`, `typedef_test`
+  - Required files: `model.json`, `model_transformed.json`, `diagram_index.html`
+  - Exit with non-zero status if any are missing to fail CI early
+
 ## Notes
 - Overall structure (parser → transformer → generator) remains; we reduce inner duplication and make behavior predictable.
 - Always verify via:
