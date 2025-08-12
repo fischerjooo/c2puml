@@ -48,3 +48,4 @@ assertions:
     output_dir_exists: ./output
     files_exist:
       - ./output/model.json
+      - ./output/model_transformed.json
