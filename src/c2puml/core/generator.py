@@ -916,24 +916,20 @@ class Generator:
                 lines.append(relationship)
 
     def _get_anonymous_uml_id(self, entity_name: str, uml_ids: Dict[str, str]) -> Optional[str]:
-        """Get UML ID for an anonymous structure entity, trying different patterns."""
-        # Try direct name
+        """Get UML ID for an anonymous structure entity using typedef-based keys with case-insensitive fallback."""
+        # Try direct key
         if entity_name in uml_ids:
             return uml_ids[entity_name]
-            
-        # Try with typedef prefix (lowercase)
-        typedef_key = f"typedef_{entity_name.lower()}"
-        if typedef_key in uml_ids:
-            return uml_ids[typedef_key]
-            
-        # Try struct prefix
-        struct_key = f"struct_{entity_name.lower()}"
-        if struct_key in uml_ids:
-            return uml_ids[struct_key]
-            
-        # Try union prefix
-        union_key = f"union_{entity_name.lower()}"
-        if union_key in uml_ids:
-            return uml_ids[union_key]
-            
+        
+        # Try exact typedef key
+        typedef_exact = f"typedef_{entity_name}"
+        if typedef_exact in uml_ids:
+            return uml_ids[typedef_exact]
+
+        # Case-insensitive match for typedef keys
+        entity_lower = entity_name.lower()
+        for key, value in uml_ids.items():
+            if key.startswith("typedef_") and key[len("typedef_"):].lower() == entity_lower:
+                return value
+
         return None

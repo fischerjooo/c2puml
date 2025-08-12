@@ -3,16 +3,16 @@
 This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, and remove duplication while keeping the current public behavior intact. Validate after each step with `./scripts/run_all.sh` and keep commits small.
 
 ## Quick wins (bug fixes)
-- [ ] Generator: fix anonymous composition UML ID resolution
+- [x] Generator: fix anonymous composition UML ID resolution
   - Current `_get_anonymous_uml_id` looks up keys like `typedef_{name.lower()}` or `struct_{name.lower()}` that are never populated; `uml_ids` uses `typedef_{OriginalCase}` keys.
   - Change lookup to try in order: `typedef_{name}`, `typedef_{name.capitalize/exact-case variants}` and finally normalize both sides consistently (e.g., store and look up with exact typedef name). Remove unused `struct_*/union_*` lookups.
-- [ ] Transformer: preserve macro parameters when renaming macros
+- [x] Transformer: preserve macro parameters when renaming macros
   - `_rename_macros` currently returns only the renamed macro name (drops `(args)`), breaking function-like macros. Keep the original parameter list when present.
-- [ ] Transformer: update `include_relations` when files are renamed
+- [x] Transformer: update `include_relations` when files are renamed
   - `_rename_files` updates `file_model.name` and the `files` dict keys, but existing `include_relations` entries still carry old `source_file`/`included_file` names. Add a pass to rewrite both sides after file renaming.
-- [ ] Transformer: convert `includes` to `set`
+- [x] Transformer: convert `includes` to `set`
   - `_dict_to_file_model` passes a list to `FileModel.includes` which is a `Set[str]`. Convert via `set(data.get("includes", []))` for consistency and deterministic deduplication.
-- [ ] Use `ProjectModel.from_dict`/`load` in transformer
+- [x] Use `ProjectModel.from_dict`/`load` in transformer
   - Replace manual reconstruction in `_load_model` with `ProjectModel.load(model_file)` to reduce drift.
 
 ## Remove duplication and simplify control flow
@@ -64,6 +64,12 @@ This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, an
 - [ ] Add a short developer guide snippet in `README.md` about where include processing lives (transformer only) and how visibility is determined in generator.
 - [ ] Consider a feature flag `"debug.verbose_include_processing"` for extra logs gated behind `--verbose`.
 
+### Artifact verification (CI/runtime)
+- [x] After running the full workflow (`./scripts/run_all.sh` or `./run_runall.sh`), verify that `artifacts/output_example` contains all generated outputs:
+  - Required PUML/PNG pairs: `application`, `complex`, `database`, `geometry`, `logger`, `math_utils`, `network`, `preprocessed`, `sample`, `sample2`, `transformed`, `typedef_test`
+  - Required files: `model.json`, `model_transformed.json`, `diagram_index.html`
+  - Exit with non-zero status if any are missing to fail CI early
+
 ## Notes
 - Overall structure (parser → transformer → generator) remains; we reduce inner duplication and make behavior predictable.
 - Always verify via:
@@ -73,8 +79,8 @@ This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, an
 ## Additional improvements and simplifications
 - [ ] Generator: remove dead/unused code
   - Delete `_is_truncated_typedef`, `_handle_truncated_typedef`, `_handle_normal_alias` and the disabled anonymous flattening block; they are not invoked.
-- [ ] Generator: align composition label with template
-  - Use `: contains` (no guillemets) for anonymous composition to match `docs/puml_template.md`.
+- [x] Generator: align composition label with template
+  - Use `: <<contains>>` for anonymous composition to match `docs/puml_template.md`.
 - [ ] Generator: simplify API and fallback
   - Drop `include_depth` parameter from public methods; rely on transformer-populated `include_relations`. Keep a minimal fallback that ignores depth and just links direct includes when no relations exist.
 - [ ] Generator: precompute visibility maps

@@ -62,7 +62,7 @@ This template defines the structure for generating PlantUML diagrams from C sour
 - Shows dependencies between typedefs
 
 ### Composition Relationships (Anonymous Structures)
-- **Anonymous structure ownership**: `{PARENT_TYPEDEF} *-- {CHILD_TYPEDEF} : contains`
+- **Anonymous structure ownership**: `{PARENT_TYPEDEF} *-- {CHILD_TYPEDEF} : <<contains>>`
 - Uses composition arrow (`*--`) to show strong ownership relationship
 - Anonymous structures are owned by and exist only as part of their parent
 - Generated for extracted anonymous structures using improved naming convention
@@ -70,8 +70,8 @@ This template defines the structure for generating PlantUML diagrams from C sour
 **Example:**
 ```plantuml
 ' Anonymous structure relationships (composition)
-TYPEDEF_RECTANGLE *-- TYPEDEF_RECTANGLE_POSITION : contains
-TYPEDEF_RECTANGLE *-- TYPEDEF_RECTANGLE_SIZE : contains
+TYPEDEF_RECTANGLE *-- TYPEDEF_RECTANGLE_POSITION : <<contains>>
+TYPEDEF_RECTANGLE *-- TYPEDEF_RECTANGLE_SIZE : <<contains>>
 ```
 
 This represents:
