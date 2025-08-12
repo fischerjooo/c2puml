@@ -906,7 +906,7 @@ class Generator:
                     
                     if parent_id and child_id:
                         has_relationships = True
-                        relationships_to_generate.append(f"{parent_id} *-- {child_id} : contains")
+                        relationships_to_generate.append(f"{parent_id} *-- {child_id} : <<contains>>")
         
         # Only add the section header and relationships if we have any
         if has_relationships:

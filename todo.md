@@ -80,7 +80,7 @@ This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, an
 - [ ] Generator: remove dead/unused code
   - Delete `_is_truncated_typedef`, `_handle_truncated_typedef`, `_handle_normal_alias` and the disabled anonymous flattening block; they are not invoked.
 - [ ] Generator: align composition label with template
-  - Use `: contains` (no guillemets) for anonymous composition to match `docs/puml_template.md`.
+  - Use `: <<contains>>` for anonymous composition to match `docs/puml_template.md`.
 - [ ] Generator: simplify API and fallback
   - Drop `include_depth` parameter from public methods; rely on transformer-populated `include_relations`. Keep a minimal fallback that ignores depth and just links direct includes when no relations exist.
 - [ ] Generator: precompute visibility maps
