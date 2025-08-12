@@ -35,6 +35,7 @@ assertions:
     max_execution_time: 45.0
   model:
     validate_structure: true
+    project_name: integration_rel_format
     expected_files:
       - a.h
       - b.h
@@ -48,9 +49,12 @@ assertions:
     includes_exist:
       - a.h
       - b.h
+    element_counts:
+      files: 3
   puml:
     syntax_valid: true
   files:
     output_dir_exists: ./output
     files_exist:
       - ./output/model.json
+      - ./output/model_transformed.json
