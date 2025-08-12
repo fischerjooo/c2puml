@@ -141,3 +141,8 @@ assertions:
         - PROCESSOR --> HEADER_API
         - PROCESSOR --> HEADER_WORKER
         - void process_data()
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json
