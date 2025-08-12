@@ -63,6 +63,7 @@ assertions:
         - LOG_ERROR
   puml:
     syntax_valid: true
+    file_count: 12
     contains_elements:
     - calculate_sum
     - create_point
@@ -101,6 +102,8 @@ assertions:
         - log_message
         - set_log_callback
         - log_level_t
+        contains_lines:
+        - 'class "log_level_t" as TYPEDEF_LOG_LEVEL_T'
       transformed.puml:
         contains_elements:
         - keep_this_function
@@ -117,9 +120,16 @@ assertions:
     files_exist:
     - ./artifacts/output_example/model.json
     - ./artifacts/output_example/sample.puml
+    - ./artifacts/output_example/sample2.puml
     - ./artifacts/output_example/geometry.puml
     - ./artifacts/output_example/logger.puml
     - ./artifacts/output_example/transformed.puml
+    - ./artifacts/output_example/application.puml
+    - ./artifacts/output_example/database.puml
+    - ./artifacts/output_example/typedef_test.puml
+    - ./artifacts/output_example/complex.puml
+    - ./artifacts/output_example/network.puml
+    - ./artifacts/output_example/preprocessed.puml
     json_files_valid:
     - ./artifacts/output_example/model.json
     utf8_files:
@@ -127,3 +137,5 @@ assertions:
     - ./artifacts/output_example/geometry.puml
     - ./artifacts/output_example/logger.puml
     - ./artifacts/output_example/transformed.puml
+    files_not_exist:
+    - ./artifacts/output_example/debug.puml
