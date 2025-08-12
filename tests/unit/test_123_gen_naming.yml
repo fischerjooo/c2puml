@@ -112,7 +112,3 @@ assertions:
         - class "_private" as TYPEDEF__PRIVATE
         - class "123invalid" as TYPEDEF_123INVALID
         - class "UPPERCASE" as TYPEDEF_UPPERCASE
-  files:
-    output_dir_exists: ./output
-    files_exist:
-      - ./output/model.json

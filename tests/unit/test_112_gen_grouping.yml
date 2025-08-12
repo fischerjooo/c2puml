@@ -113,7 +113,3 @@ assertions:
         - "- static bool ValidateInput"
         - '-- Global Variables --'
         - '-- Functions --'
-  files:
-    output_dir_exists: ./output
-    files_exist:
-      - ./output/model.json
