@@ -97,3 +97,8 @@ assertions:
         - variant_t global_variant
         class_count: 8
         relationship_count: 8
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

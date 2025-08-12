@@ -113,3 +113,8 @@ assertions:
         - '#define MIN(a, b)'
         - '#define PI'
         - '#define VERSION'
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

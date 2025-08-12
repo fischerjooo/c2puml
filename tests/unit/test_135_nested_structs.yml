@@ -55,3 +55,8 @@ assertions:
         - class "test_union_t" as TYPEDEF_TEST_UNION_T
         class_count: 3
         relationship_count: 2
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

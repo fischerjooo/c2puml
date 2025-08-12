@@ -73,3 +73,8 @@ assertions:
         - void process_nested(nested_struct_t * ns)
         class_count: 5
         relationship_count: 4
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json
