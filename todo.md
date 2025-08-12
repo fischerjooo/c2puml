@@ -16,24 +16,24 @@ This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, an
   - Replace manual reconstruction in `_load_model` with `ProjectModel.load(model_file)` to reduce drift.
 
 ## Remove duplication and simplify control flow
-- [ ] Consolidate include processing in transformer
+- [x] Consolidate include processing in transformer
   - Keep one BFS-style implementation (e.g., `_process_root_c_file_includes`) that:
     - Runs per-root `.c` file
     - Applies `include_filter` and `include_depth` (global + file-specific)
     - Populates `include_relations` only on root `.c` files
   - Remove older/duplicate flows: `_process_include_relations` (recursive variant), `_process_single_file_include_relations`, `_process_include_relations_with_file_specific_settings`, and helper `_find_included_file` if no longer used.
   - Ensure a single entry point (e.g., `_process_include_relations_simplified`).
-- [ ] Unify include filtering helpers
+- [x] Unify include filtering helpers
   - Merge `_filter_file_includes` and `_filter_file_includes_comprehensive` into a single method with a boolean flag if needed; both preserve `includes` and only filter `include_relations`.
 - [ ] Remove legacy transformation API
   - Drop `_apply_model_transformations` in favor of containerized `_apply_transformation_containers`. Keep a small adapter only for backward compatibility (`_ensure_backward_compatibility`) and delete dead code paths.
-- [ ] Deduplicate class generation in generator
+- [x] Deduplicate class generation in generator
   - Merge `_generate_file_class_with_visibility` and `_generate_file_class` into a single method parameterized by: `class_type`, `color`, visibility strategy (static `+` for headers, dynamic lookup for `.c`).
 
 ## Consistency and API surface
-- [ ] Normalize model file keys and names
+- [x] Normalize model file keys and names
   - Parser already uses filename (not path) as `ProjectModel.files` keys and `FileModel.name`. Ensure transformer/generator do not reintroduce path keys. Add a small validator in verifier for this invariant.
-- [ ] Regex compilation and reuse
+- [x] Regex compilation and reuse
   - Centralize `_compile_patterns` and reuse precompiled patterns across rename/remove operations to avoid recompilation.
 - [ ] Exceptions hygiene
   - Replace broad `except Exception` with specific exceptions; rethrow with context.
@@ -77,31 +77,31 @@ This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, an
   - Or tests only: `./scripts/run_all_tests.sh`
 
 ## Additional improvements and simplifications
-- [ ] Generator: remove dead/unused code
+- [x] Generator: remove dead/unused code
   - Delete `_is_truncated_typedef`, `_handle_truncated_typedef`, `_handle_normal_alias` and the disabled anonymous flattening block; they are not invoked.
 - [x] Generator: align composition label with template
   - Use `: <<contains>>` for anonymous composition to match `docs/puml_template.md`.
-- [ ] Generator: simplify API and fallback
+- [x] Generator: simplify API and fallback
   - Drop `include_depth` parameter from public methods; rely on transformer-populated `include_relations`. Keep a minimal fallback that ignores depth and just links direct includes when no relations exist.
-- [ ] Generator: precompute visibility maps
+- [x] Generator: precompute visibility maps
   - Build a set/map of header-declared function and global names once per diagram to avoid O(N^2) scans in `_get_visibility_prefix_for_*`.
 
 - [ ] Transformer: unify type-reference cleanup
   - Keep a single cleanup path based on explicit removed typedef names and delete the pattern-based variant. Route both callers through one implementation.
 - [ ] Transformer: standardize macro representation
   - Treat macros as names only (e.g., `PI`, `MIN(a,b)`), never strings starting with `#define`. Update rename logic to avoid injecting `#define` into the list.
-- [ ] Transformer: remove unused include helpers
+- [x] Transformer: remove unused include helpers
   - Delete `_find_included_file` and the older recursive include functions once the single BFS path is the only implementation.
 - [ ] Transformer: add helpers for file type checks
   - Introduce `is_c_file(name: str)` and `is_header_file(name: str)` to replace repeated `.endswith(".c")` and `.endswith(".h")` checks.
 
-- [ ] Parser: detect duplicate basenames across input
+- [x] Parser: detect duplicate basenames across input
   - Since the model keys are filenames, detect duplicates during parsing and fail fast with a clear error listing colliding paths.
 
 - [ ] Config: simplify initialization
   - Replace the custom `__init__` with dataclass defaults and a `from_dict()` constructor; trim the `hasattr` scaffolding and keep `_compile_patterns()` in `__post_init__`.
 
-- [ ] Verifier: strengthen invariants
+- [x] Verifier: strengthen invariants
   - Add checks for unique filename keys, consistent `FileModel.name`, and that only root `.c` files carry `include_relations` (others empty), if we enforce that invariant after include consolidation.
 
 - [ ] Logging hygiene

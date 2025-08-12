@@ -731,17 +731,7 @@ class Transformer:
             len(file_model.include_relations),
         )
 
-    def _filter_file_includes(
-        self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
-    ) -> None:
-        """Deprecated: use _filter_include_relations"""
-        self._filter_include_relations(file_model, patterns, root_file)
-
-    def _filter_file_includes_comprehensive(
-        self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
-    ) -> None:
-        """Deprecated: use _filter_include_relations"""
-        self._filter_include_relations(file_model, patterns, root_file)
+        # Removed deprecated include filtering wrappers; use _filter_include_relations instead
 
     def _matches_any_pattern(self, text: str, patterns: List[Pattern[str]]) -> bool:
         """Check if text matches any of the given regex patterns"""

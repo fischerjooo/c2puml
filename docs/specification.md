@@ -355,7 +355,7 @@ tests/
   - PlantUML diagram generation with proper formatting and styling
   - Typedef relationship visualization with stereotypes («defines», «alias»)
   - Header content display in diagrams with proper UML notation
-  - Header-to-header relationship arrows and include tree management
+  - Header-to-header relationship arrows and include tree management (using include_relations from transformer when present; fallback to direct includes only)
   - Union field display and complex type visualization
   - Enhanced typedef content and relationship display
   - Output file organization and directory structure management
@@ -598,13 +598,13 @@ The PlantUML formatting template and all diagram structure rules are now maintai
 ### 5.3 Include Depth Configuration
 
 #### 5.3.1 Configuration Parameter
-- **`include_depth`**: Controls how deep to process include relationships
+- **`include_depth`**: Controls how deep to process include relationships (applied in transformer; generator consumes `include_relations`)
 - **Default**: 1 (only direct includes)
 - **Values**: 1, 2, 3, etc. (recursive depth)
 
 #### 5.3.2 Processing Behavior
 - **Depth 1**: Only direct includes are processed
-- **Depth 2+**: Includes of includes are also processed and their content is displayed
+- **Depth 2+**: Includes of includes are also processed and their content is displayed. The transformer computes and stores these in `include_relations` on root `.c` files, which the generator uses for relationship arrows.
 - **Header relationships**: All header-to-header relationships are shown with arrows
 - **Recursive search**: When `recursive_search` is true, subdirectories are searched for include files
 
