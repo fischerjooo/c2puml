@@ -78,6 +78,6 @@ tests/unit/test_133_include_filter.py::TestIncludeFilteringComprehensive::test_i
 tests/unit/test_134_include_proc_unit.py::TestIncludeProcessingComprehensive::test_basic_include_processing PASSED [ 98%]
 tests/unit/test_135_nested_structs.py::TestNestedStructuresPuml::test_nested_structures_puml PASSED [100%]
 
-============================== 67 passed in 7.91s ==============================
+============================== 67 passed in 8.71s ==============================
 /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages/coverage/control.py:943: CoverageWarning: No data was collected. (no-data-collected)
   self._warn("No data was collected.", slug="no-data-collected")
