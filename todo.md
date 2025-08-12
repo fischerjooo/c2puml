@@ -69,3 +69,49 @@ This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, an
 - Always verify via:
   - Linux/macOS: `./scripts/run_all.sh`
   - Or tests only: `./scripts/run_all_tests.sh`
+
+## Additional improvements and simplifications
+- [ ] Generator: remove dead/unused code
+  - Delete `_is_truncated_typedef`, `_handle_truncated_typedef`, `_handle_normal_alias` and the disabled anonymous flattening block; they are not invoked.
+- [ ] Generator: align composition label with template
+  - Use `: contains` (no guillemets) for anonymous composition to match `docs/puml_template.md`.
+- [ ] Generator: simplify API and fallback
+  - Drop `include_depth` parameter from public methods; rely on transformer-populated `include_relations`. Keep a minimal fallback that ignores depth and just links direct includes when no relations exist.
+- [ ] Generator: precompute visibility maps
+  - Build a set/map of header-declared function and global names once per diagram to avoid O(N^2) scans in `_get_visibility_prefix_for_*`.
+
+- [ ] Transformer: unify type-reference cleanup
+  - Keep a single cleanup path based on explicit removed typedef names and delete the pattern-based variant. Route both callers through one implementation.
+- [ ] Transformer: standardize macro representation
+  - Treat macros as names only (e.g., `PI`, `MIN(a,b)`), never strings starting with `#define`. Update rename logic to avoid injecting `#define` into the list.
+- [ ] Transformer: remove unused include helpers
+  - Delete `_find_included_file` and the older recursive include functions once the single BFS path is the only implementation.
+- [ ] Transformer: add helpers for file type checks
+  - Introduce `is_c_file(name: str)` and `is_header_file(name: str)` to replace repeated `.endswith(".c")` and `.endswith(".h")` checks.
+
+- [ ] Parser: detect duplicate basenames across input
+  - Since the model keys are filenames, detect duplicates during parsing and fail fast with a clear error listing colliding paths.
+
+- [ ] Config: simplify initialization
+  - Replace the custom `__init__` with dataclass defaults and a `from_dict()` constructor; trim the `hasattr` scaffolding and keep `_compile_patterns()` in `__post_init__`.
+
+- [ ] Verifier: strengthen invariants
+  - Add checks for unique filename keys, consistent `FileModel.name`, and that only root `.c` files carry `include_relations` (others empty), if we enforce that invariant after include consolidation.
+
+- [ ] Logging hygiene
+  - Demote noisy `info` logs in inner loops to `debug`. Keep high-level progress at `info`.
+
+- [ ] Regex caching
+  - Precompile and cache regex patterns per transformation container to avoid recompilation in each inner loop.
+
+## More tests to add
+- [ ] Duplicate filename detection
+  - Two files named `util.c` in different folders should raise a clear error from parser.
+- [ ] Macro representation standardization
+  - After parsing and renaming, macros remain names (`PI`, `MAX(a,b)`), generator renders `#define` lines correctly.
+- [ ] Composition label style
+  - Generated PUML contains `*--` relations with `: contains` (no guillemets).
+- [ ] Visibility precompute correctness
+  - With headers declaring a subset of functions/globals, generator groups `+` and `-` correctly using the precomputed maps.
+- [ ] Generator API change safety
+  - Public `generate()` ignores/omits `include_depth` arg; tests still pass with transformer-provided `include_relations` and fallback when transform step is skipped.
