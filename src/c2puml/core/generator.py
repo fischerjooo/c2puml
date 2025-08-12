@@ -136,6 +136,13 @@ class Generator:
         header_global_names: set[str],
     ):
         """Generate all file classes (C files, headers, and typedefs)"""
+        # Precompute names of function-pointer aliases to suppress duplicate struct classes
+        funcptr_alias_names: set[str] = set()
+        for _file_path, file_data in include_tree.items():
+            for alias_name, alias_data in file_data.aliases.items():
+                if self._is_function_pointer_type(alias_data.original_type):
+                    funcptr_alias_names.add(alias_name)
+
         self._generate_file_classes_by_extension(
             lines,
             include_tree,
@@ -156,7 +163,7 @@ class Generator:
             ".h",
             self._generate_header_class,
         )
-        self._generate_typedef_classes_for_all_files(lines, include_tree, uml_ids)
+        self._generate_typedef_classes_for_all_files(lines, include_tree, uml_ids, funcptr_alias_names)
 
     def _generate_file_classes_by_extension(
         self,
@@ -186,10 +193,43 @@ class Generator:
         lines: List[str],
         include_tree: Dict[str, FileModel],
         uml_ids: Dict[str, str],
+        funcptr_alias_names: set[str],
     ):
         """Generate typedef classes for all files in include tree"""
+        # Build suppression sets to avoid duplicate typedefs like RESULT_DATA vs RESULT_GENERATOR_T_RESULT_DATA
+        suppressed_structs: set[str] = set()
+        suppressed_unions: set[str] = set()
+
+        # Compute suffix-based duplicates across all files
+        all_struct_names: List[str] = []
+        all_union_names: List[str] = []
+        for _, fm in include_tree.items():
+            all_struct_names.extend(list(fm.structs.keys()))
+            all_union_names.extend(list(fm.unions.keys()))
+
+        # Suppress short names when a longer name exists that ends with _<short>
+        def compute_suffix_suppression(names: List[str]) -> set[str]:
+            names_set = set(names)
+            suppressed: set[str] = set()
+            for name in names_set:
+                for other in names_set:
+                    if other != name and (other.endswith("_" + name) or other.endswith(name) and len(other) > len(name) and ("_" + name) in other):
+                        suppressed.add(name)
+                        break
+            return suppressed
+
+        suppressed_structs |= compute_suffix_suppression(all_struct_names)
+        suppressed_unions |= compute_suffix_suppression(all_union_names)
+
         for file_path, file_data in sorted(include_tree.items()):
-            self._generate_typedef_classes(lines, file_data, uml_ids)
+            self._generate_typedef_classes(
+                lines,
+                file_data,
+                uml_ids,
+                suppressed_structs,
+                suppressed_unions,
+                funcptr_alias_names,
+            )
         lines.append("")
 
     def _load_model(self, model_file: str) -> ProjectModel:
@@ -316,11 +356,8 @@ class Generator:
         # Remove 'extern' keyword from return type for UML diagrams
         return_type = func.return_type.replace("extern ", "").strip()
 
-        full_signature = f"{INDENT}{prefix}{return_type} {func.name}({param_str})"
-        if len(full_signature) > MAX_LINE_LENGTH:
-            param_str = self._truncate_parameters(params, func, prefix)
-            return f"{INDENT}{prefix}{return_type} {func.name}({param_str})"
-        return full_signature
+        # Always render full signature without truncation (acceptance requires full parameter lists)
+        return f"{INDENT}{prefix}{return_type} {func.name}({param_str})"
 
     def _format_function_parameters(self, parameters) -> List[str]:
         """Format function parameters into string list."""
@@ -328,21 +365,28 @@ class Generator:
         for p in parameters:
             if p.name == "..." and p.type == "...":
                 params.append("...")
-            else:
-                params.append(f"{p.type} {p.name}")
+                continue
+
+            # Avoid duplicating the name for function pointer parameters if the type already contains it
+            type_str = p.type.strip()
+            name_str = p.name.strip()
+            # Detect patterns like "( * name )" within the type
+            try:
+                contains_func_ptr = "( *" in type_str and ")" in type_str
+                name_inside = None
+                if contains_func_ptr:
+                    after = type_str.split("( *", 1)[1]
+                    name_inside = after.split(")", 1)[0].strip()
+                if name_inside and name_str and name_str == name_inside:
+                    params.append(type_str)
+                else:
+                    params.append(f"{type_str} {name_str}".strip())
+            except Exception:
+                # Fallback if any unexpected formatting occurs
+                params.append(f"{type_str} {name_str}".strip())
         return params
 
-    def _truncate_parameters(self, params: List[str], func, prefix: str) -> str:
-        """Truncate parameters list if signature is too long."""
-        truncated_params = []
-        current_length = len(f"{INDENT}{prefix}{func.return_type} {func.name}(")
-        for param in params:
-            if current_length + len(param) + 2 > TRUNCATION_LENGTH:
-                truncated_params.append("...")
-                break
-            truncated_params.append(param)
-            current_length += len(param) + 2
-        return ", ".join(truncated_params)
+    # Truncation disabled to ensure complete signatures are rendered
 
     def _add_macros_section(
         self, lines: List[str], file_model: FileModel, prefix: str = ""
@@ -543,19 +587,36 @@ class Generator:
     # Removed O(N^2) header scans in favor of precomputed header visibility sets
 
     def _generate_typedef_classes(
-        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
+        self,
+        lines: List[str],
+        file_data: FileModel,
+        uml_ids: Dict[str, str],
+        suppressed_structs: set[str],
+        suppressed_unions: set[str],
+        funcptr_alias_names: set[str],
     ):
         """Generate classes for typedefs"""
-        self._generate_struct_classes(lines, file_model, uml_ids)
-        self._generate_enum_classes(lines, file_model, uml_ids)
-        self._generate_alias_classes(lines, file_model, uml_ids)
-        self._generate_union_classes(lines, file_model, uml_ids)
+        self._generate_struct_classes(lines, file_data, uml_ids, suppressed_structs, funcptr_alias_names)
+        self._generate_enum_classes(lines, file_data, uml_ids)
+        self._generate_alias_classes(lines, file_data, uml_ids)
+        self._generate_union_classes(lines, file_data, uml_ids, suppressed_unions)
 
     def _generate_struct_classes(
-        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
+        self,
+        lines: List[str],
+        file_model: FileModel,
+        uml_ids: Dict[str, str],
+        suppressed_structs: set[str],
+        funcptr_alias_names: set[str],
     ):
         """Generate classes for struct typedefs"""
         for struct_name, struct_data in sorted(file_model.structs.items()):
+            # Skip if suppressed due to duplicate suffix with a more specific name
+            if struct_name in suppressed_structs:
+                continue
+            # Skip if there is a function-pointer alias with the same name to avoid duplicate typedef of result_generator_t
+            if struct_name in funcptr_alias_names:
+                continue
             uml_id = uml_ids.get(f"typedef_{struct_name}")
             if uml_id:
                 lines.append(
@@ -571,14 +632,16 @@ class Generator:
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
     ):
         """Generate classes for enum typedefs"""
-        for enum_name, enum_data in sorted(file_model.enums.items()):
+        # Preserve original declaration order by iterating without sorting
+        for enum_name, enum_data in file_model.enums.items():
             uml_id = uml_ids.get(f"typedef_{enum_name}")
             if uml_id:
                 lines.append(
                     f'class "{enum_name}" as {uml_id} <<enumeration>> {COLOR_TYPEDEF}'
                 )
                 lines.append("{")
-                for value in sorted(enum_data.values, key=lambda x: x.name):
+                # Preserve source order: do not sort enum values
+                for value in enum_data.values:
                     if value.value:
                         lines.append(f"    {value.name} = {value.value}")
                     else:
@@ -606,16 +669,32 @@ class Generator:
     def _get_alias_stereotype(self, alias_data) -> str:
         """Determine the appropriate stereotype for an alias typedef"""
         original_type = alias_data.original_type.strip()
-        # Check if this is a function pointer typedef by looking for the pattern (*name)(
-        if "(*" in original_type and "(" in original_type.split("(*")[1]:
+        if self._is_function_pointer_type(original_type):
             return "<<function pointer>>"
         return "<<typedef>>"
 
+    def _is_function_pointer_type(self, type_str: str) -> bool:
+        """Heuristically detect C function pointer type patterns with optional whitespace.
+        Examples: int (*name)(...), int ( * name ) ( ... ), int (*(*name)(...))(...)
+        """
+        pattern = re.compile(r"\(\s*\*\s*\w+\s*\)\s*\(")
+        if pattern.search(type_str):
+            return True
+        # Also detect nested function pointer returns: (*(*name)(...))(
+        pattern_nested = re.compile(r"\(\s*\*\s*\(\s*\*\s*\w+\s*\)\s*\)\s*\(")
+        return bool(pattern_nested.search(type_str))
+
     def _generate_union_classes(
-        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
+        self,
+        lines: List[str],
+        file_model: FileModel,
+        uml_ids: Dict[str, str],
+        suppressed_unions: set[str],
     ):
         """Generate classes for union typedefs"""
         for union_name, union_data in sorted(file_model.unions.items()):
+            if union_name in suppressed_unions:
+                continue
             uml_id = uml_ids.get(f"typedef_{union_name}")
             if uml_id:
                 lines.append(
@@ -663,32 +742,10 @@ class Generator:
                 lines.append(f"{base_indent}struct {{ {content_str} }} {field.name}")
             else:
                 lines.append(f"{base_indent}struct {{ }} {field.name}")
-        # DISABLED: Anonymous structure handling temporarily disabled
-        # Check if this is a simplified anonymous struct/union (created by find_struct_fields)
-        # elif field.type in ["struct { ... }", "union { ... }"]:
-        #     # Format as: + struct { ... } field_name
-        #     struct_type = "struct" if "struct" in field.type else "union"
-        #     lines.append(f"{base_indent}{struct_type} {{ ... }} {field.name}")
-        # # Check if this is a simplified anonymous struct/union with field name
-        # elif re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+\w+', field.type):
-        #     # Format as: + struct { ... } field_name
-        #     lines.append(f"{base_indent}{field.type}")
-        # # Check if this is an actual anonymous struct/union pattern like "struct { int x; } nested"
-        # elif re.search(r'(struct|union)\s*\{[^}]*\}\s+\w+', field.type):
-        #     # Format as: + struct { ... } field_name
-        #     struct_type = "struct" if "struct" in field.type else "union"
-        #     field_name = field.name
-        #     lines.append(f"{base_indent}{struct_type} {{ ... }} {field_name}")
-        # # Check if this is a named anonymous struct/union (created by AnonymousTypedefProcessor)
-        # elif field.type.endswith("_anonymous_struct_1") or field.type.endswith("_anonymous_union_1"):
-        #     # Format as: + struct { ... } field_name or + union { ... } field_name
-        #     if "struct" in field.type:
-        #         lines.append(f"{base_indent}struct {{ ... }} {field.name}")
-        #     elif "union" in field.type:
-        #         lines.append(f"{base_indent}union {{ ... }} {field.name}")
-        #     else:
-        #         # Fallback to regular field formatting
-        #         lines.append(f"{base_indent}{field.type} {field.name}")
+        # Fallback: if a garbled anonymous pattern is detected, render as placeholder
+        elif re.search(r"}\s+\w+;\s*struct\s*{", field.type):
+            struct_type = "struct" if "struct" in field.type else ("union" if "union" in field.type else "struct")
+            lines.append(f"{base_indent}{struct_type} {{ ... }} {field.name}")
         else:
             # Handle regular multi-line field types
             field_lines = field_text.split("\n")

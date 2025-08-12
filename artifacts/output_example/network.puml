@@ -57,8 +57,8 @@ class "network" as HEADER_NETWORK <<header>> #LightGreen
 
 class "common_status_t" as TYPEDEF_COMMON_STATUS_T <<enumeration>> #LightYellow
 {
-    STATUS_ERROR = - 1
     STATUS_OK = 0
+    STATUS_ERROR = - 1
     STATUS_PENDING = 1
     STATUS_TIMEOUT = 2
 }
@@ -88,9 +88,9 @@ class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<struct>> #LightYellow
 
 class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<enumeration>> #LightYellow
 {
-    NET_STATUS_CONNECTED
-    NET_STATUS_CONNECTING
     NET_STATUS_DISCONNECTED
+    NET_STATUS_CONNECTING
+    NET_STATUS_CONNECTED
     NET_STATUS_ERROR
 }
 

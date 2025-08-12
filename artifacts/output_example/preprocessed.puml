@@ -80,12 +80,6 @@ class "enabled_feature_t" as TYPEDEF_ENABLED_FEATURE_T <<struct>> #LightYellow
     + char[32] name
 }
 
-class "enabled_t" as TYPEDEF_ENABLED_T <<struct>> #LightYellow
-{
-    + int enabled_id
-    + char[32] enabled_name
-}
-
 class "feature_struct_t" as TYPEDEF_FEATURE_STRUCT_T <<struct>> #LightYellow
 {
     + int feature_id
@@ -111,8 +105,8 @@ class "simple_debug_t" as TYPEDEF_SIMPLE_DEBUG_T <<struct>> #LightYellow
 
 class "status_t" as TYPEDEF_STATUS_T <<enumeration>> #LightYellow
 {
-    STATUS_DISABLED = 0
     STATUS_ENABLED = 1
+    STATUS_DISABLED = 0
     STATUS_OFF = 0
     STATUS_UNKNOWN = - 1
 }

@@ -97,8 +97,8 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 
 class "GlobalStatus" as TYPEDEF_GLOBALSTATUS <<enumeration>> #LightYellow
 {
-    GS_ERROR
     GS_OK
+    GS_ERROR
     GS_UNKNOWN
 }
 
@@ -135,9 +135,9 @@ class "triangle_t" as TYPEDEF_TRIANGLE_T <<struct>> #LightYellow
 class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<enumeration>> #LightYellow
 {
     LOG_DEBUG = 0
-    LOG_ERROR
     LOG_INFO
     LOG_WARN
+    LOG_ERROR
 }
 
 class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<function pointer>> #LightYellow
@@ -164,17 +164,19 @@ class "point_t" as TYPEDEF_POINT_T <<struct>> #LightYellow
 
 class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<enumeration>> #LightYellow
 {
-    STATE_ERROR
     STATE_IDLE = 0
     STATE_RUNNING
+    STATE_ERROR
 }
 
 
 ' Include relationships
+HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
+HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
-HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
+HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
 SAMPLE2 --> HEADER_FILTERED_HEADER : <<include>>
 SAMPLE2 --> HEADER_FIRST_LEVEL : <<include>>
 SAMPLE2 --> HEADER_GEOMETRY : <<include>>

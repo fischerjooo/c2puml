@@ -42,7 +42,7 @@ class "database" as HEADER_DATABASE <<header>> #LightGreen
     + int database_commit_transaction(DatabaseConfig * config)
     + int database_connect(DatabaseConfig * config)
     + void database_disconnect(DatabaseConfig * config)
-    + int database_escape_string(const DatabaseConfig * config, const char * input, char * output, ...)
+    + int database_escape_string(const DatabaseConfig * config, const char * input, char * output, size_t max_output_size)
     + QueryResult * database_execute_query(DatabaseConfig * config, const char * query)
     + int database_execute_update(DatabaseConfig * config, const char * query)
     + void database_free_result(QueryResult * result)
@@ -87,7 +87,7 @@ class "mysql" as HEADER_MYSQL <<header>> #LightGreen
     + unsigned long mysql_num_rows(MYSQL_RES * result)
     + int mysql_ping(MYSQL * mysql)
     + int mysql_query(MYSQL * mysql, const char * query)
-    + MYSQL * mysql_real_connect(MYSQL * mysql, const char * host, const char * user, ...)
+    + MYSQL * mysql_real_connect(MYSQL * mysql, const char * host, const char * user, const char * passwd, const char * db, unsigned int port, const char * unix_socket, unsigned long clientflag)
     + MYSQL_RES * mysql_store_result(MYSQL * mysql)
 }
 
@@ -145,10 +145,10 @@ class "sqlite3" as HEADER_SQLITE3 <<header>> #LightGreen
     + #define SQLITE_SCHEMA
     + #define SQLITE_TOOBIG
     -- Functions --
-    + int sqlite3_bind_blob(sqlite3_stmt * pStmt, int i, const void * value, int n, ...)
+    + int sqlite3_bind_blob(sqlite3_stmt * pStmt, int i, const void * value, int n, void ( * destructor ) ( void * ))
     + int sqlite3_bind_double(sqlite3_stmt * pStmt, int i, double value)
     + int sqlite3_bind_int(sqlite3_stmt * pStmt, int i, int value)
-    + int sqlite3_bind_text(sqlite3_stmt * pStmt, int i, const char * value, int n, ...)
+    + int sqlite3_bind_text(sqlite3_stmt * pStmt, int i, const char * value, int n, void ( * destructor ) ( void * ))
     + int sqlite3_close(sqlite3 * db)
     + const void * sqlite3_column_blob(sqlite3_stmt * pStmt, int iCol)
     + int sqlite3_column_count(sqlite3_stmt * pStmt)
@@ -168,8 +168,8 @@ class "sqlite3" as HEADER_SQLITE3 <<header>> #LightGreen
 
 class "common_status_t" as TYPEDEF_COMMON_STATUS_T <<enumeration>> #LightYellow
 {
-    STATUS_ERROR = - 1
     STATUS_OK = 0
+    STATUS_ERROR = - 1
     STATUS_PENDING = 1
     STATUS_TIMEOUT = 2
 }
@@ -210,21 +210,21 @@ class "QueryResult" as TYPEDEF_QUERYRESULT <<struct>> #LightYellow
 
 class "DatabaseType" as TYPEDEF_DATABASETYPE <<enumeration>> #LightYellow
 {
+    DB_TYPE_SQLITE
     DB_TYPE_MYSQL
     DB_TYPE_POSTGRESQL
-    DB_TYPE_SQLITE
 }
 
 class "ExecStatusType" as TYPEDEF_EXECSTATUSTYPE <<enumeration>> #LightYellow
 {
-    PGRES_BAD_RESPONSE = 5
-    PGRES_COMMAND_OK = 1
-    PGRES_COPY_IN = 4
-    PGRES_COPY_OUT = 3
     PGRES_EMPTY_QUERY = 0
-    PGRES_FATAL_ERROR = 7
-    PGRES_NONFATAL_ERROR = 6
+    PGRES_COMMAND_OK = 1
     PGRES_TUPLES_OK = 2
+    PGRES_COPY_OUT = 3
+    PGRES_COPY_IN = 4
+    PGRES_BAD_RESPONSE = 5
+    PGRES_NONFATAL_ERROR = 6
+    PGRES_FATAL_ERROR = 7
 }
 
 class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<struct>> #LightYellow
@@ -237,9 +237,9 @@ class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<struct>> #LightYellow
 
 class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<enumeration>> #LightYellow
 {
-    NET_STATUS_CONNECTED
-    NET_STATUS_CONNECTING
     NET_STATUS_DISCONNECTED
+    NET_STATUS_CONNECTING
+    NET_STATUS_CONNECTED
     NET_STATUS_ERROR
 }
 
@@ -253,6 +253,7 @@ class "sqlite3_callback" as TYPEDEF_SQLITE3_CALLBACK <<function pointer>> #Light
 APPLICATION --> HEADER_COMMON : <<include>>
 APPLICATION --> HEADER_DATABASE : <<include>>
 APPLICATION --> HEADER_NETWORK : <<include>>
+HEADER_DATABASE --> HEADER_COMMON : <<include>>
 HEADER_DATABASE --> HEADER_LIBPQ_FE : <<include>>
 HEADER_DATABASE --> HEADER_MYSQL : <<include>>
 HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>
