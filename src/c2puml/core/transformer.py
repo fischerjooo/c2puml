@@ -69,20 +69,8 @@ class Transformer:
             raise FileNotFoundError(f"Model file not found: {model_file}")
 
         try:
-            with open(model_file, "r", encoding="utf-8") as f:
-                data = json.load(f)
-
-            # Convert back to ProjectModel
-            model = ProjectModel(
-                project_name=data["project_name"],
-                source_folder=data.get("source_folder", data.get("project_root", "")),
-                files={},
-            )
-
-            # Convert file data back to FileModel objects
-            for file_path, file_data in data["files"].items():
-                model.files[file_path] = self._dict_to_file_model(file_data)
-
+            # Use central ProjectModel loader to avoid drift
+            model = ProjectModel.load(model_file)
             self.logger.debug("Loaded model with %d files", len(model.files))
             return model
 
@@ -1321,19 +1309,31 @@ class Transformer:
             return
         
         def get_macro_name(macro: str) -> str:
-            # Extract macro name from "#define MACRO_NAME value" format
-            if macro.startswith("#define "):
-                return macro.split(" ")[1]
-            return macro
+            # Normalize to extract the macro identifier, with optional params retained later
+            text = macro.strip()
+            if text.startswith("#define "):
+                text = text[len("#define "):]
+            # Extract name before '(' if function-like, else full token until whitespace
+            name_part = text.split("(", 1)[0]
+            return name_part.split()[0]
         
         def create_renamed_macro(name: str, macro: str) -> str:
-            # Replace the macro name in the original macro string
-            if macro.startswith("#define "):
-                parts = macro.split(" ", 2)  # Split into ["#define", "OLD_NAME", "rest"]
-                if len(parts) >= 2:
-                    return f"#define {name} {parts[2]}" if len(parts) > 2 else f"#define {name}"
-            # If it's just a macro name without #define prefix, return the new name
-            return name
+            # Preserve parameters if present; don't inject or drop values
+            text = macro.strip()
+            has_define_prefix = text.startswith("#define ")
+            if has_define_prefix:
+                text = text[len("#define "):]
+            # Split name + rest
+            after_name = text[len(get_macro_name(macro)):] if len(text) >= len(get_macro_name(macro)) else text
+            # If function-like macro, after_name starts with '('params')' ... possibly followed by value which we ignore in output per template
+            # Reconstruct
+            if "(" in after_name and ")" in after_name:
+                params = after_name.split(")", 1)[0].lstrip()
+                # params includes leading '(' up to ')'
+                rebuilt = f"#define {name}{params})"
+            else:
+                rebuilt = f"#define {name}"
+            return rebuilt
         
         file_model.macros = self._rename_list_elements(
             file_model.macros, patterns_map, get_macro_name, 
@@ -1464,6 +1464,9 @@ class Transformer:
         
         updated_files = {}
         
+        # Build a mapping from old base filename to new base filename for relation updates
+        filename_renames: Dict[str, str] = {}
+        
         for file_path, file_model in model.files.items():
             # Only rename files in target_files
             if file_path in target_files:
@@ -1471,13 +1474,27 @@ class Transformer:
                 
                 if new_file_path != file_path:
                     # Update file_model.name to match new path
+                    old_name_only = Path(file_model.name).name
                     file_model.name = new_file_path
+                    new_name_only = Path(new_file_path).name
+                    filename_renames[old_name_only] = new_name_only
                     self.logger.debug("Renamed file: %s -> %s", file_path, new_file_path)
                 
                 updated_files[new_file_path] = file_model
             else:
                 # Keep original file unchanged
                 updated_files[file_path] = file_model
+        
+        # Apply include_relations rewrite across all files
+        if filename_renames:
+            for fm in updated_files.values():
+                rewritten_relations: List[IncludeRelation] = []
+                for rel in fm.include_relations:
+                    src = filename_renames.get(Path(rel.source_file).name, rel.source_file)
+                    inc = filename_renames.get(Path(rel.included_file).name, rel.included_file)
+                    # Maintain the relation using potentially updated names
+                    rewritten_relations.append(IncludeRelation(src, inc, rel.depth))
+                fm.include_relations = rewritten_relations
         
         model.files = updated_files
         return model
@@ -2033,6 +2050,9 @@ class Transformer:
         for global_data in data.get("globals", []):
             globals_list.append(Field(global_data["name"], global_data["type"]))
 
+        # Ensure includes is a set
+        includes_set: Set[str] = set(data.get("includes", []))
+
         return FileModel(
             file_path=data["file_path"],
             structs=structs,
@@ -2040,9 +2060,14 @@ class Transformer:
             unions=unions,
             functions=functions,
             globals=globals_list,
-            includes=data.get("includes", []),
+            includes=includes_set,
             macros=data.get("macros", []),
             aliases=aliases,
+            include_relations=[
+                IncludeRelation(**rel) if isinstance(rel, dict) else rel
+                for rel in data.get("include_relations", [])
+            ],
+            name=data.get("name", ""),
             anonymous_relationships=data.get("anonymous_relationships", {}),
         )
 

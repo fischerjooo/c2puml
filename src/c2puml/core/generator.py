@@ -906,7 +906,7 @@ class Generator:
                     
                     if parent_id and child_id:
                         has_relationships = True
-                        relationships_to_generate.append(f"{parent_id} *-- {child_id} : <<contains>>")
+                        relationships_to_generate.append(f"{parent_id} *-- {child_id} : contains")
         
         # Only add the section header and relationships if we have any
         if has_relationships:
@@ -916,24 +916,23 @@ class Generator:
                 lines.append(relationship)
 
     def _get_anonymous_uml_id(self, entity_name: str, uml_ids: Dict[str, str]) -> Optional[str]:
-        """Get UML ID for an anonymous structure entity, trying different patterns."""
-        # Try direct name
+        """Get UML ID for an anonymous structure entity using typedef-based keys.
+        Tries exact typedef name first, then case-insensitive match of typedef keys.
+        """
+        # Direct lookup (unlikely but harmless)
         if entity_name in uml_ids:
             return uml_ids[entity_name]
-            
-        # Try with typedef prefix (lowercase)
-        typedef_key = f"typedef_{entity_name.lower()}"
-        if typedef_key in uml_ids:
-            return uml_ids[typedef_key]
-            
-        # Try struct prefix
-        struct_key = f"struct_{entity_name.lower()}"
-        if struct_key in uml_ids:
-            return uml_ids[struct_key]
-            
-        # Try union prefix
-        union_key = f"union_{entity_name.lower()}"
-        if union_key in uml_ids:
-            return uml_ids[union_key]
-            
+
+        # Try exact typedef key with original case
+        typedef_key_exact = f"typedef_{entity_name}"
+        if typedef_key_exact in uml_ids:
+            return uml_ids[typedef_key_exact]
+
+        # Case-insensitive search among typedef keys
+        lowered = entity_name.lower()
+        for key, value in uml_ids.items():
+            if key.startswith("typedef_") and key[len("typedef_"):].lower() == lowered:
+                return value
+
+        # Not found
         return None
