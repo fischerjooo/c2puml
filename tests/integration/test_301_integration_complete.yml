@@ -219,3 +219,13 @@ assertions:
   puml:
     syntax_valid: true
     file_count: 1
+    files:
+      main.puml:
+        contains_elements:
+          - main
+          - Game
+          - Platform
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model_transformed.json
