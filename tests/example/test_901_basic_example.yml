@@ -91,6 +91,10 @@ assertions:
         - 'SAMPLE --> HEADER_GEOMETRY : <<include>>'
         - 'SAMPLE --> HEADER_LOGGER : <<include>>'
         - '+ int calculate_sum('
+        relationships_exist:
+        - { source: 'SAMPLE', target: 'HEADER_GEOMETRY', type: '-->' }
+        - { source: 'HEADER_LOGGER', target: 'TYPEDEF_LOG_LEVEL_T', type: '..>' }
+        - { source: 'TYPEDEF_TRIANGLE_T', target: 'TYPEDEF_POINT_T', type: '..>' }
         not_contains_elements:
         - filtered_struct_t
         - filtered_function1
@@ -101,6 +105,9 @@ assertions:
         contains_lines:
         - 'SAMPLE2 --> HEADER_FILTERED_HEADER : <<include>>'
         - 'HEADER_FILTERED_HEADER ..> TYPEDEF_FILTERED_STRUCT_T : <<declares>>'
+        relationships_exist:
+        - { source: 'SAMPLE2', target: 'HEADER_FILTERED_HEADER', type: '-->' }
+        - { source: 'HEADER_FILTERED_HEADER', target: 'TYPEDEF_FILTERED_STRUCT_T', type: '..>' }
       geometry.puml:
         contains_elements:
         - create_triangle
@@ -109,6 +116,10 @@ assertions:
         contains_lines:
         - 'GEOMETRY --> HEADER_GEOMETRY : <<include>>'
         - '+ int triangle_area('
+        relationships_exist:
+        - { source: 'GEOMETRY', target: 'HEADER_GEOMETRY', type: '-->' }
+        - { source: 'HEADER_GEOMETRY', target: 'TYPEDEF_TRIANGLE_T', type: '..>' }
+        - { source: 'TYPEDEF_TRIANGLE_T', target: 'TYPEDEF_POINT_T', type: '..>' }
       logger.puml:
         contains_elements:
         - log_message
@@ -117,6 +128,9 @@ assertions:
         contains_lines:
         - 'class "log_level_t" as TYPEDEF_LOG_LEVEL_T'
         - 'LOGGER --> HEADER_LOGGER : <<include>>'
+        relationships_exist:
+        - { source: 'LOGGER', target: 'HEADER_LOGGER', type: '-->' }
+        - { source: 'HEADER_LOGGER', target: 'TYPEDEF_LOG_LEVEL_T', type: '..>' }
       math_utils.puml:
         contains_elements:
         - add
@@ -124,6 +138,10 @@ assertions:
         - 'MATH_UTILS --> HEADER_MATH_UTILS : <<include>>'
         - 'HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>'
         - '+ int add('
+        relationships_exist:
+        - { source: 'MATH_UTILS', target: 'HEADER_MATH_UTILS', type: '-->' }
+        - { source: 'HEADER_MATH_UTILS', target: 'HEADER_CONFIG', type: '-->' }
+        - { source: 'HEADER_CONFIG', target: 'TYPEDEF_GLOBALSTATUS', type: '..>' }
       transformed.puml:
         contains_elements:
         - keep_this_function
@@ -132,36 +150,54 @@ assertions:
         - status_t
         contains_lines:
         - 'TRANSFORMED --> HEADER_TRANSFORMED : <<include>>'
-        not_contains_elements:
-        - test_function_one
-        - test_function_two
-        - legacy_node
-        - old_config
+        relationships_exist:
+        - { source: 'TRANSFORMED', target: 'HEADER_TRANSFORMED', type: '-->' }
+        - { source: 'HEADER_TRANSFORMED', target: 'TYPEDEF_POINT3D_T', type: '..>' }
       typedef_test.puml:
         contains_lines:
         - 'TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>'
         - 'HEADER_TYPEDEF_TEST ..> TYPEDEF_MYBUFFER : <<declares>>'
+        relationships_exist:
+        - { source: 'TYPEDEF_TEST', target: 'HEADER_TYPEDEF_TEST', type: '-->' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_MYBUFFER', type: '..>' }
       application.puml:
         contains_lines:
         - 'APPLICATION --> HEADER_DATABASE : <<include>>'
         - 'HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>'
+        relationships_exist:
+        - { source: 'APPLICATION', target: 'HEADER_DATABASE', type: '-->' }
+        - { source: 'HEADER_DATABASE', target: 'HEADER_SQLITE3', type: '-->' }
       database.puml:
         contains_lines:
         - 'DATABASE --> HEADER_DATABASE : <<include>>'
         - 'HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>'
+        relationships_exist:
+        - { source: 'DATABASE', target: 'HEADER_DATABASE', type: '-->' }
+        - { source: 'HEADER_DATABASE', target: 'HEADER_SQLITE3', type: '-->' }
       network.puml:
         contains_lines:
         - 'NETWORK --> HEADER_NETWORK : <<include>>'
         - 'HEADER_NETWORK --> HEADER_COMMON : <<include>>'
+        relationships_exist:
+        - { source: 'NETWORK', target: 'HEADER_NETWORK', type: '-->' }
+        - { source: 'HEADER_NETWORK', target: 'HEADER_COMMON', type: '-->' }
       preprocessed.puml:
         contains_lines:
         - 'PREPROCESSED --> HEADER_PREPROCESSED : <<include>>'
         - '+ int main('
+        relationships_exist:
+        - { source: 'PREPROCESSED', target: 'HEADER_PREPROCESSED', type: '-->' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_STATUS_T', type: '..>' }
       complex.puml:
         contains_lines:
         - 'COMPLEX --> HEADER_COMPLEX : <<include>>'
         - '+ void test_processor_utility_macros()'
         - 'HEADER_COMPLEX ..> TYPEDEF_COMPLEX_HANDLER_T : <<declares>>'
+        relationships_exist:
+        - { source: 'COMPLEX', target: 'HEADER_COMPLEX', type: '-->' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_COMPLEX_HANDLER_T', type: '..>' }
+        - { source: 'TYPEDEF_COMPLEX_HANDLER_T', target: 'TYPEDEF_COMPLEX_HANDLER_T_MEMORY_MANAGER', type: '*--' }
+        - { source: 'TYPEDEF_COMPLEX_HANDLER_T', target: 'TYPEDEF_COMPLEX_HANDLER_T_VALIDATOR', type: '*--' }
   files:
     output_dir_exists: ./artifacts/output_example
     files_exist:
