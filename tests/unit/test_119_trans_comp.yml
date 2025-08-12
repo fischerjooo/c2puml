@@ -135,6 +135,21 @@ assertions:
             - data
         functions:
         - nested_function
+    structs_not_exist:
+    - TempItem
+    - MainData
+    enums_not_exist:
+    - TempStatus
+    - Status
+    functions_not_exist:
+    - temp_function
+    - process_data
+    globals_not_exist:
+    - temp_global
+    - global_counter
+    macros_not_exist:
+    - UNUSED_MACRO
+    - DEBUG_MODE
   puml:
     syntax_valid: true
     files:
@@ -145,6 +160,13 @@ assertions:
         - ProcessedMainData
         - main
         - utils
+        not_contains_elements:
+        - TempItem
+        - temp_function
+        - process_data
+        - DEBUG_MODE
+        not_contains_lines:
+        - 'class "MainData" as '
       utils.puml:
         contains_elements:
         - UtilStruct

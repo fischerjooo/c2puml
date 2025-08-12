@@ -74,6 +74,12 @@ assertions:
     - NewEnum
     functions_exist:
     - new_function
+    structs_not_exist:
+    - OldStruct
+    enums_not_exist:
+    - OldEnum
+    functions_not_exist:
+    - old_function
   files:
     files_exist:
     - ./output/model_transformed.json
