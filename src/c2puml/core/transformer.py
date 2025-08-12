@@ -668,21 +668,16 @@ class Transformer:
         # Fallback: use the filename as root (original behavior)
         return filename
 
-    def _filter_file_includes(
+    def _filter_include_relations(
         self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
     ) -> None:
-        """Filter include_relations while preserving original includes arrays.
-        This is used by the main transformation pipeline to maintain source information."""
+        """Unified include_relations filtering, preserving includes arrays."""
         self.logger.debug(
             "Filtering include_relations for file %s (root: %s)", file_model.name, root_file
         )
 
-        # Preserve includes arrays - they contain important source information
-        original_includes_count = len(file_model.includes)
-
-        # Filter include_relations based on patterns
         original_relations_count = len(file_model.include_relations)
-        filtered_relations = []
+        filtered_relations: List[IncludeRelation] = []
 
         for relation in file_model.include_relations:
             if self._matches_any_pattern(relation.included_file, patterns):
@@ -698,49 +693,23 @@ class Transformer:
         file_model.include_relations = filtered_relations
 
         self.logger.debug(
-            "Include filtering for %s: includes preserved (%d), relations %d->%d",
+            "Include filtering for %s: relations %d->%d (includes preserved)",
             file_model.name,
-            original_includes_count,
             original_relations_count,
             len(file_model.include_relations),
         )
+
+    def _filter_file_includes(
+        self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
+    ) -> None:
+        """Deprecated: use _filter_include_relations"""
+        self._filter_include_relations(file_model, patterns, root_file)
 
     def _filter_file_includes_comprehensive(
         self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
     ) -> None:
-        """Comprehensive filtering that affects only include_relations, preserving includes arrays.
-        This is used by the direct _apply_include_filters method for complete filtering."""
-        self.logger.debug(
-            "Comprehensive filtering for file %s (root: %s)", file_model.name, root_file
-        )
-
-        # IMPORTANT: Do NOT filter includes arrays - they should be preserved
-        # Only filter include_relations based on the patterns
-        original_relations_count = len(file_model.include_relations)
-        filtered_relations = []
-
-        for relation in file_model.include_relations:
-            if self._matches_any_pattern(relation.included_file, patterns):
-                filtered_relations.append(relation)
-            else:
-                self.logger.debug(
-                    "Filtered out include relation: %s -> %s (root: %s)",
-                    relation.source_file,
-                    relation.included_file,
-                    root_file,
-                )
-
-        file_model.include_relations = filtered_relations
-
-        self.logger.debug(
-            "Comprehensive filtering for %s: includes preserved (%d), relations %d->%d",
-            file_model.name,
-            len(file_model.includes),
-            original_relations_count,
-            len(file_model.include_relations),
-        )
-
-
+        """Deprecated: use _filter_include_relations"""
+        self._filter_include_relations(file_model, patterns, root_file)
 
     def _matches_any_pattern(self, text: str, patterns: List[Pattern[str]]) -> bool:
         """Check if text matches any of the given regex patterns"""
