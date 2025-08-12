@@ -158,13 +158,11 @@ class Transformer:
         # Check global include_depth
         if config.get("include_depth", 1) > 1:
             return True
-        
-        # Check file-specific include_depth settings
-        if "file_specific" in config:
-            for file_config in config["file_specific"].values():
-                if file_config.get("include_depth", 1) > 1:
-                    return True
-        
+        # Check file-specific include_depth overrides
+        file_specific = config.get("file_specific", {})
+        for file_config in file_specific.values():
+            if file_config.get("include_depth", 1) > 1:
+                return True
         return False
 
     def _discover_transformation_containers(self, config: Dict[str, Any]) -> List[Tuple[str, Dict[str, Any]]]:
@@ -548,6 +546,33 @@ class Transformer:
         )
         return model
 
+    def _compile_patterns(self, patterns: List[str]) -> List[Pattern[str]]:
+        """Compile regex patterns with error handling"""
+        compiled_patterns: List[Pattern[str]] = []
+        for pattern in patterns:
+            try:
+                compiled_patterns.append(re.compile(pattern))
+            except re.error as e:
+                self.logger.warning("Invalid regex pattern '%s': %s", pattern, e)
+        return compiled_patterns
+
+    def _should_include_file(
+        self,
+        file_path: str,
+        include_patterns: List[Pattern[str]],
+        exclude_patterns: List[Pattern[str]],
+    ) -> bool:
+        """Check if a file should be included based on filters"""
+        # Check include patterns
+        if include_patterns:
+            if not any(pattern.search(file_path) for pattern in include_patterns):
+                return False
+        # Check exclude patterns
+        if exclude_patterns:
+            if any(pattern.search(file_path) for pattern in exclude_patterns):
+                return False
+        return True
+
 
 
     def _apply_include_filters(
@@ -597,8 +622,8 @@ class Transformer:
             )
 
             if root_file in compiled_filters:
-                # Apply comprehensive filtering (preserve includes arrays, filter include_relations)
-                self._filter_file_includes_comprehensive(
+                # Apply filtering (preserve includes arrays, filter include_relations)
+                self._filter_include_relations(
                     file_model, compiled_filters[root_file], root_file
                 )
 
@@ -670,21 +695,16 @@ class Transformer:
         # Fallback: use the filename as root (original behavior)
         return filename
 
-    def _filter_file_includes(
+    def _filter_include_relations(
         self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
     ) -> None:
-        """Filter include_relations while preserving original includes arrays.
-        This is used by the main transformation pipeline to maintain source information."""
+        """Filter include_relations based on patterns while preserving includes arrays."""
         self.logger.debug(
             "Filtering include_relations for file %s (root: %s)", file_model.name, root_file
         )
 
-        # Preserve includes arrays - they contain important source information
-        original_includes_count = len(file_model.includes)
-
-        # Filter include_relations based on patterns
         original_relations_count = len(file_model.include_relations)
-        filtered_relations = []
+        filtered_relations: List[IncludeRelation] = []
 
         for relation in file_model.include_relations:
             if self._matches_any_pattern(relation.included_file, patterns):
@@ -700,53 +720,24 @@ class Transformer:
         file_model.include_relations = filtered_relations
 
         self.logger.debug(
-            "Include filtering for %s: includes preserved (%d), relations %d->%d",
+            "Include filtering for %s: relations %d->%d (includes preserved: %d)",
             file_model.name,
-            original_includes_count,
             original_relations_count,
             len(file_model.include_relations),
-        )
-
-    def _filter_file_includes_comprehensive(
-        self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
-    ) -> None:
-        """Comprehensive filtering that affects only include_relations, preserving includes arrays.
-        This is used by the direct _apply_include_filters method for complete filtering."""
-        self.logger.debug(
-            "Comprehensive filtering for file %s (root: %s)", file_model.name, root_file
-        )
-
-        # IMPORTANT: Do NOT filter includes arrays - they should be preserved
-        # Only filter include_relations based on the patterns
-        original_relations_count = len(file_model.include_relations)
-        filtered_relations = []
-
-        for relation in file_model.include_relations:
-            if self._matches_any_pattern(relation.included_file, patterns):
-                filtered_relations.append(relation)
-            else:
-                self.logger.debug(
-                    "Filtered out include relation: %s -> %s (root: %s)",
-                    relation.source_file,
-                    relation.included_file,
-                    root_file,
-                )
-
-        file_model.include_relations = filtered_relations
-
-        self.logger.debug(
-            "Comprehensive filtering for %s: includes preserved (%d), relations %d->%d",
-            file_model.name,
             len(file_model.includes),
-            original_relations_count,
-            len(file_model.include_relations),
         )
-
-
 
     def _matches_any_pattern(self, text: str, patterns: List[Pattern[str]]) -> bool:
         """Check if text matches any of the given regex patterns"""
         return any(pattern.search(text) for pattern in patterns)
+
+    def _matches_pattern(self, file_path: str, pattern: str) -> bool:
+        """Check if a file path matches a regex pattern with error handling"""
+        try:
+            return bool(re.search(pattern, file_path))
+        except re.error as e:
+            self.logger.warning("Invalid regex pattern '%s': %s", pattern, e)
+            return False
 
 
 
@@ -1714,371 +1705,6 @@ class Transformer:
             file_model.unions, patterns, "union", file_model.name
         )
 
-    def _process_include_relations(
-        self,
-        model: ProjectModel,
-        max_depth: int,
-        include_filters: Dict[str, List[str]] = None,
-    ) -> ProjectModel:
-        """Process include relationships up to specified depth with include_filters support"""
-        self.logger.info("Processing include relations with max depth: %d", max_depth)
-
-        # Compile include_filters patterns if provided
-        compiled_filters = {}
-        if include_filters:
-            for root_file, patterns in include_filters.items():
-                try:
-                    compiled_filters[root_file] = [
-                        re.compile(pattern) for pattern in patterns
-                    ]
-                    self.logger.debug(
-                        "Compiled %d patterns for root file: %s",
-                        len(patterns),
-                        root_file,
-                    )
-                except re.error as e:
-                    self.logger.warning(
-                        "Invalid regex pattern for root file %s: %s", root_file, e
-                    )
-                    continue
-
-        # Create a mapping of filenames to their models for quick lookup
-        # Since we now use relative paths as keys, we need to map by filename
-        # for include processing
-        file_map = {}
-        for file_model in model.files.values():
-            filename = Path(file_model.name).name
-            file_map[filename] = file_model
-
-        # Clear all include_relations first
-        for file_model in model.files.values():
-            file_model.include_relations = []
-
-        # Only process .c files as root files for include_relations
-        # This ensures include_relations are only populated for .c files
-        for file_path, file_model in model.files.items():
-            if file_model.name.endswith(".c"):
-                root_file = Path(file_model.name).name
-
-                # Get compiled filters for this specific .c file
-                root_filters = (
-                    compiled_filters.get(root_file, []) if compiled_filters else []
-                )
-
-                # Process includes and collect all relations for this .c file
-                self._collect_include_relations_for_c_file(
-                    file_model,
-                    file_map,
-                    max_depth,
-                    1,
-                    set(),
-                    root_filters,
-                    model.source_folder,
-                )
-
-        return model
-
-    def _collect_include_relations_for_c_file(
-        self,
-        file_model: FileModel,
-        file_map: Dict[str, FileModel],
-        max_depth: int,
-        current_depth: int,
-        visited: Set[str],
-        compiled_filters: List[re.Pattern],
-        source_folder: str,
-        root_c_file: FileModel = None,
-    ) -> None:
-        """Recursively process includes for a .c file and collect all include_relations"""
-        if current_depth > max_depth or file_model.name in visited:
-            return
-
-        visited.add(file_model.name)
-
-        # If this is the first call, set the root .c file
-        if root_c_file is None:
-            root_c_file = file_model
-
-        # Process each include
-        for include_name in file_model.includes:
-            # Directly check if the included file exists in our file_map
-            # This is more reliable than file path resolution since we already
-            # have all project files mapped by filename
-            if include_name in file_map:
-                # Prevent self-referencing include relations
-                if file_model.name == include_name:
-                    self.logger.debug(
-                        "Skipping self-include relation for %s", file_model.name
-                    )
-                    continue
-
-                # Check if this include relation already exists in the root .c file to prevent cycles
-                relation_exists = any(
-                    rel.source_file == file_model.name
-                    and rel.included_file == include_name
-                    for rel in root_c_file.include_relations
-                )
-
-                if relation_exists:
-                    self.logger.debug(
-                        "Cyclic include detected and skipped: %s -> %s",
-                        file_model.name,
-                        include_name,
-                    )
-                    continue
-
-                # Check include_filters before processing this include
-                if compiled_filters and not self._matches_any_pattern(
-                    include_name, compiled_filters
-                ):
-                    self.logger.debug(
-                        "Skipping filtered include: %s -> %s",
-                        file_model.name,
-                        include_name,
-                    )
-                    continue
-
-                # Create include relation using FileModel names for consistency
-                # Always add to the root .c file, regardless of which file we're currently processing
-                source_file = file_model.name
-                included_file = file_map[include_name].name
-
-                include_relation = IncludeRelation(
-                    source_file=source_file,
-                    included_file=included_file,
-                    depth=current_depth,
-                )
-                root_c_file.include_relations.append(include_relation)
-
-                # Recursively process the included file
-                included_file_model = file_map[include_name]
-                self._collect_include_relations_for_c_file(
-                    included_file_model,
-                    file_map,
-                    max_depth,
-                    current_depth + 1,
-                    visited,
-                    compiled_filters,
-                    source_folder,
-                    root_c_file,  # Pass the root .c file to maintain context
-                )
-
-    def _find_included_file(
-        self, include_name: str, source_folder: str
-    ) -> Optional[str]:
-        """Find the actual file path for an include using simplified filename
-        matching"""
-        # Since we now use filenames as keys, we can simplify this significantly
-        # Just return the filename if it exists in the project files
-
-        # Common include paths to search
-        search_paths = [
-            Path(source_folder),
-            Path(source_folder) / "include",
-            Path(source_folder) / "src",
-            Path(source_folder) / "lib",
-            Path(source_folder) / "headers",
-        ]
-
-        # Try different extensions
-        extensions = [".h", ".hpp", ".hxx", ""]
-
-        for search_path in search_paths:
-            if not search_path.exists():
-                continue
-
-            for ext in extensions:
-                file_path = search_path / f"{include_name}{ext}"
-                if file_path.exists():
-                    # Always return filename for simplified tracking using FileModel.name
-                    return file_path.name
-
-        return None
-
-    def _matches_pattern(self, file_path: str, pattern: str) -> bool:
-        """Check if a file path matches a pattern"""
-        try:
-            return bool(re.search(pattern, file_path))
-        except re.error:
-            self.logger.warning("Invalid pattern '%s' for file matching", pattern)
-            return False
-
-    def _compile_patterns(self, patterns: List[str]) -> List[Pattern[str]]:
-        """Compile regex patterns with error handling"""
-        compiled_patterns = []
-
-        for pattern in patterns:
-            try:
-                compiled_patterns.append(re.compile(pattern))
-            except re.error as e:
-                self.logger.warning("Invalid regex pattern '%s': %s", pattern, e)
-
-        return compiled_patterns
-
-    def _should_include_file(
-        self,
-        file_path: str,
-        include_patterns: List[Pattern[str]],
-        exclude_patterns: List[Pattern[str]],
-    ) -> bool:
-        """Check if a file should be included based on filters"""
-        # Check include patterns
-        if include_patterns:
-            if not any(pattern.search(file_path) for pattern in include_patterns):
-                return False
-
-        # Check exclude patterns
-        if exclude_patterns:
-            if any(pattern.search(file_path) for pattern in exclude_patterns):
-                return False
-
-        return True
-
-    def _filter_dict(self, items: Dict[str, Any], filters: Dict[str, Any]) -> Dict[str, Any]:
-        """Filter a dictionary based on include/exclude patterns"""
-        include_patterns = self._compile_patterns(filters.get("include", []))
-        exclude_patterns = self._compile_patterns(filters.get("exclude", []))
-
-        filtered = {}
-        for name, item in items.items():
-            # Check include patterns
-            if include_patterns:
-                if not any(pattern.search(name) for pattern in include_patterns):
-                    continue
-
-            # Check exclude patterns
-            if exclude_patterns:
-                if any(pattern.search(name) for pattern in exclude_patterns):
-                    continue
-
-            filtered[name] = item
-
-        return filtered
-
-    def _filter_list(self, items: List[Any], filters: Dict[str, Any], key: Optional[Callable[[Any], str]] = None) -> List[Any]:
-        """Filter a list based on include/exclude patterns"""
-        include_patterns = self._compile_patterns(filters.get("include", []))
-        exclude_patterns = self._compile_patterns(filters.get("exclude", []))
-
-        filtered = []
-        for item in items:
-            item_name = key(item) if key else str(item)
-
-            # Check include patterns
-            if include_patterns:
-                if not any(pattern.search(item_name) for pattern in include_patterns):
-                    continue
-
-            # Check exclude patterns
-            if exclude_patterns:
-                if any(pattern.search(item_name) for pattern in exclude_patterns):
-                    continue
-
-            filtered.append(item)
-
-        return filtered
-
-    def _dict_to_file_model(self, data: Dict[str, Any]) -> FileModel:
-        """Convert dictionary back to FileModel"""
-
-        # Convert structs
-        structs = {}
-        for name, struct_data in data.get("structs", {}).items():
-            fields = [
-                Field(f["name"], f["type"]) for f in struct_data.get("fields", [])
-            ]
-            structs[name] = Struct(
-                name,
-                fields,
-                struct_data.get("methods", []),
-                struct_data.get("tag_name", ""),
-                struct_data.get("uses", []),
-            )
-
-        # Convert enums
-        enums = {}
-        for name, enum_data in data.get("enums", {}).items():
-            values = []
-            for value_data in enum_data.get("values", []):
-                if isinstance(value_data, dict):
-                    values.append(
-                        EnumValue(value_data["name"], value_data.get("value"))
-                    )
-                else:
-                    values.append(EnumValue(value_data))
-            enums[name] = Enum(name, values)
-
-        # Convert unions
-        unions = {}
-        for name, union_data in data.get("unions", {}).items():
-            fields = [Field(f["name"], f["type"]) for f in union_data.get("fields", [])]
-            unions[name] = Union(
-                name, fields, union_data.get("tag_name", ""), union_data.get("uses", [])
-            )
-
-        # Convert aliases
-        aliases = {}
-        for name, alias_data in data.get("aliases", {}).items():
-            if isinstance(alias_data, dict):
-                aliases[name] = Alias(
-                    alias_data.get("name", name),
-                    alias_data.get("original_type", ""),
-                    alias_data.get("uses", []),
-                )
-            else:
-                # Handle legacy format where aliases was Dict[str, str]
-                aliases[name] = Alias(name, alias_data, [])
-
-        # Convert functions
-        functions = []
-        for func_data in data.get("functions", []):
-            parameters = [
-                Field(p["name"], p["type"]) for p in func_data.get("parameters", [])
-            ]
-            functions.append(
-                Function(
-                    func_data["name"],
-                    func_data["return_type"],
-                    parameters,
-                    is_static=func_data.get("is_static", False),
-                    is_declaration=func_data.get("is_declaration", False),
-                )
-            )
-
-        # Convert globals
-        globals_list = []
-        for global_data in data.get("globals", []):
-            globals_list.append(Field(global_data["name"], global_data["type"]))
-
-        # Ensure includes is a set
-        includes_set: Set[str] = set(data.get("includes", []))
-
-        return FileModel(
-            file_path=data["file_path"],
-            structs=structs,
-            enums=enums,
-            unions=unions,
-            functions=functions,
-            globals=globals_list,
-            includes=includes_set,
-            macros=data.get("macros", []),
-            aliases=aliases,
-            include_relations=[
-                IncludeRelation(**rel) if isinstance(rel, dict) else rel
-                for rel in data.get("include_relations", [])
-            ],
-            name=data.get("name", ""),
-            anonymous_relationships=data.get("anonymous_relationships", {}),
-        )
-
-    def _save_model(self, model: ProjectModel, output_file: str) -> None:
-        """Save model to JSON file"""
-        try:
-            model.save(output_file)
-            self.logger.debug("Model saved to: %s", output_file)
-        except Exception as e:
-            raise ValueError(f"Failed to save model to {output_file}: {e}") from e
-
     def _process_include_relations_simplified(
         self, model: ProjectModel, config: Dict[str, Any]
     ) -> ProjectModel:
@@ -2247,27 +1873,24 @@ class Transformer:
                     root_file.include_relations.append(relation)
                     
                     self.logger.debug(
-                        "Added include relation: %s -> %s (depth %d) for root %s",
+                        "Added include relation %s -> %s (depth %d) for root %s",
                         current_filename, include_name, depth, root_filename
                     )
                     
-                    # Add included file to next level for further processing
-                    included_file = file_map[include_name]
-                    if included_file not in next_level and include_name not in processed_files:
-                        next_level.append(included_file)
+                    # Add included file to next level if it exists in our project
+                    next_level.append(file_map[include_name])
             
-            # Move to next level for the next iteration
+            # Move to the next level
             current_level = next_level
-            
-            # Break if no more files to process
-            if not current_level:
-                self.logger.debug(
-                    "No more files to process at depth %d for %s", 
-                    depth + 1, root_filename
-                )
-                break
         
-        self.logger.debug(
-            "Completed include processing for %s: %d relations generated",
-            root_filename, len(root_file.include_relations)
-        )
+        # Apply comprehensive filtering to the root file's relations if filters exist
+        if compiled_filters:
+            self._filter_include_relations(root_file, compiled_filters, root_filename)
+
+    def _save_model(self, model: ProjectModel, output_file: str) -> None:
+        """Save model to JSON file using ProjectModel.save"""
+        try:
+            model.save(output_file)
+            self.logger.debug("Model saved to: %s", output_file)
+        except Exception as e:
+            raise ValueError(f"Failed to save model to {output_file}: {e}") from e

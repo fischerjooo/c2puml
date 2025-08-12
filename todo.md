@@ -3,16 +3,16 @@
 This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, and remove duplication while keeping the current public behavior intact. Validate after each step with `./scripts/run_all.sh` and keep commits small.
 
 ## Quick wins (bug fixes)
-- [ ] Generator: fix anonymous composition UML ID resolution
+- [x] Generator: fix anonymous composition UML ID resolution
   - Current `_get_anonymous_uml_id` looks up keys like `typedef_{name.lower()}` or `struct_{name.lower()}` that are never populated; `uml_ids` uses `typedef_{OriginalCase}` keys.
   - Change lookup to try in order: `typedef_{name}`, `typedef_{name.capitalize/exact-case variants}` and finally normalize both sides consistently (e.g., store and look up with exact typedef name). Remove unused `struct_*/union_*` lookups.
-- [ ] Transformer: preserve macro parameters when renaming macros
+- [x] Transformer: preserve macro parameters when renaming macros
   - `_rename_macros` currently returns only the renamed macro name (drops `(args)`), breaking function-like macros. Keep the original parameter list when present.
-- [ ] Transformer: update `include_relations` when files are renamed
+- [x] Transformer: update `include_relations` when files are renamed
   - `_rename_files` updates `file_model.name` and the `files` dict keys, but existing `include_relations` entries still carry old `source_file`/`included_file` names. Add a pass to rewrite both sides after file renaming.
-- [ ] Transformer: convert `includes` to `set`
+- [x] Transformer: convert `includes` to `set`
   - `_dict_to_file_model` passes a list to `FileModel.includes` which is a `Set[str]`. Convert via `set(data.get("includes", []))` for consistency and deterministic deduplication.
-- [ ] Use `ProjectModel.from_dict`/`load` in transformer
+- [x] Use `ProjectModel.from_dict`/`load` in transformer
   - Replace manual reconstruction in `_load_model` with `ProjectModel.load(model_file)` to reduce drift.
 
 ## Remove duplication and simplify control flow
@@ -41,13 +41,13 @@ This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, an
 ## Tests to add (before/along changes)
 - [ ] Anonymous composition relationships render
   - Given `anonymous_relationships` in a model, verify generator produces `TYPEDEF_PARENT *-- TYPEDEF_PARENT_FIELD : <<contains>>` using the correct UML IDs.
-- [ ] Macro renaming preserves parameters
+- [x] Macro renaming preserves parameters
   - Input macros include `MAX(a,b)`; apply rename; output keeps `(a,b)` intact.
-- [ ] File rename propagates to include_relations
+- [x] File rename propagates to include_relations
   - After renaming `old.c`→`new.c`, relations reference `new.c` on both ends where appropriate.
 - [ ] Single include processing path
   - With `include_depth` > 1 and `file_specific.include_filter`, verify only one include path is used and results are stable.
-- [ ] Includes type is a set
+- [x] Includes type is a set
   - Ensure `includes` is serialized/deserialized as a set-equivalent (round-trips), and generation order is deterministic via sorting when emitting.
 
 ## Step-by-step refactor sequence (validate with ./scripts/run_all.sh)
@@ -73,7 +73,7 @@ This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, an
 ## Additional improvements and simplifications
 - [ ] Generator: remove dead/unused code
   - Delete `_is_truncated_typedef`, `_handle_truncated_typedef`, `_handle_normal_alias` and the disabled anonymous flattening block; they are not invoked.
-- [ ] Generator: align composition label with template
+- [x] Generator: align composition label with template
   - Use `: contains` (no guillemets) for anonymous composition to match `docs/puml_template.md`.
 - [ ] Generator: simplify API and fallback
   - Drop `include_depth` parameter from public methods; rely on transformer-populated `include_relations`. Keep a minimal fallback that ignores depth and just links direct includes when no relations exist.
@@ -115,3 +115,7 @@ This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, an
   - With headers declaring a subset of functions/globals, generator groups `+` and `-` correctly using the precomputed maps.
 - [ ] Generator API change safety
   - Public `generate()` ignores/omits `include_depth` arg; tests still pass with transformer-provided `include_relations` and fallback when transform step is skipped.
+
+---
+
+Status: Quick wins applied and tests green (`./scripts/run_all_tests.sh`). Next: consolidate include processing to single BFS path and remove legacy/duplicate methods.
