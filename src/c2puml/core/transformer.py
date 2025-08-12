@@ -1719,13 +1719,14 @@ class Transformer:
             file_model.unions, patterns, "union", file_model.name
         )
 
+    # Legacy include processing kept for reference; superseded by _process_include_relations_simplified
     def _process_include_relations(
         self,
         model: ProjectModel,
         max_depth: int,
         include_filters: Dict[str, List[str]] = None,
     ) -> ProjectModel:
-        """Process include relationships up to specified depth with include_filters support"""
+        """Deprecated: use _process_include_relations_simplified instead"""
         self.logger.info("Processing include relations with max depth: %d", max_depth)
 
         # Compile include_filters patterns if provided

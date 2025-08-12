@@ -53,7 +53,7 @@ class Generator:
                     pass  # Ignore errors if file can't be removed
 
     def generate(
-        self, model_file: str, output_dir: str = "./output", include_depth: int = None
+        self, model_file: str, output_dir: str = "./output"
     ) -> str:
         """Generate PlantUML files for all C files in the model"""
         # Load the model
@@ -75,7 +75,7 @@ class Generator:
                 # include_depth is handled by the transformer which processes
                 # file-specific settings and stores them in include_relations
                 puml_content = self.generate_diagram(
-                    file_model, project_model, include_depth=1
+                    file_model, project_model
                 )
 
                 # Create output filename
@@ -91,12 +91,12 @@ class Generator:
         return output_dir
 
     def generate_diagram(
-        self, file_model: FileModel, project_model: ProjectModel, include_depth: int = 1
+        self, file_model: FileModel, project_model: ProjectModel
     ) -> str:
         """Generate a PlantUML diagram for a file following the template format"""
         basename = Path(file_model.name).stem
         include_tree = self._build_include_tree(
-            file_model, project_model, include_depth
+            file_model, project_model
         )
         uml_ids = self._generate_uml_ids(include_tree, project_model)
 
@@ -154,7 +154,7 @@ class Generator:
         return ProjectModel.load(model_file)
 
     def _build_include_tree(
-        self, root_file: FileModel, project_model: ProjectModel, include_depth: int
+        self, root_file: FileModel, project_model: ProjectModel
     ) -> Dict[str, FileModel]:
         """Build include tree starting from root file"""
         include_tree = {}
@@ -179,6 +179,7 @@ class Generator:
             include_tree[root_key] = project_model.files[root_key]
 
         # If root file has include_relations, use only those files (flat processing)
+        # This is the authoritative source built by the transformer (respecting include_depth and filters)
         if root_file.include_relations:
             # include_relations is already a flattened list of all headers needed
             included_files = set()
@@ -191,33 +192,23 @@ class Generator:
                 if file_key in project_model.files:
                     include_tree[file_key] = project_model.files[file_key]
         else:
-            # Fall back to recursive traversal using includes field (backward compatibility)
+            # Fall back: only direct includes (depth=1) when no include_relations exist
             visited = set()
 
-            def add_file_to_tree(file_name: str, depth: int):
-                if depth > include_depth or file_name in visited:
+            def add_file_to_tree_once(file_name: str):
+                if file_name in visited:
                     return
-
                 visited.add(file_name)
                 file_key = find_file_key(file_name)
-
                 if file_key in project_model.files:
                     include_tree[file_key] = project_model.files[file_key]
 
-                    # Add included files recursively
-                    if depth < include_depth:
-                        file_model = project_model.files[file_key]
-                        for include in file_model.includes:
-                            # Clean the include name (remove quotes/angle brackets)
-                            clean_include = include.strip('<>"')
-                            add_file_to_tree(clean_include, depth + 1)
-
-            # Start recursive traversal from root (already added above)
+            # Start traversal from root (already added above)
             if root_key in project_model.files:
                 root_file_model = project_model.files[root_key]
                 for include in root_file_model.includes:
                     clean_include = include.strip('<>"')
-                    add_file_to_tree(clean_include, 1)
+                    add_file_to_tree_once(clean_include)
 
         return include_tree
 
@@ -347,46 +338,48 @@ class Generator:
     def _generate_c_file_class(
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str], project_model: ProjectModel
     ):
-        """Generate class for C file using filename-based keys"""
-        self._generate_file_class_with_visibility(
-            lines,
-            file_model,
-            uml_ids,
-            project_model,
+        """Generate class for C file using unified method with dynamic visibility"""
+        self._generate_file_class_unified(
+            lines=lines,
+            file_model=file_model,
+            uml_ids=uml_ids,
+            project_model=project_model,
             class_type="source",
             color=COLOR_SOURCE,
             macro_prefix="- ",
             is_declaration_only=False,
+            use_dynamic_visibility=True,
         )
 
     def _generate_header_class(
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str], project_model: ProjectModel
     ):
-        """Generate class for header file using filename-based keys"""
-        self._generate_file_class(
-            lines,
-            file_model,
-            uml_ids,
+        """Generate class for header file using unified method with static '+' visibility"""
+        self._generate_file_class_unified(
+            lines=lines,
+            file_model=file_model,
+            uml_ids=uml_ids,
+            project_model=None,
             class_type="header",
             color=COLOR_HEADER,
             macro_prefix="+ ",
-            global_prefix="+ ",
-            function_prefix="+ ",
             is_declaration_only=True,
+            use_dynamic_visibility=False,
         )
 
-    def _generate_file_class_with_visibility(
+    def _generate_file_class_unified(
         self,
         lines: List[str],
         file_model: FileModel,
         uml_ids: Dict[str, str],
-        project_model: ProjectModel,
+        project_model: ProjectModel | None,
         class_type: str,
         color: str,
         macro_prefix: str,
         is_declaration_only: bool,
+        use_dynamic_visibility: bool,
     ):
-        """Generate class for source file with dynamic visibility based on header presence"""
+        """Generate class for a file; dynamic visibility for sources, static for headers."""
         basename = Path(file_model.name).stem
         filename = Path(file_model.name).name
         uml_id = uml_ids.get(filename)
@@ -398,40 +391,20 @@ class Generator:
         lines.append("{")
 
         self._add_macros_section(lines, file_model, macro_prefix)
-        self._add_globals_section_with_visibility(lines, file_model, project_model)
-        self._add_functions_section_with_visibility(lines, file_model, project_model, is_declaration_only)
-
-        lines.append("}")
-        lines.append("")
-
-    def _generate_file_class(
-        self,
-        lines: List[str],
-        file_model: FileModel,
-        uml_ids: Dict[str, str],
-        class_type: str,
-        color: str,
-        macro_prefix: str,
-        global_prefix: str,
-        function_prefix: str,
-        is_declaration_only: bool,
-    ):
-        """Generate class for a file with specified formatting"""
-        basename = Path(file_model.name).stem
-        filename = Path(file_model.name).name
-        uml_id = uml_ids.get(filename)
-
-        if not uml_id:
-            return
-
-        lines.append(f'class "{basename}" as {uml_id} <<{class_type}>> {color}')
-        lines.append("{")
-
-        self._add_macros_section(lines, file_model, macro_prefix)
-        self._add_globals_section(lines, file_model, global_prefix)
-        self._add_functions_section(
-            lines, file_model, function_prefix, is_declaration_only
-        )
+        if use_dynamic_visibility:
+            # project_model is required when dynamic visibility is enabled
+            if project_model is None:
+                return
+            self._add_globals_section_with_visibility(lines, file_model, project_model)
+            self._add_functions_section_with_visibility(
+                lines, file_model, project_model, is_declaration_only
+            )
+        else:
+            # Static '+' visibility for headers
+            self._add_globals_section(lines, file_model, "+ ")
+            self._add_functions_section(
+                lines, file_model, "+ ", is_declaration_only
+            )
 
         lines.append("}")
         lines.append("")
@@ -623,62 +596,7 @@ class Generator:
         original_type = ' '.join(original_type.split())
         lines.append(f"    alias of {original_type}")
 
-    def _is_truncated_typedef(self, alias_data, alias_lines: List[str]) -> bool:
-        """Check if this is a truncated typedef"""
-        return (
-            alias_data.original_type.strip().endswith("(")
-            or alias_data.original_type.strip().endswith("nested1")
-            or alias_data.original_type.strip().endswith("{")
-        ) and len(alias_lines) > 1
-
-    def _handle_truncated_typedef(self, lines: List[str], alias_lines: List[str]):
-        """Handle truncated function pointer typedef"""
-        first_line = alias_lines[0].strip()
-        if "(" in first_line and not first_line.endswith(")"):
-            # Add ellipsis to indicate truncation
-            lines.append(f"    + {first_line}...)")
-        else:
-            lines.append(f"    + {first_line}")
-
-    def _handle_normal_alias(
-        self,
-        lines: List[str],
-        alias_lines: List[str],
-        inside_struct: bool,
-        nested_content: List[str],
-    ):
-        """Handle normal multi-line alias processing"""
-        for i, line in enumerate(alias_lines):
-            line = line.strip()
-
-            if i == 0:
-                lines.append(f"    + {line}")
-            elif line.startswith("struct {"):
-                # Start collecting nested struct content
-                inside_struct = True
-                nested_content = []
-            elif line == "}":
-                if inside_struct:
-                    # Close nested struct with flattened content
-                    if nested_content:
-                        content_str = "; ".join(nested_content)
-                        lines.append(f"    + struct {{ {content_str} }}")
-                    else:
-                        lines.append(f"    + struct {{ }}")
-                    inside_struct = False
-                    nested_content = []
-                else:
-                    lines.append(f"    }}")
-            elif line and line != "}":
-                if inside_struct:
-                    nested_content.append(line)  # Collect nested content
-                else:
-                    lines.append(f"+ {line}")
-
-        # If we were inside a struct but didn't find a closing brace, add one
-        if inside_struct and nested_content:
-            content_str = "; ".join(nested_content)
-            lines.append(f"    + struct {{ {content_str} }}")
+    # Removed dead/unused alias handling helpers (_is_truncated_typedef, _handle_truncated_typedef, _handle_normal_alias)
 
     def _generate_field_with_nested_structs(
         self, lines: List[str], field, base_indent: str
