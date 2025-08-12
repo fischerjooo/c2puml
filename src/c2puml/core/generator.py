@@ -39,9 +39,8 @@ class Generator:
     - Writing output files to disk
     """
 
-    # Configuration flags (set by main based on Config)
-    enable_signature_param_truncation: bool = False
-    max_function_parameters_shown: int = 0  # 0 or less = unlimited
+    # Configuration (set by main based on Config)
+    max_function_signature_chars: int = 0  # 0 or less = unlimited
 
     def _clear_output_folder(self, output_dir: str) -> None:
         """Clear existing .puml and .png files from the output directory"""
@@ -345,21 +344,33 @@ class Generator:
     def _format_function_signature(self, func, prefix: str = "") -> str:
         """Format a function signature with truncation if needed."""
         params = self._format_function_parameters(func.parameters)
-
-        # Optional: limit the number of shown parameters if configured
-        if self.enable_signature_param_truncation and isinstance(self.max_function_parameters_shown, int) and self.max_function_parameters_shown > 0:
-            shown = params[: self.max_function_parameters_shown]
-            if len(params) > self.max_function_parameters_shown:
-                shown.append("...")
-            param_str = ", ".join(shown)
-        else:
-            param_str = ", ".join(params)
+        param_str_full = ", ".join(params)
 
         # Remove 'extern' keyword from return type for UML diagrams
         return_type = func.return_type.replace("extern ", "").strip()
 
-        # Render signature (truncation handled above if enabled)
-        return f"{INDENT}{prefix}{return_type} {func.name}({param_str})"
+        # Build full signature
+        full_signature = f"{INDENT}{prefix}{return_type} {func.name}({param_str_full})"
+        limit = getattr(self, "max_function_signature_chars", 0)
+        if isinstance(limit, int) and limit > 0 and len(full_signature) > limit:
+            # Try to truncate parameters by characters while preserving readability and appending ...
+            head = f"{INDENT}{prefix}{return_type} {func.name}("
+            remaining = limit - len(head) - 1  # -1 for closing paren
+            if remaining <= 0:
+                return head + "...)"
+            # fill with params until remaining would be exceeded
+            out = []
+            consumed = 0
+            for i, p in enumerate(params):
+                add = (", " if i > 0 else "") + p
+                if consumed + len(add) + 3 > remaining:  # +3 for ellipsis when needed
+                    out.append(", ..." if i > 0 else "...")
+                    break
+                out.append(add)
+                consumed += len(add)
+            param_str = "".join(out)
+            return head + param_str + ")"
+        return full_signature
 
     def _format_function_parameters(self, parameters) -> List[str]:
         """Format function parameters into string list."""

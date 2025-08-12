@@ -21,6 +21,11 @@ class TestGeneratorBasicPlantuml(UnifiedTestCase):
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
+    def test_generator_basic_plantuml_truncation(self):
+        result = self.run_test("101_gen_basic_trunc")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
+
 
 if __name__ == "__main__":
     unittest.main()

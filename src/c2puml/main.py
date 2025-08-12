@@ -154,8 +154,7 @@ Usage:
         try:
             generator = Generator()
             # Apply config for signature truncation
-            Generator.enable_signature_param_truncation = getattr(config, "enable_signature_param_truncation", False)
-            Generator.max_function_parameters_shown = getattr(config, "max_function_parameters_shown", 0)
+            Generator.max_function_signature_chars = getattr(config, "max_function_signature_chars", 0)
             # Prefer transformed model, else fallback to model.json
             if os.path.exists(transformed_model_file):
                 model_to_use = transformed_model_file
@@ -202,8 +201,7 @@ Usage:
         # Step 3: Generate
         generator = Generator()
         # Apply config for signature truncation
-        Generator.enable_signature_param_truncation = getattr(config, "enable_signature_param_truncation", False)
-        Generator.max_function_parameters_shown = getattr(config, "max_function_parameters_shown", 0)
+        Generator.max_function_signature_chars = getattr(config, "max_function_signature_chars", 0)
         generator.generate(
             model_file=transformed_model_file,
             output_dir=output_folder,
