@@ -48,3 +48,77 @@
 ## Next Up (more)
 - unit/test_113_gen_inctree_abs.yml: align assertions schema to contains_lines and add syntax_valid
 - Consider adding relationship_count/class_count where stable in integration tests
+
+## Progress tracker (by YAML file)
+- Done:
+  - tests/unit/test_101_gen_basic.yml
+  - tests/unit/test_102_trans_basic.yml
+  - tests/unit/test_103_abs_path_relative.yml
+  - tests/unit/test_103_abs_path_subdir.yml
+  - tests/unit/test_103_abs_path_mixed.yml
+  - tests/unit/test_103_abs_path_consistency.yml
+  - tests/unit/test_103_abs_path_include_tree.yml
+  - tests/unit/test_104_anon_proc.yml
+  - tests/unit/test_105_anon_structs.yml
+  - tests/unit/test_106_config.yml
+  - tests/unit/test_107_debug_fields_anonymous.yml
+  - tests/unit/test_107_debug_fields_struct.yml
+  - tests/unit/test_107_debug_fields_union.yml
+  - tests/unit/test_108_debug_parse_anonymous.yml
+  - tests/unit/test_108_debug_parse_struct.yml
+  - tests/unit/test_108_debug_parse_union.yml
+  - tests/unit/test_109_file_spec_cfg.yml
+  - tests/unit/test_110_gen_comp.yml
+  - tests/unit/test_111_gen_exact_requested.yml
+  - tests/unit/test_111_gen_exact_params.yml
+  - tests/unit/test_112_gen_grouping.yml
+  - tests/unit/test_113_gen_inctree.yml
+  - tests/unit/test_114_preproc.yml
+  - tests/unit/test_115_parser_basics.yml
+  - tests/unit/test_116_struct_order.yml
+  - tests/unit/test_117_tokenizer_comp.yml
+  - tests/unit/test_118_token_keywords.yml
+  - tests/unit/test_119_trans_comp.yml
+  - tests/unit/test_120_typedef_extr.yml
+  - tests/unit/test_120_typedef_extr_edge.yml
+  - tests/unit/test_120_typedef_extr_enums.yml
+  - tests/unit/test_120_typedef_extr_mixed.yml
+  - tests/unit/test_120_typedef_extr_unions.yml
+  - tests/unit/test_121_verifier.yml
+  - tests/unit/test_122_gen_includes.yml
+  - tests/unit/test_123_gen_naming.yml
+  - tests/unit/test_124_gen_newfmt.yml
+  - tests/unit/test_124_gen_newfmt_complex_typedef.yml
+  - tests/unit/test_124_gen_newfmt_visibility_logic.yml
+  - tests/unit/test_125_gen_visibility.yml
+  - tests/unit/test_126_parser_typedefs.yml
+  - tests/unit/test_127_parser_simple_c.yml
+  - tests/unit/test_128_parser_simple_struct.yml
+  - tests/unit/test_129_parser_encoding.yml
+  - tests/unit/test_130_parser_elems.yml
+  - tests/unit/test_131_parser_funcs.yml
+  - tests/unit/test_132_parser_includes.yml
+  - tests/unit/test_133_include_filter.yml
+  - tests/unit/test_134_include_proc_unit.yml
+  - tests/unit/test_135_nested_structs.yml
+  - tests/feature/test_201_cli_modes.yml
+  - tests/feature/test_202_include_proc.yml
+  - tests/feature/test_202_include_proc_basic.yml
+  - tests/feature/test_202_include_proc_error.yml
+  - tests/feature/test_203_comp_features.yml
+  - tests/feature/test_204_errors_invalid_config.yml
+  - tests/feature/test_204_errors_invalid_source.yml
+  - tests/feature/test_204_errors_partial.yml
+  - tests/feature/test_205_multi_src.yml
+  - tests/feature/test_206_trans_features_renaming.yml
+  - tests/feature/test_207_crypto_filter_pattern.yml
+  - tests/feature/test_208_crypto_filter_usecase.yml
+  - tests/feature/test_209_integration_cli.yml
+  - tests/integration/test_301_integration_rel_fmt.yml
+  - tests/integration/test_301_integration_complete.yml
+  - tests/example/test_901_basic_example.yml
+- Pending:
+  - (none)
+
+## Next batch to enhance
+- Consider expanding relationships_exist and class/relationship counts in integration tests when stable
