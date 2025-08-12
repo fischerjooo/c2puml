@@ -65,6 +65,7 @@ assertions:
     max_execution_time: 60.0
   model:
     validate_structure: true
+    project_name: integration_cli_project
     expected_files:
     - main.c
     - config.h
@@ -82,6 +83,8 @@ assertions:
     includes_exist:
     - stdio.h
     - config.h
+    element_counts:
+      files: 2
   puml:
     syntax_valid: true
     files:
@@ -89,10 +92,15 @@ assertions:
         contains_elements:
           - main
           - Person
+        contains_lines:
+          - "- int main()"
+          - MAIN --> HEADER_CONFIG
       config.puml:
         contains_elements:
           - User
           - Color
+        contains_lines:
+          - class "User" as TYPEDEF_USER
   files:
     output_dir_exists: ./output
     files_exist:
