@@ -365,172 +365,196 @@ class Transformer:
         self.logger.debug("Pre-identified typedefs for removal: %s", list(removed_typedef_names))
         return removed_typedef_names
 
-    def _process_include_relations_with_file_specific_settings(
+    def _process_include_relations_simplified(
         self, model: ProjectModel, config: Dict[str, Any]
     ) -> ProjectModel:
-        """Process include relations with support for file-specific include_depth and include_filter"""
+        """
+        Simplified include processing following a structured depth-based approach:
+        1. Each include structure has a single root C file
+        2. Process C file's direct includes through filters first  
+        3. Then recursively process header files' includes with filtering
+        4. Continue until include_depth is reached
+        """
         global_include_depth = config.get("include_depth", 1)
         file_specific_config = config.get("file_specific", {})
         
-        # Clear all include_relations first
-        self._clear_include_relations(model)
-
-        # Process each .c file individually with its specific settings
-        c_files = self._get_c_files(model)
-        for file_model in c_files:
-            self._process_c_file_include_relations(
-                model, file_model, global_include_depth, file_specific_config
-            )
-
-        return model
-
-    def _extract_include_filters_from_config(self, config: Dict[str, Any]) -> Dict[str, List[str]]:
-        """Extract include_filters from file_specific configuration structure"""
-        if "file_specific" not in config:
-            return {}
+        self.logger.info(
+            "Processing includes with simplified depth-based approach (global_depth=%d)", 
+            global_include_depth
+        )
         
-        include_filters = {}
-        for file_name, file_config in config["file_specific"].items():
-            if "include_filter" in file_config:
-                include_filters[file_name] = file_config["include_filter"]
-        return include_filters
-
-    def _clear_include_relations(self, model: ProjectModel) -> None:
-        """Clear all include relations in the model"""
+        # Clear all existing include relations
         for file_model in model.files.values():
             file_model.include_relations = []
-
-    def _get_c_files(self, model: ProjectModel) -> List[FileModel]:
-        """Get all .c files from the model"""
-        return [
-            file_model for file_model in model.files.values()
-            if file_model.name.endswith(".c")
-        ]
-
-    def _process_c_file_include_relations(
-        self, 
-        model: ProjectModel, 
-        file_model: FileModel, 
-        global_include_depth: int,
-        file_specific_config: Dict[str, Any]
-    ) -> None:
-        """Process include relations for a single .c file"""
-        root_filename = Path(file_model.name).name
         
-        # Get file-specific settings
-        include_depth, include_filter_patterns = self._get_file_include_settings(
-            root_filename, file_specific_config, global_include_depth
-        )
-        
-        # Only process if include_depth > 1
-        if include_depth <= 1:
-            return
-            
-        # Compile include filter patterns
-        compiled_filters = self._compile_include_filter_patterns(
-            include_filter_patterns, root_filename, include_depth
-        )
-        
-        # Process this specific file's include relations
-        self._process_single_file_include_relations(
-            model, file_model, include_depth, compiled_filters
-        )
-
-    def _get_file_include_settings(
-        self, 
-        root_filename: str, 
-        file_specific_config: Dict[str, Any], 
-        global_include_depth: int
-    ) -> Tuple[int, List[str]]:
-        """Get include depth and filter patterns for a specific file"""
-        if root_filename in file_specific_config:
-            file_config = file_specific_config[root_filename]
-            include_depth = file_config.get("include_depth", global_include_depth)
-            include_filter_patterns = file_config.get("include_filter", [])
-        else:
-            include_depth = global_include_depth
-            include_filter_patterns = []
-            
-        return include_depth, include_filter_patterns
-
-    def _compile_include_filter_patterns(
-        self, patterns: List[str], root_filename: str, include_depth: int
-    ) -> List[Pattern[str]]:
-        """Compile include filter patterns with error handling"""
-        if not patterns:
-            return []
-            
-        try:
-            compiled_filters = [re.compile(pattern) for pattern in patterns]
-            self.logger.debug(
-                "Using %d include filter patterns for %s with depth %d", 
-                len(compiled_filters), root_filename, include_depth
-            )
-            return compiled_filters
-        except re.error as e:
-            self.logger.warning(
-                "Invalid regex pattern for file %s: %s", root_filename, e
-            )
-            return []
-
-    def _process_single_file_include_relations(
-        self, 
-        model: ProjectModel, 
-        root_file_model: "FileModel",
-        max_depth: int,
-        compiled_filters: List[Any]
-    ) -> None:
-        """Process include relations for a single root file with specific depth and filters"""
-        
-        # Create a mapping of filenames to their models for quick lookup
+        # Create filename to file model mapping for quick lookup
         file_map = {}
         for file_model in model.files.values():
             filename = Path(file_model.name).name
             file_map[filename] = file_model
-
-        # BFS to process includes up to max_depth
-        queue = deque([(root_file_model, 0)])  # (file_model, current_depth)
-        processed = set()
         
-        while queue:
-            current_file, depth = queue.popleft()
+        # Process each C file as a root with its own include structure
+        c_files = [fm for fm in model.files.values() if fm.name.endswith(".c")]
+        
+        for root_file in c_files:
+            self._process_root_c_file_includes(
+                root_file, file_map, global_include_depth, file_specific_config
+            )
             
-            if depth >= max_depth:
-                continue
-                
-            current_filename = Path(current_file.name).name
-            if current_filename in processed:
-                continue
-            processed.add(current_filename)
+        return model
+    
+    def _process_root_c_file_includes(
+        self, 
+        root_file: FileModel, 
+        file_map: Dict[str, FileModel],
+        global_include_depth: int,
+        file_specific_config: Dict[str, Any]
+    ) -> None:
+        """
+        Process includes for a single root C file following the simplified approach:
+        - Start with root C file
+        - Apply filters at each depth level
+        - Process layer by layer until max depth reached
+        """
+        root_filename = Path(root_file.name).name
+        
+        # Get file-specific settings or use global defaults
+        include_depth = global_include_depth
+        include_filters = []
+        
+        if root_filename in file_specific_config:
+            file_config = file_specific_config[root_filename]
+            include_depth = file_config.get("include_depth", global_include_depth)
+            include_filters = file_config.get("include_filter", [])
+        
+        # Skip processing if depth is 1 or less (no include relations needed)
+        if include_depth <= 1:
+            self.logger.debug(
+                "Skipping include processing for %s (depth=%d)", 
+                root_filename, include_depth
+            )
+            return
             
-            # Process includes for this file
-            for include_name in current_file.includes:
-                # Apply include filters if they exist
-                if compiled_filters:
-                    if not any(pattern.search(include_name) for pattern in compiled_filters):
-                        continue
-                
-                # Create include relation
-                relation = IncludeRelation(
-                    source_file=current_filename,
-                    included_file=include_name,
-                    depth=depth + 1
+        # Compile filter patterns
+        compiled_filters = []
+        if include_filters:
+            try:
+                compiled_filters = [re.compile(pattern) for pattern in include_filters]
+                self.logger.debug(
+                    "Compiled %d filter patterns for %s", 
+                    len(compiled_filters), root_filename
                 )
+            except re.error as e:
+                self.logger.warning(
+                    "Invalid regex pattern for %s: %s", root_filename, e
+                )
+        
+        self.logger.debug(
+            "Processing includes for root C file %s (depth=%d, filters=%d)",
+            root_filename, include_depth, len(compiled_filters)
+        )
+        
+        # Track processed files to avoid cycles
+        processed_files = set()
+        
+        # Process includes level by level using BFS approach
+        current_level = [root_file]  # Start with the root C file
+        
+        for depth in range(1, include_depth + 1):
+            next_level = []
+            
+            self.logger.debug(
+                "Processing depth %d for %s (%d files at current level)",
+                depth, root_filename, len(current_level)
+            )
+            
+            for current_file in current_level:
+                current_filename = Path(current_file.name).name
                 
-                # Add to the root file's include_relations
-                root_file_model.include_relations.append(relation)
+                # Skip if already processed to avoid cycles
+                if current_filename in processed_files:
+                    continue
+                processed_files.add(current_filename)
                 
-                # Continue processing if we haven't reached max depth and the included file exists
-                if depth + 1 < max_depth and include_name in file_map:
-                    queue.append((file_map[include_name], depth + 1))
+                # Process each include in the current file
+                for include_name in current_file.includes:
+                    # Apply include filters at all depths (not just depth 1)
+                    if compiled_filters:
+                        if not any(pattern.search(include_name) for pattern in compiled_filters):
+                            self.logger.debug(
+                                "Filtered out include %s at depth %d for %s",
+                                include_name, depth, root_filename
+                            )
+                            continue
+                    
+                    # Check if included file exists in our project
+                    if include_name not in file_map:
+                        self.logger.debug(
+                            "Include %s not found in project files (depth %d, root %s)",
+                            include_name, depth, root_filename
+                        )
+                        continue
+                    
+                    # Prevent self-references
+                    if include_name == current_filename:
+                        self.logger.debug(
+                            "Skipping self-reference %s at depth %d for %s",
+                            include_name, depth, root_filename
+                        )
+                        continue
+                    
+                    # Check for duplicate relations to prevent cycles
+                    existing_relation = any(
+                        rel.source_file == current_filename and rel.included_file == include_name
+                        for rel in root_file.include_relations
+                    )
+                    
+                    if existing_relation:
+                        self.logger.debug(
+                            "Skipping duplicate relation %s -> %s for %s",
+                            current_filename, include_name, root_filename
+                        )
+                        continue
+                    
+                    # Prevent processing files that would create cycles (already processed)
+                    if include_name in processed_files:
+                        self.logger.debug(
+                            "Skipping already processed file %s to prevent cycle for %s",
+                            include_name, root_filename
+                        )
+                        continue
+                    
+                    # Create and add the include relation to the root C file
+                    relation = IncludeRelation(
+                        source_file=current_filename,
+                        included_file=include_name,
+                        depth=depth
+                    )
+                    root_file.include_relations.append(relation)
+                    
+                    self.logger.debug(
+                        "Added include relation %s -> %s (depth %d) for root %s",
+                        current_filename, include_name, depth, root_filename
+                    )
+                    
+                    # Add included file to next level if it exists in our project
+                    next_level.append(file_map[include_name])
+            
+            # Move to the next level
+            current_level = next_level
+        
+        # Apply comprehensive filtering to the root file's relations if filters exist
+        if compiled_filters:
+            self._filter_include_relations(root_file, compiled_filters, root_filename)
 
     def _apply_file_filters(
         self, model: ProjectModel, filters: Dict[str, Any]
     ) -> ProjectModel:
         """Apply user-configured file-level filters (important filtering already
         done in parser)"""
-        include_patterns = self._compile_patterns(filters.get("include", []))
-        exclude_patterns = self._compile_patterns(filters.get("exclude", []))
+        # Support both legacy keys (include_patterns/exclude_patterns) and new keys (include/exclude)
+        include_patterns = self._compile_patterns(filters.get("include", filters.get("include_patterns", [])))
+        exclude_patterns = self._compile_patterns(filters.get("exclude", filters.get("exclude_patterns", [])))
 
         if not include_patterns and not exclude_patterns:
             return model
@@ -572,174 +596,6 @@ class Transformer:
             if any(pattern.search(file_path) for pattern in exclude_patterns):
                 return False
         return True
-
-
-
-    def _apply_include_filters(
-        self, model: ProjectModel, include_filters: Dict[str, List[str]]
-    ) -> ProjectModel:
-        """Apply include filters for each root file based on regex patterns
-        
-        Args:
-            model: The project model to apply filters to
-            include_filters: Dictionary mapping root files to their include filter patterns
-        """
-        self.logger.info(
-            "Applying include filters for %d root files", len(include_filters)
-        )
-
-        # Compile regex patterns for each root file
-        compiled_filters = {}
-        for root_file, patterns in include_filters.items():
-            try:
-                compiled_filters[root_file] = [
-                    re.compile(pattern) for pattern in patterns
-                ]
-                self.logger.debug(
-                    "Compiled %d patterns for root file: %s", len(patterns), root_file
-                )
-            except re.error as e:
-                self.logger.warning(
-                    "Invalid regex pattern for root file %s: %s", root_file, e
-                )
-                # Skip invalid patterns for this root file
-                continue
-
-        if not compiled_filters:
-            self.logger.warning(
-                "No valid include filters found, skipping include filtering"
-            )
-            return model
-
-        # Create a mapping from header files to their root C files
-        header_to_root = self._create_header_to_root_mapping(model)
-
-        # Apply filters to each file in the model
-        for file_path, file_model in model.files.items():
-            # Find the root file for this file
-            root_file = self._find_root_file_with_mapping(
-                file_path, file_model, header_to_root
-            )
-
-            if root_file in compiled_filters:
-                # Apply filtering (preserve includes arrays, filter include_relations)
-                self._filter_include_relations(
-                    file_model, compiled_filters[root_file], root_file
-                )
-
-        return model
-
-    def _create_header_to_root_mapping(self, model: ProjectModel) -> Dict[str, str]:
-        """Create a mapping from header files to their root C files"""
-        header_to_root = {}
-
-        # First, map C files to themselves
-        c_files = []
-        for file_path, file_model in model.files.items():
-            if file_model.name.endswith(".c"):
-                header_to_root[file_model.name] = file_model.name
-                c_files.append(file_model.name)
-
-        # Then, map header files to their corresponding C files
-        for file_path, file_model in model.files.items():
-            if not file_model.name.endswith(".c"):  # It's a header file
-                # Strategy 1: Look for a C file with the same base name
-                header_base_name = Path(file_model.name).stem
-                matching_c_file = header_base_name + ".c"
-                
-                if matching_c_file in [Path(c_file).name for c_file in c_files]:
-                    header_to_root[file_model.name] = matching_c_file
-                else:
-                    # Strategy 2: Find which C file includes this header
-                    including_c_files = []
-                    for c_file_path, c_file_model in model.files.items():
-                        if (c_file_model.name.endswith(".c") and 
-                            file_model.name in c_file_model.includes):
-                            including_c_files.append(c_file_model.name)
-                    
-                    if including_c_files:
-                        # Use the first C file that includes this header
-                        header_to_root[file_model.name] = including_c_files[0]
-                    else:
-                        # Strategy 3: Fallback to first available C file
-                        if c_files:
-                            header_to_root[file_model.name] = c_files[0]
-
-        return header_to_root
-
-    def _find_root_file_with_mapping(
-        self, file_path: str, file_model: FileModel, header_to_root: Dict[str, str]
-    ) -> str:
-        """Find the root C file for a given file using the header mapping"""
-        if file_model.name.endswith(".c"):
-            return file_model.name
-
-        # For header files, use the mapping
-        return header_to_root.get(file_model.name, file_model.name)
-
-    def _find_root_file(self, file_path: str, file_model: FileModel) -> str:
-        """Find the root C file for a given file"""
-        filename = Path(file_path).name
-
-        # If it's a .c file, it's its own root
-        if filename.endswith(".c"):
-            return filename
-
-        # For header files, find the corresponding .c file
-        base_name = Path(file_path).stem
-
-        # Look for a .c file with the same base name
-        if base_name and not filename.startswith("."):
-            return base_name + ".c"
-
-        # Fallback: use the filename as root (original behavior)
-        return filename
-
-    def _filter_include_relations(
-        self, file_model: FileModel, patterns: List[re.Pattern], root_file: str
-    ) -> None:
-        """Filter include_relations based on patterns while preserving includes arrays."""
-        self.logger.debug(
-            "Filtering include_relations for file %s (root: %s)", file_model.name, root_file
-        )
-
-        original_relations_count = len(file_model.include_relations)
-        filtered_relations: List[IncludeRelation] = []
-
-        for relation in file_model.include_relations:
-            if self._matches_any_pattern(relation.included_file, patterns):
-                filtered_relations.append(relation)
-            else:
-                self.logger.debug(
-                    "Filtered out include relation: %s -> %s (root: %s)",
-                    relation.source_file,
-                    relation.included_file,
-                    root_file,
-                )
-
-        file_model.include_relations = filtered_relations
-
-        self.logger.debug(
-            "Include filtering for %s: relations %d->%d (includes preserved: %d)",
-            file_model.name,
-            original_relations_count,
-            len(file_model.include_relations),
-            len(file_model.includes),
-        )
-
-    def _matches_any_pattern(self, text: str, patterns: List[Pattern[str]]) -> bool:
-        """Check if text matches any of the given regex patterns"""
-        return any(pattern.search(text) for pattern in patterns)
-
-    def _matches_pattern(self, file_path: str, pattern: str) -> bool:
-        """Check if a file path matches a regex pattern with error handling"""
-        try:
-            return bool(re.search(pattern, file_path))
-        except re.error as e:
-            self.logger.warning("Invalid regex pattern '%s': %s", pattern, e)
-            return False
-
-
 
 
 
@@ -1704,188 +1560,6 @@ class Transformer:
         file_model.unions = self._remove_dict_elements(
             file_model.unions, patterns, "union", file_model.name
         )
-
-    def _process_include_relations_simplified(
-        self, model: ProjectModel, config: Dict[str, Any]
-    ) -> ProjectModel:
-        """
-        Simplified include processing following a structured depth-based approach:
-        1. Each include structure has a single root C file
-        2. Process C file's direct includes through filters first  
-        3. Then recursively process header files' includes with filtering
-        4. Continue until include_depth is reached
-        """
-        global_include_depth = config.get("include_depth", 1)
-        file_specific_config = config.get("file_specific", {})
-        
-        self.logger.info(
-            "Processing includes with simplified depth-based approach (global_depth=%d)", 
-            global_include_depth
-        )
-        
-        # Clear all existing include relations
-        for file_model in model.files.values():
-            file_model.include_relations = []
-        
-        # Create filename to file model mapping for quick lookup
-        file_map = {}
-        for file_model in model.files.values():
-            filename = Path(file_model.name).name
-            file_map[filename] = file_model
-        
-        # Process each C file as a root with its own include structure
-        c_files = [fm for fm in model.files.values() if fm.name.endswith(".c")]
-        
-        for root_file in c_files:
-            self._process_root_c_file_includes(
-                root_file, file_map, global_include_depth, file_specific_config
-            )
-            
-        return model
-    
-    def _process_root_c_file_includes(
-        self, 
-        root_file: FileModel, 
-        file_map: Dict[str, FileModel],
-        global_include_depth: int,
-        file_specific_config: Dict[str, Any]
-    ) -> None:
-        """
-        Process includes for a single root C file following the simplified approach:
-        - Start with root C file
-        - Apply filters at each depth level
-        - Process layer by layer until max depth reached
-        """
-        root_filename = Path(root_file.name).name
-        
-        # Get file-specific settings or use global defaults
-        include_depth = global_include_depth
-        include_filters = []
-        
-        if root_filename in file_specific_config:
-            file_config = file_specific_config[root_filename]
-            include_depth = file_config.get("include_depth", global_include_depth)
-            include_filters = file_config.get("include_filter", [])
-        
-        # Skip processing if depth is 1 or less (no include relations needed)
-        if include_depth <= 1:
-            self.logger.debug(
-                "Skipping include processing for %s (depth=%d)", 
-                root_filename, include_depth
-            )
-            return
-            
-        # Compile filter patterns
-        compiled_filters = []
-        if include_filters:
-            try:
-                compiled_filters = [re.compile(pattern) for pattern in include_filters]
-                self.logger.debug(
-                    "Compiled %d filter patterns for %s", 
-                    len(compiled_filters), root_filename
-                )
-            except re.error as e:
-                self.logger.warning(
-                    "Invalid regex pattern for %s: %s", root_filename, e
-                )
-        
-        self.logger.debug(
-            "Processing includes for root C file %s (depth=%d, filters=%d)",
-            root_filename, include_depth, len(compiled_filters)
-        )
-        
-        # Track processed files to avoid cycles
-        processed_files = set()
-        
-        # Process includes level by level using BFS approach
-        current_level = [root_file]  # Start with the root C file
-        
-        for depth in range(1, include_depth + 1):
-            next_level = []
-            
-            self.logger.debug(
-                "Processing depth %d for %s (%d files at current level)",
-                depth, root_filename, len(current_level)
-            )
-            
-            for current_file in current_level:
-                current_filename = Path(current_file.name).name
-                
-                # Skip if already processed to avoid cycles
-                if current_filename in processed_files:
-                    continue
-                processed_files.add(current_filename)
-                
-                # Process each include in the current file
-                for include_name in current_file.includes:
-                    # Apply include filters at all depths (not just depth 1)
-                    if compiled_filters:
-                        if not any(pattern.search(include_name) for pattern in compiled_filters):
-                            self.logger.debug(
-                                "Filtered out include %s at depth %d for %s",
-                                include_name, depth, root_filename
-                            )
-                            continue
-                    
-                    # Check if included file exists in our project
-                    if include_name not in file_map:
-                        self.logger.debug(
-                            "Include %s not found in project files (depth %d, root %s)",
-                            include_name, depth, root_filename
-                        )
-                        continue
-                    
-                    # Prevent self-references
-                    if include_name == current_filename:
-                        self.logger.debug(
-                            "Skipping self-reference %s at depth %d for %s",
-                            include_name, depth, root_filename
-                        )
-                        continue
-                    
-                    # Check for duplicate relations to prevent cycles
-                    existing_relation = any(
-                        rel.source_file == current_filename and rel.included_file == include_name
-                        for rel in root_file.include_relations
-                    )
-                    
-                    if existing_relation:
-                        self.logger.debug(
-                            "Skipping duplicate relation %s -> %s for %s",
-                            current_filename, include_name, root_filename
-                        )
-                        continue
-                    
-                    # Prevent processing files that would create cycles (already processed)
-                    if include_name in processed_files:
-                        self.logger.debug(
-                            "Skipping already processed file %s to prevent cycle for %s",
-                            include_name, root_filename
-                        )
-                        continue
-                    
-                    # Create and add the include relation to the root C file
-                    relation = IncludeRelation(
-                        source_file=current_filename,
-                        included_file=include_name,
-                        depth=depth
-                    )
-                    root_file.include_relations.append(relation)
-                    
-                    self.logger.debug(
-                        "Added include relation %s -> %s (depth %d) for root %s",
-                        current_filename, include_name, depth, root_filename
-                    )
-                    
-                    # Add included file to next level if it exists in our project
-                    next_level.append(file_map[include_name])
-            
-            # Move to the next level
-            current_level = next_level
-        
-        # Apply comprehensive filtering to the root file's relations if filters exist
-        if compiled_filters:
-            self._filter_include_relations(root_file, compiled_filters, root_filename)
 
     def _save_model(self, model: ProjectModel, output_file: str) -> None:
         """Save model to JSON file using ProjectModel.save"""
