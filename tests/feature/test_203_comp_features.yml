@@ -44,6 +44,7 @@ assertions:
     max_execution_time: 30.0
   model:
     validate_structure: true
+    project_name: component_features
     expected_files:
       - main.c
       - api.h
@@ -69,3 +70,4 @@ assertions:
     output_dir_exists: ./output
     files_exist:
       - ./output/model.json
+      - ./output/model_transformed.json
