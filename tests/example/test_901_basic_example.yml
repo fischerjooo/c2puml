@@ -61,6 +61,8 @@ assertions:
         - LOG_INFO
         - LOG_WARN
         - LOG_ERROR
+    element_counts:
+      files: 30
   puml:
     syntax_valid: true
     file_count: 12
@@ -85,6 +87,10 @@ assertions:
         - create_point
         - process_point
         - point_t
+        contains_lines:
+        - 'SAMPLE --> HEADER_GEOMETRY : <<include>>'
+        - 'SAMPLE --> HEADER_LOGGER : <<include>>'
+        - '+ int calculate_sum('
         not_contains_elements:
         - filtered_struct_t
         - filtered_function1
@@ -92,11 +98,17 @@ assertions:
       sample2.puml:
         contains_elements:
         - filtered_struct_t
+        contains_lines:
+        - 'SAMPLE2 --> HEADER_FILTERED_HEADER : <<include>>'
+        - 'HEADER_FILTERED_HEADER ..> TYPEDEF_FILTERED_STRUCT_T : <<declares>>'
       geometry.puml:
         contains_elements:
         - create_triangle
         - triangle_area
         - triangle_t
+        contains_lines:
+        - 'GEOMETRY --> HEADER_GEOMETRY : <<include>>'
+        - '+ int triangle_area('
       logger.puml:
         contains_elements:
         - log_message
@@ -104,17 +116,52 @@ assertions:
         - log_level_t
         contains_lines:
         - 'class "log_level_t" as TYPEDEF_LOG_LEVEL_T'
+        - 'LOGGER --> HEADER_LOGGER : <<include>>'
+      math_utils.puml:
+        contains_elements:
+        - add
+        contains_lines:
+        - 'MATH_UTILS --> HEADER_MATH_UTILS : <<include>>'
+        - 'HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>'
+        - '+ int add('
       transformed.puml:
         contains_elements:
         - keep_this_function
         - main
         - point3d_t
         - status_t
+        contains_lines:
+        - 'TRANSFORMED --> HEADER_TRANSFORMED : <<include>>'
         not_contains_elements:
         - test_function_one
         - test_function_two
         - legacy_node
         - old_config
+      typedef_test.puml:
+        contains_lines:
+        - 'TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>'
+        - 'HEADER_TYPEDEF_TEST ..> TYPEDEF_MYBUFFER : <<declares>>'
+      application.puml:
+        contains_lines:
+        - 'APPLICATION --> HEADER_DATABASE : <<include>>'
+        - 'HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>'
+      database.puml:
+        contains_lines:
+        - 'DATABASE --> HEADER_DATABASE : <<include>>'
+        - 'HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>'
+      network.puml:
+        contains_lines:
+        - 'NETWORK --> HEADER_NETWORK : <<include>>'
+        - 'HEADER_NETWORK --> HEADER_COMMON : <<include>>'
+      preprocessed.puml:
+        contains_lines:
+        - 'PREPROCESSED --> HEADER_PREPROCESSED : <<include>>'
+        - '+ int main('
+      complex.puml:
+        contains_lines:
+        - 'COMPLEX --> HEADER_COMPLEX : <<include>>'
+        - '+ void test_processor_utility_macros()'
+        - 'HEADER_COMPLEX ..> TYPEDEF_COMPLEX_HANDLER_T : <<declares>>'
   files:
     output_dir_exists: ./artifacts/output_example
     files_exist:
@@ -130,12 +177,23 @@ assertions:
     - ./artifacts/output_example/complex.puml
     - ./artifacts/output_example/network.puml
     - ./artifacts/output_example/preprocessed.puml
+    - ./artifacts/output_example/math_utils.puml
+    - ./artifacts/output_example/model_transformed.json
     json_files_valid:
     - ./artifacts/output_example/model.json
+    - ./artifacts/output_example/model_transformed.json
     utf8_files:
     - ./artifacts/output_example/sample.puml
+    - ./artifacts/output_example/sample2.puml
     - ./artifacts/output_example/geometry.puml
     - ./artifacts/output_example/logger.puml
     - ./artifacts/output_example/transformed.puml
+    - ./artifacts/output_example/application.puml
+    - ./artifacts/output_example/database.puml
+    - ./artifacts/output_example/typedef_test.puml
+    - ./artifacts/output_example/complex.puml
+    - ./artifacts/output_example/network.puml
+    - ./artifacts/output_example/preprocessed.puml
+    - ./artifacts/output_example/math_utils.puml
     files_not_exist:
     - ./artifacts/output_example/debug.puml
