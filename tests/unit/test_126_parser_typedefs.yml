@@ -90,12 +90,25 @@ assertions:
         - String
         - Callback
         - Point
+        contains_lines:
+        - class "Point" as TYPEDEF_POINT
       point_typedef.puml:
         contains_elements:
         - point_t
+        contains_lines:
+        - class "point_t" as TYPEDEF_POINT_T
       status.puml:
         contains_elements:
         - Status
+        contains_lines:
+        - class "Status" as TYPEDEF_STATUS
       color.puml:
         contains_elements:
         - Color
+        contains_lines:
+        - class "Color" as TYPEDEF_COLOR
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

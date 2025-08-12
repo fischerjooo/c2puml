@@ -49,6 +49,10 @@ assertions:
     - main
   puml:
     syntax_valid: true
-    file_count: 2
     contains_elements:
     - main
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

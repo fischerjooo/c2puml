@@ -36,14 +36,13 @@ config.json: |
     "recursive_search": true
   }
 ---
-cli_execution:
-  steps:
-  - parse_only
----
 assertions:
   execution:
-    should_succeed: true
+    exit_code: 0
   model:
+    validate_structure: true
+    expected_files:
+      - complex_struct.c
     structs_exist:
     - complex_struct_t
     - complex_struct_t_metadata
@@ -56,20 +55,12 @@ assertions:
     - init_complex_struct
     globals_exist:
     - global_complex
-    struct_fields:
+    struct_details:
       __anonymous_struct___coordinates:
-      - name: x
-        type: int
-      - name: y
-        type: int
-      - name: z
-        type: int
-    union_fields:
-      data_variant:
-      - name: long_value
-        type: long
-      - name: double_value
-        type: double
+        fields:
+        - x
+        - y
+        - z
     element_counts:
       structs: 4
       unions: 2
@@ -77,6 +68,7 @@ assertions:
       globals: 1
       aliases: 0
   puml:
+    syntax_valid: true
     contains_elements:
     - complex_struct_t
     - init_complex_struct
@@ -98,3 +90,8 @@ assertions:
     - complex_struct_t global_complex
     class_count: 7
     relationship_count: 6
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

@@ -12,13 +12,13 @@ source_files:
 
     // Main processor functions
     void process_data() {
-        api_function();
-        worker_function();
+      api_function();
+      worker_function();
     }
 
     int main() {
-        process_data();
-        return 0;
+      process_data();
+      return 0;
     }
   api.h: |
     #ifndef API_H
@@ -63,7 +63,7 @@ source_files:
 
     typedef int ProcessorID;
     typedef struct {
-        int x, y;
+      int x, y;
     } Point;
 
     #endif
@@ -95,9 +95,9 @@ source_files:
     #define ERRORS_H
 
     enum ErrorCode {
-        ERROR_NONE,
-        ERROR_INVALID,
-        ERROR_MEMORY
+      ERROR_NONE,
+      ERROR_INVALID,
+      ERROR_MEMORY
     };
 
     #endif
@@ -211,3 +211,15 @@ assertions:
         - PROCESSOR --> HEADER_WORKER
         - void process_data()
         - int main()
+        not_contains_elements:
+        - private_worker
+        - memory
+        - validation
+        - errors
+        - constants
+        - internal
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

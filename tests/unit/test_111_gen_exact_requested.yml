@@ -103,17 +103,19 @@ assertions:
   execution:
     exit_code: 0
   puml:
-    example.c.puml:
-      contains:
-      - + void Init()
-      - + int Calculate()
-      - + void Shutdown()
-      - '- void HelperFunction()'
-      - '- static int InternalComputation()'
-      - -- Functions --
-      regex_matches:
-      - pattern: \+[^\-]*\n\s*\n[^\+]*\-
-        description: Empty line between public and private function groups
-      regex_not_matches:
-      - pattern: \-[^\n]*\n[^\n]*\+
-        description: Should not have private function followed by public function
+    syntax_valid: true
+    files:
+      example.c.puml:
+        contains_lines:
+        - '+ void Init()'
+        - '+ int Calculate()'
+        - '+ void Shutdown()'
+        - "- void HelperFunction()"
+        - "- static int InternalComputation()"
+        - '-- Functions --'
+        regex_matches:
+        - pattern: \+[^\-]*\n\s*\n[^\+]*\-
+          description: Empty line between public and private function groups
+        regex_not_matches:
+        - pattern: \-[^\n]*\n[^\n]*\+
+          description: Should not have private function followed by public function

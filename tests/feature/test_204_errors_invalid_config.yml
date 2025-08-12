@@ -1,6 +1,6 @@
 test:
   name: Error Handling - Invalid Configuration
-  description: Test CLI error handling for various invalid configuration scenarios
+  description: Test CLI error handling for invalid configuration (no source folders)
   category: feature
   id: '204'
 ---

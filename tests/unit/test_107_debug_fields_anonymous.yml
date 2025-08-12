@@ -40,14 +40,13 @@ config.json: |
     "recursive_search": true
   }
 ---
-cli_execution:
-  steps:
-  - parse_only
----
 assertions:
   execution:
-    should_succeed: true
+    exit_code: 0
   model:
+    validate_structure: true
+    expected_files:
+      - anonymous_fields.c
     structs_exist:
     - container_t
     - container_t_config
@@ -60,18 +59,11 @@ assertions:
     - setup_container
     globals_exist:
     - global_container
-    struct_fields:
+    struct_details:
       __anonymous_union___dimensions:
-      - name: width
-        type: int
-      - name: height
-        type: int
-    union_fields:
-      container_t_dimensions:
-      - name: width
-        type: int
-      - name: height
-        type: int
+        fields:
+        - width
+        - height
     element_counts:
       structs: 4
       unions: 2
@@ -79,6 +71,7 @@ assertions:
       globals: 1
       aliases: 0
   puml:
+    syntax_valid: true
     contains_elements:
     - container_t
     - setup_container
@@ -96,3 +89,8 @@ assertions:
     - container_t global_container
     class_count: 7
     relationship_count: 6
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

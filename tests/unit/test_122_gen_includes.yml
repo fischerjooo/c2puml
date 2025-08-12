@@ -178,3 +178,11 @@ assertions:
         - PROCESSOR --> HEADER_WORKER
         - void process_data()
         - int app_main()
+        relationships_exist:
+        - { source: PROCESSOR, target: HEADER_API, type: "-->" }
+        - { source: PROCESSOR, target: HEADER_WORKER, type: "-->" }
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

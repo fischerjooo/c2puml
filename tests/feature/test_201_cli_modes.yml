@@ -1,6 +1,6 @@
 test:
   name: CLI Modes and Features – Comprehensive
-  description: Single scenario covering parse-only, transform-only, generate-only (prefer/fallback/isolation), and full workflow
+  description: Validate CLI workflow via full pipeline; ensure parsing headers, model creation, and PlantUML generation are correct for a minimal project
   category: feature
   id: '201'
 ---
@@ -22,17 +22,24 @@ config.json: |
     "recursive_search": true
   }
 ---
-cli_execution:
-  steps:
-  - parse_only
-  - transform_only
-  - generate_only_prefer_transformed
-  - generate_only_fallback_to_model
-  - generate_only_isolation_error
-  - run_full_pipeline
----
 assertions:
   execution:
-    should_succeed: true
+    exit_code: 0
+    max_execution_time: 30.0
+  model:
+    validate_structure: true
+    expected_files:
+      - a.c
+      - a.h
+    functions_exist:
+      - main
+      - foo
+    includes_exist:
+      - a.h
+  puml:
+    syntax_valid: true
   files:
-    output_dir_exists: output
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

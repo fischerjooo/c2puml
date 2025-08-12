@@ -33,17 +33,36 @@ assertions:
     exit_code: 0
   puml:
     syntax_valid: true
-    contains:
-    - + int calculate
-    - '- void internal_helper'
-    - + int global_config
-    - '- static int internal_state'
-    - '- int function_one'
-    - '- void function_two'
-    - '- int global_one'
-    - '- char* global_two'
-    not_contains:
-    - '- int calculate'
-    - + void internal_helper
-    - '- int global_config'
-    - + static int internal_state
+    contains_elements:
+    - '+ int calculate'
+    - "- void internal_helper"
+    - '+ int global_config'
+    - "- static int internal_state"
+    - "- int function_one"
+    - "- void function_two"
+    - "- int global_one"
+    - "- char* global_two"
+    not_contains_elements:
+    - "- int calculate"
+    - '+ void internal_helper'
+    - "- int global_config"
+    - '+ static int internal_state'
+    files:
+      math.puml:
+        contains_lines:
+          - '+ int calculate'
+      utils.puml:
+        contains_lines:
+          - "- void internal_helper"
+      config.puml:
+        contains_lines:
+          - '+ int global_config'
+      internal.puml:
+        contains_lines:
+          - "- static int internal_state"
+      standalone.puml:
+        contains_lines:
+          - "- int function_one"
+          - "- void function_two"
+          - "- int global_one"
+          - "- char* global_two"

@@ -75,13 +75,14 @@ assertions:
   execution:
     exit_code: 0
   puml:
-    main.c.puml:
-      contains:
-        - "main.c"
-        - "utils.h" 
-        - "main("
-        - "utility_function"
-        # Test that include relationships are represented in the PlantUML
-      regex_matches:
-        - pattern: "main\\.c.*utils\\.h"
-          description: "Include relationship from main.c to utils.h should be present"
+    syntax_valid: true
+    files:
+      main.c.puml:
+        contains_lines:
+          - "main.c"
+          - "utils.h"
+          - "main("
+          - "utility_function"
+        regex_matches:
+          - pattern: 'main\.c.*utils\.h'
+            description: 'Include relationship from main.c to utils.h should be present'
