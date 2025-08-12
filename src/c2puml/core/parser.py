@@ -125,6 +125,11 @@ class CParser:
                 file_model = self.parse_file(file_path, relative_path)
 
                 # Use filename as key (filenames are guaranteed to be unique)
+                if file_model.name in files:
+                    raise RuntimeError(
+                        f"Duplicate filename detected: '{file_model.name}' from '{file_path}'. "
+                        f"Already seen from '{files[file_model.name].file_path}'."
+                    )
                 files[file_model.name] = file_model
 
                 self.logger.debug("Successfully parsed: %s", relative_path)

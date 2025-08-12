@@ -98,11 +98,29 @@ class Generator:
         include_tree = self._build_include_tree(
             file_model, project_model
         )
+        # Precompute header-declared names for visibility
+        header_function_decl_names: set[str] = set()
+        header_global_names: set[str] = set()
+        for filename, fm in project_model.files.items():
+            if filename.endswith(".h"):
+                for f in fm.functions:
+                    if f.is_declaration:
+                        header_function_decl_names.add(f.name)
+                for g in fm.globals:
+                    header_global_names.add(g.name)
+
         uml_ids = self._generate_uml_ids(include_tree, project_model)
 
         lines = [f"@startuml {basename}", ""]
 
-        self._generate_all_file_classes(lines, include_tree, uml_ids, project_model)
+        self._generate_all_file_classes(
+            lines,
+            include_tree,
+            uml_ids,
+            project_model,
+            header_function_decl_names,
+            header_global_names,
+        )
         self._generate_relationships(lines, include_tree, uml_ids, project_model)
 
         lines.extend(["", "@enduml"])
@@ -114,13 +132,29 @@ class Generator:
         include_tree: Dict[str, FileModel],
         uml_ids: Dict[str, str],
         project_model: ProjectModel,
+        header_function_decl_names: set[str],
+        header_global_names: set[str],
     ):
         """Generate all file classes (C files, headers, and typedefs)"""
         self._generate_file_classes_by_extension(
-            lines, include_tree, uml_ids, project_model, ".c", self._generate_c_file_class
+            lines,
+            include_tree,
+            uml_ids,
+            project_model,
+            header_function_decl_names,
+            header_global_names,
+            ".c",
+            self._generate_c_file_class,
         )
         self._generate_file_classes_by_extension(
-            lines, include_tree, uml_ids, project_model, ".h", self._generate_header_class
+            lines,
+            include_tree,
+            uml_ids,
+            project_model,
+            header_function_decl_names,
+            header_global_names,
+            ".h",
+            self._generate_header_class,
         )
         self._generate_typedef_classes_for_all_files(lines, include_tree, uml_ids)
 
@@ -130,13 +164,22 @@ class Generator:
         include_tree: Dict[str, FileModel],
         uml_ids: Dict[str, str],
         project_model: ProjectModel,
+        header_function_decl_names: set[str],
+        header_global_names: set[str],
         extension: str,
         generator_method,
     ):
         """Generate file classes for files with specific extension"""
         for file_path, file_data in sorted(include_tree.items()):
             if file_path.endswith(extension):
-                generator_method(lines, file_data, uml_ids, project_model)
+                generator_method(
+                    lines,
+                    file_data,
+                    uml_ids,
+                    project_model,
+                    header_function_decl_names,
+                    header_global_names,
+                )
 
     def _generate_typedef_classes_for_all_files(
         self,
@@ -336,14 +379,21 @@ class Generator:
                     lines.append(self._format_function_signature(func, prefix))
 
     def _generate_c_file_class(
-        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str], project_model: ProjectModel
+        self,
+        lines: List[str],
+        file_model: FileModel,
+        uml_ids: Dict[str, str],
+        project_model: ProjectModel,
+        header_function_decl_names: set[str],
+        header_global_names: set[str],
     ):
         """Generate class for C file using unified method with dynamic visibility"""
         self._generate_file_class_unified(
             lines=lines,
             file_model=file_model,
             uml_ids=uml_ids,
-            project_model=project_model,
+            header_function_decl_names=header_function_decl_names,
+            header_global_names=header_global_names,
             class_type="source",
             color=COLOR_SOURCE,
             macro_prefix="- ",
@@ -352,14 +402,21 @@ class Generator:
         )
 
     def _generate_header_class(
-        self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str], project_model: ProjectModel
+        self,
+        lines: List[str],
+        file_model: FileModel,
+        uml_ids: Dict[str, str],
+        project_model: ProjectModel,
+        header_function_decl_names: set[str],
+        header_global_names: set[str],
     ):
         """Generate class for header file using unified method with static '+' visibility"""
         self._generate_file_class_unified(
             lines=lines,
             file_model=file_model,
             uml_ids=uml_ids,
-            project_model=None,
+            header_function_decl_names=header_function_decl_names,
+            header_global_names=header_global_names,
             class_type="header",
             color=COLOR_HEADER,
             macro_prefix="+ ",
@@ -372,7 +429,8 @@ class Generator:
         lines: List[str],
         file_model: FileModel,
         uml_ids: Dict[str, str],
-        project_model: ProjectModel | None,
+        header_function_decl_names: set[str],
+        header_global_names: set[str],
         class_type: str,
         color: str,
         macro_prefix: str,
@@ -392,12 +450,12 @@ class Generator:
 
         self._add_macros_section(lines, file_model, macro_prefix)
         if use_dynamic_visibility:
-            # project_model is required when dynamic visibility is enabled
-            if project_model is None:
-                return
-            self._add_globals_section_with_visibility(lines, file_model, project_model)
+            # Use precomputed header visibility sets
+            self._add_globals_section_with_visibility(
+                lines, file_model, header_global_names
+            )
             self._add_functions_section_with_visibility(
-                lines, file_model, project_model, is_declaration_only
+                lines, file_model, header_function_decl_names, is_declaration_only
             )
         else:
             # Static '+' visibility for headers
@@ -410,7 +468,7 @@ class Generator:
         lines.append("")
 
     def _add_globals_section_with_visibility(
-        self, lines: List[str], file_model: FileModel, project_model: ProjectModel
+        self, lines: List[str], file_model: FileModel, header_global_names: set[str]
     ):
         """Add global variables section with visibility based on header presence, grouped by visibility"""
         if file_model.globals:
@@ -421,7 +479,7 @@ class Generator:
             private_globals = []
             
             for global_var in sorted(file_model.globals, key=lambda x: x.name):
-                prefix = self._get_visibility_prefix_for_global(global_var, project_model)
+                prefix = "+ " if global_var.name in header_global_names else "- "
                 formatted_global = self._format_global_variable(global_var, prefix)
                 
                 if prefix == "+ ":
@@ -445,7 +503,7 @@ class Generator:
         self,
         lines: List[str],
         file_model: FileModel,
-        project_model: ProjectModel,
+        header_function_decl_names: set[str],
         is_declaration_only: bool = False,
     ):
         """Add functions section with visibility based on header presence, grouped by visibility"""
@@ -462,7 +520,7 @@ class Generator:
                     formatted_function = self._format_function_signature(func, prefix)
                     public_functions.append(formatted_function)
                 elif not is_declaration_only and not func.is_declaration:
-                    prefix = self._get_visibility_prefix_for_function(func, project_model)
+                    prefix = "+ " if func.name in header_function_decl_names else "- "
                     formatted_function = self._format_function_signature(func, prefix)
                     
                     if prefix == "+ ":
@@ -482,25 +540,7 @@ class Generator:
             for function_line in private_functions:
                 lines.append(function_line)
 
-    def _get_visibility_prefix_for_global(self, global_var: Field, project_model: ProjectModel) -> str:
-        """Determine visibility prefix for a global variable based on header presence"""
-        # Check all header files (.h files) for this global
-        for filename, file_model in project_model.files.items():
-            if filename.endswith(".h"):
-                for header_global in file_model.globals:
-                    if header_global.name == global_var.name:
-                        return "+ "  # Public - present in header
-        return "- "  # Private - not in any header
-
-    def _get_visibility_prefix_for_function(self, func: Function, project_model: ProjectModel) -> str:
-        """Determine visibility prefix for a function based on header presence"""
-        # Check all header files (.h files) for this function
-        for filename, file_model in project_model.files.items():
-            if filename.endswith(".h"):
-                for header_func in file_model.functions:
-                    if header_func.name == func.name and header_func.is_declaration:
-                        return "+ "  # Public - present in header
-        return "- "  # Private - not in any header
+    # Removed O(N^2) header scans in favor of precomputed header visibility sets
 
     def _generate_typedef_classes(
         self, lines: List[str], file_model: FileModel, uml_ids: Dict[str, str]
