@@ -85,31 +85,35 @@ assertions:
     syntax_valid: true
     files:
       math.c.puml:
-        contains:
-        - + void Init
-        - + int Calculate
-        - + void Shutdown
-        - '- void HelperFunction'
-        - '- static int InternalComputation'
-        - -- Functions --
+        contains_lines:
+        - '+ void Init'
+        - '+ int Calculate'
+        - '+ void Shutdown'
+        - "- void HelperFunction"
+        - "- static int InternalComputation"
+        - '-- Functions --'
         regex_matches:
         - pattern: \+[^-]*\n\s*\n[^+]*-
           description: Empty line between public and private function groups
       module.c.puml:
-        contains:
-        - + int api_version
-        - + char* module_name
-        - '- static int internal_state'
-        - '- static bool debug_flag'
-        - -- Global Variables --
+        contains_lines:
+        - '+ int api_version'
+        - '+ char* module_name'
+        - "- static int internal_state"
+        - "- static bool debug_flag"
+        - '-- Global Variables --'
         regex_matches:
         - pattern: \+[^-]*\n\s*\n[^+]*-
           description: Empty line between public and private global groups
       processor.c.puml:
-        contains:
-        - + int error_count
-        - + int ProcessData
-        - '- static size_t buffer_size'
-        - '- static bool ValidateInput'
-        - -- Global Variables --
-        - -- Functions --
+        contains_lines:
+        - '+ int error_count'
+        - '+ int ProcessData'
+        - "- static size_t buffer_size"
+        - "- static bool ValidateInput"
+        - '-- Global Variables --'
+        - '-- Functions --'
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
