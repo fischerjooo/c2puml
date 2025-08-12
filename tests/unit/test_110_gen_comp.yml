@@ -130,6 +130,7 @@ assertions:
     exit_code: 0
   
   model:
+    project_name: GeneratorTest
     files_exist:
       - "generator_test.c"
       - "generator_header.h"

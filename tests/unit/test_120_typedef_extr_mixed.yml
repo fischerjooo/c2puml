@@ -124,3 +124,8 @@ assertions:
         - class "Number_t" as TYPEDEF_NUMBER_T
         class_count: 12
         relationship_count: 19
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json
