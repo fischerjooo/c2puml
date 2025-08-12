@@ -201,6 +201,7 @@ assertions:
     max_execution_time: 60.0
   model:
     validate_structure: true
+    project_name: complete_system_integration_test
     expected_files:
     - main.c
     - game.h
@@ -228,4 +229,5 @@ assertions:
   files:
     output_dir_exists: ./output
     files_exist:
+      - ./output/model.json
       - ./output/model_transformed.json
