@@ -53,6 +53,12 @@ assertions:
       files: 3
   puml:
     syntax_valid: true
+    files:
+      c.puml:
+        contains_lines:
+        - C --> HEADER_A
+        - C --> HEADER_B
+        - int f(A a, B b)
   files:
     output_dir_exists: ./output
     files_exist:
