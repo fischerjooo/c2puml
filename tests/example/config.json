@@ -8,6 +8,7 @@
   "model_output_path": "model.json",
   "recursive_search": true,
   "include_depth": 10,
+  "max_function_signature_chars": 0,
   "file_filters": {
     "include": [],
     "exclude": []

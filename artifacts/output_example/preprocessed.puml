@@ -111,8 +111,8 @@ class "simple_debug_t" as TYPEDEF_SIMPLE_DEBUG_T <<struct>> #LightYellow
 
 class "status_t" as TYPEDEF_STATUS_T <<enumeration>> #LightYellow
 {
-    STATUS_DISABLED = 0
     STATUS_ENABLED = 1
+    STATUS_DISABLED = 0
     STATUS_OFF = 0
     STATUS_UNKNOWN = - 1
 }

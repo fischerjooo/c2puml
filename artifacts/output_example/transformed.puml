@@ -57,8 +57,8 @@ class "point3d_t" as TYPEDEF_POINT3D_T <<struct>> #LightYellow
 
 class "status_t" as TYPEDEF_STATUS_T <<enumeration>> #LightYellow
 {
-    STATUS_ERROR
     STATUS_OK
+    STATUS_ERROR
     STATUS_PENDING
 }
 

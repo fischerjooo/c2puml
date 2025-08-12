@@ -679,6 +679,11 @@
           "original_type": "void(* release_callback_t)(const char * message)",
           "uses": []
         },
+        "result_generator_t": {
+          "name": "result_generator_t",
+          "original_type": "struct { int result_code",
+          "uses": []
+        },
         "uint16": {
           "name": "uint16",
           "original_type": "uint16_t",
